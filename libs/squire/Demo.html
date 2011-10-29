@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>HTML Editor Test</title>
+	<style type="text/css" media="screen">
+	body {
+    position: relative;
+    margin: 0 auto;
+    padding: 50px;
+    width: 540px;
+    font: 400 14px/1.24 helvetica, arial, sans-serif;
+    text-shadow: 0 1px 0 white;
+  }
+  h1 {
+    font-size: 1.95em;
+  }
+	iframe {
+	  border: 1px solid #888;
+	}
+	span {
+	  cursor: pointer;
+	  text-decoration: underline;
+	}
+	p {
+	  margin: 5px 0;
+	}
+	</style>
+	<script type="text/javascript" charset="utf-8">
+	var editor;
+	document.addEventListener( 'click', function ( e ) {
+	  var id = e.target.id,
+	      value;
+	  if ( id && editor && editor[ id ] ) {
+	    if ( e.target.className === 'prompt' ) {
+	      value = prompt( 'Value:' );
+	    } 
+	    editor[ id ]( value );
+	  }
+	});
+	</script>
+</head>
+<body>
+<h1>HTML Editor Test</h1>
+<header>
+  <p>This is a really simple demo, with the most trivial of UI integrations</p>
+  <p>
+  <span id="bold">Bold</span>
+  <span id="removeBold">Unbold</span>
+  <span id="italic">Italic</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <span id="removeItalic">Unitalic</span>
+  <span id="underline">Underline</span>
+  <span id="removeUnderline">Deunderline</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <span id="setFontSize" class="prompt">Font size</span>
+  <span id="setFontFace" class="prompt">Font face</span>
+  </p>
+  <p>
+	<span id="incQuoteLevel">Quote</span>
+	<span id="decQuoteLevel">Dequote</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span id="makeUnorderedList">List</span>
+	<span id="removeList">Unlist</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <span id="insertImage" class="prompt">Insert image</span>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<span id="undo">Undo</span>
+	<span id="redo">Redo</span>
+  </p>
+</header>
+<iframe src="build/document.html" onload="top.editor=this.contentWindow.editor" width="500" height="500"></iframe>
+</body>
+</html>
