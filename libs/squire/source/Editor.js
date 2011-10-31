@@ -830,7 +830,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return newParent;
     };
     
-    var convertBRtoDIV = function ( root ) {
+    var cleanupBRs = function ( root ) {
         var brs = root.querySelectorAll( 'BR' ),
             l = brs.length,
             br, seenBlock, nodeAfterSplit, div, next,
@@ -842,20 +842,20 @@ document.addEventListener( 'DOMContentLoaded', function () {
         
         while ( l-- ) {
             br = brs[l];
-            // Ignore cursor fixes.
-            if ( !br.nextSibling && !br.previousSibling ) {
-                continue;
-            }
-            seenBlock = false;
-            nodeAfterSplit = br.parentNode.split( br, stopCondition );
-            if ( nodeAfterSplit.isInline() ) {
-                div = createElement( 'DIV' );
-                nodeAfterSplit.parentNode.insertBefore( div, nodeAfterSplit );
-                do {
-                    next = nodeAfterSplit.nextSibling;
-                    div.appendChild( nodeAfterSplit );
-                    nodeAfterSplit = next;
-                } while ( nodeAfterSplit && nodeAfterSplit.isInline() );
+            // Only split elements if actually dividing
+            if ( br.nextSibling && br.previousSibling ) {
+                seenBlock = false;
+                nodeAfterSplit = br.parentNode.split( br, stopCondition );
+                if ( nodeAfterSplit.isInline() ) {
+                    div = createElement( 'DIV' );
+                    nodeAfterSplit.parentNode
+                                  .insertBefore( div, nodeAfterSplit );
+                    do {
+                        next = nodeAfterSplit.nextSibling;
+                        div.appendChild( nodeAfterSplit );
+                        nodeAfterSplit = next;
+                    } while ( nodeAfterSplit && nodeAfterSplit.isInline() );
+                }
             }
             br.detach();
         }
@@ -882,7 +882,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         setTimeout( function () {
             // Get the pasted content and clean
             var frag = cleanTree( pasteArea.detach(), null, false );
-            convertBRtoDIV( frag );
+            cleanupBRs( frag );
             
             // Restore the previous selection
             range.setStart( startContainer, startOffset );
@@ -1166,7 +1166,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             
             div.innerHTML = html;
             cleanTree( div, frag, true );
-            convertBRtoDIV( frag );
+            cleanupBRs( frag );
             
             // Wrap top-level inline nodes in div.
             children = frag.childNodes;
@@ -1187,6 +1187,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
             }
             if ( div ) {
                 frag.appendChild( div );
+            }
+            
+            // Fix cursor
+            var node = frag;
+            while ( node = node.getNextBlock() ) {
+                node.fixCursor();
             }
             
             // Remove existing body children
