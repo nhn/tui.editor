@@ -739,7 +739,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return frag;
     };
     
-    // --- Paste and clean ---
+    // --- Clean ---
     
     var allowedBlock = /^A(?:DDRESS|RTICLE|SIDE)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL$/;
     
@@ -861,7 +861,46 @@ document.addEventListener( 'DOMContentLoaded', function () {
         }
     };
     
-    var onPaste = function () {
+    var mergeAdjacent = function ( root, tag ) {
+        var els = root.querySelectorAll( tag ),
+            i, l, el, prev;
+        for ( i = 1, l = els.length; i < l; i += 1 ) {
+            el = els[i];
+            prev = el.previousSibling;
+            if ( prev && prev.nodeName === tag ) {
+                prev.appendChild( el.detach().empty() );
+            }
+        }
+        return root;
+    };
+    
+    var wrapTopLevelInline = function ( root, tag ) {
+        var children = root.childNodes,
+            wrapper = null,
+            i, l, child;
+        for ( i = 0, l = children.length; i < l; i += 1 ) {
+            child = children[i];
+            if ( child.isInline() ) {
+                if ( !wrapper ) { wrapper = createElement( tag ); }
+                wrapper.appendChild( child );
+                i -= 1;
+                l -= 1;
+            } else if ( wrapper ) {
+                root.insertBefore( wrapper, child );
+                wrapper = null;
+                i += 1;
+                l += 1;
+            }
+        }
+        if ( wrapper ) {
+            root.appendChild( wrapper );
+        }
+        return root;
+    };
+    
+    // --- Paste ---
+        
+    doc.addEventListener( 'paste', function () {
         var range = getSelection(),
             startContainer = range.startContainer,
             startOffset = range.startOffset,
@@ -895,9 +934,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             range.collapse( false );
             setSelection( range );
         }, 0 );
-    };
-    
-    doc.addEventListener( 'paste', onPaste, false );
+    }, false );
     
     // --- Keyboard interaction ---
     
@@ -1159,35 +1196,21 @@ document.addEventListener( 'DOMContentLoaded', function () {
                     return '';
             });
             
-            // Parse HTML into DOM tree and clean.
+            // Parse HTML into DOM tree
             var frag = doc.createDocumentFragment(),
                 div = createElement( 'DIV' ),
                 children, child, l, i;
             
             div.innerHTML = html;
-            cleanTree( div, frag, true );
-            cleanupBRs( frag );
             
+            // Clean
+            cleanTree( div, frag, true );
+            // Remove <br>s
+            cleanupBRs( frag );
+            // Merge adjacent blockquotes
+            mergeAdjacent( frag, 'BLOCKQUOTE' );
             // Wrap top-level inline nodes in div.
-            children = frag.childNodes;
-            div = null;
-            for ( i = 0, l = children.length; i < l; i += 1 ) {
-                child = children[i];
-                if ( child.isInline() ) {
-                    if ( !div ) { div = createElement( 'DIV' ); }
-                    div.appendChild( child );
-                    i -= 1;
-                    l -= 1;
-                } else if ( div ) {
-                    frag.insertBefore( div, child );
-                    div = null;
-                    i += 1;
-                    l += 1;
-                }
-            }
-            if ( div ) {
-                frag.appendChild( div );
-            }
+            wrapTopLevelInline( frag, 'DIV' );
             
             // Fix cursor
             var node = frag;
