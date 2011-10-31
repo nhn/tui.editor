@@ -180,7 +180,7 @@ implement( Range, {
                 endContainer = nodeAfterSplit,
                 endOffset = 0,
                 parent = nodeAfterSplit.parentNode,
-                child;
+                child, node;
             
             while ( ( child = startContainer.lastChild ) &&
                     child.nodeType === ELEMENT_NODE &&
@@ -200,6 +200,13 @@ implement( Range, {
                 endContainer.insertBefore( child, endContainer.firstChild );
                 endOffset += 1;
             }
+            
+            // Fix cursor before inserting block:
+            node = frag;
+            while ( node = node.getNextBlock() ) {
+                node.fixCursor();
+            }
+            
             parent.insertBefore( frag, nodeAfterSplit );
             
             // 6. Merge containers at edges
@@ -318,6 +325,7 @@ implement( Range, {
         return this;
     },
 
+    // First block that starts before or at range beginning.
     getStartBlock: function () {
         var node = this.startContainer,
             offset = this.startOffset,
@@ -328,22 +336,28 @@ implement( Range, {
         }
         if ( !node.isBlock() ) {
             node = node.getPreviousBlock() ||
-                this.startContainer.ownerDocument.body.getNextBlock();
+                this.startContainer.ownerDocument
+                    .body.getNextBlock();
         }
         return node;
     },
-
+    
+    // First block that starts before the range ends.
     getEndBlock: function () {
         var node = this.endContainer,
             offset = this.endOffset,
             children = node.childNodes;
-        if ( node.nodeType === ELEMENT_NODE &&
-                offset && offset <= children.length ) {
-            node = children[ offset - 1 ];
-        }
-        if ( !node.isBlock() ) {
-            node = node.getPreviousBlock() ||
-                this.startContainer.ownerDocument.body.getNextBlock();
+            
+        if ( offset < children.length ) {
+            node = children[ offset ].getPreviousBlock();
+        } else {
+            while ( node && !node.nextSibling ) {
+                node = node.parentNode;
+            }
+            return node ?
+                node.nextSibling.getPreviousBlock() :
+                this.startContainer.ownerDocument
+                    .body.lastChild.getPreviousBlock();
         }
         return node;
     },

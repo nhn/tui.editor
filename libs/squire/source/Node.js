@@ -39,6 +39,7 @@ var swap = function( node, node2 ) {
 
 var ELEMENT_NODE = 1,  // Node.ELEMENT_NODE,
     TEXT_NODE = 3,     // Node.TEXT_NODE,
+    DOCUMENT_FRAGMENT_NODE = 11, // Node.DOCUMENT_FRAGMENT_NODE
     SHOW_ELEMENT = 1,  // NodeFilter.SHOW_ELEMENT,
     FILTER_ACCEPT = 1, // NodeFilter.FILTER_ACCEPT,
     FILTER_SKIP = 3;   // NodeFilter.FILTER_SKIP;
@@ -54,7 +55,7 @@ var walkForward = function ( current, filter ) {
             }
         }
 
-        if ( node.nodeName === 'BODY' ) {
+        if ( !node ) {
             return null;
         }
         if ( filter( node ) ) {
@@ -77,7 +78,8 @@ var walkBackward = function ( current, filter ) {
             node = current.parentNode;
         }
 
-        if ( node.nodeName === 'BODY' ) {
+        if ( node.nodeName === 'BODY' ||
+                node.nodeType === DOCUMENT_FRAGMENT_NODE ) {
             return null;
         }
         if ( filter( node ) ) {
