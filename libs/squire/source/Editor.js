@@ -219,12 +219,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
             endNode = temp;
         }
         
-        // Ensure there's at least a text node in the selection
-        if ( startNode.nextSibling === endNode ) {
-            endNode.parentNode.insertBefore(
-                doc.createTextNode( '' ), endNode );
-        }
-        
         range.setStartAfter( startNode );
         range.setEndBefore( endNode );
     };
@@ -264,6 +258,10 @@ document.addEventListener( 'DOMContentLoaded', function () {
             }
             range.setStart( _range.startContainer, _range.startOffset );
             range.setEnd( _range.endContainer, _range.endOffset );
+            
+            if ( !range.collapsed ) {
+                range.moveBoundariesDownTree();
+            }
         }
         return range;
     };
