@@ -137,6 +137,15 @@ implement( Range, {
             this.selectNodeContents( startBlock );
         }
         
+        // Ensure valid range (must have only block or inline containers)
+        var isCollapsed = this.collapsed;
+        this.moveBoundariesDownTree();
+        if ( isCollapsed ) {
+            // Hopefully at least start or end is now a text node.
+            // Make that the focus point.
+            this.collapse( this.startContainer.nodeType === TEXT_NODE );
+        }
+        
         return this;
     },
     
@@ -223,7 +232,7 @@ implement( Range, {
         var range = this,
             nodeRange = node.ownerDocument.createRange();
 
-        nodeRange.selectNodeContents( node );
+        nodeRange.selectNode( node );
 
         if ( partial ) {
             // Node must not finish before range starts or start after range
@@ -322,15 +331,12 @@ implement( Range, {
 
         return this;
     },
-
-    // Returns the first block at least partially contained by the range,
-    // or null if no block is contained by the range.
-    getStartBlock: function () {
-        // 1. Find first node after range start.
-        var node = this.startContainer,
-            offset = this.startOffset,
-            children = node.childNodes;
+    
+    getFirstNodeAfterStart: function () {
+        var node = this.startContainer;
         if ( node.nodeType === ELEMENT_NODE ) {
+            var offset = this.startOffset,
+                children = node.childNodes;
             if ( offset < children.length ) {
                 node = children[ offset ];
             } else {
@@ -340,6 +346,26 @@ implement( Range, {
                 if ( node ) { node = node.nextSibling; }
             }
         }
+        return node;
+    },
+    
+    getLastNodeBeforeEnd: function () {
+        var node = this.endContainer,
+            offset = this.startOffset,
+            children = node.childNodes;
+        while ( offset && node.nodeType === ELEMENT_NODE ) {
+            node = children[ offset - 1 ];
+            children = node.childNodes;
+            offset = children.length;
+        }
+        return node;
+    },
+
+    // Returns the first block at least partially contained by the range,
+    // or null if no block is contained by the range.
+    getStartBlock: function () {
+        // 1. Find first node after range start.
+        var node = this.getFirstNodeAfterStart();
         // 2. If not a block, get previous block.
         if ( node && !node.isBlock() ) {
             node = node.getPreviousBlock();
@@ -352,16 +378,9 @@ implement( Range, {
     // or null if no block is contained by the range.
     getEndBlock: function () {
         // 1. Find first node before range end.
-        var node = this.endContainer,
-            offset = this.startOffset,
-            children = node.childNodes;
-        while ( offset && node.nodeType === ELEMENT_NODE ) {
-            node = children[ offset - 1 ];
-            children = node.childNodes;
-            offset = children.length;
-        }
+        var node = this.getLastNodeBeforeEnd();
         // 2. If not a block, get previous block.
-        if ( !node.isBlock() ) {
+        if ( node && !node.isBlock() ) {
             node = node.getPreviousBlock();
         }
         // 3. Check the block does not end before range ends.
