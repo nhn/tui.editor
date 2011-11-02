@@ -238,18 +238,18 @@ implement( Range, {
             // Node must not finish before range starts or start after range
             // finishes.
             var nodeEndBeforeStart = ( range.compareBoundaryPoints(
-                    END_TO_START, nodeRange ) === 1 ),
+                    END_TO_START, nodeRange ) > -1 ),
                 nodeStartAfterEnd = ( range.compareBoundaryPoints(
-                    START_TO_END, nodeRange ) === -1 );
+                    START_TO_END, nodeRange ) < 1 );
             return ( !nodeEndBeforeStart && !nodeStartAfterEnd );
         }
         else {
             // Node must start after range starts and finish before range
             // finishes
             var nodeStartAfterStart = ( range.compareBoundaryPoints(
-                    START_TO_START, nodeRange ) === -1 ),
+                    START_TO_START, nodeRange ) < 1 ),
                 nodeEndBeforeEnd = ( range.compareBoundaryPoints(
-                    END_TO_END, nodeRange ) === 1 );
+                    END_TO_END, nodeRange ) > -1 );
             return ( nodeStartAfterStart && nodeEndBeforeEnd );
         }
     },
