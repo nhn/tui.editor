@@ -988,7 +988,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             // Save undo checkpoint
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
-                        
+            
             // Selected text is overwritten, therefore delete the contents
             // to collapse selection.
             if ( !range.collapsed ) {
@@ -1002,6 +1002,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 splitTag = nextTag[ tag ],
                 nodeAfterSplit;
             
+            // If this is a malformed bit of document, just play it safe
+            // and insert a <br>.
             if ( !block ) {
                 range._insertNode( createElement( 'BR' ) );
                 range.collapse( false );

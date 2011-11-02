@@ -107,6 +107,8 @@ implement( Text, {
     getLength: function () {
         return this.length;
     },
+    // The text node is essentially its own contents.
+    empty: function () { return this; },
     isLike: function ( node ) {
         return node.nodeType === TEXT_NODE;
     },
