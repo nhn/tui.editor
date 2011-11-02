@@ -50,53 +50,9 @@ var ELEMENT_NODE = 1,  // Node.ELEMENT_NODE,
     FILTER_ACCEPT = 1, // NodeFilter.FILTER_ACCEPT,
     FILTER_SKIP = 3;   // NodeFilter.FILTER_SKIP;
 
-var walkForward = function ( current, filter ) {
-    var node;
-    while ( true ) {
-        node = current.firstChild;
-        while ( !node && current ) {
-            node = current.nextSibling;
-            if ( !node ) {
-                current = current.parentNode;
-            }
-        }
-
-        if ( !node ) {
-            return null;
-        }
-        if ( filter( node ) ) {
-            return node;
-        }
-
-        current = node;
-    }
+var isBlock = function ( el ) {
+    return el.isBlock() ? FILTER_ACCEPT : FILTER_SKIP;
 };
-
-var walkBackward = function ( current, filter ) {
-    var node;
-    while ( true ) {
-        node = current.previousSibling;
-        if ( node ) {
-            while ( current = node.lastChild ) {
-                node = current;
-            }
-        } else {
-            node = current.parentNode;
-        }
-
-        if ( node.nodeName === 'BODY' ||
-                node.nodeType === DOCUMENT_FRAGMENT_NODE ) {
-            return null;
-        }
-        if ( filter( node ) ) {
-            return node;
-        }
-
-        current = node;
-    }
-};
-
-var isBlock = function ( el ) { return el.isBlock(); };
 var useTextFixer = !!( window.opera || window.ie );
 
 implement( Node, {
@@ -127,10 +83,18 @@ implement( Node, {
         return parent ? parent.nearest( tag, attributes ) : null;
     },
     getPreviousBlock: function () {
-        return walkBackward( this, isBlock );
+        var doc = this.ownerDocument,
+            walker = doc.createTreeWalker(
+                doc.body, SHOW_ELEMENT, isBlock, false );
+        walker.currentNode = this;
+        return walker.previousNode();
     },
     getNextBlock: function () {
-        return walkForward( this, isBlock );
+        var doc = this.ownerDocument,
+            walker = doc.createTreeWalker(
+                doc.body, SHOW_ELEMENT, isBlock, false );
+        walker.currentNode = this;
+        return walker.nextNode();
     },
     split: function ( node, stopCondition ) {
         return node;

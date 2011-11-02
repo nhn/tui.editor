@@ -5,7 +5,7 @@ clean:
 
 build: build/squire.js build/document.html
 
-build/squire.js: source/Node.js source/Range.js source/Editor.js
+build/squire.js: source/TreeWalker.js source/Node.js source/Range.js source/Editor.js
 	mkdir -p $(@D)
 	cat $^ | uglifyjs > $@
 
