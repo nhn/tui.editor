@@ -29,6 +29,12 @@ var $True = function () { return true; };
 
 var inlineNodeNames  = /^(?:A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:FN|EL)|EM|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TRONG|AMP)|U)$/;
 
+var leafNodeNames = {
+    BR: 1,
+    IMG: 1,
+    INPUT: 1
+};
+
 var swap = function( node, node2 ) {
     var parent = node2.parentNode;
     if ( parent ) {
@@ -134,6 +140,7 @@ implement( Node, {
 
 implement( Text, {
     isInline: $True,
+    isLeaf: $True,
     getLength: function () {
         return this.length;
     },
@@ -150,6 +157,9 @@ implement( Text, {
 });
 
 implement( Element, {
+    isLeaf: function () {
+        return !!leafNodeNames[ this.nodeName ];
+    },
     isInline: function () {
         return inlineNodeNames.test( this.nodeName );
     },
@@ -396,13 +406,16 @@ implement( Element, {
             }
         } else {
             if ( useTextFixer ) {
-                while ( el.nodeType !== TEXT_NODE ) {
+                while ( !el.isLeaf() ) {
                     child = el.firstChild;
                     if ( !child ) {
                         fixer = doc.createTextNode( '' );
                         break;
                     }
                     el = child;
+                }
+                if ( el.isLeaf() && el.nodeType !== TEXT_NODE ) {
+                    el.parentNode.insertBefore( doc.createTextNode( '' ), el );
                 }
             }
             else if ( !el.textContent && !el.querySelector( 'BR' ) ) {
