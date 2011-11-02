@@ -120,7 +120,7 @@ implement( Range, {
         
         var startBlock = this.getStartBlock(),
             endBlock = this.getEndBlock();
-        if ( startBlock !== endBlock ) {
+        if ( startBlock && endBlock && startBlock !== endBlock ) {
             startBlock.mergeWithBlock( endBlock, this );
         }
         
@@ -336,8 +336,7 @@ implement( Range, {
         }
         if ( !node.isBlock() ) {
             node = node.getPreviousBlock() ||
-                this.startContainer.ownerDocument
-                    .body.getNextBlock();
+                this.startContainer.ownerDocument.body.getNextBlock();
         }
         return node;
     },
@@ -354,10 +353,12 @@ implement( Range, {
             while ( node && !node.nextSibling ) {
                 node = node.parentNode;
             }
-            return node ?
-                node.nextSibling.getPreviousBlock() :
-                this.startContainer.ownerDocument
-                    .body.lastChild.getPreviousBlock();
+            if ( node ) {
+                node = node.nextSibling.getPreviousBlock();
+            } else {
+                node = this.startContainer.ownerDocument.body.lastChild;
+                if ( node ) { node = node.getPreviousBlock(); }
+            }
         }
         return node;
     },
