@@ -116,8 +116,6 @@ implement( Range, {
         this._extractContents();
         
         // If we split into two different blocks, merge the blocks.
-        this.moveBoundariesDownTree();
-        
         var startBlock = this.getStartBlock(),
             endBlock = this.getEndBlock();
         if ( startBlock && endBlock && startBlock !== endBlock ) {
@@ -125,7 +123,7 @@ implement( Range, {
         }
         
         // Ensure body has a block-level element in it.
-        var doc = startBlock.ownerDocument,
+        var doc = this.endContainer.ownerDocument,
             body = doc.body,
             bodyFirstChild = body.firstChild;
         if ( !bodyFirstChild || bodyFirstChild.nodeName === 'BR' ) {
@@ -325,42 +323,49 @@ implement( Range, {
         return this;
     },
 
-    // First block that starts before or at range beginning.
+    // Returns the first block at least partially contained by the range,
+    // or null if no block is contained by the range.
     getStartBlock: function () {
+        // 1. Find first node after range start.
         var node = this.startContainer,
             offset = this.startOffset,
             children = node.childNodes;
-        if ( node.nodeType === ELEMENT_NODE &&
-                offset < children.length ) {
-            node = children[ offset ];
+        if ( node.nodeType === ELEMENT_NODE ) {
+            if ( offset < children.length ) {
+                node = children[ offset ];
+            } else {
+                while ( node && !node.nextSibling ) {
+                    node = node.parentNode;
+                }
+                if ( node ) { node = node.nextSibling; }
+            }
         }
-        if ( !node.isBlock() ) {
-            node = node.getPreviousBlock() ||
-                this.startContainer.ownerDocument.body.getNextBlock();
+        // 2. If not a block, get previous block.
+        if ( node && !node.isBlock() ) {
+            node = node.getPreviousBlock();
         }
-        return node;
+        // 3. Check the block does not end before range begins.
+        return node && this.containsNode( node, true ) ? node : null;
     },
     
-    // First block that starts before the range ends.
+    // Returns the last block at least partially contained by the range,
+    // or null if no block is contained by the range.
     getEndBlock: function () {
+        // 1. Find first node before range end.
         var node = this.endContainer,
-            offset = this.endOffset,
+            offset = this.startOffset,
             children = node.childNodes;
-            
-        if ( offset < children.length ) {
-            node = children[ offset ].getPreviousBlock();
-        } else {
-            while ( node && !node.nextSibling ) {
-                node = node.parentNode;
-            }
-            if ( node ) {
-                node = node.nextSibling.getPreviousBlock();
-            } else {
-                node = this.startContainer.ownerDocument.body.lastChild;
-                if ( node ) { node = node.getPreviousBlock(); }
-            }
+        while ( offset && node.nodeType === ELEMENT_NODE ) {
+            node = children[ offset - 1 ];
+            children = node.childNodes;
+            offset = children.length;
         }
-        return node;
+        // 2. If not a block, get previous block.
+        if ( !node.isBlock() ) {
+            node = node.getPreviousBlock();
+        }
+        // 3. Check the block does not end before range ends.
+        return node && this.containsNode( node, true ) ? node : null;
     },
 
     startsAtBlockBoundary: function () {
@@ -412,12 +417,15 @@ implement( Range, {
     expandToBlockBoundaries: function () {
         var start = this.getStartBlock(),
             end = this.getEndBlock(),
+            parent;
+        
+        if ( start && end ) {
             parent = start.parentNode;
-
-        this.setStart( parent, indexOf.call( parent.childNodes, start ) );
-        parent = end.parentNode;
-        this.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
-
+            this.setStart( parent, indexOf.call( parent.childNodes, start ) );
+            parent = end.parentNode;
+            this.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
+        }
+        
         return this;
     }
 });

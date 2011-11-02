@@ -998,9 +998,17 @@ document.addEventListener( 'DOMContentLoaded', function () {
             var splitNode = range.startContainer,
                 splitOffset = range.startOffset,
                 block = range.getStartBlock(),
-                tag = block.nodeName,
+                tag = block ? block.nodeName : 'DIV',
                 splitTag = nextTag[ tag ],
                 nodeAfterSplit;
+            
+            if ( !block || event.shift ) {
+                range._insertNode( createElement( 'BR' ) );
+                range.collapse( false );
+                setSelection( range );
+                docWasChanged();
+                return;
+            }
             
             if ( !block.textContent ) {
                 // Break list
