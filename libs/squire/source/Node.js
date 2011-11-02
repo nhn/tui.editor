@@ -206,7 +206,8 @@ implement( Element, {
         while ( l-- ) {
             child = children[l];
             prev = l && children[ l - 1 ];
-            if ( l && child.isInline() && child.isLike( prev ) ) {
+            if ( l && child.isInline() && child.isLike( prev ) &&
+                    !leafNodeNames[ child.nodeName ] ) {
                 if ( range.startContainer === child ) {
                     range.startContainer = prev;
                     range.startOffset += prev.getLength();

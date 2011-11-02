@@ -1002,7 +1002,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 splitTag = nextTag[ tag ],
                 nodeAfterSplit;
             
-            if ( !block || event.shift ) {
+            if ( !block ) {
                 range._insertNode( createElement( 'BR' ) );
                 range.collapse( false );
                 setSelection( range );
