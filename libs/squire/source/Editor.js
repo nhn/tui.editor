@@ -358,30 +358,34 @@ document.addEventListener( 'DOMContentLoaded', function () {
             return false;
         }
         
-        // 2. Check for ancestor matching tag/attributes
-        var root = range.commonAncestorContainer;
+        // If the common ancestor is inside the tag we require, we definitely
+        // have the format.
+        var root = range.commonAncestorContainer,
+            walker, node;
         if ( root.nearest( tag, attributes ) ) {
             return true;
         }
         
-        // 3. Get the elements matching the selector that are inside the root
-        // of the range and see if any of them are at least partially
-        // contained within the range
-        if ( root.nodeType === ELEMENT_NODE ) {
-            var els = root.getElementsByTagName( tag ),
-                l = els.length,
-                el;
-
-            while ( l-- ) {
-                el = els[l];
-                if ( range.containsNode( el, true ) &&
-                        el.is( tag, attributes ) ) {
-                    return true;
-                }
+        // If common ancestor is a text node and doesn't have the format, we
+        // definitely don't have it.
+        if ( root.nodeType === TEXT_NODE ) {
+            return false;
+        }
+        
+        // Otherwise, check each text node at least partially contained within
+        // the selection and make sure all of them have the format we want.
+        walker = doc.createTreeWalker( root, SHOW_TEXT, function ( node ) {
+            return range.containsNode( node, true ) ?
+                FILTER_ACCEPT : FILTER_SKIP;
+        }, false );
+        
+        while ( node = walker.nextNode() ) {
+            if ( !node.nearest( tag, attributes ) ) {
+                return false;
             }
         }
-                
-        return false;
+        
+        return true;
     };
     
     var addFormat = function ( tag, attributes, range ) {
