@@ -21,6 +21,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         body = doc.body;
         
     var isOpera = !!win.opera;
+    var useTextFixer = isOpera || !!win.ie;
 
     // --- DOM Sugar ---
     
@@ -1204,7 +1205,28 @@ document.addEventListener( 'DOMContentLoaded', function () {
             return doc;
         },
         
-        getHTML: getHTML,
+        getHTML: function () {
+            var brs = [],
+                node, fixer, html, l;
+            if ( useTextFixer ) {
+                node = body;
+                while ( node = node.getNextBlock() ) {
+                    if ( !node.textContent && !node.querySelector( 'BR' ) ) {
+                        fixer = createElement( 'BR' );
+                        node.appendChild( fixer );
+                        brs.push( fixer );
+                    }
+                }
+            }
+            html = getHTML();
+            if ( useTextFixer ) {
+                l = brs.length;
+                while ( l-- ) {
+                    brs[l].detach();
+                }
+            }
+            return html;
+        },
         setHTML: function ( html ) {
             // Extract styles to insert into <head>
             var styles = [];
@@ -1236,9 +1258,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
             while ( node = node.getNextBlock() ) {
                 node.fixCursor();
             }
-            
-            // Normalise
-            frag.normalize();
             
             // Remove existing body children
             while ( child = body.lastChild ) {
