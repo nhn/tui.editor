@@ -23,6 +23,31 @@ var ELEMENT_NODE = 1,   // Node.ELEMENT_NODE
     END_TO_END = 2,     // Range.END_TO_END
     END_TO_START = 3;   // Range.END_TO_START
 
+var getNodeBefore = function ( node, offset ) {
+    var children = node.childNodes;
+    while ( offset && node.nodeType === ELEMENT_NODE ) {
+        node = children[ offset - 1 ];
+        children = node.childNodes;
+        offset = children.length;
+    }
+    return node;
+};
+
+var getNodeAfter = function ( node, offset ) {
+    if ( node.nodeType === ELEMENT_NODE ) {
+        var children = node.childNodes;
+        if ( offset < children.length ) {
+            node = children[ offset ];
+        } else {
+            while ( node && !node.nextSibling ) {
+                node = node.parentNode;
+            }
+            if ( node ) { node = node.nextSibling; }
+        }
+    }
+    return node;
+};
+
 implement( Range, {
     _insertNode: function ( node ) {
         // Insert at start.
@@ -331,60 +356,50 @@ implement( Range, {
 
         return this;
     },
-    
-    getFirstNodeAfterStart: function () {
-        var node = this.startContainer;
-        if ( node.nodeType === ELEMENT_NODE ) {
-            var offset = this.startOffset,
-                children = node.childNodes;
-            if ( offset < children.length ) {
-                node = children[ offset ];
-            } else {
-                while ( node && !node.nextSibling ) {
-                    node = node.parentNode;
-                }
-                if ( node ) { node = node.nextSibling; }
-            }
-        }
-        return node;
-    },
-    
-    getLastNodeBeforeEnd: function () {
-        var node = this.endContainer,
-            offset = this.startOffset,
-            children = node.childNodes;
-        while ( offset && node.nodeType === ELEMENT_NODE ) {
-            node = children[ offset - 1 ];
-            children = node.childNodes;
-            offset = children.length;
-        }
-        return node;
-    },
 
     // Returns the first block at least partially contained by the range,
     // or null if no block is contained by the range.
     getStartBlock: function () {
-        // 1. Find first node after range start.
-        var node = this.getFirstNodeAfterStart();
-        // 2. If not a block, get previous block.
-        if ( node && !node.isBlock() ) {
-            node = node.getPreviousBlock();
+        var container = this.startContainer,
+            block;
+        
+        // If inline, get the containing block.
+        if ( container.isInline() ) {
+            block = container.getPreviousBlock();
+        } else if ( container.isBlock() ) {
+            block = container;
+        } else {
+            block = getNodeBefore( container, this.startOffset );
+            block = block.getNextBlock();
         }
-        // 3. Check the block does not end before range begins.
-        return node && this.containsNode( node, true ) ? node : null;
+        // Check the block actually intersects the range
+        return block && this.containsNode( block, true ) ? block : null;
     },
     
     // Returns the last block at least partially contained by the range,
     // or null if no block is contained by the range.
     getEndBlock: function () {
-        // 1. Find first node before range end.
-        var node = this.getLastNodeBeforeEnd();
-        // 2. If not a block, get previous block.
-        if ( node && !node.isBlock() ) {
-            node = node.getPreviousBlock();
+        var container = this.endContainer,
+            block, child;
+        
+        // If inline, get the containing block.
+        if ( container.isInline() ) {
+            block = container.getPreviousBlock();
+        } else if ( container.isBlock() ) {
+            block = container;
+        } else {
+            block = getNodeAfter( container, this.endOffset );
+            if ( !block ) {
+                block = container.ownerDocument.body;
+                while ( child = block.lastChild ) {
+                    block = child;
+                }
+            }
+            block = block.getPreviousBlock();
+            
         }
-        // 3. Check the block does not end before range ends.
-        return node && this.containsNode( node, true ) ? node : null;
+        // Check the block actually intersects the range
+        return block && this.containsNode( block, true ) ? block : null;
     },
 
     startsAtBlockBoundary: function () {
