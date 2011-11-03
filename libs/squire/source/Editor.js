@@ -900,7 +900,14 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return root;
     };
     
-    // --- Paste ---
+    // --- Cut and Paste ---
+    
+    doc.addEventListener( 'cut', function () {
+        // If all content removed, ensure div at start of body.
+        setTimeout( function () {
+            body.fixCursor();
+        }, 0 );
+    });
         
     doc.addEventListener( 'paste', function () {
         var range = getSelection(),

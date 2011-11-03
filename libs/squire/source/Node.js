@@ -356,9 +356,14 @@ implement( Element, {
             fixer, child;
         
         if ( el.nodeName === 'BODY' ) {
-            if ( !el.firstChild ) {
+            if ( !( child = el.firstChild ) || child.nodeName === 'BR' ) {
                 fixer = doc.createElement( 'DIV' );
-                el.appendChild( fixer );
+                if ( child ) {
+                    el.replaceChild( fixer, child );
+                }
+                else {
+                    el.appendChild( fixer );
+                }
                 el = fixer;
                 fixer = null;
             }

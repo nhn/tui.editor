@@ -148,18 +148,11 @@ implement( Range, {
         }
         
         // Ensure body has a block-level element in it.
-        var doc = this.endContainer.ownerDocument,
-            body = doc.body,
-            bodyFirstChild = body.firstChild;
-        if ( !bodyFirstChild || bodyFirstChild.nodeName === 'BR' ) {
-            startBlock = doc.createElement( 'DIV' ).fixCursor();
-            if ( bodyFirstChild ) {
-                body.replaceChild( startBlock, bodyFirstChild );
-            }
-            else {
-                body.appendChild( startBlock );
-            }
-            this.selectNodeContents( startBlock );
+        var body = this.endContainer.ownerDocument.body,
+            child = body.firstChild;
+        if ( !child || child.nodeName === 'BR' ) {
+            body.fixCursor();
+            this.selectNodeContents( body.firstChild );
         }
         
         // Ensure valid range (must have only block or inline containers)
