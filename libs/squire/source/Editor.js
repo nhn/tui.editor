@@ -1226,6 +1226,9 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 node.fixCursor();
             }
             
+            // Normalise
+            frag.normalize();
+            
             // Remove existing body children
             while ( child = body.lastChild ) {
                 body.removeChild( child );
