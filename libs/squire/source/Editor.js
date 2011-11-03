@@ -349,7 +349,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
     // --- Inline formatting ---
     
     // Looks for matching tag and attributes, so won't work
-    // if <b> instead of <strong> etc.
+    // if <strong> instead of <b> etc.
     var hasFormat = function ( tag, attributes, range ) {
         // 1. Normalise the arguments and get selection
         tag = tag.toUpperCase();
@@ -751,13 +751,13 @@ document.addEventListener( 'DOMContentLoaded', function () {
             var style = span.style,
                 el;
             if ( style.fontWeight && ( /bold/i.test( style.fontWeight ) ) ) {
-                el = createElement( 'STRONG' );
+                el = createElement( 'B' );
                 parent.appendChild( el );
                 parent = el;
             }
             if ( style.fontStyle &&
                     style.fontStyle.toLowerCase() === 'italic' ) {
-                el = createElement( 'EM' );
+                el = createElement( 'I' );
                 parent.appendChild( el );
                 parent = el;
             }
@@ -786,13 +786,13 @@ document.addEventListener( 'DOMContentLoaded', function () {
             parent.appendChild( el );
             return el;
         },
-        B: function ( b, parent ) {
-            var el = createElement( 'STRONG' );
+        STRONG: function ( _, parent ) {
+            var el = createElement( 'B' );
             parent.appendChild( el );
             return el;
         },
-        I: function ( i, parent ) {
-            var el = createElement( 'EM' );
+        EM: function ( _, parent ) {
+            var el = createElement( 'I' );
             parent.appendChild( el );
             return el;
         },
@@ -1042,7 +1042,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             }
             
             // Focus cursor
-            // If there's a <strong>/<em> etc. at the beginning of the split
+            // If there's a <b>/<i> etc. at the beginning of the split
             // make sure we focus inside it.
             while ( nodeAfterSplit.nodeType === ELEMENT_NODE) {
                 var child = nodeAfterSplit.firstChild,
@@ -1132,8 +1132,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
             getRangeAndRemoveBookmark( range );
             setSelection( range );
         },
-        'ctrl-b': mapKeyToFormat( 'STRONG' ),
-        'ctrl-i': mapKeyToFormat( 'EM' ),
+        'ctrl-b': mapKeyToFormat( 'B' ),
+        'ctrl-i': mapKeyToFormat( 'I' ),
         'ctrl-u': mapKeyToFormat( 'U' ),
         'ctrl-y': mapKeyTo( redo ),
         'ctrl-z': mapKeyTo( undo ),
@@ -1294,12 +1294,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
         hasFormat: chain( hasFormat ),
         changeFormat: chain( changeFormat ),
         
-        bold: command( changeFormat, { tag: 'STRONG' } ),
-        italic: command( changeFormat, { tag: 'EM' } ),
+        bold: command( changeFormat, { tag: 'B' } ),
+        italic: command( changeFormat, { tag: 'I' } ),
         underline: command( changeFormat, { tag: 'U' } ),
         
-        removeBold: command( changeFormat, null, { tag: 'STRONG' } ),
-        removeItalic: command( changeFormat, null, { tag: 'EM' } ),
+        removeBold: command( changeFormat, null, { tag: 'B' } ),
+        removeItalic: command( changeFormat, null, { tag: 'I' } ),
         removeUnderline: command( changeFormat, null, { tag: 'U' } ),
         
         makeLink: function ( url ) {
