@@ -76,15 +76,12 @@ TreeWalker.prototype.nextNode = function () {
     while ( true ) {
         node = current.firstChild;
         while ( !node && current ) {
-            node = current.nextSibling;
-            if ( !node ) {
-                current = current.parentNode;
-                if ( current === root ) {
-                    return null;
-                }
+            if ( current === root ) {
+                break;
             }
+            node = current.nextSibling;
+            if ( !node ) { current = current.parentNode; }
         }
-
         if ( !node ) {
             return null;
         }
@@ -93,7 +90,6 @@ TreeWalker.prototype.nextNode = function () {
             this.currentNode = node;
             return node;
         }
-
         current = node;
     }
 };
@@ -105,7 +101,7 @@ TreeWalker.prototype.previousNode = function () {
         filter = this.filter,
         node;
     while ( true ) {
-        if ( node === root ) {
+        if ( current === root ) {
             return null;
         }
         node = current.previousSibling;
@@ -116,12 +112,14 @@ TreeWalker.prototype.previousNode = function () {
         } else {
             node = current.parentNode;
         }
+        if ( !node ) {
+            return null;
+        }
         if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
                 filter( node ) === FILTER_ACCEPT ) {
             this.currentNode = node;
             return node;
         }
-
         current = node;
     }
 };
