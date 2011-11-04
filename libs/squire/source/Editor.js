@@ -21,7 +21,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
         body = doc.body;
         
     var isOpera = !!win.opera;
-    var useTextFixer = isOpera || !!win.ie;
+    var isIE = !!win.ie;
+    var useTextFixer = isOpera || isOpera;
 
     // --- DOM Sugar ---
     
@@ -959,14 +960,18 @@ document.addEventListener( 'DOMContentLoaded', function () {
     
     // --- Cut and Paste ---
     
-    doc.addEventListener( 'cut', function () {
+    doc.addEventListener( isIE ? 'beforecut' : 'cut', function () {
+        // Save undo checkpoint
+        var range = getSelection();
+        recordUndoState( range );
+        getRangeAndRemoveBookmark( range );
         // If all content removed, ensure div at start of body.
         setTimeout( function () {
             body.fixCursor();
         }, 0 );
     });
         
-    doc.addEventListener( 'paste', function () {
+    doc.addEventListener( isIE ?  'beforepaste' : 'paste', function () {
         var range = getSelection(),
             startContainer = range.startContainer,
             startOffset = range.startOffset,
