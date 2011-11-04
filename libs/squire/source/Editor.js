@@ -742,163 +742,219 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return frag;
     };
     
+    var tagAfterSplit = {
+        DIV: 'DIV',
+        PRE: 'DIV',
+        H1:  'DIV',
+        H2:  'DIV',
+        H3:  'DIV',
+        H4:  'DIV',
+        H5:  'DIV',
+        H6:  'DIV',
+        P:   'DIV',
+        DT:  'DD',
+        DD:  'DT',
+        LI:  'LI'
+    };
+    
+    var splitBlock = function ( block, node, offset ) {
+        var splitTag = tagAfterSplit[ block.nodeName ],
+            nodeAfterSplit = node.split( offset, block.parentNode );
+        
+        // Make sure the new node is the correct type.
+        if ( nodeAfterSplit.nodeName !== splitTag ) {
+            block = createElement( splitTag );
+            block.replaces( nodeAfterSplit )
+                 .appendChild( nodeAfterSplit.empty() );
+            nodeAfterSplit = block;
+        }
+        return nodeAfterSplit;
+    };
+    
     // --- Clean ---
     
     var allowedBlock = /^A(?:DDRESS|RTICLE|SIDE)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL$/;
     
-    var elCleaner = {
-        // Only allow a limited subset of properties.
+    var spanToSemantic = {
+        color: {
+            regexp: /\S/,
+            replace: function ( color ) {
+                return createElement( 'SPAN', {
+                    'class': 'colour',
+                    style: 'color:' + color
+                });
+            }
+        },
+        fontWeight: {
+            regexp: /^bold/i,
+            replace: function () {
+                return createElement( 'B' );
+            }
+        },
+        fontStyle: {
+            regexp: /^italic/i,
+            replace: function () {
+                return createElement( 'I' );
+            }
+        },
+        fontFamily: {
+            regexp: /\S/,
+            replace: function ( family ) {
+                return createElement( 'SPAN', {
+                    'class': 'font',
+                    style: 'font-family:' + family
+                });
+            }
+        },
+        fontSize: {
+            regexp: /\S/,
+            replace: function ( size ) {
+                return createElement( 'SPAN', {
+                    'class': 'size',
+                    style: 'font-size:' + size
+                });
+            }
+        }
+    };
+    
+    var stylesRewriters = {
         SPAN: function ( span, parent ) {
             var style = span.style,
-                el;
-            if ( style.fontWeight && ( /bold/i.test( style.fontWeight ) ) ) {
-                el = createElement( 'B' );
-                parent.appendChild( el );
-                parent = el;
+                attr, converter, css, newTreeBottom, newTreeTop, el;
+            
+            for ( attr in spanToSemantic ) {
+                converter = spanToSemantic[ attr ];
+                css = style[ attr ];
+                if ( css && converter.regexp.test( css ) ) {
+                    el = converter.replace( css );
+                    if ( newTreeBottom ) {
+                        newTreeBottom.appendChild( el );
+                    }
+                    newTreeBottom = el;
+                    if ( !newTreeTop ) {
+                        newTreeTop = el;
+                    }
+                }
             }
-            if ( style.fontStyle &&
-                    style.fontStyle.toLowerCase() === 'italic' ) {
-                el = createElement( 'I' );
-                parent.appendChild( el );
-                parent = el;
+            
+            if ( newTreeTop ) {
+                newTreeBottom.appendChild( span.empty() );
+                parent.replaceChild( newTreeTop, span );
             }
-            if ( style.fontFamily ) {
-                el = createElement( 'SPAN', {
-                    'class': 'font',
-                    style: 'font-family:' + style.fontFamily
-                });
-                parent.appendChild( el );
-                parent = el;
-            }
-            if ( style.fontSize ) {
-                el = createElement( 'SPAN', {
-                    'class': 'size',
-                    style: 'font-size:' + style.fontSize
-                });
-                parent.appendChild( el );
-                parent = el;
-            }
-            return parent;
+            
+            return newTreeBottom || span;
         },
-        A: function ( a, parent ) {
-            var el = createElement( 'a', {
-                href: a.href
-            });
-            parent.appendChild( el );
-            return el;
-        },
-        STRONG: function ( _, parent ) {
+        STRONG: function ( node, parent ) {
             var el = createElement( 'B' );
-            parent.appendChild( el );
+            parent.replaceChild( el, node );
+            el.appendChild( node.empty() );
             return el;
         },
-        EM: function ( _, parent ) {
+        EM: function ( node, parent ) {
             var el = createElement( 'I' );
-            parent.appendChild( el );
+            parent.replaceChild( el, node );
+            el.appendChild( node.empty() );
             return el;
-        },
-        '#text': function ( text, parent ) {
-            var data = text.data;
-            if ( /\S/.test( data ) ) {
-                parent.appendChild( doc.createTextNode( data ) );
-            }
-            return parent;
         }
     };
     
-    var cleanTree = function ( oldParent, newParent, allowStyles ) {
-        if ( !newParent ) { newParent = doc.createDocumentFragment(); }
-        var children = oldParent.childNodes,
-            i, l, node, tag, cleaner, inline, parent;
-        for ( i = 0, l = children.length; i < l; i += 1 ) {
-            node = children[i];
-            tag = node.nodeName;
-            cleaner = elCleaner[ tag ];
-            parent = newParent;
-            if ( cleaner ) {
-                parent = cleaner( node, newParent );
-                if ( tag === 'BR' ) { newParent = parent; }
-            }
-            else if ( allowedBlock.test( tag ) || node.isInline() ) {
-                parent = node.cloneNode( false );
-                if ( !allowStyles && parent.style.cssText ) {
-                    parent.removeAttribute( 'style' );
-                }
-                newParent.appendChild( parent );
-            }
-            if ( node.childNodes.length ) {
-                cleanTree( node, parent, allowStyles );
-            }
-        }
-        return newParent;
-    };
-    
-    var cleanupBRs = function ( root ) {
-        var brs = root.querySelectorAll( 'BR' ),
-            l = brs.length,
-            br, seenBlock, nodeAfterSplit, div, next,
-            stopCondition = function ( node ) {
-                if ( seenBlock ) { return true; }
-                if ( !node.isInline() ) { seenBlock = true; }
-                return false;
-            };
+    /*
+        Two purposes:
         
-        while ( l-- ) {
-            br = brs[l];
-            // Only split elements if actually dividing
-            if ( br.nextSibling && br.previousSibling ) {
-                seenBlock = false;
-                nodeAfterSplit = br.parentNode.split( br, stopCondition );
-                if ( nodeAfterSplit.isInline() ) {
-                    div = createElement( 'DIV' );
-                    nodeAfterSplit.parentNode
-                                  .insertBefore( div, nodeAfterSplit );
-                    do {
-                        next = nodeAfterSplit.nextSibling;
-                        div.appendChild( nodeAfterSplit );
-                        nodeAfterSplit = next;
-                    } while ( nodeAfterSplit && nodeAfterSplit.isInline() );
+        1. Remove nodes we don't want, such as weird <o:p> tags, comment nodes
+           and whitespace nodes.
+        2. Convert inline tags into our preferred format.
+    */
+    var cleanTree = function ( node, allowStyles ) {
+        var children = node.childNodes,
+            i, l, child, nodeName, nodeType, rewriter, parent;
+        for ( i = 0, l = children.length; i < l; i += 1 ) {
+            child = children[i];
+            nodeName = child.nodeName;
+            nodeType = child.nodeType;
+            rewriter = stylesRewriters[ nodeName ];
+            if ( rewriter ) {
+                child = rewriter( child, node );
+            } else if (
+                  ( !allowedBlock.test( nodeName ) && !child.isInline() ) ||
+                  ( nodeType === TEXT_NODE && !( /\S/.test( child.data ) ) ) ) {
+                node.removeChild( child );
+                i -= 1;
+                l -= 1;
+                continue;
+            }
+            if ( nodeType === ELEMENT_NODE ) {
+                if ( !allowStyles && child.style.cssText ) {
+                    child.removeAttribute( 'style' );
+                }
+                if ( child.childNodes.length ) {
+                    cleanTree( child, allowStyles );
                 }
             }
-            br.detach();
         }
-    };
-    
-    var mergeAdjacent = function ( root, tag ) {
-        var els = root.querySelectorAll( tag ),
-            i, l, el, prev;
-        for ( i = 1, l = els.length; i < l; i += 1 ) {
-            el = els[i];
-            prev = el.previousSibling;
-            if ( prev && prev.nodeName === tag ) {
-                prev.appendChild( el.detach().empty() );
-            }
-        }
-        return root;
+        return node;
     };
     
     var wrapTopLevelInline = function ( root, tag ) {
         var children = root.childNodes,
             wrapper = null,
-            i, l, child;
+            i, l, child, isBR;
         for ( i = 0, l = children.length; i < l; i += 1 ) {
             child = children[i];
-            if ( child.isInline() ) {
+            isBR = child.nodeName === 'BR';
+            if ( !isBR && child.isInline() ) {
                 if ( !wrapper ) { wrapper = createElement( tag ); }
                 wrapper.appendChild( child );
                 i -= 1;
                 l -= 1;
-            } else if ( wrapper ) {
-                root.insertBefore( wrapper, child );
+            } else if ( isBR || wrapper ) {
+                if ( !wrapper ) { wrapper = createElement( tag ); }
+                wrapper.fixCursor();
+                if ( isBR ) {
+                    root.replaceChild( wrapper, child );
+                } else {
+                    root.insertBefore( wrapper, child );
+                    i += 1;
+                    l += 1;
+                }
                 wrapper = null;
-                i += 1;
-                l += 1;
             }
         }
         if ( wrapper ) {
-            root.appendChild( wrapper );
+            root.appendChild( wrapper.fixCursor() );
         }
         return root;
+    };
+    
+    var cleanupBRs = function ( root ) {
+        var brs = root.querySelectorAll( 'BR' ),
+            l = brs.length,
+            br, block, nodeAfterSplit, div, next;
+        
+        while ( l-- ) {
+            br = brs[l];
+            // Cleanup may have removed it
+            block = br.parentNode;
+            if ( !block ) { continue; }
+            if ( br.nextSibling && br.previousSibling ) {
+                while ( block.isInline() ) {
+                    block = block.parentNode;
+                }
+                // If this is not inside a block, replace it by wrapping
+                // inlines in DIV.
+                if ( !block.isBlock() ) {
+                    wrapTopLevelInline( block, 'DIV' );
+                }
+                // If in a block we can split, split it instead
+                else if ( tagAfterSplit[ block.nodeName ] ) {
+                    splitBlock( block, br.parentNode, br );
+                    br.detach();
+                }
+                // Otherwise leave the br alone.
+            } else {
+                br.detach();
+            }
+        }
     };
     
     // --- Cut and Paste ---
@@ -930,8 +986,23 @@ document.addEventListener( 'DOMContentLoaded', function () {
         // paste event.
         setTimeout( function () {
             // Get the pasted content and clean
-            var frag = cleanTree( pasteArea.detach(), null, false );
+            var frag = pasteArea.detach().empty(),
+                first = frag.firstChild;
+            
+            // Safari likes putting extra divs around things.
+            if ( first &&
+                    first === frag.lastChild && first.nodeName === 'DIV' ) {
+                frag.replaceChild( first.empty(), first );
+            }
+            
+            frag.normalize();
+            cleanTree( frag, false );
             cleanupBRs( frag );
+            
+            var node = frag;
+            while ( node = node.getNextBlock() ) {
+                node.fixCursor();
+            }
             
             // Restore the previous selection
             range.setStart( startContainer, startOffset );
@@ -975,16 +1046,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
         };
     };
     
-    var nextTag = {
-        H1: 'DIV',
-        H2: 'DIV',
-        H3: 'DIV',
-        H4: 'DIV',
-        H5: 'DIV',
-        H6: 'DIV',
-        P:  'DIV'
-    };
-    
     var keyHandlers = {
         tab: function ( event ) {
             event.preventDefault();
@@ -1007,11 +1068,9 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 range._deleteContents();
             }
             
-            var splitNode = range.startContainer,
-                splitOffset = range.startOffset,
-                block = range.getStartBlock(),
+            var block = range.getStartBlock(),
                 tag = block ? block.nodeName : 'DIV',
-                splitTag = nextTag[ tag ],
+                splitTag = tagAfterSplit[ tag ],
                 nodeAfterSplit;
             
             // If this is a malformed bit of document, just play it safe
@@ -1022,6 +1081,45 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 setSelection( range );
                 docWasChanged();
                 return;
+            }
+            
+            // We need to wrap the contents in divs.
+            var splitNode = range.startContainer,
+                splitOffset = range.startOffset,
+                replacement;
+            if ( !splitTag ) {
+                // If the selection point is inside the block, we're going to
+                // rewrite it so our saved referece points won't be valid.
+                // Pick a node at a deeper point in the tree to avoid this.
+                if ( splitNode === block ) {
+                    splitNode = splitOffset ?
+                        splitNode.childNodes[ splitOffset - 1 ] : null;
+                    splitOffset = 0;
+                    if ( splitNode ) {
+                        if ( splitNode.nodeName === 'BR' ) {
+                            splitNode = splitNode.nextSibling;
+                        } else {
+                            splitOffset = splitNode.getLength();
+                        }
+                        if ( !splitNode || splitNode.nodeName === 'BR' ) {
+                            replacement = createElement( 'DIV' ).fixCursor();
+                            if ( splitNode ) {
+                                block.replaceChild( replacement, splitNode );
+                            } else {
+                                block.appendChild( replacement );
+                            }
+                            splitNode = replacement;
+                        }
+                    }
+                }
+                wrapTopLevelInline( block, 'DIV' );
+                splitTag = 'DIV';
+                if ( !splitNode ) {
+                    splitNode = block.firstChild;
+                }
+                range.setStart( splitNode, splitOffset );
+                range.setEnd( splitNode, splitOffset );
+                block = range.getStartBlock();
             }
             
             if ( !block.textContent ) {
@@ -1036,18 +1134,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             }
             
             // Otherwise, split at cursor point.
-            nodeAfterSplit = splitNode.split( splitOffset,
-                function ( node ) {
-                    return ( node === block.parentNode || node === body );
-                });
-            
-            // Make sure the new node is the correct type.
-            if ( splitTag ) {
-                block = createElement( splitTag );
-                block.replaces( nodeAfterSplit )
-                     .appendChild( nodeAfterSplit.empty() );
-                nodeAfterSplit = block;
-            }
+            nodeAfterSplit = splitBlock( block, splitNode, splitOffset );
             
             // Focus cursor
             // If there's a <b>/<i> etc. at the beginning of the split
@@ -1228,29 +1315,26 @@ document.addEventListener( 'DOMContentLoaded', function () {
             return html;
         },
         setHTML: function ( html ) {
+            var frag = doc.createDocumentFragment(),
+                div = createElement( 'DIV' ),
+                styles = '',
+                child;
+            
             // Extract styles to insert into <head>
-            var styles = [];
             styleExtractor.lastIndex = 0;
             html = html.replace( styleExtractor,
                 function ( _, rules ) {
-                    styles.push( rules.replace( /<!--|-->/g, '' ) );
+                    styles += rules.replace( /<!--|-->/g, '' );
                     return '';
             });
             
             // Parse HTML into DOM tree
-            var frag = doc.createDocumentFragment(),
-                div = createElement( 'DIV' ),
-                children, child, l, i;
-            
             div.innerHTML = html;
+            frag.appendChild( div.empty() );
             
-            // Clean
-            cleanTree( div, frag, true );
-            // Remove <br>s
+            cleanTree( frag, true );
             cleanupBRs( frag );
-            // Merge adjacent blockquotes
-            mergeAdjacent( frag, 'BLOCKQUOTE' );
-            // Wrap top-level inline nodes in div.
+
             wrapTopLevelInline( frag, 'DIV' );
             
             // Fix cursor
@@ -1266,19 +1350,19 @@ document.addEventListener( 'DOMContentLoaded', function () {
             
             // And insert new content
             // Add the styles
-            var head = doc.documentElement.firstChild;
-            for ( i = 0, l = styles.length; i < l; i += 1 ) {
-                var style = createElement( 'STYLE', {
-                    type: 'text/css'
-                });
+            if ( styles ) {
+                var head = doc.documentElement.firstChild,
+                    style = createElement( 'STYLE', {
+                        type: 'text/css'
+                    });
                 if ( style.styleSheet ) {
                     // IE8: must append to document BEFORE adding styles
                     // or you get the IE7 CSS parser!
                     head.appendChild( style );
-                    style.styleSheet.cssText = styles[i];
+                    style.styleSheet.cssText = styles;
                 } else {
                     // Everyone else
-                    style.appendChild( doc.createTextNode( styles[i] ) );
+                    style.appendChild( doc.createTextNode( styles ) );
                     head.appendChild( style );
                 }
             }
@@ -1296,7 +1380,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
             setSelection( getRangeAndRemoveBookmark( range ) );
-
+            
             return this;
         },
         

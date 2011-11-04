@@ -108,11 +108,8 @@ implement( Range, {
             common = common.parentNode;
         }
 
-        var uptoCommon = function ( node ) {
-                return node === common;
-            },
-            endNode = endContainer.split( endOffset, uptoCommon ) || null,
-            startNode = startContainer.split( startOffset, uptoCommon ),
+        var endNode = endContainer.split( endOffset, common ),
+            startNode = startContainer.split( startOffset, common ),
             frag = common.ownerDocument.createDocumentFragment(),
             next;
 
@@ -198,7 +195,7 @@ implement( Range, {
         // and insert block in between split, then merge containers.
         else {
             var nodeAfterSplit = this.startContainer.split( this.startOffset,
-                    function ( node ) { return node.nodeName === 'BODY'; }),
+                    this.startContainer.ownerDocument.body ),
                 nodeBeforeSplit = nodeAfterSplit.previousSibling,
                 startContainer = nodeBeforeSplit,
                 startOffset = startContainer.childNodes.length,
@@ -234,13 +231,27 @@ implement( Range, {
             
             parent.insertBefore( frag, nodeAfterSplit );
             
-            // 6. Merge containers at edges
+            // Merge containers at edges
             nodeAfterSplit.mergeContainers();
             nodeBeforeSplit.nextSibling.mergeContainers();
             
-            // Merge containers
+            // Remove empty nodes created by split.
+            if ( nodeAfterSplit === endContainer &&
+                    !endContainer.textContent ) {
+                endContainer = endContainer.previousSibling;
+                endOffset = endContainer.getLength();
+                parent.removeChild( nodeAfterSplit );
+            }
+            if ( nodeBeforeSplit === startContainer &&
+                    !startContainer.textContent) {
+                startContainer = startContainer.nextSibling;
+                startOffset = 0;
+                parent.removeChild( nodeBeforeSplit );
+            }
+            
             this.setStart( startContainer, startOffset );
             this.setEnd( endContainer, endOffset );
+            this.moveBoundariesDownTree();
         }
     },
 

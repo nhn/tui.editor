@@ -95,7 +95,7 @@ implement( Node, {
         walker.currentNode = this;
         return walker.nextNode();
     },
-    split: function ( node, stopCondition ) {
+    split: function ( node, stopNode ) {
         return node;
     },
     mergeContainers: function () {}
@@ -110,12 +110,12 @@ implement( Text, {
     isLike: function ( node ) {
         return node.nodeType === TEXT_NODE;
     },
-    split: function ( offset, stopCondition ) {
+    split: function ( offset, stopNode ) {
         var node = this;
-        if ( stopCondition( node ) ) {
+        if ( node === stopNode ) {
             return offset;
         }
-        return node.parentNode.split( node.splitText( offset ), stopCondition );
+        return node.parentNode.split( node.splitText( offset ), stopNode );
     }
 });
 
@@ -306,14 +306,16 @@ implement( Element, {
             }
         }
     },
-    split: function ( childNodeToSplitBefore, stopCondition ) {
+    split: function ( childNodeToSplitBefore, stopNode ) {
         var node = this;
         
         if ( typeof( childNodeToSplitBefore ) === 'number' ) {
-            childNodeToSplitBefore = node.childNodes[ childNodeToSplitBefore ];
+            childNodeToSplitBefore =
+                childNodeToSplitBefore < node.childNodes.length ?
+                    node.childNodes[ childNodeToSplitBefore ] : null;
         }
         
-        if ( stopCondition( node ) ) {
+        if ( node === stopNode ) {
             return childNodeToSplitBefore;
         }
         
@@ -344,7 +346,7 @@ implement( Element, {
         }
         
         // Keep on splitting up the tree
-        return parent.split( clone, stopCondition );
+        return parent.split( clone, stopNode );
     },
     fixCursor: function () {
         // In Webkit and Gecko, block level elements are collapsed and
