@@ -149,7 +149,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
     var lastFocusNode;
     var path = '';
     
-    var updatePath = function ( force ) {
+    var updatePath = function ( _, force ) {
         var anchor = sel.anchorNode,
             focus = sel.focusNode,
             newPath;
@@ -175,7 +175,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
             sel.removeAllRanges();
             sel.addRange( range );
         }
-        updatePath();
     };
     
     // --- Focus ---
@@ -208,6 +207,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         range._insertNode( el );
         range.setStartAfter( el );
         setSelection( range );
+        updatePath();
     };
     
     // --- Bookmarking ---
@@ -482,6 +482,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
         // Add bookmark
         saveRangeToBookmark( range );
         
+        // We need a node in the selection to break the surrounding
+        // formatted text.
+        if ( range.collapsed ) {
+            range._insertNode( doc.createTextNode( '' ) );
+        }
+        
         // Find block-level ancestor of selection
         var root = range.commonAncestorContainer;
         while ( root.isInline() ) {
@@ -595,6 +601,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         }
         
         setSelection( range );
+        updatePath( 0, true );
         
         // We're not still in an undo state
         docWasChanged();
@@ -622,7 +629,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         }
         
         // Path may have changed
-        updatePath( true );
+        updatePath( 0, true );
         
         // We're not still in an undo state
         docWasChanged();
@@ -669,6 +676,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         
         // 8. Restore selection
         setSelection( getRangeAndRemoveBookmark() );
+        updatePath( 0, true );
         
         // 9. We're not still in an undo state
         docWasChanged();
@@ -1039,6 +1047,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             
             range.collapse( false );
             setSelection( range );
+            updatePath( 0, true );
         }, 0 );
     }, false );
     
@@ -1104,6 +1113,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 range._insertNode( createElement( 'BR' ) );
                 range.collapse( false );
                 setSelection( range );
+                updatePath( 0, true );
                 docWasChanged();
                 return;
             }
@@ -1187,6 +1197,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 nodeAfterSplit = child;
             }
             setSelection( createRange( nodeAfterSplit, 0 ) );
+            updatePath( 0, true );
             
             // We're not still in an undo state
             docWasChanged();
@@ -1198,6 +1209,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
+                updatePath( 0, true );
             }
             // If at beginning of block, merge with previous
             else if ( range.startsAtBlockBoundary() ) {
@@ -1221,6 +1233,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                         return modifyBlocks( decreaseBlockQuoteLevel, range );
                     }
                     setSelection( range );
+                    updatePath( 0, true );
                 }
             }
             // All other cases can be safely left to the browser (I hope!).
@@ -1232,6 +1245,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
+                updatePath( 0, true );
             }
             // If at end of block, merge next into this block
             else if ( range.endsAtBlockBoundary() ) {
@@ -1242,6 +1256,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 if ( next ) {
                     current.mergeWithBlock( next, range );
                     setSelection( range );
+                    updatePath( 0, true );
                 }
             }
             // All other cases can be safely left to the browser (I hope!).
@@ -1279,8 +1294,6 @@ document.addEventListener( 'DOMContentLoaded', function () {
         
         if ( keyHandlers[ key ] ) {
             keyHandlers[ key ]( event );
-        } else {
-            fireEvent( 'keydown', event );
         }
     });
      
@@ -1403,6 +1416,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
             setSelection( getRangeAndRemoveBookmark( range ) );
+            updatePath( 0, true );
             
             return this;
         },
@@ -1457,7 +1471,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 }
             }, {
                 tag: 'SPAN',
-                'class': 'font'
+                attributes: { 'class': 'font' }
             });
             focus();
             return this;
@@ -1472,7 +1486,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 }
             }, {
                 tag: 'SPAN',
-                'class': 'size'
+                attributes: { 'class': 'size' }
             });
             focus();
             return this;
