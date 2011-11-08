@@ -48,23 +48,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
     
     // --- Events ---
     
-    var events = {};
-    var addEventListener = function ( type, fn ) {
-        var handlers = events[ type ] || ( events[ type ] = [] );
-        handlers.push( fn );
-    };
-    var removeEventListener = function ( type, fn ) {
-        var handlers = events[ type ],
-            l;
-        if ( handlers ) {
-            l = handlers.length;
-            while ( l-- ) {
-                if ( handlers[l] === fn ) {
-                    handlers.splice( l, 1 );
-                }
-            }
-        }
-    };
+    var events = {},
+        customEvents = {
+            cut: 1, paste: 1, focus: 1, blur: 1,
+            pathChange: 1, select: 1, input: 1, undoStateChange: 1
+        };
+    
     var fireEvent = function ( type, event ) {
         var handlers = events[ type ],
             l, obj;
@@ -91,6 +80,36 @@ document.addEventListener( 'DOMContentLoaded', function () {
     
     var propagateEvent = function ( event ) {
         fireEvent( event.type, event );
+    };
+    
+    var addEventListener = function ( type, fn ) {
+        var handlers = events[ type ];
+        if ( !handlers ) {
+            handlers = events[ type ] = [];
+            if ( !customEvents[ type ] ) {
+                doc.addEventListener( type, propagateEvent, false );
+            }
+        }
+        handlers.push( fn );
+    };
+    
+    var removeEventListener = function ( type, fn ) {
+        var handlers = events[ type ],
+            l;
+        if ( handlers ) {
+            l = handlers.length;
+            while ( l-- ) {
+                if ( handlers[l] === fn ) {
+                    handlers.splice( l, 1 );
+                }
+            }
+            if ( !handlers.length ) {
+                delete events[ type ];
+                if ( !customEvents[ type ] ) {
+                    doc.removeEventListener( type, propagateEvent, false );
+                }
+            }
+        }
     };
     
     // --- Selection and Path ---
@@ -130,11 +149,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
     var lastFocusNode;
     var path = '';
     
-    var updatePath = function () {
+    var updatePath = function ( force ) {
         var anchor = sel.anchorNode,
             focus = sel.focusNode,
             newPath;
-        if ( anchor !== lastAnchorNode || focus !== lastFocusNode ) {
+        if ( force || anchor !== lastAnchorNode || focus !== lastFocusNode ) {
             lastAnchorNode = anchor;
             lastFocusNode = focus;
             newPath = ( anchor && focus ) ? ( anchor === focus ) ?
@@ -143,13 +162,13 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 path = newPath;
                 fireEvent( 'pathChange', newPath );
             }
-            if ( anchor !== focus ) {
-                fireEvent( 'select' );
-            }
+        }
+        if ( anchor !== focus ) {
+            fireEvent( 'select' );
         }
     };
-    body.addEventListener( 'keyup', updatePath, false );
-    body.addEventListener( 'mouseup', updatePath, false );
+    addEventListener( 'keyup', updatePath );
+    addEventListener( 'mouseup', updatePath );
     
     var setSelection = function ( range ) {
         if ( range ) {
@@ -592,17 +611,18 @@ document.addEventListener( 'DOMContentLoaded', function () {
         recordUndoState( range );
         getRangeAndRemoveBookmark( range );
         
-        var root = range.commonAncestorContainer,
-            walker = doc.createTreeWalker( root, SHOW_ELEMENT,
-            function ( node ) {
-                return range.containsNode( node, true ) && node.isBlock() ?
-                    FILTER_ACCEPT : FILTER_SKIP;
-            }, false ),
-            block;
-        
-        while ( block = walker.nextNode() ) {
-            fn( block );
+        var start = range.getStartBlock(),
+            end = range.getEndBlock();
+        if ( start && end ) {
+            while ( true ) {
+                fn( start );
+                if ( start === end ) { break; }
+                start = start.getNextBlock();
+            }
         }
+        
+        // Path may have changed
+        updatePath( true );
         
         // We're not still in an undo state
         docWasChanged();
@@ -969,7 +989,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         setTimeout( function () {
             body.fixCursor();
         }, 0 );
-    });
+    }, false );
         
     doc.addEventListener( isIE ?  'beforepaste' : 'paste', function () {
         var range = getSelection(),
@@ -1129,7 +1149,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
             
             if ( !block.textContent ) {
                 // Break list
-                if ( block.nearest( 'UL' ) ) {
+                if ( block.nearest( 'UL' ) || block.nearest( 'OL' ) ) {
                     return modifyBlocks( decreaseListLevel, range );
                 }
                 // Break blockquote
@@ -1193,7 +1213,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 // to break lists/blockquote.
                 else {
                     // Break list
-                    if ( current.nearest( 'UL' ) ) {
+                    if ( current.nearest( 'UL' ) || current.nearest( 'OL' ) ) {
                         return modifyBlocks( decreaseListLevel, range );
                     }
                     // Break blockquote
@@ -1240,7 +1260,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         'ctrl-shift-z': mapKeyTo( redo )
     };
     
-    body.addEventListener( 'keydown', function ( event ) {
+    addEventListener( 'keydown', function ( event ) {
         // Ref: http://unixpapa.com/js/key.html
         var code = event.keyCode || event.which,
             key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
@@ -1262,9 +1282,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         } else {
             fireEvent( 'keydown', event );
         }
-    }, false );
-    body.addEventListener( 'keypress', propagateEvent, false );
-    body.addEventListener( 'keyup', propagateEvent, false );
+    });
      
     // --- Export ---
     
@@ -1406,7 +1424,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         undo: chain( undo ),
         redo: chain( redo ),
         
-        hasFormat: chain( hasFormat ),
+        hasFormat: hasFormat,
         changeFormat: chain( changeFormat ),
         
         bold: command( changeFormat, { tag: 'B' } ),
@@ -1461,6 +1479,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         },
         setTextAlignment: function ( dir ) {
             forEachBlock( function ( block ) {
+                block.className = 'align-' + dir;
                 block.style.textAlign = dir;
             });
             focus();
