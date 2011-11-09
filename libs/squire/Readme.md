@@ -251,6 +251,30 @@ Sets the font size for the selected text.
 
 Returns self.
 
+### setTextColour ###
+
+Sets the colour of the selected text.
+
+#### Parameters ####
+
+* **colour**: The colour to set. Any CSS colour value is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
+
+#### Returns ####
+
+Returns self.
+
+### setHighlightColour ###
+
+Sets the colour of the background of the selected text.
+
+#### Parameters ####
+
+* **colour**: The colour to set. Any CSS colour value is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
+
+#### Returns ####
+
+Returns self.
+
 ### setTextAlignment ###
 
 Sets the text alignment in all blocks at least partially contained by the selection.
