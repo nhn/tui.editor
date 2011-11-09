@@ -1491,6 +1491,37 @@ document.addEventListener( 'DOMContentLoaded', function () {
             focus();
             return this;
         },
+        
+        setTextColour: function ( colour ) {
+            changeFormat({
+                tag: 'SPAN',
+                attributes: {
+                    'class': 'colour',
+                    style: 'color: ' + colour
+                }
+            }, {
+                tag: 'SPAN',
+                attributes: { 'class': 'colour' }
+            });
+            focus();
+            return this;
+        },
+        
+        setHighlightColour: function ( colour ) {
+            changeFormat({
+                tag: 'SPAN',
+                attributes: {
+                    'class': 'highlight',
+                    style: 'background-color: ' + colour
+                }
+            }, {
+                tag: 'SPAN',
+                attributes: { 'class': 'highlight' }
+            });
+            focus();
+            return this;
+        },
+        
         setTextAlignment: function ( dir ) {
             forEachBlock( function ( block ) {
                 block.className = 'align-' + dir;
