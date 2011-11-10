@@ -307,7 +307,18 @@ document.addEventListener( 'DOMContentLoaded', function () {
             fireEvent( 'input' );
         };
     
-    body.addEventListener( 'DOMCharacterDataModified', docWasChanged, false );
+    addEventListener( 'keyup', function ( event ) {
+        var code = event.keyCode;
+        // Presume document was changed if:
+        // 1. A modifier key (other than shift) wasn't held down
+        // 2. The key pressed is not in range 16<=x<=20 (control keys)
+        // 3. The key pressed is not in range 33<=x<=45 (navigation keys)
+        if ( !event.ctrlKey && !event.metaKey && !event.altKey &&
+                ( code < 16 || code > 20 ) &&
+                ( code < 33 || code > 45 ) )  {
+            docWasChanged();
+        }
+    });
     
     // Leaves bookmark
     var recordUndoState = function ( range ) {
