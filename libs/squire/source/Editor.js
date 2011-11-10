@@ -197,8 +197,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
     };
     
     var setHTML = function ( html ) {
-        body.innerHTML = html;
-        body.fixCursor();
+        var node = body;
+        node.innerHTML = html;
+        do {
+            node.fixCursor();
+        } while ( node = node.getNextBlock() );
     };
     
     var insertElement = function ( el, range ) {
@@ -478,7 +481,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return range;
     };
     
-    var removeFormat = function ( tag, attributes, range ) {
+    var removeFormat = function ( tag, attributes, range, partial ) {
         // Add bookmark
         saveRangeToBookmark( range );
         
@@ -552,9 +555,11 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 }
             );
         
-        formatTags.forEach( function ( node ) {
-            examineNode( node, node );
-        });
+        if ( !partial ) {
+            formatTags.forEach( function ( node ) {
+                examineNode( node, node );
+            });
+        }
         
         // Now wrap unselected nodes in the tag
         toWrap.forEach( function ( item ) {
@@ -581,7 +586,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         return range;
     };
     
-    var changeFormat = function ( add, remove, range ) {
+    var changeFormat = function ( add, remove, range, partial ) {
         // Normalise the arguments and get selection
         if ( !range && !( range = getSelection() ) ) {
             return;
@@ -593,7 +598,7 @@ document.addEventListener( 'DOMContentLoaded', function () {
         
         if ( remove ) {
             range = removeFormat( remove.tag.toUpperCase(),
-                remove.attributes || {}, range );
+                remove.attributes || {}, range, partial );
         }
         if ( add ) {
             range = addFormat( add.tag.toUpperCase(),
@@ -1421,6 +1426,10 @@ document.addEventListener( 'DOMContentLoaded', function () {
             return this;
         },
         
+        getSelectedText: function () {
+            return getSelection().getTextContent();
+        },
+        
         insertImage: function ( src ) {
             var img = createElement( 'IMG', {
                 src: src
@@ -1450,6 +1459,17 @@ document.addEventListener( 'DOMContentLoaded', function () {
         removeUnderline: command( changeFormat, null, { tag: 'U' } ),
         
         makeLink: function ( url ) {
+            url = encodeURI( url );
+            var range = getSelection();
+            if ( range.collapsed ) {
+                var protocolEnd = url.indexOf( ':' ) + 1;
+                if ( protocolEnd ) {
+                    while ( url[ protocolEnd ] === '/' ) { protocolEnd += 1; }
+                }
+                range._insertNode(
+                    doc.createTextNode( url.slice( protocolEnd ) )
+                );
+            }
             changeFormat({
                 tag: 'A',
                 attributes: {
@@ -1457,7 +1477,15 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 }
             }, {
                 tag: 'A'
-            });
+            }, range );
+            focus();
+            return this;
+        },
+        
+        removeLink: function () {
+            changeFormat( null, {
+                tag: 'A'
+            }, getSelection(), true );
             focus();
             return this;
         },

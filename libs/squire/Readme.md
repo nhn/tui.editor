@@ -117,6 +117,10 @@ Sets the HTML value for the editor. The value supplied should not contain `<body
 #### Returns ####
 
 Returns self.
+
+### getSelectedText ###
+
+Returns the text currently selected in the editor.
     
 #### insertImage ####
 
@@ -217,11 +221,19 @@ Returns self.
 
 ### makeLink ###
 
-Makes the currently selected text a link.
+Makes the currently selected text a link. If no text is selected, the URL or email will be inserted as text at the current cursor point and made into a link.
 
 #### Parameters ####
 
-* **url**: The url to link to.
+* **url**: The url or email to link to.
+
+#### Returns ####
+
+Returns self.
+
+### removeLink ###
+
+Removes any link that is currently at least partially selected.
 
 #### Returns ####
 

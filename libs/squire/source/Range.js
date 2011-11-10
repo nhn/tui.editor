@@ -18,6 +18,8 @@ var indexOf = Array.prototype.indexOf;
 
 var ELEMENT_NODE = 1,   // Node.ELEMENT_NODE
     TEXT_NODE = 3,      // Node.TEXT_NODE
+    SHOW_TEXT = 4,      // NodeFilter.SHOW_TEXT,
+    FILTER_ACCEPT = 1,  // NodeFilter.FILTER_ACCEPT,
     START_TO_START = 0, // Range.START_TO_START
     START_TO_END = 1,   // Range.START_TO_END
     END_TO_END = 2,     // Range.END_TO_END
@@ -49,6 +51,41 @@ var getNodeAfter = function ( node, offset ) {
 };
 
 implement( Range, {
+    getTextContent: function () {
+        this.moveBoundariesDownTree();
+        
+        var startContainer = this.startContainer,
+            endContainer = this.endContainer,
+            root = this.commonAncestorContainer,
+            walker = root.ownerDocument.createTreeWalker(
+                root, SHOW_TEXT, function ( node ) {
+                    return FILTER_ACCEPT;
+            }, false ),
+            textnode = walker.currentNode = startContainer,
+            textContent = '',
+            value;
+        
+        do {
+            value = textnode.data;
+            if ( value && ( /\S/.test( value ) ) ) {
+                if ( textnode === endContainer ) {
+                    value = value.slice( 0, this.endOffset );
+                }
+                if ( textnode === startContainer ) {
+                    value = value.slice( this.startOffset );
+                }
+                textContent += value;
+            }
+            if ( textnode === endContainer ) {
+                break;
+            }
+        } while ( textnode = walker.nextNode() );
+        
+        return textContent;
+    },
+    
+    // ---
+    
     _insertNode: function ( node ) {
         // Insert at start.
         var startContainer = this.startContainer,
