@@ -2,7 +2,7 @@
 
 /*global Range, window, document, setTimeout */
 
-document.addEventListener( 'DOMContentLoaded', function () {
+( function ( doc ) {
     
     "use strict";
     
@@ -16,13 +16,12 @@ document.addEventListener( 'DOMContentLoaded', function () {
         FILTER_ACCEPT = 1,               // NodeFilter.FILTER_ACCEPT,
         FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
     
-    var doc = document,
-        win = doc.defaultView,
+    var win = doc.defaultView,
         body = doc.body;
         
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
-    var useTextFixer = isOpera || isOpera;
+    var useTextFixer = isIE || isOpera;
 
     // --- DOM Sugar ---
     
@@ -528,12 +527,8 @@ document.addEventListener( 'DOMContentLoaded', function () {
                 // If not at least partially contained, wrap entire contents
                 // in a clone of the tag we're removing and we're done.
                 if ( !range.containsNode( node, true ) ) {
-                    // Tidy up as we go...
-                    if ( isText && !node.length ) {
-                        node.detach();
-                    }
                     // Ignore bookmarks
-                    else if ( node.nodeName !== 'INPUT' ) {
+                    if ( node.nodeName !== 'INPUT' ) {
                         toWrap.push([ exemplar, node ]);
                     }
                     return;
@@ -1585,4 +1580,4 @@ document.addEventListener( 'DOMContentLoaded', function () {
     body.setAttribute( 'contenteditable', 'true' );
     win.editor.setHTML( '' );
     
-}, false );
+}( document ) );
