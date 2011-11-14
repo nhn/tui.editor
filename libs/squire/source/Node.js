@@ -102,8 +102,8 @@ implement( Node, {
 });
 
 implement( Text, {
-    isInline: $True,
     isLeaf: $True,
+    isInline: $True,
     getLength: function () {
         return this.length;
     },

@@ -51,36 +51,39 @@ var getNodeAfter = function ( node, offset ) {
 };
 
 implement( Range, {
-    getTextContent: function () {
-        this.moveBoundariesDownTree();
+    
+    forEachTextNode: function ( fn ) {
+        var range = this.cloneRange();
+        range.moveBoundariesDownTree();
         
-        var startContainer = this.startContainer,
-            endContainer = this.endContainer,
-            root = this.commonAncestorContainer,
+        var startContainer = range.startContainer,
+            endContainer = range.endContainer,
+            root = range.commonAncestorContainer,
             walker = root.ownerDocument.createTreeWalker(
                 root, SHOW_TEXT, function ( node ) {
                     return FILTER_ACCEPT;
             }, false ),
-            textnode = walker.currentNode = startContainer,
-            textContent = '',
-            value;
+            textnode = walker.currentNode = startContainer;
         
-        do {
-            value = textnode.data;
+        while ( !fn( textnode, range ) &&
+            textnode !== endContainer &&
+            ( textnode = walker.nextNode() ) ) {}
+    },
+    
+    getTextContent: function () {
+        var textContent = '';
+        this.forEachTextNode( function ( textnode, range ) {
+            var value = textnode.data;
             if ( value && ( /\S/.test( value ) ) ) {
-                if ( textnode === endContainer ) {
-                    value = value.slice( 0, this.endOffset );
+                if ( textnode === range.endContainer ) {
+                    value = value.slice( 0, range.endOffset );
                 }
-                if ( textnode === startContainer ) {
-                    value = value.slice( this.startOffset );
+                if ( textnode === range.startContainer ) {
+                    value = value.slice( range.startOffset );
                 }
                 textContent += value;
             }
-            if ( textnode === endContainer ) {
-                break;
-            }
-        } while ( textnode = walker.nextNode() );
-        
+        });
         return textContent;
     },
     

@@ -620,30 +620,33 @@
     
     // --- Block formatting ---
     
-    var forEachBlock = function ( fn, range ) {
+    var forEachBlock = function ( fn, mutates, range ) {
         if ( !range && !( range = getSelection() ) ) {
             return;
         }
         
         // Save undo checkpoint
-        recordUndoState( range );
-        getRangeAndRemoveBookmark( range );
+        if ( mutates ) {
+            recordUndoState( range );
+            getRangeAndRemoveBookmark( range );
+        }
         
         var start = range.getStartBlock(),
             end = range.getEndBlock();
         if ( start && end ) {
             while ( true ) {
-                fn( start );
-                if ( start === end ) { break; }
+                if ( fn( start ) || start === end ) { break; }
                 start = start.getNextBlock();
             }
         }
         
-        // Path may have changed
-        updatePath( 0, true );
+        if ( mutates ) {
+            // Path may have changed
+            updatePath( 0, true );
         
-        // We're not still in an undo state
-        docWasChanged();
+            // We're not still in an undo state
+            docWasChanged();
+        }
     };
     
     var modifyBlocks = function ( modify, range ) {
@@ -1398,20 +1401,11 @@
             // And insert new content
             // Add the styles
             if ( styles ) {
-                var head = doc.documentElement.firstChild,
-                    style = createElement( 'STYLE', {
+                var style = createElement( 'STYLE', {
                         type: 'text/css'
                     });
-                if ( style.styleSheet ) {
-                    // IE8: must append to document BEFORE adding styles
-                    // or you get the IE7 CSS parser!
-                    head.appendChild( style );
-                    style.styleSheet.cssText = styles;
-                } else {
-                    // Everyone else
-                    style.appendChild( doc.createTextNode( styles ) );
-                    head.appendChild( style );
-                }
+                style.appendChild( doc.createTextNode( styles ) );
+                doc.documentElement.firstChild.appendChild( style );
             }
             
             body.appendChild( frag );
@@ -1560,11 +1554,12 @@
             forEachBlock( function ( block ) {
                 block.className = 'align-' + dir;
                 block.style.textAlign = dir;
-            });
+            }, true );
             focus();
             return this;
         },
         
+        forEachBlock: chain( forEachBlock ),
         modifyBlocks: chain( modifyBlocks ),
         
         incQuoteLevel: command( modifyBlocks, increaseBlockQuoteLevel ),

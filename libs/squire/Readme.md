@@ -299,6 +299,19 @@ Sets the text alignment in all blocks at least partially contained by the select
 
 Returns self.
 
+### forEachBlock ###
+
+Executes a function on each block in the current selection, or until the function returns a truthy value.
+
+#### Parameters ####
+
+* **fn** The function to execute on each block node at least partially contained in the current selection. The function will be called with the block node as the only argument.
+* **mutates** A boolean indicating whether your function may modify anything in the document in any way.
+
+#### Returns ####
+
+Returns self.
+
 ### modifyBlocks ###
 
 Extracts a portion of the DOM tree (up to the block boundaries of the current selection), modifies it and then reinserts it and merges the edges. See the code for examples if you're interested in using this function.
