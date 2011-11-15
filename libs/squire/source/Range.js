@@ -184,6 +184,11 @@ implement( Range, {
             startBlock.mergeWithBlock( endBlock, this );
         }
         
+        // Ensure block has necessary children
+        if ( startBlock ) {
+            startBlock.fixCursor();
+        }
+        
         // Ensure body has a block-level element in it.
         var body = this.endContainer.ownerDocument.body,
             child = body.firstChild;
