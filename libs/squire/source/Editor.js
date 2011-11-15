@@ -641,9 +641,11 @@
         }
         
         if ( mutates ) {
+            setSelection( range );
+            
             // Path may have changed
             updatePath( 0, true );
-        
+            
             // We're not still in an undo state
             docWasChanged();
         }
@@ -898,6 +900,15 @@
             parent.replaceChild( el, node );
             el.appendChild( node.empty() );
             return el;
+        },
+        TT: function ( node, parent ) {
+            var el = createElement( 'SPAN', {
+                'class': 'font',
+                style: 'font-family:menlo,consolas,"courier new",monospace'
+            });
+            parent.replaceChild( el, node );
+            el.appendChild( node.empty() );
+            return el;
         }
     };
     
@@ -910,28 +921,35 @@
     */
     var cleanTree = function ( node, allowStyles ) {
         var children = node.childNodes,
-            i, l, child, nodeName, nodeType, rewriter, parent;
+            i, l, child, nodeName, nodeType, rewriter, childLength;
         for ( i = 0, l = children.length; i < l; i += 1 ) {
             child = children[i];
             nodeName = child.nodeName;
             nodeType = child.nodeType;
             rewriter = stylesRewriters[ nodeName ];
-            if ( rewriter ) {
-                child = rewriter( child, node );
-            } else if (
-                  ( !allowedBlock.test( nodeName ) && !child.isInline() ) ||
-                  ( nodeType === TEXT_NODE && !( /\S/.test( child.data ) ) ) ) {
-                node.removeChild( child );
-                i -= 1;
-                l -= 1;
-                continue;
-            }
             if ( nodeType === ELEMENT_NODE ) {
+                childLength = child.childNodes.length;
+                if ( rewriter ) {
+                    child = rewriter( child, node );
+                } else if ( !allowedBlock.test( nodeName ) &&
+                        !child.isInline() ) {
+                    i -= 1;
+                    l += childLength - 1;
+                    node.replaceChild( child.empty(), child );
+                    continue;
+                }
                 if ( !allowStyles && child.style.cssText ) {
                     child.removeAttribute( 'style' );
                 }
-                if ( child.childNodes.length ) {
+                if ( childLength ) {
                     cleanTree( child, allowStyles );
+                }
+            } else {
+                if ( ( nodeType !== TEXT_NODE ) ||
+                        !( /\S/.test( child.data ) ) ) {
+                    node.removeChild( child );
+                    i -= 1;
+                    l -= 1;
                 }
             }
         }
@@ -1574,5 +1592,10 @@
     
     body.setAttribute( 'contenteditable', 'true' );
     win.editor.setHTML( '' );
+    
+    if ( win.onEditorLoad ) {
+        win.onEditorLoad( win.editor );
+        delete win.onEditorLoad;
+    }
     
 }( document ) );
