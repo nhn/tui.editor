@@ -389,7 +389,7 @@ implement( Element, {
                     el.parentNode.insertBefore( doc.createTextNode( '' ), el );
                 }
             }
-            else if ( !el.textContent && !el.querySelector( 'BR' ) ) {
+            else if ( !el.querySelector( 'BR' ) ) {
                 fixer = doc.createElement( 'BR' );
                 while ( ( child = el.lastElementChild ) && !child.isInline() ) {
                     el = child;
