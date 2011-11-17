@@ -1273,6 +1273,15 @@
                 // Must not be at the very beginning of the text area.
                 if ( previous ) {
                     previous.mergeWithBlock( current, range );
+                    // If deleted line between containers, merge newly adjacent
+                    // containers.
+                    current = previous.parentNode;
+                    while ( current && !current.nextSibling ) {
+                        current = current.parentNode;
+                    }
+                    if ( current && ( current = current.nextSibling ) ) {
+                        current.mergeContainers();
+                    }
                     setSelection( range );
                 }
                 // If at very beginning of text area, allow backspace
@@ -1309,6 +1318,15 @@
                 // Must not be at the very end of the text area.
                 if ( next ) {
                     current.mergeWithBlock( next, range );
+                    // If deleted line between containers, merge newly adjacent
+                    // containers.
+                    next = current.parentNode;
+                    while ( next && !next.nextSibling ) {
+                        next = next.parentNode;
+                    }
+                    if ( next && ( next = next.nextSibling ) ) {
+                        next.mergeContainers();
+                    }
                     setSelection( range );
                     updatePath( 0, true );
                 }
