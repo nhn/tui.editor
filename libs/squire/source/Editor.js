@@ -1033,18 +1033,27 @@
     
     // --- Cut and Paste ---
     
+    var afterCut = function () {
+        // If all content removed, ensure div at start of body.
+        body.fixCursor();
+    };
+    
     doc.addEventListener( isIE ? 'beforecut' : 'cut', function () {
         // Save undo checkpoint
         var range = getSelection();
         recordUndoState( range );
         getRangeAndRemoveBookmark( range );
-        // If all content removed, ensure div at start of body.
-        setTimeout( function () {
-            body.fixCursor();
-        }, 0 );
+        setTimeout( afterCut, 0 );
     }, false );
-        
+    
+    // IE sometimes fires the beforepaste event twice; make sure it is not run
+    // again before our after paste function is called.
+    var awaitingPaste = false;
+    
     doc.addEventListener( isIE ?  'beforepaste' : 'paste', function () {
+        if ( awaitingPaste ) { return; }
+        awaitingPaste = true;
+        
         var range = getSelection(),
             startContainer = range.startContainer,
             startOffset = range.startOffset,
@@ -1065,34 +1074,37 @@
         setTimeout( function () {
             // Get the pasted content and clean
             var frag = pasteArea.detach().empty(),
-                first = frag.firstChild;
+                first = frag.firstChild,
+                range = createRange(
+                    startContainer, startOffset, endContainer, endOffset );
             
-            // Safari likes putting extra divs around things.
-            if ( first &&
-                    first === frag.lastChild && first.nodeName === 'DIV' ) {
-                frag.replaceChild( first.empty(), first );
+            // Was anything actually pasted?
+            if ( first ) {
+                // Safari likes putting extra divs around things.
+                if ( first === frag.lastChild && first.nodeName === 'DIV' ) {
+                    frag.replaceChild( first.empty(), first );
+                }
+
+                frag.normalize();
+                cleanTree( frag, false );
+                cleanupBRs( frag );
+
+                var node = frag;
+                while ( node = node.getNextBlock() ) {
+                    node.fixCursor();
+                }
+                
+                // Insert pasted data
+                range.insertTreeFragment( frag );
+                docWasChanged();
+            
+                range.collapse( false );
             }
             
-            frag.normalize();
-            cleanTree( frag, false );
-            cleanupBRs( frag );
-            
-            var node = frag;
-            while ( node = node.getNextBlock() ) {
-                node.fixCursor();
-            }
-            
-            // Restore the previous selection
-            range.setStart( startContainer, startOffset );
-            range.setEnd( endContainer, endOffset );
-            
-            // Insert pasted data
-            range.insertTreeFragment( frag );
-            docWasChanged();
-            
-            range.collapse( false );
             setSelection( range );
             updatePath( 0, true );
+            
+            awaitingPaste = false;
         }, 0 );
     }, false );
     
