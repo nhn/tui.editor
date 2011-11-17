@@ -1138,9 +1138,6 @@
     };
     
     var keyHandlers = {
-        tab: function ( event ) {
-            event.preventDefault();
-        },
         enter: function ( event ) {
             // We handle this ourselves
             event.preventDefault();
