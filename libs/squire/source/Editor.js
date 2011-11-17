@@ -716,6 +716,17 @@
         return frag;
     };
     
+    var removeBlockQuote = function ( frag ) {
+        var blockquotes = frag.querySelectorAll( 'blockquote' ),
+            l = blockquotes.length,
+            bq;
+        while ( l-- ) {
+            bq = blockquotes[l];
+            bq.replaceWith( bq.empty() );
+        }
+        return frag;
+    };
+    
     var makeList = function makeList ( nodes, type ) {
         var i, l, node, tag, prev, replacement;
         for ( i = 0, l = nodes.length; i < l; i += 1 ) {
@@ -1198,7 +1209,7 @@
                 }
                 // Break blockquote
                 else if ( block.nearest( 'BLOCKQUOTE' ) ) {
-                    return modifyBlocks( decreaseBlockQuoteLevel, range );
+                    return modifyBlocks( removeBlockQuote, range );
                 }
             }
             
