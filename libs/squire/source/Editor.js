@@ -413,13 +413,15 @@
                 FILTER_ACCEPT : FILTER_SKIP;
         }, false );
         
+        var seenNode = false;
         while ( node = walker.nextNode() ) {
             if ( !node.nearest( tag, attributes ) ) {
                 return false;
             }
+            seenNode = true;
         }
         
-        return true;
+        return seenNode;
     };
     
     var addFormat = function ( tag, attributes, range ) {
