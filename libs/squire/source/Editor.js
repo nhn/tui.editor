@@ -1400,6 +1400,17 @@
             return doc;
         },
         
+        addStyles: function ( styles ) {
+            if ( styles ) {
+                var style = createElement( 'STYLE', {
+                        type: 'text/css'
+                    });
+                style.appendChild( doc.createTextNode( styles ) );
+                doc.documentElement.firstChild.appendChild( style );
+            }
+            return this;
+        },
+        
         getHTML: function () {
             var brs = [],
                 node, fixer, html, l;
@@ -1425,16 +1436,7 @@
         setHTML: function ( html ) {
             var frag = doc.createDocumentFragment(),
                 div = createElement( 'DIV' ),
-                styles = '',
                 child;
-            
-            // Extract styles to insert into <head>
-            styleExtractor.lastIndex = 0;
-            html = html.replace( styleExtractor,
-                function ( _, rules ) {
-                    styles += rules.replace( /<!--|-->/g, '' );
-                    return '';
-            });
             
             // Parse HTML into DOM tree
             div.innerHTML = html;
@@ -1442,7 +1444,7 @@
             
             cleanTree( frag, true );
             cleanupBRs( frag );
-
+            
             wrapTopLevelInline( frag, 'DIV' );
             
             // Fix cursor
@@ -1457,15 +1459,6 @@
             }
             
             // And insert new content
-            // Add the styles
-            if ( styles ) {
-                var style = createElement( 'STYLE', {
-                        type: 'text/css'
-                    });
-                style.appendChild( doc.createTextNode( styles ) );
-                doc.documentElement.firstChild.appendChild( style );
-            }
-            
             body.appendChild( frag );
             body.fixCursor();
             
