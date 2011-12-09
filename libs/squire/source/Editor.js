@@ -1232,6 +1232,14 @@
                 var child = nodeAfterSplit.firstChild,
                     next;
                 
+                // Don't continue links over a block break; unlikely to be the
+                // desired outcome.
+                if ( nodeAfterSplit.nodeName === 'A' ) {
+                    nodeAfterSplit.replaceWith( nodeAfterSplit.empty() );
+                    nodeAfterSplit = child;
+                    continue;
+                }
+                
                 while ( child && child.nodeType === TEXT_NODE && !child.data ) {
                     next = child.nextSibling;
                     if ( !next || next.nodeName === 'BR' ) {
