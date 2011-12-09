@@ -385,8 +385,16 @@ implement( Element, {
                     }
                     el = child;
                 }
-                if ( el.isLeaf() && el.nodeType !== TEXT_NODE ) {
-                    el.parentNode.insertBefore( doc.createTextNode( '' ), el );
+                if ( el.isLeaf() ) {
+                    if ( el.nodeType !== TEXT_NODE ) {
+                        el.parentNode.insertBefore(
+                            doc.createTextNode( '' ), el );
+                    }
+                    // Opera will collapse the block element if it contains
+                    // just spaces (but not if it contains no data at all).
+                    else if ( /^ +$/.test( el.data ) ) {
+                        el.data = '';
+                    }
                 }
             }
             else if ( !el.querySelector( 'BR' ) ) {
