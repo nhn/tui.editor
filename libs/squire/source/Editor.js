@@ -295,7 +295,7 @@
         undoStack, // = [],
         undoStackLength, // = 0,
         isInUndoState, // = false,
-        docWasChanged = function docWasChanged () {
+        docWasChanged = function () {
             if ( isInUndoState ) {
                 isInUndoState = false;
                 fireEvent( 'undoStateChange', {
@@ -1252,6 +1252,16 @@
             }
             setSelection( createRange( nodeAfterSplit, 0 ) );
             updatePath( 0, true );
+            
+            // Scroll into view
+            if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
+                nodeAfterSplit = nodeAfterSplit.parentNode;
+            }
+            if ( nodeAfterSplit.offsetTop + nodeAfterSplit.offsetHeight >
+                    ( doc.documentElement.scrollTop || body.scrollTop ) +
+                    body.offsetHeight ) {
+                nodeAfterSplit.scrollIntoView( false );
+            }
             
             // We're not still in an undo state
             docWasChanged();
