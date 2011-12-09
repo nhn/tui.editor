@@ -529,8 +529,9 @@
                 // If not at least partially contained, wrap entire contents
                 // in a clone of the tag we're removing and we're done.
                 if ( !range.containsNode( node, true ) ) {
-                    // Ignore bookmarks
-                    if ( node.nodeName !== 'INPUT' ) {
+                    // Ignore bookmarks and empty text nodes
+                    if ( node.nodeName !== 'INPUT' &&
+                            ( !isText || node.data ) ) {
                         toWrap.push([ exemplar, node ]);
                     }
                     return;
