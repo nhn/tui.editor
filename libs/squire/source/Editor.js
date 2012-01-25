@@ -832,6 +832,45 @@
     
     // --- Clean ---
     
+    var urlRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+    var addLinks = function ( frag ) {
+        var doc = frag.ownerDocument,
+            walker = doc.createTreeWalker( frag, SHOW_TEXT,
+                    function ( node ) {
+                return node.nearest( 'A' ) ? FILTER_SKIP : FILTER_ACCEPT;
+            }, false ),
+            node, parts, i, l, text, parent, next;
+        while ( node = walker.nextNode() ) {
+            parts = node.data.split( urlRegExp );
+            l = parts.length;
+            if ( l > 1 ) {
+                parent = node.parentNode;
+                next = node.nextSibling;
+                for ( i = 0; i < l; i += 1 ) {
+                    text = parts[i];
+                    if ( i ) {
+                        if ( i % 2 ) {
+                            node = doc.createElement( 'A' );
+                            node.textContent = text;
+                            node.href = /^https?:/.test( text ) ?
+                                text : 'http://' + text;
+                        } else {
+                            node = doc.createTextNode( text );
+                        }
+                        if ( next ) {
+                            parent.insertBefore( node, next );
+                        } else {
+                            parent.appendChild( node );
+                        }
+                    } else {
+                        node.data = text;
+                    }
+                }
+                walker.currentNode = node;
+            }
+        }
+    };
+    
     var allowedBlock = /^A(?:DDRESS|RTICLE|SIDE)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL$/;
     
     var spanToSemantic = {
@@ -1087,6 +1126,7 @@
                 }
 
                 frag.normalize();
+                addLinks( frag );
                 cleanTree( frag, false );
                 cleanupBRs( frag );
 
