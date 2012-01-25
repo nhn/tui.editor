@@ -51,11 +51,11 @@ var getNodeAfter = function ( node, offset ) {
 };
 
 implement( Range, {
-    
+
     forEachTextNode: function ( fn ) {
         var range = this.cloneRange();
         range.moveBoundariesDownTree();
-        
+
         var startContainer = range.startContainer,
             endContainer = range.endContainer,
             root = range.commonAncestorContainer,
@@ -64,12 +64,12 @@ implement( Range, {
                     return FILTER_ACCEPT;
             }, false ),
             textnode = walker.currentNode = startContainer;
-        
+
         while ( !fn( textnode, range ) &&
             textnode !== endContainer &&
             ( textnode = walker.nextNode() ) ) {}
     },
-    
+
     getTextContent: function () {
         var textContent = '';
         this.forEachTextNode( function ( textnode, range ) {
@@ -86,9 +86,9 @@ implement( Range, {
         });
         return textContent;
     },
-    
+
     // ---
-    
+
     _insertNode: function ( node ) {
         // Insert at start.
         var startContainer = this.startContainer,
@@ -169,26 +169,26 @@ implement( Range, {
 
         return frag;
     },
-    
+
     _deleteContents: function () {
         // Move boundaries up as much as possible to reduce need to split.
         this.moveBoundariesUpTree();
-        
+
         // Remove selected range
         this._extractContents();
-        
+
         // If we split into two different blocks, merge the blocks.
         var startBlock = this.getStartBlock(),
             endBlock = this.getEndBlock();
         if ( startBlock && endBlock && startBlock !== endBlock ) {
             startBlock.mergeWithBlock( endBlock, this );
         }
-        
+
         // Ensure block has necessary children
         if ( startBlock ) {
             startBlock.fixCursor();
         }
-        
+
         // Ensure body has a block-level element in it.
         var body = this.endContainer.ownerDocument.body,
             child = body.firstChild;
@@ -196,7 +196,7 @@ implement( Range, {
             body.fixCursor();
             this.selectNodeContents( body.firstChild );
         }
-        
+
         // Ensure valid range (must have only block or inline containers)
         var isCollapsed = this.collapsed;
         this.moveBoundariesDownTree();
@@ -205,12 +205,12 @@ implement( Range, {
             // Make that the focus point.
             this.collapse( this.startContainer.nodeType === TEXT_NODE );
         }
-        
+
         return this;
     },
-    
+
     // ---
-    
+
     insertTreeFragment: function ( frag ) {
         // Check if it's all inline content
         var isInline = true,
@@ -222,7 +222,7 @@ implement( Range, {
                 break;
             }
         }
-        
+
         // Delete any selected content
         if ( !this.collapsed ) {
             this._deleteContents();
@@ -230,7 +230,7 @@ implement( Range, {
 
         // Move range down into text ndoes
         this.moveBoundariesDownTree();
-        
+
         // If inline, just insert at the current position.
         if ( isInline ) {
             this._insertNode( frag );
@@ -248,7 +248,7 @@ implement( Range, {
                 endOffset = 0,
                 parent = nodeAfterSplit.parentNode,
                 child, node;
-            
+
             while ( ( child = startContainer.lastChild ) &&
                     child.nodeType === ELEMENT_NODE &&
                     child.nodeName !== 'BR' ) {
@@ -267,19 +267,19 @@ implement( Range, {
                 endContainer.insertBefore( child, endContainer.firstChild );
                 endOffset += 1;
             }
-            
+
             // Fix cursor before inserting block:
             node = frag;
             while ( node = node.getNextBlock() ) {
                 node.fixCursor();
             }
-            
+
             parent.insertBefore( frag, nodeAfterSplit );
-            
+
             // Merge containers at edges
             nodeAfterSplit.mergeContainers();
             nodeBeforeSplit.nextSibling.mergeContainers();
-            
+
             // Remove empty nodes created by split.
             if ( nodeAfterSplit === endContainer &&
                     !endContainer.textContent ) {
@@ -293,7 +293,7 @@ implement( Range, {
                 startOffset = 0;
                 parent.removeChild( nodeBeforeSplit );
             }
-            
+
             this.setStart( startContainer, startOffset );
             this.setEnd( endContainer, endOffset );
             this.moveBoundariesDownTree();
@@ -301,7 +301,7 @@ implement( Range, {
     },
 
     // ---
-    
+
     containsNode: function ( node, partial ) {
         var range = this,
             nodeRange = node.ownerDocument.createRange();
@@ -327,7 +327,7 @@ implement( Range, {
             return ( nodeStartAfterStart && nodeEndBeforeEnd );
         }
     },
-    
+
     moveBoundariesDownTree: function () {
         var startContainer = this.startContainer,
             startOffset = this.startOffset,
@@ -361,7 +361,7 @@ implement( Range, {
                 endContainer = child;
             }
         }
-        
+
         // If collapsed, this algorithm finds the nearest text node positions
         // *outside* the range rather than inside, but also it flips which is
         // assigned to which.
@@ -372,7 +372,7 @@ implement( Range, {
             this.setStart( startContainer, startOffset );
             this.setEnd( endContainer, endOffset );
         }
-        
+
         return this;
     },
 
@@ -411,7 +411,7 @@ implement( Range, {
     getStartBlock: function () {
         var container = this.startContainer,
             block;
-        
+
         // If inline, get the containing block.
         if ( container.isInline() ) {
             block = container.getPreviousBlock();
@@ -424,13 +424,13 @@ implement( Range, {
         // Check the block actually intersects the range
         return block && this.containsNode( block, true ) ? block : null;
     },
-    
+
     // Returns the last block at least partially contained by the range,
     // or null if no block is contained by the range.
     getEndBlock: function () {
         var container = this.endContainer,
             block, child;
-        
+
         // If inline, get the containing block.
         if ( container.isInline() ) {
             block = container.getPreviousBlock();
@@ -445,7 +445,7 @@ implement( Range, {
                 }
             }
             block = block.getPreviousBlock();
-            
+
         }
         // Check the block actually intersects the range
         return block && this.containsNode( block, true ) ? block : null;
@@ -501,14 +501,14 @@ implement( Range, {
         var start = this.getStartBlock(),
             end = this.getEndBlock(),
             parent;
-        
+
         if ( start && end ) {
             parent = start.parentNode;
             this.setStart( parent, indexOf.call( parent.childNodes, start ) );
             parent = end.parentNode;
             this.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
         }
-        
+
         return this;
     }
 });

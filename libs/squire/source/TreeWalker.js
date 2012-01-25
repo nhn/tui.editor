@@ -21,9 +21,9 @@ if ( !needsReplacement ) {
     ( function () {
     var div = doc.createElement( 'div' ),
         text = doc.createTextNode( '' );
-    
+
     div.appendChild( text );
-    
+
     var div1 = div.cloneNode( true ),
         div2 = div.cloneNode( true ),
         div3 = div.cloneNode( true ),

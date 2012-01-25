@@ -1,7 +1,7 @@
 /* Copyright © 2011 by Neil Jenkins. Licensed under the MIT license. */
 
 ( function () {
-    
+
 /*global Node, Text, Element, window, document */
 
 "use strict";
@@ -145,7 +145,7 @@ implement( Element, {
         var path = this.parentNode.getPath(),
             id = this.id,
             className = this.className.trim();
-        
+
         path += '>' + tag;
         if ( id ) {
             path += '#' + id;
@@ -259,30 +259,30 @@ implement( Element, {
             container = container.parentNode;
         }
         container.detach();
-        
+
         offset = block.childNodes.length;
-        
+
         // Remove extra <BR> fixer if present.
         last = block.lastChild;
         if ( last && last.nodeName === 'BR' ) {
             block.removeChild( last );
             offset -= 1;
         }
-        
+
         _range = {
             startContainer: block,
             startOffset: offset,
             endContainer: block,
             endOffset: offset
         };
-        
+
         block.appendChild( next.empty() );
         block.mergeInlines( _range );
-        
+
         range.setStart(
             _range.startContainer, _range.startOffset );
         range.collapse( true );
-        
+
         // Opera inserts a BR if you delete the last piece of text
         // in a block-level element. Unfortunately, it then gets
         // confused when setting the selection subsequently and
@@ -308,43 +308,43 @@ implement( Element, {
     },
     split: function ( childNodeToSplitBefore, stopNode ) {
         var node = this;
-        
+
         if ( typeof( childNodeToSplitBefore ) === 'number' ) {
             childNodeToSplitBefore =
                 childNodeToSplitBefore < node.childNodes.length ?
                     node.childNodes[ childNodeToSplitBefore ] : null;
         }
-        
+
         if ( node === stopNode ) {
             return childNodeToSplitBefore;
         }
-        
+
         // Clone node without children
         var parent = node.parentNode,
             clone = node.cloneNode( false ),
             next;
-        
+
         // Add right-hand siblings to the clone
         while ( childNodeToSplitBefore ) {
             next = childNodeToSplitBefore.nextSibling;
             clone.appendChild( childNodeToSplitBefore );
             childNodeToSplitBefore = next;
         }
-        
+
         // DO NOT NORMALISE. This may undo the fixCursor() call
         // of a node lower down the tree!
-        
+
         // We need something in the element in order for the cursor to appear.
         node.fixCursor();
         clone.fixCursor();
-        
+
         // Inject clone after original node
         if ( next = node.nextSibling ) {
             parent.insertBefore( clone, next );
         } else {
             parent.appendChild( clone );
         }
-        
+
         // Keep on splitting up the tree
         return parent.split( clone, stopNode );
     },
@@ -356,7 +356,7 @@ implement( Element, {
         var el = this,
             doc = el.ownerDocument,
             fixer, child;
-        
+
         if ( el.nodeName === 'BODY' ) {
             if ( !( child = el.firstChild ) || child.nodeName === 'BR' ) {
                 fixer = doc.createElement( 'DIV' );
@@ -370,7 +370,7 @@ implement( Element, {
                 fixer = null;
             }
         }
-        
+
         if ( el.isInline() ) {
             if ( !el.firstChild ) {
                 fixer = doc.createTextNode( /* isWebkit ? '\u200B' :*/ '' );
@@ -407,7 +407,7 @@ implement( Element, {
         if ( fixer ) {
             el.appendChild( fixer );
         }
-        
+
         return this;
     }
 });

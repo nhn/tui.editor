@@ -3,11 +3,11 @@
 /*global Range, navigator, window, document, setTimeout */
 
 ( function ( doc ) {
-    
+
     "use strict";
-    
+
     // --- Constants ---
-    
+
     var DOCUMENT_POSITION_PRECEDING = 2, // Node.DOCUMENT_POSITION_PRECEDING
         ELEMENT_NODE = 1,                // Node.ELEMENT_NODE,
         TEXT_NODE = 3,                   // Node.TEXT_NODE,
@@ -15,17 +15,17 @@
         SHOW_ELEMENT = 1,                // NodeFilter.SHOW_ELEMENT,
         FILTER_ACCEPT = 1,               // NodeFilter.FILTER_ACCEPT,
         FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
-    
+
     var win = doc.defaultView,
         body = doc.body;
-        
+
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
     var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
     var useTextFixer = isIE || isOpera;
 
     // --- DOM Sugar ---
-    
+
     var createElement = function ( tag, props, children ) {
         var el = doc.createElement( tag ),
             attr, i, l;
@@ -45,15 +45,15 @@
         }
         return el;
     };
-    
+
     // --- Events ---
-    
+
     var events = {},
         customEvents = {
             cut: 1, paste: 1, focus: 1, blur: 1,
             pathChange: 1, select: 1, input: 1, undoStateChange: 1
         };
-    
+
     var fireEvent = function ( type, event ) {
         var handlers = events[ type ],
             l, obj;
@@ -77,11 +77,11 @@
             }
         }
     };
-    
+
     var propagateEvent = function ( event ) {
         fireEvent( event.type, event );
     };
-    
+
     var addEventListener = function ( type, fn ) {
         var handlers = events[ type ];
         if ( !handlers ) {
@@ -92,7 +92,7 @@
         }
         handlers.push( fn );
     };
-    
+
     var removeEventListener = function ( type, fn ) {
         var handlers = events[ type ],
             l;
@@ -111,7 +111,7 @@
             }
         }
     };
-    
+
     // --- Selection and Path ---
 
     var createRange = function ( range, startOffset, endContainer, endOffset ) {
@@ -127,9 +127,9 @@
         }
         return domRange;
     };
-    
+
     var sel = win.getSelection();
-    
+
     var lastSelection = null;
     var getSelection = function () {
         if ( sel.rangeCount ) {
@@ -138,17 +138,17 @@
         }
         return lastSelection;
     };
-    
+
     // IE9 loses selection state of iframe on blur, so make sure we
     // cache it just before it loses focus.
     if ( win.ie ) {
         win.addEventListener( 'beforedeactivate', getSelection, true );
     }
-    
+
     var lastAnchorNode;
     var lastFocusNode;
     var path = '';
-    
+
     var updatePath = function ( _, force ) {
         var anchor = sel.anchorNode,
             focus = sel.focusNode,
@@ -169,7 +169,7 @@
     };
     addEventListener( 'keyup', updatePath );
     addEventListener( 'mouseup', updatePath );
-    
+
     var setSelection = function ( range ) {
         if ( range ) {
             // iOS bug: if you don't focus the iframe before setting the
@@ -183,26 +183,26 @@
             sel.addRange( range );
         }
     };
-    
+
     // --- Focus ---
-    
+
     var focus = function () {
         win.focus();
     };
-    
+
     var blur = function () {
         win.blur();
     };
-    
+
     win.addEventListener( 'focus', propagateEvent, false );
     win.addEventListener( 'blur', propagateEvent, false );
-    
+
     // --- Get/Set data ---
-    
+
     var getHTML = function () {
         return body.innerHTML;
     };
-    
+
     var setHTML = function ( html ) {
         var node = body;
         node.innerHTML = html;
@@ -210,7 +210,7 @@
             node.fixCursor();
         } while ( node = node.getNextBlock() );
     };
-    
+
     var insertElement = function ( el, range ) {
         if ( !range ) { range = getSelection(); }
         range.collapse( true );
@@ -219,12 +219,12 @@
         setSelection( range );
         updatePath();
     };
-    
+
     // --- Bookmarking ---
-    
+
     var startSelectionId = 'ss-' + Date.now() + '-' + Math.random();
     var endSelectionId = 'es-' + Date.now() + '-' + Math.random();
-    
+
     var saveRangeToBookmark = function ( range ) {
         var startNode = createElement( 'INPUT', {
                 id: startSelectionId,
@@ -235,11 +235,11 @@
                 type: 'hidden'
             }),
             temp;
-        
+
         range._insertNode( startNode );
         range.collapse( false );
         range._insertNode( endNode );
-        
+
         // In a collapsed range, the start is sometimes inserted after the end!
         if ( startNode.compareDocumentPosition( endNode ) &
                 DOCUMENT_POSITION_PRECEDING ) {
@@ -249,56 +249,56 @@
             startNode = endNode;
             endNode = temp;
         }
-        
+
         range.setStartAfter( startNode );
         range.setEndBefore( endNode );
     };
-    
+
     var indexOf = Array.prototype.indexOf;
-    
+
     var getRangeAndRemoveBookmark = function ( range ) {
         var start = doc.getElementById( startSelectionId ),
             end = doc.getElementById( endSelectionId );
-        
+
         if ( start && end ) {
             var startContainer = start.parentNode,
                 endContainer = end.parentNode;
-            
+
             var _range = {
                 startContainer: startContainer,
                 endContainer: endContainer,
                 startOffset: indexOf.call( startContainer.childNodes, start ),
                 endOffset: indexOf.call( endContainer.childNodes, end )
             };
-            
+
             if ( startContainer === endContainer ) {
                 _range.endOffset -= 1;
             }
-            
+
             start.detach();
             end.detach();
-            
+
             // Merge any text nodes we split
             startContainer.mergeInlines( _range );
             if ( startContainer !== endContainer ) {
                 endContainer.mergeInlines( _range );
             }
-            
+
             if ( !range ) {
                 range = doc.createRange();
             }
             range.setStart( _range.startContainer, _range.startOffset );
             range.setEnd( _range.endContainer, _range.endOffset );
-            
+
             if ( !range.collapsed ) {
                 range.moveBoundariesDownTree();
             }
         }
         return range;
     };
-    
+
     // --- Undo ---
-    
+
     var undoIndex, // = -1,
         undoStack, // = [],
         undoStackLength, // = 0,
@@ -313,7 +313,7 @@
             }
             fireEvent( 'input' );
         };
-    
+
     addEventListener( 'keyup', function ( event ) {
         var code = event.keyCode;
         // Presume document was changed if:
@@ -326,7 +326,7 @@
             docWasChanged();
         }
     });
-    
+
     // Leaves bookmark
     var recordUndoState = function ( range ) {
         // Don't record if we're already in an undo state
@@ -348,7 +348,7 @@
             isInUndoState = true;
         }
     };
-    
+
     var undo = function () {
         // Sanity check: must not be at beginning of the history stack
         if ( undoIndex !== 0 || !isInUndoState ) {
@@ -369,7 +369,7 @@
             fireEvent( 'input' );
         }
     };
-    
+
     var redo = function () {
         // Sanity check: must not be at end of stack and must be in an undo
         // state.
@@ -387,9 +387,9 @@
             fireEvent( 'input' );
         }
     };
-    
+
     // --- Inline formatting ---
-    
+
     // Looks for matching tag and attributes, so won't work
     // if <strong> instead of <b> etc.
     var hasFormat = function ( tag, attributes, range ) {
@@ -399,7 +399,7 @@
         if ( !range && !( range = getSelection() ) ) {
             return false;
         }
-        
+
         // If the common ancestor is inside the tag we require, we definitely
         // have the format.
         var root = range.commonAncestorContainer,
@@ -407,20 +407,20 @@
         if ( root.nearest( tag, attributes ) ) {
             return true;
         }
-        
+
         // If common ancestor is a text node and doesn't have the format, we
         // definitely don't have it.
         if ( root.nodeType === TEXT_NODE ) {
             return false;
         }
-        
+
         // Otherwise, check each text node at least partially contained within
         // the selection and make sure all of them have the format we want.
         walker = doc.createTreeWalker( root, SHOW_TEXT, function ( node ) {
             return range.containsNode( node, true ) ?
                 FILTER_ACCEPT : FILTER_SKIP;
         }, false );
-        
+
         var seenNode = false;
         while ( node = walker.nextNode() ) {
             if ( !node.nearest( tag, attributes ) ) {
@@ -428,10 +428,10 @@
             }
             seenNode = true;
         }
-        
+
         return seenNode;
     };
-    
+
     var addFormat = function ( tag, attributes, range ) {
         // If the range is collapsed we simply insert the node by wrapping
         // it round the range and focus it.
@@ -465,11 +465,11 @@
                 endOffset = 0,
                 textnode = walker.currentNode = range.startContainer,
                 needsFormat;
-            
+
             if ( textnode.nodeType !== TEXT_NODE ) {
                 textnode = walker.nextNode();
             }
-            
+
             do {
                 needsFormat = !textnode.nearest( tag, attributes );
                 if ( textnode === range.endContainer ) {
@@ -493,30 +493,30 @@
                 endContainer = textnode;
                 if ( !startContainer ) { startContainer = endContainer; }
             } while ( textnode = walker.nextNode() );
-            
+
             // Now set the selection to as it was before
             range = createRange(
                 startContainer, startOffset, endContainer, endOffset );
         }
         return range;
     };
-    
+
     var removeFormat = function ( tag, attributes, range, partial ) {
         // Add bookmark
         saveRangeToBookmark( range );
-        
+
         // We need a node in the selection to break the surrounding
         // formatted text.
         if ( range.collapsed ) {
             range._insertNode( doc.createTextNode( '' ) );
         }
-        
+
         // Find block-level ancestor of selection
         var root = range.commonAncestorContainer;
         while ( root.isInline() ) {
             root = root.parentNode;
         }
-        
+
         // Find text nodes inside formatTags that are not in selection and
         // add an extra tag with the same formatting.
         var startContainer = range.startContainer,
@@ -530,10 +530,10 @@
                 if ( range.containsNode( node, false ) ) {
                     return;
                 }
-                
+
                 var isText = node.nodeType === TEXT_NODE,
                     child, next;
-                
+
                 // If not at least partially contained, wrap entire contents
                 // in a clone of the tag we're removing and we're done.
                 if ( !range.containsNode( node, true ) ) {
@@ -544,7 +544,7 @@
                     }
                     return;
                 }
-                
+
                 // Split any partially selected text nodes.
                 if ( isText ) {
                     if ( node === endContainer && endOffset !== node.length ) {
@@ -571,13 +571,13 @@
                         el.is( tag, attributes );
                 }
             );
-        
+
         if ( !partial ) {
             formatTags.forEach( function ( node ) {
                 examineNode( node, node );
             });
         }
-        
+
         // Now wrap unselected nodes in the tag
         toWrap.forEach( function ( item ) {
             // [ exemplar, node ] tuple
@@ -587,7 +587,7 @@
         formatTags.forEach( function ( el ) {
             el.replaceWith( el.empty() );
         });
-        
+
         // Merge adjacent inlines:
         range = getRangeAndRemoveBookmark();
         var _range = {
@@ -599,20 +599,20 @@
         root.mergeInlines( _range );
         range.setStart( _range.startContainer, _range.startOffset );
         range.setEnd( _range.endContainer, _range.endOffset );
-        
+
         return range;
     };
-    
+
     var changeFormat = function ( add, remove, range, partial ) {
         // Normalise the arguments and get selection
         if ( !range && !( range = getSelection() ) ) {
             return;
         }
-        
+
         // Save undo checkpoint
         recordUndoState( range );
         getRangeAndRemoveBookmark( range );
-        
+
         if ( remove ) {
             range = removeFormat( remove.tag.toUpperCase(),
                 remove.attributes || {}, range, partial );
@@ -621,27 +621,27 @@
             range = addFormat( add.tag.toUpperCase(),
                 add.attributes || {}, range );
         }
-        
+
         setSelection( range );
         updatePath( 0, true );
-        
+
         // We're not still in an undo state
         docWasChanged();
     };
-    
+
     // --- Block formatting ---
-    
+
     var forEachBlock = function ( fn, mutates, range ) {
         if ( !range && !( range = getSelection() ) ) {
             return;
         }
-        
+
         // Save undo checkpoint
         if ( mutates ) {
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
         }
-        
+
         var start = range.getStartBlock(),
             end = range.getEndBlock();
         if ( start && end ) {
@@ -650,18 +650,18 @@
                 start = start.getNextBlock();
             }
         }
-        
+
         if ( mutates ) {
             setSelection( range );
-            
+
             // Path may have changed
             updatePath( 0, true );
-            
+
             // We're not still in an undo state
             docWasChanged();
         }
     };
-    
+
     var modifyBlocks = function ( modify, range ) {
         if ( !range && !( range = getSelection() ) ) {
             return;
@@ -672,49 +672,49 @@
         if ( !isOpera ) {
             body.setAttribute( 'contenteditable', 'false' );
         }
-        
+
         // 2. Save undo checkpoint and bookmark selection
         if ( isInUndoState ) {
             saveRangeToBookmark( range );
         } else {
             recordUndoState( range );
         }
-        
+
         // 3. Expand range to block boundaries
         range.expandToBlockBoundaries();
-        
+
         // 4. Remove range.
         range.moveBoundariesUpTree( body );
         var frag = range._extractContents( body );
-        
+
         // 5. Modify tree of fragment and reinsert.
         range._insertNode( modify( frag ) );
-        
+
         // 6. Merge containers at edges
         if ( range.endOffset < range.endContainer.childNodes.length ) {
             range.endContainer.childNodes[ range.endOffset ].mergeContainers();
         }
         range.startContainer.childNodes[ range.startOffset ].mergeContainers();
-        
+
         // 7. Make it editable again
         if ( !isOpera ) {
             body.setAttribute( 'contenteditable', 'true' );
         }
-        
+
         // 8. Restore selection
         setSelection( getRangeAndRemoveBookmark() );
         updatePath( 0, true );
-        
+
         // 9. We're not still in an undo state
         docWasChanged();
     };
-    
+
     var increaseBlockQuoteLevel = function ( frag ) {
         return createElement( 'BLOCKQUOTE', [
             frag
         ]);
     };
-    
+
     var decreaseBlockQuoteLevel = function ( frag ) {
         var blockquotes = frag.querySelectorAll( 'blockquote' );
         Array.prototype.filter.call( blockquotes, function ( el ) {
@@ -724,7 +724,7 @@
         });
         return frag;
     };
-    
+
     var removeBlockQuote = function ( frag ) {
         var blockquotes = frag.querySelectorAll( 'blockquote' ),
             l = blockquotes.length,
@@ -735,7 +735,7 @@
         }
         return frag;
     };
-    
+
     var makeList = function makeList ( nodes, type ) {
         var i, l, node, tag, prev, replacement;
         for ( i = 0, l = nodes.length; i < l; i += 1 ) {
@@ -775,17 +775,17 @@
             }
         }
     };
-    
+
     var makeUnorderedList = function ( frag ) {
         makeList( frag.childNodes, 'UL' );
         return frag;
     };
-    
+
     var makeOrderedList = function ( frag ) {
         makeList( frag.childNodes, 'OL' );
         return frag;
     };
-    
+
     var decreaseListLevel = function ( frag ) {
         var lists = frag.querySelectorAll( 'UL, OL' );
         Array.prototype.filter.call( lists, function ( el ) {
@@ -808,7 +808,7 @@
         });
         return frag;
     };
-    
+
     var tagAfterSplit = {
         DIV: 'DIV',
         PRE: 'DIV',
@@ -823,11 +823,11 @@
         DD:  'DT',
         LI:  'LI'
     };
-    
+
     var splitBlock = function ( block, node, offset ) {
         var splitTag = tagAfterSplit[ block.nodeName ],
             nodeAfterSplit = node.split( offset, block.parentNode );
-        
+
         // Make sure the new node is the correct type.
         if ( nodeAfterSplit.nodeName !== splitTag ) {
             block = createElement( splitTag );
@@ -837,9 +837,9 @@
         }
         return nodeAfterSplit;
     };
-    
+
     // --- Clean ---
-    
+
     var urlRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
     var addLinks = function ( frag ) {
         var doc = frag.ownerDocument,
@@ -878,9 +878,9 @@
             }
         }
     };
-    
+
     var allowedBlock = /^A(?:DDRESS|RTICLE|SIDE)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL$/;
-    
+
     var spanToSemantic = {
         color: {
             regexp: /\S/,
@@ -922,12 +922,12 @@
             }
         }
     };
-    
+
     var stylesRewriters = {
         SPAN: function ( span, parent ) {
             var style = span.style,
                 attr, converter, css, newTreeBottom, newTreeTop, el;
-            
+
             for ( attr in spanToSemantic ) {
                 converter = spanToSemantic[ attr ];
                 css = style[ attr ];
@@ -942,12 +942,12 @@
                     }
                 }
             }
-            
+
             if ( newTreeTop ) {
                 newTreeBottom.appendChild( span.empty() );
                 parent.replaceChild( newTreeTop, span );
             }
-            
+
             return newTreeBottom || span;
         },
         STRONG: function ( node, parent ) {
@@ -972,10 +972,10 @@
             return el;
         }
     };
-    
+
     /*
         Two purposes:
-        
+
         1. Remove nodes we don't want, such as weird <o:p> tags, comment nodes
            and whitespace nodes.
         2. Convert inline tags into our preferred format.
@@ -1016,7 +1016,7 @@
         }
         return node;
     };
-    
+
     var wrapTopLevelInline = function ( root, tag ) {
         var children = root.childNodes,
             wrapper = null,
@@ -1047,12 +1047,12 @@
         }
         return root;
     };
-    
+
     var cleanupBRs = function ( root ) {
         var brs = root.querySelectorAll( 'BR' ),
             l = brs.length,
             br, block, nodeAfterSplit, div, next;
-        
+
         while ( l-- ) {
             br = brs[l];
             // Cleanup may have removed it
@@ -1078,14 +1078,14 @@
             }
         }
     };
-    
+
     // --- Cut and Paste ---
-    
+
     var afterCut = function () {
         // If all content removed, ensure div at start of body.
         body.fixCursor();
     };
-    
+
     doc.addEventListener( isIE ? 'beforecut' : 'cut', function () {
         // Save undo checkpoint
         var range = getSelection();
@@ -1093,21 +1093,21 @@
         getRangeAndRemoveBookmark( range );
         setTimeout( afterCut, 0 );
     }, false );
-    
+
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
     var awaitingPaste = false;
-    
+
     doc.addEventListener( isIE ?  'beforepaste' : 'paste', function () {
         if ( awaitingPaste ) { return; }
         awaitingPaste = true;
-        
+
         var range = getSelection(),
             startContainer = range.startContainer,
             startOffset = range.startOffset,
             endContainer = range.endContainer,
             endOffset = range.endOffset;
-        
+
         var pasteArea = createElement( 'DIV', {
             style: 'position: absolute; overflow: hidden;' +
                 'top: -100px; left: -100px; width: 1px; height: 1px;'
@@ -1115,7 +1115,7 @@
         body.appendChild( pasteArea );
         range.selectNodeContents( pasteArea );
         setSelection( range );
-        
+
         // A setTimeout of 0 means this is added to the back of the
         // single javascript thread, so it will be executed after the
         // paste event.
@@ -1125,7 +1125,7 @@
                 first = frag.firstChild,
                 range = createRange(
                     startContainer, startOffset, endContainer, endOffset );
-            
+
             // Was anything actually pasted?
             if ( first ) {
                 // Safari likes putting extra divs around things.
@@ -1142,23 +1142,23 @@
                 while ( node = node.getNextBlock() ) {
                     node.fixCursor();
                 }
-                
+
                 // Insert pasted data
                 range.insertTreeFragment( frag );
                 docWasChanged();
-            
+
                 range.collapse( false );
             }
-            
+
             setSelection( range );
             updatePath( 0, true );
-            
+
             awaitingPaste = false;
         }, 0 );
     }, false );
-    
+
     // --- Keyboard interaction ---
-    
+
     var keys = {
         8: 'backspace',
         9: 'tab',
@@ -1166,14 +1166,14 @@
         32: 'space',
         46: 'delete'
     };
-    
+
     var mapKeyTo = function ( fn ) {
         return function ( event ) {
             event.preventDefault();
             fn();
         };
     };
-    
+
     var mapKeyToFormat = function ( tag ) {
         return function ( event ) {
             event.preventDefault();
@@ -1185,31 +1185,31 @@
             }
         };
     };
-    
+
     var keyHandlers = {
         enter: function ( event ) {
             // We handle this ourselves
             event.preventDefault();
-            
+
             // Must have some form of selection
             var range = getSelection();
             if ( !range ) { return; }
-            
+
             // Save undo checkpoint
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
-            
+
             // Selected text is overwritten, therefore delete the contents
             // to collapse selection.
             if ( !range.collapsed ) {
                 range._deleteContents();
             }
-            
+
             var block = range.getStartBlock(),
                 tag = block ? block.nodeName : 'DIV',
                 splitTag = tagAfterSplit[ tag ],
                 nodeAfterSplit;
-            
+
             // If this is a malformed bit of document, just play it safe
             // and insert a <br>.
             if ( !block ) {
@@ -1220,7 +1220,7 @@
                 docWasChanged();
                 return;
             }
-            
+
             // We need to wrap the contents in divs.
             var splitNode = range.startContainer,
                 splitOffset = range.startOffset,
@@ -1259,7 +1259,7 @@
                 range.setEnd( splitNode, splitOffset );
                 block = range.getStartBlock();
             }
-            
+
             if ( !block.textContent ) {
                 // Break list
                 if ( block.nearest( 'UL' ) || block.nearest( 'OL' ) ) {
@@ -1270,17 +1270,17 @@
                     return modifyBlocks( removeBlockQuote, range );
                 }
             }
-            
+
             // Otherwise, split at cursor point.
             nodeAfterSplit = splitBlock( block, splitNode, splitOffset );
-            
+
             // Focus cursor
             // If there's a <b>/<i> etc. at the beginning of the split
             // make sure we focus inside it.
             while ( nodeAfterSplit.nodeType === ELEMENT_NODE) {
                 var child = nodeAfterSplit.firstChild,
                     next;
-                
+
                 // Don't continue links over a block break; unlikely to be the
                 // desired outcome.
                 if ( nodeAfterSplit.nodeName === 'A' ) {
@@ -1288,7 +1288,7 @@
                     nodeAfterSplit = child;
                     continue;
                 }
-                
+
                 while ( child && child.nodeType === TEXT_NODE && !child.data ) {
                     next = child.nextSibling;
                     if ( !next || next.nodeName === 'BR' ) {
@@ -1297,7 +1297,7 @@
                     child.detach();
                     child = next;
                 }
-                
+
                 // 'BR's essentially don't count; they're a browser hack.
                 // If you try to select the contents of a 'BR', FF will not let
                 // you type anything!
@@ -1309,7 +1309,7 @@
             }
             setSelection( createRange( nodeAfterSplit, 0 ) );
             updatePath( 0, true );
-            
+
             // Scroll into view
             if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
                 nodeAfterSplit = nodeAfterSplit.parentNode;
@@ -1319,7 +1319,7 @@
                     body.offsetHeight ) {
                 nodeAfterSplit.scrollIntoView( false );
             }
-            
+
             // We're not still in an undo state
             docWasChanged();
         },
@@ -1413,40 +1413,40 @@
         'ctrl-z': mapKeyTo( undo ),
         'ctrl-shift-z': mapKeyTo( redo )
     };
-    
+
     addEventListener( 'keydown', function ( event ) {
         // Ref: http://unixpapa.com/js/key.html
         var code = event.keyCode || event.which,
             key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
             modifiers = '';
-        
+
         // Function keys
         if ( 111 < code && code < 124 ) {
             key = 'f' + ( code - 111 );
         }
-        
+
         if ( event.altKey ) { modifiers += 'alt-'; }
         if ( event.ctrlKey || event.metaKey ) { modifiers += 'ctrl-'; }
         if ( event.shiftKey ) { modifiers += 'shift-'; }
-        
+
         key = modifiers + key;
-        
+
         if ( keyHandlers[ key ] ) {
             keyHandlers[ key ]( event );
         }
     });
-     
+
     // --- Export ---
-    
+
     var styleExtractor = /<style[^>]*>([\s\S]*?)<\/style>/gi;
-    
+
     var chain = function ( fn ) {
         return function () {
             fn.apply( null, arguments );
             return this;
         };
     };
-        
+
     var command = function ( fn, arg, arg2 ) {
         return function () {
             fn( arg, arg2 );
@@ -1454,19 +1454,19 @@
             return this;
         };
     };
-    
+
     win.editor = {
-        
+
         addEventListener: chain( addEventListener ),
         removeEventListener: chain( removeEventListener ),
-        
+
         focus: chain( focus ),
         blur: chain( blur ),
-        
+
         getDocument: function () {
             return doc;
         },
-        
+
         addStyles: function ( styles ) {
             if ( styles ) {
                 var style = createElement( 'STYLE', {
@@ -1477,7 +1477,7 @@
             }
             return this;
         },
-        
+
         getHTML: function () {
             var brs = [],
                 node, fixer, html, l;
@@ -1504,50 +1504,50 @@
             var frag = doc.createDocumentFragment(),
                 div = createElement( 'DIV' ),
                 child;
-            
+
             // Parse HTML into DOM tree
             div.innerHTML = html;
             frag.appendChild( div.empty() );
-            
+
             cleanTree( frag, true );
             cleanupBRs( frag );
-            
+
             wrapTopLevelInline( frag, 'DIV' );
-            
+
             // Fix cursor
             var node = frag;
             while ( node = node.getNextBlock() ) {
                 node.fixCursor();
             }
-            
+
             // Remove existing body children
             while ( child = body.lastChild ) {
                 body.removeChild( child );
             }
-            
+
             // And insert new content
             body.appendChild( frag );
             body.fixCursor();
-            
+
             // Reset the undo stack
             undoIndex = -1;
             undoStack = [];
             undoStackLength = 0;
             isInUndoState = false;
-            
+
             // Record undo state
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
             setSelection( getRangeAndRemoveBookmark( range ) );
             updatePath( 0, true );
-            
+
             return this;
         },
-        
+
         getSelectedText: function () {
             return getSelection().getTextContent();
         },
-        
+
         insertImage: function ( src ) {
             var img = createElement( 'IMG', {
                 src: src
@@ -1555,27 +1555,27 @@
             insertElement( img );
             return img;
         },
-        
+
         getPath: function () {
             return path;
         },
         getSelection: getSelection,
         setSelection: chain( setSelection ),
-        
+
         undo: chain( undo ),
         redo: chain( redo ),
-        
+
         hasFormat: hasFormat,
         changeFormat: chain( changeFormat ),
-        
+
         bold: command( changeFormat, { tag: 'B' } ),
         italic: command( changeFormat, { tag: 'I' } ),
         underline: command( changeFormat, { tag: 'U' } ),
-        
+
         removeBold: command( changeFormat, null, { tag: 'B' } ),
         removeItalic: command( changeFormat, null, { tag: 'I' } ),
         removeUnderline: command( changeFormat, null, { tag: 'U' } ),
-        
+
         makeLink: function ( url ) {
             url = encodeURI( url );
             var range = getSelection();
@@ -1599,7 +1599,7 @@
             focus();
             return this;
         },
-        
+
         removeLink: function () {
             changeFormat( null, {
                 tag: 'A'
@@ -1607,7 +1607,7 @@
             focus();
             return this;
         },
-        
+
         setFontFace: function ( name ) {
             changeFormat({
                 tag: 'SPAN',
@@ -1637,7 +1637,7 @@
             focus();
             return this;
         },
-        
+
         setTextColour: function ( colour ) {
             changeFormat({
                 tag: 'SPAN',
@@ -1652,7 +1652,7 @@
             focus();
             return this;
         },
-        
+
         setHighlightColour: function ( colour ) {
             changeFormat({
                 tag: 'SPAN',
@@ -1667,7 +1667,7 @@
             focus();
             return this;
         },
-        
+
         setTextAlignment: function ( dir ) {
             forEachBlock( function ( block ) {
                 block.className = 'align-' + dir;
@@ -1676,26 +1676,26 @@
             focus();
             return this;
         },
-        
+
         forEachBlock: chain( forEachBlock ),
         modifyBlocks: chain( modifyBlocks ),
-        
+
         incQuoteLevel: command( modifyBlocks, increaseBlockQuoteLevel ),
         decQuoteLevel: command( modifyBlocks, decreaseBlockQuoteLevel ),
-        
+
         makeUnorderedList: command( modifyBlocks, makeUnorderedList ),
         makeOrderedList: command( modifyBlocks, makeOrderedList ),
         removeList: command( modifyBlocks, decreaseListLevel )
     };
-    
+
     // --- Initialise ---
-    
+
     body.setAttribute( 'contenteditable', 'true' );
     win.editor.setHTML( '' );
-    
+
     if ( win.onEditorLoad ) {
         win.onEditorLoad( win.editor );
         delete win.onEditorLoad;
     }
-    
+
 }( document ) );
