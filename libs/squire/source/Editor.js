@@ -1,6 +1,6 @@
 /* Copyright © 2011 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global Range, window, document, setTimeout */
+/*global Range, navigator, window, document, setTimeout */
 
 ( function ( doc ) {
     
@@ -21,6 +21,7 @@
         
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
+    var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
     var useTextFixer = isIE || isOpera;
 
     // --- DOM Sugar ---
@@ -171,6 +172,13 @@
     
     var setSelection = function ( range ) {
         if ( range ) {
+            // iOS bug: if you don't focus the iframe before setting the
+            // selection, you can end up in a state where you type but the input
+            // doesn't get directed into the contenteditable area but is instead
+            // lost in a black hole. Very strange.
+            if ( isIOS ) {
+                win.focus();
+            }
             sel.removeAllRanges();
             sel.addRange( range );
         }
