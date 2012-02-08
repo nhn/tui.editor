@@ -187,6 +187,9 @@
     // --- Focus ---
 
     var focus = function () {
+        // FF seems to need the body to be focussed
+        // (at least on first load).
+        body.focus();
         win.focus();
     };
 
