@@ -843,7 +843,7 @@
 
     // --- Clean ---
 
-    var urlRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))/i;
+    var linkRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,4}))/i;
     var addLinks = function ( frag ) {
         var doc = frag.ownerDocument,
             walker = doc.createTreeWalker( frag, SHOW_TEXT,
@@ -852,7 +852,7 @@
             }, false ),
             node, parts, i, l, text, parent, next;
         while ( node = walker.nextNode() ) {
-            parts = node.data.split( urlRegExp );
+            parts = node.data.split( linkRegExp );
             l = parts.length;
             if ( l > 1 ) {
                 parent = node.parentNode;
@@ -863,7 +863,8 @@
                         if ( i % 2 ) {
                             node = doc.createElement( 'A' );
                             node.textContent = text;
-                            node.href = /^https?:/.test( text ) ?
+                            node.href = /@/.test( text ) ? 'mailto:' + text :
+                                /^https?:/.test( text ) ?
                                 text : 'http://' + text;
                         } else {
                             node = doc.createTextNode( text );
