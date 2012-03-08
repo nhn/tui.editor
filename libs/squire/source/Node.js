@@ -35,7 +35,7 @@ var leafNodeNames = {
     INPUT: 1
 };
 
-var swap = function( node, node2 ) {
+var swap = function ( node, node2 ) {
     var parent = node2.parentNode;
     if ( parent ) {
         parent.replaceChild( node, node2 );
@@ -137,7 +137,7 @@ implement( Element, {
     getLength: function () {
         return this.childNodes.length;
     },
-    getPath: function() {
+    getPath: function () {
         var tag = this.nodeName;
         if ( tag === 'BODY' ) {
             return tag;
