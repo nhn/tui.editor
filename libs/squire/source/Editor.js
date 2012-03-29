@@ -1434,11 +1434,19 @@
         'ctrl-shift-z': mapKeyTo( redo )
     };
 
-    addEventListener( 'keydown', function ( event ) {
-        // Ref: http://unixpapa.com/js/key.html
-        var code = event.keyCode || event.which,
+    // Ref: http://unixpapa.com/js/key.html
+    // Opera does not fire keydown repeatedly.
+    addEventListener( isOpera ? 'keypress' : 'keydown',
+            function ( event ) {
+        var code = event.keyCode,
             key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
             modifiers = '';
+
+        // On keypress, delete and '.' both have event.keyCode 46
+        // Must check event.which to differentiate.
+        if ( isOpera && event.which === 46 ) {
+            key = '.';
+        }
 
         // Function keys
         if ( 111 < code && code < 124 ) {
@@ -1724,7 +1732,7 @@
 
     if ( win.onEditorLoad ) {
         win.onEditorLoad( win.editor );
-        delete win.onEditorLoad;
+        win.onEditorLoad = null;
     }
 
 }( document ) );
