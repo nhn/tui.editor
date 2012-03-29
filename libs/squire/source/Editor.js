@@ -21,6 +21,7 @@
 
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
+    var isGecko = /Gecko\//.test( navigator.userAgent );
     var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
     var useTextFixer = isIE || isOpera;
 
@@ -189,7 +190,9 @@
     var focus = function () {
         // FF seems to need the body to be focussed
         // (at least on first load).
-        body.focus();
+        if ( isGecko ) {
+            body.focus();
+        }
         win.focus();
     };
 
