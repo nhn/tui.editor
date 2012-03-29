@@ -1,4 +1,4 @@
-/* Copyright © 2011 by Neil Jenkins. Licensed under the MIT license. */
+/* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
 ( function ( doc ) {
 
