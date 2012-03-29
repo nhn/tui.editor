@@ -150,9 +150,9 @@
     var lastFocusNode;
     var path = '';
 
-    var updatePath = function ( _, force ) {
-        var anchor = sel.anchorNode,
-            focus = sel.focusNode,
+    var updatePath = function ( range, force ) {
+        var anchor = range.startContainer,
+            focus = range.endContainer,
             newPath;
         if ( force || anchor !== lastAnchorNode || focus !== lastFocusNode ) {
             lastAnchorNode = anchor;
@@ -168,8 +168,11 @@
             fireEvent( 'select' );
         }
     };
-    addEventListener( 'keyup', updatePath );
-    addEventListener( 'mouseup', updatePath );
+    var updatePathOnEvent = function () {
+        updatePath( getSelection() );
+    };
+    addEventListener( 'keyup', updatePathOnEvent );
+    addEventListener( 'mouseup', updatePathOnEvent );
 
     var setSelection = function ( range ) {
         if ( range ) {
@@ -223,7 +226,7 @@
         range._insertNode( el );
         range.setStartAfter( el );
         setSelection( range );
-        updatePath();
+        updatePath( range );
     };
 
     // --- Bookmarking ---
@@ -329,6 +332,16 @@
         if ( !event.ctrlKey && !event.metaKey && !event.altKey &&
                 ( code < 16 || code > 20 ) &&
                 ( code < 33 || code > 45 ) )  {
+            // If you select all in IE8 then type, it makes a P; replace it with
+            // a DIV.
+            var firstChild = body.firstChild;
+            if ( win.ie === 8 && firstChild.nodeName === 'P' ) {
+                saveRangeToBookmark( getSelection() );
+                firstChild.replaceWith( createElement( 'DIV', [
+                    firstChild.empty()
+                ]) );
+                setSelection( getRangeAndRemoveBookmark() );
+            }
             docWasChanged();
         }
     });
@@ -530,7 +543,7 @@
             endContainer = range.endContainer,
             endOffset = range.endOffset,
             toWrap = [],
-            examineNode = function examineNode ( node, exemplar ) {
+            examineNode = function ( node, exemplar ) {
                 // If the node is completely contained by the range then
                 // we're going to remove all formatting so ignore it.
                 if ( range.containsNode( node, false ) ) {
@@ -629,7 +642,7 @@
         }
 
         setSelection( range );
-        updatePath( 0, true );
+        updatePath( range, true );
 
         // We're not still in an undo state
         docWasChanged();
@@ -661,7 +674,7 @@
             setSelection( range );
 
             // Path may have changed
-            updatePath( 0, true );
+            updatePath( range, true );
 
             // We're not still in an undo state
             docWasChanged();
@@ -709,7 +722,7 @@
 
         // 8. Restore selection
         setSelection( getRangeAndRemoveBookmark() );
-        updatePath( 0, true );
+        updatePath( range, true );
 
         // 9. We're not still in an undo state
         docWasChanged();
@@ -742,7 +755,7 @@
         return frag;
     };
 
-    var makeList = function makeList ( nodes, type ) {
+    var makeList = function ( nodes, type ) {
         var i, l, node, tag, prev, replacement;
         for ( i = 0, l = nodes.length; i < l; i += 1 ) {
             node = nodes[i];
@@ -1158,7 +1171,7 @@
             }
 
             setSelection( range );
-            updatePath( 0, true );
+            updatePath( range, true );
 
             awaitingPaste = false;
         }, 0 );
@@ -1223,7 +1236,7 @@
                 range._insertNode( createElement( 'BR' ) );
                 range.collapse( false );
                 setSelection( range );
-                updatePath( 0, true );
+                updatePath( range, true );
                 docWasChanged();
                 return;
             }
@@ -1315,7 +1328,7 @@
                 nodeAfterSplit = child;
             }
             setSelection( createRange( nodeAfterSplit, 0 ) );
-            updatePath( 0, true );
+            updatePath( range, true );
 
             // Scroll into view
             if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
@@ -1337,7 +1350,7 @@
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
-                updatePath( 0, true );
+                updatePath( range, true );
             }
             // If at beginning of block, merge with previous
             else if ( range.startsAtBlockBoundary() ) {
@@ -1370,7 +1383,7 @@
                         return modifyBlocks( decreaseBlockQuoteLevel, range );
                     }
                     setSelection( range );
-                    updatePath( 0, true );
+                    updatePath( range, true );
                 }
             }
             // All other cases can be safely left to the browser (I hope!).
@@ -1382,7 +1395,7 @@
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
-                updatePath( 0, true );
+                updatePath( range, true );
             }
             // If at end of block, merge next into this block
             else if ( range.endsAtBlockBoundary() ) {
@@ -1402,7 +1415,7 @@
                         next.mergeContainers();
                     }
                     setSelection( range );
-                    updatePath( 0, true );
+                    updatePath( range, true );
                 }
             }
             // All other cases can be safely left to the browser (I hope!).
@@ -1476,11 +1489,20 @@
 
         addStyles: function ( styles ) {
             if ( styles ) {
-                var style = createElement( 'STYLE', {
+                var head = doc.documentElement.firstChild,
+                    style = createElement( 'STYLE', {
                         type: 'text/css'
                     });
-                style.appendChild( doc.createTextNode( styles ) );
-                doc.documentElement.firstChild.appendChild( style );
+                if ( style.styleSheet ) {
+                    // IE8: must append to document BEFORE adding styles
+                    // or you get the IE7 CSS parser!
+                    head.appendChild( style );
+                    style.styleSheet.cssText = styles;
+                } else {
+                    // Everyone else
+                    style.appendChild( doc.createTextNode( styles ) );
+                    head.appendChild( style );
+                }
             }
             return this;
         },
@@ -1546,7 +1568,7 @@
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
             setSelection( getRangeAndRemoveBookmark( range ) );
-            updatePath( 0, true );
+            updatePath( range, true );
 
             return this;
         },

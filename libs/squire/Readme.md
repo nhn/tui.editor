@@ -1,13 +1,15 @@
 Squire
 ======
 
-Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible. It is built for the present and the future, and as such does not support ancient browsers. I'd guess it should work fine back to around Opera 10, Firefox 3.5, Safari 4, Chrome 9 and IE9, but I only test in the latest version of each of these browsers. Adding IE8 support should be possible by patching IE8 to support the W3C Range and TreeWalker APIs; patches are welcome. I am not interested in support for IE7 or below.
+Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible. It is built for the present and the future, and as such does not support truly ancient browsers. It should work fine back to around Opera 10, Firefox 3.5, Safari 4, Chrome 9 and IE8.
 
-Unlike other HTML5 rich text editors, squire was written as a component for writing documents (emails, essays, etc.), not doing wysiwyg websites. If you are looking for support for inserting form controls or flash components or the like, you'll need to look elsewhere. However for many purposes, Squire may be just what you need, providing the power without the bloat. The key features are:
+Unlike other HTML5 rich text editors, Squire was written as a component for writing documents (emails, essays, etc.), not doing wysiwyg websites. If you are looking for support for inserting form controls or flash components or the like, you'll need to look elsewhere. However for many purposes, Squire may be just what you need, providing the power without the bloat. The key features are:
 
 ### Lightweight ###
 
-* Only 8KB of JS after minification and gzip (26KB before gzip).
+* Only 9KB of JS after minification and gzip (27KB before gzip).
+* IE8 support does not add extra bloat to the core library; instead, a separate
+  3KB (7KB before gzip) file patches the browser to support the W3C APIs.
 * Does not include its own XHR wrapper, widget library or lightbox overlays.
 * No dependencies.
 * No UI for a toolbar is supplied, allowing you to integrate seamlessly with the
@@ -121,7 +123,7 @@ Returns self.
 ### getSelectedText ###
 
 Returns the text currently selected in the editor.
-    
+
 #### insertImage ####
 
 Inserts an image at the current cursor location.
@@ -186,37 +188,37 @@ Returns `true` if any of the selection is contained within an element with the s
 ### bold ###
 
 Makes any non-bold currently selected text bold (by wrapping it in a `<strong>` tag).
-    
+
 Returns self.
 
 ### italic ###
 
 Makes any non-italic currently selected text italic (by wrapping it in an `<em>` tag).
-    
+
 Returns self.
 
 ### underline ###
 
 Makes any non-underlined currently selected text underlined (by wrapping it in a `<u>` tag).
-    
+
 Returns self.
 
 ### removeBold ###
 
 Removes any bold formatting from the selected text.
-    
+
 Returns self.
 
 ### removeItalic ###
 
 Removes any italic formatting from the selected text.
-    
+
 Returns self.
 
 ### removeUnderline ###
 
 Removes any underline formatting from the selected text.
-    
+
 Returns self.
 
 ### makeLink ###
@@ -327,7 +329,7 @@ Returns self.
 ### incQuoteLevel ###
 
 Increases by 1 the quote level (number of `<blockquote>` tags wrapping) all blocks at least partially selected.
-    
+
 Returns self.
 
 ### decQuoteLevel ###
@@ -335,7 +337,7 @@ Returns self.
 Decreases by 1 the quote level (number of `<blockquote>` tags wrapping) all blocks at least partially selected.
 
 Returns self.
-    
+
 ### makeUnorderedList ###
 
 Changes all at-least-partially selected blocks to be part of an unordered list.

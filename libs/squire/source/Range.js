@@ -6,9 +6,8 @@
 
 "use strict";
 
-var implement = function ( constructor, props ) {
-    var proto = constructor.prototype,
-        prop;
+var implement = function ( proto, props ) {
+    var prop;
     for ( prop in props ) {
         proto[ prop ] = props[ prop ];
     }
@@ -50,7 +49,7 @@ var getNodeAfter = function ( node, offset ) {
     return node;
 };
 
-implement( Range, {
+implement( Range.prototype, {
 
     forEachTextNode: function ( fn ) {
         var range = this.cloneRange();
@@ -97,21 +96,30 @@ implement( Range, {
             endOffset = this.endOffset,
             parent, children, childCount, afterSplit;
 
+        // If part way through a text node, split it.
         if ( startContainer.nodeType === TEXT_NODE ) {
             parent = startContainer.parentNode;
             children = parent.childNodes;
-            if ( startOffset ) {
-                afterSplit = startContainer.splitText( startOffset );
-                if ( endContainer === startContainer ) {
-                    endOffset -= startOffset;
-                    endContainer = afterSplit;
+            if ( startOffset === startContainer.length ) {
+                startOffset = indexOf.call( children, startContainer ) + 1;
+                if ( this.collapsed ) {
+                    endContainer = parent;
+                    endOffset = startOffset;
                 }
-                else if ( endContainer === parent ) {
-                    endOffset += 1;
+            } else {
+                if ( startOffset ) {
+                    afterSplit = startContainer.splitText( startOffset );
+                    if ( endContainer === startContainer ) {
+                        endOffset -= startOffset;
+                        endContainer = afterSplit;
+                    }
+                    else if ( endContainer === parent ) {
+                        endOffset += 1;
+                    }
+                    startContainer = afterSplit;
                 }
-                startContainer = afterSplit;
+                startOffset = indexOf.call( children, startContainer );
             }
-            startOffset = indexOf.call( children, startContainer );
             startContainer = parent;
         } else {
             children = startContainer.childNodes;

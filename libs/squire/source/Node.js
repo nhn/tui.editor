@@ -2,15 +2,18 @@
 
 ( function () {
 
-/*global Node, Text, Element, window, document */
+/*global Node, Text, Element, HTMLDocument, window, document */
 
 "use strict";
 
-var implement = function ( constructor, props ) {
-    var proto = constructor.prototype,
-        prop;
-    for ( prop in props ) {
-        proto[ prop ] = props[ prop ];
+var implement = function ( constructors, props ) {
+    var l = constructors.length,
+        proto, prop;
+    while ( l-- ) {
+        proto = constructors[l].prototype;
+        for ( prop in props ) {
+            proto[ prop ] = props[ prop ];
+        }
     }
 };
 
@@ -54,7 +57,7 @@ var isBlock = function ( el ) {
 };
 var useTextFixer = !!( window.opera || window.ie );
 
-implement( Node, {
+implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
     isInline: $False,
     isBlock: $False,
     isContainer: $False,
@@ -101,7 +104,7 @@ implement( Node, {
     mergeContainers: function () {}
 });
 
-implement( Text, {
+implement([ Text ], {
     isLeaf: $True,
     isInline: $True,
     getLength: function () {
@@ -119,7 +122,7 @@ implement( Text, {
     }
 });
 
-implement( Element, {
+implement([ Element ], {
     isLeaf: function () {
         return !!leafNodeNames[ this.nodeName ];
     },
