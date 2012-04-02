@@ -53,15 +53,19 @@
 
     // --- Events ---
 
-    var events = {},
-        customEvents = {
-            cut: 1, paste: 1, focus: 1, blur: 1,
-            pathChange: 1, select: 1, input: 1, undoStateChange: 1
-        };
+    // Subscribing to these events won't automatically add a listener to the
+    // document node, since these events are fired in a custom manner by the
+    // editor code.
+    var customEvents = {
+        cut: 1, paste: 1, focus: 1, blur: 1,
+        pathChange: 1, select: 1, input: 1, undoStateChange: 1
+    };
+
+    var events = {};
 
     var fireEvent = function ( type, event ) {
         var handlers = events[ type ],
-            l, obj;
+            i, l, obj;
         if ( handlers ) {
             if ( typeof event !== 'object' ) {
                 event = {
@@ -71,9 +75,8 @@
             if ( event.type !== type ) {
                 event.type = type;
             }
-            l = handlers.length;
-            while ( l-- ) {
-                obj = handlers[l];
+            for ( i = 0, l = handlers.length; i < l; i += 1 ) {
+                obj = handlers[i];
                 if ( obj.handleEvent ) {
                     obj.handleEvent( event );
                 } else {
@@ -135,11 +138,24 @@
 
     var sel = win.getSelection();
 
+    var setSelection = function ( range ) {
+        if ( range ) {
+            // iOS bug: if you don't focus the iframe before setting the
+            // selection, you can end up in a state where you type but the input
+            // doesn't get directed into the contenteditable area but is instead
+            // lost in a black hole. Very strange.
+            if ( isIOS ) {
+                win.focus();
+            }
+            sel.removeAllRanges();
+            sel.addRange( range );
+        }
+    };
+
     var lastSelection = null;
     var getSelection = function () {
         if ( sel.rangeCount ) {
-            lastSelection =
-                sel.getRangeAt( 0 ).cloneRange();
+            lastSelection = sel.getRangeAt( 0 ).cloneRange();
         }
         return lastSelection;
     };
@@ -212,20 +228,6 @@
     };
     addEventListener( 'keyup', updatePathOnEvent );
     addEventListener( 'mouseup', updatePathOnEvent );
-
-    var setSelection = function ( range ) {
-        if ( range ) {
-            // iOS bug: if you don't focus the iframe before setting the
-            // selection, you can end up in a state where you type but the input
-            // doesn't get directed into the contenteditable area but is instead
-            // lost in a black hole. Very strange.
-            if ( isIOS ) {
-                win.focus();
-            }
-            sel.removeAllRanges();
-            sel.addRange( range );
-        }
-    };
 
     // --- Focus ---
 
@@ -347,6 +349,8 @@
 
     // --- Undo ---
 
+    // These values are initialised in the editor.setHTML method,
+    // which is always called on initialisation.
     var undoIndex, // = -1,
         undoStack, // = [],
         undoStackLength, // = 0,
@@ -599,7 +603,7 @@
                     return;
                 }
 
-                var isText = node.nodeType === TEXT_NODE,
+                var isText = ( node.nodeType === TEXT_NODE ),
                     child, next;
 
                 // If not at least partially contained, wrap entire contents
@@ -912,6 +916,7 @@
     // --- Clean ---
 
     var linkRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,4}))/i;
+
     var addLinks = function ( frag ) {
         var doc = frag.ownerDocument,
             walker = doc.createTreeWalker( frag, SHOW_TEXT,
