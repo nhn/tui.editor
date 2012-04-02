@@ -19,11 +19,15 @@
     var win = doc.defaultView,
         body = doc.body;
 
+    // Browser sniffing. Unfortunately necessary.
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
     var isGecko = /Gecko\//.test( navigator.userAgent );
+    var isWebKit = /WebKit/.test( navigator.userAgent );
     var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
+
     var useTextFixer = isIE || isOpera;
+    var cantFocusEmptyTextNodes = isIE || isWebKit;
 
     // --- DOM Sugar ---
 
@@ -150,7 +154,42 @@
     var lastFocusNode;
     var path = '';
 
+    // --- Workaround for browsers that can't focus empty text nodes ---
+
+    // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
+
+    var placeholderTextNode = null;
+    var setPlaceholderTextNode = function ( node ) {
+        if ( placeholderTextNode ) {
+            removePlaceholderTextNode( getSelection(), true );
+        }
+        placeholderTextNode = node;
+    };
+    var removePlaceholderTextNode = function ( range, force ) {
+        var node = placeholderTextNode,
+            index;
+        if ( !force && node.data === '\u200B' &&
+            ( range.startContainer === node || range.endContainer === node ) ) {
+            return;
+        }
+        placeholderTextNode = null;
+        if ( node.parentNode ) {
+            while ( ( index = node.data.indexOf( '\u200B' ) ) > -1 ) {
+                node.deleteData( index, 1 );
+            }
+            if ( !node.data && !node.nextSibling && !node.previousSibling &&
+                    node.parentNode.isInline() ) {
+                node.parentNode.detach();
+            }
+        }
+    };
+
+    // --- Path change events ---
+
     var updatePath = function ( range, force ) {
+        if ( placeholderTextNode ) {
+            removePlaceholderTextNode( range );
+        }
         var anchor = range.startContainer,
             focus = range.endContainer,
             newPath;
@@ -457,7 +496,8 @@
         if ( range.collapsed ) {
             var el = createElement( tag, attributes ).fixCursor();
             range._insertNode( el );
-            range.selectNodeContents( el );
+            range.setStart( el.firstChild, el.firstChild.length );
+            range.collapse( true );
         }
         // Otherwise we find all the textnodes in the range (splitting
         // partially selected nodes) and if they're not already formatted
@@ -526,8 +566,17 @@
 
         // We need a node in the selection to break the surrounding
         // formatted text.
+        var fixer;
         if ( range.collapsed ) {
-            range._insertNode( doc.createTextNode( '' ) );
+            if ( cantFocusEmptyTextNodes ) {
+                fixer = doc.createTextNode( '\u200B' );
+                setTimeout( function () {
+                    setPlaceholderTextNode( fixer );
+                }, 0 );
+            } else {
+                fixer = doc.createTextNode( '' );
+            }
+            range._insertNode( fixer );
         }
 
         // Find block-level ancestor of selection
@@ -609,6 +658,9 @@
 
         // Merge adjacent inlines:
         range = getRangeAndRemoveBookmark();
+        if ( fixer ) {
+            range.collapse( false );
+        }
         var _range = {
             startContainer: range.startContainer,
             startOffset: range.startOffset,
@@ -1484,6 +1536,8 @@
     };
 
     win.editor = {
+
+        _setPlaceholderTextNode: setPlaceholderTextNode,
 
         addEventListener: chain( addEventListener ),
         removeEventListener: chain( removeEventListener ),

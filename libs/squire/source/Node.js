@@ -2,7 +2,8 @@
 
 ( function () {
 
-/*global Node, Text, Element, HTMLDocument, window, document */
+/*global Node, Text, Element, HTMLDocument, window, document, navigator,
+    setTimeout, editor */
 
 "use strict";
 
@@ -56,6 +57,8 @@ var isBlock = function ( el ) {
     return el.isBlock() ? FILTER_ACCEPT : FILTER_SKIP;
 };
 var useTextFixer = !!( window.opera || window.ie );
+var cantFocusEmptyTextNodes =
+        /WebKit/.test( navigator.userAgent ) || !!window.ie;
 
 implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
     isInline: $False,
@@ -376,7 +379,14 @@ implement([ Element ], {
 
         if ( el.isInline() ) {
             if ( !el.firstChild ) {
-                fixer = doc.createTextNode( /* isWebkit ? '\u200B' :*/ '' );
+                if ( cantFocusEmptyTextNodes ) {
+                    fixer = doc.createTextNode( '\u200B' );
+                    setTimeout( function () {
+                        editor._setPlaceholderTextNode( fixer );
+                    }, 0 );
+                } else {
+                    fixer = doc.createTextNode( '' );
+                }
             }
         } else {
             if ( useTextFixer ) {
@@ -415,7 +425,7 @@ implement([ Element ], {
     }
 });
 
-// Fix IE9's buggy implementation of Text#splitText.
+// Fix IE8/9's buggy implementation of Text#splitText.
 // If the split is at the end of the node, it doesn't insert the newly split
 // node into the document, and sets its value to undefined rather than ''.
 // And even if the split is not at the end, the original node is removed from
