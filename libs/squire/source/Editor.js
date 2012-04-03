@@ -661,7 +661,7 @@
         });
 
         // Merge adjacent inlines:
-        range = getRangeAndRemoveBookmark();
+        getRangeAndRemoveBookmark( range );
         if ( fixer ) {
             range.collapse( false );
         }
@@ -777,7 +777,8 @@
         }
 
         // 8. Restore selection
-        setSelection( getRangeAndRemoveBookmark() );
+        getRangeAndRemoveBookmark( range );
+        setSelection( range );
         updatePath( range, true );
 
         // 9. We're not still in an undo state
@@ -1384,7 +1385,8 @@
                 }
                 nodeAfterSplit = child;
             }
-            setSelection( createRange( nodeAfterSplit, 0 ) );
+            range = createRange( nodeAfterSplit, 0 );
+            setSelection( range );
             updatePath( range, true );
 
             // Scroll into view
