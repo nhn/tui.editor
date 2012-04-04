@@ -209,9 +209,8 @@ implement( Range.prototype, {
         var isCollapsed = this.collapsed;
         this.moveBoundariesDownTree();
         if ( isCollapsed ) {
-            // Hopefully at least start or end is now a text node.
-            // Make that the focus point.
-            this.collapse( this.startContainer.nodeType === TEXT_NODE );
+            // Collapse
+            this.collapse( true );
         }
 
         return this;
