@@ -22,6 +22,7 @@
     // Browser sniffing. Unfortunately necessary.
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
+    var isIE8 = win.ie === 8;
     var isGecko = /Gecko\//.test( navigator.userAgent );
     var isWebKit = /WebKit/.test( navigator.userAgent );
     var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
@@ -1636,7 +1637,13 @@
             // Record undo state
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
-            setSelection( getRangeAndRemoveBookmark( range ) );
+            getRangeAndRemoveBookmark( range );
+            // IE8 will also set focus when selecting text.
+            // It doesn't make any difference since it doesn't
+            // maintain selection when not focussed anyway.
+            if ( !isIE8 ) {
+                setSelection( range );
+            }
             updatePath( range, true );
 
             return this;
