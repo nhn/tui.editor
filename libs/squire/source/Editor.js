@@ -176,20 +176,35 @@
     // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
 
     var placeholderTextNode = null;
+    var mayRemovePlaceholder = true;
+    var willEnablePlaceholderRemoval = false;
+
+    var enablePlaceholderRemoval = function () {
+        mayRemovePlaceholder = true;
+        willEnablePlaceholderRemoval = false;
+    };
+
     var setPlaceholderTextNode = function ( node ) {
         if ( placeholderTextNode ) {
-            removePlaceholderTextNode( getSelection(), true );
+            mayRemovePlaceholder = true;
+            removePlaceholderTextNode();
         }
+        if ( !willEnablePlaceholderRemoval ) {
+            setTimeout( enablePlaceholderRemoval, 0 );
+            willEnablePlaceholderRemoval = true;
+        }
+        mayRemovePlaceholder = false;
         placeholderTextNode = node;
     };
-    var removePlaceholderTextNode = function ( range, force ) {
+
+    var removePlaceholderTextNode = function () {
+        if ( !mayRemovePlaceholder ) { return; }
+
         var node = placeholderTextNode,
             index;
-        if ( !force && node.data === '\u200B' &&
-            ( range.startContainer === node || range.endContainer === node ) ) {
-            return;
-        }
+
         placeholderTextNode = null;
+
         if ( node.parentNode ) {
             while ( ( index = node.data.indexOf( '\u200B' ) ) > -1 ) {
                 node.deleteData( index, 1 );
@@ -204,7 +219,7 @@
     // --- Path change events ---
 
     var updatePath = function ( range, force ) {
-        if ( placeholderTextNode ) {
+        if ( placeholderTextNode && !force ) {
             removePlaceholderTextNode( range );
         }
         var anchor = range.startContainer,
@@ -575,9 +590,7 @@
         if ( range.collapsed ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( '\u200B' );
-                setTimeout( function () {
-                    setPlaceholderTextNode( fixer );
-                }, 0 );
+                setPlaceholderTextNode( fixer );
             } else {
                 fixer = doc.createTextNode( '' );
             }

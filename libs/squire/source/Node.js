@@ -3,7 +3,7 @@
 ( function () {
 
 /*global Node, Text, Element, HTMLDocument, window, document, navigator,
-    setTimeout, editor */
+    editor */
 
 "use strict";
 
@@ -242,7 +242,7 @@ implement([ Element ], {
                 }
                 child.detach();
                 if ( child.nodeType === TEXT_NODE ) {
-                    prev.appendData( child.data );
+                    prev.appendData( child.data.replace( /\u200B/g, '' ) );
                 }
                 else {
                     frags.push( child.empty() );
@@ -381,9 +381,7 @@ implement([ Element ], {
             if ( !el.firstChild ) {
                 if ( cantFocusEmptyTextNodes ) {
                     fixer = doc.createTextNode( '\u200B' );
-                    setTimeout( function () {
-                        editor._setPlaceholderTextNode( fixer );
-                    }, 0 );
+                    editor._setPlaceholderTextNode( fixer );
                 } else {
                     fixer = doc.createTextNode( '' );
                 }
