@@ -12,7 +12,6 @@
         ELEMENT_NODE = 1,                // Node.ELEMENT_NODE,
         TEXT_NODE = 3,                   // Node.TEXT_NODE,
         SHOW_TEXT = 4,                   // NodeFilter.SHOW_TEXT,
-        SHOW_ELEMENT = 1,                // NodeFilter.SHOW_ELEMENT,
         FILTER_ACCEPT = 1,               // NodeFilter.FILTER_ACCEPT,
         FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
 
@@ -1143,7 +1142,7 @@
     var cleanupBRs = function ( root ) {
         var brs = root.querySelectorAll( 'BR' ),
             l = brs.length,
-            br, block, nodeAfterSplit, div, next;
+            br, block;
 
         while ( l-- ) {
             br = brs[l];
@@ -1538,8 +1537,6 @@
     });
 
     // --- Export ---
-
-    var styleExtractor = /<style[^>]*>([\s\S]*?)<\/style>/gi;
 
     var chain = function ( fn ) {
         return function () {
