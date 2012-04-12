@@ -327,13 +327,13 @@ Extracts a portion of the DOM tree (up to the block boundaries of the current se
 
 Returns self.
 
-### incQuoteLevel ###
+### increaseQuoteLevel ###
 
 Increases by 1 the quote level (number of `<blockquote>` tags wrapping) all blocks at least partially selected.
 
 Returns self.
 
-### decQuoteLevel ###
+### decreaseQuoteLevel ###
 
 Decreases by 1 the quote level (number of `<blockquote>` tags wrapping) all blocks at least partially selected.
 

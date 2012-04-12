@@ -1803,8 +1803,8 @@
         forEachBlock: chain( forEachBlock ),
         modifyBlocks: chain( modifyBlocks ),
 
-        incQuoteLevel: command( modifyBlocks, increaseBlockQuoteLevel ),
-        decQuoteLevel: command( modifyBlocks, decreaseBlockQuoteLevel ),
+        increaseQuoteLevel: command( modifyBlocks, increaseBlockQuoteLevel ),
+        decreaseQuoteLevel: command( modifyBlocks, decreaseBlockQuoteLevel ),
 
         makeUnorderedList: command( modifyBlocks, makeUnorderedList ),
         makeOrderedList: command( modifyBlocks, makeOrderedList ),
