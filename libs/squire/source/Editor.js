@@ -67,10 +67,8 @@
         var handlers = events[ type ],
             i, l, obj;
         if ( handlers ) {
-            if ( typeof event !== 'object' ) {
-                event = {
-                    data: event
-                };
+            if ( !event ) {
+                event = {};
             }
             if ( event.type !== type ) {
                 event.type = type;
@@ -231,7 +229,7 @@
                 focus.getPath() : '(selection)' : '';
             if ( path !== newPath ) {
                 path = newPath;
-                fireEvent( 'pathChange', newPath );
+                fireEvent( 'pathChange', { path: newPath } );
             }
         }
         if ( anchor !== focus ) {
@@ -1219,7 +1217,7 @@
 
             // Was anything actually pasted?
             if ( first ) {
-                // Safari likes putting extra divs around things.
+                // Safari and IE like putting extra divs around things.
                 if ( first === frag.lastChild && first.nodeName === 'DIV' ) {
                     frag.replaceChild( first.empty(), first );
                 }
@@ -1229,16 +1227,26 @@
                 cleanTree( frag, false );
                 cleanupBRs( frag );
 
-                var node = frag;
+                var node = frag,
+                    doPaste = true;
                 while ( node = node.getNextBlock() ) {
                     node.fixCursor();
                 }
+                
+                fireEvent( 'willPaste', {
+                    fragment: frag,
+                    preventDefault: function () {
+                        doPaste = false;
+                    }
+                });
 
                 // Insert pasted data
-                range.insertTreeFragment( frag );
-                docWasChanged();
+                if ( doPaste ) {
+                    range.insertTreeFragment( frag );
+                    docWasChanged();
 
-                range.collapse( false );
+                    range.collapse( false );
+                }
             }
 
             setSelection( range );
