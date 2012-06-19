@@ -325,7 +325,8 @@
 
         if ( start && end ) {
             var startContainer = start.parentNode,
-                endContainer = end.parentNode;
+                endContainer = end.parentNode,
+                collapsed;
 
             var _range = {
                 startContainer: startContainer,
@@ -352,9 +353,11 @@
             }
             range.setStart( _range.startContainer, _range.startOffset );
             range.setEnd( _range.endContainer, _range.endOffset );
-
-            if ( !range.collapsed ) {
-                range.moveBoundariesDownTree();
+            collapsed = range.collapsed;
+            
+            range.moveBoundariesDownTree();
+            if ( collapsed ) {
+                range.collapse( true );
             }
         }
         return range;
