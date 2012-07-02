@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<title>HTML Editor Test</title>
-	<style type="text/css" media="screen">
-	body {
+    <meta charset="UTF-8">
+    <title>HTML Editor Test</title>
+    <style type="text/css" media="screen">
+    body {
     position: relative;
     margin: 0 auto;
     padding: 50px;
@@ -15,33 +15,33 @@
   h1 {
     font-size: 1.95em;
   }
-	iframe {
-	  border: 1px solid #888;
-	}
-	span {
-	  cursor: pointer;
-	  text-decoration: underline;
-	}
-	p {
-	  margin: 5px 0;
-	}
-	</style>
-	<!--[if IE 8]>
+    iframe {
+      border: 1px solid #888;
+    }
+    span {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    p {
+      margin: 5px 0;
+    }
+    </style>
+    <!--[if IE 8]>
     <script type="text/javascript" src="build/ie8.js"></script>
     <![endif]-->
-	<script type="text/javascript" charset="utf-8">
-	var editor;
-	document.addEventListener( 'click', function ( e ) {
-	  var id = e.target.id,
-	      value;
-	  if ( id && editor && editor[ id ] ) {
-	    if ( e.target.className === 'prompt' ) {
-	      value = prompt( 'Value:' );
-	    } 
-	    editor[ id ]( value );
-	  }
-	}, false );
-	</script>
+    <script type="text/javascript" charset="utf-8">
+    var editor;
+    document.addEventListener( 'click', function ( e ) {
+      var id = e.target.id,
+          value;
+      if ( id && editor && editor[ id ] ) {
+        if ( e.target.className === 'prompt' ) {
+          value = prompt( 'Value:' );
+        }
+        editor[ id ]( value );
+      }
+    }, false );
+    </script>
 </head>
 <body>
 <h1>HTML Editor Test</h1>
@@ -65,17 +65,17 @@
   <span id="makeLink" class="prompt">Link</span>
   </p>
   <p>
-	<span id="increaseQuoteLevel">Quote</span>
-	<span id="decreaseQuoteLevel">Dequote</span>
+    <span id="increaseQuoteLevel">Quote</span>
+    <span id="decreaseQuoteLevel">Dequote</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span id="makeUnorderedList">List</span>
-	<span id="removeList">Unlist</span>
+    <span id="makeUnorderedList">List</span>
+    <span id="removeList">Unlist</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <span id="insertImage" class="prompt">Insert image</span>
   <span id="setHTML" class="prompt">Set HTML</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-	<span id="undo">Undo</span>
-	<span id="redo">Redo</span>
+    <span id="undo">Undo</span>
+    <span id="redo">Redo</span>
   </p>
 </header>
 <iframe src="build/document.html" onload="top.editor=this.contentWindow.editor" width="500" height="500"></iframe>

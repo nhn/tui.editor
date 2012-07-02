@@ -19,7 +19,7 @@ Unlike other HTML5 rich text editors, Squire was written as a component for writ
 
 ### Powerful ###
 
-Squire provides an engine that handles the heavy work for you, making it easy to 
+Squire provides an engine that handles the heavy work for you, making it easy to
 add extra features. With the `changeFormat` method you can easily add or remove any inline formatting you wish. And the `modifyBlocks` method can be used to make complicated block-level changes in a relatively easy manner.
 
 If you need more commands than in the simple API, I suggest you check out the source code (it's not very long), and see how a lot of the other API methods are implemented in terms of these two methods.
@@ -37,7 +37,7 @@ Installation and usage
 4. In your JS, attach an event listener to the `load` event of the iframe. When
    this fires you can grab a reference to the editor object through
    `iframe.contentWindow.editor`.
-5. Use the API below with the `editor` object to set and get data and integrate 
+5. Use the API below with the `editor` object to set and get data and integrate
    with your application or framework.
 
 License
@@ -66,7 +66,7 @@ Attach an event listener to the editor. The handler can be either a function or 
 #### Parameters ####
 
 * **type**: The event to listen for. e.g. 'focus'.
-* **handler**: The callback function to invoke 
+* **handler**: The callback function to invoke
 
 #### Returns ####
 

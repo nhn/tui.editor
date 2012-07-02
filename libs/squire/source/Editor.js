@@ -354,7 +354,7 @@
             range.setStart( _range.startContainer, _range.startOffset );
             range.setEnd( _range.endContainer, _range.endOffset );
             collapsed = range.collapsed;
-            
+
             range.moveBoundariesDownTree();
             if ( collapsed ) {
                 range.collapse( true );
@@ -1235,7 +1235,7 @@
                 while ( node = node.getNextBlock() ) {
                     node.fixCursor();
                 }
-                
+
                 fireEvent( 'willPaste', {
                     fragment: frag,
                     preventDefault: function () {
@@ -1286,6 +1286,38 @@
                 changeFormat( { tag: tag }, null, range );
             }
         };
+    };
+
+    // If you delete the content inside a span with a font styling, Webkit will
+    // replace it with a <font> tag (!). If you delete all the text inside a
+    // link in Opera, it won't delete the link. Let's make things consistent. If
+    // you delete all text inside an inline tag, remove the inline tag.
+    var afterDelete = function () {
+        var range = getSelection(),
+            node = range.startContainer,
+            parent;
+        node = node.nodeType === TEXT_NODE ?
+            node.length ? null : node.parentNode :
+            node.isInline() && !node.textContent ? node : null;
+
+        // If focussed in empty inline element
+        if ( node ) {
+            do {
+                parent = node.parentNode;
+            } while ( parent.isInline() &&
+                !parent.textContent && ( node = parent ) );
+            range.setStart( parent,
+                indexOf.call( parent.childNodes, node ) );
+            range.collapse( true );
+            parent.removeChild( node );
+            if ( !parent.isBlock() ) {
+                parent = parent.getPreviousBlock();
+            }
+            parent.fixCursor();
+            range.moveBoundariesDownTree();
+            setSelection( range );
+            updatePath( range );
+        }
     };
 
     var keyHandlers = {
@@ -1469,7 +1501,11 @@
                     updatePath( range, true );
                 }
             }
-            // All other cases can be safely left to the browser (I hope!).
+            // Otherwise, leave to browser but check afterwards whether it has
+            // left behind an empty inline tag.
+            else {
+                setTimeout( afterDelete, 0 );
+            }
         },
         'delete': function ( event ) {
             var range = getSelection();
@@ -1501,7 +1537,11 @@
                     updatePath( range, true );
                 }
             }
-            // All other cases can be safely left to the browser (I hope!).
+            // Otherwise, leave to browser but check afterwards whether it has
+            // left behind an empty inline tag.
+            else {
+                setTimeout( afterDelete, 0 );
+            }
         },
         space: function () {
             var range = getSelection();
