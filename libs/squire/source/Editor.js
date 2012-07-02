@@ -1296,12 +1296,11 @@
         var range = getSelection(),
             node = range.startContainer,
             parent;
-        node = node.nodeType === TEXT_NODE ?
-            node.length ? null : node.parentNode :
-            node.isInline() && !node.textContent ? node : null;
-
+        if ( node.nodeType === TEXT_NODE ) {
+            node = node.parentNode;
+        }
         // If focussed in empty inline element
-        if ( node ) {
+        if ( node.isInline() && !node.textContent ) {
             do {
                 parent = node.parentNode;
             } while ( parent.isInline() &&
