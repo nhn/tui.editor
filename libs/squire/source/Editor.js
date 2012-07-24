@@ -833,7 +833,10 @@
             tag = node.nodeName;
             if ( node.isBlock() ) {
                 if ( tag !== 'LI' ) {
-                    replacement = createElement( 'LI', [
+                    replacement = createElement( 'LI', {
+                        'class': node.dir === 'rtl' ? 'dir-rtl' : '',
+                        dir: node.dir
+                    }, [
                         node.empty()
                     ]);
                     if ( node.parentNode.nodeName === type ) {
@@ -889,7 +892,10 @@
             while ( l-- ) {
                 child = children[l];
                 if ( child.nodeName === 'LI' ) {
-                    frag.replaceChild( createElement( 'DIV', [
+                    frag.replaceChild( createElement( 'DIV', {
+                        'class': child.dir === 'rtl' ? 'dir-rtl' : '',
+                        dir: child.dir
+                    }, [
                         child.empty()
                     ]), child );
                 }
@@ -921,6 +927,8 @@
         // Make sure the new node is the correct type.
         if ( nodeAfterSplit.nodeName !== splitTag ) {
             block = createElement( splitTag );
+            block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
+            block.dir = nodeAfterSplit.dir;
             block.replaces( nodeAfterSplit )
                  .appendChild( nodeAfterSplit.empty() );
             nodeAfterSplit = block;
@@ -1833,10 +1841,31 @@
             return this;
         },
 
-        setTextAlignment: function ( dir ) {
+        setTextAlignment: function ( alignment ) {
             forEachBlock( function ( block ) {
-                block.className = 'align-' + dir;
-                block.style.textAlign = dir;
+                block.className = ( block.className
+                    .split( /\s+/ )
+                    .filter( function ( klass ) {
+                        return !( /align/.test( klass ) );
+                    })
+                    .join( ' ' ) +
+                    ' align-' + alignment ).trim();
+                block.style.textAlign = alignment;
+            }, true );
+            focus();
+            return this;
+        },
+
+        setTextDirection: function ( direction ) {
+            forEachBlock( function ( block ) {
+                block.className = ( block.className
+                    .split( /\s+/ )
+                    .filter( function ( klass ) {
+                        return !( /dir/.test( klass ) );
+                    })
+                    .join( ' ' ) +
+                    ' dir-' + direction ).trim();
+                block.dir = direction;
             }, true );
             focus();
             return this;

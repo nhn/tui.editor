@@ -302,6 +302,18 @@ Sets the text alignment in all blocks at least partially contained by the select
 
 Returns self.
 
+### setTextDirection ###
+
+Sets the text direction in all blocks at least partially contained by the selection.
+
+#### Parameters ####
+
+* **direction**: The text direction. Can be 'ltr' or 'rtl'.
+
+#### Returns ####
+
+Returns self.
+
 ### forEachBlock ###
 
 Executes a function on each block in the current selection, or until the function returns a truthy value.
