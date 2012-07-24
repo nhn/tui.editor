@@ -16,7 +16,6 @@ var indexOf = Array.prototype.indexOf;
 
 var START_TO_START = 0;
 var START_TO_END   = 1;
-var END_TO_END     = 2;
 var END_TO_START   = 3;
 
 var contains = function ( a, b ) {
@@ -342,13 +341,12 @@ var getTextRangeBoundaryPosition = function (
         if ( nextNode && isCharacterDataNode( nextNode ) ) {
             boundaryPosition = new DomPosition( nextNode, 0 );
         } else if ( previousNode && isCharacterDataNode( previousNode ) ) {
-            // Strange bug; if we don't read the data property, the length
+            // Strange bug: if we don't read the data property, the length
             // property is often returned incorrectly as 0. Don't ask me why.
-            /*jshint expr: true */
-            previousNode.data;
-            /*jshint expr: false */
+            // Therefore get the length from the data property rather than
+            // reading it directly from the node.
             boundaryPosition = new DomPosition(
-                previousNode, previousNode.length );
+                previousNode, previousNode.data.length );
         } else {
             boundaryPosition = new DomPosition(
                 containerElement,
