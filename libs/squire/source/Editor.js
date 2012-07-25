@@ -254,7 +254,7 @@
     };
 
     var blur = function () {
-        win.blur();
+        body.blur();
     };
 
     win.addEventListener( 'focus', propagateEvent, false );
