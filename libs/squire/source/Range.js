@@ -344,7 +344,7 @@ implement( Range.prototype, {
 
         while ( startContainer.nodeType !== TEXT_NODE ) {
             child = startContainer.childNodes[ startOffset ];
-            if ( !child || child.nodeName === 'BR' ) {
+            if ( !child || child.isLeaf() ) {
                 break;
             }
             startContainer = child;
@@ -353,7 +353,7 @@ implement( Range.prototype, {
         if ( endOffset ) {
             while ( endContainer.nodeType !== TEXT_NODE ) {
                 child = endContainer.childNodes[ endOffset - 1 ];
-                if ( !child || child.nodeName === 'BR' ) {
+                if ( !child || child.isLeaf() ) {
                     break;
                 }
                 endContainer = child;
@@ -362,7 +362,7 @@ implement( Range.prototype, {
         } else {
             while ( endContainer.nodeType !== TEXT_NODE ) {
                 child = endContainer.firstChild;
-                if ( !child || child.nodeName === 'BR' ) {
+                if ( !child || child.isLeaf() ) {
                     break;
                 }
                 endContainer = child;

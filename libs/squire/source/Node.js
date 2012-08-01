@@ -108,7 +108,7 @@ implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
 });
 
 implement([ Text ], {
-    isLeaf: $True,
+    isLeaf: $False,
     isInline: $True,
     getLength: function () {
         return this.length;
@@ -388,7 +388,7 @@ implement([ Element ], {
             }
         } else {
             if ( useTextFixer ) {
-                while ( !el.isLeaf() ) {
+                while ( el.nodeType !== TEXT_NODE && !el.isLeaf() ) {
                     child = el.firstChild;
                     if ( !child ) {
                         fixer = doc.createTextNode( '' );
@@ -396,16 +396,14 @@ implement([ Element ], {
                     }
                     el = child;
                 }
-                if ( el.isLeaf() ) {
-                    if ( el.nodeType !== TEXT_NODE ) {
-                        el.parentNode.insertBefore(
-                            doc.createTextNode( '' ), el );
-                    }
+                if ( el.nodeType === TEXT_NODE ) {
                     // Opera will collapse the block element if it contains
                     // just spaces (but not if it contains no data at all).
-                    else if ( /^ +$/.test( el.data ) ) {
+                    if ( /^ +$/.test( el.data ) ) {
                         el.data = '';
                     }
+                } else if ( el.isLeaf() ) {
+                    el.parentNode.insertBefore( doc.createTextNode( '' ), el );
                 }
             }
             else if ( !el.querySelector( 'BR' ) ) {
