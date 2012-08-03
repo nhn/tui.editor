@@ -1205,8 +1205,39 @@
     // again before our after paste function is called.
     var awaitingPaste = false;
 
-    doc.addEventListener( isIE ?  'beforepaste' : 'paste', function () {
+    doc.addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
         if ( awaitingPaste ) { return; }
+
+        // Treat image paste as a drop of an image file.
+        var clipboardData = event.clipboardData,
+            items = clipboardData && clipboardData.items,
+            fireDrop = false,
+            l;
+        if ( items ) {
+            l = items.length;
+            while ( l-- ) {
+                if ( /^image\/.*/.test( items[l].type ) ) {
+                    event.preventDefault();
+                    fireEvent( 'dragover', {
+                        type: 'dragover',
+                        dataTransfer: clipboardData,
+                        /*jshint loopfunc: true */
+                        preventDefault: function () {
+                            fireDrop = true;
+                        }
+                        /*jshint loopfunc: false */
+                    });
+                    if ( fireDrop ) {
+                        fireEvent( 'drop', {
+                            type: 'drop',
+                            dataTransfer: clipboardData
+                        });
+                    }
+                    return;
+                }
+            }
+        }
+
         awaitingPaste = true;
 
         var range = getSelection(),
@@ -1728,6 +1759,7 @@
             return getSelection().getTextContent();
         },
 
+        insertElement: chain( insertElement ),
         insertImage: function ( src ) {
             var img = createElement( 'IMG', {
                 src: src
