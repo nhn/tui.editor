@@ -1219,7 +1219,6 @@
                 if ( /^image\/.*/.test( items[l].type ) ) {
                     event.preventDefault();
                     fireEvent( 'dragover', {
-                        type: 'dragover',
                         dataTransfer: clipboardData,
                         /*jshint loopfunc: true */
                         preventDefault: function () {
@@ -1229,7 +1228,6 @@
                     });
                     if ( fireDrop ) {
                         fireEvent( 'drop', {
-                            type: 'drop',
                             dataTransfer: clipboardData
                         });
                     }
