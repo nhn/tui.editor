@@ -15,19 +15,21 @@
         FILTER_ACCEPT = 1,               // NodeFilter.FILTER_ACCEPT,
         FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
 
-    var win = doc.defaultView,
-        body = doc.body;
+    var win = doc.defaultView;
+    var body = doc.body;
 
     // Browser sniffing. Unfortunately necessary.
+    var ua = navigator.userAgent;
     var isOpera = !!win.opera;
     var isIE = !!win.ie;
-    var isIE8 = win.ie === 8;
-    var isGecko = /Gecko\//.test( navigator.userAgent );
-    var isWebKit = /WebKit/.test( navigator.userAgent );
-    var isIOS = /iP(?:ad|hone|od)/.test( navigator.userAgent );
+    var isIE8 = ( win.ie === 8 );
+    var isGecko = /Gecko\//.test( ua );
+    var isWebKit = /WebKit/.test( ua );
+    var isIOS = /iP(?:ad|hone|od)/.test( ua );
 
     var useTextFixer = isIE || isOpera;
     var cantFocusEmptyTextNodes = isIE || isWebKit;
+    var losesSelectionOnBlur = isIE;
 
     // --- DOM Sugar ---
 
@@ -135,6 +137,7 @@
     };
 
     var sel = win.getSelection();
+    var lastSelection = null;
 
     var setSelection = function ( range ) {
         if ( range ) {
@@ -150,7 +153,6 @@
         }
     };
 
-    var lastSelection = null;
     var getSelection = function () {
         if ( sel.rangeCount ) {
             lastSelection = sel.getRangeAt( 0 ).cloneRange();
@@ -167,13 +169,9 @@
 
     // IE9 loses selection state of iframe on blur, so make sure we
     // cache it just before it loses focus.
-    if ( win.ie ) {
+    if ( losesSelectionOnBlur ) {
         win.addEventListener( 'beforedeactivate', getSelection, true );
     }
-
-    var lastAnchorNode;
-    var lastFocusNode;
-    var path = '';
 
     // --- Workaround for browsers that can't focus empty text nodes ---
 
@@ -221,6 +219,10 @@
     };
 
     // --- Path change events ---
+
+    var lastAnchorNode;
+    var lastFocusNode;
+    var path = '';
 
     var updatePath = function ( range, force ) {
         if ( placeholderTextNode && !force ) {
@@ -292,6 +294,8 @@
 
     // --- Bookmarking ---
 
+    var indexOf = Array.prototype.indexOf;
+
     var startSelectionId = 'ss-' + Date.now() + '-' + Math.random();
     var endSelectionId = 'es-' + Date.now() + '-' + Math.random();
 
@@ -323,8 +327,6 @@
         range.setStartAfter( startNode );
         range.setEndBefore( endNode );
     };
-
-    var indexOf = Array.prototype.indexOf;
 
     var getRangeAndRemoveBookmark = function ( range ) {
         var start = doc.getElementById( startSelectionId ),
@@ -374,20 +376,20 @@
 
     // These values are initialised in the editor.setHTML method,
     // which is always called on initialisation.
-    var undoIndex, // = -1,
-        undoStack, // = [],
-        undoStackLength, // = 0,
-        isInUndoState, // = false,
-        docWasChanged = function () {
-            if ( isInUndoState ) {
-                isInUndoState = false;
-                fireEvent( 'undoStateChange', {
-                    canUndo: true,
-                    canRedo: false
-                });
-            }
-            fireEvent( 'input' );
-        };
+    var undoIndex; // = -1,
+    var undoStack; // = [],
+    var undoStackLength; // = 0,
+    var isInUndoState; // = false,
+    var docWasChanged = function () {
+        if ( isInUndoState ) {
+            isInUndoState = false;
+            fireEvent( 'undoStateChange', {
+                canUndo: true,
+                canRedo: false
+            });
+        }
+        fireEvent( 'input' );
+    };
 
     addEventListener( 'keyup', function ( event ) {
         var code = event.keyCode;
@@ -398,16 +400,6 @@
         if ( !event.ctrlKey && !event.metaKey && !event.altKey &&
                 ( code < 16 || code > 20 ) &&
                 ( code < 33 || code > 45 ) )  {
-            // If you select all in IE8 then type, it makes a P; replace it with
-            // a DIV.
-            var firstChild = body.firstChild;
-            if ( win.ie === 8 && firstChild.nodeName === 'P' ) {
-                saveRangeToBookmark( getSelection() );
-                firstChild.replaceWith( createElement( 'DIV', [
-                    firstChild.empty()
-                ]) );
-                setSelection( getRangeAndRemoveBookmark() );
-            }
             docWasChanged();
         }
     });
@@ -727,6 +719,37 @@
 
     // --- Block formatting ---
 
+    var tagAfterSplit = {
+        DIV: 'DIV',
+        PRE: 'DIV',
+        H1:  'DIV',
+        H2:  'DIV',
+        H3:  'DIV',
+        H4:  'DIV',
+        H5:  'DIV',
+        H6:  'DIV',
+        P:   'DIV',
+        DT:  'DD',
+        DD:  'DT',
+        LI:  'LI'
+    };
+
+    var splitBlock = function ( block, node, offset ) {
+        var splitTag = tagAfterSplit[ block.nodeName ],
+            nodeAfterSplit = node.split( offset, block.parentNode );
+
+        // Make sure the new node is the correct type.
+        if ( nodeAfterSplit.nodeName !== splitTag ) {
+            block = createElement( splitTag );
+            block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
+            block.dir = nodeAfterSplit.dir;
+            block.replaces( nodeAfterSplit )
+                 .appendChild( nodeAfterSplit.empty() );
+            nodeAfterSplit = block;
+        }
+        return nodeAfterSplit;
+    };
+
     var forEachBlock = function ( fn, mutates, range ) {
         if ( !range && !( range = getSelection() ) ) {
             return;
@@ -910,37 +933,6 @@
             el.replaceWith( frag );
         });
         return frag;
-    };
-
-    var tagAfterSplit = {
-        DIV: 'DIV',
-        PRE: 'DIV',
-        H1:  'DIV',
-        H2:  'DIV',
-        H3:  'DIV',
-        H4:  'DIV',
-        H5:  'DIV',
-        H6:  'DIV',
-        P:   'DIV',
-        DT:  'DD',
-        DD:  'DT',
-        LI:  'LI'
-    };
-
-    var splitBlock = function ( block, node, offset ) {
-        var splitTag = tagAfterSplit[ block.nodeName ],
-            nodeAfterSplit = node.split( offset, block.parentNode );
-
-        // Make sure the new node is the correct type.
-        if ( nodeAfterSplit.nodeName !== splitTag ) {
-            block = createElement( splitTag );
-            block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
-            block.dir = nodeAfterSplit.dir;
-            block.replaces( nodeAfterSplit )
-                 .appendChild( nodeAfterSplit.empty() );
-            nodeAfterSplit = block;
-        }
-        return nodeAfterSplit;
     };
 
     // --- Clean ---
@@ -1363,6 +1355,21 @@
         }
     };
 
+    // If you select all in IE8 then type, it makes a P; replace it with
+    // a DIV.
+    if ( isIE8 ) {
+        addEventListener( 'keyup', function ( event ) {
+            var firstChild = body.firstChild;
+            if ( firstChild.nodeName === 'P' ) {
+                saveRangeToBookmark( getSelection() );
+                firstChild.replaceWith( createElement( 'DIV', [
+                    firstChild.empty()
+                ]) );
+                setSelection( getRangeAndRemoveBookmark() );
+            }
+        });
+    }
+
     var keyHandlers = {
         enter: function ( event ) {
             // We handle this ourselves
@@ -1454,7 +1461,7 @@
             // Focus cursor
             // If there's a <b>/<i> etc. at the beginning of the split
             // make sure we focus inside it.
-            while ( nodeAfterSplit.nodeType === ELEMENT_NODE) {
+            while ( nodeAfterSplit.nodeType === ELEMENT_NODE ) {
                 var child = nodeAfterSplit.firstChild,
                     next;
 
@@ -1517,6 +1524,12 @@
                     previous = current.getPreviousBlock();
                 // Must not be at the very beginning of the text area.
                 if ( previous ) {
+                    // If not editable, just delete whole block.
+                    if ( !previous.isContentEditable ) {
+                        previous.detach();
+                        return;
+                    }
+                    // Otherwise merge.
                     previous.mergeWithBlock( current, range );
                     // If deleted line between containers, merge newly adjacent
                     // containers.
@@ -1566,6 +1579,12 @@
                     next = current.getNextBlock();
                 // Must not be at the very end of the text area.
                 if ( next ) {
+                    // If not editable, just delete whole block.
+                    if ( !next.isContentEditable ) {
+                        next.detach();
+                        return;
+                    }
+                    // Otherwise merge.
                     current.mergeWithBlock( next, range );
                     // If deleted line between containers, merge newly adjacent
                     // containers.
