@@ -1,6 +1,6 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global Range, navigator, window, document, setTimeout */
+/*global Range, navigator, top, window, document, setTimeout */
 
 ( function ( doc ) {
 
@@ -263,7 +263,14 @@
     };
 
     var blur = function () {
-        body.blur();
+        // IE will remove the whole browser window from focus if you call
+        // win.blur() or body.blur(), so instead we call top.focus() to focus
+        // the top frame, thus blurring this frame. This works in everything
+        // except FF, so we need to call body.blur() in that as well.
+        if ( isGecko ) {
+            body.blur();
+        }
+        top.focus();
     };
 
     win.addEventListener( 'focus', propagateEvent, false );
