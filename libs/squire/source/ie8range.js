@@ -452,7 +452,7 @@ var toTextRange = function ( range ) {
 };
 
 var selection = {
-    rangeCount: 1,
+    rangeCount: 0,
     getRangeAt: function ( index ) {
         if ( index !== 0 ) { return undefined; }
         var sel = document.selection.createRange();

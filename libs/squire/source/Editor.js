@@ -167,7 +167,7 @@
         return lastSelection;
     };
 
-    // IE9 loses selection state of iframe on blur, so make sure we
+    // IE loses selection state of iframe on blur, so make sure we
     // cache it just before it loses focus.
     if ( losesSelectionOnBlur ) {
         win.addEventListener( 'beforedeactivate', getSelection, true );
@@ -1761,10 +1761,13 @@
             var range = createRange( body.firstChild, 0 );
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
-            // IE8 will also set focus when selecting text.
-            // It doesn't make any difference since it doesn't
-            // maintain selection when not focussed anyway.
-            if ( !isIE8 ) {
+            // IE will also set focus when selecting text so don't use
+            // setSelection. Instead, just store it in lastSelection, so if
+            // anything calls getSelection before first focus, we have a range
+            // to return.
+            if ( losesSelectionOnBlur ) {
+                lastSelection = range;
+            } else {
                 setSelection( range );
             }
             updatePath( range, true );
