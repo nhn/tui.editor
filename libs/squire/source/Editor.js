@@ -771,10 +771,9 @@
         var start = range.getStartBlock(),
             end = range.getEndBlock();
         if ( start && end ) {
-            while ( true ) {
+            do {
                 if ( fn( start ) || start === end ) { break; }
-                start = start.getNextBlock();
-            }
+            } while ( start = start.getNextBlock() );
         }
 
         if ( mutates ) {
