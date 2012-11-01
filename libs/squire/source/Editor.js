@@ -1196,6 +1196,7 @@
         var range = getSelection();
         recordUndoState( range );
         getRangeAndRemoveBookmark( range );
+        setSelection( range );
         setTimeout( afterCut, 0 );
     }, false );
 
