@@ -9,7 +9,7 @@ build/ie8.js: source/ie8types.js source/ie8dom.js source/ie8range.js
 	mkdir -p $(@D)
 	cat $^ | uglifyjs > $@
 
-build/squire.js: source/TreeWalker.js source/Node.js source/Range.js source/Editor.js
+build/squire.js: source/UA.js source/TreeWalker.js source/Node.js source/Range.js source/Editor.js
 	mkdir -p $(@D)
 	cat $^ | uglifyjs > $@
 

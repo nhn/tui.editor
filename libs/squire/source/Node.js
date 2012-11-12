@@ -1,9 +1,9 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-( function () {
+/*global Node, Text, Element, HTMLDocument, window, document,
+    editor, UA, DOMTreeWalker */
 
-/*global Node, Text, Element, HTMLDocument, window, document, navigator,
-    editor */
+( function ( UA, TreeWalker ) {
 
 "use strict";
 
@@ -56,9 +56,6 @@ var ELEMENT_NODE = 1,  // Node.ELEMENT_NODE,
 var isBlock = function ( el ) {
     return el.isBlock() ? FILTER_ACCEPT : FILTER_SKIP;
 };
-var useTextFixer = !!( window.opera || window.ie );
-var cantFocusEmptyTextNodes =
-        /WebKit/.test( navigator.userAgent ) || !!window.ie;
 
 implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
     isInline: $False,
@@ -89,14 +86,14 @@ implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
     },
     getPreviousBlock: function () {
         var doc = this.ownerDocument,
-            walker = doc.createTreeWalker(
+            walker = new TreeWalker(
                 doc.body, SHOW_ELEMENT, isBlock, false );
         walker.currentNode = this;
         return walker.previousNode();
     },
     getNextBlock: function () {
         var doc = this.ownerDocument,
-            walker = doc.createTreeWalker(
+            walker = new TreeWalker(
                 doc.body, SHOW_ELEMENT, isBlock, false );
         walker.currentNode = this;
         return walker.nextNode();
@@ -379,7 +376,7 @@ implement([ Element ], {
 
         if ( el.isInline() ) {
             if ( !el.firstChild ) {
-                if ( cantFocusEmptyTextNodes ) {
+                if ( UA.cantFocusEmptyTextNodes ) {
                     fixer = doc.createTextNode( '\u200B' );
                     editor._setPlaceholderTextNode( fixer );
                 } else {
@@ -387,7 +384,7 @@ implement([ Element ], {
                 }
             }
         } else {
-            if ( useTextFixer ) {
+            if ( UA.useTextFixer ) {
                 while ( el.nodeType !== TEXT_NODE && !el.isLeaf() ) {
                     child = el.firstChild;
                     if ( !child ) {
@@ -452,4 +449,4 @@ if ( function () {
     };
 }
 
-}() );
+}( UA, DOMTreeWalker ) );

@@ -1,17 +1,10 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-( function () {
+/*global Range, Node, DOMTreeWalker */
 
-/*global Range, Node */
+( function ( TreeWalker ) {
 
 "use strict";
-
-var implement = function ( proto, props ) {
-    var prop;
-    for ( prop in props ) {
-        proto[ prop ] = props[ prop ];
-    }
-};
 
 var indexOf = Array.prototype.indexOf;
 
@@ -49,7 +42,7 @@ var getNodeAfter = function ( node, offset ) {
     return node;
 };
 
-implement( Range.prototype, {
+var RangePrototypeExtensions = {
 
     forEachTextNode: function ( fn ) {
         var range = this.cloneRange();
@@ -58,7 +51,7 @@ implement( Range.prototype, {
         var startContainer = range.startContainer,
             endContainer = range.endContainer,
             root = range.commonAncestorContainer,
-            walker = root.ownerDocument.createTreeWalker(
+            walker = new TreeWalker(
                 root, SHOW_TEXT, function ( node ) {
                     return FILTER_ACCEPT;
             }, false ),
@@ -518,6 +511,11 @@ implement( Range.prototype, {
 
         return this;
     }
-});
+};
 
-}() );
+var prop;
+for ( prop in RangePrototypeExtensions ) {
+    Range.prototype[ prop ] = RangePrototypeExtensions[ prop ];
+}
+
+}( DOMTreeWalker ) );

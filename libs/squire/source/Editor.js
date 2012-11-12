@@ -1,8 +1,9 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global Range, navigator, top, window, document, setTimeout */
+/*global UA, DOMTreeWalker, Range, navigator,
+    top, window, document, setTimeout */
 
-( function ( doc ) {
+( function ( doc, UA, TreeWalker ) {
 
     "use strict";
 
@@ -18,18 +19,15 @@
     var win = doc.defaultView;
     var body = doc.body;
 
-    // Browser sniffing. Unfortunately necessary.
-    var ua = navigator.userAgent;
-    var isOpera = !!win.opera;
-    var isIE = !!win.ie;
-    var isIE8 = ( win.ie === 8 );
-    var isGecko = /Gecko\//.test( ua );
-    var isWebKit = /WebKit/.test( ua );
-    var isIOS = /iP(?:ad|hone|od)/.test( ua );
+    var isOpera = UA.isOpera;
+    var isGecko = UA.isGecko;
+    var isIOS = UA.isIOS;
+    var isIE = UA.isIE;
+    var isIE8 = UA.isIE8;
 
-    var useTextFixer = isIE || isOpera;
-    var cantFocusEmptyTextNodes = isIE || isWebKit;
-    var losesSelectionOnBlur = isIE;
+    var cantFocusEmptyTextNodes = UA.cantFocusEmptyTextNodes;
+    var losesSelectionOnBlur = UA.losesSelectionOnBlur;
+    var useTextFixer = UA.useTextFixer;
 
     // --- DOM Sugar ---
 
@@ -500,7 +498,7 @@
 
         // Otherwise, check each text node at least partially contained within
         // the selection and make sure all of them have the format we want.
-        walker = doc.createTreeWalker( root, SHOW_TEXT, function ( node ) {
+        walker = new TreeWalker( root, SHOW_TEXT, function ( node ) {
             return range.containsNode( node, true ) ?
                 FILTER_ACCEPT : FILTER_SKIP;
         }, false );
@@ -534,7 +532,7 @@
             // Create an iterator to walk over all the text nodes under this
             // ancestor which are in the range and not already formatted
             // correctly.
-            var walker = doc.createTreeWalker(
+            var walker = new TreeWalker(
                 range.commonAncestorContainer,
                 SHOW_TEXT,
                 function ( node ) {
@@ -947,7 +945,7 @@
 
     var addLinks = function ( frag ) {
         var doc = frag.ownerDocument,
-            walker = doc.createTreeWalker( frag, SHOW_TEXT,
+            walker = new TreeWalker( frag, SHOW_TEXT,
                     function ( node ) {
                 return node.nearest( 'A' ) ? FILTER_SKIP : FILTER_ACCEPT;
             }, false ),
@@ -1958,4 +1956,4 @@
         win.onEditorLoad = null;
     }
 
-}( document ) );
+}( document, UA, DOMTreeWalker ) );
