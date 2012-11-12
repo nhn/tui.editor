@@ -1244,8 +1244,8 @@
             endOffset = range.endOffset;
 
         var pasteArea = createElement( 'DIV', {
-            style: 'position: absolute; overflow: hidden;' +
-                'top: -100px; left: -100px; width: 1px; height: 1px;'
+            style: 'position: absolute; overflow: hidden; top:' +
+                (body.scrollTop + 30) + 'px; left: 0; width: 1px; height: 1px;'
         });
         body.appendChild( pasteArea );
         range.selectNodeContents( pasteArea );
