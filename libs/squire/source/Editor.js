@@ -301,8 +301,8 @@
 
     var indexOf = Array.prototype.indexOf;
 
-    var startSelectionId = 'ss-' + Date.now() + '-' + Math.random();
-    var endSelectionId = 'es-' + Date.now() + '-' + Math.random();
+    var startSelectionId = 'squire-selection-start';
+    var endSelectionId = 'squire-selection-end';
 
     var saveRangeToBookmark = function ( range ) {
         var startNode = createElement( 'INPUT', {
@@ -374,7 +374,7 @@
                 range.collapse( true );
             }
         }
-        return range;
+        return range || null;
     };
 
     // --- Undo ---
@@ -1705,9 +1705,12 @@
             return this;
         },
 
-        getHTML: function () {
+        getHTML: function ( withBookMark ) {
             var brs = [],
-                node, fixer, html, l;
+                node, fixer, html, l, range;
+            if ( withBookMark && ( range = getSelection() ) ) {
+                saveRangeToBookmark( range );
+            }
             if ( useTextFixer ) {
                 node = body;
                 while ( node = node.getNextBlock() ) {
@@ -1724,6 +1727,9 @@
                 while ( l-- ) {
                     brs[l].detach();
                 }
+            }
+            if ( range ) {
+                getRangeAndRemoveBookmark( range );
             }
             return html;
         },
@@ -1763,7 +1769,8 @@
             isInUndoState = false;
 
             // Record undo state
-            var range = createRange( body.firstChild, 0 );
+            var range = getRangeAndRemoveBookmark() ||
+                createRange( body.firstChild, 0 );
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
             // IE will also set focus when selecting text so don't use
