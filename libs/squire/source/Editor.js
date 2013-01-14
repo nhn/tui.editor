@@ -1,7 +1,6 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global UA, DOMTreeWalker, Range, navigator,
-    top, window, document, setTimeout */
+/*global UA, DOMTreeWalker, Range, top, document, setTimeout */
 
 ( function ( doc, UA, TreeWalker ) {
 
@@ -1363,7 +1362,7 @@
     // If you select all in IE8 then type, it makes a P; replace it with
     // a DIV.
     if ( isIE8 ) {
-        addEventListener( 'keyup', function ( event ) {
+        addEventListener( 'keyup', function () {
             var firstChild = body.firstChild;
             if ( firstChild.nodeName === 'P' ) {
                 saveRangeToBookmark( getSelection() );
