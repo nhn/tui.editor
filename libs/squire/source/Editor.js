@@ -1612,6 +1612,7 @@
         space: function () {
             var range = getSelection();
             recordUndoState( range );
+            addLinks( range.startContainer );
             getRangeAndRemoveBookmark( range );
             setSelection( range );
         },
