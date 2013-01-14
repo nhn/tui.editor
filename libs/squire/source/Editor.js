@@ -940,7 +940,7 @@
 
     // --- Clean ---
 
-    var linkRegExp = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,4}))/i;
+    var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,4}))/i;
 
     var addLinks = function ( frag ) {
         var doc = frag.ownerDocument,
@@ -962,7 +962,7 @@
                             node = doc.createElement( 'A' );
                             node.textContent = text;
                             node.href = /@/.test( text ) ? 'mailto:' + text :
-                                /^https?:/.test( text ) ?
+                                /^(?:ht|f)tps?:/.test( text ) ?
                                 text : 'http://' + text;
                         } else {
                             node = doc.createTextNode( text );
