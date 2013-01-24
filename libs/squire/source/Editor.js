@@ -1,6 +1,6 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global UA, DOMTreeWalker, Range, top, document, setTimeout */
+/*global UA, DOMTreeWalker, Range, top, document, setTimeout, console */
 
 ( function ( doc, UA, TreeWalker ) {
 
@@ -17,6 +17,7 @@
 
     var win = doc.defaultView;
     var body = doc.body;
+    var editor;
 
     var isOpera = UA.isOpera;
     var isGecko = UA.isGecko;
@@ -56,7 +57,7 @@
     // document node, since these events are fired in a custom manner by the
     // editor code.
     var customEvents = {
-        cut: 1, paste: 1, focus: 1, blur: 1,
+        focus: 1, blur: 1,
         pathChange: 1, select: 1, input: 1, undoStateChange: 1
     };
 
@@ -74,10 +75,14 @@
             }
             for ( i = 0, l = handlers.length; i < l; i += 1 ) {
                 obj = handlers[i];
-                if ( obj.handleEvent ) {
-                    obj.handleEvent( event );
-                } else {
-                    obj( event );
+                try {
+                    if ( obj.handleEvent ) {
+                        obj.handleEvent( event );
+                    } else {
+                        obj( event );
+                    }
+                } catch ( error ) {
+                    editor.didError( error );
                 }
             }
         }
@@ -1184,24 +1189,28 @@
     // --- Cut and Paste ---
 
     var afterCut = function () {
-        // If all content removed, ensure div at start of body.
-        body.fixCursor();
+        try {
+            // If all content removed, ensure div at start of body.
+            body.fixCursor();
+        } catch ( error ) {
+            editor.didError( error );
+        }
     };
 
-    doc.addEventListener( isIE ? 'beforecut' : 'cut', function () {
+    addEventListener( isIE ? 'beforecut' : 'cut', function () {
         // Save undo checkpoint
         var range = getSelection();
         recordUndoState( range );
         getRangeAndRemoveBookmark( range );
         setSelection( range );
         setTimeout( afterCut, 0 );
-    }, false );
+    });
 
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
     var awaitingPaste = false;
 
-    doc.addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
+    addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
         if ( awaitingPaste ) { return; }
 
         // Treat image paste as a drop of an image file.
@@ -1252,52 +1261,57 @@
         // single javascript thread, so it will be executed after the
         // paste event.
         setTimeout( function () {
-            // Get the pasted content and clean
-            var frag = pasteArea.detach().empty(),
-                first = frag.firstChild,
-                range = createRange(
-                    startContainer, startOffset, endContainer, endOffset );
+            try {
+                // Get the pasted content and clean
+                var frag = pasteArea.detach().empty(),
+                    first = frag.firstChild,
+                    range = createRange(
+                        startContainer, startOffset, endContainer, endOffset );
 
-            // Was anything actually pasted?
-            if ( first ) {
-                // Safari and IE like putting extra divs around things.
-                if ( first === frag.lastChild && first.nodeName === 'DIV' ) {
-                    frag.replaceChild( first.empty(), first );
-                }
-
-                frag.normalize();
-                addLinks( frag );
-                cleanTree( frag, false );
-                cleanupBRs( frag );
-
-                var node = frag,
-                    doPaste = true;
-                while ( node = node.getNextBlock() ) {
-                    node.fixCursor();
-                }
-
-                fireEvent( 'willPaste', {
-                    fragment: frag,
-                    preventDefault: function () {
-                        doPaste = false;
+                // Was anything actually pasted?
+                if ( first ) {
+                    // Safari and IE like putting extra divs around things.
+                    if ( first === frag.lastChild &&
+                            first.nodeName === 'DIV' ) {
+                        frag.replaceChild( first.empty(), first );
                     }
-                });
 
-                // Insert pasted data
-                if ( doPaste ) {
-                    range.insertTreeFragment( frag );
-                    docWasChanged();
+                    frag.normalize();
+                    addLinks( frag );
+                    cleanTree( frag, false );
+                    cleanupBRs( frag );
 
-                    range.collapse( false );
+                    var node = frag,
+                        doPaste = true;
+                    while ( node = node.getNextBlock() ) {
+                        node.fixCursor();
+                    }
+
+                    fireEvent( 'willPaste', {
+                        fragment: frag,
+                        preventDefault: function () {
+                            doPaste = false;
+                        }
+                    });
+
+                    // Insert pasted data
+                    if ( doPaste ) {
+                        range.insertTreeFragment( frag );
+                        docWasChanged();
+
+                        range.collapse( false );
+                    }
                 }
+
+                setSelection( range );
+                updatePath( range, true );
+
+                awaitingPaste = false;
+            } catch ( error ) {
+                editor.didError( error );
             }
-
-            setSelection( range );
-            updatePath( range, true );
-
-            awaitingPaste = false;
         }, 0 );
-    }, false );
+    });
 
     // --- Keyboard interaction ---
 
@@ -1333,29 +1347,33 @@
     // link in Opera, it won't delete the link. Let's make things consistent. If
     // you delete all text inside an inline tag, remove the inline tag.
     var afterDelete = function () {
-        var range = getSelection(),
-            node = range.startContainer,
-            parent;
-        if ( node.nodeType === TEXT_NODE ) {
-            node = node.parentNode;
-        }
-        // If focussed in empty inline element
-        if ( node.isInline() && !node.textContent ) {
-            do {
-                parent = node.parentNode;
-            } while ( parent.isInline() &&
-                !parent.textContent && ( node = parent ) );
-            range.setStart( parent,
-                indexOf.call( parent.childNodes, node ) );
-            range.collapse( true );
-            parent.removeChild( node );
-            if ( !parent.isBlock() ) {
-                parent = parent.getPreviousBlock();
+        try {
+            var range = getSelection(),
+                node = range.startContainer,
+                parent;
+            if ( node.nodeType === TEXT_NODE ) {
+                node = node.parentNode;
             }
-            parent.fixCursor();
-            range.moveBoundariesDownTree();
-            setSelection( range );
-            updatePath( range );
+            // If focussed in empty inline element
+            if ( node.isInline() && !node.textContent ) {
+                do {
+                    parent = node.parentNode;
+                } while ( parent.isInline() &&
+                    !parent.textContent && ( node = parent ) );
+                range.setStart( parent,
+                    indexOf.call( parent.childNodes, node ) );
+                range.collapse( true );
+                parent.removeChild( node );
+                if ( !parent.isBlock() ) {
+                    parent = parent.getPreviousBlock();
+                }
+                parent.fixCursor();
+                range.moveBoundariesDownTree();
+                setSelection( range );
+                updatePath( range );
+            }
+        } catch ( error ) {
+            editor.didError( error );
         }
     };
 
@@ -1672,7 +1690,11 @@
         };
     };
 
-    win.editor = {
+    win.editor = editor = {
+
+        didError: function ( error ) {
+            console.log( error );
+        },
 
         _setPlaceholderTextNode: setPlaceholderTextNode,
 
@@ -1957,7 +1979,7 @@
     // --- Initialise ---
 
     body.setAttribute( 'contenteditable', 'true' );
-    win.editor.setHTML( '' );
+    editor.setHTML( '' );
 
     if ( win.onEditorLoad ) {
         win.onEditorLoad( win.editor );
