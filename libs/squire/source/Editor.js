@@ -1383,8 +1383,9 @@
             var range = getSelection();
             if ( !range ) { return; }
 
-            // Save undo checkpoint
+            // Save undo checkpoint and add any links in the preceding section.
             recordUndoState( range );
+            addLinks( range.startContainer );
             getRangeAndRemoveBookmark( range );
 
             // Selected text is overwritten, therefore delete the contents
