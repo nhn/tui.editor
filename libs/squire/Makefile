@@ -1,4 +1,6 @@
-.PHONY: build clean
+.PHONY: all build clean
+
+all: build
 
 clean:
 	rm -rf build
