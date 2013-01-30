@@ -1,6 +1,6 @@
 /* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
 
-/*global Range, Node, DOMTreeWalker */
+/*global Range, DOMTreeWalker */
 
 ( function ( TreeWalker ) {
 
@@ -268,30 +268,32 @@ var RangePrototypeExtensions = {
                 endOffset += 1;
             }
 
-            // Fix cursor before inserting block:
+            // Fix cursor then insert block(s)
             node = frag;
             while ( node = node.getNextBlock() ) {
                 node.fixCursor();
             }
-
             parent.insertBefore( frag, nodeAfterSplit );
 
-            // Merge containers at edges
-            nodeAfterSplit.mergeContainers();
-            nodeBeforeSplit.nextSibling.mergeContainers();
-
-            // Remove empty nodes created by split.
-            if ( nodeAfterSplit === endContainer &&
-                    !endContainer.textContent ) {
-                endContainer = endContainer.previousSibling;
-                endOffset = endContainer.getLength();
+            // Remove empty nodes created by split and merge inserted containers
+            // with edges of split
+            node = nodeAfterSplit.previousSibling;
+            if ( !nodeAfterSplit.textContent ) {
                 parent.removeChild( nodeAfterSplit );
+            } else {
+                nodeAfterSplit.mergeContainers();
             }
-            if ( nodeBeforeSplit === startContainer &&
-                    !startContainer.textContent) {
-                startContainer = startContainer.nextSibling;
+            if ( !nodeAfterSplit.parentNode ) {
+                endContainer = node;
+                endOffset = endContainer.getLength();
+            }
+
+            if ( !nodeBeforeSplit.textContent) {
+                startContainer = nodeBeforeSplit.nextSibling;
                 startOffset = 0;
                 parent.removeChild( nodeBeforeSplit );
+            } else {
+                nodeBeforeSplit.mergeContainers();
             }
 
             this.setStart( startContainer, startOffset );
