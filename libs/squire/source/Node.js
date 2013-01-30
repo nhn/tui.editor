@@ -58,6 +58,7 @@ var isBlock = function ( el ) {
 };
 
 implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
+    isLeaf: $False,
     isInline: $False,
     isBlock: $False,
     isContainer: $False,
@@ -105,7 +106,6 @@ implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
 });
 
 implement([ Text ], {
-    isLeaf: $False,
     isInline: $True,
     getLength: function () {
         return this.length;
@@ -141,23 +141,21 @@ implement([ Element ], {
         return this.childNodes.length;
     },
     getPath: function () {
-        var tag = this.nodeName;
-        if ( tag === 'BODY' ) {
-            return tag;
+        var parent = this.parentNode,
+            path, id, className, classNames;
+        if ( !parent ) {
+            return '';
         }
-        var path = this.parentNode.getPath(),
-            id = this.id,
-            className = this.className.trim();
-
-        path += '>' + tag;
-        if ( id ) {
+        path = parent.getPath();
+        path += ( path ? '>' : '' ) + this.nodeName;
+        if ( id = this.id ) {
             path += '#' + id;
         }
-        if ( className ) {
-            className = className.split( /\s\s*/ );
-            className.sort();
+        if ( className = this.className.trim() ) {
+            classNames = className.split( /\s\s*/ );
+            classNames.sort();
             path += '.';
-            path += className.join( '.' );
+            path += classNames.join( '.' );
         }
         return path;
     },
