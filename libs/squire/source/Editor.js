@@ -988,6 +988,16 @@
 
     var allowedBlock = /^A(?:DDRESS|RTICLE|SIDE)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL$/;
 
+    var fontSizes = {
+        1: 10,
+        2: 13,
+        3: 16,
+        4: 18,
+        5: 24,
+        6: 32,
+        7: 48
+    };
+
     var spanToSemantic = {
         color: {
             regexp: /\S/,
@@ -1068,6 +1078,32 @@
             parent.replaceChild( el, node );
             el.appendChild( node.empty() );
             return el;
+        },
+        FONT: function ( node, parent ) {
+            var face = node.face,
+                size = node.size,
+                fontSpan, sizeSpan,
+                newTreeBottom, newTreeTop;
+            if ( face ) {
+                fontSpan = createElement( 'SPAN', {
+                    'class': 'font',
+                    style: 'font-family:' + face
+                });
+            }
+            if ( size ) {
+                sizeSpan = createElement( 'SPAN', {
+                    'class': 'size',
+                    style: 'font-size:' + fontSizes[ size ] + 'px'
+                });
+                if ( fontSpan ) {
+                    fontSpan.appendChild( sizeSpan );
+                }
+            }
+            newTreeTop = fontSpan || sizeSpan || createElement( 'SPAN' );
+            newTreeBottom = sizeSpan || fontSpan || newTreeTop;
+            parent.replaceChild( newTreeTop, node );
+            newTreeBottom.appendChild( node.empty() );
+            return newTreeBottom;
         },
         TT: function ( node, parent ) {
             var el = createElement( 'SPAN', {
