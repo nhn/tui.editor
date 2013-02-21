@@ -1148,13 +1148,14 @@
                 if ( childLength ) {
                     cleanTree( child, allowStyles );
                 }
-            } else {
-                if ( ( nodeType !== TEXT_NODE ) ||
-                        !( /\S/.test( child.data ) ) ) {
-                    node.removeChild( child );
-                    i -= 1;
-                    l -= 1;
-                }
+            } else if ( nodeType !== TEXT_NODE || (
+                    !( /\S/.test( child.data ) ) &&
+                    !( i > 0 && children[ i - 1 ].isInline() ) &&
+                    !( i + 1 < l && children[ i + 1 ].isInline() )
+                    ) ) {
+                node.removeChild( child );
+                i -= 1;
+                l -= 1;
             }
         }
         return node;
