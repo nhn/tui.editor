@@ -1116,6 +1116,21 @@
         }
     };
 
+    var removeEmptyInlines = function ( root ) {
+        var children = root.childNodes,
+            l = children.length,
+            child;
+        while ( l-- ) {
+            child = children[l];
+            if ( child.nodeType === ELEMENT_NODE ) {
+                removeEmptyInlines( child );
+                if ( child.isInline() && !child.firstChild ) {
+                    root.removeChild( child );
+                }
+            }
+        }
+    };
+
     /*
         Two purposes:
 
@@ -1317,6 +1332,7 @@
                     addLinks( frag );
                     cleanTree( frag, false );
                     cleanupBRs( frag );
+                    removeEmptyInlines( frag );
 
                     var node = frag,
                         doPaste = true;
