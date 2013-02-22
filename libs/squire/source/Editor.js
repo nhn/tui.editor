@@ -1217,24 +1217,24 @@
             // Cleanup may have removed it
             block = br.parentNode;
             if ( !block ) { continue; }
-            if ( br.nextSibling && br.previousSibling ) {
-                while ( block.isInline() ) {
-                    block = block.parentNode;
-                }
-                // If this is not inside a block, replace it by wrapping
-                // inlines in DIV.
-                if ( !block.isBlock() ) {
-                    wrapTopLevelInline( block, 'DIV' );
-                }
-                // If in a block we can split, split it instead
-                else if ( tagAfterSplit[ block.nodeName ] ) {
-                    splitBlock( block, br.parentNode, br );
-                    br.detach();
-                }
-                // Otherwise leave the br alone.
-            } else {
+            while ( block.isInline() ) {
+                block = block.parentNode;
+            }
+            // If this is not inside a block, replace it by wrapping
+            // inlines in DIV.
+            if ( !block.isBlock() ) {
+                wrapTopLevelInline( block, 'DIV' );
+            }
+            // If in a block we can split, split it instead, but only if there
+            // is actual text content in the block. Otherwise, the <br> is a
+            // placeholder to stop the block from collapsing, so we must leave
+            // it.
+            else if ( tagAfterSplit[ block.nodeName ] &&
+                    /\S/.test( block.textContent ) ) {
+                splitBlock( block, br.parentNode, br );
                 br.detach();
             }
+            // Otherwise leave the br alone.
         }
     };
 
