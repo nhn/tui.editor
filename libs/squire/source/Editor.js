@@ -1209,11 +1209,44 @@
         return root;
     };
 
+    var notWSTextNode = function ( node ) {
+        return notWS.test( node.data ) ? FILTER_ACCEPT : FILTER_SKIP;
+    };
+    var isLineBreak = function ( br ) {
+        var block = br.parentNode;
+        while ( block.isInline() ) {
+            block = block.parentNode;
+        }
+        var walker = new TreeWalker( block, SHOW_TEXT, notWSTextNode );
+        walker.currentNode = br;
+        if ( !walker.nextNode() ) {
+            return false;
+        }
+        walker.currentNode = br;
+        return !!walker.previousNode();
+    };
+
+    // <br> elements are treated specially, and differently depending on the
+    // browser, when in rich text editor mode. When adding HTML from external
+    // sources, we must remove them, replacing the ones that actually affect
+    // line breaks with a split of the block element containing it (and wrapping
+    // any not inside a block). Browsers that want <br> elements at the end of
+    // each block will then have them added back in a later fixCursor method
+    // call.
     var cleanupBRs = function ( root ) {
         var brs = root.querySelectorAll( 'BR' ),
+            brBreaksLine = [],
             l = brs.length,
-            br, block;
+            i, br, block;
 
+        // Must calculate whether the <br> breaks a line first, because if we
+        // have two <br>s next to each other, after the first one is converted
+        // to a block split, the second will be at the end of a block and
+        // therefore seem to not be a line break. But in its original context it
+        // was, so we should also convert it to a block split.
+        for ( i = 0; i < l; i += 1 ) {
+            brBreaksLine[i] = isLineBreak( brs[i] );
+        }
         while ( l-- ) {
             br = brs[l];
             // Cleanup may have removed it
@@ -1231,12 +1264,12 @@
             // is actual text content in the block. Otherwise, the <br> is a
             // placeholder to stop the block from collapsing, so we must leave
             // it.
-            else if ( tagAfterSplit[ block.nodeName ] &&
-                    notWS.test( block.textContent ) ) {
-                splitBlock( block, br.parentNode, br );
+            else {
+                if ( tagAfterSplit[ block.nodeName ] && brBreaksLine[l] ) {
+                    splitBlock( block, br.parentNode, br );
+                }
                 br.detach();
             }
-            // Otherwise leave the br alone.
         }
     };
 

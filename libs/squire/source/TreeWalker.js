@@ -8,7 +8,7 @@
       TreeWalker#previousNode. No way to feature detect this.
     * Some versions of Opera have a bug in TreeWalker#previousNode which makes
       it skip to the wrong node.
-    
+
     Rather than risk further bugs, it's easiest just to implement our own
     (subset) of the spec in all browsers.
 */
