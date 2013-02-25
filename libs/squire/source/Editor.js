@@ -29,6 +29,8 @@
     var losesSelectionOnBlur = UA.losesSelectionOnBlur;
     var useTextFixer = UA.useTextFixer;
 
+    var notWS = /\S/;
+
     // --- DOM Sugar ---
 
     var createElement = function ( tag, props, children ) {
@@ -1000,7 +1002,7 @@
 
     var spanToSemantic = {
         color: {
-            regexp: /\S/,
+            regexp: notWS,
             replace: function ( color ) {
                 return createElement( 'SPAN', {
                     'class': 'colour',
@@ -1021,7 +1023,7 @@
             }
         },
         fontFamily: {
-            regexp: /\S/,
+            regexp: notWS,
             replace: function ( family ) {
                 return createElement( 'SPAN', {
                     'class': 'font',
@@ -1030,7 +1032,7 @@
             }
         },
         fontSize: {
-            regexp: /\S/,
+            regexp: notWS,
             replace: function ( size ) {
                 return createElement( 'SPAN', {
                     'class': 'size',
@@ -1164,7 +1166,7 @@
                     cleanTree( child, allowStyles );
                 }
             } else if ( nodeType !== TEXT_NODE || (
-                    !( /\S/.test( child.data ) ) &&
+                    !( notWS.test( child.data ) ) &&
                     !( i > 0 && children[ i - 1 ].isInline() ) &&
                     !( i + 1 < l && children[ i + 1 ].isInline() )
                     ) ) {
@@ -1230,7 +1232,7 @@
             // placeholder to stop the block from collapsing, so we must leave
             // it.
             else if ( tagAfterSplit[ block.nodeName ] &&
-                    /\S/.test( block.textContent ) ) {
+                    notWS.test( block.textContent ) ) {
                 splitBlock( block, br.parentNode, br );
                 br.detach();
             }
@@ -1588,6 +1590,8 @@
             var range = getSelection();
             // If not collapsed, delete contents
             if ( !range.collapsed ) {
+                recordUndoState( range );
+                getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
@@ -1595,6 +1599,8 @@
             }
             // If at beginning of block, merge with previous
             else if ( range.startsAtBlockBoundary() ) {
+                recordUndoState( range );
+                getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 var current = range.getStartBlock(),
                     previous = current.getPreviousBlock();
@@ -1636,6 +1642,11 @@
             // Otherwise, leave to browser but check afterwards whether it has
             // left behind an empty inline tag.
             else {
+                var text = range.startContainer.data || '';
+                if ( !notWS.test( text.charAt( range.startOffset - 1 ) ) ) {
+                    recordUndoState( range );
+                    getRangeAndRemoveBookmark( range );
+                }
                 setTimeout( afterDelete, 0 );
             }
         },
@@ -1643,6 +1654,8 @@
             var range = getSelection();
             // If not collapsed, delete contents
             if ( !range.collapsed ) {
+                recordUndoState( range );
+                getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 range._deleteContents();
                 setSelection( range );
@@ -1650,6 +1663,8 @@
             }
             // If at end of block, merge next into this block
             else if ( range.endsAtBlockBoundary() ) {
+                recordUndoState( range );
+                getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 var current = range.getStartBlock(),
                     next = current.getNextBlock();
@@ -1678,6 +1693,12 @@
             // Otherwise, leave to browser but check afterwards whether it has
             // left behind an empty inline tag.
             else {
+                // Record undo point if deleting whitespace
+                var text = range.startContainer.data || '';
+                if ( !notWS.test( text.charAt( range.startOffset ) ) ) {
+                    recordUndoState( range );
+                    getRangeAndRemoveBookmark( range );
+                }
                 setTimeout( afterDelete, 0 );
             }
         },
