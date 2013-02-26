@@ -160,12 +160,14 @@
     var getSelection = function () {
         if ( sel.rangeCount ) {
             lastSelection = sel.getRangeAt( 0 ).cloneRange();
+            var startContainer = lastSelection.startContainer,
+                endContainer = lastSelection.endContainer;
             // FF can return the selection as being inside an <img>. WTF?
-            if ( lastSelection.startContainer.isLeaf() ) {
-                lastSelection.setStartBefore( lastSelection.startContainer );
+            if ( startContainer && startContainer.isLeaf() ) {
+                lastSelection.setStartBefore( startContainer );
             }
-            if ( lastSelection.endContainer.isLeaf() ) {
-                lastSelection.setEndBefore( lastSelection.endContainer );
+            if ( endContainer && endContainer.isLeaf() ) {
+                lastSelection.setEndBefore( endContainer );
             }
         }
         return lastSelection;
