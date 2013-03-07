@@ -1003,12 +1003,21 @@
     };
 
     var spanToSemantic = {
+        backgroundColor: {
+            regexp: notWS,
+            replace: function ( colour ) {
+                return createElement( 'SPAN', {
+                    'class': 'highlight',
+                    style: 'background-color: ' + colour
+                });
+            }
+        },
         color: {
             regexp: notWS,
-            replace: function ( color ) {
+            replace: function ( colour ) {
                 return createElement( 'SPAN', {
                     'class': 'colour',
-                    style: 'color:' + color
+                    style: 'color:' + colour
                 });
             }
         },
