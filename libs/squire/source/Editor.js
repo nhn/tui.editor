@@ -1160,8 +1160,7 @@
                     l += childLength - 1;
                     node.replaceChild( child.empty(), child );
                     continue;
-                }
-                if ( !allowStyles && child.style.cssText ) {
+                } else if ( !allowStyles && child.style.cssText ) {
                     child.removeAttribute( 'style' );
                 }
                 if ( childLength ) {
