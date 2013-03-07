@@ -1267,7 +1267,7 @@
             }
             // If this is not inside a block, replace it by wrapping
             // inlines in DIV.
-            if ( !block.isBlock() ) {
+            if ( !block.isBlock() || !tagAfterSplit[ block.nodeName ] ) {
                 wrapTopLevelInline( block, 'DIV' );
             }
             // If in a block we can split, split it instead, but only if there
@@ -1275,7 +1275,7 @@
             // placeholder to stop the block from collapsing, so we must leave
             // it.
             else {
-                if ( tagAfterSplit[ block.nodeName ] && brBreaksLine[l] ) {
+                if ( brBreaksLine[l] ) {
                     splitBlock( block, br.parentNode, br );
                 }
                 br.detach();
