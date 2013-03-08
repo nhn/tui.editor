@@ -1689,6 +1689,7 @@
                 if ( !notWS.test( text.charAt( range.startOffset - 1 ) ) ) {
                     recordUndoState( range );
                     getRangeAndRemoveBookmark( range );
+                    setSelection( range );
                 }
                 setTimeout( afterDelete, 0 );
             }
@@ -1741,6 +1742,7 @@
                 if ( !notWS.test( text.charAt( range.startOffset ) ) ) {
                     recordUndoState( range );
                     getRangeAndRemoveBookmark( range );
+                    setSelection( range );
                 }
                 setTimeout( afterDelete, 0 );
             }
