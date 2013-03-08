@@ -11,6 +11,7 @@
     var DOCUMENT_POSITION_PRECEDING = 2, // Node.DOCUMENT_POSITION_PRECEDING
         ELEMENT_NODE = 1,                // Node.ELEMENT_NODE,
         TEXT_NODE = 3,                   // Node.TEXT_NODE,
+        SHOW_ELEMENT = 1,                // NodeFilter.SHOW_ELEMENT,
         SHOW_TEXT = 4,                   // NodeFilter.SHOW_TEXT,
         FILTER_ACCEPT = 1,               // NodeFilter.FILTER_ACCEPT,
         FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
@@ -1220,20 +1221,21 @@
     };
 
     var notWSTextNode = function ( node ) {
-        return notWS.test( node.data ) ? FILTER_ACCEPT : FILTER_SKIP;
+        return ( node.nodeType === ELEMENT_NODE ?
+            node.nodeName === 'BR' :
+            notWS.test( node.data ) ) ?
+            FILTER_ACCEPT : FILTER_SKIP;
     };
     var isLineBreak = function ( br ) {
-        var block = br.parentNode;
+        var block = br.parentNode,
+            walker;
         while ( block.isInline() ) {
             block = block.parentNode;
         }
-        var walker = new TreeWalker( block, SHOW_TEXT, notWSTextNode );
+        walker = new TreeWalker(
+            block, SHOW_ELEMENT|SHOW_TEXT, notWSTextNode );
         walker.currentNode = br;
-        if ( !walker.nextNode() ) {
-            return false;
-        }
-        walker.currentNode = br;
-        return !!walker.previousNode();
+        return !!walker.nextNode();
     };
 
     // <br> elements are treated specially, and differently depending on the
