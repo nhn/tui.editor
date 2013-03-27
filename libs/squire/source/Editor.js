@@ -163,12 +163,22 @@
             lastSelection = sel.getRangeAt( 0 ).cloneRange();
             var startContainer = lastSelection.startContainer,
                 endContainer = lastSelection.endContainer;
-            // FF can return the selection as being inside an <img>. WTF?
-            if ( startContainer && startContainer.isLeaf() ) {
-                lastSelection.setStartBefore( startContainer );
-            }
-            if ( endContainer && endContainer.isLeaf() ) {
-                lastSelection.setEndBefore( endContainer );
+            // FF sometimes throws an error reading the isLeaf property. Let's
+            // catch and log it to see if we can find what's going on.
+            try {
+                // FF can return the selection as being inside an <img>. WTF?
+                if ( startContainer && startContainer.isLeaf() ) {
+                    lastSelection.setStartBefore( startContainer );
+                }
+                if ( endContainer && endContainer.isLeaf() ) {
+                    lastSelection.setEndBefore( endContainer );
+                }
+            } catch ( error ) {
+                editor.didError({
+                    name: 'Squire#getSelection error',
+                    message: 'Starts: ' + startContainer.nodeName +
+                        '\nEnds: ' + endContainer.nodeName
+                });
             }
         }
         return lastSelection;
