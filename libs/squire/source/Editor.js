@@ -1658,7 +1658,7 @@
                 getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 var current = range.getStartBlock(),
-                    previous = current.getPreviousBlock();
+                    previous = current && current.getPreviousBlock();
                 // Must not be at the very beginning of the text area.
                 if ( previous ) {
                     // If not editable, just delete whole block.
@@ -1723,7 +1723,7 @@
                 getRangeAndRemoveBookmark( range );
                 event.preventDefault();
                 var current = range.getStartBlock(),
-                    next = current.getNextBlock();
+                    next = current && current.getNextBlock();
                 // Must not be at the very end of the text area.
                 if ( next ) {
                     // If not editable, just delete whole block.
