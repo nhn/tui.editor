@@ -1388,10 +1388,38 @@ var setHTML = function ( html ) {
 var insertElement = function ( el, range ) {
     if ( !range ) { range = getSelection(); }
     range.collapse( true );
-    range._insertNode( el );
-    range.setStartAfter( el );
-    setSelection( range );
-    updatePath( range );
+    if ( isInline( el ) ) {
+        range._insertNode( el );
+        range.setStartAfter( el );
+    } else {
+        // Get containing block node.
+        var splitNode = range.getStartBlock() || body,
+            parent, nodeAfterSplit;
+        // While at end of container node, move up DOM tree.
+        while ( splitNode !== body && !splitNode.nextSibling ) {
+            splitNode = splitNode.parentNode;
+        }
+        // If in the middle of a container node, split up to body.
+        if ( splitNode !== body ) {
+            parent = splitNode.parentNode;
+            nodeAfterSplit = split( parent, splitNode.nextSibling, body );
+        }
+        if ( nodeAfterSplit ) {
+            body.insertBefore( el, nodeAfterSplit );
+            range.setStart( nodeAfterSplit, 0 );
+            range.setStart( nodeAfterSplit, 0 );
+            range.moveBoundariesDownTree();
+        } else {
+            body.appendChild( el );
+            // Insert blank line below block.
+            body.appendChild( fixCursor( createElement( 'div' ) ) );
+            range.setStart( el, 0 );
+            range.setEnd( el, 0 );
+        }
+        focus();
+        setSelection( range );
+        updatePath( range );
+    }
 };
 
 // --- Bookmarking ---
