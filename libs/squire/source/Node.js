@@ -1,37 +1,23 @@
-/* Copyright © 2011-2012 by Neil Jenkins. Licensed under the MIT license. */
+/*global
+    ELEMENT_NODE,
+    TEXT_NODE,
+    SHOW_ELEMENT,
+    FILTER_ACCEPT,
+    FILTER_SKIP,
+    doc,
+    isOpera,
+    useTextFixer,
+    cantFocusEmptyTextNodes,
 
-/*global Node, Text, Element, HTMLDocument, window, document,
-    editor, UA, DOMTreeWalker */
+    TreeWalker,
 
-( function ( UA, TreeWalker ) {
+    Text,
 
-"use strict";
+    setPlaceholderTextNode
+*/
+/*jshint strict:false */
 
-var implement = function ( constructors, props ) {
-    var l = constructors.length,
-        proto, prop;
-    while ( l-- ) {
-        proto = constructors[l].prototype;
-        for ( prop in props ) {
-            proto[ prop ] = props[ prop ];
-        }
-    }
-};
-
-var every = function ( nodeList, fn ) {
-    var l = nodeList.length;
-    while ( l-- ) {
-        if ( !fn( nodeList[l] ) ) {
-            return false;
-        }
-    }
-    return true;
-};
-
-var $False = function () { return false; };
-var $True = function () { return true; };
-
-var inlineNodeNames  = /^(?:A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TRONG|AMP)|U)$/;
+var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TRONG|AMP)|U)$/;
 
 var leafNodeNames = {
     BR: 1,
@@ -39,305 +25,231 @@ var leafNodeNames = {
     INPUT: 1
 };
 
-var swap = function ( node, node2 ) {
-    var parent = node2.parentNode;
-    if ( parent ) {
-        parent.replaceChild( node, node2 );
+function every ( nodeList, fn ) {
+    var l = nodeList.length;
+    while ( l-- ) {
+        if ( !fn( nodeList[l] ) ) {
+            return false;
+        }
     }
-    return node;
-};
+    return true;
+}
 
-var ELEMENT_NODE = 1,  // Node.ELEMENT_NODE,
-    TEXT_NODE = 3,     // Node.TEXT_NODE,
-    SHOW_ELEMENT = 1,  // NodeFilter.SHOW_ELEMENT,
-    FILTER_ACCEPT = 1, // NodeFilter.FILTER_ACCEPT,
-    FILTER_SKIP = 3;   // NodeFilter.FILTER_SKIP;
+// ---
 
-var isBlock = function ( el ) {
-    return el.isBlock() ? FILTER_ACCEPT : FILTER_SKIP;
-};
-
-implement( window.Node ? [ Node ] : [ Text, Element, HTMLDocument ], {
-    isLeaf: $False,
-    isInline: $False,
-    isBlock: $False,
-    isContainer: $False,
-    getPath: function () {
-        var parent = this.parentNode;
-        return parent ? parent.getPath() : '';
-    },
-    detach: function () {
-        var parent = this.parentNode;
-        if ( parent ) {
-            parent.removeChild( this );
-        }
-        return this;
-    },
-    replaceWith: function ( node ) {
-        swap( node, this );
-        return this;
-    },
-    replaces: function ( node ) {
-        swap( this, node );
-        return this;
-    },
-    nearest: function ( tag, attributes ) {
-        var parent = this.parentNode;
-        return parent ? parent.nearest( tag, attributes ) : null;
-    },
-    getPreviousBlock: function () {
-        var doc = this.ownerDocument,
-            walker = new TreeWalker(
-                doc.body, SHOW_ELEMENT, isBlock, false );
-        walker.currentNode = this;
-        return walker.previousNode();
-    },
-    getNextBlock: function () {
-        var doc = this.ownerDocument,
-            walker = new TreeWalker(
-                doc.body, SHOW_ELEMENT, isBlock, false );
-        walker.currentNode = this;
-        return walker.nextNode();
-    },
-    split: function ( node, stopNode ) {
-        return node;
-    },
-    mergeContainers: function () {}
-});
-
-implement([ Text ], {
-    isInline: $True,
-    getLength: function () {
-        return this.length;
-    },
-    isLike: function ( node ) {
-        return node.nodeType === TEXT_NODE;
-    },
-    split: function ( offset, stopNode ) {
-        var node = this;
-        if ( node === stopNode ) {
-            return offset;
-        }
-        return node.parentNode.split( node.splitText( offset ), stopNode );
+function hasTagAttributes ( node, tag, attributes ) {
+    if ( node.nodeName !== tag ) {
+        return false;
     }
-});
-
-implement([ Element ], {
-    isLeaf: function () {
-        return !!leafNodeNames[ this.nodeName ];
-    },
-    isInline: function () {
-        return inlineNodeNames.test( this.nodeName );
-    },
-    isBlock: function () {
-        return !this.isInline() && every( this.childNodes, function ( child ) {
-            return child.isInline();
-        });
-    },
-    isContainer: function () {
-        return !this.isInline() && !this.isBlock();
-    },
-    getLength: function () {
-        return this.childNodes.length;
-    },
-    getPath: function () {
-        var parent = this.parentNode,
-            path, id, className, classNames;
-        if ( !parent ) {
-            return '';
+    for ( var attr in attributes ) {
+        if ( node.getAttribute( attr ) !== attributes[ attr ] ) {
+            return false;
         }
-        path = parent.getPath();
-        path += ( path ? '>' : '' ) + this.nodeName;
-        if ( id = this.id ) {
+    }
+    return true;
+}
+function areAlike ( node, node2 ) {
+    return (
+        node.nodeType === node2.nodeType &&
+        node.nodeName === node2.nodeName &&
+        node.className === node2.className &&
+        ( ( !node.style && !node2.style ) ||
+          node.style.cssText === node2.style.cssText )
+    );
+}
+
+function isLeaf ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !!leafNodeNames[ node.nodeName ];
+}
+function isInline ( node ) {
+    return inlineNodeNames.test( node.nodeName );
+}
+function isBlock ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !isInline( node ) && every( node.childNodes, isInline );
+}
+function isContainer ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !isInline( node ) && !isBlock( node );
+}
+
+function acceptIfBlock ( el ) {
+    return isBlock( el ) ? FILTER_ACCEPT : FILTER_SKIP;
+}
+function getBlockWalker ( node ) {
+    var doc = node.ownerDocument,
+        walker = new TreeWalker(
+            doc.body, SHOW_ELEMENT, acceptIfBlock, false );
+    walker.currentNode = node;
+    return walker;
+}
+
+function getPreviousBlock ( node ) {
+    return getBlockWalker( node ).previousNode();
+}
+function getNextBlock ( node ) {
+    return getBlockWalker( node ).nextNode();
+}
+function getNearest ( node, tag, attributes ) {
+    do {
+        if ( hasTagAttributes( node, tag, attributes ) ) {
+            return node;
+        }
+    } while ( node = node.parentNode );
+    return null;
+}
+
+function getPath ( node ) {
+    var parent = node.parentNode,
+        path, id, className, classNames;
+    if ( !parent || node.nodeType !== ELEMENT_NODE ) {
+        path = parent ? getPath( parent ) : '';
+    } else {
+        path = getPath( parent );
+        path += ( path ? '>' : '' ) + node.nodeName;
+        if ( id = node.id ) {
             path += '#' + id;
         }
-        if ( className = this.className.trim() ) {
+        if ( className = node.className.trim() ) {
             classNames = className.split( /\s\s*/ );
             classNames.sort();
             path += '.';
             path += classNames.join( '.' );
         }
-        return path;
-    },
-    wraps: function ( node ) {
-        swap( this, node ).appendChild( node );
-        return this;
-    },
-    empty: function () {
-        var frag = this.ownerDocument.createDocumentFragment(),
-            l = this.childNodes.length;
-        while ( l-- ) {
-            frag.appendChild( this.firstChild );
+    }
+    return path;
+}
+
+function getLength ( node ) {
+    var nodeType = node.nodeType;
+    return nodeType === ELEMENT_NODE ?
+        node.childNodes.length : node.length || 0;
+}
+
+function detach ( node ) {
+    var parent = node.parentNode;
+    if ( parent ) {
+        parent.removeChild( node );
+    }
+    return node;
+}
+function replaceWith ( node, node2 ) {
+    var parent = node.parentNode;
+    if ( parent ) {
+        parent.replaceChild( node2, node );
+    }
+}
+function empty ( node ) {
+    var frag = node.ownerDocument.createDocumentFragment(),
+        childNodes = node.childNodes,
+        l = childNodes ? childNodes.length : 0;
+    while ( l-- ) {
+        frag.appendChild( node.firstChild );
+    }
+    return frag;
+}
+
+function fixCursor ( node ) {
+    // In Webkit and Gecko, block level elements are collapsed and
+    // unfocussable if they have no content. To remedy this, a <BR> must be
+    // inserted. In Opera and IE, we just need a textnode in order for the
+    // cursor to appear.
+    var doc = node.ownerDocument,
+        fixer, child;
+
+    if ( node.nodeName === 'BODY' ) {
+        if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
+            fixer = doc.createElement( 'DIV' );
+            if ( child ) {
+                node.replaceChild( fixer, child );
+            }
+            else {
+                node.appendChild( fixer );
+            }
+            node = fixer;
+            fixer = null;
         }
-        return frag;
-    },
-    is: function ( tag, attributes ) {
-        if ( this.nodeName !== tag ) { return false; }
-        var attr;
-        for ( attr in attributes ) {
-            if ( this.getAttribute( attr ) !== attributes[ attr ] ) {
-                return false;
+    }
+
+    if ( isInline( node ) ) {
+        if ( !node.firstChild ) {
+            if ( cantFocusEmptyTextNodes ) {
+                fixer = doc.createTextNode( '\u200B' );
+                setPlaceholderTextNode( fixer );
+            } else {
+                fixer = doc.createTextNode( '' );
             }
         }
-        return true;
-    },
-    nearest: function ( tag, attributes ) {
-        var el = this;
-        do {
-            if ( el.is( tag, attributes ) ) {
-                return el;
+    } else {
+        if ( useTextFixer ) {
+            while ( node.nodeType !== TEXT_NODE && !isLeaf( node ) ) {
+                child = node.firstChild;
+                if ( !child ) {
+                    fixer = doc.createTextNode( '' );
+                    break;
+                }
+                node = child;
             }
-        } while ( ( el = el.parentNode ) &&
-            ( el.nodeType === ELEMENT_NODE ) );
-        return null;
-    },
-    isLike: function ( node ) {
-        return (
-            node.nodeType === ELEMENT_NODE &&
-            node.nodeName === this.nodeName &&
-            node.className === this.className &&
-            node.style.cssText === this.style.cssText
-        );
-    },
-    mergeInlines: function ( range ) {
-        var children = this.childNodes,
-            l = children.length,
-            frags = [],
-            child, prev, len;
-        while ( l-- ) {
-            child = children[l];
-            prev = l && children[ l - 1 ];
-            if ( l && child.isInline() && child.isLike( prev ) &&
-                    !leafNodeNames[ child.nodeName ] ) {
-                if ( range.startContainer === child ) {
-                    range.startContainer = prev;
-                    range.startOffset += prev.getLength();
+            if ( node.nodeType === TEXT_NODE ) {
+                // Opera will collapse the block element if it contains
+                // just spaces (but not if it contains no data at all).
+                if ( /^ +$/.test( node.data ) ) {
+                    node.data = '';
                 }
-                if ( range.endContainer === child ) {
-                    range.endContainer = prev;
-                    range.endOffset += prev.getLength();
-                }
-                if ( range.startContainer === this ) {
-                    if ( range.startOffset > l ) {
-                        range.startOffset -= 1;
-                    }
-                    else if ( range.startOffset === l ) {
-                        range.startContainer = prev;
-                        range.startOffset = prev.getLength();
-                    }
-                }
-                if ( range.endContainer === this ) {
-                    if ( range.endOffset > l ) {
-                        range.endOffset -= 1;
-                    }
-                    else if ( range.endOffset === l ) {
-                        range.endContainer = prev;
-                        range.endOffset = prev.getLength();
-                    }
-                }
-                child.detach();
-                if ( child.nodeType === TEXT_NODE ) {
-                    prev.appendData( child.data.replace( /\u200B/g, '' ) );
-                }
-                else {
-                    frags.push( child.empty() );
-                }
-            }
-            else if ( child.nodeType === ELEMENT_NODE ) {
-                len = frags.length;
-                while ( len-- ) {
-                    child.appendChild( frags.pop() );
-                }
-                child.mergeInlines( range );
+            } else if ( isLeaf( node ) ) {
+                node.parentNode.insertBefore( doc.createTextNode( '' ), node );
             }
         }
-    },
-    mergeWithBlock: function ( next, range ) {
-        var block = this,
-            container = next,
-            last, offset, _range;
-        while ( container.parentNode.childNodes.length === 1 ) {
-            container = container.parentNode;
-        }
-        container.detach();
-
-        offset = block.childNodes.length;
-
-        // Remove extra <BR> fixer if present.
-        last = block.lastChild;
-        if ( last && last.nodeName === 'BR' ) {
-            block.removeChild( last );
-            offset -= 1;
-        }
-
-        _range = {
-            startContainer: block,
-            startOffset: offset,
-            endContainer: block,
-            endOffset: offset
-        };
-
-        block.appendChild( next.empty() );
-        block.mergeInlines( _range );
-
-        range.setStart(
-            _range.startContainer, _range.startOffset );
-        range.collapse( true );
-
-        // Opera inserts a BR if you delete the last piece of text
-        // in a block-level element. Unfortunately, it then gets
-        // confused when setting the selection subsequently and
-        // refuses to accept the range that finishes just before the
-        // BR. Removing the BR fixes the bug.
-        // Steps to reproduce bug: Type "a-b-c" (where - is return)
-        // then backspace twice. The cursor goes to the top instead
-        // of after "b".
-        if ( window.opera && ( last = block.lastChild ) &&
-                last.nodeName === 'BR' ) {
-            block.removeChild( last );
-        }
-    },
-    mergeContainers: function () {
-        var prev = this.previousSibling,
-            first = this.firstChild;
-        if ( prev && prev.isLike( this ) && prev.isContainer() ) {
-            prev.appendChild( this.detach().empty() );
-            if ( first ) {
-                first.mergeContainers();
+        else if ( !node.querySelector( 'BR' ) ) {
+            fixer = doc.createElement( 'BR' );
+            while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
+                node = child;
             }
         }
-    },
-    split: function ( childNodeToSplitBefore, stopNode ) {
-        var node = this;
+    }
+    if ( fixer ) {
+        node.appendChild( fixer );
+    }
 
-        if ( typeof( childNodeToSplitBefore ) === 'number' ) {
-            childNodeToSplitBefore =
-                childNodeToSplitBefore < node.childNodes.length ?
-                    node.childNodes[ childNodeToSplitBefore ] : null;
-        }
+    return node;
+}
 
+function split ( node, offset, stopNode ) {
+    var nodeType = node.nodeType,
+        parent, clone, next;
+    if ( nodeType === TEXT_NODE ) {
         if ( node === stopNode ) {
-            return childNodeToSplitBefore;
+            return offset;
+        }
+        return split( node.parentNode, node.splitText( offset ), stopNode );
+    }
+    if ( nodeType === ELEMENT_NODE ) {
+        if ( typeof( offset ) === 'number' ) {
+            offset = offset < node.childNodes.length ?
+                node.childNodes[ offset ] : null;
+        }
+        if ( node === stopNode ) {
+            return offset;
         }
 
         // Clone node without children
-        var parent = node.parentNode,
-            clone = node.cloneNode( false ),
-            next;
+        parent = node.parentNode,
+        clone = node.cloneNode( false );
 
         // Add right-hand siblings to the clone
-        while ( childNodeToSplitBefore ) {
-            next = childNodeToSplitBefore.nextSibling;
-            clone.appendChild( childNodeToSplitBefore );
-            childNodeToSplitBefore = next;
+        while ( offset ) {
+            next = offset.nextSibling;
+            clone.appendChild( offset );
+            offset = next;
         }
 
         // DO NOT NORMALISE. This may undo the fixCursor() call
         // of a node lower down the tree!
 
         // We need something in the element in order for the cursor to appear.
-        node.fixCursor();
-        clone.fixCursor();
+        fixCursor( node );
+        fixCursor( clone );
 
         // Inject clone after original node
         if ( next = node.nextSibling ) {
@@ -347,74 +259,142 @@ implement([ Element ], {
         }
 
         // Keep on splitting up the tree
-        return parent.split( clone, stopNode );
-    },
-    fixCursor: function () {
-        // In Webkit and Gecko, block level elements are collapsed and
-        // unfocussable if they have no content. To remedy this, a <BR> must be
-        // inserted. In Opera and IE, we just need a textnode in order for the
-        // cursor to appear.
-        var el = this,
-            doc = el.ownerDocument,
-            fixer, child;
-
-        if ( el.nodeName === 'BODY' ) {
-            if ( !( child = el.firstChild ) || child.nodeName === 'BR' ) {
-                fixer = doc.createElement( 'DIV' );
-                if ( child ) {
-                    el.replaceChild( fixer, child );
-                }
-                else {
-                    el.appendChild( fixer );
-                }
-                el = fixer;
-                fixer = null;
-            }
-        }
-
-        if ( el.isInline() ) {
-            if ( !el.firstChild ) {
-                if ( UA.cantFocusEmptyTextNodes ) {
-                    fixer = doc.createTextNode( '\u200B' );
-                    editor._setPlaceholderTextNode( fixer );
-                } else {
-                    fixer = doc.createTextNode( '' );
-                }
-            }
-        } else {
-            if ( UA.useTextFixer ) {
-                while ( el.nodeType !== TEXT_NODE && !el.isLeaf() ) {
-                    child = el.firstChild;
-                    if ( !child ) {
-                        fixer = doc.createTextNode( '' );
-                        break;
-                    }
-                    el = child;
-                }
-                if ( el.nodeType === TEXT_NODE ) {
-                    // Opera will collapse the block element if it contains
-                    // just spaces (but not if it contains no data at all).
-                    if ( /^ +$/.test( el.data ) ) {
-                        el.data = '';
-                    }
-                } else if ( el.isLeaf() ) {
-                    el.parentNode.insertBefore( doc.createTextNode( '' ), el );
-                }
-            }
-            else if ( !el.querySelector( 'BR' ) ) {
-                fixer = doc.createElement( 'BR' );
-                while ( ( child = el.lastElementChild ) && !child.isInline() ) {
-                    el = child;
-                }
-            }
-        }
-        if ( fixer ) {
-            el.appendChild( fixer );
-        }
-
-        return this;
+        return split( parent, clone, stopNode );
     }
-});
+    return node;
+}
+
+function mergeInlines ( node, range ) {
+    if ( node.nodeType !== ELEMENT_NODE ) {
+        return;
+    }
+    var children = node.childNodes,
+        l = children.length,
+        frags = [],
+        child, prev, len;
+    while ( l-- ) {
+        child = children[l];
+        prev = l && children[ l - 1 ];
+        if ( l && isInline( child ) && areAlike( child, prev ) &&
+                !leafNodeNames[ child.nodeName ] ) {
+            if ( range.startContainer === child ) {
+                range.startContainer = prev;
+                range.startOffset += getLength( prev );
+            }
+            if ( range.endContainer === child ) {
+                range.endContainer = prev;
+                range.endOffset += getLength( prev );
+            }
+            if ( range.startContainer === node ) {
+                if ( range.startOffset > l ) {
+                    range.startOffset -= 1;
+                }
+                else if ( range.startOffset === l ) {
+                    range.startContainer = prev;
+                    range.startOffset = getLength( prev );
+                }
+            }
+            if ( range.endContainer === node ) {
+                if ( range.endOffset > l ) {
+                    range.endOffset -= 1;
+                }
+                else if ( range.endOffset === l ) {
+                    range.endContainer = prev;
+                    range.endOffset = getLength( prev );
+                }
+            }
+            detach( child );
+            if ( child.nodeType === TEXT_NODE ) {
+                prev.appendData( child.data.replace( /\u200B/g, '' ) );
+            }
+            else {
+                frags.push( empty( child ) );
+            }
+        }
+        else if ( child.nodeType === ELEMENT_NODE ) {
+            len = frags.length;
+            while ( len-- ) {
+                child.appendChild( frags.pop() );
+            }
+            mergeInlines( child, range );
+        }
+    }
+}
+
+function mergeWithBlock ( block, next, range ) {
+    var container = next,
+        last, offset, _range;
+    while ( container.parentNode.childNodes.length === 1 ) {
+        container = container.parentNode;
+    }
+    detach( container );
+
+    offset = block.childNodes.length;
+
+    // Remove extra <BR> fixer if present.
+    last = block.lastChild;
+    if ( last && last.nodeName === 'BR' ) {
+        block.removeChild( last );
+        offset -= 1;
+    }
+
+    _range = {
+        startContainer: block,
+        startOffset: offset,
+        endContainer: block,
+        endOffset: offset
+    };
+
+    block.appendChild( empty( next ) );
+    mergeInlines( block, _range );
+
+    range.setStart( _range.startContainer, _range.startOffset );
+    range.collapse( true );
+
+    // Opera inserts a BR if you delete the last piece of text
+    // in a block-level element. Unfortunately, it then gets
+    // confused when setting the selection subsequently and
+    // refuses to accept the range that finishes just before the
+    // BR. Removing the BR fixes the bug.
+    // Steps to reproduce bug: Type "a-b-c" (where - is return)
+    // then backspace twice. The cursor goes to the top instead
+    // of after "b".
+    if ( isOpera && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
+        block.removeChild( last );
+    }
+}
+
+function mergeContainers ( node ) {
+    var prev = node.previousSibling,
+        first = node.firstChild;
+    if ( prev && areAlike( prev, node ) && isContainer( prev ) ) {
+        detach( node );
+        prev.appendChild( empty( node ) );
+        if ( first ) {
+            mergeContainers( first );
+        }
+    }
+}
+
+function createElement ( tag, props, children ) {
+    var el = doc.createElement( tag ),
+        attr, i, l;
+    if ( props instanceof Array ) {
+        children = props;
+        props = null;
+    }
+    if ( props ) {
+        for ( attr in props ) {
+            el.setAttribute( attr, props[ attr ] );
+        }
+    }
+    if ( children ) {
+        for ( i = 0, l = children.length; i < l; i += 1 ) {
+            el.appendChild( children[i] );
+        }
+    }
+    return el;
+}
 
 // Fix IE8/9's buggy implementation of Text#splitText.
 // If the split is at the end of the node, it doesn't insert the newly split
@@ -423,8 +403,8 @@ implement([ Element ], {
 // the document and replaced by another, rather than just having its data
 // shortened.
 if ( function () {
-    var div = document.createElement( 'div' ),
-        text = document.createTextNode( '12' );
+    var div = doc.createElement( 'div' ),
+        text = doc.createTextNode( '12' );
     div.appendChild( text );
     text.splitText( 2 );
     return div.childNodes.length !== 2;
@@ -446,5 +426,3 @@ if ( function () {
         return afterSplit;
     };
 }
-
-}( UA, DOMTreeWalker ) );

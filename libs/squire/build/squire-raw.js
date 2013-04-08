@@ -1,3 +1,1084 @@
+/* Copyright © 2011-2013 by Neil Jenkins. MIT Licensed. */
+
+( function ( doc ) {
+
+"use strict";
+/*global doc, navigator */
+
+var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
+var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
+var TEXT_NODE = 3;                   // Node.TEXT_NODE;
+var SHOW_ELEMENT = 1;                // NodeFilter.SHOW_ELEMENT;
+var SHOW_TEXT = 4;                   // NodeFilter.SHOW_TEXT;
+var FILTER_ACCEPT = 1;               // NodeFilter.FILTER_ACCEPT;
+var FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
+
+var START_TO_START = 0; // Range.START_TO_START
+var START_TO_END = 1;   // Range.START_TO_END
+var END_TO_END = 2;     // Range.END_TO_END
+var END_TO_START = 3;   // Range.END_TO_START
+
+var win = doc.defaultView;
+var body = doc.body;
+
+var ua = navigator.userAgent;
+var isGecko = /Gecko\//.test( ua );
+var isIE = /Trident\//.test( ua );
+var isIE8 = ( win.ie === 8 );
+var isIOS = /iP(?:ad|hone|od)/.test( ua );
+var isOpera = !!win.opera;
+var isWebKit = /WebKit\//.test( ua );
+
+var useTextFixer = isIE || isOpera;
+var cantFocusEmptyTextNodes = isIE || isWebKit;
+var losesSelectionOnBlur = isIE;
+
+var notWS = /\S/;
+
+var indexOf = Array.prototype.indexOf;
+/*global FILTER_ACCEPT */
+/*jshint strict:false */
+
+/*
+    Native TreeWalker is buggy in IE and Opera:
+    * IE9/10 sometimes throw errors when calling TreeWalker#nextNode or
+      TreeWalker#previousNode. No way to feature detect this.
+    * Some versions of Opera have a bug in TreeWalker#previousNode which makes
+      it skip to the wrong node.
+
+    Rather than risk further bugs, it's easiest just to implement our own
+    (subset) of the spec in all browsers.
+*/
+
+var typeToBitArray = {
+    // ELEMENT_NODE
+    1: 1,
+    // ATTRIBUTE_NODE
+    2: 2,
+    // TEXT_NODE
+    3: 4,
+    // COMMENT_NODE
+    8: 128,
+    // DOCUMENT_NODE
+    9: 256,
+    // DOCUMENT_FRAGMENT_NODE
+    11: 1024
+};
+
+function TreeWalker ( root, nodeType, filter ) {
+    this.root = this.currentNode = root;
+    this.nodeType = nodeType;
+    this.filter = filter;
+}
+
+TreeWalker.prototype.nextNode = function () {
+    var current = this.currentNode,
+        root = this.root,
+        nodeType = this.nodeType,
+        filter = this.filter,
+        node;
+    while ( true ) {
+        node = current.firstChild;
+        while ( !node && current ) {
+            if ( current === root ) {
+                break;
+            }
+            node = current.nextSibling;
+            if ( !node ) { current = current.parentNode; }
+        }
+        if ( !node ) {
+            return null;
+        }
+        if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
+                filter( node ) === FILTER_ACCEPT ) {
+            this.currentNode = node;
+            return node;
+        }
+        current = node;
+    }
+};
+
+TreeWalker.prototype.previousNode = function () {
+    var current = this.currentNode,
+        root = this.root,
+        nodeType = this.nodeType,
+        filter = this.filter,
+        node;
+    while ( true ) {
+        if ( current === root ) {
+            return null;
+        }
+        node = current.previousSibling;
+        if ( node ) {
+            while ( current = node.lastChild ) {
+                node = current;
+            }
+        } else {
+            node = current.parentNode;
+        }
+        if ( !node ) {
+            return null;
+        }
+        if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
+                filter( node ) === FILTER_ACCEPT ) {
+            this.currentNode = node;
+            return node;
+        }
+        current = node;
+    }
+};
+/*global
+    ELEMENT_NODE,
+    TEXT_NODE,
+    SHOW_ELEMENT,
+    FILTER_ACCEPT,
+    FILTER_SKIP,
+    doc,
+    isOpera,
+    useTextFixer,
+    cantFocusEmptyTextNodes,
+
+    TreeWalker,
+
+    Text,
+
+    setPlaceholderTextNode
+*/
+/*jshint strict:false */
+
+var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TRONG|AMP)|U)$/;
+
+var leafNodeNames = {
+    BR: 1,
+    IMG: 1,
+    INPUT: 1
+};
+
+function every ( nodeList, fn ) {
+    var l = nodeList.length;
+    while ( l-- ) {
+        if ( !fn( nodeList[l] ) ) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// ---
+
+function hasTagAttributes ( node, tag, attributes ) {
+    if ( node.nodeName !== tag ) {
+        return false;
+    }
+    for ( var attr in attributes ) {
+        if ( node.getAttribute( attr ) !== attributes[ attr ] ) {
+            return false;
+        }
+    }
+    return true;
+}
+function areAlike ( node, node2 ) {
+    return (
+        node.nodeType === node2.nodeType &&
+        node.nodeName === node2.nodeName &&
+        node.className === node2.className &&
+        ( ( !node.style && !node2.style ) ||
+          node.style.cssText === node2.style.cssText )
+    );
+}
+
+function isLeaf ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !!leafNodeNames[ node.nodeName ];
+}
+function isInline ( node ) {
+    return inlineNodeNames.test( node.nodeName );
+}
+function isBlock ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !isInline( node ) && every( node.childNodes, isInline );
+}
+function isContainer ( node ) {
+    return node.nodeType === ELEMENT_NODE &&
+        !isInline( node ) && !isBlock( node );
+}
+
+function acceptIfBlock ( el ) {
+    return isBlock( el ) ? FILTER_ACCEPT : FILTER_SKIP;
+}
+function getBlockWalker ( node ) {
+    var doc = node.ownerDocument,
+        walker = new TreeWalker(
+            doc.body, SHOW_ELEMENT, acceptIfBlock, false );
+    walker.currentNode = node;
+    return walker;
+}
+
+function getPreviousBlock ( node ) {
+    return getBlockWalker( node ).previousNode();
+}
+function getNextBlock ( node ) {
+    return getBlockWalker( node ).nextNode();
+}
+function getNearest ( node, tag, attributes ) {
+    do {
+        if ( hasTagAttributes( node, tag, attributes ) ) {
+            return node;
+        }
+    } while ( node = node.parentNode );
+    return null;
+}
+
+function getPath ( node ) {
+    var parent = node.parentNode,
+        path, id, className, classNames;
+    if ( !parent || node.nodeType !== ELEMENT_NODE ) {
+        path = parent ? getPath( parent ) : '';
+    } else {
+        path = getPath( parent );
+        path += ( path ? '>' : '' ) + node.nodeName;
+        if ( id = node.id ) {
+            path += '#' + id;
+        }
+        if ( className = node.className.trim() ) {
+            classNames = className.split( /\s\s*/ );
+            classNames.sort();
+            path += '.';
+            path += classNames.join( '.' );
+        }
+    }
+    return path;
+}
+
+function getLength ( node ) {
+    var nodeType = node.nodeType;
+    return nodeType === ELEMENT_NODE ?
+        node.childNodes.length : node.length || 0;
+}
+
+function detach ( node ) {
+    var parent = node.parentNode;
+    if ( parent ) {
+        parent.removeChild( node );
+    }
+    return node;
+}
+function replaceWith ( node, node2 ) {
+    var parent = node.parentNode;
+    if ( parent ) {
+        parent.replaceChild( node2, node );
+    }
+}
+function empty ( node ) {
+    var frag = node.ownerDocument.createDocumentFragment(),
+        childNodes = node.childNodes,
+        l = childNodes ? childNodes.length : 0;
+    while ( l-- ) {
+        frag.appendChild( node.firstChild );
+    }
+    return frag;
+}
+
+function fixCursor ( node ) {
+    // In Webkit and Gecko, block level elements are collapsed and
+    // unfocussable if they have no content. To remedy this, a <BR> must be
+    // inserted. In Opera and IE, we just need a textnode in order for the
+    // cursor to appear.
+    var doc = node.ownerDocument,
+        fixer, child;
+
+    if ( node.nodeName === 'BODY' ) {
+        if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
+            fixer = doc.createElement( 'DIV' );
+            if ( child ) {
+                node.replaceChild( fixer, child );
+            }
+            else {
+                node.appendChild( fixer );
+            }
+            node = fixer;
+            fixer = null;
+        }
+    }
+
+    if ( isInline( node ) ) {
+        if ( !node.firstChild ) {
+            if ( cantFocusEmptyTextNodes ) {
+                fixer = doc.createTextNode( '\u200B' );
+                setPlaceholderTextNode( fixer );
+            } else {
+                fixer = doc.createTextNode( '' );
+            }
+        }
+    } else {
+        if ( useTextFixer ) {
+            while ( node.nodeType !== TEXT_NODE && !isLeaf( node ) ) {
+                child = node.firstChild;
+                if ( !child ) {
+                    fixer = doc.createTextNode( '' );
+                    break;
+                }
+                node = child;
+            }
+            if ( node.nodeType === TEXT_NODE ) {
+                // Opera will collapse the block element if it contains
+                // just spaces (but not if it contains no data at all).
+                if ( /^ +$/.test( node.data ) ) {
+                    node.data = '';
+                }
+            } else if ( isLeaf( node ) ) {
+                node.parentNode.insertBefore( doc.createTextNode( '' ), node );
+            }
+        }
+        else if ( !node.querySelector( 'BR' ) ) {
+            fixer = doc.createElement( 'BR' );
+            while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
+                node = child;
+            }
+        }
+    }
+    if ( fixer ) {
+        node.appendChild( fixer );
+    }
+
+    return node;
+}
+
+function split ( node, offset, stopNode ) {
+    var nodeType = node.nodeType,
+        parent, clone, next;
+    if ( nodeType === TEXT_NODE ) {
+        if ( node === stopNode ) {
+            return offset;
+        }
+        return split( node.parentNode, node.splitText( offset ), stopNode );
+    }
+    if ( nodeType === ELEMENT_NODE ) {
+        if ( typeof( offset ) === 'number' ) {
+            offset = offset < node.childNodes.length ?
+                node.childNodes[ offset ] : null;
+        }
+        if ( node === stopNode ) {
+            return offset;
+        }
+
+        // Clone node without children
+        parent = node.parentNode,
+        clone = node.cloneNode( false );
+
+        // Add right-hand siblings to the clone
+        while ( offset ) {
+            next = offset.nextSibling;
+            clone.appendChild( offset );
+            offset = next;
+        }
+
+        // DO NOT NORMALISE. This may undo the fixCursor() call
+        // of a node lower down the tree!
+
+        // We need something in the element in order for the cursor to appear.
+        fixCursor( node );
+        fixCursor( clone );
+
+        // Inject clone after original node
+        if ( next = node.nextSibling ) {
+            parent.insertBefore( clone, next );
+        } else {
+            parent.appendChild( clone );
+        }
+
+        // Keep on splitting up the tree
+        return split( parent, clone, stopNode );
+    }
+    return node;
+}
+
+function mergeInlines ( node, range ) {
+    if ( node.nodeType !== ELEMENT_NODE ) {
+        return;
+    }
+    var children = node.childNodes,
+        l = children.length,
+        frags = [],
+        child, prev, len;
+    while ( l-- ) {
+        child = children[l];
+        prev = l && children[ l - 1 ];
+        if ( l && isInline( child ) && areAlike( child, prev ) &&
+                !leafNodeNames[ child.nodeName ] ) {
+            if ( range.startContainer === child ) {
+                range.startContainer = prev;
+                range.startOffset += getLength( prev );
+            }
+            if ( range.endContainer === child ) {
+                range.endContainer = prev;
+                range.endOffset += getLength( prev );
+            }
+            if ( range.startContainer === node ) {
+                if ( range.startOffset > l ) {
+                    range.startOffset -= 1;
+                }
+                else if ( range.startOffset === l ) {
+                    range.startContainer = prev;
+                    range.startOffset = getLength( prev );
+                }
+            }
+            if ( range.endContainer === node ) {
+                if ( range.endOffset > l ) {
+                    range.endOffset -= 1;
+                }
+                else if ( range.endOffset === l ) {
+                    range.endContainer = prev;
+                    range.endOffset = getLength( prev );
+                }
+            }
+            detach( child );
+            if ( child.nodeType === TEXT_NODE ) {
+                prev.appendData( child.data.replace( /\u200B/g, '' ) );
+            }
+            else {
+                frags.push( empty( child ) );
+            }
+        }
+        else if ( child.nodeType === ELEMENT_NODE ) {
+            len = frags.length;
+            while ( len-- ) {
+                child.appendChild( frags.pop() );
+            }
+            mergeInlines( child, range );
+        }
+    }
+}
+
+function mergeWithBlock ( block, next, range ) {
+    var container = next,
+        last, offset, _range;
+    while ( container.parentNode.childNodes.length === 1 ) {
+        container = container.parentNode;
+    }
+    detach( container );
+
+    offset = block.childNodes.length;
+
+    // Remove extra <BR> fixer if present.
+    last = block.lastChild;
+    if ( last && last.nodeName === 'BR' ) {
+        block.removeChild( last );
+        offset -= 1;
+    }
+
+    _range = {
+        startContainer: block,
+        startOffset: offset,
+        endContainer: block,
+        endOffset: offset
+    };
+
+    block.appendChild( empty( next ) );
+    mergeInlines( block, _range );
+
+    range.setStart( _range.startContainer, _range.startOffset );
+    range.collapse( true );
+
+    // Opera inserts a BR if you delete the last piece of text
+    // in a block-level element. Unfortunately, it then gets
+    // confused when setting the selection subsequently and
+    // refuses to accept the range that finishes just before the
+    // BR. Removing the BR fixes the bug.
+    // Steps to reproduce bug: Type "a-b-c" (where - is return)
+    // then backspace twice. The cursor goes to the top instead
+    // of after "b".
+    if ( isOpera && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
+        block.removeChild( last );
+    }
+}
+
+function mergeContainers ( node ) {
+    var prev = node.previousSibling,
+        first = node.firstChild;
+    if ( prev && areAlike( prev, node ) && isContainer( prev ) ) {
+        detach( node );
+        prev.appendChild( empty( node ) );
+        if ( first ) {
+            mergeContainers( first );
+        }
+    }
+}
+
+function createElement ( tag, props, children ) {
+    var el = doc.createElement( tag ),
+        attr, i, l;
+    if ( props instanceof Array ) {
+        children = props;
+        props = null;
+    }
+    if ( props ) {
+        for ( attr in props ) {
+            el.setAttribute( attr, props[ attr ] );
+        }
+    }
+    if ( children ) {
+        for ( i = 0, l = children.length; i < l; i += 1 ) {
+            el.appendChild( children[i] );
+        }
+    }
+    return el;
+}
+
+// Fix IE8/9's buggy implementation of Text#splitText.
+// If the split is at the end of the node, it doesn't insert the newly split
+// node into the document, and sets its value to undefined rather than ''.
+// And even if the split is not at the end, the original node is removed from
+// the document and replaced by another, rather than just having its data
+// shortened.
+if ( function () {
+    var div = doc.createElement( 'div' ),
+        text = doc.createTextNode( '12' );
+    div.appendChild( text );
+    text.splitText( 2 );
+    return div.childNodes.length !== 2;
+}() ) {
+    Text.prototype.splitText = function ( offset ) {
+        var afterSplit = this.ownerDocument.createTextNode(
+                this.data.slice( offset ) ),
+            next = this.nextSibling,
+            parent = this.parentNode,
+            toDelete = this.length - offset;
+        if ( next ) {
+            parent.insertBefore( afterSplit, next );
+        } else {
+            parent.appendChild( afterSplit );
+        }
+        if ( toDelete ) {
+            this.deleteData( offset, toDelete );
+        }
+        return afterSplit;
+    };
+}
+/*global
+    ELEMENT_NODE,
+    TEXT_NODE,
+    SHOW_TEXT,
+    FILTER_ACCEPT,
+    START_TO_START,
+    START_TO_END,
+    END_TO_END,
+    END_TO_START,
+    indexOf,
+
+    TreeWalker,
+
+    isLeaf,
+    isInline,
+    isBlock,
+    getPreviousBlock,
+    getNextBlock,
+    getLength,
+    fixCursor,
+    split,
+    mergeWithBlock,
+    mergeContainers,
+
+    Range
+*/
+/*jshint strict:false */
+
+var getNodeBefore = function ( node, offset ) {
+    var children = node.childNodes;
+    while ( offset && node.nodeType === ELEMENT_NODE ) {
+        node = children[ offset - 1 ];
+        children = node.childNodes;
+        offset = children.length;
+    }
+    return node;
+};
+
+var getNodeAfter = function ( node, offset ) {
+    if ( node.nodeType === ELEMENT_NODE ) {
+        var children = node.childNodes;
+        if ( offset < children.length ) {
+            node = children[ offset ];
+        } else {
+            while ( node && !node.nextSibling ) {
+                node = node.parentNode;
+            }
+            if ( node ) { node = node.nextSibling; }
+        }
+    }
+    return node;
+};
+
+var RangePrototype = Range.prototype;
+
+RangePrototype.forEachTextNode = function ( fn ) {
+    var range = this.cloneRange();
+    range.moveBoundariesDownTree();
+
+    var startContainer = range.startContainer,
+        endContainer = range.endContainer,
+        root = range.commonAncestorContainer,
+        walker = new TreeWalker(
+            root, SHOW_TEXT, function ( node ) {
+                return FILTER_ACCEPT;
+        }, false ),
+        textnode = walker.currentNode = startContainer;
+
+    while ( !fn( textnode, range ) &&
+        textnode !== endContainer &&
+        ( textnode = walker.nextNode() ) ) {}
+};
+
+RangePrototype.getTextContent = function () {
+    var textContent = '';
+    this.forEachTextNode( function ( textnode, range ) {
+        var value = textnode.data;
+        if ( value && ( /\S/.test( value ) ) ) {
+            if ( textnode === range.endContainer ) {
+                value = value.slice( 0, range.endOffset );
+            }
+            if ( textnode === range.startContainer ) {
+                value = value.slice( range.startOffset );
+            }
+            textContent += value;
+        }
+    });
+    return textContent;
+};
+
+// ---
+
+RangePrototype._insertNode = function ( node ) {
+    // Insert at start.
+    var startContainer = this.startContainer,
+        startOffset = this.startOffset,
+        endContainer = this.endContainer,
+        endOffset = this.endOffset,
+        parent, children, childCount, afterSplit;
+
+    // If part way through a text node, split it.
+    if ( startContainer.nodeType === TEXT_NODE ) {
+        parent = startContainer.parentNode;
+        children = parent.childNodes;
+        if ( startOffset === startContainer.length ) {
+            startOffset = indexOf.call( children, startContainer ) + 1;
+            if ( this.collapsed ) {
+                endContainer = parent;
+                endOffset = startOffset;
+            }
+        } else {
+            if ( startOffset ) {
+                afterSplit = startContainer.splitText( startOffset );
+                if ( endContainer === startContainer ) {
+                    endOffset -= startOffset;
+                    endContainer = afterSplit;
+                }
+                else if ( endContainer === parent ) {
+                    endOffset += 1;
+                }
+                startContainer = afterSplit;
+            }
+            startOffset = indexOf.call( children, startContainer );
+        }
+        startContainer = parent;
+    } else {
+        children = startContainer.childNodes;
+    }
+
+    childCount = children.length;
+
+    if ( startOffset === childCount) {
+        startContainer.appendChild( node );
+    } else {
+        startContainer.insertBefore( node, children[ startOffset ] );
+    }
+    if ( startContainer === endContainer ) {
+        endOffset += children.length - childCount;
+    }
+
+    this.setStart( startContainer, startOffset );
+    this.setEnd( endContainer, endOffset );
+
+    return this;
+};
+
+RangePrototype._extractContents = function ( common ) {
+    var startContainer = this.startContainer,
+        startOffset = this.startOffset,
+        endContainer = this.endContainer,
+        endOffset = this.endOffset;
+
+    if ( !common ) {
+        common = this.commonAncestorContainer;
+    }
+
+    if ( common.nodeType === TEXT_NODE ) {
+        common = common.parentNode;
+    }
+
+    var endNode = split( endContainer, endOffset, common ),
+        startNode = split( startContainer, startOffset, common ),
+        frag = common.ownerDocument.createDocumentFragment(),
+        next;
+
+    // End node will be null if at end of child nodes list.
+    while ( startNode !== endNode ) {
+        next = startNode.nextSibling;
+        frag.appendChild( startNode );
+        startNode = next;
+    }
+
+    this.setStart( common, endNode ?
+        indexOf.call( common.childNodes, endNode ) :
+            common.childNodes.length );
+    this.collapse( true );
+
+    fixCursor( common );
+
+    return frag;
+};
+
+RangePrototype._deleteContents = function () {
+    // Move boundaries up as much as possible to reduce need to split.
+    this.moveBoundariesUpTree();
+
+    // Remove selected range
+    this._extractContents();
+
+    // If we split into two different blocks, merge the blocks.
+    var startBlock = this.getStartBlock(),
+        endBlock = this.getEndBlock();
+    if ( startBlock && endBlock && startBlock !== endBlock ) {
+        mergeWithBlock( startBlock, endBlock, this );
+    }
+
+    // Ensure block has necessary children
+    if ( startBlock ) {
+        fixCursor( startBlock );
+    }
+
+    // Ensure body has a block-level element in it.
+    var body = this.endContainer.ownerDocument.body,
+        child = body.firstChild;
+    if ( !child || child.nodeName === 'BR' ) {
+        fixCursor( body );
+        this.selectNodeContents( body.firstChild );
+    }
+
+    // Ensure valid range (must have only block or inline containers)
+    var isCollapsed = this.collapsed;
+    this.moveBoundariesDownTree();
+    if ( isCollapsed ) {
+        // Collapse
+        this.collapse( true );
+    }
+
+    return this;
+};
+
+// ---
+
+RangePrototype.insertTreeFragment = function ( frag ) {
+    // Check if it's all inline content
+    var allInline = true,
+        children = frag.childNodes,
+        l = children.length;
+    while ( l-- ) {
+        if ( !isInline( children[l] ) ) {
+            allInline = false;
+            break;
+        }
+    }
+
+    // Delete any selected content
+    if ( !this.collapsed ) {
+        this._deleteContents();
+    }
+
+    // Move range down into text ndoes
+    this.moveBoundariesDownTree();
+
+    // If inline, just insert at the current position.
+    if ( allInline ) {
+        this._insertNode( frag );
+        this.collapse( false );
+    }
+    // Otherwise, split up to body, insert inline before and after split
+    // and insert block in between split, then merge containers.
+    else {
+        var nodeAfterSplit = split( this.startContainer, this.startOffset,
+                this.startContainer.ownerDocument.body ),
+            nodeBeforeSplit = nodeAfterSplit.previousSibling,
+            startContainer = nodeBeforeSplit,
+            startOffset = startContainer.childNodes.length,
+            endContainer = nodeAfterSplit,
+            endOffset = 0,
+            parent = nodeAfterSplit.parentNode,
+            child, node;
+
+        while ( ( child = startContainer.lastChild ) &&
+                child.nodeType === ELEMENT_NODE &&
+                child.nodeName !== 'BR' ) {
+            startContainer = child;
+            startOffset = startContainer.childNodes.length;
+        }
+        while ( ( child = endContainer.firstChild ) &&
+                child.nodeType === ELEMENT_NODE &&
+                child.nodeName !== 'BR' ) {
+            endContainer = child;
+        }
+        while ( ( child = frag.firstChild ) && isInline( child ) ) {
+            startContainer.appendChild( child );
+        }
+        while ( ( child = frag.lastChild ) && isInline( child ) ) {
+            endContainer.insertBefore( child, endContainer.firstChild );
+            endOffset += 1;
+        }
+
+        // Fix cursor then insert block(s)
+        node = frag;
+        while ( node = getNextBlock( node ) ) {
+            fixCursor( node );
+        }
+        parent.insertBefore( frag, nodeAfterSplit );
+
+        // Remove empty nodes created by split and merge inserted containers
+        // with edges of split
+        node = nodeAfterSplit.previousSibling;
+        if ( !nodeAfterSplit.textContent ) {
+            parent.removeChild( nodeAfterSplit );
+        } else {
+            mergeContainers( nodeAfterSplit );
+        }
+        if ( !nodeAfterSplit.parentNode ) {
+            endContainer = node;
+            endOffset = getLength( endContainer );
+        }
+
+        if ( !nodeBeforeSplit.textContent) {
+            startContainer = nodeBeforeSplit.nextSibling;
+            startOffset = 0;
+            parent.removeChild( nodeBeforeSplit );
+        } else {
+            mergeContainers( nodeBeforeSplit );
+        }
+
+        this.setStart( startContainer, startOffset );
+        this.setEnd( endContainer, endOffset );
+        this.moveBoundariesDownTree();
+    }
+};
+
+// ---
+
+RangePrototype.containsNode = function ( node, partial ) {
+    var range = this,
+        nodeRange = node.ownerDocument.createRange();
+
+    nodeRange.selectNode( node );
+
+    if ( partial ) {
+        // Node must not finish before range starts or start after range
+        // finishes.
+        var nodeEndBeforeStart = ( range.compareBoundaryPoints(
+                END_TO_START, nodeRange ) > -1 ),
+            nodeStartAfterEnd = ( range.compareBoundaryPoints(
+                START_TO_END, nodeRange ) < 1 );
+        return ( !nodeEndBeforeStart && !nodeStartAfterEnd );
+    }
+    else {
+        // Node must start after range starts and finish before range
+        // finishes
+        var nodeStartAfterStart = ( range.compareBoundaryPoints(
+                START_TO_START, nodeRange ) < 1 ),
+            nodeEndBeforeEnd = ( range.compareBoundaryPoints(
+                END_TO_END, nodeRange ) > -1 );
+        return ( nodeStartAfterStart && nodeEndBeforeEnd );
+    }
+};
+
+RangePrototype.moveBoundariesDownTree = function () {
+    var startContainer = this.startContainer,
+        startOffset = this.startOffset,
+        endContainer = this.endContainer,
+        endOffset = this.endOffset,
+        child;
+
+    while ( startContainer.nodeType !== TEXT_NODE ) {
+        child = startContainer.childNodes[ startOffset ];
+        if ( !child || isLeaf( child ) ) {
+            break;
+        }
+        startContainer = child;
+        startOffset = 0;
+    }
+    if ( endOffset ) {
+        while ( endContainer.nodeType !== TEXT_NODE ) {
+            child = endContainer.childNodes[ endOffset - 1 ];
+            if ( !child || isLeaf( child ) ) {
+                break;
+            }
+            endContainer = child;
+            endOffset = getLength( endContainer );
+        }
+    } else {
+        while ( endContainer.nodeType !== TEXT_NODE ) {
+            child = endContainer.firstChild;
+            if ( !child || isLeaf( child ) ) {
+                break;
+            }
+            endContainer = child;
+        }
+    }
+
+    // If collapsed, this algorithm finds the nearest text node positions
+    // *outside* the range rather than inside, but also it flips which is
+    // assigned to which.
+    if ( this.collapsed ) {
+        this.setStart( endContainer, endOffset );
+        this.setEnd( startContainer, startOffset );
+    } else {
+        this.setStart( startContainer, startOffset );
+        this.setEnd( endContainer, endOffset );
+    }
+
+    return this;
+};
+
+RangePrototype.moveBoundariesUpTree = function ( common ) {
+    var startContainer = this.startContainer,
+        startOffset = this.startOffset,
+        endContainer = this.endContainer,
+        endOffset = this.endOffset,
+        parent;
+
+    if ( !common ) {
+        common = this.commonAncestorContainer;
+    }
+
+    while ( startContainer !== common && !startOffset ) {
+        parent = startContainer.parentNode;
+        startOffset = indexOf.call( parent.childNodes, startContainer );
+        startContainer = parent;
+    }
+
+    while ( endContainer !== common &&
+            endOffset === getLength( endContainer ) ) {
+        parent = endContainer.parentNode;
+        endOffset = indexOf.call( parent.childNodes, endContainer ) + 1;
+        endContainer = parent;
+    }
+
+    this.setStart( startContainer, startOffset );
+    this.setEnd( endContainer, endOffset );
+
+    return this;
+};
+
+// Returns the first block at least partially contained by the range,
+// or null if no block is contained by the range.
+RangePrototype.getStartBlock = function () {
+    var container = this.startContainer,
+        block;
+
+    // If inline, get the containing block.
+    if ( isInline( container ) ) {
+        block = getPreviousBlock( container );
+    } else if ( isBlock( container ) ) {
+        block = container;
+    } else {
+        block = getNodeBefore( container, this.startOffset );
+        block = getNextBlock( block );
+    }
+    // Check the block actually intersects the range
+    return block && this.containsNode( block, true ) ? block : null;
+};
+
+// Returns the last block at least partially contained by the range,
+// or null if no block is contained by the range.
+RangePrototype.getEndBlock = function () {
+    var container = this.endContainer,
+        block, child;
+
+    // If inline, get the containing block.
+    if ( isInline( container ) ) {
+        block = getPreviousBlock( container );
+    } else if ( isBlock( container ) ) {
+        block = container;
+    } else {
+        block = getNodeAfter( container, this.endOffset );
+        if ( !block ) {
+            block = container.ownerDocument.body;
+            while ( child = block.lastChild ) {
+                block = child;
+            }
+        }
+        block = getPreviousBlock( block );
+
+    }
+    // Check the block actually intersects the range
+    return block && this.containsNode( block, true ) ? block : null;
+};
+
+RangePrototype.startsAtBlockBoundary = function () {
+    var startContainer = this.startContainer,
+        startOffset = this.startOffset,
+        parent, child;
+
+    while ( isInline( startContainer ) ) {
+        if ( startOffset ) {
+            return false;
+        }
+        parent = startContainer.parentNode;
+        startOffset = indexOf.call( parent.childNodes, startContainer );
+        startContainer = parent;
+    }
+    // Skip empty text nodes and <br>s.
+    while ( startOffset &&
+            ( child = startContainer.childNodes[ startOffset - 1 ] ) &&
+            ( child.data === '' || child.nodeName === 'BR' ) ) {
+        startOffset -= 1;
+    }
+    return !startOffset;
+};
+
+RangePrototype.endsAtBlockBoundary = function () {
+    var endContainer = this.endContainer,
+        endOffset = this.endOffset,
+        length = getLength( endContainer ),
+        parent, child;
+
+    while ( isInline( endContainer ) ) {
+        if ( endOffset !== length ) {
+            return false;
+        }
+        parent = endContainer.parentNode;
+        endOffset = indexOf.call( parent.childNodes, endContainer ) + 1;
+        endContainer = parent;
+        length = endContainer.childNodes.length;
+    }
+    // Skip empty text nodes and <br>s.
+    while ( endOffset < length &&
+            ( child = endContainer.childNodes[ endOffset ] ) &&
+            ( child.data === '' || child.nodeName === 'BR' ) ) {
+        endOffset += 1;
+    }
+    return endOffset === length;
+};
+
+RangePrototype.expandToBlockBoundaries = function () {
+    var start = this.getStartBlock(),
+        end = this.getEndBlock(),
+        parent;
+
+    if ( start && end ) {
+        parent = start.parentNode;
+        this.setStart( parent, indexOf.call( parent.childNodes, start ) );
+        parent = end.parentNode;
+        this.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
+    }
+
+    return this;
+};
 /*global
     DOCUMENT_POSITION_PRECEDING,
     ELEMENT_NODE,
@@ -2116,3 +3197,4 @@ if ( win.onEditorLoad ) {
     win.onEditorLoad( win.editor );
     win.onEditorLoad = null;
 }
+}( document ) );
