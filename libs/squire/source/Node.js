@@ -156,6 +156,7 @@ function fixCursor ( node ) {
     // inserted. In Opera and IE, we just need a textnode in order for the
     // cursor to appear.
     var doc = node.ownerDocument,
+        root = node,
         fixer, child;
 
     if ( node.nodeName === 'BODY' ) {
@@ -212,7 +213,7 @@ function fixCursor ( node ) {
         node.appendChild( fixer );
     }
 
-    return node;
+    return root;
 }
 
 function split ( node, offset, stopNode ) {
