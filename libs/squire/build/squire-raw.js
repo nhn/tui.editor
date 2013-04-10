@@ -348,10 +348,7 @@ function fixCursor ( node ) {
 function split ( node, offset, stopNode ) {
     var nodeType = node.nodeType,
         parent, clone, next;
-    if ( nodeType === TEXT_NODE ) {
-        if ( node === stopNode ) {
-            return offset;
-        }
+    if ( nodeType === TEXT_NODE && node !== stopNode ) {
         return split( node.parentNode, node.splitText( offset ), stopNode );
     }
     if ( nodeType === ELEMENT_NODE ) {
@@ -391,7 +388,7 @@ function split ( node, offset, stopNode ) {
         // Keep on splitting up the tree
         return split( parent, clone, stopNode );
     }
-    return node;
+    return offset;
 }
 
 function mergeInlines ( node, range ) {
