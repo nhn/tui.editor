@@ -1710,7 +1710,7 @@ var keyHandlers = {
             }
             // If at very beginning of text area, allow backspace
             // to break lists/blockquote.
-            else {
+            else if ( current ) {
                 // Break list
                 if ( getNearest( current, 'UL' ) ||
                         getNearest( current, 'OL' ) ) {
