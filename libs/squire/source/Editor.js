@@ -198,6 +198,7 @@ var willEnablePlaceholderRemoval = false;
 var enablePlaceholderRemoval = function () {
     mayRemovePlaceholder = true;
     willEnablePlaceholderRemoval = false;
+    removeEventListener( 'keydown', enablePlaceholderRemoval );
 };
 
 var removePlaceholderTextNode = function () {
@@ -225,7 +226,7 @@ var setPlaceholderTextNode = function ( node ) {
         removePlaceholderTextNode();
     }
     if ( !willEnablePlaceholderRemoval ) {
-        setTimeout( enablePlaceholderRemoval, 0 );
+        addEventListener( 'keydown', enablePlaceholderRemoval );
         willEnablePlaceholderRemoval = true;
     }
     mayRemovePlaceholder = false;
