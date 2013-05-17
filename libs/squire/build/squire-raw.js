@@ -2255,7 +2255,7 @@ var removeEmptyInlines = function ( root ) {
         child;
     while ( l-- ) {
         child = children[l];
-        if ( child.nodeType === ELEMENT_NODE ) {
+        if ( child.nodeType === ELEMENT_NODE && child.nodeName !== 'IMG' ) {
             removeEmptyInlines( child );
             if ( isInline( child ) && !child.firstChild ) {
                 root.removeChild( child );
