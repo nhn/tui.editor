@@ -17,12 +17,17 @@ var win = doc.defaultView;
 var body = doc.body;
 
 var ua = navigator.userAgent;
+
+var isIOS = /iP(?:ad|hone|od)/.test( ua );
+var isMac = /Mac OS X/.test( ua );
+
 var isGecko = /Gecko\//.test( ua );
 var isIE = /Trident\//.test( ua );
 var isIE8 = ( win.ie === 8 );
-var isIOS = /iP(?:ad|hone|od)/.test( ua );
 var isOpera = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
+
+var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
 var useTextFixer = isIE || isOpera;
 var cantFocusEmptyTextNodes = isIE || isWebKit;

@@ -22,12 +22,17 @@ var win = doc.defaultView;
 var body = doc.body;
 
 var ua = navigator.userAgent;
+
+var isIOS = /iP(?:ad|hone|od)/.test( ua );
+var isMac = /Mac OS X/.test( ua );
+
 var isGecko = /Gecko\//.test( ua );
 var isIE = /Trident\//.test( ua );
 var isIE8 = ( win.ie === 8 );
-var isIOS = /iP(?:ad|hone|od)/.test( ua );
 var isOpera = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
+
+var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
 var useTextFixer = isIE || isOpera;
 var cantFocusEmptyTextNodes = isIE || isWebKit;
@@ -1088,11 +1093,13 @@ RangePrototype.expandToBlockBoundaries = function () {
     doc,
     win,
     body,
+    isIOS,
+    isMac,
     isGecko,
     isIE,
     isIE8,
-    isIOS,
     isOpera,
+    ctrlKey,
     useTextFixer,
     cantFocusEmptyTextNodes,
     losesSelectionOnBlur,
@@ -2547,6 +2554,8 @@ var keys = {
     9: 'tab',
     13: 'enter',
     32: 'space',
+    37: 'left',
+    39: 'right',
     46: 'delete'
 };
 
@@ -2883,19 +2892,33 @@ var keyHandlers = {
         addLinks( range.startContainer );
         getRangeAndRemoveBookmark( range );
         setSelection( range );
-    },
-    'ctrl-b': mapKeyToFormat( 'B' ),
-    'ctrl-i': mapKeyToFormat( 'I' ),
-    'ctrl-u': mapKeyToFormat( 'U' ),
-    'ctrl-y': mapKeyTo( redo ),
-    'ctrl-z': mapKeyTo( undo ),
-    'ctrl-shift-z': mapKeyTo( redo )
+    }
 };
+// Firefox incorrectly handles Cmd-left/Cmd-right on Mac:
+// it goes back/forward in history! Override to do the right
+// thing.
+// https://bugzilla.mozilla.org/show_bug.cgi?id=289384
+if ( isMac && isGecko && sel.modify ) {
+    keyHandlers[ 'meta-left' ] = function ( event ) {
+        event.preventDefault();
+        sel.modify( 'move', 'backward', 'lineboundary' );
+    };
+    keyHandlers[ 'meta-right' ] = function ( event ) {
+        event.preventDefault();
+        sel.modify( 'move', 'forward', 'lineboundary' );
+    };
+}
+
+keyHandlers[ ctrlKey + 'b' ] = mapKeyToFormat( 'B' );
+keyHandlers[ ctrlKey + 'i' ] = mapKeyToFormat( 'I' );
+keyHandlers[ ctrlKey + 'u' ] = mapKeyToFormat( 'U' );
+keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( redo );
+keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( undo );
+keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( redo );
 
 // Ref: http://unixpapa.com/js/key.html
 // Opera does not fire keydown repeatedly.
-addEventListener( isOpera ? 'keypress' : 'keydown',
-        function ( event ) {
+addEventListener( isOpera ? 'keypress' : 'keydown', function ( event ) {
     var code = event.keyCode,
         key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
         modifiers = '';
@@ -2912,7 +2935,8 @@ addEventListener( isOpera ? 'keypress' : 'keydown',
     }
 
     if ( event.altKey ) { modifiers += 'alt-'; }
-    if ( event.ctrlKey || event.metaKey ) { modifiers += 'ctrl-'; }
+    if ( event.ctrlKey ) { modifiers += 'ctrl-'; }
+    if ( event.metaKey ) { modifiers += 'meta-'; }
     if ( event.shiftKey ) { modifiers += 'shift-'; }
 
     key = modifiers + key;
