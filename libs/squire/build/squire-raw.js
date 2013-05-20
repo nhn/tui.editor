@@ -1161,6 +1161,7 @@ var fireEvent = function ( type, event ) {
                     obj( event );
                 }
             } catch ( error ) {
+                error.details = 'Squire: fireEvent error. Event type: ' + type;
                 editor.didError( error );
             }
         }
@@ -1173,6 +1174,13 @@ var propagateEvent = function ( event ) {
 
 var addEventListener = function ( type, fn ) {
     var handlers = events[ type ];
+    if ( !fn ) {
+        editor.didError({
+            name: 'Squire: addEventListener with null or undefined fn',
+            message: 'Event type: ' + type
+        });
+        return;
+    }
     if ( !handlers ) {
         handlers = events[ type ] = [];
         if ( !customEvents[ type ] ) {
