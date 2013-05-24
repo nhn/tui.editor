@@ -75,6 +75,8 @@ var fireEvent = function ( type, event ) {
         if ( event.type !== type ) {
             event.type = type;
         }
+        // Clone handlers array, so any handlers added/removed do not affect it.
+        handlers = handlers.slice();
         for ( i = 0, l = handlers.length; i < l; i += 1 ) {
             obj = handlers[i];
             try {
