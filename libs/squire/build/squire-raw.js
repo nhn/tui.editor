@@ -2452,27 +2452,36 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
     var clipboardData = event.clipboardData,
         items = clipboardData && clipboardData.items,
         fireDrop = false,
-        l;
+        hasImage = false,
+        l, type;
     if ( items ) {
         l = items.length;
         while ( l-- ) {
-            if ( /^image\/.*/.test( items[l].type ) ) {
-                event.preventDefault();
-                fireEvent( 'dragover', {
-                    dataTransfer: clipboardData,
-                    /*jshint loopfunc: true */
-                    preventDefault: function () {
-                        fireDrop = true;
-                    }
-                    /*jshint loopfunc: false */
-                });
-                if ( fireDrop ) {
-                    fireEvent( 'drop', {
-                        dataTransfer: clipboardData
-                    });
-                }
-                return;
+            type = items[l].type;
+            if ( type === 'text/html' ) {
+                hasImage = false;
+                break;
             }
+            if ( /^image\/.*/.test( type ) ) {
+                hasImage = true;
+            }
+        }
+        if ( hasImage ) {
+            event.preventDefault();
+                fireEvent( 'dragover', {
+                dataTransfer: clipboardData,
+                /*jshint loopfunc: true */
+                preventDefault: function () {
+                    fireDrop = true;
+                }
+                /*jshint loopfunc: false */
+            });
+            if ( fireDrop ) {
+                fireEvent( 'drop', {
+                    dataTransfer: clipboardData
+                });
+            }
+            return;
         }
     }
 
