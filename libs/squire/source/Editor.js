@@ -6,9 +6,7 @@
     SHOW_TEXT,
     FILTER_ACCEPT,
     FILTER_SKIP,
-    doc,
     win,
-    body,
     isIOS,
     isMac,
     isGecko,
@@ -19,6 +17,7 @@
     useTextFixer,
     cantFocusEmptyTextNodes,
     losesSelectionOnBlur,
+    hasBuggySplit,
     notWS,
     indexOf,
 
@@ -66,9 +65,101 @@
 */
 /*jshint strict:false */
 
-var editor;
+function Squire ( doc ) {
+    var win = doc.defaultView;
+    var body = doc.body;
+    this._win = win;
+    this._doc = doc;
+    this._body = body;
 
-// --- Events.js ---
+    this._events = {};
+
+    this._sel = win.getSelection();
+    this._lastSelection = null;
+
+    // IE loses selection state of iframe on blur, so make sure we
+    // cache it just before it loses focus.
+    if ( losesSelectionOnBlur ) {
+        this.addEventListener( 'beforedeactivate', this.getSelection );
+    }
+
+    this._placeholderTextNode = null;
+    this._mayRemovePlaceholder = true;
+    this._willEnablePlaceholderRemoval = false;
+
+    this._lastAnchorNode = null;
+    this._lastFocusNode = null;
+    this._path = '';
+
+    this.addEventListener( 'keyup', this._updatePathOnEvent );
+    this.addEventListener( 'mouseup', this._updatePathOnEvent );
+
+    win.addEventListener( 'focus', this, false );
+    win.addEventListener( 'blur', this, false );
+
+    this._undoIndex = -1;
+    this._undoStack = [];
+    this._undoStackLength = 0;
+    this._isInUndoState = false;
+
+    this.addEventListener( 'keyup', this._docWasChanged );
+
+    // IE sometimes fires the beforepaste event twice; make sure it is not run
+    // again before our after paste function is called.
+    this._awaitingPaste = false;
+    this.addEventListener( isIE ? 'beforecut' : 'cut', this._onCut );
+    this.addEventListener( isIE ? 'beforepaste' : 'paste', this._onPaste );
+
+    if ( isIE8 ) {
+        this.addEventListener( 'keyup', this._ieSelAllClean );
+    }
+    // Opera does not fire keydown repeatedly.
+    this.addEventListener( isOpera ? 'keypress' : 'keydown', this._onKey );
+
+    // Fix IE8/9's buggy implementation of Text#splitText.
+    // If the split is at the end of the node, it doesn't insert the newly split
+    // node into the document, and sets its value to undefined rather than ''.
+    // And even if the split is not at the end, the original node is removed
+    // from the document and replaced by another, rather than just having its
+    // data shortened.
+    if ( hasBuggySplit ) {
+        win.Text.prototype.splitText = function ( offset ) {
+            var afterSplit = this.ownerDocument.createTextNode(
+                    this.data.slice( offset ) ),
+                next = this.nextSibling,
+                parent = this.parentNode,
+                toDelete = this.length - offset;
+            if ( next ) {
+                parent.insertBefore( afterSplit, next );
+            } else {
+                parent.appendChild( afterSplit );
+            }
+            if ( toDelete ) {
+                this.deleteData( offset, toDelete );
+            }
+            return afterSplit;
+        };
+    }
+
+    body.setAttribute( 'contenteditable', 'true' );
+    this.setHTML( '' );
+}
+
+var proto = Squire.prototype;
+
+proto.createElement = function ( tag, props, children ) {
+    return createElement( this._doc, tag, props, children );
+};
+
+proto.didError = function ( error ) {
+    console.log( error );
+};
+
+proto.getDocument = function () {
+    return this._doc;
+};
+
+// --- Events ---
 
 // Subscribing to these events won't automatically add a listener to the
 // document node, since these events are fired in a custom manner by the
@@ -78,10 +169,8 @@ var customEvents = {
     pathChange: 1, select: 1, input: 1, undoStateChange: 1
 };
 
-var events = {};
-
-var fireEvent = function ( type, event ) {
-    var handlers = events[ type ],
+proto.fireEvent = function ( type, event ) {
+    var handlers = this._events[ type ],
         i, l, obj;
     if ( handlers ) {
         if ( !event ) {
@@ -98,40 +187,42 @@ var fireEvent = function ( type, event ) {
                 if ( obj.handleEvent ) {
                     obj.handleEvent( event );
                 } else {
-                    obj( event );
+                    obj.call( this, event );
                 }
             } catch ( error ) {
                 error.details = 'Squire: fireEvent error. Event type: ' + type;
-                editor.didError( error );
+                this.didError( error );
             }
         }
     }
+    return this;
 };
 
-var propagateEvent = function ( event ) {
-    fireEvent( event.type, event );
+proto.handleEvent = function ( event ) {
+    this.fireEvent( event.type, event );
 };
 
-var addEventListener = function ( type, fn ) {
-    var handlers = events[ type ];
+proto.addEventListener = function ( type, fn ) {
+    var handlers = this._events[ type ];
     if ( !fn ) {
-        editor.didError({
+        this.didError({
             name: 'Squire: addEventListener with null or undefined fn',
             message: 'Event type: ' + type
         });
-        return;
+        return this;
     }
     if ( !handlers ) {
-        handlers = events[ type ] = [];
+        handlers = this._events[ type ] = [];
         if ( !customEvents[ type ] ) {
-            doc.addEventListener( type, propagateEvent, false );
+            this._doc.addEventListener( type, this, false );
         }
     }
     handlers.push( fn );
+    return this;
 };
 
-var removeEventListener = function ( type, fn ) {
-    var handlers = events[ type ],
+proto.removeEventListener = function ( type, fn ) {
+    var handlers = this._events[ type ],
         l;
     if ( handlers ) {
         l = handlers.length;
@@ -141,21 +232,23 @@ var removeEventListener = function ( type, fn ) {
             }
         }
         if ( !handlers.length ) {
-            delete events[ type ];
+            delete this._events[ type ];
             if ( !customEvents[ type ] ) {
-                doc.removeEventListener( type, propagateEvent, false );
+                this._doc.removeEventListener( type, this, false );
             }
         }
     }
+    return this;
 };
 
 // --- Selection and Path ---
 
-var createRange = function ( range, startOffset, endContainer, endOffset ) {
-    if ( range instanceof Range ) {
+proto._createRange =
+        function ( range, startOffset, endContainer, endOffset ) {
+    if ( range instanceof this._win.Range ) {
         return range.cloneRange();
     }
-    var domRange = doc.createRange();
+    var domRange = this._doc.createRange();
     domRange.setStart( range, startOffset );
     if ( endContainer ) {
         domRange.setEnd( endContainer, endOffset );
@@ -165,26 +258,27 @@ var createRange = function ( range, startOffset, endContainer, endOffset ) {
     return domRange;
 };
 
-var sel = win.getSelection();
-var lastSelection = null;
-
-var setSelection = function ( range ) {
+proto.setSelection = function ( range ) {
     if ( range ) {
         // iOS bug: if you don't focus the iframe before setting the
         // selection, you can end up in a state where you type but the input
         // doesn't get directed into the contenteditable area but is instead
         // lost in a black hole. Very strange.
         if ( isIOS ) {
-            win.focus();
+            this._win.focus();
         }
+        var sel = this._sel;
         sel.removeAllRanges();
         sel.addRange( range );
     }
+    return this;
 };
 
-var getSelection = function () {
+proto.getSelection = function () {
+    var sel = this._sel;
     if ( sel.rangeCount ) {
-        lastSelection = sel.getRangeAt( 0 ).cloneRange();
+        var lastSelection  = this._lastSelection =
+            sel.getRangeAt( 0 ).cloneRange();
         var startContainer = lastSelection.startContainer,
             endContainer = lastSelection.endContainer;
         // FF sometimes throws an error reading the isLeaf property. Let's
@@ -198,43 +292,41 @@ var getSelection = function () {
                 lastSelection.setEndBefore( endContainer );
             }
         } catch ( error ) {
-            editor.didError({
+            this.didError({
                 name: 'Squire#getSelection error',
                 message: 'Starts: ' + startContainer.nodeName +
                     '\nEnds: ' + endContainer.nodeName
             });
         }
     }
-    return lastSelection;
+    return this._lastSelection;
 };
 
-// IE loses selection state of iframe on blur, so make sure we
-// cache it just before it loses focus.
-if ( losesSelectionOnBlur ) {
-    win.addEventListener( 'beforedeactivate', getSelection, true );
-}
+proto.getSelectedText = function () {
+    return getTextContentInRange( this.getSelection() );
+};
+
+proto.getPath = function () {
+    return this._path;
+};
 
 // --- Workaround for browsers that can't focus empty text nodes ---
 
 // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
 
-var placeholderTextNode = null;
-var mayRemovePlaceholder = true;
-var willEnablePlaceholderRemoval = false;
-
-var enablePlaceholderRemoval = function () {
-    mayRemovePlaceholder = true;
-    willEnablePlaceholderRemoval = false;
-    removeEventListener( 'keydown', enablePlaceholderRemoval );
+proto._enablePlaceholderRemoval = function () {
+    this._mayRemovePlaceholder = true;
+    this._willEnablePlaceholderRemoval = false;
+    this.removeEventListener( 'keydown', this._enablePlaceholderRemoval );
 };
 
-var removePlaceholderTextNode = function () {
-    if ( !mayRemovePlaceholder ) { return; }
+proto._removePlaceholderTextNode = function () {
+    if ( !this._mayRemovePlaceholder ) { return; }
 
-    var node = placeholderTextNode,
+    var node = this._placeholderTextNode,
         index;
 
-    placeholderTextNode = null;
+    this._placeholderTextNode = null;
 
     if ( node.parentNode ) {
         while ( ( index = node.data.indexOf( '\u200B' ) ) > -1 ) {
@@ -247,126 +339,70 @@ var removePlaceholderTextNode = function () {
     }
 };
 
-var setPlaceholderTextNode = function ( node ) {
-    if ( placeholderTextNode ) {
-        mayRemovePlaceholder = true;
-        removePlaceholderTextNode();
+proto._setPlaceholderTextNode = function ( node ) {
+    if ( this._placeholderTextNode ) {
+        this._mayRemovePlaceholder = true;
+        this._removePlaceholderTextNode();
     }
-    if ( !willEnablePlaceholderRemoval ) {
-        addEventListener( 'keydown', enablePlaceholderRemoval );
-        willEnablePlaceholderRemoval = true;
+    if ( !this._willEnablePlaceholderRemoval ) {
+        this.addEventListener( 'keydown', this._enablePlaceholderRemoval );
+        this._willEnablePlaceholderRemoval = true;
     }
-    mayRemovePlaceholder = false;
-    placeholderTextNode = node;
+    this._mayRemovePlaceholder = false;
+    this._placeholderTextNode = node;
 };
 
 // --- Path change events ---
 
-var lastAnchorNode;
-var lastFocusNode;
-var path = '';
-
-var updatePath = function ( range, force ) {
-    if ( placeholderTextNode && !force ) {
-        removePlaceholderTextNode( range );
+proto._updatePath = function ( range, force ) {
+    if ( this._placeholderTextNode && !force ) {
+        this._removePlaceholderTextNode( range );
     }
     var anchor = range.startContainer,
         focus = range.endContainer,
         newPath;
-    if ( force || anchor !== lastAnchorNode || focus !== lastFocusNode ) {
-        lastAnchorNode = anchor;
-        lastFocusNode = focus;
+    if ( force || anchor !== this._lastAnchorNode ||
+            focus !== this._lastFocusNode ) {
+        this._lastAnchorNode = anchor;
+        this._lastFocusNode = focus;
         newPath = ( anchor && focus ) ? ( anchor === focus ) ?
             getPath( focus ) : '(selection)' : '';
-        if ( path !== newPath ) {
-            path = newPath;
-            fireEvent( 'pathChange', { path: newPath } );
+        if ( this._path !== newPath ) {
+            this._path = newPath;
+            this.fireEvent( 'pathChange', { path: newPath } );
         }
     }
     if ( anchor !== focus ) {
-        fireEvent( 'select' );
+        this.fireEvent( 'select' );
     }
 };
-var updatePathOnEvent = function () {
-    updatePath( getSelection() );
+
+proto._updatePathOnEvent = function () {
+    this._updatePath( this.getSelection() );
 };
-addEventListener( 'keyup', updatePathOnEvent );
-addEventListener( 'mouseup', updatePathOnEvent );
 
 // --- Focus ---
 
-var focus = function () {
+proto.focus = function () {
     // FF seems to need the body to be focussed
     // (at least on first load).
     if ( isGecko ) {
-        body.focus();
+        this._body.focus();
     }
-    win.focus();
+    this._win.focus();
+    return this;
 };
 
-var blur = function () {
+proto.blur = function () {
     // IE will remove the whole browser window from focus if you call
     // win.blur() or body.blur(), so instead we call top.focus() to focus
     // the top frame, thus blurring this frame. This works in everything
     // except FF, so we need to call body.blur() in that as well.
     if ( isGecko ) {
-        body.blur();
+        this._body.blur();
     }
     top.focus();
-};
-
-win.addEventListener( 'focus', propagateEvent, false );
-win.addEventListener( 'blur', propagateEvent, false );
-
-// --- Get/Set data ---
-
-var getHTML = function () {
-    return body.innerHTML;
-};
-
-var setHTML = function ( html ) {
-    var node = body;
-    node.innerHTML = html;
-    do {
-        fixCursor( node );
-    } while ( node = getNextBlock( node ) );
-};
-
-var insertElement = function ( el, range ) {
-    if ( !range ) { range = getSelection(); }
-    range.collapse( true );
-    if ( isInline( el ) ) {
-        insertNodeInRange( range, el );
-        range.setStartAfter( el );
-    } else {
-        // Get containing block node.
-        var splitNode = getStartBlockOfRange( range ) || body,
-            parent, nodeAfterSplit;
-        // While at end of container node, move up DOM tree.
-        while ( splitNode !== body && !splitNode.nextSibling ) {
-            splitNode = splitNode.parentNode;
-        }
-        // If in the middle of a container node, split up to body.
-        if ( splitNode !== body ) {
-            parent = splitNode.parentNode;
-            nodeAfterSplit = split( parent, splitNode.nextSibling, body );
-        }
-        if ( nodeAfterSplit ) {
-            body.insertBefore( el, nodeAfterSplit );
-            range.setStart( nodeAfterSplit, 0 );
-            range.setStart( nodeAfterSplit, 0 );
-            moveRangeBoundariesDownTree( range );
-        } else {
-            body.appendChild( el );
-            // Insert blank line below block.
-            body.appendChild( fixCursor( createElement( 'div' ) ) );
-            range.setStart( el, 0 );
-            range.setEnd( el, 0 );
-        }
-        focus();
-        setSelection( range );
-        updatePath( range );
-    }
+    return this;
 };
 
 // --- Bookmarking ---
@@ -374,12 +410,12 @@ var insertElement = function ( el, range ) {
 var startSelectionId = 'squire-selection-start';
 var endSelectionId = 'squire-selection-end';
 
-var saveRangeToBookmark = function ( range ) {
-    var startNode = createElement( 'INPUT', {
+proto._saveRangeToBookmark = function ( range ) {
+    var startNode = this.createElement( 'INPUT', {
             id: startSelectionId,
             type: 'hidden'
         }),
-        endNode = createElement( 'INPUT', {
+        endNode = this.createElement( 'INPUT', {
             id: endSelectionId,
             type: 'hidden'
         }),
@@ -403,8 +439,9 @@ var saveRangeToBookmark = function ( range ) {
     range.setEndBefore( endNode );
 };
 
-var getRangeAndRemoveBookmark = function ( range ) {
-    var start = doc.getElementById( startSelectionId ),
+proto._getRangeAndRemoveBookmark = function ( range ) {
+    var doc = this._doc,
+        start = doc.getElementById( startSelectionId ),
         end = doc.getElementById( endSelectionId );
 
     if ( start && end ) {
@@ -449,106 +486,101 @@ var getRangeAndRemoveBookmark = function ( range ) {
 
 // --- Undo ---
 
-// These values are initialised in the editor.setHTML method,
-// which is always called on initialisation.
-var undoIndex; // = -1,
-var undoStack; // = [],
-var undoStackLength; // = 0,
-var isInUndoState; // = false,
-var docWasChanged = function () {
-    if ( isInUndoState ) {
-        isInUndoState = false;
-        fireEvent( 'undoStateChange', {
-            canUndo: true,
-            canRedo: false
-        });
-    }
-    fireEvent( 'input' );
-};
-
-addEventListener( 'keyup', function ( event ) {
-    var code = event.keyCode;
+proto._docWasChanged = function ( event ) {
+    var code = event && event.keyCode;
     // Presume document was changed if:
     // 1. A modifier key (other than shift) wasn't held down
     // 2. The key pressed is not in range 16<=x<=20 (control keys)
     // 3. The key pressed is not in range 33<=x<=45 (navigation keys)
-    if ( !event.ctrlKey && !event.metaKey && !event.altKey &&
+    if ( !event || ( !event.ctrlKey && !event.metaKey && !event.altKey &&
             ( code < 16 || code > 20 ) &&
-            ( code < 33 || code > 45 ) )  {
-        docWasChanged();
+            ( code < 33 || code > 45 ) ) )  {
+        if ( this._isInUndoState ) {
+            this._isInUndoState = false;
+            this.fireEvent( 'undoStateChange', {
+                canUndo: true,
+                canRedo: false
+            });
+        }
+        this.fireEvent( 'input' );
     }
-});
+};
 
 // Leaves bookmark
-var recordUndoState = function ( range ) {
+proto._recordUndoState = function ( range ) {
     // Don't record if we're already in an undo state
-    if ( !isInUndoState ) {
+    if ( !this._isInUndoState ) {
         // Advance pointer to new position
-        undoIndex += 1;
+        var undoIndex = this._undoIndex += 1,
+            undoStack = this._undoStack;
 
         // Truncate stack if longer (i.e. if has been previously undone)
-        if ( undoIndex < undoStackLength) {
-            undoStack.length = undoStackLength = undoIndex;
+        if ( undoIndex < this._undoStackLength) {
+            undoStack.length = this._undoStackLength = undoIndex;
         }
 
         // Write out data
         if ( range ) {
-            saveRangeToBookmark( range );
+            this._saveRangeToBookmark( range );
         }
-        undoStack[ undoIndex ] = getHTML();
-        undoStackLength += 1;
-        isInUndoState = true;
+        undoStack[ undoIndex ] = this._getHTML();
+        this._undoStackLength += 1;
+        this._isInUndoState = true;
     }
 };
 
-var undo = function () {
+proto.undo = function () {
     // Sanity check: must not be at beginning of the history stack
-    if ( undoIndex !== 0 || !isInUndoState ) {
+    if ( this._undoIndex !== 0 || !this._isInUndoState ) {
         // Make sure any changes since last checkpoint are saved.
-        recordUndoState( getSelection() );
+        this._recordUndoState( this.getSelection() );
 
-        undoIndex -= 1;
-        setHTML( undoStack[ undoIndex ] );
-        var range = getRangeAndRemoveBookmark();
+        this._undoIndex -= 1;
+        this._setHTML( this._undoStack[ this._undoIndex ] );
+        var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
-            setSelection( range );
+            this.setSelection( range );
         }
-        isInUndoState = true;
-        fireEvent( 'undoStateChange', {
-            canUndo: undoIndex !== 0,
+        this._isInUndoState = true;
+        this.fireEvent( 'undoStateChange', {
+            canUndo: this._undoIndex !== 0,
             canRedo: true
         });
-        fireEvent( 'input' );
+        this.fireEvent( 'input' );
     }
+    return this;
 };
 
-var redo = function () {
+proto.redo = function () {
     // Sanity check: must not be at end of stack and must be in an undo
     // state.
-    if ( undoIndex + 1 < undoStackLength && isInUndoState ) {
-        undoIndex += 1;
-        setHTML( undoStack[ undoIndex ] );
-        var range = getRangeAndRemoveBookmark();
+    var undoIndex = this._undoIndex,
+        undoStackLength = this._undoStackLength;
+    if ( undoIndex + 1 < undoStackLength && this._isInUndoState ) {
+        this._undoIndex += 1;
+        this._setHTML( this._undoStack[ this._undoIndex ] );
+        var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
-            setSelection( range );
+            this.setSelection( range );
         }
-        fireEvent( 'undoStateChange', {
+        this.fireEvent( 'undoStateChange', {
             canUndo: true,
-            canRedo: undoIndex + 1 < undoStackLength
+            canRedo: undoIndex + 2 < undoStackLength
         });
-        fireEvent( 'input' );
+        this.fireEvent( 'input' );
     }
+    return this;
 };
 
 // --- Inline formatting ---
 
 // Looks for matching tag and attributes, so won't work
 // if <strong> instead of <b> etc.
-var hasFormat = function ( tag, attributes, range ) {
+proto.hasFormat = function ( tag, attributes, range ) {
     // 1. Normalise the arguments and get selection
     tag = tag.toUpperCase();
     if ( !attributes ) { attributes = {}; }
-    if ( !range && !( range = getSelection() ) ) {
+    if ( !range && !( range = this.getSelection() ) ) {
         return false;
     }
 
@@ -584,14 +616,14 @@ var hasFormat = function ( tag, attributes, range ) {
     return seenNode;
 };
 
-var addFormat = function ( tag, attributes, range ) {
+proto._addFormat = function ( tag, attributes, range ) {
     // If the range is collapsed we simply insert the node by wrapping
     // it round the range and focus it.
     var el, walker, startContainer, endContainer, startOffset, endOffset,
         textnode, needsFormat;
 
     if ( range.collapsed ) {
-        el = fixCursor( createElement( tag, attributes ) );
+        el = fixCursor( this.createElement( tag, attributes ) );
         insertNodeInRange( range, el );
         range.setStart( el.firstChild, el.firstChild.length );
         range.collapse( true );
@@ -642,7 +674,7 @@ var addFormat = function ( tag, attributes, range ) {
                 }
             }
             if ( needsFormat ) {
-                el = createElement( tag, attributes );
+                el = this.createElement( tag, attributes );
                 replaceWith( textnode, el );
                 el.appendChild( textnode );
                 endOffset = textnode.length;
@@ -652,23 +684,24 @@ var addFormat = function ( tag, attributes, range ) {
         } while ( textnode = walker.nextNode() );
 
         // Now set the selection to as it was before
-        range = createRange(
+        range = this._createRange(
             startContainer, startOffset, endContainer, endOffset );
     }
     return range;
 };
 
-var removeFormat = function ( tag, attributes, range, partial ) {
+proto._removeFormat = function ( tag, attributes, range, partial ) {
     // Add bookmark
-    saveRangeToBookmark( range );
+    this._saveRangeToBookmark( range );
 
     // We need a node in the selection to break the surrounding
     // formatted text.
-    var fixer;
+    var doc = this._doc,
+        fixer;
     if ( range.collapsed ) {
         if ( cantFocusEmptyTextNodes ) {
             fixer = doc.createTextNode( '\u200B' );
-            setPlaceholderTextNode( fixer );
+            this._setPlaceholderTextNode( fixer );
         } else {
             fixer = doc.createTextNode( '' );
         }
@@ -756,7 +789,7 @@ var removeFormat = function ( tag, attributes, range, partial ) {
     });
 
     // Merge adjacent inlines:
-    getRangeAndRemoveBookmark( range );
+    this._getRangeAndRemoveBookmark( range );
     if ( fixer ) {
         range.collapse( false );
     }
@@ -773,30 +806,32 @@ var removeFormat = function ( tag, attributes, range, partial ) {
     return range;
 };
 
-var changeFormat = function ( add, remove, range, partial ) {
+proto.changeFormat = function ( add, remove, range, partial ) {
     // Normalise the arguments and get selection
-    if ( !range && !( range = getSelection() ) ) {
+    if ( !range && !( range = this.getSelection() ) ) {
         return;
     }
 
     // Save undo checkpoint
-    recordUndoState( range );
-    getRangeAndRemoveBookmark( range );
+    this._recordUndoState( range );
+    this._getRangeAndRemoveBookmark( range );
 
     if ( remove ) {
-        range = removeFormat( remove.tag.toUpperCase(),
+        range = this._removeFormat( remove.tag.toUpperCase(),
             remove.attributes || {}, range, partial );
     }
     if ( add ) {
-        range = addFormat( add.tag.toUpperCase(),
+        range = this._addFormat( add.tag.toUpperCase(),
             add.attributes || {}, range );
     }
 
-    setSelection( range );
-    updatePath( range, true );
+    this.setSelection( range );
+    this._updatePath( range, true );
 
     // We're not still in an undo state
-    docWasChanged();
+    this._docWasChanged();
+
+    return this;
 };
 
 // --- Block formatting ---
@@ -822,7 +857,7 @@ var splitBlock = function ( block, node, offset ) {
 
     // Make sure the new node is the correct type.
     if ( nodeAfterSplit.nodeName !== splitTag ) {
-        block = createElement( splitTag );
+        block = this.createElement( splitTag );
         block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
         block.dir = nodeAfterSplit.dir;
         replaceWith( nodeAfterSplit, block );
@@ -832,15 +867,15 @@ var splitBlock = function ( block, node, offset ) {
     return nodeAfterSplit;
 };
 
-var forEachBlock = function ( fn, mutates, range ) {
-    if ( !range && !( range = getSelection() ) ) {
-        return;
+proto.forEachBlock = function ( fn, mutates, range ) {
+    if ( !range && !( range = this.getSelection() ) ) {
+        return this;
     }
 
     // Save undo checkpoint
     if ( mutates ) {
-        recordUndoState( range );
-        getRangeAndRemoveBookmark( range );
+        this._recordUndoState( range );
+        this._getRangeAndRemoveBookmark( range );
     }
 
     var start = getStartBlockOfRange( range ),
@@ -852,32 +887,34 @@ var forEachBlock = function ( fn, mutates, range ) {
     }
 
     if ( mutates ) {
-        setSelection( range );
+        this.setSelection( range );
 
         // Path may have changed
-        updatePath( range, true );
+        this._updatePath( range, true );
 
         // We're not still in an undo state
-        docWasChanged();
+        this._docWasChanged();
     }
+    return this;
 };
 
-var modifyBlocks = function ( modify, range ) {
-    if ( !range && !( range = getSelection() ) ) {
-        return;
+proto.modifyBlocks = function ( modify, range ) {
+    if ( !range && !( range = this.getSelection() ) ) {
+        return this;
     }
     // 1. Stop firefox adding an extra <BR> to <BODY>
     // if we remove everything. Don't want to do this in Opera
     // as it can cause focus problems.
+    var body = this._body;
     if ( !isOpera ) {
         body.setAttribute( 'contenteditable', 'false' );
     }
 
     // 2. Save undo checkpoint and bookmark selection
-    if ( isInUndoState ) {
-        saveRangeToBookmark( range );
+    if ( this._isInUndoState ) {
+        this._saveRangeToBookmark( range );
     } else {
-        recordUndoState( range );
+        this._recordUndoState( range );
     }
 
     // 3. Expand range to block boundaries
@@ -888,7 +925,7 @@ var modifyBlocks = function ( modify, range ) {
     var frag = extractContentsOfRange( range, body );
 
     // 5. Modify tree of fragment and reinsert.
-    insertNodeInRange( range, modify( frag ) );
+    insertNodeInRange( range, modify.call( this, frag ) );
 
     // 6. Merge containers at edges
     if ( range.endOffset < range.endContainer.childNodes.length ) {
@@ -902,16 +939,18 @@ var modifyBlocks = function ( modify, range ) {
     }
 
     // 8. Restore selection
-    getRangeAndRemoveBookmark( range );
-    setSelection( range );
-    updatePath( range, true );
+    this._getRangeAndRemoveBookmark( range );
+    this.setSelection( range );
+    this._updatePath( range, true );
 
     // 9. We're not still in an undo state
-    docWasChanged();
+    this._docWasChanged();
+
+    return this;
 };
 
 var increaseBlockQuoteLevel = function ( frag ) {
-    return createElement( 'BLOCKQUOTE', [
+    return this.createElement( 'BLOCKQUOTE', [
         frag
     ]);
 };
@@ -937,14 +976,14 @@ var removeBlockQuote = function ( frag ) {
     return frag;
 };
 
-var makeList = function ( nodes, type ) {
+var makeList = function ( self, nodes, type ) {
     var i, l, node, tag, prev, replacement;
     for ( i = 0, l = nodes.length; i < l; i += 1 ) {
         node = nodes[i];
         tag = node.nodeName;
         if ( isBlock( node ) ) {
             if ( tag !== 'LI' ) {
-                replacement = createElement( 'LI', {
+                replacement = self.createElement( 'LI', {
                     'class': node.dir === 'rtl' ? 'dir-rtl' : '',
                     dir: node.dir
                 }, [
@@ -963,7 +1002,7 @@ var makeList = function ( nodes, type ) {
                 else {
                     replaceWith(
                         node,
-                        createElement( type, [
+                        self.createElement( type, [
                             replacement
                         ])
                     );
@@ -971,21 +1010,23 @@ var makeList = function ( nodes, type ) {
             }
         } else if ( isContainer( node ) ) {
             if ( tag !== type && ( /^[DOU]L$/.test( tag ) ) ) {
-                replaceWith( node, createElement( type, [ empty( node ) ] ) );
+                replaceWith( node,
+                    self.createElement( type, [ empty( node ) ] )
+                );
             } else {
-                makeList( node.childNodes, type );
+                makeList( self, node.childNodes, type );
             }
         }
     }
 };
 
 var makeUnorderedList = function ( frag ) {
-    makeList( frag.childNodes, 'UL' );
+    makeList( this, frag.childNodes, 'UL' );
     return frag;
 };
 
 var makeOrderedList = function ( frag ) {
-    makeList( frag.childNodes, 'OL' );
+    makeList( this, frag.childNodes, 'OL' );
     return frag;
 };
 
@@ -1002,7 +1043,7 @@ var decreaseListLevel = function ( frag ) {
         while ( l-- ) {
             child = children[l];
             if ( child.nodeName === 'LI' ) {
-                frag.replaceChild( createElement( 'DIV', {
+                frag.replaceChild( this.createElement( 'DIV', {
                     'class': child.dir === 'rtl' ? 'dir-rtl' : '',
                     dir: child.dir
                 }, [
@@ -1011,7 +1052,7 @@ var decreaseListLevel = function ( frag ) {
             }
         }
         replaceWith( el, frag );
-    });
+    }, this );
     return frag;
 };
 
@@ -1074,7 +1115,7 @@ var spanToSemantic = {
     backgroundColor: {
         regexp: notWS,
         replace: function ( colour ) {
-            return createElement( 'SPAN', {
+            return this.createElement( 'SPAN', {
                 'class': 'highlight',
                 style: 'background-color: ' + colour
             });
@@ -1083,7 +1124,7 @@ var spanToSemantic = {
     color: {
         regexp: notWS,
         replace: function ( colour ) {
-            return createElement( 'SPAN', {
+            return this.createElement( 'SPAN', {
                 'class': 'colour',
                 style: 'color:' + colour
             });
@@ -1092,19 +1133,19 @@ var spanToSemantic = {
     fontWeight: {
         regexp: /^bold/i,
         replace: function () {
-            return createElement( 'B' );
+            return this.createElement( 'B' );
         }
     },
     fontStyle: {
         regexp: /^italic/i,
         replace: function () {
-            return createElement( 'I' );
+            return this.createElement( 'I' );
         }
     },
     fontFamily: {
         regexp: notWS,
         replace: function ( family ) {
-            return createElement( 'SPAN', {
+            return this.createElement( 'SPAN', {
                 'class': 'font',
                 style: 'font-family:' + family
             });
@@ -1113,7 +1154,7 @@ var spanToSemantic = {
     fontSize: {
         regexp: notWS,
         replace: function ( size ) {
-            return createElement( 'SPAN', {
+            return this.createElement( 'SPAN', {
                 'class': 'size',
                 style: 'font-size:' + size
             });
@@ -1149,13 +1190,13 @@ var stylesRewriters = {
         return newTreeBottom || span;
     },
     STRONG: function ( node, parent ) {
-        var el = createElement( 'B' );
+        var el = this.createElement( 'B' );
         parent.replaceChild( el, node );
         el.appendChild( empty( node ) );
         return el;
     },
     EM: function ( node, parent ) {
-        var el = createElement( 'I' );
+        var el = this.createElement( 'I' );
         parent.replaceChild( el, node );
         el.appendChild( empty( node ) );
         return el;
@@ -1166,13 +1207,13 @@ var stylesRewriters = {
             fontSpan, sizeSpan,
             newTreeBottom, newTreeTop;
         if ( face ) {
-            fontSpan = createElement( 'SPAN', {
+            fontSpan = this.createElement( 'SPAN', {
                 'class': 'font',
                 style: 'font-family:' + face
             });
         }
         if ( size ) {
-            sizeSpan = createElement( 'SPAN', {
+            sizeSpan = this.createElement( 'SPAN', {
                 'class': 'size',
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
@@ -1180,14 +1221,14 @@ var stylesRewriters = {
                 fontSpan.appendChild( sizeSpan );
             }
         }
-        newTreeTop = fontSpan || sizeSpan || createElement( 'SPAN' );
+        newTreeTop = fontSpan || sizeSpan || this.createElement( 'SPAN' );
         newTreeBottom = sizeSpan || fontSpan || newTreeTop;
         parent.replaceChild( newTreeTop, node );
         newTreeBottom.appendChild( empty( node ) );
         return newTreeBottom;
     },
     TT: function ( node, parent ) {
-        var el = createElement( 'SPAN', {
+        var el = this.createElement( 'SPAN', {
             'class': 'font',
             style: 'font-family:menlo,consolas,"courier new",monospace'
         });
@@ -1264,12 +1305,12 @@ var wrapTopLevelInline = function ( root, tag ) {
         child = children[i];
         isBR = child.nodeName === 'BR';
         if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = createElement( tag ); }
+            if ( !wrapper ) { wrapper = this.createElement( tag ); }
             wrapper.appendChild( child );
             i -= 1;
             l -= 1;
         } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = createElement( tag ); }
+            if ( !wrapper ) { wrapper = this.createElement( tag ); }
             fixCursor( wrapper );
             if ( isBR ) {
                 root.replaceChild( wrapper, child );
@@ -1354,30 +1395,26 @@ var cleanupBRs = function ( root ) {
 
 // --- Cut and Paste ---
 
-var afterCut = function () {
+var afterCut = function ( self ) {
     try {
         // If all content removed, ensure div at start of body.
-        fixCursor( body );
+        fixCursor( self._body );
     } catch ( error ) {
-        editor.didError( error );
+        self.didError( error );
     }
 };
 
-addEventListener( isIE ? 'beforecut' : 'cut', function () {
+proto._onCut = function () {
     // Save undo checkpoint
-    var range = getSelection();
-    recordUndoState( range );
-    getRangeAndRemoveBookmark( range );
-    setSelection( range );
-    setTimeout( afterCut, 0 );
-});
+    var range = this.getSelection();
+    this.recordUndoState( range );
+    this.getRangeAndRemoveBookmark( range );
+    this._setSelection( range );
+    setTimeout( function () { afterCut( this ); }, 0 );
+};
 
-// IE sometimes fires the beforepaste event twice; make sure it is not run
-// again before our after paste function is called.
-var awaitingPaste = false;
-
-addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
-    if ( awaitingPaste ) { return; }
+proto._onPaste = function ( event ) {
+    if ( this._awaitingPaste ) { return; }
 
     // Treat image paste as a drop of an image file.
     var clipboardData = event.clipboardData,
@@ -1399,7 +1436,7 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
         }
         if ( hasImage ) {
             event.preventDefault();
-                fireEvent( 'dragover', {
+                this.fireEvent( 'dragover', {
                 dataTransfer: clipboardData,
                 /*jshint loopfunc: true */
                 preventDefault: function () {
@@ -1408,7 +1445,7 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
                 /*jshint loopfunc: false */
             });
             if ( fireDrop ) {
-                fireEvent( 'drop', {
+                this.fireEvent( 'drop', {
                     dataTransfer: clipboardData
                 });
             }
@@ -1416,21 +1453,23 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
         }
     }
 
-    awaitingPaste = true;
+    this._awaitingPaste = true;
 
-    var range = getSelection(),
+    var self = this,
+        body = this._body,
+        range = this.getSelection(),
         startContainer = range.startContainer,
         startOffset = range.startOffset,
         endContainer = range.endContainer,
         endOffset = range.endOffset;
 
-    var pasteArea = createElement( 'DIV', {
+    var pasteArea = this.createElement( 'DIV', {
         style: 'position: absolute; overflow: hidden; top:' +
             (body.scrollTop + 30) + 'px; left: 0; width: 1px; height: 1px;'
     });
     body.appendChild( pasteArea );
     range.selectNodeContents( pasteArea );
-    setSelection( range );
+    this.setSelection( range );
 
     // A setTimeout of 0 means this is added to the back of the
     // single javascript thread, so it will be executed after the
@@ -1440,7 +1479,7 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
             // Get the pasted content and clean
             var frag = empty( detach( pasteArea ) ),
                 first = frag.firstChild,
-                range = createRange(
+                range = self._createRange(
                     startContainer, startOffset, endContainer, endOffset );
 
             // Was anything actually pasted?
@@ -1463,7 +1502,7 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
                     fixCursor( node );
                 }
 
-                fireEvent( 'willPaste', {
+                self.fireEvent( 'willPaste', {
                     fragment: frag,
                     preventDefault: function () {
                         doPaste = false;
@@ -1473,21 +1512,21 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
                 // Insert pasted data
                 if ( doPaste ) {
                     insertTreeFragmentIntoRange( range, frag );
-                    docWasChanged();
+                    self._docWasChanged();
 
                     range.collapse( false );
                 }
             }
 
-            setSelection( range );
-            updatePath( range, true );
+            self.setSelection( range );
+            self._updatePath( range, true );
 
-            awaitingPaste = false;
+            self._awaitingPaste = false;
         } catch ( error ) {
-            editor.didError( error );
+            self.didError( error );
         }
     }, 0 );
-});
+};
 
 // --- Keyboard interaction ---
 
@@ -1501,21 +1540,21 @@ var keys = {
     46: 'delete'
 };
 
-var mapKeyTo = function ( fn ) {
-    return function ( event ) {
+var mapKeyTo = function ( method ) {
+    return function ( self, event ) {
         event.preventDefault();
-        fn();
+        self[ method ]();
     };
 };
 
 var mapKeyToFormat = function ( tag ) {
-    return function ( event ) {
+    return function ( self, event ) {
         event.preventDefault();
-        var range = getSelection();
-        if ( hasFormat( tag, null, range ) ) {
-            changeFormat( null, { tag: tag }, range );
+        var range = self.getSelection();
+        if ( self.hasFormat( tag, null, range ) ) {
+            self.changeFormat( null, { tag: tag }, range );
         } else {
-            changeFormat( { tag: tag }, null, range );
+            self.changeFormat( { tag: tag }, null, range );
         }
     };
 };
@@ -1524,9 +1563,9 @@ var mapKeyToFormat = function ( tag ) {
 // replace it with a <font> tag (!). If you delete all the text inside a
 // link in Opera, it won't delete the link. Let's make things consistent. If
 // you delete all text inside an inline tag, remove the inline tag.
-var afterDelete = function () {
+var afterDelete = function ( self ) {
     try {
-        var range = getSelection(),
+        var range = self._getSelection(),
             node = range.startContainer,
             parent;
         if ( node.nodeType === TEXT_NODE ) {
@@ -1547,42 +1586,42 @@ var afterDelete = function () {
             }
             fixCursor( parent );
             moveRangeBoundariesDownTree( range );
-            setSelection( range );
-            updatePath( range );
+            self.setSelection( range );
+            self._updatePath( range );
         }
     } catch ( error ) {
-        editor.didError( error );
+        self.didError( error );
     }
 };
 
 // If you select all in IE8 then type, it makes a P; replace it with
 // a DIV.
 if ( isIE8 ) {
-    addEventListener( 'keyup', function () {
-        var firstChild = body.firstChild;
+    proto._ieSelAllClean = function () {
+        var firstChild = this._body.firstChild;
         if ( firstChild.nodeName === 'P' ) {
-            saveRangeToBookmark( getSelection() );
-            replaceWith( firstChild, createElement( 'DIV', [
+            this._saveRangeToBookmark( this.getSelection() );
+            replaceWith( firstChild, this.createElement( 'DIV', [
                 empty( firstChild )
             ]) );
-            setSelection( getRangeAndRemoveBookmark() );
+            this.setSelection( this._getRangeAndRemoveBookmark() );
         }
-    });
+    };
 }
 
 var keyHandlers = {
-    enter: function ( event ) {
+    enter: function ( self, event ) {
         // We handle this ourselves
         event.preventDefault();
 
         // Must have some form of selection
-        var range = getSelection();
+        var range = self.getSelection();
         if ( !range ) { return; }
 
         // Save undo checkpoint and add any links in the preceding section.
-        recordUndoState( range );
+        self._recordUndoState( range );
         addLinks( range.startContainer );
-        getRangeAndRemoveBookmark( range );
+        self._getRangeAndRemoveBookmark( range );
 
         // Selected text is overwritten, therefore delete the contents
         // to collapse selection.
@@ -1598,11 +1637,11 @@ var keyHandlers = {
         // If this is a malformed bit of document, just play it safe
         // and insert a <br>.
         if ( !block ) {
-            insertNodeInRange( range, createElement( 'BR' ) );
+            insertNodeInRange( range, self.createElement( 'BR' ) );
             range.collapse( false );
-            setSelection( range );
-            updatePath( range, true );
-            docWasChanged();
+            self.setSelection( range );
+            self._updatePath( range, true );
+            self._docWasChanged();
             return;
         }
 
@@ -1625,7 +1664,7 @@ var keyHandlers = {
                         splitOffset = getLength( splitNode );
                     }
                     if ( !splitNode || splitNode.nodeName === 'BR' ) {
-                        replacement = fixCursor( createElement( 'DIV' ) );
+                        replacement = fixCursor( self.createElement( 'DIV' ) );
                         if ( splitNode ) {
                             block.replaceChild( replacement, splitNode );
                         } else {
@@ -1648,11 +1687,11 @@ var keyHandlers = {
         if ( !block.textContent ) {
             // Break list
             if ( getNearest( block, 'UL' ) || getNearest( block, 'OL' ) ) {
-                return modifyBlocks( decreaseListLevel, range );
+                return self.modifyBlocks( decreaseListLevel, range );
             }
             // Break blockquote
             else if ( getNearest( block, 'BLOCKQUOTE' ) ) {
-                return modifyBlocks( removeBlockQuote, range );
+                return self.modifyBlocks( removeBlockQuote, range );
             }
         }
 
@@ -1692,14 +1731,16 @@ var keyHandlers = {
             }
             nodeAfterSplit = child;
         }
-        range = createRange( nodeAfterSplit, 0 );
-        setSelection( range );
-        updatePath( range, true );
+        range = self._createRange( nodeAfterSplit, 0 );
+        self.setSelection( range );
+        self._updatePath( range, true );
 
         // Scroll into view
         if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
             nodeAfterSplit = nodeAfterSplit.parentNode;
         }
+        var doc = self._doc,
+            body = self._body;
         if ( nodeAfterSplit.offsetTop + nodeAfterSplit.offsetHeight >
                 ( doc.documentElement.scrollTop || body.scrollTop ) +
                 body.offsetHeight ) {
@@ -1707,23 +1748,23 @@ var keyHandlers = {
         }
 
         // We're not still in an undo state
-        docWasChanged();
+        self._docWasChanged();
     },
-    backspace: function ( event ) {
-        var range = getSelection();
+    backspace: function ( self, event ) {
+        var range = self.getSelection();
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
-            recordUndoState( range );
-            getRangeAndRemoveBookmark( range );
+            self._recordUndoState( range );
+            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
-            setSelection( range );
-            updatePath( range, true );
+            self.setSelection( range );
+            self._updatePath( range, true );
         }
         // If at beginning of block, merge with previous
         else if ( rangeDoesStartAtBlockBoundary( range ) ) {
-            recordUndoState( range );
-            getRangeAndRemoveBookmark( range );
+            self._recordUndoState( range );
+            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             var current = getStartBlockOfRange( range ),
                 previous = current && getPreviousBlock( current );
@@ -1745,7 +1786,7 @@ var keyHandlers = {
                 if ( current && ( current = current.nextSibling ) ) {
                     mergeContainers( current );
                 }
-                setSelection( range );
+                self.setSelection( range );
             }
             // If at very beginning of text area, allow backspace
             // to break lists/blockquote.
@@ -1753,14 +1794,14 @@ var keyHandlers = {
                 // Break list
                 if ( getNearest( current, 'UL' ) ||
                         getNearest( current, 'OL' ) ) {
-                    return modifyBlocks( decreaseListLevel, range );
+                    return self.modifyBlocks( decreaseListLevel, range );
                 }
                 // Break blockquote
                 else if ( getNearest( current, 'BLOCKQUOTE' ) ) {
-                    return modifyBlocks( decreaseBlockQuoteLevel, range );
+                    return self.modifyBlocks( decreaseBlockQuoteLevel, range );
                 }
-                setSelection( range );
-                updatePath( range, true );
+                self.setSelection( range );
+                self._updatePath( range, true );
             }
         }
         // Otherwise, leave to browser but check afterwards whether it has
@@ -1768,28 +1809,28 @@ var keyHandlers = {
         else {
             var text = range.startContainer.data || '';
             if ( !notWS.test( text.charAt( range.startOffset - 1 ) ) ) {
-                recordUndoState( range );
-                getRangeAndRemoveBookmark( range );
-                setSelection( range );
+                self._recordUndoState( range );
+                self._getRangeAndRemoveBookmark( range );
+                self.setSelection( range );
             }
-            setTimeout( afterDelete, 0 );
+            setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
-    'delete': function ( event ) {
-        var range = getSelection();
+    'delete': function ( self, event ) {
+        var range = self.getSelection();
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
-            recordUndoState( range );
-            getRangeAndRemoveBookmark( range );
+            self._recordUndoState( range );
+            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
-            setSelection( range );
-            updatePath( range, true );
+            self.setSelection( range );
+            self._updatePath( range, true );
         }
         // If at end of block, merge next into this block
         else if ( rangeDoesEndAtBlockBoundary( range ) ) {
-            recordUndoState( range );
-            getRangeAndRemoveBookmark( range );
+            self._recordUndoState( range );
+            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             var current = getStartBlockOfRange( range ),
                 next = current && getNextBlock( current );
@@ -1811,8 +1852,8 @@ var keyHandlers = {
                 if ( next && ( next = next.nextSibling ) ) {
                     mergeContainers( next );
                 }
-                setSelection( range );
-                updatePath( range, true );
+                self.setSelection( range );
+                self._updatePath( range, true );
             }
         }
         // Otherwise, leave to browser but check afterwards whether it has
@@ -1821,46 +1862,45 @@ var keyHandlers = {
             // Record undo point if deleting whitespace
             var text = range.startContainer.data || '';
             if ( !notWS.test( text.charAt( range.startOffset ) ) ) {
-                recordUndoState( range );
-                getRangeAndRemoveBookmark( range );
-                setSelection( range );
+                self._recordUndoState( range );
+                self._getRangeAndRemoveBookmark( range );
+                self.setSelection( range );
             }
-            setTimeout( afterDelete, 0 );
+            setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
-    space: function () {
-        var range = getSelection();
-        recordUndoState( range );
+    space: function ( self ) {
+        var range = self.getSelection();
+        self._recordUndoState( range );
         addLinks( range.startContainer );
-        getRangeAndRemoveBookmark( range );
-        setSelection( range );
+        self._getRangeAndRemoveBookmark( range );
+        self.setSelection( range );
     }
 };
 // Firefox incorrectly handles Cmd-left/Cmd-right on Mac:
 // it goes back/forward in history! Override to do the right
 // thing.
 // https://bugzilla.mozilla.org/show_bug.cgi?id=289384
-if ( isMac && isGecko && sel.modify ) {
-    keyHandlers[ 'meta-left' ] = function ( event ) {
+if ( isMac && isGecko && win.getSelection().modify ) {
+    keyHandlers[ 'meta-left' ] = function ( self, event ) {
         event.preventDefault();
-        sel.modify( 'move', 'backward', 'lineboundary' );
+        self._sel.modify( 'move', 'backward', 'lineboundary' );
     };
-    keyHandlers[ 'meta-right' ] = function ( event ) {
+    keyHandlers[ 'meta-right' ] = function ( self, event ) {
         event.preventDefault();
-        sel.modify( 'move', 'forward', 'lineboundary' );
+        self._sel.modify( 'move', 'forward', 'lineboundary' );
     };
 }
 
 keyHandlers[ ctrlKey + 'b' ] = mapKeyToFormat( 'B' );
 keyHandlers[ ctrlKey + 'i' ] = mapKeyToFormat( 'I' );
 keyHandlers[ ctrlKey + 'u' ] = mapKeyToFormat( 'U' );
-keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( redo );
-keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( undo );
-keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( redo );
+keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
+keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( 'undo' );
+keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
 
 // Ref: http://unixpapa.com/js/key.html
-// Opera does not fire keydown repeatedly.
-addEventListener( isOpera ? 'keypress' : 'keydown', function ( event ) {
+proto._onKey = function ( event ) {
     var code = event.keyCode,
         key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
         modifiers = '';
@@ -1884,317 +1924,308 @@ addEventListener( isOpera ? 'keypress' : 'keydown', function ( event ) {
     key = modifiers + key;
 
     if ( keyHandlers[ key ] ) {
-        keyHandlers[ key ]( event );
+        keyHandlers[ key ]( this, event );
     }
-});
-
-// --- Export ---
-
-var chain = function ( fn ) {
-    return function () {
-        fn.apply( null, arguments );
-        return this;
-    };
 };
 
-var command = function ( fn, arg, arg2 ) {
-    return function () {
-        fn( arg, arg2 );
-        focus();
-        return this;
-    };
+// --- Get/Set data ---
+
+proto._getHTML = function () {
+    return this._body.innerHTML;
 };
 
-editor = win.editor = {
+proto._setHTML = function ( html ) {
+    var node = this._body;
+    node.innerHTML = html;
+    do {
+        fixCursor( node );
+    } while ( node = getNextBlock( node ) );
+};
 
-    didError: function ( error ) {
-        console.log( error );
-    },
-
-    addEventListener: chain( addEventListener ),
-    removeEventListener: chain( removeEventListener ),
-
-    focus: chain( focus ),
-    blur: chain( blur ),
-
-    getDocument: function () {
-        return doc;
-    },
-
-    addStyles: function ( styles ) {
-        if ( styles ) {
-            var head = doc.documentElement.firstChild,
-                style = createElement( 'STYLE', {
-                    type: 'text/css'
-                });
-            if ( style.styleSheet ) {
-                // IE8: must append to document BEFORE adding styles
-                // or you get the IE7 CSS parser!
-                head.appendChild( style );
-                style.styleSheet.cssText = styles;
-            } else {
-                // Everyone else
-                style.appendChild( doc.createTextNode( styles ) );
-                head.appendChild( style );
-            }
-        }
-        return this;
-    },
-
-    getHTML: function ( withBookMark ) {
-        var brs = [],
-            node, fixer, html, l, range;
-        if ( withBookMark && ( range = getSelection() ) ) {
-            saveRangeToBookmark( range );
-        }
-        if ( useTextFixer ) {
-            node = body;
-            while ( node = getNextBlock( node ) ) {
-                if ( !node.textContent && !node.querySelector( 'BR' ) ) {
-                    fixer = createElement( 'BR' );
-                    node.appendChild( fixer );
-                    brs.push( fixer );
-                }
-            }
-        }
-        html = getHTML();
-        if ( useTextFixer ) {
-            l = brs.length;
-            while ( l-- ) {
-                detach( brs[l] );
-            }
-        }
-        if ( range ) {
-            getRangeAndRemoveBookmark( range );
-        }
-        return html;
-    },
-    setHTML: function ( html ) {
-        var frag = doc.createDocumentFragment(),
-            div = createElement( 'DIV' ),
-            child;
-
-        // Parse HTML into DOM tree
-        div.innerHTML = html;
-        frag.appendChild( empty( div ) );
-
-        cleanTree( frag, true );
-        cleanupBRs( frag );
-
-        wrapTopLevelInline( frag, 'DIV' );
-
-        // Fix cursor
-        var node = frag;
+proto.getHTML = function ( withBookMark ) {
+    var brs = [],
+        node, fixer, html, l, range;
+    if ( withBookMark && ( range = this.getSelection() ) ) {
+        this._saveRangeToBookmark( range );
+    }
+    if ( useTextFixer ) {
+        node = this._body;
         while ( node = getNextBlock( node ) ) {
-            fixCursor( node );
+            if ( !node.textContent && !node.querySelector( 'BR' ) ) {
+                fixer = this.createElement( 'BR' );
+                node.appendChild( fixer );
+                brs.push( fixer );
+            }
         }
-
-        // Remove existing body children
-        while ( child = body.lastChild ) {
-            body.removeChild( child );
+    }
+    html = this._getHTML();
+    if ( useTextFixer ) {
+        l = brs.length;
+        while ( l-- ) {
+            detach( brs[l] );
         }
-
-        // And insert new content
-        body.appendChild( frag );
-        fixCursor( body );
-
-        // Reset the undo stack
-        undoIndex = -1;
-        undoStack = [];
-        undoStackLength = 0;
-        isInUndoState = false;
-
-        // Record undo state
-        var range = getRangeAndRemoveBookmark() ||
-            createRange( body.firstChild, 0 );
-        recordUndoState( range );
-        getRangeAndRemoveBookmark( range );
-        // IE will also set focus when selecting text so don't use
-        // setSelection. Instead, just store it in lastSelection, so if
-        // anything calls getSelection before first focus, we have a range
-        // to return.
-        if ( losesSelectionOnBlur ) {
-            lastSelection = range;
-        } else {
-            setSelection( range );
-        }
-        updatePath( range, true );
-
-        return this;
-    },
-
-    getSelectedText: function () {
-        return getTextContentInRange( getSelection() );
-    },
-
-    insertElement: chain( insertElement ),
-    insertImage: function ( src ) {
-        var img = createElement( 'IMG', {
-            src: src
-        });
-        insertElement( img );
-        return img;
-    },
-
-    getPath: function () {
-        return path;
-    },
-    getSelection: getSelection,
-    setSelection: chain( setSelection ),
-
-    undo: chain( undo ),
-    redo: chain( redo ),
-
-    hasFormat: hasFormat,
-    changeFormat: chain( changeFormat ),
-
-    bold: command( changeFormat, { tag: 'B' } ),
-    italic: command( changeFormat, { tag: 'I' } ),
-    underline: command( changeFormat, { tag: 'U' } ),
-
-    removeBold: command( changeFormat, null, { tag: 'B' } ),
-    removeItalic: command( changeFormat, null, { tag: 'I' } ),
-    removeUnderline: command( changeFormat, null, { tag: 'U' } ),
-
-    makeLink: function ( url ) {
-        url = encodeURI( url );
-        var range = getSelection();
-        if ( range.collapsed ) {
-            var protocolEnd = url.indexOf( ':' ) + 1;
-            if ( protocolEnd ) {
-                while ( url[ protocolEnd ] === '/' ) { protocolEnd += 1; }
-            }
-            range._insertNode(
-                doc.createTextNode( url.slice( protocolEnd ) )
-            );
-        }
-        changeFormat({
-            tag: 'A',
-            attributes: {
-                href: url
-            }
-        }, {
-            tag: 'A'
-        }, range );
-        focus();
-        return this;
-    },
-
-    removeLink: function () {
-        changeFormat( null, {
-            tag: 'A'
-        }, getSelection(), true );
-        focus();
-        return this;
-    },
-
-    setFontFace: function ( name ) {
-        changeFormat({
-            tag: 'SPAN',
-            attributes: {
-                'class': 'font',
-                style: 'font-family: ' + name + ', sans-serif;'
-            }
-        }, {
-            tag: 'SPAN',
-            attributes: { 'class': 'font' }
-        });
-        focus();
-        return this;
-    },
-    setFontSize: function ( size ) {
-        changeFormat({
-            tag: 'SPAN',
-            attributes: {
-                'class': 'size',
-                style: 'font-size: ' +
-                    ( typeof size === 'number' ? size + 'px' : size )
-            }
-        }, {
-            tag: 'SPAN',
-            attributes: { 'class': 'size' }
-        });
-        focus();
-        return this;
-    },
-
-    setTextColour: function ( colour ) {
-        changeFormat({
-            tag: 'SPAN',
-            attributes: {
-                'class': 'colour',
-                style: 'color: ' + colour
-            }
-        }, {
-            tag: 'SPAN',
-            attributes: { 'class': 'colour' }
-        });
-        focus();
-        return this;
-    },
-
-    setHighlightColour: function ( colour ) {
-        changeFormat({
-            tag: 'SPAN',
-            attributes: {
-                'class': 'highlight',
-                style: 'background-color: ' + colour
-            }
-        }, {
-            tag: 'SPAN',
-            attributes: { 'class': 'highlight' }
-        });
-        focus();
-        return this;
-    },
-
-    setTextAlignment: function ( alignment ) {
-        forEachBlock( function ( block ) {
-            block.className = ( block.className
-                .split( /\s+/ )
-                .filter( function ( klass ) {
-                    return !( /align/.test( klass ) );
-                })
-                .join( ' ' ) +
-                ' align-' + alignment ).trim();
-            block.style.textAlign = alignment;
-        }, true );
-        focus();
-        return this;
-    },
-
-    setTextDirection: function ( direction ) {
-        forEachBlock( function ( block ) {
-            block.className = ( block.className
-                .split( /\s+/ )
-                .filter( function ( klass ) {
-                    return !( /dir/.test( klass ) );
-                })
-                .join( ' ' ) +
-                ' dir-' + direction ).trim();
-            block.dir = direction;
-        }, true );
-        focus();
-        return this;
-    },
-
-    forEachBlock: chain( forEachBlock ),
-    modifyBlocks: chain( modifyBlocks ),
-
-    increaseQuoteLevel: command( modifyBlocks, increaseBlockQuoteLevel ),
-    decreaseQuoteLevel: command( modifyBlocks, decreaseBlockQuoteLevel ),
-
-    makeUnorderedList: command( modifyBlocks, makeUnorderedList ),
-    makeOrderedList: command( modifyBlocks, makeOrderedList ),
-    removeList: command( modifyBlocks, decreaseListLevel )
+    }
+    if ( range ) {
+        this._getRangeAndRemoveBookmark( range );
+    }
+    return html;
 };
 
-// --- Initialise ---
+proto.setHTML = function ( html ) {
+    var frag = this._doc.createDocumentFragment(),
+        div = this.createElement( 'DIV' ),
+        child;
 
-body.setAttribute( 'contenteditable', 'true' );
-editor.setHTML( '' );
+    // Parse HTML into DOM tree
+    div.innerHTML = html;
+    frag.appendChild( empty( div ) );
 
-if ( win.onEditorLoad ) {
-    win.onEditorLoad( win.editor );
-    win.onEditorLoad = null;
-}
+    cleanTree( frag, true );
+    cleanupBRs( frag );
+
+    wrapTopLevelInline( frag, 'DIV' );
+
+    // Fix cursor
+    var node = frag;
+    while ( node = getNextBlock( node ) ) {
+        fixCursor( node );
+    }
+
+    // Remove existing body children
+    var body = this._body;
+    while ( child = body.lastChild ) {
+        body.removeChild( child );
+    }
+
+    // And insert new content
+    body.appendChild( frag );
+    fixCursor( body );
+
+    // Reset the undo stack
+    this._undoIndex = -1;
+    this._undoStack.length = 0;
+    this._undoStackLength = 0;
+    this._isInUndoState = false;
+
+    // Record undo state
+    var range = this._getRangeAndRemoveBookmark() ||
+        this._createRange( body.firstChild, 0 );
+    this._recordUndoState( range );
+    this._getRangeAndRemoveBookmark( range );
+    // IE will also set focus when selecting text so don't use
+    // setSelection. Instead, just store it in lastSelection, so if
+    // anything calls getSelection before first focus, we have a range
+    // to return.
+    if ( losesSelectionOnBlur ) {
+        this._lastSelection = range;
+    } else {
+        this.setSelection( range );
+    }
+    this._updatePath( range, true );
+
+    return this;
+};
+
+proto.insertElement = function ( el, range ) {
+    if ( !range ) { range = this.getSelection(); }
+    range.collapse( true );
+    if ( isInline( el ) ) {
+        insertNodeInRange( range, el );
+        range.setStartAfter( el );
+    } else {
+        // Get containing block node.
+        var body = this._body,
+            splitNode = getStartBlockOfRange( range ) || body,
+            parent, nodeAfterSplit;
+        // While at end of container node, move up DOM tree.
+        while ( splitNode !== body && !splitNode.nextSibling ) {
+            splitNode = splitNode.parentNode;
+        }
+        // If in the middle of a container node, split up to body.
+        if ( splitNode !== body ) {
+            parent = splitNode.parentNode;
+            nodeAfterSplit = split( parent, splitNode.nextSibling, body );
+        }
+        if ( nodeAfterSplit ) {
+            body.insertBefore( el, nodeAfterSplit );
+            range.setStart( nodeAfterSplit, 0 );
+            range.setStart( nodeAfterSplit, 0 );
+            moveRangeBoundariesDownTree( range );
+        } else {
+            body.appendChild( el );
+            // Insert blank line below block.
+            body.appendChild( fixCursor( this.createElement( 'div' ) ) );
+            range.setStart( el, 0 );
+            range.setEnd( el, 0 );
+        }
+        this.focus();
+        this.setSelection( range );
+        this._updatePath( range );
+    }
+    return this;
+};
+
+proto.insertImage = function ( src ) {
+    var img = this.createElement( 'IMG', {
+        src: src
+    });
+    this.insertElement( img );
+    return img;
+};
+
+// --- Formatting ---
+
+var command = function ( method, arg, arg2 ) {
+    return function () {
+        this[ method ]( arg, arg2 );
+        return this.focus();
+    };
+};
+
+proto.addStyles = function ( styles ) {
+    if ( styles ) {
+        var head = this._doc.documentElement.firstChild,
+            style = this.createElement( 'STYLE', {
+                type: 'text/css'
+            });
+        if ( style.styleSheet ) {
+            // IE8: must append to document BEFORE adding styles
+            // or you get the IE7 CSS parser!
+            head.appendChild( style );
+            style.styleSheet.cssText = styles;
+        } else {
+            // Everyone else
+            style.appendChild( this._doc.createTextNode( styles ) );
+            head.appendChild( style );
+        }
+    }
+    return this;
+};
+
+proto.bold = command( 'changeFormat', { tag: 'B' } );
+proto.italic = command( 'changeFormat', { tag: 'I' } );
+proto.underline = command( 'changeFormat', { tag: 'U' } );
+
+proto.removeBold = command( 'changeFormat', null, { tag: 'B' } );
+proto.removeItalic = command( 'changeFormat', null, { tag: 'I' } );
+proto.removeUnderline = command( 'changeFormat', null, { tag: 'U' } );
+
+proto.makeLink = function ( url ) {
+    url = encodeURI( url );
+    var range = this.getSelection();
+    if ( range.collapsed ) {
+        var protocolEnd = url.indexOf( ':' ) + 1;
+        if ( protocolEnd ) {
+            while ( url[ protocolEnd ] === '/' ) { protocolEnd += 1; }
+        }
+        range._insertNode(
+            this._doc.createTextNode( url.slice( protocolEnd ) )
+        );
+    }
+    this.changeFormat({
+        tag: 'A',
+        attributes: {
+            href: url
+        }
+    }, {
+        tag: 'A'
+    }, range );
+    return this.focus();
+};
+proto.removeLink = function () {
+    this.changeFormat( null, {
+        tag: 'A'
+    }, this.getSelection(), true );
+    return this.focus();
+};
+
+proto.setFontFace = function ( name ) {
+    this.changeFormat({
+        tag: 'SPAN',
+        attributes: {
+            'class': 'font',
+            style: 'font-family: ' + name + ', sans-serif;'
+        }
+    }, {
+        tag: 'SPAN',
+        attributes: { 'class': 'font' }
+    });
+    return this.focus();
+};
+proto.setFontSize = function ( size ) {
+    this.changeFormat({
+        tag: 'SPAN',
+        attributes: {
+            'class': 'size',
+            style: 'font-size: ' +
+                ( typeof size === 'number' ? size + 'px' : size )
+        }
+    }, {
+        tag: 'SPAN',
+        attributes: { 'class': 'size' }
+    });
+    return this.focus();
+};
+
+proto.setTextColour = function ( colour ) {
+    this.changeFormat({
+        tag: 'SPAN',
+        attributes: {
+            'class': 'colour',
+            style: 'color: ' + colour
+        }
+    }, {
+        tag: 'SPAN',
+        attributes: { 'class': 'colour' }
+    });
+    return this.focus();
+};
+
+proto.setHighlightColour = function ( colour ) {
+    this.changeFormat({
+        tag: 'SPAN',
+        attributes: {
+            'class': 'highlight',
+            style: 'background-color: ' + colour
+        }
+    }, {
+        tag: 'SPAN',
+        attributes: { 'class': 'highlight' }
+    });
+    return this.focus();
+};
+
+proto.setTextAlignment = function ( alignment ) {
+    this.forEachBlock( function ( block ) {
+        block.className = ( block.className
+            .split( /\s+/ )
+            .filter( function ( klass ) {
+                return !( /align/.test( klass ) );
+            })
+            .join( ' ' ) +
+            ' align-' + alignment ).trim();
+        block.style.textAlign = alignment;
+    }, true );
+    return this.focus();
+};
+
+proto.setTextDirection = function ( direction ) {
+    this.forEachBlock( function ( block ) {
+        block.className = ( block.className
+            .split( /\s+/ )
+            .filter( function ( klass ) {
+                return !( /dir/.test( klass ) );
+            })
+            .join( ' ' ) +
+            ' dir-' + direction ).trim();
+        block.dir = direction;
+    }, true );
+    return this.focus();
+};
+
+proto.increaseQuoteLevel = command( 'modifyBlocks', increaseBlockQuoteLevel );
+proto.decreaseQuoteLevel = command( 'modifyBlocks', decreaseBlockQuoteLevel );
+
+proto.makeUnorderedList = command( 'modifyBlocks', makeUnorderedList );
+proto.makeOrderedList = command( 'modifyBlocks', makeOrderedList );
+proto.removeList = command( 'modifyBlocks', decreaseListLevel );

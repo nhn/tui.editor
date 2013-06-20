@@ -1,4 +1,5 @@
 /*global doc, navigator */
+/*jshint strict:false */
 
 var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
 var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
@@ -14,7 +15,6 @@ var END_TO_END = 2;     // Range.END_TO_END
 var END_TO_START = 3;   // Range.END_TO_START
 
 var win = doc.defaultView;
-var body = doc.body;
 
 var ua = navigator.userAgent;
 
@@ -32,6 +32,13 @@ var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 var useTextFixer = isIE || isOpera;
 var cantFocusEmptyTextNodes = isIE || isWebKit;
 var losesSelectionOnBlur = isIE;
+var hasBuggySplit = ( function () {
+    var div = doc.createElement( 'div' ),
+        text = doc.createTextNode( '12' );
+    div.appendChild( text );
+    text.splitText( 2 );
+    return div.childNodes.length !== 2;
+}() );
 
 var notWS = /\S/;
 

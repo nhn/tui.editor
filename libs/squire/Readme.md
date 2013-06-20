@@ -7,7 +7,7 @@ Unlike other HTML5 rich text editors, Squire was written as a component for writ
 
 ### Lightweight ###
 
-* Only 9KB of JS after minification and gzip (27KB before gzip).
+* Only 10KB of JS after minification and gzip (33KB before gzip).
 * IE8 support does not add extra bloat to the core library; instead, a separate
   3KB (7KB before gzip) file patches the browser to support the W3C APIs.
 * Does not include its own XHR wrapper, widget library or lightbox overlays.
@@ -39,6 +39,15 @@ Installation and usage
    `iframe.contentWindow.editor`.
 5. Use the API below with the `editor` object to set and get data and integrate
    with your application or framework.
+
+Advanced usage
+--------------
+
+If you load the library into a top-level document (rather than an iframe), it
+will not turn the page into an editable document, but will instead add a
+function named `Squire` to the global scope. Call `new Squire( document )`, with
+the `document` from an iframe to instantiate multiple rich text areas on the
+same page efficiently.
 
 License
 -------

@@ -4,7 +4,6 @@
     SHOW_ELEMENT,
     FILTER_ACCEPT,
     FILTER_SKIP,
-    doc,
     isOpera,
     useTextFixer,
     cantFocusEmptyTextNodes,
@@ -232,7 +231,7 @@ function split ( node, offset, stopNode ) {
         }
 
         // Clone node without children
-        parent = node.parentNode,
+        parent = node.parentNode;
         clone = node.cloneNode( false );
 
         // Add right-hand siblings to the clone
@@ -374,7 +373,7 @@ function mergeContainers ( node ) {
     }
 }
 
-function createElement ( tag, props, children ) {
+function createElement ( doc, tag, props, children ) {
     var el = doc.createElement( tag ),
         attr, i, l;
     if ( props instanceof Array ) {
@@ -392,35 +391,4 @@ function createElement ( tag, props, children ) {
         }
     }
     return el;
-}
-
-// Fix IE8/9's buggy implementation of Text#splitText.
-// If the split is at the end of the node, it doesn't insert the newly split
-// node into the document, and sets its value to undefined rather than ''.
-// And even if the split is not at the end, the original node is removed from
-// the document and replaced by another, rather than just having its data
-// shortened.
-if ( function () {
-    var div = doc.createElement( 'div' ),
-        text = doc.createTextNode( '12' );
-    div.appendChild( text );
-    text.splitText( 2 );
-    return div.childNodes.length !== 2;
-}() ) {
-    Text.prototype.splitText = function ( offset ) {
-        var afterSplit = this.ownerDocument.createTextNode(
-                this.data.slice( offset ) ),
-            next = this.nextSibling,
-            parent = this.parentNode,
-            toDelete = this.length - offset;
-        if ( next ) {
-            parent.insertBefore( afterSplit, next );
-        } else {
-            parent.appendChild( afterSplit );
-        }
-        if ( toDelete ) {
-            this.deleteData( offset, toDelete );
-        }
-        return afterSplit;
-    };
 }
