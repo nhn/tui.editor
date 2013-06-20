@@ -20,9 +20,7 @@
     fixCursor,
     split,
     mergeWithBlock,
-    mergeContainers,
-
-    Range
+    mergeContainers
 */
 /*jshint strict:false */
 
@@ -51,11 +49,11 @@ var getNodeAfter = function ( node, offset ) {
     return node;
 };
 
-var RangePrototype = Range.prototype;
+// ---
 
-RangePrototype.forEachTextNode = function ( fn ) {
-    var range = this.cloneRange();
-    range.moveBoundariesDownTree();
+var forEachTextNodeInRange = function ( range, fn ) {
+    range = range.cloneRange();
+    moveRangeBoundariesDownTree( range );
 
     var startContainer = range.startContainer,
         endContainer = range.endContainer,
@@ -71,9 +69,9 @@ RangePrototype.forEachTextNode = function ( fn ) {
         ( textnode = walker.nextNode() ) ) {}
 };
 
-RangePrototype.getTextContent = function () {
+var getTextContentInRange = function ( range ) {
     var textContent = '';
-    this.forEachTextNode( function ( textnode, range ) {
+    forEachTextNodeInRange( range, function ( textnode, range ) {
         var value = textnode.data;
         if ( value && ( /\S/.test( value ) ) ) {
             if ( textnode === range.endContainer ) {
@@ -90,12 +88,12 @@ RangePrototype.getTextContent = function () {
 
 // ---
 
-RangePrototype._insertNode = function ( node ) {
+var insertNodeInRange = function ( range, node ) {
     // Insert at start.
-    var startContainer = this.startContainer,
-        startOffset = this.startOffset,
-        endContainer = this.endContainer,
-        endOffset = this.endOffset,
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset,
         parent, children, childCount, afterSplit;
 
     // If part way through a text node, split it.
@@ -104,7 +102,7 @@ RangePrototype._insertNode = function ( node ) {
         children = parent.childNodes;
         if ( startOffset === startContainer.length ) {
             startOffset = indexOf.call( children, startContainer ) + 1;
-            if ( this.collapsed ) {
+            if ( range.collapsed ) {
                 endContainer = parent;
                 endOffset = startOffset;
             }
@@ -138,20 +136,18 @@ RangePrototype._insertNode = function ( node ) {
         endOffset += children.length - childCount;
     }
 
-    this.setStart( startContainer, startOffset );
-    this.setEnd( endContainer, endOffset );
-
-    return this;
+    range.setStart( startContainer, startOffset );
+    range.setEnd( endContainer, endOffset );
 };
 
-RangePrototype._extractContents = function ( common ) {
-    var startContainer = this.startContainer,
-        startOffset = this.startOffset,
-        endContainer = this.endContainer,
-        endOffset = this.endOffset;
+var extractContentsOfRange = function ( range, common ) {
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset;
 
     if ( !common ) {
-        common = this.commonAncestorContainer;
+        common = range.commonAncestorContainer;
     }
 
     if ( common.nodeType === TEXT_NODE ) {
@@ -170,28 +166,28 @@ RangePrototype._extractContents = function ( common ) {
         startNode = next;
     }
 
-    this.setStart( common, endNode ?
+    range.setStart( common, endNode ?
         indexOf.call( common.childNodes, endNode ) :
             common.childNodes.length );
-    this.collapse( true );
+    range.collapse( true );
 
     fixCursor( common );
 
     return frag;
 };
 
-RangePrototype._deleteContents = function () {
+var deleteContentsOfRange = function ( range ) {
     // Move boundaries up as much as possible to reduce need to split.
-    this.moveBoundariesUpTree();
+    moveRangeBoundariesUpTree( range );
 
     // Remove selected range
-    this._extractContents();
+    extractContentsOfRange( range );
 
     // If we split into two different blocks, merge the blocks.
-    var startBlock = this.getStartBlock(),
-        endBlock = this.getEndBlock();
+    var startBlock = getStartBlockOfRange( range ),
+        endBlock = getEndBlockOfRange( range );
     if ( startBlock && endBlock && startBlock !== endBlock ) {
-        mergeWithBlock( startBlock, endBlock, this );
+        mergeWithBlock( startBlock, endBlock, range );
     }
 
     // Ensure block has necessary children
@@ -200,27 +196,25 @@ RangePrototype._deleteContents = function () {
     }
 
     // Ensure body has a block-level element in it.
-    var body = this.endContainer.ownerDocument.body,
+    var body = range.endContainer.ownerDocument.body,
         child = body.firstChild;
     if ( !child || child.nodeName === 'BR' ) {
         fixCursor( body );
-        this.selectNodeContents( body.firstChild );
+        range.selectNodeContents( body.firstChild );
     }
 
     // Ensure valid range (must have only block or inline containers)
-    var isCollapsed = this.collapsed;
-    this.moveBoundariesDownTree();
+    var isCollapsed = range.collapsed;
+    moveRangeBoundariesDownTree( range );
     if ( isCollapsed ) {
         // Collapse
-        this.collapse( true );
+        range.collapse( true );
     }
-
-    return this;
 };
 
 // ---
 
-RangePrototype.insertTreeFragment = function ( frag ) {
+var insertTreeFragmentIntoRange = function ( range, frag ) {
     // Check if it's all inline content
     var allInline = true,
         children = frag.childNodes,
@@ -233,23 +227,23 @@ RangePrototype.insertTreeFragment = function ( frag ) {
     }
 
     // Delete any selected content
-    if ( !this.collapsed ) {
-        this._deleteContents();
+    if ( !range.collapsed ) {
+        deleteContentsOfRange( range );
     }
 
     // Move range down into text ndoes
-    this.moveBoundariesDownTree();
+    moveRangeBoundariesDownTree( range );
 
     // If inline, just insert at the current position.
     if ( allInline ) {
-        this._insertNode( frag );
-        this.collapse( false );
+        insertNodeInRange( range, frag );
+        range.collapse( false );
     }
     // Otherwise, split up to body, insert inline before and after split
     // and insert block in between split, then merge containers.
     else {
-        var nodeAfterSplit = split( this.startContainer, this.startOffset,
-                this.startContainer.ownerDocument.body ),
+        var nodeAfterSplit = split( range.startContainer, range.startOffset,
+                range.startContainer.ownerDocument.body ),
             nodeBeforeSplit = nodeAfterSplit.previousSibling,
             startContainer = nodeBeforeSplit,
             startOffset = startContainer.childNodes.length,
@@ -305,17 +299,16 @@ RangePrototype.insertTreeFragment = function ( frag ) {
             mergeContainers( nodeBeforeSplit );
         }
 
-        this.setStart( startContainer, startOffset );
-        this.setEnd( endContainer, endOffset );
-        this.moveBoundariesDownTree();
+        range.setStart( startContainer, startOffset );
+        range.setEnd( endContainer, endOffset );
+        moveRangeBoundariesDownTree( range );
     }
 };
 
 // ---
 
-RangePrototype.containsNode = function ( node, partial ) {
-    var range = this,
-        nodeRange = node.ownerDocument.createRange();
+var isNodeContainedInRange = function ( range, node, partial ) {
+    var nodeRange = node.ownerDocument.createRange();
 
     nodeRange.selectNode( node );
 
@@ -339,11 +332,11 @@ RangePrototype.containsNode = function ( node, partial ) {
     }
 };
 
-RangePrototype.moveBoundariesDownTree = function () {
-    var startContainer = this.startContainer,
-        startOffset = this.startOffset,
-        endContainer = this.endContainer,
-        endOffset = this.endOffset,
+var moveRangeBoundariesDownTree = function ( range ) {
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset,
         child;
 
     while ( startContainer.nodeType !== TEXT_NODE ) {
@@ -376,26 +369,24 @@ RangePrototype.moveBoundariesDownTree = function () {
     // If collapsed, this algorithm finds the nearest text node positions
     // *outside* the range rather than inside, but also it flips which is
     // assigned to which.
-    if ( this.collapsed ) {
-        this.setStart( endContainer, endOffset );
-        this.setEnd( startContainer, startOffset );
+    if ( range.collapsed ) {
+        range.setStart( endContainer, endOffset );
+        range.setEnd( startContainer, startOffset );
     } else {
-        this.setStart( startContainer, startOffset );
-        this.setEnd( endContainer, endOffset );
+        range.setStart( startContainer, startOffset );
+        range.setEnd( endContainer, endOffset );
     }
-
-    return this;
 };
 
-RangePrototype.moveBoundariesUpTree = function ( common ) {
-    var startContainer = this.startContainer,
-        startOffset = this.startOffset,
-        endContainer = this.endContainer,
-        endOffset = this.endOffset,
+var moveRangeBoundariesUpTree = function ( range, common ) {
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset,
         parent;
 
     if ( !common ) {
-        common = this.commonAncestorContainer;
+        common = range.commonAncestorContainer;
     }
 
     while ( startContainer !== common && !startOffset ) {
@@ -411,16 +402,14 @@ RangePrototype.moveBoundariesUpTree = function ( common ) {
         endContainer = parent;
     }
 
-    this.setStart( startContainer, startOffset );
-    this.setEnd( endContainer, endOffset );
-
-    return this;
+    range.setStart( startContainer, startOffset );
+    range.setEnd( endContainer, endOffset );
 };
 
 // Returns the first block at least partially contained by the range,
 // or null if no block is contained by the range.
-RangePrototype.getStartBlock = function () {
-    var container = this.startContainer,
+var getStartBlockOfRange = function ( range ) {
+    var container = range.startContainer,
         block;
 
     // If inline, get the containing block.
@@ -429,17 +418,17 @@ RangePrototype.getStartBlock = function () {
     } else if ( isBlock( container ) ) {
         block = container;
     } else {
-        block = getNodeBefore( container, this.startOffset );
+        block = getNodeBefore( container, range.startOffset );
         block = getNextBlock( block );
     }
     // Check the block actually intersects the range
-    return block && this.containsNode( block, true ) ? block : null;
+    return block && isNodeContainedInRange( range, block, true ) ? block : null;
 };
 
 // Returns the last block at least partially contained by the range,
 // or null if no block is contained by the range.
-RangePrototype.getEndBlock = function () {
-    var container = this.endContainer,
+var getEndBlockOfRange = function ( range ) {
+    var container = range.endContainer,
         block, child;
 
     // If inline, get the containing block.
@@ -448,7 +437,7 @@ RangePrototype.getEndBlock = function () {
     } else if ( isBlock( container ) ) {
         block = container;
     } else {
-        block = getNodeAfter( container, this.endOffset );
+        block = getNodeAfter( container, range.endOffset );
         if ( !block ) {
             block = container.ownerDocument.body;
             while ( child = block.lastChild ) {
@@ -459,12 +448,12 @@ RangePrototype.getEndBlock = function () {
 
     }
     // Check the block actually intersects the range
-    return block && this.containsNode( block, true ) ? block : null;
+    return block && isNodeContainedInRange( range, block, true ) ? block : null;
 };
 
-RangePrototype.startsAtBlockBoundary = function () {
-    var startContainer = this.startContainer,
-        startOffset = this.startOffset,
+var rangeDoesStartAtBlockBoundary = function ( range ) {
+    var startContainer = range.startContainer,
+        startOffset = range.startOffset,
         parent, child;
 
     while ( isInline( startContainer ) ) {
@@ -484,9 +473,9 @@ RangePrototype.startsAtBlockBoundary = function () {
     return !startOffset;
 };
 
-RangePrototype.endsAtBlockBoundary = function () {
-    var endContainer = this.endContainer,
-        endOffset = this.endOffset,
+var rangeDoesEndAtBlockBoundary = function ( range ) {
+    var endContainer = range.endContainer,
+        endOffset = range.endOffset,
         length = getLength( endContainer ),
         parent, child;
 
@@ -508,17 +497,15 @@ RangePrototype.endsAtBlockBoundary = function () {
     return endOffset === length;
 };
 
-RangePrototype.expandToBlockBoundaries = function () {
-    var start = this.getStartBlock(),
-        end = this.getEndBlock(),
+var expandRangeToBlockBoundaries = function ( range ) {
+    var start = getStartBlockOfRange( range ),
+        end = getEndBlockOfRange( range ),
         parent;
 
     if ( start && end ) {
         parent = start.parentNode;
-        this.setStart( parent, indexOf.call( parent.childNodes, start ) );
+        range.setStart( parent, indexOf.call( parent.childNodes, start ) );
         parent = end.parentNode;
-        this.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
+        range.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
     }
-
-    return this;
 };

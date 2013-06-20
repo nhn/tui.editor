@@ -44,6 +44,21 @@
     mergeContainers,
     createElement,
 
+    forEachTextNodeInRange,
+    getTextContentInRange,
+    insertNodeInRange,
+    extractContentsOfRange,
+    deleteContentsOfRange,
+    insertTreeFragmentIntoRange,
+    isNodeContainedInRange,
+    moveRangeBoundariesDownTree,
+    moveRangeBoundariesUpTree,
+    getStartBlockOfRange,
+    getEndBlockOfRange,
+    rangeDoesStartAtBlockBoundary,
+    rangeDoesEndAtBlockBoundary,
+    expandRangeToBlockBoundaries,
+
     Range,
     top,
     console,
@@ -321,11 +336,11 @@ var insertElement = function ( el, range ) {
     if ( !range ) { range = getSelection(); }
     range.collapse( true );
     if ( isInline( el ) ) {
-        range._insertNode( el );
+        insertNodeInRange( range, el );
         range.setStartAfter( el );
     } else {
         // Get containing block node.
-        var splitNode = range.getStartBlock() || body,
+        var splitNode = getStartBlockOfRange( range ) || body,
             parent, nodeAfterSplit;
         // While at end of container node, move up DOM tree.
         while ( splitNode !== body && !splitNode.nextSibling ) {
@@ -340,7 +355,7 @@ var insertElement = function ( el, range ) {
             body.insertBefore( el, nodeAfterSplit );
             range.setStart( nodeAfterSplit, 0 );
             range.setStart( nodeAfterSplit, 0 );
-            range.moveBoundariesDownTree();
+            moveRangeBoundariesDownTree( range );
         } else {
             body.appendChild( el );
             // Insert blank line below block.
@@ -370,9 +385,9 @@ var saveRangeToBookmark = function ( range ) {
         }),
         temp;
 
-    range._insertNode( startNode );
+    insertNodeInRange( range, startNode );
     range.collapse( false );
-    range._insertNode( endNode );
+    insertNodeInRange( range, endNode );
 
     // In a collapsed range, the start is sometimes inserted after the end!
     if ( startNode.compareDocumentPosition( endNode ) &
@@ -424,7 +439,7 @@ var getRangeAndRemoveBookmark = function ( range ) {
         range.setEnd( _range.endContainer, _range.endOffset );
         collapsed = range.collapsed;
 
-        range.moveBoundariesDownTree();
+        moveRangeBoundariesDownTree( range );
         if ( collapsed ) {
             range.collapse( true );
         }
@@ -554,7 +569,7 @@ var hasFormat = function ( tag, attributes, range ) {
     // Otherwise, check each text node at least partially contained within
     // the selection and make sure all of them have the format we want.
     walker = new TreeWalker( root, SHOW_TEXT, function ( node ) {
-        return range.containsNode( node, true ) ?
+        return isNodeContainedInRange( range, node, true ) ?
             FILTER_ACCEPT : FILTER_SKIP;
     }, false );
 
@@ -577,7 +592,7 @@ var addFormat = function ( tag, attributes, range ) {
 
     if ( range.collapsed ) {
         el = fixCursor( createElement( tag, attributes ) );
-        range._insertNode( el );
+        insertNodeInRange( range, el );
         range.setStart( el.firstChild, el.firstChild.length );
         range.collapse( true );
     }
@@ -594,7 +609,7 @@ var addFormat = function ( tag, attributes, range ) {
             range.commonAncestorContainer,
             SHOW_TEXT,
             function ( node ) {
-                return range.containsNode( node, true ) ?
+                return isNodeContainedInRange( range, node, true ) ?
                     FILTER_ACCEPT : FILTER_SKIP;
             },
             false
@@ -657,7 +672,7 @@ var removeFormat = function ( tag, attributes, range, partial ) {
         } else {
             fixer = doc.createTextNode( '' );
         }
-        range._insertNode( fixer );
+        insertNodeInRange( range, fixer );
     }
 
     // Find block-level ancestor of selection
@@ -676,7 +691,7 @@ var removeFormat = function ( tag, attributes, range, partial ) {
         examineNode = function ( node, exemplar ) {
             // If the node is completely contained by the range then
             // we're going to remove all formatting so ignore it.
-            if ( range.containsNode( node, false ) ) {
+            if ( isNodeContainedInRange( range, node, false ) ) {
                 return;
             }
 
@@ -685,7 +700,7 @@ var removeFormat = function ( tag, attributes, range, partial ) {
 
             // If not at least partially contained, wrap entire contents
             // in a clone of the tag we're removing and we're done.
-            if ( !range.containsNode( node, true ) ) {
+            if ( !isNodeContainedInRange( range, node, true ) ) {
                 // Ignore bookmarks and empty text nodes
                 if ( node.nodeName !== 'INPUT' &&
                         ( !isText || node.data ) ) {
@@ -716,7 +731,7 @@ var removeFormat = function ( tag, attributes, range, partial ) {
         },
         formatTags = Array.prototype.filter.call(
             root.getElementsByTagName( tag ), function ( el ) {
-                return range.containsNode( el, true ) &&
+                return isNodeContainedInRange( range, el, true ) &&
                     hasTagAttributes( el, tag, attributes );
             }
         );
@@ -828,8 +843,8 @@ var forEachBlock = function ( fn, mutates, range ) {
         getRangeAndRemoveBookmark( range );
     }
 
-    var start = range.getStartBlock(),
-        end = range.getEndBlock();
+    var start = getStartBlockOfRange( range ),
+        end = getEndBlockOfRange( range );
     if ( start && end ) {
         do {
             if ( fn( start ) || start === end ) { break; }
@@ -866,14 +881,14 @@ var modifyBlocks = function ( modify, range ) {
     }
 
     // 3. Expand range to block boundaries
-    range.expandToBlockBoundaries();
+    expandRangeToBlockBoundaries( range );
 
     // 4. Remove range.
-    range.moveBoundariesUpTree( body );
-    var frag = range._extractContents( body );
+    moveRangeBoundariesUpTree( range, body );
+    var frag = extractContentsOfRange( range, body );
 
     // 5. Modify tree of fragment and reinsert.
-    range._insertNode( modify( frag ) );
+    insertNodeInRange( range, modify( frag ) );
 
     // 6. Merge containers at edges
     if ( range.endOffset < range.endContainer.childNodes.length ) {
@@ -1457,7 +1472,7 @@ addEventListener( isIE ?  'beforepaste' : 'paste', function ( event ) {
 
                 // Insert pasted data
                 if ( doPaste ) {
-                    range.insertTreeFragment( frag );
+                    insertTreeFragmentIntoRange( range, frag );
                     docWasChanged();
 
                     range.collapse( false );
@@ -1531,7 +1546,7 @@ var afterDelete = function () {
                 parent = getPreviousBlock( parent );
             }
             fixCursor( parent );
-            range.moveBoundariesDownTree();
+            moveRangeBoundariesDownTree( range );
             setSelection( range );
             updatePath( range );
         }
@@ -1572,10 +1587,10 @@ var keyHandlers = {
         // Selected text is overwritten, therefore delete the contents
         // to collapse selection.
         if ( !range.collapsed ) {
-            range._deleteContents();
+            deleteContentsOfRange( range );
         }
 
-        var block = range.getStartBlock(),
+        var block = getStartBlockOfRange( range ),
             tag = block ? block.nodeName : 'DIV',
             splitTag = tagAfterSplit[ tag ],
             nodeAfterSplit;
@@ -1583,7 +1598,7 @@ var keyHandlers = {
         // If this is a malformed bit of document, just play it safe
         // and insert a <br>.
         if ( !block ) {
-            range._insertNode( createElement( 'BR' ) );
+            insertNodeInRange( range, createElement( 'BR' ) );
             range.collapse( false );
             setSelection( range );
             updatePath( range, true );
@@ -1627,7 +1642,7 @@ var keyHandlers = {
             }
             range.setStart( splitNode, splitOffset );
             range.setEnd( splitNode, splitOffset );
-            block = range.getStartBlock();
+            block = getStartBlockOfRange( range );
         }
 
         if ( !block.textContent ) {
@@ -1701,16 +1716,16 @@ var keyHandlers = {
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
             event.preventDefault();
-            range._deleteContents();
+            deleteContentsOfRange( range );
             setSelection( range );
             updatePath( range, true );
         }
         // If at beginning of block, merge with previous
-        else if ( range.startsAtBlockBoundary() ) {
+        else if ( rangeDoesStartAtBlockBoundary( range ) ) {
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
             event.preventDefault();
-            var current = range.getStartBlock(),
+            var current = getStartBlockOfRange( range ),
                 previous = current && getPreviousBlock( current );
             // Must not be at the very beginning of the text area.
             if ( previous ) {
@@ -1767,16 +1782,16 @@ var keyHandlers = {
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
             event.preventDefault();
-            range._deleteContents();
+            deleteContentsOfRange( range );
             setSelection( range );
             updatePath( range, true );
         }
         // If at end of block, merge next into this block
-        else if ( range.endsAtBlockBoundary() ) {
+        else if ( rangeDoesEndAtBlockBoundary( range ) ) {
             recordUndoState( range );
             getRangeAndRemoveBookmark( range );
             event.preventDefault();
-            var current = range.getStartBlock(),
+            var current = getStartBlockOfRange( range ),
                 next = current && getNextBlock( current );
             // Must not be at the very end of the text area.
             if ( next ) {
@@ -2009,7 +2024,7 @@ editor = win.editor = {
     },
 
     getSelectedText: function () {
-        return getSelection().getTextContent();
+        return getTextContentInRange( getSelection() );
     },
 
     insertElement: chain( insertElement ),
