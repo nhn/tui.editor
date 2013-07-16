@@ -145,15 +145,14 @@ TreeWalker.prototype.previousNode = function () {
     SHOW_ELEMENT,
     FILTER_ACCEPT,
     FILTER_SKIP,
+    win,
     isOpera,
     useTextFixer,
     cantFocusEmptyTextNodes,
 
     TreeWalker,
 
-    Text,
-
-    setPlaceholderTextNode
+    Text
 */
 /*jshint strict:false */
 
@@ -317,7 +316,9 @@ function fixCursor ( node ) {
         if ( !node.firstChild ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( '\u200B' );
-                setPlaceholderTextNode( fixer );
+                if ( win.editor ) {
+                    win.editor._setPlaceholderTextNode( fixer );
+                }
             } else {
                 fixer = doc.createTextNode( '' );
             }
