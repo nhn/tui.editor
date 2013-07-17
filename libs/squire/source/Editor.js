@@ -2121,7 +2121,8 @@ proto.makeLink = function ( url ) {
         if ( protocolEnd ) {
             while ( url[ protocolEnd ] === '/' ) { protocolEnd += 1; }
         }
-        range._insertNode(
+        insertNodeInRange(
+            range,
             this._doc.createTextNode( url.slice( protocolEnd ) )
         );
     }
