@@ -2161,8 +2161,8 @@ var fontSizes = {
 var spanToSemantic = {
     backgroundColor: {
         regexp: notWS,
-        replace: function ( colour ) {
-            return this.createElement( 'SPAN', {
+        replace: function ( doc, colour ) {
+            return createElement( doc, 'SPAN', {
                 'class': 'highlight',
                 style: 'background-color: ' + colour
             });
@@ -2170,8 +2170,8 @@ var spanToSemantic = {
     },
     color: {
         regexp: notWS,
-        replace: function ( colour ) {
-            return this.createElement( 'SPAN', {
+        replace: function ( doc, colour ) {
+            return createElement( doc, 'SPAN', {
                 'class': 'colour',
                 style: 'color:' + colour
             });
@@ -2179,20 +2179,20 @@ var spanToSemantic = {
     },
     fontWeight: {
         regexp: /^bold/i,
-        replace: function () {
-            return this.createElement( 'B' );
+        replace: function ( doc ) {
+            return createElement( doc, 'B' );
         }
     },
     fontStyle: {
         regexp: /^italic/i,
-        replace: function () {
-            return this.createElement( 'I' );
+        replace: function ( doc ) {
+            return createElement( doc, 'I' );
         }
     },
     fontFamily: {
         regexp: notWS,
-        replace: function ( family ) {
-            return this.createElement( 'SPAN', {
+        replace: function ( doc, family ) {
+            return createElement( doc, 'SPAN', {
                 'class': 'font',
                 style: 'font-family:' + family
             });
@@ -2200,8 +2200,8 @@ var spanToSemantic = {
     },
     fontSize: {
         regexp: notWS,
-        replace: function ( size ) {
-            return this.createElement( 'SPAN', {
+        replace: function ( doc, size ) {
+            return createElement( doc, 'SPAN', {
                 'class': 'size',
                 style: 'font-size:' + size
             });
@@ -2212,13 +2212,14 @@ var spanToSemantic = {
 var stylesRewriters = {
     SPAN: function ( span, parent ) {
         var style = span.style,
+            doc = span.ownerDocument,
             attr, converter, css, newTreeBottom, newTreeTop, el;
 
         for ( attr in spanToSemantic ) {
             converter = spanToSemantic[ attr ];
             css = style[ attr ];
             if ( css && converter.regexp.test( css ) ) {
-                el = converter.replace( css );
+                el = converter.replace( doc, css );
                 if ( newTreeBottom ) {
                     newTreeBottom.appendChild( el );
                 }
@@ -2237,13 +2238,13 @@ var stylesRewriters = {
         return newTreeBottom || span;
     },
     STRONG: function ( node, parent ) {
-        var el = this.createElement( 'B' );
+        var el = createElement( node.ownerDocument, 'B' );
         parent.replaceChild( el, node );
         el.appendChild( empty( node ) );
         return el;
     },
     EM: function ( node, parent ) {
-        var el = this.createElement( 'I' );
+        var el = createElement( node.ownerDocument, 'I' );
         parent.replaceChild( el, node );
         el.appendChild( empty( node ) );
         return el;
@@ -2251,16 +2252,17 @@ var stylesRewriters = {
     FONT: function ( node, parent ) {
         var face = node.face,
             size = node.size,
+            doc = node.ownerDocument,
             fontSpan, sizeSpan,
             newTreeBottom, newTreeTop;
         if ( face ) {
-            fontSpan = this.createElement( 'SPAN', {
+            fontSpan = createElement( doc, 'SPAN', {
                 'class': 'font',
                 style: 'font-family:' + face
             });
         }
         if ( size ) {
-            sizeSpan = this.createElement( 'SPAN', {
+            sizeSpan = createElement( doc, 'SPAN', {
                 'class': 'size',
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
@@ -2268,14 +2270,14 @@ var stylesRewriters = {
                 fontSpan.appendChild( sizeSpan );
             }
         }
-        newTreeTop = fontSpan || sizeSpan || this.createElement( 'SPAN' );
+        newTreeTop = fontSpan || sizeSpan || createElement( doc, 'SPAN' );
         newTreeBottom = sizeSpan || fontSpan || newTreeTop;
         parent.replaceChild( newTreeTop, node );
         newTreeBottom.appendChild( empty( node ) );
         return newTreeBottom;
     },
     TT: function ( node, parent ) {
-        var el = this.createElement( 'SPAN', {
+        var el = createElement( node.ownerDocument, 'SPAN', {
             'class': 'font',
             style: 'font-family:menlo,consolas,"courier new",monospace'
         });
@@ -2346,18 +2348,19 @@ var cleanTree = function ( node, allowStyles ) {
 
 var wrapTopLevelInline = function ( root, tag ) {
     var children = root.childNodes,
+        doc = root.ownerDocument,
         wrapper = null,
         i, l, child, isBR;
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
         isBR = child.nodeName === 'BR';
         if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = this.createElement( tag ); }
+            if ( !wrapper ) { wrapper = createElement( doc, tag ); }
             wrapper.appendChild( child );
             i -= 1;
             l -= 1;
         } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = this.createElement( tag ); }
+            if ( !wrapper ) { wrapper = createElement( doc, tag ); }
             fixCursor( wrapper );
             if ( isBR ) {
                 root.replaceChild( wrapper, child );
