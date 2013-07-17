@@ -1410,9 +1410,9 @@ var afterCut = function ( self ) {
 proto._onCut = function () {
     // Save undo checkpoint
     var range = this.getSelection();
-    this.recordUndoState( range );
-    this.getRangeAndRemoveBookmark( range );
-    this._setSelection( range );
+    this._recordUndoState( range );
+    this._getRangeAndRemoveBookmark( range );
+    this.setSelection( range );
     setTimeout( function () { afterCut( this ); }, 0 );
 };
 
