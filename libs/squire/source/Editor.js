@@ -857,7 +857,7 @@ var splitBlock = function ( block, node, offset ) {
 
     // Make sure the new node is the correct type.
     if ( nodeAfterSplit.nodeName !== splitTag ) {
-        block = this.createElement( splitTag );
+        block = createElement( nodeAfterSplit.ownerDocument, splitTag );
         block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
         block.dir = nodeAfterSplit.dir;
         replaceWith( nodeAfterSplit, block );
@@ -1568,7 +1568,7 @@ var mapKeyToFormat = function ( tag ) {
 // you delete all text inside an inline tag, remove the inline tag.
 var afterDelete = function ( self ) {
     try {
-        var range = self._getSelection(),
+        var range = self.getSelection(),
             node = range.startContainer,
             parent;
         if ( node.nodeType === TEXT_NODE ) {
