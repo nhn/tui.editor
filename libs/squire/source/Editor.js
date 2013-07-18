@@ -1398,22 +1398,21 @@ var cleanupBRs = function ( root ) {
 
 // --- Cut and Paste ---
 
-var afterCut = function ( self ) {
-    try {
-        // If all content removed, ensure div at start of body.
-        fixCursor( self._body );
-    } catch ( error ) {
-        self.didError( error );
-    }
-};
-
 proto._onCut = function () {
     // Save undo checkpoint
     var range = this.getSelection();
+    var self = this;
     this._recordUndoState( range );
     this._getRangeAndRemoveBookmark( range );
     this.setSelection( range );
-    setTimeout( function () { afterCut( this ); }, 0 );
+    setTimeout( function () {
+        try {
+            // If all content removed, ensure div at start of body.
+            fixCursor( self._body );
+        } catch ( error ) {
+            self.didError( error );
+        }
+    }, 0 );
 };
 
 proto._onPaste = function ( event ) {
