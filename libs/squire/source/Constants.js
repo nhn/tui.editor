@@ -22,16 +22,16 @@ var isIOS = /iP(?:ad|hone|od)/.test( ua );
 var isMac = /Mac OS X/.test( ua );
 
 var isGecko = /Gecko\//.test( ua );
-var isIE = /Trident\//.test( ua );
+var isIE8or9or10 = /Trident\/[456]\./.test( ua );
 var isIE8 = ( win.ie === 8 );
 var isOpera = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
 
 var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
-var useTextFixer = isIE || isOpera;
-var cantFocusEmptyTextNodes = isIE || isWebKit;
-var losesSelectionOnBlur = isIE;
+var useTextFixer = isIE8or9or10 || isOpera;
+var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
+var losesSelectionOnBlur = isIE8or9or10;
 var hasBuggySplit = ( function () {
     var div = doc.createElement( 'div' ),
         text = doc.createTextNode( '12' );

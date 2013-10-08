@@ -107,8 +107,8 @@ function Squire ( doc ) {
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
     this._awaitingPaste = false;
-    this.addEventListener( isIE ? 'beforecut' : 'cut', this._onCut );
-    this.addEventListener( isIE ? 'beforepaste' : 'paste', this._onPaste );
+    this.addEventListener( isIE8or9or10 ? 'beforecut' : 'cut', this._onCut );
+    this.addEventListener( isIE8or9or10 ? 'beforepaste' : 'paste', this._onPaste );
 
     if ( isIE8 ) {
         this.addEventListener( 'keyup', this._ieSelAllClean );
