@@ -40,6 +40,7 @@ var hasBuggySplit = ( function () {
     return div.childNodes.length !== 2;
 }() );
 
-var notWS = /\S/;
+// Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
+var notWS = /[^ \t\r\n]/;
 
 var indexOf = Array.prototype.indexOf;
