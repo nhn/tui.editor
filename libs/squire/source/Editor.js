@@ -1549,14 +1549,15 @@ var mapKeyTo = function ( method ) {
     };
 };
 
-var mapKeyToFormat = function ( tag ) {
+var mapKeyToFormat = function ( tag, remove ) {
+    remove = remove || null;
     return function ( self, event ) {
         event.preventDefault();
         var range = self.getSelection();
         if ( self.hasFormat( tag, null, range ) ) {
             self.changeFormat( null, { tag: tag }, range );
         } else {
-            self.changeFormat( { tag: tag }, null, range );
+            self.changeFormat( { tag: tag }, remove, range );
         }
     };
 };
@@ -1897,6 +1898,9 @@ if ( isMac && isGecko && win.getSelection().modify ) {
 keyHandlers[ ctrlKey + 'b' ] = mapKeyToFormat( 'B' );
 keyHandlers[ ctrlKey + 'i' ] = mapKeyToFormat( 'I' );
 keyHandlers[ ctrlKey + 'u' ] = mapKeyToFormat( 'U' );
+keyHandlers[ ctrlKey + 'shift-7' ] = mapKeyToFormat( 'STRIKE' );
+keyHandlers[ ctrlKey + 'shift-5' ] = mapKeyToFormat( 'SUB', { tag: 'SUP' } );
+keyHandlers[ ctrlKey + 'shift-6' ] = mapKeyToFormat( 'SUP', { tag: 'SUB' } );
 keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
 keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( 'undo' );
 keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
@@ -2107,10 +2111,16 @@ proto.addStyles = function ( styles ) {
 proto.bold = command( 'changeFormat', { tag: 'B' } );
 proto.italic = command( 'changeFormat', { tag: 'I' } );
 proto.underline = command( 'changeFormat', { tag: 'U' } );
+proto.strikethrough = command( 'changeFormat', { tag: 'STRIKE' } );
+proto.subscript = command( 'changeFormat', { tag: 'SUB' }, { tag: 'SUP' } );
+proto.superscript = command( 'changeFormat', { tag: 'SUP' }, { tag: 'SUB' } );
 
 proto.removeBold = command( 'changeFormat', null, { tag: 'B' } );
 proto.removeItalic = command( 'changeFormat', null, { tag: 'I' } );
 proto.removeUnderline = command( 'changeFormat', null, { tag: 'U' } );
+proto.removeStrikethrough = command( 'changeFormat', null, { tag: 'STRIKE' } );
+proto.removeSubscript = command( 'changeFormat', null, { tag: 'SUB' } );
+proto.removeSuperscript = command( 'changeFormat', null, { tag: 'SUP' } );
 
 proto.makeLink = function ( url ) {
     url = encodeURI( url );
