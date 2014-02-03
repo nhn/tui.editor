@@ -1058,7 +1058,7 @@ var expandRangeToBlockBoundaries = function ( range ) {
     isIOS,
     isMac,
     isGecko,
-    isIE,
+    isIE8or9or10,
     isIE8,
     isOpera,
     ctrlKey,
@@ -1106,7 +1106,6 @@ var expandRangeToBlockBoundaries = function ( range ) {
     rangeDoesEndAtBlockBoundary,
     expandRangeToBlockBoundaries,
 
-    Range,
     top,
     console,
     setTimeout
@@ -2210,6 +2209,15 @@ var spanToSemantic = {
     }
 };
 
+var replaceWithTag = function ( tag ) {
+    return function ( node, parent ) {
+        var el = createElement( node.ownerDocument, tag );
+        parent.replaceChild( el, node );
+        el.appendChild( empty( node ) );
+        return el;
+    };
+};
+
 var stylesRewriters = {
     SPAN: function ( span, parent ) {
         var style = span.style,
@@ -2238,41 +2246,56 @@ var stylesRewriters = {
 
         return newTreeBottom || span;
     },
-    STRONG: function ( node, parent ) {
-        var el = createElement( node.ownerDocument, 'B' );
-        parent.replaceChild( el, node );
-        el.appendChild( empty( node ) );
-        return el;
-    },
-    EM: function ( node, parent ) {
-        var el = createElement( node.ownerDocument, 'I' );
-        parent.replaceChild( el, node );
-        el.appendChild( empty( node ) );
-        return el;
-    },
+    STRONG: replaceWithTag( 'B' ),
+    EM: replaceWithTag( 'I' ),
+    S: replaceWithTag( 'STRIKE' ),
     FONT: function ( node, parent ) {
         var face = node.face,
             size = node.size,
+            colour = node.color,
             doc = node.ownerDocument,
-            fontSpan, sizeSpan,
+            fontSpan, sizeSpan, colourSpan,
             newTreeBottom, newTreeTop;
         if ( face ) {
             fontSpan = createElement( doc, 'SPAN', {
                 'class': 'font',
                 style: 'font-family:' + face
             });
+            newTreeTop = fontSpan;
+            newTreeBottom = fontSpan;
         }
         if ( size ) {
             sizeSpan = createElement( doc, 'SPAN', {
                 'class': 'size',
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
-            if ( fontSpan ) {
-                fontSpan.appendChild( sizeSpan );
+            if ( !newTreeTop ) {
+                newTreeTop = sizeSpan;
             }
+            if ( newTreeBottom ) {
+                newTreeBottom.appendChild( sizeSpan );
+            }
+            newTreeBottom = sizeSpan;
         }
-        newTreeTop = fontSpan || sizeSpan || createElement( doc, 'SPAN' );
-        newTreeBottom = sizeSpan || fontSpan || newTreeTop;
+        if ( colour && /^#?([\dA-F]{3}){1,2}$/i.test( colour ) ) {
+            if ( colour.charAt( 0 ) !== '#' ) {
+                colour = '#' + colour;
+            }
+            colourSpan = createElement( doc, 'SPAN', {
+                'class': 'colour',
+                style: 'color:' + colour
+            });
+            if ( !newTreeTop ) {
+                newTreeTop = colourSpan;
+            }
+            if ( newTreeBottom ) {
+                newTreeBottom.appendChild( colourSpan );
+            }
+            newTreeBottom = colourSpan;
+        }
+        if ( !newTreeTop ) {
+            newTreeTop = newTreeBottom = createElement( doc, 'SPAN' );
+        }
         parent.replaceChild( newTreeTop, node );
         newTreeBottom.appendChild( empty( node ) );
         return newTreeBottom;

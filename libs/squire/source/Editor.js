@@ -1161,6 +1161,15 @@ var spanToSemantic = {
     }
 };
 
+var replaceWithTag = function ( tag ) {
+    return function ( node, parent ) {
+        var el = createElement( node.ownerDocument, tag );
+        parent.replaceChild( el, node );
+        el.appendChild( empty( node ) );
+        return el;
+    };
+};
+
 var stylesRewriters = {
     SPAN: function ( span, parent ) {
         var style = span.style,
@@ -1189,18 +1198,9 @@ var stylesRewriters = {
 
         return newTreeBottom || span;
     },
-    STRONG: function ( node, parent ) {
-        var el = createElement( node.ownerDocument, 'B' );
-        parent.replaceChild( el, node );
-        el.appendChild( empty( node ) );
-        return el;
-    },
-    EM: function ( node, parent ) {
-        var el = createElement( node.ownerDocument, 'I' );
-        parent.replaceChild( el, node );
-        el.appendChild( empty( node ) );
-        return el;
-    },
+    STRONG: replaceWithTag( 'B' ),
+    EM: replaceWithTag( 'I' ),
+    S: replaceWithTag( 'STRIKE' ),
     FONT: function ( node, parent ) {
         var face = node.face,
             size = node.size,
