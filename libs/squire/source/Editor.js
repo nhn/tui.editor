@@ -1200,7 +1200,7 @@ var stylesRewriters = {
     },
     STRONG: replaceWithTag( 'B' ),
     EM: replaceWithTag( 'I' ),
-    S: replaceWithTag( 'STRIKE' ),
+    STRIKE: replaceWithTag( 'S' ),
     FONT: function ( node, parent ) {
         var face = node.face,
             size = node.size,
@@ -1921,7 +1921,7 @@ if ( isMac && isGecko && win.getSelection().modify ) {
 keyHandlers[ ctrlKey + 'b' ] = mapKeyToFormat( 'B' );
 keyHandlers[ ctrlKey + 'i' ] = mapKeyToFormat( 'I' );
 keyHandlers[ ctrlKey + 'u' ] = mapKeyToFormat( 'U' );
-keyHandlers[ ctrlKey + 'shift-7' ] = mapKeyToFormat( 'STRIKE' );
+keyHandlers[ ctrlKey + 'shift-7' ] = mapKeyToFormat( 'S' );
 keyHandlers[ ctrlKey + 'shift-5' ] = mapKeyToFormat( 'SUB', { tag: 'SUP' } );
 keyHandlers[ ctrlKey + 'shift-6' ] = mapKeyToFormat( 'SUP', { tag: 'SUB' } );
 keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
@@ -2134,14 +2134,14 @@ proto.addStyles = function ( styles ) {
 proto.bold = command( 'changeFormat', { tag: 'B' } );
 proto.italic = command( 'changeFormat', { tag: 'I' } );
 proto.underline = command( 'changeFormat', { tag: 'U' } );
-proto.strikethrough = command( 'changeFormat', { tag: 'STRIKE' } );
+proto.strikethrough = command( 'changeFormat', { tag: 'S' } );
 proto.subscript = command( 'changeFormat', { tag: 'SUB' }, { tag: 'SUP' } );
 proto.superscript = command( 'changeFormat', { tag: 'SUP' }, { tag: 'SUB' } );
 
 proto.removeBold = command( 'changeFormat', null, { tag: 'B' } );
 proto.removeItalic = command( 'changeFormat', null, { tag: 'I' } );
 proto.removeUnderline = command( 'changeFormat', null, { tag: 'U' } );
-proto.removeStrikethrough = command( 'changeFormat', null, { tag: 'STRIKE' } );
+proto.removeStrikethrough = command( 'changeFormat', null, { tag: 'S' } );
 proto.removeSubscript = command( 'changeFormat', null, { tag: 'SUB' } );
 proto.removeSuperscript = command( 'changeFormat', null, { tag: 'SUP' } );
 
