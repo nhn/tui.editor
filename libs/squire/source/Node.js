@@ -364,26 +364,40 @@ function mergeWithBlock ( block, next, range ) {
 
 function mergeContainers ( node ) {
     var prev = node.previousSibling,
-        first = node.firstChild;
+        first = node.firstChild,
+        isListItem = ( node.nodeName === 'LI' );
+
+    // Do not merge LIs, unless it only contains a UL
+    if ( isListItem && ( !first || !/^[OU]L$/.test( first.nodeName ) ) ) {
+        return;
+    }
+
     if ( prev && areAlike( prev, node ) && isContainer( prev ) ) {
         detach( node );
         prev.appendChild( empty( node ) );
         if ( first ) {
             mergeContainers( first );
         }
+    } else if ( isListItem ) {
+        prev = node.ownerDocument.createElement( 'div' );
+        node.insertBefore( prev, first );
+        fixCursor( prev );
     }
 }
 
 function createElement ( doc, tag, props, children ) {
     var el = doc.createElement( tag ),
-        attr, i, l;
+        attr, value, i, l;
     if ( props instanceof Array ) {
         children = props;
         props = null;
     }
     if ( props ) {
         for ( attr in props ) {
-            el.setAttribute( attr, props[ attr ] );
+            value = props[ attr ];
+            if ( value !== undefined ) {
+                el.setAttribute( attr, props[ attr ] );
+            }
         }
     }
     if ( children ) {

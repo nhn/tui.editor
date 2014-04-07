@@ -28,6 +28,7 @@
     isInline,
     isBlock,
     isContainer,
+    getBlockWalker,
     getPreviousBlock,
     getNextBlock,
     getNearest,
@@ -975,83 +976,128 @@ var removeBlockQuote = function ( frag ) {
     return frag;
 };
 
-var makeList = function ( self, nodes, type ) {
-    var i, l, node, tag, prev, replacement;
-    for ( i = 0, l = nodes.length; i < l; i += 1 ) {
-        node = nodes[i];
-        tag = node.nodeName;
-        if ( isBlock( node ) ) {
-            if ( tag !== 'LI' ) {
-                replacement = self.createElement( 'LI', {
-                    'class': node.dir === 'rtl' ? 'dir-rtl' : '',
-                    dir: node.dir
-                }, [
-                    empty( node )
-                ]);
-                if ( node.parentNode.nodeName === type ) {
-                    replaceWith( node, replacement );
-                }
-                else if ( ( prev = node.previousSibling ) &&
-                        prev.nodeName === type ) {
-                    prev.appendChild( replacement );
-                    detach( node );
-                    i -= 1;
-                    l -= 1;
-                }
-                else {
-                    replaceWith(
-                        node,
-                        self.createElement( type, [
-                            replacement
-                        ])
-                    );
-                }
+var makeList = function ( self, frag, type ) {
+    var walker = getBlockWalker( frag ),
+        node, tag, prev, newLi;
+
+    while ( node = walker.nextNode() ) {
+        tag = node.parentNode.nodeName;
+        if ( tag !== 'LI' ) {
+            newLi = self.createElement( 'LI', {
+                'class': node.dir === 'rtl' ? 'dir-rtl' : undefined,
+                dir: node.dir || undefined
+            });
+            // Have we replaced the previous block with a new <ul>/<ol>?
+            if ( ( prev = node.previousSibling ) &&
+                    prev.nodeName === type ) {
+                prev.appendChild( newLi );
             }
-        } else if ( isContainer( node ) ) {
-            if ( tag !== type && ( /^[DOU]L$/.test( tag ) ) ) {
+            // Otherwise, replace this block with the <ul>/<ol>
+            else {
+                replaceWith(
+                    node,
+                    self.createElement( type, [
+                        newLi
+                    ])
+                );
+            }
+            newLi.appendChild( node );
+        } else {
+            node = node.parentNode.parentNode;
+            tag = node.nodeName;
+            if ( tag !== type && ( /^[OU]L$/.test( tag ) ) ) {
                 replaceWith( node,
                     self.createElement( type, [ empty( node ) ] )
                 );
-            } else {
-                makeList( self, node.childNodes, type );
             }
         }
     }
 };
 
 var makeUnorderedList = function ( frag ) {
-    makeList( this, frag.childNodes, 'UL' );
+    makeList( this, frag, 'UL' );
     return frag;
 };
 
 var makeOrderedList = function ( frag ) {
-    makeList( this, frag.childNodes, 'OL' );
+    makeList( this, frag, 'OL' );
+    return frag;
+};
+
+var removeList = function ( frag ) {
+    var lists = frag.querySelectorAll( 'UL, OL' ),
+        i, l, ll, list, listFrag, children, child;
+    for ( i = 0, l = lists.length; i < l; i += 1 ) {
+        list = lists[i];
+        listFrag = empty( list );
+        children = listFrag.childNodes;
+        ll = children.length;
+        while ( ll-- ) {
+            child = children[ll];
+            replaceWith( child, empty( child ) );
+        }
+        wrapTopLevelInline( listFrag, 'DIV' );
+        replaceWith( list, listFrag );
+    }
+    return frag;
+};
+
+var increaseListLevel = function ( frag ) {
+    var items = frag.querySelectorAll( 'LI' ),
+        i, l, item,
+        type, newParent;
+    for ( i = 0, l = items.length; i < l; i += 1 ) {
+        item = items[i];
+        if ( !isContainer( item.firstChild ) ) {
+            // type => 'UL' or 'OL'
+            type = item.parentNode.nodeName;
+            newParent = item.previousSibling;
+            if ( !newParent || !( newParent = newParent.lastChild ) ||
+                    newParent.nodeName !== type ) {
+                replaceWith(
+                    item,
+                    this.createElement( 'LI', [
+                        newParent = this.createElement( type )
+                    ])
+                );
+            }
+            newParent.appendChild( item );
+        }
+    }
     return frag;
 };
 
 var decreaseListLevel = function ( frag ) {
-    var lists = frag.querySelectorAll( 'UL, OL' );
-    Array.prototype.filter.call( lists, function ( el ) {
-        return !getNearest( el.parentNode, 'UL' ) &&
-            !getNearest( el.parentNode, 'OL' );
-    }).forEach( function ( el ) {
-        var frag = empty( el ),
-            children = frag.childNodes,
-            l = children.length,
-            child;
-        while ( l-- ) {
-            child = children[l];
-            if ( child.nodeName === 'LI' ) {
-                frag.replaceChild( this.createElement( 'DIV', {
-                    'class': child.dir === 'rtl' ? 'dir-rtl' : '',
-                    dir: child.dir
-                }, [
-                    empty( child )
-                ]), child );
-            }
+    var items = frag.querySelectorAll( 'LI' );
+    Array.prototype.filter.call( items, function ( el ) {
+        return !isContainer( el.firstChild );
+    }).forEach( function ( item ) {
+        var parent = item.parentNode,
+            newParent = parent.parentNode,
+            first = item.firstChild,
+            node = first,
+            next;
+        if ( item.previousSibling ) {
+            parent = split( parent, item, newParent );
         }
-        replaceWith( el, frag );
+        while ( node ) {
+            next = node.nextSibling;
+            if ( isContainer( node ) ) {
+                break;
+            }
+            newParent.insertBefore( node, parent );
+            node = next;
+        }
+        if ( newParent.nodeName === 'LI' && first.previousSibling ) {
+            split( newParent, first, newParent.parentNode );
+        }
+        while ( item !== frag && !item.childNodes.length ) {
+            parent = item.parentNode;
+            parent.removeChild( item );
+            item = parent;
+        }
     }, this );
+    wrapTopLevelInline( frag, 'DIV' );
     return frag;
 };
 
@@ -1641,7 +1687,8 @@ var keyHandlers = {
         event.preventDefault();
 
         // Must have some form of selection
-        var range = self.getSelection();
+        var range = self.getSelection(),
+            block, parent, tag, splitTag, nodeAfterSplit;
         if ( !range ) { return; }
 
         // Save undo checkpoint and add any links in the preceding section.
@@ -1655,10 +1702,12 @@ var keyHandlers = {
             deleteContentsOfRange( range );
         }
 
-        var block = getStartBlockOfRange( range ),
-            tag = block ? block.nodeName : 'DIV',
-            splitTag = tagAfterSplit[ tag ],
-            nodeAfterSplit;
+        block = getStartBlockOfRange( range );
+        if ( block && ( parent = getNearest( block, 'LI' ) ) ) {
+            block = parent;
+        }
+        tag = block ? block.nodeName : 'DIV';
+        splitTag = tagAfterSplit[ tag ];
 
         // If this is a malformed bit of document, just play it safe
         // and insert a <br>.
@@ -1677,7 +1726,7 @@ var keyHandlers = {
             replacement;
         if ( !splitTag ) {
             // If the selection point is inside the block, we're going to
-            // rewrite it so our saved referece points won't be valid.
+            // rewrite it so our saved reference points won't be valid.
             // Pick a node at a deeper point in the tree to avoid this.
             if ( splitNode === block ) {
                 splitNode = splitOffset ?
@@ -1893,6 +1942,31 @@ var keyHandlers = {
                 self.setSelection( range );
             }
             setTimeout( function () { afterDelete( self ); }, 0 );
+        }
+    },
+    tab: function ( self, event ) {
+        var range = self.getSelection(),
+            node, parent;
+        // If no selection and in an empty block
+        if ( range.collapsed &&
+                rangeDoesStartAtBlockBoundary( range ) &&
+                rangeDoesEndAtBlockBoundary( range ) ) {
+            node = getStartBlockOfRange( range );
+            // Iterate through the block's parents
+            while ( parent = node.parentNode ) {
+                // If we find a UL or OL (so are in a list, node must be an LI)
+                if ( parent.nodeName === 'UL' || parent.nodeName === 'OL' ) {
+                    // AND the LI is not the first in the list
+                    if ( node.previousSibling ) {
+                        // Then increase the list level
+                        event.preventDefault();
+                        self.modifyBlocks( increaseListLevel, range );
+                    }
+                    break;
+                }
+                node = parent;
+            }
+            event.preventDefault();
         }
     },
     space: function ( self ) {
@@ -2264,4 +2338,7 @@ proto.decreaseQuoteLevel = command( 'modifyBlocks', decreaseBlockQuoteLevel );
 
 proto.makeUnorderedList = command( 'modifyBlocks', makeUnorderedList );
 proto.makeOrderedList = command( 'modifyBlocks', makeOrderedList );
-proto.removeList = command( 'modifyBlocks', decreaseListLevel );
+proto.removeList = command( 'modifyBlocks', removeList );
+
+proto.increaseListLevel = command( 'modifyBlocks', increaseListLevel );
+proto.decreaseListLevel = command( 'modifyBlocks', decreaseListLevel );
