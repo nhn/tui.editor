@@ -2670,7 +2670,9 @@ var keys = {
     32: 'space',
     37: 'left',
     39: 'right',
-    46: 'delete'
+    46: 'delete',
+    219: '[',
+    221: ']'
 };
 
 var mapKeyTo = function ( method ) {
@@ -3017,7 +3019,7 @@ var keyHandlers = {
             // Iterate through the block's parents
             while ( parent = node.parentNode ) {
                 // If we find a UL or OL (so are in a list, node must be an LI)
-                if ( /^[OU]L$/.test( parent.nodeName ) ) {
+                if ( parent.nodeName === 'UL' || parent.nodeName === 'OL' ) {
                     // AND the LI is not the first in the list
                     if ( node.previousSibling ) {
                         // Then increase the list level
@@ -3060,6 +3062,10 @@ keyHandlers[ ctrlKey + 'u' ] = mapKeyToFormat( 'U' );
 keyHandlers[ ctrlKey + 'shift-7' ] = mapKeyToFormat( 'S' );
 keyHandlers[ ctrlKey + 'shift-5' ] = mapKeyToFormat( 'SUB', { tag: 'SUP' } );
 keyHandlers[ ctrlKey + 'shift-6' ] = mapKeyToFormat( 'SUP', { tag: 'SUB' } );
+keyHandlers[ ctrlKey + 'shift-8' ] = mapKeyTo( 'makeUnorderedList' );
+keyHandlers[ ctrlKey + 'shift-9' ] = mapKeyTo( 'makeOrderedList' );
+keyHandlers[ ctrlKey + '[' ] = mapKeyTo( 'decreaseQuoteLevel' );
+keyHandlers[ ctrlKey + ']' ] = mapKeyTo( 'increaseQuoteLevel' );
 keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
 keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( 'undo' );
 keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
@@ -3067,8 +3073,16 @@ keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
 // Ref: http://unixpapa.com/js/key.html
 proto._onKey = function ( event ) {
     var code = event.keyCode,
-        key = keys[ code ] || String.fromCharCode( code ).toLowerCase(),
+        key = keys[ code ],
         modifiers = '';
+
+    if ( !key ) {
+        key = String.fromCharCode( code ).toLowerCase();
+        // Only reliable for letters and numbers
+        if ( !/^[A-Za-z0-9]$/.test( key ) ) {
+            key = '';
+        }
+    }
 
     // On keypress, delete and '.' both have event.keyCode 46
     // Must check event.which to differentiate.
