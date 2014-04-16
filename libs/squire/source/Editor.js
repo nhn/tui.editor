@@ -83,9 +83,7 @@ function Squire ( doc ) {
         this.addEventListener( 'beforedeactivate', this.getSelection );
     }
 
-    this._placeholderTextNode = null;
-    this._mayRemovePlaceholder = true;
-    this._willEnablePlaceholderRemoval = false;
+    this._hasZWS = false;
 
     this._lastAnchorNode = null;
     this._lastFocusNode = null;
@@ -314,50 +312,28 @@ proto.getPath = function () {
 
 // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
 
-proto._enablePlaceholderRemoval = function () {
-    this._mayRemovePlaceholder = true;
-    this._willEnablePlaceholderRemoval = false;
-    this.removeEventListener( 'keydown', this._enablePlaceholderRemoval );
+proto._didAddZWS = function () {
+    this._hasZWS = true;
 };
-
-proto._removePlaceholderTextNode = function () {
-    if ( !this._mayRemovePlaceholder ) { return; }
-
-    var node = this._placeholderTextNode,
-        index;
-
-    this._placeholderTextNode = null;
-
-    if ( node.parentNode ) {
+proto._removeZWS = function () {
+    if ( !this._hasZWS ) {
+        return;
+    }
+    var walker = new TreeWalker( this._body, SHOW_TEXT, function () {
+            return FILTER_ACCEPT;
+        }, false ),
+        node, index;
+    while ( node = walker.nextNode() ) {
         while ( ( index = node.data.indexOf( '\u200B' ) ) > -1 ) {
             node.deleteData( index, 1 );
         }
-        if ( !node.data && !node.nextSibling && !node.previousSibling &&
-                isInline( node.parentNode ) ) {
-            detach( node.parentNode );
-        }
     }
-};
-
-proto._setPlaceholderTextNode = function ( node ) {
-    if ( this._placeholderTextNode ) {
-        this._mayRemovePlaceholder = true;
-        this._removePlaceholderTextNode();
-    }
-    if ( !this._willEnablePlaceholderRemoval ) {
-        this.addEventListener( 'keydown', this._enablePlaceholderRemoval );
-        this._willEnablePlaceholderRemoval = true;
-    }
-    this._mayRemovePlaceholder = false;
-    this._placeholderTextNode = node;
+    this._hasZWS = false;
 };
 
 // --- Path change events ---
 
 proto._updatePath = function ( range, force ) {
-    if ( this._placeholderTextNode && !force ) {
-        this._removePlaceholderTextNode( range );
-    }
     var anchor = range.startContainer,
         focus = range.endContainer,
         newPath;
@@ -701,7 +677,7 @@ proto._removeFormat = function ( tag, attributes, range, partial ) {
     if ( range.collapsed ) {
         if ( cantFocusEmptyTextNodes ) {
             fixer = doc.createTextNode( '\u200B' );
-            this._setPlaceholderTextNode( fixer );
+            this._didAddZWS();
         } else {
             fixer = doc.createTextNode( '' );
         }
@@ -1977,6 +1953,12 @@ var keyHandlers = {
         addLinks( range.startContainer );
         self._getRangeAndRemoveBookmark( range );
         self.setSelection( range );
+    },
+    left: function ( self ) {
+        self._removeZWS();
+    },
+    right: function ( self ) {
+        self._removeZWS();
     }
 };
 // Firefox incorrectly handles Cmd-left/Cmd-right on Mac:
@@ -2075,7 +2057,7 @@ proto.getHTML = function ( withBookMark ) {
             }
         }
     }
-    html = this._getHTML();
+    html = this._getHTML().replace( /\u200B/g, '' );
     if ( useTextFixer ) {
         l = brs.length;
         while ( l-- ) {

@@ -176,7 +176,7 @@ function fixCursor ( node ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( '\u200B' );
                 if ( win.editor ) {
-                    win.editor._setPlaceholderTextNode( fixer );
+                    win.editor._didAddZWS();
                 }
             } else {
                 fixer = doc.createTextNode( '' );
@@ -303,7 +303,7 @@ function mergeInlines ( node, range ) {
             }
             detach( child );
             if ( child.nodeType === TEXT_NODE ) {
-                prev.appendData( child.data.replace( /\u200B/g, '' ) );
+                prev.appendData( child.data );
             }
             else {
                 frags.push( empty( child ) );
