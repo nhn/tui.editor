@@ -2371,7 +2371,8 @@ var removeEmptyInlines = function ( root ) {
 */
 var cleanTree = function ( node, allowStyles ) {
     var children = node.childNodes,
-        i, l, child, nodeName, nodeType, rewriter, childLength;
+        i, l, child, nodeName, nodeType, rewriter, childLength,
+        data, j, ll;
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
         nodeName = child.nodeName;
@@ -2393,11 +2394,33 @@ var cleanTree = function ( node, allowStyles ) {
             if ( childLength ) {
                 cleanTree( child, allowStyles );
             }
-        } else if ( nodeType !== TEXT_NODE || (
-                !( notWS.test( child.data ) ) &&
-                !( i > 0 && isInline( children[ i - 1 ] ) ) &&
-                !( i + 1 < l && isInline( children[ i + 1 ] ) )
-                ) ) {
+        } else {
+            if ( nodeType === TEXT_NODE ) {
+                data = child.data;
+                if ( notWS.test( data ) ) {
+                    j = 0;
+                    ll = data.length;
+                    if ( !i || !isInline( children[ i - 1 ] ) ) {
+                        while ( j < ll && !notWS.test( data.charAt( j ) ) ) {
+                            j += 1;
+                        }
+                        if ( j ) {
+                            child.data = data = data.slice( j );
+                            ll -= j;
+                        }
+                    }
+                    if ( i + 1 === l || !isInline( children[ i + 1 ] ) ) {
+                        j = ll - 1;
+                        while ( j >= 0 && !notWS.test( data.charAt( j ) ) ) {
+                            j -= 1;
+                        }
+                        if ( j < ll - 1 ) {
+                            child.data = data.slice( 0, j );
+                        }
+                    }
+                    continue;
+                }
+            }
             node.removeChild( child );
             i -= 1;
             l -= 1;
