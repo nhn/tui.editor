@@ -2410,11 +2410,11 @@ var cleanTree = function ( node, allowStyles ) {
                         }
                     }
                     if ( i + 1 === l || !isInline( children[ i + 1 ] ) ) {
-                        j = ll - 1;
-                        while ( j >= 0 && !notWS.test( data.charAt( j ) ) ) {
+                        j = ll;
+                        while ( j > 0 && !notWS.test( data.charAt( j - 1 ) ) ) {
                             j -= 1;
                         }
-                        if ( j < ll - 1 ) {
+                        if ( j < ll ) {
                             child.data = data.slice( 0, j );
                         }
                     }
