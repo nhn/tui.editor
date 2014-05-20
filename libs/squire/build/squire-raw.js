@@ -1203,6 +1203,12 @@ function Squire ( doc ) {
 
     body.setAttribute( 'contenteditable', 'true' );
     this.setHTML( '' );
+
+    // Remove Firefox's built-in controls
+    try {
+        doc.execCommand( 'enableObjectResizing', false, 'false' );
+        doc.execCommand( 'enableInlineTableEditing', false, 'false' );
+    } catch ( error ) {}
 }
 
 var proto = Squire.prototype;
