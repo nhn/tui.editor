@@ -2003,15 +2003,17 @@ var decreaseBlockQuoteLevel = function ( frag ) {
     return frag;
 };
 
-var removeBlockQuote = function ( frag ) {
-    var blockquotes = frag.querySelectorAll( 'blockquote' ),
-        l = blockquotes.length,
-        bq;
-    while ( l-- ) {
-        bq = blockquotes[l];
-        replaceWith( bq, empty( bq ) );
-    }
-    return frag;
+var removeBlockQuote = function (/* frag */) {
+    return fixCursor( this.createElement( 'div', [
+        this.createElement( 'INPUT', {
+            id: startSelectionId,
+            type: 'hidden'
+        }),
+        this.createElement( 'INPUT', {
+            id: endSelectionId,
+            type: 'hidden'
+        })
+    ]) );
 };
 
 var makeList = function ( self, frag, type ) {
