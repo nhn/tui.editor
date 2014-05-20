@@ -2405,7 +2405,10 @@ var cleanTree = function ( node, allowStyles ) {
         } else {
             if ( nodeType === TEXT_NODE ) {
                 data = child.data;
-                if ( notWS.test( data ) ) {
+                // Use \S instead of notWS, because we want to remove nodes
+                // which are just nbsp, in order to cleanup <div>nbsp<br></div>
+                // construct.
+                if ( /\S/.test( data ) ) {
                     j = 0;
                     ll = data.length;
                     if ( !i || !isInline( children[ i - 1 ] ) ) {
