@@ -507,14 +507,24 @@ function mergeWithBlock ( block, next, range ) {
 function mergeContainers ( node ) {
     var prev = node.previousSibling,
         first = node.firstChild,
-        isListItem = ( node.nodeName === 'LI' );
+        isListItem = ( node.nodeName === 'LI' ),
+        block;
 
     // Do not merge LIs, unless it only contains a UL
     if ( isListItem && ( !first || !/^[OU]L$/.test( first.nodeName ) ) ) {
         return;
     }
 
-    if ( prev && areAlike( prev, node ) && isContainer( prev ) ) {
+    if ( prev && areAlike( prev, node ) ) {
+        if ( !isContainer( prev ) ) {
+            if ( isListItem ) {
+                block = prev.ownerDocument.createElement( 'div' );
+                block.appendChild( empty( prev ) );
+                prev.appendChild( block );
+            } else {
+                return;
+            }
+        }
         detach( node );
         prev.appendChild( empty( node ) );
         if ( first ) {
