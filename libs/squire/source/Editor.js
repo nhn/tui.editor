@@ -1348,6 +1348,11 @@ var cleanTree = function ( node, allowStyles ) {
                 // which are just nbsp, in order to cleanup <div>nbsp<br></div>
                 // construct.
                 if ( /\S/.test( data ) ) {
+                    // If the parent node is inline, don't trim this node as
+                    // it probably isn't at the end of the block.
+                    if ( isInline( node ) ) {
+                        continue;
+                    }
                     j = 0;
                     ll = data.length;
                     if ( !i || !isInline( children[ i - 1 ] ) ) {
