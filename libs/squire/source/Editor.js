@@ -42,6 +42,7 @@
     mergeInlines,
     mergeWithBlock,
     mergeContainers,
+    fixContainer,
     createElement,
 
     forEachTextNodeInRange,
@@ -1020,7 +1021,7 @@ var removeList = function ( frag ) {
             child = children[ll];
             replaceWith( child, empty( child ) );
         }
-        wrapTopLevelInline( listFrag, 'DIV' );
+        fixContainer( listFrag );
         replaceWith( list, listFrag );
     }
     return frag;
@@ -1081,7 +1082,7 @@ var decreaseListLevel = function ( frag ) {
             item = parent;
         }
     }, this );
-    wrapTopLevelInline( frag, 'DIV' );
+    fixContainer( frag );
     return frag;
 };
 
@@ -1378,38 +1379,6 @@ var cleanTree = function ( node, allowStyles ) {
     return node;
 };
 
-var wrapTopLevelInline = function ( root, tag ) {
-    var children = root.childNodes,
-        doc = root.ownerDocument,
-        wrapper = null,
-        i, l, child, isBR;
-    for ( i = 0, l = children.length; i < l; i += 1 ) {
-        child = children[i];
-        isBR = child.nodeName === 'BR';
-        if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = createElement( doc, tag ); }
-            wrapper.appendChild( child );
-            i -= 1;
-            l -= 1;
-        } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = createElement( doc, tag ); }
-            fixCursor( wrapper );
-            if ( isBR ) {
-                root.replaceChild( wrapper, child );
-            } else {
-                root.insertBefore( wrapper, child );
-                i += 1;
-                l += 1;
-            }
-            wrapper = null;
-        }
-    }
-    if ( wrapper ) {
-        root.appendChild( fixCursor( wrapper ) );
-    }
-    return root;
-};
-
 var notWSTextNode = function ( node ) {
     return ( node.nodeType === ELEMENT_NODE ?
         node.nodeName === 'BR' :
@@ -1460,7 +1429,7 @@ var cleanupBRs = function ( root ) {
         // If this is not inside a block, replace it by wrapping
         // inlines in DIV.
         if ( !isBlock( block ) || !tagAfterSplit[ block.nodeName ] ) {
-            wrapTopLevelInline( block, 'DIV' );
+            fixContainer( block );
         }
         // If in a block we can split, split it instead, but only if there
         // is actual text content in the block. Otherwise, the <br> is a
@@ -1761,7 +1730,7 @@ var keyHandlers = {
                     }
                 }
             }
-            wrapTopLevelInline( block, 'DIV' );
+            fixContainer( block );
             splitTag = 'DIV';
             if ( !splitNode ) {
                 splitNode = block.firstChild;
@@ -2116,7 +2085,7 @@ proto.setHTML = function ( html ) {
     cleanTree( frag, true );
     cleanupBRs( frag );
 
-    wrapTopLevelInline( frag, 'DIV' );
+    fixContainer( frag );
 
     // Fix cursor
     var node = frag;

@@ -366,7 +366,7 @@ function mergeContainers ( node ) {
     var prev = node.previousSibling,
         first = node.firstChild,
         isListItem = ( node.nodeName === 'LI' ),
-        block;
+        needsFix, block;
 
     // Do not merge LIs, unless it only contains a UL
     if ( isListItem && ( !first || !/^[OU]L$/.test( first.nodeName ) ) ) {
@@ -384,7 +384,11 @@ function mergeContainers ( node ) {
             }
         }
         detach( node );
+        needsFix = !isContainer( node );
         prev.appendChild( empty( node ) );
+        if ( needsFix ) {
+            fixContainer( prev );
+        }
         if ( first ) {
             mergeContainers( first );
         }
@@ -393,6 +397,42 @@ function mergeContainers ( node ) {
         node.insertBefore( prev, first );
         fixCursor( prev );
     }
+}
+
+// Recursively examine container nodes and wrap any inline children.
+function fixContainer ( container ) {
+    var children = container.childNodes,
+        doc = container.ownerDocument,
+        wrapper = null,
+        i, l, child, isBR;
+    for ( i = 0, l = children.length; i < l; i += 1 ) {
+        child = children[i];
+        isBR = child.nodeName === 'BR';
+        if ( !isBR && isInline( child ) ) {
+            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            wrapper.appendChild( child );
+            i -= 1;
+            l -= 1;
+        } else if ( isBR || wrapper ) {
+            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            fixCursor( wrapper );
+            if ( isBR ) {
+                container.replaceChild( wrapper, child );
+            } else {
+                container.insertBefore( wrapper, child );
+                i += 1;
+                l += 1;
+            }
+            wrapper = null;
+        }
+        if ( isContainer( child ) ) {
+            fixContainer( child );
+        }
+    }
+    if ( wrapper ) {
+        container.appendChild( fixCursor( wrapper ) );
+    }
+    return container;
 }
 
 function createElement ( doc, tag, props, children ) {
