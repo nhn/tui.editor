@@ -38,7 +38,7 @@ var useTextFixer = isIE8or9or10 || isOpera;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
 var hasBuggySplit = ( function () {
-    var div = doc.createElement( 'div' ),
+    var div = doc.createElement( 'DIV' ),
         text = doc.createTextNode( '12' );
     div.appendChild( text );
     text.splitText( 2 );
@@ -507,6 +507,7 @@ function mergeWithBlock ( block, next, range ) {
 function mergeContainers ( node ) {
     var prev = node.previousSibling,
         first = node.firstChild,
+        doc = node.ownerDocument,
         isListItem = ( node.nodeName === 'LI' ),
         needsFix, block;
 
@@ -518,7 +519,7 @@ function mergeContainers ( node ) {
     if ( prev && areAlike( prev, node ) ) {
         if ( !isContainer( prev ) ) {
             if ( isListItem ) {
-                block = prev.ownerDocument.createElement( 'div' );
+                block = doc.createElement( 'DIV' );
                 block.appendChild( empty( prev ) );
                 prev.appendChild( block );
             } else {
@@ -535,7 +536,7 @@ function mergeContainers ( node ) {
             mergeContainers( first );
         }
     } else if ( isListItem ) {
-        prev = node.ownerDocument.createElement( 'div' );
+        prev = doc.createElement( 'DIV' );
         node.insertBefore( prev, first );
         fixCursor( prev );
     }

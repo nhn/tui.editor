@@ -365,6 +365,7 @@ function mergeWithBlock ( block, next, range ) {
 function mergeContainers ( node ) {
     var prev = node.previousSibling,
         first = node.firstChild,
+        doc = node.ownerDocument,
         isListItem = ( node.nodeName === 'LI' ),
         needsFix, block;
 
@@ -376,7 +377,7 @@ function mergeContainers ( node ) {
     if ( prev && areAlike( prev, node ) ) {
         if ( !isContainer( prev ) ) {
             if ( isListItem ) {
-                block = prev.ownerDocument.createElement( 'div' );
+                block = doc.createElement( 'DIV' );
                 block.appendChild( empty( prev ) );
                 prev.appendChild( block );
             } else {
@@ -393,7 +394,7 @@ function mergeContainers ( node ) {
             mergeContainers( first );
         }
     } else if ( isListItem ) {
-        prev = node.ownerDocument.createElement( 'div' );
+        prev = doc.createElement( 'DIV' );
         node.insertBefore( prev, first );
         fixCursor( prev );
     }

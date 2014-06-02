@@ -33,7 +33,7 @@ var useTextFixer = isIE8or9or10 || isOpera;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
 var hasBuggySplit = ( function () {
-    var div = doc.createElement( 'div' ),
+    var div = doc.createElement( 'DIV' ),
         text = doc.createTextNode( '12' );
     div.appendChild( text );
     text.splitText( 2 );
