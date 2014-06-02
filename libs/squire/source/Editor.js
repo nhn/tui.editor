@@ -1457,6 +1457,14 @@ var cleanupBRs = function ( root ) {
     }
 };
 
+proto._ensureBottomLine = function () {
+    var body = this._body,
+        div = body.lastChild;
+    if ( !div || div.nodeName !== 'DIV' || !isBlock( div ) ) {
+        body.appendChild( this.createDefaultBlock() );
+    }
+};
+
 // --- Cut and Paste ---
 
 proto._onCut = function () {
@@ -1469,7 +1477,7 @@ proto._onCut = function () {
     setTimeout( function () {
         try {
             // If all content removed, ensure div at start of body.
-            fixCursor( self._body );
+            self._ensureBottomLine();
         } catch ( error ) {
             self.didError( error );
         }
@@ -1576,8 +1584,8 @@ proto._onPaste = function ( event ) {
                 if ( doPaste ) {
                     insertTreeFragmentIntoRange( range, frag );
                     self._docWasChanged();
-
                     range.collapse( false );
+                    self._ensureBottomLine();
                 }
             }
 
@@ -1655,6 +1663,7 @@ var afterDelete = function ( self ) {
             self.setSelection( range );
             self._updatePath( range );
         }
+        self._ensureBottomLine();
     } catch ( error ) {
         self.didError( error );
     }
@@ -1827,6 +1836,7 @@ var keyHandlers = {
             self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
+            self._ensureBottomLine();
             self.setSelection( range );
             self._updatePath( range, true );
         }
@@ -1893,6 +1903,7 @@ var keyHandlers = {
             self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
+            self._ensureBottomLine();
             self.setSelection( range );
             self._updatePath( range, true );
         }
