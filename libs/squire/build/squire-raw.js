@@ -1214,6 +1214,8 @@ function Squire ( doc ) {
     this._undoStackLength = 0;
     this._isInUndoState = false;
 
+    this.defaultBlockProperties = undefined;
+
     this.addEventListener( 'keyup', this._docWasChanged );
 
     // IE sometimes fires the beforepaste event twice; make sure it is not run
@@ -1267,6 +1269,12 @@ var proto = Squire.prototype;
 
 proto.createElement = function ( tag, props, children ) {
     return createElement( this._doc, tag, props, children );
+};
+
+proto.createDefaultBlock = function ( children ) {
+    return fixCursor(
+        this.createElement( 'DIV', this.defaultBlockProperties, children )
+    );
 };
 
 proto.didError = function ( error ) {
@@ -2062,7 +2070,7 @@ var decreaseBlockQuoteLevel = function ( frag ) {
 };
 
 var removeBlockQuote = function (/* frag */) {
-    return fixCursor( this.createElement( 'div', [
+    return this.createDefaultBlock([
         this.createElement( 'INPUT', {
             id: startSelectionId,
             type: 'hidden'
@@ -2071,7 +2079,7 @@ var removeBlockQuote = function (/* frag */) {
             id: endSelectionId,
             type: 'hidden'
         })
-    ]) );
+    ]);
 };
 
 var makeList = function ( self, frag, type ) {
@@ -2772,9 +2780,9 @@ if ( isIE8 ) {
         var firstChild = this._body.firstChild;
         if ( firstChild.nodeName === 'P' ) {
             this._saveRangeToBookmark( this.getSelection() );
-            replaceWith( firstChild, this.createElement( 'DIV', [
+            replaceWith( firstChild, this.createDefaultBlock([
                 empty( firstChild )
-            ]) );
+            ]));
             this.setSelection( this._getRangeAndRemoveBookmark() );
         }
     };
@@ -3274,7 +3282,7 @@ proto.insertElement = function ( el, range ) {
         } else {
             body.appendChild( el );
             // Insert blank line below block.
-            body.appendChild( fixCursor( this.createElement( 'div' ) ) );
+            body.appendChild( this.createDefaultBlock() );
             range.setStart( el, 0 );
             range.setEnd( el, 0 );
         }
