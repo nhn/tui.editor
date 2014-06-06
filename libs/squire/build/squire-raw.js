@@ -3356,7 +3356,6 @@ proto.removeSubscript = command( 'changeFormat', null, { tag: 'SUB' } );
 proto.removeSuperscript = command( 'changeFormat', null, { tag: 'SUP' } );
 
 proto.makeLink = function ( url ) {
-    url = encodeURI( url );
     var range = this.getSelection();
     if ( range.collapsed ) {
         var protocolEnd = url.indexOf( ':' ) + 1;
