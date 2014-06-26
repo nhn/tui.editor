@@ -2006,48 +2006,38 @@ proto.modifyBlocks = function ( modify, range ) {
     if ( !range && !( range = this.getSelection() ) ) {
         return this;
     }
-    // 1. Stop firefox adding an extra <BR> to <BODY>
-    // if we remove everything. Don't want to do this in Opera
-    // as it can cause focus problems.
-    var body = this._body;
-    if ( !isOpera ) {
-        body.setAttribute( 'contenteditable', 'false' );
-    }
 
-    // 2. Save undo checkpoint and bookmark selection
+    // 1. Save undo checkpoint and bookmark selection
     if ( this._isInUndoState ) {
         this._saveRangeToBookmark( range );
     } else {
         this._recordUndoState( range );
     }
 
-    // 3. Expand range to block boundaries
+    // 2. Expand range to block boundaries
     expandRangeToBlockBoundaries( range );
 
-    // 4. Remove range.
+    // 3. Remove range.
+    var body = this._body,
+        frag;
     moveRangeBoundariesUpTree( range, body );
-    var frag = extractContentsOfRange( range, body );
+    frag = extractContentsOfRange( range, body );
 
-    // 5. Modify tree of fragment and reinsert.
+    // 4. Modify tree of fragment and reinsert.
     insertNodeInRange( range, modify.call( this, frag ) );
 
-    // 6. Merge containers at edges
+    // 5. Merge containers at edges
     if ( range.endOffset < range.endContainer.childNodes.length ) {
         mergeContainers( range.endContainer.childNodes[ range.endOffset ] );
     }
     mergeContainers( range.startContainer.childNodes[ range.startOffset ] );
 
-    // 7. Make it editable again
-    if ( !isOpera ) {
-        body.setAttribute( 'contenteditable', 'true' );
-    }
-
-    // 8. Restore selection
+    // 6. Restore selection
     this._getRangeAndRemoveBookmark( range );
     this.setSelection( range );
     this._updatePath( range, true );
 
-    // 9. We're not still in an undo state
+    // 7. We're not still in an undo state
     this._docWasChanged();
 
     return this;
