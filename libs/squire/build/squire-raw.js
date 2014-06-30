@@ -1401,21 +1401,21 @@ proto.setSelection = function ( range ) {
 };
 
 proto.getSelection = function () {
-    var sel = this._sel;
+    var sel = this._sel,
+        selection, startContainer, endContainer;
     if ( sel.rangeCount ) {
-        var lastSelection  = this._lastSelection =
-            sel.getRangeAt( 0 ).cloneRange();
-        var startContainer = lastSelection.startContainer,
-            endContainer = lastSelection.endContainer;
+        selection  = sel.getRangeAt( 0 ).cloneRange();
+        startContainer = selection.startContainer;
+        endContainer = selection.endContainer;
         // FF sometimes throws an error reading the isLeaf property. Let's
         // catch and log it to see if we can find what's going on.
         try {
             // FF can return the selection as being inside an <img>. WTF?
             if ( startContainer && isLeaf( startContainer ) ) {
-                lastSelection.setStartBefore( startContainer );
+                selection.setStartBefore( startContainer );
             }
             if ( endContainer && isLeaf( endContainer ) ) {
-                lastSelection.setEndBefore( endContainer );
+                selection.setEndBefore( endContainer );
             }
         } catch ( error ) {
             this.didError({
@@ -1424,8 +1424,14 @@ proto.getSelection = function () {
                     '\nEnds: ' + endContainer.nodeName
             });
         }
+        this._lastSelection = selection;
+    } else {
+        selection = this._lastSelection;
     }
-    return this._lastSelection;
+    if ( !selection ) {
+        selection = this._createRange( this._body.firstChild, 0 );
+    }
+    return selection;
 };
 
 proto.getSelectedText = function () {
