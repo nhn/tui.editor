@@ -2205,7 +2205,7 @@ var decreaseListLevel = function ( frag ) {
 
 // --- Clean ---
 
-var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’])|(?:[\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,4}))/i;
+var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)/i;
 
 var addLinks = function ( frag ) {
     var doc = frag.ownerDocument,
@@ -2213,35 +2213,26 @@ var addLinks = function ( frag ) {
                 function ( node ) {
             return getNearest( node, 'A' ) ? FILTER_SKIP : FILTER_ACCEPT;
         }, false ),
-        node, parts, i, l, text, parent, next;
+        node, data, parent, match, index, endIndex, child;
     while ( node = walker.nextNode() ) {
-        parts = node.data.split( linkRegExp );
-        l = parts.length;
-        if ( l > 1 ) {
-            parent = node.parentNode;
-            next = node.nextSibling;
-            for ( i = 0; i < l; i += 1 ) {
-                text = parts[i];
-                if ( i ) {
-                    if ( i % 2 ) {
-                        node = doc.createElement( 'A' );
-                        node.textContent = text;
-                        node.href = /@/.test( text ) ? 'mailto:' + text :
-                            /^(?:ht|f)tps?:/.test( text ) ?
-                            text : 'http://' + text;
-                    } else {
-                        node = doc.createTextNode( text );
-                    }
-                    if ( next ) {
-                        parent.insertBefore( node, next );
-                    } else {
-                        parent.appendChild( node );
-                    }
-                } else {
-                    node.data = text;
-                }
+        data = node.data;
+        parent = node.parentNode;
+        while ( match = linkRegExp.exec( data ) ) {
+            index = match.index;
+            endIndex = index + match[0].length;
+            if ( index ) {
+                child = doc.createTextNode( data.slice( 0, index ) );
+                parent.insertBefore( child, node );
             }
-            walker.currentNode = node;
+            child = doc.createElement( 'A' );
+            child.textContent = data.slice( index, endIndex );
+            child.href = match[1] ?
+                /^(?:ht|f)tps?:/.test( match[1] ) ?
+                    match[1] :
+                    'http://' + match[1] :
+                'mailto:' + match[2];
+            parent.insertBefore( child, node );
+            node.data = data = data.slice( endIndex );
         }
     }
 };
