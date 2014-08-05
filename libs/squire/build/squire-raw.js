@@ -2483,6 +2483,14 @@ var cleanTree = function ( node, allowStyles ) {
                     }
                     continue;
                 }
+                // If we have just white space, it may still be important if it
+                // separates two inline nodes, e.g. "<a>link</a> <a>link</a>".
+                else if ( i && i + 1 < l &&
+                        isInline( children[ i - 1 ] ) &&
+                        isInline( children[ i + 1 ] ) ) {
+                    child.data = ' ';
+                    continue;
+                }
             }
             node.removeChild( child );
             i -= 1;
