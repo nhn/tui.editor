@@ -2548,17 +2548,23 @@ var cleanupBRs = function ( root ) {
             block = block.parentNode;
         }
         // If this is not inside a block, replace it by wrapping
-        // inlines in DIV.
-        if ( !isBlock( block ) || !tagAfterSplit[ block.nodeName ] ) {
+        // inlines in a <div>.
+        if ( !isBlock( block ) ) {
             fixContainer( block );
         }
-        // If in a block we can split, split it instead, but only if there
-        // is actual text content in the block. Otherwise, the <br> is a
-        // placeholder to stop the block from collapsing, so we must leave
-        // it.
         else {
+            // If it doesn't break a line, just remove it; it's not doing
+            // anything useful. We'll add it back later if required by the
+            // browser. If it breaks a line, split the block or leave it as
+            // appropriate.
             if ( brBreaksLine[l] ) {
-                splitBlock( block, br.parentNode, br );
+                // If in a <div>, split, but anywhere else we might change
+                // the formatting too much (e.g. <li> -> to two list items!)
+                // so just play it safe and leave it.
+                if ( block.nodeName !== 'DIV' ) {
+                    continue;
+                }
+                split( br.parentNode, br, block.parentNode );
             }
             detach( br );
         }
