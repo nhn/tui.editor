@@ -1533,11 +1533,20 @@ proto._onPaste = function ( event ) {
         startContainer = range.startContainer,
         startOffset = range.startOffset,
         endContainer = range.endContainer,
-        endOffset = range.endOffset;
+        endOffset = range.endOffset,
+        startBlock = startContainer.nodeType === TEXT_NODE ?
+            startContainer : startContainer.childNodes[ startOffset ];
+
+    // We need to position the pasteArea in the visible portion of the screen
+    // to stop the browser auto-scrolling.
+    while ( isInline( startBlock )  ) {
+        startBlock = startBlock.parentNode;
+    }
 
     var pasteArea = this.createElement( 'DIV', {
         style: 'position: absolute; overflow: hidden; top:' +
-            (body.scrollTop + 30) + 'px; left: 0; width: 1px; height: 1px;'
+            ( body.scrollTop + startBlock.getBoundingClientRect().top ) +
+            'px; left: 0; width: 1px; height: 1px;'
     });
     body.appendChild( pasteArea );
     range.selectNodeContents( pasteArea );
