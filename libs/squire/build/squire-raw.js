@@ -314,7 +314,13 @@ function fixCursor ( node ) {
     }
 
     if ( isInline( node ) ) {
-        if ( !node.firstChild ) {
+        child = node.firstChild;
+        while ( cantFocusEmptyTextNodes && child &&
+                child.nodeType === TEXT_NODE && !child.data ) {
+            node.removeChild( child );
+            child = node.firstChild;
+        }
+        if ( !child ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( '\u200B' );
                 if ( win.editor ) {
