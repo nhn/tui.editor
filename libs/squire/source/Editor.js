@@ -1705,8 +1705,11 @@ var keyHandlers = {
         if ( !range ) { return; }
 
         // Save undo checkpoint and add any links in the preceding section.
+        // Remove any zws so we don't think there's content in an empty
+        // block.
         self._recordUndoState( range );
         addLinks( range.startContainer );
+        self._removeZWS();
         self._getRangeAndRemoveBookmark( range );
 
         // Selected text is overwritten, therefore delete the contents
@@ -1839,6 +1842,7 @@ var keyHandlers = {
         self._docWasChanged();
     },
     backspace: function ( self, event ) {
+        self._removeZWS();
         var range = self.getSelection();
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
@@ -1906,6 +1910,7 @@ var keyHandlers = {
         }
     },
     'delete': function ( self, event ) {
+        self._removeZWS();
         var range = self.getSelection();
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
@@ -1960,6 +1965,7 @@ var keyHandlers = {
         }
     },
     tab: function ( self, event ) {
+        self._removeZWS();
         var range = self.getSelection(),
             node, parent;
         // If no selection and in an empty block
