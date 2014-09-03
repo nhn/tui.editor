@@ -7,6 +7,7 @@
     START_TO_END,
     END_TO_END,
     END_TO_START,
+    notWS,
     indexOf,
 
     TreeWalker,
@@ -451,50 +452,56 @@ var getEndBlockOfRange = function ( range ) {
     return block && isNodeContainedInRange( range, block, true ) ? block : null;
 };
 
+var contentWalker = new TreeWalker( null,
+    SHOW_TEXT|SHOW_ELEMENT,
+    function ( node ) {
+        return node.nodeType === TEXT_NODE ?
+            notWS.test( node.data ) :
+            node.nodeName === 'IMG';
+    }
+);
+
 var rangeDoesStartAtBlockBoundary = function ( range ) {
     var startContainer = range.startContainer,
-        startOffset = range.startOffset,
-        parent, child;
+        startOffset = range.startOffset;
 
-    while ( isInline( startContainer ) ) {
+    // If in the middle or end of a text node, we're not at the boundary.
+    if ( startContainer.nodeType === TEXT_NODE ) {
         if ( startOffset ) {
             return false;
         }
-        parent = startContainer.parentNode;
-        startOffset = indexOf.call( parent.childNodes, startContainer );
-        startContainer = parent;
+        contentWalker.currentNode = startContainer;
+    } else {
+        contentWalker.currentNode = getNodeAfter( startContainer, startOffset );
     }
-    // Skip empty text nodes and <br>s.
-    while ( startOffset &&
-            ( child = startContainer.childNodes[ startOffset - 1 ] ) &&
-            ( child.data === '' || child.nodeName === 'BR' ) ) {
-        startOffset -= 1;
-    }
-    return !startOffset;
+
+    // Otherwise, look for any previous content in the same block.
+    contentWalker.root = getStartBlockOfRange( range );
+
+    return !contentWalker.previousNode();
 };
 
 var rangeDoesEndAtBlockBoundary = function ( range ) {
     var endContainer = range.endContainer,
         endOffset = range.endOffset,
-        length = getLength( endContainer ),
-        parent, child;
+        length;
 
-    while ( isInline( endContainer ) ) {
-        if ( endOffset !== length ) {
+    // If in a text node with content, and not at the end, we're not
+    // at the boundary
+    if ( endContainer.nodeType === TEXT_NODE ) {
+        length = endContainer.data.length;
+        if ( length && endOffset < length ) {
             return false;
         }
-        parent = endContainer.parentNode;
-        endOffset = indexOf.call( parent.childNodes, endContainer ) + 1;
-        endContainer = parent;
-        length = endContainer.childNodes.length;
+        contentWalker.currentNode = endContainer;
+    } else {
+        contentWalker.currentNode = getNodeBefore( endContainer, endOffset );
     }
-    // Skip empty text nodes and <br>s.
-    while ( endOffset < length &&
-            ( child = endContainer.childNodes[ endOffset ] ) &&
-            ( child.data === '' || child.nodeName === 'BR' ) ) {
-        endOffset += 1;
-    }
-    return endOffset === length;
+
+    // Otherwise, look for any further content in the same block.
+    contentWalker.root = getEndBlockOfRange( range );
+
+    return !contentWalker.nextNode();
 };
 
 var expandRangeToBlockBoundaries = function ( range ) {
