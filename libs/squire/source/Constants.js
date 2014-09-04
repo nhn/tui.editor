@@ -6,8 +6,6 @@ var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
 var TEXT_NODE = 3;                   // Node.TEXT_NODE;
 var SHOW_ELEMENT = 1;                // NodeFilter.SHOW_ELEMENT;
 var SHOW_TEXT = 4;                   // NodeFilter.SHOW_TEXT;
-var FILTER_ACCEPT = 1;               // NodeFilter.FILTER_ACCEPT;
-var FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
 
 var START_TO_START = 0; // Range.START_TO_START
 var START_TO_END = 1;   // Range.START_TO_END

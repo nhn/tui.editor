@@ -1,4 +1,3 @@
-/*global FILTER_ACCEPT */
 /*jshint strict:false */
 
 /*
@@ -52,7 +51,7 @@ TreeWalker.prototype.nextNode = function () {
             return null;
         }
         if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
-                filter( node ) === FILTER_ACCEPT ) {
+                filter( node ) ) {
             this.currentNode = node;
             return node;
         }
@@ -82,7 +81,7 @@ TreeWalker.prototype.previousNode = function () {
             return null;
         }
         if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
-                filter( node ) === FILTER_ACCEPT ) {
+                filter( node ) ) {
             this.currentNode = node;
             return node;
         }

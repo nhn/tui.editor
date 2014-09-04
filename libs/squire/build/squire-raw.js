@@ -11,8 +11,6 @@ var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
 var TEXT_NODE = 3;                   // Node.TEXT_NODE;
 var SHOW_ELEMENT = 1;                // NodeFilter.SHOW_ELEMENT;
 var SHOW_TEXT = 4;                   // NodeFilter.SHOW_TEXT;
-var FILTER_ACCEPT = 1;               // NodeFilter.FILTER_ACCEPT;
-var FILTER_SKIP = 3;                 // NodeFilter.FILTER_SKIP;
 
 var START_TO_START = 0; // Range.START_TO_START
 var START_TO_END = 1;   // Range.START_TO_END
@@ -49,7 +47,6 @@ var hasBuggySplit = ( function () {
 var notWS = /[^ \t\r\n]/;
 
 var indexOf = Array.prototype.indexOf;
-/*global FILTER_ACCEPT */
 /*jshint strict:false */
 
 /*
@@ -103,7 +100,7 @@ TreeWalker.prototype.nextNode = function () {
             return null;
         }
         if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
-                filter( node ) === FILTER_ACCEPT ) {
+                filter( node ) ) {
             this.currentNode = node;
             return node;
         }
@@ -133,7 +130,7 @@ TreeWalker.prototype.previousNode = function () {
             return null;
         }
         if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
-                filter( node ) === FILTER_ACCEPT ) {
+                filter( node ) ) {
             this.currentNode = node;
             return node;
         }
@@ -144,8 +141,6 @@ TreeWalker.prototype.previousNode = function () {
     ELEMENT_NODE,
     TEXT_NODE,
     SHOW_ELEMENT,
-    FILTER_ACCEPT,
-    FILTER_SKIP,
     win,
     isOpera,
     useTextFixer,
@@ -214,13 +209,10 @@ function isContainer ( node ) {
         !isInline( node ) && !isBlock( node );
 }
 
-function acceptIfBlock ( el ) {
-    return isBlock( el ) ? FILTER_ACCEPT : FILTER_SKIP;
-}
 function getBlockWalker ( node ) {
     var doc = node.ownerDocument,
         walker = new TreeWalker(
-            doc.body, SHOW_ELEMENT, acceptIfBlock, false );
+            doc.body, SHOW_ELEMENT, isBlock, false );
     walker.currentNode = node;
     return walker;
 }
@@ -610,7 +602,6 @@ function createElement ( doc, tag, props, children ) {
     ELEMENT_NODE,
     TEXT_NODE,
     SHOW_TEXT,
-    FILTER_ACCEPT,
     START_TO_START,
     START_TO_END,
     END_TO_END,
@@ -668,8 +659,8 @@ var forEachTextNodeInRange = function ( range, fn ) {
         endContainer = range.endContainer,
         root = range.commonAncestorContainer,
         walker = new TreeWalker(
-            root, SHOW_TEXT, function ( node ) {
-                return FILTER_ACCEPT;
+            root, SHOW_TEXT, function (/* node */) {
+                return true;
         }, false ),
         textnode = walker.currentNode = startContainer;
 
@@ -1130,8 +1121,6 @@ var expandRangeToBlockBoundaries = function ( range ) {
     TEXT_NODE,
     SHOW_ELEMENT,
     SHOW_TEXT,
-    FILTER_ACCEPT,
-    FILTER_SKIP,
     win,
     isIOS,
     isMac,
@@ -1467,7 +1456,7 @@ proto._removeZWS = function () {
         return;
     }
     var walker = new TreeWalker( this._body, SHOW_TEXT, function () {
-            return FILTER_ACCEPT;
+            return true;
         }, false ),
         node, index;
     while ( node = walker.nextNode() ) {
@@ -1724,8 +1713,7 @@ proto.hasFormat = function ( tag, attributes, range ) {
     // Otherwise, check each text node at least partially contained within
     // the selection and make sure all of them have the format we want.
     walker = new TreeWalker( root, SHOW_TEXT, function ( node ) {
-        return isNodeContainedInRange( range, node, true ) ?
-            FILTER_ACCEPT : FILTER_SKIP;
+        return isNodeContainedInRange( range, node, true );
     }, false );
 
     var seenNode = false;
@@ -1764,8 +1752,7 @@ proto._addFormat = function ( tag, attributes, range ) {
             range.commonAncestorContainer,
             SHOW_TEXT,
             function ( node ) {
-                return isNodeContainedInRange( range, node, true ) ?
-                    FILTER_ACCEPT : FILTER_SKIP;
+                return isNodeContainedInRange( range, node, true );
             },
             false
         );
@@ -2224,7 +2211,7 @@ var addLinks = function ( frag ) {
     var doc = frag.ownerDocument,
         walker = new TreeWalker( frag, SHOW_TEXT,
                 function ( node ) {
-            return getNearest( node, 'A' ) ? FILTER_SKIP : FILTER_ACCEPT;
+            return !getNearest( node, 'A' );
         }, false ),
         node, data, parent, match, index, endIndex, child;
     while ( node = walker.nextNode() ) {
@@ -2514,10 +2501,9 @@ var cleanTree = function ( node, allowStyles ) {
 };
 
 var notWSTextNode = function ( node ) {
-    return ( node.nodeType === ELEMENT_NODE ?
+    return node.nodeType === ELEMENT_NODE ?
         node.nodeName === 'BR' :
-        notWS.test( node.data ) ) ?
-        FILTER_ACCEPT : FILTER_SKIP;
+        notWS.test( node.data );
 };
 var isLineBreak = function ( br ) {
     var block = br.parentNode,

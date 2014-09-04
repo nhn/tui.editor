@@ -4,8 +4,6 @@
     TEXT_NODE,
     SHOW_ELEMENT,
     SHOW_TEXT,
-    FILTER_ACCEPT,
-    FILTER_SKIP,
     win,
     isIOS,
     isMac,
@@ -341,7 +339,7 @@ proto._removeZWS = function () {
         return;
     }
     var walker = new TreeWalker( this._body, SHOW_TEXT, function () {
-            return FILTER_ACCEPT;
+            return true;
         }, false ),
         node, index;
     while ( node = walker.nextNode() ) {
@@ -598,8 +596,7 @@ proto.hasFormat = function ( tag, attributes, range ) {
     // Otherwise, check each text node at least partially contained within
     // the selection and make sure all of them have the format we want.
     walker = new TreeWalker( root, SHOW_TEXT, function ( node ) {
-        return isNodeContainedInRange( range, node, true ) ?
-            FILTER_ACCEPT : FILTER_SKIP;
+        return isNodeContainedInRange( range, node, true );
     }, false );
 
     var seenNode = false;
@@ -638,8 +635,7 @@ proto._addFormat = function ( tag, attributes, range ) {
             range.commonAncestorContainer,
             SHOW_TEXT,
             function ( node ) {
-                return isNodeContainedInRange( range, node, true ) ?
-                    FILTER_ACCEPT : FILTER_SKIP;
+                return isNodeContainedInRange( range, node, true );
             },
             false
         );
@@ -1098,7 +1094,7 @@ var addLinks = function ( frag ) {
     var doc = frag.ownerDocument,
         walker = new TreeWalker( frag, SHOW_TEXT,
                 function ( node ) {
-            return getNearest( node, 'A' ) ? FILTER_SKIP : FILTER_ACCEPT;
+            return !getNearest( node, 'A' );
         }, false ),
         node, data, parent, match, index, endIndex, child;
     while ( node = walker.nextNode() ) {
@@ -1388,10 +1384,9 @@ var cleanTree = function ( node, allowStyles ) {
 };
 
 var notWSTextNode = function ( node ) {
-    return ( node.nodeType === ELEMENT_NODE ?
+    return node.nodeType === ELEMENT_NODE ?
         node.nodeName === 'BR' :
-        notWS.test( node.data ) ) ?
-        FILTER_ACCEPT : FILTER_SKIP;
+        notWS.test( node.data );
 };
 var isLineBreak = function ( br ) {
     var block = br.parentNode,

@@ -2,8 +2,6 @@
     ELEMENT_NODE,
     TEXT_NODE,
     SHOW_ELEMENT,
-    FILTER_ACCEPT,
-    FILTER_SKIP,
     win,
     isOpera,
     useTextFixer,
@@ -72,13 +70,10 @@ function isContainer ( node ) {
         !isInline( node ) && !isBlock( node );
 }
 
-function acceptIfBlock ( el ) {
-    return isBlock( el ) ? FILTER_ACCEPT : FILTER_SKIP;
-}
 function getBlockWalker ( node ) {
     var doc = node.ownerDocument,
         walker = new TreeWalker(
-            doc.body, SHOW_ELEMENT, acceptIfBlock, false );
+            doc.body, SHOW_ELEMENT, isBlock, false );
     walker.currentNode = node;
     return walker;
 }

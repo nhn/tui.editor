@@ -2,7 +2,6 @@
     ELEMENT_NODE,
     TEXT_NODE,
     SHOW_TEXT,
-    FILTER_ACCEPT,
     START_TO_START,
     START_TO_END,
     END_TO_END,
@@ -60,8 +59,8 @@ var forEachTextNodeInRange = function ( range, fn ) {
         endContainer = range.endContainer,
         root = range.commonAncestorContainer,
         walker = new TreeWalker(
-            root, SHOW_TEXT, function ( node ) {
-                return FILTER_ACCEPT;
+            root, SHOW_TEXT, function (/* node */) {
+                return true;
         }, false ),
         textnode = walker.currentNode = startContainer;
 
