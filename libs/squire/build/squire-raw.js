@@ -2646,18 +2646,14 @@ proto._onPaste = function ( event ) {
         startOffset = range.startOffset,
         endContainer = range.endContainer,
         endOffset = range.endOffset,
-        startBlock = startContainer.nodeType === TEXT_NODE ?
-            startContainer : startContainer.childNodes[ startOffset ];
+        startBlock = getStartBlockOfRange( range );
 
     // We need to position the pasteArea in the visible portion of the screen
     // to stop the browser auto-scrolling.
-    while ( isInline( startBlock )  ) {
-        startBlock = startBlock.parentNode;
-    }
-
     var pasteArea = this.createElement( 'DIV', {
         style: 'position: absolute; overflow: hidden; top:' +
-            ( body.scrollTop + startBlock.getBoundingClientRect().top ) +
+            ( body.scrollTop +
+                ( startBlock ? startBlock.getBoundingClientRect().top : 0 ) ) +
             'px; left: 0; width: 1px; height: 1px;'
     });
     body.appendChild( pasteArea );
