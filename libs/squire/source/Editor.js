@@ -1531,6 +1531,10 @@ proto._onPaste = function ( event ) {
         endOffset = range.endOffset,
         startBlock = getStartBlockOfRange( range );
 
+    // Record undo checkpoint
+    self._recordUndoState( range );
+    self._getRangeAndRemoveBookmark( range );
+
     // We need to position the pasteArea in the visible portion of the screen
     // to stop the browser auto-scrolling.
     var pasteArea = this.createElement( 'DIV', {
@@ -1834,11 +1838,12 @@ var keyHandlers = {
     },
     backspace: function ( self, event ) {
         self._removeZWS();
+        // Record undo checkpoint.
         var range = self.getSelection();
+        self._recordUndoState( range );
+        self._getRangeAndRemoveBookmark( range );
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
-            self._recordUndoState( range );
-            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
             self._ensureBottomLine();
@@ -1847,8 +1852,6 @@ var keyHandlers = {
         }
         // If at beginning of block, merge with previous
         else if ( rangeDoesStartAtBlockBoundary( range ) ) {
-            self._recordUndoState( range );
-            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             var current = getStartBlockOfRange( range ),
                 previous = current && getPreviousBlock( current );
@@ -1891,22 +1894,18 @@ var keyHandlers = {
         // Otherwise, leave to browser but check afterwards whether it has
         // left behind an empty inline tag.
         else {
-            var text = range.startContainer.data || '';
-            if ( !notWS.test( text.charAt( range.startOffset - 1 ) ) ) {
-                self._recordUndoState( range );
-                self._getRangeAndRemoveBookmark( range );
-                self.setSelection( range );
-            }
+            self.setSelection( range );
             setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
     'delete': function ( self, event ) {
         self._removeZWS();
+        // Record undo checkpoint.
         var range = self.getSelection();
+        self._recordUndoState( range );
+        self._getRangeAndRemoveBookmark( range );
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
-            self._recordUndoState( range );
-            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             deleteContentsOfRange( range );
             self._ensureBottomLine();
@@ -1915,8 +1914,6 @@ var keyHandlers = {
         }
         // If at end of block, merge next into this block
         else if ( rangeDoesEndAtBlockBoundary( range ) ) {
-            self._recordUndoState( range );
-            self._getRangeAndRemoveBookmark( range );
             event.preventDefault();
             var current = getStartBlockOfRange( range ),
                 next = current && getNextBlock( current );
@@ -1945,13 +1942,7 @@ var keyHandlers = {
         // Otherwise, leave to browser but check afterwards whether it has
         // left behind an empty inline tag.
         else {
-            // Record undo point if deleting whitespace
-            var text = range.startContainer.data || '';
-            if ( !notWS.test( text.charAt( range.startOffset ) ) ) {
-                self._recordUndoState( range );
-                self._getRangeAndRemoveBookmark( range );
-                self.setSelection( range );
-            }
+            self.setSelection( range );
             setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
@@ -1995,6 +1986,7 @@ var keyHandlers = {
         self._removeZWS();
     }
 };
+
 // Firefox incorrectly handles Cmd-left/Cmd-right on Mac:
 // it goes back/forward in history! Override to do the right
 // thing.
@@ -2049,12 +2041,15 @@ proto._onKey = function ( event ) {
         key = 'f' + ( code - 111 );
     }
 
-    if ( event.altKey ) { modifiers += 'alt-'; }
-    if ( event.ctrlKey ) { modifiers += 'ctrl-'; }
-    if ( event.metaKey ) { modifiers += 'meta-'; }
-    if ( event.shiftKey ) { modifiers += 'shift-'; }
+    // We need to apply the backspace/delete handlers regardless of modifiers.
+    if ( key !== 'backspace' && key !== 'delete' ) {
+        if ( event.altKey ) { modifiers += 'alt-'; }
+        if ( event.ctrlKey ) { modifiers += 'ctrl-'; }
+        if ( event.metaKey ) { modifiers += 'meta-'; }
+        if ( event.shiftKey ) { modifiers += 'shift-'; }
 
-    key = modifiers + key;
+        key = modifiers + key;
+    }
 
     if ( keyHandlers[ key ] ) {
         keyHandlers[ key ]( this, event );
