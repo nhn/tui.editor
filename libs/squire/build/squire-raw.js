@@ -1326,6 +1326,20 @@ proto.fireEvent = function ( type, event ) {
     return this;
 };
 
+proto.destroy = function () {
+    var win = this._win,
+        doc = this._doc,
+        events = this._events,
+        type;
+    win.removeEventListener( 'focus', this, false );
+    win.removeEventListener( 'blur', this, false );
+    for ( type in events ) {
+        if ( !customEvents[ type ] ) {
+            doc.removeEventListener( type, this, false );
+        }
+    }
+};
+
 proto.handleEvent = function ( event ) {
     this.fireEvent( event.type, event );
 };
