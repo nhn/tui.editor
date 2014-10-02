@@ -1745,7 +1745,7 @@ proto._addFormat = function ( tag, attributes, range ) {
     // If the range is collapsed we simply insert the node by wrapping
     // it round the range and focus it.
     var el, walker, startContainer, endContainer, startOffset, endOffset,
-        textnode, needsFormat;
+        textNode, needsFormat;
 
     if ( range.collapsed ) {
         el = fixCursor( this.createElement( tag, attributes ) );
@@ -1773,39 +1773,43 @@ proto._addFormat = function ( tag, attributes, range ) {
 
         // Start at the beginning node of the range and iterate through
         // all the nodes in the range that need formatting.
-        startOffset = 0;
-        endOffset = 0;
-        textnode = walker.currentNode = range.startContainer;
+        startContainer = range.startContainer;
+        startOffset = range.startOffset;
+        endContainer = range.endContainer;
+        endOffset = range.endOffset;
 
-        if ( textnode.nodeType !== TEXT_NODE ) {
-            textnode = walker.nextNode();
+        // Make sure we start inside a text node.
+        walker.currentNode = startContainer;
+        if ( startContainer.nodeType !== TEXT_NODE ) {
+            startContainer = walker.nextNode();
+            startOffset = 0;
         }
 
         do {
-            needsFormat = !getNearest( textnode, tag, attributes );
-            if ( textnode === range.endContainer ) {
-                if ( needsFormat && textnode.length > range.endOffset ) {
-                    textnode.splitText( range.endOffset );
-                } else {
-                    endOffset = range.endOffset;
-                }
-            }
-            if ( textnode === range.startContainer ) {
-                if ( needsFormat && range.startOffset ) {
-                    textnode = textnode.splitText( range.startOffset );
-                } else {
-                    startOffset = range.startOffset;
-                }
-            }
+            textNode = walker.currentNode;
+            needsFormat = !getNearest( textNode, tag, attributes );
             if ( needsFormat ) {
+                if ( textNode === endContainer &&
+                        textNode.length > endOffset ) {
+                    textNode.splitText( endOffset );
+                }
+                if ( textNode === startContainer && startOffset ) {
+                    textNode = textNode.splitText( startOffset );
+                    startContainer = textNode;
+                    startOffset = 0;
+                }
                 el = this.createElement( tag, attributes );
-                replaceWith( textnode, el );
-                el.appendChild( textnode );
-                endOffset = textnode.length;
+                replaceWith( textNode, el );
+                el.appendChild( textNode );
             }
-            endContainer = textnode;
-            if ( !startContainer ) { startContainer = endContainer; }
-        } while ( textnode = walker.nextNode() );
+        } while ( walker.nextNode() );
+
+        // Make sure we finish inside a text node. Otherwise offset may have
+        // changed.
+        if ( endContainer.nodeType !== TEXT_NODE ) {
+            endContainer = textNode;
+            endOffset = textNode.length;
+        }
 
         // Now set the selection to as it was before
         range = this._createRange(
