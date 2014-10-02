@@ -27,12 +27,12 @@ var isMac = /Mac OS X/.test( ua );
 var isGecko = /Gecko\//.test( ua );
 var isIE8or9or10 = /Trident\/[456]\./.test( ua );
 var isIE8 = ( win.ie === 8 );
-var isOpera = !!win.opera;
+var isPresto = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
 
 var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
-var useTextFixer = isIE8or9or10 || isOpera;
+var useTextFixer = isIE8or9or10 || isPresto;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
 var hasBuggySplit = ( function () {
@@ -497,7 +497,7 @@ function mergeWithBlock ( block, next, range ) {
     // Steps to reproduce bug: Type "a-b-c" (where - is return)
     // then backspace twice. The cursor goes to the top instead
     // of after "b".
-    if ( isOpera && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
+    if ( isPresto && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
         block.removeChild( last );
     }
 }
@@ -1230,7 +1230,7 @@ function Squire ( doc ) {
         this.addEventListener( 'keyup', this._ieSelAllClean );
     }
     // Opera does not fire keydown repeatedly.
-    this.addEventListener( isOpera ? 'keypress' : 'keydown', this._onKey );
+    this.addEventListener( isPresto ? 'keypress' : 'keydown', this._onKey );
 
     // Fix IE8/9's buggy implementation of Text#splitText.
     // If the split is at the end of the node, it doesn't insert the newly split
@@ -2947,7 +2947,7 @@ var keyHandlers = {
             // If you try to select the contents of a 'BR', FF will not let
             // you type anything!
             if ( !child || child.nodeName === 'BR' ||
-                    ( child.nodeType === TEXT_NODE && !isOpera ) ) {
+                    ( child.nodeType === TEXT_NODE && !isPresto ) ) {
                 break;
             }
             nodeAfterSplit = child;
@@ -3167,7 +3167,7 @@ proto._onKey = function ( event ) {
 
     // On keypress, delete and '.' both have event.keyCode 46
     // Must check event.which to differentiate.
-    if ( isOpera && event.which === 46 ) {
+    if ( isPresto && event.which === 46 ) {
         key = '.';
     }
 

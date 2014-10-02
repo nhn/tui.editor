@@ -113,7 +113,7 @@ function Squire ( doc ) {
         this.addEventListener( 'keyup', this._ieSelAllClean );
     }
     // Opera does not fire keydown repeatedly.
-    this.addEventListener( isOpera ? 'keypress' : 'keydown', this._onKey );
+    this.addEventListener( isPresto ? 'keypress' : 'keydown', this._onKey );
 
     // Fix IE8/9's buggy implementation of Text#splitText.
     // If the split is at the end of the node, it doesn't insert the newly split
@@ -1830,7 +1830,7 @@ var keyHandlers = {
             // If you try to select the contents of a 'BR', FF will not let
             // you type anything!
             if ( !child || child.nodeName === 'BR' ||
-                    ( child.nodeType === TEXT_NODE && !isOpera ) ) {
+                    ( child.nodeType === TEXT_NODE && !isPresto ) ) {
                 break;
             }
             nodeAfterSplit = child;
@@ -2050,7 +2050,7 @@ proto._onKey = function ( event ) {
 
     // On keypress, delete and '.' both have event.keyCode 46
     // Must check event.which to differentiate.
-    if ( isOpera && event.which === 46 ) {
+    if ( isPresto && event.which === 46 ) {
         key = '.';
     }
 

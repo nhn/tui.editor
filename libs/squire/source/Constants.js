@@ -22,12 +22,12 @@ var isMac = /Mac OS X/.test( ua );
 var isGecko = /Gecko\//.test( ua );
 var isIE8or9or10 = /Trident\/[456]\./.test( ua );
 var isIE8 = ( win.ie === 8 );
-var isOpera = !!win.opera;
+var isPresto = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
 
 var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
-var useTextFixer = isIE8or9or10 || isOpera;
+var useTextFixer = isIE8or9or10 || isPresto;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
 var hasBuggySplit = ( function () {

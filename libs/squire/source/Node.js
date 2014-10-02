@@ -358,7 +358,7 @@ function mergeWithBlock ( block, next, range ) {
     // Steps to reproduce bug: Type "a-b-c" (where - is return)
     // then backspace twice. The cursor goes to the top instead
     // of after "b".
-    if ( isOpera && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
+    if ( isPresto && ( last = block.lastChild ) && last.nodeName === 'BR' ) {
         block.removeChild( last );
     }
 }
