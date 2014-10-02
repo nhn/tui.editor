@@ -1,68 +1,6 @@
-/*global
-    DOCUMENT_POSITION_PRECEDING,
-    ELEMENT_NODE,
-    TEXT_NODE,
-    SHOW_ELEMENT,
-    SHOW_TEXT,
-    win,
-    isIOS,
-    isMac,
-    isGecko,
-    isIE8or9or10,
-    isIE8,
-    isOpera,
-    ctrlKey,
-    useTextFixer,
-    cantFocusEmptyTextNodes,
-    losesSelectionOnBlur,
-    hasBuggySplit,
-    notWS,
-    indexOf,
+/*jshint strict:false, undef:false, unused:false */
 
-    TreeWalker,
-
-    hasTagAttributes,
-    isLeaf,
-    isInline,
-    isBlock,
-    isContainer,
-    getBlockWalker,
-    getPreviousBlock,
-    getNextBlock,
-    getNearest,
-    getPath,
-    getLength,
-    detach,
-    replaceWith,
-    empty,
-    fixCursor,
-    split,
-    mergeInlines,
-    mergeWithBlock,
-    mergeContainers,
-    fixContainer,
-    createElement,
-
-    forEachTextNodeInRange,
-    getTextContentInRange,
-    insertNodeInRange,
-    extractContentsOfRange,
-    deleteContentsOfRange,
-    insertTreeFragmentIntoRange,
-    isNodeContainedInRange,
-    moveRangeBoundariesDownTree,
-    moveRangeBoundariesUpTree,
-    getStartBlockOfRange,
-    getEndBlockOfRange,
-    rangeDoesStartAtBlockBoundary,
-    rangeDoesEndAtBlockBoundary,
-    expandRangeToBlockBoundaries,
-
-    top,
-    console,
-    setTimeout
-*/
-/*jshint strict:false */
+var instances = [];
 
 function Squire ( doc ) {
     var win = doc.defaultView;
@@ -121,7 +59,7 @@ function Squire ( doc ) {
     // And even if the split is not at the end, the original node is removed
     // from the document and replaced by another, rather than just having its
     // data shortened.
-    if ( hasBuggySplit ) {
+    if ( hasBuggySplit( doc ) ) {
         win.Text.prototype.splitText = function ( offset ) {
             var afterSplit = this.ownerDocument.createTextNode(
                     this.data.slice( offset ) ),
@@ -148,6 +86,8 @@ function Squire ( doc ) {
         doc.execCommand( 'enableObjectResizing', false, 'false' );
         doc.execCommand( 'enableInlineTableEditing', false, 'false' );
     } catch ( error ) {}
+
+    instances.push( this );
 }
 
 var proto = Squire.prototype;
@@ -219,6 +159,12 @@ proto.destroy = function () {
     for ( type in events ) {
         if ( !customEvents[ type ] ) {
             doc.removeEventListener( type, this, false );
+        }
+    }
+    var l = instances.length;
+    while ( l-- ) {
+        if ( instances[l] === this ) {
+            instances.splice( l, 1 );
         }
     }
 };

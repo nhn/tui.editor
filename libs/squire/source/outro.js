@@ -1,4 +1,3 @@
-/*global top, win, doc, Squire */
 
 if ( top !== win ) {
     win.editor = new Squire( doc );

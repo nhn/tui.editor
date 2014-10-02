@@ -1,28 +1,4 @@
-/*global
-    ELEMENT_NODE,
-    TEXT_NODE,
-    SHOW_TEXT,
-    START_TO_START,
-    START_TO_END,
-    END_TO_END,
-    END_TO_START,
-    notWS,
-    indexOf,
-
-    TreeWalker,
-
-    isLeaf,
-    isInline,
-    isBlock,
-    getPreviousBlock,
-    getNextBlock,
-    getLength,
-    fixCursor,
-    split,
-    mergeWithBlock,
-    mergeContainers
-*/
-/*jshint strict:false */
+/*jshint strict:false, undef:false, unused:false */
 
 var getNodeBefore = function ( node, offset ) {
     var children = node.childNodes;

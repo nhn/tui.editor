@@ -3,8 +3,7 @@
 ( function ( doc, undefined ) {
 
 "use strict";
-/*global doc, navigator */
-/*jshint strict:false */
+/*jshint strict:false, undef:false, unused:false */
 
 var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
 var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
@@ -35,13 +34,13 @@ var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 var useTextFixer = isIE8or9or10 || isPresto;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
-var hasBuggySplit = ( function () {
+var hasBuggySplit = function ( doc ) {
     var div = doc.createElement( 'DIV' ),
         text = doc.createTextNode( '12' );
     div.appendChild( text );
     text.splitText( 2 );
     return div.childNodes.length !== 2;
-}() );
+};
 
 // Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
 var notWS = /[^ \t\r\n]/;
@@ -137,20 +136,7 @@ TreeWalker.prototype.previousNode = function () {
         current = node;
     }
 };
-/*global
-    ELEMENT_NODE,
-    TEXT_NODE,
-    SHOW_ELEMENT,
-    win,
-    isOpera,
-    useTextFixer,
-    cantFocusEmptyTextNodes,
-
-    TreeWalker,
-
-    Text
-*/
-/*jshint strict:false */
+/*jshint strict:false, undef:false, unused:false */
 
 var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TR(?:IKE|ONG)|MALL|AMP)?|U|VAR|WBR)$/;
 
@@ -282,6 +268,29 @@ function empty ( node ) {
     return frag;
 }
 
+function createElement ( doc, tag, props, children ) {
+    var el = doc.createElement( tag ),
+        attr, value, i, l;
+    if ( props instanceof Array ) {
+        children = props;
+        props = null;
+    }
+    if ( props ) {
+        for ( attr in props ) {
+            value = props[ attr ];
+            if ( value !== undefined ) {
+                el.setAttribute( attr, props[ attr ] );
+            }
+        }
+    }
+    if ( children ) {
+        for ( i = 0, l = children.length; i < l; i += 1 ) {
+            el.appendChild( children[i] );
+        }
+    }
+    return el;
+}
+
 function fixCursor ( node ) {
     // In Webkit and Gecko, block level elements are collapsed and
     // unfocussable if they have no content. To remedy this, a <BR> must be
@@ -289,7 +298,8 @@ function fixCursor ( node ) {
     // cursor to appear.
     var doc = node.ownerDocument,
         root = node,
-        fixer, child;
+        fixer, child,
+        l, instance;
 
     if ( node.nodeName === 'BODY' ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
@@ -315,8 +325,13 @@ function fixCursor ( node ) {
         if ( !child ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( '\u200B' );
-                if ( win.editor ) {
-                    win.editor._didAddZWS();
+                // Find the relevant Squire instance and notify
+                l = instances.length;
+                while ( l-- ) {
+                    instance = instances[l];
+                    if ( instance._doc === doc ) {
+                        instance._didAddZWS();
+                    }
                 }
             } else {
                 fixer = doc.createTextNode( '' );
@@ -354,6 +369,42 @@ function fixCursor ( node ) {
     }
 
     return root;
+}
+
+// Recursively examine container nodes and wrap any inline children.
+function fixContainer ( container ) {
+    var children = container.childNodes,
+        doc = container.ownerDocument,
+        wrapper = null,
+        i, l, child, isBR;
+    for ( i = 0, l = children.length; i < l; i += 1 ) {
+        child = children[i];
+        isBR = child.nodeName === 'BR';
+        if ( !isBR && isInline( child ) ) {
+            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            wrapper.appendChild( child );
+            i -= 1;
+            l -= 1;
+        } else if ( isBR || wrapper ) {
+            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            fixCursor( wrapper );
+            if ( isBR ) {
+                container.replaceChild( wrapper, child );
+            } else {
+                container.insertBefore( wrapper, child );
+                i += 1;
+                l += 1;
+            }
+            wrapper = null;
+        }
+        if ( isContainer( child ) ) {
+            fixContainer( child );
+        }
+    }
+    if ( wrapper ) {
+        container.appendChild( fixCursor( wrapper ) );
+    }
+    return container;
 }
 
 function split ( node, offset, stopNode ) {
@@ -539,90 +590,7 @@ function mergeContainers ( node ) {
         fixCursor( prev );
     }
 }
-
-// Recursively examine container nodes and wrap any inline children.
-function fixContainer ( container ) {
-    var children = container.childNodes,
-        doc = container.ownerDocument,
-        wrapper = null,
-        i, l, child, isBR;
-    for ( i = 0, l = children.length; i < l; i += 1 ) {
-        child = children[i];
-        isBR = child.nodeName === 'BR';
-        if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
-            wrapper.appendChild( child );
-            i -= 1;
-            l -= 1;
-        } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
-            fixCursor( wrapper );
-            if ( isBR ) {
-                container.replaceChild( wrapper, child );
-            } else {
-                container.insertBefore( wrapper, child );
-                i += 1;
-                l += 1;
-            }
-            wrapper = null;
-        }
-        if ( isContainer( child ) ) {
-            fixContainer( child );
-        }
-    }
-    if ( wrapper ) {
-        container.appendChild( fixCursor( wrapper ) );
-    }
-    return container;
-}
-
-function createElement ( doc, tag, props, children ) {
-    var el = doc.createElement( tag ),
-        attr, value, i, l;
-    if ( props instanceof Array ) {
-        children = props;
-        props = null;
-    }
-    if ( props ) {
-        for ( attr in props ) {
-            value = props[ attr ];
-            if ( value !== undefined ) {
-                el.setAttribute( attr, props[ attr ] );
-            }
-        }
-    }
-    if ( children ) {
-        for ( i = 0, l = children.length; i < l; i += 1 ) {
-            el.appendChild( children[i] );
-        }
-    }
-    return el;
-}
-/*global
-    ELEMENT_NODE,
-    TEXT_NODE,
-    SHOW_TEXT,
-    START_TO_START,
-    START_TO_END,
-    END_TO_END,
-    END_TO_START,
-    notWS,
-    indexOf,
-
-    TreeWalker,
-
-    isLeaf,
-    isInline,
-    isBlock,
-    getPreviousBlock,
-    getNextBlock,
-    getLength,
-    fixCursor,
-    split,
-    mergeWithBlock,
-    mergeContainers
-*/
-/*jshint strict:false */
+/*jshint strict:false, undef:false, unused:false */
 
 var getNodeBefore = function ( node, offset ) {
     var children = node.childNodes;
@@ -1115,71 +1083,9 @@ var expandRangeToBlockBoundaries = function ( range ) {
         range.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
     }
 };
-/*global
-    DOCUMENT_POSITION_PRECEDING,
-    ELEMENT_NODE,
-    TEXT_NODE,
-    SHOW_ELEMENT,
-    SHOW_TEXT,
-    win,
-    isIOS,
-    isMac,
-    isGecko,
-    isIE8or9or10,
-    isIE8,
-    isOpera,
-    ctrlKey,
-    useTextFixer,
-    cantFocusEmptyTextNodes,
-    losesSelectionOnBlur,
-    hasBuggySplit,
-    notWS,
-    indexOf,
+/*jshint strict:false, undef:false, unused:false */
 
-    TreeWalker,
-
-    hasTagAttributes,
-    isLeaf,
-    isInline,
-    isBlock,
-    isContainer,
-    getBlockWalker,
-    getPreviousBlock,
-    getNextBlock,
-    getNearest,
-    getPath,
-    getLength,
-    detach,
-    replaceWith,
-    empty,
-    fixCursor,
-    split,
-    mergeInlines,
-    mergeWithBlock,
-    mergeContainers,
-    fixContainer,
-    createElement,
-
-    forEachTextNodeInRange,
-    getTextContentInRange,
-    insertNodeInRange,
-    extractContentsOfRange,
-    deleteContentsOfRange,
-    insertTreeFragmentIntoRange,
-    isNodeContainedInRange,
-    moveRangeBoundariesDownTree,
-    moveRangeBoundariesUpTree,
-    getStartBlockOfRange,
-    getEndBlockOfRange,
-    rangeDoesStartAtBlockBoundary,
-    rangeDoesEndAtBlockBoundary,
-    expandRangeToBlockBoundaries,
-
-    top,
-    console,
-    setTimeout
-*/
-/*jshint strict:false */
+var instances = [];
 
 function Squire ( doc ) {
     var win = doc.defaultView;
@@ -1238,7 +1144,7 @@ function Squire ( doc ) {
     // And even if the split is not at the end, the original node is removed
     // from the document and replaced by another, rather than just having its
     // data shortened.
-    if ( hasBuggySplit ) {
+    if ( hasBuggySplit( doc ) ) {
         win.Text.prototype.splitText = function ( offset ) {
             var afterSplit = this.ownerDocument.createTextNode(
                     this.data.slice( offset ) ),
@@ -1265,6 +1171,8 @@ function Squire ( doc ) {
         doc.execCommand( 'enableObjectResizing', false, 'false' );
         doc.execCommand( 'enableInlineTableEditing', false, 'false' );
     } catch ( error ) {}
+
+    instances.push( this );
 }
 
 var proto = Squire.prototype;
@@ -1336,6 +1244,12 @@ proto.destroy = function () {
     for ( type in events ) {
         if ( !customEvents[ type ] ) {
             doc.removeEventListener( type, this, false );
+        }
+    }
+    var l = instances.length;
+    while ( l-- ) {
+        if ( instances[l] === this ) {
+            instances.splice( l, 1 );
         }
     }
 };
@@ -3501,7 +3415,6 @@ proto.removeList = command( 'modifyBlocks', removeList );
 
 proto.increaseListLevel = command( 'modifyBlocks', increaseListLevel );
 proto.decreaseListLevel = command( 'modifyBlocks', decreaseListLevel );
-/*global top, win, doc, Squire */
 
 if ( top !== win ) {
     win.editor = new Squire( doc );

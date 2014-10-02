@@ -1,5 +1,4 @@
-/*global doc, navigator */
-/*jshint strict:false */
+/*jshint strict:false, undef:false, unused:false */
 
 var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
 var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
@@ -30,13 +29,13 @@ var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 var useTextFixer = isIE8or9or10 || isPresto;
 var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
 var losesSelectionOnBlur = isIE8or9or10;
-var hasBuggySplit = ( function () {
+var hasBuggySplit = function ( doc ) {
     var div = doc.createElement( 'DIV' ),
         text = doc.createTextNode( '12' );
     div.appendChild( text );
     text.splitText( 2 );
     return div.childNodes.length !== 2;
-}() );
+};
 
 // Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
 var notWS = /[^ \t\r\n]/;
