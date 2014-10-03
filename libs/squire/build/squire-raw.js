@@ -1709,6 +1709,10 @@ proto._addFormat = function ( tag, attributes, range ) {
                 }
                 if ( textNode === startContainer && startOffset ) {
                     textNode = textNode.splitText( startOffset );
+                    if ( endContainer === startContainer ) {
+                        endContainer = textNode;
+                        endOffset -= startOffset;
+                    }
                     startContainer = textNode;
                     startOffset = 0;
                 }
