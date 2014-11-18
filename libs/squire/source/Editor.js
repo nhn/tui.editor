@@ -158,7 +158,7 @@ proto.destroy = function () {
     win.removeEventListener( 'blur', this, false );
     for ( type in events ) {
         if ( !customEvents[ type ] ) {
-            doc.removeEventListener( type, this, false );
+            doc.removeEventListener( type, this, true );
         }
     }
     var l = instances.length;
@@ -185,7 +185,7 @@ proto.addEventListener = function ( type, fn ) {
     if ( !handlers ) {
         handlers = this._events[ type ] = [];
         if ( !customEvents[ type ] ) {
-            this._doc.addEventListener( type, this, false );
+            this._doc.addEventListener( type, this, true );
         }
     }
     handlers.push( fn );
