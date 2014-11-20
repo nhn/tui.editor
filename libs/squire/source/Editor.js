@@ -2009,15 +2009,18 @@ proto._onKey = function ( event ) {
         key = 'f' + ( code - 111 );
     }
 
-    // We need to apply the backspace/delete handlers regardless of modifiers.
+    // We need to apply the backspace/delete handlers regardless of
+    // control key modifiers.
     if ( key !== 'backspace' && key !== 'delete' ) {
-        if ( event.altKey ) { modifiers += 'alt-'; }
+        if ( event.altKey  ) { modifiers += 'alt-'; }
         if ( event.ctrlKey ) { modifiers += 'ctrl-'; }
         if ( event.metaKey ) { modifiers += 'meta-'; }
-        if ( event.shiftKey ) { modifiers += 'shift-'; }
-
-        key = modifiers + key;
     }
+    // However, on Windows, shift-delete is apparently "cut" (WTF right?), so
+    // we want to let the browser handle shift-delete.
+    if ( event.shiftKey ) { modifiers += 'shift-'; }
+
+    key = modifiers + key;
 
     if ( keyHandlers[ key ] ) {
         keyHandlers[ key ]( this, event );
