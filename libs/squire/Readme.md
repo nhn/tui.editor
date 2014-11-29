@@ -1,15 +1,13 @@
 Squire
 ======
 
-Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible. It is built for the present and the future, and as such does not support truly ancient browsers. It should work fine back to around Opera 10, Firefox 3.5, Safari 4, Chrome 9 and IE8.
+Squire is an HTML5 rich text editor, which provides powerful cross-browser normalisation, whilst being supremely lightweight and flexible. It is built for the present and the future, and as such does not support truly ancient browsers. It should work fine back to around Opera 12, Firefox 3.5, Safari 5, Chrome 9 and IE9.
 
 Unlike other HTML5 rich text editors, Squire was written as a component for writing documents (emails, essays, etc.), not doing wysiwyg websites. If you are looking for support for inserting form controls or flash components or the like, you'll need to look elsewhere. However for many purposes, Squire may be just what you need, providing the power without the bloat. The key features are:
 
 ### Lightweight ###
 
 * Only 10KB of JS after minification and gzip (33KB before gzip).
-* IE8 support does not add extra bloat to the core library; instead, a separate
-  3KB (7KB before gzip) file patches the browser to support the W3C APIs.
 * Does not include its own XHR wrapper, widget library or lightbox overlays.
 * No dependencies.
 * No UI for a toolbar is supplied, allowing you to integrate seamlessly with the
