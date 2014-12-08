@@ -1,6 +1,9 @@
 .PHONY: all build clean
 
-all: build
+all: install build
+
+intall:
+	npm install
 
 clean:
 	rm -rf build
@@ -12,7 +15,7 @@ build/squire-raw.js: source/intro.js source/Constants.js source/TreeWalker.js so
 	cat $^ >$@
 
 build/squire.js: build/squire-raw.js
-	uglifyjs $^ -c -m -o $@
+	./node_modules/uglify-js/bin/uglifyjs $^ -c -m -o $@
 
 build/document.html: source/document.html
 	mkdir -p $(@D)
