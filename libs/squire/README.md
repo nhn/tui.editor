@@ -7,7 +7,7 @@ Unlike other HTML5 rich text editors, Squire was written as a component for writ
 
 ### Lightweight ###
 
-* Only 10KB of JS after minification and gzip (33KB before gzip).
+* Only 11.5KB of JS after minification and gzip (35KB before gzip).
 * Does not include its own XHR wrapper, widget library or lightbox overlays.
 * No dependencies.
 * No UI for a toolbar is supplied, allowing you to integrate seamlessly with the
