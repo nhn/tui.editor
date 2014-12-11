@@ -120,7 +120,7 @@ Returns self (the Squire instance).
 
 Returns the text currently selected in the editor.
 
-#### insertImage
+### insertImage
 
 Inserts an image at the current cursor location.
 
@@ -331,5 +331,17 @@ Returns self (the Squire instance).
 ### removeList
 
 Changes any at-least-partially selected blocks which are part of a list to no longer be part of a list.
+
+Returns self (the Squire instance).
+
+### increaseListLevel
+
+Increases by 1 the nesting level of any at-least-partially selected blocks which are part of a list.
+
+Returns self (the Squire instance).
+
+### decreaseListLevel
+
+Decreases by 1 the nesting level of any at-least-partially selected blocks which are part of a list.
 
 Returns self (the Squire instance).
