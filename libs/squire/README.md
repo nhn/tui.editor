@@ -211,9 +211,10 @@ Returns self.
 
 Makes the currently selected text a link. If no text is selected, the URL or email will be inserted as text at the current cursor point and made into a link.
 
-This method takes one argument:
+This method takes two arguments:
 
 * **url**: The url or email to link to.
+* **attributes**: (optional) An object containing other attributes to set on the `<a>` node. e.g. `{ target: '_blank' }`. Any `href` attribute will be overwritten by the url given as the first argument.
 
 Returns self (the Squire instance).
 

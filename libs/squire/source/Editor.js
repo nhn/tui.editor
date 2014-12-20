@@ -2214,7 +2214,7 @@ proto.removeStrikethrough = command( 'changeFormat', null, { tag: 'S' } );
 proto.removeSubscript = command( 'changeFormat', null, { tag: 'SUB' } );
 proto.removeSuperscript = command( 'changeFormat', null, { tag: 'SUP' } );
 
-proto.makeLink = function ( url ) {
+proto.makeLink = function ( url, attributes ) {
     var range = this.getSelection();
     if ( range.collapsed ) {
         var protocolEnd = url.indexOf( ':' ) + 1;
@@ -2226,11 +2226,15 @@ proto.makeLink = function ( url ) {
             this._doc.createTextNode( url.slice( protocolEnd ) )
         );
     }
+
+    if ( !attributes ) {
+        attributes = {};
+    }
+    attributes.href = url;
+
     this.changeFormat({
         tag: 'A',
-        attributes: {
-            href: url
-        }
+        attributes: attributes
     }, {
         tag: 'A'
     }, range );
