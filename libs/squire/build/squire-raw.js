@@ -1337,22 +1337,12 @@ proto.getSelection = function () {
         selection  = sel.getRangeAt( 0 ).cloneRange();
         startContainer = selection.startContainer;
         endContainer = selection.endContainer;
-        // FF sometimes throws an error reading the isLeaf property. Let's
-        // catch and log it to see if we can find what's going on.
-        try {
-            // FF can return the selection as being inside an <img>. WTF?
-            if ( startContainer && isLeaf( startContainer ) ) {
-                selection.setStartBefore( startContainer );
-            }
-            if ( endContainer && isLeaf( endContainer ) ) {
-                selection.setEndBefore( endContainer );
-            }
-        } catch ( error ) {
-            this.didError({
-                name: 'Squire#getSelection error',
-                message: 'Starts: ' + startContainer.nodeName +
-                    '\nEnds: ' + endContainer.nodeName
-            });
+        // FF can return the selection as being inside an <img>. WTF?
+        if ( startContainer && isLeaf( startContainer ) ) {
+            selection.setStartBefore( startContainer );
+        }
+        if ( endContainer && isLeaf( endContainer ) ) {
+            selection.setEndBefore( endContainer );
         }
         this._lastSelection = selection;
     } else {
@@ -3025,10 +3015,22 @@ var keyHandlers = {
         }
     },
     space: function ( self ) {
-        var range = self.getSelection();
+        var range = self.getSelection(),
+            node, parent;
         self._recordUndoState( range );
         addLinks( range.startContainer );
         self._getRangeAndRemoveBookmark( range );
+
+        // If the cursor is at the end of a link (<a>foo|</a>) then move it
+        // outside of the link (<a>foo</a>|) so that the space is not part of
+        // the link text.
+        node = range.endContainer;
+        parent = node.parentNode;
+        if ( range.collapsed && parent.nodeName === 'A' &&
+                !node.nextSibling && range.endOffset === getLength( node ) ) {
+            range.setStartAfter( parent );
+        }
+
         self.setSelection( range );
     },
     left: function ( self ) {
