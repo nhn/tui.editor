@@ -186,7 +186,7 @@ function fixCursor ( node ) {
         }
         if ( !child ) {
             if ( cantFocusEmptyTextNodes ) {
-                fixer = doc.createTextNode( '\u200B' );
+                fixer = doc.createTextNode( ZWS );
                 // Find the relevant Squire instance and notify
                 l = instances.length;
                 while ( l-- ) {

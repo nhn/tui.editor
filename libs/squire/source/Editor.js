@@ -287,11 +287,11 @@ var removeZWS = function ( root ) {
         }, false ),
         node, index;
     while ( node = walker.nextNode() ) {
-        while ( ( index = node.data.indexOf( '\u200B' ) ) > -1 ) {
+        while ( ( index = node.data.indexOf( ZWS ) ) > -1 ) {
             node.deleteData( index, 1 );
         }
     }
-}
+};
 
 proto._didAddZWS = function () {
     this._hasZWS = true;
@@ -654,7 +654,7 @@ proto._removeFormat = function ( tag, attributes, range, partial ) {
         fixer;
     if ( range.collapsed ) {
         if ( cantFocusEmptyTextNodes ) {
-            fixer = doc.createTextNode( '\u200B' );
+            fixer = doc.createTextNode( ZWS );
             this._didAddZWS();
         } else {
             fixer = doc.createTextNode( '' );
@@ -1605,33 +1605,41 @@ var mapKeyToFormat = function ( tag, remove ) {
 // replace it with a <font> tag (!). If you delete all the text inside a
 // link in Opera, it won't delete the link. Let's make things consistent. If
 // you delete all text inside an inline tag, remove the inline tag.
-var afterDelete = function ( self ) {
+var afterDelete = function ( self, range ) {
     try {
-        var range = self.getSelection(),
-            node = range.startContainer,
+        if ( !range ) { range = self.getSelection(); }
+        var node = range.startContainer,
             parent;
+        // Climb the tree from the focus point while we are inside an empty
+        // inline element
         if ( node.nodeType === TEXT_NODE ) {
             node = node.parentNode;
         }
+        parent = node;
+        while ( isInline( parent ) &&
+                ( !parent.textContent || parent.textContent === ZWS ) ) {
+            node = parent;
+            parent = node.parentNode;
+        }
         // If focussed in empty inline element
-        if ( isInline( node ) && !node.textContent ) {
-            do {
-                parent = node.parentNode;
-            } while ( isInline( parent ) &&
-                !parent.textContent && ( node = parent ) );
+        if ( node !== parent ) {
+            // Move focus to just before empty inline(s)
             range.setStart( parent,
                 indexOf.call( parent.childNodes, node ) );
             range.collapse( true );
+            // Remove empty inline(s)
             parent.removeChild( node );
+            // Fix cursor in block
             if ( !isBlock( parent ) ) {
                 parent = getPreviousBlock( parent );
             }
             fixCursor( parent );
+            // Move cursor into text node
             moveRangeBoundariesDownTree( range );
-            self.setSelection( range );
-            self._updatePath( range );
         }
         self._ensureBottomLine();
+        self.setSelection( range );
+        self._updatePath( range, true );
     } catch ( error ) {
         self.didError( error );
     }
@@ -1816,9 +1824,7 @@ var keyHandlers = {
         if ( !range.collapsed ) {
             event.preventDefault();
             deleteContentsOfRange( range );
-            self._ensureBottomLine();
-            self.setSelection( range );
-            self._updatePath( range, true );
+            afterDelete( self, range );
         }
         // If at beginning of block, merge with previous
         else if ( rangeDoesStartAtBlockBoundary( range ) ) {
@@ -1878,9 +1884,7 @@ var keyHandlers = {
         if ( !range.collapsed ) {
             event.preventDefault();
             deleteContentsOfRange( range );
-            self._ensureBottomLine();
-            self.setSelection( range );
-            self._updatePath( range, true );
+            afterDelete( self, range );
         }
         // If at end of block, merge next into this block
         else if ( rangeDoesEndAtBlockBoundary( range ) ) {
