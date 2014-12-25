@@ -1366,14 +1366,8 @@ proto.getPath = function () {
 
 // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
 
-proto._didAddZWS = function () {
-    this._hasZWS = true;
-};
-proto._removeZWS = function () {
-    if ( !this._hasZWS ) {
-        return;
-    }
-    var walker = new TreeWalker( this._body, SHOW_TEXT, function () {
+var removeZWS = function ( root ) {
+    var walker = new TreeWalker( root, SHOW_TEXT, function () {
             return true;
         }, false ),
         node, index;
@@ -1382,6 +1376,16 @@ proto._removeZWS = function () {
             node.deleteData( index, 1 );
         }
     }
+}
+
+proto._didAddZWS = function () {
+    this._hasZWS = true;
+};
+proto._removeZWS = function () {
+    if ( !this._hasZWS ) {
+        return;
+    }
+    removeZWS( this._body );
     this._hasZWS = false;
 };
 
@@ -2333,11 +2337,13 @@ var removeEmptyInlines = function ( root ) {
         child;
     while ( l-- ) {
         child = children[l];
-        if ( child.nodeType === ELEMENT_NODE && child.nodeName !== 'IMG' ) {
+        if ( child.nodeType === ELEMENT_NODE && !isLeaf( child ) ) {
             removeEmptyInlines( child );
             if ( isInline( child ) && !child.firstChild ) {
                 root.removeChild( child );
             }
+        } else if ( child.nodeType === TEXT_NODE && !child.data ) {
+            root.removeChild( child );
         }
     }
 };
@@ -2826,6 +2832,12 @@ var keyHandlers = {
         // Otherwise, split at cursor point.
         nodeAfterSplit = splitBlock( block, splitNode, splitOffset );
 
+        // Clean up any empty inlines if we hit enter at the beginning of the
+        // block
+        removeZWS( block );
+        removeEmptyInlines( block );
+        fixCursor( block );
+
         // Focus cursor
         // If there's a <b>/<i> etc. at the beginning of the split
         // make sure we focus inside it.
@@ -2835,7 +2847,8 @@ var keyHandlers = {
 
             // Don't continue links over a block break; unlikely to be the
             // desired outcome.
-            if ( nodeAfterSplit.nodeName === 'A' ) {
+            if ( nodeAfterSplit.nodeName === 'A' &&
+                    !nodeAfterSplit.textContent ) {
                 replaceWith( nodeAfterSplit, empty( nodeAfterSplit ) );
                 nodeAfterSplit = child;
                 continue;
