@@ -745,6 +745,11 @@ var deleteContentsOfRange = function ( range ) {
     // Remove selected range
     extractContentsOfRange( range );
 
+    // Move boundaries back down tree so that they are inside the blocks.
+    // If we don't do this, the range may be collapsed to a point between
+    // two blocks, so get(Start|End)BlockOfRange will return null.
+    moveRangeBoundariesDownTree( range );
+
     // If we split into two different blocks, merge the blocks.
     var startBlock = getStartBlockOfRange( range ),
         endBlock = getEndBlockOfRange( range );
@@ -763,14 +768,6 @@ var deleteContentsOfRange = function ( range ) {
     if ( !child || child.nodeName === 'BR' ) {
         fixCursor( body );
         range.selectNodeContents( body.firstChild );
-    }
-
-    // Ensure valid range (must have only block or inline containers)
-    var isCollapsed = range.collapsed;
-    moveRangeBoundariesDownTree( range );
-    if ( isCollapsed ) {
-        // Collapse
-        range.collapse( true );
     }
 };
 
