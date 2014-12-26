@@ -2726,14 +2726,11 @@ var afterDelete = function ( self, range ) {
 };
 
 var keyHandlers = {
-    enter: function ( self, event ) {
+    enter: function ( self, event, range ) {
+        var block, parent, tag, splitTag, nodeAfterSplit;
+
         // We handle this ourselves
         event.preventDefault();
-
-        // Must have some form of selection
-        var range = self.getSelection(),
-            block, parent, tag, splitTag, nodeAfterSplit;
-        if ( !range ) { return; }
 
         // Save undo checkpoint and add any links in the preceding section.
         // Remove any zws so we don't think there's content in an empty
@@ -2879,10 +2876,9 @@ var keyHandlers = {
         // We're not still in an undo state
         self._docWasChanged();
     },
-    backspace: function ( self, event ) {
+    backspace: function ( self, event, range ) {
         self._removeZWS();
         // Record undo checkpoint.
-        var range = self.getSelection();
         self._recordUndoState( range );
         self._getRangeAndRemoveBookmark( range );
         // If not collapsed, delete contents
@@ -2939,10 +2935,9 @@ var keyHandlers = {
             setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
-    'delete': function ( self, event ) {
+    'delete': function ( self, event, range ) {
         self._removeZWS();
         // Record undo checkpoint.
-        var range = self.getSelection();
         self._recordUndoState( range );
         self._getRangeAndRemoveBookmark( range );
         // If not collapsed, delete contents
@@ -2985,10 +2980,9 @@ var keyHandlers = {
             setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
-    tab: function ( self, event ) {
+    tab: function ( self, event, range ) {
+        var node, parent;
         self._removeZWS();
-        var range = self.getSelection(),
-            node, parent;
         // If no selection and in an empty block
         if ( range.collapsed &&
                 rangeDoesStartAtBlockBoundary( range ) &&
@@ -3011,9 +3005,8 @@ var keyHandlers = {
             event.preventDefault();
         }
     },
-    space: function ( self ) {
-        var range = self.getSelection(),
-            node, parent;
+    space: function ( self, _, range ) {
+        var node, parent;
         self._recordUndoState( range );
         addLinks( range.startContainer );
         self._getRangeAndRemoveBookmark( range );
@@ -3071,7 +3064,8 @@ keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
 proto._onKey = function ( event ) {
     var code = event.keyCode,
         key = keys[ code ],
-        modifiers = '';
+        modifiers = '',
+        range = this.getSelection();
 
     if ( !key ) {
         key = String.fromCharCode( code ).toLowerCase();
@@ -3106,7 +3100,12 @@ proto._onKey = function ( event ) {
     key = modifiers + key;
 
     if ( keyHandlers[ key ] ) {
-        keyHandlers[ key ]( this, event );
+        keyHandlers[ key ]( this, event, range );
+    } else if ( key.length === 1 && !range.collapsed ) {
+        deleteContentsOfRange( range );
+        this._ensureBottomLine();
+        this.setSelection( range );
+        this._updatePath( range, true );
     }
 };
 
