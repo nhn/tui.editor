@@ -30,13 +30,6 @@ var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 var useTextFixer = isIElt11 || isPresto;
 var cantFocusEmptyTextNodes = isIElt11 || isWebKit;
 var losesSelectionOnBlur = isIElt11;
-var hasBuggySplit = function ( doc ) {
-    var div = doc.createElement( 'DIV' ),
-        text = doc.createTextNode( '12' );
-    div.appendChild( text );
-    text.splitText( 2 );
-    return div.childNodes.length !== 2;
-};
 
 // Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
 var notWS = /[^ \t\r\n]/;

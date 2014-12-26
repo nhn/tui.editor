@@ -50,13 +50,17 @@ function Squire ( doc ) {
     // Opera does not fire keydown repeatedly.
     this.addEventListener( isPresto ? 'keypress' : 'keydown', this._onKey );
 
-    // Fix IE8/9's buggy implementation of Text#splitText.
+    // Fix IE<10's buggy implementation of Text#splitText.
     // If the split is at the end of the node, it doesn't insert the newly split
     // node into the document, and sets its value to undefined rather than ''.
     // And even if the split is not at the end, the original node is removed
     // from the document and replaced by another, rather than just having its
     // data shortened.
-    if ( hasBuggySplit( doc ) ) {
+    // We used to feature test for this, but then found the feature test would
+    // sometimes pass, but later on the buggy behaviour would still appear.
+    // I think IE10 does not have the same bug, but it doesn't hurt to replace
+    // its native fn too and then we don't need yet another UA category.
+    if ( isIElt11 ) {
         win.Text.prototype.splitText = function ( offset ) {
             var afterSplit = this.ownerDocument.createTextNode(
                     this.data.slice( offset ) ),
