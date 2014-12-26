@@ -3102,6 +3102,10 @@ proto._onKey = function ( event ) {
     if ( keyHandlers[ key ] ) {
         keyHandlers[ key ]( this, event, range );
     } else if ( key.length === 1 && !range.collapsed ) {
+        // Record undo checkpoint.
+        this._recordUndoState( range );
+        this._getRangeAndRemoveBookmark( range );
+        // Delete the selection
         deleteContentsOfRange( range );
         this._ensureBottomLine();
         this.setSelection( range );
