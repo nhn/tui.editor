@@ -26,16 +26,15 @@ var isIOS = /iP(?:ad|hone|od)/.test( ua );
 var isMac = /Mac OS X/.test( ua );
 
 var isGecko = /Gecko\//.test( ua );
-var isIE8or9or10 = /Trident\/[456]\./.test( ua );
-var isIE8 = ( win.ie === 8 );
+var isIElt11 = /Trident\/[456]\./.test( ua );
 var isPresto = !!win.opera;
 var isWebKit = /WebKit\//.test( ua );
 
 var ctrlKey = isMac ? 'meta-' : 'ctrl-';
 
-var useTextFixer = isIE8or9or10 || isPresto;
-var cantFocusEmptyTextNodes = isIE8or9or10 || isWebKit;
-var losesSelectionOnBlur = isIE8or9or10;
+var useTextFixer = isIElt11 || isPresto;
+var cantFocusEmptyTextNodes = isIElt11 || isWebKit;
+var losesSelectionOnBlur = isIElt11;
 var hasBuggySplit = function ( doc ) {
     var div = doc.createElement( 'DIV' ),
         text = doc.createTextNode( '12' );
@@ -1131,12 +1130,9 @@ function Squire ( doc ) {
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
     this._awaitingPaste = false;
-    this.addEventListener( isIE8or9or10 ? 'beforecut' : 'cut', this._onCut );
-    this.addEventListener( isIE8or9or10 ? 'beforepaste' : 'paste', this._onPaste );
+    this.addEventListener( isIElt11 ? 'beforecut' : 'cut', this._onCut );
+    this.addEventListener( isIElt11 ? 'beforepaste' : 'paste', this._onPaste );
 
-    if ( isIE8 ) {
-        this.addEventListener( 'keyup', this._ieSelAllClean );
-    }
     // Opera does not fire keydown repeatedly.
     this.addEventListener( isPresto ? 'keypress' : 'keydown', this._onKey );
 
@@ -2731,21 +2727,6 @@ var afterDelete = function ( self, range ) {
         self.didError( error );
     }
 };
-
-// If you select all in IE8 then type, it makes a P; replace it with
-// a DIV.
-if ( isIE8 ) {
-    proto._ieSelAllClean = function () {
-        var firstChild = this._body.firstChild;
-        if ( firstChild.nodeName === 'P' ) {
-            this._saveRangeToBookmark( this.getSelection() );
-            replaceWith( firstChild, this.createDefaultBlock([
-                empty( firstChild )
-            ]));
-            this.setSelection( this._getRangeAndRemoveBookmark() );
-        }
-    };
-}
 
 var keyHandlers = {
     enter: function ( self, event ) {

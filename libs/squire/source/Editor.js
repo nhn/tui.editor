@@ -44,12 +44,9 @@ function Squire ( doc ) {
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
     this._awaitingPaste = false;
-    this.addEventListener( isIE8or9or10 ? 'beforecut' : 'cut', this._onCut );
-    this.addEventListener( isIE8or9or10 ? 'beforepaste' : 'paste', this._onPaste );
+    this.addEventListener( isIElt11 ? 'beforecut' : 'cut', this._onCut );
+    this.addEventListener( isIElt11 ? 'beforepaste' : 'paste', this._onPaste );
 
-    if ( isIE8 ) {
-        this.addEventListener( 'keyup', this._ieSelAllClean );
-    }
     // Opera does not fire keydown repeatedly.
     this.addEventListener( isPresto ? 'keypress' : 'keydown', this._onKey );
 
@@ -1644,21 +1641,6 @@ var afterDelete = function ( self, range ) {
         self.didError( error );
     }
 };
-
-// If you select all in IE8 then type, it makes a P; replace it with
-// a DIV.
-if ( isIE8 ) {
-    proto._ieSelAllClean = function () {
-        var firstChild = this._body.firstChild;
-        if ( firstChild.nodeName === 'P' ) {
-            this._saveRangeToBookmark( this.getSelection() );
-            replaceWith( firstChild, this.createDefaultBlock([
-                empty( firstChild )
-            ]));
-            this.setSelection( this._getRangeAndRemoveBookmark() );
-        }
-    };
-}
 
 var keyHandlers = {
     enter: function ( self, event ) {
