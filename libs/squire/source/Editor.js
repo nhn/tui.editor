@@ -337,7 +337,10 @@ proto.focus = function () {
     // FF seems to need the body to be focussed (at least on first load).
     // Chrome also now needs body to be focussed in order to show the cursor
     // (otherwise it is focussed, but the cursor doesn't appear).
-    this._body.focus();
+    // Opera (Presto-variant) however will lose the selection if you call this!
+    if ( !isPresto ) {
+        this._body.focus();
+    }
     this._win.focus();
     return this;
 };
