@@ -53,7 +53,8 @@ function Squire ( doc ) {
         this.addEventListener( 'keyup', this._keyUpDetectChange );
     }
 
-    this.defaultBlockProperties = undefined;
+    this.defaultBlockTag = 'DIV';
+    this.defaultBlockProperties = null;
 
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
@@ -113,7 +114,8 @@ proto.createElement = function ( tag, props, children ) {
 
 proto.createDefaultBlock = function ( children ) {
     return fixCursor(
-        this.createElement( 'DIV', this.defaultBlockProperties, children )
+        this.createElement(
+            this.defaultBlockTag, this.defaultBlockProperties, children )
     );
 };
 
@@ -824,29 +826,29 @@ proto.changeFormat = function ( add, remove, range, partial ) {
 // --- Block formatting ---
 
 var tagAfterSplit = {
-    DIV: 'DIV',
-    PRE: 'DIV',
-    H1:  'DIV',
-    H2:  'DIV',
-    H3:  'DIV',
-    H4:  'DIV',
-    H5:  'DIV',
-    H6:  'DIV',
-    P:   'DIV',
     DT:  'DD',
     DD:  'DT',
     LI:  'LI'
 };
 
-var splitBlock = function ( block, node, offset ) {
+var splitBlock = function ( self, block, node, offset ) {
     var splitTag = tagAfterSplit[ block.nodeName ],
+        splitProperties = null,
         nodeAfterSplit = split( node, offset, block.parentNode );
 
+    if ( !splitTag ) {
+        splitTag = self.defaultBlockTag;
+        splitProperties = self.defaultBlockProperties;
+    }
+
     // Make sure the new node is the correct type.
-    if ( nodeAfterSplit.nodeName !== splitTag ) {
-        block = createElement( nodeAfterSplit.ownerDocument, splitTag );
-        block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
-        block.dir = nodeAfterSplit.dir;
+    if ( !hasTagAttributes( nodeAfterSplit, splitTag, splitProperties ) ) {
+        block = createElement( nodeAfterSplit.ownerDocument,
+            splitTag, splitProperties );
+        if ( nodeAfterSplit.dir ) {
+            block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
+            block.dir = nodeAfterSplit.dir;
+        }
         replaceWith( nodeAfterSplit, block );
         block.appendChild( empty( nodeAfterSplit ) );
         nodeAfterSplit = block;
@@ -1455,8 +1457,8 @@ var cleanupBRs = function ( root ) {
 
 proto._ensureBottomLine = function () {
     var body = this._body,
-        div = body.lastChild;
-    if ( !div || div.nodeName !== 'DIV' || !isBlock( div ) ) {
+        last = body.lastChild;
+    if ( !last || last.nodeName !== this.defaultBlockTag || !isBlock( last ) ) {
         body.appendChild( this.createDefaultBlock() );
     }
 };
@@ -1686,7 +1688,7 @@ var afterDelete = function ( self, range ) {
 
 var keyHandlers = {
     enter: function ( self, event, range ) {
-        var block, parent, tag, splitTag, nodeAfterSplit;
+        var block, parent, nodeAfterSplit;
 
         // We handle this ourselves
         event.preventDefault();
@@ -1706,15 +1708,10 @@ var keyHandlers = {
         }
 
         block = getStartBlockOfRange( range );
-        if ( block && ( parent = getNearest( block, 'LI' ) ) ) {
-            block = parent;
-        }
-        tag = block ? block.nodeName : 'DIV';
-        splitTag = tagAfterSplit[ tag ];
 
-        // If this is a malformed bit of document, just play it safe
-        // and insert a <br>.
-        if ( !block ) {
+        // If this is a malformed bit of document or in a table;
+        // just play it safe and insert a <br>.
+        if ( !block || /^T[HD]$/.test( block.nodeName ) ) {
             insertNodeInRange( range, self.createElement( 'BR' ) );
             range.collapse( false );
             self.setSelection( range );
@@ -1722,43 +1719,9 @@ var keyHandlers = {
             return;
         }
 
-        // We need to wrap the contents in divs.
-        var splitNode = range.startContainer,
-            splitOffset = range.startOffset,
-            replacement;
-        if ( !splitTag ) {
-            // If the selection point is inside the block, we're going to
-            // rewrite it so our saved reference points won't be valid.
-            // Pick a node at a deeper point in the tree to avoid this.
-            if ( splitNode === block ) {
-                splitNode = splitOffset ?
-                    splitNode.childNodes[ splitOffset - 1 ] : null;
-                splitOffset = 0;
-                if ( splitNode ) {
-                    if ( splitNode.nodeName === 'BR' ) {
-                        splitNode = splitNode.nextSibling;
-                    } else {
-                        splitOffset = getLength( splitNode );
-                    }
-                    if ( !splitNode || splitNode.nodeName === 'BR' ) {
-                        replacement = fixCursor( self.createElement( 'DIV' ) );
-                        if ( splitNode ) {
-                            block.replaceChild( replacement, splitNode );
-                        } else {
-                            block.appendChild( replacement );
-                        }
-                        splitNode = replacement;
-                    }
-                }
-            }
-            fixContainer( block );
-            splitTag = 'DIV';
-            if ( !splitNode ) {
-                splitNode = block.firstChild;
-            }
-            range.setStart( splitNode, splitOffset );
-            range.setEnd( splitNode, splitOffset );
-            block = getStartBlockOfRange( range );
+        // If in a list, we'll split the LI instead.
+        if ( parent = getNearest( block, 'LI' ) ) {
+            block = parent;
         }
 
         if ( !block.textContent ) {
@@ -1773,7 +1736,8 @@ var keyHandlers = {
         }
 
         // Otherwise, split at cursor point.
-        nodeAfterSplit = splitBlock( block, splitNode, splitOffset );
+        nodeAfterSplit = splitBlock( self, block,
+            range.startContainer, range.startOffset );
 
         // Clean up any empty inlines if we hit enter at the beginning of the
         // block

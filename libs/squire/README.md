@@ -41,6 +41,12 @@ Advanced usage
 
 If you load the library into a top-level document (rather than an iframe), it will not turn the page into an editable document, but will instead add a function named `Squire` to the global scope. Call `new Squire( document )`, with the `document` from an iframe to instantiate multiple rich text areas on the same page efficiently.
 
+### Setting the default block style
+
+By default, the editor will use a `<div>` for blank lines, as most users have been conditioned by Microsoft Word to expect <kbd>Enter</kbd> to act like pressing <kbd>return</kbd> on a typewriter. If you would like to use `<p>` tags (or anything else) for the default block type instead, then after calling `var editor = new Squire( document )` (or getting your reference to the ready-made `editor` instance if using the simple setup), set `editor.defaultBlockTag = 'P';`.
+
+You can also set an object of attributes to apply to each default block node by setting the *defaultBlockProperties* property, e.g. `editor.defaultBlockProperties = { style: 'font-size: 16px;' }`.
+
 License
 -------
 
