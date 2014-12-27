@@ -31,6 +31,8 @@ var useTextFixer = isIElt11 || isPresto;
 var cantFocusEmptyTextNodes = isIElt11 || isWebKit;
 var losesSelectionOnBlur = isIElt11;
 
+var canObserveMutations = typeof MutationObserver !== 'undefined';
+
 // Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
 var notWS = /[^ \t\r\n]/;
 

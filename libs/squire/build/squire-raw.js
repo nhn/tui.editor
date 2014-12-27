@@ -36,6 +36,8 @@ var useTextFixer = isIElt11 || isPresto;
 var cantFocusEmptyTextNodes = isIElt11 || isWebKit;
 var losesSelectionOnBlur = isIElt11;
 
+var canObserveMutations = typeof MutationObserver !== 'undefined';
+
 // Use [^ \t\r\n] instead of \S so that nbsp does not count as white-space
 var notWS = /[^ \t\r\n]/;
 
@@ -1081,6 +1083,8 @@ var instances = [];
 function Squire ( doc ) {
     var win = doc.defaultView;
     var body = doc.body;
+    var mutation;
+
     this._win = win;
     this._doc = doc;
     this._body = body;
@@ -1112,10 +1116,22 @@ function Squire ( doc ) {
     this._undoStack = [];
     this._undoStackLength = 0;
     this._isInUndoState = false;
+    this._ignoreChange = false;
+
+    if ( canObserveMutations ) {
+        mutation = new MutationObserver( this._docWasChanged.bind( this ) );
+        mutation.observe( body, {
+            childList: true,
+            attributes: true,
+            characterData: true,
+            subtree: true
+        });
+        this._mutation = mutation;
+    } else {
+        this.addEventListener( 'keyup', this._keyUpDetectChange );
+    }
 
     this.defaultBlockProperties = undefined;
-
-    this.addEventListener( 'keyup', this._docWasChanged );
 
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
@@ -1237,6 +1253,9 @@ proto.destroy = function () {
         if ( !customEvents[ type ] ) {
             doc.removeEventListener( type, this, true );
         }
+    }
+    if ( this._mutation ) {
+        this._mutation.disconnect();
     }
     var l = instances.length;
     while ( l-- ) {
@@ -1514,24 +1533,32 @@ proto._getRangeAndRemoveBookmark = function ( range ) {
 
 // --- Undo ---
 
-proto._docWasChanged = function ( event ) {
-    var code = event && event.keyCode;
+proto._keyUpDetectChange = function ( event ) {
+    var code = event.keyCode;
     // Presume document was changed if:
     // 1. A modifier key (other than shift) wasn't held down
     // 2. The key pressed is not in range 16<=x<=20 (control keys)
     // 3. The key pressed is not in range 33<=x<=45 (navigation keys)
-    if ( !event || ( !event.ctrlKey && !event.metaKey && !event.altKey &&
+    if ( !event.ctrlKey && !event.metaKey && !event.altKey &&
             ( code < 16 || code > 20 ) &&
-            ( code < 33 || code > 45 ) ) )  {
-        if ( this._isInUndoState ) {
-            this._isInUndoState = false;
-            this.fireEvent( 'undoStateChange', {
-                canUndo: true,
-                canRedo: false
-            });
-        }
-        this.fireEvent( 'input' );
+            ( code < 33 || code > 45 ) )  {
+        this._docWasChanged();
     }
+};
+
+proto._docWasChanged = function () {
+    if ( canObserveMutations && this._ignoreChange ) {
+        this._ignoreChange = false;
+        return;
+    }
+    if ( this._isInUndoState ) {
+        this._isInUndoState = false;
+        this.fireEvent( 'undoStateChange', {
+            canUndo: true,
+            canRedo: false
+        });
+    }
+    this.fireEvent( 'input' );
 };
 
 // Leaves bookmark
@@ -1564,6 +1591,7 @@ proto.undo = function () {
         this._recordUndoState( this.getSelection() );
 
         this._undoIndex -= 1;
+        this._ignoreChange = true;
         this._setHTML( this._undoStack[ this._undoIndex ] );
         var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
@@ -1586,6 +1614,7 @@ proto.redo = function () {
         undoStackLength = this._undoStackLength;
     if ( undoIndex + 1 < undoStackLength && this._isInUndoState ) {
         this._undoIndex += 1;
+        this._ignoreChange = true;
         this._setHTML( this._undoStack[ this._undoIndex ] );
         var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
@@ -1863,7 +1892,9 @@ proto.changeFormat = function ( add, remove, range, partial ) {
     this._updatePath( range, true );
 
     // We're not still in an undo state
-    this._docWasChanged();
+    if ( !canObserveMutations ) {
+        this._docWasChanged();
+    }
 
     return this;
 };
@@ -1927,7 +1958,9 @@ proto.forEachBlock = function ( fn, mutates, range ) {
         this._updatePath( range, true );
 
         // We're not still in an undo state
-        this._docWasChanged();
+        if ( !canObserveMutations ) {
+            this._docWasChanged();
+        }
     }
     return this;
 };
@@ -1968,7 +2001,9 @@ proto.modifyBlocks = function ( modify, range ) {
     this._updatePath( range, true );
 
     // 7. We're not still in an undo state
-    this._docWasChanged();
+    if ( !canObserveMutations ) {
+        this._docWasChanged();
+    }
 
     return this;
 };
@@ -2631,7 +2666,9 @@ proto._onPaste = function ( event ) {
                 // Insert pasted data
                 if ( doPaste ) {
                     insertTreeFragmentIntoRange( range, frag );
-                    self._docWasChanged();
+                    if ( !canObserveMutations ) {
+                        self._docWasChanged();
+                    }
                     range.collapse( false );
                     self._ensureBottomLine();
                 }
@@ -2760,7 +2797,6 @@ var keyHandlers = {
             range.collapse( false );
             self.setSelection( range );
             self._updatePath( range, true );
-            self._docWasChanged();
             return;
         }
 
@@ -2872,9 +2908,6 @@ var keyHandlers = {
                 body.offsetHeight ) {
             nodeAfterSplit.scrollIntoView( false );
         }
-
-        // We're not still in an undo state
-        self._docWasChanged();
     },
     backspace: function ( self, event, range ) {
         self._removeZWS();
