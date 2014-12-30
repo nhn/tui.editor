@@ -1593,7 +1593,6 @@ proto.undo = function () {
         this._recordUndoState( this.getSelection() );
 
         this._undoIndex -= 1;
-        this._ignoreChange = true;
         this._setHTML( this._undoStack[ this._undoIndex ] );
         var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
@@ -1616,7 +1615,6 @@ proto.redo = function () {
         undoStackLength = this._undoStackLength;
     if ( undoIndex + 1 < undoStackLength && this._isInUndoState ) {
         this._undoIndex += 1;
-        this._ignoreChange = true;
         this._setHTML( this._undoStack[ this._undoIndex ] );
         var range = this._getRangeAndRemoveBookmark();
         if ( range ) {
@@ -3122,6 +3120,7 @@ proto._setHTML = function ( html ) {
     do {
         fixCursor( node );
     } while ( node = getNextBlock( node ) );
+    this._ignoreChange = true;
 };
 
 proto.getHTML = function ( withBookMark ) {
@@ -3172,6 +3171,9 @@ proto.setHTML = function ( html ) {
     while ( node = getNextBlock( node ) ) {
         fixCursor( node );
     }
+
+    // Don't fire an input event
+    this._ignoreChange = true;
 
     // Remove existing body children
     var body = this._body;
