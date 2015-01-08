@@ -1,4 +1,4 @@
-/*jshint strict:false, undef:false, unused:false */
+/*jshint strict:false, undef:false, unused:false, latedef:false */
 
 var getNodeBefore = function ( node, offset ) {
     var children = node.childNodes;

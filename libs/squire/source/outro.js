@@ -1,3 +1,4 @@
+/*jshint ignore:start */
 
 if ( top !== win ) {
     win.editor = new Squire( doc );

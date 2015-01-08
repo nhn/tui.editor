@@ -3,7 +3,6 @@
 ( function ( doc, undefined ) {
 
 "use strict";
-/*jshint strict:false, undef:false, unused:false */
 
 var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
 var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
@@ -42,7 +41,6 @@ var canObserveMutations = typeof MutationObserver !== 'undefined';
 var notWS = /[^ \t\r\n]/;
 
 var indexOf = Array.prototype.indexOf;
-/*jshint strict:false */
 
 /*
     Native TreeWalker is buggy in IE and Opera:
@@ -132,7 +130,6 @@ TreeWalker.prototype.previousNode = function () {
         current = node;
     }
 };
-/*jshint strict:false, undef:false, unused:false */
 
 var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TR(?:IKE|ONG)|MALL|AMP)?|U|VAR|WBR)$/;
 
@@ -586,7 +583,6 @@ function mergeContainers ( node ) {
         fixCursor( prev );
     }
 }
-/*jshint strict:false, undef:false, unused:false */
 
 var getNodeBefore = function ( node, offset ) {
     var children = node.childNodes;
@@ -1076,7 +1072,6 @@ var expandRangeToBlockBoundaries = function ( range ) {
         range.setEnd( parent, indexOf.call( parent.childNodes, end ) + 1 );
     }
 };
-/*jshint strict:false, undef:false, unused:false */
 
 var instances = [];
 
