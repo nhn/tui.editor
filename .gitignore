@@ -41,12 +41,15 @@ Desktop.ini
 .project
 .metadata
 
+# build
+dist
+build
+
 # etc
 *.swp
 etc
 temp
 doc
 report
-dist
 karma.conf.local.js
 .tern-project
