@@ -1,0 +1,47 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true,
+    "jquery": true
+  },
+  "globals": {
+    "describe": true,
+    "it": true,
+    "should": true,
+    "before": true,
+    "after": true,
+    "beforeEach": true,
+    "afterEach": true
+  },
+  "rules": {
+    //Possible Errors 
+    "no-comma-dangle": 2
+    "no-cond-assign": 2,
+    "no-console": 2,
+    "no-constant-condition": 2,
+    "no-debugger": 2,
+    "no-dupe-keys": 2,
+    "no-empty": 1,
+    "no-empty-class": 1,
+    "no-ex-assing": 2,
+    "no-extra-boolean-cast": 2,
+    "no-extra-parens": 2,
+    "no-extra-semi": 2,
+    "no-func-assign": 1,
+    "no-inner-declarations": 2,
+    "no-invalid-regexp": 2,
+    "no-negated-in-lhs": 1,
+    "no-obj-calls": 2,
+    "no-regex-spaces": 2,
+    "no-reserved-kyes": 2,
+    "no-sparse-arrays": 2,
+    "no-unreachable": 2,
+    "use-isnan": 2,
+    "valid-jsdoc": 2,
+    "valid-typeof": 1,
+
+    //Stylistic Issues
+    "quotes": [1, "single"]
+  }
+}
