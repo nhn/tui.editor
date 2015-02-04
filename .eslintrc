@@ -10,10 +10,12 @@
   },
   "rules": {
     //Possible Errors 
-    "no-console": 0,
+    "no-console": 1,
     "no-extra-parens": 2,
     "no-reserved-keys": 2,
-    "valid-jsdoc": 2,
+    "valid-jsdoc": [2, {
+        "requireReturn": false
+    }],
     "valid-typeof": 1,
 
 
