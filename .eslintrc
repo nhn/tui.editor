@@ -10,9 +10,9 @@
   },
   "rules": {
     //Possible Errors 
-    "no-console": 1,
+    "no-console": 0,
     "no-extra-parens": 2,
-    "no-reserved-kyes": 2,
+    "no-reserved-keys": 2,
     "valid-jsdoc": 2,
     "valid-typeof": 1,
 
@@ -26,26 +26,26 @@
     "no-eq-null": 2,
     "no-floating-decimal": 2,
     "no-self-compare": 1,
-    "no-warning-comments": 1
+    "no-warning-comments": 1,
     "radix": 2,
-    "vars-on-top": 2
+    "vars-on-top": 2,
     "wrap-iife": 1,
 
     //Variables
     "no-undefined": 2,
 
     //Stylistic Issues
-    "brace-style": [2, "1tbs", { "allowSingleLine": true}]
-    "comma-spacing": [2, {before: false, after: true}]
-    "comma-style": [2, "last"]
-    "func-names": 1,
+    "brace-style": [2, "1tbs", { "allowSingleLine": true}],
+    "comma-spacing": [2, {before: false, after: true}],
+    "comma-style": [2, "last"],
+    "eol-last": 1,
     "new-cap": 2,
     "no-array-constructor": 2,
-    "no-loney-if": 2,
-    "no-multiple-empty-lines": [2, {"max": 2}]
+    "no-lonely-if": 2,
+    "no-multiple-empty-lines": [2, {"max": 2}],
     "no-nested-ternary": 2,
     "no-underscore-dangle": 0,
-    "quotes": [1, "single"]
+    "quotes": [1, "single"],
     "one-var": 2,
     "padded-blocks": [2, "never"],
     "space-after-function-name": 2,
@@ -53,7 +53,9 @@
     "space-before-blocks": 2,
     "space-in-brackets": 2,
     "space-in-parens": 2,
-    "spaced-line-comment": 1,
+
+    //Node.js
+    "no-mixed-requires": [1, true],
 
     //Legacy
     "no-plusplus": 2
