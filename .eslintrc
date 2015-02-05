@@ -37,8 +37,8 @@
     "no-undefined": 2,
 
     //Stylistic Issues
-    "brace-style": [2, "1tbs", { "allowSingleLine": true}],
-    "comma-spacing": [2, {before: false, after: true}],
+    "brace-style": [2, "1tbs", {"allowSingleLine": true}],
+    "comma-spacing": [2, {"before": false, "after": true}],
     "comma-style": [2, "last"],
     "eol-last": 1,
     "new-cap": 2,
