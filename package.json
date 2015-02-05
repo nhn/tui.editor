@@ -1,0 +1,29 @@
+{
+  "name": "DurayEditor",
+  "version": "0.0.0",
+  "private": true,
+  "author": "NHNEntertainment",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^8.1.3",
+    "browserify-istanbul": "^0.1.3",
+    "watchify": "^2.3.0",
+
+    "gulp": "^3.8.10",
+    "gulp-eslint": "^0.2.2",
+    "gulp-sourcemaps": "^1.3.0",
+    "gulp-util": "^3.0.3",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+
+    "karma": "^0.12.31",
+    "karma-browserify": "^3.0.1",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-coverage": "git+https://github.com/everedifice/karma-coverage.git",
+    "karma-jasmine": "^0.3.5",
+    "karma-jasmine-ajax": "^0.1.4",
+    "karma-junit-reporter": "^0.2.2",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git"
+  }
+}
