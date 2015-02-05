@@ -48,7 +48,7 @@
     "no-nested-ternary": 2,
     "no-underscore-dangle": 0,
     "quotes": [1, "single"],
-    "one-var": 2,
+    "one-var": 0,
     "padded-blocks": [2, "never"],
     "space-after-function-name": 2,
     "space-after-keywords": 2,
@@ -57,7 +57,7 @@
     "space-in-parens": 2,
 
     //Node.js
-    "no-mixed-requires": [1, true],
+    "no-mixed-requires": [2, true],
 
     //Legacy
     "no-plusplus": 2
