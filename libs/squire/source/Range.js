@@ -108,6 +108,7 @@ var insertNodeInRange = function ( range, node ) {
     } else {
         startContainer.insertBefore( node, children[ startOffset ] );
     }
+
     if ( startContainer === endContainer ) {
         endOffset += children.length - childCount;
     }

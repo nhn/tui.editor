@@ -692,6 +692,7 @@ var insertNodeInRange = function ( range, node ) {
     } else {
         startContainer.insertBefore( node, children[ startOffset ] );
     }
+
     if ( startContainer === endContainer ) {
         endOffset += children.length - childCount;
     }
@@ -2598,15 +2599,19 @@ proto._onPaste = function ( event ) {
     var self = this,
         body = this._body,
         range = this.getSelection(),
-        startContainer = range.startContainer,
-        startOffset = range.startOffset,
-        endContainer = range.endContainer,
-        endOffset = range.endOffset,
-        startBlock = getStartBlockOfRange( range );
+        startContainer, startOffset, endContainer, endOffset, startBlock;
 
     // Record undo checkpoint
     self._recordUndoState( range );
     self._getRangeAndRemoveBookmark( range );
+
+    // Note current selection. We must do this AFTER recording the undo
+    // checkpoint, as this modifies the DOM.
+    startContainer = range.startContainer;
+    startOffset = range.startOffset;
+    endContainer = range.endContainer;
+    endOffset = range.endOffset;
+    startBlock = getStartBlockOfRange( range );
 
     // We need to position the pasteArea in the visible portion of the screen
     // to stop the browser auto-scrolling.
