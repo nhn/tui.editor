@@ -2,7 +2,7 @@
 
 all: install build
 
-intall:
+install:
 	npm install
 
 clean:
