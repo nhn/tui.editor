@@ -426,6 +426,11 @@ function split ( node, offset, stopNode ) {
             offset = next;
         }
 
+        // Maintain li numbering
+        if ( node.nodeName === 'OL' ) {
+            clone.start = ( +node.start || 1 ) + node.childNodes.length - 1;
+        }
+
         // DO NOT NORMALISE. This may undo the fixCursor() call
         // of a node lower down the tree!
 
