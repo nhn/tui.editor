@@ -31,7 +31,7 @@
     "no-warning-comments": 1,
     "radix": 2,
     "vars-on-top": 2,
-    "wrap-iife": 1,
+    "wrap-iife": [2, "any"],
 
     //Variables
     "no-undefined": 2,
