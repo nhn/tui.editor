@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<title>PageDown Demo Page</title>
+
+<link rel="stylesheet" type="text/css" href="demo.css" />
+
+<script type="text/javascript" src="../../Markdown.Converter.js"></script>
+<script type="text/javascript" src="../../Markdown.Sanitizer.js"></script>
+<script type="text/javascript" src="../../Markdown.Editor.js"></script>
+</head>
+
+<body>
+<div class="wmd-panel">
+    <div id="wmd-button-bar"></div>
+    <textarea class="wmd-input" id="wmd-input">
+        this is the *first* editor.
+        ------------------------------
+
+        just plain **markdown**, except that the input is sanitized:
+
+        <marquee>i'm the ghost from the past!</marquee>
+
+        and that it implements "fenced blockquotes" via a plugin:
+
+        """
+        do it like this:
+
+        1. have idea.
+        2. ???
+        3. profit!
+        """
+    </textarea>
+</div>
+<div id="wmd-preview" class="wmd-panel wmd-preview"></div>
+
+<script type="text/javascript">
+(function () {
+ var converter1 = Markdown.getSanitizingConverter();
+
+ converter1.hooks.chain("preBlockGamut", function (text, rbg) {
+     return text.replace(/^ {0,3}""" *\n((?:.*?\n)+?) {0,3}""" *$/gm, function (whole, inner) {
+         return "<blockquote>" + rbg(inner) + "</blockquote>\n";
+         });
+     });
+
+ var editor1 = new Markdown.Editor(converter1);
+
+ editor1.run();
+
+ })();
+</script>
+</body>
+</html>
