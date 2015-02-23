@@ -40,8 +40,21 @@
         }, 1000);
     });
 
+
+    function getTextOfLine(elem) {
+        var lines = $(elem).find('.line');
+        var lineTests = [];
+
+        for(var i = 0; i < lines.length; i++){
+            lineTests.push(lines[i].textContent.replace('\n', ''));
+        }
+
+        return lineTests.join('\n');
+    }
+
     function editUpdate() {
-        var currentText = this.innerText;
+        //var currentText = this.innerText || this.textContent;
+        var currentText = getTextOfLine(this);
         var currentTextLine = currentText.split('\n');
         var modifiedContent = [];
 
