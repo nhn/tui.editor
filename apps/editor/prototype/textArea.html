@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DEMO</title>
+    <script src="../lib/marked/lib/marked.js"></script>
+    <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+    <style>
+        #content {outline: 1px solid #ddd;padding: 3px;}
+        p {margin:2px 0;padding:0;}
+        textarea {
+            z-index: 0;
+            opacity: 1;
+            border: none;
+            resize: none;
+            outline: none;
+            border-left: 1px solid red;
+            overflow: hidden;
+            -webkit-user-select: text;
+            user-select: text;
+            margin:0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+<textarea wrap="off" spellcheck="false" style="height: 28px;width: 7px;"></textarea>
+<div id="content"></div>
+<div id="preview"></div>
+<script src="./textArea.js"></script>
+</body>
+</html>

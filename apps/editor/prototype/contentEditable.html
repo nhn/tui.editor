@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <title>DEMO</title>
     <script src="../lib/marked/lib/marked.js"></script>
+    <script src="../lib/prism/prism.js"></script>
+    <link rel="stylesheet" href="../lib/prism/prism.css" data-noprefix />
     <script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
     <style>
-        #content {outline: 1px solid #ddd;padding: 3px;}
+        #content {outline: 1px solid #ddd;padding: 3px}
         p {margin:2px 0;padding:0;}
     </style>
     </head>
 <body>
+<pre class="language-markdown">
 <div id="content" contenteditable="true"></div>
+</pre>
+<pre id="hl" class="language-markdown"></pre>
 <div id="preview"></div>
 <script src="./contentEditable.js"></script>
 </body>
