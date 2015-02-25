@@ -28,17 +28,28 @@ function MarkdownEditor(base, options) {
 
     this.session = new Session(this.base);
     this.partManager = new PartManager();
-
-    this.base.eventManager.listen('contentChange', function() {
-        var el = self.$editorEl;
-        el.html(Prism.highlight(el[0].innerText, Prism.languages.markdown));
-    });
 }
 
 MarkdownEditor.prototype.init = function() {};
 
 MarkdownEditor.prototype.newLine = function() {
     this.session.newLine();
+};
+
+MarkdownEditor.prototype.contentChanged = function() {
+    var $el = this.$editorEl;
+
+    this.action.stopObserveContent();
+
+    //this.applySyntaxHighlight();
+
+    this.action.observeContent();
+};
+
+
+MarkdownEditor.prototype.applySyntaxHighlight = function() {
+    var $el = this.$editorEl;
+    $el.html(Prism.highlight($el[0].innerText, Prism.languages.markdown));
 };
 
 module.exports = MarkdownEditor;
