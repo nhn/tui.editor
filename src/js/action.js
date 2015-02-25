@@ -13,38 +13,53 @@
  * @class
  */
 function Action(options) {
-    this.$editorEl = options.$editorEl;
-    this.contentChangeTOID = null;
+    this.editor = options.editor;
+
+    this._mo = null;
+    this.isOberserveContent = false;
 
     this._bindKeyEvent();
+    this.observeContent();
 }
 
 
 Action.prototype._bindKeyEvent = function() {
-    var commandManager = this.base.commandManager,
-        self = this;
+    var self = this;
 
-    this.$editorEl.on('keydown', function(ev) {
+    this.editor.$editorEl.on('keydown', function(ev) {
         if (ev.which === 13) {
-            commandManager.run('newLine');
-        }
-
-        if (ev.which < 37 || ev.which > 40) {
-            self._contentChange();
+            self.editor.newLine();
         }
     });
 };
 
-Action.prototype._contentChange = function() {
-    var self = this;
-
-    if (this.contentChangeTOID) {
-        clearTimeout(this.contentChangeTOID);
+Action.prototype._contentChanged = function(recorded) {
+    if (this.isOberserveContent) {
+        this.editor.contentChanged();
     }
+};
 
-    this.contentChangeTOID = setTimeout(function() {
-        self.base.eventManager.emit('contentChange');
-    }, 500);
+Action.prototype.stopObserveContent = function() {
+    this.isOberserveContent = false;
+    this._mo.disconnect();
+};
+
+Action.prototype.observeContent = function() {
+    var editorEl = this.editor.$editorEl[0];
+
+    this._mo = this._mo || new MutationObserver(this._contentChanged.bind(this));
+    this._mo.observe(editorEl, {
+        childList: true,
+        //attributes: true,
+        characterData: true,
+        subtree: true
+    });
+
+    this.isOberserveContent = true;
+};
+
+Action.prototype.destroy = function() {
+    this.stopObserveContent();
 };
 
 module.exports = Action;
