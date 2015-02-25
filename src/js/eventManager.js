@@ -5,6 +5,8 @@
 
 'use strict';
 
+var util = ne.util;
+
 /**
  * EventManager
  * @exports EventManager
@@ -13,10 +15,26 @@
  * @class
  */
 function EventManager() {
+    this.events = new util.HashMap();
 }
 
-EventManager.prototype.listen = function() {};
+EventManager.prototype.listen = function(name, handler) {
+    var eventHandlers = this.events.get(name) || [];
+    eventHandlers.push(handler);
 
-EventManager.prototype.emit = function() {};
+    this.events.set(name, eventHandlers);
+};
+
+EventManager.prototype.emit = function() {
+    var args = util.toArray(arguments),
+        name = args.shift(),
+        eventHandlers = this.events.get(name);
+
+    if (eventHandlers) {
+       util.forEach(eventHandlers, function(handler) {
+            handler.apply(null, args);
+       });
+    }
+};
 
 module.exports = EventManager;

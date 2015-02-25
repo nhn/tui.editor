@@ -6,7 +6,9 @@
     "jquery": true
   },
   "globals": {
-    "ne": true
+    "ne": true,
+    "Prism": true,
+    "rangy": true
   },
   "rules": {
     //Possible Errors 

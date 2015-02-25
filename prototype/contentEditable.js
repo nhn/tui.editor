@@ -112,6 +112,11 @@
 
         $('#hl').html(Prism.highlight(currentText, Prism.languages.markdown));
 
+
+        $('.line').on('click', function() {
+           console.log('ccc');
+        });
+
         textBuffer = currentTextLine;
     }
 
