@@ -6,6 +6,8 @@
 'use strict';
 
 var Action = require('./action');
+var Session = require('./session');
+var PartManager = require('./partManager');
 
 /**
  * MarkdownEditor
@@ -15,10 +17,28 @@ var Action = require('./action');
  * @class
  */
 function MarkdownEditor(base, options) {
+    var self = this;
+
     this.base = base;
-    this.action = new Action(this.base);
+    this.$editorEl = this.base.layout.$editorEl;
+
+    this.action = new Action({
+        editor: this
+    });
+
+    this.session = new Session(this.base);
+    this.partManager = new PartManager();
+
+    this.base.eventManager.listen('contentChange', function() {
+        var el = self.$editorEl;
+        el.html(Prism.highlight(el[0].innerText, Prism.languages.markdown));
+    });
 }
 
 MarkdownEditor.prototype.init = function() {};
+
+MarkdownEditor.prototype.newLine = function() {
+    this.session.newLine();
+};
 
 module.exports = MarkdownEditor;
