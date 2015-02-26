@@ -24,12 +24,21 @@ function Action(options) {
 
 
 Action.prototype._bindKeyEvent = function() {
-    var self = this;
+    var self = this,
+        $editorEl = this.editor.$editorEl;
 
-    this.editor.$editorEl.on('keydown', function(ev) {
+    $editorEl.on('keydown', function(ev) {
         if (ev.which === 13) {
             self.editor.newLine();
         }
+    });
+
+    $editorEl.on('copy', function() {
+        console.log('on: copy!!');
+    });
+
+    $editorEl.on('paste', function() {
+        console.log('on: paste!!');
     });
 };
 

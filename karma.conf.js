@@ -15,13 +15,19 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['browserify', 'jasmine-ajax', 'jasmine'],
-
+        frameworks: ['browserify', 'jasmine-ajax', 'jasmine-jquery', 'jasmine'],
 
         // list of files / patterns to load in the browser
         files: [
+            'lib/jquery/dist/jquery.js',
+            'lib/codesnippet/code-snippet.js',
+            'lib/WeakMap/WeakMap.js',
+            'lib/MutationObserver/MutationObserver.js',
+            'lib/rangy/rangy-core.js',
+            'lib/marked/marked.min.js',
+            'lib/prism/prism.js',
             'src/js/**/*.js',
-            //{pattern: 'test/fixtures/*', included: false},
+            {pattern: 'test/fixtures/*', included: false},
             'test/**/*.spec.js'
         ],
 
@@ -98,7 +104,7 @@ module.exports = function(config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
 
-        autoWatchBatchDelay: 1000,
+        autoWatchBatchDelay: 500,
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
