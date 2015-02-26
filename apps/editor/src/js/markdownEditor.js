@@ -5,9 +5,12 @@
 
 'use strict';
 
-var Action = require('./action');
-var Session = require('./session');
-var PartManager = require('./partManager');
+var Action = require('./action'),
+    Session = require('./session'),
+    Selection = require('./selection'),
+    PartManager = require('./partManager');
+
+var CONTENT_CHANGE_DELAY = 500;
 
 /**
  * MarkdownEditor
@@ -22,30 +25,43 @@ function MarkdownEditor(base, options) {
     this.base = base;
     this.$editorEl = this.base.layout.$editorEl;
 
+    this._contentDelayTOID = null;
+
     this.action = new Action({
         editor: this
     });
 
     this.session = new Session(this.base);
     this.partManager = new PartManager();
+    this.selection = new Selection({
+        $editorEl: this.$editorEl
+    });
 }
 
 MarkdownEditor.prototype.init = function() {};
 
 MarkdownEditor.prototype.newLine = function() {
+    //셀렉션정보 만들어서 넘기기
     this.session.newLine();
 };
 
 MarkdownEditor.prototype.contentChanged = function() {
-    var $el = this.$editorEl;
+    var self = this;
 
-    this.action.stopObserveContent();
+    if (this._contentDelayTOID) {
+        clearTimeout(this._contentDelayTOID);
+    }
 
-    //this.applySyntaxHighlight();
+    this._contentDelayTOID = setTimeout(function() {
+        self.action.stopObserveContent();
 
-    this.action.observeContent();
+        //self.applySyntaxHighlight();
+        self.selection.update();
+
+        self.action.observeContent();
+    }, CONTENT_CHANGE_DELAY);
+
 };
-
 
 MarkdownEditor.prototype.applySyntaxHighlight = function() {
     var $el = this.$editorEl;
