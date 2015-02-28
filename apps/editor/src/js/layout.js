@@ -12,7 +12,7 @@
  * @constructor
  * @class
  */
-function Layout(base, options){
+function Layout(base, options) {
     this.$el = $(options.el);
 }
 
@@ -23,7 +23,7 @@ Layout.prototype.init = function() {
 };
 
 Layout.prototype.initEditorEl = function() {
-    this.$editorEl = $('<pre contenteditable="true" class="language-markdown"/>');
+    this.$editorEl = $('<pre contenteditable="true" class="language-markdown" style="white-space: pre" />');
     this.$el.append(this.$editorEl);
 };
 
