@@ -13,7 +13,7 @@
   "rules": {
     //Possible Errors 
     "no-console": 1,
-    "no-extra-parens": 2,
+    "no-extra-parens": 0,
     "no-reserved-keys": 2,
     "valid-jsdoc": [2, {
         "requireReturn": false

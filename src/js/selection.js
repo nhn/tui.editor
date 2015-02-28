@@ -5,6 +5,9 @@
 
 'use strict';
 
+var ContentTracker = require('./contentTracker'),
+    util = ne.util;
+
 /**
  * Selection
  * @exports Selection
@@ -14,21 +17,58 @@
  */
 function Selection(options) {
     this.$editorEl = options.$editorEl;
+    this.contentTracker = new ContentTracker(this.$editorEl);
 }
 
-Selection.prototype.update = function() {
-    console.log($('pre')[0].innerText);
-    var range = rangy.createRange();
-    console.log(this.$editorEl);
-    range.setStart(this.$editorEl[0]);
-
-};
+Selection.prototype.update = function() {};
 
 Selection.prototype.save = function() {
 };
 Selection.prototype.adjustCursor = function() {
 };
-Selection.prototype.createSelection = function() {
+
+Selection.prototype.createRange = function(start, end) {
+    var range = rangy.createRange(),
+        nodeInfo = this.contentTracker.getOffsetNodeInfo([start, end]);
+
+    range.setStart(nodeInfo[0].node, nodeInfo[0].offsetInNode);
+    range.setEnd(nodeInfo[1].node, nodeInfo[1].offsetInNode);
+
+    return range;
 };
 
+Selection.prototype.select = function(start, end) {
+    var range;
+
+    if (util.isObject(start)) {
+        end = start.end;
+        start = start.start;
+    }
+
+    range = this.createRange(start, end || start);
+
+
+    rangy.getSelection().addRange(range);
+
+    return range;
+};
+
+Selection.prototype.getCurrentSelection = function() {
+    var range = this._getCurrentRange(),
+        trackInfo;
+
+    if (range) {
+        trackInfo = this.contentTracker.getNodeOffset([range.startContainer, range.endContainer]);
+
+        return {
+            start: trackInfo[0].offset + range.startOffset,
+            end: trackInfo[1].offset + range.endOffset,
+            range: range
+        };
+    }
+};
+
+Selection.prototype._getCurrentRange = function() {
+    return rangy.getSelection().getRangeAt(0);
+};
 module.exports = Selection;
