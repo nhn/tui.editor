@@ -133,7 +133,7 @@ describe('contentTracker', function() {
         });
     });
 
-    xdescribe('_getNodeOffset', function() {
+    describe('_getNodeOffset', function() {
         it('node정보를 넘겨 정보를 얻어올수있다', function() {
             var nodeInfo = ct.getOffsetNodeInfo([17]),
                 res = ct._getNodeOffset([nodeInfo[0].node]);

@@ -78,7 +78,6 @@ ContentTracker.prototype.getNodeOffset = function(nodeList) {
         this.beforeNode = this.currentNode;
         this.currentNode = this.treeWalker.currentNode;
 
-
         while (this.currentNode === nodeToFind) {
             trackInfo.push(this._getOffsetInfo(this.index));
 

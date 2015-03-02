@@ -21,11 +21,21 @@ var util = ne.util;
 function Selection(options) {
     this.$editorEl = options.$editorEl;
     this.contentTracker = new ContentTracker(this.$editorEl);
+
+    this.tempRange = null;
+
+    rangy.init();
 }
 
-Selection.prototype.update = function() {};
+Selection.prototype.restore = function() {
+    if (this.tempRange) {
+        this.select(this.tempRange);
+        this.tempRange = null;
+    }
+};
 
 Selection.prototype.save = function() {
+    this.tempRange = this.getCurrentSelection();
 };
 
 Selection.prototype.adjustCursor = function() {
@@ -38,6 +48,9 @@ Selection.prototype.createRange = function(start, end) {
     range.setStart(nodeInfo[0].node, nodeInfo[0].offsetInNode);
     range.setEnd(nodeInfo[1].node, nodeInfo[1].offsetInNode);
 
+    range.start = start;
+    range.end = end;
+
     return range;
 };
 
@@ -48,6 +61,8 @@ Selection.prototype.select = function(start, end) {
         end = start.end;
         start = start.start;
     }
+
+    rangy.getSelection().removeAllRanges();
 
     range = this.createRange(start, end || start);
 
@@ -62,16 +77,15 @@ Selection.prototype.getCurrentSelection = function() {
 
     if (range) {
         trackInfo = this.contentTracker.getNodeOffset([range.startContainer, range.endContainer]);
-
-        return {
-            start: trackInfo[0].offset + range.startOffset,
-            end: trackInfo[1].offset + range.endOffset,
-            range: range
-        };
+        range.start = trackInfo[0].offset + range.startOffset;
+        range.end = trackInfo[1].offset + range.endOffset;
     }
+
+    return range;
 };
 
 Selection.prototype._getCurrentRange = function() {
     return rangy.getSelection().getRangeAt(0);
 };
+
 module.exports = Selection;

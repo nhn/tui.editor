@@ -16,8 +16,6 @@ function NEditor(options) {
     this.layout = new Layout(this, options);
     this.layout.init();
 
-    rangy.init();
-
     this.editor = new MarkdownEditor(this);
 
 }
