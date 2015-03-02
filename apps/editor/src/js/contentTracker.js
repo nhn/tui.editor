@@ -65,7 +65,12 @@ ContentTracker.prototype.getOffsetNodeInfo = function(offsetList) {
     //마지막 라인 맨끝일 경우의 처리
 };
 
-
+/**
+ * 배열로 node들을 넘거 해당 node의 offset위치를 구한다.
+ * nodeList의 node의 순서가 document상에서 위에서 아래방향 이어야한다.
+ * @param {node} nodeList 노드들이 담긴 배열
+ * @returns {number[]} offset목록이 담긴 배열
+ */
 ContentTracker.prototype.getNodeOffset = function(nodeList) {
     var nodeToFind,
         trackInfo = [];
@@ -108,16 +113,6 @@ ContentTracker.prototype._getNodeOffset = function(nodeList) {
 
     while (nodeList.length) {
         node = nodeList.shift();
-
-        /*
-        if (node.nodeType === NODE.ELEMENT) {
-            if (node.innerHTML === '<br>') {
-                offset = 1;
-            }
-        } else {
-            offset = 0;
-        }
-        */
 
         offset = 0;
 
