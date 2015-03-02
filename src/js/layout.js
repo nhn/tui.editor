@@ -19,10 +19,10 @@ function Layout(base, options) {
 Layout.prototype.init = function() {
     console.log('Layout Init');
 
-    this.initEditorEl();
+    this._initEditorEl();
 };
 
-Layout.prototype.initEditorEl = function() {
+Layout.prototype._initEditorEl = function() {
     this.$editorEl = $('<pre contenteditable="true" class="language-markdown" style="white-space: pre" />');
     this.$el.append(this.$editorEl);
 };

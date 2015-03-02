@@ -27,9 +27,9 @@
         el: $('#editSection')
     });
 
-    $('#editSection').find('pre').html("Hi There\n<span>this is</span>\n<span><b>kim</b> here</span>\n");
+    $('#editSection').find('pre').html('Hi There\n<span>this is</span>\n<span><b>kim</b> here\n</span>\n<span>last</span>');
 
-    ned.editor.selection.select(10, 20);
+    ned.editor.selection.contentTracker.getOffsetNodeInfo([17]);
 </script>
 </body>
 </html>

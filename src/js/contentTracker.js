@@ -47,7 +47,7 @@ ContentTracker.prototype.getOffsetNodeInfo = function(offsetList) {
 
         this._getCurrentNodeLen();
 
-        while (this._isIndexOverOffset(offsetToFind)) {
+        while (this._isIndexHasOffset(offsetToFind)) {
             trackInfo.push(this._getOffsetInfo(offsetToFind));
 
             if (offsetList.length) {
@@ -60,9 +60,6 @@ ContentTracker.prototype.getOffsetNodeInfo = function(offsetList) {
 
         this.index += this.currentNodeLength;
     }
-
-    //todo 비어있을 때의 처리 비어있다는건 마지막 라인일수 있다 마지막 라인은 개행문자가 없이 끝날수 있다.
-    //마지막 라인 맨끝일 경우의 처리
 };
 
 /**
@@ -96,6 +93,61 @@ ContentTracker.prototype.getNodeOffset = function(nodeList) {
         this._getCurrentNodeLen();
         this.index += this.currentNodeLength;
     }
+};
+
+
+ContentTracker.prototype._init = function() {
+    this.offsetToFind = 0;
+    this.index = 0;
+    this.currentNode = null;
+    this.beforeNode = null;
+    this.currentNodeLength = 0;
+};
+
+ContentTracker.prototype._reset = function() {
+    this._init();
+    this.treeWalker.currentNode = this.treeWalker.root;
+};
+
+ContentTracker.prototype._getOffsetInfo = function(offsetToFind) {
+    var info = {},
+        offsetAfterNodeLen = this.index + this.currentNodeLength - offsetToFind;
+
+    info.offset = offsetToFind;
+    info.node = this.currentNode;
+    info.before = this.beforeNode;
+    info.offsetInNode = this.currentNodeLength - offsetAfterNodeLen;
+
+    return info;
+};
+
+ContentTracker.prototype._isIndexHasOffset = function(offset) {
+    var result,
+        bound = this.index + this.currentNodeLength;
+
+    //해당 NODE가 LF를 가지고있으면 LF 캐릭터는 제외하고 계산
+    //마지막 라인이거나 분리된 개행이 분리된 노드에서 발생한 경우
+    if (this._isNodeHasLf(this.currentNode)) {
+        result = bound > offset;
+    } else {
+        result = bound >= offset;
+    }
+
+    return result;
+};
+
+ContentTracker.prototype._isNodeHasLf = function(node) {
+    return node && node.nodeValue[node.nodeValue.length - 1] === '\n';
+};
+
+ContentTracker.prototype._getCurrentNodeLen = function() {
+    if (this.currentNode.nodeType === NODE.TEXT) {
+        this.currentNodeLength = this._getTextNodeLen(this.currentNode);
+    }
+};
+
+ContentTracker.prototype._getTextNodeLen = function(node) {
+    return node.nodeValue.length;
 };
 
 /**
@@ -136,45 +188,6 @@ ContentTracker.prototype._getNodeOffset = function(nodeList) {
     }
 
     return offsetList;
-};
-
-ContentTracker.prototype._init = function() {
-    this.offsetToFind = 0;
-    this.index = 0;
-    this.currentNode = null;
-    this.beforeNode = null;
-    this.currentNodeLength = 0;
-};
-
-ContentTracker.prototype._reset = function() {
-    this._init();
-    this.treeWalker.currentNode = this.treeWalker.root;
-};
-
-ContentTracker.prototype._getOffsetInfo = function(offsetToFind) {
-    var info = {},
-        offsetAfterNodeLen = this.index + this.currentNodeLength - offsetToFind;
-
-    info.offset = offsetToFind;
-    info.node = this.currentNode;
-    info.before = this.beforeNode;
-    info.offsetInNode = this.currentNodeLength - offsetAfterNodeLen;
-
-    return info;
-};
-
-ContentTracker.prototype._isIndexOverOffset = function(offset) {
-    return this.index + this.currentNodeLength > offset;
-};
-
-ContentTracker.prototype._getCurrentNodeLen = function() {
-    if (this.currentNode.nodeType === NODE.TEXT) {
-        this.currentNodeLength = this._getTextNodeLen(this.currentNode);
-    }
-};
-
-ContentTracker.prototype._getTextNodeLen = function(node) {
-    return node.nodeValue.length;
 };
 
 module.exports = ContentTracker;
