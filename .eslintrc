@@ -1,6 +1,7 @@
 {
   "env": {
     "browser": true,
+    "amd": true,
     "node": true,
     "jasmine": true,
     "jquery": true
@@ -8,7 +9,8 @@
   "globals": {
     "ne": true,
     "Prism": true,
-    "rangy": true
+    "rangy": true,
+    "loadFixtures": true
   },
   "rules": {
     //Possible Errors 
