@@ -5,8 +5,9 @@
 
 'use strict';
 
-var ContentTracker = require('./contentTracker'),
-    util = ne.util;
+var ContentTracker = require('./contentTracker');
+
+var util = ne.util;
 
 /**
  * Selection
@@ -14,6 +15,8 @@ var ContentTracker = require('./contentTracker'),
  * @extends {}
  * @constructor
  * @class
+ * @param {object} options 옵션
+ * @param {jQuery} options.$editorEl 에디팅 영역 엘리먼트
  */
 function Selection(options) {
     this.$editorEl = options.$editorEl;
@@ -24,6 +27,7 @@ Selection.prototype.update = function() {};
 
 Selection.prototype.save = function() {
 };
+
 Selection.prototype.adjustCursor = function() {
 };
 
@@ -46,7 +50,6 @@ Selection.prototype.select = function(start, end) {
     }
 
     range = this.createRange(start, end || start);
-
 
     rangy.getSelection().addRange(range);
 
