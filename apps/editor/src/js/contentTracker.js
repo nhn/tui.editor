@@ -125,8 +125,9 @@ ContentTracker.prototype._isIndexHasOffset = function(offset) {
     var result,
         bound = this.index + this.currentNodeLength;
 
-    //해당 NODE가 LF를 가지고있으면 LF 캐릭터는 제외하고 계산
-    //마지막 라인이거나 분리된 개행이 분리된 노드에서 발생한 경우
+    //해당 NODE가 LF를 가지고있으면 LF 캐릭터는 제외하고 계산한다
+    //LF를 가지고 있지 않은 경우(마지막라인, 텍스트노드와 개행노드가 분리된경우)
+    //LF가 없으므로 offset을 판단하는 조건이 바뀐다.
     if (this._isNodeHasLf(this.currentNode)) {
         result = bound > offset;
     } else {
