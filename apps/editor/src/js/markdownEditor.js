@@ -55,9 +55,9 @@ MarkdownEditor.prototype.contentChanged = function() {
     this._contentDelayTOID = setTimeout(function() {
         self.action.stopObserveContent();
 
-        var selectionInfo = self.selection.getCurrentSelection();
-        self.applySyntaxHighlight();
-        self.selection.select(selectionInfo);
+        //var selectionInfo = self.selection.getCurrentSelection();
+        //self.applySyntaxHighlight();
+        //self.selection.select(selectionInfo);
 
         self.action.observeContent();
     }, CONTENT_CHANGE_DELAY);
