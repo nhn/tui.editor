@@ -134,7 +134,7 @@ var extractContentsOfRange = function ( range, common ) {
     var endNode = split( endContainer, endOffset, common ),
         startNode = split( startContainer, startOffset, common ),
         frag = common.ownerDocument.createDocumentFragment(),
-        next;
+        next, before, after;
 
     // End node will be null if at end of child nodes list.
     while ( startNode !== endNode ) {
@@ -143,9 +143,25 @@ var extractContentsOfRange = function ( range, common ) {
         startNode = next;
     }
 
-    range.setStart( common, endNode ?
+    startContainer = common;
+    startOffset = endNode ?
         indexOf.call( common.childNodes, endNode ) :
-            common.childNodes.length );
+        common.childNodes.length;
+
+    // Merge text nodes if adjacent. IE10 in particular will not focus
+    // between two text nodes
+    after = common.childNodes[ startOffset ];
+    before = after && after.previousSibling;
+    if ( before &&
+            before.nodeType === TEXT_NODE &&
+            after.nodeType === TEXT_NODE ) {
+        startContainer = before;
+        startOffset = before.length;
+        before.appendData( after.data );
+        detach( after );
+    }
+
+    range.setStart( startContainer, startOffset );
     range.collapse( true );
 
     fixCursor( common );
