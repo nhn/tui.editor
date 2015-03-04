@@ -36,6 +36,7 @@ Selection.prototype.restore = function() {
 
 Selection.prototype.save = function() {
     this.tempRange = this.getCurrentSelection();
+    console.log(this.tempRange);
 };
 
 Selection.prototype.adjustCursor = function() {
@@ -85,7 +86,8 @@ Selection.prototype.getCurrentSelection = function() {
 };
 
 Selection.prototype._getCurrentRange = function() {
-    return rangy.getSelection().getRangeAt(0);
+    var sel = rangy.getSelection();
+    return sel.rangeCount && sel.getRangeAt(0);
 };
 
 module.exports = Selection;

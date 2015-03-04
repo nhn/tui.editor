@@ -23,7 +23,7 @@ Layout.prototype.init = function() {
 };
 
 Layout.prototype._initEditorEl = function() {
-    this.$editorEl = $('<pre contenteditable="true" class="language-markdown" style="white-space: pre" />');
+    this.$editorEl = $('<pre contenteditable="true" class="language-markdown" style="height:100px;width:500px;overflow:hidden" />');
     this.$el.append(this.$editorEl);
 };
 
