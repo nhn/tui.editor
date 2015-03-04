@@ -22,7 +22,7 @@ CommandManager.prototype.addCommand = function(commandOptions) {
     this.commands.set(commandOptions.name, commandOptions.method);
 };
 
-CommandManager.prototype.run = function() {
+CommandManager.prototype.action = function() {
     var args = util.toArray(arguments),
         name = args.shift(),
         command = this.commands.get(name);

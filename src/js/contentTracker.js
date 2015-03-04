@@ -60,6 +60,21 @@ ContentTracker.prototype.getOffsetNodeInfo = function(offsetList) {
 
         this.index += this.currentNodeLength;
     }
+
+    //에디팅영역이 비어잇음
+    //todo 메서드 분리
+    do {
+        trackInfo.push({
+            offset: 0,
+            node: this.$el[0],
+            before: null,
+            offsetInNode: 0
+        });
+
+        offsetToFind = offsetList.shift();
+    } while (offsetToFind);
+
+    return trackInfo;
 };
 
 /**
@@ -92,6 +107,21 @@ ContentTracker.prototype.getNodeOffset = function(nodeList) {
         this._getCurrentNodeLen();
         this.index += this.currentNodeLength;
     }
+
+    //에디팅영역이 비어잇음
+    //todo 메서드 분리
+    do {
+        trackInfo.push({
+            offset: 0,
+            node: this.$el[0],
+            before: null,
+            offsetInNode: 0
+        });
+
+        nodeToFind = nodeList.shift();
+    } while (nodeToFind);
+
+    return trackInfo;
 };
 
 

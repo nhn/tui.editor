@@ -29,6 +29,7 @@ Action.prototype._bindKeyEvent = function() {
 
     $editorEl.on('keydown', function(ev) {
         if (ev.which === 13) {
+            ev.preventDefault();
             self.editor.newLine();
         }
     });
@@ -42,7 +43,7 @@ Action.prototype._bindKeyEvent = function() {
     });
 };
 
-Action.prototype._contentChanged = function(recorded) {
+Action.prototype._contentChanged = function() {
     if (this.isOberserveContent) {
         this.editor.contentChanged();
     }
