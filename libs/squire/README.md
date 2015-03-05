@@ -30,7 +30,7 @@ Installation and usage
    would like the editor to use (or link to an external stylesheet).
 3. In your application, instead of a `<textarea>`, use an
    `<iframe src="path/to/document.html">`.
-4. In your JS, attach an event listener to the `load` event of the iframe. When
+4. In your JS, attach an event listener to the [`load` event](https://developer.mozilla.org/en-US/docs/Web/Events/load) of the iframe. When
    this fires you can grab a reference to the editor object through
    `iframe.contentWindow.editor`.
 5. Use the API below with the `editor` object to set and get data and integrate
@@ -61,9 +61,9 @@ Attach an event listener to the editor. The handler can be either a function or 
 
 * **focus**: The editor gained focus.
 * **blur**: The editor lost focus
-* **keydown**: Standard DOM keydown event.
-* **keypress**: Standard DOM keypress event.
-* **keyup**: Standard DOM keyup event.
+* **keydown**: Standard [DOM keydown event](https://developer.mozilla.org/en-US/docs/Web/Events/keydown).
+* **keypress**: Standard [DOM keypress event](https://developer.mozilla.org/en-US/docs/Web/Events/keypress).
+* **keyup**: Standard [DOM keyup event](https://developer.mozilla.org/en-US/docs/Web/Events/keyup).
 * **input**: The user inserted, deleted or changed the style of some text; in other words, the result for `editor.getHTML()` will have changed.
 * **pathChange**: The path (see getPath documentation) to the cursor has changed. The new path is available as the `path` property on the event object.
 * **select**: The user selected some text.
