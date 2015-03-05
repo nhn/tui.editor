@@ -246,7 +246,7 @@ Sets the font size for the selected text.
 
 This method takes one argument:
 
-* **size**: A size to set. Any CSS size value is accepted, e.g. '13px', or 'small'.
+* **size**: A size to set. Any CSS [length value](https://developer.mozilla.org/en-US/docs/Web/CSS/length) or [absolute-size value](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_values_syntax#syntax-absolute-size) is accepted, e.g. '13px', or 'small'.
 
 Returns self (the Squire instance).
 
