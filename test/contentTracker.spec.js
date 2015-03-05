@@ -53,6 +53,16 @@ describe('contentTracker', function() {
             expect(res[0].node.nodeValue).toEqual('kim');
         });
 
+        it('첫탐색에서 실패하고(인자가 잘못되서) 다음탐색에서 정상적인 인자에는 정상적인 결과를 낸다', function() {
+            var res;
+
+            ct.getOffsetNodeInfo([200]);
+            res = ct.getOffsetNodeInfo([18]);
+
+            expect(res[0].offsetInNode).toEqual(1);
+            expect(res[0].before.nodeValue).toEqual('\n');
+        });
+
         it('첫번쩨 offset의 정보를 가져올 수 있다.', function() {
             var res = ct.getOffsetNodeInfo([0]);
             expect(res[0].node.nodeValue).toEqual('Hi There\n');
@@ -96,6 +106,7 @@ describe('contentTracker', function() {
 
             expect(res[0].node.nodeValue).toEqual('last');
         });
+
     });
 
     describe('getNodeOffset', function() {
@@ -130,6 +141,27 @@ describe('contentTracker', function() {
             var nodeInfo = ct.getOffsetNodeInfo([25]),
                 res = ct.getNodeOffset([nodeInfo[0].node]);
             expect(res[0].offset).toEqual(20);
+        });
+
+        it('여러번 실행해도 문제 처음부터 다시 검사한다', function() {
+            var nodeInfo = ct.getOffsetNodeInfo([20, 0, 18]),
+                res;
+
+            ct.getNodeOffset([nodeInfo[0].node]);
+            ct.getNodeOffset([nodeInfo[1].node]);
+            res = ct.getNodeOffset([nodeInfo[2].node]);
+
+            expect(res[0].node.nodeValue).toEqual('kim');
+        });
+
+        it('첫탐색에서 실패하고(인자가 잘못되서) 다음탐색에서 정상적인 인자에는 정상적인 결과를 낸다', function() {
+            var nodeInfo = ct.getOffsetNodeInfo([18]),
+                res;
+
+            ct.getNodeOffset([$('<div />')]);
+            res = ct.getNodeOffset([nodeInfo[0].node]);
+
+            expect(res[0].node.nodeValue).toEqual('kim');
         });
     });
 
