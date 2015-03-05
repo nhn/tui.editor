@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
+<head lang="ko">
     <meta charset="UTF-8">
     <title>DEMO</title>
     <link rel="stylesheet" href="../lib/prism/prism.css" data-noprefix />
@@ -27,10 +27,10 @@
         el: $('#editSection')
     });
 
-    $('#editSection').find('pre').html('Hi There\n<span>this is</span>\n<span><b>kim</b> here\n</span>\n<span>last</span>');
+    $('#editSection').find('div').html('Hi There\n<span>this is</span>\n<span><b>kim</b> here\n</span>\n<span>last</span>');
 
     console.log(ned.editor.selection.select(10, 26));
-    console.log(ned.editor.selection.getCurrentSelection());
+    //console.log(ned.editor.selection.getCurrentSelection());
 </script>
 </body>
 </html>
