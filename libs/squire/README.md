@@ -12,7 +12,7 @@ Unlike other HTML5 rich text editors, Squire was written as a component for writ
 * Only 11.5KB of JS after minification and gzip (35KB before gzip).
 * Does not include its own XHR wrapper, widget library or lightbox overlays.
 * No dependencies.
-* No UI for a toolbar is supplied, allowing you to integrate seamlessly with the rest of your application and lose the bloat of having two UI toolkits loaded. Instead, you get a component you can drop in in place of a `<textarea>` and manipulate programatically.
+* No UI for a toolbar is supplied, allowing you to integrate seamlessly with the rest of your application and lose the bloat of having two UI toolkits loaded. Instead, you get a component you can insert in place of a `<textarea>` and manipulate programatically.
 
 ### Powerful ###
 
