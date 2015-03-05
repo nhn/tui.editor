@@ -256,7 +256,7 @@ Sets the colour of the selected text.
 
 This method takes one argument:
 
-* **colour**: The colour to set. Any CSS colour value is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
+* **colour**: The colour to set. Any [CSS colour value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
 
 Returns self (the Squire instance).
 
@@ -266,7 +266,7 @@ Sets the colour of the background of the selected text.
 
 This method takes one argument:
 
-* **colour**: The colour to set. Any CSS colour value is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
+* **colour**: The colour to set. Any [CSS colour value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value) is accepted, e.g. '#f00', or 'hsl(0,0,0)'.
 
 Returns self (the Squire instance).
 
