@@ -74,6 +74,8 @@ ContentTracker.prototype.getOffsetNodeInfo = function(offsetList) {
         offsetToFind = offsetList.shift();
     } while (offsetToFind);
 
+    this._reset();
+
     return trackInfo;
 };
 
@@ -120,6 +122,8 @@ ContentTracker.prototype.getNodeOffset = function(nodeList) {
 
         nodeToFind = nodeList.shift();
     } while (nodeToFind);
+
+    this._reset();
 
     return trackInfo;
 };
