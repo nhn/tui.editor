@@ -142,7 +142,7 @@ Returns the path through the DOM tree from the `<body>` element to the current c
 
 ### getSelection
 
-Returns a W3C Range object representing the current selection/cursor position.
+Returns a [W3C Range object](https://developer.mozilla.org/en-US/docs/Web/API/Range) representing the current selection/cursor position.
 
 ### setSelection
 
@@ -150,7 +150,7 @@ Changes the current selection/cursor position.
 
 The method takes one argument:
 
-* **range**: The W3C Range object representing the desired selection.
+* **range**: The [W3C Range object](https://developer.mozilla.org/en-US/docs/Web/API/Range) representing the desired selection.
 
 Returns self (the Squire instance).
 
