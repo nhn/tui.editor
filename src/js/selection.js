@@ -36,7 +36,7 @@ Selection.prototype.restore = function() {
 
 Selection.prototype.save = function() {
     this.tempRange = this.getCurrentSelection();
-    console.log(this.tempRange);
+    console.log('save', this.tempRange.start, this.tempRange.end);
 };
 
 Selection.prototype.adjustCursor = function() {
@@ -44,7 +44,12 @@ Selection.prototype.adjustCursor = function() {
 
 Selection.prototype.createRange = function(start, end) {
     var range = rangy.createRange(),
-        nodeInfo = this.contentTracker.getOffsetNodeInfo([start, end]);
+        nodeInfo;
+
+    start = start < 0 ? 0 : start;
+    end = end < 0 ? 0 : end;
+
+    nodeInfo = this.contentTracker.getOffsetNodeInfo([start, end]);
 
     range.setStart(nodeInfo[0].node, nodeInfo[0].offsetInNode);
     range.setEnd(nodeInfo[1].node, nodeInfo[1].offsetInNode);
@@ -81,7 +86,12 @@ Selection.prototype.getCurrentSelection = function() {
         range.start = trackInfo[0].offset + range.startOffset;
         range.end = trackInfo[1].offset + range.endOffset;
     }
-
+/**
+    if(range.start === range.end && range.startContainer.textContent == '\n' && range.startOffset == 1) {
+        //IE화 파폭에서의 마지막라인에서의 문제 교정
+        range.start = --range.end;
+    }
+*/
     return range;
 };
 
