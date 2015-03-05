@@ -205,13 +205,13 @@ Returns self (the Squire instance).
 
 Removes any italic formatting from the selected text.
 
-Returns self.
+Returns self (the Squire instance).
 
 ### removeUnderline
 
 Removes any underline formatting from the selected text.
 
-Returns self.
+Returns self (the Squire instance).
 
 ### makeLink
 
