@@ -20,7 +20,7 @@ Squire provides an engine that handles the heavy work for you, making it easy to
 
 If you need more commands than in the simple API, I suggest you check out the source code (it's not very long), and see how a lot of the other API methods are implemented in terms of these two methods.
 
-The general philosophy of Squire is to allow the browser to do as much as it can (which unfortunately is not very much), but take control anywhere it deviates from what is required, or there are significant cross-browser differences. As such, the `document.execCommand` method is not used at all; instead all formatting is done via custom functions, and certain keys, such as 'enter' and 'backspace' are handled by the editor.
+The general philosophy of Squire is to allow the browser to do as much as it can (which unfortunately is not very much), but take control anywhere it deviates from what is required, or there are significant cross-browser differences. As such, the [`document.execCommand`](https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand) method is not used at all; instead all formatting is done via custom functions, and certain keys, such as 'enter' and 'backspace' are handled by the editor.
 
 Installation and usage
 ----------------------
