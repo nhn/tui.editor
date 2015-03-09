@@ -5,6 +5,7 @@
 {
     content: "";
     display: block;
+    height: 0;
     clear: both;
 }
 .editor-container {
@@ -41,14 +42,15 @@
 .editor-container>.preview {
     box-sizing: border-box;
     width: 50%;
-    height: 300px;
     overflow: auto;
+    white-space: pre;
 }
 .editor-container>.editor {
     padding: 5px;
     border-right: 1px solid #ccc;
     float: left;
     outline: none;
+    white-space: pre;
 }
 .editor-container>.preview {
     padding: 5px;

@@ -16,6 +16,7 @@ function Layout(base, options) {
     this.$el = $(options.el);
 }
 
+
 Layout.prototype.init = function() {
     console.log('Layout Init');
 

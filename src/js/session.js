@@ -12,43 +12,47 @@
  * @constructor
  * @class
  */
-function Session(base) {
-    this.base = base;
+
+function Session(editor) {
+    this.editor = editor;
+    this.selection = editor.selection;
 }
+var diffMatchPatch = new diff_match_patch();
 
-Session.prototype.newLine = function(range) {
-    console.log("Session:NewLine", range);
-    var frag = document.createDocumentFragment(),
-        newLine,
-        lineRestText,
-        preLine;
+Session.prototype.newLine = function(start, end) {
+    var textContent = this.editor.getTextContent(),
+        selection = this.selection;
 
+    var status = {
+        before: textContent.slice(0, start),
+        after: textContent.slice(end)
+    };
 
+    //todo lf에서 newLine시  contentChange루틴에서마지막 개행을 삭제해서 첫개행이 제대로 이루어지지 않는다.
+    status.before += '\n';
+
+    var value = status.before + status.after;
+
+    //setValue
+    var startOffset = diffMatchPatch.diff_commonPrefix(textContent, value);
+    if(startOffset === textContent.length) {
+        startOffset--;
+    }
+    var endOffset = Math.min(
+        diffMatchPatch.diff_commonSuffix(this.textContent, value),
+        textContent.length - startOffset,
+        value.length - startOffset
+    );
+
+    var replacement = value.substring(startOffset, value.length - endOffset);
+    var range = selection.createRange(startOffset, textContent.length - endOffset);
     range.deleteContents();
-    range.collapse(true);
+    range.insertNode(document.createTextNode(replacement));
 
-    preLine = this._findLineEl(range.startContainer);
-
-    lineRestText = preLine.innerText.substring(range.startOffset);
-
-    preLine.innerText = preLine.innerText.substring(0, range.startOffset);
-
-    newLine = this.makeLine(lineRestText);
-
-    //preLine.nodeValue.length - range.startContainer.nodeValue.length
-
-
-    //현라인의 끝으로 커서 이동
-    //현라인의 끝에서 newLine추가.
-    range.setEndAfter(preLine);
-    range.setStartAfter(preLine);
-    frag.appendChild(newLine);
-    range.insertNode(frag);
-
-    range.setStartBefore(newLine);
-    range.setEndBefore(newLine);
-
-    return range;
+    return {
+        start: startOffset,
+        end: value.length - endOffset
+    };
 };
 
 Session.prototype.makeLine = function(text) {
