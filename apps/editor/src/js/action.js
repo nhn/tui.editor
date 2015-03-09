@@ -18,6 +18,8 @@ function Action(options) {
     this._mo = null;
     this.isOberserveContent = false;
 
+    this._isComposing = 0;
+
     this._bindKeyEvent();
     this.observeContent();
 }
@@ -30,6 +32,8 @@ Action.prototype._bindKeyEvent = function() {
     $editorEl.on('keydown', function(ev) {
         if (ev.which === 13) {
             ev.preventDefault();
+            //self._isComposing = 0;
+            console.log("enter뙇!");
             self.editor.newLine();
         }
     });
@@ -41,10 +45,23 @@ Action.prototype._bindKeyEvent = function() {
     $editorEl.on('paste', function() {
         console.log('on: paste!!');
     });
+
+    $editorEl.on('compositionstart', function() {
+        self._isComposing += 1;
+        console.log('on: compositionstart!!', self._isComposing);
+    });
+
+    $editorEl.on('compositionend', function() {
+        setTimeout(function(){
+            self._isComposing -= 1;
+        console.log('on: compositionend!!', self._isComposing);
+        }, 0);
+    });
 };
 
 Action.prototype._contentChanged = function() {
     if (this.isOberserveContent) {
+        console.log("contentChange!!");
         this.editor.contentChanged();
     }
 };
@@ -70,6 +87,10 @@ Action.prototype.observeContent = function() {
 
 Action.prototype.destroy = function() {
     this.stopObserveContent();
+};
+
+Action.prototype.isComposing = function() {
+    return this._isComposing > 0;
 };
 
 module.exports = Action;
