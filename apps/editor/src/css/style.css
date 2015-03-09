@@ -1,0 +1,74 @@
+@charset "UTF-8";
+.editor-container:after,
+.editor-container>.toolbar:after,
+.editor-container>.statusbar:after
+{
+    content: "";
+    display: block;
+    clear: both;
+}
+.editor-container {
+    border: 1px solid #ccc;
+}
+.editor-container>.toolbar {
+    padding: 5px;
+    height: 30px;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
+}
+.editor-container>.toolbar>button {
+    box-sizing: border-box;
+    min-width: 30px;
+    height: 30px;
+    background: white;
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    float: left;
+    outline: none;
+}
+.editor-container>.toolbar>button:hover,
+.editor-container>.toolbar>button:focus {
+    background: #eee;
+}
+.editor-container>.toolbar>button:active {
+    box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
+}
+.editor-container>.toolbar>button:first-child {
+    border-left-width: 1px;
+}
+.editor-container>.editor,
+.editor-container>.preview {
+    box-sizing: border-box;
+    width: 50%;
+    height: 300px;
+    overflow: auto;
+}
+.editor-container>.editor {
+    padding: 5px;
+    border-right: 1px solid #ccc;
+    float: left;
+    outline: none;
+}
+.editor-container>.preview {
+    padding: 5px;
+    float: right;
+}
+.editor-container>.statusbar {
+    padding: 5px;
+    height: 12px;
+    background: #eee;
+    border-top: 1px solid #ccc;
+    clear:both;
+}
+.editor-container>.statusbar>span {
+    font-size: 12px;
+    color: #666;
+    line-height: 100%;
+}
+.editor-container>.statusbar>span.left {
+    float: left;
+}
+.editor-container>.statusbar>span.right {
+    float: right;
+}
