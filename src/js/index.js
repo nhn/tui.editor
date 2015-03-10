@@ -2,6 +2,7 @@
 'use strict';
 
 var MarkdownEditor = require('./markdownEditor');
+var Preview = require('./preview');
 var Layout = require('./layout');
 var EventManager = require('./eventManager');
 var CommandManager = require('./commandManager');
@@ -17,7 +18,7 @@ function NEditor(options) {
     this.layout.init();
 
     this.editor = new MarkdownEditor(this);
-
+    this.preview = new Preview(this);
 }
 
 NEditor.prototype.remove = function() {

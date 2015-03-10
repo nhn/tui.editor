@@ -42,8 +42,8 @@
 .editor-container>.preview {
     box-sizing: border-box;
     width: 50%;
+    height:400px;
     overflow: auto;
-    white-space: pre;
 }
 .editor-container>.editor {
     padding: 5px;
