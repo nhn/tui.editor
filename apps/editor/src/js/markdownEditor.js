@@ -25,6 +25,7 @@ function MarkdownEditor(base, options) {
 
     this._contentDelayTOID = null;
 
+
     this.action = new Action({
         editor: this
     });
@@ -42,6 +43,7 @@ function MarkdownEditor(base, options) {
     window.session = this.session;
 
     this.textContent = '';
+    this.isHlCapable = false;
 
     this.init();
 }
@@ -58,17 +60,45 @@ MarkdownEditor.prototype.init = function() {
     }
 
     //초반 파트 삽입
-    this.contentChanged();
+   // this.contentChanged();
+
+    this.addTrailingLfNode2();
+};
+
+MarkdownEditor.prototype.addTrailingLfNode2 = function() {
+    this.trailingLfNode = $('<p class="line"><br /></p>')[0];
+    this.$editorEl.append(this.trailingLfNode);
+};
+
+MarkdownEditor.prototype.contentChanged = function() {
+    var changedTextContent = "";
+    var lines = this.$editorEl.find('.line');
+
+    $.each(lines, function(index, line) {
+        changedTextContent += line.textContent + '\n';
+    });
+
+    changedTextContent = changedTextContent.slice(0, -1);
+    console.log('contentChanged', this.textContent, changedTextContent);
+    this.textContent = changedTextContent;
+
+    if (this.isHlCapable) {
+        console.log("하일라이트 돌리기", this.textContent);
+        this.isHlCapable = false;
+    }
 };
 
 MarkdownEditor.prototype.newLine = function() {
+    this.isHlCapable = true;
+    /*
     var sel = this.selection.getCurrentSelection();
     console.log(sel);
     var newSel = this.session.newLine(sel.start, sel.end);
     this.selection.select(newSel.end, newSel.end);
+    */
 };
 
-MarkdownEditor.prototype.contentChanged = function() {
+MarkdownEditor.prototype._contentChanged = function() {
     var self = this;
     var changedTextContent = this.$editorEl[0].textContent;
 
@@ -95,7 +125,7 @@ MarkdownEditor.prototype.contentChanged = function() {
             //텍스트를 섹션 파서에 넘겨서 각종 섹션 목록을 만든다.
             console.log("컴포징상태가 아니라서 이후 진행됨!");
             this.sectionManager.update(this.textContent);
-            this.renderSection();
+            //this.renderSection();
         } else {
             console.log("컴포징 상태");
         }
