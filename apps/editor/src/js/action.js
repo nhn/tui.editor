@@ -31,10 +31,9 @@ Action.prototype._bindKeyEvent = function() {
 
     $editorEl.on('keydown', function(ev) {
         if (ev.which === 13) {
-            ev.preventDefault();
-            //self._isComposing = 0;
+            //ev.preventDefault();
             console.log("enter뙇!");
-            self.editor.newLine();
+            //self.editor.newLine();
         }
     });
 
@@ -53,27 +52,25 @@ Action.prototype._bindKeyEvent = function() {
 
     $editorEl.on('compositionend', function() {
         setTimeout(function(){
-            self._isComposing -= 1;
-        console.log('on: compositionend!!', self._isComposing);
+            self._isComposing-=1;
+            console.log('on: compositionend!!', self._isComposing);
         }, 0);
     });
 };
 
 Action.prototype._contentChanged = function() {
-    if (this.isOberserveContent) {
-        console.log("contentChange!!");
-        this.editor.contentChanged();
-    }
+    this.editor.contentChanged();
 };
 
 Action.prototype.stopObserveContent = function() {
-    this.isOberserveContent = false;
     this._mo.disconnect();
+    this.isOberserveContent = false;
 };
 
 Action.prototype.observeContent = function() {
     var editorEl = this.editor.$editorEl[0];
 
+    this.isOberserveContent = true;
     this._mo = this._mo || new MutationObserver(this._contentChanged.bind(this));
     this._mo.observe(editorEl, {
         childList: true,
@@ -81,8 +78,6 @@ Action.prototype.observeContent = function() {
         characterData: true,
         subtree: true
     });
-
-    this.isOberserveContent = true;
 };
 
 Action.prototype.destroy = function() {

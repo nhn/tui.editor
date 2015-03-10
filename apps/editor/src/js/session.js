@@ -25,11 +25,14 @@ Session.prototype.newLine = function(start, end) {
 
     var status = {
         before: textContent.slice(0, start),
-        after: textContent.slice(end)
+        after: textContent.slice(end),
+        textContent: textContent
     };
+
 
     //todo lf에서 newLine시  contentChange루틴에서마지막 개행을 삭제해서 첫개행이 제대로 이루어지지 않는다.
     status.before += '\n';
+    console.log('status', status);
 
     var value = status.before + status.after;
 

@@ -127,10 +127,12 @@ SectionManager.prototype.update = function(text) {
         this.insertBeforeSections = insertBeforeSection;
         this.sectionsToRemove = sectionsToRemove;
 
+        /*
         console.log('leftIndex, rightIndex', leftIndex, rightIndex);
         console.log('modifiedSections', modifiedSections);
         console.log('insertBeforeSection', insertBeforeSection);
         console.log('sectionsToRemove', sectionsToRemove);
+        */
     } else {
         this.sectionList = newSectionList;
         this.modifiedSections = newSectionList;
