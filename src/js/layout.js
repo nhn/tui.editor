@@ -48,7 +48,7 @@ Layout.prototype._initToolbarEl = function() {
 Layout.prototype._initEditorEl = function() {
     return $('<div>')
         .addClass('editor')
-        .attr('contenteditable', 'true')
+        //.attr('contenteditable', 'true')
         .appendTo(this.$containerEl);
 };
 
