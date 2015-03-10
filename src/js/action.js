@@ -33,7 +33,7 @@ Action.prototype._bindKeyEvent = function() {
         if (ev.which === 13) {
             //ev.preventDefault();
             console.log("enter뙇!");
-            //self.editor.newLine();
+            self.editor.newLine();
         }
     });
 
