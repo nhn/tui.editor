@@ -85,18 +85,20 @@ Selection.prototype.getCurrentSelection = function() {
         trackInfo = this.contentTracker.getNodeOffset([range.startContainer, range.endContainer]);
         range.start = trackInfo[0].offset + range.startOffset;
         range.end = trackInfo[1].offset + range.endOffset;
-    }
-/**
-    if(range.start === range.end && range.startContainer.textContent == '\n' && range.startOffset == 1) {
+
         //IE화 파폭에서의 마지막라인에서의 문제 교정
-        range.start = --range.end;
+        if (range.start === range.end && range.startContainer.textContent === '\n' && range.startOffset === 1) {
+            range.end -= 1;
+            range.start = range.end;
+        }
     }
-*/
+
     return range;
 };
 
 Selection.prototype._getCurrentRange = function() {
     var sel = rangy.getSelection();
+    //todo 에디팅영역 안에서 발생한레인지찾는 루틴필요
     return sel.rangeCount && sel.getRangeAt(0);
 };
 

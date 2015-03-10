@@ -63,6 +63,7 @@ MarkdownEditor.prototype.init = function() {
 
 MarkdownEditor.prototype.newLine = function() {
     var sel = this.selection.getCurrentSelection();
+    console.log(sel);
     var newSel = this.session.newLine(sel.start, sel.end);
     this.selection.select(newSel.end, newSel.end);
 };
@@ -71,37 +72,34 @@ MarkdownEditor.prototype.contentChanged = function() {
     var self = this;
     var changedTextContent = this.$editorEl[0].textContent;
 
-    console.log("----------------")
-
     //trailingLfNode에 있는 개행은 삭제한다.
-    //todo 한글입력이 lf에서 입력이 되면 엔터입력한게 사라진다. 여기서 없애서..
-    if(this.$editorEl[0].lastChild === this.trailingLfNode && this.trailingLfNode.textContent.slice(-1) == '\n') {
+    if (this.$editorEl[0].lastChild === this.trailingLfNode && this.trailingLfNode.textContent.slice(-1) === '\n') {
         changedTextContent = changedTextContent.slice(0, -1);
     }
 
     //특정 OS를 위한 개행 전환
     changedTextContent = changedTextContent.replace(/\r\n?/g, '\n');
 
-    console.log(changedTextContent, this.textContent);
+    console.log('contentChanged:', changedTextContent, this.textContent);
+
     if (changedTextContent === this.textContent) {
         //유저가 공간을 모두 지움
         if (this.$editorEl.children().length === 0) {
-            console.log("모두지움")
             this.$editorEl.empty();
             //this.renderSection();
             this.addTrailingLfNode();
         }
     } else {
         this.textContent = changedTextContent;
-            console.log("??", this.action._isComposing);
         if (!this.action.isComposing()) {
             //텍스트를 섹션 파서에 넘겨서 각종 섹션 목록을 만든다.
+            console.log("컴포징상태가 아니라서 이후 진행됨!");
             this.sectionManager.update(this.textContent);
             this.renderSection();
+        } else {
+            console.log("컴포징 상태");
         }
     }
-
-
 };
 
 MarkdownEditor.prototype.renderSection = function() {
