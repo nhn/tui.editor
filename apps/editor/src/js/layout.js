@@ -22,7 +22,7 @@ Layout.prototype.init = function() {
 
     this.$containerEl = this._initContainerEl();
     this.$toolbarEl = this._initToolbarEl();
-    this.$editorEl = this._initEditorEl();
+    this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
     this.$statusbarEl = this._initStatusBarEl();
     this.$statusbarLeftAreaEl = this._initStatusBarLeftAreaEl();

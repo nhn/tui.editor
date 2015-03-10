@@ -14,9 +14,10 @@
  */
 function MarkdownEditor(base, options) {
     this.base = base;
-    this.$editorContainerEl = this.base.layout.$editorEl;
+    this.$editorContainerEl = this.base.layout.$editorContainerEl;
 
     this.init();
+    this._initEvent();
 }
 
 MarkdownEditor.prototype.init = function() {
@@ -27,6 +28,23 @@ MarkdownEditor.prototype.init = function() {
     this.cm = CodeMirror.fromTextArea(cmTextarea[0], {
         lineWrapping: true,
         mode: "markdown"
+    });
+};
+
+MarkdownEditor.prototype._initEvent = function() {
+    var self = this;
+
+    this.cm.on('update', function(cm) {
+        console.log('event: update', cm);
+        self.base.eventManager.emit('previewUpdate', cm.doc.getValue('\n'));
+    });
+
+    this.cm.on('change', function() {
+        console.log('event: change', arguments);
+    });
+
+    this.cm.on('scroll', function() {
+        console.log('event: scroll', arguments);
     });
 };
 
