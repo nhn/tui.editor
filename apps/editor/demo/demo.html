@@ -5,23 +5,24 @@
     <title>DEMO</title>
     <!--<link rel="stylesheet" href="../lib/prism/prism.css" data-noprefix />-->
     <script src="../lib/marked/lib/marked.js"></script>
-    <script src="../lib/prism/prism.js"></script>
-    <script src="../lib/rangy/rangy-core.js"></script>
     <script src="../lib/jquery/dist/jquery.js"></script>
-    <script src="../lib/WeakMap/WeakMap.js"></script>
-    <script src="../lib/MutationObserver/MutationObserver.js"></script>
     <script src="../lib/codesnippet/code-snippet.js"></script>
-    <script src="../lib/google-diff-match-patch-js/diff_match_patch_uncompressed.js"></script>
+    <script src="../lib/codemirror/lib/codemirror.js"></script>
+    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
+    <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../src/css/style.css">
+    <style type="text/css">
+      .cm-header { font-family: arial; }
+      .cm-header-1 { font-size: 300%; }
+      .cm-header-2 { font-size: 250%; }
+      .cm-header-3 { font-size: 200%; }
+      .cm-header-4 { font-size: 150%; }
+      .cm-header-5 { font-size: 100%; }
+      .cm-header-6 { font-size: 90%; }
+      .cm-strong { font-size: 140%; }
+    </style>
 </head>
 <body>
-<!--
-<pre class="language-markdown">
-<div id="content" contenteditable="true"></div>
-</pre>
-<pre id="hl" class="language-markdown"></pre>
-<div id="preview"></div>
--->
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
