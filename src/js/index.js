@@ -11,7 +11,12 @@ var Converter = require('./converter');
 
 
 function NEditor(options) {
-    this.options = options;
+    var defaultOptions = {
+        'previewStyle': 'column',
+        'height': 300
+    };
+
+    this.options = $.extend({}, defaultOptions, options);
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager();

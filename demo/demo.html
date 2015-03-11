@@ -27,7 +27,9 @@
 <script src="/build/bundle.js"></script>
 <script>
     var ned = new ne.NEditor({
-        el: $('#editSection')
+        el: $('#editSection'),
+//        previewStyle: 'column'
+        previewStyle: 'tab'
     });
 
     ned.setValue("#Heading\n##Heading2");
