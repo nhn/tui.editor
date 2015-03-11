@@ -49,4 +49,8 @@ MarkdownEditor.prototype._initEvent = function() {
     });
 };
 
+MarkdownEditor.prototype.focus = function() {
+    this.cm.focus();
+};
+
 module.exports = MarkdownEditor;
