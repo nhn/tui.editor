@@ -26,7 +26,8 @@ MarkdownEditor.prototype.init = function() {
 
     this.cm = CodeMirror.fromTextArea(cmTextarea[0], {
         lineWrapping: true,
-        mode: "markdown"
+        mode: 'gfm',
+        theme: 'default'
     });
 
     this._initEvent();
