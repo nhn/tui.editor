@@ -37,7 +37,7 @@ MarkdownEditor.prototype._initEvent = function() {
 
     this.cm.on('update', function(cm) {
         console.log('event: update', cm);
-        self.eventManager.emit('markdownUpdated', cm.doc.getValue('\n'));
+        self.eventManager.emit('markdownUpdated', self.getValue());
     });
 
     this.cm.on('change', function() {
@@ -51,6 +51,14 @@ MarkdownEditor.prototype._initEvent = function() {
 
 MarkdownEditor.prototype.focus = function() {
     this.cm.focus();
+};
+
+MarkdownEditor.prototype.setValue = function(markdown) {
+    this.cm.doc.setValue(markdown);
+};
+
+MarkdownEditor.prototype.getValue = function() {
+    return this.cm.doc.getValue('\n');
 };
 
 module.exports = MarkdownEditor;
