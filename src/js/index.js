@@ -1,20 +1,20 @@
 
 'use strict';
 
-var MarkdownEditor = require('./markdownEditor');
-var Preview = require('./preview');
-var Layout = require('./layout');
-var EventManager = require('./eventManager');
-var CommandManager = require('./commandManager');
-var ExtManager = require('./extManager');
-var Converter = require('./converter');
-
+var MarkdownEditor = require('./markdownEditor'),
+    Preview = require('./preview'),
+    Layout = require('./layout'),
+    EventManager = require('./eventManager'),
+    CommandManager = require('./commandManager'),
+    ExtManager = require('./extManager'),
+    Converter = require('./converter'),
+    Bold = require('./ext/bold');
 
 function NEditor(options) {
     this.options = options;
 
     this.eventManager = new EventManager();
-    this.commandManager = new CommandManager();
+    this.commandManager = new CommandManager(this);
     this.converter = new Converter(this.eventManager);
 
     this.layout = new Layout(this, options);
@@ -22,6 +22,7 @@ function NEditor(options) {
 
     this.editor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
+
 
     this.exts = NEditor.extManager.activate(this);
 
@@ -52,11 +53,13 @@ NEditor.prototype.getMarkdown = function() {
     console.log('getMarkdown');
 };
 
-NEditor.prototype.addExtension = function(ext) {
+NEditor.extManager = new ExtManager();
+
+NEditor.addExtension = function(ext) {
     NEditor.extManager.add(ext);
 };
 
-NEditor.extManager = new ExtManager();
+NEditor.addExtension(Bold);
 
 window.ne = window.ne || {};
 window.ne.NEditor = NEditor;
