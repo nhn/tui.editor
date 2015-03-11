@@ -14,8 +14,9 @@ var util = ne.util;
  * @constructor
  * @class
  */
-function CommandManager() {
+function CommandManager(base) {
     this.commands = new util.HashMap();
+    this.base = base;
 }
 
 CommandManager.prototype.addCommand = function(commandOptions) {
@@ -26,6 +27,8 @@ CommandManager.prototype.action = function() {
     var args = util.toArray(arguments),
         name = args.shift(),
         command = this.commands.get(name);
+
+    args.unshift(this.base.editor);
 
     if (command) {
         command.apply(null, args);
