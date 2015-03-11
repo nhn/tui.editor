@@ -29,8 +29,8 @@ Bold.prototype.init = function() {
     });
 
     this.addCommand({
-        name: 'test',
-        method: function(){
+        name: 'boldSelection',
+        method: function() {
             console.log('command!!', arguments);
         }
     });
