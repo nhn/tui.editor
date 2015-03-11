@@ -55,7 +55,8 @@ Layout.prototype._initEditorEl = function() {
 Layout.prototype._initPreviewEl = function() {
     return $('<div>')
         .addClass('preview')
-        .appendTo(this.$containerEl);
+        .appendTo(this.$containerEl)
+        .wrap('<div class="preview-container"></div>');
 };
 
 Layout.prototype._initStatusBarEl = function() {

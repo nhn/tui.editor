@@ -39,11 +39,10 @@
     border-left-width: 1px;
 }
 .editor-container>.editor,
-.editor-container>.preview {
+.editor-container>.preview-container {
     box-sizing: border-box;
     width: 50%;
     height:400px;
-    overflow: auto;
 }
 .editor-container>.editor {
     padding: 5px;
@@ -52,9 +51,17 @@
     outline: none;
     white-space: pre;
 }
-.editor-container>.preview {
+.editor-container>.editor>.CodeMirror {
+    height: 100%;
+}
+.editor-container>.preview-container {
     padding: 5px;
     float: right;
+}
+.editor-container>.preview-container>.preview {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
 }
 .editor-container>.statusbar {
     padding: 5px;
