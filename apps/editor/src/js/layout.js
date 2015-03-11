@@ -96,4 +96,8 @@ Layout.prototype.getStatusbarRightAreaEl = function() {
     return this.$statusbarRightAreaEl;
 };
 
+Layout.prototype.getEditorContainerEl = function() {
+    return this.$editorContainerEl;
+};
+
 module.exports = Layout;
