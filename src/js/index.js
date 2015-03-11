@@ -32,6 +32,14 @@ NEditor.prototype.focus = function() {
    this.editor.focus();
 };
 
+NEditor.prototype.setValue = function(markdown) {
+    this.editor.setValue(markdown);
+};
+
+NEditor.prototype.getValue = function() {
+    return this.editor.getValue();
+};
+
 NEditor.prototype.remove = function() {
     console.log('remove');
 };
