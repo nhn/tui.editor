@@ -13,7 +13,7 @@
  * @class
  */
 function ExtManager() {
-    this.exts = new util.HashMap();
+    this.exts = new ne.util.HashMap();
 }
 
 ExtManager.prototype.activate = function(obj) {
