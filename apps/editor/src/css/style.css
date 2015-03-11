@@ -15,6 +15,8 @@
     padding: 5px;
     height: 30px;
     background: #eee;
+}
+.editor-container.preview-style-column>.toolbar {
     border-bottom: 1px solid #ccc;
 }
 .editor-container>.toolbar>button {
@@ -27,6 +29,7 @@
     border-width: 1px 1px 1px 0;
     float: left;
     outline: none;
+    cursor: pointer;
 }
 .editor-container>.toolbar>button:hover,
 .editor-container>.toolbar>button:focus {
@@ -38,23 +41,72 @@
 .editor-container>.toolbar>button:first-child {
     border-left-width: 1px;
 }
-.editor-container>.editor,
-.editor-container>.preview {
-    box-sizing: border-box;
-    width: 50%;
-    height:400px;
-    overflow: auto;
+.editor-container>.tab{
+    padding: 0 5px;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
 }
-.editor-container>.editor {
+.editor-container>.tab>button {
+    box-sizing: border-box;
+    padding: 5px;
+    height: 23px;
+    font-size: 11px;
+    line-height: 100%;
+    background: #ddd;
+    border: 1px solid #ccc;
+    position: relative;
+    top: 1px;
+    left: -1px;
+    outline: none;
+    cursor: pointer;
+}
+.editor-container>.tab>button:first-child {
+    left: 0;
+}
+.editor-container>.tab>button.active {
+    background: white;
+    border-bottom-color: white;
+}
+.editor-container>.tab>button:hover,
+.editor-container>.tab>button:focus {
+    background: #eee;
+}
+.editor-container>.editor>.CodeMirror {
+    height: 100%;
+}
+.editor-container>.editor,
+.editor-container>.preview-container {
+    box-sizing: border-box;
+    height:400px;
+}
+.editor-container.preview-style-tab>.editor,
+.editor-container.preview-style-tab>.preview-container {
+    float: left;
+    width: 100%;
+    display: none;
+}
+.editor-container.preview-style-tab>.active {
+    display: block;
+}
+.editor-container.preview-style-column>.editor,
+.editor-container.preview-style-column>.preview-container {
+    width: 50%;
+}
+.editor-container.preview-style-column>.editor {
     padding: 5px;
     border-right: 1px solid #ccc;
     float: left;
     outline: none;
     white-space: pre;
 }
-.editor-container>.preview {
+.editor-container.preview-style-column>.preview-container {
     padding: 5px;
     float: right;
+}
+.editor-container.preview-style-column>.preview-container>.preview {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
 }
 .editor-container>.statusbar {
     padding: 5px;

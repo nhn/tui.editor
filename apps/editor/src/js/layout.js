@@ -14,6 +14,7 @@
  */
 function Layout(base, options) {
     this.$el = $(options.el);
+    this.previewStyle = options.previewStyle === 'tab' ? 'tab' : 'column';
 }
 
 
@@ -22,6 +23,11 @@ Layout.prototype.init = function() {
 
     this.$containerEl = this._initContainerEl();
     this.$toolbarEl = this._initToolbarEl();
+
+    if (this.previewStyle === 'tab') {
+        this._initTabEl();
+    }
+
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
     this.$statusbarEl = this._initStatusBarEl();
@@ -32,6 +38,7 @@ Layout.prototype.init = function() {
 Layout.prototype._initContainerEl = function() {
     return $('<div>')
         .addClass('editor-container')
+        .addClass('preview-style-' + this.previewStyle)
         .appendTo(this.$el);
 };
 
@@ -40,14 +47,41 @@ Layout.prototype._initToolbarEl = function() {
         .addClass('toolbar')
         .appendTo(this.$containerEl)
         //TODO extension 정의 후 제거(addButton() 사용)
-        .append('<button style="font-weight:bold">B</button>')
-        .append('<button style="font-style:italic">I</button>')
-        .append('<button style="text-decoration:underline">U</button>');
+        .append('<button type="button" style="font-weight:bold">B</button>')
+        .append('<button type="button" style="font-style:italic">I</button>')
+        .append('<button type="button" style="text-decoration:underline">U</button>');
+};
+
+Layout.prototype._initTabEl = function() {
+    var self = this;
+    var editorButton = $('<button type="button" class="active">Editor</button>');
+    var previewButton = $('<button type="button">Preview</button>');
+
+    editorButton.on('click', function() {
+        self.$editorContainerEl.addClass('active');
+        self.$previewEl.parent().removeClass('active');
+        editorButton.addClass('active');
+        previewButton.removeClass('active');
+    });
+
+    previewButton.on('click', function () {
+        self.$editorContainerEl.removeClass('active');
+        self.$previewEl.parent().addClass('active');
+        editorButton.removeClass('active');
+        previewButton.addClass('active');
+    });
+
+    return $('<div>')
+        .addClass('tab')
+        .append(editorButton)
+        .append(previewButton)
+        .appendTo(this.$containerEl);
 };
 
 Layout.prototype._initEditorEl = function() {
     return $('<div>')
         .addClass('editor')
+        .addClass('active')
         //.attr('contenteditable', 'true')
         .appendTo(this.$containerEl);
 };
@@ -55,7 +89,8 @@ Layout.prototype._initEditorEl = function() {
 Layout.prototype._initPreviewEl = function() {
     return $('<div>')
         .addClass('preview')
-        .appendTo(this.$containerEl);
+        .appendTo(this.$containerEl)
+        .wrap('<div class="preview-container"></div>');
 };
 
 Layout.prototype._initStatusBarEl = function() {
