@@ -5,9 +5,9 @@ var MarkdownEditor = require('./markdownEditor');
 var Preview = require('./preview');
 var Layout = require('./layout');
 var EventManager = require('./eventManager');
-//커맨드매니저는 필요하다 Hook의 기능도 commandManager가 해야할듯
 var CommandManager = require('./commandManager');
 var ExtManager = require('./extManager');
+var Converter = require('./converter');
 
 
 function NEditor(options) {
@@ -19,8 +19,9 @@ function NEditor(options) {
     this.layout = new Layout(this, options);
     this.layout.init();
 
-    this.editor = new MarkdownEditor(this);
-    this.preview = new Preview(this);
+    this.editor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
+    this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
+    this.converter = new Converter(this.eventManager);
 
     this.exts = NEditor.extManager.activate(this);
 }

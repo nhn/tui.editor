@@ -28,7 +28,7 @@ CommandManager.prototype.action = function() {
         name = args.shift(),
         command = this.commands.get(name);
 
-    args.unshift(this.base.editor);
+    args.unshift(this.base);
 
     if (command) {
         command.apply(null, args);

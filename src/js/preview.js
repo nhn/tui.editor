@@ -12,9 +12,9 @@
  * @constructor
  * @class
  */
-function Preview(base) {
-    this.base = base;
-    this.el = this.base.layout.getPreviewEl();
+function Preview(eventManager, el) {
+    this.eventManager = eventManager;
+    this.el = el;
 
     this.init();
 }
@@ -22,16 +22,8 @@ function Preview(base) {
 Preview.prototype.init = function() {
     var self = this;
 
-    this.base.eventManager.listen('previewUpdate', function(markdown) {
-        self.el.html(marked(markdown, {
-            gfm: true,
-            tables: true,
-            breaks: false,
-            pedantic: false,
-            sanitize: true,
-            smartLists: true,
-            smartypants: false
-        }));
+    this.eventManager.listen('previewUpdate', function(html) {
+        self.el.html(html);
     });
 };
 

@@ -12,9 +12,11 @@
  * @constructor
  * @class
  */
-function Extension(name, target) {
+function Extension(name, base) {
     this.name = name;
-    this.editor = target;
+
+    this.commandManager = base.commandManager;
+    this.eventManger = base.eventManager;
 }
 
 Extension.prototype.addCommand = function(commandOptions) {
@@ -26,8 +28,6 @@ Extension.prototype.action = function() {
     commandManager.action.apply(this.commandManager, arguments);
 };
 
-Extension.prototype.remove = function() {
-
-};
+Extension.prototype.remove = function() {};
 
 module.exports = Extension;

@@ -12,12 +12,11 @@
  * @constructor
  * @class
  */
-function MarkdownEditor(base) {
-    this.base = base;
-    this.$editorContainerEl = this.base.layout.$editorContainerEl;
+function MarkdownEditor(eventManager, el) {
+    this.eventManager = eventManager;
+    this.$editorContainerEl = el;
 
     this.init();
-    this._initEvent();
 }
 
 MarkdownEditor.prototype.init = function() {
@@ -29,6 +28,8 @@ MarkdownEditor.prototype.init = function() {
         lineWrapping: true,
         mode: "markdown"
     });
+
+    this._initEvent();
 };
 
 MarkdownEditor.prototype._initEvent = function() {
@@ -36,7 +37,7 @@ MarkdownEditor.prototype._initEvent = function() {
 
     this.cm.on('update', function(cm) {
         console.log('event: update', cm);
-        self.base.eventManager.emit('previewUpdate', cm.doc.getValue('\n'));
+        self.eventManager.emit('markdownUpdated', cm.doc.getValue('\n'));
     });
 
     this.cm.on('change', function() {
