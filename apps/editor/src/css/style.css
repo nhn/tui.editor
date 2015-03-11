@@ -71,16 +71,20 @@
 .editor-container>.tab>button:focus {
     background: #eee;
 }
+.editor-container>.editor,
+.editor-container>.preview {
+    box-sizing: border-box;
+    height:400px;
+    overflow: auto;
+}
 .editor-container>.editor>.CodeMirror {
     height: 100%;
 }
-.editor-container>.editor,
-.editor-container>.preview-container {
-    box-sizing: border-box;
-    height:400px;
+.editor-container>.preview {
+    padding: 5px;
 }
 .editor-container.preview-style-tab>.editor,
-.editor-container.preview-style-tab>.preview-container {
+.editor-container.preview-style-tab>.preview {
     float: left;
     width: 100%;
     display: none;
@@ -89,24 +93,16 @@
     display: block;
 }
 .editor-container.preview-style-column>.editor,
-.editor-container.preview-style-column>.preview-container {
+.editor-container.preview-style-column>.preview {
     width: 50%;
 }
 .editor-container.preview-style-column>.editor {
-    padding: 5px;
-    border-right: 1px solid #ccc;
     float: left;
-    outline: none;
-    white-space: pre;
+    border-right: 1px solid #ccc;
 }
-.editor-container.preview-style-column>.preview-container {
-    padding: 5px;
+.editor-container.preview-style-column>.preview {
     float: right;
-}
-.editor-container.preview-style-column>.preview-container>.preview {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
+    padding: 5px;
 }
 .editor-container>.statusbar {
     padding: 5px;
