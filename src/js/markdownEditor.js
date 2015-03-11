@@ -12,7 +12,7 @@
  * @constructor
  * @class
  */
-function MarkdownEditor(base, options) {
+function MarkdownEditor(base) {
     this.base = base;
     this.$editorContainerEl = this.base.layout.$editorContainerEl;
 
