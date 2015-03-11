@@ -15,6 +15,7 @@
 function Layout(base, options) {
     this.$el = $(options.el);
     this.previewStyle = options.previewStyle === 'tab' ? 'tab' : 'column';
+    this.height = options.height;
 }
 
 
@@ -22,7 +23,7 @@ Layout.prototype.init = function() {
     console.log('Layout Init');
 
     this.$containerEl = this._initContainerEl();
-    this.$toolbarEl = this._initToolbarEl();
+    //this.$toolbarEl = this._initToolbarEl();
 
     if (this.previewStyle === 'tab') {
         this._initTabEl();
@@ -30,9 +31,9 @@ Layout.prototype.init = function() {
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
-    this.$statusbarEl = this._initStatusBarEl();
-    this.$statusbarLeftAreaEl = this._initStatusBarLeftAreaEl();
-    this.$statusbarRightAreaEl = this._initStatusBarRightAreaEl();
+    //this.$statusbarEl = this._initStatusBarEl();
+    //this.$statusbarLeftAreaEl = this._initStatusBarLeftAreaEl();
+    //this.$statusbarRightAreaEl = this._initStatusBarRightAreaEl();
 };
 
 Layout.prototype._initContainerEl = function() {
@@ -54,27 +55,27 @@ Layout.prototype._initToolbarEl = function() {
 
 Layout.prototype._initTabEl = function() {
     var self = this;
-    var editorButton = $('<button type="button" class="active">Editor</button>');
-    var previewButton = $('<button type="button">Preview</button>');
+    var $editorButton = $('<button type="button" class="active">Editor</button>');
+    var $previewButton = $('<button type="button">Preview</button>');
 
-    editorButton.on('click', function() {
+    $editorButton.on('click', function() {
         self.$editorContainerEl.addClass('active');
-        self.$previewEl.parent().removeClass('active');
-        editorButton.addClass('active');
-        previewButton.removeClass('active');
+        self.$previewEl.removeClass('active');
+        $editorButton.addClass('active');
+        $previewButton.removeClass('active');
     });
 
-    previewButton.on('click', function () {
+    $previewButton.on('click', function () {
         self.$editorContainerEl.removeClass('active');
-        self.$previewEl.parent().addClass('active');
-        editorButton.removeClass('active');
-        previewButton.addClass('active');
+        self.$previewEl.addClass('active');
+        $editorButton.removeClass('active');
+        $previewButton.addClass('active');
     });
 
     return $('<div>')
         .addClass('tab')
-        .append(editorButton)
-        .append(previewButton)
+        .append($editorButton)
+        .append($previewButton)
         .appendTo(this.$containerEl);
 };
 
@@ -82,6 +83,7 @@ Layout.prototype._initEditorEl = function() {
     return $('<div>')
         .addClass('editor')
         .addClass('active')
+        .height(this.height)
         //.attr('contenteditable', 'true')
         .appendTo(this.$containerEl);
 };
@@ -89,8 +91,8 @@ Layout.prototype._initEditorEl = function() {
 Layout.prototype._initPreviewEl = function() {
     return $('<div>')
         .addClass('preview')
+        .height(this.height)
         .appendTo(this.$containerEl)
-        .wrap('<div class="preview-container"></div>');
 };
 
 Layout.prototype._initStatusBarEl = function() {
