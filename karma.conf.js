@@ -21,13 +21,9 @@ module.exports = function(config) {
         files: [
             'lib/jquery/dist/jquery.js',
             'lib/codesnippet/code-snippet.js',
-            'lib/WeakMap/WeakMap.js',
-            'lib/MutationObserver/MutationObserver.js',
-            'lib/rangy/rangy-core.js',
             'lib/marked/marked.min.js',
-            'lib/prism/prism.js',
             'src/js/**/*.js',
-            {pattern: 'test/fixtures/*', included: false},
+            //{pattern: 'test/fixtures/*', included: false},
             'test/**/*.spec.js'
         ],
 
