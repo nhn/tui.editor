@@ -48,6 +48,10 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('scroll', function() {
         console.log('event: scroll', arguments);
     });
+
+    this.cm.on('focus', function() {
+        console.log('event: focus', arguments);
+    });
 };
 
 MarkdownEditor.prototype.focus = function() {
