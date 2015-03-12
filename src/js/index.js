@@ -5,10 +5,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
-    CommandManager = require('./commandManager'),
-    ExtManager = require('./extManager'),
-    Converter = require('./converter'),
-    Bold = require('./ext/bold');
+    Converter = require('./converter');
 
 function NEditor(options) {
     var defaultOptions = {
@@ -19,31 +16,36 @@ function NEditor(options) {
     this.options = $.extend({}, defaultOptions, options);
 
     this.eventManager = new EventManager();
-    this.commandManager = new CommandManager(this);
     this.converter = new Converter(this.eventManager);
 
     this.layout = new Layout(this, options);
     this.layout.init();
 
-    this.editor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
+    this.mdEditor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
-
-
-    this.exts = NEditor.extManager.activate(this);
 
     this.focus();
 }
 
+NEditor.prototype.execCommand = function(command) {
+    //현재 에디터 상태를 토대로 codeMirror혹은 Wysiwyg커맨드를 실행해주는 루틴
+    this.getCodeMirror().execCommand(command);
+};
+
+NEditor.prototype.getCodeMirror = function() {
+    return this.mdEditor.cm;
+};
+
 NEditor.prototype.focus = function() {
-   this.editor.focus();
+   this.mdEditor.focus();
 };
 
 NEditor.prototype.setValue = function(markdown) {
-    this.editor.setValue(markdown);
+    this.mdEditor.setValue(markdown);
 };
 
 NEditor.prototype.getValue = function() {
-    return this.editor.getValue();
+    return this.mdEditor.getValue();
 };
 
 NEditor.prototype.remove = function() {
@@ -57,14 +59,6 @@ NEditor.prototype.hide = function() {
 NEditor.prototype.getMarkdown = function() {
     console.log('getMarkdown');
 };
-
-NEditor.extManager = new ExtManager();
-
-NEditor.addExtension = function(ext) {
-    NEditor.extManager.add(ext);
-};
-
-NEditor.addExtension(Bold);
 
 window.ne = window.ne || {};
 window.ne.NEditor = NEditor;
