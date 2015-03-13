@@ -86,7 +86,7 @@ $.fn.ned = function() {
 
         if (instance) {
             if (typeof options === 'string') {
-                instance[options].apply(instance, args.slice(1));
+                return instance[options].apply(instance, args.slice(1));
             }
         } else {
             options.el = el;
