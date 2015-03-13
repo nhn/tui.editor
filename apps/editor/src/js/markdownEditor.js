@@ -12,11 +12,9 @@
  * @constructor
  * @class
  */
-function MarkdownEditor(eventManager, el, initialValue) {
+function MarkdownEditor(eventManager, el) {
     this.eventManager = eventManager;
     this.$editorContainerEl = el;
-
-    this.init(initialValue);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -24,6 +22,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
 
     if (initialValue) {
         cmTextarea.text(initialValue);
+        this.eventManager.emit('markdownUpdated', initialValue);
     }
 
     this.$editorContainerEl.append(cmTextarea);
