@@ -28,15 +28,22 @@
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
-    var ned = new ne.NEditor({
+    /*var ned = new ne.NEditor({
         el: $('#editSection'),
 //        previewStyle: 'column',
         previewStyle: 'tab',
         height: 100
+    });*/
+
+    $('#editSection').ned({
+        previewStyle: 'tab',
+        height: 100
     });
 
-    ned.setValue("#Heading\n##Heading2");
-    console.log(ned.getValue());
+
+
+    $('#editSection').ned('setValue', "#Heading\n##Heading2");
+    console.log($('#editSection').ned('getValue'));
 </script>
 </body>
 </html>

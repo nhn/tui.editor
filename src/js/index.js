@@ -5,7 +5,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
-    Button = require('./button'),
+    //Button = require('./Button'),
     Converter = require('./converter');
 
 function NEditor(options) {
@@ -26,11 +26,11 @@ function NEditor(options) {
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
 
     this.focus();
-
+/*
     console.log(new Button({
         className: 'bold',
         text: 'B'
-    }));
+    }));*/
 }
 
 NEditor.prototype.getCursorOffset = function() {
