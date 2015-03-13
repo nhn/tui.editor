@@ -12,15 +12,19 @@
  * @constructor
  * @class
  */
-function MarkdownEditor(eventManager, el) {
+function MarkdownEditor(eventManager, el, initialValue) {
     this.eventManager = eventManager;
     this.$editorContainerEl = el;
 
-    this.init();
+    this.init(initialValue);
 }
 
-MarkdownEditor.prototype.init = function() {
+MarkdownEditor.prototype.init = function(initialValue) {
     var cmTextarea = $('<textarea />');
+
+    if (initialValue) {
+        cmTextarea.text(initialValue);
+    }
 
     this.$editorContainerEl.append(cmTextarea);
 

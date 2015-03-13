@@ -23,7 +23,7 @@ function NEditor(options) {
     this.layout = new Layout(this, options);
     this.layout.init();
 
-    this.mdEditor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
+    this.mdEditor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl(), this.options.initialValue);
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
 
     NEditor._extManager.applyExtension(this, this.options.exts);
