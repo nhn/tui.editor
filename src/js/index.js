@@ -5,6 +5,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
+    Button = require('./button'),
     Converter = require('./converter');
 
 function NEditor(options) {
@@ -25,7 +26,15 @@ function NEditor(options) {
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
 
     this.focus();
+
+    console.log(new Button({
+        className: 'bold',
+        text: 'B'
+    }));
 }
+
+NEditor.prototype.getCursorOffset = function() {
+};
 
 NEditor.prototype.execCommand = function(command) {
     //현재 에디터 상태를 토대로 codeMirror혹은 Wysiwyg커맨드를 실행해주는 루틴
@@ -58,6 +67,35 @@ NEditor.prototype.hide = function() {
 
 NEditor.prototype.getMarkdown = function() {
     console.log('getMarkdown');
+};
+
+
+//for jquery
+$.fn.ned = function() {
+    var args = $.makeArray(arguments),
+        options,
+        instance,
+        el;
+
+    el = this[0];
+
+    if (el) {
+        options = args[0] || {};
+
+        instance = $.data(el, 'ned');
+
+        if (instance) {
+            if (typeof options === 'string') {
+                instance[options].apply(instance, args.slice(1));
+            }
+        } else {
+            options.el = el;
+            instance = new NEditor(options);
+            $.data(el, 'ned', instance);
+        }
+    }
+
+    return this;
 };
 
 window.ne = window.ne || {};
