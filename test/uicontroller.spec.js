@@ -1,81 +1,12 @@
-var UIController = require('../../../src/js/ui/uicontroller'),
-    InteractBroker = require('../../../src/js/interactBroker');
+var UIController = require('../src/js/uicontroller');
+
+'use strict';
 
 describe('UIController', function() {
-    var uic, ib;
+    var uic;
 
     beforeEach(function() {
         uic = new UIController();
-        ib = new InteractBroker();
-    });
-
-    describe('setIB', function(){
-        it('InteractBroker를 셋팅할수있다', function() {
-            uic.setIB(ib);
-
-            expect(uic.IB).toBe(ib);
-        });
-
-        it('IB가 셋팅이 되고 uic에 onSetIB 메소드가 구현되어있으면 실행한다', function() {
-            uic.onSetIB = jasmine.createSpy('onsetib');
-            uic.setIB(ib);
-
-            expect(uic.onSetIB).toHaveBeenCalled();
-        });
-    });
-
-    describe('listen()', function() {
-        it('InteractBroker에서 메세지를 받을수있다.', function(){
-            var param = null;
-
-            uic.setIB(ib);
-            uic.listen('justevent', function(data){
-                param = data;
-            });
-
-            ib.emit('justevent', 5);
-
-           expect(param).toEqual(5);
-        });
-    });
-
-    describe('stopListen()', function() {
-        var param;
-
-        beforeEach(function(){
-            param = null;
-
-            uic.setIB(ib);
-            uic.listen('justevent', function(data){
-                param = data;
-            });
-        });
-
-        it('IB에서 메세지구독을 해제한다', function() {
-            uic.stopListen();
-            ib.emit('justevent', 5);
-
-            expect(param).toEqual(null);
-        });
-    });
-
-    describe('emit()', function() {
-        var param;
-
-        beforeEach(function(){
-            param = null;
-
-            uic.setIB(ib);
-            uic.listen('justevent', function(data){
-                param = data;
-            });
-        });
-
-        it('IB에 emit()메소드를 실행하며 인자를 전달한다. ', function() {
-            uic.emit('justevent', 5);
-
-            expect(param).toEqual(5);
-        });
     });
 
     describe('on()', function() {
@@ -118,32 +49,6 @@ describe('UIController', function() {
         });
     });
 
-    describe('_addEvent()', function(){
-        it('커스텀 이벤트를 바인드할수있다.', function() {
-            var check = false;
-
-            uic._addEvent('event!', function() {
-                check = true;
-            });
-
-            uic.fireEvent('event!');
-
-            expect(check).toEqual(true);
-        });
-
-        it('jQuery 형식으로 el에  이벤트를 바인드할수있다.', function() {
-            var check = false;
-
-            uic._addEvent('click', function() {
-                check = true;
-            });
-
-            uic.$el.trigger('click');
-
-            expect(check).toEqual(true);
-        });
-    });
-
     describe('off()', function() {
         it('커스텀 이벤트를 취소한다..', function() {
             var check = false;
@@ -173,14 +78,6 @@ describe('UIController', function() {
         });
     });
 
-    describe('_parseEventType()', function() {
-        it('이벤트 타입으로 아벤트종류와 셀렉터를 구분한다.', function() {
-            var parsedType = uic._parseEventType('click .tab a');
-
-            expect(parsedType[0]).toEqual('click');
-            expect(parsedType[1]).toEqual('.tab a');
-        });
-    });
 
     describe('isDomEvent()', function() {
         it('이벤트와 셀렉터를 넘겨 돔이벤트를 구분할수있다.', function() {
@@ -265,8 +162,8 @@ describe('UIController', function() {
         });
 
         it('각종 속성으로 원하는 루트 엘리먼트를 생성할수있다', function() {
-            uic.tagName = 'ol';
-            uic.className = 'myclass';
+            uic.options.tagName = 'ol';
+            uic.options.className = 'myclass';
             uic.setRootElement();
 
             expect(uic.$el[0].tagName).toEqual('OL');
@@ -302,12 +199,11 @@ describe('UIController', function() {
 
 
     describe('addUIC()', function() {
-       it('IB를 서로 연결하고 파라메터로 넘겨진 uic의 루트엘리먼트도 포함시킨다.', function() {
+       it('uic를 dom상에 append한다', function() {
             var subUic = new UIController();
 
             uic.addUIC(subUic);
 
-            expect(uic.IB).toBe(subUic.IB);
             expect(uic.$el.find('div').length).toEqual(1);
        });
     });

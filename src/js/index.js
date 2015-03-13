@@ -5,7 +5,8 @@ var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
-    //Button = require('./Button'),
+    ExtManager = require('./extManager'),
+    Button = require('./button'),
     Converter = require('./converter');
 
 function NEditor(options) {
@@ -25,12 +26,16 @@ function NEditor(options) {
     this.mdEditor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
     this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
 
+    NEditor._extManager.applyExtension(this, this.options.exts);
     this.focus();
-/*
-    console.log(new Button({
+
+
+    var button = new Button({
         className: 'bold',
         text: 'B'
-    }));*/
+    });
+
+    $('body').append(button.$el);
 }
 
 NEditor.prototype.getCursorOffset = function() {
@@ -68,6 +73,12 @@ NEditor.prototype.hide = function() {
 NEditor.prototype.getMarkdown = function() {
     console.log('getMarkdown');
 };
+
+NEditor.definedExtention = function(name, ext) {
+    NEditor._extManager.defineExtension(name, ext);
+};
+
+NEditor._extManager = new ExtManager();
 
 
 //for jquery
