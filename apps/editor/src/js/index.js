@@ -5,6 +5,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
+    CommandMangager = require('./commandManager'),
     ExtManager = require('./extManager'),
     Button = require('./button'),
     Converter = require('./converter');
@@ -18,13 +19,14 @@ function NEditor(options) {
     this.options = $.extend({}, defaultOptions, options);
 
     this.eventManager = new EventManager();
+    this.commandManager = new CommandMangager(this);
     this.converter = new Converter(this.eventManager);
 
     this.layout = new Layout(this, options);
     this.layout.init();
 
-    this.mdEditor = new MarkdownEditor(this.eventManager, this.layout.getEditorContainerEl());
-    this.preview = new Preview(this.eventManager, this.layout.getPreviewEl());
+    this.mdEditor = new MarkdownEditor(this.layout.getEditorContainerEl(), this.eventManager, this.commandManager);
+    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
 
     NEditor._extManager.applyExtension(this, this.options.exts);
 

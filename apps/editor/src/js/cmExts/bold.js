@@ -4,7 +4,6 @@ var Bold = {
     name: 'Bold',
     type: 'md',
     fn: function bold(cm) {
-
         if (cm.getOption("disableInput")) {
             return CodeMirror.Pass;
         }
