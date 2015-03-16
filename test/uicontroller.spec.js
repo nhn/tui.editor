@@ -162,8 +162,8 @@ describe('UIController', function() {
         });
 
         it('각종 속성으로 원하는 루트 엘리먼트를 생성할수있다', function() {
-            uic.options.tagName = 'ol';
-            uic.options.className = 'myclass';
+            uic.tagName = 'ol';
+            uic.className = 'myclass';
             uic.setRootElement();
 
             expect(uic.$el[0].tagName).toEqual('OL');
