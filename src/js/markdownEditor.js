@@ -5,6 +5,8 @@
 
 'use strict';
 
+var Bold = require('./cmExts/bold');
+
 /**
  * MarkdownEditor
  * @exports MarkdownEditor
@@ -12,9 +14,11 @@
  * @constructor
  * @class
  */
-function MarkdownEditor(eventManager, el) {
+function MarkdownEditor(el, eventManager, commandManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = el;
+
+    commandManager.addCommand(Bold);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {

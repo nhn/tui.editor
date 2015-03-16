@@ -12,7 +12,7 @@
  * @constructor
  * @class
  */
-function Preview(eventManager, el) {
+function Preview(el, eventManager) {
     this.eventManager = eventManager;
     this.el = el;
 
