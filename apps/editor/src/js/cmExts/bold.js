@@ -1,18 +1,22 @@
-CodeMirror.commands.bold = function bold(cm) {
-    console.log('bold');
+'use strict';
 
-    if (cm.getOption("disableInput")) {
-        return CodeMirror.Pass;
-    }
+var Bold = {
+    name: 'Bold',
+    type: 'md',
+    fn: function bold(cm) {
 
-    var doc = cm.getDoc();
-    var selection = doc.getSelection();
+        if (cm.getOption("disableInput")) {
+            return CodeMirror.Pass;
+        }
 
-    var result = '**' + selection + '**';
+        var doc = cm.getDoc();
+        var selection = doc.getSelection();
 
-    doc.replaceSelection(result);
+        var result = '**' + selection + '**';
+
+        doc.replaceSelection(result);
+    },
+    keyMap: ['Ctrl-B', 'Cmd-B']
 };
 
-CodeMirror.keyMap.macDefault['Cmd-B'] = 'bold';
-CodeMirror.keyMap.pcDefault['Ctrl-B'] = 'bold';
-
+module.exports = Bold;
