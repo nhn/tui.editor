@@ -22,6 +22,7 @@ module.exports = function(config) {
             'lib/jquery/dist/jquery.js',
             'lib/codesnippet/code-snippet.js',
             'lib/marked/marked.min.js',
+            'lib/codemirror/lib/codemirror.js',
             'src/js/**/*.js',
             //{pattern: 'test/fixtures/*', included: false},
             'test/**/*.spec.js'
