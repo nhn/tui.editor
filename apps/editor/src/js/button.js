@@ -12,27 +12,26 @@ var util = ne.util;
 /**
  * Button
  * @exports Button
- * @extends {}
+ * @extends {UIController}
  * @constructor
  * @class
+ * @param {object} options 옵션
+ * @param {string} options.tagName 만들 RootElement 태그네임
+ * @param {string} options.className 만들어진 RootElement에 추가할 클래스
+ * @param {string} options.command 클릭되면 실행될 커맨드명
+ * @param {string} options.text 버튼안에 들어갈 텍스트
+ * @param {string} options.style 추가적으로 적용될 CSS스타일
  */
-
 function Button(options) {
-    $.extend(options, {
-        className: '',
-        command: '',
-        text: 'TB'
-    });
-
     UIController.call(this, {
         tagName: 'button',
-        className: options.className
+        className: this._getClassName(options.className)
     });
 
     this.command = options.command;
     this.text = options.text;
+    this.style = options.style;
 
-    this.attachEvents();
     this.render();
 }
 
@@ -44,10 +43,29 @@ Button.prototype.events = {
 
 Button.prototype.render = function() {
     this.$el.text(this.text);
+
+    if (this.className) {
+        this.$el.addClass(this.className);
+    }
+
+    if (this.style) {
+        this.$el.attr('style', this.style);
+    }
+    this.attachEvents();
 };
 
 Button.prototype._onClick = function() {
-    console.log('aewfawef');
+    this.fireEvent('command', this.command);
+};
+
+Button.prototype._getClassName = function(classNameToAdd) {
+    var className = 'toolButton';
+
+    if (classNameToAdd) {
+        className += ' ' + classNameToAdd;
+    }
+
+    return className;
 };
 
 module.exports = Button;
