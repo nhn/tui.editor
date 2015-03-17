@@ -7,7 +7,6 @@ var MarkdownEditor = require('./markdownEditor'),
     EventManager = require('./eventManager'),
     CommandMangager = require('./commandManager'),
     ExtManager = require('./extManager'),
-    Button = require('./button'),
     Converter = require('./converter');
 
 function NEditor(options) {
@@ -22,7 +21,7 @@ function NEditor(options) {
     this.commandManager = new CommandMangager(this);
     this.converter = new Converter(this.eventManager);
 
-    this.layout = new Layout(this, options);
+    this.layout = new Layout(options, this.eventManager, this.commandManager);
     this.layout.init();
 
     this.mdEditor = new MarkdownEditor(this.layout.getEditorContainerEl(), this.eventManager, this.commandManager);
@@ -33,14 +32,6 @@ function NEditor(options) {
     this.mdEditor.init(this.options.initialValue);
 
     this.focus();
-
-
-    var button = new Button({
-        className: 'bold',
-        text: 'B'
-    });
-
-    $('body').append(button.$el);
 }
 
 NEditor.prototype.getCursorOffset = function() {

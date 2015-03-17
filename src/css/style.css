@@ -122,3 +122,13 @@
 .editor-container>.statusbar>span.right {
     float: right;
 }
+
+.toolButton {
+    padding: 6px 10px;
+    backgound: #ccc;
+    border: 1px solid #555;
+}
+
+.boldButton {
+    font-weight:bold;
+}

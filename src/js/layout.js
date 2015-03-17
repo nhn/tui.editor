@@ -5,6 +5,8 @@
 
 'use strict';
 
+var Toolbar = require('./toolbar.js');
+
 /**
  * Layout
  * @exports Layout
@@ -12,15 +14,20 @@
  * @constructor
  * @class
  */
-function Layout(base, options) {
+function Layout(options, eventManager, commandManager) {
     this.$el = $(options.el);
     this.previewStyle = options.previewStyle === 'tab' ? 'tab' : 'column';
     this.height = options.height;
+    this.eventManager = eventManager;
+    this.commandManager = commandManager;
 }
 
 
 Layout.prototype.init = function() {
     console.log('Layout Init');
+
+    this.toolbar = new Toolbar(this.$el, this.eventManager, this.commandManager);
+    this.$el.append(this.toolbar.$el);
 
     this.$containerEl = this._initContainerEl();
     //this.$toolbarEl = this._initToolbarEl();
@@ -31,6 +38,7 @@ Layout.prototype.init = function() {
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
+
     //this.$statusbarEl = this._initStatusBarEl();
     //this.$statusbarLeftAreaEl = this._initStatusBarLeftAreaEl();
     //this.$statusbarRightAreaEl = this._initStatusBarRightAreaEl();
