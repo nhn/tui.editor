@@ -41,6 +41,9 @@ Button.prototype.events = {
     'click': '_onClick'
 };
 
+/**
+ * Button의 모습을 그린다
+ */
 Button.prototype.render = function() {
     this.$el.text(this.text);
 
