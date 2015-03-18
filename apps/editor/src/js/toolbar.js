@@ -42,7 +42,10 @@ Toolbar.prototype.render = function() {
     this.$el.append(this.template(tmpl, {title: 'toolbuttons'}));
     this.$buttonContainer = this.$el.find('.buttons');
 };
-
+/**
+ * 버튼을 추가한다
+ * @param {Button} button 버튼
+ */
 Toolbar.prototype.addButton = function(button) {
     var commandManager = this.commandManager;
 
