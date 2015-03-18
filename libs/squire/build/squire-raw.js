@@ -1436,7 +1436,7 @@ proto._updatePath = function ( range, force ) {
             this.fireEvent( 'pathChange', { path: newPath } );
         }
     }
-    if ( anchor !== focus ) {
+    if ( !range.collapsed ) {
         this.fireEvent( 'select' );
     }
 };
