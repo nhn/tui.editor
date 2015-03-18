@@ -13,10 +13,14 @@ var gulp = require('gulp'),
 
     connect = require('gulp-connect'),
 
+    rename = require('gulp-rename'),
+
+    ugilfy = require('gulp-uglify'),
+
     livereload = require('gulp-livereload');
 
 /*
- * Browserify
+ * Browserif
  */
 var bundler = watchify(browserify('./src/js/index.js', {
     debug: true
@@ -40,6 +44,14 @@ function bundle(changedFiles) {
 
 bundler.on('update', bundle); // on any dep update, runs the bundler
 gulp.task('develop', bundle); // so you can run `gulp js` to build the file
+
+gulp.task('bundle', function() {
+    return browserify('./src/js/index.js')
+        .bundle()
+        .pipe(source('ned.js'))
+        .pipe(buffer())
+        .pipe(gulp.dest('./dist'));
+});
 
 /*
  * eslint
@@ -67,3 +79,16 @@ gulp.task('watch', function () {
     gulp.watch(['./build/*.js'], livereload.changed);
     gulp.watch(['./demo/*'], livereload.changed);
 });
+
+
+/*
+ * Uglify
+ */
+gulp.task('uglify', function() {
+    return gulp.src('./dist/ned.js')
+        .pipe(ugilfy())
+        .pipe(rename('ned.min.js'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build', ['bundle', 'uglify']);
