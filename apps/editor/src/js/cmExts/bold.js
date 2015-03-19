@@ -59,6 +59,8 @@ var Bold = {
         if (isEmpty && !isRemoved) {
             setCursorToCenter();
         }
+
+        cm.focus();
     },
     keyMap: ['Ctrl-B', 'Cmd-B']
 };
