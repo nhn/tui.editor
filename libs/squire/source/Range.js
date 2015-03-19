@@ -221,7 +221,7 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
         deleteContentsOfRange( range );
     }
 
-    // Move range down into text ndoes
+    // Move range down into text nodes
     moveRangeBoundariesDownTree( range );
 
     // If inline, just insert at the current position.
