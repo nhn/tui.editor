@@ -26,11 +26,10 @@ function Layout(options, eventManager, commandManager) {
 Layout.prototype.init = function() {
     console.log('Layout Init');
 
-    this.toolbar = new Toolbar(this.$el, this.eventManager, this.commandManager);
-    this.$el.append(this.toolbar.$el);
-
     this.$containerEl = this._initContainerEl();
-    //this.$toolbarEl = this._initToolbarEl();
+
+    this.toolbar = new Toolbar(this.$el, this.eventManager, this.commandManager);
+    this.$containerEl.append(this.toolbar.$el);
 
     if (this.previewStyle === 'tab') {
         this._initTabEl();
