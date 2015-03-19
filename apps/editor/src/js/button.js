@@ -25,7 +25,7 @@ var util = ne.util;
 function Button(options) {
     UIController.call(this, {
         tagName: 'button',
-        className: this._getClassName(options.className)
+        className: options.className
     });
 
     this.command = options.command;
@@ -55,16 +55,6 @@ Button.prototype.render = function() {
 
 Button.prototype._onClick = function() {
     this.fireEvent('command', this.command);
-};
-
-Button.prototype._getClassName = function(classNameToAdd) {
-    var className = 'toolButton';
-
-    if (classNameToAdd) {
-        className += ' ' + classNameToAdd;
-    }
-
-    return className;
 };
 
 module.exports = Button;

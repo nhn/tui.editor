@@ -6,6 +6,7 @@
 'use strict';
 
 var Bold = require('./cmExts/bold');
+var Italic = require('./cmExts/italic');
 
 /**
  * MarkdownEditor
@@ -19,6 +20,7 @@ function MarkdownEditor(el, eventManager, commandManager) {
     this.$editorContainerEl = el;
 
     commandManager.addCommand(Bold);
+    commandManager.addCommand(Italic);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
