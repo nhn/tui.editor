@@ -23,7 +23,7 @@ var tmpl = '<p><%=title%></p><div class="buttons"></div>';
 function Toolbar($container, eventManager, commandManager) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'toolBar'
+        className: 'toolbar'
     });
 
     this.buttons = [];
@@ -39,8 +39,7 @@ function Toolbar($container, eventManager, commandManager) {
 util.inherit(Toolbar, UIController);
 
 Toolbar.prototype.render = function() {
-    this.$el.append(this.template(tmpl, {title: 'toolbuttons'}));
-    this.$buttonContainer = this.$el.find('.buttons');
+    this.$buttonContainer = this.$el;
 };
 /**
  * 버튼을 추가한다
