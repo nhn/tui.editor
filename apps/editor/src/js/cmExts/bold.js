@@ -1,5 +1,6 @@
 'use strict';
 
+var boldRegex = /^\*\*(.*)\*\*$/m;
 var Bold = {
     name: 'Bold',
     type: 'md',
@@ -9,11 +10,17 @@ var Bold = {
         }
 
         var doc = cm.getDoc();
-        var selection = doc.getSelection();
+        var selection = doc.getSelections();
+        var i, length = selection.length;
+        var result = new Array(length);
 
-        var result = '**' + selection + '**';
+        var matches;
+        for (i = 0; i < length; i++) {
+            matches = boldRegex.exec(selection[i]);
+            result[i] = matches ? matches[1] : '**' + selection[i] + '**';
+        }
 
-        doc.replaceSelection(result);
+        doc.replaceSelections(result, 'around');
     },
     keyMap: ['Ctrl-B', 'Cmd-B']
 };
