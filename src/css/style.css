@@ -41,6 +41,12 @@
 .editor-container>.toolbar>button:first-child {
     border-left-width: 1px;
 }
+.editor-container>.toolbar>button.bold {
+    font-weight: bold;
+}
+.editor-container>.toolbar>button.italic {
+    font-style: italic;
+}
 .editor-container>.tab{
     padding: 0 5px;
     background: #eee;
@@ -123,12 +129,3 @@
     float: right;
 }
 
-.toolButton {
-    padding: 6px 10px;
-    backgound: #ccc;
-    border: 1px solid #555;
-}
-
-.boldButton {
-    font-weight:bold;
-}

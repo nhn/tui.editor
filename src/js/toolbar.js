@@ -10,8 +10,6 @@ var UIController = require('./uicontroller'),
 
 var util = ne.util;
 
-var tmpl = '<p><%=title%></p><div class="buttons"></div>';
-
 /**
  * Toolbar
  * @exports Toolbar
@@ -58,9 +56,15 @@ Toolbar.prototype.addButton = function(button) {
 
 Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
-        className: 'boldButton',
+        className: 'bold',
         command: 'Bold',
         text: 'B'
+    }));
+
+    this.addButton(new Button({
+        className: 'italic',
+        command: 'Italic',
+        text: 'I'
     }));
 };
 
