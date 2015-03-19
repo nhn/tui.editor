@@ -30,7 +30,7 @@ var Bold = {
             if (tmpSelection === '****' || tmpSelection === '____') {
                 selection = tmpSelection;
             } else {
-                doc.setSelection({line: cursor.line, ch: cursor.ch});
+                doc.setSelection(cursor);
             }
         }
 
