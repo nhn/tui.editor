@@ -7,6 +7,7 @@
 
 var Bold = require('./cmExts/bold');
 var Italic = require('./cmExts/italic');
+var DeleteEmphasis = require('./cmExts/deleteEmphasis');
 
 /**
  * MarkdownEditor
@@ -21,6 +22,7 @@ function MarkdownEditor(el, eventManager, commandManager) {
 
     commandManager.addCommand(Bold);
     commandManager.addCommand(Italic);
+    commandManager.addCommand(DeleteEmphasis);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
