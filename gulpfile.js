@@ -17,6 +17,8 @@ var gulp = require('gulp'),
 
     ugilfy = require('gulp-uglify'),
 
+    stripDebug = require('gulp-strip-debug'),
+
     livereload = require('gulp-livereload');
 
 /*
@@ -86,6 +88,7 @@ gulp.task('watch', function () {
  */
 gulp.task('uglify', function() {
     return gulp.src('./dist/ned.js')
+        .pipe(stripDebug())
         .pipe(ugilfy())
         .pipe(rename('ned.min.js'))
         .pipe(gulp.dest('./dist'));
