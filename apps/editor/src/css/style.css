@@ -1,4 +1,7 @@
 @charset "UTF-8";
+.editor-container * {
+    box-sizing: content-box;
+}
 .editor-container:after,
 .editor-container>.toolbar:after,
 .editor-container>.statusbar:after
