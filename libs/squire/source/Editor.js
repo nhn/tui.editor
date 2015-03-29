@@ -2,6 +2,18 @@
 
 var instances = [];
 
+function getSquireInstance ( doc ) {
+    var l = instances.length,
+        instance;
+    while ( l-- ) {
+        instance = instances[l];
+        if ( instance._doc === doc ) {
+            return instance;
+        }
+    }
+    return null;
+}
+
 function Squire ( doc ) {
     var win = doc.defaultView;
     var body = doc.body;

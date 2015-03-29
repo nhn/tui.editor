@@ -160,12 +160,14 @@ function fixCursor ( node ) {
     // cursor to appear.
     var doc = node.ownerDocument,
         root = node,
-        fixer, child,
-        l, instance;
+        fixer, child, instance;
 
     if ( node.nodeName === 'BODY' ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
-            fixer = doc.createElement( 'DIV' );
+            instance = getSquireInstance( doc );
+            fixer = instance ?
+                instance.createDefaultBlock() :
+                createElement( doc, 'DIV' );
             if ( child ) {
                 node.replaceChild( fixer, child );
             }
@@ -187,14 +189,7 @@ function fixCursor ( node ) {
         if ( !child ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( ZWS );
-                // Find the relevant Squire instance and notify
-                l = instances.length;
-                while ( l-- ) {
-                    instance = instances[l];
-                    if ( instance._doc === doc ) {
-                        instance._didAddZWS();
-                    }
-                }
+                getSquireInstance( doc )._didAddZWS();
             } else {
                 fixer = doc.createTextNode( '' );
             }
@@ -220,7 +215,7 @@ function fixCursor ( node ) {
             }
         }
         else if ( !node.querySelector( 'BR' ) ) {
-            fixer = doc.createElement( 'BR' );
+            fixer = createElement( doc, 'BR' );
             while ( ( child = node.lastElementChild ) && !isInline( child ) ) {
                 node = child;
             }
@@ -435,7 +430,7 @@ function mergeContainers ( node ) {
     if ( prev && areAlike( prev, node ) ) {
         if ( !isContainer( prev ) ) {
             if ( isListItem ) {
-                block = doc.createElement( 'DIV' );
+                block = createElement( doc, 'DIV' );
                 block.appendChild( empty( prev ) );
                 prev.appendChild( block );
             } else {
@@ -452,7 +447,7 @@ function mergeContainers ( node ) {
             mergeContainers( first );
         }
     } else if ( isListItem ) {
-        prev = doc.createElement( 'DIV' );
+        prev = createElement( doc, 'DIV' );
         node.insertBefore( prev, first );
         fixCursor( prev );
     }
