@@ -290,8 +290,8 @@ function split ( node, offset, stopNode ) {
             offset = next;
         }
 
-        // Maintain li numbering
-        if ( node.nodeName === 'OL' ) {
+        // Maintain li numbering if inside a quote.
+        if ( node.nodeName === 'OL' && getNearest( node, 'BLOCKQUOTE' ) ) {
             clone.start = ( +node.start || 1 ) + node.childNodes.length - 1;
         }
 
