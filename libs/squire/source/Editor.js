@@ -1467,7 +1467,7 @@ var cleanupBRs = function ( root ) {
 
 proto._ensureBottomLine = function () {
     var body = this._body,
-        last = body.lastChild;
+        last = body.lastElementChild;
     if ( !last || last.nodeName !== this.defaultBlockTag || !isBlock( last ) ) {
         body.appendChild( this.createDefaultBlock() );
     }

@@ -2557,7 +2557,17 @@ var cleanupBRs = function ( root ) {
 
 proto._ensureBottomLine = function () {
     var body = this._body,
-        last = body.lastChild;
+        last;
+    // Safari (+others?) adds white-space text nodes to the end of <body>
+    // for no apparent reason. Remove them, since they're semantically
+    // meaningless.
+    while ( last = body.lastChild ) {
+        if ( last.nodeType === TEXT_NODE && !notWS.test( last.data ) ) {
+            body.removeChild( last );
+        } else {
+            break;
+        }
+    }
     if ( !last || last.nodeName !== this.defaultBlockTag || !isBlock( last ) ) {
         body.appendChild( this.createDefaultBlock() );
     }
