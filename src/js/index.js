@@ -31,7 +31,7 @@ function NEditor(options) {
 
     this.mdEditor.init(this.options.initialValue);
 
-    this.focus();
+    //this.focus();
 }
 
 NEditor.prototype.getCursorOffset = function() {
