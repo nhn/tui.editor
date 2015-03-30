@@ -46,6 +46,7 @@ Button.prototype.events = {
  */
 Button.prototype.render = function() {
     this.$el.text(this.text);
+    this.$el.attr('type', 'button');
 
     if (this.style) {
         this.$el.attr('style', this.style);
