@@ -22,7 +22,6 @@ function Layout(options, eventManager, commandManager) {
     this.commandManager = commandManager;
 }
 
-
 Layout.prototype.init = function() {
     console.log('Layout Init');
 
@@ -37,10 +36,6 @@ Layout.prototype.init = function() {
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
-
-    //this.$statusbarEl = this._initStatusBarEl();
-    //this.$statusbarLeftAreaEl = this._initStatusBarLeftAreaEl();
-    //this.$statusbarRightAreaEl = this._initStatusBarRightAreaEl();
 };
 
 Layout.prototype._initContainerEl = function() {
@@ -48,16 +43,6 @@ Layout.prototype._initContainerEl = function() {
         .addClass('editor-container')
         .addClass('preview-style-' + this.previewStyle)
         .appendTo(this.$el);
-};
-
-Layout.prototype._initToolbarEl = function() {
-    return $('<div>')
-        .addClass('toolbar')
-        .appendTo(this.$containerEl)
-        //TODO extension 정의 후 제거(addButton() 사용)
-        .append('<button type="button" style="font-weight:bold">B</button>')
-        .append('<button type="button" style="font-style:italic">I</button>')
-        .append('<button type="button" style="text-decoration:underline">U</button>');
 };
 
 Layout.prototype._initTabEl = function() {
@@ -99,29 +84,7 @@ Layout.prototype._initPreviewEl = function() {
     return $('<div>')
         .addClass('preview')
         .height(this.height)
-        .appendTo(this.$containerEl)
-};
-
-Layout.prototype._initStatusBarEl = function() {
-    return $('<div>')
-        .addClass('statusbar')
         .appendTo(this.$containerEl);
-};
-
-Layout.prototype._initStatusBarLeftAreaEl = function() {
-    return $('<span>')
-        .addClass('left')
-        .appendTo(this.$statusbarEl)
-        //TODO 샘플 텍스트 제거
-        .text('p > img');
-};
-
-Layout.prototype._initStatusBarRightAreaEl = function() {
-    return $('<span>')
-        .addClass('right')
-        .appendTo(this.$statusbarEl)
-        //TODO 샘플 텍스트 제거
-        .text('10:00 임시 저장 됨');
 };
 
 Layout.prototype.getEditorEl = function() {
