@@ -20,10 +20,10 @@ function Preview($el, eventManager) {
 }
 
 Preview.prototype.init = function() {
-    var self = this;
+    var $el = this.$el;
 
     this.eventManager.listen('previewUpdate', function(html) {
-        self.el.html(html);
+        $el.html(html);
     });
 };
 
