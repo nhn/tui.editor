@@ -1,6 +1,35 @@
 'use strict';
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
+
+function isNeedRemove(selection) {
+    return boldRegex.test(selection);
+}
+
+function append(selection) {
+    return '**' + selection + '**';
+}
+
+function remove(selection) {
+    return selection.substr(2, selection.length - 4);
+}
+
+function expendSelection(doc, cursor) {
+    var tmpSelection = doc.getSelection();
+
+    doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+
+    if (tmpSelection === '****' || tmpSelection === '____') {
+        return tmpSelection;
+    } else {
+        doc.setSelection(cursor);
+    }
+}
+
+function setCursorToCenter(doc, cursor) {
+    doc.setCursor(cursor.line, cursor.ch + 2);
+}
+
 var Bold = {
     name: 'Bold',
     type: 'md',
@@ -11,45 +40,20 @@ var Bold = {
 
         cm.execCommand('singleSelection');
 
-        function isNeedRemove() {
-            return boldRegex.test(selection);
-        }
-
-        function append() {
-            return '**' + selection + '**';
-        }
-
-        function remove() {
-            return selection.substr(2, selection.length - 4);
-        }
-
-        function expendSelection() {
-            doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
-
-            var tmpSelection = doc.getSelection();
-            if (tmpSelection === '****' || tmpSelection === '____') {
-                selection = tmpSelection;
-            } else {
-                doc.setSelection(cursor);
-            }
-        }
-
-        function setCursorToCenter() {
-            doc.setCursor(cursor.line, cursor.ch + 2);
-        }
-
         var doc = cm.getDoc();
         var cursor = doc.getCursor();
         var selection = doc.getSelection();
+        var tmpSelection;
         var isEmpty = !selection;
 
         // if selection is empty, expend selection to detect a syntax
         if (isEmpty && cursor.ch > 1) {
-            expendSelection();
+            tmpSelection = expendSelection(doc, cursor);
+            selection = tmpSelection || selection;
         }
 
-        var isRemoved = isNeedRemove();
-        var result = isRemoved ? remove() : append();
+        var isRemoved = isNeedRemove(selection);
+        var result = isRemoved ? remove(selection) : append(selection);
 
         console.log(selection);
         console.log(result);
@@ -57,7 +61,7 @@ var Bold = {
         doc.replaceSelection(result, 'around');
 
         if (isEmpty && !isRemoved) {
-            setCursorToCenter();
+            setCursorToCenter(doc, cursor);
         }
 
         cm.focus();
