@@ -12,9 +12,9 @@
  * @constructor
  * @class
  */
-function Preview(el, eventManager) {
+function Preview($el, eventManager) {
     this.eventManager = eventManager;
-    this.el = el;
+    this.$el = $el;
 
     this.init();
 }

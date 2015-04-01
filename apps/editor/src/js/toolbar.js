@@ -39,6 +39,7 @@ util.inherit(Toolbar, UIController);
 Toolbar.prototype.render = function() {
     this.$buttonContainer = this.$el;
 };
+
 /**
  * 버튼을 추가한다
  * @param {Button} button 버튼

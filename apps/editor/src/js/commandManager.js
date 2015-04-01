@@ -5,7 +5,8 @@
 
 'use strict';
 
-var util = ne.util;
+var util = ne.util,
+    CodeMirror = window.CodeMirror;
 
 /**
  * CommandManager
