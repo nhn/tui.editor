@@ -28,7 +28,7 @@ Layout.prototype.init = function() {
 
     this.$containerEl = this._initContainerEl();
 
-    this.toolbar = new Toolbar(this.$el, this.eventManager, this.commandManager);
+    this.toolbar = new Toolbar(this.eventManager, this.commandManager);
     this.$containerEl.append(this.toolbar.$el);
 
     if (this.previewStyle === 'tab') {
