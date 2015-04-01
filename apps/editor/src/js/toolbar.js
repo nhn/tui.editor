@@ -16,9 +16,10 @@ var util = ne.util;
  * @extends {UIController}
  * @constructor
  * @class
- * @param {object} options 옵션
+ * @param {EventManager} eventManager 이벤트 매니저
+ * @param {CommandManager} commandManager 커맨드 매니저
  */
-function Toolbar($container, eventManager, commandManager) {
+function Toolbar(eventManager, commandManager) {
     UIController.call(this, {
         tagName: 'div',
         className: 'toolbar'
@@ -26,7 +27,6 @@ function Toolbar($container, eventManager, commandManager) {
 
     this.buttons = [];
 
-    this.$container = $container;
     this.eventManager = eventManager;
     this.commandManager = commandManager;
 
