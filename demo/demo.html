@@ -38,11 +38,19 @@
     $('#editSection').ned({
         previewStyle: 'tab',
         height: 101,
-        initialValue: 'init'
+        initialValue: 'init',
+        hooks: {
+            'htmlRenderAfterHook': function() {
+                console.log('htmlRenderAfterHook', arguments);
+            },
+            'previewBeforeHook': function($dom) {
+                console.log('previewBeforeHook', $dom);
+            }
+        }
     });
 
 
-/*kj
+/*
     $('#editSection').ned('setValue', "#Heading\n##Heading2");
     console.log($('#editSection').ned('getValue'));
     */

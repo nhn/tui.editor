@@ -28,12 +28,24 @@ EventManager.prototype.listen = function(name, handler) {
 EventManager.prototype.emit = function() {
     var args = util.toArray(arguments),
         name = args.shift(),
-        eventHandlers = this.events.get(name);
+        eventHandlers = this.events.get(name),
+        result,
+        results;
 
     if (eventHandlers) {
-       util.forEach(eventHandlers, function(handler) {
-            handler.apply(null, args);
+        results = [];
+
+        util.forEach(eventHandlers, function(handler) {
+            result = handler.apply(null, args);
+
+            if (!util.isUndefined(result)) {
+                results.push(result);
+            }
        });
+    }
+
+    if (results && results.length) {
+        return results;
     }
 };
 
