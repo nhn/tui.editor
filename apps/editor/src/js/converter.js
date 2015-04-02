@@ -5,7 +5,8 @@
 
 'use strict';
 
-var marked = window.marked;
+var marked = window.marked,
+    hljs = window.hljs;
 
 /**
  * Convertor
@@ -47,7 +48,10 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         pedantic: false,
         sanitize: true,
         smartLists: true,
-        smartypants: false
+        smartypants: false,
+        highlight: function(code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
     });
 };
 
