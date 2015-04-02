@@ -39,6 +39,7 @@
 
     //Variables
     "no-undefined": 2,
+    "no-use-before-define": [2, "nofunc"],
 
     //Stylistic Issues
     "brace-style": [2, "1tbs", {"allowSingleLine": true}],
