@@ -5,6 +5,66 @@ var CodeMirror = window.CodeMirror;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 
+
+var Italic = {
+    name: 'Italic',
+    type: 'md',
+    fn: function bold(cm) {
+        var doc,
+            cursor,
+            selection,
+            tmpSelection,
+            isEmpty,
+            isWithBold,
+            isRemoved,
+            result;
+
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
+        }
+
+        cm.execCommand('singleSelection');
+
+        doc = cm.getDoc();
+        cursor = doc.getCursor();
+        selection = doc.getSelection();
+        isEmpty = !selection;
+        isWithBold = false;
+
+        // if selection is empty, expend selection to detect a syntax
+        if (isEmpty) {
+            if (cursor.ch > 2) {
+                tmpSelection = expendWithBoldSelection(doc, cursor);
+
+                if (tmpSelection) {
+                    isWithBold = 'with';
+                }
+            }
+
+            if (isWithBold !== 'with' && cursor.ch > 1) {
+                isWithBold = expendOnlyBoldSelection(doc, cursor);
+            }
+
+            if (!isWithBold && cursor.ch > 0) {
+                expendSelection(doc, cursor);
+                selection = tmpSelection || selection;
+            }
+        }
+
+        isRemoved = isNeedRemove(selection);
+        result = isRemoved ? remove(selection) : append(selection);
+
+        doc.replaceSelection(result, 'around');
+
+        if (isEmpty) {
+            setCursorToCenter(doc, cursor, isRemoved);
+        }
+
+        cm.focus();
+    },
+    keyMap: ['Ctrl-I', 'Cmd-I']
+};
+
 function isNeedRemove(selection) {
     return italicRegex.test(selection) || boldItalicRegex.test(selection);
 }
@@ -58,59 +118,5 @@ function setCursorToCenter(doc, cursor, isRemoved) {
     var pos = isRemoved ? -1 : 1;
     doc.setCursor(cursor.line, cursor.ch + pos);
 }
-
-var Italic = {
-    name: 'Italic',
-    type: 'md',
-    fn: function bold(cm) {
-        if (cm.getOption("disableInput")) {
-            return CodeMirror.Pass;
-        }
-
-        cm.execCommand('singleSelection');
-
-        var doc = cm.getDoc();
-        var cursor = doc.getCursor();
-        var selection = doc.getSelection();
-        var tmpSelection;
-        var isEmpty = !selection;
-        var isWithBold = false;
-
-        // if selection is empty, expend selection to detect a syntax
-        if (isEmpty) {
-            if (cursor.ch > 2) {
-                tmpSelection = expendWithBoldSelection(doc, cursor);
-
-                if (tmpSelection) {
-                    isWithBold = 'with';
-                }
-            }
-
-            if (isWithBold !== 'with' && cursor.ch > 1) {
-                isWithBold = expendOnlyBoldSelection(doc, cursor);
-            }
-
-            if (!isWithBold && cursor.ch > 0) {
-                expendSelection(doc, cursor);
-                selection = tmpSelection || selection;
-            }
-        }
-
-        var isRemoved = isNeedRemove(selection);
-        var result = isRemoved ? remove(selection) : append(selection);
-
-        console.log(selection);
-        console.log(result);
-
-        doc.replaceSelection(result, 'around');
-
-        if (isEmpty) {
-            setCursorToCenter(doc, cursor, isRemoved);
-        }
-
-        cm.focus();
-    },
-    keyMap: ['Ctrl-I', 'Cmd-I']
-};
 
 module.exports = Italic;

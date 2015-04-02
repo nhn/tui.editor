@@ -1,6 +1,51 @@
 'use strict';
 
+var CodeMirror = window.CodeMirror;
+
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
+
+var Bold = {
+    name: 'Bold',
+    type: 'md',
+    fn: function bold(cm) {
+        var doc,
+            cursor,
+            selection,
+            tmpSelection,
+            isEmpty,
+            isRemoved,
+            result;
+
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
+        }
+
+        cm.execCommand('singleSelection');
+
+        doc = cm.getDoc();
+        cursor = doc.getCursor();
+        selection = doc.getSelection();
+        isEmpty = !selection;
+
+        // if selection is empty, expend selection to detect a syntax
+        if (isEmpty && cursor.ch > 1) {
+            tmpSelection = expendSelection(doc, cursor);
+            selection = tmpSelection || selection;
+        }
+
+        isRemoved = isNeedRemove(selection);
+        result = isRemoved ? remove(selection) : append(selection);
+
+        doc.replaceSelection(result, 'around');
+
+        if (isEmpty && !isRemoved) {
+            setCursorToCenter(doc, cursor);
+        }
+
+        cm.focus();
+    },
+    keyMap: ['Ctrl-B', 'Cmd-B']
+};
 
 function isNeedRemove(selection) {
     return boldRegex.test(selection);
@@ -29,44 +74,5 @@ function expendSelection(doc, cursor) {
 function setCursorToCenter(doc, cursor) {
     doc.setCursor(cursor.line, cursor.ch + 2);
 }
-
-var Bold = {
-    name: 'Bold',
-    type: 'md',
-    fn: function bold(cm) {
-        if (cm.getOption("disableInput")) {
-            return CodeMirror.Pass;
-        }
-
-        cm.execCommand('singleSelection');
-
-        var doc = cm.getDoc();
-        var cursor = doc.getCursor();
-        var selection = doc.getSelection();
-        var tmpSelection;
-        var isEmpty = !selection;
-
-        // if selection is empty, expend selection to detect a syntax
-        if (isEmpty && cursor.ch > 1) {
-            tmpSelection = expendSelection(doc, cursor);
-            selection = tmpSelection || selection;
-        }
-
-        var isRemoved = isNeedRemove(selection);
-        var result = isRemoved ? remove(selection) : append(selection);
-
-        console.log(selection);
-        console.log(result);
-
-        doc.replaceSelection(result, 'around');
-
-        if (isEmpty && !isRemoved) {
-            setCursorToCenter(doc, cursor);
-        }
-
-        cm.focus();
-    },
-    keyMap: ['Ctrl-B', 'Cmd-B']
-};
 
 module.exports = Bold;

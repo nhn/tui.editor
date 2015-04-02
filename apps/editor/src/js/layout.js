@@ -13,6 +13,9 @@ var Toolbar = require('./toolbar.js');
  * @extends {}
  * @constructor
  * @class
+ * @param {object} options 옵션
+ * @param {EventManager} eventManager 이벤트 매니저
+ * @param {commandManager} commandManager 커맨드 매니저
  */
 function Layout(options, eventManager, commandManager) {
     this.$el = $(options.el);
@@ -23,8 +26,6 @@ function Layout(options, eventManager, commandManager) {
 }
 
 Layout.prototype.init = function() {
-    console.log('Layout Init');
-
     this.$containerEl = this._initContainerEl();
 
     this.toolbar = new Toolbar(this.eventManager, this.commandManager);
