@@ -53,3 +53,4 @@ doc
 report
 karma.conf.local.js
 .tern-project
+.vim
