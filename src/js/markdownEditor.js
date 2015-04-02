@@ -9,6 +9,8 @@ var Bold = require('./cmExts/bold');
 var Italic = require('./cmExts/italic');
 var DeleteEmphasis = require('./cmExts/deleteEmphasis');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * MarkdownEditor
  * @exports MarkdownEditor
@@ -38,7 +40,8 @@ MarkdownEditor.prototype.init = function(initialValue) {
     this.cm = CodeMirror.fromTextArea(cmTextarea[0], {
         lineWrapping: true,
         mode: 'gfm',
-        theme: 'default'
+        theme: 'default',
+        dragDrop: false
     });
 
     this._initEvent();
