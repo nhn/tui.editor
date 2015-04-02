@@ -65,6 +65,10 @@ gulp.task('lint', function lint() {
         .pipe(eslint.failOnError());
 });
 
+gulp.task('lintw', function lint() {
+    gulp.watch(['src/js/**/*.js'], ['lint']);
+});
+
 
 /*
  * gulp-connect
@@ -94,4 +98,4 @@ gulp.task('uglify', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', ['bundle', 'uglify']);
+gulp.task('build', ['lint', 'bundle', 'uglify']);
