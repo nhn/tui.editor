@@ -20,10 +20,22 @@ function Preview($el, eventManager) {
 }
 
 Preview.prototype.init = function() {
-    var $el = this.$el;
+    var $el = this.$el,
+        eventManager = this.eventManager,
+        domData,
+        processedDataByHook;
 
-    this.eventManager.listen('previewUpdate', function(html) {
-        $el.html(html);
+    eventManager.listen('previewUpdate', function(html) {
+        domData = $(html);
+
+        processedDataByHook = eventManager.emit('previewBeforeHook', domData) || domData;
+
+        if (processedDataByHook) {
+            domData = processedDataByHook[0];
+        }
+
+        $el.empty();
+        $el.append(domData);
     });
 };
 

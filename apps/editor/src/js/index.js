@@ -9,11 +9,16 @@ var MarkdownEditor = require('./markdownEditor'),
     ExtManager = require('./extManager'),
     Converter = require('./converter');
 
+var util = ne.util;
+
 function NEditor(options) {
     var defaultOptions = {
         'previewStyle': 'column',
         'height': 300
     };
+
+    var hooks = options.hooks,
+        self = this;
 
     this.options = $.extend({}, defaultOptions, options);
 
@@ -26,6 +31,13 @@ function NEditor(options) {
 
     this.mdEditor = new MarkdownEditor(this.layout.getEditorContainerEl(), this.eventManager, this.commandManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
+
+    //추후 변경
+    if (hooks) {
+        util.forEach(hooks, function(fn, key) {
+            self.eventManager.listen(key, fn);
+        });
+    }
 
     NEditor._extManager.applyExtension(this, this.options.exts);
 
