@@ -17,10 +17,13 @@ var CodeMirror = window.CodeMirror;
  * @extends {}
  * @constructor
  * @class
+ * @param {jQuery} $el 에디터가 들어갈 엘리먼트
+ * @param {EventManager} eventManager 이벤트 매니저
+ * @param {commandManager} commandManager 커맨드 매니저
  */
-function MarkdownEditor(el, eventManager, commandManager) {
+function MarkdownEditor($el, eventManager, commandManager) {
     this.eventManager = eventManager;
-    this.$editorContainerEl = el;
+    this.$editorContainerEl = $el;
 
     commandManager.addCommand(Bold);
     commandManager.addCommand(Italic);

@@ -9,12 +9,19 @@ var util = ne.util,
     _id = 0;
 
 /**
+ * 사전 정의된 이벤트 목록(jQuery이벤트), 해당 목록의 이벤트는 커스텀 이벤트로 사용할수없다.
+ * @type {string}
+ */
+var jQueryEventList = 'blur focus focusin focusout load resize scroll unload click ' +
+    'dblclick mousedown mouseup mousemove mouseover mouseout mouseenter ' +
+    'mouseleave change select submit keydown keypress keyup error';
+
+/**
  * UIController 클래스
  * @exports UIController
  * @constructor
  * @class
- * @param {Object} options
- * @param {InteractBroker} options.interactBroker
+ * @param {Object} options 옵션
  * @param {Boolean} options.stopInteraction true로 넘어오면 해당 UI의 모든 DOM이벤트들이 막힌다.
  * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
  */
@@ -40,13 +47,6 @@ function UIController(options) {
     this.setRootElement(options.rootElement);
 }
 
-/**
- * 사전 정의된 이벤트 목록(jQuery이벤트), 해당 목록의 이벤트는 커스텀 이벤트로 사용할수없다.
- * @type {string}
- */
-var jQueryEventList = 'blur focus focusin focusout load resize scroll unload click ' +
-    'dblclick mousedown mouseup mousemove mouseover mouseout mouseenter ' +
-    'mouseleave change select submit keydown keypress keyup error';
 
 /**********
  * method
@@ -54,18 +54,18 @@ var jQueryEventList = 'blur focus focusin focusout load resize scroll unload cli
 
 /**
  * UIC에 custom event을 걸거나 jQuery를 이용해 dom에 이벤트를 건다.
- * @param {string} type 이벤트명과 셀렉터 스트링
- * @param {function} fn 이벤트 핸들러
+ * @param {string} aType 이벤트명과 셀렉터 스트링
+ * @param {function} aFn 이벤트 핸들러
  */
-UIController.prototype.on = function(type, fn) {
+UIController.prototype.on = function(aType, aFn) {
     var self = this;
 
-    if (util.isObject(type)) {
-        util.forEach(type, function(fn, type){
+    if (util.isObject(aType)) {
+        util.forEach(aType, function(fn, type) {
             self._addEvent(type, fn);
         });
     } else {
-        this._addEvent(type, fn);
+        this._addEvent(aType, aFn);
     }
 };
 
@@ -84,12 +84,10 @@ UIController.prototype._addEvent = function(type, fn) {
 
     if (!this.isDomEvent(event)) {
         this.cEvent.on(event, fn);
+    } else if (selector) {
+        this.$el.on(event, selector, fn);
     } else {
-        if (selector) {
-            this.$el.on(event, selector, fn);
-        } else {
-            this.$el.on(event, fn);
-        }
+        this.$el.on(event, fn);
     }
 };
 
@@ -105,22 +103,20 @@ UIController.prototype.off = function(type, fn) {
         event = parsedType[0],
         selector = parsedType[1];
 
-    if(!this.isDomEvent(event)){
+    if (!this.isDomEvent(event)) {
         this.cEvent.off(event, fn);
+    } else if (selector) {
+        this.$el.off(event, selector, fn);
     } else {
-        if (selector) {
-            this.$el.off(event, selector, fn);
-        } else {
-            this.$el.off(event, fn);
-        }
+        this.$el.off(event, fn);
     }
 };
 
 /**
  * 이벤트 바안딩 텍스트를 전달받아 이벤트 명과 셀렉터로 분리해준다.
  * 'click td' => ['click', 'td]
- * @param type
- * @returns [] Event, Selector
+ * @param {string} type 이벤트쿼리 스트링
+ * @returns {array} Event, Selector
  */
 UIController.prototype._parseEventType = function(type) {
     var splitType = type.split(' '),
@@ -133,7 +129,7 @@ UIController.prototype._parseEventType = function(type) {
 /**
  * 이벤트 명을 입력받아 돔이벤트인지 아닌지 판단하는 루틴.
  * @param {string} eventName 이벤트 핸들러, 네임스페이스, 셀렉터 스트링
- * @returns {boolean}
+ * @returns {boolean} 돔이벤트인지 아닌지 여부
  * @private
  */
 UIController.prototype.isDomEvent = function(eventName) {
@@ -156,7 +152,7 @@ UIController.prototype.attachEvents = function() {
     if (this.events) {
         util.forEach(this.events, function(handlerName, type) {
             if (self[handlerName]) {
-                if(self.isDomEvent(type)){
+                if (self.isDomEvent(type)) {
                     type = self.getEventNameWithNamespace(type);
                     handler = util.bind(self[handlerName], self);
                     self.on(type, handler);
@@ -183,7 +179,7 @@ UIController.prototype.setRootElement = function($el) {
     var className = this.className,
         tagName = this.tagName;
 
-    if(!$el){
+    if (!$el) {
         className = className || ('uic' + this.id);
         tagName = tagName;
         $el = $('<' + tagName + ' class="' + className + '"/>');
@@ -211,7 +207,7 @@ UIController.prototype._initID = function() {
  * 이벤트종류에 네임스페이스를 더한다.
  * "click" -> "click.uicEvent23"
  * @param {string} event 이벤트 핸들러, 셀릭터 스트링
- * @returns {string}
+ * @returns {string} 네임스페이스가 포함된 이벤트스트링
  */
 UIController.prototype.getEventNameWithNamespace = function(event) {
     var eventSplited = event.split(' ');
@@ -224,13 +220,13 @@ UIController.prototype.getEventNameWithNamespace = function(event) {
  * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
  * @param {string} template 템플릿 텍스트
  * @param {object|object[]} mapper 템플릿과 합성될 데이터
- * @return {Array}
+ * @return {array} rendered text
  */
 UIController.prototype.template = function(template, mapper) {
     var totalReplaced = [],
         replaced;
 
-    if(!util.isArray(mapper)){
+    if (!util.isArray(mapper)) {
         mapper = [mapper];
     }
 
@@ -248,11 +244,11 @@ UIController.prototype.template = function(template, mapper) {
 /**
  * uic안에 서브uic를 삽입한다.
  * 두번째 인자로 셀렉터를 넘기면 this.$el이 아닌 셀렉터에 해당하는 엘리먼트를 찾아서 그엘리먼트에 서브 UIC의 엘리먼트를 붙인다.
- * @param {UIController} uic
+ * @param {UIController} uic UIController instance
  * @param {string} [targetSEL] 셀렉터
  */
 UIController.prototype.addUIC = function(uic, targetSEL) {
-    if(targetSEL){
+    if (targetSEL) {
         this.$el.find(targetSEL).append(uic.$el);
     } else {
         this.$el.append(uic.$el);
@@ -262,7 +258,7 @@ UIController.prototype.addUIC = function(uic, targetSEL) {
 /**
  * 이벤트를 바인드 할지 말지를 설정할수있게 한다.
  * false를 넘기면 이벤트가 바인드 되지 않음
- * @param {boolean} isInteractive
+ * @param {boolean} isInteractive flag
  */
 UIController.prototype.setInteractive = function(isInteractive) {
     this.isInteractive = isInteractive;
@@ -294,8 +290,8 @@ UIController.prototype.destroy = function() {
 
 /**
  * UIController를 확장해 새 생성자를 만든다.
- * @param {Object} props
- * @returns {*}
+ * @param {Object} props properties to extend
+ * @returns {UIController} 생성자
  */
 UIController.extend = function(props) {
     var newUIC = util.defineClass(this, props);
