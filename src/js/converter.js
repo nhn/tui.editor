@@ -49,7 +49,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         sanitize: true,
         smartLists: true,
         smartypants: false,
-        highlight: function(code, lang) {
+        highlight: function(code) {
             return hljs.highlightAuto(code).value;
         }
     });
