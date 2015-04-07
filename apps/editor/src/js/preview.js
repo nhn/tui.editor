@@ -24,17 +24,12 @@ function Preview($el, eventManager) {
 Preview.prototype.init = function() {
     var $el = this.$el,
         eventManager = this.eventManager,
-        domData,
-        processedDataByHook;
+        domData;
 
     eventManager.listen('previewUpdate', function(html) {
         domData = $(html);
 
-        processedDataByHook = eventManager.emit('previewBeforeHook', domData) || domData;
-
-        if (processedDataByHook) {
-            domData = processedDataByHook[0];
-        }
+        domData = eventManager.emit('previewBeforeHook', domData) || domData;
 
         $el.empty();
         $el.append(domData);

@@ -79,6 +79,12 @@ Toolbar.prototype._initButton = function() {
         command: 'Heading',
         text: 'HH'
     }));
+
+    this.addButton(new Button({
+        className: 'hrline',
+        command: 'HR',
+        text: 'HR'
+    }));
 };
 
 module.exports = Toolbar;

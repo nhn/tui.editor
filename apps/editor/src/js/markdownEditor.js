@@ -5,11 +5,13 @@
 
 'use strict';
 
-var Bold = require('./cmExts/bold');
-var Italic = require('./cmExts/italic');
-var DeleteEmphasis = require('./cmExts/deleteEmphasis');
-var Blockquote = require('./cmExts/blockquote');
-var Heading = require('./cmExts/heading');
+var Bold = require('./cmExts/bold'),
+    Italic = require('./cmExts/italic'),
+    DeleteEmphasis = require('./cmExts/deleteEmphasis'),
+    Blockquote = require('./cmExts/blockquote'),
+    Heading = require('./cmExts/heading'),
+    HR = require('./cmExts/hr');
+
 
 var CodeMirror = window.CodeMirror;
 
@@ -32,6 +34,7 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(DeleteEmphasis);
     commandManager.addCommand(Blockquote);
     commandManager.addCommand(Heading);
+    commandManager.addCommand(HR);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
