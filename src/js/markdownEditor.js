@@ -8,6 +8,7 @@
 var Bold = require('./cmExts/bold');
 var Italic = require('./cmExts/italic');
 var DeleteEmphasis = require('./cmExts/deleteEmphasis');
+var Blockquote = require('./cmExts/blockquote.js');
 
 var CodeMirror = window.CodeMirror;
 
@@ -28,6 +29,7 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(Bold);
     commandManager.addCommand(Italic);
     commandManager.addCommand(DeleteEmphasis);
+    commandManager.addCommand(Blockquote);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -46,6 +48,10 @@ MarkdownEditor.prototype.init = function(initialValue) {
         theme: 'default',
         dragDrop: false
     });
+
+
+    window.dd = this.cm;
+    window.dd2 = this.cm.getDoc();
 
     this._initEvent();
 };

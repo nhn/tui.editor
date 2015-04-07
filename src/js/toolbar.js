@@ -67,6 +67,12 @@ Toolbar.prototype._initButton = function() {
         command: 'Italic',
         text: 'I'
     }));
+
+    this.addButton(new Button({
+        className: 'quote',
+        command: 'Blockquote',
+        text: 'Q'
+    }));
 };
 
 module.exports = Toolbar;
