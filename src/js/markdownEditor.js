@@ -8,7 +8,8 @@
 var Bold = require('./cmExts/bold');
 var Italic = require('./cmExts/italic');
 var DeleteEmphasis = require('./cmExts/deleteEmphasis');
-var Blockquote = require('./cmExts/blockquote.js');
+var Blockquote = require('./cmExts/blockquote');
+var Heading = require('./cmExts/heading');
 
 var CodeMirror = window.CodeMirror;
 
@@ -30,6 +31,7 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(Italic);
     commandManager.addCommand(DeleteEmphasis);
     commandManager.addCommand(Blockquote);
+    commandManager.addCommand(Heading);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
