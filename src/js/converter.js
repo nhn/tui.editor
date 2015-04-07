@@ -30,12 +30,14 @@ Convertor.prototype._initEvent = function() {
 
         renderedHtml = self._markdownToHtml(markdown);
 
+
         processedDataByHook = self.eventManager.emit('htmlRenderAfterHook', renderedHtml);
 
         if (processedDataByHook) {
             renderedHtml = processedDataByHook[0];
         }
 
+        console.log(renderedHtml);
         self.eventManager.emit('previewUpdate', renderedHtml);
     });
 };
