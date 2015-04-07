@@ -73,6 +73,12 @@ Toolbar.prototype._initButton = function() {
         command: 'Blockquote',
         text: 'Q'
     }));
+
+    this.addButton(new Button({
+        className: 'heading',
+        command: 'Heading',
+        text: 'HH'
+    }));
 };
 
 module.exports = Toolbar;
