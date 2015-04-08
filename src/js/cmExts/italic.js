@@ -1,68 +1,68 @@
 'use strict';
 
-var CodeMirror = window.CodeMirror;
+var MarkdownCommand = require('../markdownCommand');
 
-var italicRegex = /^[\*_][^\*_]*[\*_]$/;
+var util = ne.util;
+
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
+var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
+function Italic() {
+    MarkdownCommand.call(this, 'Italic');
 
-var Italic = {
-    name: 'Italic',
-    type: 'md',
-    fn: function bold(cm) {
-        var doc,
-            cursor,
-            selection,
-            tmpSelection,
-            isEmpty,
-            isWithBold,
-            isRemoved,
-            result;
+    this.setKeyMap('Ctrl-I', 'Ctrl-I');
+}
 
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
+util.inherit(Italic, MarkdownCommand);
 
-        cm.execCommand('singleSelection');
+Italic.prototype.exec = function() {
+    var cursor,
+        selection,
+        tmpSelection,
+        isRemoved,
+        result,
+        isEmpty,
+        isWithBold;
 
-        doc = cm.getDoc();
-        cursor = doc.getCursor();
-        selection = doc.getSelection();
-        isEmpty = !selection;
-        isWithBold = false;
+    if (!this.isAvailable()) {
+        return this.getPass();
+    }
 
-        // if selection is empty, expend selection to detect a syntax
-        if (isEmpty) {
-            if (cursor.ch > 2) {
-                tmpSelection = expendWithBoldSelection(doc, cursor);
+    cursor = this.doc.getCursor();
+    selection = this.doc.getSelection();
+    isEmpty = !selection;
+    isWithBold = false;
 
-                if (tmpSelection) {
-                    isWithBold = 'with';
-                }
-            }
+    // if selection is empty, expend selection to detect a syntax
+    if (isEmpty) {
+        if (cursor.ch > 2) {
+            tmpSelection = expendWithBoldSelection(this.doc, cursor);
 
-            if (isWithBold !== 'with' && cursor.ch > 1) {
-                isWithBold = expendOnlyBoldSelection(doc, cursor);
-            }
-
-            if (!isWithBold && cursor.ch > 0) {
-                expendSelection(doc, cursor);
-                selection = tmpSelection || selection;
+            if (tmpSelection) {
+                isWithBold = 'with';
             }
         }
 
-        isRemoved = isNeedRemove(selection);
-        result = isRemoved ? remove(selection) : append(selection);
-
-        doc.replaceSelection(result, 'around');
-
-        if (isEmpty) {
-            setCursorToCenter(doc, cursor, isRemoved);
+        if (isWithBold !== 'with' && cursor.ch > 1) {
+            isWithBold = expendOnlyBoldSelection(this.doc, cursor);
         }
 
-        cm.focus();
-    },
-    keyMap: ['Ctrl-I', 'Cmd-I']
+        if (!isWithBold && cursor.ch > 0) {
+            expendSelection(this.doc, cursor);
+            selection = tmpSelection || selection;
+        }
+    }
+
+    isRemoved = isNeedRemove(selection);
+    result = isRemoved ? remove(selection) : append(selection);
+
+    this.doc.replaceSelection(result, 'around');
+
+    if (isEmpty) {
+        setCursorToCenter(this.doc, cursor, isRemoved);
+    }
+
+    this.cm.focus();
 };
 
 function isNeedRemove(selection) {
@@ -119,4 +119,4 @@ function setCursorToCenter(doc, cursor, isRemoved) {
     doc.setCursor(cursor.line, cursor.ch + pos);
 }
 
-module.exports = Italic;
+module.exports = new Italic();

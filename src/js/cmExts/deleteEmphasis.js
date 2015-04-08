@@ -1,32 +1,33 @@
 'use strict';
 
-var CodeMirror = window.CodeMirror;
+var MarkdownCommand = require('../markdownCommand');
 
-var DeleteEmphasis = {
-    name: 'DeleteEmphasis',
-    type: 'md',
-    fn: function bold(cm) {
-        var doc,
-            cursor,
-            range;
+var util = ne.util;
 
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
+function DeleteEmphasis() {
+    MarkdownCommand.call(this, 'DeleteEmphasis');
 
-        cm.execCommand('singleSelection');
+    this.setKeyMap('Backspace', 'Backspace');
+}
 
-        doc = cm.getDoc();
-        cursor = doc.getCursor();
-        range = doc.getRange({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+util.inherit(DeleteEmphasis, MarkdownCommand);
 
-        if (range === '**' || range === '__') {
-            cm.execCommand('delCharAfter');
-        }
+DeleteEmphasis.prototype.exec = function() {
+    var cursor,
+        range;
 
-        cm.execCommand('delCharBefore');
-    },
-    keyMap: ['Backspace', 'Backspace']
+    if (!this.isAvailable()) {
+        return this.getPass();
+    }
+
+    cursor = this.doc.getCursor();
+    range = this.doc.getRange({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+
+    if (range === '**' || range === '__') {
+        this.cm.execCommand('delCharAfter');
+    }
+
+    this.cm.execCommand('delCharBefore');
 };
 
-module.exports = DeleteEmphasis;
+module.exports = new DeleteEmphasis();

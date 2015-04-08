@@ -25,21 +25,20 @@ function CommandManager(base) {
 /**
  * addCommand
  * 커맨드를 추가한다.
- * @param {Object} commandOptions 커맨드를 생성할 옵션들
- * @param {String} commandOptions.name 커맨드명
- * @param {Function} commandOptions.fn 커맨드펑션
- * @param {Array} commandOptions.keyMap 매핑할 키들 첫번째는 PC 두번째는 MAC
- * @param {string} commandOptions.type 커맨드 타입 입력하지않으면 기본, md입력하면 코드미러용 커맨드
+ * @param {Command} command 커맨드객체
  */
-CommandManager.prototype.addCommand = function(commandOptions) {
-    var name = commandOptions.name,
-        fn = commandOptions.fn,
-        keyMap = commandOptions.keyMap,
-        type = commandOptions.type,
-        base = this.base;
+CommandManager.prototype.addCommand = function(command) {
+    var base = this.base,
+        fn,
+        name = command.getName();
 
-    if (type === 'md') {
-        this._addCMCommand(name, fn, keyMap);
+
+    fn = function CommandFN() {
+        command.responder.apply(command, arguments);
+    };
+
+    if (command.isMDType()) {
+        this._addCMCommand(name, fn, command.keyMap);
         this._mdCommand.set(name, function() {
             return base.getCodeMirror().execCommand(name);
         });

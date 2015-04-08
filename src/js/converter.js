@@ -37,7 +37,6 @@ Convertor.prototype._initEvent = function() {
             renderedHtml = processedDataByHook[0];
         }
 
-        console.log(renderedHtml);
         self.eventManager.emit('previewUpdate', renderedHtml);
     });
 };

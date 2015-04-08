@@ -32,7 +32,8 @@ function NEditor(options) {
     this.mdEditor = new MarkdownEditor(this.layout.getEditorContainerEl(), this.eventManager, this.commandManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
 
-    //추후 변경
+
+    //추후 옵션처리기에서 처리
     if (hooks) {
         util.forEach(hooks, function(fn, key) {
             self.eventManager.listen(key, fn);
@@ -42,6 +43,7 @@ function NEditor(options) {
     NEditor._extManager.applyExtension(this, this.options.exts);
 
     this.mdEditor.init(this.options.initialValue);
+    this.getCodeMirror().__ned = this;
 
     //this.focus();
 }
