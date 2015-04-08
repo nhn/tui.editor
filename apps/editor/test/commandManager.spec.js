@@ -20,7 +20,7 @@ describe('CommandManager', function() {
                 name: 'mycommand',
                 type: 'md',
                 keyMap: ['Ctrl-B', 'Cmd-B'],
-                fn: function() {
+                responder: function() {
                     return 'myfn';
                 }
             });
@@ -36,7 +36,7 @@ describe('CommandManager', function() {
                 name: 'mycommand',
                 type: 'md',
                 keyMap: ['Ctrl-B', 'Cmd-B'],
-                fn: function() {
+                responder: function() {
                     return 'myfn';
                 }
             });
@@ -48,7 +48,7 @@ describe('CommandManager', function() {
             var cmgr = new CommandManager(mockupBase);
             cmgr.addCommand({
                 name: 'mycommand',
-                fn: function() {
+                responder: function() {
                     return 'myfn';
                 }
             });
@@ -62,7 +62,7 @@ describe('CommandManager', function() {
             var cmgr = new CommandManager(mockupBase);
             cmgr.addCommand({
                 name: 'mycommand',
-                fn: function() {
+                responder: function() {
                     return 'myfn';
                 }
             });
@@ -78,7 +78,7 @@ describe('CommandManager', function() {
                 name: 'mycommand',
                 type: 'md',
                 keymap: ['Ctrl-B', 'Cmd-B'],
-                fn: function() {
+                responder: function() {
                     res = 'myfn';
                 }
             });

@@ -1,57 +1,47 @@
 'use strict';
 
-var CodeMirror = window.CodeMirror;
+var MarkdownCommand = require('../markdownCommand');
 
-var HR = {
-    name: 'HR',
-    type: 'md',
-    fn: function blockquote(cm) {
-        var doc,
-            range,
-            from,
-            to,
-            replaceText;
+var util = ne.util;
 
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
+function HR() {
+    MarkdownCommand.call(this, 'HR');
 
-        doc = cm.getDoc();
-
-        range = getCurrentRange(cm);
-
-        from = {
-            line: range.from.line,
-            ch: range.from.ch
-        };
-
-        to = {
-            line: range.to.line,
-            ch: range.to.ch
-        };
-
-        if (range.collapsed) {
-            replaceText = doc.getLine(from.line) + '\n***';
-            from.ch = 0;
-            to.ch = doc.getLineHandle(range.to.line).text.length;
-        } else {
-            replaceText = '***';
-        }
-
-        doc.replaceRange(replaceText, from, to);
-    },
-    keyMap: ['Ctrl-L', 'Ctrl-L']
-};
-
-function getCurrentRange(cm) {
-    var from = cm.getCursor(true),
-        to = cm.getCursor(false);
-
-    return {
-        from: from,
-        to: to,
-        collapsed: from === to
-    };
+    this.setKeyMap('Ctrl-Q', 'Ctrl-Q');
 }
 
-module.exports = HR;
+util.inherit(HR, MarkdownCommand);
+
+HR.prototype.exec = function() {
+    var replaceText,
+        range,
+        from,
+        to;
+    if (!this.isAvailable()) {
+        return this.getPass();
+    }
+
+    range = this.getCurrentRange();
+
+    from = {
+        line: range.from.line,
+        ch: range.from.ch
+    };
+
+    to = {
+        line: range.to.line,
+        ch: range.to.ch
+    };
+
+    if (range.collapsed) {
+        replaceText = this.doc.getLine(from.line) + '\n***';
+        from.ch = 0;
+        to.ch = this.doc.getLineHandle(range.to.line).text.length;
+    } else {
+        replaceText = '***';
+    }
+
+    this.doc.replaceRange(replaceText, from, to);
+};
+
+module.exports = new HR();
