@@ -302,7 +302,47 @@ proto.getSelection = function () {
 };
 
 proto.getSelectedText = function () {
-    return getTextContentInRange( this.getSelection() );
+    var range = this.getSelection(),
+        walker = new TreeWalker(
+            range.commonAncestorContainer,
+            SHOW_TEXT|SHOW_ELEMENT,
+            function ( node ) {
+                return isNodeContainedInRange( range, node, true );
+            }
+        ),
+        startContainer = range.startContainer,
+        endContainer = range.endContainer,
+        node = walker.currentNode = startContainer,
+        textContent = '',
+        addedTextInBlock = false,
+        value;
+
+    if ( !walker.filter( node ) ) {
+        node = walker.nextNode();
+    }
+
+    while ( node ) {
+        if ( node.nodeType === TEXT_NODE ) {
+            value = node.data;
+            if ( value && ( /\S/.test( value ) ) ) {
+                if ( node === endContainer ) {
+                    value = value.slice( 0, range.endOffset );
+                }
+                if ( node === startContainer ) {
+                    value = value.slice( range.startOffset );
+                }
+                textContent += value;
+                addedTextInBlock = true;
+            }
+        } else if ( node.nodeName === 'BR' ||
+                addedTextInBlock && !isInline( node ) ) {
+            textContent += '\n';
+            addedTextInBlock = false;
+        }
+        node = walker.nextNode();
+    }
+
+    return textContent;
 };
 
 proto.getPath = function () {

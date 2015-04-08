@@ -611,43 +611,6 @@ var getNodeAfter = function ( node, offset ) {
 
 // ---
 
-var forEachTextNodeInRange = function ( range, fn ) {
-    range = range.cloneRange();
-    moveRangeBoundariesDownTree( range );
-
-    var startContainer = range.startContainer,
-        endContainer = range.endContainer,
-        root = range.commonAncestorContainer,
-        walker = new TreeWalker(
-            root, SHOW_TEXT, function (/* node */) {
-                return true;
-        }, false ),
-        textnode = walker.currentNode = startContainer;
-
-    while ( !fn( textnode, range ) &&
-        textnode !== endContainer &&
-        ( textnode = walker.nextNode() ) ) {}
-};
-
-var getTextContentInRange = function ( range ) {
-    var textContent = '';
-    forEachTextNodeInRange( range, function ( textnode, range ) {
-        var value = textnode.data;
-        if ( value && ( /\S/.test( value ) ) ) {
-            if ( textnode === range.endContainer ) {
-                value = value.slice( 0, range.endOffset );
-            }
-            if ( textnode === range.startContainer ) {
-                value = value.slice( range.startOffset );
-            }
-            textContent += value;
-        }
-    });
-    return textContent;
-};
-
-// ---
-
 var insertNodeInRange = function ( range, node ) {
     // Insert at start.
     var startContainer = range.startContainer,
@@ -1392,7 +1355,47 @@ proto.getSelection = function () {
 };
 
 proto.getSelectedText = function () {
-    return getTextContentInRange( this.getSelection() );
+    var range = this.getSelection(),
+        walker = new TreeWalker(
+            range.commonAncestorContainer,
+            SHOW_TEXT|SHOW_ELEMENT,
+            function ( node ) {
+                return isNodeContainedInRange( range, node, true );
+            }
+        ),
+        startContainer = range.startContainer,
+        endContainer = range.endContainer,
+        node = walker.currentNode = startContainer,
+        textContent = '',
+        addedTextInBlock = false,
+        value;
+
+    if ( !walker.filter( node ) ) {
+        node = walker.nextNode();
+    }
+
+    while ( node ) {
+        if ( node.nodeType === TEXT_NODE ) {
+            value = node.data;
+            if ( value && ( /\S/.test( value ) ) ) {
+                if ( node === endContainer ) {
+                    value = value.slice( 0, range.endOffset );
+                }
+                if ( node === startContainer ) {
+                    value = value.slice( range.startOffset );
+                }
+                textContent += value;
+                addedTextInBlock = true;
+            }
+        } else if ( node.nodeName === 'BR' ||
+                addedTextInBlock && !isInline( node ) ) {
+            textContent += '\n';
+            addedTextInBlock = false;
+        }
+        node = walker.nextNode();
+    }
+
+    return textContent;
 };
 
 proto.getPath = function () {

@@ -27,43 +27,6 @@ var getNodeAfter = function ( node, offset ) {
 
 // ---
 
-var forEachTextNodeInRange = function ( range, fn ) {
-    range = range.cloneRange();
-    moveRangeBoundariesDownTree( range );
-
-    var startContainer = range.startContainer,
-        endContainer = range.endContainer,
-        root = range.commonAncestorContainer,
-        walker = new TreeWalker(
-            root, SHOW_TEXT, function (/* node */) {
-                return true;
-        }, false ),
-        textnode = walker.currentNode = startContainer;
-
-    while ( !fn( textnode, range ) &&
-        textnode !== endContainer &&
-        ( textnode = walker.nextNode() ) ) {}
-};
-
-var getTextContentInRange = function ( range ) {
-    var textContent = '';
-    forEachTextNodeInRange( range, function ( textnode, range ) {
-        var value = textnode.data;
-        if ( value && ( /\S/.test( value ) ) ) {
-            if ( textnode === range.endContainer ) {
-                value = value.slice( 0, range.endOffset );
-            }
-            if ( textnode === range.startContainer ) {
-                value = value.slice( range.startOffset );
-            }
-            textContent += value;
-        }
-    });
-    return textContent;
-};
-
-// ---
-
 var insertNodeInRange = function ( range, node ) {
     // Insert at start.
     var startContainer = range.startContainer,
