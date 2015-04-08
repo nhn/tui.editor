@@ -24,8 +24,8 @@ module.exports = function(config) {
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',
             'lib/codemirror/addon/mode/overlay.js',
-            'lib/codemirror/mode/markdown/mardown.js',
-            'lib/ocdemirror/mode/gfm/gfm.js',
+            'lib/codemirror/mode/markdown/markdown.js',
+            'lib/codemirror/mode/gfm/gfm.js',
             'src/js/**/*.js',
             //{pattern: 'test/fixtures/*', included: false},
             'test/**/*.spec.js'

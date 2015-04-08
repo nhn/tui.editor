@@ -29,7 +29,7 @@ Preview.prototype.init = function() {
     eventManager.listen('previewUpdate', function(html) {
         domData = $(html);
 
-        domData = eventManager.emit('previewBeforeHook', domData) || domData;
+        eventManager.emit('previewBeforeHook', domData);
 
         $el.empty();
         $el.append(domData);
