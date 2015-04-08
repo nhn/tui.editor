@@ -610,7 +610,7 @@ proto._addFormat = function ( tag, attributes, range ) {
     // If the range is collapsed we simply insert the node by wrapping
     // it round the range and focus it.
     var el, walker, startContainer, endContainer, startOffset, endOffset,
-        textNode, needsFormat;
+        node, needsFormat;
 
     if ( range.collapsed ) {
         el = fixCursor( this.createElement( tag, attributes ) );
@@ -622,16 +622,21 @@ proto._addFormat = function ( tag, attributes, range ) {
     // partially selected nodes) and if they're not already formatted
     // correctly we wrap them in the appropriate tag.
     else {
-        // We don't want to apply formatting twice so we check each text
-        // node to see if it has an ancestor with the formatting already.
         // Create an iterator to walk over all the text nodes under this
         // ancestor which are in the range and not already formatted
         // correctly.
+        //
+        // In Blink/WebKit, empty blocks may have no text nodes, just a <br>.
+        // Therefore we wrap this in the tag as well, as this will then cause it
+        // to apply when the user types something in the block, which is
+        // presumably what was intended.
         walker = new TreeWalker(
             range.commonAncestorContainer,
-            SHOW_TEXT,
+            SHOW_TEXT|SHOW_ELEMENT,
             function ( node ) {
-                return isNodeContainedInRange( range, node, true );
+                return ( node.nodeType === TEXT_NODE ||
+                                                    node.nodeName === 'BR' ) &&
+                    isNodeContainedInRange( range, node, true );
             },
             false
         );
@@ -643,41 +648,53 @@ proto._addFormat = function ( tag, attributes, range ) {
         endContainer = range.endContainer;
         endOffset = range.endOffset;
 
-        // Make sure we start inside a text node.
+        // Make sure we start with a valid node.
         walker.currentNode = startContainer;
-        if ( startContainer.nodeType !== TEXT_NODE ) {
+        if ( !walker.filter( startContainer ) ) {
             startContainer = walker.nextNode();
             startOffset = 0;
         }
 
+        // If there are no interesting nodes in the selection, abort
+        if ( !startContainer ) {
+            return range;
+        }
+
         do {
-            textNode = walker.currentNode;
-            needsFormat = !getNearest( textNode, tag, attributes );
+            node = walker.currentNode;
+            needsFormat = !getNearest( node, tag, attributes );
             if ( needsFormat ) {
-                if ( textNode === endContainer &&
-                        textNode.length > endOffset ) {
-                    textNode.splitText( endOffset );
+                // <br> can never be a container node, so must have a text node
+                // if node == (end|start)Container
+                if ( node === endContainer && node.length > endOffset ) {
+                    node.splitText( endOffset );
                 }
-                if ( textNode === startContainer && startOffset ) {
-                    textNode = textNode.splitText( startOffset );
+                if ( node === startContainer && startOffset ) {
+                    node = node.splitText( startOffset );
                     if ( endContainer === startContainer ) {
-                        endContainer = textNode;
+                        endContainer = node;
                         endOffset -= startOffset;
                     }
-                    startContainer = textNode;
+                    startContainer = node;
                     startOffset = 0;
                 }
                 el = this.createElement( tag, attributes );
-                replaceWith( textNode, el );
-                el.appendChild( textNode );
+                replaceWith( node, el );
+                el.appendChild( node );
             }
         } while ( walker.nextNode() );
 
-        // Make sure we finish inside a text node. Otherwise offset may have
-        // changed.
+        // If we don't finish inside a text node, offset may have changed.
         if ( endContainer.nodeType !== TEXT_NODE ) {
-            endContainer = textNode;
-            endOffset = textNode.length;
+            if ( node.nodeType === TEXT_NODE ) {
+                endContainer = node;
+                endOffset = node.length;
+            } else {
+                // If <br>, we must have just wrapped it, so it must have only
+                // one child
+                endContainer = node.parentNode;
+                endOffset = 1;
+            }
         }
 
         // Now set the selection to as it was before
