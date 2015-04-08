@@ -357,10 +357,19 @@ var removeZWS = function ( root ) {
     var walker = new TreeWalker( root, SHOW_TEXT, function () {
             return true;
         }, false ),
-        node, index;
+        parent, node, index;
     while ( node = walker.nextNode() ) {
         while ( ( index = node.data.indexOf( ZWS ) ) > -1 ) {
-            node.deleteData( index, 1 );
+            if ( node.length === 1 ) {
+                do {
+                    parent = node.parentNode;
+                    parent.removeChild( node );
+                    node = parent;
+                } while ( isInline( node ) && !getLength( node ) );
+                break;
+            } else {
+                node.deleteData( index, 1 );
+            }
         }
     }
 };
@@ -1826,10 +1835,12 @@ var keyHandlers = {
             // Don't continue links over a block break; unlikely to be the
             // desired outcome.
             if ( nodeAfterSplit.nodeName === 'A' &&
-                    !nodeAfterSplit.textContent ) {
-                replaceWith( nodeAfterSplit, empty( nodeAfterSplit ) );
+                    ( !nodeAfterSplit.textContent ||
+                        nodeAfterSplit.textContent === ZWS ) ) {
+                child = self._doc.createTextNode( '' );
+                replaceWith( nodeAfterSplit, child );
                 nodeAfterSplit = child;
-                continue;
+                break;
             }
 
             while ( child && child.nodeType === TEXT_NODE && !child.data ) {
