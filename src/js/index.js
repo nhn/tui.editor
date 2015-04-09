@@ -11,9 +11,11 @@ var MarkdownEditor = require('./markdownEditor'),
 
 var util = ne.util;
 
+var __nedInstance = [];
+
 function NEditor(options) {
     var defaultOptions = {
-        'previewStyle': 'column',
+        'previewStyle': 'tab',
         'height': 300
     };
 
@@ -40,13 +42,19 @@ function NEditor(options) {
         });
     }
 
+    this.changePreviewStyle(this.options.previewStyle);
+
     NEditor._extManager.applyExtension(this, this.options.exts);
 
     this.mdEditor.init(this.options.initialValue);
     this.getCodeMirror().__ned = this;
 
-    //this.focus();
+    __nedInstance.push(this);
 }
+
+NEditor.prototype.changePreviewStyle = function(style) {
+    this.layout.changePreviewStyle(style);
+};
 
 NEditor.prototype.getCursorOffset = function() {
 };
@@ -82,6 +90,10 @@ NEditor.prototype.hide = function() {
 
 NEditor.prototype.getMarkdown = function() {
     console.log('getMarkdown');
+};
+
+NEditor.getInstances = function() {
+    return __nedInstance;
 };
 
 NEditor.definedExtention = function(name, ext) {
