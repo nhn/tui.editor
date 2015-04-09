@@ -192,11 +192,14 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
         insertNodeInRange( range, frag );
         range.collapse( false );
     }
-    // Otherwise, split up to body, insert inline before and after split
-    // and insert block in between split, then merge containers.
+    // Otherwise, split up to blockquote (if a parent) or body, insert inline
+    // before and after split and insert block in between split, then merge
+    // containers.
     else {
-        var nodeAfterSplit = split( range.startContainer, range.startOffset,
-                range.startContainer.ownerDocument.body ),
+        var splitPoint = range.startContainer,
+            nodeAfterSplit = split( splitPoint, range.startOffset,
+                getNearest( splitPoint.parentNode, 'BLOCKQUOTE' ) ||
+                splitPoint.ownerDocument.body ),
             nodeBeforeSplit = nodeAfterSplit.previousSibling,
             startContainer = nodeBeforeSplit,
             startOffset = startContainer.childNodes.length,
