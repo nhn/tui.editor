@@ -29,21 +29,17 @@ function CommandManager(base) {
  */
 CommandManager.prototype.addCommand = function(command) {
     var base = this.base,
-        fn,
+        responder = command.responder,
         name = command.getName();
 
-
-    fn = function CommandFN() {
-        command.responder.apply(command, arguments);
-    };
-
     if (command.isMDType()) {
-        this._addCMCommand(name, fn, command.keyMap);
+        this._addCMCommand(name, responder, command.keyMap);
+
         this._mdCommand.set(name, function() {
             return base.getCodeMirror().execCommand(name);
         });
-    } else {
-        this._command.set(name, fn);
+    } else if (command.isGlobalType()) {
+        this._command.set(name, responder);
     }
 };
 
@@ -67,11 +63,11 @@ CommandManager.prototype.exec = function(name) {
     var command = this._command.get(name),
         mdCommand = this._mdCommand.get(name);
 
-    //wysiwyg에디터가 추가되면 상황별로 판단하는 로직이 필요
+    //todo 상황별로 판단하는 로직이 필요
     if (command) {
-        return command(this.base);
+        return command();
     } else if (mdCommand) {
-        return mdCommand(this.base);
+        return mdCommand();
     }
 };
 
