@@ -51,6 +51,8 @@ Blockquote.prototype.exec = function() {
 
     //해당 에디터의 내용을 변경한다
     this.doc.replaceRange(textLinesToModify.join('\n'), from, to);
+
+    this.cm.focus();
 };
 
 module.exports = new Blockquote();

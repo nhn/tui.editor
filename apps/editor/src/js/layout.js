@@ -19,7 +19,6 @@ var Toolbar = require('./toolbar.js');
  */
 function Layout(options, eventManager, commandManager) {
     this.$el = $(options.el);
-    this.previewStyle = options.previewStyle === 'tab' ? 'tab' : 'column';
     this.height = options.height;
     this.eventManager = eventManager;
     this.commandManager = commandManager;
@@ -30,10 +29,7 @@ Layout.prototype.init = function() {
 
     this.toolbar = new Toolbar(this.eventManager, this.commandManager);
     this.$containerEl.append(this.toolbar.$el);
-
-    if (this.previewStyle === 'tab') {
-        this._initTabEl();
-    }
+    this.$tabEl = this._initTabEl();
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
@@ -42,7 +38,6 @@ Layout.prototype.init = function() {
 Layout.prototype._initContainerEl = function() {
     return $('<div>')
         .addClass('editor-container')
-        .addClass('preview-style-' + this.previewStyle)
         .appendTo(this.$el);
 };
 
@@ -86,6 +81,24 @@ Layout.prototype._initPreviewEl = function() {
         .addClass('preview')
         .height(this.height)
         .appendTo(this.$containerEl);
+};
+
+Layout.prototype.verticalSplitStyle = function() {
+    this.$containerEl.removeClass('preview-style-tab');
+    this.$containerEl.addClass('preview-style-vertical');
+};
+
+Layout.prototype.tabStyle = function() {
+    this.$containerEl.removeClass('preview-style-vertical');
+    this.$containerEl.addClass('preview-style-tab');
+};
+
+Layout.prototype.changePreviewStyle = function(style) {
+    if (style === 'tab') {
+        this.tabStyle();
+    } else if (style === 'vertical') {
+        this.verticalSplitStyle();
+    }
 };
 
 Layout.prototype.getEditorEl = function() {

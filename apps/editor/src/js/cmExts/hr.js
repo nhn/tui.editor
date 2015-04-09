@@ -42,6 +42,8 @@ HR.prototype.exec = function() {
     }
 
     this.doc.replaceRange(replaceText, from, to);
+
+    this.cm.focus();
 };
 
 module.exports = new HR();

@@ -50,6 +50,7 @@
     font-style: italic;
 }
 .editor-container>.tab{
+    display:none;
     padding: 0 5px;
     background: #eee;
     border-bottom: 1px solid #ccc;
@@ -112,22 +113,21 @@
     float: right;
     padding: 5px;
 }
-.editor-container>.statusbar {
-    padding: 5px;
-    height: 12px;
-    background: #eee;
-    border-top: 1px solid #ccc;
-    clear:both;
-}
-.editor-container>.statusbar>span {
-    font-size: 12px;
-    color: #666;
-    line-height: 100%;
-}
-.editor-container>.statusbar>span.left {
-    float: left;
-}
-.editor-container>.statusbar>span.right {
-    float: right;
+.editor-container.preview-style-tab>.tab{
+    display:block;
 }
 
+.editor-container.preview-style-vertical .toolbar {
+    border-bottom: 1px solid #ccc;
+}
+
+.editor-container.preview-style-vertical .editor {
+    float: left;
+    width: 50%;
+    border-right: 1px solid #ccc;
+}
+
+.editor-container.preview-style-vertical .preview {
+    float: left;
+    width: 50%;
+}

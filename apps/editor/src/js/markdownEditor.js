@@ -54,10 +54,6 @@ MarkdownEditor.prototype.init = function(initialValue) {
         dragDrop: false
     });
 
-
-    window.dd = this.cm;
-    window.dd2 = this.cm.getDoc();
-
     this._initEvent();
 };
 
