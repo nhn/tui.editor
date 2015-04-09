@@ -72,14 +72,16 @@
 .editor-container>.tab>button:first-child {
     left: 0;
 }
-.editor-container>.tab>button.active {
+.editor-container>.tab>button.active,
+.editor-container>.tab>button:hover.active {
     background: white;
     border-bottom-color: white;
 }
-.editor-container>.tab>button:hover,
-.editor-container>.tab>button:focus {
+
+.editor-container>.tab>button:hover {
     background: #eee;
 }
+
 .editor-container>.editor,
 .editor-container>.preview {
     box-sizing: border-box;

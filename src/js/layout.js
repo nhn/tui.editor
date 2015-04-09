@@ -5,7 +5,8 @@
 
 'use strict';
 
-var Toolbar = require('./toolbar.js');
+var Toolbar = require('./toolbar'),
+    Tab = require('./tab');
 
 /**
  * Layout
@@ -25,46 +26,38 @@ function Layout(options, eventManager, commandManager) {
 }
 
 Layout.prototype.init = function() {
+    var self = this;
+
     this.$containerEl = this._initContainerEl();
 
     this.toolbar = new Toolbar(this.eventManager, this.commandManager);
     this.$containerEl.append(this.toolbar.$el);
-    this.$tabEl = this._initTabEl();
+
+    this.tab = new Tab({
+        items: ['Editor', 'Preview'],
+        onItemClick: function(tabName) {
+            if (tabName === 'Editor') {
+                self.$editorContainerEl.addClass('active');
+                self.$previewEl.removeClass('active');
+            } else {
+                self.$editorContainerEl.removeClass('active');
+                self.$previewEl.addClass('active');
+            }
+        }
+    });
+
+    this.$containerEl.append(this.tab.$el);
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
+
+    this.tab.activate('Editor');
 };
 
 Layout.prototype._initContainerEl = function() {
     return $('<div>')
         .addClass('editor-container')
         .appendTo(this.$el);
-};
-
-Layout.prototype._initTabEl = function() {
-    var self = this;
-    var $editorButton = $('<button type="button" class="active">Editor</button>');
-    var $previewButton = $('<button type="button">Preview</button>');
-
-    $editorButton.on('click', function() {
-        self.$editorContainerEl.addClass('active');
-        self.$previewEl.removeClass('active');
-        $editorButton.addClass('active');
-        $previewButton.removeClass('active');
-    });
-
-    $previewButton.on('click', function () {
-        self.$editorContainerEl.removeClass('active');
-        self.$previewEl.addClass('active');
-        $editorButton.removeClass('active');
-        $previewButton.addClass('active');
-    });
-
-    return $('<div>')
-        .addClass('tab')
-        .append($editorButton)
-        .append($previewButton)
-        .appendTo(this.$containerEl);
 };
 
 Layout.prototype._initEditorEl = function() {

@@ -1,4 +1,3 @@
-
 'use strict';
 
 var MarkdownEditor = require('./markdownEditor'),
@@ -52,6 +51,11 @@ function NEditor(options) {
     __nedInstance.push(this);
 }
 
+
+/**
+ * 프리뷰가 보여지는 방식을 변경한다
+ * @param {string} style 스타일 이름 tab, vertical
+ */
 NEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
 };
