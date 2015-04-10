@@ -51,6 +51,11 @@ Heading.prototype.exec = function() {
 
     //해당 에디터의 내용을 변경한다
     this.doc.replaceRange(textLinesToModify.join('\n'), from, to);
+
+    range.to.ch += 1;
+    this.doc.setCursor(range.to);
+
+    this.cm.focus();
 };
 
 module.exports = new Heading();
