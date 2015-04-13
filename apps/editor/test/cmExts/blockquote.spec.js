@@ -2,7 +2,7 @@ var Blockquote = require('../../src/js/cmExts/blockquote');
 
 var CodeMirror = window.CodeMirror;
 
-describe('', function() {
+describe('Blockquote', function() {
     'use strict';
 
     var cm,

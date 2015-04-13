@@ -32,35 +32,35 @@ Bold.prototype.exec = function() {
 
     // if selection is empty, expend selection to detect a syntax
     if (isEmpty && cursor.ch > 1) {
-        tmpSelection = expendSelection(this.doc, cursor);
+        tmpSelection = this.expendSelection(this.doc, cursor);
         selection = tmpSelection || selection;
     }
 
-    isRemoved = isNeedRemove(selection);
-    result = isRemoved ? remove(selection) : append(selection);
+    isRemoved = this.isNeedRemove(selection);
+    result = isRemoved ? this.remove(selection) : this.append(selection);
 
     this.doc.replaceSelection(result, 'around');
 
     if (isEmpty && !isRemoved) {
-        setCursorToCenter(this.doc, cursor);
+        this.setCursorToCenter(this.doc, cursor);
     }
 
     this.cm.focus();
 };
 
-function isNeedRemove(selection) {
+Bold.prototype.isNeedRemove = function(selection) {
     return boldRegex.test(selection);
-}
+};
 
-function append(selection) {
+Bold.prototype.append = function(selection) {
     return '**' + selection + '**';
-}
+};
 
-function remove(selection) {
+Bold.prototype.remove = function(selection) {
     return selection.substr(2, selection.length - 4);
-}
+};
 
-function expendSelection(doc, cursor) {
+Bold.prototype.expendSelection = function(doc, cursor) {
     var tmpSelection = doc.getSelection();
 
     doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
@@ -70,10 +70,10 @@ function expendSelection(doc, cursor) {
     } else {
         doc.setSelection(cursor);
     }
-}
+};
 
-function setCursorToCenter(doc, cursor) {
+Bold.prototype.setCursorToCenter = function(doc, cursor) {
     doc.setCursor(cursor.line, cursor.ch + 2);
-}
+};
 
 module.exports = new Bold();

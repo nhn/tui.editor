@@ -36,7 +36,7 @@ Italic.prototype.exec = function() {
     // if selection is empty, expend selection to detect a syntax
     if (isEmpty) {
         if (cursor.ch > 2) {
-            tmpSelection = expendWithBoldSelection(this.doc, cursor);
+            tmpSelection = this.expendWithBoldSelection(cursor);
 
             if (tmpSelection) {
                 isWithBold = 'with';
@@ -44,79 +44,79 @@ Italic.prototype.exec = function() {
         }
 
         if (isWithBold !== 'with' && cursor.ch > 1) {
-            isWithBold = expendOnlyBoldSelection(this.doc, cursor);
+            isWithBold = this.expendOnlyBoldSelection(cursor);
         }
 
         if (!isWithBold && cursor.ch > 0) {
-            expendSelection(this.doc, cursor);
+            this.expendSelection(cursor);
             selection = tmpSelection || selection;
         }
     }
 
-    isRemoved = isNeedRemove(selection);
-    result = isRemoved ? remove(selection) : append(selection);
+    isRemoved = this.isNeedRemove(selection);
+    result = isRemoved ? this.remove(selection) : this.append(selection);
 
     this.doc.replaceSelection(result, 'around');
 
     if (isEmpty) {
-        setCursorToCenter(this.doc, cursor, isRemoved);
+        this.setCursorToCenter(cursor, isRemoved);
     }
 
     this.cm.focus();
 };
 
-function isNeedRemove(selection) {
+Italic.prototype.isNeedRemove = function(selection) {
     return italicRegex.test(selection) || boldItalicRegex.test(selection);
-}
+};
 
-function append(selection) {
+Italic.prototype.append = function(selection) {
     return '*' + selection + '*';
-}
+};
 
-function remove(selection) {
+Italic.prototype.remove = function(selection) {
     return selection.substr(1, selection.length - 2);
-}
+};
 
-function expendWithBoldSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
+Italic.prototype.expendWithBoldSelection = function(cursor) {
+    var tmpSelection = this.doc.getSelection();
 
-    doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
+    this.doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
 
     if (tmpSelection === '******' || tmpSelection === '______') {
         return tmpSelection;
     } else {
-        doc.setSelection(cursor);
+        this.doc.setSelection(cursor);
     }
-}
+};
 
-function expendOnlyBoldSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
+Italic.prototype.expendOnlyBoldSelection = function(cursor) {
+    var tmpSelection = this.doc.getSelection();
 
-    doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+    this.doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
     if (tmpSelection === '****' || tmpSelection === '____') {
-        doc.setSelection(cursor);
+        this.doc.setSelection(cursor);
         return 'only';
     }
 
     return false;
-}
+};
 
-function expendSelection(doc, cursor) {
-    var tmpSelection = doc.getSelection();
+Italic.prototype.expendSelection = function(cursor) {
+    var tmpSelection = this.doc.getSelection();
 
-    doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+    this.doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
 
     if (tmpSelection === '**' || tmpSelection === '__') {
         return tmpSelection;
     } else {
-        doc.setSelection(cursor);
+        this.doc.setSelection(cursor);
     }
-}
+};
 
-function setCursorToCenter(doc, cursor, isRemoved) {
+Italic.prototype.setCursorToCenter = function(cursor, isRemoved) {
     var pos = isRemoved ? -1 : 1;
-    doc.setCursor(cursor.line, cursor.ch + pos);
-}
+    this.doc.setCursor(cursor.line, cursor.ch + pos);
+};
 
 module.exports = new Italic();

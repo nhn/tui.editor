@@ -7,7 +7,6 @@
 
 var Bold = require('./cmExts/bold'),
     Italic = require('./cmExts/italic'),
-    DeleteEmphasis = require('./cmExts/deleteEmphasis'),
     Blockquote = require('./cmExts/blockquote'),
     Heading = require('./cmExts/heading'),
     HR = require('./cmExts/hr');
@@ -31,7 +30,6 @@ function MarkdownEditor($el, eventManager, commandManager) {
 
     commandManager.addCommand(Bold);
     commandManager.addCommand(Italic);
-    commandManager.addCommand(DeleteEmphasis);
     commandManager.addCommand(Blockquote);
     commandManager.addCommand(Heading);
     commandManager.addCommand(HR);
