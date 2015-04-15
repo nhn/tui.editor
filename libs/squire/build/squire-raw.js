@@ -3319,6 +3319,50 @@ proto.insertImage = function ( src ) {
     return img;
 };
 
+// Insert HTML at the cursor location. If the selection is not collapsed
+// insertTreeFragmentIntoRange will delete the selection so that it is replaced
+// by the html being inserted.
+proto.insertHTML = function ( html ) {
+    var range = this.getSelection(),
+        frag = this._doc.createDocumentFragment(),
+        div = this.createElement( 'DIV' );
+
+    // Parse HTML into DOM tree
+    div.innerHTML = html;
+    frag.appendChild( empty( div ) );
+
+    // Record undo checkpoint
+    this._recordUndoState( range );
+    this._getRangeAndRemoveBookmark( range );
+
+    try {
+        frag.normalize();
+        addLinks( frag );
+        cleanTree( frag, true );
+        cleanupBRs( frag );
+        removeEmptyInlines( frag );
+        fixContainer( frag );
+
+        var node = frag;
+        while ( node = getNextBlock( node ) ) {
+            fixCursor( node );
+        }
+
+        insertTreeFragmentIntoRange( range, frag );
+        if ( !canObserveMutations ) {
+            this._docWasChanged();
+        }
+        range.collapse( false );
+        this._ensureBottomLine();
+
+        this.setSelection( range );
+        this._updatePath( range, true );
+    } catch ( error ) {
+        this.didError( error );
+    }
+    return this;
+};
+
 // --- Formatting ---
 
 var command = function ( method, arg, arg2 ) {

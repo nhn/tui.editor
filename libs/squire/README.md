@@ -136,6 +136,16 @@ The method takes one argument:
 
 Returns a reference to the newly inserted image element.
 
+### insertHTML
+
+Inserts an HTML fragment at the current cursor location, or replaces the selection if selected. The value supplied should not contain `<body>` tags or anything outside of that.
+
+The method takes one argument:
+
+* **html**: The html to insert.
+
+Returns self (the Squire instance).
+
 ### getPath
 
 Returns the path through the DOM tree from the `<body>` element to the current current cursor position. This is a string consisting of the tag, id and class names in CSS format. For example `BODY>BLOCKQUOTE>DIV#id>STRONG>SPAN.font>EM`. If a selection has been made, so different parts of the selection may have different paths, the value will be `(selection)`. The path is useful for efficiently determining the current formatting for bold, italic, underline etc, and thus determining button state. If a selection has been made, you can has the `hasFormat` method instead to get the current state for the properties you care about.
