@@ -1,0 +1,75 @@
+var Toolbar = require('../src/js/toolbar'),
+    CommandMangager = require('../src/js/commandManager'),
+    Command = require('../src/js/command'),
+    EventManager = require('../src/js/eventManager'),
+    Button = require('../src/js/button');
+
+describe('Toolbar', function() {
+    'use strict';
+
+    var toolbar,
+        em,
+        cm;
+
+    beforeEach(function() {
+        $('body').empty();
+        em = new EventManager();
+        cm = new CommandMangager();
+        toolbar = new Toolbar(em, cm);
+    });
+
+    describe('버튼을 추가할 수 있다', function() {
+        it('버튼을 추가해 buttons의 갯수가 증가했다', function() {
+            var len;
+
+            len = toolbar.buttons.length;
+
+            toolbar.addButton(new Button({
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            }));
+
+            expect(toolbar.buttons.length).toBe(len + 1);
+        });
+
+        it('버튼에 커맨드 연결이되어 버튼클릭시 커맨드가 실행된다', function() {
+            var command;
+
+            toolbar.addButton(new Button({
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            }));
+
+            $('body').append(toolbar.$el);
+
+            command = new Command('test', Command.TYPE.GB);
+            command.exec = jasmine.createSpy('exec');
+
+            cm.addCommand(command);
+
+            $('.test').trigger('click');
+
+            expect(command.exec).toHaveBeenCalled();
+        });
+    });
+
+    describe('기본 툴바버튼들을 생성한다', function() {
+        beforeEach(function() {
+            $('body').append(toolbar.$el);
+        });
+
+        it('추가된 툴바의 갯수는 5개', function() {
+            expect($('button').length).toEqual(5);
+        });
+
+        it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {
+            expect($('.bold').length).toEqual(1);
+            expect($('.italic').length).toEqual(1);
+            expect($('.quote').length).toEqual(1);
+            expect($('.heading').length).toEqual(1);
+            expect($('.hrline').length).toEqual(1);
+        });
+    });
+});
