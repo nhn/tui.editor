@@ -20,6 +20,8 @@ function CommandManager(base) {
     this._command = new util.HashMap();
     this._mdCommand = new util.HashMap();
     this.base = base;
+
+    this._linkWithEventManager();
 }
 
 /**
@@ -34,9 +36,8 @@ CommandManager.prototype.addCommand = function(command) {
 
     if (command.isMDType()) {
         this._addCMCommand(name, responder, command.keyMap);
-
         this._mdCommand.set(name, function() {
-            return base.getCodeMirror().execCommand(name);
+           return responder.apply(null, [base.getCodeMirror()].concat(util.toArray(arguments)));
         });
     } else if (command.isGlobalType()) {
         this._command.set(name, responder);
@@ -61,14 +62,25 @@ CommandManager.prototype._addCMCommand = function(name, fn, keyMap) {
  */
 CommandManager.prototype.exec = function(name) {
     var command = this._command.get(name),
-        mdCommand = this._mdCommand.get(name);
+        mdCommand = this._mdCommand.get(name),
+        args = util.toArray(arguments);
+
+    args.shift();
 
     //todo 상황별로 판단하는 로직이 필요
     if (command) {
         return command();
     } else if (mdCommand) {
-        return mdCommand();
+        return mdCommand.apply(null, args);
     }
+};
+
+CommandManager.prototype._linkWithEventManager = function() {
+    var commandManager = this;
+
+    this.base.eventManager.listen('command', function(command) {
+        commandManager.exec(command);
+    });
 };
 
 module.exports = CommandManager;
