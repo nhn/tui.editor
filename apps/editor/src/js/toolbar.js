@@ -17,9 +17,8 @@ var util = ne.util;
  * @constructor
  * @class
  * @param {EventManager} eventManager 이벤트 매니저
- * @param {CommandManager} commandManager 커맨드 매니저
  */
-function Toolbar(eventManager, commandManager) {
+function Toolbar(eventManager) {
     UIController.call(this, {
         tagName: 'div',
         className: 'toolbar'
@@ -28,7 +27,6 @@ function Toolbar(eventManager, commandManager) {
     this.buttons = [];
 
     this.eventManager = eventManager;
-    this.commandManager = commandManager;
 
     this.render();
     this._initButton();
@@ -45,10 +43,10 @@ Toolbar.prototype.render = function() {
  * @param {Button} button 버튼
  */
 Toolbar.prototype.addButton = function(button) {
-    var commandManager = this.commandManager;
+    var ev = this.eventManager;
 
     button.on('command', function(commandName) {
-        commandManager.exec(commandName);
+        ev.emit('command', commandName);
     });
 
     this.buttons.push(button);
@@ -84,6 +82,11 @@ Toolbar.prototype._initButton = function() {
         className: 'hrline',
         command: 'HR',
         text: 'HR'
+    }));
+
+    this.addButton(new Button({
+        className: 'link',
+        text: 'link'
     }));
 };
 
