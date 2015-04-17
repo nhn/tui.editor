@@ -29,7 +29,7 @@ var LAYOUT_TEMPLATE = [
  * @param {object} options 옵션
  */
 var Layerpopup = util.defineClass({
-    layoutTemplate: LAYOUT_TEMPLATE.join(),
+    layoutTemplate: LAYOUT_TEMPLATE.join(''),
     init: function Layerpopup(options) {
         options = util.extend({}, options);
 
@@ -37,6 +37,7 @@ var Layerpopup = util.defineClass({
         this._initTarget(options);
         this._initExternalPopupHtmlIfNeed(options);
         this._initCloserOpener(options);
+        this._initContent(options);
         this._render();
     },
     _initTarget: function(options) {
@@ -57,12 +58,18 @@ var Layerpopup = util.defineClass({
             this.closerCssQuery = options.closerCssQuery;
         }
     },
+    _initContent: function(options) {
+        if (options.content) {
+            this.$content = $(options.content);
+        }
+    },
     _render: function() {
         this._renderLayout();
-        this.$body = this.$el.find(this._getFullClassName('body'));
-        this._renderBody(this.$body);
+        this._renderContent();
         this._bindEvent();
         this._bindOpenerCloserEvent();
+
+        this.trigger('afterRender', this);
     },
     _renderLayout: function() {
         if (!this._isExternalHtmlUse) {
@@ -73,7 +80,11 @@ var Layerpopup = util.defineClass({
             this.hide();
         }
     },
-    _renderBody: function($body) {
+    _renderContent: function() {
+        if (!this._isExternalHtmlUse) {
+            this.$el.find(this._getFullClassName('closeButton'))
+                .append(this.$content);
+        }
     },
     _getFullClassName: function(lastName) {
         return '.' + CLASS_PREFIX + lastName;
@@ -122,15 +133,18 @@ var Layerpopup = util.defineClass({
     hide: function() {
         this.$el.css('display', 'none');
         this._isShow = false;
+        this.trigger('hidden', this);
     },
     show: function() {
         this.$el.css('display', 'block');
         this._isShow = true;
+        this.trigger('shown', this);
     },
     isShow: function() {
         return this._isShow;
     },
     remove: function() {
+        this.trigger('remove', this);
         this._unbindOpenerCloserEvent();
         this._unbindEvent();
 
