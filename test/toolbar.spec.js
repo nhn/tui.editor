@@ -14,7 +14,9 @@ describe('Toolbar', function() {
     beforeEach(function() {
         $('body').empty();
         em = new EventManager();
-        cm = new CommandMangager();
+        cm = new CommandMangager({
+            eventManager: em
+        });
         toolbar = new Toolbar(em, cm);
     });
 
@@ -61,7 +63,7 @@ describe('Toolbar', function() {
         });
 
         it('추가된 툴바의 갯수는 5개', function() {
-            expect($('button').length).toEqual(5);
+            expect($('button').length).toEqual(6);
         });
 
         it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {
@@ -70,6 +72,7 @@ describe('Toolbar', function() {
             expect($('.quote').length).toEqual(1);
             expect($('.heading').length).toEqual(1);
             expect($('.hrline').length).toEqual(1);
+            expect($('.link').length).toEqual(1);
         });
     });
 });
