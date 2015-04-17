@@ -34,7 +34,7 @@ Command.prototype._responder = function() {
         this.setup.apply(this, arguments);
     }
 
-    return this.exec();
+    return this.exec.apply(this, arguments);
 };
 
 Command.prototype.initResponder = function() {

@@ -1,24 +1,28 @@
 var CommandManager = require('../src/js/commandManager'),
-    Command = require('../src/js/command');
+    Command = require('../src/js/command'),
+    EventManager = require('../src/js/eventManager');
 
 var CodeMirror = window.CodeMirror;
 
 describe('CommandManager', function() {
     'use strict';
 
+    var mockupCm = {
+        execCommand: function(name) {
+            return name;
+        }
+    };
+
     var mockupBase = {
         getCodeMirror: function() {
-            return {
-                execCommand: function(name) {
-                    return name;
-                }
-            };
+            return mockupCm;
         }
     };
 
     var cmgr;
 
     beforeEach(function() {
+        mockupBase.eventManager = new EventManager();
         cmgr = new CommandManager(mockupBase);
     });
 
@@ -51,8 +55,8 @@ describe('CommandManager', function() {
         });
     });
 
-    describe('exec', function() {
-        it('일반 커맨드를 실행할 수 있다', function() {
+    describe('커맨드를 실행한다', function() {
+        it('일반 커맨드를 실행', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');
@@ -63,20 +67,42 @@ describe('CommandManager', function() {
             expect(command.exec).toHaveBeenCalled();
         });
 
-        it('마크다운 커맨드(코드미러)를 실행할 수 있다', function() {
-            var command = new Command('mycommand', Command.TYPE.MD);
+        it('마크다운 커맨드(코드미러)를 실행', function() {
+            var command = new Command('mycommand', Command.TYPE.MD),
+                execSpy = jasmine.createSpy('spy');
 
             command.setKeyMap('Ctrl-B', 'Cmd-B');
             command.setup = function() {};
-            command.exec = function() {};
+            command.exec = execSpy;
+            cmgr.addCommand(command);
+            cmgr.exec('mycommand');
+
+            expect(execSpy).toHaveBeenCalled();
+        });
+
+        it('커맨드에 인자를 전달할 수 있다', function() {
+            var command = new Command('mycommand', Command.TYPE.MD),
+                execSpy = jasmine.createSpy('spy');
+
+            command.setKeyMap('Ctrl-B', 'Cmd-B');
+            command.setup = function() {};
+            command.exec = execSpy;
 
             cmgr.addCommand(command);
+            cmgr.exec('mycommand', 'arg', 'arg2');
 
-            expect(cmgr.exec('mycommand')).toBe('mycommand');
+            expect(execSpy).toHaveBeenCalledWith(mockupCm, 'arg', 'arg2');
         });
-    });
 
-    describe('wysiwyg용 커맨드를 실행한다.', function() {
+        it('이벤트매니저를 이용해 커맨드를 실행', function() {
+            var command = new Command('mycommand', Command.TYPE.GB);
 
+            command.exec = jasmine.createSpy('글로벌 커맨드');
+            cmgr.addCommand(command);
+
+            mockupBase.eventManager.emit('command', 'mycommand');
+
+            expect(command.exec).toHaveBeenCalled();
+        });
     });
 });
