@@ -41,7 +41,6 @@ function UIController(options) {
     this.$el = null;
 
     this._initID();
-    this.cEvent = new util.CustomEvents();
 
     this.setInteractive(!options.stopInteraction);
     this.setRootElement(options.rootElement);
@@ -82,9 +81,7 @@ UIController.prototype._addEvent = function(type, fn) {
         event = parsedType[0],
         selector = parsedType[1];
 
-    if (!this.isDomEvent(event)) {
-        this.cEvent.on(event, fn);
-    } else if (selector) {
+    if (this.isDomEvent(event) && selector) {
         this.$el.on(event, selector, fn);
     } else {
         this.$el.on(event, fn);
@@ -103,9 +100,7 @@ UIController.prototype.off = function(type, fn) {
         event = parsedType[0],
         selector = parsedType[1];
 
-    if (!this.isDomEvent(event)) {
-        this.cEvent.off(event, fn);
-    } else if (selector) {
+    if (this.isDomEvent(event) && selector) {
         this.$el.off(event, selector, fn);
     } else {
         this.$el.off(event, fn);
@@ -191,7 +186,7 @@ UIController.prototype.setRootElement = function($el) {
  * 커스텀 이벤트를 발생시킨다.
  */
 UIController.prototype.fireEvent = function() {
-    this.cEvent.fire.apply(this.cEvent, arguments);
+    this.$el.trigger.apply(this.$el, arguments);
 };
 
 /**
