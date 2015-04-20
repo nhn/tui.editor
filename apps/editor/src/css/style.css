@@ -133,3 +133,44 @@
     float: left;
     width: 50%;
 }
+
+
+
+
+.nepopup-wrapper {
+    width: 500px;
+    left: auto;
+    margin-right: auto;
+    margin-left: auto;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+.nepopup-header {
+    height: 30px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
+}
+
+.nepopup-body {
+    padding: 15px;
+}
+
+.nepopup-header .nepopup-closeButton {
+    float: right;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1;
+    background: none;
+    font-weight: bold;
+    font-size: 20px;
+    color: #aaa;
+}
+
+.nepopup-header .nepopup-title {
+    font-size: 20px;
+    font-weight:bold;
+    vertical-align: baseline;
+}

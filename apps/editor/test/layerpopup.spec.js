@@ -52,10 +52,27 @@ describe('Layerpopup', function() {
         it('옵션으로 전달된 $el이 내부 $el로 지정된다', function() {
             expect(popup.$el.hasClass(CLASS_PREFIX + 'wrapper')).toBe(true);
         });
+
+        it('외부 HTML을 이용하는경우 컨텐트옵션을 이용하지 않는다', function() {
+            $('body').html(Layerpopup.prototype.layoutTemplate);
+
+            popup = new Layerpopup({
+                $el: $('.' + CLASS_PREFIX + 'wrapper'),
+                content: $('<p>test</p>')
+            });
+
+            expect(popup.$target.find('p').length).toBe(0);
+        });
     });
 
-    describe('기본레이아웃을 이용하는 경우 컨텐트를 전달받아 그린다', function() {
-        it('컨텐트를 텍스트형태로 전달받아서 그린다', function() {
+    describe('기본레이아웃을 이용한다', function() {
+        it('텍스트 컨텐트를 전달받아 그린다', function() {
+            var popup = new Layerpopup({
+                textContent: 'text'
+            });
+            expect(popup.$el.find('.' + CLASS_PREFIX + 'body').text()).toEqual('text');
+        });
+        it('컨텐트를 텍스트 태그형태로 전달받아서 그린다', function() {
             var popup = new Layerpopup({
                 content: '<p>test</p>'
             });
@@ -70,20 +87,43 @@ describe('Layerpopup', function() {
             expect(popup.$target.find('p').length).toBe(1);
         });
 
-        it('외부 HTML을 이용하는경우 컨텐트를 이용하지 않는다', function() {
-            var popup;
-
-            $('body').html(Layerpopup.prototype.layoutTemplate);
-
-            popup = new Layerpopup({
-                $el: $('.' + CLASS_PREFIX + 'wrapper'),
-                content: $('<p>test</p>')
+        it('타이틀을 전달받아 그린다', function() {
+            new Layerpopup({
+                title: 'mytitle'
             });
 
-            expect(popup.$target.find('p').length).toBe(0);
+            expect($('.' + CLASS_PREFIX + 'title').text()).toEqual('mytitle');
         });
     });
 
+    describe('setContent', function() {
+        it('컨텐트를 변경한다', function() {
+            var popup = new Layerpopup();
+            popup.setContent('text');
+            expect(popup.$el.find('.' + CLASS_PREFIX + 'body').text()).toEqual('text');
+        });
+        it('컨텐트가 이미 있다면 지우고 변경한다', function() {
+            var popup = new Layerpopup();
+            popup.setContent('text');
+            popup.setContent('text');
+            expect(popup.$el.find('.' + CLASS_PREFIX + 'body').text()).toEqual('text');
+        });
+    });
+
+    describe('setTitle', function() {
+        it('타이틀을 변경한다', function() {
+            var popup = new Layerpopup();
+            popup.setTitle('title');
+            expect($('.' + CLASS_PREFIX + 'title').text()).toEqual('title');
+        });
+
+        it('타이틀이 이미 있다면 지우고  변경한다', function() {
+            var popup = new Layerpopup();
+            popup.setTitle('titleBefore');
+            popup.setTitle('title');
+            expect($('.' + CLASS_PREFIX + 'title').text()).toEqual('title');
+        });
+    });
 
     describe('내부의 ' + CLASS_PREFIX + 'closeButton란 클래스가 붙은 엘리먼트가 클릭되면 팝업이 닫힌다', function() {
         var popup;
