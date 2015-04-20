@@ -11,70 +11,59 @@ describe('UIController', function() {
 
     describe('on()', function() {
         it('커스텀 이벤트를 바인드할수있다.', function() {
-            var check = false;
+            var spy = jasmine.createSpy();
 
-            uic.on('event!', function() {
-                check = true;
-            });
+            uic.on('event!', spy);
 
             uic.fireEvent('event!');
 
-            expect(check).toEqual(true);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('jQuery 형식으로 el에  이벤트를 바인드할수있다.', function() {
-            var check = false;
+            var spy = jasmine.createSpy();
 
-            uic.on('click', function() {
-                check = true;
-            });
+            uic.on('click', spy);
 
             uic.$el.trigger('click');
 
-            expect(check).toEqual(true);
+            expect(spy).toHaveBeenCalled();
         });
 
         it('객체로 이벤트를 바인드할수있다.', function() {
-            var check = false;
+            var spy = jasmine.createSpy();
 
             uic.on({
-                'event!': function() {
-                    check = true;
-                }
+                'event!': spy
             });
 
             uic.fireEvent('event!');
 
-            expect(check).toEqual(true);
+            expect(spy).toHaveBeenCalled();
         });
     });
 
     describe('off()', function() {
         it('커스텀 이벤트를 취소한다..', function() {
-            var check = false;
+            var spy = jasmine.createSpy();
 
-            uic.on('event!', function() {
-                check = true;
-            });
+            uic.on('event!', spy);
 
             uic.off('event!');
 
             uic.fireEvent('event!');
 
-            expect(check).toEqual(false);
+            expect(spy).not.toHaveBeenCalled();
         });
 
         it('jQuery 형식으로 el에  이벤트를 언바인드할수있다..', function() {
-            var check = false;
+            var spy = jasmine.createSpy();
 
-            uic.on('click', function() {
-                check = true;
-            });
-
+            uic.on('click', spy);
             uic.off('click');
             uic.$el.trigger('click');
 
-            expect(check).toEqual(false);
+            expect(spy).not.toHaveBeenCalled();
         });
     });
 
