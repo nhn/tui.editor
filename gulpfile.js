@@ -83,6 +83,7 @@ gulp.task('connect', function() {
 gulp.task('watch', function () {
     livereload.listen();
     gulp.watch(['./build/*.js'], livereload.changed);
+    gulp.watch(['./src/css/*.css'], livereload.changed);
     gulp.watch(['./demo/*'], livereload.changed);
 });
 
