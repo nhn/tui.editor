@@ -5,6 +5,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
     CommandMangager = require('./commandManager'),
+    Layerpopup = require('./layerpopup'),
     ExtManager = require('./extManager'),
     Converter = require('./converter');
 
@@ -55,6 +56,15 @@ function NEditor(options) {
     }
 
     this.changePreviewStyle(this.options.previewStyle);
+/*
+    var lp = new Layerpopup({
+        title: 'MYTITLE',
+        textContent: 'waefwaef'
+    });
+
+    lp.show();
+    */
+
 
     NEditor._extManager.applyExtension(this, this.options.exts);
 

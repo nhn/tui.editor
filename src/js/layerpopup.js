@@ -14,6 +14,7 @@ var CLASS_PREFIX = 'nepopup-';
 var LAYOUT_TEMPLATE = [
     '<div class="' + CLASS_PREFIX + 'wrapper">',
         '<div class="' + CLASS_PREFIX + 'header">',
+            '<span class="' + CLASS_PREFIX + 'title"></span>',
             '<button class="' + CLASS_PREFIX + 'closeButton">x</button>',
         '</div>',
         '<div class="' + CLASS_PREFIX + 'body"></div>',
@@ -27,6 +28,12 @@ var LAYOUT_TEMPLATE = [
  * @constructor
  * @class
  * @param {object} options 옵션
+ * @param {object} options.openerCssQuery
+ * @param {object} options.closerCssQuery
+ * @param {object} options.$el
+ * @param {object} options.content
+ * @param {object} options.textContent
+ * @param {object} options.title
  */
 var Layerpopup = util.defineClass({
     layoutTemplate: LAYOUT_TEMPLATE.join(''),
@@ -38,7 +45,11 @@ var Layerpopup = util.defineClass({
         this._initExternalPopupHtmlIfNeed(options);
         this._initCloserOpener(options);
         this._initContent(options);
+        this._initTitle(options);
         this._render();
+        this._bindEvent();
+        this._bindOpenerCloserEvent();
+        this.trigger('afterRender', this);
     },
     _initTarget: function(options) {
         this.$target = options.$target || $('body');
@@ -61,15 +72,19 @@ var Layerpopup = util.defineClass({
     _initContent: function(options) {
         if (options.content) {
             this.$content = $(options.content);
+        } else if (options.textContent) {
+            this.$content = options.textContent;
+        }
+    },
+    _initTitle: function(options) {
+        if (options.title) {
+            this._initTitle = options.title;
         }
     },
     _render: function() {
         this._renderLayout();
+        this._renderTitle();
         this._renderContent();
-        this._bindEvent();
-        this._bindOpenerCloserEvent();
-
-        this.trigger('afterRender', this);
     },
     _renderLayout: function() {
         if (!this._isExternalHtmlUse) {
@@ -82,8 +97,12 @@ var Layerpopup = util.defineClass({
     },
     _renderContent: function() {
         if (!this._isExternalHtmlUse) {
-            this.$el.find(this._getFullClassName('closeButton'))
-                .append(this.$content);
+            this.setContent(this.$content);
+        }
+    },
+    _renderTitle: function() {
+        if (!this._isExternalHtmlUse) {
+            this.setTitle(this._initTitle);
         }
     },
     _getFullClassName: function(lastName) {
@@ -129,6 +148,18 @@ var Layerpopup = util.defineClass({
     },
     _getId: function() {
         return this._id;
+    },
+    setContent: function($content) {
+        var $body = this.$el.find(this._getFullClassName('body'));
+
+        $body.empty();
+        $body.append($content);
+    },
+    setTitle: function(title) {
+        var $title = this.$el.find(this._getFullClassName('title'));
+
+        $title.empty();
+        $title.append(title);
     },
     hide: function() {
         this.$el.css('display', 'none');
