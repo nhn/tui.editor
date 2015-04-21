@@ -47,6 +47,7 @@ var Layerpopup = util.defineClass({
         this._initContent(options);
         this._initTitle(options);
         this._render();
+        this._initClassName(options);
         this._bindEvent();
         this._bindOpenerCloserEvent();
         this.trigger('afterRender', this);
@@ -79,6 +80,11 @@ var Layerpopup = util.defineClass({
     _initTitle: function(options) {
         if (options.title) {
             this._initTitle = options.title;
+        }
+    },
+    _initClassName: function(options) {
+        if (options.className) {
+            this.$el.addClass(options.className);
         }
     },
     _render: function() {
