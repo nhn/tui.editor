@@ -8,8 +8,6 @@
 var UIController = require('./uicontroller'),
     Button = require('./button');
 
-var util = ne.util;
-
 /**
  * Toolbar
  * @exports Toolbar
@@ -18,76 +16,73 @@ var util = ne.util;
  * @class
  * @param {EventManager} eventManager 이벤트 매니저
  */
-function Toolbar(eventManager) {
-    UIController.call(this, {
-        tagName: 'div',
-        className: 'toolbar'
-    });
+var Toolbar = UIController.extend({
+    init: function(eventManager) {
+        UIController.call(this, {
+            tagName: 'div',
+            className: 'toolbar'
+        });
 
-    this.buttons = [];
+        this.buttons = [];
 
-    this.eventManager = eventManager;
+        this.eventManager = eventManager;
 
-    this.render();
-    this._initButton();
-}
+        this.render();
+        this._initButton();
+    },
+    render: function() {
+        this.$buttonContainer = this.$el;
+    },
+    /**
+     * 버튼을 추가한다
+     * @param {Button} button 버튼
+     */
+    addButton: function(button) {
+        var ev = this.eventManager;
 
-util.inherit(Toolbar, UIController);
+        button.on('command', function($, commandName) {
+            ev.emit('command', commandName);
+        });
 
-Toolbar.prototype.render = function() {
-    this.$buttonContainer = this.$el;
-};
+        this.buttons.push(button);
+        this.$buttonContainer.append(button.$el);
+    },
+    _initButton: function() {
+        this.addButton(new Button({
+            className: 'bold',
+            command: 'Bold',
+            text: 'B'
+        }));
 
-/**
- * 버튼을 추가한다
- * @param {Button} button 버튼
- */
-Toolbar.prototype.addButton = function(button) {
-    var ev = this.eventManager;
+        this.addButton(new Button({
+            className: 'italic',
+            command: 'Italic',
+            text: 'I'
+        }));
 
-    button.on('command', function($, commandName) {
-        ev.emit('command', commandName);
-    });
+        this.addButton(new Button({
+            className: 'quote',
+            command: 'Blockquote',
+            text: 'Q'
+        }));
 
-    this.buttons.push(button);
-    this.$buttonContainer.append(button.$el);
-};
+        this.addButton(new Button({
+            className: 'heading',
+            command: 'Heading',
+            text: 'HH'
+        }));
 
-Toolbar.prototype._initButton = function() {
-    this.addButton(new Button({
-        className: 'bold',
-        command: 'Bold',
-        text: 'B'
-    }));
+        this.addButton(new Button({
+            className: 'hrline',
+            command: 'HR',
+            text: 'HR'
+        }));
 
-    this.addButton(new Button({
-        className: 'italic',
-        command: 'Italic',
-        text: 'I'
-    }));
-
-    this.addButton(new Button({
-        className: 'quote',
-        command: 'Blockquote',
-        text: 'Q'
-    }));
-
-    this.addButton(new Button({
-        className: 'heading',
-        command: 'Heading',
-        text: 'HH'
-    }));
-
-    this.addButton(new Button({
-        className: 'hrline',
-        command: 'HR',
-        text: 'HR'
-    }));
-
-    this.addButton(new Button({
-        className: 'link',
-        text: 'link'
-    }));
-};
+        this.addButton(new Button({
+            className: 'link',
+            text: 'link'
+        }));
+    }
+});
 
 module.exports = Toolbar;

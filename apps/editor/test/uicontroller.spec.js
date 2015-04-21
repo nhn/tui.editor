@@ -15,7 +15,7 @@ describe('UIController', function() {
 
             uic.on('event!', spy);
 
-            uic.fireEvent('event!');
+            uic.trigger('event!');
 
             expect(spy).toHaveBeenCalled();
         });
@@ -37,7 +37,7 @@ describe('UIController', function() {
                 'event!': spy
             });
 
-            uic.fireEvent('event!');
+            uic.trigger('event!');
 
             expect(spy).toHaveBeenCalled();
         });
@@ -51,7 +51,7 @@ describe('UIController', function() {
 
             uic.off('event!');
 
-            uic.fireEvent('event!');
+            uic.trigger('event!');
 
             expect(spy).not.toHaveBeenCalled();
         });

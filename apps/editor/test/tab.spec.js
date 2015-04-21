@@ -43,20 +43,18 @@ describe('Tab', function() {
         });
 
         it('핸들러에 인자로 버튼의 네임 넘어간다', function() {
-            var clickedItemName;
+            var spy = jasmine.createSpy('onItemClick');
 
             tab = new Tab({
                 items: ['tab1', 'tab2'],
-                onItemClick: function(name) {
-                    clickedItemName = name;
-                }
+                onItemClick: spy
             });
 
             $('body').append(tab.$el);
 
             $('button').eq(0).trigger('click');
 
-            expect(clickedItemName).toEqual('tab1');
+            expect(spy.calls.mostRecent().args[1]).toEqual('tab1');
         });
     });
 

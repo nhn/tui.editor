@@ -7,8 +7,6 @@
 
 var UIController = require('./uicontroller');
 
-var util = ne.util;
-
 /**
  * Button
  * @exports Button
@@ -22,40 +20,38 @@ var util = ne.util;
  * @param {string} options.text 버튼안에 들어갈 텍스트
  * @param {string} options.style 추가적으로 적용될 CSS스타일
  */
-function Button(options) {
-    UIController.call(this, {
-        tagName: 'button',
-        className: options.className
-    });
 
-    this.command = options.command;
-    this.text = options.text;
-    this.style = options.style;
+var Button = UIController.extend({
+    events: {
+        'click': '_onClick'
+    },
+    init: function Button(options) {
+        UIController.call(this, {
+            tagName: 'button',
+            className: options.className
+        });
 
-    this.render();
-}
+        this.command = options.command;
+        this.text = options.text;
+        this.style = options.style;
 
-util.inherit(Button, UIController);
+        this.render();
+    },
+    /**
+     * Button의 모습을 그린다
+     */
+    render: function() {
+        this.$el.text(this.text);
+        this.$el.attr('type', 'button');
 
-Button.prototype.events = {
-    'click': '_onClick'
-};
-
-/**
- * Button의 모습을 그린다
- */
-Button.prototype.render = function() {
-    this.$el.text(this.text);
-    this.$el.attr('type', 'button');
-
-    if (this.style) {
-        this.$el.attr('style', this.style);
+        if (this.style) {
+            this.$el.attr('style', this.style);
+        }
+        this.attachEvents();
+    },
+    _onClick: function() {
+        this.trigger('command', this.command);
     }
-    this.attachEvents();
-};
-
-Button.prototype._onClick = function() {
-    this.fireEvent('command', this.command);
-};
+});
 
 module.exports = Button;

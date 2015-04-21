@@ -35,7 +35,7 @@ Layout.prototype.init = function() {
 
     this.tab = new Tab({
         items: ['Editor', 'Preview'],
-        onItemClick: function(tabName) {
+        onItemClick: function($event, tabName) {
             if (tabName === 'Editor') {
                 self.$editorContainerEl.addClass('active');
                 self.$previewEl.removeClass('active');
