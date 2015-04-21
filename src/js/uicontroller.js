@@ -185,7 +185,7 @@ UIController.prototype.setRootElement = function($el) {
 /**
  * 커스텀 이벤트를 발생시킨다.
  */
-UIController.prototype.fireEvent = function() {
+UIController.prototype.trigger = function() {
     this.$el.trigger.apply(this.$el, arguments);
 };
 
