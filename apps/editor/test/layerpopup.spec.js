@@ -24,17 +24,24 @@ describe('Layerpopup', function() {
     });
 
     describe('기본 레이아웃을 생성하여 팝업을 그린다', function() {
-        var popup;
-
-        beforeEach(function() {
-            popup = new Layerpopup();
-        });
-
         it('자체 생성 팝업 HTML의 각 클래스네임별로 엘리먼트들이 존재한다.', function() {
+            var popup;
+
+            popup = new Layerpopup();
+
             expect(popup.$target.find('.' + CLASS_PREFIX + 'wrapper').length).toBe(1);
             expect(popup.$target.find('.' + CLASS_PREFIX + 'header').length).toBe(1);
             expect(popup.$target.find('.' + CLASS_PREFIX + 'body').length).toBe(1);
             expect(popup.$target.find('.' + CLASS_PREFIX + 'closeButton').length).toBe(1);
+        });
+        it('옵션 className이 전달되면 팝업 래퍼에 클래스를 추가한다', function() {
+            var popup;
+
+            popup = new Layerpopup({
+                className: 'myclass'
+            });
+
+            expect(popup.$el.hasClass('myclass')).toBe(true);
         });
     });
 
