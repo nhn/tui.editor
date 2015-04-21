@@ -46,8 +46,8 @@ var Layerpopup = util.defineClass({
         this._initCloserOpener(options);
         this._initContent(options);
         this._initTitle(options);
-        this._render();
         this._initClassName(options);
+        this._render();
         this._bindEvent();
         this._bindOpenerCloserEvent();
         this.trigger('afterRender', this);
@@ -84,7 +84,7 @@ var Layerpopup = util.defineClass({
     },
     _initClassName: function(options) {
         if (options.className) {
-            this.$el.addClass(options.className);
+            this.className = options.className;
         }
     },
     _render: function() {
@@ -95,6 +95,7 @@ var Layerpopup = util.defineClass({
     _renderLayout: function() {
         if (!this._isExternalHtmlUse) {
             this.$el = $(this.layoutTemplate);
+            this.$el.addClass(this.className);
             this.hide();
             this.$target.append(this.$el);
         } else {
