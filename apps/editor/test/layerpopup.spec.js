@@ -28,23 +28,7 @@ describe('Layerpopup', function() {
         });
     });
 
-    describe('기본 레이아웃을 생성하여 팝업을 그린다', function() {
-        var popup;
-
-        beforeEach(function() {
-            popup = new Layerpopup();
-            popup.render();
-        });
-
-        it('자체 생성 팝업 HTML의 각 클래스네임별로 엘리먼트들이 존재한다.', function() {
-            expect(popup.$target.find('.' + CLASS_PREFIX + 'wrapper').length).toBe(1);
-            expect(popup.$target.find('.' + CLASS_PREFIX + 'header').length).toBe(1);
-            expect(popup.$target.find('.' + CLASS_PREFIX + 'body').length).toBe(1);
-            expect(popup.$target.find('.' + CLASS_PREFIX + 'closeButton').length).toBe(1);
-        });
-    });
-
-    describe('팩토리를 이용해 외부 팝업 HTML을 이용한다', function() {
+    describe('팩토리를 이용해 외부 팝업 HTML을 팝업화한다', function() {
         var popup;
 
         beforeEach(function() {
@@ -72,6 +56,25 @@ describe('Layerpopup', function() {
     });
 
     describe('기본레이아웃을 이용한다', function() {
+        it('자체 생성 팝업 HTML의 각 클래스네임별로 엘리먼트들이 존재한다.', function() {
+            var popup = new Layerpopup();
+            popup.render();
+
+            expect(popup.$target.find('.' + CLASS_PREFIX + 'wrapper').length).toBe(1);
+            expect(popup.$target.find('.' + CLASS_PREFIX + 'header').length).toBe(1);
+            expect(popup.$target.find('.' + CLASS_PREFIX + 'body').length).toBe(1);
+            expect(popup.$target.find('.' + CLASS_PREFIX + 'closeButton').length).toBe(1);
+        });
+
+        it('className을 옵션으로 전달하면 래퍼 엘리먼트에 해당 클래스네임을 추가한다', function() {
+            var popup = new Layerpopup({
+                className: 'myclass'
+            });
+            popup.render();
+
+            expect(popup.$el.hasClass('myclass')).toBe(true);
+        });
+
         it('텍스트 컨텐트를 전달받아 그린다', function() {
             var popup = new Layerpopup({
                 textContent: 'text'
@@ -81,6 +84,7 @@ describe('Layerpopup', function() {
 
             expect(popup.$el.find('.' + CLASS_PREFIX + 'body').text()).toEqual('text');
         });
+
         it('컨텐트를 텍스트 태그형태로 전달받아서 그린다', function() {
             var popup = new Layerpopup({
                 content: '<p>test</p>'

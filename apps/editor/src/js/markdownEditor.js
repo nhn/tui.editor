@@ -9,7 +9,8 @@ var Bold = require('./cmExts/bold'),
     Italic = require('./cmExts/italic'),
     Blockquote = require('./cmExts/blockquote'),
     Heading = require('./cmExts/heading'),
-    HR = require('./cmExts/hr');
+    HR = require('./cmExts/hr'),
+    AddLink = require('./cmExts/addLink');
 
 
 var CodeMirror = window.CodeMirror;
@@ -33,6 +34,7 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(Blockquote);
     commandManager.addCommand(Heading);
     commandManager.addCommand(HR);
+    commandManager.addCommand(AddLink);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {

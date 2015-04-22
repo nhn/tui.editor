@@ -1,11 +1,13 @@
 var PopupAddLink = require('../src/js/popupAddLink');
 
-describe('', function() {
+describe('PopupAddLink', function() {
     'use strict';
 
     var popup;
 
     beforeEach(function() {
+        $('body').empty();
+
         popup = new PopupAddLink();
     });
 
@@ -19,9 +21,41 @@ describe('', function() {
         });
     });
 
-    describe('OK 버튼을 누르면 addLink이벤트를 발생 시킨다', function() {
+    describe('이벤트의 발생', function() {
+        var handler = jasmine.createSpy('buttonClickedHandler');
+
+        beforeEach(function() {
+            handler = jasmine.createSpy('buttonClickedHandler');
+        });
+
+        it('ok버튼을 누르면 okButtonClicked이벤트가 발생한다', function() {
+            popup.on('okButtonClicked', handler);
+
+            $('.okButton').trigger('click');
+
+            expect(handler).toHaveBeenCalled();
+        });
+
+        it('close버튼을 누르면 closeButtonClicked이벤트가 발생한다', function() {
+            popup.on('closeButtonClicked', handler);
+
+            $('.closeButton').trigger('click');
+
+            expect(handler).toHaveBeenCalled();
+        });
     });
 
-    describe('Cancel 버튼으로 팝업을 닫는다', function() {
+    describe('입력된 값의 데이터를 가져올 수 있다', function() {
+        it('getValue()로 입력된 값을 객체형식으로 받는다', function() {
+            var value;
+
+            $('.linkTextInput').val('myLinkText');
+            $('.urlInput').val('myUrl');
+
+            value = popup.getValue();
+
+            expect(value.linkText).toEqual('myLinkText');
+            expect(value.url).toEqual('myUrl');
+        });
     });
 });
