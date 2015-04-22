@@ -1,40 +1,45 @@
 'use strict';
 
-var LayerPopup = require('./layerpopup'),
-    UIController = require('./uicontroller');
+var LayerPopup = require('./layerpopup');
 
 var ADDLINK_CONTENT = [
-    '<label for="linkText">Link Text</lable>',
-    '<input type="text" id="linkText" />',
+    '<label for="linkText">Link Text</label>',
+    '<input type="text" class="linkTextInput" />',
     '<label for="url">URL</label>',
-    '<input type="text" id="url" />',
-    '<button class="okButton" />',
-    '<button class="closeButton" />'
+    '<input type="text" class="urlInput" />',
+    '<div class="buttonSection">',
+    '<button class="okButton">OK</button>',
+    '<button class="closeButton">Cancel</button>',
+    '</div>'
 ];
 
-var PopupAddLinkContent = UIController.extend({
-    contentHTML: ADDLINK_CONTENT.join(''),
-    init: function() {
-        UIController.call(this);
-    },
-    render: function() {
-        this.$el.html(this.contentHTML);
-
-        return this;
-    }
-});
-
 var PopupAddLink = LayerPopup.extend({
-    className: 'popupAddLink',
+    title: 'Add Link',
+    className: 'popupAddLink neditor-popup',
+    $content: $(ADDLINK_CONTENT.join('')),
     init: function PopupAddLink(options) {
-        LayerPopup.apply(this, options);
-
-        this.addLinkContent = new PopupAddLinkContent();
-
-        this._renderPopup();
+        LayerPopup.call(this, options);
+        this.render();
+        this._bindContentEvent();
     },
-    _renderPopup: function() {
-        this.setContent(this.addLinkContent.render().$el);
+    _bindContentEvent: function() {
+        var self = this;
+
+        this.on('click', '.okButton', function() {
+            self.trigger('okButtonClicked', this);
+            self.hide();
+        });
+
+        this.on('click', '.closeButton', function() {
+            self.trigger('closeButtonClicked', this);
+            self.hide();
+        });
+    },
+    getValue: function() {
+        return {
+            linkText: this.$el.find('.linkTextInput').val(),
+            url: this.$el.find('.urlInput').val()
+        };
     }
 });
 

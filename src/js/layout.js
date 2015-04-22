@@ -6,7 +6,8 @@
 'use strict';
 
 var Toolbar = require('./toolbar'),
-    Tab = require('./tab');
+    Tab = require('./tab'),
+    PopupAddLink = require('./popupAddLink');
 
 /**
  * Layout
@@ -46,11 +47,12 @@ Layout.prototype.init = function() {
         }
     });
 
+    this._initPopupAddLink();
+
     this.$containerEl.append(this.tab.$el);
 
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
-
     this.tab.activate('Editor');
 };
 
@@ -74,6 +76,23 @@ Layout.prototype._initPreviewEl = function() {
         .addClass('preview')
         .height(this.height)
         .appendTo(this.$containerEl);
+};
+
+Layout.prototype._initPopupAddLink = function() {
+    var popupAddLink,
+        em = this.eventManager;
+
+    popupAddLink = new PopupAddLink({
+        $target: this.$el
+    });
+
+    em.listen('openPopupAddLink', function() {
+        popupAddLink.show();
+    });
+
+    popupAddLink.on('okButtonClicked', function() {
+        em.emit('command', 'AddLink', popupAddLink.getValue());
+    });
 };
 
 Layout.prototype.verticalSplitStyle = function() {

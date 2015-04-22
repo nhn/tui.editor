@@ -144,6 +144,8 @@
     margin-left: auto;
     border: 2px solid #ccc;
     border-radius: 5px;
+    background: white;
+    z-index: 9999;
 }
 
 .nepopup-header {
@@ -173,4 +175,19 @@
     font-size: 20px;
     font-weight:bold;
     vertical-align: baseline;
+}
+
+.neditor-popup {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    margin-left: -250px;
+}
+
+.neditor-popup label {
+    display: block;
+}
+
+.buttonSection {
+    margin-top: 15px;
 }

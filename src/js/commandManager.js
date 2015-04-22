@@ -78,8 +78,8 @@ CommandManager.prototype.exec = function(name) {
 CommandManager.prototype._linkWithEventManager = function() {
     var commandManager = this;
 
-    this.base.eventManager.listen('command', function(command) {
-        commandManager.exec(command);
+    this.base.eventManager.listen('command', function() {
+        commandManager.exec.apply(commandManager, arguments);
     });
 };
 
