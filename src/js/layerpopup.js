@@ -34,6 +34,7 @@ var LAYOUT_TEMPLATE = [
  * @param {object} options.content
  * @param {object} options.textContent
  * @param {object} options.title
+ * @param {object} options.$target
  */
 var Layerpopup = util.defineClass({
     layoutTemplate: LAYOUT_TEMPLATE.join(''),
@@ -79,7 +80,7 @@ var Layerpopup = util.defineClass({
     },
     _initTitle: function(options) {
         if (options.title) {
-            this._initTitle = options.title;
+            this.title = options.title;
         }
     },
     _initClassName: function(options) {
@@ -98,9 +99,11 @@ var Layerpopup = util.defineClass({
             this.$el.addClass(this.className);
             this.hide();
             this.$target.append(this.$el);
+            this.$body = this.$el.find(this._getFullClassName('body'));
         } else {
             this.hide();
         }
+
     },
     _renderContent: function() {
         if (!this._isExternalHtmlUse) {
@@ -109,7 +112,7 @@ var Layerpopup = util.defineClass({
     },
     _renderTitle: function() {
         if (!this._isExternalHtmlUse) {
-            this.setTitle(this._initTitle);
+            this.setTitle(this.title);
         }
     },
     _getFullClassName: function(lastName) {
@@ -142,12 +145,12 @@ var Layerpopup = util.defineClass({
     _bindEvent: function() {
         var self = this;
 
-        this.on('click.' + this._getId(), this._getFullClassName('closeButton'), function() {
+        this.on('click', this._getFullClassName('closeButton'), function() {
             self.hide();
         });
     },
     _unbindEvent: function() {
-        this.$el.off('.' + this._getId());
+        this.off();
     },
     _setId: function() {
         this._id = _id;
@@ -157,10 +160,8 @@ var Layerpopup = util.defineClass({
         return this._id;
     },
     setContent: function($content) {
-        var $body = this.$el.find(this._getFullClassName('body'));
-
-        $body.empty();
-        $body.append($content);
+        this.$body.empty();
+        this.$body.append($content);
     },
     setTitle: function(title) {
         var $title = this.$el.find(this._getFullClassName('title'));
