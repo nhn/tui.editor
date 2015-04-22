@@ -89,8 +89,7 @@ var Layerpopup = util.defineClass({
         this._renderTitle();
         this._renderContent();
 
-        this._bindLayerPopupEvent();
-        this._bindOpenerCloserEvent();
+        this._attachPopupEvent();
     },
     _renderLayout: function() {
         if (!this._isExternalHtmlUse) {
@@ -116,7 +115,7 @@ var Layerpopup = util.defineClass({
     _getFullClassName: function(lastName) {
         return '.' + CLASS_PREFIX + lastName;
     },
-    _bindOpenerCloserEvent: function() {
+    _attachOpenerCloserEvent: function() {
         var self = this;
 
         if (this.openerCssQuery) {
@@ -131,7 +130,7 @@ var Layerpopup = util.defineClass({
             });
         }
     },
-    _unbindOpenerCloserEvent: function() {
+    _detachOpenerCloserEvent: function() {
         if (this.openerCssQuery) {
             $(this.openerCssQuery).off('.' + this._getId());
         }
@@ -140,15 +139,20 @@ var Layerpopup = util.defineClass({
             $(this.closerCssQuery).off('.' + this._getId());
         }
     },
-    _bindLayerPopupEvent: function() {
+    _attachPopupControlEvent: function() {
         var self = this;
 
         this.on('click', this._getFullClassName('closeButton'), function() {
             self.hide();
         });
     },
-    _unbindEvent: function() {
+    _detachPopupEvent: function() {
         this.off();
+        this._detachOpenerCloserEvent();
+    },
+    _attachPopupEvent: function() {
+        this._attachPopupControlEvent();
+        this._attachOpenerCloserEvent();
     },
     _setId: function() {
         this._id = _id;
@@ -182,8 +186,7 @@ var Layerpopup = util.defineClass({
     },
     remove: function() {
         this.trigger('remove', this);
-        this._unbindOpenerCloserEvent();
-        this._unbindEvent();
+        this._detachPopupEvent();
 
         this.$el.empty();
         this.$el.remove();
