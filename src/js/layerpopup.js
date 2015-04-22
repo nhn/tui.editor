@@ -48,10 +48,6 @@ var Layerpopup = util.defineClass({
         this._initContent(options);
         this._initTitle(options);
         this._initClassName(options);
-        this._render();
-        this._bindEvent();
-        this._bindOpenerCloserEvent();
-        this.trigger('afterRender', this);
     },
     _initTarget: function(options) {
         this.$target = options.$target || $('body');
@@ -88,10 +84,13 @@ var Layerpopup = util.defineClass({
             this.className = options.className;
         }
     },
-    _render: function() {
+    render: function() {
         this._renderLayout();
         this._renderTitle();
         this._renderContent();
+
+        this._bindLayerPopupEvent();
+        this._bindOpenerCloserEvent();
     },
     _renderLayout: function() {
         if (!this._isExternalHtmlUse) {
@@ -103,7 +102,6 @@ var Layerpopup = util.defineClass({
         } else {
             this.hide();
         }
-
     },
     _renderContent: function() {
         if (!this._isExternalHtmlUse) {
@@ -142,7 +140,7 @@ var Layerpopup = util.defineClass({
             $(this.closerCssQuery).off('.' + this._getId());
         }
     },
-    _bindEvent: function() {
+    _bindLayerPopupEvent: function() {
         var self = this;
 
         this.on('click', this._getFullClassName('closeButton'), function() {
@@ -200,6 +198,13 @@ var Layerpopup = util.defineClass({
         this.$el.trigger.apply(this.$el, arguments);
     }
 });
+
+Layerpopup.popupfy = function(options) {
+    var popup = new Layerpopup(options);
+    popup.render();
+
+    return popup;
+};
 
 Layerpopup.extend = function(props) {
     var Child = util.defineClass(this, props);
