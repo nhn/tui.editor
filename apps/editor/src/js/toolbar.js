@@ -44,6 +44,10 @@ var Toolbar = UIController.extend({
             ev.emit('command', commandName);
         });
 
+        button.on('event', function($, eventName) {
+            ev.emit(eventName);
+        });
+
         this.buttons.push(button);
         this.$buttonContainer.append(button.$el);
     },
@@ -80,6 +84,7 @@ var Toolbar = UIController.extend({
 
         this.addButton(new Button({
             className: 'link',
+            event: 'openPopupAddLink',
             text: 'link'
         }));
     }
