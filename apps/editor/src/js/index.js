@@ -56,15 +56,6 @@ function NEditor(options) {
     }
 
     this.changePreviewStyle(this.options.previewStyle);
-/*
-    var lp = new Layerpopup({
-        title: 'MYTITLE',
-        textContent: 'waefwaef'
-    });
-
-    lp.show();
-    */
-
 
     NEditor._extManager.applyExtension(this, this.options.exts);
 
