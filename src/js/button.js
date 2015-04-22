@@ -32,6 +32,7 @@ var Button = UIController.extend({
         });
 
         this.command = options.command;
+        this.event = options.event;
         this.text = options.text;
         this.style = options.style;
 
@@ -50,7 +51,11 @@ var Button = UIController.extend({
         this.attachEvents();
     },
     _onClick: function() {
-        this.trigger('command', this.command);
+        if (this.command) {
+            this.trigger('command', this.command);
+        } else {
+            this.trigger('event', this.event);
+        }
     }
 });
 

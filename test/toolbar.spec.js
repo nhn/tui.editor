@@ -55,6 +55,24 @@ describe('Toolbar', function() {
 
             expect(command.exec).toHaveBeenCalled();
         });
+
+        it('버튼에 이벤트가 연결이되어 버튼클릭시 이벤트가 실행된다', function() {
+            var handler = jasmine.createSpy('exec');
+
+            toolbar.addButton(new Button({
+                className: 'test',
+                event: 'test',
+                text: 'test'
+            }));
+
+            $('body').append(toolbar.$el);
+
+            em.listen('test', handler);
+
+            $('.test').trigger('click');
+
+            expect(handler).toHaveBeenCalled();
+        });
     });
 
     describe('기본 툴바버튼들을 생성한다', function() {
