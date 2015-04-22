@@ -66,6 +66,9 @@ module.exports = function(config) {
             dir: 'report/coverage/',
             reporters: [
                 {
+                    type: 'text'
+                },
+                {
                     type: 'html',
                     subdir: function(browser) {
                         return 'report-html/' + browser;
