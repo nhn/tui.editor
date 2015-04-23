@@ -85,7 +85,25 @@ var Toolbar = UIController.extend({
         this.addButton(new Button({
             className: 'link',
             event: 'openPopupAddLink',
-            text: 'link'
+            text: 'A'
+        }));
+
+        this.addButton(new Button({
+            className: 'image',
+            event: 'openPopupAddImage',
+            text: 'IMG'
+        }));
+
+        this.addButton(new Button({
+            className: 'ul',
+            command: 'UL',
+            text: 'UL'
+        }));
+
+        this.addButton(new Button({
+            className: 'ol',
+            command: 'OL',
+            text: 'OL'
         }));
     }
 });
