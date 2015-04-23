@@ -1,14 +1,20 @@
-var PopupAddLink = require('../src/js/popupAddLink');
+var PopupAddLink = require('../src/js/popupAddLink'),
+    EventManager = require('../src/js/eventManager');
 
 describe('PopupAddLink', function() {
     'use strict';
 
-    var popup;
+    var popup,
+        em;
 
     beforeEach(function() {
         $('body').empty();
 
-        popup = new PopupAddLink();
+        em = new EventManager();
+
+        popup = new PopupAddLink({
+            eventManager: em
+        });
     });
 
     describe('생성', function() {
@@ -42,6 +48,35 @@ describe('PopupAddLink', function() {
             $('.closeButton').trigger('click');
 
             expect(handler).toHaveBeenCalled();
+        });
+    });
+
+    describe('eventManager와 연결', function() {
+        var handler;
+
+        beforeEach(function() {
+            handler = jasmine.createSpy('buttonClickedHandler');
+        });
+
+        it('okButtonClicked이벤트가 발생하면 eventManager의 command 이벤트가 발생한다', function() {
+            var value = {
+                    linkText: 'linkText',
+                    url: 'urlText'
+                };
+
+            em.listen('command', handler);
+            $('.linkTextInput').val(value.linkText);
+            $('.urlInput').val(value.url);
+
+            $('.okButton').trigger('click');
+
+            expect(handler).toHaveBeenCalledWith('AddLink', value);
+        });
+
+        it('eventManager에서 openPopupAddLink 이벤트가 발생하면 팝업이 보여진다', function() {
+            em.emit('openPopupAddLink');
+
+            expect(popup.isShow()).toBe(true);
         });
     });
 
