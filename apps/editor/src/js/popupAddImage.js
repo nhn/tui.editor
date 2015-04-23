@@ -36,12 +36,25 @@ var PopupAddImage = LayerPopup.extend({
             self.trigger('closeButtonClicked', this);
             self.hide();
         });
+
+        this.on('shown', function() {
+            self.$el.find('.imageUrlInput').focus();
+        });
+
+        this.on('hidden', function() {
+            self.resetInputs();
+        });
     },
     _linkWithEventManager: function(eventManager) {
         var self = this;
 
         eventManager.listen('openPopupAddImage', function() {
+            eventManager.emit('closeAllPopup');
             self.show();
+        });
+
+        eventManager.listen('closeAllPopup', function() {
+            self.hide();
         });
 
         this.on('okButtonClicked', function() {
@@ -53,7 +66,11 @@ var PopupAddImage = LayerPopup.extend({
             imageUrl: this.$el.find('.imageUrlInput').val(),
             altText: this.$el.find('.altTextInput').val()
         };
+    },
+    resetInputs: function() {
+        this.$el.find('input').val('');
     }
+
 });
 
 module.exports = PopupAddImage;
