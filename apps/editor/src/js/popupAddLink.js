@@ -21,6 +21,7 @@ var PopupAddLink = LayerPopup.extend({
         LayerPopup.call(this, options);
         this.render();
         this._bindContentEvent();
+        this._linkWithEventManager(options.eventManager);
     },
     _bindContentEvent: function() {
         var self = this;
@@ -33,6 +34,17 @@ var PopupAddLink = LayerPopup.extend({
         this.on('click', '.closeButton', function() {
             self.trigger('closeButtonClicked', this);
             self.hide();
+        });
+    },
+    _linkWithEventManager: function(eventManager) {
+        var self = this;
+
+        eventManager.listen('openPopupAddLink', function() {
+            self.show();
+        });
+
+        this.on('okButtonClicked', function() {
+            eventManager.emit('command', 'AddLink', self.getValue());
         });
     },
     getValue: function() {
