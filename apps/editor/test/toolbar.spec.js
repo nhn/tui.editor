@@ -80,8 +80,8 @@ describe('Toolbar', function() {
             $('body').append(toolbar.$el);
         });
 
-        it('추가된 툴바의 갯수는 5개', function() {
-            expect($('button').length).toEqual(6);
+        it('추가된 툴바의 갯수는 7개', function() {
+            expect($('button').length).toEqual(9);
         });
 
         it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {
@@ -91,6 +91,9 @@ describe('Toolbar', function() {
             expect($('.heading').length).toEqual(1);
             expect($('.hrline').length).toEqual(1);
             expect($('.link').length).toEqual(1);
+            expect($('.image').length).toEqual(1);
+            expect($('.ul').length).toEqual(1);
+            expect($('.ol').length).toEqual(1);
         });
     });
 });
