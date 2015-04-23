@@ -7,7 +7,8 @@
 
 var Toolbar = require('./toolbar'),
     Tab = require('./tab'),
-    PopupAddLink = require('./popupAddLink');
+    PopupAddLink = require('./popupAddLink'),
+    PopupAddImage = require('./popupAddImage');
 
 /**
  * Layout
@@ -48,6 +49,7 @@ Layout.prototype.init = function() {
     });
 
     this._initPopupAddLink();
+    this._initPopupAddImage();
 
     this.$containerEl.append(this.tab.$el);
 
@@ -79,19 +81,16 @@ Layout.prototype._initPreviewEl = function() {
 };
 
 Layout.prototype._initPopupAddLink = function() {
-    var popupAddLink,
-        em = this.eventManager;
-
-    popupAddLink = new PopupAddLink({
-        $target: this.$el
+    this.popupAddLink = new PopupAddLink({
+        $target: this.$el,
+        eventManager: this.eventManager
     });
+};
 
-    em.listen('openPopupAddLink', function() {
-        popupAddLink.show();
-    });
-
-    popupAddLink.on('okButtonClicked', function() {
-        em.emit('command', 'AddLink', popupAddLink.getValue());
+Layout.prototype._initPopupAddImage = function() {
+    this.popupAddImage = new PopupAddImage({
+        $target: this.$el,
+        eventManager: this.eventManager
     });
 };
 
