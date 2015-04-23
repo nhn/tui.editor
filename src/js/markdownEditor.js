@@ -11,7 +11,9 @@ var Bold = require('./cmExts/bold'),
     Heading = require('./cmExts/heading'),
     HR = require('./cmExts/hr'),
     AddLink = require('./cmExts/addLink'),
-    AddImage = require('./cmExts/addImage');
+    AddImage = require('./cmExts/addImage'),
+    UL = require('./cmExts/UL'),
+    OL = require('./cmExts/OL');
 
 
 var CodeMirror = window.CodeMirror;
@@ -37,6 +39,8 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(HR);
     commandManager.addCommand(AddLink);
     commandManager.addCommand(AddImage);
+    commandManager.addCommand(UL);
+    commandManager.addCommand(OL);
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
