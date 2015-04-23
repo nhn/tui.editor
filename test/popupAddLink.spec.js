@@ -78,6 +78,13 @@ describe('PopupAddLink', function() {
 
             expect(popup.isShow()).toBe(true);
         });
+
+        it('eventManager에서 closeAllPopup 이벤트가 발생하면 팝업이 닫힌다', function() {
+            em.emit('openPopupAddLink');
+            em.emit('closeAllPopup');
+
+            expect(popup.isShow()).toBe(false);
+        });
     });
 
     describe('입력된 값의 데이터를 가져올 수 있다', function() {
@@ -93,4 +100,20 @@ describe('PopupAddLink', function() {
             expect(value.url).toEqual('myUrl');
         });
     });
+
+    describe('팝업이 닫히면 입력된값들이 초기화된다', function() {
+        it('인풋의 값들이 ""로 변경된다', function() {
+            var value;
+
+            $('.linkTextInput').val('myLinkText');
+            $('.urlInput').val('myUrl');
+
+            popup.hide();
+            value = popup.getValue();
+
+            expect(value.linkText).toEqual('');
+            expect(value.url).toEqual('');
+        });
+    });
+
 });

@@ -35,12 +35,25 @@ var PopupAddLink = LayerPopup.extend({
             self.trigger('closeButtonClicked', this);
             self.hide();
         });
+
+        this.on('shown', function() {
+            self.$el.find('.linkTextInput').focus();
+        });
+
+        this.on('hidden', function() {
+            self.resetInputs();
+        });
     },
     _linkWithEventManager: function(eventManager) {
         var self = this;
 
         eventManager.listen('openPopupAddLink', function() {
+            eventManager.emit('closeAllPopup');
             self.show();
+        });
+
+        eventManager.listen('closeAllPopup', function() {
+            self.hide();
         });
 
         this.on('okButtonClicked', function() {
@@ -52,6 +65,9 @@ var PopupAddLink = LayerPopup.extend({
             linkText: this.$el.find('.linkTextInput').val(),
             url: this.$el.find('.urlInput').val()
         };
+    },
+    resetInputs: function() {
+        this.$el.find('input').val('');
     }
 });
 
