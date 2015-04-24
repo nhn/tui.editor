@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var UL = MarkdownCommand.extend({
+/**
+ * UL
+ * @exports UL
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var UL = MarkdownCommand.extend(/** @lends UL.prototype */{
     init: function UL() {
         MarkdownCommand.call(this, 'UL');
     },

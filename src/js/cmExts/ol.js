@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var OL = MarkdownCommand.extend({
+/**
+ * OL
+ * @exports OL
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var OL = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     init: function OL() {
         MarkdownCommand.call(this, 'OL');
     },

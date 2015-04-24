@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var Heading = MarkdownCommand.extend({
+/**
+ * Heading
+ * @exports Heading
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var Heading = MarkdownCommand.extend(/** @lends Heading.prototype */{
     keyMap: ['Ctrl-H', 'Ctrl-H'],
     init: function Heading() {
         MarkdownCommand.call(this, 'Heading');

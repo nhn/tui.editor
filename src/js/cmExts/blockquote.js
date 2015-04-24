@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var Blockquote = MarkdownCommand.extend({
+/**
+ * Blockquote
+ * @exports Blockquote
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     init: function Blockquote() {
         MarkdownCommand.call(this, 'Blockquote');

@@ -5,11 +5,23 @@ var MarkdownCommand = require('../markdownCommand');
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
-var Italic = MarkdownCommand.extend({
+/**
+ * Italic
+ * @exports Italic
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var Italic = MarkdownCommand.extend(/** @lends Italic.prototype */{
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     init: function Italic() {
         MarkdownCommand.call(this, 'Italic');
     },
+    /**
+     * exec
+     * 커맨드 핸들러
+     * @return {number} 코드미러 상수
+     */
     exec: function() {
         var cursor,
             selection,
@@ -59,15 +71,39 @@ var Italic = MarkdownCommand.extend({
 
         this.cm.focus();
     },
-    isNeedRemove: function(selection) {
-        return italicRegex.test(selection) || boldItalicRegex.test(selection);
+    /**
+     * isNeedRemove
+     * 이미 텍스트에 이탤릭이나 볼드가 적용되어 있는지 판단한다
+     * @param {string} text 텍스트
+     * @return {boolean} 적용 여부
+     */
+    isNeedRemove: function(text) {
+        return italicRegex.test(text) || boldItalicRegex.test(text);
     },
-    append: function(selection) {
-        return '*' + selection + '*';
+    /**
+     * append
+     * 텍스트에 이탤릭을 적용한다
+     * @param {string} text 적용할 텍스트
+     * @return {string} 이탤릭이 적용된 텍스트
+     */
+    append: function(text) {
+        return '*' + text + '*';
     },
-    remove: function(selection) {
-        return selection.substr(1, selection.length - 2);
+    /**
+     * remove
+     * 텍스트에서 이탤릭을 제거한다
+     * @param {string} text 제거할 텍스트
+     * @return {string} 제거된 텍스트
+     */
+    remove: function(text) {
+        return text.substr(1, text.length - 2);
     },
+    /**
+     * expendWithBoldSelection
+     * 볼드와 함께 적용된 셀렉션 영역을 확장한다
+     * @param {object} cursor 커서객체
+     * @return {string} 확장된 영역의 텍스트
+     */
     expendWithBoldSelection: function(cursor) {
         var tmpSelection = this.doc.getSelection();
 
@@ -79,6 +115,12 @@ var Italic = MarkdownCommand.extend({
             this.doc.setSelection(cursor);
         }
     },
+    /**
+     * expendOnlyBoldSelection
+     * 볼드만 적용된 셀렉션 영역을 확장한다
+     * @param {object} cursor 커서객체
+     * @return {string} 확장된 영역의 텍스트
+     */
     expendOnlyBoldSelection: function(cursor) {
         var tmpSelection = this.doc.getSelection();
 
@@ -91,6 +133,12 @@ var Italic = MarkdownCommand.extend({
 
         return false;
     },
+    /**
+     * expendSelection
+     * 이탤릭이 적용된 셀렉션 영역을 확장한다
+     * @param {object} cursor 커서객체
+     * @return {string} 확장된 영역의 텍스트
+     */
     expendSelection: function(cursor) {
         var tmpSelection = this.doc.getSelection();
 
@@ -102,6 +150,12 @@ var Italic = MarkdownCommand.extend({
             this.doc.setSelection(cursor);
         }
     },
+    /**
+     * setCursorToCenter
+     * 커서를 중앙으로 이동시킨다
+     * @param {object} cursor 커서객체
+     * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
+     */
     setCursorToCenter: function(cursor, isRemoved) {
         var pos = isRemoved ? -1 : 1;
         this.doc.setCursor(cursor.line, cursor.ch + pos);

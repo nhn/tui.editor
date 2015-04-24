@@ -2,11 +2,17 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var HR = MarkdownCommand.extend({
+/**
+ * HR
+ * @exports HR
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var HR = MarkdownCommand.extend(/** @lends HR.prototype */{
+    keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     init: function HR() {
         MarkdownCommand.call(this, 'HR');
-
-        this.setKeyMap('Ctrl-Q', 'Ctrl-Q');
     },
     exec: function() {
         var replaceText,

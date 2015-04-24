@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var AddLink = MarkdownCommand.extend({
+/**
+ * AddLink
+ * @exports AddLink
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var AddLink = MarkdownCommand.extend(/** @lends AddLink.prototype */{
     init: function AddLink() {
         MarkdownCommand.call(this, 'AddLink');
     },
