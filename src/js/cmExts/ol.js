@@ -2,41 +2,38 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var util = ne.util;
+var OL = MarkdownCommand.extend({
+    init: function OL() {
+        MarkdownCommand.call(this, 'OL');
+    },
+    exec: function() {
+        var replaceText,
+            range,
+            from,
+            to;
 
-function OL() {
-    MarkdownCommand.call(this, 'OL');
-}
+        if (!this.isAvailable()) {
+            return this.getPass();
+        }
 
-util.inherit(OL, MarkdownCommand);
+        range = this.getCurrentRange();
 
-OL.prototype.exec = function() {
-    var replaceText,
-        range,
-        from,
-        to;
+        from = {
+            line: range.from.line,
+            ch: range.from.ch
+        };
 
-    if (!this.isAvailable()) {
-        return this.getPass();
+        to = {
+            line: range.to.line,
+            ch: range.to.ch
+        };
+
+        replaceText = '1. ';
+
+        this.doc.replaceRange(replaceText, from, to);
+
+        this.cm.focus();
     }
-
-    range = this.getCurrentRange();
-
-    from = {
-        line: range.from.line,
-        ch: range.from.ch
-    };
-
-    to = {
-        line: range.to.line,
-        ch: range.to.ch
-    };
-
-    replaceText = '1. ';
-
-    this.doc.replaceRange(replaceText, from, to);
-
-    this.cm.focus();
-};
+});
 
 module.exports = new OL();

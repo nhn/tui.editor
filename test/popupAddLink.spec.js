@@ -115,5 +115,4 @@ describe('PopupAddLink', function() {
             expect(value.url).toEqual('');
         });
     });
-
 });

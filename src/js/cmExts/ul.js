@@ -2,47 +2,38 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var util = ne.util;
+var UL = MarkdownCommand.extend({
+    init: function UL() {
+        MarkdownCommand.call(this, 'UL');
+    },
+    exec: function() {
+        var replaceText,
+            range,
+            from,
+            to;
 
-function UL() {
-    MarkdownCommand.call(this, 'UL');
-}
+        if (!this.isAvailable()) {
+            return this.getPass();
+        }
 
-util.inherit(UL, MarkdownCommand);
+        range = this.getCurrentRange();
 
-UL.prototype.exec = function() {
-    var replaceText,
-        range,
-        from,
-        to;
+        from = {
+            line: range.from.line,
+            ch: range.from.ch
+        };
 
-    if (!this.isAvailable()) {
-        return this.getPass();
+        to = {
+            line: range.to.line,
+            ch: range.to.ch
+        };
+
+        replaceText = '* ';
+
+        this.doc.replaceRange(replaceText, from, to);
+
+        this.cm.focus();
     }
-
-    range = this.getCurrentRange();
-
-    from = {
-        line: range.from.line,
-        ch: range.from.ch
-    };
-
-    to = {
-        line: range.to.line,
-        ch: range.to.ch
-    };
-
-    replaceText = '* ';
-/*
-    if (range.collapsed) {
-        replaceText = replaceText + '\n';
-        from.ch = 0;
-        to.ch = 0;
-    }
-*/
-    this.doc.replaceRange(replaceText, from, to);
-
-    this.cm.focus();
-};
+});
 
 module.exports = new UL();
