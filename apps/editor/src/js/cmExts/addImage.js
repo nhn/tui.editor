@@ -2,7 +2,14 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
-var AddImage = MarkdownCommand.extend({
+/**
+ * AddImage
+ * @exports AddImage
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
+var AddImage = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     init: function AddImage() {
         MarkdownCommand.call(this, 'AddImage');
     },

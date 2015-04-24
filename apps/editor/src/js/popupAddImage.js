@@ -13,7 +13,14 @@ var POPUP_CONTENT = [
     '</div>'
 ];
 
-var PopupAddImage = LayerPopup.extend({
+/**
+ * PopupAddImage
+ * @exports AddImage
+ * @extends {LayerPopup}
+ * @constructor
+ * @class
+ */
+var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
     title: 'Add Image',
     className: 'popupAddImage neditor-popup',
     $content: $(POPUP_CONTENT.join('')),

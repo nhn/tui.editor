@@ -13,7 +13,7 @@ var ADDLINK_CONTENT = [
     '</div>'
 ];
 
-var PopupAddLink = LayerPopup.extend({
+var PopupAddLink = LayerPopup.extend(/** @lends PopupAddLink.prototype */{
     title: 'Add Link',
     className: 'popupAddLink neditor-popup',
     $content: $(ADDLINK_CONTENT.join('')),

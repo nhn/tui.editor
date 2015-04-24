@@ -4,11 +4,22 @@ var MarkdownCommand = require('../markdownCommand');
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
+/**
+ * Bold
+ * @exports Bold
+ * @extends {MarkdownCommand}
+ * @constructor
+ * @class
+ */
 var Bold = MarkdownCommand.extend({
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     init: function Bold() {
         MarkdownCommand.call(this, 'Bold');
     },
+    /**
+     *  커맨드 핸들러
+     *  @return {CodeMirror} 코드미러 상수
+     */
     exec: function() {
         var cursor,
             selection,
@@ -42,15 +53,36 @@ var Bold = MarkdownCommand.extend({
 
         this.cm.focus();
     },
-    isNeedRemove: function(selection) {
-        return boldRegex.test(selection);
+    /**
+     * 이미 Bold가 적용이 되어있는지 확인
+     * @param {string} text 셀렉션텍스트
+     * @return {boolean} 볼드 적용 여부
+     */
+    isNeedRemove: function(text) {
+        return boldRegex.test(text);
     },
-    append: function(selection) {
-        return '**' + selection + '**';
+    /**
+     * Bold를 적용한다
+     * @param {string} text 셀렉션텍스트
+     * @return {string} 볼드가 적용된 텍스트
+     */
+    append: function(text) {
+        return '**' + text + '**';
     },
-    remove: function(selection) {
-        return selection.substr(2, selection.length - 4);
+    /**
+     * Bold를 제거한다
+     * @param {string} text 셀렉션텍스트
+     * @return {string} 볼드가 제거된 텍스트
+     */
+    remove: function(text) {
+        return text.substr(2, text.length - 4);
     },
+    /**
+     * 셀렉션영역을 확장한다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
+     * @param {object} cursor 코드미러 커서 객체
+     * @return {string} 셀렉션의 텍스트
+     */
     expendSelection: function(doc, cursor) {
         var tmpSelection = doc.getSelection();
 
@@ -62,6 +94,11 @@ var Bold = MarkdownCommand.extend({
             doc.setSelection(cursor);
         }
     },
+    /**
+     * 커서를 센터로 이동시킨다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
+     * @param {object} cursor 코드미러 커서 객체
+     */
     setCursorToCenter: function(doc, cursor) {
         doc.setCursor(cursor.line, cursor.ch + 2);
     }
