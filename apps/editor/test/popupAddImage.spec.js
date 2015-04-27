@@ -87,8 +87,8 @@ describe('PopupAddImage', function() {
         });
     });
 
-    describe('입력된 값의 데이터를 가져올 수 있다', function() {
-        it('getValue()로 입력된 값을 객체형식으로 받는다', function() {
+    describe('url입력 방식', function() {
+        it('getValue()로 입력된 값들을 객체형식으로 받는다', function() {
             var value;
 
             $('.imageUrlInput').val('imageUrlText');
@@ -99,10 +99,8 @@ describe('PopupAddImage', function() {
             expect(value.imageUrl).toEqual('imageUrlText');
             expect(value.altText).toEqual('altText');
         });
-    });
 
-    describe('팝업이 닫히면 입력된값들이 초기화된다', function() {
-        it('인풋의 값들이 ""로 변경된다', function() {
+        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
             var value;
 
             $('.imageUrlInput').val('imageUrlText');
@@ -113,6 +111,58 @@ describe('PopupAddImage', function() {
 
             expect(value.imageUrl).toEqual('');
             expect(value.altText).toEqual('');
+        });
+    });
+
+    describe('file입력 방식', function() {
+        it('addImageFileHook이 없으면 UI에서 file 입력을 할수 없다.', function() {
+
+        });
+
+        describe('ok버튼이 클릭', function() {
+            it('addImageFileHook을 실행한다.', function() {
+                var hook = jasmine.createSpy('addImageFileHook');
+                em.listen('addImageFileHook', hook);
+
+                $('.okButton').trigger('click');
+
+                expect(hook).toHaveBeenCalled();
+            });
+            it('addImageFileHook을 실행되면 폼과 콜백이 전달된다.', function() {
+                var form,
+                    callback;
+
+                em.listen('addImageFileHook', function(oForm, oCallback) {
+                    form = oForm;
+                    callback = oCallback;
+                });
+
+                $('.okButton').trigger('click');
+
+                expect(form.selector).toEqual('form');
+                expect(callback).toBeDefined();
+            });
+
+            it('addImageFileHook에 전달되는 콜백으로 완성된 url을 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', function() {
+                var addImage = jasmine.createSpy('addImage'),
+                    value = {
+                        imageUrl: 'imageUrlText',
+                        altText: 'altText'
+                    };
+
+                em.listen('command', function(type, imageValue) {
+                    addImage(imageValue);
+                });
+
+                em.listen('addImageFileHook', function(oForm, callback) {
+                    callback(value);
+                });
+
+                $('.okButton').trigger('click');
+
+                expect(addImage).toHaveBeenCalledWith({imageUrl: value.imageUrl, altText: value.altText});
+                expect(popup.isShow()).toBe(false);
+            });
         });
     });
 });

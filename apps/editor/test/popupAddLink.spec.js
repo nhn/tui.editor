@@ -27,7 +27,7 @@ describe('PopupAddLink', function() {
         });
     });
 
-    describe('이벤트의 발생', function() {
+    describe('버튼 이벤트', function() {
         var handler = jasmine.createSpy('buttonClickedHandler');
 
         beforeEach(function() {
@@ -87,8 +87,8 @@ describe('PopupAddLink', function() {
         });
     });
 
-    describe('입력된 값의 데이터를 가져올 수 있다', function() {
-        it('getValue()로 입력된 값을 객체형식으로 받는다', function() {
+    describe('url입력 방식', function() {
+        it('getValue()로 입력된 값들을 객체형식으로 받는다', function() {
             var value;
 
             $('.linkTextInput').val('myLinkText');
@@ -99,10 +99,8 @@ describe('PopupAddLink', function() {
             expect(value.linkText).toEqual('myLinkText');
             expect(value.url).toEqual('myUrl');
         });
-    });
 
-    describe('팝업이 닫히면 입력된값들이 초기화된다', function() {
-        it('인풋의 값들이 ""로 변경된다', function() {
+        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
             var value;
 
             $('.linkTextInput').val('myLinkText');
@@ -113,6 +111,12 @@ describe('PopupAddLink', function() {
 
             expect(value.linkText).toEqual('');
             expect(value.url).toEqual('');
+        });
+    });
+
+    describe('file입력 방식', function() {
+        it('', function() {
+
         });
     });
 });
