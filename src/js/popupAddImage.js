@@ -3,10 +3,14 @@
 var LayerPopup = require('./layerpopup');
 
 var POPUP_CONTENT = [
-    '<label for="linkText">Image URL</label>',
+    '<label for="">Image URL</label>',
     '<input type="text" class="imageUrlInput" />',
+    '<form>',
+    '<label for="">Image File</label>',
+    '<input type="file" name="imageFile" class="imageFileInput" />',
     '<label for="url">Alt Text</label>',
-    '<input type="text" class="altTextInput" />',
+    '<input type="text" name="altText" class="altTextInput" />',
+    '</form>',
     '<div class="buttonSection">',
     '<button class="okButton">OK</button>',
     '<button class="closeButton">Cancel</button>',
@@ -27,9 +31,12 @@ var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
     init: function PopupAddImage(options) {
         LayerPopup.call(this, options);
 
+        this.eventManager = options.eventManager;
+
         this.render();
         this._bindContentEvent();
-        this._linkWithEventManager(options.eventManager);
+        this._linkWithEventManager();
+        this._initApplyImageBindContext();
     },
     _bindContentEvent: function() {
         var self = this;
@@ -52,21 +59,36 @@ var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
             self.resetInputs();
         });
     },
-    _linkWithEventManager: function(eventManager) {
+    _linkWithEventManager: function() {
         var self = this;
 
-        eventManager.listen('openPopupAddImage', function() {
-            eventManager.emit('closeAllPopup');
+        this.eventManager.listen('openPopupAddImage', function() {
+            self.eventManager.emit('closeAllPopup');
             self.show();
         });
 
-        eventManager.listen('closeAllPopup', function() {
+        this.eventManager.listen('closeAllPopup', function() {
             self.hide();
         });
 
         this.on('okButtonClicked', function() {
-            eventManager.emit('command', 'AddImage', self.getValue());
+            if (self.isUrlType()) {
+                self.applyImage(self.getValue());
+            } else {
+                self.eventManager.emit('addImageFileHook', self.getHookValue(), self.applyImage);
+            }
         });
+    },
+    _initApplyImageBindContext: function() {
+        var self = this;
+
+        this.applyImage = function(value) {
+            self.eventManager.emit('command', 'AddImage', value);
+            self.hide();
+        };
+    },
+    isUrlType: function() {
+        return !!this.$el.find('.imageUrlInput').val();
     },
     getValue: function() {
         return {
@@ -74,10 +96,12 @@ var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
             altText: this.$el.find('.altTextInput').val()
         };
     },
+    getHookValue: function() {
+        return this.$el.find('form');
+    },
     resetInputs: function() {
         this.$el.find('input').val('');
     }
-
 });
 
 module.exports = PopupAddImage;

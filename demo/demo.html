@@ -9,7 +9,7 @@
     <script src="../lib/codesnippet/code-snippet.js"></script>
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/codemirror/addon/mode/overlay.js"></script>
-    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
+    <script src="../lib/codemirror/mode/markdown/markdown.js"><script>
     <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
@@ -28,6 +28,11 @@
 </head>
 <body>
 <div id="editSection"></div>
+<form id='mf' method='post' action='http://posttestserver.com/post.php'>
+    <input type = 'file' name= 'ewafaew' />
+    <button>weffwe</button>
+</form>
+
 <script src="/build/bundle.js"></script>
 <script>
     /*var ned = new ne.NEditor({
@@ -47,6 +52,11 @@
             },
             'previewBeforeHook': function($dom) {
                 console.log('previewBeforeHook', $dom);
+            },
+            'addImageFileHook': function($form, callback) {
+                $form[0].action = 'http://posttestserver.com/post.php';
+                $form[0].method = 'POST';
+                $form[0].submit();
             }
         }
     });
