@@ -95,13 +95,73 @@ describe('Tab', function() {
         });
     });
 
-    describe('.activate()', function() {
+    describe('initName옵션으로 탭명을 입력하면 시작시 그 탭이 활성화되어 시작된다', function() {
+        var tabSection1,
+            tabSection2;
+
         beforeEach(function() {
-            var handler = jasmine.createSpy('onItemClick');
+            tabSection1 = $('<div>tab1</div>');
+            tabSection2 = $('<div>tab2</div>');
+
+            $('body').append(tabSection1);
+            $('body').append(tabSection2);
+
+            tab = new Tab({
+                initName: 'tab2',
+                items: ['tab1', 'tab2'],
+                sections: [tabSection1, tabSection2]
+            });
+
+            $('body').append(tab.$el);
+        });
+        it('해당 버튼에 active클래스가 추가되어있다', function() {
+            var buttons;
+
+            buttons = $('button');
+
+            expect($(buttons[1]).hasClass('active')).toBe(true);
+        });
+
+        it('해당 섹션에 active클래스가 추가되어있다', function() {
+            expect($('div').eq(1).hasClass('active')).toBe(true);
+        });
+    });
+
+    describe('섹션의 활성화', function() {
+        var tabSection1,
+            tabSection2;
+        beforeEach(function() {
+            tabSection1 = $('<div>tab1</div>');
+            tabSection2 = $('<div>tab2</div>');
+
+            $('body').append(tabSection1);
+            $('body').append(tabSection2);
 
             tab = new Tab({
                 items: ['tab1', 'tab2'],
-                onItemClick: handler
+                sections: [tabSection1, tabSection2]
+            });
+
+            $('body').append(tab.$el);
+        });
+
+        it('섹션에 .active 클래스가 추가된다', function() {
+            $('button').eq(1).trigger('click');
+            expect(tabSection2.hasClass('active')).toBe(true);
+        });
+
+        it('기본섹션의  .active 클래스는 삭제되고 새로 선택된 섹션에 추가된다', function() {
+            $('button').eq(0).trigger('click');
+            $('button').eq(1).trigger('click');
+            expect(tabSection1.hasClass('active')).toBe(false);
+            expect(tabSection2.hasClass('active')).toBe(true);
+        });
+    });
+
+    describe('.activate()', function() {
+        beforeEach(function() {
+            tab = new Tab({
+                items: ['tab1', 'tab2']
             });
 
             $('body').append(tab.$el);

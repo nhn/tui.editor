@@ -28,40 +28,37 @@ function Layout(options, eventManager, commandManager) {
 }
 
 Layout.prototype.init = function() {
-    var self = this;
-
     this.$containerEl = this._initContainerEl();
 
     this.toolbar = new Toolbar(this.eventManager, this.commandManager);
-    this.$containerEl.append(this.toolbar.$el);
+    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
 
-    this.tab = new Tab({
-        items: ['Editor', 'Preview'],
-        onItemClick: function($event, tabName) {
-            if (tabName === 'Editor') {
-                self.$editorContainerEl.addClass('active');
-                self.$previewEl.removeClass('active');
-            } else {
-                self.$editorContainerEl.removeClass('active');
-                self.$previewEl.addClass('active');
-            }
-        }
-    });
 
     this._initPopupAddLink();
     this._initPopupAddImage();
 
-    this.$containerEl.append(this.tab.$el);
-
     this.$editorContainerEl = this._initEditorEl();
     this.$previewEl = this._initPreviewEl();
+
+    this.tab = new Tab({
+        items: ['Editor', 'Preview'],
+        sections: [this.$editorContainerEl, this.$previewEl]
+    });
+
+    this.$containerEl.find('.tabSection').append(this.tab.$el);
+
     this.tab.activate('Editor');
 };
 
 Layout.prototype._initContainerEl = function() {
-    return $('<div>')
-        .addClass('editor-container')
-        .appendTo(this.$el);
+    var containerTmpl = [
+        '<div class="editor-container">',
+            '<div class="toolbarSection" />',
+            '<div class="tabSection" />',
+        '</div>'
+    ];
+
+    return $(containerTmpl.join('')).appendTo(this.$el);
 };
 
 Layout.prototype._initEditorEl = function() {

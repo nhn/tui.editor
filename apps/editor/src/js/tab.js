@@ -6,7 +6,7 @@
 'use strict';
 
 var UIController = require('./uicontroller');
-var buttonTmpl = '<button type="button"><%=name%></button>';
+var buttonTmpl = '<button type="button" data-index="<%=index%>"><%=name%></button>';
 
 /**
  * Tab
@@ -29,29 +29,42 @@ var Tab = UIController.extend({
         });
 
         this.items = options.items;
+        this.sections = options.sections;
 
         this._$activeButton = null;
 
         this.render();
         this._initItemClickEvent(options);
+
+        this._applyInitName(options.initName);
     },
     render: function() {
-        var i,
-            len,
-            buttonData = [],
-            html;
+        var buttonHtml;
+
+        buttonHtml = this.template(buttonTmpl, this._getButtonData());
+
+        this.$el.html(buttonHtml);
+
+        this.attachEvents();
+    },
+    _applyInitName: function(initName) {
+        if (initName) {
+            this.activate(initName);
+        }
+    },
+    _getButtonData: function() {
+        var buttonData = [],
+            i,
+            len;
 
         for (i = 0, len = this.items.length; i < len; i += 1) {
             buttonData.push({
-                name: this.items[i]
+                name: this.items[i],
+                index: i
             });
         }
 
-        html = this.template(buttonTmpl, buttonData);
-
-        this.$el.html(html);
-
-        this.attachEvents();
+        return buttonData;
     },
     _onButtonClick: function(ev) {
         var $button = $(ev.target);
@@ -60,17 +73,30 @@ var Tab = UIController.extend({
             return;
         }
 
+        this._deactive();
+
         this._activateButton($button);
+        this._activateSection($button.attr('data-index'));
 
         this.trigger('itemClick', $button.text());
     },
-    _activateButton: function($button) {
+    _deactive: function() {
         if (this._$activeButton) {
             this._$activeButton.removeClass('active');
-        }
 
+            if (this.sections) {
+                this.sections[this._$activeButton.attr('data-index')].removeClass('active');
+            }
+        }
+    },
+    _activateButton: function($button) {
         this._$activeButton = $button;
         this._$activeButton.addClass('active');
+    },
+    _activateSection: function(index) {
+        if (this.sections) {
+            this.sections[index].addClass('active');
+        }
     },
     activate: function(name) {
         this.$el.find('button:contains("' + name + '")').trigger('click');
