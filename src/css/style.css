@@ -3,8 +3,8 @@
     box-sizing: content-box;
 }
 .editor-container:after,
-.editor-container>.toolbar:after,
-.editor-container>.statusbar:after
+.editor-container .toolbar:after,
+.editor-container .statusbar:after
 {
     content: "";
     display: block;
@@ -14,15 +14,15 @@
 .editor-container {
     border: 1px solid #ccc;
 }
-.editor-container>.toolbar {
+.editor-container .toolbar {
     padding: 5px;
     height: 30px;
     background: #eee;
 }
-.editor-container.preview-style-column>.toolbar {
+.editor-container.preview-style-vetical .toolbar {
     border-bottom: 1px solid #ccc;
 }
-.editor-container>.toolbar>button {
+.editor-container .toolbar button {
     box-sizing: border-box;
     min-width: 30px;
     height: 30px;
@@ -34,28 +34,28 @@
     outline: none;
     cursor: pointer;
 }
-.editor-container>.toolbar>button:hover {
+.editor-container .toolbar button:hover {
     background: #eee;
 }
-.editor-container>.toolbar>button:active {
+.editor-container .toolbar button:active {
     box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
-.editor-container>.toolbar>button:first-child {
+.editor-container .toolbar button:first-child {
     border-left-width: 1px;
 }
-.editor-container>.toolbar>button.bold {
+.editor-container .toolbar button.bold {
     font-weight: bold;
 }
-.editor-container>.toolbar>button.italic {
+.editor-container .toolbar button.italic {
     font-style: italic;
 }
-.editor-container>.tab{
+.editor-container .tab{
     display:none;
     padding: 0 5px;
     background: #eee;
     border-bottom: 1px solid #ccc;
 }
-.editor-container>.tab>button {
+.editor-container .tab button {
     box-sizing: border-box;
     padding: 5px;
     height: 23px;
@@ -69,16 +69,16 @@
     outline: none;
     cursor: pointer;
 }
-.editor-container>.tab>button:first-child {
+.editor-container .tab button:first-child {
     left: 0;
 }
-.editor-container>.tab>button.active,
-.editor-container>.tab>button:hover.active {
+.editor-container .tab button.active,
+.editor-container .tab button:hover.active {
     background: white;
     border-bottom-color: white;
 }
 
-.editor-container>.tab>button:hover {
+.editor-container .tab button:hover {
     background: #eee;
 }
 
@@ -103,19 +103,19 @@
 .editor-container.preview-style-tab>.active {
     display: block;
 }
-.editor-container.preview-style-column>.editor,
-.editor-container.preview-style-column>.preview {
+.editor-container.preview-style-vertical>.editor,
+.editor-container.preview-style-vertical>.preview {
     width: 50%;
 }
-.editor-container.preview-style-column>.editor {
+.editor-container.preview-style-vertical>.editor {
     float: left;
     border-right: 1px solid #ccc;
 }
-.editor-container.preview-style-column>.preview {
+.editor-container.preview-style-vertical>.preview {
     float: right;
     padding: 5px;
 }
-.editor-container.preview-style-tab>.tab{
+.editor-container.preview-style-tab .tab{
     display:block;
 }
 
@@ -133,10 +133,6 @@
     float: left;
     width: 50%;
 }
-
-
-
-
 .nepopup-wrapper {
     width: 500px;
     left: auto;
@@ -190,4 +186,26 @@
 
 .buttonSection {
     margin-top: 15px;
+}
+
+
+.popupAddImage .tab {
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
+}
+
+.popupAddImage .urlType {
+    display: none;
+}
+.popupAddImage .fileType {
+    display: none;
+}
+.popupAddImage div.active,
+.popupAddImage form.active{
+    display: block;
+}
+.popupAddImage .tab button {
+    border: none;
+    background: none;
 }

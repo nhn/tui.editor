@@ -65,6 +65,7 @@ describe('PopupAddImage', function() {
                 };
 
             em.listen('command', handler);
+
             $('.imageUrlInput').val(value.imageUrl);
             $('.altTextInput').val(value.altText);
 
@@ -89,28 +90,27 @@ describe('PopupAddImage', function() {
 
     describe('url입력 방식', function() {
         it('getValue()로 입력된 값들을 객체형식으로 받는다', function() {
-            var value;
+            var value = {
+                    imageUrl: 'imageUrlText',
+                    altText: 'altText'
+                };
 
             $('.imageUrlInput').val('imageUrlText');
             $('.altTextInput').val('altText');
 
-            value = popup.getValue();
+            expect($('.imageUrlInput').val()).toEqual(value.imageUrl);
+            expect($('.altTextInput').val()).toEqual(value.altText);
 
-            expect(value.imageUrl).toEqual('imageUrlText');
-            expect(value.altText).toEqual('altText');
         });
 
         it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
-            var value;
-
             $('.imageUrlInput').val('imageUrlText');
             $('.altTextInput').val('altText');
 
             popup.hide();
-            value = popup.getValue();
 
-            expect(value.imageUrl).toEqual('');
-            expect(value.altText).toEqual('');
+            expect($('.imageUrlInput').val()).toEqual('');
+            expect($('.altTextInput').val()).toEqual('');
         });
     });
 
@@ -155,8 +155,10 @@ describe('PopupAddImage', function() {
                 });
 
                 em.listen('addImageFileHook', function(oForm, callback) {
-                    callback(value);
+                    callback(value.imageUrl);
                 });
+
+                $('.altTextInput').val(value.altText);
 
                 $('.okButton').trigger('click');
 

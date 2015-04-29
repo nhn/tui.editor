@@ -28,8 +28,9 @@
 </head>
 <body>
 <div id="editSection"></div>
-<form id='mf' method='post' action='http://posttestserver.com/post.php'>
-    <input type = 'file' name= 'ewafaew' />
+<form id='mf' method='post' action='http://posttestserver.com/post.php?dir=shi' enctype="multipart/form-data">
+    <input type = 'file' name= 'file' />
+    <input type = 'text' name= 'test' />
     <button>weffwe</button>
 </form>
 
@@ -54,9 +55,11 @@
                 console.log('previewBeforeHook', $dom);
             },
             'addImageFileHook': function($form, callback) {
+                $form.find('.imageFileInput').attr('name','fileName');
                 $form[0].action = 'http://posttestserver.com/post.php';
                 $form[0].method = 'POST';
                 $form[0].submit();
+                //callback으로 url전달
             }
         }
     });

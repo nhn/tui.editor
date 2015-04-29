@@ -1,24 +1,29 @@
 'use strict';
 
-var LayerPopup = require('./layerpopup');
+var LayerPopup = require('./layerpopup'),
+    Tab = require('./tab');
 
 var POPUP_CONTENT = [
-    '<label for="">Image URL</label>',
-    '<input type="text" class="imageUrlInput" />',
-    '<form>',
-    '<label for="">Image File</label>',
-    '<input type="file" name="imageFile" class="imageFileInput" />',
-    '<label for="url">Alt Text</label>',
-    '<input type="text" name="altText" class="altTextInput" />',
+    '<div class="tabSection"></div>',
+    '<div class="urlType">',
+        '<label for="">Image URL</label>',
+        '<input type="text" class="imageUrlInput" />',
+    '</div>',
+    '<form enctype="multipart/form-data" class="fileType">',
+        '<label for="">Image File</label>',
+        '<input type="file" class="imageFileInput" />',
     '</form>',
+    '<label for="url">Alt Text</label>',
+    '<input type="text" class="altTextInput" />',
     '<div class="buttonSection">',
-    '<button class="okButton">OK</button>',
-    '<button class="closeButton">Cancel</button>',
+        '<button class="okButton">OK</button>',
+        '<button class="closeButton">Cancel</button>',
     '</div>'
 ];
 
 /**
  * PopupAddImage
+ * It implements a Image Add Popup
  * @exports AddImage
  * @extends {LayerPopup}
  * @constructor
@@ -34,6 +39,7 @@ var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
         this.eventManager = options.eventManager;
 
         this.render();
+
         this._bindContentEvent();
         this._linkWithEventManager();
         this._initApplyImageBindContext();
@@ -72,31 +78,65 @@ var PopupAddImage = LayerPopup.extend(/** @lends PopupAddImage.prototype */{
         });
 
         this.on('okButtonClicked', function() {
-            if (self.isUrlType()) {
-                self.applyImage(self.getValue());
+            if (self._isUrlType()) {
+                self.applyImage();
             } else {
-                self.eventManager.emit('addImageFileHook', self.getHookValue(), self.applyImage);
+                self.eventManager.emit('addImageFileHook', self._getImageFileForm(), self.applyImage);
             }
         });
     },
     _initApplyImageBindContext: function() {
         var self = this;
 
-        this.applyImage = function(value) {
-            self.eventManager.emit('command', 'AddImage', value);
+        this.applyImage = function(url) {
+            var info;
+
+            if (url) {
+                info = self._getImageInfoWithGivenUrl(url);
+            } else {
+                info = self._getImageInfo();
+            }
+
+            self.eventManager.emit('command', 'AddImage', info);
             self.hide();
         };
     },
-    isUrlType: function() {
+    _isUrlType: function() {
         return !!this.$el.find('.imageUrlInput').val();
     },
-    getValue: function() {
+    /**
+     * _renderContent
+     * @override
+     */
+    _renderContent: function() {
+        var $popup = this.$el;
+
+        LayerPopup.prototype._renderContent.call(this);
+
+        this.$body.find('.tabSection').append(new Tab({
+            initName: 'URL',
+            items: ['URL', 'File'],
+            sections: [$popup.find('.urlType'), $popup.find('.fileType')]
+        }).$el);
+    },
+    _getImageInfoWithGivenUrl: function(imageUrl) {
+        var altText = this.$el.find('.altTextInput').val();
+
+        return this._makeImageInfo(imageUrl, altText);
+    },
+    _getImageInfo: function() {
+        var imageUrl = this.$el.find('.imageUrlInput').val(),
+            altText = this.$el.find('.altTextInput').val();
+
+        return this._makeImageInfo(imageUrl, altText);
+    },
+    _makeImageInfo: function(url, alt) {
         return {
-            imageUrl: this.$el.find('.imageUrlInput').val(),
-            altText: this.$el.find('.altTextInput').val()
+            imageUrl: url,
+            altText: alt
         };
     },
-    getHookValue: function() {
+    _getImageFileForm: function() {
         return this.$el.find('form');
     },
     resetInputs: function() {
