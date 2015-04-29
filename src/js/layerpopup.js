@@ -70,6 +70,7 @@ var Layerpopup = util.defineClass({
     _initContent: function(options) {
         if (options.content) {
             this.$content = $(options.content);
+            this.$content.css('display', 'block');
         } else if (options.textContent) {
             this.$content = options.textContent;
         }
