@@ -37,3 +37,12 @@ var canObserveMutations = typeof MutationObserver !== 'undefined';
 var notWS = /[^ \t\r\n]/;
 
 var indexOf = Array.prototype.indexOf;
+
+// Polyfill for FF3.5
+if ( !Object.create ) {
+    Object.create = function ( proto ) {
+        var F = function () {};
+        F.prototype = proto;
+        return new F();
+    };
+}

@@ -94,6 +94,20 @@ The method takes two arguments:
 
 Returns self (the Squire instance).
 
+### setKeyHandler
+
+Adds or removes a keyboard shortcut. You can use this to override the default keyboard shortcuts (e.g. Ctrl-B for bold – see the bottom of KeyHandlers.js for the list).
+
+This method takes two arguments:
+
+* **key**: The key to handle, including any modifiers in alphabetical order. e.g. `"alt-ctrl-meta-shift-enter"`
+* **fn**: The function to be called when this key is pressed, or `null` if removing a key handler. The function will be passed three arguments when called:
+  * **self**: A reference to the Squire instance.
+  * **event**: The key event object.
+  * **range**: A Range object representing the current selection.
+
+Returns self (the Squire instance).
+
 ### focus
 
 Focuses the editor.
