@@ -47,6 +47,12 @@ By default, the editor will use a `<div>` for blank lines, as most users have be
 
 You can also set an object of attributes to apply to each default block node by setting the *defaultBlockProperties* property, e.g. `editor.defaultBlockProperties = { style: 'font-size: 16px;' }`.
 
+### Determining button state
+
+If you are adding a UI to Squire, you'll probably want to show a button in different states depending on whether a particular style is active in the current selection or not. For example, a "Bold" button would be in a depressed state if the text under the cursor is already bold.
+
+The efficient way to determine the state for most buttons is to monitor the "pathChange" event in the editor, and determine the state from the new path. If the selection goes across nodes, you will need to call the `hasFormat` method for each of your buttons to determine whether the styles are active. See the `getPath` and `hasFormat` documentation for more information.
+
 License
 -------
 
