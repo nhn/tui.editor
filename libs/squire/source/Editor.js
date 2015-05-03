@@ -1658,21 +1658,25 @@ proto._onPaste = function ( event ) {
                 removeEmptyInlines( frag );
 
                 var node = frag,
-                    doPaste = true;
+                    doPaste = true,
+                    event = {
+                        fragment: frag,
+                        preventDefault: function () {
+                            doPaste = false;
+                        },
+                        isDefaultPrevented: function () {
+                            return !doPaste;
+                        }
+                    };
                 while ( node = getNextBlock( node ) ) {
                     fixCursor( node );
                 }
 
-                self.fireEvent( 'willPaste', {
-                    fragment: frag,
-                    preventDefault: function () {
-                        doPaste = false;
-                    }
-                });
+                self.fireEvent( 'willPaste', event );
 
                 // Insert pasted data
                 if ( doPaste ) {
-                    insertTreeFragmentIntoRange( range, frag );
+                    insertTreeFragmentIntoRange( range, event.fragment );
                     if ( !canObserveMutations ) {
                         self._docWasChanged();
                     }
