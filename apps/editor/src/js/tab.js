@@ -69,16 +69,7 @@ var Tab = UIController.extend({
     _onButtonClick: function(ev) {
         var $button = $(ev.target);
 
-        if (this._$activeButton && this._$activeButton.text() === $button.text()) {
-            return;
-        }
-
-        this._deactive();
-
-        this._activateButton($button);
-        this._activateSection($button.attr('data-index'));
-
-        this.trigger('itemClick', $button.text());
+        this._activateTabByButton($button);
     },
     _deactive: function() {
         if (this._$activeButton) {
@@ -99,7 +90,20 @@ var Tab = UIController.extend({
         }
     },
     activate: function(name) {
-        this.$el.find('button:contains("' + name + '")').trigger('click');
+        var $button = this.$el.find('button:contains("' + name + '")');
+        this._activateTabByButton($button);
+    },
+    _activateTabByButton: function($button) {
+        if (this._$activeButton && this._$activeButton.text() === $button.text()) {
+            return;
+        }
+
+        this._deactive();
+
+        this._activateButton($button);
+        this._activateSection($button.attr('data-index'));
+
+        this.trigger('itemClick', $button.text());
     },
     _initItemClickEvent: function(options) {
         if (options.onItemClick) {
