@@ -6,6 +6,7 @@ var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
 /**
  * Bold
+ * Add bold markdown syntax to markdown editor
  * @exports Bold
  * @extends {MarkdownCommand}
  * @constructor

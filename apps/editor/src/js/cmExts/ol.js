@@ -4,6 +4,7 @@ var MarkdownCommand = require('../markdownCommand');
 
 /**
  * OL
+ * Add ordered list markdown syntax to markdown editor
  * @exports OL
  * @extends {MarkdownCommand}
  * @constructor
@@ -13,6 +14,10 @@ var OL = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     init: function OL() {
         MarkdownCommand.call(this, 'OL');
     },
+    /**
+     * 커맨드 핸들러
+     * @return {number} 코드미러 상수
+     */
     exec: function() {
         var replaceText,
             range,

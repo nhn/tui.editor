@@ -4,6 +4,7 @@ var MarkdownCommand = require('../markdownCommand');
 
 /**
  * Heading
+ * Add heading markdown syntax to markdown editor
  * @exports Heading
  * @extends {MarkdownCommand}
  * @constructor

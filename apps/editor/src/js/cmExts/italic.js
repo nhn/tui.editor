@@ -7,6 +7,7 @@ var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
 /**
  * Italic
+ * Add italic markdown syntax to markdown editor
  * @exports Italic
  * @extends {MarkdownCommand}
  * @constructor
@@ -18,7 +19,6 @@ var Italic = MarkdownCommand.extend(/** @lends Italic.prototype */{
         MarkdownCommand.call(this, 'Italic');
     },
     /**
-     * exec
      * 커맨드 핸들러
      * @return {number} 코드미러 상수
      */
