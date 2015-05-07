@@ -4,6 +4,7 @@ var MarkdownCommand = require('../markdownCommand');
 
 /**
  * Blockquote
+ * Add blockquote markdown syntax to markdown editor
  * @exports Blockquote
  * @extends {MarkdownCommand}
  * @constructor
@@ -14,6 +15,10 @@ var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
     init: function Blockquote() {
         MarkdownCommand.call(this, 'Blockquote');
     },
+    /**
+     *  커맨드 핸들러
+     *  @return {CodeMirror} 코드미러 상수
+     */
     exec: function() {
         var textToModify,
             range,
@@ -27,7 +32,7 @@ var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
             return this.getPass();
         }
 
-        // 선택된 영역을 가공함
+        //range 을 가공함
         range = this.getCurrentRange();
 
         from = {
@@ -43,7 +48,7 @@ var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
         //영역의 텍스트를 가저오고
         textToModify = this.doc.getRange(from, to);
 
-        //원하는 대로 가공한다
+        //텍스트 컨텐트를 변경 한다
         textLinesToModify = textToModify.split('\n');
         lineLength = textLinesToModify.length;
 

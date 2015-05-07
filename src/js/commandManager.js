@@ -11,7 +11,6 @@ var util = ne.util,
 /**
  * CommandManager
  * @exports CommandManager
- * @extends {}
  * @constructor
  * @class
  * @param {NEditor} base ned인스턴스
@@ -37,13 +36,21 @@ CommandManager.prototype.addCommand = function(command) {
     if (command.isMDType()) {
         this._addCMCommand(name, responder, command.keyMap);
         this._mdCommand.set(name, function() {
-           return responder.apply(null, [base.getCodeMirror()].concat(util.toArray(arguments)));
+            var args = [base.getCodeMirror()].concat(util.toArray(arguments));
+            return responder.apply(null, args);
         });
     } else if (command.isGlobalType()) {
         this._command.set(name, responder);
     }
 };
 
+/**
+ * _addCMCommand
+ * Add command to codemirror for use its keyMap system
+ * @param {string} name Command Name
+ * @param {function} fn Command responder
+ * @param {array} keyMap keyMap array
+ */
 CommandManager.prototype._addCMCommand = function(name, fn, keyMap) {
     if (!CodeMirror.commands[name]) {
         CodeMirror.commands[name] = fn;
@@ -67,7 +74,7 @@ CommandManager.prototype.exec = function(name) {
 
     args.shift();
 
-    //todo 상황별로 판단하는 로직이 필요
+    //todo 위지윅 추가시 상황별로 판단하는 로직이 필요
     if (command) {
         return command();
     } else if (mdCommand) {
@@ -75,6 +82,10 @@ CommandManager.prototype.exec = function(name) {
     }
 };
 
+/**
+ * _linkWithEventManager
+ * Link CommandManager with EventManager so that invoke command by event
+ */
 CommandManager.prototype._linkWithEventManager = function() {
     var commandManager = this;
 

@@ -4,6 +4,7 @@ var MarkdownCommand = require('../markdownCommand');
 
 /**
  * AddImage
+ * Add Image markdown syntax to markdown Editor
  * @exports AddImage
  * @extends {MarkdownCommand}
  * @constructor
@@ -13,6 +14,12 @@ var AddImage = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     init: function AddImage() {
         MarkdownCommand.call(this, 'AddImage');
     },
+    /**
+     *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
+     *  @param {object} data data for image
+     *  @return {CodeMirror} 코드미러 상수
+     */
     exec: function(cm, data) {
         var replaceText,
             range,

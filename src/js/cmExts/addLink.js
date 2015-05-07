@@ -4,6 +4,7 @@ var MarkdownCommand = require('../markdownCommand');
 
 /**
  * AddLink
+ * Add link markdown syntax to markdown editor
  * @exports AddLink
  * @extends {MarkdownCommand}
  * @constructor
@@ -13,6 +14,12 @@ var AddLink = MarkdownCommand.extend(/** @lends AddLink.prototype */{
     init: function AddLink() {
         MarkdownCommand.call(this, 'AddLink');
     },
+    /**
+     *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
+     *  @param {object} data data for link
+     *  @return {CodeMirror} 코드미러 상수
+     */
     exec: function(cm, data) {
         var replaceText,
         range,
