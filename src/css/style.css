@@ -82,8 +82,8 @@
     background: #eee;
 }
 
-.neditor>.mdContainer>.editor,
-.neditor>.preview {
+.neditor .mdContainer .editor,
+.neditor .preview {
     box-sizing: border-box;
     height:400px;
     overflow: auto;

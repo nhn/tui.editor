@@ -22,34 +22,33 @@ function WysiwygEditor($el, eventManager, commandManager) {
     this.$editorContainerEl = $el;
 }
 
-
 WysiwygEditor.prototype.init = function(initialValue) {
-    var editor;
+    /*var editor;
     var iframe = document.createElement( 'iframe' );
 
     iframe.addEventListener( 'load', function () {
-        // Make sure we're in standards mode.
+         Make sure we're in standards mode.
         var doc = iframe.contentDocument;
         if ( doc.compatMode !== 'CSS1Compat' ) {
             doc.open();
             doc.write( '<!DOCTYPE html><title></title>' );
             doc.close();
         }
-        // doc.close() can cause a re-entrant load event in some browsers,
-        // such as IE9.
+         doc.close() can cause a re-entrant load event in some browsers,
+         such as IE9.
         if ( editor ) {
             return;
         }
-        // Create Squire instance
+         Create Squire instance
         editor = new Squire( doc );
-        // Add styles to frame
+         Add styles to frame
         var style = doc.createElement( 'style' );
         style.type = 'text/css';
         style.textContent = document.getElementById( 'editorStyles' ).textContent;
         doc.querySelector( 'head' ).appendChild( style );
     }, false );
 
-    this.$editorContainerEl.append(iframe);
+    this.$editorContainerEl.append(iframe);*/
 };
 
 
