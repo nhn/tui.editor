@@ -9,8 +9,9 @@
     <script src="../lib/codesnippet/code-snippet.js"></script>
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/codemirror/addon/mode/overlay.js"></script>
-    <script src="../lib/codemirror/mode/markdown/markdown.js"><script>
+    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
     <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../src/css/style.css">
@@ -29,6 +30,49 @@
 <body>
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
+<script type="text/template" id="editorStyles">
+  html {
+    height: 100%;
+  }
+  body {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 1em;
+    background: transparent;
+    color: #2b2b2b;
+    font: 13px/1.35 Helvetica, arial, sans-serif;
+    cursor: text;
+  }
+  a {
+    text-decoration: underline;
+  }
+  h1 {
+    font-size: 138.5%;
+  }
+  h2 {
+    font-size: 123.1%;
+  }
+  h3 {
+    font-size: 108%;
+  }
+  h1,h2,h3,p {
+    margin: 1em 0;
+  }
+  h4,h5,h6 {
+    margin: 0;
+  }
+  ul, ol {
+    margin: 0 1em;
+    padding: 0 1em;
+  }
+  blockquote {
+    border-left: 2px solid blue;
+    margin: 0;
+    padding: 0 10px;
+  }
+</script>
 <script>
     /*var ned = new ne.NEditor({
         el: $('#editSection'),

@@ -18,31 +18,31 @@ var Toolbar = require('./toolbar'),
  * @class
  * @param {object} options 옵션
  * @param {EventManager} eventManager 이벤트 매니저
- * @param {commandManager} commandManager 커맨드 매니저
  */
-function Layout(options, eventManager, commandManager) {
+function Layout(options, eventManager) {
     this.$el = $(options.el);
     this.height = options.height;
     this.eventManager = eventManager;
-    this.commandManager = commandManager;
 }
 
 Layout.prototype.init = function() {
     this.$containerEl = this._initContainerEl();
 
-    this.toolbar = new Toolbar(this.eventManager, this.commandManager);
+    this.toolbar = new Toolbar(this.eventManager);
     this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
 
 
     this._initPopupAddLink();
     this._initPopupAddImage();
 
-    this.$editorContainerEl = this._initEditorEl();
+    this.$mdEditorContainerEl = this._initMdEditorContainerEl();
     this.$previewEl = this._initPreviewEl();
+    this.$wwEditorContainerEl = this._initWwEditorContainerEl();
 
+    //markdown
     this.tab = new Tab({
         items: ['Editor', 'Preview'],
-        sections: [this.$editorContainerEl, this.$previewEl]
+        sections: [this.$mdEditorContainerEl, this.$previewEl]
     });
 
     this.$containerEl.find('.tabSection').append(this.tab.$el);
@@ -52,29 +52,37 @@ Layout.prototype.init = function() {
 
 Layout.prototype._initContainerEl = function() {
     var containerTmpl = [
-        '<div class="editor-container">',
-            '<div class="toolbarSection" />',
-            '<div class="tabSection" />',
+        '<div class="neditor">',
+           '<div class="toolbarSection" />',
+            '<div class="mdContainer">',
+               '<div class="tabSection" />',
+            '</div>',
+            '<div class="wysiwygContainer" />',
         '</div>'
     ];
 
     return $(containerTmpl.join('')).appendTo(this.$el);
 };
 
-Layout.prototype._initEditorEl = function() {
+Layout.prototype._initMdEditorContainerEl = function() {
     return $('<div>')
         .addClass('editor')
-        .addClass('active')
         .height(this.height)
-        //.attr('contenteditable', 'true')
-        .appendTo(this.$containerEl);
+        .appendTo(this.$containerEl.find('.mdContainer'));
 };
 
 Layout.prototype._initPreviewEl = function() {
     return $('<div>')
         .addClass('preview')
         .height(this.height)
-        .appendTo(this.$containerEl);
+        .appendTo(this.$containerEl.find('.mdContainer'));
+};
+
+Layout.prototype._initWwEditorContainerEl = function() {
+    return $('<div>')
+        .addClass('editor')
+        .height(this.height)
+        .appendTo(this.$containerEl.find('.wysiwygContainer'));
 };
 
 Layout.prototype._initPopupAddLink = function() {
@@ -92,13 +100,13 @@ Layout.prototype._initPopupAddImage = function() {
 };
 
 Layout.prototype.verticalSplitStyle = function() {
-    this.$containerEl.removeClass('preview-style-tab');
-    this.$containerEl.addClass('preview-style-vertical');
+    this.$containerEl.find('.mdContainer').removeClass('preview-style-tab');
+    this.$containerEl.find('.mdContainer').addClass('preview-style-vertical');
 };
 
 Layout.prototype.tabStyle = function() {
-    this.$containerEl.removeClass('preview-style-vertical');
-    this.$containerEl.addClass('preview-style-tab');
+    this.$containerEl.find('.mdContainer').removeClass('preview-style-vertical');
+    this.$containerEl.find('.mdContainer').addClass('preview-style-tab');
 };
 
 Layout.prototype.changePreviewStyle = function(style) {
@@ -125,8 +133,11 @@ Layout.prototype.getStatusbarRightAreaEl = function() {
     return this.$statusbarRightAreaEl;
 };
 
-Layout.prototype.getEditorContainerEl = function() {
-    return this.$editorContainerEl;
+Layout.prototype.getMdEditorContainerEl = function() {
+    return this.$mdEditorContainerEl;
 };
 
+Layout.prototype.getWwEditorContainerEl = function() {
+    return this.$wwEditorContainerEl;
+};
 module.exports = Layout;
