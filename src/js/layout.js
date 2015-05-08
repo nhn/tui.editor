@@ -7,6 +7,7 @@
 
 var Toolbar = require('./toolbar'),
     Tab = require('./tab'),
+    EditorTypeSwitch = require('./editorTypeSwitch'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage');
 
@@ -29,6 +30,7 @@ Layout.prototype.init = function() {
     this._renderLayout();
 
     this._initToolbar();
+    this._initEditorTypeControl();
 
     this._initPopupAddLink();
     this._initPopupAddImage();
@@ -41,6 +43,7 @@ Layout.prototype._renderLayout = function() {
     var containerTmpl = [
         '<div class="neditor">',
            '<div class="toolbarSection" />',
+           '<div class="editorTypeSwitchSection" />',
             '<div class="mdContainer">',
                '<div class="tabSection" />',
                '<div class="editor" />',
@@ -58,6 +61,11 @@ Layout.prototype._renderLayout = function() {
 Layout.prototype._initToolbar = function() {
     this.toolbar = new Toolbar(this.eventManager);
     this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
+};
+
+Layout.prototype._initEditorTypeControl = function() {
+    this.editorTypeSwitch = new EditorTypeSwitch(this.eventManager);
+    this.$containerEl.find('.editorTypeSwitchSection').append(this.editorTypeSwitch.$el);
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
