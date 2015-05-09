@@ -2,10 +2,10 @@
 
 var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
+    WysiwygEditor = require('./wysiwygEditor'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
     CommandMangager = require('./commandManager'),
-    Layerpopup = require('./layerpopup'),
     ExtManager = require('./extManager'),
     Converter = require('./converter');
 
@@ -45,9 +45,9 @@ function NEditor(options) {
     this.layout = new Layout(options, this.eventManager, this.commandManager);
     this.layout.init();
 
-    this.mdEditor = new MarkdownEditor(this.layout.getEditorContainerEl(), this.eventManager, this.commandManager);
+    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
-
+    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.eventManager, this.commandManager);
 
     //추후 옵션처리기에서 처리
     if (hooks) {
@@ -61,7 +61,10 @@ function NEditor(options) {
     NEditor._extManager.applyExtension(this, this.options.exts);
 
     this.mdEditor.init(this.options.initialValue);
+
     this.getCodeMirror().__ned = this;
+
+    this.wwEditor.init(this.options.height);
 
     __nedInstance.push(this);
 }

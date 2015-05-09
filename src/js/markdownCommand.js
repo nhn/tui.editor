@@ -12,7 +12,7 @@ var CodeMirror = window.CodeMirror;
  * @constructor
  * @class
  */
-var MarkdownCommand = Command.extend(/** @lends Command.prototype */{
+var MarkdownCommand = Command.extend(/** @lends MarkdownCommand.prototype */{
     /**
      * init
      * initialize Command

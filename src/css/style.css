@@ -1,28 +1,29 @@
 @charset "UTF-8";
-.editor-container * {
+
+.neditor * {
     box-sizing: content-box;
 }
-.editor-container:after,
-.editor-container .toolbar:after,
-.editor-container .statusbar:after
+.neditor:after,
+.neditor .toolbar:after,
+.neditor .statusbar:after
 {
     content: "";
     display: block;
     height: 0;
     clear: both;
 }
-.editor-container {
+.neditor {
     border: 1px solid #ccc;
 }
-.editor-container .toolbar {
+.neditor .toolbar {
     padding: 5px;
     height: 30px;
     background: #eee;
 }
-.editor-container.preview-style-vetical .toolbar {
+.neditor.preview-style-vetical .toolbar {
     border-bottom: 1px solid #ccc;
 }
-.editor-container .toolbar button {
+.neditor .toolbar button {
     box-sizing: border-box;
     min-width: 30px;
     height: 30px;
@@ -34,28 +35,28 @@
     outline: none;
     cursor: pointer;
 }
-.editor-container .toolbar button:hover {
+.neditor .toolbar button:hover {
     background: #eee;
 }
-.editor-container .toolbar button:active {
+.neditor .toolbar button:active {
     box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
-.editor-container .toolbar button:first-child {
+.neditor .toolbar button:first-child {
     border-left-width: 1px;
 }
-.editor-container .toolbar button.bold {
+.neditor .toolbar button.bold {
     font-weight: bold;
 }
-.editor-container .toolbar button.italic {
+.neditor .toolbar button.italic {
     font-style: italic;
 }
-.editor-container .tab{
+.neditor .tab{
     display:none;
     padding: 0 5px;
     background: #eee;
     border-bottom: 1px solid #ccc;
 }
-.editor-container .tab button {
+.neditor .tab button {
     box-sizing: border-box;
     padding: 5px;
     height: 23px;
@@ -69,70 +70,86 @@
     outline: none;
     cursor: pointer;
 }
-.editor-container .tab button:first-child {
+.neditor .tab button:first-child {
     left: 0;
 }
-.editor-container .tab button.active,
-.editor-container .tab button:hover.active {
+.neditor .tab button.active,
+.neditor .tab button:hover.active {
     background: white;
     border-bottom-color: white;
 }
 
-.editor-container .tab button:hover {
+.neditor .tab button:hover {
     background: #eee;
 }
 
-.editor-container>.editor,
-.editor-container>.preview {
+.neditor .mdContainer .editor,
+.neditor .preview {
     box-sizing: border-box;
     height:400px;
     overflow: auto;
 }
-.editor-container>.editor>.CodeMirror {
+.neditor>.mdContainer>.CodeMirror {
     height: 100%;
 }
-.editor-container>.preview {
+.neditor>.preview {
     padding: 5px;
 }
-.editor-container.preview-style-tab>.editor,
-.editor-container.preview-style-tab>.preview {
+.neditor .preview-style-tab>.editor,
+.neditor .preview-style-tab>.preview {
     float: left;
     width: 100%;
     display: none;
 }
-.editor-container.preview-style-tab>.active {
+.neditor .preview-style-tab>.active {
     display: block;
 }
-.editor-container.preview-style-vertical>.editor,
-.editor-container.preview-style-vertical>.preview {
+.neditor .preview-style-vertical>.editor,
+.neditor .preview-style-vertical>.preview {
     width: 50%;
 }
-.editor-container.preview-style-vertical>.editor {
+.neditor .preview-style-vertical>.editor {
     float: left;
     border-right: 1px solid #ccc;
 }
-.editor-container.preview-style-vertical>.preview {
+.neditor .preview-style-vertical>.preview {
     float: right;
     padding: 5px;
 }
-.editor-container.preview-style-tab .tab{
+.neditor .preview-style-tab .tab{
     display:block;
 }
 
-.editor-container.preview-style-vertical .toolbar {
+.neditor.preview-style-vertical .toolbar {
     border-bottom: 1px solid #ccc;
 }
 
-.editor-container.preview-style-vertical .editor {
+.neditor .preview-style-vertical .editor {
     float: left;
     width: 50%;
     border-right: 1px solid #ccc;
 }
 
-.editor-container.preview-style-vertical .preview {
+.neditor .preview-style-vertical .preview {
     float: left;
     width: 50%;
 }
+
+.editor iframe {
+    border: none;
+    width: 100%;
+}
+
+.neditor .editorTypeSwitchSection {
+    float: right;
+    margin-top: -23px;
+    margin-right: 5px;
+}
+
+.neditor .wysiwygContainer {
+    border-top: 1px solid #ccc;
+}
+/* nepopup용 추후 분리해야함 */
 .nepopup-wrapper {
     width: 500px;
     left: auto;
@@ -209,3 +226,5 @@
     border: none;
     background: none;
 }
+
+

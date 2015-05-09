@@ -9,11 +9,13 @@
     <script src="../lib/codesnippet/code-snippet.js"></script>
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/codemirror/addon/mode/overlay.js"></script>
-    <script src="../lib/codemirror/mode/markdown/markdown.js"><script>
+    <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
     <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../src/css/style.css">
+    <link rel="stylesheet" href="../src/css/contentStyle.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <style type="text/css">
       .cm-header { font-family: arial; }
@@ -30,16 +32,14 @@
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
-    /*var ned = new ne.NEditor({
-        el: $('#editSection'),
-//        previewStyle: 'column',
-        previewStyle: 'tab',
-        height: 100
-    });*/
+    if (!window.console || console.log) {
+        window.console = {};
+        window.console.log = function(){};
+    }
 
     $('#editSection').ned({
         previewStyle: 'tab',
-        height: 101,
+        height: 200,
         initialValue: '* 목록\n```\nprint();\n\nprint();\nprint();```',
         hooks: {
             'htmlRenderAfterHook': function() {
@@ -54,6 +54,7 @@
                 $form[0].method = 'POST';
                 $form[0].submit();
                 //callback으로 url전달
+                //callback('이미지URL');
             }
         }
     });

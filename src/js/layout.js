@@ -7,6 +7,7 @@
 
 var Toolbar = require('./toolbar'),
     Tab = require('./tab'),
+    EditorTypeSwitch = require('./editorTypeSwitch'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage');
 
@@ -18,31 +19,87 @@ var Toolbar = require('./toolbar'),
  * @class
  * @param {object} options 옵션
  * @param {EventManager} eventManager 이벤트 매니저
- * @param {commandManager} commandManager 커맨드 매니저
  */
-function Layout(options, eventManager, commandManager) {
+function Layout(options, eventManager) {
     this.$el = $(options.el);
     this.height = options.height;
     this.eventManager = eventManager;
-    this.commandManager = commandManager;
 }
 
 Layout.prototype.init = function() {
-    this.$containerEl = this._initContainerEl();
+    this._renderLayout();
 
-    this.toolbar = new Toolbar(this.eventManager, this.commandManager);
-    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
-
+    this._initToolbar();
+    this._initEditorTypeSwitch();
 
     this._initPopupAddLink();
     this._initPopupAddImage();
 
-    this.$editorContainerEl = this._initEditorEl();
-    this.$previewEl = this._initPreviewEl();
+    this._initMarkdownAndPreviewSection();
+    this._initWysiwygSection();
+
+    this._switchToMarkdown();
+};
+
+Layout.prototype._renderLayout = function() {
+    var containerTmpl = [
+        '<div class="neditor">',
+           '<div class="toolbarSection" />',
+           '<div class="editorTypeSwitchSection" />',
+            '<div class="mdContainer">',
+               '<div class="tabSection" />',
+               '<div class="editor" />',
+               '<div class="preview neditor-content" />',
+            '</div>',
+            '<div class="wysiwygContainer">',
+                '<div class="editor" />',
+            '</div>',
+        '</div>'
+    ];
+
+    this.$containerEl = $(containerTmpl.join('')).appendTo(this.$el);
+};
+
+Layout.prototype._initToolbar = function() {
+    this.toolbar = new Toolbar(this.eventManager);
+    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
+};
+
+Layout.prototype._initEditorTypeSwitch = function() {
+    var self = this;
+
+    this.editorTypeSwitch = new EditorTypeSwitch(this.eventManager);
+    this.$containerEl.find('.editorTypeSwitchSection').append(this.editorTypeSwitch.$el);
+
+    this.eventManager.listen('editorTypeSwitched', function(type) {
+        if (type === EditorTypeSwitch.TYPE.WYSIWYG) {
+            self._switchToWYSIWYG();
+        } else {
+            self._switchToMarkdown();
+        }
+    });
+};
+
+Layout.prototype._switchToWYSIWYG = function() {
+    this.$containerEl.find('.mdContainer').css('display', 'none');
+    this.$containerEl.find('.wysiwygContainer').css('display', 'block');
+};
+
+Layout.prototype._switchToMarkdown = function() {
+    this.$containerEl.find('.mdContainer').css('display', 'block');
+    this.$containerEl.find('.wysiwygContainer').css('display', 'none');
+};
+
+Layout.prototype._initMarkdownAndPreviewSection = function() {
+    this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
+    this.$previewEl = this.$containerEl.find('.mdContainer .preview');
+
+    this.$mdEditorContainerEl.height(this.height);
+    this.$previewEl.height(this.height);
 
     this.tab = new Tab({
         items: ['Editor', 'Preview'],
-        sections: [this.$editorContainerEl, this.$previewEl]
+        sections: [this.$mdEditorContainerEl, this.$previewEl]
     });
 
     this.$containerEl.find('.tabSection').append(this.tab.$el);
@@ -50,31 +107,9 @@ Layout.prototype.init = function() {
     this.tab.activate('Editor');
 };
 
-Layout.prototype._initContainerEl = function() {
-    var containerTmpl = [
-        '<div class="editor-container">',
-            '<div class="toolbarSection" />',
-            '<div class="tabSection" />',
-        '</div>'
-    ];
-
-    return $(containerTmpl.join('')).appendTo(this.$el);
-};
-
-Layout.prototype._initEditorEl = function() {
-    return $('<div>')
-        .addClass('editor')
-        .addClass('active')
-        .height(this.height)
-        //.attr('contenteditable', 'true')
-        .appendTo(this.$containerEl);
-};
-
-Layout.prototype._initPreviewEl = function() {
-    return $('<div>')
-        .addClass('preview')
-        .height(this.height)
-        .appendTo(this.$containerEl);
+Layout.prototype._initWysiwygSection = function() {
+    this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
+    this.$wwEditorContainerEl.height(this.height);
 };
 
 Layout.prototype._initPopupAddLink = function() {
@@ -91,21 +126,21 @@ Layout.prototype._initPopupAddImage = function() {
     });
 };
 
-Layout.prototype.verticalSplitStyle = function() {
-    this.$containerEl.removeClass('preview-style-tab');
-    this.$containerEl.addClass('preview-style-vertical');
+Layout.prototype._verticalSplitStyle = function() {
+    this.$containerEl.find('.mdContainer').removeClass('preview-style-tab');
+    this.$containerEl.find('.mdContainer').addClass('preview-style-vertical');
 };
 
-Layout.prototype.tabStyle = function() {
-    this.$containerEl.removeClass('preview-style-vertical');
-    this.$containerEl.addClass('preview-style-tab');
+Layout.prototype._tabStyle = function() {
+    this.$containerEl.find('.mdContainer').removeClass('preview-style-vertical');
+    this.$containerEl.find('.mdContainer').addClass('preview-style-tab');
 };
 
 Layout.prototype.changePreviewStyle = function(style) {
     if (style === 'tab') {
-        this.tabStyle();
+        this._tabStyle();
     } else if (style === 'vertical') {
-        this.verticalSplitStyle();
+        this._verticalSplitStyle();
     }
 };
 
@@ -125,8 +160,12 @@ Layout.prototype.getStatusbarRightAreaEl = function() {
     return this.$statusbarRightAreaEl;
 };
 
-Layout.prototype.getEditorContainerEl = function() {
-    return this.$editorContainerEl;
+Layout.prototype.getMdEditorContainerEl = function() {
+    return this.$mdEditorContainerEl;
+};
+
+Layout.prototype.getWwEditorContainerEl = function() {
+    return this.$wwEditorContainerEl;
 };
 
 module.exports = Layout;
