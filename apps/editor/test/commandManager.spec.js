@@ -1,5 +1,6 @@
 var CommandManager = require('../src/js/commandManager'),
     Command = require('../src/js/command'),
+    EditorTypeSwitch = require('../src/js/editorTypeSwitch'),
     EventManager = require('../src/js/eventManager');
 
 var CodeMirror = window.CodeMirror;
@@ -16,6 +17,9 @@ describe('CommandManager', function() {
     var mockupBase = {
         getCodeMirror: function() {
             return mockupCm;
+        },
+        getSquire: function() {
+            return {};
         }
     };
 
@@ -75,6 +79,25 @@ describe('CommandManager', function() {
             command.setup = function() {};
             command.exec = execSpy;
             cmgr.addCommand(command);
+
+            mockupBase.eventManager.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.MARKDOWN);
+
+            cmgr.exec('mycommand');
+
+            expect(execSpy).toHaveBeenCalled();
+        });
+
+        it('WYSIWYG 커맨드를 실행', function() {
+            var command = new Command('mycommand', Command.TYPE.WW),
+                execSpy = jasmine.createSpy('spy');
+
+            command.setKeyMap('Ctrl-B', 'Cmd-B');
+            command.setup = function() {};
+            command.exec = execSpy;
+            cmgr.addCommand(command);
+
+            mockupBase.eventManager.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.WYSIWYG);
+
             cmgr.exec('mycommand');
 
             expect(execSpy).toHaveBeenCalled();

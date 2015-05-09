@@ -90,6 +90,10 @@ NEditor.prototype.getCodeMirror = function() {
     return this.mdEditor.cm;
 };
 
+NEditor.prototype.getSquire = function() {
+    return this.wwEditor.editor;
+};
+
 NEditor.prototype.focus = function() {
    this.mdEditor.focus();
 };
@@ -108,10 +112,6 @@ NEditor.prototype.remove = function() {
 
 NEditor.prototype.hide = function() {
     console.log('hide');
-};
-
-NEditor.prototype.getMarkdown = function() {
-    console.log('getMarkdown');
 };
 
 NEditor.getInstances = function() {

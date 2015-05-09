@@ -46,6 +46,14 @@ var Command = util.defineClass(/** @lends Command.prototype */{
         return this.type === Command.TYPE.MD;
     },
     /**
+     * isWWType
+     * returns whether Command Type is Wysiwyg or not
+     * @return {boolean} result
+     */
+    isWWType: function() {
+        return this.type === Command.TYPE.WW;
+    },
+    /**
      * isGlobalType
      * returns whether Command Type is Global or not
      * @return {boolean} result
