@@ -128,7 +128,15 @@
         return;
     }
     // Create Squire instance
-    editor = new Squire( doc );
+    editor = new Squire( doc, {
+        blockTag: 'p',
+        blockAttributes: {'class': 'paragraph'},
+        tagAttributes: {
+            ul: {'class': 'UL'},
+            ol: {'class': 'OL'},
+            li: {'class': 'listItem'}
+        }
+    });
     // Add styles to frame
     var style = doc.createElement( 'style' );
     style.type = 'text/css';

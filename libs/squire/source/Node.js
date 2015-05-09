@@ -82,7 +82,7 @@ function getNearest ( node, tag, attributes ) {
 
 function getPath ( node ) {
     var parent = node.parentNode,
-        path, id, className, classNames;
+        path, id, className, classNames, dir;
     if ( !parent || node.nodeType !== ELEMENT_NODE ) {
         path = parent ? getPath( parent ) : '';
     } else {
@@ -96,6 +96,9 @@ function getPath ( node ) {
             classNames.sort();
             path += '.';
             path += classNames.join( '.' );
+        }
+        if ( dir = node.dir ) {
+            path += '[dir=' + dir + ']';
         }
     }
     return path;
@@ -160,14 +163,11 @@ function fixCursor ( node ) {
     // cursor to appear.
     var doc = node.ownerDocument,
         root = node,
-        fixer, child, instance;
+        fixer, child;
 
     if ( node.nodeName === 'BODY' ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
-            instance = getSquireInstance( doc );
-            fixer = instance ?
-                instance.createDefaultBlock() :
-                createElement( doc, 'DIV' );
+            fixer = getSquireInstance( doc ).createDefaultBlock();
             if ( child ) {
                 node.replaceChild( fixer, child );
             }
@@ -233,17 +233,25 @@ function fixContainer ( container ) {
     var children = container.childNodes,
         doc = container.ownerDocument,
         wrapper = null,
-        i, l, child, isBR;
+        i, l, child, isBR,
+        config = getSquireInstance( doc )._config;
+
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
         isBR = child.nodeName === 'BR';
         if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            if ( !wrapper ) {
+                 wrapper = createElement( doc,
+                    config.blockTag, config.blockAttributes );
+            }
             wrapper.appendChild( child );
             i -= 1;
             l -= 1;
         } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            if ( !wrapper ) {
+                wrapper = createElement( doc,
+                    config.blockTag, config.blockAttributes );
+            }
             fixCursor( wrapper );
             if ( isBR ) {
                 container.replaceChild( wrapper, child );

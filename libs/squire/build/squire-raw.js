@@ -222,7 +222,7 @@ function getNearest ( node, tag, attributes ) {
 
 function getPath ( node ) {
     var parent = node.parentNode,
-        path, id, className, classNames;
+        path, id, className, classNames, dir;
     if ( !parent || node.nodeType !== ELEMENT_NODE ) {
         path = parent ? getPath( parent ) : '';
     } else {
@@ -236,6 +236,9 @@ function getPath ( node ) {
             classNames.sort();
             path += '.';
             path += classNames.join( '.' );
+        }
+        if ( dir = node.dir ) {
+            path += '[dir=' + dir + ']';
         }
     }
     return path;
@@ -300,14 +303,11 @@ function fixCursor ( node ) {
     // cursor to appear.
     var doc = node.ownerDocument,
         root = node,
-        fixer, child, instance;
+        fixer, child;
 
     if ( node.nodeName === 'BODY' ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
-            instance = getSquireInstance( doc );
-            fixer = instance ?
-                instance.createDefaultBlock() :
-                createElement( doc, 'DIV' );
+            fixer = getSquireInstance( doc ).createDefaultBlock();
             if ( child ) {
                 node.replaceChild( fixer, child );
             }
@@ -373,17 +373,25 @@ function fixContainer ( container ) {
     var children = container.childNodes,
         doc = container.ownerDocument,
         wrapper = null,
-        i, l, child, isBR;
+        i, l, child, isBR,
+        config = getSquireInstance( doc )._config;
+
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
         isBR = child.nodeName === 'BR';
         if ( !isBR && isInline( child ) ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            if ( !wrapper ) {
+                 wrapper = createElement( doc,
+                    config.blockTag, config.blockAttributes );
+            }
             wrapper.appendChild( child );
             i -= 1;
             l -= 1;
         } else if ( isBR || wrapper ) {
-            if ( !wrapper ) { wrapper = createElement( doc, 'DIV' ); }
+            if ( !wrapper ) {
+                wrapper = createElement( doc,
+                    config.blockTag, config.blockAttributes );
+            }
             fixCursor( wrapper );
             if ( isBR ) {
                 container.replaceChild( wrapper, child );
@@ -1438,6 +1446,20 @@ function getSquireInstance ( doc ) {
     return null;
 }
 
+function mergeObjects ( base, extras ) {
+    var prop, value;
+    if ( !base ) {
+        base = {};
+    }
+    for ( prop in extras ) {
+        value = extras[ prop ];
+        base[ prop ] = ( value && value.constructor === Object ) ?
+            mergeObjects( base[ prop ], value ) :
+            value;
+    }
+    return base;
+}
+
 function Squire ( doc, config ) {
     var win = doc.defaultView;
     var body = doc.body;
@@ -1488,9 +1510,6 @@ function Squire ( doc, config ) {
     } else {
         this.addEventListener( 'keyup', this._keyUpDetectChange );
     }
-
-    this.defaultBlockTag = 'DIV';
-    this.defaultBlockProperties = null;
 
     // IE sometimes fires the beforepaste event twice; make sure it is not run
     // again before our after paste function is called.
@@ -1554,11 +1573,22 @@ function Squire ( doc, config ) {
 var proto = Squire.prototype;
 
 proto.setConfig = function ( config ) {
-    for ( var prop in config ) {
-        if ( config.hasOwnProperty( prop ) ) {
-            this[ prop ] = config[ prop ];
+    config = mergeObjects({
+        blockTag: 'DIV',
+        blockAttributes: null,
+        tagAttributes: {
+            blockquote: null,
+            ul: null,
+            ol: null,
+            li: null
         }
-    }
+    }, config );
+
+    // Users may specify block tag in lower case
+    config.blockTag = config.blockTag.toUpperCase();
+
+    this._config = config;
+
     return this;
 };
 
@@ -1567,9 +1597,9 @@ proto.createElement = function ( tag, props, children ) {
 };
 
 proto.createDefaultBlock = function ( children ) {
+    var config = this._config;
     return fixCursor(
-        this.createElement(
-            this.defaultBlockTag, this.defaultBlockProperties, children )
+        this.createElement( config.blockTag, config.blockAttributes, children )
     );
 };
 
@@ -2352,11 +2382,12 @@ var tagAfterSplit = {
 var splitBlock = function ( self, block, node, offset ) {
     var splitTag = tagAfterSplit[ block.nodeName ],
         splitProperties = null,
-        nodeAfterSplit = split( node, offset, block.parentNode );
+        nodeAfterSplit = split( node, offset, block.parentNode ),
+        config = self._config;
 
     if ( !splitTag ) {
-        splitTag = self.defaultBlockTag;
-        splitProperties = self.defaultBlockProperties;
+        splitTag = config.blockTag;
+        splitProperties = config.blockAttributes;
     }
 
     // Make sure the new node is the correct type.
@@ -2364,7 +2395,6 @@ var splitBlock = function ( self, block, node, offset ) {
         block = createElement( nodeAfterSplit.ownerDocument,
             splitTag, splitProperties );
         if ( nodeAfterSplit.dir ) {
-            block.className = nodeAfterSplit.dir === 'rtl' ? 'dir-rtl' : '';
             block.dir = nodeAfterSplit.dir;
         }
         replaceWith( nodeAfterSplit, block );
@@ -2451,9 +2481,10 @@ proto.modifyBlocks = function ( modify, range ) {
 };
 
 var increaseBlockQuoteLevel = function ( frag ) {
-    return this.createElement( 'BLOCKQUOTE', [
-        frag
-    ]);
+    return this.createElement( 'BLOCKQUOTE',
+        this._config.tagAttributes.blockquote, [
+            frag
+        ]);
 };
 
 var decreaseBlockQuoteLevel = function ( frag ) {
@@ -2481,15 +2512,19 @@ var removeBlockQuote = function (/* frag */) {
 
 var makeList = function ( self, frag, type ) {
     var walker = getBlockWalker( frag ),
-        node, tag, prev, newLi;
+        node, tag, prev, newLi,
+        tagAttributes = self._config.tagAttributes,
+        listAttrs = tagAttributes[ type.toLowerCase() ],
+        listItemAttrs = tagAttributes.li;
 
     while ( node = walker.nextNode() ) {
         tag = node.parentNode.nodeName;
         if ( tag !== 'LI' ) {
-            newLi = self.createElement( 'LI', {
-                'class': node.dir === 'rtl' ? 'dir-rtl' : undefined,
-                dir: node.dir || undefined
-            });
+            newLi = self.createElement( 'LI', listItemAttrs );
+            if ( node.dir ) {
+                newLi.dir = node.dir;
+            }
+
             // Have we replaced the previous block with a new <ul>/<ol>?
             if ( ( prev = node.previousSibling ) &&
                     prev.nodeName === type ) {
@@ -2499,7 +2534,7 @@ var makeList = function ( self, frag, type ) {
             else {
                 replaceWith(
                     node,
-                    self.createElement( type, [
+                    self.createElement( type, listAttrs, [
                         newLi
                     ])
                 );
@@ -2510,7 +2545,7 @@ var makeList = function ( self, frag, type ) {
             tag = node.nodeName;
             if ( tag !== type && ( /^[OU]L$/.test( tag ) ) ) {
                 replaceWith( node,
-                    self.createElement( type, [ empty( node ) ] )
+                    self.createElement( type, listAttrs, [ empty( node ) ] )
                 );
             }
         }
@@ -2548,7 +2583,10 @@ var removeList = function ( frag ) {
 var increaseListLevel = function ( frag ) {
     var items = frag.querySelectorAll( 'LI' ),
         i, l, item,
-        type, newParent;
+        type, newParent,
+        tagAttributes = this._config.tagAttributes,
+        listItemAttrs = tagAttributes.li,
+        listAttrs;
     for ( i = 0, l = items.length; i < l; i += 1 ) {
         item = items[i];
         if ( !isContainer( item.firstChild ) ) {
@@ -2557,10 +2595,11 @@ var increaseListLevel = function ( frag ) {
             newParent = item.previousSibling;
             if ( !newParent || !( newParent = newParent.lastChild ) ||
                     newParent.nodeName !== type ) {
+                listAttrs = tagAttributes[ type.toLowerCase() ];
                 replaceWith(
                     item,
-                    this.createElement( 'LI', [
-                        newParent = this.createElement( type )
+                    this.createElement( 'LI', listItemAttrs, [
+                        newParent = this.createElement( type, listAttrs )
                     ])
                 );
             }
@@ -2976,7 +3015,8 @@ var cleanupBRs = function ( root ) {
 proto._ensureBottomLine = function () {
     var body = this._body,
         last = body.lastElementChild;
-    if ( !last || last.nodeName !== this.defaultBlockTag || !isBlock( last ) ) {
+    if ( !last ||
+            last.nodeName !== this._config.blockTag || !isBlock( last ) ) {
         body.appendChild( this.createDefaultBlock() );
     }
 };
@@ -3347,10 +3387,10 @@ proto.insertElement = function ( el, range ) {
     return this;
 };
 
-proto.insertImage = function ( src ) {
-    var img = this.createElement( 'IMG', {
+proto.insertImage = function ( src, attributes ) {
+    var img = this.createElement( 'IMG', mergeObjects({
         src: src
-    });
+    }, attributes ));
     this.insertElement( img );
     return img;
 };
@@ -3547,13 +3587,6 @@ proto.setTextAlignment = function ( alignment ) {
 
 proto.setTextDirection = function ( direction ) {
     this.forEachBlock( function ( block ) {
-        block.className = ( block.className
-            .split( /\s+/ )
-            .filter( function ( klass ) {
-                return !( /dir/.test( klass ) );
-            })
-            .join( ' ' ) +
-            ' dir-' + direction ).trim();
         block.dir = direction;
     }, true );
     return this.focus();

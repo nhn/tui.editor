@@ -43,9 +43,16 @@ If you load the library into a top-level document (rather than an iframe), it wi
 
 ### Setting the default block style
 
-By default, the editor will use a `<div>` for blank lines, as most users have been conditioned by Microsoft Word to expect <kbd>Enter</kbd> to act like pressing <kbd>return</kbd> on a typewriter. If you would like to use `<p>` tags (or anything else) for the default block type instead, then after calling `var editor = new Squire( document )` (or getting your reference to the ready-made `editor` instance if using the simple setup), set `editor.defaultBlockTag = 'P';`.
+By default, the editor will use a `<div>` for blank lines, as most users have been conditioned by Microsoft Word to expect <kbd>Enter</kbd> to act like pressing <kbd>return</kbd> on a typewriter. If you would like to use `<p>` tags (or anything else) for the default block type instead, you can pass a config object as the second parameter to the squire constructor. You can also
+pass a set of attributes to apply to each default block:
 
-You can also set an object of attributes to apply to each default block node by setting the *defaultBlockProperties* property, e.g. `editor.defaultBlockProperties = { style: 'font-size: 16px;' }`.
+    var editor = new Squire( document, {
+        blockTag: 'P',
+        blockAttributes: { style: 'font-size: 16px;' }
+    })
+
+If using the simple setup, call `editor.setConfig(…);` with your 
+config object instead. Be sure to do this *before* calling `editor.setHTML()`.
 
 ### Determining button state
 
