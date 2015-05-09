@@ -5,6 +5,8 @@
 
 'use strict';
 
+var EditorTypeSwitch = require('./editorTypeSwitch');
+
 var marked = window.marked,
     hljs = window.hljs;
 
@@ -19,6 +21,8 @@ var marked = window.marked,
 function Convertor(eventManager) {
     this.eventManager = eventManager;
     this._initEvent();
+
+    this.latestMarkdown = null;
 }
 
 Convertor.prototype._initEvent = function() {
@@ -30,7 +34,6 @@ Convertor.prototype._initEvent = function() {
 
         renderedHtml = self._markdownToHtml(markdown);
 
-
         processedDataByHook = self.eventManager.emit('htmlRenderAfterHook', renderedHtml);
 
         if (processedDataByHook) {
@@ -38,6 +41,16 @@ Convertor.prototype._initEvent = function() {
         }
 
         self.eventManager.emit('previewUpdate', renderedHtml);
+
+        self.latestMarkdown = markdown;
+    });
+
+    this.eventManager.listen('editorTypeSwitched', function(type) {
+        if (type === EditorTypeSwitch.TYPE.MARKDOWN) {
+            console.log('CONVERTER: TO MARKDOWN 뿅! 아직 작업 안되었음');
+        } else {
+            self.eventManager.emit('htmlUpdate', self._markdownToHtml(self.latestMarkdown));
+        }
     });
 };
 
