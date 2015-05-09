@@ -1,0 +1,6 @@
+Makefile
+.jshintrc
+.gitignore
+.editorconfig
+bower.json
+source/

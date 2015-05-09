@@ -3609,7 +3609,11 @@ if ( top !== win ) {
         win.onEditorLoad = null;
     }
 } else {
-    win.Squire = Squire;
+    if ( typeof exports === 'object' ) {
+        module.exports = Squire;
+    } else {
+        win.Squire = Squire;
+    }
 }
 
 }( document ) );
