@@ -135,6 +135,20 @@
     width: 50%;
 }
 
+.editor iframe {
+    border: none;
+    width: 100%;
+}
+
+.neditor .editorTypeSwitchSection {
+    float: right;
+    margin-top: -23px;
+    margin-right: 5px;
+}
+
+.neditor .wysiwygContainer {
+    border-top: 1px solid #ccc;
+}
 /* nepopup용 추후 분리해야함 */
 .nepopup-wrapper {
     width: 500px;
@@ -213,7 +227,4 @@
     background: none;
 }
 
-.editor iframe {
-    border: none;
-    width: 100%;
-}
+
