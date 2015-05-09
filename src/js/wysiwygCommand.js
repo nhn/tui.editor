@@ -22,12 +22,10 @@ var WysiwygCommand = Command.extend(/** @lends WysiwygCommand.prototype */{
     /**
      * setup
      * Set current base and codemirror context
-     * @param {CodeMirror} cm codemirror
+     * @param {Squire} editor Squire instance
      */
-    setup: function(cm) {
-        this.cm = cm;
-        this.doc = cm.getDoc();
-        this.base = cm.__ned;
+    setup: function(editor) {
+        this.editor = editor;
     }
 });
 

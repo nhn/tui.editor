@@ -5,6 +5,8 @@
 
 'use strict';
 
+var EditorTypeSwitch = require('./editorTypeSwitch');
+
 var util = ne.util,
     CodeMirror = window.CodeMirror;
 
@@ -18,9 +20,11 @@ var util = ne.util,
 function CommandManager(base) {
     this._command = new util.HashMap();
     this._mdCommand = new util.HashMap();
+    this._wwCommand = new util.HashMap();
     this.base = base;
+    this.typeStatus = EditorTypeSwitch.TYPE.MARKDOWN;
 
-    this._linkWithEventManager();
+    this._initEvent();
 }
 
 /**
@@ -39,9 +43,30 @@ CommandManager.prototype.addCommand = function(command) {
             var args = [base.getCodeMirror()].concat(util.toArray(arguments));
             return responder.apply(null, args);
         });
+
+        this._mdCommand.set(name, responder);
+    } else if (command.isWWType()) {
+        this._wwCommand.set(name, responder);
     } else if (command.isGlobalType()) {
         this._command.set(name, responder);
     }
+};
+
+
+/**
+ * _initEvent
+ * Bind event handler to eventManager
+ */
+CommandManager.prototype._initEvent = function() {
+    var self = this;
+
+    this.base.eventManager.listen('editorTypeSwitched', function(type) {
+        self.typeStatus = type;
+    });
+
+    this.base.eventManager.listen('command', function() {
+        self.exec.apply(self, arguments);
+    });
 };
 
 /**
@@ -70,28 +95,23 @@ CommandManager.prototype._addCMCommand = function(name, fn, keyMap) {
 CommandManager.prototype.exec = function(name) {
     var command = this._command.get(name),
         mdCommand = this._mdCommand.get(name),
+        wwCommand = this._wwCommand.get(name),
         args = util.toArray(arguments);
 
     args.shift();
 
-    //todo 위지윅 추가시 상황별로 판단하는 로직이 필요
     if (command) {
         return command();
-    } else if (mdCommand) {
+    }
+
+    if (this.typeStatus === EditorTypeSwitch.TYPE.MARKDOWN && mdCommand) {
+        args = [this.base.getCodeMirror()].concat(args);
         return mdCommand.apply(null, args);
+    } else if (this.typeStatus === EditorTypeSwitch.TYPE.WYSIWYG && wwCommand) {
+        args = [this.base.getSquire()].concat(args);
+        return wwCommand.apply(null, args);
     }
 };
 
-/**
- * _linkWithEventManager
- * Link CommandManager with EventManager so that invoke command by event
- */
-CommandManager.prototype._linkWithEventManager = function() {
-    var commandManager = this;
-
-    this.base.eventManager.listen('command', function() {
-        commandManager.exec.apply(commandManager, arguments);
-    });
-};
-
 module.exports = CommandManager;
+

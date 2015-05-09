@@ -5,6 +5,7 @@
 
 'use strict';
 
+var Bold = require('./squireCommand/bold');
 var Squire = window.Squire;
 
 /**
@@ -19,6 +20,8 @@ var Squire = window.Squire;
 function WysiwygEditor($el, eventManager, commandManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
+
+    commandManager.addCommand(Bold);
 }
 
 WysiwygEditor.prototype.init = function(height) {
