@@ -21,34 +21,7 @@ function WysiwygEditor($el, eventManager, commandManager) {
     this.$editorContainerEl = $el;
 }
 
-WysiwygEditor.prototype.init = function(initialValue) {
-    /*var editor;
-    var iframe = document.createElement( 'iframe' );
-
-    iframe.addEventListener( 'load', function () {
-        //Make sure we're in standards mode.
-        var doc = iframe.contentDocument;
-        if (doc.compatMode && edoc.compatMode !== 'CSS1Compat' ) {
-            doc.open();
-            doc.write( '<!DOCTYPE html><title></title>' );
-            doc.close();
-        }
-        //doc.close() can cause a re-entrant load event in some browsers,
-        //such as IE9.
-        if ( editor ) {
-            return;
-        }
-        //Create Squire instance
-        editor = new Squire( doc );
-        //Add styles to frame
-        var style = doc.createElement( 'style' );
-        style.type = 'text/css';
-        style.textContent = document.getElementById( 'editorStyles' ).textContent;
-        doc.querySelector( 'head' ).appendChild( style );
-    }, false );
-
-    this.$editorContainerEl.append(iframe);*/
-
+WysiwygEditor.prototype.init = function(height) {
     var self = this;
 
     this.$iframe = $('<iframe />');
@@ -56,20 +29,58 @@ WysiwygEditor.prototype.init = function(initialValue) {
     this.$iframe.ready(function() {
         var doc = self.$iframe[0].contentDocument;
 
-        if (doc.compatMode !== 'CSS1Compat') {
-            doc.open();
-            doc.write('<!DOCTYPE html><title></title>');
-            doc.close();
-        }
-
         if (self.editor) {
             return;
         }
 
+        self._makeSureStandardMode(doc);
+        self._initStyleSheet(doc);
         self.editor = new Squire(doc);
+        self.setHeight(height);
+
+        self._initEvent();
     });
 
     this.$editorContainerEl.append(this.$iframe);
+};
+
+WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
+    if (doc.compatMode !== 'CSS1Compat') {
+        doc.open();
+        doc.write('<!DOCTYPE html><title></title>');
+        doc.close();
+    }
+};
+
+WysiwygEditor.prototype._initStyleSheet = function(doc) {
+        var styleLink = doc.createElement('link');
+
+        styleLink.rel = 'stylesheet';
+        styleLink.href = '../src/css/contentStyle.css';
+
+        doc.querySelector('head').appendChild(styleLink);
+        doc.querySelector('body').className = '.neditor-content';
+        doc.querySelector('html').className = '.neditor-content';
+};
+
+WysiwygEditor.prototype._initEvent = function() {
+    var self = this;
+
+    this.eventManager.listen('htmlUpdate', function(html) {
+        self.setValue(html);
+    });
+};
+
+WysiwygEditor.prototype.setHeight = function(height) {
+    this.$iframe.height(height);
+};
+
+WysiwygEditor.prototype.setValue = function(html) {
+    this.editor.setHTML(html);
+};
+
+WysiwygEditor.prototype.getValue = function() {
+    return this.editor.getHTML();
 };
 
 module.exports = WysiwygEditor;

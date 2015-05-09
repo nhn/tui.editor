@@ -49,7 +49,7 @@ Layout.prototype._renderLayout = function() {
             '<div class="mdContainer">',
                '<div class="tabSection" />',
                '<div class="editor" />',
-               '<div class="preview" />',
+               '<div class="preview neditor-content" />',
             '</div>',
             '<div class="wysiwygContainer">',
                 '<div class="editor" />',

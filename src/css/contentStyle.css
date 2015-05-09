@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+html.neditor-content {
+    height: 100%;
+}
+
+body.neditor-content {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    padding: 1em;
+    background: transparent;
+    color: #2b2b2b;
+    font: 13px/1.35 Helvetica, arial, sans-serif;
+    cursor: text;
+}
+.neditor-content a {
+    text-decoration: underline;
+}
+.neditor-content h1 {
+    font-size: 138.5%;
+}
+.neditor-content h2 {
+    font-size: 123.1%;
+}
+.neditor-content h3 {
+    font-size: 108%;
+}
+.neditor-content h1,h2,h3,p {
+    margin: 1em 0;
+}
+.neditor-content h4,h5,h6 {
+    margin: 0;
+}
+.neditor-content ul, ol {
+    margin: 0 1em;
+    padding: 0 1em;
+}
+.neditor-content blockquote {
+    border-left: 2px solid blue;
+    margin: 0;
+    padding: 0 10px;
+}

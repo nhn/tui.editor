@@ -49,7 +49,6 @@ function NEditor(options) {
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.eventManager, this.commandManager);
 
-
     //추후 옵션처리기에서 처리
     if (hooks) {
         util.forEach(hooks, function(fn, key) {
@@ -65,7 +64,7 @@ function NEditor(options) {
 
     this.getCodeMirror().__ned = this;
 
-    this.wwEditor.init();
+    this.wwEditor.init(this.options.height);
 
     __nedInstance.push(this);
 }

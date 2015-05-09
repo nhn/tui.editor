@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 .neditor * {
     box-sizing: content-box;
 }
@@ -210,4 +211,9 @@
 .popupAddImage .tab button {
     border: none;
     background: none;
+}
+
+.editor iframe {
+    border: none;
+    width: 100%;
 }
