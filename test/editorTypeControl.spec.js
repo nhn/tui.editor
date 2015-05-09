@@ -49,6 +49,6 @@ describe('EditorTypeSwitch', function() {
         $('button').trigger('click');
 
         expect($('.editorTypeSwitch button').text()).toEqual('toMarkdown');
-        expect(handler).toHaveBeenCalledWith('WYSIWYG');
+        expect(handler).toHaveBeenCalledWith(EditorTypeSwitch.TYPE.WYSIWYG, 'WYSIWYG');
     });
 });

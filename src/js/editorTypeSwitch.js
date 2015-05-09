@@ -31,9 +31,9 @@ var EditorTypeSwitch = UIController.extend({
 
         this.eventManager = eventManager;
         this.type = util.isExisty(initialType) ? initialType : EditorTypeSwitch.TYPE.MARKDOWN;
-        this.render();
+        this._render();
     },
-    render: function() {
+    _render: function() {
         this.$button = $('<button class="switchButton" />');
         this._setButtonTitle();
         this.$el.append(this.$button);
@@ -47,9 +47,11 @@ var EditorTypeSwitch = UIController.extend({
         this._switchType();
     },
     _switchType: function() {
-        this.eventManager.emit('editorTypeSwitched', this._getNextTypeString());
+        var typeToSwitch = this._getNextTypeString();
+
         this._toggleType();
         this._setButtonTitle();
+        this.eventManager.emit('editorTypeSwitched', this.type, typeToSwitch);
     },
     _getNextTypeString: function() {
         return this.nextTypeString[this.type];
