@@ -11,8 +11,8 @@
     <script src="../lib/codemirror/addon/mode/overlay.js"></script>
     <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
     <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
-    <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../src/css/style.css">
     <link rel="stylesheet" href="../src/css/contentStyle.css">
@@ -41,6 +41,9 @@
         previewStyle: 'tab',
         height: 200,
         initialValue: '* 목록\n```\nprint();\n\nprint();\nprint();```',
+        contentCSSStyles: [
+            '../src/css/contentStyle.css'
+        ],
         hooks: {
             'htmlRenderAfterHook': function() {
                 console.log('htmlRenderAfterHook', arguments);

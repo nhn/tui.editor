@@ -22,6 +22,7 @@ var __nedInstance = [];
  * @param {number} options.height 에디터 height 픽셀
  * @param {string} options.initialValue 초기 입력 테스트
  * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
+ * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
  * @param {object} options.hooks 외부 연결 훅 목록
  * @param {function} options.hooks.htmlRenderAfterHook DOM으로 그려질 HTML텍스트가 만들어진후 실행되는 훅, 만들어진 HTML텍스트가 인자로 전달되고 리턴값이 HTML텍스트로 대체된다.
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
@@ -44,12 +45,17 @@ function NEditor(options) {
 
     this.layout = new Layout(options, this.eventManager, this.commandManager);
     this.layout.init();
-
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
-    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.eventManager, this.commandManager);
+    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager, this.commandManager);
 
-    //추후 옵션처리기에서 처리
+    //todo 옵션에따라 초기 에디터 활성화부분필요
+    //ff에서 display none인 엘리먼트에 iframe이 붙으면 iframe안의 getSelection이 정상적으로 동작하지 않아 Squire에서 오류가 발생한다..
+    //css로 float으로 레이아웃잡고 visibility로 온오프 처리해야하듯
+    //Squire 이니셜라이즈가 모두끝난후 에디터 셀렉션이 들어가야할듯
+    //this.layout._switchToMarkdown();
+
+    //todo 추후 옵션처리기에서 처리
     if (hooks) {
         util.forEach(hooks, function(fn, key) {
             self.eventManager.listen(key, fn);

@@ -6,7 +6,9 @@
 'use strict';
 
 var Bold = require('./squireCommand/bold');
-var Squire = window.Squire;
+
+var Squire = window.Squire,
+    util = ne.util;
 
 /**
  * WysiwygEditor
@@ -14,12 +16,14 @@ var Squire = window.Squire;
  * @constructor
  * @class
  * @param {jQuery} $el 에디터가 들어갈 엘리먼트
+ * @param {string[]} contentStyles List of CSS style file path for HTML content
  * @param {EventManager} eventManager 이벤트 매니저
  * @param {commandManager} commandManager 커맨드 매니저
  */
-function WysiwygEditor($el, eventManager, commandManager) {
+function WysiwygEditor($el, contentStyles, eventManager, commandManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
+    this.contentStyles = contentStyles;
 
     commandManager.addCommand(Bold);
 }
@@ -28,7 +32,6 @@ WysiwygEditor.prototype.init = function(height) {
     var self = this;
 
     this.$iframe = $('<iframe />');
-
     this.$iframe.ready(function() {
         var doc = self.$iframe[0].contentDocument;
 
@@ -38,9 +41,10 @@ WysiwygEditor.prototype.init = function(height) {
 
         self._makeSureStandardMode(doc);
         self._initStyleSheet(doc);
-        self.editor = new Squire(doc);
+        self.editor = new Squire(doc, {
+            blockTag: 'p',
+        });
         self.setHeight(height);
-
         self._initEvent();
     });
 
@@ -56,14 +60,18 @@ WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
 };
 
 WysiwygEditor.prototype._initStyleSheet = function(doc) {
-        var styleLink = doc.createElement('link');
+    var styleLink;
 
+    util.forEach(this.contentStyles, function(stylePath) {
+        styleLink = doc.createElement('link');
         styleLink.rel = 'stylesheet';
-        styleLink.href = '../src/css/contentStyle.css';
+        styleLink.href = stylePath;
 
         doc.querySelector('head').appendChild(styleLink);
-        doc.querySelector('body').className = '.neditor-content';
-        doc.querySelector('html').className = '.neditor-content';
+    });
+
+    doc.querySelector('body').className = '.neditor-content';
+    doc.querySelector('html').className = '.neditor-content';
 };
 
 WysiwygEditor.prototype._initEvent = function() {
