@@ -1,3 +1,6 @@
+/**
+ * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ */
 'use strict';
 
 var util = ne.util;
@@ -68,9 +71,15 @@ var Command = util.defineClass(/** @lends Command.prototype */{
      * @param {string} mac mac osx key
      */
     setKeyMap: function(win, mac) {
-        this.keyMap = [];
-        this.keyMap[0] = win;
-        this.keyMap[1] = mac;
+        this.keyMap = [win, mac];
+    },
+    /**
+     * setup
+     * Must implment in subclass for change commands context
+     * @virtual
+     */
+    setup: function(){
+        throw new Error('must be inplemented by subclass!');
     },
     /**
      * _responder

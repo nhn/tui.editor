@@ -64,6 +64,8 @@ describe('CommandManager', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');
+            command.setup = function(){};
+
             cmgr.addCommand(command);
 
             cmgr.exec(command.getName());
@@ -120,6 +122,7 @@ describe('CommandManager', function() {
         it('이벤트매니저를 이용해 커맨드를 실행', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
+            command.setup = function() {};
             command.exec = jasmine.createSpy('글로벌 커맨드');
             cmgr.addCommand(command);
 
