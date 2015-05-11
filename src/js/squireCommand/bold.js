@@ -1,3 +1,6 @@
+/**
+ * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ */
 'use strict';
 
 var WysiwygCommand = require('../wysiwygCommand');

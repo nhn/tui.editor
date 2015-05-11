@@ -47,6 +47,7 @@ describe('Toolbar', function() {
             $('body').append(toolbar.$el);
 
             command = new Command('test', Command.TYPE.GB);
+            command.setup = function() {};
             command.exec = jasmine.createSpy('exec');
 
             cm.addCommand(command);
