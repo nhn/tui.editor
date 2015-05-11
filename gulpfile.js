@@ -3,7 +3,7 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
-    sourcemaps = require('gulp-sourcemaps'),
+    //sourcemaps = require('gulp-sourcemaps'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     watchify = require('watchify'),
