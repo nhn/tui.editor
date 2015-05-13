@@ -14,10 +14,14 @@ var UIController = require('./uicontroller'),
  * @extends {UIController}
  * @constructor
  * @class
- * @param {EventManager} eventManager 이벤트 매니저
  */
-var Toolbar = UIController.extend({
-    init: function(eventManager) {
+var Toolbar = UIController.extend(/** @lends Toolbar.prototype */{
+    /**
+     * init
+     * Initialize toolbar
+     * @param {EventManager} eventManager 이벤트 매니저
+     */
+    init: function Toolbar(eventManager) {
         UIController.call(this, {
             tagName: 'div',
             className: 'toolbar'
@@ -30,9 +34,15 @@ var Toolbar = UIController.extend({
         this.render();
         this._initButton();
     },
+
+    /**
+     * render
+     * Render toolbar
+     */
     render: function() {
         this.$buttonContainer = this.$el;
     },
+
     /**
      * 버튼을 추가한다
      * @param {Button} button 버튼
@@ -40,17 +50,21 @@ var Toolbar = UIController.extend({
     addButton: function(button) {
         var ev = this.eventManager;
 
-        button.on('command', function($, commandName) {
+        button.on('command', function emitCommandEvent($, commandName) {
             ev.emit('command', commandName);
         });
 
-        button.on('event', function($, eventName) {
+        button.on('event', function emitEventByCommand($, eventName) {
             ev.emit(eventName);
         });
 
         this.buttons.push(button);
         this.$buttonContainer.append(button.$el);
     },
+
+    /**
+     * 필요한 버튼들을 추가한다.
+     */
     _initButton: function() {
         this.addButton(new Button({
             className: 'bold',
