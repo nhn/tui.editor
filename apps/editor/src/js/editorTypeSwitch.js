@@ -18,7 +18,7 @@ var util = ne.util;
  * @class
  * @param {EventManager} eventManager 이벤트 매니저
  */
-var EditorTypeSwitch = UIController.extend({
+var EditorTypeSwitch = UIController.extend(/** @lends EditorTypeSwitch.prototype */{
     events: {
         'click button': '_buttonClicked'
     },

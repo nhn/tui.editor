@@ -42,7 +42,7 @@ WysiwygEditor.prototype.init = function(height) {
         self._makeSureStandardMode(doc);
         self._initStyleSheet(doc);
         self.editor = new Squire(doc, {
-            blockTag: 'p',
+            blockTag: 'p'
         });
         self.setHeight(height);
         self._initEvent();

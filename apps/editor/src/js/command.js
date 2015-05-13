@@ -78,7 +78,7 @@ var Command = util.defineClass(/** @lends Command.prototype */{
      * Must implment in subclass for change commands context
      * @virtual
      */
-    setup: function(){
+    setup: function() {
         throw new Error('must be inplemented by subclass!');
     },
     /**

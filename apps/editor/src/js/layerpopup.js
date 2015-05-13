@@ -36,7 +36,7 @@ var LAYOUT_TEMPLATE = [
  * @param {object} options.title
  * @param {object} options.$target
  */
-var Layerpopup = util.defineClass({
+var Layerpopup = util.defineClass(/** @lends Layerpopup.prototype */{
     layoutTemplate: LAYOUT_TEMPLATE.join(''),
     init: function Layerpopup(options) {
         options = util.extend({}, options);

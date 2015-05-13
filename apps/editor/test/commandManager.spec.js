@@ -64,7 +64,7 @@ describe('CommandManager', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');
-            command.setup = function(){};
+            command.setup = function() {};
 
             cmgr.addCommand(command);
 
