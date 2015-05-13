@@ -165,7 +165,7 @@ var Tab = UIController.extend(/** @lends Tab.prototype */{
      * @param {jQuery} $button button to activate
      */
     _activateTabByButton: function($button) {
-        if (this._$activeButton && this._$activeButton.text() === $button.text()) {
+        if (this._isActivatedButton($button)) {
             return;
         }
 
@@ -175,6 +175,16 @@ var Tab = UIController.extend(/** @lends Tab.prototype */{
         this._activateSection($button.attr('data-index'));
 
         this.trigger('itemClick', $button.text());
+    },
+
+    /**
+     * _isActivatedButton
+     * Check passed button is activated
+     * @param {jQuery} $button Button to check
+     * @return {boolean} result
+     */
+    _isActivatedButton: function($button) {
+        return this._$activeButton && this._$activeButton.text() === $button.text();
     },
 
     /**
