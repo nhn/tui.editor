@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implments MarkdownCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -15,7 +15,7 @@ var util = ne.util;
  * MarkdownCommand
  * It implements Markdown Command
  * @exports MarkdownCommand
- * @extends {Command}
+ * @augments Command
  * @constructor
  * @class
  * @param {string} name Command Name
@@ -26,6 +26,7 @@ function MarkdownCommand(name) {
 
 MarkdownCommand.prototype = util.extend({},
     Command.prototype,
+/** @lends MarkdownCommand.prototype */
 {
     /**
      * setup
@@ -69,12 +70,6 @@ MarkdownCommand.prototype = util.extend({},
         return CodeMirror.Pass;
     }
 });
-
-MarkdownCommand.extend = function(props) {
-    var Child = util.defineClass(this, props);
-    Child.extend = MarkdownCommand.extend;
-    return Child;
-};
 
 MarkdownCommand.factory = function(props) {
     var mc = new MarkdownCommand(props.name);

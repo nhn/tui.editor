@@ -11,14 +11,11 @@ var MarkdownCommand = require('../markdownCommand');
  * UL
  * Add unordered list markdown syntax to markdown editor
  * @exports UL
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var UL = MarkdownCommand.extend(/** @lends UL.prototype */{
-    init: function UL() {
-        MarkdownCommand.call(this, 'UL');
-    },
+var UL = MarkdownCommand.factory(/** @lends UL */{
+    name: 'UL',
     /**
      * 커맨드 핸들러
      * @return {number} 코드미러 상수
@@ -53,4 +50,4 @@ var UL = MarkdownCommand.extend(/** @lends UL.prototype */{
     }
 });
 
-module.exports = new UL();
+module.exports = UL;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -11,14 +11,12 @@ var MarkdownCommand = require('../markdownCommand');
  * OL
  * Add ordered list markdown syntax to markdown editor
  * @exports OL
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var OL = MarkdownCommand.extend(/** @lends AddImage.prototype */{
-    init: function OL() {
-        MarkdownCommand.call(this, 'OL');
-    },
+var OL = MarkdownCommand.factory(/** @lends OL */{
+    name: 'OL',
+
     /**
      * 커맨드 핸들러
      * @return {number} 코드미러 상수
@@ -53,4 +51,4 @@ var OL = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     }
 });
 
-module.exports = new OL();
+module.exports = OL;

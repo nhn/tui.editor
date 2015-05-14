@@ -13,11 +13,11 @@ var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
  * Bold
  * Add bold markdown syntax to markdown editor
  * @exports Bold
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
 var Bold = MarkdownCommand.factory(/** @lends Bold */{
+    name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
      *  커맨드 핸들러

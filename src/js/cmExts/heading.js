@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -11,15 +11,12 @@ var MarkdownCommand = require('../markdownCommand');
  * Heading
  * Add heading markdown syntax to markdown editor
  * @exports Heading
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var Heading = MarkdownCommand.extend(/** @lends Heading.prototype */{
+var Heading = MarkdownCommand.factory(/** @lends Heading */{
+    name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
-    init: function Heading() {
-        MarkdownCommand.call(this, 'Heading');
-    },
     exec: function() {
         var textToModify,
         range,
@@ -67,4 +64,4 @@ var Heading = MarkdownCommand.extend(/** @lends Heading.prototype */{
     }
 });
 
-module.exports = new Heading();
+module.exports = Heading;

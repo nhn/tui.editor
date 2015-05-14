@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implments AddImage markdown comment
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -11,14 +11,11 @@ var MarkdownCommand = require('../markdownCommand');
  * AddImage
  * Add Image markdown syntax to markdown Editor
  * @exports AddImage
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var AddImage = MarkdownCommand.extend(/** @lends AddImage.prototype */{
-    init: function AddImage() {
-        MarkdownCommand.call(this, 'AddImage');
-    },
+var AddImage = MarkdownCommand.factory(/** @lends AddImage */{
+    name: 'AddImage',
     /**
      *  커맨드 핸들러
      *  @param {CodeMirror} cm CodeMirror instance
@@ -55,4 +52,4 @@ var AddImage = MarkdownCommand.extend(/** @lends AddImage.prototype */{
     }
 });
 
-module.exports = new AddImage();
+module.exports = AddImage;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -14,15 +14,12 @@ var italicRegex = /^[\*_][^\*_]*[\*_]$/;
  * Italic
  * Add italic markdown syntax to markdown editor
  * @exports Italic
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var Italic = MarkdownCommand.extend(/** @lends Italic.prototype */{
+var Italic = MarkdownCommand.factory(/** @lends Italic */{
+    name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
-    init: function Italic() {
-        MarkdownCommand.call(this, 'Italic');
-    },
     /**
      * 커맨드 핸들러
      * @return {number} 코드미러 상수
@@ -167,4 +164,4 @@ var Italic = MarkdownCommand.extend(/** @lends Italic.prototype */{
     }
 });
 
-module.exports = new Italic();
+module.exports = Italic;

@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -11,15 +11,12 @@ var MarkdownCommand = require('../markdownCommand');
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
  * @exports Blockquote
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
+var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
+    name: 'Blockquote',
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
-    init: function Blockquote() {
-        MarkdownCommand.call(this, 'Blockquote');
-    },
     /**
      *  커맨드 핸들러
      *  @return {CodeMirror} 코드미러 상수
@@ -72,4 +69,4 @@ var Blockquote = MarkdownCommand.extend(/** @lends Blockquote.prototype */{
     }
 });
 
-module.exports = new Blockquote();
+module.exports = Blockquote;

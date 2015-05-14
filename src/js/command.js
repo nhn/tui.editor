@@ -115,10 +115,4 @@ Command.TYPE = {
     GB: 2
 };
 
-Command.extend = function(props) {
-    var Child = util.defineClass(this, props);
-    Child.extend = Command.extend;
-    return Child;
-};
-
 module.exports = Command;
