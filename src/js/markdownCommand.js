@@ -1,11 +1,15 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+
 'use strict';
 
 var Command = require('./command');
 
 var CodeMirror = window.CodeMirror;
+
+var util = ne.util;
 
 /**
  * MarkdownCommand
@@ -14,16 +18,15 @@ var CodeMirror = window.CodeMirror;
  * @extends {Command}
  * @constructor
  * @class
+ * @param {string} name Command Name
  */
-var MarkdownCommand = Command.extend(/** @lends MarkdownCommand.prototype */{
-    /**
-     * init
-     * initialize Command
-     * @param {string} name Command Name
-     */
-    init: function MarkdownCommand(name) {
-        Command.call(this, name, Command.TYPE.MD);
-    },
+function MarkdownCommand(name) {
+    Command.call(this, name, Command.TYPE.MD);
+}
+
+MarkdownCommand.prototype = util.extend({},
+    Command.prototype,
+{
     /**
      * setup
      * Set current base and codemirror context
@@ -66,5 +69,19 @@ var MarkdownCommand = Command.extend(/** @lends MarkdownCommand.prototype */{
         return CodeMirror.Pass;
     }
 });
+
+MarkdownCommand.extend = function(props) {
+    var Child = util.defineClass(this, props);
+    Child.extend = MarkdownCommand.extend;
+    return Child;
+};
+
+MarkdownCommand.factory = function(props) {
+    var mc = new MarkdownCommand(props.name);
+
+    util.extend(mc, props);
+
+    return mc;
+};
 
 module.exports = MarkdownCommand;

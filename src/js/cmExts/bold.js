@@ -1,6 +1,8 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+
 'use strict';
 
 var MarkdownCommand = require('../markdownCommand');
@@ -15,11 +17,8 @@ var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
  * @constructor
  * @class
  */
-var Bold = MarkdownCommand.extend({
+var Bold = MarkdownCommand.factory(/** @lends Bold */{
     keyMap: ['Ctrl-B', 'Ctrl-B'],
-    init: function Bold() {
-        MarkdownCommand.call(this, 'Bold');
-    },
     /**
      *  커맨드 핸들러
      *  @return {CodeMirror} 코드미러 상수
@@ -108,4 +107,4 @@ var Bold = MarkdownCommand.extend({
     }
 });
 
-module.exports = new Bold();
+module.exports = Bold;

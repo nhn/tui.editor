@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';

@@ -1,5 +1,6 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 'use strict';
 
@@ -11,19 +12,17 @@ var util = ne.util;
  * @exports Command
  * @constructor
  * @class
+ * @param {string} name Command name
+ * @param {number} type Command type (Command.TYPE)
  */
-var Command = util.defineClass(/** @lends Command.prototype */{
-    /**
-     * initialize command
-     * @param {string} name Command name
-     * @param {number} type Command type (Command.TYPE)
-     */
-    init: function Command(name, type) {
-        this.name = name;
-        this.type = type;
+function Command(name, type) {
+    this.name = name;
+    this.type = type;
 
-        this.initResponder();
-    },
+    this.initResponder();
+}
+
+Command.prototype = {
     /**
      * getName
      * returns Name of command
@@ -104,8 +103,7 @@ var Command = util.defineClass(/** @lends Command.prototype */{
             return self._responder.apply(self, arguments);
         };
     }
-});
-
+};
 
 /**
  * Command Type Constant
@@ -117,12 +115,6 @@ Command.TYPE = {
     GB: 2
 };
 
-/**
- * extend
- * for command inheritance
- * @param {object} props child properties
- * @return {*} Constructor
- */
 Command.extend = function(props) {
     var Child = util.defineClass(this, props);
     Child.extend = Command.extend;

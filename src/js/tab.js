@@ -1,6 +1,6 @@
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
