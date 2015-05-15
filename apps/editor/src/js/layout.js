@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -37,6 +37,8 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
+
+    this._switchToMarkdown();
 };
 
 Layout.prototype._renderLayout = function() {

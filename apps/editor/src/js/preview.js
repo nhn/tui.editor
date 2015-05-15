@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -26,7 +26,7 @@ Preview.prototype.init = function() {
         eventManager = this.eventManager,
         domData;
 
-    eventManager.listen('previewUpdate', function(html) {
+    eventManager.listen('renderedHtmlUpdated', function(html) {
         domData = $(html);
 
         eventManager.emit('previewBeforeHook', domData);

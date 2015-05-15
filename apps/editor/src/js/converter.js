@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -22,13 +22,13 @@ function Convertor(eventManager) {
     this.eventManager = eventManager;
     this._initEvent();
 
-    this.latestMarkdown = null;
+    this.latestMarkdown = '';
 }
 
 Convertor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('markdownUpdated', function(markdown) {
+    this.eventManager.listen('markdownEditorContentChanged', function(markdown) {
         var renderedHtml,
             processedDataByHook;
 
@@ -40,7 +40,7 @@ Convertor.prototype._initEvent = function() {
             renderedHtml = processedDataByHook[0];
         }
 
-        self.eventManager.emit('previewUpdate', renderedHtml);
+        self.eventManager.emit('renderedHtmlUpdated', renderedHtml);
 
         self.latestMarkdown = markdown;
     });
@@ -67,6 +67,10 @@ Convertor.prototype._markdownToHtml = function(markdown) {
             return hljs.highlightAuto(code).value;
         }
     });
+};
+
+Convertor.factory = function(eventManager) {
+    return new Convertor(eventManager);
 };
 
 module.exports = Convertor;

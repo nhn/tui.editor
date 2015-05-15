@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -8,118 +8,119 @@
 var UIController = require('./uicontroller'),
     Button = require('./button');
 
+var util = ne.util;
+
 /**
  * Toolbar
  * @exports Toolbar
- * @extends {UIController}
+ * @augments UIController
  * @constructor
  * @class
+ * @param {EventManager} eventManager 이벤트 매니저
  */
-var Toolbar = UIController.extend(/** @lends Toolbar.prototype */{
-    /**
-     * init
-     * Initialize toolbar
-     * @param {EventManager} eventManager 이벤트 매니저
-     */
-    init: function Toolbar(eventManager) {
-        UIController.call(this, {
-            tagName: 'div',
-            className: 'toolbar'
-        });
+function Toolbar(eventManager) {
+    UIController.call(this, {
+        tagName: 'div',
+        className: 'toolbar'
+    });
 
-        this.buttons = [];
+    this.buttons = [];
 
-        this.eventManager = eventManager;
+    this.eventManager = eventManager;
 
-        this.render();
-        this._initButton();
-    },
+    this.render();
+    this._initButton();
+}
 
-    /**
-     * render
-     * Render toolbar
-     */
-    render: function() {
-        this.$buttonContainer = this.$el;
-    },
+Toolbar.prototype = util.extend(
+    {},
+    UIController.prototype
+);
 
-    /**
-     * 버튼을 추가한다
-     * @param {Button} button 버튼
-     */
-    addButton: function(button) {
-        var ev = this.eventManager;
+/**
+ * render
+ * Render toolbar
+ */
+Toolbar.prototype.render = function() {
+    this.$buttonContainer = this.$el;
+};
 
-        button.on('command', function emitCommandEvent($, commandName) {
-            ev.emit('command', commandName);
-        });
+/**
+ * 버튼을 추가한다
+ * @param {Button} button 버튼
+ */
+Toolbar.prototype.addButton = function(button) {
+    var ev = this.eventManager;
 
-        button.on('event', function emitEventByCommand($, eventName) {
-            ev.emit(eventName);
-        });
+    button.on('command', function emitCommandEvent($, commandName) {
+        ev.emit('command', commandName);
+    });
 
-        this.buttons.push(button);
-        this.$buttonContainer.append(button.$el);
-    },
+    button.on('event', function emitEventByCommand($, eventName) {
+        ev.emit(eventName);
+    });
 
-    /**
-     * 필요한 버튼들을 추가한다.
-     */
-    _initButton: function() {
-        this.addButton(new Button({
-            className: 'bold',
-            command: 'Bold',
-            text: 'B'
-        }));
+    this.buttons.push(button);
+    this.$buttonContainer.append(button.$el);
+};
 
-        this.addButton(new Button({
-            className: 'italic',
-            command: 'Italic',
-            text: 'I'
-        }));
+/**
+ * 필요한 버튼들을 추가한다.
+ */
+Toolbar.prototype._initButton = function() {
+    this.addButton(new Button({
+        className: 'bold',
+        command: 'Bold',
+        text: 'B'
+    }));
 
-        this.addButton(new Button({
-            className: 'quote',
-            command: 'Blockquote',
-            text: 'Q'
-        }));
+    this.addButton(new Button({
+        className: 'italic',
+        command: 'Italic',
+        text: 'I'
+    }));
 
-        this.addButton(new Button({
-            className: 'heading',
-            command: 'Heading',
-            text: 'HH'
-        }));
+    this.addButton(new Button({
+        className: 'quote',
+        command: 'Blockquote',
+        text: 'Q'
+    }));
 
-        this.addButton(new Button({
-            className: 'hrline',
-            command: 'HR',
-            text: 'HR'
-        }));
+    this.addButton(new Button({
+        className: 'heading',
+        command: 'Heading',
+        text: 'HH'
+    }));
 
-        this.addButton(new Button({
-            className: 'link',
-            event: 'openPopupAddLink',
-            text: 'A'
-        }));
+    this.addButton(new Button({
+        className: 'hrline',
+        command: 'HR',
+        text: 'HR'
+    }));
 
-        this.addButton(new Button({
-            className: 'image',
-            event: 'openPopupAddImage',
-            text: 'IMG'
-        }));
+    this.addButton(new Button({
+        className: 'link',
+        event: 'openPopupAddLink',
+        text: 'A'
+    }));
 
-        this.addButton(new Button({
-            className: 'ul',
-            command: 'UL',
-            text: 'UL'
-        }));
+    this.addButton(new Button({
+        className: 'image',
+        event: 'openPopupAddImage',
+        text: 'IMG'
+    }));
 
-        this.addButton(new Button({
-            className: 'ol',
-            command: 'OL',
-            text: 'OL'
-        }));
-    }
-});
+    this.addButton(new Button({
+        className: 'ul',
+        command: 'UL',
+        text: 'UL'
+    }));
+
+    this.addButton(new Button({
+        className: 'ol',
+        command: 'OL',
+        text: 'OL'
+    }));
+};
 
 module.exports = Toolbar;
