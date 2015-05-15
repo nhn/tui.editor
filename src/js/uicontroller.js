@@ -17,7 +17,6 @@ var util = ne.util,
  */
 function UIController(options) {
     options = util.extend({
-        stopInteraction: false,
         tagName: 'div'
     }, options || {});
 
@@ -85,14 +84,22 @@ UIController.prototype._addEvent = function(type, fn) {
  * @param {function} fn 이벤트 핸들러
  */
 UIController.prototype.off = function(type, fn) {
-    var parsedType = this._parseEventType(type),
-        event = parsedType[0],
+    var parsedType,
+        event,
+        selector;
+
+    if (type) {
+        parsedType = this._parseEventType(type);
+        event = parsedType[0];
         selector = parsedType[1];
 
-    if (selector) {
-        this.$el.off(event, selector, fn);
+        if (selector) {
+            this.$el.off(event, selector, fn);
+        } else {
+            this.$el.off(event, fn);
+        }
     } else {
-        this.$el.off(event, fn);
+        this.$el.off();
     }
 };
 

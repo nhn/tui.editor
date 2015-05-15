@@ -32,7 +32,7 @@ describe('Layerpopup', function() {
         var popup;
 
         beforeEach(function() {
-            $('body').html(Layerpopup.prototype.layoutTemplate);
+            $('body').html('<div class="' + CLASS_PREFIX + 'wrapper' + '" />');
 
             popup = Layerpopup.factory({
                 $el: $('.' + CLASS_PREFIX + 'wrapper')
@@ -249,7 +249,7 @@ describe('Layerpopup', function() {
         });
     });
 
-    describe('remove로 팝업을 DOM에서 삭제핧 수 있다', function() {
+    describe('remove로 팝업을 DOM에서 삭제할 수 있다', function() {
         var popup;
 
         beforeEach(function() {
@@ -290,9 +290,6 @@ describe('Layerpopup', function() {
             button.trigger('click');
             expect(popup.isShow()).toBe(true);
         });
-    });
-
-    describe('dim레이어를 추가 할수있다.', function() {
     });
 
     describe('커스텀 이벤트를 관리할 수 있다', function() {

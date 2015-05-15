@@ -106,7 +106,6 @@ Tab.prototype._getButtonData = function() {
  */
 Tab.prototype._onButtonClick = function(ev) {
     var $button = $(ev.target);
-
     this._activateTabByButton($button);
 };
 

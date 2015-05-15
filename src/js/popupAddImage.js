@@ -63,12 +63,12 @@ PopupAddImage.prototype = util.extend(
 PopupAddImage.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('click', '.okButton', function() {
+    this.on('click .okButton', function() {
         self.trigger('okButtonClicked', this);
         self.hide();
     });
 
-    this.on('click', '.closeButton', function() {
+    this.on('click .closeButton', function() {
         self.trigger('closeButtonClicked', this);
         self.hide();
     });
