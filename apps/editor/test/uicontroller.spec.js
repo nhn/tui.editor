@@ -65,6 +65,22 @@ describe('UIController', function() {
 
             expect(spy).not.toHaveBeenCalled();
         });
+
+        it('파라메터를 넘기지않으면 모든 이벤트가 삭제된다', function() {
+            var spy = jasmine.createSpy(),
+                spy2 = jasmine.createSpy();
+
+            uic.on('click', spy);
+            uic.on('event!', spy);
+
+            uic.off();
+
+            uic.$el.trigger('click');
+            uic.trigger('event!');
+
+            expect(spy).not.toHaveBeenCalled();
+            expect(spy2).not.toHaveBeenCalled();
+        });
     });
 
     describe('attachEvents()', function() {

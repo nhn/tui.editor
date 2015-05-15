@@ -153,6 +153,7 @@ describe('Tab', function() {
         it('기본섹션의  .active 클래스는 삭제되고 새로 선택된 섹션에 추가된다', function() {
             $('button').eq(0).trigger('click');
             $('button').eq(1).trigger('click');
+
             expect(tabSection1.hasClass('active')).toBe(false);
             expect(tabSection2.hasClass('active')).toBe(true);
         });
