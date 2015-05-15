@@ -1,6 +1,6 @@
 /**
  * @fileoverview
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -48,7 +48,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
 
     if (initialValue) {
         cmTextarea.text(initialValue);
-        this.eventManager.emit('markdownUpdated', initialValue);
+        this.eventManager.emit('markdownEditorContentChanged', initialValue);
     }
 
     this.$editorContainerEl.append(cmTextarea);
@@ -68,11 +68,10 @@ MarkdownEditor.prototype._initEvent = function() {
 
     this.cm.on('update', function(cm) {
         console.log('event: update', cm);
-        self.eventManager.emit('markdownUpdated', self.getValue());
     });
 
     this.cm.on('change', function() {
-        console.log('event: change', arguments);
+        self.eventManager.emit('markdownEditorContentChanged', self.getValue());
     });
 
     this.cm.on('scroll', function() {

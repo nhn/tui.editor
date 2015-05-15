@@ -1,6 +1,8 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+
 'use strict';
 
 var MarkdownCommand = require('../markdownCommand');
@@ -9,15 +11,12 @@ var MarkdownCommand = require('../markdownCommand');
  * HR
  * Add HR markdown syntax to markdown editor
  * @exports HR
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var HR = MarkdownCommand.extend(/** @lends HR.prototype */{
+var HR = MarkdownCommand.factory(/** @lends HR */{
+    name: 'HR',
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
-    init: function HR() {
-        MarkdownCommand.call(this, 'HR');
-    },
     /**
      *  커맨드 핸들러
      *  @return {CodeMirror} 코드미러 상수
@@ -58,4 +57,4 @@ var HR = MarkdownCommand.extend(/** @lends HR.prototype */{
     }
 });
 
-module.exports = new HR();
+module.exports = HR;

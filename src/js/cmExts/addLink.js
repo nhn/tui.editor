@@ -1,6 +1,8 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview Implements Addlink markdown command
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+
 'use strict';
 
 var MarkdownCommand = require('../markdownCommand');
@@ -9,14 +11,11 @@ var MarkdownCommand = require('../markdownCommand');
  * AddLink
  * Add link markdown syntax to markdown editor
  * @exports AddLink
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * @augments Command
+ * @augments MarkdownCommand
  */
-var AddLink = MarkdownCommand.extend(/** @lends AddLink.prototype */{
-    init: function AddLink() {
-        MarkdownCommand.call(this, 'AddLink');
-    },
+var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
+    name: 'AddLink',
     /**
      *  커맨드 핸들러
      *  @param {CodeMirror} cm CodeMirror instance
@@ -53,4 +52,4 @@ var AddLink = MarkdownCommand.extend(/** @lends AddLink.prototype */{
     }
 });
 
-module.exports = new AddLink();
+module.exports = AddLink;

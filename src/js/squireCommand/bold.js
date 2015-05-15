@@ -1,5 +1,6 @@
 /**
- * @author FE개발팀 김성호 sungho-kim@nhnent.com
+ * @fileoverview Implements WysiwygCommand
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
@@ -7,18 +8,15 @@
 var WysiwygCommand = require('../wysiwygCommand');
 
 /**
- * Blockquote
- * Add blockquote markdown syntax to markdown editor
- * @exports Blockquote
- * @extends {MarkdownCommand}
- * @constructor
- * @class
+ * Bold
+ * Add bold to selected wysiwyg editor content
+ * @exports Bold
+ * @augments Command
+ * @augments WysiwygCommand
  */
-var Bold = WysiwygCommand.extend(/** @lends Bold.prototype */{
+var Bold = WysiwygCommand.factory(/** @lends Bold */{
+    name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
-    init: function Bold() {
-        WysiwygCommand.call(this, 'Bold');
-    },
     /**
      *  커맨드 핸들러
      */
@@ -28,4 +26,4 @@ var Bold = WysiwygCommand.extend(/** @lends Bold.prototype */{
     }
 });
 
-module.exports = new Bold();
+module.exports = Bold;

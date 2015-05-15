@@ -1,3 +1,8 @@
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
 'use strict';
 
 var MarkdownEditor = require('./markdownEditor'),

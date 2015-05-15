@@ -1,6 +1,13 @@
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
 'use strict';
 
 var LayerPopup = require('./layerpopup');
+
+var util = ne.util;
 
 var ADDLINK_CONTENT = [
     '<label for="linkText">Link Text</label>',
@@ -13,62 +20,72 @@ var ADDLINK_CONTENT = [
     '</div>'
 ];
 
-var PopupAddLink = LayerPopup.extend(/** @lends PopupAddLink.prototype */{
-    title: 'Add Link',
-    className: 'popupAddLink neditor-popup',
-    $content: $(ADDLINK_CONTENT.join('')),
-    init: function PopupAddLink(options) {
-        LayerPopup.call(this, options);
-        this.render();
-        this._bindContentEvent();
-        this._linkWithEventManager(options.eventManager);
-    },
-    _bindContentEvent: function() {
-        var self = this;
+function PopupAddLink(options) {
+    LayerPopup.call(this, options);
+    this.render();
+    this._bindContentEvent();
+    this._linkWithEventManager(options.eventManager);
+}
 
-        this.on('click', '.okButton', function() {
-            self.trigger('okButtonClicked', this);
-            self.hide();
-        });
+PopupAddLink.prototype = util.extend(
+    {},
+    LayerPopup.prototype
+);
 
-        this.on('click', '.closeButton', function() {
-            self.trigger('closeButtonClicked', this);
-            self.hide();
-        });
+PopupAddLink.prototype.title = 'Add Link';
 
-        this.on('shown', function() {
-            self.$el.find('.linkTextInput').focus();
-        });
+PopupAddLink.prototype.className = 'popupAddLink neditor-popup';
 
-        this.on('hidden', function() {
-            self.resetInputs();
-        });
-    },
-    _linkWithEventManager: function(eventManager) {
-        var self = this;
+PopupAddLink.prototype.$content = $(ADDLINK_CONTENT.join(''));
 
-        eventManager.listen('openPopupAddLink', function() {
-            eventManager.emit('closeAllPopup');
-            self.show();
-        });
+PopupAddLink.prototype._bindContentEvent = function() {
+    var self = this;
 
-        eventManager.listen('closeAllPopup', function() {
-            self.hide();
-        });
+    this.on('click', '.okButton', function() {
+        self.trigger('okButtonClicked', this);
+        self.hide();
+    });
 
-        this.on('okButtonClicked', function() {
-            eventManager.emit('command', 'AddLink', self.getValue());
-        });
-    },
-    getValue: function() {
-        return {
-            linkText: this.$el.find('.linkTextInput').val(),
-            url: this.$el.find('.urlInput').val()
-        };
-    },
-    resetInputs: function() {
-        this.$el.find('input').val('');
-    }
-});
+    this.on('click', '.closeButton', function() {
+        self.trigger('closeButtonClicked', this);
+        self.hide();
+    });
+
+    this.on('shown', function() {
+        self.$el.find('.linkTextInput').focus();
+    });
+
+    this.on('hidden', function() {
+        self.resetInputs();
+    });
+};
+
+PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
+    var self = this;
+
+    eventManager.listen('openPopupAddLink', function() {
+        eventManager.emit('closeAllPopup');
+        self.show();
+    });
+
+    eventManager.listen('closeAllPopup', function() {
+        self.hide();
+    });
+
+    this.on('okButtonClicked', function() {
+        eventManager.emit('command', 'AddLink', self.getValue());
+    });
+};
+
+PopupAddLink.prototype.getValue = function() {
+    return {
+        linkText: this.$el.find('.linkTextInput').val(),
+        url: this.$el.find('.urlInput').val()
+    };
+};
+
+PopupAddLink.prototype.resetInputs = function() {
+    this.$el.find('input').val('');
+};
 
 module.exports = PopupAddLink;
