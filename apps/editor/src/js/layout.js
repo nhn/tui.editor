@@ -11,6 +11,21 @@ var Toolbar = require('./toolbar'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage');
 
+var containerTmpl = [
+        '<div class="neditor">',
+           '<div class="toolbarSection" />',
+           '<div class="editorTypeSwitchSection" />',
+            '<div class="mdContainer">',
+               '<div class="tabSection" />',
+               '<div class="editor" />',
+               '<div class="preview neditor-content" />',
+            '</div>',
+            '<div class="wysiwygContainer">',
+                '<div class="editor" />',
+            '</div>',
+        '</div>'
+    ].join('');
+
 /**
  * Layout
  * @exports Layout
@@ -42,22 +57,7 @@ Layout.prototype.init = function() {
 };
 
 Layout.prototype._renderLayout = function() {
-    var containerTmpl = [
-        '<div class="neditor">',
-           '<div class="toolbarSection" />',
-           '<div class="editorTypeSwitchSection" />',
-            '<div class="mdContainer">',
-               '<div class="tabSection" />',
-               '<div class="editor" />',
-               '<div class="preview neditor-content" />',
-            '</div>',
-            '<div class="wysiwygContainer">',
-                '<div class="editor" />',
-            '</div>',
-        '</div>'
-    ];
-
-    this.$containerEl = $(containerTmpl.join('')).appendTo(this.$el);
+    this.$containerEl = $(containerTmpl).appendTo(this.$el);
 };
 
 Layout.prototype._initToolbar = function() {

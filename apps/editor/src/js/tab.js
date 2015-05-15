@@ -53,13 +53,6 @@ Tab.prototype = util.extend(
 );
 
 /**
- * events for tab
- */
-Tab.prototype.events = {
-        'click button': '_onButtonClick'
-};
-
-/**
  * render
  * render UI
  */
@@ -70,7 +63,9 @@ Tab.prototype.render = function() {
 
     this.$el.html(buttonHtml);
 
-    this.attachEvents();
+    this.attachEvents({
+        'click button': '_onButtonClick'
+    });
 };
 
 /**

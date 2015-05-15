@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -9,7 +9,7 @@ var LayerPopup = require('./layerpopup');
 
 var util = ne.util;
 
-var ADDLINK_CONTENT = [
+var POPUP_CONTENT = [
     '<label for="linkText">Link Text</label>',
     '<input type="text" class="linkTextInput" />',
     '<label for="url">URL</label>',
@@ -18,10 +18,26 @@ var ADDLINK_CONTENT = [
     '<button class="okButton">OK</button>',
     '<button class="closeButton">Cancel</button>',
     '</div>'
-];
+].join('');
 
+/**
+ * PopupAddLink
+ * It implements a link Add Popup
+ * @exports PopupAddLink
+ * @augments LayerPopup
+ * @constructor
+ * @class
+ * @param {object} options options
+ */
 function PopupAddLink(options) {
+    options = util.extend({
+        title: 'Add Link',
+        className: 'popupAddLink neditor-popup',
+        content: POPUP_CONTENT
+    }, options);
+
     LayerPopup.call(this, options);
+
     this.render();
     this._bindContentEvent();
     this._linkWithEventManager(options.eventManager);
@@ -31,12 +47,6 @@ PopupAddLink.prototype = util.extend(
     {},
     LayerPopup.prototype
 );
-
-PopupAddLink.prototype.title = 'Add Link';
-
-PopupAddLink.prototype.className = 'popupAddLink neditor-popup';
-
-PopupAddLink.prototype.$content = $(ADDLINK_CONTENT.join(''));
 
 PopupAddLink.prototype._bindContentEvent = function() {
     var self = this;

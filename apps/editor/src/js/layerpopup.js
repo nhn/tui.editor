@@ -19,7 +19,7 @@ var LAYOUT_TEMPLATE = [
         '</div>',
         '<div class="' + CLASS_PREFIX + 'body"></div>',
     '</div>'
-];
+].join('');
 
 /**
  * Layerpopup
@@ -47,8 +47,6 @@ function Layerpopup(options) {
     this._initTitle(options);
     this._initClassName(options);
 }
-
-Layerpopup.prototype.layoutTemplate = LAYOUT_TEMPLATE.join('');
 
 Layerpopup.prototype._initTarget = function(options) {
     this.$target = options.$target || $('body');
@@ -102,7 +100,7 @@ Layerpopup.prototype.render = function() {
 
 Layerpopup.prototype._renderLayout = function() {
     if (!this._isExternalHtmlUse) {
-        this.$el = $(this.layoutTemplate);
+        this.$el = $(LAYOUT_TEMPLATE);
         this.$el.addClass(this.className);
         this.hide();
         this.$target.append(this.$el);

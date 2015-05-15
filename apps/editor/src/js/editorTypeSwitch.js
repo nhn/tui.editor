@@ -9,6 +9,12 @@ var UIController = require('./uicontroller');
 
 var util = ne.util;
 
+var nextTypeString = ['WYSIWYG', 'Markdown'],
+    TYPE = {
+        'MARKDOWN': 0,
+        'WYSIWYG': 1
+    };
+
 /**
  * EditorTypeSwitch
  * UI Control for switch between Markdown and WYSIWYG
@@ -26,7 +32,7 @@ function EditorTypeSwitch(eventManager, initialType) {
     });
 
     this.eventManager = eventManager;
-    this.type = util.isExisty(initialType) ? initialType : EditorTypeSwitch.TYPE.MARKDOWN;
+    this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
     this._render();
 }
 
@@ -35,18 +41,14 @@ EditorTypeSwitch.prototype = util.extend(
     UIController.prototype
 );
 
-EditorTypeSwitch.prototype.events = {
-    'click button': '_buttonClicked'
-};
-
-EditorTypeSwitch.prototype.nextTypeString = ['WYSIWYG', 'Markdown'];
-
 EditorTypeSwitch.prototype._render = function() {
     this.$button = $('<button class="switchButton" />');
     this._setButtonTitle();
     this.$el.append(this.$button);
 
-    this.attachEvents();
+    this.attachEvents({
+        'click button': '_buttonClicked'
+    });
 };
 
 EditorTypeSwitch.prototype._setButtonTitle = function() {
@@ -66,16 +68,13 @@ EditorTypeSwitch.prototype._switchType = function() {
 };
 
 EditorTypeSwitch.prototype._getNextTypeString = function() {
-    return this.nextTypeString[this.type];
+    return nextTypeString[this.type];
 };
 
 EditorTypeSwitch.prototype._toggleType = function() {
-    this.type = this.type === EditorTypeSwitch.TYPE.MARKDOWN ? EditorTypeSwitch.TYPE.WYSIWYG : EditorTypeSwitch.TYPE.MARKDOWN;
+    this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
 };
 
-EditorTypeSwitch.TYPE = {
-    'MARKDOWN': 0,
-    'WYSIWYG': 1
-};
+EditorTypeSwitch.TYPE = TYPE;
 
 module.exports = EditorTypeSwitch;
