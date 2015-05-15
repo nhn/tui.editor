@@ -120,7 +120,7 @@ describe('UIController', function() {
             uic.attachEvents();
         });
 
-        it('events의 내응을 이벤트 해제한다.', function(){
+        it('events의 내응을 이벤트 해제한다.', function() {
             uic.detachEvents();
             uic.$el.find('.test').trigger('click');
 
@@ -128,7 +128,7 @@ describe('UIController', function() {
         });
     });
 
-    describe('setRootElement()', function(){
+    describe('setRootElement()', function() {
         it('jQuery 엘리먼트를 $el로 셋팅할수있다', function() {
             var elem = $('<div />');
 
@@ -152,7 +152,7 @@ describe('UIController', function() {
         });
     });
 
-    describe('template()', function(){
+    describe('template()', function() {
         it('템플릿 텍스트와 매핑할 데이터 객체를 넘기면 맵핑된 텍스트가 리턴된다.', function() {
             var tmpl = '<div><%=text%></div>',
                 obj = {
@@ -168,7 +168,7 @@ describe('UIController', function() {
 
         it('매핑데이터가 배열이면 배열의 갯수만큼 배열로 리턴된다', function() {
             var tmpl = '<div><%=text%></div>',
-                obj = [{ text: 'some' }, { text: 'some2'}],
+                obj = [{text: 'some'}, {text: 'some2'}],
                 renderedText;
 
             renderedText = uic.template(tmpl, obj);
@@ -187,48 +187,5 @@ describe('UIController', function() {
 
             expect(uic.$el.find('div').length).toEqual(1);
        });
-    });
-
-    describe('setInteractive()', function(){
-        it('false를 파라메터로 넘기면 attachEvents로 이벤트가 추가되지 않는다', function() {
-            var testFlag = false;
-
-            uic.setInteractive(false);
-
-            uic.events = {
-                'click .test': '_eventest'
-            };
-
-            uic._eventest = function() {
-                testFlag = true;
-            };
-
-            uic.$el.html('<span class="test">t</span>');
-            uic.attachEvents();
-
-            uic.$el.find('.test').trigger('click');
-
-            expect(testFlag).toEqual(false);
-        });
-
-        it('이벤트가 이미 추가된상태에서 false파라메터를 넘기면 이벤트가 detach된다.', function() {
-            var testFlag = false;
-
-            uic.events = {
-                'click .test': '_eventest'
-            };
-
-            uic._eventest = function() {
-                testFlag = true;
-            };
-
-            uic.$el.html('<span class="test">t</span>');
-            uic.attachEvents();
-
-            uic.setInteractive(false);
-            uic.$el.find('.test').trigger('click');
-
-            expect(testFlag).toEqual(false);
-        });
     });
 });

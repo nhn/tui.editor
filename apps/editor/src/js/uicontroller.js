@@ -7,22 +7,12 @@
 
 var util = ne.util,
     _id = 0;
-
-/**
- * 사전 정의된 이벤트 목록(jQuery이벤트), 해당 목록의 이벤트는 커스텀 이벤트로 사용할수없다.
- * @type {string}
- */
-var jQueryEventList = 'blur focus focusin focusout load resize scroll unload click ' +
-    'dblclick mousedown mouseup mousemove mouseover mouseout mouseenter ' +
-    'mouseleave change select submit keydown keypress keyup error';
-
 /**
  * UIController 클래스
  * @exports UIController
  * @constructor
  * @class
  * @param {Object} options 옵션
- * @param {Boolean} options.stopInteraction true로 넘어오면 해당 UI의 모든 DOM이벤트들이 막힌다.
  * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
  */
 function UIController(options) {
@@ -42,7 +32,6 @@ function UIController(options) {
 
     this._initID();
 
-    this.setInteractive(!options.stopInteraction);
     this.setRootElement(options.rootElement);
 }
 
@@ -129,10 +118,6 @@ UIController.prototype.attachEvents = function(events) {
     var self = this,
         handler,
         eventlist = events || this.events;
-
-    if (!this.isInteractive) {
-        return;
-    }
 
     if (eventlist) {
         util.forEach(eventlist, function(handlerName, type) {
@@ -235,19 +220,6 @@ UIController.prototype.addUIC = function(uic, targetSEL) {
         this.$el.find(targetSEL).append(uic.$el);
     } else {
         this.$el.append(uic.$el);
-    }
-};
-
-/**
- * 이벤트를 바인드 할지 말지를 설정할수있게 한다.
- * false를 넘기면 이벤트가 바인드 되지 않음
- * @param {boolean} isInteractive flag
- */
-UIController.prototype.setInteractive = function(isInteractive) {
-    this.isInteractive = isInteractive;
-
-    if (this.$el && !this.isInteractive) {
-        this.detachEvents();
     }
 };
 
