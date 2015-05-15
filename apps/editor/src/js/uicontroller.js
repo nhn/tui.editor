@@ -184,32 +184,6 @@ UIController.prototype.getEventNameWithNamespace = function(event) {
 };
 
 /**
- * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.
- * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
- * @param {string} template 템플릿 텍스트
- * @param {object|object[]} mapper 템플릿과 합성될 데이터
- * @return {array} rendered text
- */
-UIController.prototype.template = function(template, mapper) {
-    var totalReplaced = [],
-        replaced;
-
-    if (!util.isArray(mapper)) {
-        mapper = [mapper];
-    }
-
-    util.forEach(mapper, function(mapdata) {
-        replaced = template.replace(/<%=([^%]+)%>/g, function(matchedString, name) {
-            return util.isExisty(mapdata, name) ? mapdata[name].toString() : '';
-        });
-
-        totalReplaced.push(replaced);
-    });
-
-    return totalReplaced;
-};
-
-/**
  * uic안에 서브uic를 삽입한다.
  * 두번째 인자로 셀렉터를 넘기면 this.$el이 아닌 셀렉터에 해당하는 엘리먼트를 찾아서 그엘리먼트에 서브 UIC의 엘리먼트를 붙인다.
  * @param {UIController} uic UIController instance
