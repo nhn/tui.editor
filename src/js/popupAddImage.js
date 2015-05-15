@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -26,18 +26,24 @@ var POPUP_CONTENT = [
         '<button class="okButton">OK</button>',
         '<button class="closeButton">Cancel</button>',
     '</div>'
-];
+].join('');
 
 /**
  * PopupAddImage
  * It implements a Image Add Popup
- * @exports AddImage
+ * @exports PopupAddImage
  * @augments LayerPopup
  * @constructor
  * @class
  * @param {object} options options
  */
 function PopupAddImage(options) {
+    options = util.extend({
+        title: 'Add Image',
+        className: 'popupAddImage neditor-popup',
+        content: POPUP_CONTENT
+    }, options);
+
     LayerPopup.call(this, options);
 
     this.eventManager = options.eventManager;
@@ -53,12 +59,6 @@ PopupAddImage.prototype = util.extend(
     {},
     LayerPopup.prototype
 );
-
-PopupAddImage.prototype.title = 'Add Image';
-
-PopupAddImage.prototype.className = 'popupAddImage neditor-popup';
-
-PopupAddImage.prototype.$content = $(POPUP_CONTENT.join(''));
 
 PopupAddImage.prototype._bindContentEvent = function() {
     var self = this;

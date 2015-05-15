@@ -41,10 +41,6 @@ Button.prototype = util.extend(
     UIController.prototype
 );
 
-Button.prototype.events = {
-    'click': '_onClick'
-};
-
 /**
  * Button의 모습을 그린다
  */
@@ -55,7 +51,9 @@ Button.prototype.render = function() {
     if (this.style) {
         this.$el.attr('style', this.style);
     }
-    this.attachEvents();
+    this.attachEvents({
+        'click': '_onClick'
+    });
 };
 
 /**
