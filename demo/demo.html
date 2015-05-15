@@ -39,17 +39,17 @@
 
     $('#editSection').ned({
         previewStyle: 'tab',
-        height: 200,
+        height: 300,
         initialValue: '* 목록\n```\nprint();\n\nprint();\nprint();```',
         contentCSSStyles: [
             '../src/css/contentStyle.css'
         ],
         hooks: {
             'htmlRenderAfterHook': function() {
-                console.log('htmlRenderAfterHook', arguments);
+                //console.log('htmlRenderAfterHook', arguments);
             },
             'previewBeforeHook': function($dom) {
-                console.log('previewBeforeHook', $dom);
+                //console.log('previewBeforeHook', $dom);
             },
             'addImageFileHook': function($form, callback) {
                 $form.find('.imageFileInput').attr('name','fileName');

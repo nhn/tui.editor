@@ -37,6 +37,8 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
+
+    this._switchToMarkdown();
 };
 
 Layout.prototype._renderLayout = function() {

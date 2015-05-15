@@ -26,7 +26,7 @@ Preview.prototype.init = function() {
         eventManager = this.eventManager,
         domData;
 
-    eventManager.listen('previewUpdate', function(html) {
+    eventManager.listen('renderedHtmlUpdated', function(html) {
         domData = $(html);
 
         eventManager.emit('previewBeforeHook', domData);

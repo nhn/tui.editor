@@ -22,19 +22,19 @@ function WysiwygCommand(name) {
     Command.call(this, name, Command.TYPE.WW);
 }
 
-WysiwygCommand.prototype = util.extend({},
-    Command.prototype,
-/** @lends WysiwygCommand.prototype */
-{
-    /**
-     * setup
-     * Set current base and codemirror context
-     * @param {Squire} editor Squire instance
-     */
-    setup: function(editor) {
-        this.editor = editor;
-    }
-});
+WysiwygCommand.prototype = util.extend(
+    {},
+    Command.prototype
+);
+
+/**
+ * setup
+ * Set current base and codemirror context
+ * @param {Squire} editor Squire instance
+ */
+WysiwygCommand.prototype.setup = function(editor) {
+    this.editor = editor;
+};
 
 WysiwygCommand.factory = function(props) {
     var wc = new WysiwygCommand(props.name);

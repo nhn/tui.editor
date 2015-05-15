@@ -34,7 +34,7 @@ describe('Layerpopup', function() {
         beforeEach(function() {
             $('body').html(Layerpopup.prototype.layoutTemplate);
 
-            popup = Layerpopup.popupfy({
+            popup = Layerpopup.factory({
                 $el: $('.' + CLASS_PREFIX + 'wrapper')
             });
         });
@@ -46,7 +46,7 @@ describe('Layerpopup', function() {
         it('외부 HTML을 이용하는경우 컨텐트옵션을 이용하지 않는다', function() {
             $('body').html(Layerpopup.prototype.layoutTemplate);
 
-            popup = Layerpopup.popupfy({
+            popup = Layerpopup.factory({
                 $el: $('.' + CLASS_PREFIX + 'wrapper'),
                 content: $('<p>test</p>')
             });
