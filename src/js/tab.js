@@ -5,11 +5,12 @@
 
 'use strict';
 
-var UIController = require('./uiController');
+var UIController = require('./uiController'),
+    templater = require('./templater');
 
 var util = ne.util;
 
-var buttonTmpl = '<button type="button" data-index="<%=index%>"><%=name%></button>';
+var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
 
 /**
  * Tab
@@ -65,7 +66,7 @@ Tab.prototype.events = {
 Tab.prototype.render = function() {
     var buttonHtml;
 
-    buttonHtml = this.template(buttonTmpl, this._getButtonData());
+    buttonHtml = templater(buttonTmpl, this._getButtonData());
 
     this.$el.html(buttonHtml);
 
