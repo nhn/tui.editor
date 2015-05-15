@@ -1,6 +1,6 @@
-var UIController = require('../src/js/uicontroller');
-
 'use strict';
+
+var UIController = require('../src/js/uicontroller');
 
 describe('UIController', function() {
     var uic;
@@ -67,48 +67,40 @@ describe('UIController', function() {
         });
     });
 
-
-    describe('isDomEvent()', function() {
-        it('이벤트와 셀렉터를 넘겨 돔이벤트를 구분할수있다.', function() {
-            var result = uic.isDomEvent('click .tab a');
-            expect(result).toEqual(true);
-        });
-
-        it('이벤트와 네임스페이스, 셀렉터를 넘겨 돔이벤트를 구분할수있다.', function() {
-            var result = uic.isDomEvent('click.myname #tab a');
-            expect(result).toEqual(true);
-        });
-
-        it('이벤트명을 넘겨 돔이벤트를 구분할수있다.', function() {
-            var result = uic.isDomEvent('click');
-            expect(result).toEqual(true);
-        });
-
-        it('돔이벤트가 아니면 false를 리턴한다.', function() {
-            var result = uic.isDomEvent('clickable.myname #tab a');
-            expect(result).toEqual(false);
-        });
-    });
-
-
     describe('attachEvents()', function() {
-        it('this.events객체를 이용해 이벤트를 걸수있다', function(){
-            var testFlag = false;
+        var eventlist,
+            handler;
 
-            uic.events = {
-                'click .test': '_eventest'
+        beforeEach(function() {
+            eventlist = {
+                'click .test': 'handler'
             };
 
-            uic._eventest = function() {
-                testFlag = true;
-            };
+            handler = jasmine.createSpy('handler');
+        });
+
+        it('인자로 이벤트 리스트를 넘겨 이벤트를 걸수있다', function() {
+            uic.handler = handler;
+
+            uic.$el.html('<span class="test">t</span>');
+
+            uic.attachEvents(eventlist);
+
+            uic.$el.find('.test').trigger('click');
+
+            expect(handler).toHaveBeenCalled();
+        });
+
+        it('this.events객체를 이용해 이벤트를 걸수있다', function() {
+            uic.events = eventlist;
+            uic.handler = handler;
 
             uic.$el.html('<span class="test">t</span>');
             uic.attachEvents();
 
             uic.$el.find('.test').trigger('click');
 
-            expect(testFlag).toEqual(true);
+            expect(handler).toHaveBeenCalled();
         });
     });
 

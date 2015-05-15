@@ -81,7 +81,7 @@ UIController.prototype._addEvent = function(type, fn) {
         event = parsedType[0],
         selector = parsedType[1];
 
-    if (this.isDomEvent(event) && selector) {
+    if (selector) {
         this.$el.on(event, selector, fn);
     } else {
         this.$el.on(event, fn);
@@ -100,7 +100,7 @@ UIController.prototype.off = function(type, fn) {
         event = parsedType[0],
         selector = parsedType[1];
 
-    if (this.isDomEvent(event) && selector) {
+    if (selector) {
         this.$el.off(event, selector, fn);
     } else {
         this.$el.off(event, fn);
@@ -122,36 +122,24 @@ UIController.prototype._parseEventType = function(type) {
 };
 
 /**
- * 이벤트 명을 입력받아 돔이벤트인지 아닌지 판단하는 루틴.
- * @param {string} eventName 이벤트 핸들러, 네임스페이스, 셀렉터 스트링
- * @returns {boolean} 돔이벤트인지 아닌지 여부
- * @private
+ * 파라메터로 넘어오는 이벤트 리스트 혹은 this.events를 토대로 dom 이벤트를 한꺼번에 바인드한다.
+ * @param {object} events 이벤트 목록
  */
-UIController.prototype.isDomEvent = function(eventName) {
-    //셀럭터를 분리하고 네임스페이스를 분리해서 순수 이벤트 명만 가져옴
-    eventName = eventName.split(' ')[0].split('.')[0];
-    return jQueryEventList.indexOf(eventName) !== -1;
-};
-
-/**
- * this.events를 토대로 dom 이벤트를 한꺼번에 바인드한다.
- */
-UIController.prototype.attachEvents = function() {
+UIController.prototype.attachEvents = function(events) {
     var self = this,
-        handler;
+        handler,
+        eventlist = events || this.events;
 
     if (!this.isInteractive) {
         return;
     }
 
-    if (this.events) {
-        util.forEach(this.events, function(handlerName, type) {
+    if (eventlist) {
+        util.forEach(eventlist, function(handlerName, type) {
             if (self[handlerName]) {
-                if (self.isDomEvent(type)) {
-                    type = self.getEventNameWithNamespace(type);
-                    handler = util.bind(self[handlerName], self);
-                    self.on(type, handler);
-                }
+                type = self.getEventNameWithNamespace(type);
+                handler = util.bind(self[handlerName], self);
+                self.on(type, handler);
             } else {
                 throw new Error('UIController#attachEvents: ' + handlerName + '란 메서드가 없습니다.');
             }
