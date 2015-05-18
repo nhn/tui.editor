@@ -1,5 +1,8 @@
 @charset "UTF-8";
 
+.neditor {
+    position: relative;
+}
 .neditor * {
     box-sizing: content-box;
 }
