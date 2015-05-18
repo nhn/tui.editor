@@ -13,7 +13,8 @@ var Bold = require('./cmExts/bold'),
     AddLink = require('./cmExts/addLink'),
     AddImage = require('./cmExts/addImage'),
     UL = require('./cmExts/UL'),
-    OL = require('./cmExts/OL');
+    OL = require('./cmExts/OL'),
+    LazyRunner = require('./lazyRunner');
 
 
 var CodeMirror = window.CodeMirror;
@@ -28,7 +29,7 @@ var CodeMirror = window.CodeMirror;
  * @param {EventManager} eventManager 이벤트 매니저
  * @param {commandManager} commandManager 커맨드 매니저
  */
-function MarkdownEditor($el, eventManager, commandManager) {
+function MarkdownEditor($el, eventManager, commandManager, delay) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
 
@@ -41,6 +42,15 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(AddImage);
     commandManager.addCommand(UL);
     commandManager.addCommand(OL);
+
+    this.lazyRunner = new LazyRunner();
+
+    this.lazyRunner.registerLazyRunFunction(
+        'emitMarkdownEditorContentChangedEvent',
+        this._emitMarkdownEditorContentChangedEvent,
+        delay || 300,
+        this
+    );
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -48,7 +58,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
 
     if (initialValue) {
         cmTextarea.text(initialValue);
-        this.eventManager.emit('markdownEditorContentChanged', initialValue);
+        this._emitMarkdownEditorContentChangedEvent(initialValue);
     }
 
     this.$editorContainerEl.append(cmTextarea);
@@ -66,20 +76,21 @@ MarkdownEditor.prototype.init = function(initialValue) {
 MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.cm.on('update', function(cm) {
-        console.log('event: update', cm);
+    this.cm.on('update', function() {
+        //console.log('event: update', cm);
+        //스크롤시에도 이벤트가 발생함
     });
 
     this.cm.on('change', function() {
-        self.eventManager.emit('markdownEditorContentChanged', self.getValue());
+        self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
     });
 
     this.cm.on('scroll', function() {
-        console.log('event: scroll', arguments);
+        //console.log('event: scroll', arguments);
     });
 
     this.cm.on('focus', function() {
-        console.log('event: focus', arguments);
+        //console.log('event: focus', arguments);
     });
 };
 
@@ -93,6 +104,10 @@ MarkdownEditor.prototype.setValue = function(markdown) {
 
 MarkdownEditor.prototype.getValue = function() {
     return this.cm.doc.getValue('\n');
+};
+
+MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
+    this.eventManager.emit('markdownEditorContentChanged', value || this.getValue());
 };
 
 module.exports = MarkdownEditor;
