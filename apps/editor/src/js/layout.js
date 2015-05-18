@@ -102,7 +102,7 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
         sections: [this.$mdEditorContainerEl, this.$previewEl]
     });
 
-    this.$containerEl.find('.tabSection').append(this.tab.$el);
+    this.$containerEl.find('.mdContainer .tabSection').append(this.tab.$el);
 
     this.tab.activate('Editor');
 };
