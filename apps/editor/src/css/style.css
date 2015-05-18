@@ -3,6 +3,7 @@
 .neditor {
     position: relative;
 }
+
 .neditor * {
     box-sizing: content-box;
 }

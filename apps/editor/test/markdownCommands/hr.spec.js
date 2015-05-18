@@ -1,4 +1,4 @@
-var HR = require('../../src/js/cmExts/hr');
+var HR = require('../../src/js/markdownCommands/hr');
 
 var CodeMirror = window.CodeMirror;
 

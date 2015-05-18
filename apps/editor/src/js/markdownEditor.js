@@ -5,15 +5,15 @@
 
 'use strict';
 
-var Bold = require('./cmExts/bold'),
-    Italic = require('./cmExts/italic'),
-    Blockquote = require('./cmExts/blockquote'),
-    Heading = require('./cmExts/heading'),
-    HR = require('./cmExts/hr'),
-    AddLink = require('./cmExts/addLink'),
-    AddImage = require('./cmExts/addImage'),
-    UL = require('./cmExts/UL'),
-    OL = require('./cmExts/OL'),
+var Bold = require('./markdownCommands/bold'),
+    Italic = require('./markdownCommands/italic'),
+    Blockquote = require('./markdownCommands/blockquote'),
+    Heading = require('./markdownCommands/heading'),
+    HR = require('./markdownCommands/hr'),
+    AddLink = require('./markdownCommands/addLink'),
+    AddImage = require('./markdownCommands/addImage'),
+    UL = require('./markdownCommands/UL'),
+    OL = require('./markdownCommands/OL'),
     LazyRunner = require('./lazyRunner');
 
 
@@ -76,14 +76,15 @@ MarkdownEditor.prototype.init = function(initialValue) {
 MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
+    this.cm.on('change', function() {
+        self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
+    });
+    /*
     this.cm.on('update', function() {
         //console.log('event: update', cm);
         //스크롤시에도 이벤트가 발생함
     });
 
-    this.cm.on('change', function() {
-        self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
-    });
 
     this.cm.on('scroll', function() {
         //console.log('event: scroll', arguments);
@@ -92,6 +93,7 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('focus', function() {
         //console.log('event: focus', arguments);
     });
+    */
 };
 
 MarkdownEditor.prototype.focus = function() {

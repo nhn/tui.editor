@@ -1,4 +1,4 @@
-var AddImage = require('../../src/js/cmExts/AddImage');
+var AddImage = require('../../src/js/markdownCommands/AddImage');
 
 var CodeMirror = window.CodeMirror;
 

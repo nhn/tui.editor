@@ -1,4 +1,4 @@
-var Heading = require('../../src/js/cmExts/heading');
+var Heading = require('../../src/js/markdownCommands/heading');
 
 var CodeMirror = window.CodeMirror;
 
