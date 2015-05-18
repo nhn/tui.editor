@@ -1,4 +1,4 @@
-var Blockquote = require('../../src/js/cmExts/blockquote');
+var Blockquote = require('../../src/js/markdownCommands/blockquote');
 
 var CodeMirror = window.CodeMirror;
 

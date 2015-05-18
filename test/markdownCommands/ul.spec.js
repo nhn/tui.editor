@@ -1,8 +1,8 @@
-var OL = require('../../src/js/cmExts/ol');
+var UL = require('../../src/js/markdownCommands/ul');
 
 var CodeMirror = window.CodeMirror;
 
-describe('OL', function() {
+describe('UL', function() {
     'use strict';
 
     var cm,
@@ -17,7 +17,7 @@ describe('OL', function() {
         cm = CodeMirror.fromTextArea(textArea[0], {
             lineWrapping: true,
             mode: 'gfm',
-            theme: 'defaOLt',
+            theme: 'default',
             dragDrop: false
         });
 
@@ -31,24 +31,24 @@ describe('OL', function() {
         it('텍스트가 있는 라인에서 추가된다', function() {
             doc.setCursor(0, 0);
 
-            OL.responder(cm);
+            UL.responder(cm);
 
-            expect(doc.getLine(0)).toEqual('1. mytext1');
+            expect(doc.getLine(0)).toEqual('* mytext1');
         });
         it('빈라인에서 추가된다', function() {
             doc.setCursor(1, 0);
 
-            OL.responder(cm);
+            UL.responder(cm);
 
-            expect(doc.getLine(1)).toEqual('1. ');
+            expect(doc.getLine(1)).toEqual('* ');
         });
 
         it('영역선택후 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            OL.responder(cm);
+            UL.responder(cm);
 
-            expect(doc.getLine(0)).toEqual('1. ');
+            expect(doc.getLine(0)).toEqual('* ');
             expect(doc.getLine(1)).toEqual('mytext3');
         });
     });

@@ -5,7 +5,7 @@
 
 'use strict';
 
-var Bold = require('./squireCommand/bold');
+var Bold = require('./wysiwygCommands/bold');
 
 var Squire = window.Squire,
     util = ne.util;

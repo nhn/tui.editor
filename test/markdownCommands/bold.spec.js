@@ -1,4 +1,4 @@
-var Bold = require('../../src/js/cmExts/bold');
+var Bold = require('../../src/js/markdownCommands/bold');
 
 var CodeMirror = window.CodeMirror;
 

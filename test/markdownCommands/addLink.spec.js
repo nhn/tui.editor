@@ -1,4 +1,4 @@
-var AddLink = require('../../src/js/cmExts/addLink');
+var AddLink = require('../../src/js/markdownCommands/addLink');
 
 var CodeMirror = window.CodeMirror;
 

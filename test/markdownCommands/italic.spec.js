@@ -1,4 +1,4 @@
-var Italic = require('../../src/js/cmExts/Italic');
+var Italic = require('../../src/js/markdownCommands/italic');
 
 var CodeMirror = window.CodeMirror;
 
