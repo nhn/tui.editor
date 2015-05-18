@@ -114,14 +114,14 @@ Layout.prototype._initWysiwygSection = function() {
 
 Layout.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
-        $target: this.$el,
+        $target: this.$el.find('.neditor'),
         eventManager: this.eventManager
     });
 };
 
 Layout.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
-        $target: this.$el,
+        $target: this.$el.find('.neditor'),
         eventManager: this.eventManager
     });
 };
