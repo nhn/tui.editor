@@ -73,8 +73,6 @@ function NEditor(options) {
 
     this.mdEditor.init(this.options.initialValue);
 
-    this.getCodeMirror().__ned = this;
-
     this.wwEditor.init(this.options.height);
 
     __nedInstance.push(this);
