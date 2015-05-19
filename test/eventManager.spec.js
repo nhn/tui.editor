@@ -9,6 +9,7 @@ describe('eventManager', function() {
         ev = new EventManager();
     });
 
+
     it('listen으로 이벤트핸들러를 등록하고 emit으로 실행할수 있다', function() {
         var handler = jasmine.createSpy('handler');
 
@@ -33,7 +34,7 @@ describe('eventManager', function() {
 
         result = ev.emit('EventHook');
 
-        expect(result).toEqual([0, 1]);
+        expect(result).toEqual([0, 2]);
     });
 
     it('핸들러가 특정값을 리턴하지 않으면 emit은 undefined 리턴', function() {
@@ -44,5 +45,13 @@ describe('eventManager', function() {
         result = ev.emit('event1');
 
         expect(result).toBeUndefined();
+    });
+
+    describe('사용하는 이벤트를 등록 관리 할수 있다.', function() {
+        it('등록되지 않은 이벤트를 사용하는 경우 에러', function() {
+        });
+
+        it('등록된 이벤트명으로 다시 이벤트를 등록하는 경우 에러', function() {
+        });
     });
 });
