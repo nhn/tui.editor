@@ -27,6 +27,7 @@ var __nedInstance = [];
  * @param {number} options.height 에디터 height 픽셀
  * @param {string} options.initialValue 초기 입력 테스트
  * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
+ * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
  * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
  * @param {object} options.hooks 외부 연결 훅 목록
  * @param {function} options.hooks.htmlRenderAfterHook DOM으로 그려질 HTML텍스트가 만들어진후 실행되는 훅, 만들어진 HTML텍스트가 인자로 전달되고 리턴값이 HTML텍스트로 대체된다.
@@ -34,15 +35,16 @@ var __nedInstance = [];
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */
 function NEditor(options) {
-    var defaultOptions = {
+    var self = this,
+        hooks;
+
+    this.options = $.extend({
         'previewStyle': 'tab',
+        'initialEditType': 'wysiwyg',
         'height': 300
-    };
+    }, options);
 
-    var hooks = options.hooks,
-        self = this;
-
-    this.options = $.extend({}, defaultOptions, options);
+    hooks = options.hooks;
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandMangager(this);
@@ -50,6 +52,7 @@ function NEditor(options) {
 
     this.layout = new Layout(options, this.eventManager, this.commandManager);
     this.layout.init();
+
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager, options.delay);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager, this.commandManager);
@@ -74,6 +77,8 @@ function NEditor(options) {
     this.mdEditor.init(this.options.initialValue);
 
     this.wwEditor.init(this.options.height);
+
+    this.eventManager.emit('editorTypeSwitched', this.options.initialEditType === 'markdown' ? 0 : 1);
 
     __nedInstance.push(this);
 }
