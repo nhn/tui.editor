@@ -98,7 +98,7 @@ describe('CommandManager', function() {
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.WYSIWYG);
+            mockupBase.eventManager.emit('changeEditorTypeToWysiwyg');
 
             cmgr.exec('mycommand');
 

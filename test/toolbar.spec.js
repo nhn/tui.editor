@@ -14,6 +14,7 @@ describe('Toolbar', function() {
     beforeEach(function() {
         $('body').empty();
         em = new EventManager();
+        em.addEventType('test');
         cm = new CommandMangager({
             eventManager: em
         });
