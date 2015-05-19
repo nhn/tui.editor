@@ -1,4 +1,4 @@
-var AddImage = require('../../src/js/markdownCommands/AddImage');
+var AddImage = require('../../src/js/markdownCommands/addImage');
 
 var CodeMirror = window.CodeMirror;
 

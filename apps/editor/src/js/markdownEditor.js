@@ -12,8 +12,8 @@ var Bold = require('./markdownCommands/bold'),
     HR = require('./markdownCommands/hr'),
     AddLink = require('./markdownCommands/addLink'),
     AddImage = require('./markdownCommands/addImage'),
-    UL = require('./markdownCommands/UL'),
-    OL = require('./markdownCommands/OL'),
+    UL = require('./markdownCommands/ul'),
+    OL = require('./markdownCommands/ol'),
     LazyRunner = require('./lazyRunner');
 
 

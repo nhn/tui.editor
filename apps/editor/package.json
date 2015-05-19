@@ -20,6 +20,7 @@
     "karma-browserify": "^3.0.1",
     "karma-chrome-launcher": "^0.1.7",
     "karma-coverage": "git+https://github.com/everedifice/karma-coverage.git",
+    "karma-failed-reporter": "0.0.3",
     "karma-firefox-launcher": "^0.1.4",
     "karma-jasmine": "^0.3.5",
     "karma-jasmine-ajax": "^0.1.4",

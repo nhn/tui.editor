@@ -40,7 +40,6 @@ module.exports = function(config) {
         },
 
         browserify: {
-            debug: true,
             bundleDelay: 1000,
             transform: [istanbul({
                 ignore: ['**/test/**', '**/tmpl/**'],
@@ -58,7 +57,7 @@ module.exports = function(config) {
 
         // optionally, configure the reporter
         coverageReporter: {
-            dir: 'report/coverage/',
+            dir: 'coverage/',
             reporters: [
                 {type: 'text'},
                 {
@@ -69,11 +68,6 @@ module.exports = function(config) {
                 }
             ]
         },
-
-
-        // web server port
-        port: 9877,
-
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
