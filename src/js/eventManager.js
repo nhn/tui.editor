@@ -32,6 +32,7 @@ EventManager.prototype.emit = function() {
         result,
         results;
 
+
     if (eventHandlers) {
         results = [];
 

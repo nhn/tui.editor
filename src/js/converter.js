@@ -45,12 +45,12 @@ Convertor.prototype._initEvent = function() {
         self.latestMarkdown = markdown;
     });
 
-    this.eventManager.listen('editorTypeSwitched', function(type) {
-        if (type === EditorTypeSwitch.TYPE.MARKDOWN) {
-            console.log('CONVERTER: TO MARKDOWN 뿅! 아직 작업 안되었음');
-        } else {
-            self.eventManager.emit('htmlUpdate', self._markdownToHtml(self.latestMarkdown));
-        }
+    this.eventManager.listen('changeEditorTypeToWysiwyg', function() {
+        self.eventManager.emit('htmlUpdate', self._markdownToHtml(self.latestMarkdown));
+    });
+
+    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+        console.log('CONVERTER: TO MARKDOWN 뿅! 아직 작업 안되었음');
     });
 };
 
