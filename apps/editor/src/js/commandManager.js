@@ -5,10 +5,10 @@
 
 'use strict';
 
-var EditorTypeSwitch = require('./editorTypeSwitch');
-
 var util = ne.util,
     CodeMirror = window.CodeMirror;
+
+var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
 
 /**
  * CommandManager
@@ -22,7 +22,7 @@ function CommandManager(base) {
     this._mdCommand = new util.HashMap();
     this._wwCommand = new util.HashMap();
     this.base = base;
-    this.typeStatus = EditorTypeSwitch.TYPE.MARKDOWN;
+    this.typeStatus = TYPE.MARKDOWN;
 
     this._initEvent();
 }
@@ -60,8 +60,12 @@ CommandManager.prototype.addCommand = function(command) {
 CommandManager.prototype._initEvent = function() {
     var self = this;
 
-    this.base.eventManager.listen('editorTypeSwitched', function(type) {
-        self.typeStatus = type;
+    this.base.eventManager.listen('changeEditorTypeToWysiwyg', function() {
+        self.typeStatus = TYPE.WYSIWYG;
+    });
+
+    this.base.eventManager.listen('changeEditorTypeToMarkdown', function() {
+        self.typeStatus = TYPE.MARKDOWN;
     });
 
     this.base.eventManager.listen('command', function() {
@@ -104,10 +108,10 @@ CommandManager.prototype.exec = function(name) {
         return command();
     }
 
-    if (this.typeStatus === EditorTypeSwitch.TYPE.MARKDOWN && mdCommand) {
+    if (this.typeStatus === TYPE.MARKDOWN && mdCommand) {
         args = [this.base.getCodeMirror()].concat(args);
         return mdCommand.apply(null, args);
-    } else if (this.typeStatus === EditorTypeSwitch.TYPE.WYSIWYG && wwCommand) {
+    } else if (this.typeStatus === TYPE.WYSIWYG && wwCommand) {
         args = [this.base.getSquire()].concat(args);
         return wwCommand.apply(null, args);
     }

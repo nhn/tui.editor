@@ -1,11 +1,26 @@
 /**
- * @fileoverview
+ * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
 
 var util = ne.util;
+
+var eventList = [
+    'htmlRenderAfterHook',
+    'previewBeforeHook',
+    'addImageFileHook',
+    'markdownEditorContentChanged',
+    'changeEditorTypeToWysiwyg',
+    'changeEditorTypeToMarkdown',
+    'openPopupAddLink',
+    'openPopupAddImage',
+    'closeAllPopup',
+    'command',
+    'htmlUpdate',
+    'renderedHtmlUpdated'
+];
 
 /**
  * EventManager
@@ -16,22 +31,28 @@ var util = ne.util;
  */
 function EventManager() {
     this.events = new util.HashMap();
+    this.TYPE = new util.Enum(eventList);
 }
 
-EventManager.prototype.listen = function(name, handler) {
-    var eventHandlers = this.events.get(name) || [];
+EventManager.prototype.listen = function(type, handler) {
+    var eventHandlers;
+
+    if (!this._hasEventType(type)) {
+        throw new Error('There is no event type ' + type);
+    }
+
+    eventHandlers = this.events.get(type) || [];
     eventHandlers.push(handler);
 
-    this.events.set(name, eventHandlers);
+    this.events.set(type, eventHandlers);
 };
 
 EventManager.prototype.emit = function() {
     var args = util.toArray(arguments),
-        name = args.shift(),
-        eventHandlers = this.events.get(name),
+        type = args.shift(),
+        eventHandlers = this.events.get(type),
         result,
         results;
-
 
     if (eventHandlers) {
         results = [];
@@ -48,6 +69,18 @@ EventManager.prototype.emit = function() {
     if (results && results.length) {
         return results;
     }
+};
+
+EventManager.prototype._hasEventType = function(type) {
+    return !util.isUndefined(this.TYPE[type]);
+};
+
+EventManager.prototype.addEventType = function(type) {
+    if (this._hasEventType(type)) {
+        throw new Error('There is already have event type ' + type);
+    }
+
+    this.TYPE.set(type);
 };
 
 module.exports = EventManager;
