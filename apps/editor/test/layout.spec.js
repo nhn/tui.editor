@@ -51,14 +51,14 @@ describe('Layout', function() {
 
     describe('Markdown and WYSIWYG type switching by eventManager', function() {
         it('to Markdown', function() {
-            em.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.MARKDOWN);
+            em.emit('changeEditorTypeToMarkdown');
 
             expect($('.mdContainer').css('display')).toEqual('block');
             expect($('.wysiwygContainer').css('display')).toBe('none');
         });
 
         it('to WYSIWYG', function() {
-            em.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.WYSIWYG);
+            em.emit('changeEditorTypeToWysiwyg');
 
             expect($('.mdContainer').css('display')).toEqual('none');
             expect($('.wysiwygContainer').css('display')).toBe('block');

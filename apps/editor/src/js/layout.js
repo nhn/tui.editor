@@ -12,19 +12,19 @@ var Toolbar = require('./toolbar'),
     PopupAddImage = require('./popupAddImage');
 
 var containerTmpl = [
-        '<div class="neditor">',
-           '<div class="toolbarSection" />',
-           '<div class="editorTypeSwitchSection" />',
-            '<div class="mdContainer">',
-               '<div class="tabSection" />',
-               '<div class="editor" />',
-               '<div class="preview neditor-content" />',
-            '</div>',
-            '<div class="wysiwygContainer">',
-                '<div class="editor" />',
-            '</div>',
-        '</div>'
-    ].join('');
+    '<div class="neditor">',
+        '<div class="toolbarSection" />',
+        '<div class="editorTypeSwitchSection" />',
+        '<div class="mdContainer">',
+            '<div class="tabSection" />',
+            '<div class="editor" />',
+            '<div class="preview neditor-content" />',
+        '</div>',
+        '<div class="wysiwygContainer">',
+            '<div class="editor" />',
+        '</div>',
+    '</div>'
+].join('');
 
 /**
  * Layout
@@ -53,7 +53,7 @@ Layout.prototype.init = function() {
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
 
-    this._switchToMarkdown();
+    this._initEvent();
 };
 
 Layout.prototype._renderLayout = function() {
@@ -65,17 +65,29 @@ Layout.prototype._initToolbar = function() {
     this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
 };
 
+Layout.prototype._initEvent = function() {
+    var self = this;
+
+    this.eventManager.listen('changeEditorTypeToWysiwyg', function() {
+        self._switchToWYSIWYG();
+    });
+
+    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+        self._switchToMarkdown();
+    });
+};
+
 Layout.prototype._initEditorTypeSwitch = function() {
     var self = this;
 
-    this.editorTypeSwitch = new EditorTypeSwitch(this.eventManager);
+    this.editorTypeSwitch = new EditorTypeSwitch();
     this.$containerEl.find('.editorTypeSwitchSection').append(this.editorTypeSwitch.$el);
 
-    this.eventManager.listen('editorTypeSwitched', function(type) {
-        if (type === EditorTypeSwitch.TYPE.WYSIWYG) {
-            self._switchToWYSIWYG();
+    this.editorTypeSwitch.on('editorTypeSwitched', function(ev, info) {
+        if (info.type === EditorTypeSwitch.TYPE.WYSIWYG) {
+            self.eventManager.emit('changeEditorTypeToWysiwyg');
         } else {
-            self._switchToMarkdown();
+            self.eventManager.emit('changeEditorTypeToMarkdown');
         }
     });
 };

@@ -22,16 +22,14 @@ var nextTypeString = ['WYSIWYG', 'Markdown'],
  * @augments UIController
  * @constructor
  * @class
- * @param {EventManager} eventManager 이벤트 매니저
  * @param {number} initialType initial type of editor
  */
-function EditorTypeSwitch(eventManager, initialType) {
+function EditorTypeSwitch(initialType) {
     UIController.call(this, {
         tagName: 'div',
         className: 'editorTypeSwitch'
     });
 
-    this.eventManager = eventManager;
     this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
     this._render();
 }
@@ -64,7 +62,11 @@ EditorTypeSwitch.prototype._switchType = function() {
 
     this._toggleType();
     this._setButtonTitle();
-    this.eventManager.emit('editorTypeSwitched', this.type, typeToSwitch);
+
+    this.trigger('editorTypeSwitched', {
+        type: this.type,
+        text: typeToSwitch
+    });
 };
 
 EditorTypeSwitch.prototype._getNextTypeString = function() {
