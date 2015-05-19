@@ -5,7 +5,11 @@
 
 'use strict';
 
-var Bold = require('./wysiwygCommands/bold');
+var Bold = require('./wysiwygCommands/bold'),
+    Italic = require('./wysiwygCommands/italic'),
+    Blockquote = require('./wysiwygCommands/blockquote'),
+    UL = require('./wysiwygCommands/ul'),
+    OL = require('./wysiwygCommands/ol');
 
 var Squire = window.Squire,
     util = ne.util;
@@ -26,6 +30,10 @@ function WysiwygEditor($el, contentStyles, eventManager, commandManager) {
     this.contentStyles = contentStyles;
 
     commandManager.addCommand(Bold);
+    commandManager.addCommand(Italic);
+    commandManager.addCommand(Blockquote);
+    commandManager.addCommand(UL);
+    commandManager.addCommand(OL);
 }
 
 WysiwygEditor.prototype.init = function(height) {
