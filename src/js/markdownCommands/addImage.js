@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implments AddImage markdown comment
+ * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 

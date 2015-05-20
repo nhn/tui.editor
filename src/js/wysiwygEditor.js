@@ -8,6 +8,10 @@
 var Bold = require('./wysiwygCommands/bold'),
     Italic = require('./wysiwygCommands/italic'),
     Blockquote = require('./wysiwygCommands/blockquote'),
+    AddImage = require('./wysiwygCommands/addImage'),
+    AddLink = require('./wysiwygCommands/addLink'),
+    HR = require('./wysiwygCommands/hr'),
+    Heading = require('./wysiwygCommands/heading'),
     UL = require('./wysiwygCommands/ul'),
     OL = require('./wysiwygCommands/ol');
 
@@ -34,6 +38,10 @@ function WysiwygEditor($el, contentStyles, eventManager, commandManager) {
     commandManager.addCommand(Blockquote);
     commandManager.addCommand(UL);
     commandManager.addCommand(OL);
+    commandManager.addCommand(AddImage);
+    commandManager.addCommand(AddLink);
+    commandManager.addCommand(HR);
+    commandManager.addCommand(Heading);
 }
 
 WysiwygEditor.prototype.init = function(height) {
@@ -50,11 +58,13 @@ WysiwygEditor.prototype.init = function(height) {
         self._makeSureStandardMode(doc);
         self._initStyleSheet(doc);
         self.editor = new Squire(doc, {
-            blockTag: 'p'
+            blockTag: 'P'
         });
         self.setHeight(height);
         self._initEvent();
+    window.dd = self.editor;
     });
+
 
     this.$editorContainerEl.append(this.$iframe);
 };
