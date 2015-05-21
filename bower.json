@@ -1,11 +1,11 @@
 {
-  "name": "",
+  "name": "toMark",
   "version": "0.0.0",
   "authors": [
-    ""
+    "Sungho Kim / FE Development Team / NHN Entertainment."
   ],
   "main": "",
-  "license": "",
+  "license": "MIT",
   "private": true,
   "ignore": [
     "**/.*",
