@@ -1,0 +1,71 @@
+{
+  "env": {
+    "browser": true,
+    "amd": true,
+    "node": true,
+    "jasmine": true,
+    "jquery": true
+  },
+  "globals": {
+    "ne": true,
+    "Prism": true,
+    "rangy": true,
+    "loadFixtures": true
+  },
+  "rules": {
+    //Possible Errors 
+    "no-console": 1,
+    "no-extra-parens": 0,
+    "no-reserved-keys": 2,
+    "valid-jsdoc": [2, {
+        "requireReturn": false
+    }],
+    "valid-typeof": 1,
+
+
+    //Best Practices
+    "block-scoped-var": 2,
+    "complexity": 1,
+    "default-case": 2,
+    "guard-for-in": 2,
+    "no-else-return": 1,
+    "no-eq-null": 2,
+    "no-floating-decimal": 2,
+    "no-self-compare": 1,
+    "no-warning-comments": 1,
+    "no-new": 1,
+    "radix": 2,
+    "vars-on-top": 2,
+    "wrap-iife": [2, "any"],
+
+    //Variables
+    "no-undefined": 2,
+    "no-use-before-define": [2, "nofunc"],
+
+    //Stylistic Issues
+    "brace-style": [2, "1tbs", {"allowSingleLine": true}],
+    "comma-spacing": [2, {"before": false, "after": true}],
+    "comma-style": [2, "last"],
+    "eol-last": 1,
+    "new-cap": 2,
+    "no-array-constructor": 2,
+    "no-lonely-if": 2,
+    "no-multiple-empty-lines": [2, {"max": 2}],
+    "no-nested-ternary": 2,
+    "no-underscore-dangle": 0,
+    "quotes": [1, "single"],
+    "one-var": 0,
+    "padded-blocks": [2, "never"],
+    "space-after-function-name": 2,
+    "space-after-keywords": 2,
+    "space-before-blocks": 2,
+    "space-in-brackets": 2,
+    "space-in-parens": 2,
+
+    //Node.js
+    "no-mixed-requires": [2, true],
+
+    //Legacy
+    "no-plusplus": 2
+  }
+}
