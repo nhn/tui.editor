@@ -26,9 +26,8 @@ module.exports = function(config) {
             'lib/codemirror/addon/mode/overlay.js',
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
-            'src/js/**/*.js',
-            //{pattern: 'test/fixtures/*', included: false},
-            'test/**/*.spec.js'
+            {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
+            {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
         ],
 
 

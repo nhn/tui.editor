@@ -5,8 +5,6 @@
 
 'use strict';
 
-var EditorTypeSwitch = require('./editorTypeSwitch');
-
 var marked = window.marked,
     hljs = window.hljs;
 
