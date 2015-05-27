@@ -40,6 +40,10 @@ DomRunner.prototype.next = function() {
     return node;
 };
 
+DomRunner.prototype.getNode = function() {
+    return this._current;
+};
+
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
     return !node && current !== this._root;
 };

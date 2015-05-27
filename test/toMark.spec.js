@@ -9,9 +9,19 @@ describe('toMark', function() {
         expect(mdText).toEqual('# Hello World!');
     });
 
-    it('convert heading2 tag to markdown', function() {
-        var mdText = toMark('<h2>Hello World!</h2>');
-        expect(mdText).toEqual('## Hello World!');
+    xit('convert heading2 tag to markdown', function() {
+        var mdText = toMark('<h2>Hello <em>World!</em></h2>');
+        expect(mdText).toEqual('## Hello *World!*');
+    });
+
+    xit('convert heading2 tag to markdown', function() {
+        var mdText = toMark('<h2>Hello <em>World!</em></h2>');
+        expect(mdText).toEqual('## Hello *World!*');
+    });
+
+    xit('convert heading1, heading2 tag to markdown', function() {
+        var mdText = toMark('<h1>Hello World!</h1><h2>Hello World!</h2>');
+        expect(mdText).toEqual('# Hello World!## Hello World!');
     });
 });
 
@@ -30,9 +40,9 @@ describe('toDom', function() {
             expect(dom.childNodes.length).toEqual(1);
             expect(dom.childNodes[0].tagName).toEqual('IMG');
             expect(dom.childNodes[0].attributes[0].name).toEqual('src');
-            expect(dom.childNodes[0].attributes[0].nodeValue).toEqual('https://www.google.co.kr/images/nav_logo195.png');
+            expect(dom.childNodes[0].src).toEqual('https://www.google.co.kr/images/nav_logo195.png');
             expect(dom.childNodes[0].attributes[1].name).toEqual('alt');
-            expect(dom.childNodes[0].attributes[1].nodeValue).toEqual('altText');
+            expect(dom.childNodes[0].alt).toEqual('altText');
         });
     });
 });

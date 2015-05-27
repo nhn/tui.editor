@@ -6,7 +6,8 @@
 'use strict';
 
 var DomRunner = require('./domRunner'),
-    toDom = require('./toDom');
+    toDom = require('./toDom'),
+    basicRenderer = require('./renderer.basic');
 
 /**
  * toMark
@@ -15,15 +16,11 @@ var DomRunner = require('./domRunner'),
  * @return {string} converted markdown text
  */
 function toMark(htmlStr) {
-    var nodes = new DomRunner(toDom(htmlStr)),
+    var runner = new DomRunner(toDom(htmlStr)),
         markdownResult = '';
 
-    var node = nodes.next();
-
-    if (node.tagName === 'H1') {
-        markdownResult = '# Hello World!';
-    } else if (node.tagName === 'H2') {
-        markdownResult = '## Hello World!';
+    while (runner.next()) {
+        markdownResult += basicRenderer.convert(runner);
     }
 
     return markdownResult;

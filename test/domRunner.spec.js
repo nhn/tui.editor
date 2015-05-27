@@ -282,4 +282,14 @@ describe('domRunner', function() {
             expect(node.tagName).toEqual('TH');
         });
     });
+
+    describe('get current node', function() {
+        beforeEach(function() {
+            domRunner = new DomRunner(toDom('<div>currentText</div>'));
+        });
+
+        it('check table tags', function() {
+            expect(domRunner.next()).toBe(domRunner.getNode());
+        });
+    });
 });
