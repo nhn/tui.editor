@@ -17,22 +17,27 @@ var basicRenderer = Renderer.factory({
         return runner.getNode().nodeValue;
     },
     'H1, H2, H3, H4, H5, H6': function(runner) {
-        var res;
+        var res = '',
+            node = runner.getNode(),
+            headingNumber = parseInt(node.tagName[1], 10);
 
-        res = '# ';
+        while (headingNumber) {
+            res += '#';
+            headingNumber -= 1;
+        }
+
+        res += ' ';
 
         if (runner.getNode().childNodes.length) {
             runner.next();
             res += this.convert(runner);
         }
 
-
         return res;
     },
     'EM': function(runner) {
-        return '*' + runner.getNode().innerText + '*';
+        return '*' + runner.getNodeText() + '*';
     }
 });
-
 
 module.exports = basicRenderer;
