@@ -36,7 +36,7 @@ function Renderer(rules) {
 }
 
 Renderer.prototype.addRule = function(selectorString, converter) {
-    var selectors = selectorString.split(','),
+    var selectors = selectorString.split(', '),
         selector = selectors.pop();
 
     while (selector) {
