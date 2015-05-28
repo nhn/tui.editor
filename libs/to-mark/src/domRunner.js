@@ -44,6 +44,19 @@ DomRunner.prototype.getNode = function() {
     return this._current;
 };
 
+DomRunner.prototype.getNodeText = function() {
+    var node = this.getNode(),
+        text;
+
+    if (node.nodeType === NODE.TEXT_NODE) {
+        text = node.nodeValue;
+    } else {
+        text = node.textContent || node.innerText;
+    }
+
+    return text;
+};
+
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
     return !node && current !== this._root;
 };

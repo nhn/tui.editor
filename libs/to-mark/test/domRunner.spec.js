@@ -6,6 +6,35 @@ var DomRunner = require('../src/domRunner'),
 describe('domRunner', function() {
     var domRunner;
 
+    describe('get nodes text', function() {
+        beforeEach(function() {
+            var htmlStr = [
+                '<h1>Hello World!</h1>'
+            ].join('');
+
+            domRunner = new DomRunner(toDom(htmlStr));
+        });
+
+        it('get elements text', function() {
+            var text;
+
+            domRunner.next();
+            text = domRunner.getNodeText();
+
+            expect(text).toEqual('Hello World!');
+        });
+
+        it('get text nodes text', function() {
+            var text;
+
+            domRunner.next();
+            domRunner.next();
+            text = domRunner.getNodeText();
+
+            expect(text).toEqual('Hello World!');
+        });
+    });
+
     describe('iterate Nodes 1depth', function() {
         beforeEach(function() {
             var htmlStr = [
@@ -20,7 +49,7 @@ describe('domRunner', function() {
             var node = domRunner.next();
 
             expect(node.tagName).toEqual('H1');
-            expect(node.innerText).toEqual('Hello World!');
+            expect(domRunner.getNodeText()).toEqual('Hello World!');
         });
 
         it('second node is text node', function() {
@@ -30,7 +59,7 @@ describe('domRunner', function() {
             node = domRunner.next();
 
             expect(node.nodeType).toEqual(DomRunner.NODE_TYPE.TEXT_NODE);
-            expect(node.nodeValue).toEqual('Hello World!');
+            expect(domRunner.getNodeText()).toEqual('Hello World!');
         });
 
         it('third node is tag p', function() {
@@ -69,7 +98,7 @@ describe('domRunner', function() {
             var node = domRunner.next();
 
             expect(node.tagName).toEqual('P');
-            expect(node.innerText).toEqual('make me bold');
+            expect(domRunner.getNodeText()).toEqual('make me bold');
         });
 
         it('second node is text', function() {
