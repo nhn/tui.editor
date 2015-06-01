@@ -5,22 +5,30 @@ var basicRenderer = require('../src/renderer.basic'),
     DomRunner = require('../src/domRunner');
 
 describe('basicRenderer', function() {
-    var runner,
-        result;
+    function getMarkdownText(htmlStr) {
+        var runner = new DomRunner(toDom(htmlStr));
+        runner.next();
+
+        return basicRenderer.convert(runner);
+    }
+
+    describe('inline', function() {
+        it('em', function() {
+            expect(getMarkdownText('<em>emphasis</em>')).toEqual('*emphasis*');
+        });
+
+        it('link', function() {
+            expect(getMarkdownText('<a href="http://www.nhnent.com">NHNENT</a>')).toEqual('[NHNENT](http://www.nhnent.com/)');
+        });
+    });
 
     describe('Headings', function() {
         it('heading with empty text', function() {
-            runner = new DomRunner(toDom('<h1></h1>'));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('# ');
+            expect(getMarkdownText('<h1></h1>')).toEqual('# ');
         });
 
         it('heading with text', function() {
-            runner = new DomRunner(toDom('<h1>heading</h1>'));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('# heading');
+            expect(getMarkdownText('<h1>heading</h1>')).toEqual('# heading');
         });
 
         it('heading with inline element', function() {
@@ -28,53 +36,18 @@ describe('basicRenderer', function() {
                 '<h1>',
                     '<em>heading</em>',
                 '</h1>'
-            ];
+            ].join('');
 
-            runner = new DomRunner(toDom(htmlStr.join('')));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('# *heading*');
+            expect(getMarkdownText(htmlStr)).toEqual('# *heading*');
         });
 
         it('H1 ~ H6', function() {
-            var htmlStr = [
-                '<h1>1</h1>',
-                '<h2>2</h2>',
-                '<h3>3</h3>',
-                '<h4>4</h4>',
-                '<h5>5</h5>',
-                '<h6>6</h6>'
-            ];
-
-            runner = new DomRunner(toDom(htmlStr[0]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('# 1');
-
-            runner = new DomRunner(toDom(htmlStr[1]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('## 2');
-
-            runner = new DomRunner(toDom(htmlStr[2]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('### 3');
-
-            runner = new DomRunner(toDom(htmlStr[3]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('#### 4');
-
-            runner = new DomRunner(toDom(htmlStr[4]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('##### 5');
-
-            runner = new DomRunner(toDom(htmlStr[5]));
-            runner.next();
-            result = basicRenderer.convert(runner);
-            expect(result).toEqual('###### 6');
+            expect(getMarkdownText('<h1>1</h1>')).toEqual('# 1');
+            expect(getMarkdownText('<h2>2</h2>')).toEqual('## 2');
+            expect(getMarkdownText('<h3>3</h3>')).toEqual('### 3');
+            expect(getMarkdownText('<h4>4</h4>')).toEqual('#### 4');
+            expect(getMarkdownText('<h5>5</h5>')).toEqual('##### 5');
+            expect(getMarkdownText('<h6>6</h6>')).toEqual('###### 6');
         });
     });
 });

@@ -18,8 +18,23 @@ var basicRenderer = Renderer.factory({
         return runner.getNode().nodeValue;
     },
     'EM': function(runner) {
+        var res;
+
         runner.next(); //it resolve text node
-        return '*' + this.convert(runner) + '*';
+
+        res = '*' + this.convert(runner) + '*';
+
+        return res;
+    },
+    'A': function(runner) {
+        var res,
+            url = runner.getNode().href;
+
+        runner.next();
+
+        res = '[' + this.convert(runner) + '](' + url + ')';
+
+        return res;
     },
     'H1, H2, H3, H4, H5, H6': function(runner) {
         var res = '',
@@ -41,9 +56,6 @@ var basicRenderer = Renderer.factory({
         }
 
         return res;
-    },
-    'UL LI': function() {
-
     }
 });
 
