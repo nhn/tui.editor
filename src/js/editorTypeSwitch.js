@@ -40,7 +40,7 @@ EditorTypeSwitch.prototype = util.extend(
 );
 
 EditorTypeSwitch.prototype._render = function() {
-    this.$button = $('<button class="switchButton" />');
+    this.$button = $('<button class="switchButton" type="button" />');
     this._setButtonTitle();
     this.$el.append(this.$button);
 
