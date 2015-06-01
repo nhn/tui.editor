@@ -51,6 +51,7 @@ Button.prototype.render = function() {
     if (this.style) {
         this.$el.attr('style', this.style);
     }
+
     this.attachEvents({
         'click': '_onClick'
     });
