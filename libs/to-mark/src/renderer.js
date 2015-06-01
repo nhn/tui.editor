@@ -40,7 +40,8 @@ Renderer.prototype.addRule = function(selectorString, converter) {
         selector = selectors.pop();
 
     while (selector) {
-        this.rules[selector] = converter;
+        //this.rules[selector] = converter;
+        this._setConverterWithSelector(selector, converter);
         selector = selectors.pop();
     }
 };
@@ -55,13 +56,53 @@ Renderer.prototype.addRules = function(rules) {
 
 Renderer.prototype.convert = function(runner) {
     var result,
-        convertor = this.rules[runner.getNode().tagName || 'TEXT_NODE'];
+        converter = this._getConverter(runner.getNode());
 
-    if (convertor) {
-        result = convertor.call(this, runner);
+    if (converter) {
+        result = converter.call(this, runner);
     }
 
-    return result;
+    return result || '';
+};
+
+Renderer.prototype._getConverter = function (node) {
+    var nodePointer = node.parentNode,
+        rulePointer = this.rules[node.tagName || 'TEXT_NODE'],
+        converter;
+
+    if (rulePointer) {
+        while (nodePointer && rulePointer[nodePointer.tagName]) {
+            rulePointer = rulePointer[nodePointer.tagName];
+            nodePointer = nodePointer.parentNode;
+        }
+
+        converter = rulePointer.converter;
+    }
+
+    return converter;
+};
+
+Renderer.prototype._setConverterWithSelector = function(selector, converter) {
+    var selectorIndex,
+        ruleElem,
+        rulePointer = this.rules;
+
+    selector = selector.split(' ');
+    selectorIndex = selector.length - 1;
+
+    while (selectorIndex >= 0) {
+        ruleElem = selector[selectorIndex];
+
+        if (!rulePointer[ruleElem]) {
+            rulePointer[ruleElem] = {};
+        }
+
+        rulePointer = rulePointer[ruleElem];
+
+        selectorIndex -= 1;
+    }
+
+    rulePointer.converter = converter;
 };
 
 Renderer.factory = function(rules) {

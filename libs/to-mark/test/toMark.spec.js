@@ -8,19 +8,19 @@ describe('toMark', function() {
         expect(mdText).toEqual('# Hello World!');
     });
 
-    xit('convert heading2 tag to markdown', function() {
+    it('convert heading2 tag to markdown', function() {
         var mdText = toMark('<h2>Hello <em>World!</em></h2>');
         expect(mdText).toEqual('## Hello *World!*');
     });
 
-    xit('convert heading2 tag to markdown', function() {
+    it('convert heading2 tag to markdown', function() {
         var mdText = toMark('<h2>Hello <em>World!</em></h2>');
         expect(mdText).toEqual('## Hello *World!*');
     });
 
-    xit('convert heading1, heading2 tag to markdown', function() {
+    it('convert heading1, heading2 tag to markdown', function() {
         var mdText = toMark('<h1>Hello World!</h1><h2>Hello World!</h2>');
-        expect(mdText).toEqual('# Hello World!## Hello World!');
+        expect(mdText).toEqual('# Hello World!\n## Hello World!');
     });
 });
 

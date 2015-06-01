@@ -39,7 +39,7 @@ describe('renderer', function() {
         expect(convertedText).toEqual('markdownText');
     });
 
-    it('if there is no rule, conveter returns undefined', function() {
+    it('if there is no rule, conveter returns empty string', function() {
         var convertedText,
             renderer = Renderer.factory();
 
@@ -48,7 +48,7 @@ describe('renderer', function() {
 
         convertedText = renderer.convert(runner);
 
-        expect(convertedText).toBeUndefined();
+        expect(convertedText).toEqual('');
     });
 
     it('rules are can be assigned separately with comma', function() {
@@ -65,5 +65,33 @@ describe('renderer', function() {
         convertedText = renderer.convert(runner);
 
         expect(convertedText).toEqual('markdownText');
+    });
+
+    it('rules are can be assigned using css style nest element', function() {
+        var convertedText,
+            renderer = Renderer.factory({
+                'UL LI': function() {
+                    return 'ulli';
+                },
+                'OL LI': function() {
+                    return 'olli';
+                }
+            });
+
+        runner = new DomRunner(toDom('<ul><li>test</li></ul>'));
+
+        //ul을 건너띄기 위해 2번
+        runner.next();
+        runner.next();
+        convertedText = renderer.convert(runner);
+        expect(convertedText).toEqual('ulli');
+
+        runner = new DomRunner(toDom('<ol><li>test</li></ol>'));
+
+        //ol pass
+        runner.next();
+        runner.next();
+        convertedText = renderer.convert(runner);
+        expect(convertedText).toEqual('olli');
     });
 });
