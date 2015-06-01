@@ -17,13 +17,13 @@ var DomRunner = require('./domRunner'),
  */
 function toMark(htmlStr) {
     var runner = new DomRunner(toDom(htmlStr)),
-        markdownResult = '';
+        markdownLines = [];
 
     while (runner.next()) {
-        markdownResult += basicRenderer.convert(runner);
+        markdownLines.push(basicRenderer.convert(runner));
     }
 
-    return markdownResult;
+    return markdownLines.join('\n');
 }
 
 module.exports = toMark;
