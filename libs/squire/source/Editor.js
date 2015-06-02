@@ -1938,20 +1938,19 @@ proto.insertElement = function ( el, range ) {
         }
         if ( nodeAfterSplit ) {
             body.insertBefore( el, nodeAfterSplit );
-            range.setStart( nodeAfterSplit, 0 );
-            range.setStart( nodeAfterSplit, 0 );
-            moveRangeBoundariesDownTree( range );
         } else {
             body.appendChild( el );
             // Insert blank line below block.
-            body.appendChild( this.createDefaultBlock() );
-            range.setStart( el, 0 );
-            range.setEnd( el, 0 );
+            nodeAfterSplit = this.createDefaultBlock();
+            body.appendChild( nodeAfterSplit );
         }
-        this.focus();
-        this.setSelection( range );
-        this._updatePath( range );
+        range.setStart( nodeAfterSplit, 0 );
+        range.setEnd( nodeAfterSplit, 0 );
+        moveRangeBoundariesDownTree( range );
     }
+    this.focus();
+    this.setSelection( range );
+    this._updatePath( range );
     return this;
 };
 
