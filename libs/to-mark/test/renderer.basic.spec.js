@@ -20,6 +20,10 @@ describe('basicRenderer', function() {
         it('link', function() {
             expect(getMarkdownText('<a href="http://www.nhnent.com">NHNENT</a>')).toEqual('[NHNENT](http://www.nhnent.com/)');
         });
+
+        it('image', function() {
+            expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
+        });
     });
 
     describe('Headings', function() {
