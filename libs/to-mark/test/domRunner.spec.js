@@ -321,4 +321,16 @@ describe('domRunner', function() {
             expect(domRunner.next()).toBe(domRunner.getNode());
         });
     });
+
+    describe('if next node is nothing left, returns null', function() {
+        beforeEach(function() {
+            domRunner = new DomRunner(toDom('<div>currentText</div>'));
+        });
+
+        it('domRunner returns null', function() {
+            domRunner.next();
+            domRunner.next();
+            expect(domRunner.next()).toBeNull();
+        });
+    });
 });

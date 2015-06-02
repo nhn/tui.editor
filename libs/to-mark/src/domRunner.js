@@ -28,16 +28,18 @@ DomRunner.prototype.next = function() {
     var current = this._current,
         node;
 
-    node = this._getNextNode(current);
+    if (this._current) {
+        node = this._getNextNode(current);
 
-    while (this._isNeedNextSearch(node, current)) {
-        current = current.parentNode;
-        node = current.nextSibling;
+        while (this._isNeedNextSearch(node, current)) {
+            current = current.parentNode;
+            node = current.nextSibling;
+        }
+
+        this._current = node;
     }
 
-    this._current = node;
-
-    return node;
+    return this._current;
 };
 
 DomRunner.prototype.getNode = function() {

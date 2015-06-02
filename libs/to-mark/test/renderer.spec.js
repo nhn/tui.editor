@@ -94,4 +94,18 @@ describe('renderer', function() {
         convertedText = renderer.convert(runner);
         expect(convertedText).toEqual('olli');
     });
+
+    it('convertChildNode can convert all childNodes of runners currunt node', function() {
+        var renderer = Renderer.factory({
+            'LI': function() {
+                return 'li';
+            }
+        });
+
+        runner = new DomRunner(toDom('<ul><li></li><li></li></ul>'));
+
+        runner.next();
+
+        expect(renderer.convertChildNodes(runner)).toEqual('lili');
+    });
 });
