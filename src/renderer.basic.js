@@ -14,7 +14,6 @@ var Renderer = require('./renderer');
  */
 var basicRenderer = Renderer.factory({
     'TEXT_NODE': function(runner) {
-        //todo text escape 처리 모듈 추가
         return runner.getNode().nodeValue;
     },
     'EM': function(runner) {
@@ -50,8 +49,7 @@ var basicRenderer = Renderer.factory({
     'H1, H2, H3, H4, H5, H6': function(runner) {
         var res = '',
             node = runner.getNode(),
-            headingNumber = parseInt(node.tagName[1], 10),
-            childNodeLength = node.childNodes.length;
+            headingNumber = parseInt(node.tagName[1], 10);
 
         while (headingNumber) {
             res += '#';
@@ -59,14 +57,40 @@ var basicRenderer = Renderer.factory({
         }
 
         res += ' ';
+        res += this.convertChildNodes(runner);
 
-        while (childNodeLength) {
-            runner.next();
-            res += this.convert(runner);
-            childNodeLength -= 1;
+        return res;
+    },
+    'UL': function(runner) {
+        var res = '',
+            node;
+
+        node = runner.next();
+
+        while (node && node.tagName && node.tagName === 'LI') {
+            res += '* ' + this.convert(runner) + '\n';
+            node = runner.next();
         }
 
         return res;
+    },
+    'OL': function(runner) {
+        var res = '',
+            node,
+            number = 1;
+
+        node = runner.next();
+
+        while (node && node.tagName && node.tagName === 'LI') {
+            res += number + '. ' + this.convert(runner) + '\n';
+            number += 1;
+            node = runner.next();
+        }
+
+        return res;
+    },
+    'LI': function(runner) {
+        return this.convertChildNodes(runner);
     }
 });
 

@@ -5,9 +5,15 @@ var basicRenderer = require('../src/renderer.basic'),
     DomRunner = require('../src/domRunner');
 
 describe('basicRenderer', function() {
-    function getMarkdownText(htmlStr) {
+    //test case use only
+    function getMarkdownText(htmlStr, passElementCount) {
         var runner = new DomRunner(toDom(htmlStr));
-        runner.next();
+
+        passElementCount = passElementCount + 1 || 1;
+        while (passElementCount) {
+            runner.next();
+            passElementCount -= 1;
+        }
 
         return basicRenderer.convert(runner);
     }
@@ -45,6 +51,18 @@ describe('basicRenderer', function() {
             expect(getMarkdownText(htmlStr)).toEqual('# *heading*');
         });
 
+        it('heading with inline element', function() {
+            var htmlStr = [
+                '<h1>',
+                    '<em>heading</em>',
+                    'text',
+                    '<img src="http://www.nhnent.com" alt="NHNENT" />',
+                '</h1>'
+            ].join('');
+
+            expect(getMarkdownText(htmlStr)).toEqual('# *heading*text![NHNENT](http://www.nhnent.com/)');
+        });
+
         it('H1 ~ H6', function() {
             expect(getMarkdownText('<h1>1</h1>')).toEqual('# 1');
             expect(getMarkdownText('<h2>2</h2>')).toEqual('## 2');
@@ -52,6 +70,39 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<h4>4</h4>')).toEqual('#### 4');
             expect(getMarkdownText('<h5>5</h5>')).toEqual('##### 5');
             expect(getMarkdownText('<h6>6</h6>')).toEqual('###### 6');
+        });
+    });
+
+    describe('Lists', function() {
+        it('ul li', function() {
+            //1 means pass ul
+            expect(getMarkdownText('<ul><li>1</li></ul>')).toEqual('* 1\n');
+        });
+
+        it('ol li', function() {
+            expect(getMarkdownText('<ol><li>1</li></ol>')).toEqual('1. 1\n');
+        });
+
+        it('ol multiple li', function() {
+            expect(getMarkdownText('<ol><li>1</li><li>2</li></ol>')).toEqual('1. 1\n2. 2\n');
+        });
+
+        it('ul multiple li', function() {
+            expect(getMarkdownText('<ul><li>1</li><li>2</li></ul>')).toEqual('* 1\n* 2\n');
+        });
+
+        it('li with inline element', function() {
+            var htmlStr = [
+                '<ul>',
+                    '<li>',
+                        '<em>cont</em>',
+                        'text',
+                        '<img src="http://www.nhnent.com" alt="NHNENT" />',
+                    '</li>',
+                '</ul>'
+            ].join('');
+
+            expect(getMarkdownText(htmlStr)).toEqual('* *cont*text![NHNENT](http://www.nhnent.com/)\n');
         });
     });
 });

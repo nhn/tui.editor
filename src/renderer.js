@@ -105,6 +105,21 @@ Renderer.prototype._setConverterWithSelector = function(selector, converter) {
     rulePointer.converter = converter;
 };
 
+Renderer.prototype.convertChildNodes = function(runner) {
+    var childNodeLength,
+        res = '';
+
+    childNodeLength = runner.getNode().childNodes.length;
+
+    while (childNodeLength) {
+        runner.next();
+        res += this.convert(runner);
+        childNodeLength -= 1;
+    }
+
+    return res;
+};
+
 Renderer.factory = function(rules) {
     var renderer = new Renderer(rules);
     return renderer;
