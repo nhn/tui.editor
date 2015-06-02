@@ -36,6 +36,17 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
+    'IMG': function(runner) {
+        var res,
+            src = runner.getNode().src,
+            alt = runner.getNode().alt;
+
+        runner.next();
+
+        res = '![' + alt + '](' + src + ')';
+
+        return res;
+    },
     'H1, H2, H3, H4, H5, H6': function(runner) {
         var res = '',
             node = runner.getNode(),
