@@ -31,6 +31,10 @@ describe('basicRenderer', function() {
         it('image', function() {
             expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
         });
+
+        it('strong', function() {
+            expect(getMarkdownText('<strong></strong>', 'imstrong')).toEqual('**imstrong**');
+        });
     });
 
     describe('Headings', function() {
@@ -78,7 +82,6 @@ describe('basicRenderer', function() {
                 '</ul>'
             ].join('');
 
-            //expect(getMarkdownText(htmlStr, '* item\n', 4)).toEqual('    * item\n');
             expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('\n    * item\n    * item');
         });
     });
