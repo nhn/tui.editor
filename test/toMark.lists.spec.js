@@ -59,5 +59,17 @@ describe('toMark', function() {
             ].join('');
             expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\n        * DEPTH3\n            * DEPTH4\n');
         });
+
+        it('if haadings are nested in li, convert to inline html', function() {
+            var htmlStr = [
+                '<ul>',
+                    '<li>',
+                        '<h1>nested heading</h1>',
+                    '</li>',
+                '</ul>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('* <h1>nested heading</h1>\n');
+        });
     });
 });

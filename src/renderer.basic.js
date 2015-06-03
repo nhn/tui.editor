@@ -71,6 +71,9 @@ var basicRenderer = Renderer.factory({
 
         return res + '\n';
     },
+    'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
+        return '<h1>' + node.innerHTML + '</h1>';
+    },
 
     //List
     'LI OL, LI UL': function(node, subContent) {
