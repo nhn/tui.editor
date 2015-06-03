@@ -51,6 +51,28 @@ describe('renderer', function() {
         expect(convertedText).toEqual('subContents');
     });
 
+    it('if rule\'s converter returns falsy, conveter returns subContent', function() {
+        var convertedText,
+            renderer = Renderer.factory({
+                'H1, H2, H3, H4, H5, H6': function() {
+                    return false;
+                },
+                'EM': function() {}
+            });
+
+        runner = new DomRunner(toDom('<h1>test</h1>'));
+        runner.next();
+        convertedText = renderer.convert(runner.getNode(), 'subContents');
+
+        expect(convertedText).toEqual('subContents');
+
+        runner = new DomRunner(toDom('<em>test</em>'));
+        runner.next();
+        convertedText = renderer.convert(runner.getNode(), 'subContents');
+
+        expect(convertedText).toEqual('subContents');
+    });
+
     it('rules can be assigned separately with comma', function() {
         var convertedText,
             renderer = Renderer.factory({
