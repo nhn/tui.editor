@@ -48,6 +48,13 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
+    'CODE': function(node, subContent) {
+        var res;
+
+        res = '`' + subContent + '`';
+
+        return res;
+    },
 
     //Headings
     'H1, H2, H3, H4, H5, H6': function(node, subContent) {
