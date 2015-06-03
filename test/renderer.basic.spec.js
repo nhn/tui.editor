@@ -35,6 +35,10 @@ describe('basicRenderer', function() {
         it('strong', function() {
             expect(getMarkdownText('<strong></strong>', 'imstrong')).toEqual('**imstrong**');
         });
+
+        it('code', function() {
+            expect(getMarkdownText('<code></code>', 'imcode')).toEqual('`imcode`');
+        });
     });
 
     describe('Headings', function() {
