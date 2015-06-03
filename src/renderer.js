@@ -54,12 +54,12 @@ Renderer.prototype.addRules = function(rules) {
     });
 };
 
-Renderer.prototype.convert = function(runner) {
+Renderer.prototype.convert = function(node, subContent) {
     var result,
-        converter = this._getConverter(runner.getNode());
+        converter = this._getConverter(node);
 
     if (converter) {
-        result = converter.call(this, runner);
+        result = converter.call(this, node, subContent);
     }
 
     return result || '';
