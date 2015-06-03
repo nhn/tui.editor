@@ -13,6 +13,7 @@ var Renderer = require('./renderer');
  * @augments Renderer
  */
 var basicRenderer = Renderer.factory({
+    //inlines
     'TEXT_NODE': function(node) {
         return node.nodeValue;
     },
@@ -20,6 +21,13 @@ var basicRenderer = Renderer.factory({
         var res;
 
         res = '*' + subContent + '*';
+
+        return res;
+    },
+    'STRONG': function(node, subContent) {
+        var res;
+
+        res = '**' + subContent + '**';
 
         return res;
     },
@@ -40,6 +48,8 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
+
+    //Headings
     'H1, H2, H3, H4, H5, H6': function(node, subContent) {
         var res = '',
             headingNumber = parseInt(node.tagName[1], 10);
@@ -54,6 +64,8 @@ var basicRenderer = Renderer.factory({
 
         return res + '\n';
     },
+
+    //List
     'LI OL, LI UL': function(node, subContent) {
         var res, lastNremoved;
 

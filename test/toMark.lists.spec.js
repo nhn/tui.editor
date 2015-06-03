@@ -3,29 +3,11 @@
 var toMark = require('../src/toMark');
 
 describe('toMark', function() {
-    describe('Headings', function() {
-        it('convert heading tag to markdown', function() {
-            expect(toMark('<h1>Hello World!</h1>')).toEqual('# Hello World!\n');
-        });
-
-        it('convert heading2 tag to markdown', function() {
-            expect(toMark('<h2>Hello <em>World!</em></h2>')).toEqual('## Hello *World!*\n');
-        });
-
-        it('convert heading2 tag to markdown', function() {
-            expect(toMark('<h2>Hello <em>World!</em></h2>')).toEqual('## Hello *World!*\n');
-        });
-
-        it('convert heading1, heading2 tag to markdown', function() {
-            expect(toMark('<h1>Hello World!</h1><h2>Hello World!</h2>')).toEqual('# Hello World!\n## Hello World!\n');
-        });
-    });
-
     describe('Lists', function() {
         it('Unordered List can be converted', function() {
             var htmlStr = [
                 '<ul>',
-                   '<li>TEST</li>',
+                    '<li>TEST</li>',
                 '</ul>'
             ].join('');
 
@@ -35,7 +17,7 @@ describe('toMark', function() {
         it('Ordered List can be converted', function() {
             var htmlStr = [
                 '<ol>',
-                   '<li>TEST</li>',
+                    '<li>TEST</li>',
                 '</ol>'
             ].join('');
 
@@ -68,17 +50,14 @@ describe('toMark', function() {
                                         '<ul>',
                                             '<li>DEPTH4</li>',
                                         '</ul>',
-                                    '</li>',
+                                     '</li>',
                                 '</ul>',
                             '</li>',
                         '</ul>',
                     '</li>',
                 '</ol>'
             ].join('');
-
             expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\n        * DEPTH3\n            * DEPTH4\n');
         });
     });
 });
-
-
