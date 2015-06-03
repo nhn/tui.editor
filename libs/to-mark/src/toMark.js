@@ -17,13 +17,32 @@ var DomRunner = require('./domRunner'),
  */
 function toMark(htmlStr) {
     var runner = new DomRunner(toDom(htmlStr)),
-        markdownLines = [];
+        markdownContent = '';
 
     while (runner.next()) {
-        markdownLines.push(basicRenderer.convert(runner));
+        markdownContent += tracker(runner);
     }
 
-    return markdownLines.join('\n');
+    return markdownContent;
+}
+
+function tracker(runner) {
+    var i,
+        t,
+        subContent = '',
+        content;
+
+    var node = runner.getNode();
+
+
+    for (i = 0, t = node.childNodes.length; i < t; i += 1) {
+        runner.next();
+        subContent += tracker(runner);
+    }
+
+    content = basicRenderer.convert(node, subContent);
+
+    return content;
 }
 
 module.exports = toMark;

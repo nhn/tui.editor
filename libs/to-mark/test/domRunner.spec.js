@@ -318,7 +318,7 @@ describe('domRunner', function() {
         });
 
         it('check table tags', function() {
-            expect(domRunner.next()).toBe(domRunner.getNode());
+            expect(domRunner.next()).toBe(domRunner.getNode()+1);
         });
     });
 

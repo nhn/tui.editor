@@ -13,42 +13,35 @@ var Renderer = require('./renderer');
  * @augments Renderer
  */
 var basicRenderer = Renderer.factory({
-    'TEXT_NODE': function(runner) {
-        return runner.getNode().nodeValue;
+    'TEXT_NODE': function(node) {
+        return node.nodeValue;
     },
-    'EM': function(runner) {
+    'EM': function(node, subContent) {
         var res;
 
-        runner.next(); //it resolve text node
-
-        res = '*' + this.convert(runner) + '*';
+        res = '*' + subContent + '*';
 
         return res;
     },
-    'A': function(runner) {
+    'A': function(node, subContent) {
         var res,
-            url = runner.getNode().href;
+            url = node.href;
 
-        runner.next();
-
-        res = '[' + this.convert(runner) + '](' + url + ')';
+        res = '[' + subContent + '](' + url + ')';
 
         return res;
     },
-    'IMG': function(runner) {
+    'IMG': function(node) {
         var res,
-            src = runner.getNode().src,
-            alt = runner.getNode().alt;
-
-        runner.next();
+            src = node.src,
+            alt = node.alt;
 
         res = '![' + alt + '](' + src + ')';
 
         return res;
     },
-    'H1, H2, H3, H4, H5, H6': function(runner) {
+    'H1, H2, H3, H4, H5, H6': function(node, subContent) {
         var res = '',
-            node = runner.getNode(),
             headingNumber = parseInt(node.tagName[1], 10);
 
         while (headingNumber) {
@@ -57,40 +50,23 @@ var basicRenderer = Renderer.factory({
         }
 
         res += ' ';
-        res += this.convertChildNodes(runner);
+        res += subContent;
+
+        return '\n' + res;
+    },
+    'UL LI': function(node, subContent) {
+        var res = '';
+
+        res += '* ' + subContent;
+
+        return '\n' + res;
+    },
+    'OL LI': function(node, subContent) {
+        var res = '';
+
+        res += '\n' + '1. ' + subContent;
 
         return res;
-    },
-    'UL': function(runner) {
-        var res = '',
-            node;
-
-        node = runner.next();
-
-        while (node && node.tagName && node.tagName === 'LI') {
-            res += '* ' + this.convert(runner) + '\n';
-            node = runner.next();
-        }
-
-        return res;
-    },
-    'OL': function(runner) {
-        var res = '',
-            node,
-            number = 1;
-
-        node = runner.next();
-
-        while (node && node.tagName && node.tagName === 'LI') {
-            res += number + '. ' + this.convert(runner) + '\n';
-            number += 1;
-            node = runner.next();
-        }
-
-        return res;
-    },
-    'LI': function(runner) {
-        return this.convertChildNodes(runner);
     }
 });
 
