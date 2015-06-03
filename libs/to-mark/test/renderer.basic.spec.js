@@ -79,7 +79,7 @@ describe('basicRenderer', function() {
             ].join('');
 
             //expect(getMarkdownText(htmlStr, '* item\n', 4)).toEqual('    * item\n');
-            expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('    * item\n    * item\n');
+            expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('\n    * item\n    * item');
         });
     });
 });

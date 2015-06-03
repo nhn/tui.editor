@@ -57,11 +57,12 @@ var basicRenderer = Renderer.factory({
     'LI OL, LI UL': function(node, subContent) {
         var res, lastNremoved;
 
+        //because parent LI converter add \n too
         lastNremoved = subContent.replace(/\n$/g, '');
 
         res = lastNremoved.replace(/^/gm, '    ');
 
-        return res + '\n';
+        return '\n' + res;
     },
     'UL LI': function(node, subContent) {
         var res = '';
