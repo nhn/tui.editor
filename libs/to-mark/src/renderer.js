@@ -62,7 +62,7 @@ Renderer.prototype.convert = function(node, subContent) {
         result = converter.call(this, node, subContent);
     }
 
-    return result || '';
+    return result || subContent;
 };
 
 Renderer.prototype._getConverter = function (node) {
@@ -103,21 +103,6 @@ Renderer.prototype._setConverterWithSelector = function(selector, converter) {
     }
 
     rulePointer.converter = converter;
-};
-
-Renderer.prototype.convertChildNodes = function(runner) {
-    var childNodeLength,
-        res = '';
-
-    childNodeLength = runner.getNode().childNodes.length;
-
-    while (childNodeLength) {
-        runner.next();
-        res += this.convert(runner);
-        childNodeLength -= 1;
-    }
-
-    return res;
 };
 
 Renderer.factory = function(rules) {

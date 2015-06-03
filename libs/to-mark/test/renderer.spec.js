@@ -18,7 +18,7 @@ describe('renderer', function() {
         runner = new DomRunner(toDom('<h1>test</h1>'));
         runner.next();
 
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode());
 
         expect(convertedText).toEqual('markdownText');
     });
@@ -34,24 +34,24 @@ describe('renderer', function() {
         runner = new DomRunner(toDom('<h1>test</h1>'));
         runner.next();
 
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode());
 
         expect(convertedText).toEqual('markdownText');
     });
 
-    it('if there is no rule, conveter returns empty string', function() {
+    it('if there is no rule, conveter returns subContent', function() {
         var convertedText,
             renderer = Renderer.factory();
 
         runner = new DomRunner(toDom('<h1>test</h1>'));
         runner.next();
 
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode(), 'subContents');
 
-        expect(convertedText).toEqual('');
+        expect(convertedText).toEqual('subContents');
     });
 
-    it('rules are can be assigned separately with comma', function() {
+    it('rules can be assigned separately with comma', function() {
         var convertedText,
             renderer = Renderer.factory({
                 'H1, H2, H3, H4, H5, H6': function() {
@@ -62,12 +62,12 @@ describe('renderer', function() {
         runner = new DomRunner(toDom('<h2>test</h2>'));
         runner.next();
 
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode());
 
         expect(convertedText).toEqual('markdownText');
     });
 
-    it('rules are can be assigned using css style nest element', function() {
+    it('rules can be assigned using css style nest element', function() {
         var convertedText,
             renderer = Renderer.factory({
                 'UL LI': function() {
@@ -83,7 +83,7 @@ describe('renderer', function() {
         //ul을 건너띄기 위해 2번
         runner.next();
         runner.next();
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode());
         expect(convertedText).toEqual('ulli');
 
         runner = new DomRunner(toDom('<ol><li>test</li></ol>'));
@@ -91,21 +91,7 @@ describe('renderer', function() {
         //ol pass
         runner.next();
         runner.next();
-        convertedText = renderer.convert(runner);
+        convertedText = renderer.convert(runner.getNode());
         expect(convertedText).toEqual('olli');
-    });
-
-    it('convertChildNode can convert all childNodes of runners currunt node', function() {
-        var renderer = Renderer.factory({
-            'LI': function() {
-                return 'li';
-            }
-        });
-
-        runner = new DomRunner(toDom('<ul><li></li><li></li></ul>'));
-
-        runner.next();
-
-        expect(renderer.convertChildNodes(runner)).toEqual('lili');
     });
 });

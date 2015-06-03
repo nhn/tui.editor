@@ -35,53 +35,51 @@ describe('basicRenderer', function() {
 
     describe('Headings', function() {
         it('heading with empty text', function() {
-            expect(getMarkdownText('<h1></h1>', '')).toEqual('\n# ');
+            expect(getMarkdownText('<h1></h1>', '')).toEqual('# \n');
         });
 
         it('heading with text', function() {
-            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('\n# heading');
+            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('# heading\n');
         });
 
         it('H1 ~ H6', function() {
-            expect(getMarkdownText('<h1></h1>', '1')).toEqual('\n# 1');
-            expect(getMarkdownText('<h2></h2>', '2')).toEqual('\n## 2');
-            expect(getMarkdownText('<h3></h3>', '3')).toEqual('\n### 3');
-            expect(getMarkdownText('<h4></h4>', '4')).toEqual('\n#### 4');
-            expect(getMarkdownText('<h5></h5>', '5')).toEqual('\n##### 5');
-            expect(getMarkdownText('<h6></h6>', '6')).toEqual('\n###### 6');
+            expect(getMarkdownText('<h1></h1>', '1')).toEqual('# 1\n');
+            expect(getMarkdownText('<h2></h2>', '2')).toEqual('## 2\n');
+            expect(getMarkdownText('<h3></h3>', '3')).toEqual('### 3\n');
+            expect(getMarkdownText('<h4></h4>', '4')).toEqual('#### 4\n');
+            expect(getMarkdownText('<h5></h5>', '5')).toEqual('##### 5\n');
+            expect(getMarkdownText('<h6></h6>', '6')).toEqual('###### 6\n');
         });
     });
 
     describe('Lists', function() {
         it('ul li', function() {
-            expect(getMarkdownText('<ul><li></li></ul>', '1', 2)).toEqual('\n* 1');
+            expect(getMarkdownText('<ul><li></li></ul>', '1', 2)).toEqual('* 1\n');
         });
 
         it('ol li', function() {
-            expect(getMarkdownText('<ol><li>1</li></ol>', '1', 2)).toEqual('\n1. 1');
+            expect(getMarkdownText('<ol><li>1</li></ol>', '1', 2)).toEqual('1. 1\n');
         });
 
         xit('ol multiple li', function() {
             expect(getMarkdownText('<ol><li>1</li><li>2</li></ol>')).toEqual('1. 1\n2. 2\n');
         });
 
-        fit('nested list', function() {
+        it('nested list', function() {
             var htmlStr = [
                 '<ul>',
-                    '<li>',
-                        'list item',
-                    '</li>',
+                    '<li></li>',
                     '<li>',
                         '<ul>',
                             '<li>',
-                                'nested item',
                             '</li>',
                         '</ul>',
                     '</li>',
                 '</ul>'
             ].join('');
 
-            expect(getMarkdownText(htmlStr)).toEqual('* list item\n    * nested item\n');
+            //expect(getMarkdownText(htmlStr, '* item\n', 4)).toEqual('    * item\n');
+            expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('    * item\n    * item\n');
         });
     });
 });

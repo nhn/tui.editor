@@ -52,19 +52,28 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return '\n' + res;
+        return res + '\n';
+    },
+    'LI OL, LI UL': function(node, subContent) {
+        var res, lastNremoved;
+
+        lastNremoved = subContent.replace(/\n$/g, '');
+
+        res = lastNremoved.replace(/^/gm, '    ');
+
+        return res + '\n';
     },
     'UL LI': function(node, subContent) {
         var res = '';
 
-        res += '* ' + subContent;
+        res += '* ' + subContent + '\n';
 
-        return '\n' + res;
+        return res;
     },
     'OL LI': function(node, subContent) {
         var res = '';
 
-        res += '\n' + '1. ' + subContent;
+        res += '1. ' + subContent + '\n';
 
         return res;
     }

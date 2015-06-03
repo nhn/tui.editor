@@ -34,7 +34,6 @@ function tracker(runner) {
 
     var node = runner.getNode();
 
-
     for (i = 0, t = node.childNodes.length; i < t; i += 1) {
         runner.next();
         subContent += tracker(runner);
