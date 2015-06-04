@@ -1,6 +1,6 @@
 'use strict';
 
-var toMark = require('../src/index');
+var toMark = require('../src/toMark');
 
 describe('toMark', function() {
     describe('Lists', function() {

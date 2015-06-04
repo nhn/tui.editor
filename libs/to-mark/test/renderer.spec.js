@@ -116,4 +116,11 @@ describe('renderer', function() {
         convertedText = renderer.convert(runner.getNode());
         expect(convertedText).toEqual('olli');
     });
+
+    it('trim() can remove space', function() {
+        var renderer = Renderer.factory();
+
+        expect(renderer.trim('       ')).toEqual('');
+        expect(renderer.trim('    aaa   ')).toEqual('aaa');
+    });
 });

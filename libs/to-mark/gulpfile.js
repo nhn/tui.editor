@@ -24,7 +24,7 @@ var gulp = require('gulp'),
 /*
  * Browserif
  */
-var bundler = watchify(browserify('./src/js/index.js', {
+var bundler = watchify(browserify('./src/index.js', {
     //debug: true
 }));
 
@@ -47,7 +47,7 @@ bundler.on('update', bundle); // on any dep update, runs the bundler
 gulp.task('develop', bundle); // so you can run `gulp js` to build the file
 
 gulp.task('bundle', function() {
-    return browserify('./src/js/index.js')
+    return browserify('./src/index.js')
         .bundle()
         .pipe(source('toMark.js'))
         .pipe(buffer())
