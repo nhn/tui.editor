@@ -110,12 +110,20 @@ var basicRenderer = Renderer.factory({
     'BLOCKQUOTE': function(node, subContent) {
         var res, lastNremoved;
 
-        //because parent LI converter add \n too
         lastNremoved = subContent.replace(/\n$/g, '');
-
         res = lastNremoved.replace(/^/gm, '> ');
 
         return res + '\n';
+    },
+
+    //Code Block
+    'PRE CODE': function(node, subContent) {
+        var res, lastNremoved;
+
+        lastNremoved = subContent.replace(/\n$/g, '');
+        res = lastNremoved.replace(/^/gm, '    ');
+
+        return '\n' + res + '\n';
     }
 });
 

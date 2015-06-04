@@ -132,4 +132,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('> imblock1\n>   imblock2\n');
         });
     });
+
+    describe('pre-code', function() {
+        it('add oneline blockquote', function() {
+            expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2)).toEqual('\n    function(){\n        var in=0;\n    }\n');
+        });
+    });
 });
