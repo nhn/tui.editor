@@ -99,6 +99,11 @@ var basicRenderer = Renderer.factory({
         res += '1. ' + subContent + '\n';
 
         return res;
+    },
+
+    //HR
+    'HR': function() {
+        return '\n- - -\n';
     }
 });
 

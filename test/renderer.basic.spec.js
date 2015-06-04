@@ -41,6 +41,25 @@ describe('basicRenderer', function() {
         });
     });
 
+    describe('Paragraph', function() {
+        it('heading with empty text', function() {
+            expect(getMarkdownText('<h1></h1>', '')).toEqual('# \n');
+        });
+
+        it('heading with text', function() {
+            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('# heading\n');
+        });
+
+        it('H1 ~ H6', function() {
+            expect(getMarkdownText('<h1></h1>', '1')).toEqual('# 1\n');
+            expect(getMarkdownText('<h2></h2>', '2')).toEqual('## 2\n');
+            expect(getMarkdownText('<h3></h3>', '3')).toEqual('### 3\n');
+            expect(getMarkdownText('<h4></h4>', '4')).toEqual('#### 4\n');
+            expect(getMarkdownText('<h5></h5>', '5')).toEqual('##### 5\n');
+            expect(getMarkdownText('<h6></h6>', '6')).toEqual('###### 6\n');
+        });
+    });
+
     describe('Headings', function() {
         it('heading with empty text', function() {
             expect(getMarkdownText('<h1></h1>', '')).toEqual('# \n');
@@ -87,6 +106,12 @@ describe('basicRenderer', function() {
             ].join('');
 
             expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('\n    * item\n    * item');
+        });
+    });
+
+    describe('HR', function() {
+        it('add hr line', function() {
+            expect(getMarkdownText('<hr />')).toEqual('\n- - -\n');
         });
     });
 });
