@@ -15,7 +15,7 @@ var Renderer = require('./renderer');
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        return node.nodeValue;
+        return this.trim(node.nodeValue);
     },
     'EM': function(node, subContent) {
         var res;

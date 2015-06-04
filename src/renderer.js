@@ -105,6 +105,10 @@ Renderer.prototype._setConverterWithSelector = function(selector, converter) {
     rulePointer.converter = converter;
 };
 
+Renderer.prototype.trim = function(text) {
+    return text.replace(/^\s+|\s+$/gm, '');
+};
+
 Renderer.factory = function(rules) {
     var renderer = new Renderer(rules);
     return renderer;
