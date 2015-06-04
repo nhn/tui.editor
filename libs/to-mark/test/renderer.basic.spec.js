@@ -114,4 +114,22 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<hr />')).toEqual('\n- - -\n');
         });
     });
+
+    describe('blockquote', function() {
+        it('add oneline blockquote', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('> imblock\n');
+        });
+
+        it('add \n if there are no \n in text end', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('> imblock\n');
+        });
+
+        it('add multiline blockqutoe', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\nimblock2\n')).toEqual('> imblock1\n> imblock2\n');
+        });
+
+        it('add multiline content with some space to blockqutoe', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('> imblock1\n>   imblock2\n');
+        });
+    });
 });
