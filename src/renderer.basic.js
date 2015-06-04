@@ -104,6 +104,18 @@ var basicRenderer = Renderer.factory({
     //HR
     'HR': function() {
         return '\n- - -\n';
+    },
+
+    //Blockquote
+    'BLOCKQUOTE': function(node, subContent) {
+        var res, lastNremoved;
+
+        //because parent LI converter add \n too
+        lastNremoved = subContent.replace(/\n$/g, '');
+
+        res = lastNremoved.replace(/^/gm, '> ');
+
+        return res + '\n';
     }
 });
 
