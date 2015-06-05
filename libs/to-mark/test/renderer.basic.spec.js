@@ -19,6 +19,12 @@ describe('basicRenderer', function() {
         return basicRenderer.convert(runner.getNode(), subContent);
     }
 
+    describe('TEXT_NODE', function() {
+        it('Text node should not be trimed', function() {
+            expect(getMarkdownText(' im text ')).toEqual(' im text ');
+        });
+    });
+
     describe('inline', function() {
         it('em', function() {
             expect(getMarkdownText('<em></em>', 'emphasis')).toEqual('*emphasis*');
@@ -43,20 +49,20 @@ describe('basicRenderer', function() {
 
     describe('Headings', function() {
         it('heading with empty text', function() {
-            expect(getMarkdownText('<h1></h1>', '')).toEqual('# \n');
+            expect(getMarkdownText('<h1></h1>', '')).toEqual('\n# \n');
         });
 
         it('heading with text', function() {
-            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('# heading\n');
+            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('\n# heading\n');
         });
 
         it('H1 ~ H6', function() {
-            expect(getMarkdownText('<h1></h1>', '1')).toEqual('# 1\n');
-            expect(getMarkdownText('<h2></h2>', '2')).toEqual('## 2\n');
-            expect(getMarkdownText('<h3></h3>', '3')).toEqual('### 3\n');
-            expect(getMarkdownText('<h4></h4>', '4')).toEqual('#### 4\n');
-            expect(getMarkdownText('<h5></h5>', '5')).toEqual('##### 5\n');
-            expect(getMarkdownText('<h6></h6>', '6')).toEqual('###### 6\n');
+            expect(getMarkdownText('<h1></h1>', '1')).toEqual('\n# 1\n');
+            expect(getMarkdownText('<h2></h2>', '2')).toEqual('\n## 2\n');
+            expect(getMarkdownText('<h3></h3>', '3')).toEqual('\n### 3\n');
+            expect(getMarkdownText('<h4></h4>', '4')).toEqual('\n#### 4\n');
+            expect(getMarkdownText('<h5></h5>', '5')).toEqual('\n##### 5\n');
+            expect(getMarkdownText('<h6></h6>', '6')).toEqual('\n###### 6\n');
         });
     });
 
@@ -98,19 +104,19 @@ describe('basicRenderer', function() {
 
     describe('blockquote', function() {
         it('add oneline blockquote', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('> imblock\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('\n> imblock\n');
         });
 
         it('add \n if there are no \n in text end', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('> imblock\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('\n> imblock\n');
         });
 
         it('add multiline blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\nimblock2\n')).toEqual('> imblock1\n> imblock2\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\nimblock2\n')).toEqual('\n> imblock1\n> imblock2\n');
         });
 
         it('add multiline content with some space to blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('> imblock1\n>   imblock2\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('\n> imblock1\n>   imblock2\n');
         });
     });
 

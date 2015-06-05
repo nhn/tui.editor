@@ -15,7 +15,7 @@ var Renderer = require('./renderer');
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        return this.trim(node.nodeValue);
+        return node.nodeValue;
     },
     'EM': function(node, subContent) {
         var res;
@@ -69,7 +69,7 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return res + '\n';
+        return '\n' + res + '\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
         return '<h1>' + node.innerHTML + '</h1>';
@@ -113,7 +113,7 @@ var basicRenderer = Renderer.factory({
         lastNremoved = subContent.replace(/\n$/g, '');
         res = lastNremoved.replace(/^/gm, '> ');
 
-        return res + '\n';
+        return '\n' + res + '\n';
     },
 
     //Code Block

@@ -16,14 +16,18 @@ var DomRunner = require('./domRunner'),
  * @return {string} converted markdown text
  */
 function toMark(htmlStr) {
-    var runner = new DomRunner(toDom(htmlStr)),
+    var runner = new DomRunner(toDom(htmlStr.replace(/^[\s\r\n\t]+|[\s\r\n\t]+$/g, ''))),
         markdownContent = '';
 
     while (runner.next()) {
         markdownContent += tracker(runner);
     }
 
-    return markdownContent;
+    return finalize(markdownContent);
+}
+
+function finalize(text) {
+    return text.replace(/^[\n]+|[\n]+$/g, '');
 }
 
 function tracker(runner) {

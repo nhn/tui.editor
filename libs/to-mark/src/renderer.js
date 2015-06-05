@@ -106,7 +106,7 @@ Renderer.prototype._setConverterWithSelector = function(selector, converter) {
 };
 
 Renderer.prototype.trim = function(text) {
-    return text.replace(/^\s+|\s+$/gm, '');
+    return text.replace(/^[\s\r\n\t]+|[\s\r\n\t]+$/g, '');
 };
 
 Renderer.factory = function(rules) {
