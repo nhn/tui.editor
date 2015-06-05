@@ -7,8 +7,13 @@ describe('toMark', function() {
         expect(toMark('<h1>Hello World!</h1>')).toEqual('# Hello World!');
     });
 
-    it('html string should be trimed', function() {
-        expect(toMark('     <h1>Hello World!</h1>    \n\t')).toEqual('# Hello World!');
+    it('html string should be trimed and remove all newline, tab characters', function() {
+        expect(toMark('     <h1>Hello\n World!\n\t</h1>    \n\t')).toEqual('# Hello World!');
+    });
+
+    it('', function() {
+        expect(toMark('<blockquote><p>imbq<br /></p></blockquote>'))
+            .toEqual('> imbq');
     });
 
     xit('nbsp;', function() {

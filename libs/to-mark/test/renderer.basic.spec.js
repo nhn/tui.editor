@@ -67,6 +67,10 @@ describe('basicRenderer', function() {
     });
 
     describe('Lists', function() {
+        it('ul, ol', function() {
+            expect(getMarkdownText('<ol><li></li></ol>', '* 1\n')).toEqual('\n* 1\n\n');
+            expect(getMarkdownText('<ul><li></li></ul>', '1. 1\n')).toEqual('\n1. 1\n\n');
+        });
         it('ul li', function() {
             expect(getMarkdownText('<ul><li></li></ul>', '1', 2)).toEqual('* 1\n');
         });
@@ -123,6 +127,16 @@ describe('basicRenderer', function() {
     describe('pre-code', function() {
         it('add oneline blockquote', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2)).toEqual('\n    function(){\n        var in=0;\n    }\n');
+        });
+    });
+
+    describe('P', function() {
+        it('wrap newlines', function() {
+            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n');
+        });
+
+        it('pass content when sone conditions', function() {
+            expect(getMarkdownText('<blockquote><p></p></blockquote>', 'paragraph', 2)).toEqual('paragraph');
         });
     });
 });

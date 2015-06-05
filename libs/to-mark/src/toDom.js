@@ -10,11 +10,14 @@
  * toDom
  * @exports toDom
  * @param {string} htmlString HTML string
- * @return {DOMElement} dom element
+ * @return {DOMElement[]} dom element
  */
 function toDom(htmlString) {
     var wrapper = document.createElement('div');
+
     wrapper.innerHTML = htmlString;
+    wrapper.__htmlRootByToMark = true;
+
     return wrapper;
 }
 

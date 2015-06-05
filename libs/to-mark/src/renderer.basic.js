@@ -56,6 +56,14 @@ var basicRenderer = Renderer.factory({
         return res;
     },
 
+    //Paragraphs
+    'P': function(node, subContent) {
+        return '\n' + subContent + '\n';
+    },
+    'BLOCKQUOTE P': function(node, subContent) {
+        return subContent;
+    },
+
     //Headings
     'H1, H2, H3, H4, H5, H6': function(node, subContent) {
         var res = '',
@@ -76,6 +84,9 @@ var basicRenderer = Renderer.factory({
     },
 
     //List
+    'UL, OL': function(node, subContent) {
+        return '\n' + subContent + '\n';
+    },
     'LI OL, LI UL': function(node, subContent) {
         var res, lastNremoved;
 
