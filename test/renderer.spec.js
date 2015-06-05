@@ -117,10 +117,11 @@ describe('renderer', function() {
         expect(convertedText).toEqual('olli');
     });
 
-    it('trim() can remove space', function() {
+    it('textNodeTrim() can remove space, tab, new line character from string', function() {
         var renderer = Renderer.factory();
 
-        expect(renderer.trim('       ')).toEqual('');
-        expect(renderer.trim('    aaa   ')).toEqual('aaa');
+        expect(renderer.trim('aa\r\n')).toEqual('aa');
+        expect(renderer.trim('\t')).toEqual('');
+        expect(renderer.trim(' aa aa ')).toEqual('aa aa');
     });
 });

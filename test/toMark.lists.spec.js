@@ -11,7 +11,7 @@ describe('toMark', function() {
                 '</ul>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('* TEST\n');
+            expect(toMark(htmlStr)).toEqual('* TEST');
         });
 
         it('Ordered List can be converted', function() {
@@ -21,7 +21,7 @@ describe('toMark', function() {
                 '</ol>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('1. TEST\n');
+            expect(toMark(htmlStr)).toEqual('1. TEST');
         });
 
         it('Nested List can be converted', function() {
@@ -36,7 +36,7 @@ describe('toMark', function() {
                 '</ol>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2-1\n    * DEPTH2-2\n');
+            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2-1\n    * DEPTH2-2');
         });
 
         it('Multiple Nesting', function() {
@@ -57,7 +57,7 @@ describe('toMark', function() {
                     '</li>',
                 '</ol>'
             ].join('');
-            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\n        * DEPTH3\n            * DEPTH4\n');
+            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\n        * DEPTH3\n            * DEPTH4');
         });
 
         it('if haadings are nested in li, convert to inline html', function() {
@@ -69,7 +69,7 @@ describe('toMark', function() {
                 '</ul>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('* <h1>nested heading</h1>\n');
+            expect(toMark(htmlStr)).toEqual('* <h1>nested heading</h1>');
         });
     });
 });
