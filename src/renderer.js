@@ -66,20 +66,32 @@ Renderer.prototype.convert = function(node, subContent) {
 };
 
 Renderer.prototype._getConverter = function (node) {
-    var nodePointer = node.parentNode,
+    var prevNode = this._getPrevNode(node),
         rulePointer = this.rules[node.tagName || 'TEXT_NODE'],
         converter;
 
     if (rulePointer) {
-        while (nodePointer && rulePointer[nodePointer.tagName]) {
-            rulePointer = rulePointer[nodePointer.tagName];
-            nodePointer = nodePointer.parentNode;
+        while (prevNode && this._getNextRule(rulePointer, prevNode.tagName)) {
+            rulePointer = this._getNextRule(rulePointer, prevNode.tagName);
+            prevNode = this._getPrevNode(prevNode);
         }
 
         converter = rulePointer.converter;
     }
 
     return converter;
+};
+
+Renderer.prototype._getNextRule = function(ruleObj, ruleName) {
+    return ruleObj[ruleName];
+};
+
+Renderer.prototype._getPrevNode = function(node) {
+    var parentNode = node.parentNode;
+
+    if (parentNode && !parentNode.__htmlRootByToMark) {
+        return parentNode;
+    }
 };
 
 Renderer.prototype._setConverterWithSelector = function(selector, converter) {

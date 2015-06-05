@@ -16,7 +16,7 @@ var DomRunner = require('./domRunner'),
  * @return {string} converted markdown text
  */
 function toMark(htmlStr) {
-    var runner = new DomRunner(toDom(htmlStr.replace(/^[\s\r\n\t]+|[\s\r\n\t]+$/g, ''))),
+    var runner = new DomRunner(toDom(htmlStr.replace(/^[\s]+|[\s]+$|[\r\n\t]/g, ''))),
         markdownContent = '';
 
     while (runner.next()) {

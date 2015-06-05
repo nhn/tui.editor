@@ -117,6 +117,55 @@ describe('renderer', function() {
         expect(convertedText).toEqual('olli');
     });
 
+    it('nesting rules cant apply to element that has __htmlRootByToMark property which is root of html have', function() {
+        var convertedText,
+            renderer = Renderer.factory({
+                'DIV P': function() {
+                    return 'div p';
+                },
+                'P': function() {
+                    return 'p';
+                }
+            });
+
+        runner = new DomRunner(toDom('<p></p>'));
+
+        runner.next();
+        convertedText = renderer.convert(runner.getNode());
+
+        expect(convertedText).toEqual('p');
+    });
+
+    //이기능이 적용 되면 *에서 빠져야할것들에 대한 처리가 또들어가야한다
+    //특정 html코드가 div로 많이 감싸져있는 경우 div는 *에서 빠져야하는데 포함되어 잘못 셀렉트 될여지가 많음
+    //div외에도 레이아웃을 관장하는 태그들에대한 모든처리가필요함(특히 html5 시멘틱 태그들)
+    //임의의 라는 *기능이 사실상 임의(any)가 아님..
+    //우선 기능 제외
+    xit('* can be used for rule selector,it means any element but root element to parse', function() {
+        var convertedText,
+            renderer = Renderer.factory({
+                '* EM': function() {
+                    return 'anyElementAndEM';
+                }
+            });
+
+        runner = new DomRunner(toDom('<h1><EM></EM></h1>'));
+        runner.next();
+        runner.next();
+
+        convertedText = renderer.convert(runner.getNode());
+
+        expect(convertedText).toEqual('anyElementAndEM');
+
+        runner = new DomRunner(toDom('<div><EM></EM></div>'));
+        runner.next();
+        runner.next();
+
+        convertedText = renderer.convert(runner.getNode());
+
+        expect(convertedText).toBeUndefined();
+    });
+
     it('textNodeTrim() can remove space, tab, new line character from string', function() {
         var renderer = Renderer.factory();
 
