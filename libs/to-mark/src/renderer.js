@@ -125,6 +125,14 @@ Renderer.prototype.trim = function(text) {
     return text.replace(/^[\s\r\n\t]+|[\s\r\n\t]+$/g, '');
 };
 
+Renderer.prototype.processText = function(text) {
+    text = text.replace(/[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g, function(matched){ // eslint-disable-line space-before-blocks
+        return '\\' + matched;
+    });
+
+    return text;
+};
+
 Renderer.factory = function(rules) {
     return new Renderer(rules);
 };

@@ -197,4 +197,18 @@ describe('renderer', function() {
         expect(renderer.trim('\t')).toEqual('');
         expect(renderer.trim(' aa aa ')).toEqual('aa aa');
     });
+
+    it('processText() can process html text node for markdown text', function() {
+        var renderer = Renderer.factory();
+
+        expect(renderer.processText('im *text*')).toEqual('im \\*text\\*');
+        expect(renderer.processText('im (text)')).toEqual('im \\(text\\)');
+        expect(renderer.processText('im [text]')).toEqual('im \\[text\\]');
+        expect(renderer.processText('im {text}')).toEqual('im \\{text\\}');
+        expect(renderer.processText('im _text_')).toEqual('im \\_text\\_');
+        expect(renderer.processText('im ## text')).toEqual('im \\#\\# text');
+        expect(renderer.processText('im ` text')).toEqual('im \\` text');
+        expect(renderer.processText('im + text -')).toEqual('im \\+ text \\-');
+        expect(renderer.processText('im . text !')).toEqual('im \\. text \\!');
+    });
 });
