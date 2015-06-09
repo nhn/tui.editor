@@ -22,7 +22,6 @@ function forEachOwnProperties(obj, iteratee, context) {
 /**
  * Renderer
  * @exports Renderer
- * @augments
  * @constructor
  * @param {object} rules rules to add
  * @class
@@ -40,7 +39,6 @@ Renderer.prototype.addRule = function(selectorString, converter) {
         selector = selectors.pop();
 
     while (selector) {
-        //this.rules[selector] = converter;
         this._setConverterWithSelector(selector, converter);
         selector = selectors.pop();
     }
@@ -66,17 +64,16 @@ Renderer.prototype.convert = function(node, subContent) {
 };
 
 Renderer.prototype._getConverter = function (node) {
-    var prevNode = this._getPrevNode(node),
-        rulePointer = this.rules[node.tagName || 'TEXT_NODE'],
+    var rulePointer = this.rules,
         converter;
 
-    if (rulePointer) {
-        while (prevNode && this._getNextRule(rulePointer, prevNode.tagName)) {
-            rulePointer = this._getNextRule(rulePointer, prevNode.tagName);
-            prevNode = this._getPrevNode(prevNode);
-        }
+    while (node && rulePointer) {
+        rulePointer = this._getNextRule(rulePointer, this._getRuleNameFromNode(node));
+        node = this._getPrevNode(node);
 
-        converter = rulePointer.converter;
+        if (rulePointer && rulePointer.converter) {
+            converter = rulePointer.converter;
+        }
     }
 
     return converter;
@@ -84,6 +81,10 @@ Renderer.prototype._getConverter = function (node) {
 
 Renderer.prototype._getNextRule = function(ruleObj, ruleName) {
     return ruleObj[ruleName];
+};
+
+Renderer.prototype._getRuleNameFromNode = function(node) {
+    return node.tagName || 'TEXT_NODE';
 };
 
 Renderer.prototype._getPrevNode = function(node) {
@@ -94,27 +95,30 @@ Renderer.prototype._getPrevNode = function(node) {
     }
 };
 
-Renderer.prototype._setConverterWithSelector = function(selector, converter) {
-    var selectorIndex,
-        ruleElem,
-        rulePointer = this.rules;
+Renderer.prototype._setConverterWithSelector = function(selectors, converter) {
+    var rulePointer = this.rules;
 
-    selector = selector.split(' ');
-    selectorIndex = selector.length - 1;
-
-    while (selectorIndex >= 0) {
-        ruleElem = selector[selectorIndex];
-
+    this._eachSelector(selectors, function(ruleElem) {
         if (!rulePointer[ruleElem]) {
             rulePointer[ruleElem] = {};
         }
 
         rulePointer = rulePointer[ruleElem];
-
-        selectorIndex -= 1;
-    }
+    });
 
     rulePointer.converter = converter;
+};
+
+Renderer.prototype._eachSelector = function(selectors, iteratee) {
+    var selectorIndex;
+
+    selectors = selectors.split(' ');
+    selectorIndex = selectors.length - 1;
+
+    while (selectorIndex >= 0) {
+        iteratee(selectors[selectorIndex]);
+        selectorIndex -= 1;
+    }
 };
 
 Renderer.prototype.trim = function(text) {
@@ -122,8 +126,7 @@ Renderer.prototype.trim = function(text) {
 };
 
 Renderer.factory = function(rules) {
-    var renderer = new Renderer(rules);
-    return renderer;
+    return new Renderer(rules);
 };
 
 module.exports = Renderer;

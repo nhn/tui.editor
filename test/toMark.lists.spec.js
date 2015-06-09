@@ -57,6 +57,7 @@ describe('toMark', function() {
                     '</li>',
                 '</ol>'
             ].join('');
+
             expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\n        * DEPTH3\n            * DEPTH4');
         });
 
