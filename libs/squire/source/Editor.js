@@ -1673,7 +1673,7 @@ proto._onPaste = function ( event ) {
         style: 'position: absolute; overflow: hidden; top:' +
             ( body.scrollTop +
                 ( startBlock ? startBlock.getBoundingClientRect().top : 0 ) ) +
-            'px; left: 0; width: 1px; height: 1px;'
+            'px; right: 150%; width: 1px; height: 1px;'
     });
     body.appendChild( pasteArea );
     range.selectNodeContents( pasteArea );
