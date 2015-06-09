@@ -1685,10 +1685,20 @@ proto._onPaste = function ( event ) {
     setTimeout( function () {
         try {
             // Get the pasted content and clean
-            var frag = empty( detach( pasteArea ) ),
-                first = frag.firstChild,
-                range = self._createRange(
-                    startContainer, startOffset, endContainer, endOffset );
+            var frag = self._doc.createDocumentFragment(),
+                next = pasteArea,
+                first, range;
+
+            // #88: Chrome can apparently split the paste area if certain
+            // content is inserted; gather them all up.
+            while ( pasteArea = next ) {
+                next = pasteArea.nextSibling;
+                frag.appendChild( empty( detach( pasteArea ) ) );
+            }
+
+            first = frag.firstChild;
+            range = self._createRange(
+                startContainer, startOffset, endContainer, endOffset );
 
             // Was anything actually pasted?
             if ( first ) {
