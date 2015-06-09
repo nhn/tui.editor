@@ -21,7 +21,11 @@ describe('basicRenderer', function() {
 
     describe('TEXT_NODE', function() {
         it('Text node should not be trimed', function() {
-            expect(getMarkdownText(' im text ')).toEqual(' im text ');
+            //&nbsp space and just text space have different char code
+            expect(getMarkdownText('&nbsp;im text').replace(/[\s]/g, ' ')).toEqual(' im text');
+            expect(getMarkdownText('&nbsp;im &nbsp;text&nbsp;').replace(/[\s]/g, ' ')).toEqual(' im  text ');
+
+            //expect(getMarkdownText('<p>im <em> text</em></p>', null, 4).replace(/[\s]/g, ' ')).toEqual('text');
         });
     });
 
