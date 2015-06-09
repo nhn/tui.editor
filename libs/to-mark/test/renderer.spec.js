@@ -87,6 +87,13 @@ describe('renderer', function() {
         convertedText = renderer.convert(runner.getNode());
 
         expect(convertedText).toEqual('markdownText');
+
+        runner = new DomRunner(toDom('<h6>test</h6>'));
+        runner.next();
+
+        convertedText = renderer.convert(runner.getNode());
+
+        expect(convertedText).toEqual('markdownText');
     });
 
     it('rules can be assigned using css style nest element', function() {
@@ -117,7 +124,7 @@ describe('renderer', function() {
         expect(convertedText).toEqual('olli');
     });
 
-    it('nesting rules cant apply to element that has __htmlRootByToMark property which is root of html have', function() {
+    it('nesting rules cant apply over root element of html', function() {
         var convertedText,
             renderer = Renderer.factory({
                 'DIV P': function() {
@@ -134,6 +141,23 @@ describe('renderer', function() {
         convertedText = renderer.convert(runner.getNode());
 
         expect(convertedText).toEqual('p');
+    });
+
+    it('Text node uses rule name "TEXT_NODE"', function() {
+        var convertedText,
+            renderer = Renderer.factory({
+                'TEXT_NODE': function() {
+                    return 'text node';
+                }
+            });
+
+        runner = new DomRunner(toDom('<p>tttt</p>'));
+
+        runner.next();
+        runner.next();
+        convertedText = renderer.convert(runner.getNode());
+
+        expect(convertedText).toEqual('text node');
     });
 
     //이기능이 적용 되면 *에서 빠져야할것들에 대한 처리가 또들어가야한다

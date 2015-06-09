@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Implements toDom
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -20,6 +19,5 @@ function toDom(htmlString) {
 
     return wrapper;
 }
-
 
 module.exports = toDom;
