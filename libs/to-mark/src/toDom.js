@@ -8,13 +8,19 @@
 /**
  * toDom
  * @exports toDom
- * @param {string} htmlString HTML string
+ * @param {string} html HTML string
  * @return {DOMElement[]} dom element
  */
-function toDom(htmlString) {
+function toDom(html) {
     var wrapper = document.createElement('div');
 
-    wrapper.innerHTML = htmlString;
+    //trim text
+    html = html.replace(/^[\s]+|[\s]+$|[\r\n\t]/g, '');
+
+    //remove spaces more than 1(if need more space, must use &nbsp)
+    html = html.replace(/[\s]+/g, ' ');
+
+    wrapper.innerHTML = html;
     wrapper.__htmlRootByToMark = true;
 
     return wrapper;

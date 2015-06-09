@@ -3,6 +3,16 @@
 var toDom = require('../src/toDom');
 
 describe('toDom', function() {
+    it('trim html strings', function() {
+        var dom = toDom('   <h1>Hello World!</h1>   ');
+        expect(dom.innerHTML).toEqual('<h1>Hello World!</h1>');
+    });
+
+    it('remove text nodes spaces more than 1', function() {
+        var dom = toDom('<h1>Hello            World!</h1>');
+        expect(dom.innerHTML).toEqual('<h1>Hello World!</h1>');
+    });
+
     it('convert block tag to dom', function() {
         var dom = toDom('<h1>Hello World!</h1>');
         var node = dom.childNodes[0];
