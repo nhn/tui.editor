@@ -93,7 +93,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<ol><li>1</li></ol>', '1', 2)).toEqual('1. 1\n');
         });
 
-        fit('ol multiple li', function() {
+        it('ol multiple li', function() {
             expect(getMarkdownText('<ol><li></li><li></li></ol>', '2', 3)).toEqual('2. 2\n');
             expect(getMarkdownText('<ol><li></li><li></li><li></li></ol>', '3', 4)).toEqual('3. 3\n');
         });
@@ -144,7 +144,7 @@ describe('basicRenderer', function() {
     });
 
     describe('pre-code', function() {
-        it('add oneline blockquote', function() {
+        it('code with some spaces', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
                 .toEqual('\n    function(){\n        var in=0;\n    }\n');
         });
