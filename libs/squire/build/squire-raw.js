@@ -3463,16 +3463,8 @@ proto.addStyles = function ( styles ) {
             style = this.createElement( 'STYLE', {
                 type: 'text/css'
             });
-        if ( style.styleSheet ) {
-            // IE8: must append to document BEFORE adding styles
-            // or you get the IE7 CSS parser!
-            head.appendChild( style );
-            style.styleSheet.cssText = styles;
-        } else {
-            // Everyone else
-            style.appendChild( this._doc.createTextNode( styles ) );
-            head.appendChild( style );
-        }
+        style.appendChild( this._doc.createTextNode( styles ) );
+        head.appendChild( style );
     }
     return this;
 };
