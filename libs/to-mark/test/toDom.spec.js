@@ -36,4 +36,3 @@ describe('toDom', function() {
         expect(dom.__htmlRootByToMark).toBe(true);
     });
 });
-

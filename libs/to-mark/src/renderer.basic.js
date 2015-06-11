@@ -15,8 +15,8 @@ var Renderer = require('./renderer');
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        console.dir(node);
-        return node.nodeValue;
+        var trimmedText = this.trim(node.nodeValue);
+        return this.getSpaceControlled(this.processText(trimmedText), node);
     },
     'EM': function(node, subContent) {
         var res;
@@ -48,6 +48,9 @@ var basicRenderer = Renderer.factory({
         res = '![' + alt + '](' + src + ')';
 
         return res;
+    },
+    'BR': function() {
+        return '  \n';
     },
     'CODE': function(node, subContent) {
         var res;
@@ -81,6 +84,7 @@ var basicRenderer = Renderer.factory({
         return '\n' + res + '\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
+        //todo 각 요소들 처리
         return '<h1>' + node.innerHTML + '</h1>';
     },
 
