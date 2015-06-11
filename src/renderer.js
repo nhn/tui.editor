@@ -5,6 +5,9 @@
 
 'use strict';
 
+var leadSpaceRx = /^\u0020/;
+var trailSpaceRx = /.+\u0020$/;
+
 function forEachOwnProperties(obj, iteratee, context) {
     var key;
 
@@ -50,6 +53,31 @@ Renderer.prototype.addRules = function(rules) {
     forEachOwnProperties(rules, function(converter, selectorString) {
         self.addRule(selectorString, converter);
     });
+};
+
+Renderer.prototype.getSpaceControlled = function(content, node) {
+    var lead = '',
+        trail = '',
+        text;
+
+    if (node.nodeType === 3) {
+        if (node.previousSibling) {
+            text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
+
+            if (trailSpaceRx.test(text) || leadSpaceRx.test(node.innerHTML || node.nodeValue)) {
+                lead = ' ';
+            }
+        }
+
+        if (node.nextSibling) {
+            text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
+            if (leadSpaceRx.test(text) || trailSpaceRx.test(node.innerHTML || node.nodeValue)) {
+                trail = ' ';
+            }
+        }
+    }
+
+    return lead + content + trail;
 };
 
 Renderer.prototype.convert = function(node, subContent) {
@@ -122,7 +150,7 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
 };
 
 Renderer.prototype.trim = function(text) {
-    return text.replace(/^[\s\r\n\t]+|[\s\r\n\t]+$/g, '');
+    return text.replace(/^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g, '');
 };
 
 Renderer.prototype.processText = function(text) {

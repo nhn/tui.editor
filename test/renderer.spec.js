@@ -190,12 +190,13 @@ describe('renderer', function() {
         expect(convertedText).toBeUndefined();
     });
 
-    it('textNodeTrim() can remove space, tab, new line character from string', function() {
+    it('trim() can remove space(not &nbsp), tab, new line character from string', function() {
         var renderer = Renderer.factory();
 
         expect(renderer.trim('aa\r\n')).toEqual('aa');
         expect(renderer.trim('\t')).toEqual('');
         expect(renderer.trim(' aa aa ')).toEqual('aa aa');
+        expect(renderer.trim(toDom('<p>Hello&nbsp; </p>').innerText)).toEqual('Hello '.replace(/\s/, '\u00a0'));
     });
 
     it('processText() can process html text node for markdown text', function() {
@@ -210,5 +211,41 @@ describe('renderer', function() {
         expect(renderer.processText('im ` text')).toEqual('im \\` text');
         expect(renderer.processText('im + text -')).toEqual('im \\+ text \\-');
         expect(renderer.processText('im . text !')).toEqual('im \\. text \\!');
+    });
+
+    it('getSpaceControlled() can control text node spaces', function() {
+        var renderer = Renderer.factory();
+
+        runner = new DomRunner(toDom('<p>Hello <em>world</em></p>'));
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+
+        runner = new DomRunner(toDom('<p>Hello <em> world</em></p>'));
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+
+        runner = new DomRunner(toDom('<p>Hello<em> world</em></p>'));
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+
+        runner = new DomRunner(toDom('<p>Hello<em>&nbsp;world</em></p>'));
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello');
+
+        runner = new DomRunner(toDom('<p><em>Hello</em> world</p>'));
+        runner.next();
+        runner.next();
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual(' world');
     });
 });

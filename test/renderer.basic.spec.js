@@ -20,12 +20,19 @@ describe('basicRenderer', function() {
     }
 
     describe('TEXT_NODE', function() {
-        it('Text node should not be trimed', function() {
-            //&nbsp space and just text space have different char code
-            expect(getMarkdownText('&nbsp;im text').replace(/[\s]/g, ' ')).toEqual(' im text');
-            expect(getMarkdownText('&nbsp;im &nbsp;text&nbsp;').replace(/[\s]/g, ' ')).toEqual(' im  text ');
+        it('Text node should trimed except &nbsp;', function() {
+            //&nbspl turns \u00a0 in dom node
+            expect(getMarkdownText('&nbsp;im text')).toEqual('\u00a0im text');
+            expect(getMarkdownText(' &nbsp;im text ')).toEqual('\u00a0im text');
+            expect(getMarkdownText('&nbsp;im &nbsp;text&nbsp;')).toEqual('\u00a0im \u00a0text\u00a0');
+        });
 
-            //expect(getMarkdownText('<p>im <em> text</em></p>', null, 4).replace(/[\s]/g, ' ')).toEqual('text');
+        it('텍스트노드와 나란히 있는 태그안의 공백은 텍스트노드의 공백한개로 대체된다', function() {
+            expect(getMarkdownText('<h1>hello <em>world</em></h1>', null, 2)).toEqual('hello ');
+            expect(getMarkdownText('<h1>hello<em> world</em></h1>', null, 2)).toEqual('hello ');
+            expect(getMarkdownText('<h1>hello&nbsp;<em> world</em></h1>', null, 2)).toEqual('hello\u00a0 ');
+            expect(getMarkdownText('<h1><em>hello</em> world</em></h1>', null, 4)).toEqual(' world');
+            expect(getMarkdownText('<h1><em>hello </em>world</em></h1>', null, 4)).toEqual(' world');
         });
     });
 
@@ -48,6 +55,9 @@ describe('basicRenderer', function() {
 
         it('code', function() {
             expect(getMarkdownText('<code></code>', 'imcode')).toEqual('`imcode`');
+        });
+        it('br', function() {
+            expect(getMarkdownText('<br />')).toEqual('  \n');
         });
     });
 
@@ -130,7 +140,8 @@ describe('basicRenderer', function() {
 
     describe('pre-code', function() {
         it('add oneline blockquote', function() {
-            expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2)).toEqual('\n    function(){\n        var in=0;\n    }\n');
+            expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
+                .toEqual('\n    function(){\n        var in=0;\n    }\n');
         });
     });
 
