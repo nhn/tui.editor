@@ -110,9 +110,18 @@ var basicRenderer = Renderer.factory({
         return res;
     },
     'OL LI': function(node, subContent) {
-        var res = '';
+        var res = '',
+            liCounter = 1;
 
-        res += '1. ' + subContent + '\n';
+        while (node.previousSibling) {
+            node = node.previousSibling;
+
+            if (node.nodeType === 1 && node.tagName === 'LI') {
+                liCounter += 1;
+            }
+        }
+
+        res += liCounter + '. ' + subContent + '\n';
 
         return res;
     },

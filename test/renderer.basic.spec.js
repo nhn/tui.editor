@@ -93,8 +93,9 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<ol><li>1</li></ol>', '1', 2)).toEqual('1. 1\n');
         });
 
-        xit('ol multiple li', function() {
-            expect(getMarkdownText('<ol><li>1</li><li>2</li></ol>')).toEqual('1. 1\n2. 2\n');
+        fit('ol multiple li', function() {
+            expect(getMarkdownText('<ol><li></li><li></li></ol>', '2', 3)).toEqual('2. 2\n');
+            expect(getMarkdownText('<ol><li></li><li></li><li></li></ol>', '3', 4)).toEqual('3. 3\n');
         });
 
         it('nested list', function() {
