@@ -60,7 +60,7 @@ DomRunner.prototype.getNodeText = function() {
 };
 
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
-    return !node && current !== this._root;
+    return !node && current.parentNode !== this._root;
 };
 
 DomRunner.prototype._getNextNode = function(current) {

@@ -126,7 +126,7 @@ var basicRenderer = Renderer.factory({
     'BLOCKQUOTE': function(node, subContent) {
         var res, lastNremoved;
 
-        lastNremoved = subContent.replace(/\n$/g, '');
+        lastNremoved = this.trim(subContent);
         res = lastNremoved.replace(/^/gm, '> ');
 
         return '\n' + res + '\n';
