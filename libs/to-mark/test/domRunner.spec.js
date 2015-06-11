@@ -312,6 +312,31 @@ describe('domRunner', function() {
         });
     });
 
+    describe('iterate stop when next node is root node', function() {
+        beforeEach(function() {
+            var htmlStr = [
+                '<div>',
+                    '<p>myli <strong>bold</strong></p>',
+                '</div>',
+                '<pre>next</pre>'
+            ].join('');
+
+            var dom = toDom(htmlStr);
+
+            domRunner = new DomRunner(toDom(dom.firstChild));
+        });
+
+        it('no more next over root', function() {
+            domRunner.next();
+            domRunner.next();
+            domRunner.next();
+            domRunner.next();
+            domRunner.next(); //root
+
+            expect(domRunner.getNode()).toEqual(null);
+        });
+    });
+
     describe('get current node', function() {
         beforeEach(function() {
             domRunner = new DomRunner(toDom('<div>currentText</div>'));

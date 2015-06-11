@@ -130,11 +130,15 @@ describe('basicRenderer', function() {
         });
 
         it('add multiline blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\nimblock2\n')).toEqual('\n> imblock1\n> imblock2\n');
+            expect(getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n')).toEqual('\n> imblock1\n> imblock2\n');
         });
 
         it('add multiline content with some space to blockqutoe', function() {
             expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('\n> imblock1\n>   imblock2\n');
+        });
+
+        it('nested blockqutoe', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n'))).toEqual('\n> > imblock1\n> > imblock2\n');
         });
     });
 
