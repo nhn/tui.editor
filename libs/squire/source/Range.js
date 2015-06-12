@@ -187,15 +187,13 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
     // Move range down into text nodes
     moveRangeBoundariesDownTree( range );
 
-    // If inline, just insert at the current position.
     if ( allInline ) {
+        // If inline, just insert at the current position.
         insertNodeInRange( range, frag );
         range.collapse( false );
-    }
-    // Otherwise, split up to blockquote (if a parent) or body, insert inline
-    // before and after split and insert block in between split, then merge
-    // containers.
-    else {
+    } else {
+        // Otherwise...
+        // 1. Split up to blockquote (if a parent) or body
         var splitPoint = range.startContainer,
             nodeAfterSplit = split( splitPoint, range.startOffset,
                 getNearest( splitPoint.parentNode, 'BLOCKQUOTE' ) ||
@@ -206,8 +204,10 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
             endContainer = nodeAfterSplit,
             endOffset = 0,
             parent = nodeAfterSplit.parentNode,
-            child, node;
+            child, node, prev, next;
 
+        // 2. Move down into edge either side of split and insert any inline
+        // nodes at the beginning/end of the fragment
         while ( ( child = startContainer.lastChild ) &&
                 child.nodeType === ELEMENT_NODE &&
                 child.nodeName !== 'BR' ) {
@@ -227,32 +227,58 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
             endOffset += 1;
         }
 
-        // Fix cursor then insert block(s)
+        // 3. Fix cursor then insert block(s) in the fragment
         node = frag;
         while ( node = getNextBlock( node ) ) {
             fixCursor( node );
         }
         parent.insertBefore( frag, nodeAfterSplit );
 
-        // Remove empty nodes created by split and merge inserted containers
-        // with edges of split
-        node = nodeAfterSplit.previousSibling;
-        if ( !nodeAfterSplit.textContent ) {
-            parent.removeChild( nodeAfterSplit );
-        } else {
-            mergeContainers( nodeAfterSplit );
+        // 4. Remove empty nodes created either side of split, then
+        // merge containers at the edges.
+        next = nodeBeforeSplit.nextSibling;
+        node = getPreviousBlock( next );
+        if ( !/\S/.test( node.textContent ) ) {
+            do {
+                parent = node.parentNode;
+                parent.removeChild( node );
+                node = parent;
+            } while ( parent && !parent.lastChild &&
+                parent.nodeName !== 'BODY' );
         }
-        if ( !nodeAfterSplit.parentNode ) {
-            endContainer = node;
-            endOffset = getLength( endContainer );
+        if ( !nodeBeforeSplit.parentNode ) {
+            nodeBeforeSplit = next.previousSibling;
+        }
+        if ( !startContainer.parentNode ) {
+            startContainer = nodeBeforeSplit;
+            startOffset = nodeBeforeSplit.childNodes.length;
+        }
+        // Merge inserted containers with edges of split
+        if ( isContainer( next ) ) {
+            mergeContainers( next );
         }
 
-        if ( !nodeBeforeSplit.textContent) {
-            startContainer = nodeBeforeSplit.nextSibling;
-            startOffset = 0;
-            parent.removeChild( nodeBeforeSplit );
-        } else {
-            mergeContainers( nodeBeforeSplit );
+        prev = nodeAfterSplit.previousSibling;
+        node = isBlock( nodeAfterSplit ) ?
+            nodeAfterSplit : getNextBlock( nodeAfterSplit );
+        if ( !/\S/.test( node.textContent ) ) {
+            do {
+                parent = node.parentNode;
+                parent.removeChild( node );
+                node = parent;
+            } while ( parent && !parent.lastChild &&
+                parent.nodeName !== 'BODY' );
+        }
+        if ( !nodeAfterSplit.parentNode ) {
+            nodeAfterSplit = prev.nextSibling;
+        }
+        if ( !endOffset ) {
+            endContainer = prev;
+            endOffset = prev.childNodes.length;
+        }
+        // Merge inserted containers with edges of split
+        if ( isContainer( nodeAfterSplit ) ) {
+            mergeContainers( nodeAfterSplit );
         }
 
         range.setStart( startContainer, startOffset );
