@@ -301,6 +301,20 @@ proto._createRange =
     return domRange;
 };
 
+proto._moveCursorTo = function ( toStart ) {
+    var body = this._body,
+        range = this._createRange( body, toStart ? 0 : body.childNodes.length );
+    moveRangeBoundariesDownTree( range );
+    this.setSelection( range );
+    return this;
+};
+proto.moveCursorToStart = function () {
+    return this._moveCursorTo( true );
+};
+proto.moveCursorToEnd = function () {
+    return this._moveCursorTo( false );
+};
+
 proto.setSelection = function ( range ) {
     if ( range ) {
         // iOS bug: if you don't focus the iframe before setting the

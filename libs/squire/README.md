@@ -51,7 +51,7 @@ pass a set of attributes to apply to each default block:
         blockAttributes: { style: 'font-size: 16px;' }
     })
 
-If using the simple setup, call `editor.setConfig(…);` with your 
+If using the simple setup, call `editor.setConfig(…);` with your
 config object instead. Be sure to do this *before* calling `editor.setHTML()`.
 
 ### Determining button state
@@ -188,6 +188,20 @@ Changes the current selection/cursor position.
 The method takes one argument:
 
 * **range**: The [W3C Range object](https://developer.mozilla.org/en-US/docs/Web/API/Range) representing the desired selection.
+
+Returns self (the Squire instance).
+
+### moveCursorToStart
+
+Removes any current selection and moves the cursor to the very beginning of the
+document.
+
+Returns self (the Squire instance).
+
+### moveCursorToEnd
+
+Removes any current selection and moves the cursor to the very end of the
+document.
 
 Returns self (the Squire instance).
 
