@@ -1552,7 +1552,7 @@ var cleanupBRs = function ( root ) {
     var brs = root.querySelectorAll( 'BR' ),
         brBreaksLine = [],
         l = brs.length,
-        i, br, block;
+        i, br, parent;
 
     // Must calculate whether the <br> breaks a line first, because if we
     // have two <br>s next to each other, after the first one is converted
@@ -1565,31 +1565,16 @@ var cleanupBRs = function ( root ) {
     while ( l-- ) {
         br = brs[l];
         // Cleanup may have removed it
-        block = br.parentNode;
-        if ( !block ) { continue; }
-        while ( isInline( block ) ) {
-            block = block.parentNode;
-        }
-        // If this is not inside a block, replace it by wrapping
-        // inlines in a <div>.
-        if ( !isBlock( block ) ) {
-            fixContainer( block );
-        }
-        else {
-            // If it doesn't break a line, just remove it; it's not doing
-            // anything useful. We'll add it back later if required by the
-            // browser. If it breaks a line, split the block or leave it as
-            // appropriate.
-            if ( brBreaksLine[l] ) {
-                // If in a <div>, split, but anywhere else we might change
-                // the formatting too much (e.g. <li> -> to two list items!)
-                // so just play it safe and leave it.
-                if ( block.nodeName !== 'DIV' ) {
-                    continue;
-                }
-                split( br.parentNode, br, block.parentNode );
-            }
+        parent = br.parentNode;
+        if ( !parent ) { continue; }
+        // If it doesn't break a line, just remove it; it's not doing
+        // anything useful. We'll add it back later if required by the
+        // browser. If it breaks a line, wrap the content in div tags
+        // and replace the brs.
+        if ( !brBreaksLine[l] ) {
             detach( br );
+        } else if ( !isInline( parent ) ) {
+            fixContainer( parent );
         }
     }
 };
