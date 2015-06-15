@@ -7,6 +7,9 @@
 
 var Renderer = require('./renderer');
 
+var lastReturnRx = /\n$/g,
+    startOfLinesRx = /^/gm;
+
 /**
  * basicRenderer
  * Basic Markdown Renderer
@@ -99,9 +102,9 @@ var basicRenderer = Renderer.factory({
         var res, lastNremoved;
 
         //because parent LI converter add \n too
-        lastNremoved = subContent.replace(/\n$/g, '');
+        lastNremoved = subContent.replace(lastReturnRx, '');
 
-        res = lastNremoved.replace(/^/gm, '    ');
+        res = lastNremoved.replace(startOfLinesRx, '    ');
 
         return '\n' + res;
     },
@@ -136,10 +139,10 @@ var basicRenderer = Renderer.factory({
 
     //Blockquote
     'BLOCKQUOTE': function(node, subContent) {
-        var res, lastNremoved;
+        var res, trimmedText;
 
-        lastNremoved = this.trim(subContent);
-        res = lastNremoved.replace(/^/gm, '> ');
+        trimmedText = this.trim(subContent);
+        res = trimmedText.replace(startOfLinesRx, '> ');
 
         return '\n' + res + '\n';
     },
@@ -148,8 +151,8 @@ var basicRenderer = Renderer.factory({
     'PRE CODE': function(node, subContent) {
         var res, lastNremoved;
 
-        lastNremoved = subContent.replace(/\n$/g, '');
-        res = lastNremoved.replace(/^/gm, '    ');
+        lastNremoved = subContent.replace(lastReturnRx, '');
+        res = lastNremoved.replace(startOfLinesRx, '    ');
 
         return '\n' + res + '\n';
     }
