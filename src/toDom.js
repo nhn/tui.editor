@@ -5,6 +5,9 @@
 
 'use strict';
 
+var findFirstLastSpaceOrAllReturnsRx = /^[\s]+|[\s]+$|[\r\n\t]/g,
+    findAllSpacesMoreThanOneRx = /[\s]+/g;
+
 /**
  * toDom
  * @exports toDom
@@ -18,10 +21,10 @@ function toDom(html) {
         wrapper = document.createElement('div');
 
         //trim text
-        html = html.replace(/^[\s]+|[\s]+$|[\r\n\t]/g, '');
+        html = html.replace(findFirstLastSpaceOrAllReturnsRx, '');
 
         //remove spaces more than 1(if need more space, must use &nbsp)
-        html = html.replace(/[\s]+/g, ' ');
+        html = html.replace(findAllSpacesMoreThanOneRx, ' ');
 
         wrapper.innerHTML = html;
     } else {

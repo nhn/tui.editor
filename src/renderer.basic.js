@@ -7,7 +7,7 @@
 
 var Renderer = require('./renderer');
 
-var lastReturnRx = /\n$/g,
+var findLastReturnRx = /\n$/g,
     startOfLinesRx = /^/gm;
 
 /**
@@ -102,7 +102,7 @@ var basicRenderer = Renderer.factory({
         var res, lastNremoved;
 
         //because parent LI converter add \n too
-        lastNremoved = subContent.replace(lastReturnRx, '');
+        lastNremoved = subContent.replace(findLastReturnRx, '');
 
         res = lastNremoved.replace(startOfLinesRx, '    ');
 
@@ -151,7 +151,7 @@ var basicRenderer = Renderer.factory({
     'PRE CODE': function(node, subContent) {
         var res, lastNremoved;
 
-        lastNremoved = subContent.replace(lastReturnRx, '');
+        lastNremoved = subContent.replace(findLastReturnRx, '');
         res = lastNremoved.replace(startOfLinesRx, '    ');
 
         return '\n' + res + '\n';
