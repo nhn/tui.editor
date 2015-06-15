@@ -6,6 +6,9 @@
 
 'use strict';
 
+/**
+ * Node Type Value
+ */
 var NODE = {
     ELEMENT_NODE: 1,
     ATTRIBUTE_NODE: 2,
@@ -24,6 +27,12 @@ function DomRunner(node) {
     this._current = node;
 }
 
+
+/**
+ * next
+ * Iterate next node
+ * @return {DOMElement} next node
+ */
 DomRunner.prototype.next = function() {
     var current = this._current,
         node;
@@ -42,10 +51,20 @@ DomRunner.prototype.next = function() {
     return this._current;
 };
 
+/**
+ * getNode
+ * return current node
+ * @return {DOMElement} current node
+ */
 DomRunner.prototype.getNode = function() {
     return this._current;
 };
 
+/**
+ * getNodeText
+ * get current node's text content
+ * @return {string} text
+ */
 DomRunner.prototype.getNodeText = function() {
     var node = this.getNode(),
         text;
@@ -59,10 +78,25 @@ DomRunner.prototype.getNodeText = function() {
     return text;
 };
 
+/**
+ * _isNeedNextSearch
+ * check if there is next node to iterate
+ * @private
+ * @param {DOMElement} node next node
+ * @param {DOMElement} current next node
+ * @return {boolean} result
+ */
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
     return !node && current.parentNode !== this._root;
 };
 
+/**
+ * _getNextNode
+ * return available next node
+ * @private
+ * @param {DOMElement} current current node
+ * @return {DOMElement} next node
+ */
 DomRunner.prototype._getNextNode = function(current) {
     return current.firstChild || current.nextSibling;
 };
