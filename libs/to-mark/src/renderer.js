@@ -5,12 +5,12 @@
 
 'use strict';
 
-var leadSpaceRx = /^\u0020/,
-    trailSpaceRx = /.+\u0020$/,
+var findLeadSpaceRx = /^\u0020/,
+    findTrailSpaceRx = /.+\u0020$/,
     //find first and last characters for trim
-    trimRx = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
+    findCharToTrimRx = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
     //find characters that need escape
-    escapeTextRx = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
+    findCharToEscapeRx = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
 
 /**
  * forEachOwnProperties
@@ -94,14 +94,14 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         if (node.previousSibling) {
             text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
 
-            if (trailSpaceRx.test(text) || leadSpaceRx.test(node.innerHTML || node.nodeValue)) {
+            if (findTrailSpaceRx.test(text) || findLeadSpaceRx.test(node.innerHTML || node.nodeValue)) {
                 lead = ' ';
             }
         }
 
         if (node.nextSibling) {
             text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
-            if (leadSpaceRx.test(text) || trailSpaceRx.test(node.innerHTML || node.nodeValue)) {
+            if (findLeadSpaceRx.test(text) || findTrailSpaceRx.test(node.innerHTML || node.nodeValue)) {
                 trail = ' ';
             }
         }
@@ -236,7 +236,7 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  * @return {string} trimed text
  */
 Renderer.prototype.trim = function(text) {
-    return text.replace(trimRx, '');
+    return text.replace(findCharToTrimRx, '');
 };
 
 /**
@@ -246,7 +246,7 @@ Renderer.prototype.trim = function(text) {
  * @return {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
-    text = text.replace(escapeTextRx, function(matched){ // eslint-disable-line space-before-blocks
+    text = text.replace(findCharToEscapeRx, function(matched){ // eslint-disable-line space-before-blocks
         return '\\' + matched;
     });
 
