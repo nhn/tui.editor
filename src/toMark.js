@@ -35,7 +35,6 @@ function toMark(htmlStr) {
 function finalize(text) {
     //remove first and last \n
     text = text.replace(/^[\n]+|[\n]+$/g, '');
-
     return text;
 }
 

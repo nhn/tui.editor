@@ -333,7 +333,7 @@ describe('domRunner', function() {
             domRunner.next();
             domRunner.next(); //root
 
-            expect(domRunner.getNode()).toEqual(null);
+            expect(domRunner.getNode()).toBeNull();
         });
     });
 

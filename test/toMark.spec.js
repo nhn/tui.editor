@@ -20,8 +20,8 @@ describe('toMark', function() {
     });
 
     it('p and inlines', function() {
-        expect(toMark('<p>this is link <a href="http://nhnent.com">link</a></h2>')).toEqual('this is link [link](http://nhnent.com/)');
-        expect(toMark('<p><em>this</em> is link <a href="http://nhnent.com">link</a></h2>')).toEqual('*this* is link [link](http://nhnent.com/)');
-        expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></h2>')).toEqual('*this* is \u00a0**strong**');
+        expect(toMark('<p>this is link <a href="http://nhnent.com">link</a></p>')).toEqual('this is link [link](http://nhnent.com/)');
+        expect(toMark('<p><em>this</em> is link <a href="http://nhnent.com">link</a></p>')).toEqual('*this* is link [link](http://nhnent.com/)');
+        expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></p>')).toEqual('*this* is \u00a0**strong**');
     });
 });
