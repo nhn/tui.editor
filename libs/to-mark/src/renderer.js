@@ -5,13 +5,12 @@
 
 'use strict';
 
-
-/**
- * Empty Space Regex
- * @type {Regex}
- */
-var leadSpaceRx = /^\u0020/;
-var trailSpaceRx = /.+\u0020$/;
+var leadSpaceRx = /^\u0020/,
+    trailSpaceRx = /.+\u0020$/,
+    //find first and last characters for trim
+    trimRx = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
+    //find characters that need escape
+    escapeTextRx = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
 
 /**
  * forEachOwnProperties
@@ -237,7 +236,7 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  * @return {string} trimed text
  */
 Renderer.prototype.trim = function(text) {
-    return text.replace(/^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g, '');
+    return text.replace(trimRx, '');
 };
 
 /**
@@ -247,7 +246,7 @@ Renderer.prototype.trim = function(text) {
  * @return {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
-    text = text.replace(/[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g, function(matched){ // eslint-disable-line space-before-blocks
+    text = text.replace(escapeTextRx, function(matched){ // eslint-disable-line space-before-blocks
         return '\\' + matched;
     });
 
