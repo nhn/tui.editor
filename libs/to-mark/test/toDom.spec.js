@@ -6,12 +6,13 @@ describe('toDom', function() {
     describe('HTML Text', function() {
         it('trim html strings', function() {
             var dom = toDom('   <h1>Hello World!</h1>   ');
-            expect(dom.innerHTML).toEqual('<h1>Hello World!</h1>');
+            //toUpperCase for CrossBrowsing Issue
+            expect(dom.innerHTML.toUpperCase()).toEqual('<h1>Hello World!</h1>'.toUpperCase());
         });
 
         it('remove text nodes spaces more than 1', function() {
             var dom = toDom('<h1>Hello            World!</h1>');
-            expect(dom.innerHTML).toEqual('<h1>Hello World!</h1>');
+            expect(dom.innerHTML.toUpperCase()).toEqual('<h1>Hello World!</h1>'.toUpperCase());
         });
 
         it('convert block tag to dom', function() {

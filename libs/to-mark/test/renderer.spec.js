@@ -196,7 +196,7 @@ describe('renderer', function() {
         expect(renderer.trim('aa\r\n')).toEqual('aa');
         expect(renderer.trim('\t')).toEqual('');
         expect(renderer.trim(' aa aa ')).toEqual('aa aa');
-        expect(renderer.trim(toDom('<p>Hello&nbsp; </p>').innerText)).toEqual('Hello '.replace(/\s/, '\u00a0'));
+        expect(renderer.trim(toDom('<p>Hello&nbsp; </p>').firstChild.firstChild.nodeValue)).toEqual('Hello\u00a0');
     });
 
     it('escapeText() can process html text node for markdown text', function() {
