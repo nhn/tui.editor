@@ -74,7 +74,7 @@ var basicRenderer = Renderer.factory({
     //Headings
     'H1, H2, H3, H4, H5, H6': function(node, subContent) {
         var res = '',
-            headingNumber = parseInt(node.tagName[1], 10);
+            headingNumber = parseInt(node.tagName.charAt(1), 10);
 
         while (headingNumber) {
             res += '#';
