@@ -9,14 +9,17 @@ var Renderer = require('./renderer');
 
 /**
  * basicRenderer
+ * Basic Markdown Renderer
  * @exports basicRenderer
  * @augments Renderer
  */
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        var trimmedText = this.trim(node.nodeValue);
-        return this.getSpaceControlled(this.processText(trimmedText), node);
+        var trimmedText = this.trim(node.nodeValue),
+            escapedText = this.escapeText(trimmedText);
+
+        return this.getSpaceControlled(escapedText, node);
     },
     'EM': function(node, subContent) {
         var res;

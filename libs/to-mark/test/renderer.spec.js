@@ -199,18 +199,18 @@ describe('renderer', function() {
         expect(renderer.trim(toDom('<p>Hello&nbsp; </p>').innerText)).toEqual('Hello '.replace(/\s/, '\u00a0'));
     });
 
-    it('processText() can process html text node for markdown text', function() {
+    it('escapeText() can process html text node for markdown text', function() {
         var renderer = Renderer.factory();
 
-        expect(renderer.processText('im *text*')).toEqual('im \\*text\\*');
-        expect(renderer.processText('im (text)')).toEqual('im \\(text\\)');
-        expect(renderer.processText('im [text]')).toEqual('im \\[text\\]');
-        expect(renderer.processText('im {text}')).toEqual('im \\{text\\}');
-        expect(renderer.processText('im _text_')).toEqual('im \\_text\\_');
-        expect(renderer.processText('im ## text')).toEqual('im \\#\\# text');
-        expect(renderer.processText('im ` text')).toEqual('im \\` text');
-        expect(renderer.processText('im + text -')).toEqual('im \\+ text \\-');
-        expect(renderer.processText('im . text !')).toEqual('im \\. text \\!');
+        expect(renderer.escapeText('im *text*')).toEqual('im \\*text\\*');
+        expect(renderer.escapeText('im (text)')).toEqual('im \\(text\\)');
+        expect(renderer.escapeText('im [text]')).toEqual('im \\[text\\]');
+        expect(renderer.escapeText('im {text}')).toEqual('im \\{text\\}');
+        expect(renderer.escapeText('im _text_')).toEqual('im \\_text\\_');
+        expect(renderer.escapeText('im ## text')).toEqual('im \\#\\# text');
+        expect(renderer.escapeText('im ` text')).toEqual('im \\` text');
+        expect(renderer.escapeText('im + text -')).toEqual('im \\+ text \\-');
+        expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
     });
 
     it('getSpaceControlled() can control text node spaces', function() {

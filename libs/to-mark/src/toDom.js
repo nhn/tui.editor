@@ -8,7 +8,7 @@
 /**
  * toDom
  * @exports toDom
- * @param {string} html HTML string
+ * @param {DOMElement|string} html DOM Node root or HTML string
  * @return {DOMElement[]} dom element
  */
 function toDom(html) {

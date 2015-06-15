@@ -26,6 +26,12 @@ function toMark(htmlStr) {
     return finalize(markdownContent);
 }
 
+/**
+ * finalize
+ * remove first and last return character
+ * @param {string} text text to finalize
+ * @return {string} result
+ */
 function finalize(text) {
     //remove first and last \n
     text = text.replace(/^[\n]+|[\n]+$/g, '');
@@ -33,6 +39,12 @@ function finalize(text) {
     return text;
 }
 
+/**
+ * tracker
+ * Iterate childNodes and process conversion using recursive call
+ * @param {DomRunner} runner dom runner
+ * @return {string} processed text
+ */
 function tracker(runner) {
     var i,
         t,
