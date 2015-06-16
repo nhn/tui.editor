@@ -9,7 +9,7 @@ var DomRunner = require('./domRunner'),
     toDom = require('./toDom'),
     basicRenderer = require('./renderer.basic');
 
-var findFirstLastReturnsRx = /^[\n]+|[\n]+$/g;
+var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
 
 /**
  * toMark
@@ -30,13 +30,13 @@ function toMark(htmlStr) {
 
 /**
  * finalize
- * remove first and last return character
+ * Remove first and last return character
  * @param {string} text text to finalize
  * @return {string} result
  */
 function finalize(text) {
     //remove first and last \n
-    text = text.replace(findFirstLastReturnsRx, '');
+    text = text.replace(FIND_FIRST_LAST_RETURNS_RX, '');
     return text;
 }
 
