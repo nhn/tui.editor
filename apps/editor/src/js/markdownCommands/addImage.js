@@ -44,7 +44,7 @@ var AddImage = MarkdownCommand.factory(/** @lends AddImage */{
             ch: range.to.ch
         };
 
-        replaceText = '![' + data.imageUrl + '](' + data.altText + ')';
+        replaceText = '![' + data.altText + '](' + data.imageUrl + ')';
 
         this.doc.replaceRange(replaceText, from, to);
 

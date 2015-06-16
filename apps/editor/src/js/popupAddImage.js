@@ -18,7 +18,7 @@ var POPUP_CONTENT = [
     '</div>',
     '<form enctype="multipart/form-data" class="fileType">',
         '<label for="">Image File</label>',
-        '<input type="file" class="imageFileInput" />',
+        '<input type="file" class="imageFileInput" accept="image/*" />',
     '</form>',
     '<label for="url">Alt Text</label>',
     '<input type="text" class="altTextInput" />',

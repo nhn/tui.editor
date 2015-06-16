@@ -42,7 +42,7 @@ describe('AddImage', function() {
 
             AddImage.responder(cm, data);
 
-            expect(doc.getLine(1)).toEqual('![' + data.imageUrl + '](' + data.altText + ')');
+            expect(doc.getLine(1)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
         });
 
         it('영역선택후 링크가 추가된다', function() {
@@ -50,7 +50,7 @@ describe('AddImage', function() {
 
             AddImage.responder(cm, data);
 
-            expect(doc.getLine(0)).toEqual('![' + data.imageUrl + '](' + data.altText + ')');
+            expect(doc.getLine(0)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
             expect(doc.getLine(1)).toEqual('mytext3');
         });
     });
