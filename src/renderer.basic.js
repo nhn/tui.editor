@@ -7,8 +7,8 @@
 
 var Renderer = require('./renderer');
 
-var findLastReturnRx = /\n$/g,
-    startOfLinesRx = /^/gm;
+var FIND_LAST_RETURN_RX = /\n$/g,
+    START_OF_LINES_RX = /^/gm;
 
 /**
  * basicRenderer
@@ -102,9 +102,9 @@ var basicRenderer = Renderer.factory({
         var res, lastNremoved;
 
         //because parent LI converter add \n too
-        lastNremoved = subContent.replace(findLastReturnRx, '');
+        lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
 
-        res = lastNremoved.replace(startOfLinesRx, '    ');
+        res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
         return '\n' + res;
     },
@@ -142,7 +142,7 @@ var basicRenderer = Renderer.factory({
         var res, trimmedText;
 
         trimmedText = this.trim(subContent);
-        res = trimmedText.replace(startOfLinesRx, '> ');
+        res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
         return '\n' + res + '\n';
     },
@@ -151,8 +151,8 @@ var basicRenderer = Renderer.factory({
     'PRE CODE': function(node, subContent) {
         var res, lastNremoved;
 
-        lastNremoved = subContent.replace(findLastReturnRx, '');
-        res = lastNremoved.replace(startOfLinesRx, '    ');
+        lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
+        res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
         return '\n' + res + '\n';
     }

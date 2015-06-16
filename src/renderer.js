@@ -5,16 +5,16 @@
 
 'use strict';
 
-var findLeadSpaceRx = /^\u0020/,
-    findTrailSpaceRx = /.+\u0020$/,
+var FIND_LEAD_SPACE_RX = /^\u0020/,
+    FIND_TRAIL_SPACE_RX = /.+\u0020$/,
     //find first and last characters for trim
-    findCharToTrimRx = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
+    FIND_CHAR_TO_TRIM_RX = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
     //find characters that need escape
-    findCharToEscapeRx = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
+    FIND_CHAR_TO_ESCAPE_RX = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
 
 /**
  * forEachOwnProperties
- * iterate properties of object
+ * Iterate properties of object
  * from https://github.com/nhnent/fe.code-snippet/blob/master/src/collection.js
  * @param {object} obj object to iterate
  * @param {function} iteratee callback function
@@ -71,16 +71,14 @@ Renderer.prototype.addRule = function(selectorString, converter) {
  * @param {object} rules key(rule selector), value(converter function)
  */
 Renderer.prototype.addRules = function(rules) {
-    var self = this;
-
     forEachOwnProperties(rules, function(converter, selectorString) {
-        self.addRule(selectorString, converter);
-    });
+        this.addRule(selectorString, converter);
+    }, this);
 };
 
 /**
  * getSpaceControlled
- * remove flanked space of dom node
+ * Remove flanked space of dom node
  * @param {string} content text content
  * @param {DOMElement} node current node
  * @return {string} result
@@ -90,20 +88,18 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         trail = '',
         text;
 
-    if (node.nodeType === 3) {
-        if (node.previousSibling) {
-            text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
+    if (node.previousSibling) {
+        text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
 
-            if (findTrailSpaceRx.test(text) || findLeadSpaceRx.test(node.innerHTML || node.nodeValue)) {
-                lead = ' ';
-            }
+        if (FIND_TRAIL_SPACE_RX.test(text) || FIND_LEAD_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
+            lead = ' ';
         }
+    }
 
-        if (node.nextSibling) {
-            text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
-            if (findLeadSpaceRx.test(text) || findTrailSpaceRx.test(node.innerHTML || node.nodeValue)) {
-                trail = ' ';
-            }
+    if (node.nextSibling) {
+        text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
+        if (FIND_LEAD_SPACE_RX.test(text) || FIND_TRAIL_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
+            trail = ' ';
         }
     }
 
@@ -112,7 +108,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
 
 /**
  * convert
- * convert dom node to markdown using dom node and subContent
+ * Convert dom node to markdown using dom node and subContent
  * @param {DOMElement} node node to convert
  * @param {stirng} subContent child nodes converted text
  * @return {string} converted text
@@ -130,7 +126,7 @@ Renderer.prototype.convert = function(node, subContent) {
 
 /**
  * _getConverter
- * get converter function for node
+ * Get converter function for node
  * @private
  * @param {DOMElement} node node
  * @return {function} converter function
@@ -231,12 +227,12 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
 
 /**
  * trim
- * trim text
+ * Trim text
  * @param {string} text text be trimed
  * @return {string} trimed text
  */
 Renderer.prototype.trim = function(text) {
-    return text.replace(findCharToTrimRx, '');
+    return text.replace(FIND_CHAR_TO_TRIM_RX, '');
 };
 
 /**
@@ -246,7 +242,7 @@ Renderer.prototype.trim = function(text) {
  * @return {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
-    text = text.replace(findCharToEscapeRx, function(matched){ // eslint-disable-line space-before-blocks
+    text = text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched){ // eslint-disable-line space-before-blocks
         return '\\' + matched;
     });
 
@@ -255,7 +251,7 @@ Renderer.prototype.escapeText = function(text) {
 
 /**
  * Renderer factory
- * return new renderer
+ * Return new renderer
  * @param {object} rules rule object, key(rule selector), value(converter function)
  * @return {Renderer} renderer
  */

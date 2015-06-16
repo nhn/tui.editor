@@ -20,7 +20,7 @@ var NODE = {
  * @exports DomRunner
  * @constructor
  * @class
- * @param {DOMElement} node root node that has nodes to interate(not iterate itself and any its siblings)
+ * @param {DOMElement} node A root node that it has nodes to iterate(not iterate itself and its any siblings)
  */
 function DomRunner(node) {
     this._root = node;
@@ -53,7 +53,7 @@ DomRunner.prototype.next = function() {
 
 /**
  * getNode
- * return current node
+ * Return current node
  * @return {DOMElement} current node
  */
 DomRunner.prototype.getNode = function() {
@@ -62,7 +62,7 @@ DomRunner.prototype.getNode = function() {
 
 /**
  * getNodeText
- * get current node's text content
+ * Get current node's text content
  * @return {string} text
  */
 DomRunner.prototype.getNodeText = function() {
@@ -80,7 +80,7 @@ DomRunner.prototype.getNodeText = function() {
 
 /**
  * _isNeedNextSearch
- * check if there is next node to iterate
+ * Check if there is next node to iterate
  * @private
  * @param {DOMElement} node next node
  * @param {DOMElement} current next node
@@ -92,7 +92,7 @@ DomRunner.prototype._isNeedNextSearch = function(node, current) {
 
 /**
  * _getNextNode
- * return available next node
+ * Return available next node
  * @private
  * @param {DOMElement} current current node
  * @return {DOMElement} next node

@@ -5,8 +5,8 @@
 
 'use strict';
 
-var findFirstLastSpaceOrAllReturnsRx = /^[\s]+|[\s]+$|[\r\n\t]/g,
-    findAllSpacesMoreThanOneRx = /[\s]+/g;
+var FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX = /^[\s]+|[\s]+$|[\r\n\t]/g,
+    FIND_WHOLE_SPACE_MORE_THAN_ONE_RX = /[\s]+/g;
 
 /**
  * toDom
@@ -21,10 +21,10 @@ function toDom(html) {
         wrapper = document.createElement('div');
 
         //trim text
-        html = html.replace(findFirstLastSpaceOrAllReturnsRx, '');
+        html = html.replace(FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX, '');
 
         //remove spaces more than 1(if need more space, must use &nbsp)
-        html = html.replace(findAllSpacesMoreThanOneRx, ' ');
+        html = html.replace(FIND_WHOLE_SPACE_MORE_THAN_ONE_RX, ' ');
 
         wrapper.innerHTML = html;
     } else {
