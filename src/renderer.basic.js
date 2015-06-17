@@ -24,6 +24,9 @@ var basicRenderer = Renderer.factory({
 
         return this.getSpaceControlled(escapedText, node);
     },
+    'CODE TEXT_NODE': function(node) {
+        return node.nodeValue;
+    },
     'EM': function(node, subContent) {
         var res;
 
