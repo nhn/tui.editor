@@ -3,6 +3,12 @@
 var toMark = require('../src/toMark');
 
 describe('toMark', function() {
+    it('if pass empty string or falsy object return empty string', function() {
+        expect(toMark('')).toEqual('');
+        expect(toMark(false)).toEqual('');
+        expect(toMark()).toEqual('');
+        expect(toMark(null)).toEqual('');
+    });
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
         expect(toMark('<h1>Hello World</h1>')).toEqual('# Hello World');
     });
@@ -23,5 +29,18 @@ describe('toMark', function() {
         expect(toMark('<p>this is link <a href="http://nhnent.com">link</a></p>')).toEqual('this is link [link](http://nhnent.com/)');
         expect(toMark('<p><em>this</em> is link <a href="http://nhnent.com">link</a></p>')).toEqual('*this* is link [link](http://nhnent.com/)');
         expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></p>')).toEqual('*this* is \u00a0**strong**');
+    });
+
+
+    xit('', function() {
+        var myRenderer = {};
+
+        toMark('', {
+            renderer: myRenderer,
+            gfm: true,
+            rules: {
+                'H1': function() {}
+            }
+        });
     });
 });

@@ -37,6 +37,13 @@ describe('toDom', function() {
             var dom = toDom('<img src="https://www.google.co.kr/images/nav_logo195.png" alt="altText" />');
             expect(dom.__htmlRootByToMark).toBe(true);
         });
+
+        //this test has cross browser issue in IE7/IE8
+        xit('text node', function() {
+            expect(toDom('<p> text </p>').innerHTML).toEqual('<p> text </p>');
+            expect(toDom('<code> text </code>').innerHTML).toEqual('<code> text </code>');
+            expect(toDom('<pre><code> text </code></pre>').innerHTML).toEqual('<pre><code> text </code></pre>');
+        });
     });
 
     describe('Dom', function() {
