@@ -36,7 +36,7 @@ describe('basicRenderer', function() {
         });
 
         it('returns pure nodeValue of text node in code tag', function() {
-            expect(getMarkdownText('<code> my*code* </code>', null, 2)).toEqual(' my*code* ');
+            expect(getMarkdownText('<pre><code> my*code* </code></pre>', null, 3)).toEqual(' my*code* ');
         });
     });
 

@@ -249,6 +249,23 @@ Renderer.prototype.escapeText = function(text) {
     return text;
 };
 
+function cloneRules(dest, src) {
+    forEachOwnProperties(src, function(value, key) {
+        if (key !== 'converter') {
+            if (!dest[key]) {
+                dest[key] = {};
+            }
+            cloneRules(dest[key], value);
+        } else {
+            dest[key] = value;
+        }
+    });
+}
+
+Renderer.prototype.mix = function(renderer) {
+    cloneRules(this.rules, renderer.rules);
+};
+
 /**
  * Renderer factory
  * Return new renderer

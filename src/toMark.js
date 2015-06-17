@@ -8,6 +8,7 @@
 var DomRunner = require('./domRunner'),
     toDom = require('./toDom'),
     basicRenderer = require('./renderer.basic');
+   /// gfmRenderer = require('./renderer.gfm');
 
 var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
 
@@ -18,8 +19,14 @@ var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
  * @return {string} converted markdown text
  */
 function toMark(htmlStr) {
-    var runner = new DomRunner(toDom(htmlStr)),
+    var runner,
         markdownContent = '';
+
+    if (!htmlStr) {
+        return '';
+    }
+
+    runner = new DomRunner(toDom(htmlStr));
 
     while (runner.next()) {
         markdownContent += tracker(runner);
