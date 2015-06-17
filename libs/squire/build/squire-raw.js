@@ -1375,7 +1375,25 @@ var keyHandlers = {
         // Otherwise, leave to browser but check afterwards whether it has
         // left behind an empty inline tag.
         else {
-            self.setSelection( range );
+            // But first check if the cursor is just before an IMG tag. If so,
+            // delete it ourselves, because the browser won't if it is not
+            // inline.
+            var originalRange = range.cloneRange(),
+                cursorContainer, cursorOffset, nodeAfterCursor;
+            moveRangeBoundariesUpTree( range, self._body );
+            cursorContainer = range.endContainer;
+            cursorOffset = range.endOffset;
+            if ( cursorContainer.nodeType === ELEMENT_NODE ) {
+                nodeAfterCursor = cursorContainer.childNodes[ cursorOffset ];
+                if ( nodeAfterCursor && nodeAfterCursor.nodeName === 'IMG' ) {
+                    event.preventDefault();
+                    detach( nodeAfterCursor );
+                    moveRangeBoundariesDownTree( range );
+                    afterDelete( self, range );
+                    return;
+                }
+            }
+            self.setSelection( originalRange );
             setTimeout( function () { afterDelete( self ); }, 0 );
         }
     },
