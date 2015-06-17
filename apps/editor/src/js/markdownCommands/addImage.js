@@ -46,7 +46,7 @@ var AddImage = MarkdownCommand.factory(/** @lends AddImage */{
 
         replaceText = '![' + data.altText + '](' + data.imageUrl + ')';
 
-        this.doc.replaceRange(replaceText, from, to);
+        this.doc.replaceRange(replaceText, from, to, '+addImage');
 
         this.cm.focus();
     }

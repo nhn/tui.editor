@@ -29,7 +29,7 @@ var CodeMirror = window.CodeMirror;
  * @param {EventManager} eventManager 이벤트 매니저
  * @param {commandManager} commandManager 커맨드 매니저
  */
-function MarkdownEditor($el, eventManager, commandManager, delay) {
+function MarkdownEditor($el, eventManager, commandManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
 
@@ -48,7 +48,7 @@ function MarkdownEditor($el, eventManager, commandManager, delay) {
     this.lazyRunner.registerLazyRunFunction(
         'emitMarkdownEditorContentChangedEvent',
         this._emitMarkdownEditorContentChangedEvent,
-        delay || 300,
+        300,
         this
     );
 }

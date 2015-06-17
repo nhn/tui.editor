@@ -53,5 +53,20 @@ describe('AddImage', function() {
             expect(doc.getLine(0)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
             expect(doc.getLine(1)).toEqual('mytext3');
         });
+
+        it('change 이벤트에 +addImage origin이 추가됨', function() {
+            var origin;
+
+            doc.setCursor(1, 0);
+
+            cm.on('change', function(cmOb, changeObj) {
+                origin = changeObj.origin;
+            });
+
+            AddImage.responder(cm, data);
+
+            expect(doc.getLine(1)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
+            expect(origin).toEqual('+addImage');
+        });
     });
 });
