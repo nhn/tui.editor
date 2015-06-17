@@ -250,8 +250,9 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
             nodeBeforeSplit = next.previousSibling;
         }
         if ( !startContainer.parentNode ) {
-            startContainer = nodeBeforeSplit;
-            startOffset = nodeBeforeSplit.childNodes.length;
+            startContainer = nodeBeforeSplit || next.parentNode;
+            startOffset = nodeBeforeSplit ?
+                nodeBeforeSplit.childNodes.length : 0;
         }
         // Merge inserted containers with edges of split
         if ( isContainer( next ) ) {
@@ -277,7 +278,7 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
             endOffset = prev.childNodes.length;
         }
         // Merge inserted containers with edges of split
-        if ( isContainer( nodeAfterSplit ) ) {
+        if ( nodeAfterSplit && isContainer( nodeAfterSplit ) ) {
             mergeContainers( nodeAfterSplit );
         }
 
