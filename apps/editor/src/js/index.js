@@ -53,7 +53,7 @@ function NEditor(options) {
     this.layout = new Layout(options, this.eventManager, this.commandManager);
     this.layout.init();
 
-    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager, options.delay);
+    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager, this.commandManager);
 
