@@ -32,7 +32,7 @@ function hasTagAttributes ( node, tag, attributes ) {
     return true;
 }
 function areAlike ( node, node2 ) {
-    return (
+    return !isLeaf( node ) && (
         node.nodeType === node2.nodeType &&
         node.nodeName === node2.nodeName &&
         node.className === node2.className &&

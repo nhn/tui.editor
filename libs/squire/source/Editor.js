@@ -2220,7 +2220,7 @@ proto.removeAllFormatting = function ( range ) {
     var cleanNodes = doc.createDocumentFragment();
     var nodeAfterSplit = split( endContainer, endOffset, stopNode );
     var nodeInSplit = split( startContainer, startOffset, stopNode );
-    var nextNode;
+    var nextNode, _range, childNodes;
 
     // Then replace contents in split with a cleaned version of the same:
     // blocks become default blocks, text and leaf nodes survive, everything
@@ -2231,22 +2231,39 @@ proto.removeAllFormatting = function ( range ) {
         nodeInSplit = nextNode;
     }
     removeFormatting( this, formattedNodes, cleanNodes );
+    cleanNodes.normalize();
     nodeInSplit = cleanNodes.firstChild;
     nextNode = cleanNodes.lastChild;
 
+    // Restore selection
+    childNodes = stopNode.childNodes;
     if ( nodeInSplit ) {
         stopNode.insertBefore( cleanNodes, nodeAfterSplit );
-        range.setStartBefore( nodeInSplit );
-        range.setEndAfter( nextNode );
+        startOffset = indexOf.call( childNodes, nodeInSplit );
+        endOffset = indexOf.call( childNodes, nextNode ) + 1;
     } else {
-        range.setStartBefore( nodeAfterSplit );
-        range.setEndBefore( nodeAfterSplit );
+        startOffset = indexOf.call( childNodes, nodeAfterSplit );
+        endOffset = startOffset;
     }
+
+    // Merge text nodes at edges, if possible
+    _range = {
+        startContainer: stopNode,
+        startOffset: startOffset,
+        endContainer: stopNode,
+        endOffset: endOffset
+    };
+    mergeInlines( stopNode, _range );
+    range.setStart( _range.startContainer, _range.startOffset );
+    range.setEnd( _range.endContainer, _range.endOffset );
+
+    // And move back down the tree
     moveRangeBoundariesDownTree( range );
 
     this.setSelection( range );
+    this._updatePath( range, true );
 
-    return this;
+    return this.focus();
 };
 
 proto.increaseQuoteLevel = command( 'modifyBlocks', increaseBlockQuoteLevel );
