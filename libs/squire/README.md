@@ -403,3 +403,9 @@ Returns self (the Squire instance).
 Decreases by 1 the nesting level of any at-least-partially selected blocks which are part of a list.
 
 Returns self (the Squire instance).
+
+### removeAllFormatting
+
+Removes all formatting from the selection. Block elements (list items, table cells, etc.) are kept as separate blocks.
+
+Returns self (the Squire instance).
