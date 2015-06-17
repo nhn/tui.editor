@@ -34,6 +34,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<h1><em>hello</em> world</em></h1>', null, 4)).toEqual(' world');
             expect(getMarkdownText('<h1><em>hello </em>world</em></h1>', null, 4)).toEqual(' world');
         });
+
+        it('returns pure nodeValue of text node in code tag', function() {
+            expect(getMarkdownText('<code> my*code* </code>', null, 2)).toEqual(' my*code* ');
+        });
     });
 
     describe('inline', function() {
