@@ -3,32 +3,27 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
-    //sourcemaps = require('gulp-sourcemaps'),
+    sourcemaps = require('gulp-sourcemaps'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
     watchify = require('watchify'),
     browserify = require('browserify'),
 
     eslint = require('gulp-eslint'),
-
     connect = require('gulp-connect'),
-
     rename = require('gulp-rename'),
-
     ugilfy = require('gulp-uglify'),
-
     stripDebug = require('gulp-strip-debug'),
-
     livereload = require('gulp-livereload');
 
 /*
- * Browserif
+ * Browserify
  */
 var bundler = watchify(browserify('./src/js/index.js', {
     debug: true
 }));
 
-//bundler.transform('brfs');
+//Development Build
 function bundle(changedFiles) {
     gutil.log("changed", changedFiles);
     return bundler.bundle()
@@ -37,9 +32,8 @@ function bundle(changedFiles) {
         .pipe(source('bundle.js'))
         // optional, remove if you dont want sourcemaps
         .pipe(buffer())
-        //sourcemaps 플러그인으로 만든 소스맵이 정상적으로 작동하지 않는다.
-        //.pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
-        //.pipe(sourcemaps.write('./')) // writes .map file
+        .pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
+        .pipe(sourcemaps.write('./')) // writes .map file
         //
         .pipe(gulp.dest('./build'));
 }
@@ -47,11 +41,13 @@ function bundle(changedFiles) {
 bundler.on('update', bundle); // on any dep update, runs the bundler
 gulp.task('develop', bundle); // so you can run `gulp js` to build the file
 
+//Production Build
 gulp.task('bundle', function() {
     return browserify('./src/js/index.js')
         .bundle()
         .pipe(source('ned.js'))
         .pipe(buffer())
+        .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
 });
 
@@ -80,6 +76,9 @@ gulp.task('connect', function() {
     });
 });
 
+/*
+ * watch
+ */
 gulp.task('watch', function () {
     livereload.listen();
     gulp.watch(['./build/*.js'], livereload.changed);
@@ -87,13 +86,20 @@ gulp.task('watch', function () {
     gulp.watch(['./demo/*'], livereload.changed);
 });
 
+/*
+ * gulp-strip-debug
+ */
+gulp.task('stripDebug', function () {
+    return gulp.src('dist/ned.js')
+        .pipe(stripDebug())
+        .pipe(gulp.dest('./dist'));
+});
 
 /*
  * Uglify
  */
 gulp.task('uglify', function() {
     return gulp.src('./dist/ned.js')
-        .pipe(stripDebug())
         .pipe(ugilfy())
         .pipe(rename('ned.min.js'))
         .pipe(gulp.dest('./dist'));
