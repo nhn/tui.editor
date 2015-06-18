@@ -26,6 +26,17 @@ var gfmRenderer = Renderer.factory({
         }
 
         return '\n```' + language + '\n' + subContent + '\n```\n';
+    },
+    'INPUT': function(node) {
+        var condition;
+
+        if (node.type !== 'checkbox') {
+            return;
+        }
+
+        condition = node.checked ? 'x' : ' ';
+
+        return '[' + condition + ']';
     }
 });
 

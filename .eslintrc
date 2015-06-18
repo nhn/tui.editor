@@ -13,7 +13,7 @@
     "loadFixtures": true
   },
   "rules": {
-    //Possible Errors 
+    //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
     "no-reserved-keys": 2,
@@ -37,6 +37,7 @@
     "radix": 2,
     "vars-on-top": 2,
     "wrap-iife": [2, "any"],
+    "consistent-return": 1
 
     //Variables
     "no-undefined": 2,

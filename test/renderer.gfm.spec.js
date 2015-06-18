@@ -30,4 +30,14 @@ describe('gfmRenderer', function() {
                 .toEqual('\n``` javascript\nfunction(){\n    var in=0;\n}\n```\n');
         });
     });
+
+    describe('input', function() {
+        it('unchecked input box', function() {
+            expect(getMarkdownText('<input type="checkbox" />')).toEqual('[ ]');
+        });
+
+        it('checked input box', function() {
+            expect(getMarkdownText('<input type="checkbox" checked="checked" />')).toEqual('[x]');
+        });
+    });
 });
