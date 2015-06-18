@@ -51,6 +51,16 @@ describe('renderer', function() {
         expect(convertedText).toEqual('subContents');
     });
 
+    it('if rule converter returns falsy renderer.converter returns empty string', function() {
+        var renderer = Renderer.factory();
+
+        renderer.addRule('H1, H2, H3, H4, H5, H6', function() {
+            return;
+        });
+
+        expect(renderer.convert({tagName: 'H1'})).toEqual('');
+    });
+
     it('if rule\'s converter returns falsy, conveter returns subContent', function() {
         var convertedText,
             renderer = Renderer.factory({
