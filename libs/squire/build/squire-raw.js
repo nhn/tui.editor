@@ -1548,38 +1548,6 @@ keyHandlers[ ctrlKey + 'y' ] = mapKeyTo( 'redo' );
 keyHandlers[ ctrlKey + 'z' ] = mapKeyTo( 'undo' );
 keyHandlers[ ctrlKey + 'shift-z' ] = mapKeyTo( 'redo' );
 
-var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)/i;
-
-var addLinks = function ( frag ) {
-    var doc = frag.ownerDocument,
-        walker = new TreeWalker( frag, SHOW_TEXT,
-                function ( node ) {
-            return !getNearest( node, 'A' );
-        }, false ),
-        node, data, parent, match, index, endIndex, child;
-    while ( node = walker.nextNode() ) {
-        data = node.data;
-        parent = node.parentNode;
-        while ( match = linkRegExp.exec( data ) ) {
-            index = match.index;
-            endIndex = index + match[0].length;
-            if ( index ) {
-                child = doc.createTextNode( data.slice( 0, index ) );
-                parent.insertBefore( child, node );
-            }
-            child = doc.createElement( 'A' );
-            child.textContent = data.slice( index, endIndex );
-            child.href = match[1] ?
-                /^(?:ht|f)tps?:/.test( match[1] ) ?
-                    match[1] :
-                    'http://' + match[1] :
-                'mailto:' + match[2];
-            parent.insertBefore( child, node );
-            node.data = data = data.slice( endIndex );
-        }
-    }
-};
-
 var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL)$/;
 
 var fontSizes = {
@@ -3441,6 +3409,38 @@ proto.insertImage = function ( src, attributes ) {
     }, attributes ));
     this.insertElement( img );
     return img;
+};
+
+var linkRegExp = /\b((?:(?:ht|f)tps?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,}\/)(?:[^\s()<>]+|\([^\s()<>]+\))+(?:\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'".,<>?«»“”‘’]))|([\w\-.%+]+@(?:[\w\-]+\.)+[A-Z]{2,}\b)/i;
+
+var addLinks = function ( frag ) {
+    var doc = frag.ownerDocument,
+        walker = new TreeWalker( frag, SHOW_TEXT,
+                function ( node ) {
+            return !getNearest( node, 'A' );
+        }, false ),
+        node, data, parent, match, index, endIndex, child;
+    while ( node = walker.nextNode() ) {
+        data = node.data;
+        parent = node.parentNode;
+        while ( match = linkRegExp.exec( data ) ) {
+            index = match.index;
+            endIndex = index + match[0].length;
+            if ( index ) {
+                child = doc.createTextNode( data.slice( 0, index ) );
+                parent.insertBefore( child, node );
+            }
+            child = doc.createElement( 'A' );
+            child.textContent = data.slice( index, endIndex );
+            child.href = match[1] ?
+                /^(?:ht|f)tps?:/.test( match[1] ) ?
+                    match[1] :
+                    'http://' + match[1] :
+                'mailto:' + match[2];
+            parent.insertBefore( child, node );
+            node.data = data = data.slice( endIndex );
+        }
+    }
 };
 
 // Insert HTML at the cursor location. If the selection is not collapsed
