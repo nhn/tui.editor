@@ -1720,10 +1720,20 @@ var stylesRewriters = {
        and whitespace nodes.
     2. Convert inline tags into our preferred format.
 */
-var cleanTree = function ( node, allowStyles ) {
+var cleanTree = function cleanTree ( node ) {
     var children = node.childNodes,
-        i, l, child, nodeName, nodeType, rewriter, childLength,
-        data, j, ll;
+        blockParent, i, l, child, nodeName, nodeType, rewriter, childLength,
+        startsWithWS, endsWithWS, data;
+
+    blockParent = node;
+    while ( isInline( blockParent ) ) {
+        blockParent = blockParent.parentNode;
+    }
+    if ( !isBlock( blockParent ) ) {
+        blockParent = null;
+    }
+    contentWalker.root = blockParent;
+
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
         nodeName = child.nodeName;
@@ -1736,55 +1746,43 @@ var cleanTree = function ( node, allowStyles ) {
             } else if ( !allowedBlock.test( nodeName ) &&
                     !isInline( child ) ) {
                 i -= 1;
-                l += childLength - 1;
-                node.replaceChild( empty( child ), child );
+                if ( nodeName === 'HEAD' || nodeName === 'STYLE' ) {
+                    node.removeChild( child );
+                    l -= 1;
+                } else {
+                    l += childLength - 1;
+                    node.replaceChild( empty( child ), child );
+                }
                 continue;
-            } else if ( !allowStyles && child.style.cssText ) {
-                child.removeAttribute( 'style' );
             }
             if ( childLength ) {
-                cleanTree( child, allowStyles );
+                cleanTree( child );
             }
         } else {
             if ( nodeType === TEXT_NODE ) {
                 data = child.data;
-                // Use \S instead of notWS, because we want to remove nodes
+                // Use \s instead of notWS, because we want to remove nodes
                 // which are just nbsp, in order to cleanup <div>nbsp<br></div>
                 // construct.
-                if ( /\S/.test( data ) ) {
-                    // If the parent node is inline, don't trim this node as
-                    // it probably isn't at the end of the block.
-                    if ( isInline( node ) ) {
-                        continue;
-                    }
-                    j = 0;
-                    ll = data.length;
-                    if ( !i || !isInline( children[ i - 1 ] ) ) {
-                        while ( j < ll && !notWS.test( data.charAt( j ) ) ) {
-                            j += 1;
-                        }
-                        if ( j ) {
-                            child.data = data = data.slice( j );
-                            ll -= j;
-                        }
-                    }
-                    if ( i + 1 === l || !isInline( children[ i + 1 ] ) ) {
-                        j = ll;
-                        while ( j > 0 && !notWS.test( data.charAt( j - 1 ) ) ) {
-                            j -= 1;
-                        }
-                        if ( j < ll ) {
-                            child.data = data.slice( 0, j );
-                        }
-                    }
+                startsWithWS = /\s/.test( data.charAt( 0 ) );
+                endsWithWS = /\s/.test( data.charAt( data.length - 1 ) );
+                if ( !startsWithWS && !endsWithWS ) {
                     continue;
                 }
-                // If we have just white space, it may still be important if it
-                // separates two inline nodes, e.g. "<a>link</a> <a>link</a>".
-                else if ( i && i + 1 < l &&
-                        isInline( children[ i - 1 ] ) &&
-                        isInline( children[ i + 1 ] ) ) {
-                    child.data = ' ';
+                if ( startsWithWS ) {
+                    contentWalker.currentNode = child;
+                    if ( !blockParent || !contentWalker.previousNode() ) {
+                        data = data.replace( /^\s+/g, '' );
+                    }
+                }
+                if ( endsWithWS ) {
+                    contentWalker.currentNode = child;
+                    if ( !blockParent || !contentWalker.nextNode() ) {
+                        data = data.replace( /\s+$/g, '' );
+                    }
+                }
+                if ( data ) {
+                    child.data = data;
                     continue;
                 }
             }
@@ -3319,7 +3317,7 @@ proto.setHTML = function ( html ) {
     div.innerHTML = html;
     frag.appendChild( empty( div ) );
 
-    cleanTree( frag, true );
+    cleanTree( frag );
     cleanupBRs( frag );
 
     fixContainer( frag );
@@ -3473,7 +3471,7 @@ proto.insertHTML = function ( html, isPaste ) {
         };
 
         addLinks( frag );
-        cleanTree( frag, true );
+        cleanTree( frag );
         cleanupBRs( frag );
         removeEmptyInlines( frag );
         frag.normalize();
