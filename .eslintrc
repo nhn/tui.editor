@@ -8,22 +8,22 @@
   },
   "globals": {
     "ne": true,
-    "Prism": true,
+    "prism": true,
     "rangy": true,
-    "loadFixtures": true
+    "loadfixtures": true
   },
   "rules": {
-    //Possible Errors
+    //possible errors
     "no-console": 1,
     "no-extra-parens": 0,
     "no-reserved-keys": 2,
     "valid-jsdoc": [2, {
-        "requireReturn": false
+        "requirereturn": false
     }],
     "valid-typeof": 1,
 
 
-    //Best Practices
+    //best practices
     "block-scoped-var": 2,
     "complexity": 1,
     "default-case": 2,
@@ -37,14 +37,14 @@
     "radix": 2,
     "vars-on-top": 2,
     "wrap-iife": [2, "any"],
-    "consistent-return": 1
+    "consistent-return": 0,
 
-    //Variables
+    //variables
     "no-undefined": 2,
     "no-use-before-define": [2, "nofunc"],
 
-    //Stylistic Issues
-    "brace-style": [2, "1tbs", {"allowSingleLine": true}],
+    //stylistic issues
+    "brace-style": [2, "1tbs", {"allowsingleline": true}],
     "comma-spacing": [2, {"before": false, "after": true}],
     "comma-style": [2, "last"],
     "eol-last": 1,
@@ -63,10 +63,10 @@
     "space-in-brackets": 2,
     "space-in-parens": 2,
 
-    //Node.js
+    //node.js
     "no-mixed-requires": [2, true],
 
-    //Legacy
+    //legacy
     "no-plusplus": 2
   }
 }
