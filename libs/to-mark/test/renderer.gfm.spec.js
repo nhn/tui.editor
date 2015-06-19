@@ -19,6 +19,13 @@ describe('gfmRenderer', function() {
         return gfmRenderer.convert(runner.getNode(), subContent);
     }
 
+    describe('del', function() {
+        it('~~subcontent~~', function() {
+            expect(getMarkdownText('<p><del>text</del></p>', 'text', 2))
+                .toEqual('~~text~~');
+        });
+    });
+
     describe('pre code', function() {
         it('code with ```', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
