@@ -1392,7 +1392,7 @@ proto.insertImage = function ( src, attributes ) {
 // Insert HTML at the cursor location. If the selection is not collapsed
 // insertTreeFragmentIntoRange will delete the selection so that it is replaced
 // by the html being inserted.
-proto.insertHTML = function ( html ) {
+proto.insertHTML = function ( html, isPaste ) {
     var range = this.getSelection(),
         frag = this._doc.createDocumentFragment(),
         div = this.createElement( 'DIV' );
@@ -1406,24 +1406,37 @@ proto.insertHTML = function ( html ) {
     this._getRangeAndRemoveBookmark( range );
 
     try {
-        frag.normalize();
+        var node = frag;
+        var event = {
+            fragment: frag,
+            preventDefault: function () {
+                this.defaultPrevented = true;
+            },
+            defaultPrevented: false
+        };
+
         addLinks( frag );
         cleanTree( frag, true );
         cleanupBRs( frag );
         removeEmptyInlines( frag );
-        fixContainer( frag );
+        frag.normalize();
 
-        var node = frag;
         while ( node = getNextBlock( node ) ) {
             fixCursor( node );
         }
 
-        insertTreeFragmentIntoRange( range, frag );
-        if ( !canObserveMutations ) {
-            this._docWasChanged();
+        if ( isPaste ) {
+            this.fireEvent( 'willPaste', event );
         }
-        range.collapse( false );
-        this._ensureBottomLine();
+
+        if ( !event.defaultPrevented ) {
+            insertTreeFragmentIntoRange( range, event.fragment );
+            if ( !canObserveMutations ) {
+                this._docWasChanged();
+            }
+            range.collapse( false );
+            this._ensureBottomLine();
+        }
 
         this.setSelection( range );
         this._updatePath( range, true );
@@ -1431,6 +1444,20 @@ proto.insertHTML = function ( html ) {
         this.didError( error );
     }
     return this;
+};
+
+proto.insertPlainText = function ( plainText, isPaste ) {
+    var lines = plainText.split( '\n' ),
+        i, l;
+    for ( i = 1, l = lines.length - 1; i < l; i += 1 ) {
+        lines[i] = '<DIV>' +
+            lines[i].split( '&' ).join( '&amp;' )
+                    .split( '<' ).join( '&lt;'  )
+                    .split( '>' ).join( '&gt;'  )
+                    .replace( / (?= )/g, '&nbsp;' ) +
+        '</DIV>';
+    }
+    return this.insertHTML( lines.join( '' ), isPaste );
 };
 
 // --- Formatting ---

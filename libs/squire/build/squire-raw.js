@@ -1918,29 +1918,40 @@ var onCut = function () {
 };
 
 var onPaste = function ( event ) {
-    if ( this._awaitingPaste ) { return; }
-
-    // Treat image paste as a drop of an image file.
     var clipboardData = event.clipboardData,
         items = clipboardData && clipboardData.items,
         fireDrop = false,
         hasImage = false,
-        l, type;
+        plainItem = null,
+        self = this,
+        l, item, type;
+
+    // Current HTML5 Clipboard interface
+    // https://html.spec.whatwg.org/multipage/interaction.html
     if ( items ) {
+        event.preventDefault();
         l = items.length;
         while ( l-- ) {
-            type = items[l].type;
+            item = items[l];
+            type = item.type;
             if ( type === 'text/html' ) {
-                hasImage = false;
-                break;
+                /*jshint loopfunc: true */
+                item.getAsString( function ( html ) {
+                    self.insertHTML( html, true );
+                });
+                /*jshint loopfunc: false */
+                return;
+            }
+            if ( type === 'text/plain' ) {
+                plainItem = item;
             }
             if ( /^image\/.*/.test( type ) ) {
                 hasImage = true;
             }
         }
+        // Treat image paste as a drop of an image file.
         if ( hasImage ) {
-            event.preventDefault();
-                this.fireEvent( 'dragover', {
+            this.fireEvent( 'dragover', {
                 dataTransfer: clipboardData,
                 /*jshint loopfunc: true */
                 preventDefault: function () {
@@ -1953,28 +1964,35 @@ var onPaste = function ( event ) {
                     dataTransfer: clipboardData
                 });
             }
-            return;
+        } else if ( plainItem ) {
+            item.getAsString( function ( text ) {
+                self.insertPlainText( text, true );
+            });
         }
+        return;
     }
 
+    // Old interface
+    if ( clipboardData ) {
+        event.preventDefault();
+        if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
+            this.insertHTML( clipboardData.getData( 'text/html' ), true );
+        } else {
+            this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
+        }
+        return;
+    }
+
+    // No interface :(
     this._awaitingPaste = true;
 
-    var self = this,
-        body = this._body,
+    var body = this._body,
         range = this.getSelection(),
-        startContainer, startOffset, endContainer, endOffset, startBlock;
-
-    // Record undo checkpoint
-    self._recordUndoState( range );
-    self._getRangeAndRemoveBookmark( range );
-
-    // Note current selection. We must do this AFTER recording the undo
-    // checkpoint, as this modifies the DOM.
-    startContainer = range.startContainer;
-    startOffset = range.startOffset;
-    endContainer = range.endContainer;
-    endOffset = range.endOffset;
-    startBlock = getStartBlockOfRange( range );
+        startContainer = range.startContainer,
+        startOffset = range.startOffset,
+        endContainer = range.endContainer,
+        endOffset = range.endOffset,
+        startBlock = getStartBlockOfRange( range );
 
     // We need to position the pasteArea in the visible portion of the screen
     // to stop the browser auto-scrolling.
@@ -1993,8 +2011,10 @@ var onPaste = function ( event ) {
     // paste event.
     setTimeout( function () {
         try {
+            self._awaitingPaste = false;
+
             // Get the pasted content and clean
-            var frag = self._doc.createDocumentFragment(),
+            var html = '',
                 next = pasteArea,
                 first, range;
 
@@ -2002,59 +2022,22 @@ var onPaste = function ( event ) {
             // content is inserted; gather them all up.
             while ( pasteArea = next ) {
                 next = pasteArea.nextSibling;
-                frag.appendChild( empty( detach( pasteArea ) ) );
+                // Safari and IE like putting extra divs around things.
+                first = pasteArea.firstChild;
+                if ( first && first === pasteArea.lastChild &&
+                        first.nodeName === 'DIV' ) {
+                    pasteArea = first;
+                }
+                html += pasteArea.innerHTML;
             }
 
-            first = frag.firstChild;
             range = self._createRange(
                 startContainer, startOffset, endContainer, endOffset );
-
-            // Was anything actually pasted?
-            if ( first ) {
-                // Safari and IE like putting extra divs around things.
-                if ( first === frag.lastChild &&
-                        first.nodeName === 'DIV' ) {
-                    frag.replaceChild( empty( first ), first );
-                }
-
-                frag.normalize();
-                addLinks( frag );
-                cleanTree( frag, false );
-                cleanupBRs( frag );
-                removeEmptyInlines( frag );
-
-                var node = frag,
-                    doPaste = true,
-                    event = {
-                        fragment: frag,
-                        preventDefault: function () {
-                            doPaste = false;
-                        },
-                        isDefaultPrevented: function () {
-                            return !doPaste;
-                        }
-                    };
-                while ( node = getNextBlock( node ) ) {
-                    fixCursor( node );
-                }
-
-                self.fireEvent( 'willPaste', event );
-
-                // Insert pasted data
-                if ( doPaste ) {
-                    insertTreeFragmentIntoRange( range, event.fragment );
-                    if ( !canObserveMutations ) {
-                        self._docWasChanged();
-                    }
-                    range.collapse( false );
-                    self._ensureBottomLine();
-                }
-            }
-
             self.setSelection( range );
-            self._updatePath( range, true );
 
-            self._awaitingPaste = false;
+            if ( html ) {
+                self.insertHTML( html, true );
+            }
         } catch ( error ) {
             self.didError( error );
         }
@@ -3453,7 +3436,7 @@ proto.insertImage = function ( src, attributes ) {
 // Insert HTML at the cursor location. If the selection is not collapsed
 // insertTreeFragmentIntoRange will delete the selection so that it is replaced
 // by the html being inserted.
-proto.insertHTML = function ( html ) {
+proto.insertHTML = function ( html, isPaste ) {
     var range = this.getSelection(),
         frag = this._doc.createDocumentFragment(),
         div = this.createElement( 'DIV' );
@@ -3467,24 +3450,37 @@ proto.insertHTML = function ( html ) {
     this._getRangeAndRemoveBookmark( range );
 
     try {
-        frag.normalize();
+        var node = frag;
+        var event = {
+            fragment: frag,
+            preventDefault: function () {
+                this.defaultPrevented = true;
+            },
+            defaultPrevented: false
+        };
+
         addLinks( frag );
         cleanTree( frag, true );
         cleanupBRs( frag );
         removeEmptyInlines( frag );
-        fixContainer( frag );
+        frag.normalize();
 
-        var node = frag;
         while ( node = getNextBlock( node ) ) {
             fixCursor( node );
         }
 
-        insertTreeFragmentIntoRange( range, frag );
-        if ( !canObserveMutations ) {
-            this._docWasChanged();
+        if ( isPaste ) {
+            this.fireEvent( 'willPaste', event );
         }
-        range.collapse( false );
-        this._ensureBottomLine();
+
+        if ( !event.defaultPrevented ) {
+            insertTreeFragmentIntoRange( range, event.fragment );
+            if ( !canObserveMutations ) {
+                this._docWasChanged();
+            }
+            range.collapse( false );
+            this._ensureBottomLine();
+        }
 
         this.setSelection( range );
         this._updatePath( range, true );
@@ -3492,6 +3488,20 @@ proto.insertHTML = function ( html ) {
         this.didError( error );
     }
     return this;
+};
+
+proto.insertPlainText = function ( plainText, isPaste ) {
+    var lines = plainText.split( '\n' ),
+        i, l;
+    for ( i = 1, l = lines.length - 1; i < l; i += 1 ) {
+        lines[i] = '<DIV>' +
+            lines[i].split( '&' ).join( '&amp;' )
+                    .split( '<' ).join( '&lt;'  )
+                    .split( '>' ).join( '&gt;'  )
+                    .replace( / (?= )/g, '&nbsp;' ) +
+        '</DIV>';
+    }
+    return this.insertHTML( lines.join( '' ), isPaste );
 };
 
 // --- Formatting ---
