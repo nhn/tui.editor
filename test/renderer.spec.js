@@ -311,6 +311,5 @@ describe('renderer', function() {
         convertedText = renderer2.convert(runner.getNode());
 
         expect(convertedText).toEqual('renderer2');
-
     });
 });
