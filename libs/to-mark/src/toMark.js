@@ -17,18 +17,46 @@ var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
  * @exports toMark
  * @param {string} htmlStr html string to convert
  * @param {object} options option
+ * @param {boolean} options.gfm if this property is false turn off it cant parse gfm
+ * @param {Renderer} options.renderer pass renderer to use
  * @return {string} converted markdown text
+ * @example
+ * toMark('<h1>hello world</h1>'); // "# hello world"
+ * toMark('<del>strike</del>'); // "~~strike~~"
+ * toMark('<del>strike</del>', {gfm: false}); // "strike"
  */
 function toMark(htmlStr, options) {
     var runner,
-        renderer = gfmRenderer,
-        markdownContent = '';
+        renderer;
 
     if (!htmlStr) {
         return '';
     }
 
+    renderer = gfmRenderer;
+
+    if (options) {
+        if (options.gfm === false) {
+            renderer = basicRenderer;
+        }
+
+        renderer = options.renderer || renderer;
+    }
+
     runner = new DomRunner(toDom(htmlStr));
+
+    return parse(runner, renderer);
+}
+
+/**
+ * parse
+ * Parse dom to markdown
+ * @param {DomRunner} runner runner
+ * @param {Renderer} renderer renderer
+ * @return {string} markdown text
+ */
+function parse(runner, renderer) {
+    var markdownContent = '';
 
     while (runner.next()) {
         markdownContent += tracker(runner, renderer);
@@ -53,6 +81,7 @@ function finalize(text) {
  * tracker
  * Iterate childNodes and process conversion using recursive call
  * @param {DomRunner} runner dom runner
+ * @param {Renderer} renderer renderer to use
  * @return {string} processed text
  */
 function tracker(runner, renderer) {
