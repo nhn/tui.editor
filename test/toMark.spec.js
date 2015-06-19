@@ -32,15 +32,11 @@ describe('toMark', function() {
     });
 
 
-    xit('', function() {
-        var myRenderer = {};
+    it('pass gfm false option to using basic markdown renderer', function() {
+        expect(toMark('<del>strike</del>', {
+            gfm: false
+        })).toEqual('strike');
 
-        toMark('', {
-            renderer: myRenderer,
-            gfm: true,
-            rules: {
-                'H1': function() {}
-            }
-        });
+        expect(toMark('<del>strike</del>')).toEqual('~~strike~~');
     });
 });
