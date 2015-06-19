@@ -61,7 +61,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         ths = node.firstChild.childNodes;
         thsLength = ths.length;
 
-        for (i = 0; i < thsLength; i++){
+        for (i = 0; i < thsLength; i += 1) {
             align = ths[i].align;
             textLength = ths[i].innerText.length;
             leftAlignValue = '';
@@ -93,7 +93,7 @@ function repeatString(pattern, count) {
 
     while (count > 1) {
         result += pattern;
-        count--;
+        count -= 1;
     }
 
     return result;
