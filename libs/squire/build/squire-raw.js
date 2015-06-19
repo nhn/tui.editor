@@ -1927,7 +1927,9 @@ var onPaste = function ( event ) {
         l, item, type;
 
     // Current HTML5 Clipboard interface
+    // ---------------------------------
     // https://html.spec.whatwg.org/multipage/interaction.html
+
     if ( items ) {
         event.preventDefault();
         l = items.length;
@@ -1973,17 +1975,25 @@ var onPaste = function ( event ) {
     }
 
     // Old interface
-    if ( clipboardData ) {
-        event.preventDefault();
-        if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
-            this.insertHTML( clipboardData.getData( 'text/html' ), true );
-        } else {
-            this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
-        }
-        return;
-    }
+    // -------------
+    // Currently supported by FF & Safari. *However*, Safari flat out refuses
+    // to copy stuff as text/html when copying from *within Safari*. There is
+    // no way to get an HTML version of the clipboard other than to use the
+    // fallback method.
+
+    // if ( clipboardData ) {
+    //     event.preventDefault();
+    //     if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
+    //         this.insertHTML( clipboardData.getData( 'text/html' ), true );
+    //     } else {
+    //         this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
+    //     }
+    //     return;
+    // }
 
     // No interface :(
+    // ---------------
+
     this._awaitingPaste = true;
 
     var body = this._body,
