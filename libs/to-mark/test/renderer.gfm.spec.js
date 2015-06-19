@@ -31,13 +31,46 @@ describe('gfmRenderer', function() {
         });
     });
 
-    describe('input', function() {
+    describe('li input', function() {
         it('unchecked input box', function() {
-            expect(getMarkdownText('<input type="checkbox" />')).toEqual('[ ]');
+            expect(getMarkdownText('<li><input type="checkbox" /></li>', null, 2)).toEqual('[ ]');
         });
 
         it('checked input box', function() {
-            expect(getMarkdownText('<input type="checkbox" checked="checked" />')).toEqual('[x]');
+            expect(getMarkdownText('<li><input type="checkbox" checked="checked" /></li>', null, 2)).toEqual('[x]');
+        });
+    });
+
+    describe('table', function() {
+        describe('TR TD, TR TH', function() {
+            it('should return subContent and |', function() {
+                expect(getMarkdownText('<table><tr><td>text</td></tr></table>', 'text', 4)).toEqual(' text |');
+                expect(getMarkdownText('<table><tr><th>text</th></tr></table>', 'text', 4)).toEqual(' text |');
+            });
+        });
+
+        describe('TR', function() {
+            it('should return | and subContent', function() {
+                expect(getMarkdownText('<table><tr><td>text</td></tr></table>', ' text |', 3)).toEqual('| text |\n');
+            });
+        });
+
+        describe('THEAD', function() {
+            it('table with head', function() {
+                expect(getMarkdownText('<table><thead><tr><th>text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ==== |\n');
+            });
+
+            it('table with left align head', function() {
+                expect(getMarkdownText('<table><thead><tr><th align="left">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :=== |\n');
+            });
+
+            it('table with right align head', function() {
+                expect(getMarkdownText('<table><thead><tr><th align="right">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ===: |\n');
+            });
+
+            it('table with center align head', function() {
+                expect(getMarkdownText('<table><thead><tr><th align="center">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :==: |\n');
+            });
         });
     });
 });

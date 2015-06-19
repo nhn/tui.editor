@@ -269,11 +269,22 @@ Renderer.prototype.mix = function(renderer) {
 /**
  * Renderer factory
  * Return new renderer
+ * @param {Renderer} srcRenderer renderer to extend
  * @param {object} rules rule object, key(rule selector), value(converter function)
  * @return {Renderer} renderer
  */
-Renderer.factory = function(rules) {
-    return new Renderer(rules);
+Renderer.factory = function(srcRenderer, rules) {
+    var renderer = new Renderer();
+
+    if (!rules) {
+        rules = srcRenderer;
+    } else {
+        renderer.mix(srcRenderer);
+    }
+
+    renderer.addRules(rules);
+
+    return renderer;
 };
 
 module.exports = Renderer;

@@ -7,8 +7,8 @@
 
 var DomRunner = require('./domRunner'),
     toDom = require('./toDom'),
-    basicRenderer = require('./renderer.basic');
-   /// gfmRenderer = require('./renderer.gfm');
+    basicRenderer = require('./renderer.basic'),
+    gfmRenderer = require('./renderer.gfm');
 
 var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
 
@@ -16,10 +16,12 @@ var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
  * toMark
  * @exports toMark
  * @param {string} htmlStr html string to convert
+ * @param {object} options option
  * @return {string} converted markdown text
  */
-function toMark(htmlStr) {
+function toMark(htmlStr, options) {
     var runner,
+        renderer = gfmRenderer,
         markdownContent = '';
 
     if (!htmlStr) {
@@ -29,7 +31,7 @@ function toMark(htmlStr) {
     runner = new DomRunner(toDom(htmlStr));
 
     while (runner.next()) {
-        markdownContent += tracker(runner);
+        markdownContent += tracker(runner, renderer);
     }
 
     return finalize(markdownContent);
@@ -53,7 +55,7 @@ function finalize(text) {
  * @param {DomRunner} runner dom runner
  * @return {string} processed text
  */
-function tracker(runner) {
+function tracker(runner, renderer) {
     var i,
         t,
         subContent = '',
@@ -63,10 +65,10 @@ function tracker(runner) {
 
     for (i = 0, t = node.childNodes.length; i < t; i += 1) {
         runner.next();
-        subContent += tracker(runner);
+        subContent += tracker(runner, renderer);
     }
 
-    content = basicRenderer.convert(node, subContent);
+    content = renderer.convert(node, subContent);
 
     return content;
 }
