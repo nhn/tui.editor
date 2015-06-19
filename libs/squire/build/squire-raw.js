@@ -805,13 +805,16 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
             endContainer = nodeAfterSplit,
             endOffset = 0,
             parent = nodeAfterSplit.parentNode,
-            child, node, prev, next;
+            child, node, prev, next, startAnchor;
 
         // 2. Move down into edge either side of split and insert any inline
         // nodes at the beginning/end of the fragment
         while ( ( child = startContainer.lastChild ) &&
-                child.nodeType === ELEMENT_NODE &&
-                child.nodeName !== 'BR' ) {
+                child.nodeType === ELEMENT_NODE ) {
+            if ( child.nodeName === 'BR' ) {
+                startOffset -= 1;
+                break;
+            }
             startContainer = child;
             startOffset = startContainer.childNodes.length;
         }
@@ -820,8 +823,9 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
                 child.nodeName !== 'BR' ) {
             endContainer = child;
         }
+        startAnchor = startContainer.childNodes[ startOffset ] || null;
         while ( ( child = frag.firstChild ) && isInline( child ) ) {
-            startContainer.appendChild( child );
+            startContainer.insertBefore( child, startAnchor );
         }
         while ( ( child = frag.lastChild ) && isInline( child ) ) {
             endContainer.insertBefore( child, endContainer.firstChild );
@@ -1049,6 +1053,7 @@ var rangeDoesStartAtBlockBoundary = function ( range ) {
         startOffset = range.startOffset;
 
     // If in the middle or end of a text node, we're not at the boundary.
+    contentWalker.root = null;
     if ( startContainer.nodeType === TEXT_NODE ) {
         if ( startOffset ) {
             return false;
@@ -1071,6 +1076,7 @@ var rangeDoesEndAtBlockBoundary = function ( range ) {
 
     // If in a text node with content, and not at the end, we're not
     // at the boundary
+    contentWalker.root = null;
     if ( endContainer.nodeType === TEXT_NODE ) {
         length = endContainer.data.length;
         if ( length && endOffset < length ) {
