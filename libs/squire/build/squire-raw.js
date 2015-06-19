@@ -1713,23 +1713,6 @@ var stylesRewriters = {
     }
 };
 
-var removeEmptyInlines = function ( root ) {
-    var children = root.childNodes,
-        l = children.length,
-        child;
-    while ( l-- ) {
-        child = children[l];
-        if ( child.nodeType === ELEMENT_NODE && !isLeaf( child ) ) {
-            removeEmptyInlines( child );
-            if ( isInline( child ) && !child.firstChild ) {
-                root.removeChild( child );
-            }
-        } else if ( child.nodeType === TEXT_NODE && !child.data ) {
-            root.removeChild( child );
-        }
-    }
-};
-
 /*
     Two purposes:
 
@@ -1813,6 +1796,27 @@ var cleanTree = function ( node, allowStyles ) {
     return node;
 };
 
+// ---
+
+var removeEmptyInlines = function removeEmptyInlines ( root ) {
+    var children = root.childNodes,
+        l = children.length,
+        child;
+    while ( l-- ) {
+        child = children[l];
+        if ( child.nodeType === ELEMENT_NODE && !isLeaf( child ) ) {
+            removeEmptyInlines( child );
+            if ( isInline( child ) && !child.firstChild ) {
+                root.removeChild( child );
+            }
+        } else if ( child.nodeType === TEXT_NODE && !child.data ) {
+            root.removeChild( child );
+        }
+    }
+};
+
+// ---
+
 var notWSTextNode = function ( node ) {
     return node.nodeType === ELEMENT_NODE ?
         node.nodeName === 'BR' :
@@ -1833,10 +1837,9 @@ var isLineBreak = function ( br ) {
 // <br> elements are treated specially, and differently depending on the
 // browser, when in rich text editor mode. When adding HTML from external
 // sources, we must remove them, replacing the ones that actually affect
-// line breaks with a split of the block element containing it (and wrapping
-// any not inside a block). Browsers that want <br> elements at the end of
-// each block will then have them added back in a later fixCursor method
-// call.
+// line breaks by wrapping the inline text in a <div>. Browsers that want <br>
+// elements at the end of each block will then have them added back in a later
+// fixCursor method call.
 var cleanupBRs = function ( root ) {
     var brs = root.querySelectorAll( 'BR' ),
         brBreaksLine = [],
