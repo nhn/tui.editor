@@ -19,6 +19,9 @@ var FIND_LAST_RETURN_RX = /\n$/g,
  * @augments Renderer
  */
 var gfmRenderer = Renderer.factory(basicRenderer, {
+    'DEL': function(node, subContent) {
+        return '~~' + subContent + '~~';
+    },
     'PRE CODE': function(node, subContent) {
         var language = '';
 
