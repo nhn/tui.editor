@@ -193,7 +193,7 @@ describe('renderer', function() {
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
     });
 
-    it('getSpaceControlled() can control text node spaces', function() {
+    it('getSpaceControlled() can control text node spaces relate with line element', function() {
         var renderer = Renderer.factory();
 
         runner = new DomRunner(toDom('<p>Hello <em>world</em></p>'));
@@ -227,6 +227,17 @@ describe('renderer', function() {
         runner.next();
 
         expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual(' world');
+
+        runner = new DomRunner(toDom('<table><tr><td>hello</td></tr> <tr><td>world</td></tr></table>'));
+        runner.next();
+        runner.next();
+        runner.next();
+        runner.next();
+        runner.next();
+        runner.next();
+        runner.next();
+
+        expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual('world');
     });
 
     it('can mix renderers', function() {

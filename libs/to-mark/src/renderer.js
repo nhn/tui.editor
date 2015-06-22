@@ -76,6 +76,11 @@ Renderer.prototype.addRules = function(rules) {
     }, this);
 };
 
+function isInlineNode(node) {
+    var tag = node.tagName;
+    return tag === 'EM' || tag === 'STRONG' || tag === 'A' || tag === 'IMG' || tag === 'CODE';
+}
+
 /**
  * getSpaceControlled
  * Remove flanked space of dom node
@@ -88,7 +93,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         trail = '',
         text;
 
-    if (node.previousSibling) {
+    if (node.previousSibling && isInlineNode(node.previousSibling)) {
         text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
 
         if (FIND_TRAIL_SPACE_RX.test(text) || FIND_LEAD_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
@@ -96,7 +101,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         }
     }
 
-    if (node.nextSibling) {
+    if (node.nextSibling && isInlineNode(node.nextSibling)) {
         text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
         if (FIND_LEAD_SPACE_RX.test(text) || FIND_TRAIL_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
             trail = ' ';
