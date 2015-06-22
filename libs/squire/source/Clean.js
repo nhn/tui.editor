@@ -1,7 +1,5 @@
 /*jshint strict:false, undef:false, unused:false */
 
-var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL)$/;
-
 var fontSizes = {
     1: 10,
     2: 13,
@@ -165,6 +163,14 @@ var stylesRewriters = {
     }
 };
 
+var allowedBlock = /^(?:A(?:DDRESS|RTICLE|SIDE|UDIO)|BLOCKQUOTE|CAPTION|D(?:[DLT]|IV)|F(?:IGURE|OOTER)|H[1-6]|HEADER|L(?:ABEL|EGEND|I)|O(?:L|UTPUT)|P(?:RE)?|SECTION|T(?:ABLE|BODY|D|FOOT|H|HEAD|R)|UL)$/;
+
+var blacklist = /^(?:HEAD|META|STYLE)/;
+
+var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT, function () {
+    return true;
+});
+
 /*
     Two purposes:
 
@@ -174,17 +180,14 @@ var stylesRewriters = {
 */
 var cleanTree = function cleanTree ( node ) {
     var children = node.childNodes,
-        blockParent, i, l, child, nodeName, nodeType, rewriter, childLength,
-        startsWithWS, endsWithWS, data;
+        nonInlineParent, i, l, child, nodeName, nodeType, rewriter, childLength,
+        startsWithWS, endsWithWS, data, sibling;
 
-    blockParent = node;
-    while ( isInline( blockParent ) ) {
-        blockParent = blockParent.parentNode;
+    nonInlineParent = node;
+    while ( isInline( nonInlineParent ) ) {
+        nonInlineParent = nonInlineParent.parentNode;
     }
-    if ( !isBlock( blockParent ) ) {
-        blockParent = null;
-    }
-    contentWalker.root = blockParent;
+    walker.root = nonInlineParent;
 
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
@@ -195,16 +198,15 @@ var cleanTree = function cleanTree ( node ) {
             childLength = child.childNodes.length;
             if ( rewriter ) {
                 child = rewriter( child, node );
-            } else if ( !allowedBlock.test( nodeName ) &&
-                    !isInline( child ) ) {
+            } else if ( blacklist.test( nodeName ) ) {
+                node.removeChild( child );
                 i -= 1;
-                if ( nodeName === 'HEAD' || nodeName === 'STYLE' ) {
-                    node.removeChild( child );
-                    l -= 1;
-                } else {
-                    l += childLength - 1;
-                    node.replaceChild( empty( child ), child );
-                }
+                l -= 1;
+                continue;
+            } else if ( !allowedBlock.test( nodeName ) && !isInline( child ) ) {
+                i -= 1;
+                l += childLength - 1;
+                node.replaceChild( empty( child ), child );
                 continue;
             }
             if ( childLength ) {
@@ -221,16 +223,41 @@ var cleanTree = function cleanTree ( node ) {
                 if ( !startsWithWS && !endsWithWS ) {
                     continue;
                 }
+                // Iterate through the nodes; if we hit some other content
+                // before the start of a new block we don't trim
                 if ( startsWithWS ) {
-                    contentWalker.currentNode = child;
-                    if ( !blockParent || !contentWalker.previousNode() ) {
+                    walker.currentNode = child;
+                    while ( sibling = walker.previousPONode() ) {
+                        nodeName = sibling.nodeName;
+                        if ( nodeName === 'IMG' ||
+                                ( nodeName === '#text' &&
+                                    /\S/.test( sibling.data ) ) ) {
+                            break;
+                        }
+                        if ( !isInline( sibling ) ) {
+                            sibling = null;
+                            break;
+                        }
+                    }
+                    if ( !sibling ) {
                         data = data.replace( /^\s+/g, '' );
                     }
                 }
                 if ( endsWithWS ) {
-                    contentWalker.currentNode = child;
-                    if ( !blockParent || !contentWalker.nextNode() ) {
-                        data = data.replace( /\s+$/g, '' );
+                    walker.currentNode = child;
+                    while ( sibling = walker.nextNode() ) {
+                        if ( nodeName === 'IMG' ||
+                                ( nodeName === '#text' &&
+                                    /\S/.test( sibling.data ) ) ) {
+                            break;
+                        }
+                        if ( !isInline( sibling ) ) {
+                            sibling = null;
+                            break;
+                        }
+                    }
+                    if ( !sibling ) {
+                        data = data.replace( /^\s+/g, '' );
                     }
                 }
                 if ( data ) {

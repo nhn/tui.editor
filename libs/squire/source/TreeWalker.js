@@ -88,3 +88,31 @@ TreeWalker.prototype.previousNode = function () {
         current = node;
     }
 };
+
+// Previous node in post-order.
+TreeWalker.prototype.previousPONode = function () {
+    var current = this.currentNode,
+        root = this.root,
+        nodeType = this.nodeType,
+        filter = this.filter,
+        node;
+    while ( true ) {
+        node = current.lastChild;
+        while ( !node && current ) {
+            if ( current === root ) {
+                break;
+            }
+            node = current.previousSibling;
+            if ( !node ) { current = current.parentNode; }
+        }
+        if ( !node ) {
+            return null;
+        }
+        if ( ( typeToBitArray[ node.nodeType ] & nodeType ) &&
+                filter( node ) ) {
+            this.currentNode = node;
+            return node;
+        }
+        current = node;
+    }
+};

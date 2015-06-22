@@ -1,6 +1,6 @@
 /*jshint strict:false, undef:false, unused:false */
 
-var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|FN|EL)|EM|FONT|HR|I(?:NPUT|MG|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:U[BP]|PAN|TR(?:IKE|ONG)|MALL|AMP)?|U|VAR|WBR)$/;
+var inlineNodeNames  = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
 
 var leafNodeNames = {
     BR: 1,
@@ -49,11 +49,13 @@ function isInline ( node ) {
     return inlineNodeNames.test( node.nodeName );
 }
 function isBlock ( node ) {
-    return node.nodeType === ELEMENT_NODE &&
+    var type = node.nodeType;
+    return ( type === ELEMENT_NODE || type === DOCUMENT_FRAGMENT_NODE ) &&
         !isInline( node ) && every( node.childNodes, isInline );
 }
 function isContainer ( node ) {
-    return node.nodeType === ELEMENT_NODE &&
+    var type = node.nodeType;
+    return ( type === ELEMENT_NODE || type === DOCUMENT_FRAGMENT_NODE ) &&
         !isInline( node ) && !isBlock( node );
 }
 
