@@ -7,10 +7,6 @@
 
 var Renderer = require('./renderer'),
     basicRenderer = require('./renderer.basic');
-/*
-var FIND_LAST_RETURN_RX = /\n$/g,
-    START_OF_LINES_RX = /^/gm;
-*/
 
 /**
  * gfmRenderer
@@ -51,38 +47,44 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return '|' + subContent + '\n';
     },
     'THEAD': function(node, sbContent) {
-        var i, ths, thsLength, align, leftAlignValue, rightAlignValue, textLength,
+        var i, ths, thsLength,
             result = '';
 
         ths = findChildTag(findChildTag(node, 'TR')[0], 'TH');
         thsLength = ths.length;
 
         for (i = 0; i < thsLength; i += 1) {
-            align = ths[i].align;
-            textLength = ths[i].textContent ? ths[i].textContent.length : ths[i].innerText.length;
-            leftAlignValue = '';
-            rightAlignValue = '';
-
-            if (align) {
-                if (align === 'left') {
-                    leftAlignValue = ':';
-                    textLength -= 1;
-                } else if (align === 'right') {
-                    rightAlignValue = ':';
-                    textLength -= 1;
-                } else if (align === 'center') {
-                    rightAlignValue = ':';
-                    leftAlignValue = ':';
-                    textLength -= 2;
-                }
-            }
-
-            result += ' ' + leftAlignValue + repeatString('=', textLength) + rightAlignValue + ' |';
+            result += ' ' + makeTableHeadAlignText(ths[i]) + ' |';
         }
 
         return sbContent + '|' + result + '\n';
     }
 });
+
+function makeTableHeadAlignText(th) {
+    var align, leftAlignValue, rightAlignValue, textLength;
+
+    align = th.align;
+    textLength = th.textContent ? th.textContent.length : th.innerText.length;
+    leftAlignValue = '';
+    rightAlignValue = '';
+
+    if (align) {
+        if (align === 'left') {
+            leftAlignValue = ':';
+            textLength -= 1;
+        } else if (align === 'right') {
+            rightAlignValue = ':';
+            textLength -= 1;
+        } else if (align === 'center') {
+            rightAlignValue = ':';
+            leftAlignValue = ':';
+            textLength -= 2;
+        }
+    }
+
+    return leftAlignValue + repeatString('=', textLength) + rightAlignValue;
+}
 
 function findChildTag(node, tagName) {
     var i,
