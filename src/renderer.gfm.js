@@ -54,13 +54,12 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         var i, ths, thsLength, align, leftAlignValue, rightAlignValue, textLength,
             result = '';
 
-
         ths = findChildTag(findChildTag(node, 'TR')[0], 'TH');
         thsLength = ths.length;
 
         for (i = 0; i < thsLength; i += 1) {
             align = ths[i].align;
-            textLength = ths[i].innerText.length;
+            textLength = ths[i].textContent ? ths[i].textContent.length : ths[i].innerText.length;
             leftAlignValue = '';
             rightAlignValue = '';
 
