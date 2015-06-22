@@ -1990,6 +1990,8 @@ var onPaste = function ( event ) {
     // paste event.
     setTimeout( function () {
         try {
+            // IE sometimes fires the beforepaste event twice; make sure it is
+            // not run again before our after paste function is called.
             self._awaitingPaste = false;
 
             // Get the pasted content and clean
@@ -2001,6 +2003,7 @@ var onPaste = function ( event ) {
             // content is inserted; gather them all up.
             while ( pasteArea = next ) {
                 next = pasteArea.nextSibling;
+                detach( pasteArea );
                 // Safari and IE like putting extra divs around things.
                 first = pasteArea.firstChild;
                 if ( first && first === pasteArea.lastChild &&
