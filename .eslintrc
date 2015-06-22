@@ -18,7 +18,7 @@
     "no-extra-parens": 0,
     "no-reserved-keys": 2,
     "valid-jsdoc": [2, {
-        "requirereturn": false
+        "requireReturn": false
     }],
     "valid-typeof": 1,
 

@@ -54,11 +54,8 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         var i, ths, thsLength, align, leftAlignValue, rightAlignValue, textLength,
             result = '';
 
-        if (!node.firstChild || node.firstChild.tagName !== 'TR' || node.firstChild.firstChild.tagName !== 'TH') {
-            return;
-        }
 
-        ths = node.firstChild.childNodes;
+        ths = findChildTag(findChildTag(node, 'TR')[0], 'TH');
         thsLength = ths.length;
 
         for (i = 0; i < thsLength; i += 1) {
@@ -68,17 +65,17 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
             rightAlignValue = '';
 
             if (align) {
-               if (align === 'left') {
+                if (align === 'left') {
                     leftAlignValue = ':';
                     textLength -= 1;
-               } else if (align === 'right') {
+                } else if (align === 'right') {
                     rightAlignValue = ':';
                     textLength -= 1;
-               } else if (align === 'center') {
+                } else if (align === 'center') {
                     rightAlignValue = ':';
                     leftAlignValue = ':';
                     textLength -= 2;
-               }
+                }
             }
 
             result += ' ' + leftAlignValue + repeatString('=', textLength) + rightAlignValue + ' |';
@@ -87,6 +84,21 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return sbContent + '|' + result + '\n';
     }
 });
+
+function findChildTag(node, tagName) {
+    var i,
+        childNodes = node.childNodes,
+        childLength = childNodes.length,
+        result = [];
+
+    for (i = 0; i < childLength; i += 1) {
+        if (childNodes[i].tagName && childNodes[i].tagName === tagName) {
+            result.push(childNodes[i]);
+        }
+    }
+
+    return result;
+}
 
 function repeatString(pattern, count) {
     var result = pattern;

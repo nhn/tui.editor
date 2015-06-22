@@ -156,7 +156,7 @@ describe('basicRenderer', function() {
 
     describe('P', function() {
         it('wrap newlines', function() {
-            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n');
+            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
         });
 
         it('pass content when sone conditions', function() {
