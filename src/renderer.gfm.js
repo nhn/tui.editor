@@ -83,7 +83,7 @@ function makeTableHeadAlignText(th) {
         }
     }
 
-    return leftAlignValue + repeatString('=', textLength) + rightAlignValue;
+    return leftAlignValue + repeatString('-', textLength) + rightAlignValue;
 }
 
 function findChildTag(node, tagName) {
