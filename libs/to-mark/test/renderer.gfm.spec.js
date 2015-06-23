@@ -64,19 +64,19 @@ describe('gfmRenderer', function() {
 
         describe('THEAD', function() {
             it('table with head', function() {
-                expect(getMarkdownText('<table><thead><tr><th>text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ==== |\n');
+                expect(getMarkdownText('<table><thead><tr><th>text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ---- |\n');
             });
 
             it('table with left align head', function() {
-                expect(getMarkdownText('<table><thead><tr><th align="left">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :=== |\n');
+                expect(getMarkdownText('<table><thead><tr><th align="left">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :--- |\n');
             });
 
             it('table with right align head', function() {
-                expect(getMarkdownText('<table><thead><tr><th align="right">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ===: |\n');
+                expect(getMarkdownText('<table><thead><tr><th align="right">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ---: |\n');
             });
 
             it('table with center align head', function() {
-                expect(getMarkdownText('<table><thead><tr><th align="center">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :==: |\n');
+                expect(getMarkdownText('<table><thead><tr><th align="center">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :--: |\n');
             });
         });
     });

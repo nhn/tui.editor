@@ -41,7 +41,7 @@ describe('toMark', function() {
                 '</table>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('| text | text |\n| ==== | ==== |');
+            expect(toMark(htmlStr)).toEqual('| text | text |\n| ---- | ---- |');
         });
 
         it('complete table', function() {
@@ -71,7 +71,7 @@ describe('toMark', function() {
 
             var expectText = [
                 '| leftHead | centerHead | rightHead |',
-                '| :======= | :========: | ========: |',
+                '| :------- | :--------: | --------: |',
                 '| text1 | text2 | text3 |',
                 '| text4 | text5 | text6 |'
             ].join('\n');
@@ -79,10 +79,10 @@ describe('toMark', function() {
             expect(toMark(htmlStr)).toEqual(expectText);
 
             /*
-            var dd = toMark(htmlStr);
+            var dd - toMark(htmlStr);
 
-            for (var i = 0; i < dd.length; i++) {
-                if (dd.charAt(i) !== expectText.charAt(i)) {
+            for (var i - 0; i < dd.length; i++) {
+                if (dd.charAt(i) !-- expectText.charAt(i)) {
                     console.log(dd.charAt(i), dd.charCodeAt(i), expectText.charAt(i), expectText.charCodeAt(i));
                 }
             }
