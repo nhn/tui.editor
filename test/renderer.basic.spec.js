@@ -24,7 +24,7 @@ describe('basicRenderer', function() {
             //&nbspl turns \u00a0 in dom node
             expect(getMarkdownText('&nbsp;im text')).toEqual('\u00a0im text');
             expect(getMarkdownText(' &nbsp;im text ')).toEqual('\u00a0im text');
-            expect(getMarkdownText('&nbsp;im &nbsp;text&nbsp;')).toEqual('\u00a0im \u00a0text\u00a0');
+            expect(getMarkdownText('&nbsp;im     &nbsp;text&nbsp;')).toEqual('\u00a0im \u00a0text\u00a0');
         });
 
         it('텍스트노드와 나란히 있는 태그안의 공백은 텍스트노드의 공백한개로 대체된다', function() {

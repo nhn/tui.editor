@@ -19,7 +19,8 @@ var FIND_LAST_RETURN_RX = /\n$/g,
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        var trimmedText = this.trim(node.nodeValue),
+        var spaceCollapsedText = this.getSpaceCollapsedText(node.nodeValue),
+            trimmedText = this.trim(spaceCollapsedText),
             escapedText = this.escapeText(trimmedText);
 
         return this.getSpaceControlled(escapedText, node);

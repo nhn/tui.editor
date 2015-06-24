@@ -9,6 +9,8 @@ var FIND_LEAD_SPACE_RX = /^\u0020/,
     FIND_TRAIL_SPACE_RX = /.+\u0020$/,
     //find first and last characters for trim
     FIND_CHAR_TO_TRIM_RX = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
+    //find space more than one
+    FIND_SPACE_MORE_THAN_ONE_RX = /[\u0020]+/g,
     //find characters that need escape
     FIND_CHAR_TO_ESCAPE_RX = /[\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
 
@@ -238,6 +240,16 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  */
 Renderer.prototype.trim = function(text) {
     return text.replace(FIND_CHAR_TO_TRIM_RX, '');
+};
+
+/**
+ * getSpaceCollapsedText
+ * Collape space more than 2
+ * @param {string} text text be collapsed
+ * @return {string} result
+ */
+Renderer.prototype.getSpaceCollapsedText = function(text) {
+    return text.replace(FIND_SPACE_MORE_THAN_ONE_RX, ' ');
 };
 
 /**

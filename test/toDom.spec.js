@@ -10,10 +10,21 @@ describe('toDom', function() {
             expect(dom.innerHTML.toUpperCase()).toEqual('<h1>Hello World!</h1>'.toUpperCase());
         });
 
-        it('remove text nodes spaces more than 1', function() {
-            var dom = toDom('<h1>Hello            World!</h1>');
-            expect(dom.innerHTML.toUpperCase()).toEqual('<h1>Hello World!</h1>'.toUpperCase());
+        it('remove spaces more than 1 between tags', function() {
+            var dom = toDom('<h1>Hello World!</h1>    <h2>Hello World!</h2>');
+            expect(dom.innerHTML.toUpperCase()).toEqual('<h1>Hello World!</h1> <h2>Hello World!</h2>'.toUpperCase());
         });
+
+        it('remove remove returns between tags', function() {
+            var dom = toDom('<h1>hello</h1>\n<h2>world</h2>');
+            expect(dom.innerHTML.toUpperCase()).toEqual('<h1>hello</h1><h2>world</h2>'.toUpperCase());
+        });
+
+        it('dont remove remove returns in text node', function() {
+            var dom = toDom('<pre><code>hel\nlo</code></pre>');
+            expect(dom.firstChild.firstChild.firstChild.nodeValue).toEqual('hel\nlo');
+        });
+
 
         it('convert block tag to dom', function() {
             var dom = toDom('<h1>Hello World!</h1>');

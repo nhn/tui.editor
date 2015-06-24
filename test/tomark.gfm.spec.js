@@ -86,7 +86,31 @@ describe('toMark', function() {
                     console.log(dd.charAt(i), dd.charCodeAt(i), expectText.charAt(i), expectText.charCodeAt(i));
                 }
             }
-*/
+            */
         });
+    });
+
+    describe('code block', function() {
+       it('preserve text node(not trimed) in code block', function() {
+            var htmlStr = [
+                '<pre>',
+                    '<code>',
+                        'function my() {\n',
+                        '    var dd = 1;\n',
+                        '}',
+                    '</code>',
+                '</pre>'
+            ].join('');
+
+            var expectText = [
+                '```',
+                'function my() {',
+                '    var dd = 1;',
+                '}',
+                '```'
+            ].join('\n');
+
+            expect(toMark(htmlStr)).toEqual(expectText);
+       });
     });
 });
