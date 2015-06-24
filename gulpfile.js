@@ -75,7 +75,7 @@ gulp.task('lintw', function lint() {
 gulp.task('connect', function() {
     connect.server({
         root: '',
-        port: 8080
+        port: 8081
     });
 });
 
