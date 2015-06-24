@@ -72,7 +72,7 @@ var basicRenderer = Renderer.factory({
 
     //Paragraphs
     'P': function(node, subContent) {
-        return '\n' + subContent + '\n\n';
+        return '\n' + subContent + '\n';
     },
     'BLOCKQUOTE P': function(node, subContent) {
         return subContent;

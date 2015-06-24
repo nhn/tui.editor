@@ -259,7 +259,7 @@ Renderer.prototype.getSpaceCollapsedText = function(text) {
  * @return {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
-    text = text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched){ // eslint-disable-line space-before-blocks
+    text = text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched) {
         return '\\' + matched;
     });
 
