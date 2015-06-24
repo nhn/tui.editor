@@ -36,12 +36,11 @@ describe('toDom', function() {
         });
 
         it('convert inline tag string to dom', function() {
-            var dom = toDom('<img src="https://www.google.co.kr/images/nav_logo195.png" alt="altText" />');
+            var dom = toDom('<a href="https://www.google.co.kr/" />');
             var node = dom.childNodes[0];
 
-            expect(node.tagName).toEqual('IMG');
-            expect(node.src).toEqual('https://www.google.co.kr/images/nav_logo195.png');
-            expect(node.alt).toEqual('altText');
+            expect(node.tagName).toEqual('A');
+            expect(node.href).toEqual('https://www.google.co.kr/');
         });
 
         it('add __htmlRootByToMark property to root element', function() {
