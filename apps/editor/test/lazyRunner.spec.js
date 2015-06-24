@@ -31,6 +31,22 @@ describe('LazyRunner', function() {
             expect(func).toHaveBeenCalled();
         });
 
+        it('function invoked with context', function() {
+            var callback, context;
+            context = {
+                data: null
+            };
+            callback = function() {
+                this.data = 'myData';
+            };
+
+            lr.run(callback, 0, context);
+
+            jasmine.clock().tick(1);
+
+            expect(context.data).toEqual('myData');
+        });
+
         it('ignore current run function when run() is called again before current run function be invoked', function() {
             var func = jasmine.createSpy('func');
 

@@ -40,7 +40,7 @@ function NEditor(options) {
 
     this.options = $.extend({
         'previewStyle': 'tab',
-        'initialEditType': 'wysiwyg',
+        'initialEditType': 'markdown',
         'height': 300
     }, options);
 
@@ -78,7 +78,12 @@ function NEditor(options) {
 
     this.wwEditor.init(this.options.height);
 
-    this.eventManager.emit('editorTypeSwitched', this.options.initialEditType === 'markdown' ? 0 : 1);
+
+    if (this.options.initialEditType === 'markdown') {
+        this.eventManager.emit('changeEditorTypeToMarkdown');
+    } else {
+        this.eventManager.emit('changeEditorTypeToWysiwyg');
+    }
 
     __nedInstance.push(this);
 }
