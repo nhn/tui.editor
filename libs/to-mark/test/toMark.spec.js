@@ -31,7 +31,6 @@ describe('toMark', function() {
         expect(toMark('<p><em>this</em> is &nbsp;<strong>strong</strong></p>')).toEqual('*this* is \u00a0**strong**');
     });
 
-
     it('pass gfm false option to using basic markdown renderer', function() {
         expect(toMark('<del>strike</del>', {
             gfm: false
