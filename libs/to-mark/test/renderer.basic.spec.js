@@ -41,8 +41,9 @@ describe('basicRenderer', function() {
     });
 
     describe('inline', function() {
-        it('em', function() {
+        it('em, b', function() {
             expect(getMarkdownText('<em></em>', 'emphasis')).toEqual('*emphasis*');
+            expect(getMarkdownText('<b></b>', 'emphasis')).toEqual('*emphasis*');
         });
 
         it('link', function() {
@@ -53,8 +54,9 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
         });
 
-        it('strong', function() {
+        it('strong, s', function() {
             expect(getMarkdownText('<strong></strong>', 'imstrong')).toEqual('**imstrong**');
+            expect(getMarkdownText('<s></s>', 'imstrong')).toEqual('**imstrong**');
         });
 
         it('code', function() {

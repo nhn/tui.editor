@@ -28,14 +28,14 @@ var basicRenderer = Renderer.factory({
     'CODE TEXT_NODE': function(node) {
         return node.nodeValue;
     },
-    'EM': function(node, subContent) {
+    'EM, B': function(node, subContent) {
         var res;
 
         res = '*' + subContent + '*';
 
         return res;
     },
-    'STRONG': function(node, subContent) {
+    'STRONG, S': function(node, subContent) {
         var res;
 
         res = '**' + subContent + '**';
