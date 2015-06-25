@@ -27,7 +27,7 @@ function Convertor(eventManager) {
 Convertor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('markdownEditorContentChanged', function(markdown) {
+    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
         var renderedHtml,
             processedDataByHook;
 
