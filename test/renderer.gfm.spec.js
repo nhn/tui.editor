@@ -19,10 +19,10 @@ describe('gfmRenderer', function() {
         return gfmRenderer.convert(runner.getNode(), subContent);
     }
 
-    describe('del', function() {
+    describe('del, s', function() {
         it('~~subcontent~~', function() {
-            expect(getMarkdownText('<p><del>text</del></p>', 'text', 2))
-                .toEqual('~~text~~');
+            expect(getMarkdownText('<p><del>text</del></p>', 'text', 2)).toEqual('~~text~~');
+            expect(getMarkdownText('<p><s>text</s></p>', 'text', 2)).toEqual('~~text~~');
         });
     });
 

@@ -15,7 +15,7 @@ var Renderer = require('./renderer'),
  * @augments Renderer
  */
 var gfmRenderer = Renderer.factory(basicRenderer, {
-    'DEL': function(node, subContent) {
+    'DEL, S': function(node, subContent) {
         return '~~' + subContent + '~~';
     },
     'PRE CODE': function(node, subContent) {
