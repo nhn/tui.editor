@@ -5,6 +5,8 @@ var keys = {
     9: 'tab',
     13: 'enter',
     32: 'space',
+    33: 'pageup',
+    34: 'pagedown',
     37: 'left',
     39: 'right',
     46: 'delete',
@@ -425,6 +427,18 @@ if ( isMac && isGecko && win.getSelection().modify ) {
     keyHandlers[ 'meta-right' ] = function ( self, event ) {
         event.preventDefault();
         self._sel.modify( 'move', 'forward', 'lineboundary' );
+    };
+}
+
+// System standard for page up/down on Mac is to just scroll, not move the
+// cursor. On Linux/Windows, it should move the cursor, but some browsers don't
+// implement this natively. Override to support it.
+if ( !isMac ) {
+    keyHandlers.pageup = function ( self ) {
+        self.moveCursorToStart();
+    };
+    keyHandlers.pagedown = function ( self ) {
+        self.moveCursorToEnd();
     };
 }
 
