@@ -80,7 +80,7 @@ Renderer.prototype.addRules = function(rules) {
 
 function isInlineNode(node) {
     var tag = node.tagName;
-    return tag === 'EM' || tag === 'STRONG' || tag === 'A' || tag === 'IMG' || tag === 'CODE';
+    return tag === 'S' || tag === 'B' || tag === 'I' || tag === 'EM' || tag === 'STRONG' || tag === 'A' || tag === 'IMG' || tag === 'CODE';
 }
 
 /**
