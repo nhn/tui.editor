@@ -13,6 +13,7 @@ var eventList = [
     'addImageFileHook',
     'markdownEditorContentChanged',
     'contentChanged.wysiwygEditor',
+    'contentChanged.markdownEditor',
     'changeEditorTypeToWysiwyg',
     'changeEditorTypeToMarkdown',
     'openPopupAddLink',

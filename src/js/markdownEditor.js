@@ -118,7 +118,7 @@ MarkdownEditor.prototype.getValue = function() {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
-    this.eventManager.emit('markdownEditorContentChanged', value || this.getValue());
+    this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
 };
 
 module.exports = MarkdownEditor;
