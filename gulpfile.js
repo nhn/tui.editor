@@ -31,9 +31,9 @@ function bundle(changedFiles) {
         .on('error', gutil.log.bind(gutil, 'browserify error'))
         .pipe(source('bundle.js'))
         // optional, remove if you dont want sourcemaps
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
-        .pipe(sourcemaps.write('./')) // writes .map file
+        //.pipe(buffer())
+        //.pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
+        //.pipe(sourcemaps.write('./')) // writes .map file
         //
         .pipe(gulp.dest('./build'));
 }

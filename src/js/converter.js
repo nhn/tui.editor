@@ -22,6 +22,7 @@ function Convertor(eventManager) {
     this._initEvent();
 
     this.latestMarkdown = '';
+    this.latestHtml = '';
 }
 
 Convertor.prototype._initEvent = function() {
