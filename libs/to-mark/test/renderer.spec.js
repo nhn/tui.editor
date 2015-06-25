@@ -193,51 +193,57 @@ describe('renderer', function() {
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
     });
 
-    it('getSpaceControlled() can control text node spaces relate with line element', function() {
-        var renderer = Renderer.factory();
+    describe('getSpaceControlled()', function() {
+        it('can control text node spaces relate with line element', function() {
+            var renderer = Renderer.factory();
 
-        runner = new DomRunner(toDom('<p>Hello <em>world</em></p>'));
-        runner.next();
-        runner.next();
+            runner = new DomRunner(toDom('<p>Hello <em>world</em></p>'));
+            runner.next();
+            runner.next();
 
-        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+            expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
 
-        runner = new DomRunner(toDom('<p>Hello <em> world</em></p>'));
-        runner.next();
-        runner.next();
+            runner = new DomRunner(toDom('<p>Hello <strong> world</strong></p>'));
+            runner.next();
+            runner.next();
 
-        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+            expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
 
-        runner = new DomRunner(toDom('<p>Hello<em> world</em></p>'));
-        runner.next();
-        runner.next();
+            runner = new DomRunner(toDom('<p>Hello<i> world</i></p>'));
+            runner.next();
+            runner.next();
 
-        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
+            expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello ');
 
-        runner = new DomRunner(toDom('<p>Hello<em>&nbsp;world</em></p>'));
-        runner.next();
-        runner.next();
+            runner = new DomRunner(toDom('<p>Hello<code>&nbsp;world</code></p>'));
+            runner.next();
+            runner.next();
 
-        expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello');
+            expect(renderer.getSpaceControlled('Hello', runner.getNode())).toEqual('Hello');
 
-        runner = new DomRunner(toDom('<p><em>Hello</em> world</p>'));
-        runner.next();
-        runner.next();
-        runner.next();
-        runner.next();
+            runner = new DomRunner(toDom('<p><b>Hello</b> world</p>'));
+            runner.next();
+            runner.next();
+            runner.next();
+            runner.next();
 
-        expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual(' world');
+            expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual(' world');
+        });
 
-        runner = new DomRunner(toDom('<table><tr><td>hello</td></tr> <tr><td>world</td></tr></table>'));
-        runner.next();
-        runner.next();
-        runner.next();
-        runner.next();
-        runner.next();
-        runner.next();
-        runner.next();
+        it('cant control with non-inline element', function() {
+            var renderer = Renderer.factory();
 
-        expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual('world');
+            runner = new DomRunner(toDom('<table><tr><td>hello</td></tr> <tr><td>world</td></tr></table>'));
+            runner.next();
+            runner.next();
+            runner.next();
+            runner.next();
+            runner.next();
+            runner.next();
+            runner.next();
+
+            expect(renderer.getSpaceControlled('world', runner.getNode())).toEqual('world');
+        });
     });
 
     it('can mix renderers', function() {
