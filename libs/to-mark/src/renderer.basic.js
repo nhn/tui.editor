@@ -28,14 +28,14 @@ var basicRenderer = Renderer.factory({
     'CODE TEXT_NODE': function(node) {
         return node.nodeValue;
     },
-    'EM, B': function(node, subContent) {
+    'EM, I': function(node, subContent) {
         var res;
 
         res = '*' + subContent + '*';
 
         return res;
     },
-    'STRONG, S': function(node, subContent) {
+    'STRONG, B': function(node, subContent) {
         var res;
 
         res = '**' + subContent + '**';
@@ -94,7 +94,7 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return '\n' + res + '\n';
+        return res + '\n\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
         return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
@@ -102,7 +102,7 @@ var basicRenderer = Renderer.factory({
 
     //List
     'UL, OL': function(node, subContent) {
-        return '\n' + subContent + '\n';
+        return subContent + '\n';
     },
     'LI OL, LI UL': function(node, subContent) {
         var res, lastNremoved;
@@ -140,7 +140,7 @@ var basicRenderer = Renderer.factory({
 
     //HR
     'HR': function() {
-        return '\n- - -\n';
+        return '- - -\n\n';
     },
 
     //Blockquote
@@ -150,7 +150,7 @@ var basicRenderer = Renderer.factory({
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
-        return '\n' + res + '\n';
+        return res + '\n\n';
     },
 
     //Code Block
@@ -160,7 +160,7 @@ var basicRenderer = Renderer.factory({
         lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
         res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
-        return '\n' + res + '\n';
+        return res + '\n\n';
     }
 });
 
