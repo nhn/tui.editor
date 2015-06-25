@@ -12,6 +12,7 @@ var eventList = [
     'previewBeforeHook',
     'addImageFileHook',
     'markdownEditorContentChanged',
+    'contentChanged.wysiwygEditor',
     'changeEditorTypeToWysiwyg',
     'changeEditorTypeToMarkdown',
     'openPopupAddLink',
@@ -19,6 +20,7 @@ var eventList = [
     'closeAllPopup',
     'command',
     'htmlUpdate',
+    'markdownUpdate',
     'renderedHtmlUpdated'
 ];
 

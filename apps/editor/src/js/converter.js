@@ -6,6 +6,7 @@
 'use strict';
 
 var marked = window.marked,
+    toMark = window.toMark,
     hljs = window.hljs;
 
 /**
@@ -44,11 +45,25 @@ Convertor.prototype._initEvent = function() {
     });
 
     this.eventManager.listen('changeEditorTypeToWysiwyg', function() {
-        self.eventManager.emit('htmlUpdate', self._markdownToHtml(self.latestMarkdown));
+        var html;
+        html = self._markdownToHtml(self.latestMarkdown);
+        console.log('\n\n~~toHtml~~\n', self.latestMarkdown, '\n-------\n', html);
+        self.eventManager.emit('htmlUpdate', html);
     });
 
     this.eventManager.listen('changeEditorTypeToMarkdown', function() {
-        console.log('CONVERTER: TO MARKDOWN 뿅! 아직 작업 안되었음');
+        var markdown;
+
+        if (self.latestHtml) {
+            //remove br created by Squire
+            markdown = toMark(self.latestHtml.replace(/<br>/g, ''));
+            console.log('\n\n~~toMD~~\n', self.latestHtml.replace(/<br>/g, ''), '\n------->\n', markdown);
+            self.eventManager.emit('markdownUpdate', markdown);
+        }
+    });
+
+    this.eventManager.listen('contentChanged.wysiwygEditor', function(html) {
+        self.latestHtml = html;
     });
 };
 

@@ -57,14 +57,14 @@ WysiwygEditor.prototype.init = function(height) {
 
         self._makeSureStandardMode(doc);
         self._initStyleSheet(doc);
+
         self.editor = new Squire(doc, {
             blockTag: 'P'
         });
+
         self.setHeight(height);
         self._initEvent();
-    window.dd = self.editor;
     });
-
 
     this.$editorContainerEl.append(this.$iframe);
 };
@@ -97,6 +97,10 @@ WysiwygEditor.prototype._initEvent = function() {
 
     this.eventManager.listen('htmlUpdate', function(html) {
         self.setValue(html);
+    });
+
+    this.editor.addEventListener('input', function() {
+        self.eventManager.emit('contentChanged.wysiwygEditor', self.getValue());
     });
 };
 

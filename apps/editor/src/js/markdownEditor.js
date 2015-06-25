@@ -79,6 +79,15 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('change', function() {
         self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
     });
+
+    this.eventManager.listen('markdownUpdate', function(markdown) {
+        self.setValue(markdown);
+    });
+
+    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+        self.cm.refresh();
+    });
+
     /*
     this.cm.on('update', function() {
         //console.log('event: update', cm);
