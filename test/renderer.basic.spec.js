@@ -158,10 +158,14 @@ describe('basicRenderer', function() {
 
     describe('P', function() {
         it('wrap newlines', function() {
-            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
+            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('paragraph\n\n');
         });
 
-        it('pass content when sone conditions', function() {
+        it('add return in li', function() {
+            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph\n');
+        });
+
+        it('pass content in blockquote', function() {
             expect(getMarkdownText('<blockquote><p></p></blockquote>', 'paragraph', 2)).toEqual('paragraph');
         });
     });

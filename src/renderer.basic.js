@@ -72,7 +72,10 @@ var basicRenderer = Renderer.factory({
 
     //Paragraphs
     'P': function(node, subContent) {
-        return '\n' + subContent + '\n\n';
+        return subContent + '\n\n';
+    },
+    'LI P': function(node, subContent) {
+        return subContent + '\n';
     },
     'BLOCKQUOTE P': function(node, subContent) {
         return subContent;
@@ -94,8 +97,7 @@ var basicRenderer = Renderer.factory({
         return '\n' + res + '\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
-        //todo 각 요소들 처리
-        return '<h1>' + node.innerHTML + '</h1>';
+        return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
     },
 
     //List
