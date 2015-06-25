@@ -111,6 +111,7 @@ MarkdownEditor.prototype.focus = function() {
 
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.cm.doc.setValue(markdown);
+    this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
 };
 
 MarkdownEditor.prototype.getValue = function() {

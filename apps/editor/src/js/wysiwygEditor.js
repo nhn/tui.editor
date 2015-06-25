@@ -110,6 +110,7 @@ WysiwygEditor.prototype.setHeight = function(height) {
 
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
+    this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
 
 WysiwygEditor.prototype.getValue = function() {
