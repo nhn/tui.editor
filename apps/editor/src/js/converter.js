@@ -56,9 +56,9 @@ Convertor.prototype._initEvent = function() {
         var markdown;
 
         if (self.latestHtml) {
-            //remove br created by Squire
-            markdown = toMark(self.latestHtml.replace(/<br>/g, ''));
-            console.log('\n\n~~toMD~~\n', self.latestHtml.replace(/<br>/g, ''), '\n------->\n', markdown);
+            //remove last br created by Squire
+            markdown = toMark(self.latestHtml);
+            console.log('\n\n~~toMD~~\n', self.latestHtml, '\n------->\n', markdown);
             self.eventManager.emit('markdownUpdate', markdown);
         }
     });
