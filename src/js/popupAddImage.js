@@ -98,6 +98,7 @@ PopupAddImage.prototype._linkWithEventManager = function() {
         if (self._isUrlType()) {
             self.applyImage();
         } else {
+            self._preAltValue = self.$el.find('.altTextInput').val();
             self.eventManager.emit('addImageFileHook', self._getImageFileForm(), self.applyImage);
         }
     });
@@ -141,8 +142,8 @@ PopupAddImage.prototype._renderContent = function() {
 };
 
 PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
-    var altText = this.$el.find('.altTextInput').val();
-
+    var altText = this._preAltValue;
+    this._preAltValue = '';
     return this._makeImageInfo(imageUrl, altText);
 };
 

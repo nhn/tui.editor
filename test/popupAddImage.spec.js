@@ -143,7 +143,7 @@ describe('PopupAddImage', function() {
                 expect(callback).toBeDefined();
             });
 
-            it('addImageFileHook에 전달되는 콜백으로 완성된 url을 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', function() {
+            it('addImageFileHook에 전달되는 콜백으로 완성된 url을 비동기로 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', function(done) {
                 var addImage = jasmine.createSpy('addImage'),
                     value = {
                         imageUrl: 'imageUrlText',
@@ -155,15 +155,17 @@ describe('PopupAddImage', function() {
                 });
 
                 em.listen('addImageFileHook', function(oForm, callback) {
-                    callback(value.imageUrl);
+                    setTimeout(function() {
+                        callback(value.imageUrl);
+                        expect(addImage).toHaveBeenCalledWith({imageUrl: value.imageUrl, altText: value.altText});
+                        expect(popup.isShow()).toBe(false);
+                        done();
+                    }, 0);
                 });
 
                 $('.altTextInput').val(value.altText);
 
                 $('.okButton').trigger('click');
-
-                expect(addImage).toHaveBeenCalledWith({imageUrl: value.imageUrl, altText: value.altText});
-                expect(popup.isShow()).toBe(false);
             });
         });
     });
