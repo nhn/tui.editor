@@ -71,7 +71,7 @@ var basicRenderer = Renderer.factory({
     },
 
     //Paragraphs
-    'P': function(node, subContent) {
+    'P, DIV': function(node, subContent) {
         return subContent + '\n\n';
     },
     'LI P': function(node, subContent) {

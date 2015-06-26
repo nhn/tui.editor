@@ -10,8 +10,8 @@ var DomRunner = require('./domRunner'),
     basicRenderer = require('./renderer.basic'),
     gfmRenderer = require('./renderer.gfm');
 
-var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g;
-
+var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g,
+    FIND_DUPLICATED_RETURNS_RX = /[ \xA0]+\n\n/g;
 /**
  * toMark
  * @exports toMark
@@ -72,6 +72,8 @@ function parse(runner, renderer) {
  * @return {string} result
  */
 function finalize(text) {
+    //collapse duplicated returns made by <br /> and block element
+    text = text.replace(FIND_DUPLICATED_RETURNS_RX, '\n');
     //remove first and last \n
     text = text.replace(FIND_FIRST_LAST_RETURNS_RX, '');
     return text;
