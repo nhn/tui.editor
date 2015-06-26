@@ -38,4 +38,10 @@ describe('toMark', function() {
 
         expect(toMark('<del>strike</del>')).toEqual('~~strike~~');
     });
+
+    it('collapse duplicated returns made by <br /> and block element', function() {
+        expect(toMark('<p>text<br />text<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
+        expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
+        expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n  \ntext');
+    });
 });
