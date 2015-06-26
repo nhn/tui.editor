@@ -21,8 +21,6 @@
     "jquery": "~2.1.3",
     "codemirror": "~5.0.0",
     "highlightjs": "~8.4.0",
-    "squire-rte": "~1.2.0",
-    "to-markdown": "~1.2.1",
-    "toMark": '
+    "squire-rte": "~1.3.0"
   }
 }
