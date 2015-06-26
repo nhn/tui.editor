@@ -54,13 +54,12 @@
 .neditor .toolbar button.italic {
     font-style: italic;
 }
-.neditor .tab{
-    display:none;
+.mdContainer .tab{
     padding: 0 5px;
     background: #eee;
     border-bottom: 1px solid #ccc;
 }
-.neditor .tab button {
+.mdContainer .tab button {
     box-sizing: border-box;
     padding: 5px;
     height: 23px;
@@ -74,29 +73,29 @@
     outline: none;
     cursor: pointer;
 }
-.neditor .tab button:first-child {
+.mdContainer .tab button:first-child {
     left: 0;
 }
-.neditor .tab button.active,
-.neditor .tab button:hover.active {
+.mdContainer .tab button.active,
+.mdContainer .tab button:hover.active {
     background: white;
     border-bottom-color: white;
 }
 
-.neditor .tab button:hover {
+.mdContainer .tab button:hover {
     background: #eee;
 }
 
-.neditor .mdContainer .editor,
-.neditor .preview {
+.mdContainer .editor,
+.mdContainer .preview {
     box-sizing: border-box;
     height:400px;
     overflow: auto;
 }
-.neditor>.mdContainer>.CodeMirror {
+.mdContainer>.CodeMirror {
     height: 100%;
 }
-.neditor>.preview {
+.mdContainer>.preview {
     padding: 5px;
 }
 .neditor .preview-style-tab>.editor,
