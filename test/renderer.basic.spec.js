@@ -119,6 +119,11 @@ describe('basicRenderer', function() {
 
             expect(getMarkdownText(htmlStr, '* item\n* item\n', 4)).toEqual('\n    * item\n    * item');
         });
+
+        it('if li has empty text then add \' \'', function() {
+            expect(getMarkdownText('<ul><li></li></ul>', '', 2)).toEqual('*  \n');
+            expect(getMarkdownText('<ol><li></li></ol>', '', 2)).toEqual('1.  \n');
+        });
     });
 
     describe('HR', function() {
