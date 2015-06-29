@@ -22,7 +22,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         var language = '';
 
         if (node.getAttribute('data-language')) {
-            language = ' ' + node.getAttribute('data-language');
+            language = node.getAttribute('data-language');
         }
 
         return '\n```' + language + '\n' + subContent + '\n```\n';
