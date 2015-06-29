@@ -34,7 +34,7 @@ describe('gfmRenderer', function() {
 
         it('code with specific language', function() {
             expect(getMarkdownText('<pre><code data-language="javascript"></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('\n``` javascript\nfunction(){\n    var in=0;\n}\n```\n');
+                .toEqual('\n```javascript\nfunction(){\n    var in=0;\n}\n```\n');
         });
     });
 
