@@ -136,8 +136,8 @@ PopupAddImage.prototype._renderContent = function() {
 
     this.$body.find('.tabSection').append(new Tab({
         initName: 'File',
-        items: ['URL', 'File'],
-        sections: [$popup.find('.urlType'), $popup.find('.fileType')]
+        items: ['File', 'URL'],
+        sections: [$popup.find('.fileType'), $popup.find('.urlType')]
     }).$el);
 };
 
