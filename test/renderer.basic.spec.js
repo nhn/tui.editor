@@ -69,27 +69,27 @@ describe('basicRenderer', function() {
 
     describe('Headings', function() {
         it('heading with empty text', function() {
-            expect(getMarkdownText('<h1></h1>', '')).toEqual('# \n\n');
+            expect(getMarkdownText('<h1></h1>', '')).toEqual('\n# \n\n');
         });
 
         it('heading with text', function() {
-            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('# heading\n\n');
+            expect(getMarkdownText('<h1></h1>', 'heading')).toEqual('\n# heading\n\n');
         });
 
         it('H1 ~ H6', function() {
-            expect(getMarkdownText('<h1></h1>', '1')).toEqual('# 1\n\n');
-            expect(getMarkdownText('<h2></h2>', '2')).toEqual('## 2\n\n');
-            expect(getMarkdownText('<h3></h3>', '3')).toEqual('### 3\n\n');
-            expect(getMarkdownText('<h4></h4>', '4')).toEqual('#### 4\n\n');
-            expect(getMarkdownText('<h5></h5>', '5')).toEqual('##### 5\n\n');
-            expect(getMarkdownText('<h6></h6>', '6')).toEqual('###### 6\n\n');
+            expect(getMarkdownText('<h1></h1>', '1')).toEqual('\n# 1\n\n');
+            expect(getMarkdownText('<h2></h2>', '2')).toEqual('\n## 2\n\n');
+            expect(getMarkdownText('<h3></h3>', '3')).toEqual('\n### 3\n\n');
+            expect(getMarkdownText('<h4></h4>', '4')).toEqual('\n#### 4\n\n');
+            expect(getMarkdownText('<h5></h5>', '5')).toEqual('\n##### 5\n\n');
+            expect(getMarkdownText('<h6></h6>', '6')).toEqual('\n###### 6\n\n');
         });
     });
 
     describe('Lists', function() {
         it('ul, ol', function() {
-            expect(getMarkdownText('<ol><li></li></ol>', '* 1\n')).toEqual('* 1\n\n');
-            expect(getMarkdownText('<ul><li></li></ul>', '1. 1\n')).toEqual('1. 1\n\n');
+            expect(getMarkdownText('<ol><li></li></ol>', '* 1\n')).toEqual('\n* 1\n\n');
+            expect(getMarkdownText('<ul><li></li></ul>', '1. 1\n')).toEqual('\n1. 1\n\n');
         });
         it('ul li', function() {
             expect(getMarkdownText('<ul><li></li></ul>', '1', 2)).toEqual('* 1\n');
@@ -123,42 +123,42 @@ describe('basicRenderer', function() {
 
     describe('HR', function() {
         it('add hr line', function() {
-            expect(getMarkdownText('<hr />')).toEqual('- - -\n\n');
+            expect(getMarkdownText('<hr />')).toEqual('\n- - -\n\n');
         });
     });
 
     describe('blockquote', function() {
         it('add oneline blockquote', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('> imblock\n\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('\n> imblock\n\n');
         });
 
         it('add \n if there are no \n in text end', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('> imblock\n\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('\n> imblock\n\n');
         });
 
         it('add multiline blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n')).toEqual('> imblock1\n> imblock2\n\n');
+            expect(getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n')).toEqual('\n> imblock1\n> imblock2\n\n');
         });
 
         it('add multiline content with some space to blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('> imblock1\n>   imblock2\n\n');
+            expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('\n> imblock1\n>   imblock2\n\n');
         });
 
         it('nested blockqutoe', function() {
-            expect(getMarkdownText('<blockquote></blockquote>', getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n'))).toEqual('> > imblock1\n> > imblock2\n\n');
+            expect(getMarkdownText('<blockquote></blockquote>', getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n'))).toEqual('\n> > imblock1\n> > imblock2\n\n');
         });
     });
 
     describe('pre-code', function() {
         it('code with some spaces', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('    function(){\n        var in=0;\n    }\n\n');
+                .toEqual('\n    function(){\n        var in=0;\n    }\n\n');
         });
     });
 
     describe('P', function() {
         it('wrap newlines', function() {
-            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('paragraph\n\n');
+            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
         });
 
         it('add return in li', function() {

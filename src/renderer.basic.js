@@ -72,7 +72,7 @@ var basicRenderer = Renderer.factory({
 
     //Paragraphs
     'P': function(node, subContent) {
-        return subContent + '\n\n';
+        return '\n' + subContent + '\n\n';
     },
     'LI P': function(node, subContent) {
         return subContent + '\n';
@@ -94,7 +94,7 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return res + '\n\n';
+        return '\n' + res + '\n\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
         return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
@@ -102,7 +102,7 @@ var basicRenderer = Renderer.factory({
 
     //List
     'UL, OL': function(node, subContent) {
-        return subContent + '\n';
+        return '\n' + subContent + '\n';
     },
     'LI OL, LI UL': function(node, subContent) {
         var res, lastNremoved;
@@ -140,7 +140,7 @@ var basicRenderer = Renderer.factory({
 
     //HR
     'HR': function() {
-        return '- - -\n\n';
+        return '\n- - -\n\n';
     },
 
     //Blockquote
@@ -150,7 +150,7 @@ var basicRenderer = Renderer.factory({
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
-        return res + '\n\n';
+        return '\n' + res + '\n\n';
     },
 
     //Code Block
@@ -160,7 +160,7 @@ var basicRenderer = Renderer.factory({
         lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
         res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
-        return res + '\n\n';
+        return '\n' + res + '\n\n';
     }
 });
 
