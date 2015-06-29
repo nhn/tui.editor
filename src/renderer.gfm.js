@@ -36,7 +36,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
 
         condition = node.checked ? 'x' : ' ';
 
-        return '[' + condition + ']';
+        return '[' + condition + '] ';
     },
 
     //Table

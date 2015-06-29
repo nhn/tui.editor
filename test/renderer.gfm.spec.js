@@ -40,11 +40,11 @@ describe('gfmRenderer', function() {
 
     describe('li input', function() {
         it('unchecked input box', function() {
-            expect(getMarkdownText('<li><input type="checkbox" /></li>', null, 2)).toEqual('[ ]');
+            expect(getMarkdownText('<li><input type="checkbox" /></li>', null, 2)).toEqual('[ ] ');
         });
 
         it('checked input box', function() {
-            expect(getMarkdownText('<li><input type="checkbox" checked="checked" /></li>', null, 2)).toEqual('[x]');
+            expect(getMarkdownText('<li><input type="checkbox" checked="checked" /></li>', null, 2)).toEqual('[x] ');
         });
     });
 
