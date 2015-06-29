@@ -132,7 +132,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<blockquote></blockquote>', 'imblock\n')).toEqual('\n> imblock\n\n');
         });
 
-        it('add \n if there are no \n in text end', function() {
+        it('add \\n if there are no \\n in text end', function() {
             expect(getMarkdownText('<blockquote></blockquote>', 'imblock')).toEqual('\n> imblock\n\n');
         });
 
