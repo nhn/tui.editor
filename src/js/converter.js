@@ -5,6 +5,8 @@
 
 'use strict';
 
+var markedCustomRenderer = require('./markedCustomRenderer');
+
 var marked = window.marked,
     toMark = window.toMark,
     hljs = window.hljs;
@@ -70,6 +72,7 @@ Convertor.prototype._initEvent = function() {
 
 Convertor.prototype._markdownToHtml = function(markdown) {
     return marked(markdown, {
+        renderer: markedCustomRenderer,
         gfm: true,
         tables: true,
         breaks: true,
