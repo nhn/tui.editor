@@ -4,7 +4,7 @@
   "authors": [
     "Sungho Kim / FE Development Team / NHN Entertainment."
   ],
-  "main": "",
+  "main": "src/index.js",
   "license": "MIT",
   "private": true,
   "ignore": [
