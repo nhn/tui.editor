@@ -19,6 +19,7 @@ var marked = window.marked,
  * @class
  * @param {EventManager} eventManager 이벤트 매니저
  */
+
 function Convertor(eventManager) {
     this.eventManager = eventManager;
     this._initEvent();
@@ -34,7 +35,7 @@ Convertor.prototype._initEvent = function() {
         var renderedHtml,
             processedDataByHook;
 
-        renderedHtml = self._markdownToHtml(markdown);
+        renderedHtml = self._markdownToHtmlWithCodeHighlight(markdown);
 
         processedDataByHook = self.eventManager.emit('htmlRenderAfterHook', renderedHtml);
 
@@ -70,7 +71,7 @@ Convertor.prototype._initEvent = function() {
     });
 };
 
-Convertor.prototype._markdownToHtml = function(markdown) {
+Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
         renderer: markedCustomRenderer,
         gfm: true,
@@ -83,6 +84,19 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         highlight: function(code) {
             return hljs.highlightAuto(code).value;
         }
+    });
+};
+
+Convertor.prototype._markdownToHtml = function(markdown) {
+    return marked(markdown, {
+        renderer: markedCustomRenderer,
+        gfm: true,
+        tables: true,
+        breaks: true,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false
     });
 };
 

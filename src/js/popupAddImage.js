@@ -135,7 +135,7 @@ PopupAddImage.prototype._renderContent = function() {
     LayerPopup.prototype._renderContent.call(this);
 
     this.$body.find('.tabSection').append(new Tab({
-        initName: 'URL',
+        initName: 'File',
         items: ['URL', 'File'],
         sections: [$popup.find('.urlType'), $popup.find('.fileType')]
     }).$el);
