@@ -114,8 +114,6 @@ describe('CommandManager', function() {
             mockupBase.eventManager.emit('command', 'mycommand', 'myarg');
 
             expect(command.exec).toHaveBeenCalled();
-            //인자가 제대로 전달되고있는데 expect가 실패함
-            //expect(command.exec).toHaveBeenCalledWith('mycommand', 'myargs');
         });
     });
 });
