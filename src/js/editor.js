@@ -145,9 +145,6 @@ NEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
 };
 
-NEditor.prototype.getCursorOffset = function() {
-};
-
 NEditor.prototype.execCommand = function(command) {
     //현재 에디터 상태를 토대로 codeMirror혹은 Wysiwyg커맨드를 실행해주는 루틴
     this.getCodeMirror().execCommand(command);
