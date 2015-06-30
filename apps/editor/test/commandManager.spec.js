@@ -31,21 +31,6 @@ describe('CommandManager', function() {
     });
 
     describe('addCommand', function() {
-        it('마크다운타입으로 등록하면 코드미러에 커맨드를 등록한다', function() {
-            var command = new Command('mycommand', Command.TYPE.MD);
-
-            command.setKeyMap('Ctrl-B', 'Cmd-B');
-            command.setup = function() {};
-            command.exec = function() {};
-
-            cmgr.addCommand(command);
-
-            expect(CodeMirror.commands.mycommand).toBeDefined();
-            expect(CodeMirror.commands.mycommand).toBe(command.responder);
-            expect(CodeMirror.keyMap.macDefault['Cmd-B']).toBeDefined();
-            expect(CodeMirror.keyMap.pcDefault['Ctrl-B']).toBeDefined();
-        });
-
         it('마크다운타입으로 등록하게되면 _mdCommand에 등록된다.', function() {
             var command = new Command('mycommand', Command.TYPE.MD);
 
