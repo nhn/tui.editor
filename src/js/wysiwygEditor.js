@@ -12,6 +12,7 @@ var Bold = require('./wysiwygCommands/bold'),
     AddLink = require('./wysiwygCommands/addLink'),
     HR = require('./wysiwygCommands/hr'),
     Heading = require('./wysiwygCommands/heading'),
+    Task = require('./wysiwygCommands/task'),
     UL = require('./wysiwygCommands/ul'),
     OL = require('./wysiwygCommands/ol');
 
@@ -42,6 +43,7 @@ function WysiwygEditor($el, contentStyles, eventManager, commandManager) {
     commandManager.addCommand(AddLink);
     commandManager.addCommand(HR);
     commandManager.addCommand(Heading);
+    commandManager.addCommand(Task);
 }
 
 WysiwygEditor.prototype.init = function(height) {

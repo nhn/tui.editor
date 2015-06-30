@@ -121,6 +121,13 @@ Toolbar.prototype._initButton = function() {
         command: 'OL',
         text: 'OL'
     }));
+
+    this.addButton(new Button({
+        className: 'task',
+        command: 'Task',
+        text: 'TASK'
+    }));
+
 };
 
 module.exports = Toolbar;

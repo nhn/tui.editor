@@ -14,6 +14,7 @@ var Bold = require('./markdownCommands/bold'),
     AddImage = require('./markdownCommands/addImage'),
     UL = require('./markdownCommands/ul'),
     OL = require('./markdownCommands/ol'),
+    Task = require('./markdownCommands/task'),
     LazyRunner = require('./lazyRunner');
 
 
@@ -42,6 +43,7 @@ function MarkdownEditor($el, eventManager, commandManager) {
     commandManager.addCommand(AddImage);
     commandManager.addCommand(UL);
     commandManager.addCommand(OL);
+    commandManager.addCommand(Task);
 
     this.lazyRunner = new LazyRunner();
 

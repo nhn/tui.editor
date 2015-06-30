@@ -6,7 +6,7 @@ module.exports = function(config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: '',
+        basepath: '',
 
 
         // frameworks to use
@@ -16,7 +16,8 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'lib/jquery/dist/jquery.js',
-            'lib/codesnippet/code-snippet.js',
+            'lib/ne-code-snippet/code-snippet.js',
+            'lib/toMark/dist/toMark.js',
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',
             'lib/codemirror/addon/mode/overlay.js',

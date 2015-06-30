@@ -1,5 +1,5 @@
 /**
- * @fileoverview HR markdown command
+ * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -8,19 +8,14 @@
 var MarkdownCommand = require('../markdownCommand');
 
 /**
- * HR
- * Add HR markdown syntax to markdown editor
- * @exports HR
+ * Task
+ * @exports Task
  * @augments Command
  * @augments MarkdownCommand
  */
-var HR = MarkdownCommand.factory(/** @lends HR */{
-    name: 'HR',
-    keyMap: ['Ctrl-Q', 'Ctrl-Q'],
-    /**
-     *  커맨드 핸들러
-     *  @return {CodeMirror} 코드미러 상수
-     */
+
+var Task = MarkdownCommand.factory(/** @lends Task */{
+    name: 'Task',
     exec: function() {
         var replaceText,
             range,
@@ -43,13 +38,7 @@ var HR = MarkdownCommand.factory(/** @lends HR */{
             ch: range.to.ch
         };
 
-        if (range.collapsed) {
-            replaceText = this.doc.getLine(from.line) + '\n***';
-            from.ch = 0;
-            to.ch = this.doc.getLineHandle(range.to.line).text.length;
-        } else {
-            replaceText = '***';
-        }
+        replaceText = '* [ ] ';
 
         this.doc.replaceRange(replaceText, from, to);
 
@@ -57,4 +46,4 @@ var HR = MarkdownCommand.factory(/** @lends HR */{
     }
 });
 
-module.exports = HR;
+module.exports = Task;
