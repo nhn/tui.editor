@@ -35,21 +35,18 @@ function CommandManager(base) {
 CommandManager.prototype.addCommand = function(command) {
     var base = this.base,
         responder = command.responder,
-        name = command.getName();
+        name = command.getName(),
+        commandBase;
 
     if (command.isMDType()) {
-        this._addCMCommand(name, responder, command.keyMap);
-        this._mdCommand.set(name, function() {
-            var args = [base.getCodeMirror()].concat(util.toArray(arguments));
-            return responder.apply(null, args);
-        });
-
-        this._mdCommand.set(name, responder);
+        commandBase = this._mdCommand;
     } else if (command.isWWType()) {
-        this._wwCommand.set(name, responder);
+        commandBase = this._wwCommand;
     } else if (command.isGlobalType()) {
-        this._command.set(name, responder);
+        commandBase = this._command;
     }
+
+    commandBase.set(name,responder);
 };
 
 
@@ -74,48 +71,35 @@ CommandManager.prototype._initEvent = function() {
 };
 
 /**
- * _addCMCommand
- * Add command to codemirror for use its keyMap system
- * @param {string} name Command Name
- * @param {function} fn Command responder
- * @param {array} keyMap keyMap array
- */
-CommandManager.prototype._addCMCommand = function(name, fn, keyMap) {
-    if (!CodeMirror.commands[name]) {
-        CodeMirror.commands[name] = fn;
-
-        if (keyMap) {
-            CodeMirror.keyMap.pcDefault[keyMap[0]] = name;
-            CodeMirror.keyMap.macDefault[keyMap[1]] = name;
-        }
-    }
-};
-
-/**
  * 커맨드를 실행한다
  * @param {String} name 커맨드명
  * @returns {*} 커맨드를 수행한후 리턴값
  */
 CommandManager.prototype.exec = function(name) {
-    var command = this._command.get(name),
+    var commandToRun,
+        globalCommand = this._command.get(name),
         mdCommand = this._mdCommand.get(name),
         wwCommand = this._wwCommand.get(name),
         args = util.toArray(arguments);
 
     args.shift();
 
-    if (command) {
-        return command();
+    if (globalCommand) {
+        args = [this.base].concat(args);
+        commandToRun = globalCommand;
+    } else {
+        if (this.typeStatus === TYPE.MARKDOWN && mdCommand) {
+            args = [this.base.getCodeMirror()].concat(args);
+            commandToRun = mdCommand;
+        } else if (this.typeStatus === TYPE.WYSIWYG && wwCommand) {
+            args = [this.base.getSquire()].concat(args);
+            commandToRun = wwCommand;
+        }
     }
 
-    if (this.typeStatus === TYPE.MARKDOWN && mdCommand) {
-        args = [this.base.getCodeMirror()].concat(args);
-        return mdCommand.apply(null, args);
-    } else if (this.typeStatus === TYPE.WYSIWYG && wwCommand) {
-        args = [this.base.getSquire()].concat(args);
-        return wwCommand.apply(null, args);
+    if (commandToRun) {
+        return commandToRun.apply(null, args);
     }
 };
 
 module.exports = CommandManager;
-
