@@ -5,20 +5,8 @@
 
 'use strict';
 
-var Bold = require('./wysiwygCommands/bold'),
-    Italic = require('./wysiwygCommands/italic'),
-    Blockquote = require('./wysiwygCommands/blockquote'),
-    AddImage = require('./wysiwygCommands/addImage'),
-    AddLink = require('./wysiwygCommands/addLink'),
-    HR = require('./wysiwygCommands/hr'),
-    Heading = require('./wysiwygCommands/heading'),
-    Task = require('./wysiwygCommands/task'),
-    UL = require('./wysiwygCommands/ul'),
-    OL = require('./wysiwygCommands/ol');
-
 var Squire = window.Squire,
     util = ne.util;
-
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -27,23 +15,11 @@ var Squire = window.Squire,
  * @param {jQuery} $el 에디터가 들어갈 엘리먼트
  * @param {string[]} contentStyles List of CSS style file path for HTML content
  * @param {EventManager} eventManager 이벤트 매니저
- * @param {commandManager} commandManager 커맨드 매니저
  */
-function WysiwygEditor($el, contentStyles, eventManager, commandManager) {
+function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
-
-    commandManager.addCommand(Bold);
-    commandManager.addCommand(Italic);
-    commandManager.addCommand(Blockquote);
-    commandManager.addCommand(UL);
-    commandManager.addCommand(OL);
-    commandManager.addCommand(AddImage);
-    commandManager.addCommand(AddLink);
-    commandManager.addCommand(HR);
-    commandManager.addCommand(Heading);
-    commandManager.addCommand(Task);
 }
 
 WysiwygEditor.prototype.init = function(height) {

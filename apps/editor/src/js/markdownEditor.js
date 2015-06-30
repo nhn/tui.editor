@@ -5,18 +5,7 @@
 
 'use strict';
 
-var Bold = require('./markdownCommands/bold'),
-    Italic = require('./markdownCommands/italic'),
-    Blockquote = require('./markdownCommands/blockquote'),
-    Heading = require('./markdownCommands/heading'),
-    HR = require('./markdownCommands/hr'),
-    AddLink = require('./markdownCommands/addLink'),
-    AddImage = require('./markdownCommands/addImage'),
-    UL = require('./markdownCommands/ul'),
-    OL = require('./markdownCommands/ol'),
-    Task = require('./markdownCommands/task'),
-    LazyRunner = require('./lazyRunner');
-
+var LazyRunner = require('./lazyRunner');
 
 var CodeMirror = window.CodeMirror;
 
@@ -30,20 +19,9 @@ var CodeMirror = window.CodeMirror;
  * @param {EventManager} eventManager 이벤트 매니저
  * @param {commandManager} commandManager 커맨드 매니저
  */
-function MarkdownEditor($el, eventManager, commandManager) {
+function MarkdownEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
-
-    commandManager.addCommand(Bold);
-    commandManager.addCommand(Italic);
-    commandManager.addCommand(Blockquote);
-    commandManager.addCommand(Heading);
-    commandManager.addCommand(HR);
-    commandManager.addCommand(AddLink);
-    commandManager.addCommand(AddImage);
-    commandManager.addCommand(UL);
-    commandManager.addCommand(OL);
-    commandManager.addCommand(Task);
 
     this.lazyRunner = new LazyRunner();
 

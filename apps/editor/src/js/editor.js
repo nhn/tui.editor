@@ -10,9 +10,33 @@ var MarkdownEditor = require('./markdownEditor'),
     WysiwygEditor = require('./wysiwygEditor'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
-    CommandMangager = require('./commandManager'),
+    CommandManager = require('./commandManager'),
     ExtManager = require('./extManager'),
     Converter = require('./converter');
+
+//markdown commands
+var mdcBold = require('./markdownCommands/bold'),
+    mdcItalic = require('./markdownCommands/italic'),
+    mdcBlockquote = require('./markdownCommands/blockquote'),
+    mdcHeading = require('./markdownCommands/heading'),
+    mdcHR = require('./markdownCommands/hr'),
+    mdcAddLink = require('./markdownCommands/addLink'),
+    mdcAddImage = require('./markdownCommands/addImage'),
+    mdcUL = require('./markdownCommands/ul'),
+    mdcOL = require('./markdownCommands/ol'),
+    mdcTask = require('./markdownCommands/task');
+
+//wysiwyg Commands
+var wwBold = require('./wysiwygCommands/bold'),
+    wwItalic = require('./wysiwygCommands/italic'),
+    wwBlockquote = require('./wysiwygCommands/blockquote'),
+    wwAddImage = require('./wysiwygCommands/addImage'),
+    wwAddLink = require('./wysiwygCommands/addLink'),
+    wwHR = require('./wysiwygCommands/hr'),
+    wwHeading = require('./wysiwygCommands/heading'),
+    wwUL = require('./wysiwygCommands/ul'),
+    wwOL = require('./wysiwygCommands/ol'),
+    wwTask = require('./wysiwygCommands/task');
 
 var util = ne.util;
 
@@ -47,15 +71,15 @@ function NEditor(options) {
     hooks = options.hooks;
 
     this.eventManager = new EventManager();
-    this.commandManager = new CommandMangager(this);
+    this.commandManager = new CommandManager(this);
     this.converter = new Converter(this.eventManager);
 
-    this.layout = new Layout(options, this.eventManager, this.commandManager);
+    this.layout = new Layout(options, this.eventManager);
     this.layout.init();
 
-    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager, this.commandManager);
+    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
-    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager, this.commandManager);
+    this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     //todo 옵션에따라 초기 에디터 활성화부분필요
     //ff에서 display none인 엘리먼트에 iframe이 붙으면 iframe안의 getSelection이 정상적으로 동작하지 않아 Squire에서 오류가 발생한다..
@@ -78,6 +102,7 @@ function NEditor(options) {
 
     this.wwEditor.init(this.options.height);
 
+    this._initDefaultCommands();
 
     if (this.options.initialEditType === 'markdown') {
         this.eventManager.emit('changeEditorTypeToMarkdown');
@@ -88,6 +113,29 @@ function NEditor(options) {
     __nedInstance.push(this);
 }
 
+NEditor.prototype._initDefaultCommands = function() {
+    this.commandManager.addCommand(mdcBold);
+    this.commandManager.addCommand(mdcItalic);
+    this.commandManager.addCommand(mdcBlockquote);
+    this.commandManager.addCommand(mdcHeading);
+    this.commandManager.addCommand(mdcHR);
+    this.commandManager.addCommand(mdcAddLink);
+    this.commandManager.addCommand(mdcAddImage);
+    this.commandManager.addCommand(mdcUL);
+    this.commandManager.addCommand(mdcOL);
+    this.commandManager.addCommand(mdcTask);
+
+    this.commandManager.addCommand(wwBold);
+    this.commandManager.addCommand(wwItalic);
+    this.commandManager.addCommand(wwBlockquote);
+    this.commandManager.addCommand(wwUL);
+    this.commandManager.addCommand(wwOL);
+    this.commandManager.addCommand(wwAddImage);
+    this.commandManager.addCommand(wwAddLink);
+    this.commandManager.addCommand(wwHR);
+    this.commandManager.addCommand(wwHeading);
+    this.commandManager.addCommand(wwTask);
+};
 
 /**
  * 프리뷰가 보여지는 방식을 변경한다
