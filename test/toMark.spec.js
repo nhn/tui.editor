@@ -48,5 +48,6 @@ describe('toMark', function() {
         expect(toMark('<p>text<br />text<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
         expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
         expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n  \ntext');
+        expect(toMark('<ul><li>text<br></li><li>text<br></li></ul> ')).toEqual('* text\n* text');
     });
 });
