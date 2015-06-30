@@ -13,7 +13,8 @@ var DomRunner = require('./domRunner'),
 var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
-    FIND_DUPLICATED_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g;
+    FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
+    FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
 /**
  * toMark
  * @exports toMark
@@ -75,10 +76,13 @@ function parse(runner, renderer) {
  */
 function finalize(text) {
     //collapse duplicated returns made by <br /> and block element
-    text = text.replace(FIND_DUPLICATED_RETURNS_WITH_BR_RX, '\n\n');
+    text = text.replace(FIND_DUPLICATED_2_RETURNS_WITH_BR_RX, '\n\n');
 
     //collpase emptyline and additional return
     text = text.replace(FIND_EMPTYLINE_WITH_RETURN_RX, '\n  \n');
+
+    //collapse return and <br>
+    text = text.replace(FIND_DUPLICATED_RETURN_WITH_BR_RX, '\n');
 
     //collapse triple returns made by consecutive block elements
     text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
