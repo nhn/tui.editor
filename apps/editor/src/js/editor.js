@@ -59,16 +59,13 @@ var __nedInstance = [];
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */
 function NEditor(options) {
-    var self = this,
-        hooks;
+    var self = this;
 
     this.options = $.extend({
         'previewStyle': 'tab',
         'initialEditType': 'markdown',
         'height': 300
     }, options);
-
-    hooks = options.hooks;
 
     this.eventManager = new EventManager();
     this.commandManager = new CommandManager(this);
@@ -88,8 +85,8 @@ function NEditor(options) {
     //this.layout._switchToMarkdown();
 
     //todo 추후 옵션처리기에서 처리
-    if (hooks) {
-        util.forEach(hooks, function(fn, key) {
+    if (this.options.hooks) {
+        util.forEach(this.options.hooks, function(fn, key) {
             self.eventManager.listen(key, fn);
         });
     }
@@ -145,9 +142,7 @@ NEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
 };
 
-NEditor.prototype.execCommand = function(command) {
-    //현재 에디터 상태를 토대로 codeMirror혹은 Wysiwyg커맨드를 실행해주는 루틴
-    this.getCodeMirror().execCommand(command);
+NEditor.prototype.exec = function(command) {
 };
 
 NEditor.prototype.getCodeMirror = function() {
