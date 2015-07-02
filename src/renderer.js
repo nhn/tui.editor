@@ -7,6 +7,7 @@
 
 var FIND_LEAD_SPACE_RX = /^\u0020/,
     FIND_TRAIL_SPACE_RX = /.+\u0020$/,
+    FIND_SPACE_RETURN_TAB_RX = /[\n\s\t]+/g,
     //find first and last characters for trim
     FIND_CHAR_TO_TRIM_RX = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
     //find space more than one
@@ -242,6 +243,16 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  */
 Renderer.prototype.trim = function(text) {
     return text.replace(FIND_CHAR_TO_TRIM_RX, '');
+};
+
+/**
+ * isEmptyText
+ * Returns whether text empty or not
+ * @param {string} text text be checked
+ * @return {boolean} result
+ */
+Renderer.prototype.isEmptyText = function(text) {
+    return text.replace(FIND_SPACE_RETURN_TAB_RX, '') === '';
 };
 
 /**
