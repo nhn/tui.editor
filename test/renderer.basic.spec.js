@@ -46,17 +46,39 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<i></i>', 'emphasis')).toEqual('*emphasis*');
         });
 
+        it('empty em, i returns nothing', function() {
+            expect(getMarkdownText('<em></em>', '')).toEqual('');
+            expect(getMarkdownText('<i></i>', '')).toEqual('');
+        });
+
         it('link', function() {
             expect(getMarkdownText('<a href="http://www.nhnent.com"></a>', 'NHNENT')).toEqual('[NHNENT](http://www.nhnent.com/)');
+        });
+
+        it('link that has no text node return nothing', function() {
+            expect(getMarkdownText('<a href="http://www.nhnent.com"></a>', '')).toEqual('');
+        });
+
+        it('link that has no href return text node', function() {
+            expect(getMarkdownText('<a></a>', 'myText')).toEqual('myText');
         });
 
         it('image', function() {
             expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
         });
 
+        it('image without src returns nothing', function() {
+            expect(getMarkdownText('<img alt="NHNENT" />')).toEqual('');
+        });
+
         it('strong, b', function() {
             expect(getMarkdownText('<strong></strong>', 'imstrong')).toEqual('**imstrong**');
             expect(getMarkdownText('<b></b>', 'imstrong')).toEqual('**imstrong**');
+        });
+
+        it('strong, b without text node returns nothing', function() {
+            expect(getMarkdownText('<strong></strong>', '')).toEqual('');
+            expect(getMarkdownText('<b></b>', '')).toEqual('');
         });
 
         it('code', function() {
@@ -166,8 +188,8 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
         });
 
-        it('add return in li', function() {
-            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph\n');
+        it('pass content in li', function() {
+            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph');
         });
 
         it('pass content in blockquote', function() {
