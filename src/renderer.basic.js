@@ -82,7 +82,13 @@ var basicRenderer = Renderer.factory({
 
     //Paragraphs
     'P': function(node, subContent) {
-        return '\n' + subContent + '\n\n';
+        var res = '';
+
+        if (!this.isEmptyText(subContent)) {
+            res = '\n' + subContent + '\n\n';
+        }
+
+        return res;
     },
     'LI P, BLOCKQUOTE P': function(node, subContent) {
         return subContent;

@@ -11,6 +11,7 @@ describe('toMark', function() {
     });
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
         expect(toMark('<h1>Hello World</h1>')).toEqual('# Hello World');
+        expect(toMark('<h1>Hello World</h1><br />')).toEqual('# Hello World');
     });
 
     it('Empty spaces more than 1 are removed even if flanked space in tags', function() {
@@ -49,5 +50,7 @@ describe('toMark', function() {
         expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
         expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n  \ntext');
         expect(toMark('<ul><li>text<br></li><li>text<br></li></ul> ')).toEqual('* text\n* text');
+        expect(toMark('<ul><li>text<br></li></ul><p>text</p>')).toEqual('* text\n\ntext');
+        expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext  \ntext');
     });
 });

@@ -62,6 +62,8 @@ Renderer.prototype.addRule = function(selectorString, converter) {
     var selectors = selectorString.split(', '),
         selector = selectors.pop();
 
+    converter.fname = selectorString;
+
     while (selector) {
         this._setConverterWithSelector(selector, converter);
         selector = selectors.pop();
@@ -130,6 +132,8 @@ Renderer.prototype.convert = function(node, subContent) {
     } else {
         result = subContent;
     }
+
+    //console.log(JSON.stringify(result), converter.fname);
 
     return result || '';
 };

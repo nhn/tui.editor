@@ -202,6 +202,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
         });
 
+        it('empty p returns empty string', function() {
+            expect(getMarkdownText('<p></p>', '')).toEqual('');
+        });
+
         it('pass content in li', function() {
             expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph');
         });
