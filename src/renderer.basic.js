@@ -31,7 +31,7 @@ var basicRenderer = Renderer.factory({
     'EM, I': function(node, subContent) {
         var res = '';
 
-        if (subContent) {
+        if (subContent.replace(/[\s\n]+/g, '')) {
             res = '*' + subContent + '*';
         }
 
@@ -40,17 +40,17 @@ var basicRenderer = Renderer.factory({
     'STRONG, B': function(node, subContent) {
         var res = '';
 
-        if (subContent) {
+        if (subContent.replace(/[\s\n]+/g, '')) {
             res = '**' + subContent + '**';
         }
 
         return res;
     },
     'A': function(node, subContent) {
-        var res = '',
+        var res = subContent,
             url = node.href;
 
-        if (subContent && url) {
+        if (subContent.replace(/[\s\n]+/g, '') && url) {
             res = '[' + subContent + '](' + url + ')';
         }
 
