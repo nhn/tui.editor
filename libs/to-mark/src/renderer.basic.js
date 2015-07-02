@@ -29,33 +29,41 @@ var basicRenderer = Renderer.factory({
         return node.nodeValue;
     },
     'EM, I': function(node, subContent) {
-        var res;
+        var res = '';
 
-        res = '*' + subContent + '*';
+        if (subContent) {
+            res = '*' + subContent + '*';
+        }
 
         return res;
     },
     'STRONG, B': function(node, subContent) {
-        var res;
+        var res = '';
 
-        res = '**' + subContent + '**';
+        if (subContent) {
+            res = '**' + subContent + '**';
+        }
 
         return res;
     },
     'A': function(node, subContent) {
-        var res,
+        var res = '',
             url = node.href;
 
-        res = '[' + subContent + '](' + url + ')';
+        if (subContent && url) {
+            res = '[' + subContent + '](' + url + ')';
+        }
 
         return res;
     },
     'IMG': function(node) {
-        var res,
+        var res = '',
             src = node.src,
             alt = node.alt;
 
-        res = '![' + alt + '](' + src + ')';
+        if (src) {
+            res = '![' + alt + '](' + src + ')';
+        }
 
         return res;
     },
@@ -75,7 +83,7 @@ var basicRenderer = Renderer.factory({
         return '\n' + subContent + '\n\n';
     },
     'LI P': function(node, subContent) {
-        return subContent + '\n';
+        return subContent;
     },
     'BLOCKQUOTE P': function(node, subContent) {
         return subContent;
