@@ -163,7 +163,7 @@ var basicRenderer = Renderer.factory({
     'EM, I': function(node, subContent) {
         var res = '';
 
-        if (subContent.replace(/[\s\n]+/g, '')) {
+        if (!this.isEmptyText(subContent)) {
             res = '*' + subContent + '*';
         }
 
@@ -172,7 +172,7 @@ var basicRenderer = Renderer.factory({
     'STRONG, B': function(node, subContent) {
         var res = '';
 
-        if (subContent.replace(/[\s\n]+/g, '')) {
+        if (!this.isEmptyText(subContent)) {
             res = '**' + subContent + '**';
         }
 
@@ -182,7 +182,7 @@ var basicRenderer = Renderer.factory({
         var res = subContent,
             url = node.href;
 
-        if (subContent.replace(/[\s\n]+/g, '') && url) {
+        if (!this.isEmptyText(subContent) && url) {
             res = '[' + subContent + '](' + url + ')';
         }
 
@@ -203,21 +203,26 @@ var basicRenderer = Renderer.factory({
         return '  \n';
     },
     'CODE': function(node, subContent) {
-        var res;
+        var res = '';
 
-        res = '`' + subContent + '`';
+        if (!this.isEmptyText(subContent)) {
+            res = '`' + subContent + '`';
+        }
 
         return res;
     },
 
     //Paragraphs
     'P': function(node, subContent) {
-        return '\n' + subContent + '\n\n';
+        var res = '';
+
+        if (!this.isEmptyText(subContent)) {
+            res = '\n' + subContent + '\n\n';
+        }
+
+        return res;
     },
-    'LI P': function(node, subContent) {
-        return subContent;
-    },
-    'BLOCKQUOTE P': function(node, subContent) {
+    'LI P, BLOCKQUOTE P': function(node, subContent) {
         return subContent;
     },
 
@@ -432,6 +437,7 @@ module.exports = gfmRenderer;
 
 var FIND_LEAD_SPACE_RX = /^\u0020/,
     FIND_TRAIL_SPACE_RX = /.+\u0020$/,
+    FIND_SPACE_RETURN_TAB_RX = /[\n\s\t]+/g,
     //find first and last characters for trim
     FIND_CHAR_TO_TRIM_RX = /^[\u0020\r\n\t]+|[\u0020\r\n\t]+$/g,
     //find space more than one
@@ -485,6 +491,8 @@ function Renderer(rules) {
 Renderer.prototype.addRule = function(selectorString, converter) {
     var selectors = selectorString.split(', '),
         selector = selectors.pop();
+
+    converter.fname = selectorString;
 
     while (selector) {
         this._setConverterWithSelector(selector, converter);
@@ -554,6 +562,8 @@ Renderer.prototype.convert = function(node, subContent) {
     } else {
         result = subContent;
     }
+
+    //console.log(JSON.stringify(result), converter.fname);
 
     return result || '';
 };
@@ -667,6 +677,16 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  */
 Renderer.prototype.trim = function(text) {
     return text.replace(FIND_CHAR_TO_TRIM_RX, '');
+};
+
+/**
+ * isEmptyText
+ * Returns whether text empty or not
+ * @param {string} text text be checked
+ * @return {boolean} result
+ */
+Renderer.prototype.isEmptyText = function(text) {
+    return text.replace(FIND_SPACE_RETURN_TAB_RX, '') === '';
 };
 
 /**
@@ -791,7 +811,7 @@ var DomRunner = require('./domRunner'),
     basicRenderer = require('./renderer.basic'),
     gfmRenderer = require('./renderer.gfm');
 
-var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g,
+var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
@@ -869,7 +889,7 @@ function finalize(text) {
     text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
 
     //remove first and last \n
-    text = text.replace(FIND_FIRST_LAST_RETURNS_RX, '');
+    text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
 
     return text;
 }
