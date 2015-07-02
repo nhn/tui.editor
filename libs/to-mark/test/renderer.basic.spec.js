@@ -38,6 +38,11 @@ describe('basicRenderer', function() {
         it('returns pure nodeValue of text node in code tag', function() {
             expect(getMarkdownText('<pre><code> my*code* </code></pre>', null, 3)).toEqual(' my*code* ');
         });
+
+        it('empty html string returns empty string', function() {
+            expect(getMarkdownText('  \n')).toEqual('');
+            expect(getMarkdownText('')).toEqual('');
+        });
     });
 
     describe('inline', function() {
@@ -48,7 +53,9 @@ describe('basicRenderer', function() {
 
         it('empty em, i returns nothing', function() {
             expect(getMarkdownText('<em></em>', '')).toEqual('');
+            expect(getMarkdownText('<em></em>', '\n')).toEqual('');
             expect(getMarkdownText('<i></i>', '')).toEqual('');
+            expect(getMarkdownText('<i></i>', '\n')).toEqual('');
         });
 
         it('link', function() {
@@ -78,7 +85,9 @@ describe('basicRenderer', function() {
 
         it('strong, b without text node returns nothing', function() {
             expect(getMarkdownText('<strong></strong>', '')).toEqual('');
+            expect(getMarkdownText('<strong></strong>', '\n')).toEqual('');
             expect(getMarkdownText('<b></b>', '')).toEqual('');
+            expect(getMarkdownText('<b></b>', '\n')).toEqual('');
         });
 
         it('code', function() {

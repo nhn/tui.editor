@@ -87,7 +87,7 @@ DomRunner.prototype.getNodeText = function() {
  * @return {boolean} result
  */
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
-    return !node && current.parentNode !== this._root;
+    return !node && current !== this._root && current.parentNode !== this._root;
 };
 
 /**

@@ -126,9 +126,11 @@ Renderer.prototype.convert = function(node, subContent) {
 
     if (converter) {
         result = converter.call(this, node, subContent);
+    } else {
+        result = subContent;
     }
 
-    return result || subContent || '';
+    return result || '';
 };
 
 /**
