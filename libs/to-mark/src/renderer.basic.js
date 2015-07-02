@@ -31,7 +31,7 @@ var basicRenderer = Renderer.factory({
     'EM, I': function(node, subContent) {
         var res = '';
 
-        if (subContent.replace(/[\s\n]+/g, '')) {
+        if (!this.isEmptyText(subContent)) {
             res = '*' + subContent + '*';
         }
 
@@ -40,7 +40,7 @@ var basicRenderer = Renderer.factory({
     'STRONG, B': function(node, subContent) {
         var res = '';
 
-        if (subContent.replace(/[\s\n]+/g, '')) {
+        if (!this.isEmptyText(subContent)) {
             res = '**' + subContent + '**';
         }
 
@@ -50,7 +50,7 @@ var basicRenderer = Renderer.factory({
         var res = subContent,
             url = node.href;
 
-        if (subContent.replace(/[\s\n]+/g, '') && url) {
+        if (!this.isEmptyText(subContent) && url) {
             res = '[' + subContent + '](' + url + ')';
         }
 
@@ -71,9 +71,11 @@ var basicRenderer = Renderer.factory({
         return '  \n';
     },
     'CODE': function(node, subContent) {
-        var res;
+        var res = '';
 
-        res = '`' + subContent + '`';
+        if (!this.isEmptyText(subContent)) {
+            res = '`' + subContent + '`';
+        }
 
         return res;
     },

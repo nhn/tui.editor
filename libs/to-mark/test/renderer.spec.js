@@ -193,6 +193,13 @@ describe('renderer', function() {
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
     });
 
+    it('isEmptyText() returns whether text empty or not', function() {
+        var renderer = Renderer.factory();
+        expect(renderer.isEmptyText('i ee    \n')).toBe(false);
+        expect(renderer.isEmptyText('\n')).toBe(true);
+        expect(renderer.isEmptyText('  \n')).toBe(true);
+    });
+
     describe('getSpaceControlled()', function() {
         it('can control text node spaces relate with line element', function() {
             var renderer = Renderer.factory();

@@ -51,7 +51,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<i></i>', 'emphasis')).toEqual('*emphasis*');
         });
 
-        it('empty em, i returns nothing', function() {
+        it('empty em, i returns empty string', function() {
             expect(getMarkdownText('<em></em>', '')).toEqual('');
             expect(getMarkdownText('<em></em>', '\n')).toEqual('');
             expect(getMarkdownText('<i></i>', '')).toEqual('');
@@ -62,7 +62,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<a href="http://www.nhnent.com"></a>', 'NHNENT')).toEqual('[NHNENT](http://www.nhnent.com/)');
         });
 
-        it('link that has no text node return nothing', function() {
+        it('link that has no text node return empty string', function() {
             expect(getMarkdownText('<a href="http://www.nhnent.com"></a>', '')).toEqual('');
         });
 
@@ -74,7 +74,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
         });
 
-        it('image without src returns nothing', function() {
+        it('image without src returns empty string', function() {
             expect(getMarkdownText('<img alt="NHNENT" />')).toEqual('');
         });
 
@@ -83,7 +83,7 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<b></b>', 'imstrong')).toEqual('**imstrong**');
         });
 
-        it('strong, b without text node returns nothing', function() {
+        it('empty strong, b returns empty string', function() {
             expect(getMarkdownText('<strong></strong>', '')).toEqual('');
             expect(getMarkdownText('<strong></strong>', '\n')).toEqual('');
             expect(getMarkdownText('<b></b>', '')).toEqual('');
@@ -92,6 +92,11 @@ describe('basicRenderer', function() {
 
         it('code', function() {
             expect(getMarkdownText('<code></code>', 'imcode')).toEqual('`imcode`');
+        });
+
+        it('empty code returns empty string', function() {
+            expect(getMarkdownText('<code></code>', '')).toEqual('');
+            expect(getMarkdownText('<code></code>', ' \n')).toEqual('');
         });
         it('br', function() {
             expect(getMarkdownText('<br />')).toEqual('  \n');
