@@ -44,7 +44,7 @@ describe('toMark', function() {
         expect(toMark('<p>text</p><p>text</p>')).toEqual('text\n\ntext');
     });
 
-    it('collapse duplicated returns made by <br /> and block element', function() {
+    it('finalize markdown text', function() {
         expect(toMark('<p>text<br /></p><p>text</p>')).toEqual('text\n\ntext');
         expect(toMark('<p>text<br />text<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
         expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>')).toEqual('text  \ntext\n\ntext');
@@ -52,5 +52,6 @@ describe('toMark', function() {
         expect(toMark('<ul><li>text<br></li><li>text<br></li></ul> ')).toEqual('* text\n* text');
         expect(toMark('<ul><li>text<br></li></ul><p>text</p>')).toEqual('* text\n\ntext');
         expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext  \ntext');
+        expect(toMark('<ul><li>text</li></ul><p></p><ul><li>text</li></ul>')).toEqual('* text\n\n* text');
     });
 });
