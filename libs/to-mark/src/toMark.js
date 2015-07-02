@@ -10,7 +10,7 @@ var DomRunner = require('./domRunner'),
     basicRenderer = require('./renderer.basic'),
     gfmRenderer = require('./renderer.gfm');
 
-var FIND_FIRST_LAST_RETURNS_RX = /^[\n]+|[\n]+$/g,
+var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
@@ -88,7 +88,7 @@ function finalize(text) {
     text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
 
     //remove first and last \n
-    text = text.replace(FIND_FIRST_LAST_RETURNS_RX, '');
+    text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
 
     return text;
 }
