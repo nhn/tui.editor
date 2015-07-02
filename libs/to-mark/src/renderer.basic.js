@@ -84,7 +84,7 @@ var basicRenderer = Renderer.factory({
     'P': function(node, subContent) {
         return '\n' + subContent + '\n\n';
     },
-    'P P, LI P, BLOCKQUOTE P': function(node, subContent) {
+    'LI P, BLOCKQUOTE P': function(node, subContent) {
         return subContent;
     },
 
