@@ -88,7 +88,7 @@ DomRunner.prototype.getNodeText = function() {
  * @return {boolean} result
  */
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
-    return !node && current.parentNode !== this._root;
+    return !node && current !== this._root && current.parentNode !== this._root;
 };
 
 /**
@@ -163,7 +163,7 @@ var basicRenderer = Renderer.factory({
     'EM, I': function(node, subContent) {
         var res = '';
 
-        if (subContent) {
+        if (subContent.replace(/[\s\n]+/g, '')) {
             res = '*' + subContent + '*';
         }
 
@@ -172,17 +172,17 @@ var basicRenderer = Renderer.factory({
     'STRONG, B': function(node, subContent) {
         var res = '';
 
-        if (subContent) {
+        if (subContent.replace(/[\s\n]+/g, '')) {
             res = '**' + subContent + '**';
         }
 
         return res;
     },
     'A': function(node, subContent) {
-        var res = '',
+        var res = subContent,
             url = node.href;
 
-        if (subContent && url) {
+        if (subContent.replace(/[\s\n]+/g, '') && url) {
             res = '[' + subContent + '](' + url + ')';
         }
 
@@ -551,9 +551,11 @@ Renderer.prototype.convert = function(node, subContent) {
 
     if (converter) {
         result = converter.call(this, node, subContent);
+    } else {
+        result = subContent;
     }
 
-    return result || subContent || '';
+    return result || '';
 };
 
 /**
