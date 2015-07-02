@@ -37,7 +37,7 @@ WysiwygEditor.prototype.init = function(height) {
         self._initStyleSheet(doc);
 
         self.editor = new Squire(doc, {
-            blockTag: 'P'
+            blockTag: 'DIV'
         });
 
         self.setHeight(height);
@@ -92,7 +92,7 @@ WysiwygEditor.prototype.setValue = function(html) {
 };
 
 WysiwygEditor.prototype.getValue = function() {
-    return this.editor.getHTML();
+    return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
 };
 
 module.exports = WysiwygEditor;
