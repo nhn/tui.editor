@@ -26,7 +26,7 @@ WysiwygEditor.prototype.init = function(height) {
     var self = this;
 
     this.$iframe = $('<iframe />');
-    this.$iframe.ready(function() {
+    this.$iframe.load(function() {
         var doc = self.$iframe[0].contentDocument;
 
         if (self.editor) {
