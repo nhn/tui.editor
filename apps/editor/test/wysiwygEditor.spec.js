@@ -4,30 +4,53 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager');
 
 describe('WysiwygEditor', function() {
-    var $container, em, cm;
-
-    cm = {
-        addCommand: function() {}
-    };
+    var $container, em;
 
     beforeEach(function() {
         $('body').empty();
         $container = $('<div />');
+
         $('body').append($container);
+
         em = new EventManager();
     });
 
-    //squire has problem in karma runner
-    xit('when something changed in editor Emit contentChanged.wysiwygEditor', function() {
-        var wwe = new WysiwygEditor($container, null, em, cm),
-            handler = jasmine.createSpy('handler');
+    afterEach(function() {
+        $('body').empty();
+    });
 
-        em.listen('contentChanged.wysiwygEditor', handler);
+    xdescribe('Initialize', function() {
+        var wwe;
 
-        wwe.editor = window.editor;
-        wwe.init(300);
-        wwe.editor.bold();
+        beforeEach(function() {
+            wwe = new WysiwygEditor($container, null, em);
+        });
 
-        expect(handler).toHaveBeenCalled();
+        it('init() invoke callback', function (done) {
+            wwe.init(300, function() {
+                done();
+            });
+        });
+    });
+
+    describe('Event', function() {
+        var wwe;
+
+        beforeEach(function(done) {
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                done();
+            });
+        });
+
+        fit('when something changed in editor Emit contentChanged.wysiwygEditor', function(done) {
+            em.listen('contentChanged.wysiwygEditor', function() {
+                done();
+            });
+
+            //because squire input event
+            wwe.editor._ignoreChange = false;
+            wwe.editor.insertHTML('<p>test</p>');
+        });
     });
 });
