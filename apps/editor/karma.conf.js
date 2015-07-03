@@ -116,6 +116,10 @@ module.exports = function(config) {
             'Firefox-WebDriver'
         ],
 
+        client: {
+            useIframe: true
+        },
+
         customLaunchers: {
             'IE9': {
                 base: 'WebDriver',
