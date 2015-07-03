@@ -91,21 +91,21 @@ function NEditor(options) {
         });
     }
 
-    this.changePreviewStyle(this.options.previewStyle);
+    this.wwEditor.init(this.options.height, function() {
+        self.changePreviewStyle(self.options.previewStyle);
 
-    NEditor._extManager.applyExtension(this, this.options.exts);
+        self.mdEditor.init(self.options.initialValue);
 
-    this.mdEditor.init(this.options.initialValue);
+        NEditor._extManager.applyExtension(self, self.options.exts);
 
-    this.wwEditor.init(this.options.height);
+        self._initDefaultCommands();
 
-    this._initDefaultCommands();
-
-    if (this.options.initialEditType === 'markdown') {
-        this.eventManager.emit('changeEditorTypeToMarkdown');
-    } else {
-        this.eventManager.emit('changeEditorTypeToWysiwyg');
-    }
+        if (self.options.initialEditType === 'markdown') {
+            self.eventManager.emit('changeEditorTypeToMarkdown');
+        } else {
+            self.eventManager.emit('changeEditorTypeToWysiwyg');
+        }
+    });
 
     __nedInstance.push(this);
 }
