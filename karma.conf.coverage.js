@@ -23,14 +23,13 @@ module.exports = function(config) {
             'lib/codemirror/addon/mode/overlay.js',
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
+            'lib/squire-rte/build/squire-raw.js',
             {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
             {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
         ],
 
-
         // list of files to exclude
         exclude: [],
-
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor

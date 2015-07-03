@@ -22,18 +22,21 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.contentStyles = contentStyles;
 }
 
-WysiwygEditor.prototype.init = function(height) {
+WysiwygEditor.prototype.init = function(height, callback) {
     var self = this;
 
     this.$iframe = $('<iframe />');
+
     this.$iframe.load(function() {
         var doc = self.$iframe[0].contentDocument;
+
+        //Not in quirks mode
+        self._makeSureStandardMode(doc);
 
         if (self.editor) {
             return;
         }
 
-        self._makeSureStandardMode(doc);
         self._initStyleSheet(doc);
 
         self.editor = new Squire(doc, {
@@ -42,6 +45,10 @@ WysiwygEditor.prototype.init = function(height) {
 
         self.setHeight(height);
         self._initEvent();
+
+        if (callback) {
+           callback();
+        }
     });
 
     this.$editorContainerEl.append(this.$iframe);
