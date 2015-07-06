@@ -39,7 +39,7 @@ Installation and usage
 Advanced usage
 --------------
 
-If you load the library into a top-level document (rather than an iframe), it will not turn the page into an editable document, but will instead add a function named `Squire` to the global scope. Call `new Squire( document )`, with the `document` from an iframe to instantiate multiple rich text areas on the same page efficiently.
+If you load the library into a top-level document (rather than an iframe), it will not turn the page into an editable document, but will instead add a function named `Squire` to the global scope. Call `new Squire( document )`, with the `document` from an iframe to instantiate multiple rich text areas on the same page efficiently. Note, for compatibility with all browsers (particularly Firefox), you MUST wait for the iframe's `onload` event to fire before instantiating Squire.
 
 ### Setting the default block style
 
