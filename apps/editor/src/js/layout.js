@@ -38,6 +38,7 @@ var containerTmpl = [
 function Layout(options, eventManager) {
     this.$el = $(options.el);
     this.height = options.height;
+    this.type = options.initialEditType;
     this.eventManager = eventManager;
 }
 
@@ -80,7 +81,7 @@ Layout.prototype._initEvent = function() {
 Layout.prototype._initEditorTypeSwitch = function() {
     var self = this;
 
-    this.editorTypeSwitch = new EditorTypeSwitch();
+    this.editorTypeSwitch = new EditorTypeSwitch(this.type === 'markdown' ? EditorTypeSwitch.TYPE.MARKDOWN : EditorTypeSwitch.TYPE.WYSIWYG);
     this.$containerEl.find('.editorTypeSwitchSection').append(this.editorTypeSwitch.$el);
 
     this.editorTypeSwitch.on('editorTypeSwitched', function(ev, info) {
