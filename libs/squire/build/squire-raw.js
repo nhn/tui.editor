@@ -3854,14 +3854,15 @@ proto.decreaseListLevel = command( 'modifyBlocks', decreaseListLevel );
 if ( typeof exports === 'object' ) {
     module.exports = Squire;
 } else {
-    if ( top !== win ) {
+    win.Squire = Squire;
+
+    if ( top !== win &&
+            doc.documentElement.getAttribute( 'data-squireinit' ) === 'true' ) {
         win.editor = new Squire( doc );
         if ( win.onEditorLoad ) {
             win.onEditorLoad( win.editor );
             win.onEditorLoad = null;
         }
-    } else {
-        win.Squire = Squire;
     }
 }
 
