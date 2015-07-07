@@ -27,10 +27,23 @@
       .cm-header-5 { font-size: 100%; }
       .cm-header-6 { font-size: 90%; }
       .cm-strong { font-size: 140%; }
+      #hint {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 9999;
+      }
     </style>
 </head>
 <body>
-<div id="editSection"></div>
+<div id="editSection">
+    <select id ="hint">
+        <option>-- select one --</option>
+        <option>임시데이터1</option>
+        <option>임시데이터2</option>
+    </select>
+</div>
 <script src="/build/bundle.js"></script>
 <script>
     if (!window.console || !console.log) {
@@ -47,6 +60,7 @@
             '../src/css/contentStyle.css'
         ],
         initialEditType: 'wysiwyg',
+        exts: ['querySplitter', 'completeHint'],
         hooks: {
             'htmlRenderAfterHook': function() {
                 //console.log('htmlRenderAfterHook', arguments);

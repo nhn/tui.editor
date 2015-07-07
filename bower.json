@@ -20,7 +20,7 @@
     "jquery": "~2.1.3",
     "codemirror": "~5.0.0",
     "highlightjs": "~8.4.0",
-    "squire-rte": "https://github.com/shiren/Squire.git#master",
+    "squire-rte": "https://github.com/neilj/Squire.git#master",
     "toMark": "https://github.nhnent.com/sungho-kim/toMark.git#master",
     "ne-code-snippet": "~1.0.3"
   }

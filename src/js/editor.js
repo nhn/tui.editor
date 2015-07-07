@@ -11,7 +11,7 @@ var MarkdownEditor = require('./markdownEditor'),
     Layout = require('./layout'),
     EventManager = require('./eventManager'),
     CommandManager = require('./commandManager'),
-    ExtManager = require('./extManager'),
+    extManager = require('./extManager'),
     Converter = require('./converter');
 
 //markdown commands
@@ -41,6 +41,11 @@ var wwBold = require('./wysiwygCommands/bold'),
 var util = ne.util;
 
 var __nedInstance = [];
+
+//default extensions
+require('./extensions/querySplitter');
+require('./extensions/completeHint');
+
 
 /**
  * NEditor
@@ -96,7 +101,7 @@ function NEditor(options) {
 
         self.mdEditor.init(self.options.initialValue);
 
-        NEditor._extManager.applyExtension(self, self.options.exts);
+        extManager.applyExtension(self, self.options.exts);
 
         self._initDefaultCommands();
 
@@ -177,10 +182,9 @@ NEditor.getInstances = function() {
     return __nedInstance;
 };
 
-NEditor.definedExtention = function(name, ext) {
-    NEditor._extManager.defineExtension(name, ext);
+NEditor.defineExtension = function(name, ext) {
+    extManager.defineExtension(name, ext);
 };
 
-NEditor._extManager = new ExtManager();
 
 module.exports = NEditor;
