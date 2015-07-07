@@ -90,7 +90,9 @@ WysiwygEditor.prototype._initEvent = function() {
             eventObj;
 
         eventObj = {
-            selection: sel
+            selection: sel,
+            textContent: sel.commonAncestorContainer.textContent,
+            caretOffset: sel.endOffset
         };
 
         self.eventManager.emit('change.wysiwygEditor', eventObj);
