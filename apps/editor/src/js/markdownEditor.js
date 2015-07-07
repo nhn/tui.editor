@@ -57,6 +57,7 @@ MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
     this.cm.on('change', function() {
+        console.log(arguments);
         self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
     });
 
@@ -67,6 +68,8 @@ MarkdownEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeEditorTypeToMarkdown', function() {
         self.cm.refresh();
     });
+
+    window.dd = self.cm;
 
     /*
     this.cm.on('update', function() {

@@ -52,6 +52,18 @@ describe('WysiwygEditor', function() {
             wwe.editor._ignoreChange = false;
             wwe.editor.insertHTML('<p>test</p>');
         });
+
+        it('when something changed in editor Emit change.wysiwygEditor', function(done) {
+            em.listen('change.wysiwygEditor', function(eObj) {
+                expect(eObj.selection.startOffset).toEqual(1);
+                expect(eObj.selection.endOffset).toEqual(1);
+                done();
+            });
+
+            //because squire input event
+            wwe.editor._ignoreChange = false;
+            wwe.editor.insertHTML('test');
+        });
     });
 
     describe('editor functions', function() {

@@ -19,7 +19,7 @@ function ExtManager() {
 }
 
 ExtManager.prototype.defineExtension = function(name, ext) {
-    this.exts.set('name', ext);
+    this.exts.set(name, ext);
 };
 
 ExtManager.prototype.applyExtension = function(context, extNames) {
@@ -34,4 +34,4 @@ ExtManager.prototype.applyExtension = function(context, extNames) {
     }
 };
 
-module.exports = ExtManager;
+module.exports = new ExtManager();
