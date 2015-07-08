@@ -237,7 +237,7 @@ WysiwygEditor.prototype.setValue = function(html) {
 
 WysiwygEditor.prototype.getValue = function() {
     //remove contenteditable block, in this case div
-    return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+   return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
 };
 
 module.exports = WysiwygEditor;

@@ -19,10 +19,11 @@ var Italic = WysiwygCommand.factory(/** @lends Italic */{
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        this.editor.italic();
-        this.editor.focus();
+    exec: function(editor) {
+        editor.italic();
+        editor.focus();
     }
 });
 

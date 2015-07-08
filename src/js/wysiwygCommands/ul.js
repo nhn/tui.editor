@@ -19,10 +19,11 @@ var UL = WysiwygCommand.factory(/** @lends UL */{
     keyMap: ['Ctrl-U', 'Ctrl-U'],
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        this.editor.makeUnorderedList();
-        this.editor.focus();
+    exec: function(editor) {
+        editor.makeUnorderedList();
+        editor.focus();
     }
 });
 

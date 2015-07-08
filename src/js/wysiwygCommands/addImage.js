@@ -22,8 +22,8 @@ var AddImage = WysiwygCommand.factory(/** @lends AddImage */{
      *  @param {object} data data for image
      */
     exec: function(editor, data) {
-        this.editor.insertImage(data.imageUrl);
-        this.editor.focus();
+        editor.insertImage(data.imageUrl);
+        editor.focus();
     }
 });
 
