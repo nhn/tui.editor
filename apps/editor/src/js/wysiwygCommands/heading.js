@@ -18,23 +18,24 @@ var Heading = WysiwygCommand.factory(/** @lends Heading */{
     name: 'Heading',
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        var range = this.editor.getSelection();
+    exec: function(editor) {
+        var range = editor.getSelection();
 
         if (range.collapsed) {
             return;
         }
 
-        this.editor.changeFormat({tag: 'H3'}, null, range);
-        this.editor.focus();
+        editor.changeFormat({tag: 'H3'}, null, range);
+        editor.focus();
     },
     _getCurrentHeadingDepth: function(range) {
         var depth,
             i;
 
         for (i = 0; i <= 6; i += 1) {
-            if (this.editor.hasFormat('h' + i, null, range)) {
+            if (editor.hasFormat('h' + i, null, range)) {
                 depth = i;
                 break;
             }

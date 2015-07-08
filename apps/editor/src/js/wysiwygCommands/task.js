@@ -18,17 +18,18 @@ var Task = WysiwygCommand.factory(/** @lends Task */{
     name: 'Task',
     /**
      * Command Handler
+     * @param {Squire} editor Squire instance
      */
-    exec: function() {
-        var path = this.editor.getPath().split('>');
+    exec: function(editor) {
+        var path = editor.getPath().split('>');
 
         if(path[path.length - 1] === 'LI') {
-            this.editor.insertHTML('<input type="checkbox" /> ');
+            editor.insertHTML('<input type="checkbox" /> ');
         } else {
-            this.editor.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
+            editor.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
         }
 
-        this.editor.focus();
+        editor.focus();
     }
 });
 

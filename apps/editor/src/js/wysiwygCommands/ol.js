@@ -19,10 +19,11 @@ var OL = WysiwygCommand.factory(/** @lends OL */{
     keyMap: ['Ctrl-O', 'Ctrl-O'],
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        this.editor.makeOrderedList();
-        this.editor.focus();
+    exec: function(editor) {
+        editor.makeOrderedList();
+        editor.focus();
     }
 });
 

@@ -19,10 +19,11 @@ var Bold = WysiwygCommand.factory(/** @lends Bold */{
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        this.editor.bold();
-        this.editor.focus();
+    exec: function(editor) {
+        editor.bold();
+        editor.focus();
     }
 });
 

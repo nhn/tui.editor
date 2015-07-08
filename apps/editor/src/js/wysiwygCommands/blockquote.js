@@ -16,14 +16,13 @@ var WysiwygCommand = require('../wysiwygCommand');
  */
 var Blockquote = WysiwygCommand.factory(/** @lends Blockquote */{
     name: 'Blockquote',
-    keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        console.log('quote');
-        this.editor.increaseQuoteLevel();
-        this.editor.focus();
+    exec: function(editor) {
+        editor.increaseQuoteLevel();
+        editor.focus();
     }
 });
 

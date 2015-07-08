@@ -18,11 +18,12 @@ var HR = WysiwygCommand.factory(/** @lends HR */{
     name: 'HR',
     /**
      *  커맨드 핸들러
+     *  @param {Squire} editor Squire instance
      */
-    exec: function() {
-        var hr = this.editor.createElement('HR');
-        this.editor.insertElement(hr);
-        this.editor.focus();
+    exec: function(editor) {
+        var hr = editor.createElement('HR');
+        editor.insertElement(hr);
+        editor.focus();
     }
 });
 

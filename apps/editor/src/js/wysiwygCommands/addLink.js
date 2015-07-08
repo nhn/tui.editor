@@ -22,8 +22,8 @@ var AddLink = WysiwygCommand.factory(/** @lends AddLink */{
      *  @param {object} data data for link
      */
     exec: function(editor, data) {
-        this.editor.makeLink(data.url);
-        this.editor.focus();
+        editor.makeLink(data.url);
+        editor.focus();
     }
 });
 
