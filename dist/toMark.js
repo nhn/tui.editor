@@ -140,6 +140,7 @@ if (typeof window !== 'undefined') {
 var Renderer = require('./renderer');
 
 var FIND_LAST_RETURN_RX = /\n$/g,
+    FIND_BR_AND_RETURN_RX = /[ \xA0]+\n\n/g,
     START_OF_LINES_RX = /^/gm;
 
 /**
@@ -250,12 +251,14 @@ var basicRenderer = Renderer.factory({
         return '\n' + subContent + '\n';
     },
     'LI OL, LI UL': function(node, subContent) {
-        var res, lastNremoved;
+        var res, processedSubContent;
 
         //because parent LI converter add \n too
-        lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
+        processedSubContent = subContent.replace(FIND_LAST_RETURN_RX, '');
+        //and br remove end of li
+        processedSubContent = processedSubContent.replace(FIND_BR_AND_RETURN_RX, '\n');
 
-        res = lastNremoved.replace(START_OF_LINES_RX, '    ');
+        res = processedSubContent.replace(START_OF_LINES_RX, '    ');
 
         return '\n' + res;
     },
