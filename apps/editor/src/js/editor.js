@@ -153,6 +153,7 @@ NEditor.prototype.changePreviewStyle = function(style) {
 };
 
 NEditor.prototype.exec = function(command) {
+    this.commandManager.exec(command);
 };
 
 NEditor.prototype.getCodeMirror = function() {
