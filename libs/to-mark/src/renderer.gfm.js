@@ -15,6 +15,9 @@ var Renderer = require('./renderer'),
  * @augments Renderer
  */
 var gfmRenderer = Renderer.factory(basicRenderer, {
+    'BR': function() {
+        return '\n';
+    },
     'DEL, S': function(node, subContent) {
         return '~~' + subContent + '~~';
     },
