@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -19,7 +19,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var Italic = MarkdownCommand.factory(/** @lends Italic */{
+var Italic = CommandManager.command('markdown',/** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
@@ -51,7 +51,7 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
         // if selection is empty, expend selection to detect a syntax
         if (isEmpty) {
             if (cursor.ch > 2) {
-                tmpSelection = this.expendWithBoldSelection(cursor);
+                tmpSelection = this.expendWithBoldSelection(doc, cursor);
 
                 if (tmpSelection) {
                     isWithBold = 'with';
@@ -59,11 +59,11 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
             }
 
             if (isWithBold !== 'with' && cursor.ch > 1) {
-                isWithBold = this.expendOnlyBoldSelection(cursor);
+                isWithBold = this.expendOnlyBoldSelection(doc, cursor);
             }
 
             if (!isWithBold && cursor.ch > 0) {
-                this.expendSelection(cursor);
+                this.expendSelection(doc, cursor);
                 selection = tmpSelection || selection;
             }
         }
@@ -74,7 +74,7 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
         doc.replaceSelection(result, 'around');
 
         if (isEmpty) {
-            this.setCursorToCenter(cursor, isRemoved);
+            this.setCursorToCenter(doc, cursor, isRemoved);
         }
 
         cm.focus();
@@ -112,15 +112,15 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
-    expendWithBoldSelection: function(cursor) {
-        var tmpSelection = this.doc.getSelection();
+    expendWithBoldSelection: function(doc, cursor) {
+        var tmpSelection = doc.getSelection();
 
-        this.doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
+        doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
 
         if (tmpSelection === '******' || tmpSelection === '______') {
             return tmpSelection;
         } else {
-            this.doc.setSelection(cursor);
+            doc.setSelection(cursor);
         }
     },
     /**
@@ -129,13 +129,13 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
-    expendOnlyBoldSelection: function(cursor) {
-        var tmpSelection = this.doc.getSelection();
+    expendOnlyBoldSelection: function(doc, cursor) {
+        var tmpSelection = doc.getSelection();
 
-        this.doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
         if (tmpSelection === '****' || tmpSelection === '____') {
-            this.doc.setSelection(cursor);
+            doc.setSelection(cursor);
             return 'only';
         }
 
@@ -147,15 +147,15 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
-    expendSelection: function(cursor) {
-        var tmpSelection = this.doc.getSelection();
+    expendSelection: function(doc, cursor) {
+        var tmpSelection = doc.getSelection();
 
-        this.doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+        doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
 
         if (tmpSelection === '**' || tmpSelection === '__') {
             return tmpSelection;
         } else {
-            this.doc.setSelection(cursor);
+            doc.setSelection(cursor);
         }
     },
     /**
@@ -164,9 +164,9 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
      * @param {object} cursor 커서객체
      * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
      */
-    setCursorToCenter: function(cursor, isRemoved) {
+    setCursorToCenter: function(doc, cursor, isRemoved) {
         var pos = isRemoved ? -1 : 1;
-        this.doc.setCursor(cursor.line, cursor.ch + pos);
+        doc.setCursor(cursor.line, cursor.ch + pos);
     }
 });
 

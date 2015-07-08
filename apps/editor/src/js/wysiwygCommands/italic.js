@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * Italic
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Italic = WysiwygCommand.factory(/** @lends Italic */{
+var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**

@@ -5,6 +5,8 @@
 
 'use strict';
 
+var util = ne.util;
+
 /**
  * Command
  * It implements command to editors
@@ -17,8 +19,6 @@
 function Command(name, type) {
     this.name = name;
     this.type = type;
-
-    this.initResponder();
 }
 
 /**
@@ -76,38 +76,17 @@ Command.prototype.setKeyMap = function(win, mac) {
     this.keyMap = [win, mac];
 };
 
-/**
- * setup
- * Must implment in subclass for change commands context
- * @virtual
- */
-Command.prototype.setup = function() {
-    throw new Error('must be inplemented by subclass!');
+Command.prototype.runWithContext = function(instance, args) {
+    args = [instance].concat(args);
+    return this.exec.apply(this, args);
 };
 
-/**
- * _responder
- * first responder to commandManager or editor
- * @return {*} Command's return value
- */
-Command.prototype._responder = function() {
-    if (this.setup) {
-        this.setup.apply(this, arguments);
-    }
+Command.factory = function(props) {
+    var command = new Command(props.name, Command.TYPE.GB);
 
-    return this.exec.apply(this, arguments);
-};
+    util.extend(command, props);
 
-/**
- * initResponder
- * Bind command context to responder for editors
- */
-Command.prototype.initResponder = function() {
-    var self = this;
-
-    this.responder = function() {
-        return self._responder.apply(self, arguments);
-    };
+    return command;
 };
 
 /**

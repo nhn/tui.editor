@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var CodeMirror = window.CodeMirror;
 
@@ -16,7 +16,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var UL = MarkdownCommand.factory(/** @lends UL */{
+var UL = CommandManager.command('markdown',/** @lends UL */{
     name: 'UL',
     /**
      * 커맨드 핸들러
@@ -36,7 +36,7 @@ var UL = MarkdownCommand.factory(/** @lends UL */{
 
         doc = cm.getDoc();
 
-        range = this.getCurrentRange();
+        range = this.getCurrentRange(cm);
 
         from = {
             line: range.from.line,

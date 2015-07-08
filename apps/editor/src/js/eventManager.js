@@ -34,7 +34,7 @@ var eventList = [
  * @class
  */
 function EventManager() {
-    this.events = new util.HashMap();
+    this.events = new util.Map();
     this.TYPE = new util.Enum(eventList);
 }
 

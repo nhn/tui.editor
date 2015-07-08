@@ -40,7 +40,7 @@ describe('AddLink', function() {
         it('빈라인에서 링크가 추가된다', function() {
             doc.setCursor(1, 0);
 
-            AddLink.responder(cm, data);
+            AddLink.exec(cm, data);
 
             expect(doc.getLine(1)).toEqual('[' + data.linkText + '](' + data.url + ')');
         });
@@ -48,7 +48,7 @@ describe('AddLink', function() {
         it('영역선택후 링크가 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            AddLink.responder(cm, data);
+            AddLink.exec(cm, data);
 
             expect(doc.getLine(0)).toEqual('[' + data.linkText + '](' + data.url + ')');
             expect(doc.getLine(1)).toEqual('mytext3');

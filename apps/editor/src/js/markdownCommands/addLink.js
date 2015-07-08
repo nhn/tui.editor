@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var CodeMirror = window.CodeMirror;
 
@@ -16,7 +16,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
+var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
@@ -27,6 +27,7 @@ var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
     exec: function(cm, data) {
         var replaceText,
         range,
+        doc,
         from,
         to;
 
@@ -34,7 +35,9 @@ var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
             return CodeMirror.Pass;
         }
 
-        range = this.getCurrentRange();
+        doc = cm.getDoc();
+
+        range = this.getCurrentRange(cm);
 
         from = {
             line: range.from.line,
@@ -48,7 +51,7 @@ var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
 
         replaceText = '[' + data.linkText + '](' + data.url + ')';
 
-        this.doc.replaceRange(replaceText, from, to);
+        doc.replaceRange(replaceText, from, to);
 
         cm.focus();
     }

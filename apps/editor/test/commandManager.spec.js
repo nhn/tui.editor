@@ -1,9 +1,6 @@
 var CommandManager = require('../src/js/commandManager'),
     Command = require('../src/js/command'),
-    EditorTypeSwitch = require('../src/js/editorTypeSwitch'),
     EventManager = require('../src/js/eventManager');
-
-var CodeMirror = window.CodeMirror;
 
 describe('CommandManager', function() {
     'use strict';
@@ -35,7 +32,6 @@ describe('CommandManager', function() {
             var command = new Command('mycommand', Command.TYPE.MD);
 
             command.setKeyMap('Ctrl-B', 'Cmd-B');
-            command.setup = function() {};
             command.exec = function() {};
 
             cmgr.addCommand(command);
@@ -49,8 +45,6 @@ describe('CommandManager', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');
-            command.setup = function() {};
-
             cmgr.addCommand(command);
 
             cmgr.exec(command.getName());
@@ -63,11 +57,10 @@ describe('CommandManager', function() {
                 execSpy = jasmine.createSpy('spy');
 
             command.setKeyMap('Ctrl-B', 'Cmd-B');
-            command.setup = function() {};
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('editorTypeSwitched', EditorTypeSwitch.TYPE.MARKDOWN);
+            mockupBase.eventManager.emit('changeEditorTypeToMarkdown');
 
             cmgr.exec('mycommand');
 
@@ -79,7 +72,6 @@ describe('CommandManager', function() {
                 execSpy = jasmine.createSpy('spy');
 
             command.setKeyMap('Ctrl-B', 'Cmd-B');
-            command.setup = function() {};
             command.exec = execSpy;
             cmgr.addCommand(command);
 
@@ -91,29 +83,63 @@ describe('CommandManager', function() {
         });
 
         it('커맨드에 인자를 전달할 수 있다', function() {
-            var command = new Command('mycommand', Command.TYPE.MD),
+            var command = new Command('mycommand', Command.TYPE.GB),
                 execSpy = jasmine.createSpy('spy');
 
             command.setKeyMap('Ctrl-B', 'Cmd-B');
-            command.setup = function() {};
             command.exec = execSpy;
 
             cmgr.addCommand(command);
+
             cmgr.exec('mycommand', 'arg', 'arg2');
 
-            expect(execSpy).toHaveBeenCalledWith(mockupCm, 'arg', 'arg2');
+            expect(execSpy).toHaveBeenCalledWith(mockupBase, 'arg', 'arg2');
         });
 
         it('이벤트매니저를 이용해 커맨드를 실행', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
-            command.setup = function() {};
             command.exec = jasmine.createSpy('글로벌 커맨드');
             cmgr.addCommand(command);
 
             mockupBase.eventManager.emit('command', 'mycommand', 'myarg');
 
             expect(command.exec).toHaveBeenCalled();
+        });
+    });
+
+    describe('produce command', function() {
+        it('create command', function() {
+            var mdCommand, wwCommand, command;
+
+            command = CommandManager.command('global', {
+                name: 'mycommand'
+            });
+
+            mdCommand = CommandManager.command('markdown', {
+                name: 'mycommand'
+            });
+
+            wwCommand = CommandManager.command('wysiwyg', {
+                name: 'mycommand'
+            });
+
+            expect(command.isGlobalType()).toBe(true);
+            expect(mdCommand.isMDType()).toBe(true);
+            expect(wwCommand.isWWType()).toBe(true);
+        });
+
+        it('add & create command', function() {
+            var execSpy = jasmine.createSpy('spy');
+
+            cmgr.addCommand('markdown', {
+                name: 'mycommand',
+                exec: execSpy
+            });
+
+            cmgr.exec('mycommand');
+
+            expect(execSpy).toHaveBeenCalled();
         });
     });
 });

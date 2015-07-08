@@ -5,8 +5,11 @@
 
 'use strict';
 
-var util = ne.util,
-    CodeMirror = window.CodeMirror;
+var util = ne.util;
+
+var Command = require('./command'),
+    MarkdownCommand = require('./markdownCommand'),
+    WysiwygCommand = require('./wysiwygCommand');
 
 var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
 
@@ -18,9 +21,9 @@ var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
  * @param {NEditor} base ned인스턴스
  */
 function CommandManager(base) {
-    this._command = new util.HashMap();
-    this._mdCommand = new util.HashMap();
-    this._wwCommand = new util.HashMap();
+    this._command = new util.Map();
+    this._mdCommand = new util.Map();
+    this._wwCommand = new util.Map();
     this.base = base;
     this.typeStatus = TYPE.MARKDOWN;
 
@@ -31,12 +34,17 @@ function CommandManager(base) {
  * addCommand
  * 커맨드를 추가한다.
  * @param {Command} command 커맨드객체
+ * @return {Command} 커맨드
  */
 CommandManager.prototype.addCommand = function(command) {
-    var base = this.base,
-        responder = command.responder,
-        name = command.getName(),
+    var name,
         commandBase;
+
+    if (arguments.length === 2) {
+        command = CommandManager.command(arguments[0], arguments[1]);
+    }
+
+    name = command.getName();
 
     if (command.isMDType()) {
         commandBase = this._mdCommand;
@@ -46,7 +54,9 @@ CommandManager.prototype.addCommand = function(command) {
         commandBase = this._command;
     }
 
-    commandBase.set(name,responder);
+    commandBase.set(name, command);
+
+    return command;
 };
 
 
@@ -77,29 +87,40 @@ CommandManager.prototype._initEvent = function() {
  */
 CommandManager.prototype.exec = function(name) {
     var commandToRun,
-        globalCommand = this._command.get(name),
-        mdCommand = this._mdCommand.get(name),
-        wwCommand = this._wwCommand.get(name),
         args = util.toArray(arguments);
 
     args.shift();
 
-    if (globalCommand) {
-        args = [this.base].concat(args);
-        commandToRun = globalCommand;
-    } else {
-        if (this.typeStatus === TYPE.MARKDOWN && mdCommand) {
-            args = [this.base.getCodeMirror()].concat(args);
-            commandToRun = mdCommand;
-        } else if (this.typeStatus === TYPE.WYSIWYG && wwCommand) {
-            args = [this.base.getSquire()].concat(args);
-            commandToRun = wwCommand;
+    commandToRun = this._command.get(name);
+
+    if (!commandToRun) {
+        if (this.typeStatus === TYPE.MARKDOWN) {
+            commandToRun = this._mdCommand.get(name);
+        } else if (this.typeStatus === TYPE.WYSIWYG) {
+            commandToRun = this._wwCommand.get(name);
         }
     }
 
     if (commandToRun) {
-        return commandToRun.apply(null, args);
+        return commandToRun.runWithContext(this.base, args);
     }
 };
+
+CommandManager.command = function(type, props) {
+    var command;
+
+    if (type === 'markdown') {
+        command = MarkdownCommand.factory(props.name);
+    } else if (type === 'wysiwyg') {
+        command = WysiwygCommand.factory(props.name);
+    } else if (type === 'global') {
+        command = Command.factory(props.name);
+    }
+
+    util.extend(command, props);
+
+    return command;
+};
+
 
 module.exports = CommandManager;

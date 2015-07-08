@@ -15,7 +15,7 @@ var util = ne.util;
  * @class
  */
 function ExtManager() {
-    this.exts = new util.HashMap();
+    this.exts = new util.Map();
 }
 
 ExtManager.prototype.defineExtension = function(name, ext) {

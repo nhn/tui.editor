@@ -40,7 +40,7 @@ describe('AddImage', function() {
         it('빈라인에서 링크가 추가된다', function() {
             doc.setCursor(1, 0);
 
-            AddImage.responder(cm, data);
+            AddImage.exec(cm, data);
 
             expect(doc.getLine(1)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
         });
@@ -48,7 +48,7 @@ describe('AddImage', function() {
         it('영역선택후 링크가 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            AddImage.responder(cm, data);
+            AddImage.exec(cm, data);
 
             expect(doc.getLine(0)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
             expect(doc.getLine(1)).toEqual('mytext3');
@@ -63,7 +63,7 @@ describe('AddImage', function() {
                 origin = changeObj.origin;
             });
 
-            AddImage.responder(cm, data);
+            AddImage.exec(cm, data);
 
             expect(doc.getLine(1)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
             expect(origin).toEqual('+addImage');

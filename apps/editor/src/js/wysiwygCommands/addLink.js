@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * AddLink
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddLink = WysiwygCommand.factory(/** @lends AddLink */{
+var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러

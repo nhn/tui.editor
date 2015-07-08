@@ -31,14 +31,14 @@ describe('OL', function() {
         it('텍스트가 있는 라인에서 추가된다', function() {
             doc.setCursor(0, 0);
 
-            OL.responder(cm);
+            OL.exec(cm);
 
             expect(doc.getLine(0)).toEqual('1. mytext1');
         });
         it('빈라인에서 추가된다', function() {
             doc.setCursor(1, 0);
 
-            OL.responder(cm);
+            OL.exec(cm);
 
             expect(doc.getLine(1)).toEqual('1. ');
         });
@@ -46,7 +46,7 @@ describe('OL', function() {
         it('영역선택후 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            OL.responder(cm);
+            OL.exec(cm);
 
             expect(doc.getLine(0)).toEqual('1. ');
             expect(doc.getLine(1)).toEqual('mytext3');

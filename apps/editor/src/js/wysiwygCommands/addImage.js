@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * AddImage
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddImage = WysiwygCommand.factory(/** @lends AddImage */{
+var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
     name: 'AddImage',
     /**
      *  커맨드 핸들러

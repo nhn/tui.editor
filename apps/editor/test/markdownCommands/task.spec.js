@@ -31,7 +31,7 @@ describe('task', function() {
         it('added task', function() {
             doc.setCursor(0, 0);
 
-            task.responder(cm);
+            task.exec(cm);
 
             expect(doc.getLine(0)).toEqual('* [ ] mytext1');
         });

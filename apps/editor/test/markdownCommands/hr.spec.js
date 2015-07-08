@@ -29,7 +29,7 @@ describe('HR', function() {
         it('현재라인 밑에 ***가 추가되었다', function() {
             cm.setCursor(2, 3);
 
-            HR.responder(cm);
+            HR.exec(cm);
 
             expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '***', 'mytext3'].join('\n'));
         });
@@ -39,7 +39,7 @@ describe('HR', function() {
         it('셀렉션 영역이 ***로 대체되었다', function() {
             cm.setSelection({line: 0, ch: 1}, {line: 2, ch: 2});
 
-            HR.responder(cm);
+            HR.exec(cm);
 
             expect(cm.getValue()).toEqual(['m***text2', 'mytext3'].join('\n'));
         });
