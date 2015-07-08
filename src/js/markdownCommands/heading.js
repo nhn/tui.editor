@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var CodeMirror = window.CodeMirror;
 
@@ -16,7 +16,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var Heading = MarkdownCommand.factory(/** @lends Heading */{
+var Heading = CommandManager.command('markdown',/** @lends Heading */{
     name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
     /**
@@ -41,7 +41,7 @@ var Heading = MarkdownCommand.factory(/** @lends Heading */{
         doc = cm.getDoc();
 
         // 선택된 영역을 가공함
-        range = this.getCurrentRange();
+        range = this.getCurrentRange(cm);
 
         from = {
             line: range.from.line,

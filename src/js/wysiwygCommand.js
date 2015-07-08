@@ -27,13 +27,9 @@ WysiwygCommand.prototype = util.extend(
     Command.prototype
 );
 
-/**
- * setup
- * Set current base and codemirror context
- * @param {Squire} editor Squire instance
- */
-WysiwygCommand.prototype.setup = function(editor) {
-    this.editor = editor;
+WysiwygCommand.prototype.runWithContext = function(instance, args) {
+    args = [instance.getSquire()].concat(args);
+    return this.exec.apply(this, args);
 };
 
 WysiwygCommand.factory = function(props) {

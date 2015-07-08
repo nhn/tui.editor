@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * Task
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Task = WysiwygCommand.factory(/** @lends Task */{
+var Task = CommandManager.command('wysiwyg',/** @lends Task */{
     name: 'Task',
     /**
      * Command Handler

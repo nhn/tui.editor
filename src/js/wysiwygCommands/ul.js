@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * UL
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var UL = WysiwygCommand.factory(/** @lends UL */{
+var UL = CommandManager.command('wysiwyg',/** @lends UL */{
     name: 'UL',
     keyMap: ['Ctrl-U', 'Ctrl-U'],
     /**

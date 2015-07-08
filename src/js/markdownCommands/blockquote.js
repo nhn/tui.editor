@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var CodeMirror = window.CodeMirror;
 
@@ -16,7 +16,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
+var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     name: 'Blockquote',
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**
@@ -36,7 +36,7 @@ var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
 
 
         //range 을 가공함
-        range = this.getCurrentRange();
+        range = this.getCurrentRange(cm);
 
         from = {
             line: range.from.line,

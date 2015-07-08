@@ -34,14 +34,14 @@ describe('Task', function() {
     });
 
     it('add Task', function() {
-        Task.responder(editor);
+        Task.exec(editor);
 
         expect(editor.getHTML().replace(/<br>/g,'')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });
 
     it('if already in list just add input box', function() {
         editor.setHTML('<ul><li></li></ul>');
-        Task.responder(editor);
+        Task.exec(editor);
 
         expect(editor.getHTML().replace(/<br>/g,'')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });

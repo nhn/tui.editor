@@ -31,7 +31,7 @@ describe('', function() {
         it('텍스트가 있는 라인시작에 #가 추가되었다', function() {
             doc.setCursor(2, 3);
 
-            Heading.responder(cm);
+            Heading.exec(cm);
 
             expect(cm.getValue()).toEqual(['mytext1', '', '#mytext2', 'mytext3'].join('\n'));
         });
@@ -39,7 +39,7 @@ describe('', function() {
         it('빈 라인시작에 #가 추가되었다', function() {
             doc.setCursor(1, 3);
 
-            Heading.responder(cm);
+            Heading.exec(cm);
 
             expect(cm.getValue()).toEqual(['mytext1', '#', 'mytext2', 'mytext3'].join('\n'));
         });
@@ -49,7 +49,7 @@ describe('', function() {
         it('인용구가 정상적으로 추가되었다', function() {
             doc.setSelection({line: 0, ch: 3}, {line: 2, ch: 2});
 
-            Heading.responder(cm);
+            Heading.exec(cm);
 
             expect(cm.getValue()).toEqual(['#mytext1', '#', '#mytext2', 'mytext3'].join('\n'));
         });

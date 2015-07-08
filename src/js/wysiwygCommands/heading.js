@@ -5,7 +5,7 @@
 
 'use strict';
 
-var WysiwygCommand = require('../wysiwygCommand');
+var CommandManager = require('../commandManager');
 
 /**
  * Heading
@@ -14,7 +14,7 @@ var WysiwygCommand = require('../wysiwygCommand');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Heading = WysiwygCommand.factory(/** @lends Heading */{
+var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
     name: 'Heading',
     /**
      *  커맨드 핸들러

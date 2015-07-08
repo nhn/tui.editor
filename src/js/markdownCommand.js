@@ -29,25 +29,20 @@ MarkdownCommand.prototype = util.extend(
     Command.prototype
 );
 
-/**
- * setup
- * Set current base and codemirror context
- * @param {CodeMirror} cm codemirror
- */
-MarkdownCommand.prototype.setup = function(cm) {
-    this.cm = cm;
-    this.doc = cm.getDoc();
-    this.base = cm.__ned;
+MarkdownCommand.prototype.runWithContext = function(instance, args) {
+    args = [instance.getCodeMirror()].concat(args);
+    return this.exec.apply(this, args);
 };
 
 /**
  * getCurrentRange
  * returns current selection's range
+ * @param {CodeMirror} cm codemirror instance
  * @return {object} selection range
  */
-MarkdownCommand.prototype.getCurrentRange = function() {
-    var from = this.cm.getCursor(true),
-    to = this.cm.getCursor(false);
+MarkdownCommand.prototype.getCurrentRange = function(cm) {
+    var from = cm.getCursor(true),
+    to = cm.getCursor(false);
 
     return {
         from: from,

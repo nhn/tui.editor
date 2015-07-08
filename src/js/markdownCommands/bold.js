@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MarkdownCommand = require('../markdownCommand');
+var CommandManager = require('../commandManager');
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -18,7 +18,7 @@ var CodeMirror = window.CodeMirror;
  * @augments Command
  * @augments MarkdownCommand
  */
-var Bold = MarkdownCommand.factory(/** @lends Bold */{
+var Bold = CommandManager.command('markdown',/** @lends Bold */{
     name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
