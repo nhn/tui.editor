@@ -329,9 +329,6 @@ var Renderer = require('./renderer'),
  * @augments Renderer
  */
 var gfmRenderer = Renderer.factory(basicRenderer, {
-    'BR': function() {
-        return '\n';
-    },
     'DEL, S': function(node, subContent) {
         return '~~' + subContent + '~~';
     },
@@ -816,6 +813,7 @@ var DomRunner = require('./domRunner'),
 
 var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
+    FIND_RETURNS_RX = /[ \xA0]+\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
     FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
@@ -834,6 +832,7 @@ var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
  */
 function toMark(htmlStr, options) {
     var runner,
+        isGfm = true,
         renderer;
 
     if (!htmlStr) {
@@ -843,7 +842,9 @@ function toMark(htmlStr, options) {
     renderer = gfmRenderer;
 
     if (options) {
-        if (options.gfm === false) {
+        isGfm = options.gfm;
+
+        if (isGfm === false) {
             renderer = basicRenderer;
         }
 
@@ -852,7 +853,7 @@ function toMark(htmlStr, options) {
 
     runner = new DomRunner(toDom(htmlStr));
 
-    return parse(runner, renderer);
+    return finalize(parse(runner, renderer), isGfm);
 }
 
 /**
@@ -869,16 +870,17 @@ function parse(runner, renderer) {
         markdownContent += tracker(runner, renderer);
     }
 
-    return finalize(markdownContent);
+    return markdownContent;
 }
 
 /**
  * finalize
  * Remove first and last return character
  * @param {string} text text to finalize
+ * @param {boolean} isGfm isGfm flag
  * @return {string} result
  */
-function finalize(text) {
+function finalize(text, isGfm) {
     //collapse duplicated returns made by <br /> and block element
     text = text.replace(FIND_DUPLICATED_2_RETURNS_WITH_BR_RX, '\n\n');
 
@@ -893,6 +895,11 @@ function finalize(text) {
 
     //remove first and last \n
     text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
+
+    //in gfm replace '  \n' make by <br> to '\n'
+    if (isGfm) {
+        text = text.replace(FIND_RETURNS_RX, '\n');
+    }
 
     return text;
 }
