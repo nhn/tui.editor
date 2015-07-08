@@ -161,8 +161,12 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<ol><li></li></ol>', '', 2)).toEqual('1.  \n');
         });
 
-        it('return in li from nest list', function() {
+        it('return between li text content from nest list', function() {
             expect(getMarkdownText('<li><ul></ul></li>', '* text  \ntext\n* text', 2)).toEqual('\n    * text  \n    text\n    * text');
+        });
+
+        it('return end of li from nest list', function() {
+            expect(getMarkdownText('<li><ul></ul></li>', '* text  \n\n* text', 2)).toEqual('\n    * text\n    * text');
         });
     });
 
