@@ -52,6 +52,7 @@ describe('toMark', function() {
         expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n\ntext');
         expect(toMark('<ul><li>text<br></li><li>text<br></li></ul>', {gfm: false})).toEqual('* text\n* text');
         expect(toMark('<ul><li>text<br><ul><li>text<br>text</li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text  \n    text\n    * text');
+        expect(toMark('<ul><li>text<br><ul><li>text<br></li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text\n    * text');
         expect(toMark('<ul><li>text<br></li></ul><p>text</p>', {gfm: false})).toEqual('* text\n\ntext');
         expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>', {gfm: false})).toEqual('* text\n\ntext  \ntext');
         expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext\ntext');
