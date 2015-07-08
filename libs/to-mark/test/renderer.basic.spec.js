@@ -214,8 +214,8 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<p></p>', '')).toEqual('');
         });
 
-        it('pass content in li', function() {
-            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph');
+        it('add empty line in li', function() {
+            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph\n  \n');
         });
 
         it('pass content in blockquote', function() {

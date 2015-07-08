@@ -91,8 +91,17 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-    'LI P, BLOCKQUOTE P': function(node, subContent) {
+    'BLOCKQUOTE P': function(node, subContent) {
         return subContent;
+    },
+    'LI P': function(node, subContent) {
+        var res = '';
+
+        if (!this.isEmptyText(subContent)) {
+            res = subContent + '\n  \n';
+        }
+
+        return res;
     },
 
     //Headings
