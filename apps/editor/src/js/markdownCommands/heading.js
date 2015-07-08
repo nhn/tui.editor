@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * Heading
  * Add heading markdown syntax to markdown editor
@@ -17,18 +19,26 @@ var MarkdownCommand = require('../markdownCommand');
 var Heading = MarkdownCommand.factory(/** @lends Heading */{
     name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
-    exec: function() {
+    /**
+     *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
+     *  @return {CodeMirror} 코드미러 상수
+     */
+    exec: function(cm) {
         var textToModify,
         range,
         from,
         to,
         textLinesToModify,
         lineLength,
+        doc,
         i;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         // 선택된 영역을 가공함
         range = this.getCurrentRange();
@@ -40,11 +50,11 @@ var Heading = MarkdownCommand.factory(/** @lends Heading */{
 
         to = {
             line: range.to.line,
-            ch: this.doc.getLineHandle(range.to.line).text.length
+            ch: doc.getLineHandle(range.to.line).text.length
         };
 
         //영역의 텍스트를 가저오고
-        textToModify = this.doc.getRange(from, to);
+        textToModify = doc.getRange(from, to);
 
         //원하는 대로 가공한다
         textLinesToModify = textToModify.split('\n');
@@ -55,12 +65,12 @@ var Heading = MarkdownCommand.factory(/** @lends Heading */{
         }
 
         //해당 에디터의 내용을 변경한다
-        this.doc.replaceRange(textLinesToModify.join('\n'), from, to);
+        doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
         range.to.ch += 1;
-        this.doc.setCursor(range.to);
+        doc.setCursor(range.to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

@@ -9,6 +9,8 @@ var MarkdownCommand = require('../markdownCommand');
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * Bold
  * Add bold markdown syntax to markdown editor
@@ -22,39 +24,43 @@ var Bold = MarkdownCommand.factory(/** @lends Bold */{
     /**
      *  커맨드 핸들러
      *  @return {CodeMirror} 코드미러 상수
+     *  @param {CodeMirror} cm CodeMirror instance
      */
-    exec: function() {
+    exec: function(cm) {
         var cursor,
             selection,
             tmpSelection,
             isRemoved,
             result,
+            doc,
             isEmpty;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
 
-        cursor = this.doc.getCursor();
-        selection = this.doc.getSelection();
+        doc = cm.getDoc();
+
+        cursor = doc.getCursor();
+        selection = doc.getSelection();
         isEmpty = !selection;
 
         // if selection is empty, expend selection to detect a syntax
         if (isEmpty && cursor.ch > 1) {
-            tmpSelection = this.expendSelection(this.doc, cursor);
+            tmpSelection = this.expendSelection(doc, cursor);
             selection = tmpSelection || selection;
         }
 
         isRemoved = this.isNeedRemove(selection);
         result = isRemoved ? this.remove(selection) : this.append(selection);
 
-        this.doc.replaceSelection(result, 'around');
+        doc.replaceSelection(result, 'around');
 
         if (isEmpty && !isRemoved) {
-            this.setCursorToCenter(this.doc, cursor);
+            this.setCursorToCenter(doc, cursor);
         }
 
-        this.cm.focus();
+        cm.focus();
     },
     /**
      * 이미 Bold가 적용이 되어있는지 확인

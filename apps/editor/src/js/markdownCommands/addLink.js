@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * AddLink
  * Add link markdown syntax to markdown editor
@@ -28,8 +30,8 @@ var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
         from,
         to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
 
         range = this.getCurrentRange();
@@ -48,7 +50,7 @@ var AddLink = MarkdownCommand.factory(/** @lends AddLink */{
 
         this.doc.replaceRange(replaceText, from, to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

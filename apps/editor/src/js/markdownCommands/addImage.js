@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * AddImage
  * Add Image markdown syntax to markdown Editor
@@ -25,12 +27,15 @@ var AddImage = MarkdownCommand.factory(/** @lends AddImage */{
     exec: function(cm, data) {
         var replaceText,
             range,
+            doc,
             from,
             to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         range = this.getCurrentRange();
 
@@ -46,9 +51,9 @@ var AddImage = MarkdownCommand.factory(/** @lends AddImage */{
 
         replaceText = '![' + data.altText + '](' + data.imageUrl + ')';
 
-        this.doc.replaceRange(replaceText, from, to, '+addImage');
+        doc.replaceRange(replaceText, from, to, '+addImage');
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 
