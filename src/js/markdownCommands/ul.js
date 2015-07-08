@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * UL
  * Add unordered list markdown syntax to markdown editor
@@ -18,17 +20,21 @@ var UL = MarkdownCommand.factory(/** @lends UL */{
     name: 'UL',
     /**
      * 커맨드 핸들러
-     * @return {number} 코드미러 상수
+     * @param {CodeMirror} cm CodeMirror instance
+     * @return {object} 코드미러 상수
      */
-    exec: function() {
+    exec: function(cm) {
         var replaceText,
             range,
+            doc,
             from,
             to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         range = this.getCurrentRange();
 
@@ -44,9 +50,9 @@ var UL = MarkdownCommand.factory(/** @lends UL */{
 
         replaceText = '* ';
 
-        this.doc.replaceRange(replaceText, from, to);
+        doc.replaceRange(replaceText, from, to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

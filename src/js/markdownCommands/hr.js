@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * HR
  * Add HR markdown syntax to markdown editor
@@ -16,20 +18,23 @@ var MarkdownCommand = require('../markdownCommand');
  */
 var HR = MarkdownCommand.factory(/** @lends HR */{
     name: 'HR',
-    keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**
      *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
      *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function() {
+    exec: function(cm) {
         var replaceText,
             range,
             from,
+            doc,
             to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         range = this.getCurrentRange();
 
@@ -44,16 +49,16 @@ var HR = MarkdownCommand.factory(/** @lends HR */{
         };
 
         if (range.collapsed) {
-            replaceText = this.doc.getLine(from.line) + '\n***';
+            replaceText = doc.getLine(from.line) + '\n***';
             from.ch = 0;
-            to.ch = this.doc.getLineHandle(range.to.line).text.length;
+            to.ch = doc.getLineHandle(range.to.line).text.length;
         } else {
             replaceText = '***';
         }
 
-        this.doc.replaceRange(replaceText, from, to);
+        doc.replaceRange(replaceText, from, to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
@@ -19,20 +21,19 @@ var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**
      *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
      *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function() {
-        var textToModify,
-            range,
-            from,
-            to,
-            textLinesToModify,
-            lineLength,
-            i;
+    exec: function(cm) {
+        var textToModify, range, from, to, textLinesToModify,
+            lineLength, i, doc;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
+
 
         //range 을 가공함
         range = this.getCurrentRange();
@@ -44,11 +45,11 @@ var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
 
         to = {
             line: range.to.line,
-            ch: this.doc.getLineHandle(range.to.line).text.length
+            ch: doc.getLineHandle(range.to.line).text.length
         };
 
         //영역의 텍스트를 가저오고
-        textToModify = this.doc.getRange(from, to);
+        textToModify = doc.getRange(from, to);
 
         //텍스트 컨텐트를 변경 한다
         textLinesToModify = textToModify.split('\n');
@@ -59,13 +60,13 @@ var Blockquote = MarkdownCommand.factory(/** @lends Blockquote */{
         }
 
         //해당 에디터의 내용을 변경한다
-        this.doc.replaceRange(textLinesToModify.join('\n'), from, to);
+        doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
         range.to.ch += 1;
 
-        this.doc.setCursor(range.to);
+        doc.setCursor(range.to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

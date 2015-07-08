@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * Task
  * @exports Task
@@ -16,15 +18,23 @@ var MarkdownCommand = require('../markdownCommand');
 
 var Task = MarkdownCommand.factory(/** @lends Task */{
     name: 'Task',
-    exec: function() {
+    /**
+     *  커맨드 핸들러
+     *  @param {CodeMirror} cm CodeMirror instance
+     *  @return {CodeMirror} 코드미러 상수
+     */
+    exec: function(cm) {
         var replaceText,
             range,
+            doc,
             from,
             to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         range = this.getCurrentRange();
 
@@ -40,9 +50,9 @@ var Task = MarkdownCommand.factory(/** @lends Task */{
 
         replaceText = '* [ ] ';
 
-        this.doc.replaceRange(replaceText, from, to);
+        doc.replaceRange(replaceText, from, to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 

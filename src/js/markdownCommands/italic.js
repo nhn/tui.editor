@@ -10,6 +10,8 @@ var MarkdownCommand = require('../markdownCommand');
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * Italic
  * Add italic markdown syntax to markdown editor
@@ -22,23 +24,27 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
      * 커맨드 핸들러
+     * @param {CodeMirror} cm CodeMirror instance
      * @return {number} 코드미러 상수
      */
-    exec: function() {
+    exec: function(cm) {
         var cursor,
             selection,
             tmpSelection,
             isRemoved,
             result,
             isEmpty,
+            doc,
             isWithBold;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
 
-        cursor = this.doc.getCursor();
-        selection = this.doc.getSelection();
+        doc = cm.getDoc();
+
+        cursor = doc.getCursor();
+        selection = doc.getSelection();
         isEmpty = !selection;
         isWithBold = false;
 
@@ -65,13 +71,13 @@ var Italic = MarkdownCommand.factory(/** @lends Italic */{
         isRemoved = this.isNeedRemove(selection);
         result = isRemoved ? this.remove(selection) : this.append(selection);
 
-        this.doc.replaceSelection(result, 'around');
+        doc.replaceSelection(result, 'around');
 
         if (isEmpty) {
             this.setCursorToCenter(cursor, isRemoved);
         }
 
-        this.cm.focus();
+        cm.focus();
     },
     /**
      * isNeedRemove

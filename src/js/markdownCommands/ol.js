@@ -7,6 +7,8 @@
 
 var MarkdownCommand = require('../markdownCommand');
 
+var CodeMirror = window.CodeMirror;
+
 /**
  * OL
  * Add ordered list markdown syntax to markdown editor
@@ -19,17 +21,21 @@ var OL = MarkdownCommand.factory(/** @lends OL */{
 
     /**
      * 커맨드 핸들러
-     * @return {number} 코드미러 상수
+     * @param {CodeMirror} cm CodeMirror instance
+     * @return {object} 코드미러 상수
      */
-    exec: function() {
+    exec: function(cm) {
         var replaceText,
             range,
+            doc,
             from,
             to;
 
-        if (!this.isAvailable()) {
-            return this.getPass();
+        if (cm.getOption('disableInput')) {
+            return CodeMirror.Pass;
         }
+
+        doc = cm.getDoc();
 
         range = this.getCurrentRange();
 
@@ -45,9 +51,9 @@ var OL = MarkdownCommand.factory(/** @lends OL */{
 
         replaceText = '1. ';
 
-        this.doc.replaceRange(replaceText, from, to);
+        doc.replaceRange(replaceText, from, to);
 
-        this.cm.focus();
+        cm.focus();
     }
 });
 
