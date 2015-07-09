@@ -86,6 +86,10 @@ WysiwygEditor.prototype._initEvent = function() {
     });
 
     this.editor.addEventListener('input', function() {
+        self.eventManager.emit('contentChanged.wysiwygEditor', self.getValue());
+    });
+
+    this.editor.addEventListener('input', function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
@@ -96,9 +100,13 @@ WysiwygEditor.prototype._initEvent = function() {
         };
 
         self.eventManager.emit('change.wysiwygEditor', eventObj);
-        self.eventManager.emit('contentChanged.wysiwygEditor', self.getValue());
     });
 
+/*
+    this.editor.getDocument().addEventListener('compositionstart', function(){console.log(1);});
+    this.editor.getDocument().addEventListener('compositionend', function(){console.log(2);});
+    this.editor.getDocument().addEventListener('compositionupdate', function(){console.log(3);});
+*/
     //특정 키를 기준으로 가져오기.
     /*this.editor.addEventListener('keyup', function() {
         var sel = self.editor.getSelection();
