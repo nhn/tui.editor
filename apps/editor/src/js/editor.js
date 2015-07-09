@@ -152,8 +152,8 @@ NEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
 };
 
-NEditor.prototype.exec = function(command) {
-    this.commandManager.exec(command);
+NEditor.prototype.exec = function() {
+    this.commandManager.exec.apply(this.commandManager, arguments);
 };
 
 NEditor.prototype.getCodeMirror = function() {
@@ -191,6 +191,5 @@ NEditor.getInstances = function() {
 NEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
 };
-
 
 module.exports = NEditor;

@@ -3,24 +3,43 @@
 var extManager = require('../extManager');
 
 extManager.defineExtension('completeHint', function(editor) {
-    var caretPos,
-        $hintLayer = $('#hint');
+    var $hintLayer = $('#hint'),
+        lastFounded;
+
+    window.dd = editor.getSquire();
+
+    editor.getSquire().setKeyHandler('ctrl-shift-enter', function() {
+        console.log('enter');
+    });
+
+    editor.commandManager.addCommand('wysiwyg', {
+        name: 'insertWithSelection',
+        exec: function(sq, data, founded) {
+            var range = document.createRange();
+            range.setStart(founded.selection.commonAncestorContainer, founded.startOffset);
+            range.setEnd(founded.selection.commonAncestorContainer, founded.caretOffset);
+            sq.setSelection(range);
+            sq.insertHTML('<input type="text" value="' + data + '" readonly />');
+            sq.focus();
+        }
+    });
 
     editor.eventManager.listen('query', function(founded) {
+        var caretPos;
+
         if (founded) {
             if (founded.currentText === '@' && !caretPos) {
                 caretPos = editor.wwEditor.getCaretPosition();
                 show($hintLayer, caretPos, founded.text);
             }
+            lastFounded = founded;
         } else {
-            caretPos = null;
             hide($hintLayer);
         }
     });
 
     $hintLayer.on('change', function() {
-        console.log($hintLayer.val());
-        editor.wwEditor.editor.insertHTML('<input type="text" value="' + $(this).val() + '" readonly />');
+        editor.exec('insertWithSelection', $(this).val(), lastFounded);
         $hintLayer.css("display", "none");
     });
 });
@@ -32,8 +51,6 @@ function show($layer, pos, query) {
         left: pos.left,
         top: pos.top + 70
     });
-
-    console.log(query);
 }
 
 function hide($layer) {

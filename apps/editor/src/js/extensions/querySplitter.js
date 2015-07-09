@@ -54,4 +54,7 @@ extManager.defineExtension('querySplitter', function(editor) {
             editor.eventManager.emit('query', eventObject);
         }
     });
+
+    editor.eventManager.listen('change.markdownEditor', function(ev) {
+    });
 });
