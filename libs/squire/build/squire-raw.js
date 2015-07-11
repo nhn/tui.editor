@@ -2017,20 +2017,23 @@ var onPaste = function ( event ) {
 
     // Old interface
     // -------------
-    // Currently supported by FF & Safari. *However*, Safari flat out refuses
-    // to copy stuff as text/html when copying from *within Safari*. There is
-    // no way to get an HTML version of the clipboard other than to use the
-    // fallback method.
 
-    // if ( clipboardData ) {
-    //     event.preventDefault();
-    //     if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
-    //         this.insertHTML( clipboardData.getData( 'text/html' ), true );
-    //     } else {
-    //         this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
-    //     }
-    //     return;
-    // }
+    if ( clipboardData ) {
+        if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
+            event.preventDefault();
+            this.insertHTML( clipboardData.getData( 'text/html' ), true );
+            return;
+        }
+        // Safari (and indeed many other OS X apps) copies stuff as text/rtf
+        // rather than text/html; even from a webpage in Safari. The only way
+        // to get an HTML version is to fallback to letting the browser insert
+        // the content. *Sigh*.
+        else if ( indexOf.call( clipboardData.types, 'text/rtf' ) === -1 ) {
+            event.preventDefault();
+            this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
+            return;
+        }
+    }
 
     // No interface :(
     // ---------------
