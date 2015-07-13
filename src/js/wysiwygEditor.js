@@ -94,6 +94,7 @@ WysiwygEditor.prototype._initEvent = function() {
             eventObj;
 
         eventObj = {
+            source: 'wysiwyg',
             selection: sel,
             textContent: sel.commonAncestorContainer.textContent,
             caretOffset: sel.endOffset
@@ -102,76 +103,6 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
-
-/*
-    this.editor.getDocument().addEventListener('compositionstart', function(){console.log(1);});
-    this.editor.getDocument().addEventListener('compositionend', function(){console.log(2);});
-    this.editor.getDocument().addEventListener('compositionupdate', function(){console.log(3);});
-*/
-    //특정 키를 기준으로 가져오기.
-    /*this.editor.addEventListener('keyup', function() {
-        var sel = self.editor.getSelection();
-        var textContent = sel.commonAncestorContainer.textContent;
-        var cursor = sel.endOffset;
-        var currentBlock;
-        var foundRuleRX = /@[^@\s]+/;
-
-        //스페이스가 입력되면 input이벤트가 두번발생한다.
-        //어차피 키입력에만 반응해야하니까 keyup으로 가자
-        console.log('--------------------');
-        console.log('cursor', cursor);
-        console.log(/\s/.test(textContent[cursor-1]), textContent[cursor-1]);
-
-        if (!(/\s/.test(textContent[cursor-1])) && /@/g.test(textContent)) {
-            var textBlocks = textContent.split(' ');
-            var count = 0;
-
-            console.log(textBlocks);
-
-            for(var i = 0; i < textBlocks.length; i+=1) {
-                count += textBlocks[i].length;
-
-                if (count > cursor - textBlocks.length) {
-                    currentBlock = textBlocks[i];
-                    break;
-                }
-            }
-
-            var founded = foundRuleRX.exec(currentBlock);
-            console.log("> ", founded);
-        }
-    }[);
-*/
-/*
-    //[Ma[변경점을 기준으로 가져오기
-    //
-    var startOffset = null;
-        var co[MaZntainer = null;
-
-    this.editor.addEventListener('input', function() {
-        var sel = self.editor.getSelection();
-        var textContent = sel.commonAncestorContainer.textContent;
-        var cursor = sel.endOffset;
-        var currentBlock;
-        var foundRuleRX = /@[^@\s]+/;
-
-        if (container !== sel.commonAncestorContainer) {
-            startOffset = cursor-1;
-            container = sel.commonAncestorContainer;
-        }
-
-        if (startOffset > cursor) {
-            startOffset = cursor-1;
-        }
-
-        console.log('--------------------');
-        console.log('cursor', cursor);
-        console.log('startOffset', startOffset);
-        console.log('textContent.length', textContent.length);
-        console.log(textContent[cursor-1]);
-        console.log(textContent.slice(startOffset, cursor));
-    });
-*/
 /*
     this.editor.addEventListener('keyup', function() {
         //console.log('keyup', arguments);
