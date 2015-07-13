@@ -57,8 +57,21 @@ MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
     this.cm.on('change', function() {
-        console.log(arguments);
         self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
+    });
+
+    this.cm.on('change', function(cm, e) {
+        var eventObj;
+
+        eventObj = {
+            source: 'markdown',
+            selection: {from: e.from, to: e.to},
+            textContent: cm.getDoc().getLine(e.to.line),
+            caretOffset: e.to.ch + 1
+        };
+
+        self.eventManager.emit('change.markdownEditor', eventObj);
+        self.eventManager.emit('change', eventObj);
     });
 
     this.eventManager.listen('markdownUpdate', function(markdown) {
@@ -69,7 +82,7 @@ MarkdownEditor.prototype._initEvent = function() {
         self.cm.refresh();
     });
 
-    window.dd = self.cm;
+    window.dd2 = this.cm;
 
     /*
     this.cm.on('update', function() {
@@ -101,8 +114,16 @@ MarkdownEditor.prototype.getValue = function() {
     return this.cm.doc.getValue('\n');
 };
 
+MarkdownEditor.prototype.getEditor = function() {
+    return this.cm;
+};
+
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
     this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
+};
+
+MarkdownEditor.prototype.getCaretPosition = function() {
+    return this.cm.cursorCoords();
 };
 
 module.exports = MarkdownEditor;

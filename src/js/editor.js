@@ -157,7 +157,7 @@ NEditor.prototype.exec = function() {
 };
 
 NEditor.prototype.getCodeMirror = function() {
-   return this.mdEditor.cm;
+    return this.mdEditor.cm;
 };
 
 NEditor.prototype.getSquire = function() {
