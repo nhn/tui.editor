@@ -15,14 +15,23 @@ extManager.defineExtension('querySplitter', function(editor) {
     editor.eventManager.addEventType('query');
 
     editor.eventManager.listen('change.wysiwygEditor', function(ev) {
+        process(ev);
+    });
+
+    editor.eventManager.listen('change.markdownEditor', function(ev) {
+        process(ev);
+    });
+
+    //todo 클로저 제거하고 객체형태로
+    function process(ev) {
         var founded, textBlocks, count, i, eventObject,
             textContent = ev.textContent,
             caretOffset = ev.caretOffset,
             currentBlock;
 
         //찾는 룰이 있다가 backspace로 모두 지워진 경우를 위해 active가 필요 마지막 한번의 undefined로  query이벤트를 날리기위해
-        if (active || queryRx.test(textContent)) {
-            if (textContent === '' || !(/\s/.test(textContent[caretOffset - 1]))) {
+        if (active || (textContent && queryRx.test(textContent))) {
+            if (textContent && (textContent === '' || !(/\s/.test(textContent[caretOffset - 1])))) {
                 textBlocks = textContent.split(' ');
                 count = 0;
 
@@ -53,8 +62,5 @@ extManager.defineExtension('querySplitter', function(editor) {
 
             editor.eventManager.emit('query', eventObject);
         }
-    });
-
-    editor.eventManager.listen('change.markdownEditor', function(ev) {
-    });
+    }
 });
