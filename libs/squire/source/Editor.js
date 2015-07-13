@@ -191,7 +191,7 @@ var customEvents = {
 
 proto.fireEvent = function ( type, event ) {
     var handlers = this._events[ type ],
-        i, l, obj;
+        l, obj;
     if ( handlers ) {
         if ( !event ) {
             event = {};
@@ -201,8 +201,9 @@ proto.fireEvent = function ( type, event ) {
         }
         // Clone handlers array, so any handlers added/removed do not affect it.
         handlers = handlers.slice();
-        for ( i = 0, l = handlers.length; i < l; i += 1 ) {
-            obj = handlers[i];
+        l = handlers.length;
+        while ( l-- ) {
+            obj = handlers[l];
             try {
                 if ( obj.handleEvent ) {
                     obj.handleEvent( event );

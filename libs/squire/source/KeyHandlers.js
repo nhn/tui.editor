@@ -21,6 +21,10 @@ var onKey = function ( event ) {
         modifiers = '',
         range = this.getSelection();
 
+    if ( event.defaultPrevented ) {
+        return;
+    }
+
     if ( !key ) {
         key = String.fromCharCode( code ).toLowerCase();
         // Only reliable for letters and numbers
