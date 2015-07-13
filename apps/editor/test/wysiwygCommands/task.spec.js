@@ -36,13 +36,13 @@ describe('Task', function() {
     it('add Task', function() {
         Task.exec(editor);
 
-        expect(editor.getHTML().replace(/<br>/g,'')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(editor.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });
 
     it('if already in list just add input box', function() {
         editor.setHTML('<ul><li></li></ul>');
         Task.exec(editor);
 
-        expect(editor.getHTML().replace(/<br>/g,'')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(editor.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });
 });

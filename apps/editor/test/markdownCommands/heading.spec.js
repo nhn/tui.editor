@@ -27,6 +27,10 @@ describe('', function() {
         doc = cm.getDoc();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('특정라인에서 커맨드실행시 해당라인의 첫번째 컬럼에 #가 추가된다', function() {
         it('텍스트가 있는 라인시작에 #가 추가되었다', function() {
             doc.setCursor(2, 3);

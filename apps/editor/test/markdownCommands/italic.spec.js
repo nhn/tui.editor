@@ -27,6 +27,10 @@ describe('Italic', function() {
         doc = cm.getDoc();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('특정라인에서 커맨드실행시 해당위치에 이탤릭문법이 추가된다', function() {
         it('텍스트 중간에서 실행시 **가 삽입된다 ', function() {
             doc.setCursor(2, 3);

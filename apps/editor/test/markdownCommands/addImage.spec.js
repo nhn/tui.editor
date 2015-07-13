@@ -27,6 +27,10 @@ describe('AddImage', function() {
         doc = cm.getDoc();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('인자로 들어온 데이터를 이용해 이미지구문을 추가한다', function() {
         var data;
 
