@@ -27,6 +27,8 @@ describe('WysiwygEditor', function() {
 
         it('init() invoke callback', function (done) {
             wwe.init(300, function() {
+                expect($('iframe').length).toEqual(1);
+                expect($('iframe')[0].contentDocument.body.className).toEqual('neditor-content');
                 done();
             });
         });
@@ -38,14 +40,13 @@ describe('WysiwygEditor', function() {
         beforeEach(function(done) {
             wwe = new WysiwygEditor($container, null, em);
             wwe.init(300, function() {
-                expect($('iframe').length).toEqual(1);
-                expect($('iframe')[0].contentDocument.body.className).toEqual('neditor-content');
                 done();
             });
         });
 
-        it('when something changed in editor Emit contentChanged.wysiwygEditor', function(done) {
-            em.listen('contentChanged.wysiwygEditor', function() {
+        it('when something changed in editor Emit contentChanged.wysiwygEditor event', function(done) {
+            em.listen('contentChanged.wysiwygEditor', function(data) {
+                expect(data).toEqual('<p>test<br></p><br>');
                 done();
             });
 
@@ -54,16 +55,30 @@ describe('WysiwygEditor', function() {
             wwe.editor.insertHTML('<p>test</p>');
         });
 
-        it('when something changed in editor Emit change.wysiwygEditor', function(done) {
-            em.listen('change.wysiwygEditor', function(eObj) {
-                expect(eObj.selection.startOffset).toEqual(1);
-                expect(eObj.selection.endOffset).toEqual(1);
+        it('when something changed in editor Emit change.wysiwygEditor event', function(done) {
+            //squire event fire asynchronous
+            em.listen('change.wysiwygEditor', function(ev) {
+                expect(ev.textContent).toEqual('t');
+                expect(ev.caretOffset).toEqual(1);
                 done();
             });
 
             //because squire input event
             wwe.editor._ignoreChange = false;
-            wwe.editor.insertHTML('test');
+            wwe.editor.insertHTML('t');
+        });
+
+        it('when something changed in editor Emit change event', function(done) {
+            //squire event fire asynchronous
+            em.listen('change', function(ev) {
+                expect(ev.textContent).toEqual('t');
+                expect(ev.caretOffset).toEqual(1);
+                done();
+            });
+
+            //because squire input event
+            wwe.editor._ignoreChange = false;
+            wwe.editor.insertHTML('t');
         });
     });
 

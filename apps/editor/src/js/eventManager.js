@@ -15,6 +15,8 @@ var eventList = [
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
     'contentChanged.markdownEditor',
+    'change.markdownEditor',
+    'change',
     'changeEditorTypeToWysiwyg',
     'changeEditorTypeToMarkdown',
     'openPopupAddLink',

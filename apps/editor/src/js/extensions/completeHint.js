@@ -29,7 +29,8 @@ extManager.defineExtension('completeHint', function(editor) {
 
         if (founded) {
             if (founded.currentText === '@' && !caretPos) {
-                caretPos = editor.wwEditor.getCaretPosition();
+                //caretPos = editor.wwEditor.getCaretPosition();
+                caretPos = editor.mdEditor.getCaretPosition();
                 show($hintLayer, caretPos, founded.text);
             }
             lastFounded = founded;
@@ -44,12 +45,11 @@ extManager.defineExtension('completeHint', function(editor) {
     });
 });
 
-
 function show($layer, pos, query) {
     $layer.css({
         display: "block",
         left: pos.left,
-        top: pos.top + 70
+        top: pos.top + 20
     });
 }
 
