@@ -127,6 +127,14 @@ var afterDelete = function ( self, range ) {
             // Move cursor into text node
             moveRangeBoundariesDownTree( range );
         }
+        // If you delete the last character in the sole <div> in Chrome,
+        // it removes the div and replaces it with just a <br> inside the
+        // body. Detach the <br>; the _ensureBottomLine call will insert a new
+        // block.
+        if ( node.nodeName === 'BODY' &&
+                ( node = node.firstChild ) && node.nodeName === 'BR' ) {
+            detach( node );
+        }
         self._ensureBottomLine();
         self.setSelection( range );
         self._updatePath( range, true );
