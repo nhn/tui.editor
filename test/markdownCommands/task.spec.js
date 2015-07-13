@@ -27,6 +27,10 @@ describe('task', function() {
         doc = cm.getDoc();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('add task', function() {
         it('added task', function() {
             doc.setCursor(0, 0);

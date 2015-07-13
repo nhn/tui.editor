@@ -7,7 +7,6 @@ describe('WysiwygEditor', function() {
     var $container, em;
 
     beforeEach(function() {
-        $('body').empty();
         $container = $('<div />');
 
         $('body').append($container);

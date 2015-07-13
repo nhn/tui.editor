@@ -27,6 +27,10 @@ describe('UL', function() {
         doc = cm.getDoc();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('커서위치에 UL마크다운 문법을 추가한다', function() {
         it('텍스트가 있는 라인에서 추가된다', function() {
             doc.setCursor(0, 0);

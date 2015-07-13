@@ -25,6 +25,10 @@ describe('HR', function() {
         cm.setValue(sourceText.join('\n'));
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('현재라인 바로 밑에 HR 라인을 추가한다', function() {
         it('현재라인 밑에 ***가 추가되었다', function() {
             cm.setCursor(2, 3);
