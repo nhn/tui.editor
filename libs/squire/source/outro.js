@@ -2,6 +2,10 @@
 
 if ( typeof exports === 'object' ) {
     module.exports = Squire;
+} else if ( typeof define === 'function' && define.amd ) {
+    define( function () {
+        return Squire;
+    });
 } else {
     win.Squire = Squire;
 
