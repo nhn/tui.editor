@@ -38,6 +38,8 @@ describe('WysiwygEditor', function() {
         beforeEach(function(done) {
             wwe = new WysiwygEditor($container, null, em);
             wwe.init(300, function() {
+                expect($('iframe').length).toEqual(1);
+                expect($('iframe')[0].contentDocument.body.className).toEqual('neditor-content');
                 done();
             });
         });
