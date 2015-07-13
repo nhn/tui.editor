@@ -3,6 +3,19 @@
 var extManager = require('../extManager');
 
 extManager.defineExtension('completeHint', function(editor) {
+    var $layer = $('<div><input type="text" /></div>');
+
+    $(editor.options.el).append($layer);
+
+    editor.eventManager.listen('change', function(ev) {
+        if (ev.textContent[ev.caretOffset - 1] === '@') {
+            $layer.find('input').focus();
+        }
+    });
+});
+
+/*
+extManager.defineExtension('completeHint', function(editor) {
     var $hintLayer = $('#hint'),
         lastFounded;
 
@@ -55,4 +68,4 @@ function show($layer, pos, query) {
 
 function hide($layer) {
     $layer.css("display", "none");
-}
+}*/

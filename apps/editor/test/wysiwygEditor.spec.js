@@ -72,6 +72,7 @@ describe('WysiwygEditor', function() {
             //squire event fire asynchronous
             em.listen('change', function(ev) {
                 expect(ev.textContent).toEqual('t');
+                expect(ev.source).toEqual('wysiwyg');
                 expect(ev.caretOffset).toEqual(1);
                 done();
             });
