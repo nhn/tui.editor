@@ -201,13 +201,17 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
 
     marker.parentNode.removeChild(marker);
 
+    this.editor.setSelection(selection);
+
     return pos;
 };
 
 WysiwygEditor.prototype.addWidget = function(selection, node, style) {
     var pos = this.getSelectionOffset(selection, style);
 
-    this.$editorContainerEl.append(node);
+    if (node.parentNode !== this.$editorContainerEl[0]) {
+        this.$editorContainerEl.append(node);
+    }
 
     $(node).css({
         position: 'absolute',
