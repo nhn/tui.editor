@@ -19,11 +19,13 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
     keyMap: ['Ctrl-O', 'Ctrl-O'],
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        editor.makeOrderedList();
-        editor.focus();
+    exec: function(wwe) {
+        var sq = wwe.getEditor();
+
+        sq.makeOrderedList();
+        sq.focus();
     }
 });
 

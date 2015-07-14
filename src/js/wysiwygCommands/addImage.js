@@ -18,12 +18,14 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
     name: 'AddImage',
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      *  @param {object} data data for image
      */
-    exec: function(editor, data) {
-        editor.insertImage(data.imageUrl);
-        editor.focus();
+    exec: function(wwe, data) {
+        var sq = wwe.getEditor();
+
+        sq.insertImage(data.imageUrl);
+        sq.focus();
     }
 });
 

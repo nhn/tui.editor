@@ -1,25 +1,25 @@
-var OL = require('../../src/js/markdownCommands/ol');
+'use strict';
 
-var CodeMirror = window.CodeMirror;
+var OL = require('../../src/js/markdownCommands/ol'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('OL', function() {
-    'use strict';
-
     var cm,
-        doc;
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'defaOLt',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
@@ -35,14 +35,14 @@ describe('OL', function() {
         it('텍스트가 있는 라인에서 추가된다', function() {
             doc.setCursor(0, 0);
 
-            OL.exec(cm);
+            OL.exec(mde);
 
             expect(doc.getLine(0)).toEqual('1. mytext1');
         });
         it('빈라인에서 추가된다', function() {
             doc.setCursor(1, 0);
 
-            OL.exec(cm);
+            OL.exec(mde);
 
             expect(doc.getLine(1)).toEqual('1. ');
         });
@@ -50,7 +50,7 @@ describe('OL', function() {
         it('영역선택후 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            OL.exec(cm);
+            OL.exec(mde);
 
             expect(doc.getLine(0)).toEqual('1. ');
             expect(doc.getLine(1)).toEqual('mytext3');

@@ -76,13 +76,18 @@ Command.prototype.setKeyMap = function(win, mac) {
     this.keyMap = [win, mac];
 };
 
-Command.prototype.runWithContext = function(instance, args) {
-    args = [instance].concat(args);
-    return this.exec.apply(this, args);
-};
+Command.factory = function(typeStr, props) {
+    var command, type;
 
-Command.factory = function(props) {
-    var command = new Command(props.name, Command.TYPE.GB);
+    if (typeStr === 'markdown') {
+        type = Command.TYPE.MD;
+    } else if (typeStr === 'wysiwyg') {
+        type = Command.TYPE.WW;
+    } else if (typeStr === 'global') {
+        type = Command.TYPE.GB;
+    }
+
+    command = new Command(props.name, type);
 
     util.extend(command, props);
 

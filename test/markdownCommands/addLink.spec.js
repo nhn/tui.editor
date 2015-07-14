@@ -1,32 +1,30 @@
-var AddLink = require('../../src/js/markdownCommands/addLink');
-
-var CodeMirror = window.CodeMirror;
+'use strict';
+var AddLink = require('../../src/js/markdownCommands/addLink'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('AddLink', function() {
-    'use strict';
-
     var cm,
-        doc;
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'default',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
     });
-
     afterEach(function() {
         $('body').empty();
     });
@@ -44,7 +42,7 @@ describe('AddLink', function() {
         it('빈라인에서 링크가 추가된다', function() {
             doc.setCursor(1, 0);
 
-            AddLink.exec(cm, data);
+            AddLink.exec(mde, data);
 
             expect(doc.getLine(1)).toEqual('[' + data.linkText + '](' + data.url + ')');
         });
@@ -52,7 +50,7 @@ describe('AddLink', function() {
         it('영역선택후 링크가 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
-            AddLink.exec(cm, data);
+            AddLink.exec(mde, data);
 
             expect(doc.getLine(0)).toEqual('[' + data.linkText + '](' + data.url + ')');
             expect(doc.getLine(1)).toEqual('mytext3');

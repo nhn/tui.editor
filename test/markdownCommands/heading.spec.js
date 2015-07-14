@@ -1,25 +1,26 @@
-var Heading = require('../../src/js/markdownCommands/heading');
+'use strict';
 
-var CodeMirror = window.CodeMirror;
+var Heading = require('../../src/js/markdownCommands/heading'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
-describe('', function() {
-    'use strict';
 
+describe('Heading', function() {
     var cm,
-        doc;
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'default',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
@@ -35,7 +36,7 @@ describe('', function() {
         it('텍스트가 있는 라인시작에 #가 추가되었다', function() {
             doc.setCursor(2, 3);
 
-            Heading.exec(cm);
+            Heading.exec(mde);
 
             expect(cm.getValue()).toEqual(['mytext1', '', '#mytext2', 'mytext3'].join('\n'));
         });
@@ -43,7 +44,7 @@ describe('', function() {
         it('빈 라인시작에 #가 추가되었다', function() {
             doc.setCursor(1, 3);
 
-            Heading.exec(cm);
+            Heading.exec(mde);
 
             expect(cm.getValue()).toEqual(['mytext1', '#', 'mytext2', 'mytext3'].join('\n'));
         });
@@ -53,7 +54,7 @@ describe('', function() {
         it('인용구가 정상적으로 추가되었다', function() {
             doc.setSelection({line: 0, ch: 3}, {line: 2, ch: 2});
 
-            Heading.exec(cm);
+            Heading.exec(mde);
 
             expect(cm.getValue()).toEqual(['#mytext1', '#', '#mytext2', 'mytext3'].join('\n'));
         });

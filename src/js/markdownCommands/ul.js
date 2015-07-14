@@ -19,24 +19,20 @@ var CodeMirror = window.CodeMirror;
 var UL = CommandManager.command('markdown',/** @lends UL */{
     name: 'UL',
     /**
-     * 커맨드 핸들러
-     * @param {CodeMirror} cm CodeMirror instance
-     * @return {object} 코드미러 상수
+     *  커맨드 핸들러
+     *  @param {MarkdownEditor} mde MarkdownEditor instance
+     *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function(cm) {
-        var replaceText,
-            range,
-            doc,
-            from,
-            to;
+    exec: function(mde) {
+        var replaceText, range, from, to,
+            cm = mde.getEditor(),
+            doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
             return CodeMirror.Pass;
         }
 
-        doc = cm.getDoc();
-
-        range = this.getCurrentRange(cm);
+        range = mde.getCurrentRange();
 
         from = {
             line: range.from.line,

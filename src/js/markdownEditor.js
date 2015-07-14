@@ -101,17 +101,34 @@ MarkdownEditor.prototype._initEvent = function() {
     */
 };
 
+/**
+ * getCurrentRange
+ * returns current selection's range
+ * @param {CodeMirror} cm codemirror instance
+ * @return {object} selection range
+ */
+MarkdownEditor.prototype.getCurrentRange = function() {
+    var from = this.cm.getCursor(true),
+    to = this.cm.getCursor(false);
+
+    return {
+        from: from,
+        to: to,
+        collapsed: from === to
+    };
+};
+
 MarkdownEditor.prototype.focus = function() {
     this.cm.focus();
 };
 
 MarkdownEditor.prototype.setValue = function(markdown) {
-    this.cm.doc.setValue(markdown);
+    this.cm.setValue(markdown);
     this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
 };
 
 MarkdownEditor.prototype.getValue = function() {
-    return this.cm.doc.getValue('\n');
+    return this.cm.getValue('\n');
 };
 
 MarkdownEditor.prototype.getEditor = function() {

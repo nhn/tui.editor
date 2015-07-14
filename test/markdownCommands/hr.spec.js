@@ -1,28 +1,32 @@
-var HR = require('../../src/js/markdownCommands/hr');
+'use strict';
+
+var HR = require('../../src/js/markdownCommands/hr'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 var CodeMirror = window.CodeMirror;
 
 describe('HR', function() {
-    'use strict';
-
-    var cm;
+    var cm,
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'default',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
+        doc = cm.getDoc();
     });
 
     afterEach(function() {
@@ -33,7 +37,7 @@ describe('HR', function() {
         it('현재라인 밑에 ***가 추가되었다', function() {
             cm.setCursor(2, 3);
 
-            HR.exec(cm);
+            HR.exec(mde);
 
             expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '***', 'mytext3'].join('\n'));
         });
@@ -43,7 +47,7 @@ describe('HR', function() {
         it('셀렉션 영역이 ***로 대체되었다', function() {
             cm.setSelection({line: 0, ch: 1}, {line: 2, ch: 2});
 
-            HR.exec(cm);
+            HR.exec(mde);
 
             expect(cm.getValue()).toEqual(['m***text2', 'mytext3'].join('\n'));
         });

@@ -17,19 +17,20 @@ var CommandManager = require('../commandManager');
 var Task = CommandManager.command('wysiwyg',/** @lends Task */{
     name: 'Task',
     /**
-     * Command Handler
-     * @param {Squire} editor Squire instance
+     *  커맨드 핸들러
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        var path = editor.getPath().split('>');
+    exec: function(wwe) {
+        var sq = wwe.getEditor(),
+            path = sq.getPath().split('>');
 
-        if(path[path.length - 1] === 'LI') {
-            editor.insertHTML('<input type="checkbox" /> ');
+        if (path[path.length - 1] === 'LI') {
+            sq.insertHTML('<input type="checkbox" /> ');
         } else {
-            editor.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
+            sq.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
         }
 
-        editor.focus();
+        sq.focus();
     }
 });
 

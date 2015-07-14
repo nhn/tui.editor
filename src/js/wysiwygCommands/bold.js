@@ -19,11 +19,13 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        editor.bold();
-        editor.focus();
+    exec: function(wwe) {
+        var sq = wwe.getEditor();
+
+        sq.bold();
+        sq.focus();
     }
 });
 
