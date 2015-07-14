@@ -1977,7 +1977,7 @@ var onPaste = function ( event ) {
         hasImage = false,
         plainItem = null,
         self = this,
-        l, item, type;
+        l, item, type, data;
 
     // Current HTML5 Clipboard interface
     // ---------------------------------
@@ -2030,21 +2030,24 @@ var onPaste = function ( event ) {
     // Old interface
     // -------------
 
-    if ( clipboardData ) {
-        if ( indexOf.call( clipboardData.types, 'text/html' ) > -1 ) {
-            event.preventDefault();
-            this.insertHTML( clipboardData.getData( 'text/html' ), true );
-            return;
-        }
-        // Safari (and indeed many other OS X apps) copies stuff as text/rtf
-        // rather than text/html; even from a webpage in Safari. The only way
-        // to get an HTML version is to fallback to letting the browser insert
-        // the content. *Sigh*.
-        else if ( indexOf.call( clipboardData.types, 'text/rtf' ) === -1 ) {
-            event.preventDefault();
+    // Safari (and indeed many other OS X apps) copies stuff as text/rtf
+    // rather than text/html; even from a webpage in Safari. The only way
+    // to get an HTML version is to fallback to letting the browser insert
+    // the content. *Sigh*.
+    if ( clipboardData && (
+            indexOf.call( clipboardData.types, 'text/html' ) > -1 ||
+            indexOf.call( clipboardData.types, 'text/rtf' ) === -1 ) ) {
+        event.preventDefault();
+        // Abiword on Linux copies a plain text and html version, but the HTML
+        // version is the empty string! So always try to get HTML, but if none,
+        // insert plain text instead.
+        data = clipboardData.getData( 'text/html' );
+        if ( data ) {
+            this.insertHTML( data, true );
+        } else {
             this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
-            return;
         }
+        return;
     }
 
     // No interface :(
