@@ -7,9 +7,21 @@ extManager.defineExtension('completeHint', function(editor) {
 
     $(editor.options.el).append($layer);
 
+    var cm = window.dd = editor.getCodeMirror();
+    var sq = window.dd2 = editor.getSquire();
+
+    var wwe = editor.wwEditor;
+    var mde = editor.mdEditor;
+
     editor.eventManager.listen('change', function(ev) {
         if (ev.textContent[ev.caretOffset - 1] === '@') {
-            $layer.find('input').focus();
+            if (ev.source === 'markdown') {
+                //cm.addWidget(cm.getCursor(), $layer[0], false, "over");
+                //$layer.find('input').focus();
+                mde.addWidget(ev.selection, $layer[0]);
+            } else {
+                wwe.addWidget(ev.selection, $layer[0]);
+            }
         }
     });
 });
