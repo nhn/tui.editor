@@ -50,6 +50,8 @@ WysiwygEditor.prototype.init = function(height, callback) {
         }
     });
 
+    this.$editorContainerEl.css('position', 'relative');
+
     this.$editorContainerEl.append(this.$iframe);
 };
 
@@ -177,7 +179,41 @@ WysiwygEditor.prototype.setValue = function(html) {
 
 WysiwygEditor.prototype.getValue = function() {
     //remove contenteditable block, in this case div
-   return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+    return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+};
+
+WysiwygEditor.prototype.getEditor = function() {
+    return this.editor;
+};
+
+WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
+    var pos,
+        marker = this.editor.createElement('INPUT');
+
+    this.editor._ignoreChange = true;
+    this.editor.insertElement(marker, selection);
+
+    pos = $(marker).offset();
+
+    if (style !== 'over') {
+        pos.top += $(marker).outerHeight();
+    }
+
+    marker.parentNode.removeChild(marker);
+
+    return pos;
+};
+
+WysiwygEditor.prototype.addWidget = function(selection, node, style) {
+    var pos = this.getSelectionOffset(selection, style);
+
+    this.$editorContainerEl.append(node);
+
+    $(node).css({
+        position: 'absolute',
+        top: pos.top,
+        left: pos.left
+    });
 };
 
 module.exports = WysiwygEditor;

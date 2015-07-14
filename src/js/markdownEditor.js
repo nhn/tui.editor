@@ -123,7 +123,11 @@ MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value
 };
 
 MarkdownEditor.prototype.getCaretPosition = function() {
-    return this.cm.cursorCoords();
+    return this.getEditor().cursorCoords();
+};
+
+MarkdownEditor.prototype.addWidget = function(selection, node, style) {
+    this.getEditor().addWidget(selection.to, node, style);
 };
 
 module.exports = MarkdownEditor;
