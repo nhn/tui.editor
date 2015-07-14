@@ -87,6 +87,7 @@ CommandManager.prototype._initEvent = function() {
  */
 CommandManager.prototype.exec = function(name) {
     var commandToRun,
+        context = this.base,
         args = util.toArray(arguments);
 
     args.shift();
@@ -96,26 +97,23 @@ CommandManager.prototype.exec = function(name) {
     if (!commandToRun) {
         if (this.typeStatus === TYPE.MARKDOWN) {
             commandToRun = this._mdCommand.get(name);
+            context = this.base.mdEditor;
         } else if (this.typeStatus === TYPE.WYSIWYG) {
             commandToRun = this._wwCommand.get(name);
+            context = this.base.wwEditor;
         }
     }
 
     if (commandToRun) {
-        return commandToRun.runWithContext(this.base, args);
+        args.unshift(context);
+        return commandToRun.exec.apply(commandToRun, args);
     }
 };
 
 CommandManager.command = function(type, props) {
     var command;
 
-    if (type === 'markdown') {
-        command = MarkdownCommand.factory(props.name);
-    } else if (type === 'wysiwyg') {
-        command = WysiwygCommand.factory(props.name);
-    } else if (type === 'global') {
-        command = Command.factory(props.name);
-    }
+    command = Command.factory(type, props.name);
 
     util.extend(command, props);
 

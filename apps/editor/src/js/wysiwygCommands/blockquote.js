@@ -18,11 +18,13 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
     name: 'Blockquote',
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        editor.increaseQuoteLevel();
-        editor.focus();
+    exec: function(wwe) {
+        var sq = wwe.getEditor();
+
+        sq.increaseQuoteLevel();
+        sq.focus();
     }
 });
 

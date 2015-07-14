@@ -23,23 +23,17 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
      *  커맨드 핸들러
+     *  @param {MarkdownEditor} mde MarkdownEditor instance
      *  @return {CodeMirror} 코드미러 상수
-     *  @param {CodeMirror} cm CodeMirror instance
      */
-    exec: function(cm) {
-        var cursor,
-            selection,
-            tmpSelection,
-            isRemoved,
-            result,
-            doc,
-            isEmpty;
+    exec: function(mde) {
+        var cursor, selection, tmpSelection, isRemoved, result, isEmpty,
+            cm = mde.getEditor(),
+            doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
             return CodeMirror.Pass;
         }
-
-        doc = cm.getDoc();
 
         cursor = doc.getCursor();
         selection = doc.getSelection();

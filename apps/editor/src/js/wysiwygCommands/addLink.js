@@ -18,12 +18,14 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
-     *  @param {object} data data for link
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     *  @param {object} data data for image
      */
-    exec: function(editor, data) {
-        editor.makeLink(data.url);
-        editor.focus();
+    exec: function(wwe, data) {
+        var sq = wwe.getEditor();
+
+        sq.makeLink(data.url);
+        sq.focus();
     }
 });
 

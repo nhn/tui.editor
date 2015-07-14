@@ -21,22 +21,20 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**
      *  커맨드 핸들러
-     *  @param {CodeMirror} cm CodeMirror instance
+     *  @param {MarkdownEditor} mde MarkdownEditor instance
      *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function(cm) {
-        var textToModify, range, from, to, textLinesToModify,
-            lineLength, i, doc;
+    exec: function(mde) {
+        var textToModify, range, from, to, textLinesToModify, lineLength, i,
+            cm = mde.getEditor(),
+            doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
             return CodeMirror.Pass;
         }
 
-        doc = cm.getDoc();
-
-
         //range 을 가공함
-        range = this.getCurrentRange(cm);
+        range = mde.getCurrentRange();
 
         from = {
             line: range.from.line,

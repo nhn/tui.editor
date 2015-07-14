@@ -1,25 +1,25 @@
-var Italic = require('../../src/js/markdownCommands/italic');
+'use strict';
 
-var CodeMirror = window.CodeMirror;
+var Italic = require('../../src/js/markdownCommands/italic'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('Italic', function() {
-    'use strict';
-
     var cm,
-        doc;
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'default',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
@@ -35,7 +35,7 @@ describe('Italic', function() {
         it('텍스트 중간에서 실행시 **가 삽입된다 ', function() {
             doc.setCursor(2, 3);
 
-            Italic.exec(cm);
+            Italic.exec(mde);
 
             expect(cm.getValue()).toEqual(['mytext1', '', 'myt**ext2', 'mytext3'].join('\n'));
         });
@@ -43,7 +43,7 @@ describe('Italic', function() {
         it('빈 라인시작에 **가 추가되었다', function() {
             doc.setCursor(1, 3);
 
-            Italic.exec(cm);
+            Italic.exec(mde);
 
             expect(cm.getValue()).toEqual(['mytext1', '**', 'mytext2', 'mytext3'].join('\n'));
         });
@@ -53,7 +53,7 @@ describe('Italic', function() {
         it('선택된영역의 텍스트가 이탤릭처리된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
 
-            Italic.exec(cm);
+            Italic.exec(mde);
 
             expect(cm.getValue()).toEqual(['*mytext1*', '', 'mytext2', 'mytext3'].join('\n'));
         });

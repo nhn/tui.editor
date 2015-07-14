@@ -1,32 +1,23 @@
 'use strict';
 
-var Task = require('../../src/js/wysiwygCommands/task');
-
-var Squire = window.Squire;
+var Task = require('../../src/js/wysiwygCommands/task'),
+    WysiwygEditor = require('../../src/js/wysiwygEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('Task', function() {
-    var editor;
+    var wwe, sq;
 
     beforeEach(function(done) {
-        var $iframe = $('<iframe />');
+        var $container = $('<div />');
 
-        editor = null;
+        $('body').append($container);
 
-        $iframe.load(function() {
-            var doc = $iframe[0].contentDocument;
+        wwe = new WysiwygEditor($container, null, new EventManager());
 
-            if (editor) {
-                return;
-            }
-
-            editor = new Squire(doc, {
-                blockTag: 'DIV'
-            });
-
+        wwe.init(300, function() {
+            sq = wwe.getEditor();
             done();
         });
-
-        $('body').append($iframe);
     });
 
     afterEach(function() {
@@ -34,15 +25,15 @@ describe('Task', function() {
     });
 
     it('add Task', function() {
-        Task.exec(editor);
+        Task.exec(wwe);
 
-        expect(editor.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });
 
     it('if already in list just add input box', function() {
-        editor.setHTML('<ul><li></li></ul>');
-        Task.exec(editor);
+        sq.setHTML('<ul><li></li></ul>');
+        Task.exec(wwe);
 
-        expect(editor.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
     });
 });

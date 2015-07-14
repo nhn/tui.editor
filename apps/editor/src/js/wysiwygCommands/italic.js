@@ -19,11 +19,13 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        editor.italic();
-        editor.focus();
+    exec: function(wwe) {
+        var sq = wwe.getEditor();
+
+        sq.italic();
+        sq.focus();
     }
 });
 

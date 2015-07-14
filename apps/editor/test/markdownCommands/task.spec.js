@@ -1,25 +1,25 @@
 'use strict';
 
-var task = require('../../src/js/markdownCommands/task');
-
-var CodeMirror = window.CodeMirror;
+var task = require('../../src/js/markdownCommands/task'),
+    MarkdownEditor = require('../../src/js/markdownEditor'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('task', function() {
     var cm,
-        doc;
+        doc,
+        mde;
 
     beforeEach(function() {
-        var textArea = $('<textarea />'),
+        var $container = $('<div />'),
             sourceText;
 
-        $('body').append(textArea);
+        $('body').append($container);
 
-        cm = CodeMirror.fromTextArea(textArea[0], {
-            lineWrapping: true,
-            mode: 'gfm',
-            theme: 'default',
-            dragDrop: false
-        });
+        mde = new MarkdownEditor($container, new EventManager());
+
+        mde.init();
+
+        cm = mde.getEditor();
 
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
@@ -35,7 +35,7 @@ describe('task', function() {
         it('added task', function() {
             doc.setCursor(0, 0);
 
-            task.exec(cm);
+            task.exec(mde);
 
             expect(doc.getLine(0)).toEqual('* [ ] mytext1');
         });

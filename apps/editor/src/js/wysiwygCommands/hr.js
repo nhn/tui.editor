@@ -18,12 +18,14 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
     name: 'HR',
     /**
      *  커맨드 핸들러
-     *  @param {Squire} editor Squire instance
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(editor) {
-        var hr = editor.createElement('HR');
-        editor.insertElement(hr);
-        editor.focus();
+    exec: function(wwe) {
+        var sq = wwe.getEditor(),
+            hr = sq.createElement('HR');
+
+        sq.insertElement(hr);
+        sq.focus();
     }
 });
 

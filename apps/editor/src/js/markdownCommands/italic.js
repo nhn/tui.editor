@@ -23,25 +23,18 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
-     * 커맨드 핸들러
-     * @param {CodeMirror} cm CodeMirror instance
-     * @return {number} 코드미러 상수
+     *  커맨드 핸들러
+     *  @param {MarkdownEditor} mde MarkdownEditor instance
+     *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function(cm) {
-        var cursor,
-            selection,
-            tmpSelection,
-            isRemoved,
-            result,
-            isEmpty,
-            doc,
-            isWithBold;
+    exec: function(mde) {
+        var cursor, selection, tmpSelection, isRemoved, result, isEmpty, isWithBold,
+            cm = mde.getEditor(),
+            doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
             return CodeMirror.Pass;
         }
-
-        doc = cm.getDoc();
 
         cursor = doc.getCursor();
         selection = doc.getSelection();

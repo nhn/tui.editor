@@ -20,24 +20,20 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
-     *  @param {CodeMirror} cm CodeMirror instance
-     *  @param {object} data data for link
+     *  @param {MarkdownEditor} mde MarkdownEditor instance
+     *  @param {object} data data for image
      *  @return {CodeMirror} 코드미러 상수
      */
-    exec: function(cm, data) {
-        var replaceText,
-        range,
-        doc,
-        from,
-        to;
+    exec: function(mde, data) {
+        var replaceText, range, from, to,
+            cm = mde.getEditor(),
+            doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
             return CodeMirror.Pass;
         }
 
-        doc = cm.getDoc();
-
-        range = this.getCurrentRange(cm);
+        range = mde.getCurrentRange();
 
         from = {
             line: range.from.line,
