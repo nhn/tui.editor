@@ -16,30 +16,30 @@ var nextTypeString = ['WYSIWYG', 'Markdown'],
     };
 
 /**
- * EditorTypeSwitch
+ * ModeSwitch
  * UI Control for switch between Markdown and WYSIWYG
- * @exports EditorTypeSwitch
+ * @exports ModeSwitch
  * @augments UIController
  * @constructor
  * @class
  * @param {number} initialType initial type of editor
  */
-function EditorTypeSwitch(initialType) {
+function ModeSwitch(initialType) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'editorTypeSwitch'
+        className: 'modeSwitch'
     });
 
     this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
     this._render();
 }
 
-EditorTypeSwitch.prototype = util.extend(
+ModeSwitch.prototype = util.extend(
     {},
     UIController.prototype
 );
 
-EditorTypeSwitch.prototype._render = function() {
+ModeSwitch.prototype._render = function() {
     this.$button = $('<button class="switchButton" type="button" />');
     this._setButtonTitle();
     this.$el.append(this.$button);
@@ -49,34 +49,34 @@ EditorTypeSwitch.prototype._render = function() {
     });
 };
 
-EditorTypeSwitch.prototype._setButtonTitle = function() {
+ModeSwitch.prototype._setButtonTitle = function() {
     this.$button.text('to' + this._getNextTypeString());
 };
 
-EditorTypeSwitch.prototype._buttonClicked = function() {
+ModeSwitch.prototype._buttonClicked = function() {
     this._switchType();
 };
 
-EditorTypeSwitch.prototype._switchType = function() {
+ModeSwitch.prototype._switchType = function() {
     var typeToSwitch = this._getNextTypeString();
 
     this._toggleType();
     this._setButtonTitle();
 
-    this.trigger('editorTypeSwitched', {
+    this.trigger('modeSwitched', {
         type: this.type,
         text: typeToSwitch
     });
 };
 
-EditorTypeSwitch.prototype._getNextTypeString = function() {
+ModeSwitch.prototype._getNextTypeString = function() {
     return nextTypeString[this.type];
 };
 
-EditorTypeSwitch.prototype._toggleType = function() {
+ModeSwitch.prototype._toggleType = function() {
     this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
 };
 
-EditorTypeSwitch.TYPE = TYPE;
+ModeSwitch.TYPE = TYPE;
 
-module.exports = EditorTypeSwitch;
+module.exports = ModeSwitch;

@@ -3,33 +3,32 @@
 var extManager = require('../extManager');
 
 extManager.defineExtension('completeHint', function(editor) {
-    var $layer = $('<div><input type="text" /></div>');
-
-    //var cm = window.dd = editor.getCodeMirror();
-    //var sq = window.dd2 = editor.getSquire();
-    var wwe = editor.wwEditor;
-    var mde = editor.mdEditor;
+    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
 
     $(editor.options.el).append($layer);
 
-    $layer.find('input').on('blur', function() {
-        wwe.replaceSelection('awefawefweaf');
-        $layer.hide();
+    $layer.find('input').on('click', function() {
+        hideUI($layer);
+        editor.getCurrentModeEditor().replaceSelection('awefawefweaf');
     });
 
     editor.eventManager.listen('change', function(ev) {
         if (ev.textContent[ev.caretOffset] === '@') {
-            if (ev.source === 'markdown') {
-                mde.addWidget(ev.selection, $layer[0], 'over');
-                $layer.find('input').focus();
-            } else {
-                wwe.addWidget(ev.selection, $layer[0], 'over');
-                $layer.find('input').focus();
-            }
-            $layer.show();
+            editor.addWidget(ev.selection, $layer[0], 'over');
+            showUI($layer);
         }
     });
 });
+
+function showUI($layer) {
+    $layer.show();
+    $layer.find('input').focus();
+}
+
+function hideUI($layer) {
+    $layer.hide();
+    $layer.find('input').val('');
+}
 
 /*
 extManager.defineExtension('completeHint', function(editor) {

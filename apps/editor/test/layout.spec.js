@@ -1,6 +1,5 @@
 var Layout = require('../src/js/layout'),
-    EventManager = require('../src/js/eventManager'),
-    EditorTypeSwitch = require('../src/js/editorTypeSwitch');
+    EventManager = require('../src/js/eventManager');
 
 describe('Layout', function() {
     'use strict';
@@ -24,7 +23,7 @@ describe('Layout', function() {
     it('All layout elements are exist', function() {
         expect($('.neditor').length).toEqual(1);
         expect($('.toolbarSection').length).toEqual(1);
-        expect($('.editorTypeSwitchSection').length).toEqual(1);
+        expect($('.modeSwitchSection').length).toEqual(1);
         expect($('.mdContainer').length).toEqual(1);
         expect($('.mdContainer .tabSection').length).toEqual(1);
         expect($('.mdContainer .editor').length).toEqual(1);
@@ -51,14 +50,14 @@ describe('Layout', function() {
 
     describe('Markdown and WYSIWYG type switching by eventManager', function() {
         it('to Markdown', function() {
-            em.emit('changeEditorTypeToMarkdown');
+            em.emit('changeModeToMarkdown');
 
             expect($('.mdContainer').css('display')).toEqual('block');
             expect($('.wysiwygContainer').css('display')).toBe('none');
         });
 
         it('to WYSIWYG', function() {
-            em.emit('changeEditorTypeToWysiwyg');
+            em.emit('changeModeToWysiwyg');
 
             expect($('.mdContainer').css('display')).toEqual('none');
             expect($('.wysiwygContainer').css('display')).toBe('block');

@@ -78,7 +78,7 @@ MarkdownEditor.prototype._initEvent = function() {
         self.setValue(markdown);
     });
 
-    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+    this.eventManager.listen('changeModeToMarkdown', function() {
         self.cm.refresh();
     });
 
@@ -153,6 +153,7 @@ MarkdownEditor.prototype.replaceSelection = function(content, selection) {
     }
 
     this.getEditor().replaceSelection(content);
+    this.focus();
 };
 
 module.exports = MarkdownEditor;

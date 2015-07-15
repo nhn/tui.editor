@@ -7,14 +7,14 @@
 
 var Toolbar = require('./toolbar'),
     Tab = require('./tab'),
-    EditorTypeSwitch = require('./editorTypeSwitch'),
+    ModeSwitch = require('./modeSwitch'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage');
 
 var containerTmpl = [
     '<div class="neditor">',
         '<div class="toolbarSection" />',
-        '<div class="editorTypeSwitchSection" />',
+        '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
             '<div class="tabSection" />',
             '<div class="editor" />',
@@ -46,7 +46,7 @@ Layout.prototype.init = function() {
     this._renderLayout();
 
     this._initToolbar();
-    this._initEditorTypeSwitch();
+    this._initModeSwitch();
 
     this._initPopupAddLink();
     this._initPopupAddImage();
@@ -69,26 +69,26 @@ Layout.prototype._initToolbar = function() {
 Layout.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('changeEditorTypeToWysiwyg', function() {
+    this.eventManager.listen('changeModeToWysiwyg', function() {
         self._switchToWYSIWYG();
     });
 
-    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+    this.eventManager.listen('changeModeToMarkdown', function() {
         self._switchToMarkdown();
     });
 };
 
-Layout.prototype._initEditorTypeSwitch = function() {
+Layout.prototype._initModeSwitch = function() {
     var self = this;
 
-    this.editorTypeSwitch = new EditorTypeSwitch(this.type === 'markdown' ? EditorTypeSwitch.TYPE.MARKDOWN : EditorTypeSwitch.TYPE.WYSIWYG);
-    this.$containerEl.find('.editorTypeSwitchSection').append(this.editorTypeSwitch.$el);
+    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+    this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
 
-    this.editorTypeSwitch.on('editorTypeSwitched', function(ev, info) {
-        if (info.type === EditorTypeSwitch.TYPE.WYSIWYG) {
-            self.eventManager.emit('changeEditorTypeToWysiwyg');
+    this.modeSwitch.on('modeSwitched', function(ev, info) {
+        if (info.type === ModeSwitch.TYPE.WYSIWYG) {
+            self.eventManager.emit('changeModeToWysiwyg');
         } else {
-            self.eventManager.emit('changeEditorTypeToMarkdown');
+            self.eventManager.emit('changeModeToMarkdown');
         }
     });
 };
