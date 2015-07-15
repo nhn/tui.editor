@@ -67,7 +67,7 @@ MarkdownEditor.prototype._initEvent = function() {
             source: 'markdown',
             selection: {from: e.from, to: e.to},
             textContent: cm.getDoc().getLine(e.to.line),
-            caretOffset: e.to.ch + 1
+            caretOffset: e.to.ch
         };
 
         self.eventManager.emit('change.markdownEditor', eventObj);
@@ -108,8 +108,8 @@ MarkdownEditor.prototype._initEvent = function() {
  * @return {object} selection range
  */
 MarkdownEditor.prototype.getCurrentRange = function() {
-    var from = this.cm.getCursor(true),
-    to = this.cm.getCursor(false);
+    var from = this.cm.getCursor('from'),
+    to = this.cm.getCursor('to');
 
     return {
         from: from,
@@ -144,7 +144,15 @@ MarkdownEditor.prototype.getCaretPosition = function() {
 };
 
 MarkdownEditor.prototype.addWidget = function(selection, node, style) {
-    this.getEditor().addWidget(selection.to, node, style);
+    this.getEditor().addWidget(selection.to, node, true, style);
+};
+
+MarkdownEditor.prototype.replaceSelection = function(content, selection) {
+    if (selection) {
+        this.getEditor().setSelection(selection.from, selection.to);
+    }
+
+    this.getEditor().replaceSelection(content);
 };
 
 module.exports = MarkdownEditor;

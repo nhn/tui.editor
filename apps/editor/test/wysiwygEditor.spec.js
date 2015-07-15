@@ -59,7 +59,7 @@ describe('WysiwygEditor', function() {
             //squire event fire asynchronous
             em.listen('change.wysiwygEditor', function(ev) {
                 expect(ev.textContent).toEqual('t');
-                expect(ev.caretOffset).toEqual(1);
+                expect(ev.caretOffset).toEqual(0);
                 done();
             });
 
@@ -73,7 +73,7 @@ describe('WysiwygEditor', function() {
             em.listen('change', function(ev) {
                 expect(ev.textContent).toEqual('t');
                 expect(ev.source).toEqual('wysiwyg');
-                expect(ev.caretOffset).toEqual(1);
+                expect(ev.caretOffset).toEqual(0);
                 done();
             });
 
@@ -103,6 +103,19 @@ describe('WysiwygEditor', function() {
         it('when get html data, remove contenteditable block tag which is div', function() {
             wwe.setValue('<ul><li>list</li></ul>');
             expect(wwe.getValue()).toEqual('<ul><li>list<br></li></ul>');
+        });
+
+        it('replace selection content with passed content', function() {
+            var selection;
+
+            selection = wwe.getEditor().getSelection();
+            wwe.replaceSelection('test', selection);
+            expect(wwe.getValue()).toEqual('test<br>');
+        });
+
+        it('if replace selection without selection, use current selection', function() {
+            wwe.replaceSelection('test');
+            expect(wwe.getValue()).toEqual('test<br>');
         });
     });
 });

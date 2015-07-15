@@ -99,7 +99,7 @@ WysiwygEditor.prototype._initEvent = function() {
             source: 'wysiwyg',
             selection: sel,
             textContent: sel.commonAncestorContainer.textContent,
-            caretOffset: sel.endOffset
+            caretOffset: sel.endOffset - 1
         };
 
         self.eventManager.emit('change.wysiwygEditor', eventObj);
@@ -186,13 +186,24 @@ WysiwygEditor.prototype.getEditor = function() {
     return this.editor;
 };
 
+WysiwygEditor.prototype.replaceSelection = function(content, selection) {
+    if (!selection) {
+        selection = this.editor.getSelection();
+    }
+    this.editor.insertPlainText(content, selection);
+};
+
 WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
     var pos,
         marker = this.editor.createElement('INPUT');
 
-    this.editor._ignoreChange = true;
-    this.editor.insertElement(marker, selection);
+    var range = selection.cloneRange();
 
+    range.setStart(range.startContainer, range.startOffset - 1);
+    range.setEnd(range.endContainer, range.endOffset - 1);
+
+    this.editor._ignoreChange = true;
+    this.editor.insertElement(marker, range);
     pos = $(marker).offset();
 
     if (style !== 'over') {
@@ -202,6 +213,8 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
     marker.parentNode.removeChild(marker);
 
     this.editor.setSelection(selection);
+
+    pos.top -= $(this.editor.getDocument().body).scrollTop();
 
     return pos;
 };
