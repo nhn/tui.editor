@@ -102,6 +102,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
     /**
      * expendWithBoldSelection
      * 볼드와 함께 적용된 셀렉션 영역을 확장한다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
@@ -119,6 +120,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
     /**
      * expendOnlyBoldSelection
      * 볼드만 적용된 셀렉션 영역을 확장한다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
@@ -137,6 +139,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
     /**
      * expendSelection
      * 이탤릭이 적용된 셀렉션 영역을 확장한다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
      * @return {string} 확장된 영역의 텍스트
      */
@@ -154,6 +157,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
     /**
      * setCursorToCenter
      * 커서를 중앙으로 이동시킨다
+     * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
      * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
      */

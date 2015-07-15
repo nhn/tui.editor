@@ -44,9 +44,10 @@ markedCustomRenderer.listitem = function (text) {
 };
 
 markedCustomRenderer.code = function(code, lang, escaped) {
+    var out;
   if (this.options.highlight) {
-    var out = this.options.highlight(code, lang);
-    if (out != null && out !== code) {
+    out = this.options.highlight(code, lang);
+    if (out !== null && out !== code) {
       escaped = true;
       code = out;
     }

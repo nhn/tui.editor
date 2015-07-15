@@ -127,7 +127,6 @@ Toolbar.prototype._initButton = function() {
         command: 'Task',
         text: 'TASK'
     }));
-
 };
 
 module.exports = Toolbar;

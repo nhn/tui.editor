@@ -7,9 +7,7 @@
 
 var util = ne.util;
 
-var Command = require('./command'),
-    MarkdownCommand = require('./markdownCommand'),
-    WysiwygCommand = require('./wysiwygCommand');
+var Command = require('./command');
 
 var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
 
