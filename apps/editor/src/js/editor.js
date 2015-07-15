@@ -97,11 +97,10 @@ function NEditor(options) {
         });
     }
 
+    this.changePreviewStyle(this.options.previewStyle);
+    this.mdEditor.init(this.options.initialValue);
+
     this.wwEditor.init(this.options.height, function() {
-        self.changePreviewStyle(self.options.previewStyle);
-
-        self.mdEditor.init(self.options.initialValue);
-
         extManager.applyExtension(self, self.options.exts);
 
         self._initDefaultCommands();
