@@ -10,17 +10,23 @@ extManager.defineExtension('completeHint', function(editor) {
     var wwe = editor.wwEditor;
     var mde = editor.mdEditor;
 
-
     $(editor.options.el).append($layer);
+
+    $layer.find('input').on('blur', function() {
+        wwe.replaceSelection('awefawefweaf');
+        $layer.hide();
+    });
+
     editor.eventManager.listen('change', function(ev) {
-        if (ev.textContent[ev.caretOffset - 1] === '@') {
+        if (ev.textContent[ev.caretOffset] === '@') {
             if (ev.source === 'markdown') {
-                //cm.addWidget(cm.getCursor(), $layer[0], false, "over");
-                //$layer.find('input').focus();
-                mde.addWidget(ev.selection, $layer[0]);
+                mde.addWidget(ev.selection, $layer[0], 'over');
+                $layer.find('input').focus();
             } else {
-                wwe.addWidget(ev.selection, $layer[0]);
+                wwe.addWidget(ev.selection, $layer[0], 'over');
+                $layer.find('input').focus();
             }
+            $layer.show();
         }
     });
 });
