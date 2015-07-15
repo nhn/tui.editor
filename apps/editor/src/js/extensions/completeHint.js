@@ -5,14 +5,13 @@ var extManager = require('../extManager');
 extManager.defineExtension('completeHint', function(editor) {
     var $layer = $('<div><input type="text" /></div>');
 
-    $(editor.options.el).append($layer);
-
-    var cm = window.dd = editor.getCodeMirror();
-    var sq = window.dd2 = editor.getSquire();
-
+    //var cm = window.dd = editor.getCodeMirror();
+    //var sq = window.dd2 = editor.getSquire();
     var wwe = editor.wwEditor;
     var mde = editor.mdEditor;
 
+
+    $(editor.options.el).append($layer);
     editor.eventManager.listen('change', function(ev) {
         if (ev.textContent[ev.caretOffset - 1] === '@') {
             if (ev.source === 'markdown') {
