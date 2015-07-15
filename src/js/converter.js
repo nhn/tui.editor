@@ -51,7 +51,7 @@ Convertor.prototype._initEvent = function() {
     this.eventManager.listen('changeModeToWysiwyg', function() {
         var html;
         html = self._markdownToHtml(self.latestMarkdown);
-        console.log('\n\n~~toHtml~~\n', self.latestMarkdown, '\n-------\n', html);
+        //console.log('\n\n~~toHtml~~\n', self.latestMarkdown, '\n-------\n', html);
         self.eventManager.emit('htmlUpdate', html);
     });
 
@@ -61,7 +61,7 @@ Convertor.prototype._initEvent = function() {
         if (self.latestHtml) {
             //remove last br created by Squire
             markdown = toMark(self.latestHtml);
-            console.log('\n\n~~toMD~~\n', self.latestHtml, '\n------->\n', markdown);
+            //console.log('\n\n~~toMD~~\n', self.latestHtml, '\n------->\n', markdown);
             self.eventManager.emit('markdownUpdate', markdown);
         }
     });

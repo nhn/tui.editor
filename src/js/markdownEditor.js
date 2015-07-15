@@ -63,15 +63,17 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('change', function(cm, e) {
         var eventObj;
 
-        eventObj = {
-            source: 'markdown',
-            selection: {from: e.from, to: e.to},
-            textContent: cm.getDoc().getLine(e.to.line),
-            caretOffset: e.to.ch
-        };
+        if (e.origin !== 'setValue') {
+            eventObj = {
+                source: 'markdown',
+                selection: {from: e.from, to: e.to},
+                textContent: cm.getDoc().getLine(e.to.line),
+                caretOffset: e.to.ch
+            };
 
-        self.eventManager.emit('change.markdownEditor', eventObj);
-        self.eventManager.emit('change', eventObj);
+            self.eventManager.emit('change.markdownEditor', eventObj);
+            self.eventManager.emit('change', eventObj);
+        }
     });
 
     this.eventManager.listen('markdownUpdate', function(markdown) {
@@ -81,8 +83,6 @@ MarkdownEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeModeToMarkdown', function() {
         self.cm.refresh();
     });
-
-    window.dd2 = this.cm;
 
     /*
     this.cm.on('update', function() {
