@@ -20,6 +20,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
+    window.ddd = this;
 }
 
 WysiwygEditor.prototype.init = function(height, callback) {
@@ -48,7 +49,6 @@ WysiwygEditor.prototype.init = function(height, callback) {
         if (callback) {
            callback();
         }
-        window.ddd = self.editor;
     });
 
     this.$editorContainerEl.css('position', 'relative');
@@ -235,6 +235,13 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style) {
         left: pos.left
     });
 };
+
+WysiwygEditor.prototype.for = function() {
+    this.getEditor().forEachBlock(function(){
+        console.log(arguments);
+    });
+};
+
 
 module.exports = WysiwygEditor;
 

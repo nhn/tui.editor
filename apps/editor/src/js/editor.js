@@ -74,6 +74,15 @@ function NEditor(options) {
     }, options);
 
     this.eventManager = new EventManager();
+
+    this.eventManager.listen('changeModeToWysiwyg', function() {
+        self.currentMode = 'wysiwyg';
+    });
+
+    this.eventManager.listen('changeModeToMarkdown', function() {
+        self.currentMode = 'markdown';
+    });
+
     this.commandManager = new CommandManager(this);
     this.converter = new Converter(this.eventManager);
 
@@ -104,14 +113,6 @@ function NEditor(options) {
         extManager.applyExtension(self, self.options.exts);
 
         self._initDefaultCommands();
-
-        self.eventManager.listen('changeModeToWysiwyg', function() {
-            self.currentMode = 'wysiwyg';
-        });
-
-        self.eventManager.listen('changeModeToMarkdown', function() {
-            self.currentMode = 'markdown';
-        });
 
         if (self.options.initialEditType === 'markdown') {
             self.eventManager.emit('changeModeToMarkdown');
