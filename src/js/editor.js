@@ -105,10 +105,18 @@ function NEditor(options) {
 
         self._initDefaultCommands();
 
+        self.eventManager.listen('changeModeToWysiwyg', function() {
+            self.currentMode = 'wysiwyg';
+        });
+
+        self.eventManager.listen('changeModeToMarkdown', function() {
+            self.currentMode = 'markdown';
+        });
+
         if (self.options.initialEditType === 'markdown') {
-            self.eventManager.emit('changeEditorTypeToMarkdown');
+            self.eventManager.emit('changeModeToMarkdown');
         } else {
-            self.eventManager.emit('changeEditorTypeToWysiwyg');
+            self.eventManager.emit('changeModeToWysiwyg');
         }
 
         if (self.options.onload) {
@@ -156,15 +164,15 @@ NEditor.prototype.exec = function() {
 };
 
 NEditor.prototype.getCodeMirror = function() {
-    return this.mdEditor.cm;
+    return this.mdEditor.getEditor();
 };
 
 NEditor.prototype.getSquire = function() {
-    return this.wwEditor.editor;
+    return this.wwEditor.getEditor();
 };
 
 NEditor.prototype.focus = function() {
-   this.mdEditor.focus();
+   this.getCurrentModeEditor().focus();
 };
 
 NEditor.prototype.setValue = function(markdown) {
@@ -173,6 +181,30 @@ NEditor.prototype.setValue = function(markdown) {
 
 NEditor.prototype.getValue = function() {
     return this.mdEditor.getValue();
+};
+
+NEditor.prototype.addWidget = function(selection, node, style) {
+    this.getCurrentModeEditor().addWidget(selection, node, style);
+};
+
+NEditor.prototype.getCurrentModeEditor = function() {
+    var editor;
+
+    if (this.isMarkdownMode()) {
+        editor = this.mdEditor;
+    } else {
+        editor = this.wwEditor;
+    }
+
+    return editor;
+};
+
+NEditor.prototype.isMarkdownMode = function() {
+    return this.currentMode === 'markdown';
+};
+
+NEditor.prototype.isWysiwygMode = function() {
+    return this.currentMode === 'wysiwyg';
 };
 
 NEditor.prototype.remove = function() {

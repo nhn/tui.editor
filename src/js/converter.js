@@ -48,14 +48,14 @@ Convertor.prototype._initEvent = function() {
         self.latestMarkdown = markdown;
     });
 
-    this.eventManager.listen('changeEditorTypeToWysiwyg', function() {
+    this.eventManager.listen('changeModeToWysiwyg', function() {
         var html;
         html = self._markdownToHtml(self.latestMarkdown);
         console.log('\n\n~~toHtml~~\n', self.latestMarkdown, '\n-------\n', html);
         self.eventManager.emit('htmlUpdate', html);
     });
 
-    this.eventManager.listen('changeEditorTypeToMarkdown', function() {
+    this.eventManager.listen('changeModeToMarkdown', function() {
         var markdown;
 
         if (self.latestHtml) {

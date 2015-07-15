@@ -48,6 +48,7 @@ WysiwygEditor.prototype.init = function(height, callback) {
         if (callback) {
            callback();
         }
+        window.ddd = self.editor;
     });
 
     this.$editorContainerEl.css('position', 'relative');
@@ -187,10 +188,12 @@ WysiwygEditor.prototype.getEditor = function() {
 };
 
 WysiwygEditor.prototype.replaceSelection = function(content, selection) {
-    if (!selection) {
-        selection = this.editor.getSelection();
+    if (selection) {
+        this.editor.setSelection(selection);
     }
-    this.editor.insertPlainText(content, selection);
+
+    this.editor.insertPlainText(content);
+    this.editor.focus();
 };
 
 WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
