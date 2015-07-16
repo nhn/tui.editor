@@ -44,7 +44,7 @@ var __nedInstance = [];
 
 //default extensions
 require('./extensions/querySplitter');
-require('./extensions/completeHint');
+require('./extensions/textPalette');
 
 
 /**

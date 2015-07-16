@@ -37,14 +37,7 @@
     </style>
 </head>
 <body>
-<div id="editSection">
-    <select id="hint">
-        <option>awefawef</option>
-        <option>awefawef2</option>
-        <option>awefawef3</option>
-    </select>
-</div>
-<!--div contentEditable="true"><div><input type="text" value="dfweaf" readonly /></div></div-->
+<div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
     if (!window.console || !console.log) {
@@ -61,7 +54,13 @@
             '../src/css/contentStyle.css'
         ],
         initialEditType: 'wysiwyg',
-        exts: ['querySplitter', 'completeHint'],
+        textPalette: {
+            triggers: '@#',
+            querySender: function(query, done) {
+                done([1,2,3]);
+            }
+        },
+        exts: ['querySplitter', 'textPalette'],
         hooks: {
             'htmlRenderAfterHook': function() {
                 //console.log('htmlRenderAfterHook', arguments);
