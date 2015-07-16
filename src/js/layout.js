@@ -165,6 +165,10 @@ Layout.prototype.show = function() {
     this.$el.find('.neditor').css('display', 'block');
 };
 
+Layout.prototype.remove = function() {
+    this.$el.find('.neditor').remove();
+};
+
 Layout.prototype.getEditorEl = function() {
     return this.$containerEl;
 };
