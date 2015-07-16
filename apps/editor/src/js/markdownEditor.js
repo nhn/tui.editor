@@ -156,4 +156,20 @@ MarkdownEditor.prototype.replaceSelection = function(content, selection) {
     this.focus();
 };
 
+MarkdownEditor.prototype.replaceOffset = function(content, from, to) {
+    var cursor = this.getEditor().getCursor(),
+        selection = {
+            from: {
+                line: cursor.line,
+                ch: from
+            },
+            to: {
+                line: cursor.line,
+                ch: to
+            }
+        };
+
+    this.replaceSelection(content, selection);
+};
+
 module.exports = MarkdownEditor;

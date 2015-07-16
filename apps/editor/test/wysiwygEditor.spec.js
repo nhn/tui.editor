@@ -117,5 +117,13 @@ describe('WysiwygEditor', function() {
             wwe.replaceSelection('test');
             expect(wwe.getValue()).toEqual('test<br>');
         });
+
+        xit('replace with current cursor\'s containers offset', function() {
+            wwe.replaceSelection('test');
+            wwe.getEditor().moveCursorToEnd();
+            console.log(wwe.getEditor().getPath());
+            wwe.replaceOffset('123', 1, 3);
+            expect(wwe.getValue()).toEqual('te123st<br>');
+        });
     });
 });
