@@ -23,7 +23,7 @@ Preview.prototype.render = function(html) {
     var processedDataByHook,
         finalHtml = html;
 
-    processedDataByHook = this.eventManager.emit('htmlRenderAfterHook', html);
+    processedDataByHook = this.eventManager.emit('previewBeforeHook', html);
 
     if (processedDataByHook) {
         finalHtml = processedDataByHook[0];

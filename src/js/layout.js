@@ -70,11 +70,11 @@ Layout.prototype._initEvent = function() {
     var self = this;
 
     this.eventManager.listen('changeModeToWysiwyg', function() {
-        self._switchToWYSIWYG();
+        self.switchToWYSIWYG();
     });
 
     this.eventManager.listen('changeModeToMarkdown', function() {
-        self._switchToMarkdown();
+        self.switchToMarkdown();
     });
 };
 
@@ -93,12 +93,12 @@ Layout.prototype._initModeSwitch = function() {
     });
 };
 
-Layout.prototype._switchToWYSIWYG = function() {
+Layout.prototype.switchToWYSIWYG = function() {
     this.$containerEl.find('.mdContainer').css('display', 'none');
     this.$containerEl.find('.wysiwygContainer').css('display', 'block');
 };
 
-Layout.prototype._switchToMarkdown = function() {
+Layout.prototype.switchToMarkdown = function() {
     this.$containerEl.find('.mdContainer').css('display', 'block');
     this.$containerEl.find('.wysiwygContainer').css('display', 'none');
 };
@@ -155,6 +155,14 @@ Layout.prototype.changePreviewStyle = function(style) {
     } else if (style === 'vertical') {
         this._verticalSplitStyle();
     }
+};
+
+Layout.prototype.hide = function() {
+    this.$el.find('.neditor').css('display', 'none');
+};
+
+Layout.prototype.show = function() {
+    this.$el.find('.neditor').css('display', 'block');
 };
 
 Layout.prototype.getEditorEl = function() {
