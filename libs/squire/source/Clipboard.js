@@ -80,19 +80,19 @@ var onPaste = function ( event ) {
     // Safari (and indeed many other OS X apps) copies stuff as text/rtf
     // rather than text/html; even from a webpage in Safari. The only way
     // to get an HTML version is to fallback to letting the browser insert
-    // the content. *Sigh*.
+    // the content. Same for getting image data. *Sigh*.
     if ( clipboardData && (
-            indexOf.call( clipboardData.types, 'text/html' ) > -1 ||
-            indexOf.call( clipboardData.types, 'text/rtf' ) === -1 ) ) {
+            indexOf.call( clipboardData.types, 'text/html' ) > -1 || (
+            indexOf.call( clipboardData.types, 'text/plain' ) > -1 &&
+            indexOf.call( clipboardData.types, 'text/rtf' ) < 0 ) ) ) {
         event.preventDefault();
         // Abiword on Linux copies a plain text and html version, but the HTML
         // version is the empty string! So always try to get HTML, but if none,
         // insert plain text instead.
-        data = clipboardData.getData( 'text/html' );
-        if ( data ) {
+        if (( data = clipboardData.getData( 'text/html' ) )) {
             this.insertHTML( data, true );
-        } else {
-            this.insertPlainText( clipboardData.getData( 'text/plain' ), true );
+        } else if (( data = clipboardData.getData( 'text/plain' ) )) {
+            this.insertPlainText( data, true );
         }
         return;
     }
