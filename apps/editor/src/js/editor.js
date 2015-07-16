@@ -77,14 +77,20 @@ function NEditor(options) {
 
     this.eventManager.listen('changeModeToWysiwyg', function() {
         self.currentMode = 'wysiwyg';
+        self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
     });
 
     this.eventManager.listen('changeModeToMarkdown', function() {
         self.currentMode = 'markdown';
+        self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
+    });
+
+    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
+        self.preview.render(self.converter.toHTML(markdown));
     });
 
     this.commandManager = new CommandManager(this);
-    this.converter = new Converter(this.eventManager);
+    this.converter = new Converter();
 
     this.layout = new Layout(options, this.eventManager);
     this.layout.init();
@@ -93,13 +99,6 @@ function NEditor(options) {
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
-    //todo 옵션에따라 초기 에디터 활성화부분필요
-    //ff에서 display none인 엘리먼트에 iframe이 붙으면 iframe안의 getSelection이 정상적으로 동작하지 않아 Squire에서 오류가 발생한다..
-    //css로 float으로 레이아웃잡고 visibility로 온오프 처리해야하듯
-    //Squire 이니셜라이즈가 모두끝난후 에디터 셀렉션이 들어가야할듯
-    //this.layout._switchToMarkdown();
-
-    //todo 추후 옵션처리기에서 처리
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
             self.eventManager.listen(key, fn);
@@ -107,7 +106,7 @@ function NEditor(options) {
     }
 
     this.changePreviewStyle(this.options.previewStyle);
-    this.mdEditor.init(this.options.initialValue);
+    this.mdEditor.init();
 
     this.wwEditor.init(this.options.height, function() {
         extManager.applyExtension(self, self.options.exts);
@@ -119,6 +118,8 @@ function NEditor(options) {
         } else {
             self.eventManager.emit('changeModeToWysiwyg');
         }
+
+        self.setValue(self.options.initialValue);
 
         if (self.options.onload) {
             self.options.onload(self);
@@ -158,6 +159,7 @@ NEditor.prototype._initDefaultCommands = function() {
  */
 NEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
+    this.mdPreviewStyle = style;
 };
 
 NEditor.prototype.exec = function() {
@@ -177,11 +179,27 @@ NEditor.prototype.focus = function() {
 };
 
 NEditor.prototype.setValue = function(markdown) {
-    this.mdEditor.setValue(markdown);
+    if (!markdown) {
+        return;
+    }
+
+    if (this.isMarkdownMode()) {
+        this.mdEditor.setValue(markdown);
+    } else {
+        this.wwEditor.setValue(this.converter.toHTML(markdown));
+    }
 };
 
 NEditor.prototype.getValue = function() {
-    return this.mdEditor.getValue();
+    var markdown;
+
+    if (this.isMarkdownMode()) {
+        markdown = this.mdEditor.getValue();
+    } else {
+        markdown = this.converter.toMarkdown(this.wwEditor.getValue());
+    }
+
+    return markdown;
 };
 
 NEditor.prototype.addWidget = function(selection, node, style) {
