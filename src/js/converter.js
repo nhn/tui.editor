@@ -59,7 +59,6 @@ Convertor.prototype._initEvent = function() {
         var markdown;
 
         if (self.latestHtml) {
-            //remove last br created by Squire
             markdown = toMark(self.latestHtml);
             //console.log('\n\n~~toMD~~\n', self.latestHtml, '\n------->\n', markdown);
             self.eventManager.emit('markdownUpdate', markdown);
