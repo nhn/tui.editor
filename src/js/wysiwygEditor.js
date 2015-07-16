@@ -102,8 +102,6 @@ WysiwygEditor.prototype._initEvent = function() {
             caretOffset: sel.endOffset - 1
         };
 
-        console.log(eventObj, arguments);
-
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
