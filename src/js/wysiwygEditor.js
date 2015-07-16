@@ -99,7 +99,7 @@ WysiwygEditor.prototype._initEvent = function() {
         eventObj = {
             source: 'wysiwyg',
             selection: sel,
-            textContent: sel.commonAncestorContainer.textContent,
+            textContent: sel.endContainer.textContent,
             caretOffset: sel.endOffset - 1
         };
 
@@ -196,6 +196,19 @@ WysiwygEditor.prototype.replaceSelection = function(content, selection) {
     this.editor.focus();
 };
 
+WysiwygEditor.prototype.replaceOffset = function(content, from, to) {
+    var selection = this.editor.getSelection().cloneRange();
+
+    if (!to) {
+        to = from;
+    }
+
+    selection.setStart(selection.startContainer, from);
+    selection.setEnd(selection.endContainer, to);
+
+    this.replaceSelection(content, selection);
+};
+
 WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
     var pos,
         marker = this.editor.createElement('INPUT');
@@ -235,13 +248,6 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style) {
         left: pos.left
     });
 };
-
-WysiwygEditor.prototype.for = function() {
-    this.getEditor().forEachBlock(function(){
-        console.log(arguments);
-    });
-};
-
 
 module.exports = WysiwygEditor;
 
