@@ -105,19 +105,6 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
-/*
-    this.editor.addEventListener('keyup', function() {
-        //console.log('keyup', arguments);
-    });
-
-
-    this.editor.addEventListener('pathChange', function() {
-        console.log('pathChnage', arguments);
-    });
-
-    this.editor.addEventListener('select', function() {
-        console.log('select', arguments);
-    });*/
 };
 
 //from http://jsfiddle.net/9ThVr/24/
