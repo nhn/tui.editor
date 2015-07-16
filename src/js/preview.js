@@ -17,23 +17,20 @@
 function Preview($el, eventManager) {
     this.eventManager = eventManager;
     this.$el = $el;
-
-    this.init();
 }
 
-Preview.prototype.init = function() {
-    var $el = this.$el,
-        eventManager = this.eventManager,
-        domData;
+Preview.prototype.render = function(html) {
+    var processedDataByHook,
+        finalHtml = html;
 
-    eventManager.listen('renderedHtmlUpdated', function(html) {
-        domData = $(html);
+    processedDataByHook = this.eventManager.emit('htmlRenderAfterHook', html);
 
-        eventManager.emit('previewBeforeHook', domData);
+    if (processedDataByHook) {
+        finalHtml = processedDataByHook[0];
+    }
 
-        $el.empty();
-        $el.append(domData);
-    });
+    this.$el.empty();
+    this.$el.html(finalHtml);
 };
 
 module.exports = Preview;

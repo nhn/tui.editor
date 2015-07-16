@@ -17,58 +17,9 @@ var marked = window.marked,
  * @extends {}
  * @constructor
  * @class
- * @param {EventManager} eventManager 이벤트 매니저
  */
 
-function Convertor(eventManager) {
-    this.eventManager = eventManager;
-    this._initEvent();
-
-    this.latestMarkdown = '';
-    this.latestHtml = '';
-}
-
-Convertor.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        var renderedHtml,
-            processedDataByHook;
-
-        renderedHtml = self._markdownToHtmlWithCodeHighlight(markdown);
-
-        processedDataByHook = self.eventManager.emit('htmlRenderAfterHook', renderedHtml);
-
-        if (processedDataByHook) {
-            renderedHtml = processedDataByHook[0];
-        }
-
-        self.eventManager.emit('renderedHtmlUpdated', renderedHtml);
-
-        self.latestMarkdown = markdown;
-    });
-
-    this.eventManager.listen('changeModeToWysiwyg', function() {
-        var html;
-        html = self._markdownToHtml(self.latestMarkdown);
-        //console.log('\n\n~~toHtml~~\n', self.latestMarkdown, '\n-------\n', html);
-        self.eventManager.emit('htmlUpdate', html);
-    });
-
-    this.eventManager.listen('changeModeToMarkdown', function() {
-        var markdown;
-
-        if (self.latestHtml) {
-            markdown = toMark(self.latestHtml);
-            //console.log('\n\n~~toMD~~\n', self.latestHtml, '\n------->\n', markdown);
-            self.eventManager.emit('markdownUpdate', markdown);
-        }
-    });
-
-    this.eventManager.listen('contentChanged.wysiwygEditor', function(html) {
-        self.latestHtml = html;
-    });
-};
+function Convertor() {}
 
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
@@ -97,6 +48,18 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         smartLists: true,
         smartypants: false
     });
+};
+
+Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
+    return this._markdownToHtmlWithCodeHighlight(markdown);
+};
+
+Convertor.prototype.toHTML = function(markdown) {
+    return this._markdownToHtml(markdown);
+};
+
+Convertor.prototype.toMarkdown = function(html) {
+    return toMark(html);
 };
 
 Convertor.factory = function(eventManager) {
