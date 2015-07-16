@@ -122,6 +122,10 @@ MarkdownEditor.prototype.focus = function() {
     this.cm.focus();
 };
 
+MarkdownEditor.prototype.remove = function() {
+    this.cm.toTextArea();
+};
+
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.cm.setValue(markdown);
     this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
@@ -140,24 +144,24 @@ MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value
 };
 
 MarkdownEditor.prototype.getCaretPosition = function() {
-    return this.getEditor().cursorCoords();
+    return this.cm.cursorCoords();
 };
 
 MarkdownEditor.prototype.addWidget = function(selection, node, style) {
-    this.getEditor().addWidget(selection.to, node, true, style);
+    this.cm.addWidget(selection.to, node, true, style);
 };
 
 MarkdownEditor.prototype.replaceSelection = function(content, selection) {
     if (selection) {
-        this.getEditor().setSelection(selection.from, selection.to);
+        this.cm.setSelection(selection.from, selection.to);
     }
 
-    this.getEditor().replaceSelection(content);
+    this.cm.replaceSelection(content);
     this.focus();
 };
 
 MarkdownEditor.prototype.replaceOffset = function(content, from, to) {
-    var cursor = this.getEditor().getCursor(),
+    var cursor = this.cm.getCursor(),
         selection = {
             from: {
                 line: cursor.line,

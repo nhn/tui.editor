@@ -20,7 +20,6 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
-    window.ddd = this;
 }
 
 WysiwygEditor.prototype.init = function(height, callback) {
@@ -103,6 +102,8 @@ WysiwygEditor.prototype._initEvent = function() {
             caretOffset: sel.endOffset - 1
         };
 
+        console.log(eventObj, arguments);
+
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
@@ -169,6 +170,10 @@ WysiwygEditor.prototype.focus = function() {
     this.editor.focus();
 };
 
+WysiwygEditor.prototype.remove = function() {
+    this.editor = null;
+};
+
 WysiwygEditor.prototype.setHeight = function(height) {
     this.$iframe.height(height);
 };
@@ -192,6 +197,7 @@ WysiwygEditor.prototype.replaceSelection = function(content, selection) {
         this.editor.setSelection(selection);
     }
 
+    this.editor._ignoreChange = true;
     this.editor.insertPlainText(content);
     this.editor.focus();
 };

@@ -46,7 +46,6 @@ var __nedInstance = [];
 require('./extensions/querySplitter');
 require('./extensions/textPalette');
 
-
 /**
  * NEditor
  * @exports NEditor
@@ -75,19 +74,7 @@ function NEditor(options) {
 
     this.eventManager = new EventManager();
 
-    this.eventManager.listen('changeModeToWysiwyg', function() {
-        self.currentMode = 'wysiwyg';
-        self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
-    });
-
-    this.eventManager.listen('changeModeToMarkdown', function() {
-        self.currentMode = 'markdown';
-        self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
-    });
-
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        self.preview.render(self.converter.toHTML(markdown));
-    });
+    this._initEvent();
 
     this.commandManager = new CommandManager(this);
     this.converter = new Converter();
@@ -106,6 +93,7 @@ function NEditor(options) {
     }
 
     this.changePreviewStyle(this.options.previewStyle);
+
     this.mdEditor.init();
 
     this.wwEditor.init(this.options.height, function() {
@@ -128,6 +116,24 @@ function NEditor(options) {
 
     __nedInstance.push(this);
 }
+
+NEditor.prototype._initEvent = function() {
+    var self = this;
+
+    this.eventManager.listen('changeModeToWysiwyg', function() {
+        self.currentMode = 'wysiwyg';
+        self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
+    });
+
+    this.eventManager.listen('changeModeToMarkdown', function() {
+        self.currentMode = 'markdown';
+        self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
+    });
+
+    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
+        self.preview.render(self.converter.toHTML(markdown));
+    });
+};
 
 NEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(mdcBold);
@@ -227,11 +233,17 @@ NEditor.prototype.isWysiwygMode = function() {
 };
 
 NEditor.prototype.remove = function() {
-    console.log('remove');
+    this.wwEditor.remove();
+    this.mdEditor.remove();
+    this.layout.remove();
 };
 
 NEditor.prototype.hide = function() {
-    console.log('hide');
+    this.layout.hide();
+};
+
+NEditor.prototype.show = function() {
+    this.layout.show();
 };
 
 NEditor.getInstances = function() {
