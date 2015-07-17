@@ -78,7 +78,6 @@ function NEditor(options) {
 
     this.commandManager = new CommandManager(this);
     this.converter = new Converter();
-
     this.layout = new Layout(options, this.eventManager);
     this.layout.init();
 

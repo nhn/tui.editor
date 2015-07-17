@@ -107,8 +107,8 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
     this.$previewEl = this.$containerEl.find('.mdContainer .preview');
 
-    this.$mdEditorContainerEl.height(this.height);
-    this.$previewEl.height(this.height);
+    this.$mdEditorContainerEl.css('height', this.height);
+    this.$previewEl.css('height', this.height);
 
     this.tab = new Tab({
         items: ['Editor', 'Preview'],
