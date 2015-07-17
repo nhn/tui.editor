@@ -55,12 +55,10 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
 };
 
 Convertor.prototype.toHTML = function(markdown) {
-    console.log('toHTML', markdown);
     return this._markdownToHtml(markdown);
 };
 
 Convertor.prototype.toMarkdown = function(html) {
-    console.log('toMarkdown', html);
     return toMark(html);
 };
 

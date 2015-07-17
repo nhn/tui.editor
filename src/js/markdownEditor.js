@@ -67,7 +67,7 @@ MarkdownEditor.prototype._initEvent = function() {
             eventObj = {
                 source: 'markdown',
                 selection: {from: e.from, to: e.to},
-                textContent: cm.getDoc().getLine(e.to.line),
+                textContent: cm.getDoc().getLine(e.to.line) || '',
                 caretOffset: e.to.ch
             };
 
