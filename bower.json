@@ -16,7 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "marked": "~0.3.3",
+    "marked": "https://github.com/chjj/marked.git#master",
     "jquery": "~2.1.3",
     "codemirror": "~5.0.0",
     "highlightjs": "~8.4.0",
