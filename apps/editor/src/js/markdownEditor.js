@@ -84,22 +84,6 @@ MarkdownEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeModeToMarkdown', function() {
         self.cm.refresh();
     });
-
-    /*
-    this.cm.on('update', function() {
-        //console.log('event: update', cm);
-        //스크롤시에도 이벤트가 발생함
-    });
-
-
-    this.cm.on('scroll', function() {
-        //console.log('event: scroll', arguments);
-    });
-
-    this.cm.on('focus', function() {
-        //console.log('event: focus', arguments);
-    });
-    */
 };
 
 /**
