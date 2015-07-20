@@ -9,9 +9,9 @@
     <script src="../lib/jquery/dist/jquery.js"></script>
     <script src="../lib/ne-code-snippet/code-snippet.js"></script>
     <script src="../lib/codemirror/lib/codemirror.js"></script>
-    <script src="../lib/codemirror/addon/mode/overlay.js"></script>
+    <!--script src="../lib/codemirror/addon/mode/overlay.js"></script>
     <script src="../lib/codemirror/mode/markdown/markdown.js"></script>
-    <script src="../lib/codemirror/mode/gfm/gfm.js"></script>
+    <script src="../lib/codemirror/mode/gfm/gfm.js"></script-->
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
@@ -19,21 +19,8 @@
     <link rel="stylesheet" href="../src/css/contentStyle.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <style type="text/css">
-      .cm-header { font-family: arial; }
-      .cm-header-1 { font-size: 300%; }
-      .cm-header-2 { font-size: 250%; }
-      .cm-header-3 { font-size: 200%; }
-      .cm-header-4 { font-size: 150%; }
-      .cm-header-5 { font-size: 100%; }
-      .cm-header-6 { font-size: 90%; }
-      .cm-strong { font-size: 140%; }
-      #hint {
-        display: none;
-        position: absolute;
-        left: 0;
-        top: 0;
-        z-index: 9999;
-      }
+      .cm-header { color:blue; }
+      .cm-strong { font-weight:bold; }
     </style>
 </head>
 <body>
@@ -55,7 +42,7 @@
         ],
         initialEditType: 'markdown',
         textPalette: {
-            triggers: '@#',
+            triggers: '@',
             querySender: function(query, done) {
                 done([1,2,3]);
             }
