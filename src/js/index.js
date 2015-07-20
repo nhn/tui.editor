@@ -1,11 +1,19 @@
 /**
- * @fileoverview
+ * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
 
-var NEditor = require('./editor');
+var NEditor;
+
+//codemirror modes&addons
+require('./codemirror/overlay');
+require('./codemirror/markdown');
+require('./codemirror/gfm');
+require('./codemirror/continuelist');
+
+NEditor = require('./editor');
 
 //for jquery
 $.fn.ned = function() {
