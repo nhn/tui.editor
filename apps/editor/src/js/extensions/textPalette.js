@@ -13,6 +13,7 @@ extManager.defineExtension('textPalette', function(editor) {
         var query = $layer.find('input').val();
 
         if (e.which === 13) {
+            e.stopPropagation();
             editor.getCurrentModeEditor().replaceSelection(query);
             hideUI($layer);
         } else {
