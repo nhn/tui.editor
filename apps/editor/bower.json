@@ -1,8 +1,8 @@
 {
   "name": "NEdit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "authors": [
-    "Sungho Kim <sungho-kim@nhnent.com>"
+    "Sungho Kim <shirenbeat@gmail.com>"
   ],
   "main": "./src/js/index.js",
   "license": "MIT",
