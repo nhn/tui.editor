@@ -26,8 +26,7 @@ var bundler = watchify(browserify('./src/js/index.js', {
 }));
 
 //Development Build
-function bundle(changedFiles) {
-    gutil.log("changed", changedFiles);
+function bundle() {
     return bundler.bundle()
         // log errors if they happen
         .on('error', gutil.log.bind(gutil, 'browserify error'))
@@ -40,8 +39,10 @@ function bundle(changedFiles) {
         .pipe(gulp.dest('./build'));
 }
 
-bundler.on('update', bundle); // on any dep update, runs the bundler
-gulp.task('develop', bundle); // so you can run `gulp js` to build the file
+bundler.on('update', bundle);
+bundler.on('log', gutil.log);
+
+gulp.task('develop', bundle);
 
 //Production Build
 gulp.task('bundle', function() {
