@@ -5,7 +5,7 @@
 
 'use strict';
 
-var UIController = require('./uiController'),
+var UIController = require('./uicontroller'),
     templater = require('./templater');
 
 var util = ne.util;
