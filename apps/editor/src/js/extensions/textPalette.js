@@ -14,7 +14,8 @@ extManager.defineExtension('textPalette', function(editor) {
 
         if (e.which === 13) {
             e.stopPropagation();
-            editor.getCurrentModeEditor().replaceSelection(query);
+            //editor.getCurrentModeEditor().replaceSelection(query);
+            editor.getCurrentModeEditor().replaceRelativeOffset(query, 0, 1);
             hideUI($layer);
         } else {
             querySender(query, function(list) {

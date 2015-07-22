@@ -95,11 +95,13 @@ WysiwygEditor.prototype._initEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
+        sel.setEnd(sel.endContainer, sel.endOffset - 1);
+
         eventObj = {
             source: 'wysiwyg',
             selection: sel,
             textContent: sel.endContainer.textContent,
-            caretOffset: sel.endOffset - 1
+            caretOffset: sel.endOffset
         };
 
         self.eventManager.emit('change.wysiwygEditor', eventObj);
@@ -187,28 +189,75 @@ WysiwygEditor.prototype.replaceSelection = function(content, selection) {
     this.editor.focus();
 };
 
-WysiwygEditor.prototype.replaceOffset = function(content, from, to) {
-    var selection = this.editor.getSelection().cloneRange();
+WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
+    var selection, endSelectionInfo;
 
-    if (!to) {
-        to = from;
-    }
+    selection = this.editor.getSelection().cloneRange();
 
-    selection.setStart(selection.startContainer, from);
-    selection.setEnd(selection.endContainer, to);
+    selection.setStart(selection.endContainer, selection.endOffset + offset);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
+    selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
     this.replaceSelection(content, selection);
 };
 
+function getTextLengthOfElement(element) {
+    var textLength;
+
+    if (element.nodeType === 1) {
+       textLength = element.textContent.length;
+    } else if (element.nodeType === 3) {
+       textLength = element.nodeValue.length;
+    }
+
+    return textLength;
+}
+
+WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
+    var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
+
+    traceElement = anchorElement;
+    traceOffset = offset;
+    stepLength = 0;
+
+    while (traceElement) {
+        traceElementLength = getTextLengthOfElement(traceElement);
+        stepLength += traceElementLength;
+
+        if (offset <= stepLength) {
+            break;
+        }
+
+        traceOffset -= traceElementLength;
+
+        if (getTextLengthOfElement(traceElement) > 0) {
+            latestAvailableElement = traceElement;
+        }
+
+        traceElement = traceElement.nextSibling;
+    }
+
+    if (!traceElement) {
+        traceElement = latestAvailableElement;
+        traceOffset = getTextLengthOfElement(traceElement);
+    }
+
+    return {
+        element: traceElement,
+        offset: traceOffset
+    };
+};
+
 WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
-    var pos,
+    var pos, range,
         marker = this.editor.createElement('INPUT');
 
-    var range = selection.cloneRange();
+    range = selection.cloneRange();
 
-    range.setStart(range.startContainer, range.startOffset - 1);
-    range.setEnd(range.endContainer, range.endOffset - 1);
+    range.setStart(range.startContainer, range.startOffset);
+    range.setEnd(range.endContainer, range.endOffset);
 
+    //to prevent squire input event fire
     this.editor._ignoreChange = true;
     this.editor.insertElement(marker, range);
     pos = $(marker).offset();

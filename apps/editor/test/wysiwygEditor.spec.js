@@ -118,12 +118,46 @@ describe('WysiwygEditor', function() {
             expect(wwe.getValue()).toEqual('test<br>');
         });
 
-        xit('replace with current cursor\'s containers offset', function() {
-            wwe.replaceSelection('test');
-            wwe.getEditor().moveCursorToEnd();
-            console.log(wwe.getEditor().getPath());
-            wwe.replaceOffset('123', 1, 3);
-            expect(wwe.getValue()).toEqual('te123st<br>');
+        it('replace with current cursor\'s containers offset', function() {
+            wwe.replaceSelection('t');
+            wwe.replaceSelection('e');
+            wwe.replaceSelection('s');
+            wwe.replaceSelection('t');
+
+            wwe.replaceRelativeOffset('123', -2, 1);
+            expect(wwe.getValue()).toEqual('te123t<br>');
+        });
+
+        describe('find element and offset by passing element and offset', function() {
+            var firstBlock;
+
+            beforeEach(function() {
+                wwe.getEditor().insertPlainText('text1');
+                wwe.getEditor().insertPlainText('text2');
+
+                firstBlock = wwe.getEditor().getDocument().body.childNodes[0];
+            });
+
+            it('offset is lower than passed element\'s length', function() {
+                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 3)).toEqual({
+                    element: firstBlock.childNodes[0],
+                    offset: 3
+                });
+            });
+
+            it('offset is higher than passed element\'s length', function() {
+                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 7)).toEqual({
+                    element: firstBlock.childNodes[1],
+                    offset: 2
+                });
+            });
+
+            it('offset is higher than exist content length', function() {
+                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 11)).toEqual({
+                    element: firstBlock.childNodes[1],
+                    offset: 5
+                });
+            });
         });
     });
 });

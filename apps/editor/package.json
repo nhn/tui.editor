@@ -5,7 +5,7 @@
   "author": "NHNEntertainment",
   "license": "ISC",
   "devDependencies": {
-    "browserify": "latest",
+    "browserify": "^11.0.0",
     "browserify-istanbul": "latest",
     "gulp": "latest",
     "gulp-connect": "latest",
@@ -20,7 +20,6 @@
     "karma-browserify": "latest",
     "karma-chrome-launcher": "latest",
     "karma-coverage": "^0.4.2",
-    "karma-failed-reporter": "latest",
     "karma-firefox-launcher": "latest",
     "karma-jasmine": "latest",
     "karma-junit-reporter": "^0.2.2",
