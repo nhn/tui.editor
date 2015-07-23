@@ -135,7 +135,10 @@ MarkdownEditor.prototype.getCaretPosition = function() {
 };
 
 MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
-    selection.to.ch += offset;
+    if (offset) {
+        selection.to.ch += offset;
+    }
+
     this.cm.addWidget(selection.to, node, true, style);
 };
 
