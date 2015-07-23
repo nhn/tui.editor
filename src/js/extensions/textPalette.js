@@ -25,8 +25,8 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
-        if (triggers.indexOf(ev.textContent[ev.caretOffset-1]) !== -1) {
-            editor.addWidget(ev.selection, $layer[0], 'over', 1);
+        if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
+            editor.addWidget(ev.selection, $layer[0], 'over');
             showUI($layer);
         }
     });

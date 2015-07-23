@@ -255,7 +255,7 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) 
     range = selection.cloneRange();
 
     range.setStart(range.startContainer, range.startOffset);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + offset);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset || 0));
     range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
     //to prevent squire input event fire
