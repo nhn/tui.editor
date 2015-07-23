@@ -3,6 +3,9 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
+    concat = require('gulp-concat'),
+    concatCss = require('gulp-concat-css'),
+
     //sourcemaps = require('gulp-sourcemaps'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
@@ -108,4 +111,29 @@ gulp.task('uglify', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify']));
+gulp.task('makeFull', function() {
+    return gulp.src([
+            './lib/codemirror/lib/codemirror.js',
+            './lib/highlightjs/highlight.pack.js',
+            './lib/marked/lib/marked.js',
+            './lib/ne-code-snippet/code-snippet.js',
+            './lib/squire-rte/build/squire-raw.js',
+            './lib/toMark/dist/toMark.js',
+            './dist/ned.js'
+         ])
+        .pipe(ugilfy())
+        .pipe(concat('ned.full.min.js'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('css', function() {
+    return gulp.src([
+            './lib/codemirror/lib/codemirror.css',
+            './lib/highlightjs/styles/github.css',
+            './src/css/style.css'
+         ])
+        .pipe(concatCss('ned.css'))
+        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'makeFull', 'uglify', 'css']));

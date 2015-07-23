@@ -8,6 +8,8 @@
     "browserify": "^11.0.0",
     "browserify-istanbul": "latest",
     "gulp": "latest",
+    "gulp-concat": "^2.6.0",
+    "gulp-concat-css": "^2.2.0",
     "gulp-connect": "latest",
     "gulp-eslint": "latest",
     "gulp-livereload": "^3.7.0",
