@@ -15,7 +15,7 @@ extManager.defineExtension('textPalette', function(editor) {
         if (e.which === 13) {
             e.stopPropagation();
             //editor.getCurrentModeEditor().replaceSelection(query);
-            editor.getCurrentModeEditor().replaceRelativeOffset(query, 0, 1);
+            editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
             hideUI($layer);
         } else {
             querySender(query, function(list) {
@@ -25,8 +25,8 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
-        if (triggers.indexOf(ev.textContent[ev.caretOffset]) !== -1) {
-            editor.addWidget(ev.selection, $layer[0], 'over');
+        if (triggers.indexOf(ev.textContent[ev.caretOffset-1]) !== -1) {
+            editor.addWidget(ev.selection, $layer[0], 'over', 1);
             showUI($layer);
         }
     });

@@ -59,7 +59,7 @@ describe('WysiwygEditor', function() {
             //squire event fire asynchronous
             em.listen('change.wysiwygEditor', function(ev) {
                 expect(ev.textContent).toEqual('t');
-                expect(ev.caretOffset).toEqual(0);
+                expect(ev.caretOffset).toEqual(1);
                 done();
             });
 
@@ -73,7 +73,7 @@ describe('WysiwygEditor', function() {
             em.listen('change', function(ev) {
                 expect(ev.textContent).toEqual('t');
                 expect(ev.source).toEqual('wysiwyg');
-                expect(ev.caretOffset).toEqual(0);
+                expect(ev.caretOffset).toEqual(1);
                 done();
             });
 

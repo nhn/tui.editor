@@ -65,6 +65,8 @@ MarkdownEditor.prototype._initEvent = function() {
         var eventObj;
 
         if (e.origin !== 'setValue') {
+            e.to.ch += 1;
+
             eventObj = {
                 source: 'markdown',
                 selection: {from: e.from, to: e.to},
@@ -132,7 +134,8 @@ MarkdownEditor.prototype.getCaretPosition = function() {
     return this.cm.cursorCoords();
 };
 
-MarkdownEditor.prototype.addWidget = function(selection, node, style) {
+MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
+    selection.to.ch += offset;
     this.cm.addWidget(selection.to, node, true, style);
 };
 
@@ -145,16 +148,16 @@ MarkdownEditor.prototype.replaceSelection = function(content, selection) {
     this.focus();
 };
 
-MarkdownEditor.prototype.replaceOffset = function(content, from, to) {
+MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
     var cursor = this.cm.getCursor(),
         selection = {
             from: {
                 line: cursor.line,
-                ch: from
+                ch: cursor.ch + offset
             },
             to: {
                 line: cursor.line,
-                ch: to
+                ch: (cursor.ch + offset) + overwriteLength
             }
         };
 
