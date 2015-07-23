@@ -95,7 +95,7 @@ WysiwygEditor.prototype._initEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        sel.setEnd(sel.endContainer, sel.endOffset - 1);
+        //sel.setEnd(sel.endContainer, sel.endOffset - 1);
 
         eventObj = {
             source: 'wysiwyg',
@@ -248,14 +248,15 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     };
 };
 
-WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
-    var pos, range,
+WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) {
+    var pos, range, endSelectionInfo,
         marker = this.editor.createElement('INPUT');
 
     range = selection.cloneRange();
 
     range.setStart(range.startContainer, range.startOffset);
-    range.setEnd(range.endContainer, range.endOffset);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + offset);
+    range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
     //to prevent squire input event fire
     this.editor._ignoreChange = true;
@@ -275,8 +276,8 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style) {
     return pos;
 };
 
-WysiwygEditor.prototype.addWidget = function(selection, node, style) {
-    var pos = this.getSelectionOffset(selection, style);
+WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
+    var pos = this.getSelectionOffset(selection, style, offset);
 
     if (node.parentNode !== this.$editorContainerEl[0]) {
         this.$editorContainerEl.append(node);

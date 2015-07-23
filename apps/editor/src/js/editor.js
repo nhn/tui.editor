@@ -207,8 +207,8 @@ NEditor.prototype.getValue = function() {
     return markdown;
 };
 
-NEditor.prototype.addWidget = function(selection, node, style) {
-    this.getCurrentModeEditor().addWidget(selection, node, style);
+NEditor.prototype.addWidget = function(selection, node, style, offset) {
+    this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
 NEditor.prototype.getCurrentModeEditor = function() {
