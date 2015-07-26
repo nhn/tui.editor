@@ -215,11 +215,8 @@ var cleanTree = function cleanTree ( node ) {
         } else {
             if ( nodeType === TEXT_NODE ) {
                 data = child.data;
-                // Use \s instead of notWS, because we want to remove nodes
-                // which are just nbsp, in order to cleanup <div>nbsp<br></div>
-                // construct.
-                startsWithWS = /\s/.test( data.charAt( 0 ) );
-                endsWithWS = /\s/.test( data.charAt( data.length - 1 ) );
+                startsWithWS = !notWS.test( data.charAt( 0 ) );
+                endsWithWS = !notWS.test( data.charAt( data.length - 1 ) );
                 if ( !startsWithWS && !endsWithWS ) {
                     continue;
                 }
