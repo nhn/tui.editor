@@ -134,7 +134,15 @@ var extractContentsOfRange = function ( range, common ) {
 
 var deleteContentsOfRange = function ( range ) {
     // Move boundaries up as much as possible to reduce need to split.
+    // But we need to check whether we've moved the boundary outside of a
+    // block. If so, the entire block will be removed, so we shouldn't merge
+    // later.
     moveRangeBoundariesUpTree( range );
+
+    var startBlock = range.startContainer,
+        endBlock = range.endContainer,
+        needsMerge = ( isInline( startBlock ) || isBlock( startBlock ) ) &&
+            ( isInline( endBlock ) || isBlock( endBlock ) );
 
     // Remove selected range
     extractContentsOfRange( range );
@@ -145,10 +153,12 @@ var deleteContentsOfRange = function ( range ) {
     moveRangeBoundariesDownTree( range );
 
     // If we split into two different blocks, merge the blocks.
-    var startBlock = getStartBlockOfRange( range ),
+    if ( needsMerge ) {
+        startBlock = getStartBlockOfRange( range );
         endBlock = getEndBlockOfRange( range );
-    if ( startBlock && endBlock && startBlock !== endBlock ) {
-        mergeWithBlock( startBlock, endBlock, range );
+        if ( startBlock && endBlock && startBlock !== endBlock ) {
+            mergeWithBlock( startBlock, endBlock, range );
+        }
     }
 
     // Ensure block has necessary children
@@ -162,6 +172,8 @@ var deleteContentsOfRange = function ( range ) {
     if ( !child || child.nodeName === 'BR' ) {
         fixCursor( body );
         range.selectNodeContents( body.firstChild );
+    } else {
+        range.collapse( false );
     }
 };
 
