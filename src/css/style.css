@@ -1,33 +1,33 @@
 @charset "UTF-8";
 
-.neditor {
+.neonEditor {
     position: relative;
 }
 
-.neditor * {
+.neonEditor * {
     box-sizing: content-box;
 }
-.neditor:after,
-.neditor .toolbar:after,
-.neditor .statusbar:after
+.neonEditor:after,
+.neonEditor .toolbar:after,
+.neonEditor .statusbar:after
 {
     content: "";
     display: block;
     height: 0;
     clear: both;
 }
-.neditor {
+.neonEditor {
     border: 1px solid #ccc;
 }
-.neditor .toolbar {
+.neonEditor .toolbar {
     padding: 5px;
     height: 30px;
     background: #eee;
 }
-.neditor.preview-style-vetical .toolbar {
+.neonEditor.preview-style-vetical .toolbar {
     border-bottom: 1px solid #ccc;
 }
-.neditor .toolbar button {
+.neonEditor .toolbar button {
     box-sizing: border-box;
     min-width: 30px;
     height: 30px;
@@ -39,19 +39,19 @@
     outline: none;
     cursor: pointer;
 }
-.neditor .toolbar button:hover {
+.neonEditor .toolbar button:hover {
     background: #eee;
 }
-.neditor .toolbar button:active {
+.neonEditor .toolbar button:active {
     box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
-.neditor .toolbar button:first-child {
+.neonEditor .toolbar button:first-child {
     border-left-width: 1px;
 }
-.neditor .toolbar button.bold {
+.neonEditor .toolbar button.bold {
     font-weight: bold;
 }
-.neditor .toolbar button.italic {
+.neonEditor .toolbar button.italic {
     font-style: italic;
 }
 .mdContainer .tab{
@@ -98,42 +98,42 @@
 .mdContainer>.preview {
     padding: 5px;
 }
-.neditor .preview-style-tab>.editor,
-.neditor .preview-style-tab>.preview {
+.neonEditor .preview-style-tab>.editor,
+.neonEditor .preview-style-tab>.preview {
     float: left;
     width: 100%;
     display: none;
 }
-.neditor .preview-style-tab>.active {
+.neonEditor .preview-style-tab>.active {
     display: block;
 }
-.neditor .preview-style-vertical>.editor,
-.neditor .preview-style-vertical>.preview {
+.neonEditor .preview-style-vertical>.editor,
+.neonEditor .preview-style-vertical>.preview {
     width: 50%;
 }
-.neditor .preview-style-vertical>.editor {
+.neonEditor .preview-style-vertical>.editor {
     float: left;
     border-right: 1px solid #ccc;
 }
-.neditor .preview-style-vertical>.preview {
+.neonEditor .preview-style-vertical>.preview {
     float: right;
     padding: 5px;
 }
-.neditor .preview-style-tab .tab{
+.neonEditor .preview-style-tab .tab{
     display:block;
 }
 
-.neditor.preview-style-vertical .toolbar {
+.neonEditor.preview-style-vertical .toolbar {
     border-bottom: 1px solid #ccc;
 }
 
-.neditor .preview-style-vertical .editor {
+.neonEditor .preview-style-vertical .editor {
     float: left;
     width: 50%;
     border-right: 1px solid #ccc;
 }
 
-.neditor .preview-style-vertical .preview {
+.neonEditor .preview-style-vertical .preview {
     float: left;
     width: 50%;
 }
@@ -143,13 +143,13 @@
     width: 100%;
 }
 
-.neditor .modeSwitchSection {
+.neonEditor .modeSwitchSection {
     float: right;
     margin-top: -23px;
     margin-right: 5px;
 }
 
-.neditor .wysiwygContainer {
+.neonEditor .wysiwygContainer {
     border-top: 1px solid #ccc;
 }
 /* nepopup용 추후 분리해야함 */
@@ -193,14 +193,14 @@
     vertical-align: baseline;
 }
 
-.neditor-popup {
+.neonEditor-popup {
     position: absolute;
     top: 30px;
     left: 50%;
     margin-left: -250px;
 }
 
-.neditor-popup label {
+.neonEditor-popup label {
     display: block;
 }
 

@@ -12,13 +12,13 @@ var Toolbar = require('./toolbar'),
     PopupAddImage = require('./popupAddImage');
 
 var containerTmpl = [
-    '<div class="neditor">',
+    '<div class="neonEditor">',
         '<div class="toolbarSection" />',
         '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
             '<div class="tabSection" />',
             '<div class="editor" />',
-            '<div class="preview neditor-content" />',
+            '<div class="preview neonEditor-content" />',
         '</div>',
         '<div class="wysiwygContainer">',
             '<div class="editor" />',
@@ -101,6 +101,7 @@ Layout.prototype.switchToWYSIWYG = function() {
 Layout.prototype.switchToMarkdown = function() {
     this.$containerEl.find('.mdContainer').css('display', 'block');
     this.$containerEl.find('.wysiwygContainer').css('display', 'none');
+    this.markdownTab.activate('Editor');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
@@ -110,14 +111,12 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl.css('height', this.height);
     this.$previewEl.css('height', this.height);
 
-    this.tab = new Tab({
+    this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],
         sections: [this.$mdEditorContainerEl, this.$previewEl]
     });
 
-    this.$containerEl.find('.mdContainer .tabSection').append(this.tab.$el);
-
-    this.tab.activate('Editor');
+    this.$containerEl.find('.mdContainer .tabSection').append(this.markdownTab.$el);
 };
 
 Layout.prototype._initWysiwygSection = function() {
@@ -127,14 +126,14 @@ Layout.prototype._initWysiwygSection = function() {
 
 Layout.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.neditor'),
+        $target: this.$el.find('.neonEditor'),
         eventManager: this.eventManager
     });
 };
 
 Layout.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.neditor'),
+        $target: this.$el.find('.neonEditor'),
         eventManager: this.eventManager
     });
 };
@@ -158,15 +157,15 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.neditor').css('display', 'none');
+    this.$el.find('.neonEditor').css('display', 'none');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.neditor').css('display', 'block');
+    this.$el.find('.neonEditor').css('display', 'block');
 };
 
 Layout.prototype.remove = function() {
-    this.$el.find('.neditor').remove();
+    this.$el.find('.neonEditor').remove();
 };
 
 Layout.prototype.getEditorEl = function() {

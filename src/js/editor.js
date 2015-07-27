@@ -113,6 +113,8 @@ function NeonEditor(options) {
         }
     });
 
+    window.dd = this;
+
     __nedInstance.push(this);
 }
 
