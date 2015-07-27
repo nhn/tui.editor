@@ -5,7 +5,7 @@
 
 'use strict';
 
-var NEditor;
+var NeonEditor;
 
 //codemirror modes&addons
 require('./codemirror/overlay');
@@ -13,10 +13,10 @@ require('./codemirror/markdown');
 require('./codemirror/gfm');
 require('./codemirror/continuelist');
 
-NEditor = require('./editor');
+NeonEditor = require('./editor');
 
 //for jquery
-$.fn.ned = function() {
+$.fn.neonEditor = function() {
     var args = $.makeArray(arguments),
         options,
         instance,
@@ -27,7 +27,7 @@ $.fn.ned = function() {
     if (el) {
         options = args[0] || {};
 
-        instance = $.data(el, 'ned');
+        instance = $.data(el, 'neonEditor');
 
         if (instance) {
             if (typeof options === 'string') {
@@ -35,8 +35,8 @@ $.fn.ned = function() {
             }
         } else {
             options.el = el;
-            instance = new NEditor(options);
-            $.data(el, 'ned', instance);
+            instance = new NeonEditor(options);
+            $.data(el, 'neonEditor', instance);
         }
     }
 
@@ -44,4 +44,4 @@ $.fn.ned = function() {
 };
 
 window.ne = window.ne || {};
-window.ne.NEditor = NEditor;
+window.ne.NeonEditor = NeonEditor;

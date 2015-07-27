@@ -47,8 +47,8 @@ require('./extensions/querySplitter');
 require('./extensions/textPalette');
 
 /**
- * NEditor
- * @exports NEditor
+ * NeonEditor
+ * @exports NeonEditor
  * @constructor
  * @class
  * @param {object} options 옵션
@@ -63,7 +63,7 @@ require('./extensions/textPalette');
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */
-function NEditor(options) {
+function NeonEditor(options) {
     var self = this;
 
     this.options = $.extend({
@@ -116,7 +116,7 @@ function NEditor(options) {
     __nedInstance.push(this);
 }
 
-NEditor.prototype._initEvent = function() {
+NeonEditor.prototype._initEvent = function() {
     var self = this;
 
     this.eventManager.listen('changeModeToWysiwyg', function() {
@@ -134,7 +134,7 @@ NEditor.prototype._initEvent = function() {
     });
 };
 
-NEditor.prototype._initDefaultCommands = function() {
+NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(mdcBold);
     this.commandManager.addCommand(mdcItalic);
     this.commandManager.addCommand(mdcBlockquote);
@@ -162,28 +162,28 @@ NEditor.prototype._initDefaultCommands = function() {
  * 프리뷰가 보여지는 방식을 변경한다
  * @param {string} style 스타일 이름 tab, vertical
  */
-NEditor.prototype.changePreviewStyle = function(style) {
+NeonEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
 };
 
-NEditor.prototype.exec = function() {
+NeonEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
 };
 
-NEditor.prototype.getCodeMirror = function() {
+NeonEditor.prototype.getCodeMirror = function() {
     return this.mdEditor.getEditor();
 };
 
-NEditor.prototype.getSquire = function() {
+NeonEditor.prototype.getSquire = function() {
     return this.wwEditor.getEditor();
 };
 
-NEditor.prototype.focus = function() {
+NeonEditor.prototype.focus = function() {
    this.getCurrentModeEditor().focus();
 };
 
-NEditor.prototype.setValue = function(markdown) {
+NeonEditor.prototype.setValue = function(markdown) {
     if (!markdown) {
         return;
     }
@@ -195,7 +195,7 @@ NEditor.prototype.setValue = function(markdown) {
     }
 };
 
-NEditor.prototype.getValue = function() {
+NeonEditor.prototype.getValue = function() {
     var markdown;
 
     if (this.isMarkdownMode()) {
@@ -207,11 +207,11 @@ NEditor.prototype.getValue = function() {
     return markdown;
 };
 
-NEditor.prototype.addWidget = function(selection, node, style, offset) {
+NeonEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
-NEditor.prototype.getCurrentModeEditor = function() {
+NeonEditor.prototype.getCurrentModeEditor = function() {
     var editor;
 
     if (this.isMarkdownMode()) {
@@ -223,34 +223,34 @@ NEditor.prototype.getCurrentModeEditor = function() {
     return editor;
 };
 
-NEditor.prototype.isMarkdownMode = function() {
+NeonEditor.prototype.isMarkdownMode = function() {
     return this.currentMode === 'markdown';
 };
 
-NEditor.prototype.isWysiwygMode = function() {
+NeonEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
-NEditor.prototype.remove = function() {
+NeonEditor.prototype.remove = function() {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
 };
 
-NEditor.prototype.hide = function() {
+NeonEditor.prototype.hide = function() {
     this.layout.hide();
 };
 
-NEditor.prototype.show = function() {
+NeonEditor.prototype.show = function() {
     this.layout.show();
 };
 
-NEditor.getInstances = function() {
+NeonEditor.getInstances = function() {
     return __nedInstance;
 };
 
-NEditor.defineExtension = function(name, ext) {
+NeonEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
 };
 
-module.exports = NEditor;
+module.exports = NeonEditor;

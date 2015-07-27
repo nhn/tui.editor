@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DEMO</title>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../dist/neonEditor.full.min.js"></script>
+    <link rel="stylesheet" href="../dist/neonEditor.css">
+    <link rel="stylesheet" href="../dist/contentStyle.css">
+</head>
+<body>
+<div id="editSection"></div>
+<script>
+    $('#editSection').neonEditor({
+        initialEditType: 'markdown',
+        previewStyle: 'tab',
+        height: 300,
+        contentCSSStyles: [
+            '../dist/contentStyle.css'
+        ]
+    });
+</script>
+</body>
+</html>
