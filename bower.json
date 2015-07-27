@@ -13,7 +13,6 @@
       "./dist/contentStyle.css"
   ],
   "license": "MIT",
-  "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
@@ -23,7 +22,7 @@
     "tests"
   ],
   "keywords": [],
-  "dependencies": {
+  "devDependencies": {
     "marked": "https://github.com/chjj/marked.git#master",
     "jquery": "~2.1.3",
     "codemirror": "https://github.com/codemirror/CodeMirror.git#master",
