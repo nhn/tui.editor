@@ -1,6 +1,6 @@
 'use strict';
 
-var Neditor = require('../../src/js/editor');
+var NeonEditor = require('../../src/js/editor');
 
 describe('querySplitter', function() {
     var ned, em;
@@ -12,7 +12,7 @@ describe('querySplitter', function() {
 
     describe('wysiwyg', function() {
         beforeEach(function(done) {
-            ned = new Neditor({
+            ned = new NeonEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,
@@ -263,7 +263,7 @@ describe('querySplitter', function() {
 
     describe('markdown', function() {
         beforeEach(function(done) {
-            ned = new Neditor({
+            ned = new NeonEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,

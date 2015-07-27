@@ -1,9 +1,9 @@
 {
-  "name": "DurayEditor",
-  "version": "0.0.0",
+  "name": "NeonEditor",
+  "version": "0.0.1",
   "private": true,
-  "author": "NHNEntertainment",
-  "license": "ISC",
+  "author": "Sungho Kim <shirenbeat@gmail.com>",
+  "license": "MIT",
   "devDependencies": {
     "browserify": "^11.0.0",
     "browserify-istanbul": "latest",

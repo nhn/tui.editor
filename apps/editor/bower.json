@@ -1,10 +1,17 @@
 {
-  "name": "NEdit",
-  "version": "0.1.0",
+  "name": "NeonEditor",
+  "version": "0.0.1",
+  "description": "private",
   "authors": [
     "Sungho Kim <shirenbeat@gmail.com>"
   ],
-  "main": "./src/js/index.js",
+  "main": [
+      "./dist/neonEditor.js",
+      "./dist/neonEditor.min.js",
+      "./dist/neonEditor.full.min.js",
+      "./dist/neonEditor.css",
+      "./dist/contentStyle.css"
+  ],
   "license": "MIT",
   "private": true,
   "ignore": [
@@ -15,10 +22,11 @@
     "test",
     "tests"
   ],
+  "keywords": [],
   "dependencies": {
     "marked": "https://github.com/chjj/marked.git#master",
     "jquery": "~2.1.3",
-    "codemirror": "https://github.com/shiren/CodeMirror.git#master",
+    "codemirror": "https://github.com/codemirror/CodeMirror.git#master",
     "highlightjs": "~8.4.0",
     "squire-rte": "https://github.com/neilj/Squire.git#master",
     "toMark": "https://github.nhnent.com/sungho-kim/toMark.git#master",
