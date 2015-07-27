@@ -51,7 +51,7 @@ gulp.task('develop', bundle);
 gulp.task('bundle', function() {
     return browserify('./src/js/index.js')
         .bundle()
-        .pipe(source('ned.js'))
+        .pipe(source('neonEditor.js'))
         .pipe(buffer())
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
@@ -96,7 +96,7 @@ gulp.task('watch', function () {
  * gulp-strip-debug
  */
 gulp.task('stripDebug', function () {
-    return gulp.src('dist/ned.js')
+    return gulp.src('dist/neonEditor.js')
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
 });
@@ -105,9 +105,9 @@ gulp.task('stripDebug', function () {
  * Uglify
  */
 gulp.task('uglify', function() {
-    return gulp.src('./dist/ned.js')
+    return gulp.src('./dist/neonEditor.js')
         .pipe(ugilfy())
-        .pipe(rename('ned.min.js'))
+        .pipe(rename('neonEditor.min.js'))
         .pipe(gulp.dest('./dist'));
 });
 
@@ -119,10 +119,10 @@ gulp.task('makeFull', function() {
             './lib/ne-code-snippet/code-snippet.js',
             './lib/squire-rte/build/squire-raw.js',
             './lib/toMark/dist/toMark.js',
-            './dist/ned.js'
+            './dist/neonEditor.js'
          ])
         .pipe(ugilfy())
-        .pipe(concat('ned.full.min.js'))
+        .pipe(concat('neonEditor.full.min.js'))
         .pipe(gulp.dest('./dist'));
 });
 
@@ -132,8 +132,16 @@ gulp.task('css', function() {
             './lib/highlightjs/styles/github.css',
             './src/css/style.css'
          ])
-        .pipe(concatCss('ned.css'))
+        .pipe(concatCss('neonEditor.css'))
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'makeFull', 'uglify', 'css']));
+gulp.task('contentCssCopy', function() {
+    return gulp.src([
+            './src/css/contentStyle.css'
+         ])
+        .pipe(gulp.dest('./dist'));
+});
+
+
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'makeFull', 'uglify', 'css', 'contentCssCopy']));
