@@ -25,12 +25,12 @@ $('#editSection').neonEditor({
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자)
-* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 contentStyle.css의 경로를 다시 지정하면됩니다.
+* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 demoDist.html파일처럼 contentStyle.css의 경로를 다시 지정하면됩니다.
 
 ## API
 
 ``` javascript
-// 아래와 같이 일반적인 jQuery 플러그인 인터페이스를 이용합니다.
+//아래와 같이 일반적인 jQuery 플러그인 인터페이스를 이용합니다.
 $('#editSection').neonEditor('focus');
 ```
 

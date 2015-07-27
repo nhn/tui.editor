@@ -21,7 +21,7 @@ describe('Layout', function() {
     });
 
     it('All layout elements are exist', function() {
-        expect($('.neditor').length).toEqual(1);
+        expect($('.neonEditor').length).toEqual(1);
         expect($('.toolbarSection').length).toEqual(1);
         expect($('.modeSwitchSection').length).toEqual(1);
         expect($('.mdContainer').length).toEqual(1);
