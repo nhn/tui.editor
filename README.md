@@ -37,3 +37,11 @@ $('#editSection').neonEditor('focus');
 * focus: 에디터에 포커스를 줍니다.
 * hide: 에디터를 숨깁니다.
 * show: 에디터를 보입니다.
+
+## 설치
+
+```
+bower install NeonEditor
+```
+
+bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일을 다운로드 하셔도 됩니다.
