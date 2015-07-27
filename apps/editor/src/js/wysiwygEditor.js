@@ -75,8 +75,7 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
         doc.querySelector('head').appendChild(styleLink);
     });
 
-    doc.querySelector('body').className = 'neditor-content';
-    doc.querySelector('html').className = 'neditor-content';
+    doc.querySelector('html').className = 'neonEditor-content';
 };
 
 
