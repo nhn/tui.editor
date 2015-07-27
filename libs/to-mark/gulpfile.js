@@ -21,6 +21,7 @@ var gulp = require('gulp'),
 
     livereload = require('gulp-livereload');
 
+var gulpSync = require('gulp-sync')(gulp);
 /*
  * Browserif
  */
@@ -98,4 +99,4 @@ gulp.task('uglify', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', ['lint', 'bundle', 'uglify']);
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify']));
