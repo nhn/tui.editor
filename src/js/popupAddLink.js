@@ -15,8 +15,8 @@ var POPUP_CONTENT = [
     '<label for="url">URL</label>',
     '<input type="text" class="urlInput" />',
     '<div class="buttonSection">',
-    '<button class="okButton">OK</button>',
-    '<button class="closeButton">Cancel</button>',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -32,7 +32,7 @@ var POPUP_CONTENT = [
 function PopupAddLink(options) {
     options = util.extend({
         title: 'Add Link',
-        className: 'popupAddLink neditor-popup',
+        className: 'popupAddLink neonEditor-popup',
         content: POPUP_CONTENT
     }, options);
 

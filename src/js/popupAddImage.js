@@ -23,8 +23,8 @@ var POPUP_CONTENT = [
     '<label for="url">Alt Text</label>',
     '<input type="text" class="altTextInput" />',
     '<div class="buttonSection">',
-        '<button class="okButton">OK</button>',
-        '<button class="closeButton">Cancel</button>',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -40,7 +40,7 @@ var POPUP_CONTENT = [
 function PopupAddImage(options) {
     options = util.extend({
         title: 'Add Image',
-        className: 'popupAddImage neditor-popup',
+        className: 'popupAddImage neonEditor-popup',
         content: POPUP_CONTENT
     }, options);
 
