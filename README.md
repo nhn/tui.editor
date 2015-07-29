@@ -32,16 +32,19 @@ $('#editSection').neonEditor({
 ``` javascript
 //아래와 같이 일반적인 jQuery 플러그인 인터페이스를 이용합니다.
 $('#editSection').neonEditor('focus');
+var content = $("#editSection").neonEditor("getValue");
 ```
 
 * focus: 에디터에 포커스를 줍니다.
 * hide: 에디터를 숨깁니다.
 * show: 에디터를 보입니다.
+* getValue: 입력된 마크다운 컨텐트를 가져옵니다.
+* setValue: 에디터에 마크다운 컨텐트를 셋팅합니다.
 
 ## 설치
 
 ```
-bower install NeonEditor
+bower install git@github.com:shiren/neon-editor.git#develop
 ```
 
 bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일을 다운로드 하셔도 됩니다.
