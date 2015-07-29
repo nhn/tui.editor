@@ -1,16 +1,19 @@
 {
   "name": "NeonEditor",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "private",
   "authors": [
-    "Sungho Kim <shirenbeat@gmail.com>"
+      {
+          "name": "Sungho Kim",
+          "email": "shirenbeat@gmail.com"
+      }
   ],
+  "moduleType": {
+      "globals"
+  },
   "main": [
-      "./dist/neonEditor.js",
-      "./dist/neonEditor.min.js",
-      "./dist/neonEditor.full.min.js",
-      "./dist/neonEditor.css",
-      "./dist/contentStyle.css"
+      "dist/neonEditor.js",
+      "dist/neonEditor.css"
   ],
   "license": "MIT",
   "ignore": [

@@ -1504,6 +1504,8 @@ function NeonEditor(options) {
         }
     });
 
+    window.dd = this;
+
     __nedInstance.push(this);
 }
 
@@ -2197,13 +2199,13 @@ var Toolbar = require('./toolbar'),
     PopupAddImage = require('./popupAddImage');
 
 var containerTmpl = [
-    '<div class="neditor">',
+    '<div class="neonEditor">',
         '<div class="toolbarSection" />',
         '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
             '<div class="tabSection" />',
             '<div class="editor" />',
-            '<div class="preview neditor-content" />',
+            '<div class="preview neonEditor-content" />',
         '</div>',
         '<div class="wysiwygContainer">',
             '<div class="editor" />',
@@ -2286,6 +2288,7 @@ Layout.prototype.switchToWYSIWYG = function() {
 Layout.prototype.switchToMarkdown = function() {
     this.$containerEl.find('.mdContainer').css('display', 'block');
     this.$containerEl.find('.wysiwygContainer').css('display', 'none');
+    this.markdownTab.activate('Editor');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
@@ -2295,14 +2298,12 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl.css('height', this.height);
     this.$previewEl.css('height', this.height);
 
-    this.tab = new Tab({
+    this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],
         sections: [this.$mdEditorContainerEl, this.$previewEl]
     });
 
-    this.$containerEl.find('.mdContainer .tabSection').append(this.tab.$el);
-
-    this.tab.activate('Editor');
+    this.$containerEl.find('.mdContainer .tabSection').append(this.markdownTab.$el);
 };
 
 Layout.prototype._initWysiwygSection = function() {
@@ -2312,14 +2313,14 @@ Layout.prototype._initWysiwygSection = function() {
 
 Layout.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.neditor'),
+        $target: this.$el.find('.neonEditor'),
         eventManager: this.eventManager
     });
 };
 
 Layout.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.neditor'),
+        $target: this.$el.find('.neonEditor'),
         eventManager: this.eventManager
     });
 };
@@ -2343,15 +2344,15 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.neditor').css('display', 'none');
+    this.$el.find('.neonEditor').css('display', 'none');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.neditor').css('display', 'block');
+    this.$el.find('.neonEditor').css('display', 'block');
 };
 
 Layout.prototype.remove = function() {
-    this.$el.find('.neditor').remove();
+    this.$el.find('.neonEditor').remove();
 };
 
 Layout.prototype.getEditorEl = function() {
@@ -3358,7 +3359,6 @@ MarkdownEditor.prototype.remove = function() {
 
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.cm.setValue(markdown);
-    this.cm.refresh();
     this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
 };
 
@@ -3606,8 +3606,8 @@ var POPUP_CONTENT = [
     '<label for="url">Alt Text</label>',
     '<input type="text" class="altTextInput" />',
     '<div class="buttonSection">',
-        '<button class="okButton">OK</button>',
-        '<button class="closeButton">Cancel</button>',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -3623,7 +3623,7 @@ var POPUP_CONTENT = [
 function PopupAddImage(options) {
     options = util.extend({
         title: 'Add Image',
-        className: 'popupAddImage neditor-popup',
+        className: 'popupAddImage neonEditor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -3772,8 +3772,8 @@ var POPUP_CONTENT = [
     '<label for="url">URL</label>',
     '<input type="text" class="urlInput" />',
     '<div class="buttonSection">',
-    '<button class="okButton">OK</button>',
-    '<button class="closeButton">Cancel</button>',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -3789,7 +3789,7 @@ var POPUP_CONTENT = [
 function PopupAddLink(options) {
     options = util.extend({
         title: 'Add Link',
-        className: 'popupAddLink neditor-popup',
+        className: 'popupAddLink neonEditor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -4935,8 +4935,7 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
         doc.querySelector('head').appendChild(styleLink);
     });
 
-    doc.querySelector('body').className = 'neditor-content';
-    doc.querySelector('html').className = 'neditor-content';
+    doc.querySelector('html').className = 'neonEditor-content';
 };
 
 
