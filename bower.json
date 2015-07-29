@@ -8,9 +8,9 @@
             "email": "shirenbeat@gmail.com"
         }
     ],
-    "moduleType": {
+    "moduleType": [
         "globals"
-    },
+    ],
     "main": [
         "dist/neonEditor.js",
         "dist/neonEditor.css"
