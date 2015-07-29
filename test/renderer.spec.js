@@ -193,6 +193,60 @@ describe('renderer', function() {
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
     });
 
+    describe('_isNeedEscape() can check passed text is needed escape or not', function() {
+        var renderer;
+
+        beforeEach(function() {
+            renderer = Renderer.factory();
+        });
+
+        it('heading', function() {
+            expect(renderer._isNeedEscape('# heading')).toEqual(true);
+
+            expect(renderer._isNeedEscape('######## heading')).toEqual(false);
+            expect(renderer._isNeedEscape('#heading')).toEqual(false);
+        });
+
+        it('list', function() {
+            expect(renderer._isNeedEscape(' * list')).toEqual(true);
+            expect(renderer._isNeedEscape('* list')).toEqual(true);
+            expect(renderer._isNeedEscape('1. list')).toEqual(true);
+
+            expect(renderer._isNeedEscape('*list')).toEqual(false);
+            expect(renderer._isNeedEscape('1.awefawef')).toEqual(false);
+            expect(renderer._isNeedEscape('awef1. awef')).toEqual(false);
+        });
+
+        it('code, codeblock', function() {
+            expect(renderer._isNeedEscape('``` awefwaef')).toEqual(true);
+            expect(renderer._isNeedEscape('```` awefwaef')).toEqual(true);
+            expect(renderer._isNeedEscape('`awefwaef`')).toEqual(true);
+
+            expect(renderer._isNeedEscape('``awefwaef')).toEqual(false);
+            expect(renderer._isNeedEscape('`awefwaef')).toEqual(false);
+            expect(renderer._isNeedEscape('awefwaef`')).toEqual(false);
+        });
+
+        it('em, strong', function() {
+            expect(renderer._isNeedEscape('*em*')).toEqual(true);
+            expect(renderer._isNeedEscape('**strong**')).toEqual(true);
+            expect(renderer._isNeedEscape('__strong__')).toEqual(true);
+
+            expect(renderer._isNeedEscape('_ em_')).toEqual(false);
+        });
+
+        it('link,img', function() {
+            expect(renderer._isNeedEscape('[abaewf](afewf)')).toEqual(true);
+            expect(renderer._isNeedEscape('![abaewf](afewf)')).toEqual(true);
+        });
+
+        it('should not escaped', function() {
+            expect(renderer._isNeedEscape('[]!(#)')).toEqual(false);
+            expect(renderer._isNeedEscape('[avafwef]wae(fweflll!(#)')).toEqual(false);
+            expect(renderer._isNeedEscape('[#awefawefwae]! (awefwaef)[waefawef]')).toEqual(false);
+        });
+    });
+
     it('isEmptyText() returns whether text empty or not', function() {
         var renderer = Renderer.factory();
         expect(renderer.isEmptyText('i ee    \n')).toBe(false);

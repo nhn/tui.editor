@@ -20,11 +20,15 @@ var FIND_LAST_RETURN_RX = /\n$/g,
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        var spaceCollapsedText = this.getSpaceCollapsedText(node.nodeValue),
-            trimmedText = this.trim(spaceCollapsedText),
-            escapedText = this.escapeText(trimmedText);
+        var managedText;
 
-        return this.getSpaceControlled(escapedText, node);
+        managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
+
+        if (this._isNeedEscape(managedText)) {
+            managedText = this.escapeText(managedText);
+        }
+
+        return this.getSpaceControlled(managedText, node);
     },
     'CODE TEXT_NODE': function(node) {
         return node.nodeValue;

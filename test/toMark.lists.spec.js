@@ -36,7 +36,7 @@ describe('toMark', function() {
                 '</ol>'
             ].join('');
 
-            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2\\-1\n    * DEPTH2\\-2');
+            expect(toMark(htmlStr)).toEqual('1. DEPTH1\n    * DEPTH2-1\n    * DEPTH2-2');
         });
 
         it('Multiple Nesting', function() {
