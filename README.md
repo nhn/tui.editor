@@ -9,6 +9,12 @@ jQuery최신 버전이 필요합니다..
 
 dist디렉토리의 neonEditor.css와 contentStyle.css를 링크해야합니다.
 
+neonEditor.css는 에디터에 필요한 css스타일들이고
+
+contentStyle.css는 wysiwyg에디터나 preview에서 보여질 컨텐트의 스타일들입니다.
+
+contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통해 만들어진 컨텐츠를 보여줄때 같은 내용을 사용하실수 있습니다.(css파일 내용 참고)
+
 ``` javascript
 $('#editSection').neonEditor({
     initialEditType: 'markdown',
