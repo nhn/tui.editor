@@ -152,11 +152,15 @@ var FIND_LAST_RETURN_RX = /\n$/g,
 var basicRenderer = Renderer.factory({
     //inlines
     'TEXT_NODE': function(node) {
-        var spaceCollapsedText = this.getSpaceCollapsedText(node.nodeValue),
-            trimmedText = this.trim(spaceCollapsedText),
-            escapedText = this.escapeText(trimmedText);
+        var managedText;
 
-        return this.getSpaceControlled(escapedText, node);
+        managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
+
+        if (this._isNeedEscape(managedText)) {
+            managedText = this.escapeText(managedText);
+        }
+
+        return this.getSpaceControlled(managedText, node);
     },
     'CODE TEXT_NODE': function(node) {
         return node.nodeValue;
@@ -723,6 +727,40 @@ Renderer.prototype.escapeText = function(text) {
     });
 
     return text;
+};
+
+Renderer.markdownText = {
+    codeblock: /(^ {4}[^\n]+\n*)+/,
+    hr: /(^ *[-*_]){3,} */,
+    heading: /^(#{1,6}) +[\s\S]+/,
+    lheading: /^([^\n]+)\n *(=|-){2,} */,
+    blockquote: /^( *>[^\n]+.*)+/,
+    list: /^ *(\*+|\d+\.) [\s\S]+/,
+    def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? */,
+
+    link: /!?\[.*\]\(.*\)/,
+    reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
+    strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
+    em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
+    code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+
+    codeblockGfm: /^(`{3,})[ \.]*(\S+)/
+};
+
+Renderer.prototype._isNeedEscape = function(text) {
+    var res = false,
+        type,
+        markdownText = Renderer.markdownText;
+
+    for (type in markdownText) {
+        if (markdownText[type].test(text)) {
+            console.log(type);
+            res = true;
+            break;
+       }
+    }
+
+    return res;
 };
 
 function cloneRules(dest, src) {
