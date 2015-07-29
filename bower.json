@@ -31,7 +31,7 @@
         "codemirror": "https://github.com/codemirror/CodeMirror.git#master",
         "highlightjs": "~8.4.0",
         "squire-rte": "https://github.com/neilj/Squire.git#master",
-        "toMark": "https://github.com/shiren/toMark.git#master",
+        "toMark": "https://github.com/shiren/toMark.git#develop",
         "ne-code-snippet": "~1.0.3"
     }
 }
