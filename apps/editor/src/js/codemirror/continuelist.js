@@ -17,7 +17,7 @@ CodeMirror.commands.subListIndentTab = function (cm) {
             cm.replaceRange("\t" + line, {
                 line: pos.line, ch: 0
             }, {
-                line: pos.line, ch: pos.ch + 1
+                line: pos.line, ch: line.length
             });
         } else {
             if (cm.somethingSelected()) cm.indentSelection("add");
@@ -48,12 +48,15 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
             });
             replacements[i] = "\n";
         } else {
-            var indent = match[1], after = match[5];
-            var bullet = unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0
-                ? match[2]
-                : (parseInt(match[3], 10) + 1) + match[4];
-
-                replacements[i] = "\n" + indent + bullet + after;
+            var indent = match[1], after = match[5], bullet;
+            if (indent.length === pos.ch) {
+                bullet = "";
+            } else if (unorderedListRE.test(match[2]) || match[2].indexOf(">") >= 0) {
+                bullet = match[2];
+            } else {
+                bullet = (parseInt(match[3], 10) + 1) + match[4];
+            }
+            replacements[i] = "\n" + indent + bullet + after;
         }
     }
 
