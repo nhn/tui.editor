@@ -7,9 +7,9 @@
         "email": "shirenbeat@gmail.com"
     }
   ],
-  "moduleType": {
+  "moduleType": [
       "globals"
-  },
+  ],
   "main": [
       "dist/toMark.js"
   ],
