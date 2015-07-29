@@ -283,6 +283,40 @@ Renderer.prototype.escapeText = function(text) {
     return text;
 };
 
+Renderer.markdownText = {
+    codeblock: /(^ {4}[^\n]+\n*)+/,
+    hr: /(^ *[-*_]){3,} */,
+    heading: /^(#{1,6}) +[\s\S]+/,
+    lheading: /^([^\n]+)\n *(=|-){2,} */,
+    blockquote: /^( *>[^\n]+.*)+/,
+    list: /^ *(\*+|\d+\.) [\s\S]+/,
+    def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? */,
+
+    link: /!?\[.*\]\(.*\)/,
+    reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
+    strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
+    em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
+    code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
+
+    codeblockGfm: /^(`{3,})[ \.]*(\S+)/
+};
+
+Renderer.prototype._isNeedEscape = function(text) {
+    var res = false,
+        type,
+        markdownText = Renderer.markdownText;
+
+    for (type in markdownText) {
+        if (markdownText[type].test(text)) {
+            console.log(type);
+            res = true;
+            break;
+       }
+    }
+
+    return res;
+};
+
 function cloneRules(dest, src) {
     forEachOwnProperties(src, function(value, key) {
         if (key !== 'converter') {
