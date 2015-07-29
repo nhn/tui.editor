@@ -2,12 +2,16 @@
   "name": "toMark",
   "version": "0.1.0",
   "authors": [
-    "Sungho Kim <shirebeat@gmail.com>",
-    "NHN Entertainment"
+    {
+        "name": "Sungho Kim",
+        "email": "shirenbeat@gmail.com"
+    }
   ],
+  "moduleType": {
+      "globals"
+  },
   "main": [
-      "dist/toMark.js",
-      "dist/toMark.min.js"
+      "dist/toMark.js"
   ],
   "license": "MIT",
   "ignore": [
@@ -17,7 +21,5 @@
     "lib/",
     "test",
     "tests"
-  ],
-  "dependencies": {
-  }
+  ]
 }
