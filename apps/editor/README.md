@@ -31,8 +31,13 @@ $('#editSection').neonEditor({
 
 ``` javascript
 //아래와 같이 일반적인 jQuery 플러그인 인터페이스를 이용합니다.
+
 $('#editSection').neonEditor('focus');
+
 var content = $("#editSection").neonEditor("getValue");
+
+$("#editSection").neonEditor("setValue", "# Hello!!");
+
 ```
 
 * focus: 에디터에 포커스를 줍니다.
