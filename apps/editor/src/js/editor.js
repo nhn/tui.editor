@@ -101,10 +101,12 @@ function NeonEditor(options) {
         self._initDefaultCommands();
 
         if (self.options.initialEditType === 'markdown') {
-            self.eventManager.emit('changeModeToMarkdown');
+            self.eventManager.emit('changeMode.markdown');
         } else {
-            self.eventManager.emit('changeModeToWysiwyg');
+            self.eventManager.emit('changeMode.wysiwyg');
         }
+
+        self.eventManager.emit('changeMode', self.options.initialEditType);
 
         self.setValue(self.options.initialValue);
 
@@ -121,12 +123,12 @@ function NeonEditor(options) {
 NeonEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('changeModeToWysiwyg', function() {
+    this.eventManager.listen('changeMode.wysiwyg', function() {
         self.currentMode = 'wysiwyg';
         self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
     });

@@ -69,11 +69,11 @@ Layout.prototype._initToolbar = function() {
 Layout.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('changeModeToWysiwyg', function() {
+    this.eventManager.listen('changeMode.wysiwyg', function() {
         self.switchToWYSIWYG();
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.switchToMarkdown();
     });
 };
@@ -85,11 +85,17 @@ Layout.prototype._initModeSwitch = function() {
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
 
     this.modeSwitch.on('modeSwitched', function(ev, info) {
+        var type;
+
         if (info.type === ModeSwitch.TYPE.WYSIWYG) {
-            self.eventManager.emit('changeModeToWysiwyg');
+            self.eventManager.emit('changeMode.wysiwyg');
+            type = "wysiwyg";
         } else {
-            self.eventManager.emit('changeModeToMarkdown');
+            self.eventManager.emit('changeMode.markdown');
+            type = "markdown";
         }
+
+        self.eventManager.emit('changeMode', type);
     });
 };
 

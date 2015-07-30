@@ -83,7 +83,7 @@ MarkdownEditor.prototype._initEvent = function() {
         self.setValue(markdown);
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.cm.refresh();
     });
 };
