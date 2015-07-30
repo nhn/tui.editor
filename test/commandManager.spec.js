@@ -60,7 +60,7 @@ describe('CommandManager', function() {
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('changeModeToMarkdown');
+            mockupBase.eventManager.emit('changeMode.markdown');
 
             cmgr.exec('mycommand');
 
@@ -75,7 +75,7 @@ describe('CommandManager', function() {
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('changeModeToWysiwyg');
+            mockupBase.eventManager.emit('changeMode.wysiwyg');
 
             cmgr.exec('mycommand');
 

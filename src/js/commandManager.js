@@ -65,11 +65,11 @@ CommandManager.prototype.addCommand = function(command) {
 CommandManager.prototype._initEvent = function() {
     var self = this;
 
-    this.base.eventManager.listen('changeModeToWysiwyg', function() {
+    this.base.eventManager.listen('changeMode.wysiwyg', function() {
         self.typeStatus = TYPE.WYSIWYG;
     });
 
-    this.base.eventManager.listen('changeModeToMarkdown', function() {
+    this.base.eventManager.listen('changeMode.markdown', function() {
         self.typeStatus = TYPE.MARKDOWN;
     });
 

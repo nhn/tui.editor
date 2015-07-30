@@ -50,14 +50,14 @@ describe('Layout', function() {
 
     describe('Markdown and WYSIWYG type switching by eventManager', function() {
         it('to Markdown', function() {
-            em.emit('changeModeToMarkdown');
+            em.emit('changeMode.markdown');
 
             expect($('.mdContainer').css('display')).toEqual('block');
             expect($('.wysiwygContainer').css('display')).toBe('none');
         });
 
         it('to WYSIWYG', function() {
-            em.emit('changeModeToWysiwyg');
+            em.emit('changeMode.wysiwyg');
 
             expect($('.mdContainer').css('display')).toEqual('none');
             expect($('.wysiwygContainer').css('display')).toBe('block');
