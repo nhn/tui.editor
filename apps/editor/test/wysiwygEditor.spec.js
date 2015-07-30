@@ -83,7 +83,31 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('editor functions', function() {
+    describe('getValue', function() {
+        var wwe;
+
+        beforeEach(function(done) {
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                done();
+            });
+        });
+
+        it('checked checkbox should have checked attribute', function() {
+            wwe.getEditor().setHTML('<input type="checkbox" id="task" />');
+            wwe.getEditor().getDocument().getElementById('task').checked = true;
+
+            expect(wwe.getValue()).toEqual('<input type="checkbox" id="task" checked="checked"><br>');
+        });
+
+        it('unchecked checkbox should not have checked attribute', function() {
+            wwe.getEditor().setHTML('<input type="checkbox" id="task" />');
+
+            expect(wwe.getValue()).toEqual('<input type="checkbox" id="task"><br>');
+        });
+    });
+
+    describe('editing functions', function() {
         var wwe;
 
         beforeEach(function(done) {
