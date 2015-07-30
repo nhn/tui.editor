@@ -9,8 +9,6 @@ var util = ne.util;
 
 var Command = require('./command');
 
-var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
-
 /**
  * CommandManager
  * @exports CommandManager
@@ -23,7 +21,6 @@ function CommandManager(base) {
     this._mdCommand = new util.Map();
     this._wwCommand = new util.Map();
     this.base = base;
-    this.typeStatus = TYPE.MARKDOWN;
 
     this._initEvent();
 }
@@ -65,14 +62,6 @@ CommandManager.prototype.addCommand = function(command) {
 CommandManager.prototype._initEvent = function() {
     var self = this;
 
-    this.base.eventManager.listen('changeMode.wysiwyg', function() {
-        self.typeStatus = TYPE.WYSIWYG;
-    });
-
-    this.base.eventManager.listen('changeMode.markdown', function() {
-        self.typeStatus = TYPE.MARKDOWN;
-    });
-
     this.base.eventManager.listen('command', function() {
         self.exec.apply(self, arguments);
     });
@@ -93,10 +82,10 @@ CommandManager.prototype.exec = function(name) {
     commandToRun = this._command.get(name);
 
     if (!commandToRun) {
-        if (this.typeStatus === TYPE.MARKDOWN) {
+        if (this.base.isMarkdownMode()) {
             commandToRun = this._mdCommand.get(name);
             context = this.base.mdEditor;
-        } else if (this.typeStatus === TYPE.WYSIWYG) {
+        } else {
             commandToRun = this._wwCommand.get(name);
             context = this.base.wwEditor;
         }

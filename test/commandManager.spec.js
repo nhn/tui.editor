@@ -25,6 +25,10 @@ describe('CommandManager', function() {
     beforeEach(function() {
         mockupBase.eventManager = new EventManager();
         cmgr = new CommandManager(mockupBase);
+
+        mockupBase.isMarkdownMode = function() {
+            return true;
+        };
     });
 
     describe('addCommand', function() {
@@ -60,8 +64,6 @@ describe('CommandManager', function() {
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('changeMode.markdown');
-
             cmgr.exec('mycommand');
 
             expect(execSpy).toHaveBeenCalled();
@@ -75,7 +77,9 @@ describe('CommandManager', function() {
             command.exec = execSpy;
             cmgr.addCommand(command);
 
-            mockupBase.eventManager.emit('changeMode.wysiwyg');
+            mockupBase.isMarkdownMode = function() {
+                return false;
+            };
 
             cmgr.exec('mycommand');
 
