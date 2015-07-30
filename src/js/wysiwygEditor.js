@@ -170,8 +170,24 @@ WysiwygEditor.prototype.setValue = function(html) {
 };
 
 WysiwygEditor.prototype.getValue = function() {
+    this._prepareGetHTML();
     //remove contenteditable block, in this case div
     return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+};
+
+WysiwygEditor.prototype._prepareGetHTML = function() {
+    this.editor._ignoreChange = true;
+    this._addCheckedAttrToCheckedInput();
+};
+
+WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
+    var doc = this.getEditor().getDocument();
+
+    $(doc.body).find('input').each(function(index, input) {
+        if (input.checked) {
+            $(input).attr('checked', 'checked');
+        }
+    });
 };
 
 WysiwygEditor.prototype.getEditor = function() {
