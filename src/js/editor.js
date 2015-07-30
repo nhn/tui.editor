@@ -186,9 +186,7 @@ NeonEditor.prototype.focus = function() {
 };
 
 NeonEditor.prototype.setValue = function(markdown) {
-    if (!markdown) {
-        return;
-    }
+    markdown = markdown || '';
 
     if (this.isMarkdownMode()) {
         this.mdEditor.setValue(markdown);
