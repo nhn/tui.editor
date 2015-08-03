@@ -16,7 +16,7 @@
     //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
-    "quote-props": [2, "as-needed", {"keywords": true}]
+    "quote-props": [2, consistent],
     "valid-jsdoc": [2, {
         "requireReturn": false
     }],
@@ -56,10 +56,11 @@
     "quotes": [1, "single"],
     "one-var": 0,
     "padded-blocks": [2, "never"],
-    "space-after-function-name": 2,
+    "space-before-function-paren": [2, "never"],
     "space-after-keywords": 2,
     "space-before-blocks": 2,
-    "space-in-brackets": 2,
+    "object-curly-spacing": [2, "never"],
+    "array-bracket-spacing": [2, "never"],
     "space-in-parens": 2,
 
     //Node.js

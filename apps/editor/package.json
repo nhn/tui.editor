@@ -11,7 +11,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-concat-css": "^2.2.0",
     "gulp-connect": "latest",
-    "gulp-eslint": "latest",
+    "gulp-eslint": "^1.0.0",
     "gulp-livereload": "^3.7.0",
     "gulp-rename": "latest",
     "gulp-strip-debug": "latest",
