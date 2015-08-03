@@ -1516,8 +1516,10 @@ NeonEditor.prototype._initEvent = function() {
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
     });
 
+
+    //todo preview로 옮기기
     this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        self.preview.render(self.converter.toHTML(markdown));
+        self.preview.render(self.converter.toHTMLWithCodeHightlight(markdown));
     });
 };
 

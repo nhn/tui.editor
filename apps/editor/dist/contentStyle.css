@@ -9,36 +9,282 @@ html.neonEditor-content {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     height: 100%;
+    font-family: Helvetica, arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: white;
     padding: 1em;
-    background: transparent;
-    color: #2b2b2b;
-    font: 13px/1.35 Helvetica, arial, sans-serif;
     cursor: text;
+    color: #2b2b2b;
 }
+
+.neonEditor-content body > *:first-child {
+    margin-top: 0 !important;
+}
+
+.neonEditor-content body > *:last-child {
+    margin-bottom: 0 !important;
+}
+
 .neonEditor-content a {
-    text-decoration: underline;
+    color: #4183C4;
 }
+
+.neonEditor-content h1,
+.neonEditor-content h2,
+.neonEditor-content h3,
+.neonEditor-content h4,
+.neonEditor-content h5,
+.neonEditor-content h6 {
+    margin: 20px 0 10px;
+    padding: 0;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    cursor: text;
+    position: relative;
+}
+
 .neonEditor-content h1 {
-    font-size: 138.5%;
+    font-size: 28px;
+    color: black;
 }
+
 .neonEditor-content h2 {
-    font-size: 123.1%;
+    font-size: 24px;
+    border-bottom: 1px solid #cccccc;
+    color: black;
 }
+
 .neonEditor-content h3 {
-    font-size: 108%;
+    font-size: 18px;
 }
-.neonEditor-content h1,h2,h3,p {
-    margin: 1em 0;
+
+.neonEditor-content h4 {
+    font-size: 16px;
 }
-.neonEditor-content h4,h5,h6 {
-    margin: 0;
+
+.neonEditor-content h5 {
+    font-size: 14px;
 }
-.neonEditor-content ul, ol {
-    margin: 0 1em;
-    padding: 0 1em;
+
+.neonEditor-content h6 {
+    color: #777777;
+    font-size: 14px;
 }
+
+.neonEditor-content p,
+.neonEditor-content blockquote,
+.neonEditor-content ul,
+.neonEditor-content ol,
+.neonEditor-content dl,
+.neonEditor-content li,
+.neonEditor-content table,
+.neonEditor-content pre {
+    margin: 15px 0;
+}
+
+.neonEditor-content hr {
+    background: transparent url("../../images/modules/pulls/dirty-shade.png") repeat-x 0 0;
+    border: 0 none;
+    color: #cccccc;
+    height: 4px;
+    padding: 0;
+}
+
+.neonEditor-content body > h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.neonEditor-content body > h1:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.neonEditor-content body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.neonEditor-content body > h3:first-child,
+.neonEditor-content body > h4:first-child,
+.neonEditor-content body > h5:first-child,
+.neonEditor-content body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.neonEditor-content a:first-child h1,
+.neonEditor-content a:first-child h2,
+.neonEditor-content a:first-child h3,
+.neonEditor-content a:first-child h4,
+.neonEditor-content a:first-child h5,
+.neonEditor-content a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.neonEditor-content h1 p,
+.neonEditor-content h2 p,
+.neonEditor-content h3 p,
+.neonEditor-content h4 p,
+.neonEditor-content h5 p,
+.neonEditor-content h6 p {
+    margin-top: 0;
+}
+
+.neonEditor-content li p.first {
+    display: inline-block;
+}
+
+.neonEditor-content ul,
+.neonEditor-content ol {
+    padding-left: 30px;
+}
+
+.neonEditor-content ul :first-child,
+.neonEditor-content ol :first-child {
+    margin-top: 0;
+}
+
+.neonEditor-content ul :last-child,
+.neonEditor-content ol :last-child {
+    margin-bottom: 0;
+}
+
+.neonEditor-content dl {
+    padding: 0;
+}
+
+.neonEditor-content dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px;
+}
+
+.neonEditor-content dl dt:first-child {
+    padding: 0;
+}
+
+.neonEditor-content dl dt > :first-child {
+    margin-top: 0;
+}
+
+.neonEditor-content dl dt > :last-child {
+    margin-bottom: 0;
+}
+
+.neonEditor-content dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px;
+}
+
+.neonEditor-content dl dd > :first-child {
+    margin-top: 0;
+}
+
+.neonEditor-content dl dd > :last-child {
+    margin-bottom: 0;
+}
+
 .neonEditor-content blockquote {
-    border-left: 2px solid blue;
+    border-left: 4px solid #dddddd;
+    padding: 0 15px;
+    color: #777777;
+}
+
+.neonEditor-content blockquote > :first-child {
+    margin-top: 0;
+}
+
+.neonEditor-content  blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+.neonEditor-content table {
+    padding: 0;
+}
+
+.neonEditor-content table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
     margin: 0;
-    padding: 0 10px;
+    padding: 0;
+}
+
+.neonEditor-content table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+
+.neonEditor-content table tr th {
+    font-weight: bold;
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+.neonEditor-content table tr td {
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+.neonEditor-content table tr th :first-child,
+.neonEditor-content table tr td :first-child {
+    margin-top: 0;
+}
+
+.neonEditor-content table tr th :last-child,
+.neonEditor-content table tr td :last-child {
+    margin-bottom: 0;
+}
+
+.neonEditor-content img {
+    max-width: 100%;
+}
+
+.neonEditor-content code{
+    margin: 0 2px;
+    padding: 0 5px;
+    white-space: nowrap;
+    border: 1px solid #eaeaea;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+}
+
+.neonEditor-content pre code {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    border: none;
+    background: transparent;
+}
+
+.neonEditor-content .highlight pre {
+    background-color: #f8f8f8;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
+}
+
+.neonEditor-content pre {
+    background-color: #f8f8f8;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
+}
+
+.neonEditor-content pre code{
+    background-color: transparent;
+    border: none;
 }
