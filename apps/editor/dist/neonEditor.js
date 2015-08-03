@@ -3,7 +3,6 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
 'use strict';
 
 var UIController = require('./uicontroller');
@@ -72,7 +71,7 @@ Button.prototype._onClick = function() {
 
 module.exports = Button;
 
-},{"./uicontroller":37}],2:[function(require,module,exports){
+},{"./uicontroller":38}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 'use strict';
@@ -1208,8 +1207,6 @@ var util = ne.util;
 
 var Command = require('./command');
 
-var TYPE = new util.Enum(['GLOBAL', 'MARKDOWN', 'WYSIWYG']);
-
 /**
  * CommandManager
  * @exports CommandManager
@@ -1222,7 +1219,6 @@ function CommandManager(base) {
     this._mdCommand = new util.Map();
     this._wwCommand = new util.Map();
     this.base = base;
-    this.typeStatus = TYPE.MARKDOWN;
 
     this._initEvent();
 }
@@ -1264,14 +1260,6 @@ CommandManager.prototype.addCommand = function(command) {
 CommandManager.prototype._initEvent = function() {
     var self = this;
 
-    this.base.eventManager.listen('changeModeToWysiwyg', function() {
-        self.typeStatus = TYPE.WYSIWYG;
-    });
-
-    this.base.eventManager.listen('changeModeToMarkdown', function() {
-        self.typeStatus = TYPE.MARKDOWN;
-    });
-
     this.base.eventManager.listen('command', function() {
         self.exec.apply(self, arguments);
     });
@@ -1292,10 +1280,10 @@ CommandManager.prototype.exec = function(name) {
     commandToRun = this._command.get(name);
 
     if (!commandToRun) {
-        if (this.typeStatus === TYPE.MARKDOWN) {
+        if (this.base.isMarkdownMode()) {
             commandToRun = this._mdCommand.get(name);
             context = this.base.mdEditor;
-        } else if (this.typeStatus === TYPE.WYSIWYG) {
+        } else {
             commandToRun = this._wwCommand.get(name);
             context = this.base.wwEditor;
         }
@@ -1391,7 +1379,7 @@ Convertor.factory = function(eventManager) {
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":29}],9:[function(require,module,exports){
+},{"./markedCustomRenderer":30}],9:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1438,6 +1426,7 @@ var __nedInstance = [];
 
 //default extensions
 require('./extensions/querySplitter');
+require('./extensions/taskCounter');
 require('./extensions/textPalette');
 
 /**
@@ -1495,10 +1484,12 @@ function NeonEditor(options) {
         self._initDefaultCommands();
 
         if (self.options.initialEditType === 'markdown') {
-            self.eventManager.emit('changeModeToMarkdown');
+            self.eventManager.emit('changeMode.markdown');
         } else {
-            self.eventManager.emit('changeModeToWysiwyg');
+            self.eventManager.emit('changeMode.wysiwyg');
         }
+
+        self.eventManager.emit('changeMode', self.options.initialEditType);
 
         self.setValue(self.options.initialValue);
 
@@ -1515,12 +1506,12 @@ function NeonEditor(options) {
 NeonEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('changeModeToWysiwyg', function() {
+    this.eventManager.listen('changeMode.wysiwyg', function() {
         self.currentMode = 'wysiwyg';
         self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
     });
@@ -1580,9 +1571,7 @@ NeonEditor.prototype.focus = function() {
 };
 
 NeonEditor.prototype.setValue = function(markdown) {
-    if (!markdown) {
-        return;
-    }
+    markdown = markdown || '';
 
     if (this.isMarkdownMode()) {
         this.mdEditor.setValue(markdown);
@@ -1651,7 +1640,7 @@ NeonEditor.defineExtension = function(name, ext) {
 
 module.exports = NeonEditor;
 
-},{"./commandManager":7,"./converter":8,"./eventManager":10,"./extManager":11,"./extensions/querySplitter":12,"./extensions/textPalette":13,"./layout":16,"./markdownCommands/addImage":18,"./markdownCommands/addLink":19,"./markdownCommands/blockquote":20,"./markdownCommands/bold":21,"./markdownCommands/heading":22,"./markdownCommands/hr":23,"./markdownCommands/italic":24,"./markdownCommands/ol":25,"./markdownCommands/task":26,"./markdownCommands/ul":27,"./markdownEditor":28,"./preview":33,"./wysiwygCommands/addImage":38,"./wysiwygCommands/addLink":39,"./wysiwygCommands/blockquote":40,"./wysiwygCommands/bold":41,"./wysiwygCommands/heading":42,"./wysiwygCommands/hr":43,"./wysiwygCommands/italic":44,"./wysiwygCommands/ol":45,"./wysiwygCommands/task":46,"./wysiwygCommands/ul":47,"./wysiwygEditor":48}],10:[function(require,module,exports){
+},{"./commandManager":7,"./converter":8,"./eventManager":10,"./extManager":11,"./extensions/querySplitter":12,"./extensions/taskCounter":13,"./extensions/textPalette":14,"./layout":17,"./markdownCommands/addImage":19,"./markdownCommands/addLink":20,"./markdownCommands/blockquote":21,"./markdownCommands/bold":22,"./markdownCommands/heading":23,"./markdownCommands/hr":24,"./markdownCommands/italic":25,"./markdownCommands/ol":26,"./markdownCommands/task":27,"./markdownCommands/ul":28,"./markdownEditor":29,"./preview":34,"./wysiwygCommands/addImage":39,"./wysiwygCommands/addLink":40,"./wysiwygCommands/blockquote":41,"./wysiwygCommands/bold":42,"./wysiwygCommands/heading":43,"./wysiwygCommands/hr":44,"./wysiwygCommands/italic":45,"./wysiwygCommands/ol":46,"./wysiwygCommands/task":47,"./wysiwygCommands/ul":48,"./wysiwygEditor":49}],10:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1671,8 +1660,9 @@ var eventList = [
     'contentChanged.markdownEditor',
     'change.markdownEditor',
     'change',
-    'changeModeToWysiwyg',
-    'changeModeToMarkdown',
+    'changeMode.wysiwyg',
+    'changeMode.markdown',
+    'changeMode',
     'openPopupAddLink',
     'openPopupAddImage',
     'closeAllPopup',
@@ -1857,6 +1847,38 @@ extManager.defineExtension('querySplitter', function(editor) {
 
 var extManager = require('../extManager');
 
+var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
+var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
+
+extManager.defineExtension('taskCounter', function(editor) {
+    editor.getTaskCount = function() {
+        var found;
+
+        if (editor.isMarkdownMode()) {
+            found = editor.mdEditor.getValue().match(FIND_TASK_RX);
+            return found ? found.length : 0;
+        } else {
+            return editor.wwEditor.get$Body().find('input').length;
+        }
+    }
+
+    editor.getCheckedTaskCount = function() {
+        var found;
+
+        if (editor.isMarkdownMode()) {
+            found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
+            return found ? found.length : 0;
+        } else {
+            return editor.wwEditor.get$Body().find('input:checked').length;
+        }
+    }
+});
+
+},{"../extManager":11}],14:[function(require,module,exports){
+'use strict';
+
+var extManager = require('../extManager');
+
 extManager.defineExtension('textPalette', function(editor) {
     var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
     var triggers = editor.options.textPalette.triggers,
@@ -1901,7 +1923,7 @@ function updateUI($layer, list) {
     void 0;
 }
 
-},{"../extManager":11}],14:[function(require,module,exports){
+},{"../extManager":11}],15:[function(require,module,exports){
 /**
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1950,7 +1972,7 @@ $.fn.neonEditor = function() {
 window.ne = window.ne || {};
 window.ne.NeonEditor = NeonEditor;
 
-},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":9}],15:[function(require,module,exports){
+},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":9}],16:[function(require,module,exports){
 /**
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2187,7 +2209,7 @@ LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
 
 module.exports = LayerPopup;
 
-},{"./uicontroller":37}],16:[function(require,module,exports){
+},{"./uicontroller":38}],17:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2259,11 +2281,11 @@ Layout.prototype._initToolbar = function() {
 Layout.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('changeModeToWysiwyg', function() {
+    this.eventManager.listen('changeMode.wysiwyg', function() {
         self.switchToWYSIWYG();
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.switchToMarkdown();
     });
 };
@@ -2275,11 +2297,17 @@ Layout.prototype._initModeSwitch = function() {
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
 
     this.modeSwitch.on('modeSwitched', function(ev, info) {
+        var type;
+
         if (info.type === ModeSwitch.TYPE.WYSIWYG) {
-            self.eventManager.emit('changeModeToWysiwyg');
+            self.eventManager.emit('changeMode.wysiwyg');
+            type = "wysiwyg";
         } else {
-            self.eventManager.emit('changeModeToMarkdown');
+            self.eventManager.emit('changeMode.markdown');
+            type = "markdown";
         }
+
+        self.eventManager.emit('changeMode', type);
     });
 };
 
@@ -2384,7 +2412,7 @@ Layout.prototype.getWwEditorContainerEl = function() {
 
 module.exports = Layout;
 
-},{"./modeSwitch":30,"./popupAddImage":31,"./popupAddLink":32,"./tab":34,"./toolbar":36}],17:[function(require,module,exports){
+},{"./modeSwitch":31,"./popupAddImage":32,"./popupAddLink":33,"./tab":35,"./toolbar":37}],18:[function(require,module,exports){
 /**
  * @fileoverview Implements LazyRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2463,7 +2491,7 @@ LazyRunner.prototype._clearTOIDIfNeed = function(TOID) {
 
 module.exports = LazyRunner;
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2523,7 +2551,7 @@ var AddImage = CommandManager.command('markdown',
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],19:[function(require,module,exports){
+},{"../commandManager":7}],20:[function(require,module,exports){
 /**
  * @fileoverview Implements Addlink markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2581,7 +2609,7 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],20:[function(require,module,exports){
+},{"../commandManager":7}],21:[function(require,module,exports){
 /**
  * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2654,7 +2682,7 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],21:[function(require,module,exports){
+},{"../commandManager":7}],22:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2766,7 +2794,7 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],22:[function(require,module,exports){
+},{"../commandManager":7}],23:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2838,7 +2866,7 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],23:[function(require,module,exports){
+},{"../commandManager":7}],24:[function(require,module,exports){
 /**
  * @fileoverview HR markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2901,7 +2929,7 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],24:[function(require,module,exports){
+},{"../commandManager":7}],25:[function(require,module,exports){
 /**
  * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3073,7 +3101,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],25:[function(require,module,exports){
+},{"../commandManager":7}],26:[function(require,module,exports){
 /**
  * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3130,7 +3158,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],26:[function(require,module,exports){
+},{"../commandManager":7}],27:[function(require,module,exports){
 /**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3187,7 +3215,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],27:[function(require,module,exports){
+},{"../commandManager":7}],28:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3244,7 +3272,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],28:[function(require,module,exports){
+},{"../commandManager":7}],29:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3330,7 +3358,7 @@ MarkdownEditor.prototype._initEvent = function() {
         self.setValue(markdown);
     });
 
-    this.eventManager.listen('changeModeToMarkdown', function() {
+    this.eventManager.listen('changeMode.markdown', function() {
         self.cm.refresh();
     });
 };
@@ -3416,7 +3444,7 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
 
 module.exports = MarkdownEditor;
 
-},{"./lazyRunner":17}],29:[function(require,module,exports){
+},{"./lazyRunner":18}],30:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -3433,7 +3461,7 @@ var markedCustomRenderer = new window.marked.Renderer();
 
 var regexTaskList = /^((?:<p>|))\[(?:x| )\] /;
 
-markedCustomRenderer.list = function (body, ordered) {
+markedCustomRenderer.list = function(body, ordered) {
     var className = '',
     type = ordered ? 'ol' : 'ul';
 
@@ -3444,7 +3472,7 @@ markedCustomRenderer.list = function (body, ordered) {
     return '<' + type + className + '>\n' + body + '</' + type + '>\n';
 };
 
-markedCustomRenderer.listitem = function (text) {
+markedCustomRenderer.listitem = function(text) {
     var cap,
     checked,
     className = '',
@@ -3499,7 +3527,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3583,7 +3611,7 @@ ModeSwitch.TYPE = TYPE;
 
 module.exports = ModeSwitch;
 
-},{"./uicontroller":37}],31:[function(require,module,exports){
+},{"./uicontroller":38}],32:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3757,7 +3785,7 @@ PopupAddImage.prototype.resetInputs = function() {
 
 module.exports = PopupAddImage;
 
-},{"./layerpopup":15,"./tab":34}],32:[function(require,module,exports){
+},{"./layerpopup":16,"./tab":35}],33:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3860,7 +3888,7 @@ PopupAddLink.prototype.resetInputs = function() {
 
 module.exports = PopupAddLink;
 
-},{"./layerpopup":15}],33:[function(require,module,exports){
+},{"./layerpopup":16}],34:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3898,7 +3926,7 @@ Preview.prototype.render = function(html) {
 
 module.exports = Preview;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4096,7 +4124,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":35,"./uicontroller":37}],35:[function(require,module,exports){
+},{"./templater":36,"./uicontroller":38}],36:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4135,7 +4163,7 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4269,7 +4297,7 @@ Toolbar.prototype._initButton = function() {
 
 module.exports = Toolbar;
 
-},{"./button":1,"./uicontroller":37}],37:[function(require,module,exports){
+},{"./button":1,"./uicontroller":38}],38:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4509,7 +4537,7 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4544,7 +4572,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],39:[function(require,module,exports){
+},{"../commandManager":7}],40:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4579,7 +4607,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],40:[function(require,module,exports){
+},{"../commandManager":7}],41:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4612,7 +4640,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],41:[function(require,module,exports){
+},{"../commandManager":7}],42:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4646,7 +4674,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],42:[function(require,module,exports){
+},{"../commandManager":7}],43:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4684,7 +4712,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],43:[function(require,module,exports){
+},{"../commandManager":7}],44:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4719,7 +4747,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],44:[function(require,module,exports){
+},{"../commandManager":7}],45:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4753,7 +4781,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],45:[function(require,module,exports){
+},{"../commandManager":7}],46:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4787,7 +4815,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],46:[function(require,module,exports){
+},{"../commandManager":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4826,7 +4854,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4860,7 +4888,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":7}],49:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4957,8 +4985,6 @@ WysiwygEditor.prototype._initEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        //sel.setEnd(sel.endContainer, sel.endOffset - 1);
-
         eventObj = {
             source: 'wysiwyg',
             selection: sel,
@@ -5033,8 +5059,27 @@ WysiwygEditor.prototype.setValue = function(html) {
 };
 
 WysiwygEditor.prototype.getValue = function() {
+    this._prepareGetHTML();
     //remove contenteditable block, in this case div
     return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+};
+
+WysiwygEditor.prototype._prepareGetHTML = function() {
+    this.editor._ignoreChange = true;
+    this._addCheckedAttrToCheckedInput();
+};
+
+WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
+    var doc = this.getEditor().getDocument();
+
+    //save input checked state to tag
+    $(doc.body).find('input').each(function(index, input) {
+        if (input.checked) {
+            $(input).attr('checked', 'checked');
+        } else {
+            $(input).removeAttr('checked');
+        }
+    });
 };
 
 WysiwygEditor.prototype.getEditor = function() {
@@ -5048,13 +5093,18 @@ WysiwygEditor.prototype.replaceSelection = function(content, selection) {
 
     this.editor._ignoreChange = true;
     this.editor.insertPlainText(content);
-    this.editor.focus();
 };
 
 WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
-    var selection, endSelectionInfo;
+    var selection;
 
     selection = this.editor.getSelection().cloneRange();
+
+    this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
+};
+
+WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
+    var endSelectionInfo;
 
     selection.setStart(selection.endContainer, selection.endOffset + offset);
     endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
@@ -5152,7 +5202,11 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
     });
 };
 
+WysiwygEditor.prototype.get$Body = function() {
+    return $(this.getEditor().getDocument().body);
+};
+
 module.exports = WysiwygEditor;
 
 
-},{}]},{},[14]);
+},{}]},{},[15]);

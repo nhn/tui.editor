@@ -79,47 +79,48 @@
   -webkit-animation: blink 1.06s steps(1) infinite;
   -moz-animation: blink 1.06s steps(1) infinite;
   animation: blink 1.06s steps(1) infinite;
+  background-color: #7e7;
 }
 
 @-moz-keyframes blink {
   0% {
-    background: #7e7;
+
   }
 
   50% {
-    background: none;
+    background-color: transparent;
   }
 
   100% {
-    background: #7e7;
+
   }
 }
 
 @-webkit-keyframes blink {
   0% {
-    background: #7e7;
+
   }
 
   50% {
-    background: none;
+    background-color: transparent;
   }
 
   100% {
-    background: #7e7;
+
   }
 }
 
 @keyframes blink {
   0% {
-    background: #7e7;
+
   }
 
   50% {
-    background: none;
+    background-color: transparent;
   }
 
   100% {
-    background: #7e7;
+
   }
 }
 
