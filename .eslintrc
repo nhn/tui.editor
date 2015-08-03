@@ -13,6 +13,8 @@
     "loadFixtures": true
   },
   "rules": {
+    "strict": [2, "global"],
+
     //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
