@@ -60,27 +60,13 @@ describe('WysiwygEditor', function() {
             em.listen('change.wysiwygEditor', function(ev) {
                 expect(ev.textContent).toEqual('t');
 
-                //we cant simulate range offset
-                //expect(ev.caretOffset).toEqual(1);
+                expect(ev.caretOffset).toEqual(1);
                 done();
             });
 
             //because squire input event
             wwe.editor._ignoreChange = false;
             wwe.editor.insertPlainText('t');
-
-            /*
-
-            var selection = wwe.getEditor().getSelection();
-
-            selection.selectNodeContents(wwe.getEditor().getDocument().body.childNodes[0]);
-
-            selection.setStart(selection.startContainer, 1);
-            selection.collapse(true);
-            console.log(selection.endOffset);
-            console.log(selection.endContainer);
-
-            wwe.getEditor().setSelection(selection);*/
         });
 
         it('when something changed in editor Emit change event', function(done) {
@@ -88,7 +74,7 @@ describe('WysiwygEditor', function() {
             em.listen('change', function(ev) {
                 expect(ev.textContent).toEqual('t');
                 expect(ev.source).toEqual('wysiwyg');
-                //expect(ev.caretOffset).toEqual(1);
+                expect(ev.caretOffset).toEqual(1);
                 done();
             });
 
