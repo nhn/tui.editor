@@ -311,5 +311,9 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
     });
 };
 
+WysiwygEditor.prototype.get$Body = function() {
+    return $(this.getEditor().getDocument().body);
+};
+
 module.exports = WysiwygEditor;
 

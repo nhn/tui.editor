@@ -124,17 +124,20 @@ module.exports = function(config) {
             'IE9': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE9'
+                browserName: 'internet explorer',
+                version: 9
             },
             'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE10'
+                browserName: 'internet explorer',
+                version: 10
             },
             'IE11': {
                 base: 'WebDriver',
                 config: webdriverConfig,
-                browserName: 'IE11'
+                browserName: 'internet explorer',
+                version: 11
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
