@@ -44,6 +44,7 @@ var __nedInstance = [];
 
 //default extensions
 require('./extensions/querySplitter');
+require('./extensions/taskCounter');
 require('./extensions/textPalette');
 
 /**

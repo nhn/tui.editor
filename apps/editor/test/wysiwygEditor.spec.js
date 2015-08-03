@@ -110,6 +110,18 @@ describe('WysiwygEditor', function() {
         });
     });
 
+    it('get current wysiwyg ifram body that wrapped jquery', function(done) {
+        var wwe;
+
+        wwe = new WysiwygEditor($container, null, em);
+        wwe.init(300, function() {
+            done();
+        });
+
+        expect(wwe.get$Body().length).toEqual(1);
+        expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
+    });
+
     describe('editing functions', function() {
         var wwe;
 
