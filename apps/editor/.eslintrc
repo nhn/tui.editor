@@ -13,10 +13,10 @@
     "loadFixtures": true
   },
   "rules": {
-    //Possible Errors 
+    //Possible Errors
     "no-console": 1,
     "no-extra-parens": 0,
-    "no-reserved-keys": 2,
+    "quote-props": [2, "as-needed", {"keywords": true}]
     "valid-jsdoc": [2, {
         "requireReturn": false
     }],
