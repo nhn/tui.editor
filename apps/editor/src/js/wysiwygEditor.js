@@ -94,8 +94,6 @@ WysiwygEditor.prototype._initEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        //sel.setEnd(sel.endContainer, sel.endOffset - 1);
-
         eventObj = {
             source: 'wysiwyg',
             selection: sel,
@@ -183,9 +181,12 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
 WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
     var doc = this.getEditor().getDocument();
 
+    //save input checked state to tag
     $(doc.body).find('input').each(function(index, input) {
         if (input.checked) {
             $(input).attr('checked', 'checked');
+        } else {
+            $(input).removeAttr('checked');
         }
     });
 };
@@ -201,13 +202,18 @@ WysiwygEditor.prototype.replaceSelection = function(content, selection) {
 
     this.editor._ignoreChange = true;
     this.editor.insertPlainText(content);
-    this.editor.focus();
 };
 
 WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
-    var selection, endSelectionInfo;
+    var selection;
 
     selection = this.editor.getSelection().cloneRange();
+
+    this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
+};
+
+WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
+    var endSelectionInfo;
 
     selection.setStart(selection.endContainer, selection.endOffset + offset);
     endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
