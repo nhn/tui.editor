@@ -4,6 +4,7 @@ html.neonEditor-content {
     height: 100%;
 }
 
+.neonEditor-content,
 .neonEditor-content body {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
