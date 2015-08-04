@@ -40,37 +40,34 @@ describe('MarkdownEditor', function() {
             mde.getEditor().replaceSelection('myText');
         });
 
-        it('when something change emit change.MarkdownEditor event', function() {
-            var textContent, caretOffset;
+        it('when something change emit change.MarkdownEditor event', function(done) {
+            var textContent;
 
             em.listen('change.markdownEditor', function(ev) {
                 textContent = ev.textContent;
-                caretOffset = ev.caretOffset;
+
+                expect(textContent).toEqual('my');
+                done();
             });
 
-
-            mde.getEditor().replaceSelection('m');
-            mde.getEditor().replaceSelection('y');
-
-            expect(textContent).toEqual('my');
-            expect(caretOffset).toEqual(2);
+            mde.getEditor().replaceSelection('my');
         });
 
-        it('when something change emit change event', function() {
-            var textContent, caretOffset, source;
+        it('when something change emit change event', function(done) {
+            var textContent, source;
 
             em.listen('change', function(ev) {
                 source = ev.source;
                 textContent = ev.textContent;
-                caretOffset = ev.caretOffset;
+
+                expect(textContent).toEqual('my');
+                expect(source).toEqual('markdown');
+
+                done();
             });
 
             mde.getEditor().replaceSelection('m');
             mde.getEditor().replaceSelection('y');
-
-            expect(textContent).toEqual('my');
-            expect(caretOffset).toEqual(2);
-            expect(source).toEqual('markdown');
         });
 
         it('replace selection content with passed content', function() {

@@ -5,8 +5,6 @@
 
 'use strict';
 
-var LazyRunner = require('./lazyRunner');
-
 var CodeMirror = window.CodeMirror;
 
 /**
@@ -22,15 +20,6 @@ var CodeMirror = window.CodeMirror;
 function MarkdownEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
-
-    this.lazyRunner = new LazyRunner();
-
-    this.lazyRunner.registerLazyRunFunction(
-        'emitMarkdownEditorContentChangedEvent',
-        this._emitMarkdownEditorContentChangedEvent,
-        300,
-        this
-    );
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -57,30 +46,9 @@ MarkdownEditor.prototype.init = function(initialValue) {
 MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.cm.on('change', function() {
-        self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
-    });
-
-    this.cm.on('change', function(cm, e) {
-        var eventObj;
-
-        if (e.origin !== 'setValue') {
-            e.to.ch += 1;
-
-            eventObj = {
-                source: 'markdown',
-                selection: {from: e.from, to: e.to},
-                textContent: cm.getDoc().getLine(e.to.line) || '',
-                caretOffset: e.to.ch
-            };
-
-            self.eventManager.emit('change.markdownEditor', eventObj);
-            self.eventManager.emit('change', eventObj);
-        }
-    });
-
-    this.eventManager.listen('markdownUpdate', function(markdown) {
-        self.setValue(markdown);
+    this.cm.on('change', function(cm, cmEvent) {
+        self._emitMarkdownEditorContentChangedEvent();
+        self._emitMarkdownEditorChangeEvent(cmEvent);
     });
 
     this.eventManager.listen('changeMode.markdown', function() {
@@ -115,7 +83,7 @@ MarkdownEditor.prototype.remove = function() {
 
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.cm.setValue(markdown);
-    this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
+    this._emitMarkdownEditorContentChangedEvent();
 };
 
 MarkdownEditor.prototype.getValue = function() {
@@ -128,6 +96,24 @@ MarkdownEditor.prototype.getEditor = function() {
 
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
     this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
+};
+
+MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
+    var eventObj;
+
+    if (e.origin !== 'setValue' && e.origin !== '*compose') {
+        e.to.ch += 1;
+
+        eventObj = {
+            source: 'markdown',
+            selection: {from: e.from, to: e.to},
+            textContent: this.cm.getDoc().getLine(e.to.line) || '',
+            caretOffset: e.to.ch
+        };
+
+        this.eventManager.emit('change.markdownEditor', eventObj);
+        this.eventManager.emit('change', eventObj);
+    }
 };
 
 MarkdownEditor.prototype.getCaretPosition = function() {

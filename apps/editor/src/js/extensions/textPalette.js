@@ -16,6 +16,7 @@ extManager.defineExtension('textPalette', function(editor) {
             e.stopPropagation();
             //editor.getCurrentModeEditor().replaceSelection(query);
             editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
+            editor.focus();
             hideUI($layer);
         } else {
             querySender(query, function(list) {
@@ -25,6 +26,7 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
+        console.log(ev);
         if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
             editor.addWidget(ev.selection, $layer[0], 'over');
             showUI($layer);
