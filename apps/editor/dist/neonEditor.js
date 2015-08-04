@@ -1465,7 +1465,7 @@ function NeonEditor(options) {
     this.layout.init();
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
-    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
+    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.converter);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     if (this.options.hooks) {
@@ -1514,12 +1514,6 @@ NeonEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
-    });
-
-
-    //todo preview로 옮기기
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        self.preview.render(self.converter.toHTMLWithCodeHightlight(markdown));
     });
 };
 
@@ -1895,6 +1889,7 @@ extManager.defineExtension('textPalette', function(editor) {
             e.stopPropagation();
             //editor.getCurrentModeEditor().replaceSelection(query);
             editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
+            editor.focus();
             hideUI($layer);
         } else {
             querySender(query, function(list) {
@@ -1904,6 +1899,7 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
+        void 0;
         if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
             editor.addWidget(ev.selection, $layer[0], 'over');
             showUI($layer);
@@ -2436,13 +2432,13 @@ function LazyRunner() {
     this.lazyRunFunctions = {};
 }
 
-LazyRunner.prototype.run = function(fn, delay, context) {
+LazyRunner.prototype.run = function(fn, params, context, delay) {
     var TOID;
 
     if (util.isString(fn)) {
-        TOID = this._runRegisteredRun(fn, delay, context);
+        TOID = this._runRegisteredRun(fn, params, context, delay);
     } else {
-        TOID = this._runSingleRun(fn, delay, this.globalTOID, context);
+        TOID = this._runSingleRun(fn, params, context, delay, this.globalTOID);
         this.globalTOID = TOID;
     }
 
@@ -2460,17 +2456,17 @@ LazyRunner.prototype.registerLazyRunFunction = function(name, fn, delay, context
     };
 };
 
-LazyRunner.prototype._runSingleRun = function(fn, delay, TOID, context) {
+LazyRunner.prototype._runSingleRun = function(fn, params, context, delay, TOID) {
     this._clearTOIDIfNeed(TOID);
 
     TOID = setTimeout(function() {
-        fn.call(context);
+        fn.call(context, params);
     }, delay);
 
     return TOID;
 };
 
-LazyRunner.prototype._runRegisteredRun = function(lazyRunName, delay, context) {
+LazyRunner.prototype._runRegisteredRun = function(lazyRunName, params, context, delay) {
     var TOID, fn;
 
     fn = this.lazyRunFunctions[lazyRunName].fn;
@@ -2478,7 +2474,7 @@ LazyRunner.prototype._runRegisteredRun = function(lazyRunName, delay, context) {
     delay = delay || this.lazyRunFunctions[lazyRunName].delay;
     context = context || this.lazyRunFunctions[lazyRunName].context;
 
-    TOID = this._runSingleRun(fn, delay, TOID, context);
+    TOID = this._runSingleRun(fn, params, context, delay, TOID);
 
     this.lazyRunFunctions[lazyRunName].TOID = TOID;
 
@@ -3282,8 +3278,6 @@ module.exports = UL;
 
 'use strict';
 
-var LazyRunner = require('./lazyRunner');
-
 var CodeMirror = window.CodeMirror;
 
 /**
@@ -3299,15 +3293,6 @@ var CodeMirror = window.CodeMirror;
 function MarkdownEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
-
-    this.lazyRunner = new LazyRunner();
-
-    this.lazyRunner.registerLazyRunFunction(
-        'emitMarkdownEditorContentChangedEvent',
-        this._emitMarkdownEditorContentChangedEvent,
-        300,
-        this
-    );
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -3334,30 +3319,9 @@ MarkdownEditor.prototype.init = function(initialValue) {
 MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.cm.on('change', function() {
-        self.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
-    });
-
-    this.cm.on('change', function(cm, e) {
-        var eventObj;
-
-        if (e.origin !== 'setValue') {
-            e.to.ch += 1;
-
-            eventObj = {
-                source: 'markdown',
-                selection: {from: e.from, to: e.to},
-                textContent: cm.getDoc().getLine(e.to.line) || '',
-                caretOffset: e.to.ch
-            };
-
-            self.eventManager.emit('change.markdownEditor', eventObj);
-            self.eventManager.emit('change', eventObj);
-        }
-    });
-
-    this.eventManager.listen('markdownUpdate', function(markdown) {
-        self.setValue(markdown);
+    this.cm.on('change', function(cm, cmEvent) {
+        self._emitMarkdownEditorContentChangedEvent();
+        self._emitMarkdownEditorChangeEvent(cmEvent);
     });
 
     this.eventManager.listen('changeMode.markdown', function() {
@@ -3392,7 +3356,7 @@ MarkdownEditor.prototype.remove = function() {
 
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.cm.setValue(markdown);
-    this.lazyRunner.run('emitMarkdownEditorContentChangedEvent');
+    this._emitMarkdownEditorContentChangedEvent();
 };
 
 MarkdownEditor.prototype.getValue = function() {
@@ -3405,6 +3369,24 @@ MarkdownEditor.prototype.getEditor = function() {
 
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
     this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
+};
+
+MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
+    var eventObj;
+
+    if (e.origin !== 'setValue' && e.origin !== '*compose') {
+        e.to.ch += 1;
+
+        eventObj = {
+            source: 'markdown',
+            selection: {from: e.from, to: e.to},
+            textContent: this.cm.getDoc().getLine(e.to.line) || '',
+            caretOffset: e.to.ch
+        };
+
+        this.eventManager.emit('change.markdownEditor', eventObj);
+        this.eventManager.emit('change', eventObj);
+    }
 };
 
 MarkdownEditor.prototype.getCaretPosition = function() {
@@ -3446,7 +3428,7 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
 
 module.exports = MarkdownEditor;
 
-},{"./lazyRunner":18}],30:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -3898,6 +3880,8 @@ module.exports = PopupAddLink;
 
 'use strict';
 
+var LazyRunner = require('./lazyRunner');
+
 /**
  * Preview
  * @exports Preview
@@ -3906,11 +3890,35 @@ module.exports = PopupAddLink;
  * @class
  * @param {jQuery} $el 프리뷰가 들어갈 엘리먼트
  * @param {EventManager} eventManager 이벤트 매니저
- */
-function Preview($el, eventManager) {
+ * @param {Converter} converter 컨버터
+ **/
+function Preview($el, eventManager, converter) {
     this.eventManager = eventManager;
+    this.converter = converter;
     this.$el = $el;
+
+    this.lazyRunner = new LazyRunner();
+
+    this.lazyRunner.registerLazyRunFunction(
+        'refresh',
+        this.refresh,
+        800,
+        this
+    );
+    this._initEvent();
 }
+
+Preview.prototype._initEvent = function() {
+    var self = this;
+
+    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
+        self.lazyRunner.run('refresh', markdown);
+    });
+};
+
+Preview.prototype.refresh = function(markdown) {
+    this.render(this.converter.toHTMLWithCodeHightlight(markdown));
+};
 
 Preview.prototype.render = function(html) {
     var processedDataByHook,
@@ -3928,7 +3936,7 @@ Preview.prototype.render = function(html) {
 
 module.exports = Preview;
 
-},{}],35:[function(require,module,exports){
+},{"./lazyRunner":18}],35:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
