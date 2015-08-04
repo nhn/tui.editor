@@ -28,7 +28,7 @@
     "devDependencies": {
         "marked": "https://github.com/chjj/marked.git#master",
         "jquery": "~2.1.3",
-        "codemirror": "https://github.com/codemirror/CodeMirror.git#master",
+        "codemirror": "~5.5.0",
         "highlightjs": "~8.4.0",
         "squire-rte": "https://github.com/neilj/Squire.git#master",
         "toMark": "https://github.com/shiren/toMark.git#develop",
