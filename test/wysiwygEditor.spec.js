@@ -25,10 +25,10 @@ describe('WysiwygEditor', function() {
             wwe = new WysiwygEditor($container, null, em);
         });
 
-        it('init() invoke callback', function (done) {
+        it('init() invoke callback', function(done) {
             wwe.init(300, function() {
                 expect($('iframe').length).toEqual(1);
-                expect($('iframe').contents().find('html').hasClass('neonEditor-content')).toBe(true);
+                expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
                 done();
             });
         });
