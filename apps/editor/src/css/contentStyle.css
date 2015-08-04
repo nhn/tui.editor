@@ -1,11 +1,6 @@
 @charset "UTF-8";
 
-html.neonEditor-content {
-    height: 100%;
-}
-
-.neonEditor-content,
-.neonEditor-content body {
+.neonEditor-content {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -21,11 +16,11 @@ html.neonEditor-content {
     color: #2b2b2b;
 }
 
-.neonEditor-content body > *:first-child {
+.neonEditor-content > *:first-child {
     margin-top: 0 !important;
 }
 
-.neonEditor-content body > *:last-child {
+.neonEditor-content > *:last-child {
     margin-bottom: 0 !important;
 }
 
@@ -87,11 +82,10 @@ html.neonEditor-content {
 }
 
 .neonEditor-content hr {
-    background: transparent url("../../images/modules/pulls/dirty-shade.png") repeat-x 0 0;
-    border: 0 none;
-    color: #cccccc;
-    height: 4px;
+    height: 1px;
     padding: 0;
+    border: 0;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
 .neonEditor-content body > h2:first-child {
