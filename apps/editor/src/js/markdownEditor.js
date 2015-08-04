@@ -64,7 +64,7 @@ MarkdownEditor.prototype._initEvent = function() {
  */
 MarkdownEditor.prototype.getCurrentRange = function() {
     var from = this.cm.getCursor('from'),
-    to = this.cm.getCursor('to');
+        to = this.cm.getCursor('to');
 
     return {
         from: from,
@@ -98,17 +98,32 @@ MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value
     this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
 };
 
-MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-    var eventObj;
+MarkdownEditor.prototype._cloneCMEventObject = function(e) {
+    return {
+        from: {
+            line: e.from.line,
+            ch: e.from.ch
+        },
+        to: {
+            line: e.to.line,
+            ch: e.to.ch
+        }
+    };
+};
 
+MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
+    var eventObj,
+        cmEventCloned;
     if (e.origin !== 'setValue' && e.origin !== '*compose') {
-        e.to.ch += 1;
+        cmEventCloned = this._cloneCMEventObject(e);
+
+        cmEventCloned.to.ch += 1;
 
         eventObj = {
             source: 'markdown',
-            selection: {from: e.from, to: e.to},
+            selection: cmEventCloned,
             textContent: this.cm.getDoc().getLine(e.to.line) || '',
-            caretOffset: e.to.ch
+            caretOffset: cmEventCloned.to.ch
         };
 
         this.eventManager.emit('change.markdownEditor', eventObj);
