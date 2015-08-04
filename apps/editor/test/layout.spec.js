@@ -1,9 +1,9 @@
+'use strict';
+
 var Layout = require('../src/js/layout'),
     EventManager = require('../src/js/eventManager');
 
 describe('Layout', function() {
-    'use strict';
-
     var layout,
         em;
 
@@ -50,14 +50,14 @@ describe('Layout', function() {
 
     describe('Markdown and WYSIWYG type switching by eventManager', function() {
         it('to Markdown', function() {
-            em.emit('changeMode.markdown');
+            layout.switchToMarkdown();
 
             expect($('.mdContainer').css('display')).toEqual('block');
             expect($('.wysiwygContainer').css('display')).toBe('none');
         });
 
         it('to WYSIWYG', function() {
-            em.emit('changeMode.wysiwyg');
+            layout.switchToWYSIWYG();
 
             expect($('.mdContainer').css('display')).toEqual('none');
             expect($('.wysiwygContainer').css('display')).toBe('block');

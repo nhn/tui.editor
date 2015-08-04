@@ -82,6 +82,7 @@ function NeonEditor(options) {
     this.layout = new Layout(options, this.eventManager);
     this.layout.init();
 
+
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.converter);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
@@ -126,11 +127,13 @@ NeonEditor.prototype._initEvent = function() {
 
     this.eventManager.listen('changeMode.wysiwyg', function() {
         self.currentMode = 'wysiwyg';
+        self.layout.switchToWYSIWYG();
         self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
     });
 
     this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
+        self.layout.switchToMarkdown();
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
     });
 };

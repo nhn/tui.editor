@@ -26,7 +26,6 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
-        console.log(ev);
         if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
             editor.addWidget(ev.selection, $layer[0], 'over');
             showUI($layer);

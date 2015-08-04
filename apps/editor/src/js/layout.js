@@ -53,8 +53,6 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
-
-    this._initEvent();
 };
 
 Layout.prototype._renderLayout = function() {
@@ -64,18 +62,6 @@ Layout.prototype._renderLayout = function() {
 Layout.prototype._initToolbar = function() {
     this.toolbar = new Toolbar(this.eventManager);
     this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
-};
-
-Layout.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('changeMode.wysiwyg', function() {
-        self.switchToWYSIWYG();
-    });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.switchToMarkdown();
-    });
 };
 
 Layout.prototype._initModeSwitch = function() {
