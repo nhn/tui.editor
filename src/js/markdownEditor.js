@@ -50,10 +50,6 @@ MarkdownEditor.prototype._initEvent = function() {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
     });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.cm.refresh();
-    });
 };
 
 /**
@@ -82,8 +78,9 @@ MarkdownEditor.prototype.remove = function() {
 };
 
 MarkdownEditor.prototype.setValue = function(markdown) {
-    this.cm.setValue(markdown);
+    this.getEditor().setValue(markdown);
     this._emitMarkdownEditorContentChangedEvent();
+    this.getEditor().refresh();
 };
 
 MarkdownEditor.prototype.getValue = function() {
@@ -114,6 +111,7 @@ MarkdownEditor.prototype._cloneCMEventObject = function(e) {
 MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
     var eventObj,
         cmEventCloned;
+
     if (e.origin !== 'setValue' && e.origin !== '*compose') {
         cmEventCloned = this._cloneCMEventObject(e);
 
