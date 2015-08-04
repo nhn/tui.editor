@@ -48,6 +48,10 @@ WysiwygEditor.prototype.init = function(height, callback) {
         if (callback) {
            callback();
         }
+
+        $(doc).on('click', function() {
+            self.focus();
+        });
     });
 
     this.$editorContainerEl.css('position', 'relative');

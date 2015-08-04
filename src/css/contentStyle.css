@@ -4,14 +4,12 @@
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    height: 100%;
     font-family: Helvetica, arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
-    padding-top: 10px;
-    padding-bottom: 10px;
     background-color: white;
     padding: 1em;
+    margin: 0;
     cursor: text;
     color: #2b2b2b;
 }
