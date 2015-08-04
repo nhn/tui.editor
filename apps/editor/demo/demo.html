@@ -29,14 +29,14 @@
     }
 
     $('#editSection').neonEditor({
-        previewStyle: 'tab',
+        previewStyle: 'vertical',
         height: 300,
         delay: 300,
         //initialValue: '* 목록\n```\nprint();\n\nprint();\nprint();```',
         contentCSSStyles: [
             '../src/css/contentStyle.css'
         ],
-        initialEditType: 'wysiwyg',
+        initialEditType: 'markdown',
         textPalette: {
             triggers: '@',
             querySender: function(query, done) {
