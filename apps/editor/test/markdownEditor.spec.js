@@ -31,9 +31,10 @@ describe('MarkdownEditor', function() {
             mde.init();
         });
 
-        it('when something change emit contentChanged.MarkdownEditor event', function() {
+        it('when something change emit contentChanged.MarkdownEditor event', function(done) {
             em.listen('contentChanged.markdownEditor', function(data) {
                 expect(data).toEqual('myText');
+                done();
             });
 
             mde.getEditor().replaceSelection('myText');
@@ -47,8 +48,10 @@ describe('MarkdownEditor', function() {
                 caretOffset = ev.caretOffset;
             });
 
+
             mde.getEditor().replaceSelection('m');
             mde.getEditor().replaceSelection('y');
+
             expect(textContent).toEqual('my');
             expect(caretOffset).toEqual(2);
         });
@@ -64,6 +67,7 @@ describe('MarkdownEditor', function() {
 
             mde.getEditor().replaceSelection('m');
             mde.getEditor().replaceSelection('y');
+
             expect(textContent).toEqual('my');
             expect(caretOffset).toEqual(2);
             expect(source).toEqual('markdown');
