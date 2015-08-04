@@ -19,13 +19,13 @@ function LazyRunner() {
     this.lazyRunFunctions = {};
 }
 
-LazyRunner.prototype.run = function(fn, delay, context) {
+LazyRunner.prototype.run = function(fn, params, context, delay) {
     var TOID;
 
     if (util.isString(fn)) {
-        TOID = this._runRegisteredRun(fn, delay, context);
+        TOID = this._runRegisteredRun(fn, params, context, delay);
     } else {
-        TOID = this._runSingleRun(fn, delay, this.globalTOID, context);
+        TOID = this._runSingleRun(fn, params, context, delay, this.globalTOID);
         this.globalTOID = TOID;
     }
 
@@ -43,17 +43,17 @@ LazyRunner.prototype.registerLazyRunFunction = function(name, fn, delay, context
     };
 };
 
-LazyRunner.prototype._runSingleRun = function(fn, delay, TOID, context) {
+LazyRunner.prototype._runSingleRun = function(fn, params, context, delay, TOID) {
     this._clearTOIDIfNeed(TOID);
 
     TOID = setTimeout(function() {
-        fn.call(context);
+        fn.call(context, params);
     }, delay);
 
     return TOID;
 };
 
-LazyRunner.prototype._runRegisteredRun = function(lazyRunName, delay, context) {
+LazyRunner.prototype._runRegisteredRun = function(lazyRunName, params, context, delay) {
     var TOID, fn;
 
     fn = this.lazyRunFunctions[lazyRunName].fn;
@@ -61,7 +61,7 @@ LazyRunner.prototype._runRegisteredRun = function(lazyRunName, delay, context) {
     delay = delay || this.lazyRunFunctions[lazyRunName].delay;
     context = context || this.lazyRunFunctions[lazyRunName].context;
 
-    TOID = this._runSingleRun(fn, delay, TOID, context);
+    TOID = this._runSingleRun(fn, params, context, delay, TOID);
 
     this.lazyRunFunctions[lazyRunName].TOID = TOID;
 

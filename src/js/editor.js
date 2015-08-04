@@ -83,7 +83,7 @@ function NeonEditor(options) {
     this.layout.init();
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
-    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager);
+    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.converter);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     if (this.options.hooks) {
@@ -132,12 +132,6 @@ NeonEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
-    });
-
-
-    //todo preview로 옮기기
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        self.preview.render(self.converter.toHTMLWithCodeHightlight(markdown));
     });
 };
 

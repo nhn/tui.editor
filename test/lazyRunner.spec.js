@@ -88,7 +88,7 @@ describe('LazyRunner', function() {
         it('ignore current run function that is not invoked yet when run() is called with same run again', function() {
             var func = jasmine.createSpy('func');
 
-            lr.registerLazyRunFunction('lrrun', func, 0);
+            lr.registerLazyRunFunction('lrrun', func, null, 0);
 
             lr.run('lrrun');
             lr.run('lrrun');
@@ -134,6 +134,23 @@ describe('LazyRunner', function() {
             jasmine.clock().tick(1);
 
             expect(result).toEqual('myres');
+        });
+
+        it('Invoke with parameters', function() {
+            var result,
+                func;
+
+            func = function(param) {
+                result = param;
+            };
+
+            lr.registerLazyRunFunction('lrrun', func, 0);
+
+            lr.run('lrrun', 'param');
+
+            jasmine.clock().tick(1);
+
+            expect(result).toEqual('param');
         });
     });
 });
