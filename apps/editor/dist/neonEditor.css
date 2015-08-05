@@ -801,23 +801,25 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
   padding: 5px;
 }
 
-.neonEditor .preview-style-tab .tab {
-  display: block;
+.neonEditor .preview-style-vertical>.tabSection {
+  display: none;
 }
 
-.neonEditor.preview-style-vertical .toolbar {
-  border-bottom: 1px solid #ccc;
+.neonEditor .preview-style-tab>.tabSection {
+  display: block;
 }
 
 .neonEditor .preview-style-vertical .editor {
   float: left;
   width: 50%;
   border-right: 1px solid #ccc;
+  border-top: 1px solid #ccc;
 }
 
 .neonEditor .preview-style-vertical .preview {
   float: left;
   width: 50%;
+  border-top: 1px solid #ccc;
 }
 
 .editor iframe {
