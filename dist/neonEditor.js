@@ -1342,8 +1342,12 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         sanitize: true,
         smartLists: true,
         smartypants: false,
-        highlight: function(code) {
-            return hljs.highlightAuto(code).value;
+        highlight: function(code, type) {
+            if (hljs.getLanguage(type)) {
+                return hljs.highlight(type, code).value;
+            } else {
+                return code;
+            }
         }
     });
 };
@@ -5075,9 +5079,23 @@ WysiwygEditor.prototype.setValue = function(html) {
 };
 
 WysiwygEditor.prototype.getValue = function() {
+    var html;
+
     this._prepareGetHTML();
+
+    html = this.editor.getHTML();
+
+    //empty line replace to br
+    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, '<br />');
+
+    //remove unnecessary brs
+    html = html.replace(/(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g, '</$1>');
+
     //remove contenteditable block, in this case div
-    return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+    html = html.replace(/<div>/g, '');
+    html = html.replace(/<\/div>/g, '<br />');
+
+    return html ;
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
