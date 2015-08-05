@@ -112,7 +112,8 @@ MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
     var eventObj,
         cmEventCloned;
 
-    if (e.origin !== 'setValue' && e.origin !== '*compose') {
+    if (e.origin !== 'setValue') {
+        console.log('efewf');
         cmEventCloned = this._cloneCMEventObject(e);
 
         cmEventCloned.to.ch += 1;
