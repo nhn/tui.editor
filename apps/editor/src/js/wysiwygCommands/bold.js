@@ -24,6 +24,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.bold();
         sq.focus();
     }
