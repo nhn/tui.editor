@@ -187,7 +187,7 @@ WysiwygEditor.prototype.getValue = function() {
 
     //remove contenteditable block, in this case div
     html = html.replace(/<div>/g, '');
-    html = html.replace(/<\/div>/g, '\n');
+    html = html.replace(/<\/div>/g, '<br />');
 
     return html ;
 };
