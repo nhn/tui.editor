@@ -122,9 +122,9 @@ describe('WysiwygEditor', function() {
         });
 
         it('remove contentEditable block tag(div)', function() {
-            var html = 'abcde\nefg';
+            var html = 'abcde<br />efg';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual('abcde\nefg\n');
+            expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
         });
     });
 
@@ -169,12 +169,12 @@ describe('WysiwygEditor', function() {
 
             selection = wwe.getEditor().getSelection();
             wwe.replaceSelection('test', selection);
-            expect(wwe.getValue()).toEqual('test\n');
+            expect(wwe.getValue()).toEqual('test<br />');
         });
 
         it('if replace selection without selection, use current selection', function() {
             wwe.replaceSelection('test');
-            expect(wwe.getValue()).toEqual('test\n');
+            expect(wwe.getValue()).toEqual('test<br />');
         });
 
         it('replace with current cursor\'s containers offset', function() {
@@ -190,7 +190,7 @@ describe('WysiwygEditor', function() {
 
             wwe.replaceRelativeOffset('123', -2, 1);
 
-            expect(wwe.getValue()).toEqual('te123t\n');
+            expect(wwe.getValue()).toEqual('te123t<br />');
         });
 
         describe('find element and offset by passing element and offset', function() {
