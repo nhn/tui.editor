@@ -1464,6 +1464,7 @@ function NeonEditor(options) {
     this.layout = new Layout(options, this.eventManager);
     this.layout.init();
 
+
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.converter);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
@@ -1508,11 +1509,13 @@ NeonEditor.prototype._initEvent = function() {
 
     this.eventManager.listen('changeMode.wysiwyg', function() {
         self.currentMode = 'wysiwyg';
+        self.layout.switchToWYSIWYG();
         self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
     });
 
     this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
+        self.layout.switchToMarkdown();
         self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
     });
 };
@@ -1899,7 +1902,6 @@ extManager.defineExtension('textPalette', function(editor) {
     });
 
     editor.eventManager.listen('change', function(ev) {
-        void 0;
         if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
             editor.addWidget(ev.selection, $layer[0], 'over');
             showUI($layer);
@@ -2263,8 +2265,6 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
-
-    this._initEvent();
 };
 
 Layout.prototype._renderLayout = function() {
@@ -2274,18 +2274,6 @@ Layout.prototype._renderLayout = function() {
 Layout.prototype._initToolbar = function() {
     this.toolbar = new Toolbar(this.eventManager);
     this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
-};
-
-Layout.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('changeMode.wysiwyg', function() {
-        self.switchToWYSIWYG();
-    });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.switchToMarkdown();
-    });
 };
 
 Layout.prototype._initModeSwitch = function() {
@@ -3323,10 +3311,6 @@ MarkdownEditor.prototype._initEvent = function() {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
     });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.cm.refresh();
-    });
 };
 
 /**
@@ -3337,7 +3321,7 @@ MarkdownEditor.prototype._initEvent = function() {
  */
 MarkdownEditor.prototype.getCurrentRange = function() {
     var from = this.cm.getCursor('from'),
-    to = this.cm.getCursor('to');
+        to = this.cm.getCursor('to');
 
     return {
         from: from,
@@ -3355,8 +3339,9 @@ MarkdownEditor.prototype.remove = function() {
 };
 
 MarkdownEditor.prototype.setValue = function(markdown) {
-    this.cm.setValue(markdown);
+    this.getEditor().setValue(markdown);
     this._emitMarkdownEditorContentChangedEvent();
+    this.getEditor().refresh();
 };
 
 MarkdownEditor.prototype.getValue = function() {
@@ -3371,17 +3356,33 @@ MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value
     this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
 };
 
-MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-    var eventObj;
+MarkdownEditor.prototype._cloneCMEventObject = function(e) {
+    return {
+        from: {
+            line: e.from.line,
+            ch: e.from.ch
+        },
+        to: {
+            line: e.to.line,
+            ch: e.to.ch
+        }
+    };
+};
 
-    if (e.origin !== 'setValue' && e.origin !== '*compose') {
-        e.to.ch += 1;
+MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
+    var eventObj,
+        cmEventCloned;
+
+    if (e.origin !== 'setValue') {
+        cmEventCloned = this._cloneCMEventObject(e);
+
+        cmEventCloned.to.ch += 1;
 
         eventObj = {
             source: 'markdown',
-            selection: {from: e.from, to: e.to},
+            selection: cmEventCloned,
             textContent: this.cm.getDoc().getLine(e.to.line) || '',
-            caretOffset: e.to.ch
+            caretOffset: cmEventCloned.to.ch
         };
 
         this.eventManager.emit('change.markdownEditor', eventObj);
@@ -4949,6 +4950,10 @@ WysiwygEditor.prototype.init = function(height, callback) {
         if (callback) {
            callback();
         }
+
+        $(doc).on('click', function() {
+            self.focus();
+        });
     });
 
     this.$editorContainerEl.css('position', 'relative');
@@ -4976,7 +4981,8 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
         doc.querySelector('head').appendChild(styleLink);
     });
 
-    doc.querySelector('html').className = 'neonEditor-content';
+    doc.querySelector('html').style.height = '100%';
+    doc.querySelector('body').className = 'neonEditor-content';
 };
 
 
