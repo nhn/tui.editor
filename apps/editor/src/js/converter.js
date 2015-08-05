@@ -31,8 +31,12 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         sanitize: true,
         smartLists: true,
         smartypants: false,
-        highlight: function(code) {
-            return hljs.highlightAuto(code).value;
+        highlight: function(code, type) {
+            if (hljs.getLanguage(type)) {
+                return hljs.highlight(type, code).value;
+            } else {
+                return code;
+            }
         }
     });
 };
