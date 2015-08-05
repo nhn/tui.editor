@@ -173,9 +173,23 @@ WysiwygEditor.prototype.setValue = function(html) {
 };
 
 WysiwygEditor.prototype.getValue = function() {
+    var html;
+
     this._prepareGetHTML();
+
+    html = this.editor.getHTML();
+
+    //empty line replace to br
+    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, '<br />');
+
+    //remove unnecessary brs
+    html = html.replace(/(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g, '</$1>');
+
     //remove contenteditable block, in this case div
-    return this.editor.getHTML().replace(/<div>|<\/div>/g, '');
+    html = html.replace(/<div>/g, '');
+    html = html.replace(/<\/div>/g, '\n');
+
+    return html ;
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {

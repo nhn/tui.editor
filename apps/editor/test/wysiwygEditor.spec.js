@@ -46,7 +46,7 @@ describe('WysiwygEditor', function() {
 
         it('when something changed in editor Emit contentChanged.wysiwygEditor event', function(done) {
             em.listen('contentChanged.wysiwygEditor', function(data) {
-                expect(data.replace(/<br>/g, '')).toEqual('<p>test</p>');
+                expect(data.replace(/<br \/>/g, '')).toEqual('<p>test</p>');
                 done();
             });
 
@@ -108,6 +108,24 @@ describe('WysiwygEditor', function() {
 
             expect(wwe.getValue().toLowerCase().indexOf('checked="checked"')).toEqual(-1);
         });
+
+        it('remove all unnecessary brs', function() {
+            var html = '<p>1</p><p>2</p>';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual(html);
+        });
+
+        it('dont remove necessary brs', function() {
+            var html = '<p>1</p><div><br></div><p>2</p>';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual('<p>1</p><br /><p>2</p>');
+        });
+
+        it('remove contentEditable block tag(div)', function() {
+            var html = 'abcde\nefg';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual('abcde\nefg\n');
+        });
     });
 
     it('get current wysiwyg ifram body that wrapped jquery', function(done) {
@@ -151,12 +169,12 @@ describe('WysiwygEditor', function() {
 
             selection = wwe.getEditor().getSelection();
             wwe.replaceSelection('test', selection);
-            expect(wwe.getValue().replace(/<br>/g, '')).toEqual('test');
+            expect(wwe.getValue()).toEqual('test\n');
         });
 
         it('if replace selection without selection, use current selection', function() {
             wwe.replaceSelection('test');
-            expect(wwe.getValue().replace(/<br>/, '')).toEqual('test');
+            expect(wwe.getValue()).toEqual('test\n');
         });
 
         it('replace with current cursor\'s containers offset', function() {
@@ -172,7 +190,7 @@ describe('WysiwygEditor', function() {
 
             wwe.replaceRelativeOffset('123', -2, 1);
 
-            expect(wwe.getValue().replace(/<br>/, '')).toEqual('te123t');
+            expect(wwe.getValue()).toEqual('te123t\n');
         });
 
         describe('find element and offset by passing element and offset', function() {
