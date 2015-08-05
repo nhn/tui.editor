@@ -24,6 +24,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.italic();
         sq.focus();
     }

@@ -24,6 +24,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
     exec: function(wwe, data) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.makeLink(data.url);
         sq.focus();
     }
