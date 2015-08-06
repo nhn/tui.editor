@@ -128,13 +128,31 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    it('get current wysiwyg ifram body that wrapped jquery', function(done) {
+    it('get current wysiwyg iframe body that wrapped jquery', function(done) {
         var wwe;
 
         wwe = new WysiwygEditor($container, null, em);
         wwe.init(300, function() {
             expect(wwe.get$Body().length).toEqual(1);
             expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
+            done();
+        });
+    });
+
+    it('remove task if current selection\'s have', function(done) {
+        var wwe;
+
+        wwe = new WysiwygEditor($container, null, em);
+        wwe.init(300, function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<ul><li><input type="check" /></li></ul>');
+
+            range.selectNodeContents(wwe.get$Body().find('li').children()[0].nextSibling)
+            wwe.getEditor().setSelection(range);
+            wwe._removeTaskInputIfNeed();
+
+            expect(wwe.getValue()).toBe('<ul></ul>');
             done();
         });
     });
