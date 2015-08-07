@@ -27,13 +27,13 @@ describe('Task', function() {
     it('add Task', function() {
         Task.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><div><input type="checkbox"></div></li></ul><div></div>');
     });
 
-    it('if already in list just add input box', function() {
-        sq.setHTML('<ul><li></li></ul>');
+    it('if already in empty task, dont make task', function() {
+        sq.setHTML('<ul><li><input type="checkbox"></li></ul>');
         Task.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul>');
     });
 });
