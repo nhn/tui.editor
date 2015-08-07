@@ -75,6 +75,22 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
     }
 };
 
+WysiwygEditor.prototype.saveSelection = function(selection) {
+    var sq = this.getEditor();
+
+    if (!selection) {
+        selection = sq.getSelection().cloneRange();
+    }
+
+    this.getEditor()._saveRangeToBookmark(selection);
+};
+
+WysiwygEditor.prototype.restoreSavedSelection = function() {
+    var sq = this.getEditor();
+
+    sq.setSelection(sq._getRangeAndRemoveBookmark());
+};
+
 WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
     var selection, $selected, $li;
 
@@ -82,13 +98,15 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
 
-    if ($li.length && $li.text() === '' && $li.find('input').length) {
+    if ($li.length
+        && $li.find('input').length
+        && ($li.text() === '' || (selection.startOffset === 0 && selection.startContainer.previousSibling.tagName === 'INPUT'))
+    ) {
+        this.saveSelection(selection);
+
         $li.find('input').remove();
 
-        selection.selectNodeContents($li[0]);
-        selection.collapse(true);
-
-        this.getEditor().setSelection(selection);
+        this.restoreSavedSelection();
     }
 };
 

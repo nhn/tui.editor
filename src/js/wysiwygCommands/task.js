@@ -21,13 +21,31 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            path = sq.getPath().split('>');
+        var selection, $selected, $li, savedSelection,
+            sq = wwe.getEditor();
 
-        if (path[path.length - 1] === 'LI') {
-            sq.insertHTML('<input type="checkbox" /> ');
-        } else {
-            sq.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
+        if (!sq.hasFormat('li')) {
+            sq.makeUnorderedList();
+        }
+
+        selection = sq.getSelection().cloneRange();
+        $selected = $(selection.startContainer);
+        $li = $selected.closest('li');
+
+        if ($li.find('input').length === 0) {
+            selection = sq.getSelection().cloneRange();
+
+            wwe.saveSelection(selection);
+
+            selection.setStart(selection.startContainer, 0);
+            selection.collapse(true);
+            sq.setSelection(selection);
+
+            sq.insertElement(sq.createElement('INPUT', {
+                type: 'checkbox'
+            }));
+
+            wwe.restoreSavedSelection();
         }
 
         sq.focus();
