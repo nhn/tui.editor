@@ -22,13 +22,33 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
      */
     exec: function(wwe) {
         var sq = wwe.getEditor(),
-            range = sq.getSelection();
+            range = sq.getSelection(),
+            foundedHeading = wwe.hasFormatWithRx(/h[\d]/i),
+            depth = 1,
+            beforeDepth;
 
-        if (range.collapsed) {
-            return;
+        if (foundedHeading) {
+            beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
         }
 
-        sq.changeFormat({tag: 'H3'}, null, range);
+        if (beforeDepth && beforeDepth < 6) {
+            depth = beforeDepth + 1;
+        }
+
+        sq.modifyBlocks(function(frag) {
+            var newHeading, childrens;
+
+            if (beforeDepth) {
+                childrens = $(frag).find('h' + beforeDepth).children()[0];
+            } else {
+                childrens = frag;
+            }
+
+            newHeading = this.createElement('H' + depth, null, [childrens]);
+
+            return newHeading;
+        });
+
         sq.focus();
     }
 });

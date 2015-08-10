@@ -139,6 +139,18 @@ describe('WysiwygEditor', function() {
         });
     });
 
+    it('hasFormat with RegExp', function(done) {
+        var wwe;
+
+        wwe = new WysiwygEditor($container, null, em);
+
+        wwe.init(300, function() {
+            wwe.setValue('<h1>hasHeading</h1>');
+            expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
+            done();
+        });
+    });
+
     it('remove task if current selection\'s have', function(done) {
         var wwe;
 
