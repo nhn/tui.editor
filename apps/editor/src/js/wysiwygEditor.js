@@ -121,6 +121,18 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (this.getEditor().hasFormat('li')) {
             this._removeTaskInputIfNeed();
         }
+        if (this.getEditor().hasFormat('h1')) {
+
+            //todo 프로토타입한거임 다시 만들기
+            var selection, $selected, $heading;
+
+            selection = this.getEditor().getSelection().cloneRange();
+            $selected = $(selection.startContainer);
+            $heading = $selected.closest('h1');
+            if (!$li[0].textContent) {
+                $li.replaceWith('<br />');
+            }
+        }
     }
 };
 
@@ -398,6 +410,10 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
 WysiwygEditor.prototype.get$Body = function() {
     return $(this.getEditor().getDocument().body);
 };
+
+WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
+    return this.getEditor().getPath().match(rx);
+}
 
 module.exports = WysiwygEditor;
 

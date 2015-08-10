@@ -4,7 +4,7 @@ var Bold = require('../../src/js/wysiwygCommands/bold'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager');
 
-describe('Task', function() {
+describe('Bold', function() {
     var wwe, sq;
 
     beforeEach(function(done) {
