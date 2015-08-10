@@ -160,7 +160,8 @@ describe('WysiwygEditor', function() {
 
             wwe.setValue('<ul><li><input type="check" /></li></ul>');
 
-            range.selectNodeContents(wwe.get$Body().find('li').children()[0].nextSibling)
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('LI')[0].firstChild);
+            range.collapse(true);
             wwe.getEditor().setSelection(range);
             wwe._removeTaskInputIfNeed();
 
