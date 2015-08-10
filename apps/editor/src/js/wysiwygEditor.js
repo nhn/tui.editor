@@ -111,6 +111,8 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
+    var self = this;
+
     //enter
     if (event.which === 13) {
         if (this.getEditor().hasFormat('li')) {
@@ -120,18 +122,14 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     } else if (event.which === 8) {
         if (this.getEditor().hasFormat('li')) {
             this._removeTaskInputIfNeed();
-        }
-        if (this.getEditor().hasFormat('h1')) {
-
-            //todo 프로토타입한거임 다시 만들기
-            var selection, $selected, $heading;
-
-            selection = this.getEditor().getSelection().cloneRange();
-            $selected = $(selection.startContainer);
-            $heading = $selected.closest('h1');
-            if (!$li[0].textContent) {
-                $li.replaceWith('<br />');
-            }
+        //squire상단의 블럭태그 사라지지 않는 문제 픽스
+        } else if (!this.getEditor().getDocument().body.textContent) {
+            this.getEditor().modifyBlocks(function(frag) {
+                if (!frag.textContent) {
+                    frag = self.getEditor().createDefaultBlock();
+                }
+                return frag
+            });
         }
     }
 };
