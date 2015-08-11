@@ -764,7 +764,6 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 .mdContainer .preview {
   box-sizing: border-box;
   height: 400px;
-  overflow: auto;
 }
 
 .mdContainer>.CodeMirror {
@@ -773,6 +772,7 @@ github.com style (c) Vasily Polovnyov <vast@whiteants.net>
 
 .mdContainer>.preview {
   padding: 5px;
+  overflow: auto;
 }
 
 .neonEditor .preview-style-tab>.editor,
