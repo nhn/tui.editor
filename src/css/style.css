@@ -54,6 +54,11 @@
 .neonEditor .toolbar button.italic {
     font-style: italic;
 }
+
+.mdContainer {
+    overflow: hidden;
+}
+
 .mdContainer .tab{
     padding: 0 5px;
     background: #eee;
@@ -91,10 +96,10 @@
     box-sizing: border-box;
     height:400px;
 }
-.mdContainer>.CodeMirror {
+.mdContainer .CodeMirror {
     height: 100%;
 }
-.mdContainer>.preview {
+.mdContainer .preview {
     padding: 5px;
     overflow: auto;
 }
