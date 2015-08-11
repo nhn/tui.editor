@@ -131,7 +131,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             this._removeTaskInputIfNeed();
         //squire상단의 블럭태그 사라지지 않는 문제 픽스
         } else if (!this.getEditor().getDocument().body.textContent) {
-            self.makeEmptyBlockCurrentSelection();
+            this.makeEmptyBlockCurrentSelection();
         }
     }
 };
@@ -177,6 +177,8 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 };
 
 WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
+    var self = this;
+
     this.getEditor().modifyBlocks(function(frag) {
         if (!frag.textContent) {
             frag = self.getEditor().createDefaultBlock();
