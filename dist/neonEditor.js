@@ -1343,11 +1343,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         smartLists: true,
         smartypants: false,
         highlight: function(code, type) {
-            if (hljs.getLanguage(type)) {
-                return hljs.highlight(type, code).value;
-            } else {
-                return code;
-            }
+            return hljs.getLanguage(type) ? hljs.highlight(type, code).value : code;
         }
     });
 };
@@ -4614,6 +4610,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
     exec: function(wwe, data) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.makeLink(data.url);
         sq.focus();
     }
@@ -4682,6 +4679,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.bold();
         sq.focus();
     }
@@ -4714,13 +4712,33 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
      */
     exec: function(wwe) {
         var sq = wwe.getEditor(),
-            range = sq.getSelection();
+            range = sq.getSelection(),
+            foundedHeading = wwe.hasFormatWithRx(/h[\d]/i),
+            depth = 1,
+            beforeDepth;
 
-        if (range.collapsed) {
-            return;
+        if (foundedHeading) {
+            beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
         }
 
-        sq.changeFormat({tag: 'H3'}, null, range);
+        if (beforeDepth && beforeDepth < 6) {
+            depth = beforeDepth + 1;
+        }
+
+        sq.modifyBlocks(function(frag) {
+            var newHeading, childrens;
+
+            if (beforeDepth) {
+                childrens = $(frag).find('h' + beforeDepth).children()[0];
+            } else {
+                childrens = frag;
+            }
+
+            newHeading = this.createElement('H' + depth, null, [childrens]);
+
+            return newHeading;
+        });
+
         sq.focus();
     }
 });
@@ -4789,6 +4807,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        sq.removeAllFormatting();
         sq.italic();
         sq.focus();
     }
@@ -4854,13 +4873,31 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            path = sq.getPath().split('>');
+        var selection, $selected, $li, savedSelection,
+            sq = wwe.getEditor();
 
-        if (path[path.length - 1] === 'LI') {
-            sq.insertHTML('<input type="checkbox" /> ');
-        } else {
-            sq.insertHTML('<ul><li><input type="checkbox" /> </li></ul>');
+        if (!sq.hasFormat('li')) {
+            sq.makeUnorderedList();
+        }
+
+        selection = sq.getSelection().cloneRange();
+        $selected = $(selection.startContainer);
+        $li = $selected.closest('li');
+
+        if ($li.find('input').length === 0) {
+            selection = sq.getSelection().cloneRange();
+
+            wwe.saveSelection(selection);
+
+            selection.setStart(selection.startContainer, 0);
+            selection.collapse(true);
+            sq.setSelection(selection);
+
+            sq.insertElement(sq.createElement('INPUT', {
+                type: 'checkbox'
+            }));
+
+            wwe.restoreSavedSelection();
         }
 
         sq.focus();
@@ -4913,6 +4950,9 @@ module.exports = UL;
 
 var Squire = window.Squire,
     util = ne.util;
+
+var FIND_HEADING_RX = /h[\d]/i;
+
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -4950,19 +4990,144 @@ WysiwygEditor.prototype.init = function(height, callback) {
 
         self.setHeight(height);
         self._initEvent();
-
-        if (callback) {
-           callback();
-        }
+        self._initSquireKeyHandler();
 
         $(doc).on('click', function() {
             self.focus();
         });
+
+        if (callback) {
+           callback();
+        }
     });
 
     this.$editorContainerEl.css('position', 'relative');
-
     this.$editorContainerEl.append(this.$iframe);
+};
+
+WysiwygEditor.prototype._initSquireKeyHandler = function() {
+    var self = this;
+
+    this.getEditor().addEventListener('keydown', function(event) {
+        self._keyEventHandler(event);
+    });
+
+    if (util.browser.firefox) {
+        //prevent last keyevent when composing
+        this.getEditor().addEventListener('compositionend', function(event) {
+            self._keyEventHandler(event);
+        });
+    }
+};
+
+WysiwygEditor.prototype.saveSelection = function(selection) {
+    var sq = this.getEditor();
+
+    if (!selection) {
+        selection = sq.getSelection().cloneRange();
+    }
+
+    this.getEditor()._saveRangeToBookmark(selection);
+};
+
+WysiwygEditor.prototype.restoreSavedSelection = function() {
+    var sq = this.getEditor();
+
+    sq.setSelection(sq._getRangeAndRemoveBookmark());
+};
+
+WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
+    var selection, $selected, $li;
+
+    selection = this.getEditor().getSelection().cloneRange();
+    $selected = $(selection.startContainer);
+    $li = $selected.closest('li');
+
+    if ($li.length
+        && $li.find('input').length
+        && ($li.text() === '' || (selection.startOffset === 0 && selection.startContainer.previousSibling.tagName === 'INPUT'))
+    ) {
+        this.saveSelection(selection);
+
+        $li.find('input').remove();
+
+        this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype._keyEventHandler = function(event) {
+    var self = this;
+
+    //enter
+    if (event.which === 13) {
+        if (this.getEditor().hasFormat('li')) {
+            this._removeTaskInputIfNeed();
+        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
+            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+            setTimeout(function() {
+                self._unwrapHeading();
+            }, 0);
+        }
+    //backspace
+    } else if (event.which === 8) {
+        if (this.getEditor().hasFormat('li')) {
+            this._removeTaskInputIfNeed();
+        //squire상단의 블럭태그 사라지지 않는 문제 픽스
+        } else if (!this.getEditor().getDocument().body.textContent) {
+            this.makeEmptyBlockCurrentSelection();
+        }
+    }
+};
+
+WysiwygEditor.prototype._unwrapHeading = function() {
+    this.unwrapBlockTag(function(node) {
+        return FIND_HEADING_RX.test(node);
+    });
+};
+
+WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        var current = frag.childNodes[0],
+            newFrag = self.getEditor().getDocument().createDocumentFragment(),
+            tagName;
+
+        //find last depth
+        while (current.firstChild) {
+            current = current.firstChild;
+        }
+
+        //find tag
+        while (current !== frag) {
+            tagName = current.tagName && current.tagName.toUpperCase();
+
+            if (util.isFunction(condition) ? condition(tagName) : (tagName === condition)) {
+                util.forEachArray(current.childNodes, function(node) {
+                    newFrag.appendChild(node);
+                });
+
+                frag = newFrag;
+
+                break;
+            }
+
+            current = current.parentNode;
+        }
+
+        return frag;
+    });
+};
+
+WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        if (!frag.textContent) {
+            frag = self.getEditor().createDefaultBlock();
+        }
+        return frag
+    });
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
@@ -5239,6 +5404,10 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
 WysiwygEditor.prototype.get$Body = function() {
     return $(this.getEditor().getDocument().body);
 };
+
+WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
+    return this.getEditor().getPath().match(rx);
+}
 
 module.exports = WysiwygEditor;
 
