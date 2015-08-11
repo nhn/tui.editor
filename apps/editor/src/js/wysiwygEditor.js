@@ -7,6 +7,9 @@
 
 var Squire = window.Squire,
     util = ne.util;
+
+var FIND_HEADING_RX = /h[\d]/i;
+
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -56,7 +59,6 @@ WysiwygEditor.prototype.init = function(height, callback) {
     });
 
     this.$editorContainerEl.css('position', 'relative');
-
     this.$editorContainerEl.append(this.$iframe);
 };
 
@@ -117,6 +119,11 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     if (event.which === 13) {
         if (this.getEditor().hasFormat('li')) {
             this._removeTaskInputIfNeed();
+        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
+            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+            setTimeout(function() {
+                self._unwrapHeading();
+            }, 0);
         }
     //backspace
     } else if (event.which === 8) {
@@ -124,14 +131,58 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             this._removeTaskInputIfNeed();
         //squire상단의 블럭태그 사라지지 않는 문제 픽스
         } else if (!this.getEditor().getDocument().body.textContent) {
-            this.getEditor().modifyBlocks(function(frag) {
-                if (!frag.textContent) {
-                    frag = self.getEditor().createDefaultBlock();
-                }
-                return frag
-            });
+            self.makeEmptyBlockCurrentSelection();
         }
     }
+};
+
+WysiwygEditor.prototype._unwrapHeading = function() {
+    this.unwrapBlockTag(function(node) {
+        return FIND_HEADING_RX.test(node);
+    });
+};
+
+WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        var current = frag.childNodes[0],
+            newFrag = self.getEditor().getDocument().createDocumentFragment(),
+            tagName;
+
+        //find last depth
+        while (current.firstChild) {
+            current = current.firstChild;
+        }
+
+        //find tag
+        while (current !== frag) {
+            tagName = current.tagName && current.tagName.toUpperCase();
+
+            if (util.isFunction(condition) ? condition(tagName) : (tagName === condition)) {
+                util.forEachArray(current.childNodes, function(node) {
+                    newFrag.appendChild(node);
+                });
+
+                frag = newFrag;
+
+                break;
+            }
+
+            current = current.parentNode;
+        }
+
+        return frag;
+    });
+};
+
+WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
+    this.getEditor().modifyBlocks(function(frag) {
+        if (!frag.textContent) {
+            frag = self.getEditor().createDefaultBlock();
+        }
+        return frag
+    });
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {

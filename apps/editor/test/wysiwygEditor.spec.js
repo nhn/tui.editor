@@ -151,7 +151,7 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    it('remove task if current selection\'s have', function(done) {
+    it('remove task if current selection\'s have task', function(done) {
         var wwe;
 
         wwe = new WysiwygEditor($container, null, em);
@@ -167,6 +167,49 @@ describe('WysiwygEditor', function() {
 
             expect(wwe.getValue()).toBe('<ul></ul>');
             done();
+        });
+    });
+
+    describe('unwrapBlockTag()', function() {
+        it('unwrap tag of current selection with tag name', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div>test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe.unwrapBlockTag('H1');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
+                done();
+            });
+        });
+
+        it('unwrap tag of current selection with condition callback', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div>test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.unwrapBlockTag(function(tagName) {
+                    return tagName === 'H1';
+                });
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
+                done();
+            });
         });
     });
 
