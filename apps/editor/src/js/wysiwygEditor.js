@@ -106,7 +106,7 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
     ) {
         this.saveSelection(selection);
 
-        $li.find('input').remove();
+        $li.find('input:checkbox').remove();
 
         this.restoreSavedSelection();
     }
