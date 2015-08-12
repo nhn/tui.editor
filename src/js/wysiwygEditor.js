@@ -113,7 +113,8 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
-    var self = this;
+    var self = this,
+        range, doc, sq;
 
     //enter
     if (event.which === 13) {
@@ -127,13 +128,15 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         }
     //backspace
     } else if (event.which === 8) {
-        if (this.getEditor().hasFormat('li')) {
-            this._removeTaskInputIfNeed();
+        range = this.getEditor().getSelection();
+
+        if (range.collapsed) {
+            if (this.getEditor().hasFormat('li')) {
+                this._removeTaskInputIfNeed();
+            } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
+                this._unwrapHeading();
+            }
         }
-        //squire상단의 블럭태그 사라지지 않는 문제 픽스
-       /* else if (!this.getEditor().getDocument().body.textContent) {*/
-            //this.makeEmptyBlockCurrentSelection();
-        /*}*/
     }
 };
 
@@ -149,6 +152,7 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
     this.getEditor().modifyBlocks(function(frag) {
         var current = frag.childNodes[0],
             newFrag = self.getEditor().getDocument().createDocumentFragment(),
+            nextBlock,
             tagName;
 
         //find last depth
@@ -161,10 +165,24 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
             tagName = current.tagName && current.tagName.toUpperCase();
 
             if (util.isFunction(condition) ? condition(tagName) : (tagName === condition)) {
-                util.forEachArray(current.childNodes, function(node) {
-                    newFrag.appendChild(node);
-                });
+                nextBlock = current.childNodes[0];
 
+                //there is no next blocktag
+                if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
+                    nextBlock = self.getEditor().createDefaultBlock();
+
+                    util.forEachArray(util.toArray(current.childNodes), function(node) {
+                        nextBlock.appendChild(node);
+                    });
+
+
+                    //remove unneccesary br
+                    if ($(nextBlock).find('br').length > 1  && nextBlock.childNodes[nextBlock.childNodes.length - 1]) {
+                        nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
+                    }
+                }
+
+                newFrag.appendChild(nextBlock);
                 frag = newFrag;
 
                 break;
