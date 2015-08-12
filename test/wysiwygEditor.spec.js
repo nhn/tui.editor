@@ -158,7 +158,7 @@ describe('WysiwygEditor', function() {
         wwe.init(300, function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<ul><li><input type="check" /></li></ul>');
+            wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
 
             range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('LI')[0].firstChild);
             range.collapse(true);
