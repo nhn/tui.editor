@@ -129,10 +129,11 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     } else if (event.which === 8) {
         if (this.getEditor().hasFormat('li')) {
             this._removeTaskInputIfNeed();
-        //squire상단의 블럭태그 사라지지 않는 문제 픽스
-        } else if (!this.getEditor().getDocument().body.textContent) {
-            this.makeEmptyBlockCurrentSelection();
         }
+        //squire상단의 블럭태그 사라지지 않는 문제 픽스
+       /* else if (!this.getEditor().getDocument().body.textContent) {*/
+            //this.makeEmptyBlockCurrentSelection();
+        /*}*/
     }
 };
 
@@ -197,7 +198,7 @@ WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
 };
 
 WysiwygEditor.prototype._initStyleSheet = function(doc) {
-    var styleLink;
+    var styleLink, body;
 
     util.forEach(this.contentStyles, function(stylePath) {
         styleLink = doc.createElement('link');
@@ -208,7 +209,9 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
     });
 
     doc.querySelector('html').style.height = '100%';
-    doc.querySelector('body').className = 'neonEditor-content';
+    body = doc.querySelector('body');
+    body.style.height = '100%';
+    body.className = 'neonEditor-content';
 };
 
 
