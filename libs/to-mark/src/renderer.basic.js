@@ -9,6 +9,7 @@ var Renderer = require('./renderer');
 
 var FIND_LAST_RETURN_RX = /\n$/g,
     FIND_BR_AND_RETURN_RX = /[ \xA0]+\n\n/g,
+    FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX = /([ \xA0]+\n){2,}/g,
     START_OF_LINES_RX = /^/gm;
 
 /**
@@ -88,6 +89,9 @@ var basicRenderer = Renderer.factory({
     //Paragraphs
     'P': function(node, subContent) {
         var res = '';
+
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
         if (!this.isEmptyText(subContent)) {
             res = '\n' + subContent + '\n\n';
