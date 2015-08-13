@@ -214,6 +214,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<p></p>', '')).toEqual('');
         });
 
+        it('convert multiple brs to one br', function() {
+            expect(getMarkdownText('<p></p>', 'a  \n  \n  \nb')).toEqual('\na  \nb\n\n');
+        });
+
         it('add empty line in li', function() {
             expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph\n  \n');
         });
