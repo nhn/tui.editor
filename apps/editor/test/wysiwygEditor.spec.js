@@ -126,6 +126,18 @@ describe('WysiwygEditor', function() {
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
         });
+
+        it('empty line replace to br', function() {
+            var html = '<p><br /></p>test';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual('<br />test<br />');
+        });
+
+        it('empty line li dont replace to br', function() {
+            var html = '<ul><li></li></ul>';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual(html);
+        });
     });
 
     it('get current wysiwyg iframe body that wrapped jquery', function(done) {
