@@ -151,7 +151,7 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    it('remove task if current selection\'s have task', function(done) {
+    it('remove input if current selection\'s have task', function(done) {
         var wwe;
 
         wwe = new WysiwygEditor($container, null, em);
@@ -165,7 +165,7 @@ describe('WysiwygEditor', function() {
             wwe.getEditor().setSelection(range);
             wwe._removeTaskInputIfNeed();
 
-            expect(wwe.getValue()).toBe('<ul></ul>');
+            expect(wwe.getValue()).toBe('<ul><li></li></ul>');
             done();
         });
     });
