@@ -14,6 +14,8 @@ var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
     FIND_RETURNS_RX = /[ \xA0]+\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
+    FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX = /\n\n([ \xA0]+\n){2,}/g,
+    FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX = /([ \xA0]+\n){2,}/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
     FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
 /**
@@ -91,6 +93,12 @@ function finalize(text, isGfm) {
 
     //collapse triple returns made by consecutive block elements
     text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
+
+    //remove multi empty lines between block
+    text = text.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX, '\n\n');
+
+    //remove multi empty lines between text
+    text = text.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
     //remove first and last \n
     text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');

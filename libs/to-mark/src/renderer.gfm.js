@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements gfmRenderer
+ * @fileoverview Implements Github flavored markdown renderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -11,6 +11,9 @@ var Renderer = require('./renderer'),
 /**
  * gfmRenderer
  * github flavored Markdown Renderer
+ *
+ * we didnt render gfm br here because we need distingush returns that made by block with br
+ * so we render gfm br later in toMark.js finalize function
  * @exports gfmRenderer
  * @augments Renderer
  */
