@@ -145,7 +145,7 @@ Renderer.prototype.convert = function(node, subContent) {
  * @param {DOMElement} node node
  * @return {function} converter function
  */
-Renderer.prototype._getConverter = function (node) {
+Renderer.prototype._getConverter = function(node) {
     var rulePointer = this.rules,
         converter;
 

@@ -278,7 +278,7 @@ var basicRenderer = Renderer.factory({
     'UL LI': function(node, subContent) {
         var res = '';
 
-        res += '* ' + (subContent || ' ') + '\n';
+        res += '* ' + subContent + '\n';
 
         return res;
     },
@@ -294,7 +294,7 @@ var basicRenderer = Renderer.factory({
             }
         }
 
-        res += liCounter + '. ' + (subContent || ' ') + '\n';
+        res += liCounter + '. ' + subContent + '\n';
 
         return res;
     },
@@ -329,7 +329,7 @@ module.exports = basicRenderer;
 
 },{"./renderer":5}],4:[function(require,module,exports){
 /**
- * @fileoverview Implements gfmRenderer
+ * @fileoverview Implements Github flavored markdown renderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -341,6 +341,9 @@ var Renderer = require('./renderer'),
 /**
  * gfmRenderer
  * github flavored Markdown Renderer
+ *
+ * we didnt render gfm br here because we need distingush returns that made by block with br
+ * so we render gfm br later in toMark.js finalize function
  * @exports gfmRenderer
  * @augments Renderer
  */
@@ -591,7 +594,7 @@ Renderer.prototype.convert = function(node, subContent) {
  * @param {DOMElement} node node
  * @return {function} converter function
  */
-Renderer.prototype._getConverter = function (node) {
+Renderer.prototype._getConverter = function(node) {
     var rulePointer = this.rules,
         converter;
 
@@ -754,7 +757,6 @@ Renderer.prototype._isNeedEscape = function(text) {
 
     for (type in markdownText) {
         if (markdownText[type].test(text)) {
-            console.log(type);
             res = true;
             break;
        }
@@ -863,8 +865,10 @@ var DomRunner = require('./domRunner'),
 
 var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
     FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
-    FIND_RETURNS_RX = /[ \xA0]+\n/g,
+    FIND_RETURNS_RX = /([ \xA0]){2,}\n/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
+    FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX = /\n\n([ \xA0]+\n){2,}/g,
+    FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX = /([ \xA0]+\n){2,}/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
     FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
 /**
@@ -942,6 +946,12 @@ function finalize(text, isGfm) {
 
     //collapse triple returns made by consecutive block elements
     text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
+
+    //remove multi empty lines between block
+    text = text.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX, '\n\n');
+
+    //remove multi empty lines between text
+    text = text.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
     //remove first and last \n
     text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
