@@ -146,7 +146,7 @@ var basicRenderer = Renderer.factory({
     'UL LI': function(node, subContent) {
         var res = '';
 
-        res += '* ' + (subContent || ' ') + '\n';
+        res += '* ' + subContent + '\n';
 
         return res;
     },
@@ -162,7 +162,7 @@ var basicRenderer = Renderer.factory({
             }
         }
 
-        res += liCounter + '. ' + (subContent || ' ') + '\n';
+        res += liCounter + '. ' + subContent + '\n';
 
         return res;
     },
