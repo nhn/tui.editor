@@ -308,7 +308,6 @@ Renderer.prototype._isNeedEscape = function(text) {
 
     for (type in markdownText) {
         if (markdownText[type].test(text)) {
-            console.log(type);
             res = true;
             break;
        }

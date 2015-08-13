@@ -44,18 +44,29 @@ describe('toMark', function() {
         expect(toMark('<p>text</p><p>text</p>')).toEqual('text\n\ntext');
     });
 
-    it('finalize markdown text', function() {
-        expect(toMark('<p>text<br /></p><p>text</p>', {gfm: false})).toEqual('text\n\ntext');
-        expect(toMark('<p>text<br />text<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
-        expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
-        expect(toMark('<p>text<br /></p><br /><p>text</p>', {gfm: false})).toEqual('text\n\n  \ntext');
-        expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n\ntext');
-        expect(toMark('<ul><li>text<br></li><li>text<br></li></ul>', {gfm: false})).toEqual('* text\n* text');
-        expect(toMark('<ul><li>text<br><ul><li>text<br>text</li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text  \n    text\n    * text');
-        expect(toMark('<ul><li>text<br><ul><li>text<br></li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text\n    * text');
-        expect(toMark('<ul><li>text<br></li></ul><p>text</p>', {gfm: false})).toEqual('* text\n\ntext');
-        expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>', {gfm: false})).toEqual('* text\n\ntext  \ntext');
-        expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext\ntext');
-        expect(toMark('<ul><li>text</li></ul><p></p><ul><li>text</li></ul>', {gfm: false})).toEqual('* text\n\n* text');
+    describe('finalize markdown text', function() {
+        it('process br', function() {
+            expect(toMark('<p>text<br /></p><p>text</p>', {gfm: false})).toEqual('text\n\ntext');
+            expect(toMark('<p>text<br />text<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
+            expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
+            expect(toMark('<p>text<br /></p><br /><p>text</p>', {gfm: false})).toEqual('text\n\n  \ntext');
+            expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n\ntext');
+        });
+
+        it('process returns between block tags', function() {
+            expect(toMark('<ul><li>text<br></li><li>text<br></li></ul>', {gfm: false})).toEqual('* text\n* text');
+            expect(toMark('<ul><li>text<br><ul><li>text<br>text</li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text  \n    text\n    * text');
+            expect(toMark('<ul><li>text<br><ul><li>text<br></li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text\n    * text');
+            expect(toMark('<ul><li>text<br></li></ul><p>text</p>', {gfm: false})).toEqual('* text\n\ntext');
+            expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>', {gfm: false})).toEqual('* text\n\ntext  \ntext');
+            expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext\ntext');
+            expect(toMark('<ul><li>text</li></ul><p></p><ul><li>text</li></ul>', {gfm: false})).toEqual('* text\n\n* text');
+        });
+
+        it('process empty multi line', function() {
+            expect(toMark('<p>text<br /><br /><br />text</p>')).toEqual('text\ntext');
+            expect(toMark('<p>text<br /><br />text</p>')).toEqual('text\ntext');
+            expect(toMark('<p>text</p><br /><br /><p>text</p>')).toEqual('text\n\ntext');
+        });
     });
 });
