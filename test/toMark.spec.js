@@ -64,9 +64,9 @@ describe('toMark', function() {
         });
 
         it('process empty multi line', function() {
-            expect(toMark('<p>text<br /><br /><br />text</p>')).toEqual('text\ntext');
-            expect(toMark('<p>text<br /><br />text</p>')).toEqual('text\ntext');
-            expect(toMark('<p>text</p><br /><br /><p>text</p>')).toEqual('text\n\ntext');
+            expect(toMark('<p>text1<br /><br /><br />text</p>')).toEqual('text1\ntext');
+            expect(toMark('<p>text2<br /><br />text</p>')).toEqual('text2\ntext');
+            expect(toMark('<p>text3</p><br /><br /><p>text</p>')).toEqual('text3\n\ntext');
         });
     });
 });
