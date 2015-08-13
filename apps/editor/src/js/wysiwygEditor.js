@@ -329,7 +329,10 @@ WysiwygEditor.prototype.getValue = function() {
     html = this.editor.getHTML();
 
     //empty line replace to br
-    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, '<br />');
+    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, function(match, tag) {
+        //we maintain empty list
+        return tag === 'li' ? match : '<br />';
+    });
 
     //remove unnecessary brs
     html = html.replace(/(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g, '</$1>');
