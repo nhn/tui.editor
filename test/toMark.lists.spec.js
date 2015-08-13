@@ -72,5 +72,16 @@ describe('toMark', function() {
 
             expect(toMark(htmlStr)).toEqual('* <h1>nested heading</h1>');
         });
+
+        it('empty list have blank text', function() {
+            var htmlStr = [
+                '<ul>',
+                    '<li></li>',
+                    '<li>2</li>',
+                '</ul>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('* \n* 2');
+        });
     });
 });
