@@ -225,6 +225,90 @@ describe('WysiwygEditor', function() {
         });
     });
 
+    describe('changeBlockFormat', function() {
+        it('change block format', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div>test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormat('H1', 'P');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
+                done();
+            });
+        });
+
+        it('unwrap block format', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div>test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormat('H1');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
+                done();
+            });
+        });
+
+        it('unwrap block format list', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li><div>test<br></div></li></ul>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormat('UL', 'OL');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ol><li>test</li></ol>');
+                done();
+            });
+        });
+    });
+
+    describe('changeBlockFormatTo', function() {
+        it('change any block for to passed tagName', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div>test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormatTo('P');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
+                done();
+            });
+        });
+    });
+
     describe('editing functions', function() {
         var wwe;
 

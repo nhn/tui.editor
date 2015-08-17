@@ -147,13 +147,15 @@ WysiwygEditor.prototype._unwrapHeading = function() {
 };
 
 WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
+    this.changeBlockFormat(condition);
+};
+
+WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
     var self = this;
 
     this.getEditor().modifyBlocks(function(frag) {
         var current = frag.childNodes[0],
-            newFrag = self.getEditor().getDocument().createDocumentFragment(),
-            nextBlock,
-            tagName;
+            newFrag, newBlock, nextBlock, tagName;
 
         //find last depth
         while (current.firstChild) {
@@ -162,9 +164,9 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
         //find tag
         while (current !== frag) {
-            tagName = current.tagName && current.tagName.toUpperCase();
+            tagName = current.tagName;
 
-            if (util.isFunction(condition) ? condition(tagName) : (tagName === condition)) {
+            if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
                 nextBlock = current.childNodes[0];
 
                 //there is no next blocktag
@@ -177,12 +179,23 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
 
                     //remove unneccesary br
-                    if ($(nextBlock).find('br').length > 1  && nextBlock.childNodes[nextBlock.childNodes.length - 1]) {
+                    if ($(nextBlock).find('br').length > 1  &&
+                        nextBlock.childNodes[nextBlock.childNodes.length - 1].nodeType === Node.ELEMENT_NODE &&
+                        nextBlock.childNodes[nextBlock.childNodes.length - 1].tagName === 'BR'
+                       ) {
                         nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
                     }
                 }
 
-                newFrag.appendChild(nextBlock);
+                if (targetTagName) {
+                    newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
+                } else {
+                    newBlock = nextBlock;
+                }
+
+                newFrag = self.getEditor().getDocument().createDocumentFragment();
+                newFrag.appendChild(newBlock);
+
                 frag = newFrag;
 
                 break;
@@ -193,6 +206,12 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
         return frag;
     });
+};
+
+WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
+    this.changeBlockFormat(function(tagName) {
+        return /\b(H[\d]|LI|P|BLOCKQUOTE)\b/.test(tagName);
+    }, targetTagName);
 };
 
 WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
