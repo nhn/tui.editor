@@ -25,6 +25,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
             sq = wwe.getEditor();
 
         if (!sq.hasFormat('li')) {
+            wwe.unwrapBlockTag();
             sq.makeUnorderedList();
         }
 
