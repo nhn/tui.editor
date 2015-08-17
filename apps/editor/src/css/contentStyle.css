@@ -139,6 +139,12 @@
     margin-top: 0;
 }
 
+.neonEditor-content ul ul,
+.neonEditor-content ol ol {
+    margin-top: 0;
+}
+
+
 .neonEditor-content ul :last-child,
 .neonEditor-content ol :last-child {
     margin-bottom: 0;
