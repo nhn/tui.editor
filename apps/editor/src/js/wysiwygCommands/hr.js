@@ -22,9 +22,14 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
      */
     exec: function(wwe) {
         var sq = wwe.getEditor(),
-            hr = sq.createElement('HR');
+            hr = sq.createElement('HR', {
+                'contentEditable': false
+            });
 
-        sq.insertElement(hr);
+        sq.modifyBlocks(function(frag) {
+            return hr;
+        });
+
         sq.focus();
     }
 });

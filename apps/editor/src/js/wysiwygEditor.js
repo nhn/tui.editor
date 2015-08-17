@@ -136,6 +136,10 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._removeTaskInputIfNeed();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
+            } else if (range.startContainer.previousSibling &&
+                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
+                       range.startContainer.previousSibling.tagName === 'HR') {
+                $(range.startContainer.previousSibling).remove();
             }
         }
     }
