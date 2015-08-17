@@ -24,6 +24,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        wwe.unwrapBlockTag();
         sq.makeUnorderedList();
         sq.focus();
     }

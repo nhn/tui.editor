@@ -35,19 +35,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
             depth = beforeDepth + 1;
         }
 
-        sq.modifyBlocks(function(frag) {
-            var newHeading, childrens;
-
-            if (beforeDepth) {
-                childrens = $(frag).find('h' + beforeDepth).children()[0];
-            } else {
-                childrens = frag;
-            }
-
-            newHeading = this.createElement('H' + depth, null, [childrens]);
-
-            return newHeading;
-        });
+        wwe.changeBlockFormatTo('H' + depth);
 
         sq.focus();
     }

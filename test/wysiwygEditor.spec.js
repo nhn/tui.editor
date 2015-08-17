@@ -223,6 +223,26 @@ describe('WysiwygEditor', function() {
                 done();
             });
         });
+
+        it('remove unused inputbox when change from task to another', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<h1><div><input type="checkbox" />test<br></div></h1>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.unwrapBlockTag();
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
+                done();
+            });
+        });
     });
 
     describe('changeBlockFormat', function() {
@@ -285,6 +305,26 @@ describe('WysiwygEditor', function() {
                 done();
             });
         });
+
+        it('if not mached any condition, wrap targetTagName node to first div node', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<div>test<br></div>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormat('UL', 'P');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
+                done();
+            });
+        });
     });
 
     describe('changeBlockFormatTo', function() {
@@ -304,6 +344,26 @@ describe('WysiwygEditor', function() {
                 wwe.changeBlockFormatTo('P');
 
                 expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
+                done();
+            });
+        });
+
+        it('remove unused inputbox when change from task to another', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+
+                wwe.changeBlockFormatTo('H1');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<h1>test</h1>');
                 done();
             });
         });

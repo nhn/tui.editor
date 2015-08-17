@@ -8,7 +8,8 @@
 var Squire = window.Squire,
     util = ne.util;
 
-var FIND_HEADING_RX = /h[\d]/i;
+var FIND_HEADING_RX = /h[\d]/i,
+    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
 
 /**
  * WysiwygEditor
@@ -147,7 +148,23 @@ WysiwygEditor.prototype._unwrapHeading = function() {
 };
 
 WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
+    if (!condition) {
+        condition = function(tagName) {
+            return FIND_BLOCK_TAGNAME_RX.test(tagName);
+        };
+    }
+
     this.changeBlockFormat(condition);
+    this._removeTaskInputInWrongPlace();
+};
+
+
+WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
+    this.get$Body().find('input:checkbox').each(function(index, node) {
+        if (node.parentNode.tagName !== 'LI') {
+            $(node).remove();
+        }
+    });
 };
 
 WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
@@ -204,14 +221,20 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
             current = current.parentNode;
         }
 
+        //if not source condition node not founded, we wrap current div node with node named targetTagName
+        if ((!newFrag || !srcCondition) && frag.childNodes[0].nodeType === Node.ELEMENT_NODE && frag.childNodes[0].tagName === 'DIV' && targetTagName) {
+            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
+        }
+
         return frag;
     });
 };
 
 WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
     this.changeBlockFormat(function(tagName) {
-        return /\b(H[\d]|LI|P|BLOCKQUOTE)\b/.test(tagName);
+        return FIND_BLOCK_TAGNAME_RX.test(tagName);
     }, targetTagName);
+    this._removeTaskInputInWrongPlace();
 };
 
 WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
