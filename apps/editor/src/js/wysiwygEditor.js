@@ -126,7 +126,12 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
+        } else if (this.getEditor().hasFormat('P')) {
+            setTimeout(function() {
+                self._splitPIfNeed();
+            }, 0);
         }
+
     //backspace
     } else if (event.which === 8) {
         range = this.getEditor().getSelection();
@@ -136,12 +141,27 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._removeTaskInputIfNeed();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
+
+            //todo for remove hr, not perfect
             } else if (range.startContainer.previousSibling &&
                        range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
                        range.startContainer.previousSibling.tagName === 'HR') {
                 $(range.startContainer.previousSibling).remove();
             }
         }
+    }
+};
+
+WysiwygEditor.prototype._splitPIfNeed = function() {
+    var range = this.getEditor().getSelection(),
+        prev = range.startContainer.previousSibling;
+
+    if (prev && prev.parentNode && prev.parentNode.tagName === 'P' &&
+        prev.nodeType === Node.ELEMENT_NODE &&
+        prev.tagName === 'DIV' &&
+        !prev.textContent) {
+        $(prev).remove();
+        this.unwrapBlockTag('P');
     }
 };
 
@@ -364,7 +384,20 @@ WysiwygEditor.prototype.setHeight = function(height) {
 
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
+    this._ensurePtagContentWrappedWithDiv();
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
+};
+
+//this because we need new line inside ptag
+//p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
+WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
+    var $body = this.get$Body();
+
+    $body.find('p').each(function(index, node) {
+        if ($(node).find('div').length <= 0) {
+            $(node).wrapInner('<div />');
+        }
+    });
 };
 
 WysiwygEditor.prototype.getValue = function() {
