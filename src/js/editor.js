@@ -12,7 +12,7 @@ var MarkdownEditor = require('./markdownEditor'),
     EventManager = require('./eventManager'),
     CommandManager = require('./commandManager'),
     extManager = require('./extManager'),
-    Converter = require('./converter');
+    Convertor = require('./convertor');
 
 //markdown commands
 var mdcBold = require('./markdownCommands/bold'),
@@ -78,13 +78,13 @@ function NeonEditor(options) {
     this._initEvent();
 
     this.commandManager = new CommandManager(this);
-    this.converter = new Converter();
+    this.convertor = new Convertor();
     this.layout = new Layout(options, this.eventManager);
     this.layout.init();
 
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
-    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.converter);
+    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
     this.wwEditor = new WysiwygEditor(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     if (this.options.hooks) {
@@ -128,13 +128,13 @@ NeonEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeMode.wysiwyg', function() {
         self.currentMode = 'wysiwyg';
         self.layout.switchToWYSIWYG();
-        self.wwEditor.setValue(self.converter.toHTML(self.mdEditor.getValue()));
+        self.wwEditor.setValue(self.convertor.toHTML(self.mdEditor.getValue()));
     });
 
     this.eventManager.listen('changeMode.markdown', function() {
         self.currentMode = 'markdown';
         self.layout.switchToMarkdown();
-        self.mdEditor.setValue(self.converter.toMarkdown(self.wwEditor.getValue()));
+        self.mdEditor.setValue(self.convertor.toMarkdown(self.wwEditor.getValue()));
     });
 };
 
@@ -193,7 +193,7 @@ NeonEditor.prototype.setValue = function(markdown) {
     if (this.isMarkdownMode()) {
         this.mdEditor.setValue(markdown);
     } else {
-        this.wwEditor.setValue(this.converter.toHTML(markdown));
+        this.wwEditor.setValue(this.convertor.toHTML(markdown));
     }
 };
 
@@ -203,7 +203,7 @@ NeonEditor.prototype.getValue = function() {
     if (this.isMarkdownMode()) {
         markdown = this.mdEditor.getValue();
     } else {
-        markdown = this.converter.toMarkdown(this.wwEditor.getValue());
+        markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
     }
 
     return markdown;
