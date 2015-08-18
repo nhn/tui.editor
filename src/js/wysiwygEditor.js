@@ -108,6 +108,7 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
         this.saveSelection(selection);
 
         $li.find('input:checkbox').remove();
+        $li.removeClass('task-list-item');
 
         this.restoreSavedSelection();
     }
@@ -121,41 +122,143 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
     });
 };
 
+WysiwygEditor.prototype._isTaskList = function() {
+    return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
+};
+
+
+var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+
+function isContainer(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && !isBlock(node);
+}
+
+function isInline(node) {
+    return inlineNodeNames.test(node.nodeName);
+}
+function isBlock(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && every(node.childNodes, isInline);
+}
+function every(nodeList, fn) {
+    var l = nodeList.length;
+
+    while (l-=1) {
+        if (!fn(nodeList[l])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function replaceWith(node, node2) {
+    var parent = node.parentNode;
+    if (parent) {
+        parent.replaceChild(node2, node);
+    }
+}
+
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
         range, doc, sq;
 
     //enter
     if (event.which === 13) {
-        if (this.getEditor().hasFormat('li')) {
+        if (this._isTaskList()) {
             this._removeTaskInputIfNeed();
+
+            setTimeout(function() {
+                if (self._isTaskList()) {
+                    self.eventManager.emit('command', 'Task');
+                }
+            }, 0);
         } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
             //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
         } else if (this.getEditor().hasFormat('P')) {
+            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
             setTimeout(function() {
                 self._splitPIfNeed();
             }, 0);
         }
-
     //backspace
     } else if (event.which === 8) {
         range = this.getEditor().getSelection();
 
         if (range.collapsed) {
-            if (this.getEditor().hasFormat('li')) {
+            if (this._isTaskList()) {
                 this._removeTaskInputIfNeed();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
 
-            //todo for remove hr, not perfect
+            //todo for remove hr, not perfect fix need
             } else if (range.startContainer.previousSibling &&
                        range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
                        range.startContainer.previousSibling.tagName === 'HR') {
                 $(range.startContainer.previousSibling).remove();
             }
+        }
+    } else if (event.which === 9) {
+        if (this._isTaskList()) {
+            event.preventDefault();
+            this._taskTabHandler();
+        }
+    }
+};
+
+var increaseTaskLevel = function(frag) {
+    var items = frag.querySelectorAll('LI'),
+        i, l, item,
+        type, newParent,
+        listItemAttrs = {class: 'task-list-item'},
+        listAttrs;
+
+    for (i = 0, l = items.length; i < l; i += 1) {
+        item = items[i];
+        if (!isContainer(item.firstChild)) {
+            // type => 'UL' or 'OL'
+            type = item.parentNode.nodeName;
+            newParent = item.previousSibling;
+            if (!newParent || !(newParent = newParent.lastChild) ||
+                newParent.nodeName !== type) {
+                replaceWith(
+                    item,
+                    this.createElement('LI', listItemAttrs, [
+                        newParent = this.createElement(type)
+                    ])
+                );
+            }
+            newParent.appendChild(item);
+        }
+    }
+    return frag;
+};
+
+WysiwygEditor.prototype._taskTabHandler = function() {
+    var parent, node, range;
+
+    range = this.getEditor().getSelection();
+    node = range.startContainer;
+
+    if (range.collapsed && range.startContainer.textContent.replace(/\u200B/g, '') === '') {
+        while (parent = node.parentNode) {
+            // If we find a UL or OL (so are in a list, node must be an LI)
+            if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+                // AND the LI is not the first in the list
+                if (node.previousSibling) {
+                    // Then increase the list level
+                    this.getEditor().modifyBlocks(increaseTaskLevel);
+                }
+
+                break;
+            }
+            node = parent;
         }
     }
 };
@@ -216,7 +319,6 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
                     util.forEachArray(util.toArray(current.childNodes), function(node) {
                         nextBlock.appendChild(node);
                     });
-
 
                     //remove unneccesary br
                     if ($(nextBlock).find('br').length > 1  &&
@@ -569,4 +671,3 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
 }
 
 module.exports = WysiwygEditor;
-
