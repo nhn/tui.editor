@@ -80,6 +80,15 @@ PopupAddImage.prototype._bindContentEvent = function() {
     this.on('hidden', function() {
         self.resetInputs();
     });
+
+    this.tab.on('itemClick', function() {
+        self.resetInputs();
+    });
+
+    this.on('change .imageFileInput', function() {
+        var filename = self.$el.find('.imageFileInput').val().split('\\').pop();
+        self.$el.find('.altTextInput').val(filename);
+    });
 };
 
 PopupAddImage.prototype._linkWithEventManager = function() {
@@ -134,11 +143,13 @@ PopupAddImage.prototype._renderContent = function() {
 
     LayerPopup.prototype._renderContent.call(this);
 
-    this.$body.find('.tabSection').append(new Tab({
+    this.tab = new Tab({
         initName: 'File',
         items: ['File', 'URL'],
         sections: [$popup.find('.fileType'), $popup.find('.urlType')]
-    }).$el);
+    });
+
+    this.$body.find('.tabSection').append(this.tab.$el);
 };
 
 PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {

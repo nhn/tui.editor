@@ -1,9 +1,9 @@
+'use strict';
+
 var PopupAddImage = require('../src/js/popupAddImage'),
     EventManager = require('../src/js/eventManager');
 
 describe('PopupAddImage', function() {
-    'use strict';
-
     var popup,
         em;
 
@@ -100,14 +100,23 @@ describe('PopupAddImage', function() {
 
             expect($('.imageUrlInput').val()).toEqual(value.imageUrl);
             expect($('.altTextInput').val()).toEqual(value.altText);
-
         });
 
-        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
+        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 리셋된다', function() {
             $('.imageUrlInput').val('imageUrlText');
             $('.altTextInput').val('altText');
 
             popup.hide();
+
+            expect($('.imageUrlInput').val()).toEqual('');
+            expect($('.altTextInput').val()).toEqual('');
+        });
+
+        it('when tab has changed then reset inputs', function() {
+            $('.imageUrlInput').val('imageUrlText');
+            $('.altTextInput').val('altText');
+
+            popup.$el.find('.tab button').eq(1).trigger('click');
 
             expect($('.imageUrlInput').val()).toEqual('');
             expect($('.altTextInput').val()).toEqual('');
