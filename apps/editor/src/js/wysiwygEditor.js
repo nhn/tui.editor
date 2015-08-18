@@ -113,6 +113,14 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
     }
 };
 
+WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
+    this.get$Body().find('input:checkbox').each(function(index, node) {
+        if ($(node).parents('li').length === 0) {
+            $(node).remove();
+        }
+    });
+};
+
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
         range, doc, sq;
@@ -180,15 +188,6 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
     this.changeBlockFormat(condition);
     this._removeTaskInputInWrongPlace();
-};
-
-
-WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
-    this.get$Body().find('input:checkbox').each(function(index, node) {
-        if (node.parentNode.tagName !== 'LI') {
-            $(node).remove();
-        }
-    });
 };
 
 WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
