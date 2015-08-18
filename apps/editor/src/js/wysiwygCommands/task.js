@@ -34,8 +34,6 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         $li = $selected.closest('li');
 
         if ($li.find('input').length === 0) {
-            selection = sq.getSelection().cloneRange();
-
             wwe.saveSelection(selection);
 
             selection.setStart(selection.startContainer, 0);
@@ -45,6 +43,8 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
             sq.insertElement(sq.createElement('INPUT', {
                 type: 'checkbox'
             }));
+
+            $li.addClass('task-list-item');
 
             wwe.restoreSavedSelection();
         }
