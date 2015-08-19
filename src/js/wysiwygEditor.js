@@ -11,6 +11,8 @@ var Squire = window.Squire,
 var FIND_HEADING_RX = /h[\d]/i,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
 
+var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -103,12 +105,13 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 
     if ($li.length
         && $li.find('input').length
-        && ($li.text() === '' || (selection.startOffset === 0 && selection.startContainer.previousSibling.tagName === 'INPUT'))
+        && ($li.text().replace(/[\u200B\s]/g, '') === '')
     ) {
         this.saveSelection(selection);
 
         $li.find('input:checkbox').remove();
         $li.removeClass('task-list-item');
+        $li.text('');
 
         this.restoreSavedSelection();
     }
@@ -125,9 +128,6 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
 WysiwygEditor.prototype._isTaskList = function() {
     return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
 };
-
-
-var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
 
 function isContainer(node) {
     var type = node.nodeType;
@@ -216,7 +216,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     }
 };
 
-var increaseTaskLevel = function(frag) {
+function increaseTaskLevel(frag) {
     var items = frag.querySelectorAll('LI'),
         i, l, item,
         type, newParent,
@@ -252,7 +252,7 @@ WysiwygEditor.prototype._taskTabHandler = function() {
     range = this.getEditor().getSelection();
     node = range.startContainer;
 
-    if (range.collapsed && range.startContainer.textContent.replace(/\u200B/g, '') === '') {
+    if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
         while (parent = node.parentNode) {
             // If we find a UL or OL (so are in a list, node must be an LI)
             if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {

@@ -34,15 +34,19 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         $li = $selected.closest('li');
 
         if ($li.find('input').length === 0) {
+            //todo modifyBlock로 커버가능할듯
             wwe.saveSelection(selection);
 
             selection.setStart(selection.startContainer, 0);
             selection.collapse(true);
-            sq.setSelection(selection);
 
             sq.insertElement(sq.createElement('INPUT', {
                 type: 'checkbox'
-            }));
+            }), selection);
+
+            selection.setStart(selection.startContainer, 1);
+
+            sq.insertElement(sq.getDocument().createTextNode(' \u200B'), selection);
 
             $li.addClass('task-list-item');
 
