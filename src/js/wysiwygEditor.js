@@ -138,18 +138,22 @@ function isContainer(node) {
 function isInline(node) {
     return inlineNodeNames.test(node.nodeName);
 }
+
 function isBlock(node) {
     var type = node.nodeType;
     return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
         !isInline(node) && every(node.childNodes, isInline);
 }
-function every(nodeList, fn) {
-    var l = nodeList.length;
 
-    while (l-=1) {
+function every(nodeList, fn) {
+    var l = nodeList.length - 1;
+
+    while (l >= 0) {
         if (!fn(nodeList[l])) {
             return false;
         }
+
+        l -= 1;
     }
 
     return true;
@@ -225,6 +229,7 @@ var increaseTaskLevel = function(frag) {
             // type => 'UL' or 'OL'
             type = item.parentNode.nodeName;
             newParent = item.previousSibling;
+
             if (!newParent || !(newParent = newParent.lastChild) ||
                 newParent.nodeName !== type) {
                 replaceWith(
@@ -237,6 +242,7 @@ var increaseTaskLevel = function(frag) {
             newParent.appendChild(item);
         }
     }
+
     return frag;
 };
 
