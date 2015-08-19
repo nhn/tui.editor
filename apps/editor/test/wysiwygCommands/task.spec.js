@@ -27,7 +27,7 @@ describe('Task', function() {
     it('add Task', function() {
         Task.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"></div></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"> </div></li></ul><div></div>');
     });
 
     it('if already in empty task, dont make task', function() {
