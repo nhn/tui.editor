@@ -43,6 +43,7 @@ WysiwygEditor.prototype.init = function(height, callback) {
         }
 
         self._initStyleSheet(doc);
+        self._initEditorContainerStyles(doc);
 
         self.editor = new Squire(doc, {
             blockTag: 'DIV'
@@ -352,7 +353,7 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
             current = current.parentNode;
         }
 
-        //if not source condition node not founded, we wrap current div node with node named targetTagName
+        //if source condition node is not founded, we wrap current div node with node named targetTagName
         if ((!newFrag || !srcCondition) && frag.childNodes[0].nodeType === Node.ELEMENT_NODE && frag.childNodes[0].tagName === 'DIV' && targetTagName) {
             frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
         }
@@ -398,13 +399,19 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
 
         doc.querySelector('head').appendChild(styleLink);
     });
+};
+
+WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
+    var bodyStyle, body;
 
     doc.querySelector('html').style.height = '100%';
     body = doc.querySelector('body');
-    body.style.height = '100%';
     body.className = 'neonEditor-content';
-};
 
+    bodyStyle = body.style;
+    bodyStyle.height = '100%';
+    bodyStyle.padding = '0 5px';
+};
 
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
@@ -649,7 +656,7 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) 
 
     this.editor.setSelection(selection);
 
-    pos.top -= $(this.editor.getDocument().body).scrollTop();
+    pos.top -= this.get$Body().scrollTop();
 
     return pos;
 };
