@@ -144,9 +144,9 @@
     margin-top: 0;
 }
 
-.neonEditor-content .task-list li,
 .neonEditor-content li.task-list-item {
     list-style-type: none;
+    padding-left: -30px;
 }
 
 
