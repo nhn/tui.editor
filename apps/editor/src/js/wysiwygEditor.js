@@ -524,7 +524,8 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
 };
 
 WysiwygEditor.prototype.get$Body = function() {
-    return $(this.getEditor().getDocument().body);
+    this.$body = this.$body || $(this.getEditor().getDocument().body);
+    return this.$body;
 };
 
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
