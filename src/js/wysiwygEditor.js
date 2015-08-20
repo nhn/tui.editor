@@ -81,92 +81,6 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
     }
 };
 
-WysiwygEditor.prototype.saveSelection = function(selection) {
-    var sq = this.getEditor();
-
-    if (!selection) {
-        selection = sq.getSelection().cloneRange();
-    }
-
-    this.getEditor()._saveRangeToBookmark(selection);
-};
-
-WysiwygEditor.prototype.restoreSavedSelection = function() {
-    var sq = this.getEditor();
-
-    sq.setSelection(sq._getRangeAndRemoveBookmark());
-};
-
-WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
-    var selection, $selected, $li;
-
-    selection = this.getEditor().getSelection().cloneRange();
-    $selected = $(selection.startContainer);
-    $li = $selected.closest('li');
-
-    if ($li.length
-        && $li.find('input').length
-        && ($li.text().replace(/[\u200B\s]/g, '') === '')
-    ) {
-        this.saveSelection(selection);
-
-        $li.find('input:checkbox').remove();
-        $li.removeClass('task-list-item');
-        $li.text('');
-
-        this.restoreSavedSelection();
-    }
-};
-
-WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
-    this.get$Body().find('input:checkbox').each(function(index, node) {
-        if ($(node).parents('li').length === 0) {
-            $(node).remove();
-        }
-    });
-};
-
-WysiwygEditor.prototype._isTaskList = function() {
-    return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
-};
-
-function isContainer(node) {
-    var type = node.nodeType;
-    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-        !isInline(node) && !isBlock(node);
-}
-
-function isInline(node) {
-    return inlineNodeNames.test(node.nodeName);
-}
-
-function isBlock(node) {
-    var type = node.nodeType;
-    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-        !isInline(node) && every(node.childNodes, isInline);
-}
-
-function every(nodeList, fn) {
-    var l = nodeList.length - 1;
-
-    while (l >= 0) {
-        if (!fn(nodeList[l])) {
-            return false;
-        }
-
-        l -= 1;
-    }
-
-    return true;
-}
-
-function replaceWith(node, node2) {
-    var parent = node.parentNode;
-    if (parent) {
-        parent.replaceChild(node2, node);
-    }
-}
-
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
         range, doc, sq;
@@ -217,88 +131,22 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     }
 };
 
-function increaseTaskLevel(frag) {
-    var items = frag.querySelectorAll('LI'),
-        i, l, item,
-        type, newParent,
-        listItemAttrs = {class: 'task-list-item'},
-        listAttrs;
+WysiwygEditor.prototype.saveSelection = function(selection) {
+    var sq = this.getEditor();
 
-    for (i = 0, l = items.length; i < l; i += 1) {
-        item = items[i];
-        if (!isContainer(item.firstChild)) {
-            // type => 'UL' or 'OL'
-            type = item.parentNode.nodeName;
-            newParent = item.previousSibling;
-
-            if (!newParent || !(newParent = newParent.lastChild) ||
-                newParent.nodeName !== type) {
-                replaceWith(
-                    item,
-                    this.createElement('LI', listItemAttrs, [
-                        newParent = this.createElement(type)
-                    ])
-                );
-            }
-            newParent.appendChild(item);
-        }
+    if (!selection) {
+        selection = sq.getSelection().cloneRange();
     }
 
-    return frag;
+    this.getEditor()._saveRangeToBookmark(selection);
 };
 
-WysiwygEditor.prototype._taskTabHandler = function() {
-    var parent, node, range;
+WysiwygEditor.prototype.restoreSavedSelection = function() {
+    var sq = this.getEditor();
 
-    range = this.getEditor().getSelection();
-    node = range.startContainer;
-
-    if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
-        while (parent = node.parentNode) {
-            // If we find a UL or OL (so are in a list, node must be an LI)
-            if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
-                // AND the LI is not the first in the list
-                if (node.previousSibling) {
-                    // Then increase the list level
-                    this.getEditor().modifyBlocks(increaseTaskLevel);
-                }
-
-                break;
-            }
-            node = parent;
-        }
-    }
+    sq.setSelection(sq._getRangeAndRemoveBookmark());
 };
 
-WysiwygEditor.prototype._splitPIfNeed = function() {
-    var range = this.getEditor().getSelection(),
-        prev = range.startContainer.previousSibling;
-
-    if (prev && prev.parentNode && prev.parentNode.tagName === 'P' &&
-        prev.nodeType === Node.ELEMENT_NODE &&
-        prev.tagName === 'DIV' &&
-        !prev.textContent) {
-        $(prev).remove();
-        this.unwrapBlockTag('P');
-    }
-};
-
-WysiwygEditor.prototype._unwrapHeading = function() {
-    this.unwrapBlockTag(function(node) {
-        return FIND_HEADING_RX.test(node);
-    });
-};
-
-WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
-    if (!condition) {
-        condition = function(tagName) {
-            return FIND_BLOCK_TAGNAME_RX.test(tagName);
-        };
-    }
-
-    this.changeBlockFormat(condition);
-    this._removeTaskInputInWrongPlace();
-};
 
 WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
     var self = this;
@@ -682,5 +530,158 @@ WysiwygEditor.prototype.get$Body = function() {
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 }
+
+WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
+    var selection, $selected, $li;
+
+    selection = this.getEditor().getSelection().cloneRange();
+    $selected = $(selection.startContainer);
+    $li = $selected.closest('li');
+
+    if ($li.length
+        && $li.find('input').length
+        && ($li.text().replace(/[\u200B\s]/g, '') === '')
+    ) {
+        this.saveSelection(selection);
+
+        $li.find('input:checkbox').remove();
+        $li.removeClass('task-list-item');
+        $li.text('');
+
+        this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
+    this.get$Body().find('input:checkbox').each(function(index, node) {
+        if ($(node).parents('li').length === 0) {
+            $(node).remove();
+        }
+    });
+};
+
+WysiwygEditor.prototype._isTaskList = function() {
+    return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
+};
+
+function isContainer(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && !isBlock(node);
+}
+
+function isInline(node) {
+    return inlineNodeNames.test(node.nodeName);
+}
+
+function isBlock(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && every(node.childNodes, isInline);
+}
+
+function every(nodeList, fn) {
+    var l = nodeList.length - 1;
+
+    while (l >= 0) {
+        if (!fn(nodeList[l])) {
+            return false;
+        }
+
+        l -= 1;
+    }
+
+    return true;
+}
+
+function replaceWith(node, node2) {
+    var parent = node.parentNode;
+    if (parent) {
+        parent.replaceChild(node2, node);
+    }
+}
+
+function increaseTaskLevel(frag) {
+    var items = frag.querySelectorAll('LI'),
+        i, l, item,
+        type, newParent,
+        listItemAttrs = {class: 'task-list-item'},
+        listAttrs;
+
+    for (i = 0, l = items.length; i < l; i += 1) {
+        item = items[i];
+        if (!isContainer(item.firstChild)) {
+            // type => 'UL' or 'OL'
+            type = item.parentNode.nodeName;
+            newParent = item.previousSibling;
+
+            if (!newParent || !(newParent = newParent.lastChild) ||
+                newParent.nodeName !== type) {
+                replaceWith(
+                    item,
+                    this.createElement('LI', listItemAttrs, [
+                        newParent = this.createElement(type)
+                    ])
+                );
+            }
+            newParent.appendChild(item);
+        }
+    }
+
+    return frag;
+};
+
+WysiwygEditor.prototype._taskTabHandler = function() {
+    var parent, node, range;
+
+    range = this.getEditor().getSelection();
+    node = range.startContainer;
+
+    if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
+        while (parent = node.parentNode) {
+            // If we find a UL or OL (so are in a list, node must be an LI)
+            if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+                // AND the LI is not the first in the list
+                if (node.previousSibling) {
+                    // Then increase the list level
+                    this.getEditor().modifyBlocks(increaseTaskLevel);
+                }
+
+                break;
+            }
+            node = parent;
+        }
+    }
+};
+
+WysiwygEditor.prototype._splitPIfNeed = function() {
+    var range = this.getEditor().getSelection(),
+        prev = range.startContainer.previousSibling;
+
+    if (prev && prev.parentNode && prev.parentNode.tagName === 'P' &&
+        prev.nodeType === Node.ELEMENT_NODE &&
+        prev.tagName === 'DIV' &&
+        !prev.textContent) {
+        $(prev).remove();
+        this.unwrapBlockTag('P');
+    }
+};
+
+WysiwygEditor.prototype._unwrapHeading = function() {
+    this.unwrapBlockTag(function(node) {
+        return FIND_HEADING_RX.test(node);
+    });
+};
+
+WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
+    if (!condition) {
+        condition = function(tagName) {
+            return FIND_BLOCK_TAGNAME_RX.test(tagName);
+        };
+    }
+
+    this.changeBlockFormat(condition);
+    this._removeTaskInputInWrongPlace();
+};
 
 module.exports = WysiwygEditor;
