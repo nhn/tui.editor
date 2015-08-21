@@ -347,18 +347,41 @@ WysiwygEditor.prototype.setHeight = function(height) {
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
     this._ensurePtagContentWrappedWithDiv();
+    this._ensureSpaceNextToTaskInput();
+    this._removeTaskListClass();
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
 
 //this because we need new line inside ptag
 //p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
 WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
-    var $body = this.get$Body();
-
-    $body.find('p').each(function(index, node) {
+    this.get$Body().find('p').each(function(index, node) {
         if ($(node).find('div').length <= 0) {
             $(node).wrapInner('<div />');
         }
+    });
+};
+
+WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
+    var findTextNodeFilter, firstTextNode;
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    this.get$Body().find('.task-list-item').each(function(i, node) {
+        firstTextNode = $(node).contents().filter(findTextNodeFilter)[0];
+
+        if (!(/^\s\u200B/g.test(firstTextNode.nodeValue))) {
+            firstTextNode.nodeValue = ' \u200B' + firstTextNode.nodeValue;
+        }
+    });
+};
+
+WysiwygEditor.prototype._removeTaskListClass = function() {
+    //because task-list class is block merge normal list and task list
+    this.get$Body().find('.task-list').each(function(index, node) {
+        $(node).removeClass('task-list');
     });
 };
 
