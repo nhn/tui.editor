@@ -144,6 +144,13 @@
     margin-top: 0;
 }
 
+.neonEditor-content li.task-list-item {
+    list-style-type: none;
+}
+
+.neonEditor-content .task-list-item input {
+    margin-left: -1.5em;
+}
 
 .neonEditor-content ul :last-child,
 .neonEditor-content ol :last-child {
