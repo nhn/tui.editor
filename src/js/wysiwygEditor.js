@@ -541,7 +541,7 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 
     if ($li.length
         && $li.find('input').length
-        && ($li.text().replace(/[\u200B\s]/g, '') === '')
+        && ($li.text().replace(/\s\u200B/g, '') === '')
     ) {
         this.saveSelection(selection);
 
@@ -554,11 +554,26 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 };
 
 WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
+    var isNotInsideTask, parent,
+        self = this;
+
     this.get$Body().find('input:checkbox').each(function(index, node) {
-        if ($(node).parents('li').length === 0) {
+        isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
+
+        if (isNotInsideTask) {
+            parent = $(node).parent();
             $(node).remove();
+            self.replaceContentText(parent, /\s\u200B/g, '');
         }
     });
+};
+
+WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
+    var before;
+
+    this._addCheckedAttrToCheckedInput();
+    before = $(container).html()
+    $(container).html(before.replace(from, to));
 };
 
 WysiwygEditor.prototype._isTaskList = function() {
