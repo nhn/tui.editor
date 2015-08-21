@@ -396,6 +396,24 @@ describe('WysiwygEditor', function() {
         });
     });
 
+    describe('replace node\'s content text', function() {
+        it('replace text without affect tags', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(300, function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
+
+                wwe.replaceContentText(wwe.getEditor().getDocument().body, 'list1', 'list2');
+
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
+                done();
+            });
+        });
+    });
+
     describe('editing functions', function() {
         var wwe;
 
