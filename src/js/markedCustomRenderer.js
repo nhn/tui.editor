@@ -14,17 +14,6 @@ var markedCustomRenderer = new window.marked.Renderer();
 
 var regexTaskList = /^((?:<p>|))\[(?:x| )\] /;
 
-markedCustomRenderer.list = function(body, ordered) {
-    var className = '',
-    type = ordered ? 'ol' : 'ul';
-
-    if (body.indexOf('<li class="task-list-item">') > -1) {
-        className = ' class="task-list"';
-    }
-
-    return '<' + type + className + '>\n' + body + '</' + type + '>\n';
-};
-
 markedCustomRenderer.listitem = function(text) {
     var cap,
     checked,
