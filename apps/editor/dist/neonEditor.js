@@ -5319,7 +5319,7 @@ WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     this.get$Body().find('.task-list-item').each(function(i, node) {
         firstTextNode = $(node).contents().filter(findTextNodeFilter)[0];
 
-        if (!(/^\s\u200B/g.test(firstTextNode.nodeValue))) {
+        if (firstTextNode && !(/^\s\u200B/g.test(firstTextNode.nodeValue))) {
             firstTextNode.nodeValue = ' \u200B' + firstTextNode.nodeValue;
         }
     });
