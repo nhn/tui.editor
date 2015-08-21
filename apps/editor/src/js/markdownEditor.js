@@ -37,7 +37,10 @@ MarkdownEditor.prototype.init = function(initialValue) {
         mode: 'gfm',
         theme: 'default',
         dragDrop: false,
-        extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'}
+        extraKeys: {
+            'Enter': 'newlineAndIndentContinueMarkdownList',
+            'Tab': 'subListIndentTab'
+        }
     });
 
     this._initEvent();
