@@ -86,13 +86,28 @@ Layout.prototype._initModeSwitch = function() {
 };
 
 Layout.prototype.switchToWYSIWYG = function() {
-    this.$containerEl.find('.mdContainer').css('display', 'none');
-    this.$containerEl.find('.wysiwygContainer').css('display', 'block');
+    this.$containerEl.find('.mdContainer').css({
+        position: 'absolute',
+        visibility: 'hidden'
+    });
+    this.$containerEl.find('.wysiwygContainer').css({
+        position: 'inherit',
+        visibility: 'visible'
+    });
 };
 
 Layout.prototype.switchToMarkdown = function() {
-    this.$containerEl.find('.mdContainer').css('display', 'block');
-    this.$containerEl.find('.wysiwygContainer').css('display', 'none');
+    this.$containerEl.find('.mdContainer').css({
+        position: 'inherit',
+        visibility: 'visible'
+    });
+
+    //we cant use display none for ifram because firefox have issue about it
+    this.$containerEl.find('.wysiwygContainer').css({
+        position: 'absolute',
+        visibility: 'hidden'
+    });
+
     this.markdownTab.activate('Editor');
 };
 
