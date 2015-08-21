@@ -144,6 +144,16 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('div').length).toEqual(1);
             expect(wwe.get$Body().find('div')[0].textContent).toEqual('text1');
         });
+
+        it('put space and ZWS into input tag next', function() {
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
+            expect(wwe.get$Body().find('li')[0].textContent).toEqual(' \u200BTASK');
+        });
+
+        it('remove task-list class of element, it may block merge normal list and task list', function() {
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
+            expect(wwe.get$Body().find('ul').eq(0).hasClass('task-list')).toEqual(false);
+        });
     });
 
     it('get current wysiwyg iframe body that wrapped jquery', function(done) {
