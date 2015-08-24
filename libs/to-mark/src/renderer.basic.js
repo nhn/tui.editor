@@ -85,19 +85,7 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-/*
-    'DIV': function(node, subContent) {
-        var res = '';
 
-        //convert multiple brs to one br
-        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
-
-        if (!this.isEmptyText(subContent)) {
-            res = subContent + '\n';
-        }
-
-        return res;
-    },*/
     //Paragraphs
     'P': function(node, subContent) {
         var res = '';
