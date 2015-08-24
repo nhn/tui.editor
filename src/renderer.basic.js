@@ -73,7 +73,7 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-    'BR': function() {
+    'BR': function(node) {
         return '  \n';
     },
     'CODE': function(node, subContent) {
@@ -85,7 +85,19 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
+/*
+    'DIV': function(node, subContent) {
+        var res = '';
 
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
+
+        if (!this.isEmptyText(subContent)) {
+            res = subContent + '\n';
+        }
+
+        return res;
+    },*/
     //Paragraphs
     'P': function(node, subContent) {
         var res = '';
@@ -94,7 +106,7 @@ var basicRenderer = Renderer.factory({
         subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
         if (!this.isEmptyText(subContent)) {
-            res = '\n' + subContent + '\n\n';
+            res = '\n\n' + subContent + '\n\n';
         }
 
         return res;
@@ -151,6 +163,9 @@ var basicRenderer = Renderer.factory({
     'UL LI': function(node, subContent) {
         var res = '';
 
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
+
         res += '* ' + subContent + '\n';
 
         return res;
@@ -166,6 +181,9 @@ var basicRenderer = Renderer.factory({
                 liCounter += 1;
             }
         }
+
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
         res += liCounter + '. ' + subContent + '\n';
 

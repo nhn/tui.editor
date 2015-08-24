@@ -168,6 +168,11 @@ describe('basicRenderer', function() {
         it('return end of li from nest list', function() {
             expect(getMarkdownText('<li><ul></ul></li>', '* text  \n\n* text', 2)).toEqual('\n    * text\n    * text');
         });
+
+        it('convert multiple brs to one br', function() {
+            expect(getMarkdownText('<ul><li></li></ul>', 'abdef  \n  \n  \nghi', 2)).toEqual('* abdef  \nghi\n');
+            expect(getMarkdownText('<ol><li></li></ol>', 'abdef  \n  \n  \nghi', 2)).toEqual('1. abdef  \nghi\n');
+        });
     });
 
     describe('HR', function() {
@@ -207,7 +212,7 @@ describe('basicRenderer', function() {
 
     describe('P', function() {
         it('wrap newlines', function() {
-            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\nparagraph\n\n');
+            expect(getMarkdownText('<p></p>', 'paragraph')).toEqual('\n\nparagraph\n\n');
         });
 
         it('empty p returns empty string', function() {
@@ -215,7 +220,7 @@ describe('basicRenderer', function() {
         });
 
         it('convert multiple brs to one br', function() {
-            expect(getMarkdownText('<p></p>', 'a  \n  \n  \nb')).toEqual('\na  \nb\n\n');
+            expect(getMarkdownText('<p></p>', 'a  \n  \n  \nb')).toEqual('\n\na  \nb\n\n');
         });
 
         it('add empty line in li', function() {
