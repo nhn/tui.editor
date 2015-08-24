@@ -125,7 +125,7 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
         return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
@@ -133,15 +133,16 @@ var basicRenderer = Renderer.factory({
 
     //List
     'UL, OL': function(node, subContent) {
-        return '\n' + subContent + '\n';
+        return '\n\n' + subContent + '\n\n';
     },
     'LI OL, LI UL': function(node, subContent) {
         var res, processedSubContent;
 
-        //because parent LI converter add \n too
-        processedSubContent = subContent.replace(FIND_LAST_RETURN_RX, '');
-        //and br remove end of li
-        processedSubContent = processedSubContent.replace(FIND_BR_AND_RETURN_RX, '\n');
+        //remove last br of li
+        processedSubContent = subContent.replace(FIND_BR_AND_RETURN_RX, '\n');
+
+        //parent LI converter add \n too, so we remove last return
+        processedSubContent = processedSubContent.replace(FIND_LAST_RETURN_RX, '');
 
         res = processedSubContent.replace(START_OF_LINES_RX, '    ');
 
@@ -173,7 +174,7 @@ var basicRenderer = Renderer.factory({
 
     //HR
     'HR': function() {
-        return '\n- - -\n\n';
+        return '\n\n- - -\n\n';
     },
 
     //Blockquote
@@ -183,7 +184,7 @@ var basicRenderer = Renderer.factory({
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     },
 
     //Code Block
@@ -193,7 +194,7 @@ var basicRenderer = Renderer.factory({
         lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
         res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     }
 });
 
