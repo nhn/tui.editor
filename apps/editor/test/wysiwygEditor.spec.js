@@ -110,15 +110,15 @@ describe('WysiwygEditor', function() {
         });
 
         it('remove all unnecessary brs', function() {
-            var html = '<p>1</p><p>2</p>';
+            var html = '<h1>1</h1><h1>2</h1>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual('<p>1<br /></p><p>2<br /></p>');
+            expect(wwe.getValue()).toEqual('<h1>1</h1><h1>2</h1>');
         });
 
         it('dont remove necessary brs', function() {
-            var html = '<p>1</p><div><br></div><p>2</p>';
+            var html = '<h1>1</h1><div><br></div><h1>2</h1>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual('<p>1<br /></p><br /><p>2<br /></p>');
+            expect(wwe.getValue()).toEqual('<h1>1</h1><br /><h1>2</h1>');
         });
 
         it('remove contentEditable block tag(div)', function() {
@@ -194,27 +194,6 @@ describe('WysiwygEditor', function() {
             wwe._removeTaskInputIfNeed();
 
             expect(wwe.getValue()).toBe('<ul><li></li></ul>');
-            done();
-        });
-    });
-
-    it('split p tag when return in blank line', function(done) {
-        var wwe;
-
-        wwe = new WysiwygEditor($container, null, em);
-        wwe.init(300, function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<p>text1<br>text2</p>');
-            wwe.get$Body().find('p').append($('<div><br></div'));
-            wwe.get$Body().find('p').append($('<div><br></div'));
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[3].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-            wwe._splitPIfNeed();
-
-            expect(wwe.getValue()).toBe('<p>text1<br />text2<br /></p><br />');
             done();
         });
     });

@@ -80,16 +80,6 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
             }
         });
     }
-/*
-    this.getEditor().addEventListener('input', function() {
-        var pathArray = self.getEditor().getPath().split('>');
-        var range = self.getEditor().getSelection(),
-            current = range.startContainer;
-
-        if (pathArray.length === 3 && pathArray[2] === 'DIV' && range.startContainer.textContent) {
-            self.changeBlockFormat(null, 'P');
-        }
-    );*/
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
@@ -110,11 +100,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
             setTimeout(function() {
                 self._unwrapHeading();
-            }, 0);
-        } else if (this.getEditor().hasFormat('P')) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-            setTimeout(function() {
-                self._splitPIfNeed();
             }, 0);
         }
     //backspace
@@ -372,12 +357,16 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
 
-//this because we need new line inside ptag
+//this because we need new line inside ptag, and additional empty line added
 //p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
 WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
     this.get$Body().find('p').each(function(index, node) {
         if ($(node).find('div').length <= 0) {
             $(node).wrapInner('<div />');
+        }
+
+        if ($(node).next().is('p')) {
+            $(node).append('<div><br></div>');
         }
     });
 };
