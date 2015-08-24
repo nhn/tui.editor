@@ -194,6 +194,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<blockquote></blockquote>', '\nimblock1\nimblock2\n')).toEqual('\n\n> imblock1\n> imblock2\n\n');
         });
 
+        it('convert multiple brs to one br', function() {
+            expect(getMarkdownText('<blockquote></blockquote>', '\nimblock1  \n  \n  \nimblock2\n')).toEqual('\n\n> imblock1\n> imblock2\n\n');
+        });
+
         it('add multiline content with some space to blockqutoe', function() {
             expect(getMarkdownText('<blockquote></blockquote>', 'imblock1\n  imblock2\n')).toEqual('\n\n> imblock1\n>   imblock2\n\n');
         });
