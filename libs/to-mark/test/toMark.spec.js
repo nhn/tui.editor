@@ -46,19 +46,23 @@ describe('toMark', function() {
 
     describe('finalize markdown text', function() {
         it('process br', function() {
-            expect(toMark('<p>text<br /></p><p>text</p>', {gfm: false})).toEqual('text\n\ntext');
-            expect(toMark('<p>text<br />text<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
-            expect(toMark('<p>text<br />text  &nbsp;<br /></p><p>text</p>', {gfm: false})).toEqual('text  \ntext\n\ntext');
-            expect(toMark('<p>text<br /></p><br /><p>text</p>', {gfm: false})).toEqual('text\n\n  \ntext');
-            expect(toMark('<p>text<br /></p><br /><p>text</p>')).toEqual('text\n\n\ntext');
+            expect(toMark('<p>text1<br /></p><p>text</p>', {gfm: false})).toEqual('text1\n\ntext');
+            expect(toMark('<p>text2<br />text<br /></p><p>text</p>', {gfm: false})).toEqual('text2  \ntext\n\ntext');
+            expect(toMark('<p>text3<br />text  &nbsp;<br /></p><p>text</p>', {gfm: false})).toEqual('text3  \ntext\n\ntext');
+            //블럭태그와 블럭태그 사이는 최대 한칸
+            expect(toMark('<p>text4<br /></p><br /><p>text</p>', {gfm: false})).toEqual('text4\n\ntext');
+            //블럭태그와 블럭태그 사이는 최대 한칸
+            expect(toMark('<p>text5<br /></p><br /><p>text</p>')).toEqual('text5\n\ntext');
+            //두개이상의 BR은 개행한개로
+            expect(toMark('text6<br /><br /><br /><br />text')).toEqual('text6\n\ntext');
         });
 
-        it('process returns between block tags', function() {
+        it('returns between block tags', function() {
             expect(toMark('<ul><li>text1<br></li><li>text1<br></li></ul>', {gfm: false})).toEqual('* text1\n* text1');
             expect(toMark('<ul><li>text2<br><ul><li>text2<br>text2</li><li>text2<br></li></ul></li></ul>', {gfm: false})).toEqual('* text2\n    * text2  \n    text2\n    * text2');
             expect(toMark('<ul><li>text<br><ul><li>text<br></li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text\n    * text');
             expect(toMark('<ul><li>text4<br></li></ul><p>text4</p>', {gfm: false})).toEqual('* text4\n\ntext4');
-            expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>', {gfm: false})).toEqual('* text\n\ntext  \ntext');
+            expect(toMark('<ul><li>text5<br></li></ul><p><div>text5<br></div><div>text5<br></div></p>', {gfm: false})).toEqual('* text5\n\ntext5  \ntext5');
             expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext\ntext');
             expect(toMark('<ul><li>text</li></ul><p></p><ul><li>text</li></ul>', {gfm: false})).toEqual('* text\n\n* text');
         });
