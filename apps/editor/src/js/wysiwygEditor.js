@@ -72,6 +72,21 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
     this.getEditor().addEventListener('keydown', function(event) {
         self._keyEventHandler(event);
     });
+
+    if (util.browser.firefox) {
+        this.getEditor().addEventListener('keypress', function(event) {
+            //event.preventDefault();
+            //이벤트를 발생시키려했던 시도
+            //여기서 생성되는 이벤트는 preventDefault를 안하게되서 스콰이어와 디폴트 액션이 동시에 먹게된다.
+            //그래서 엔터키의 경우 두번 개행한다.
+            //self.getEditor().getDocument().body.dispatchEvent(new KeyboardEvent('keydown', {keyCode: event.keyCode}));
+
+            //prevent duplicated event fire when alphabet key pressed, we need only functional key(e.g. enter)
+            if (event.keyCode) {
+                self._keyEventHandler(event);
+            }
+        });
+    }
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
@@ -79,7 +94,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         range, doc, sq;
 
     //enter
-    if (event.which === 13) {
+    if (event.keyCode === 13) {
         if (this._isTaskList()) {
             this._removeTaskInputIfNeed();
 
@@ -100,7 +115,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             }, 0);
         }
     //backspace
-    } else if (event.which === 8) {
+    } else if (event.keyCode === 8) {
         range = this.getEditor().getSelection();
 
         if (range.collapsed) {
