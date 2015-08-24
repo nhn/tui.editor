@@ -72,13 +72,6 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
     this.getEditor().addEventListener('keydown', function(event) {
         self._keyEventHandler(event);
     });
-
-    if (util.browser.firefox) {
-        //prevent last keyevent when composing
-        this.getEditor().addEventListener('compositionend', function(event) {
-            self._keyEventHandler(event);
-        });
-    }
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
