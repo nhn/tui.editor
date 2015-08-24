@@ -75,18 +75,21 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
 
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(event) {
-            //event.preventDefault();
-            //이벤트를 발생시키려했던 시도
-            //여기서 생성되는 이벤트는 preventDefault를 안하게되서 스콰이어와 디폴트 액션이 동시에 먹게된다.
-            //그래서 엔터키의 경우 두번 개행한다.
-            //self.getEditor().getDocument().body.dispatchEvent(new KeyboardEvent('keydown', {keyCode: event.keyCode}));
-
-            //prevent duplicated event fire when alphabet key pressed, we need only functional key(e.g. enter)
             if (event.keyCode) {
                 self._keyEventHandler(event);
             }
         });
     }
+/*
+    this.getEditor().addEventListener('input', function() {
+        var pathArray = self.getEditor().getPath().split('>');
+        var range = self.getEditor().getSelection(),
+            current = range.startContainer;
+
+        if (pathArray.length === 3 && pathArray[2] === 'DIV' && range.startContainer.textContent) {
+            self.changeBlockFormat(null, 'P');
+        }
+    );*/
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
@@ -163,50 +166,52 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
         var current = frag.childNodes[0],
             newFrag, newBlock, nextBlock, tagName;
 
-        //find last depth
-        while (current.firstChild) {
-            current = current.firstChild;
-        }
-
-        //find tag
-        while (current !== frag) {
-            tagName = current.tagName;
-
-            if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
-                nextBlock = current.childNodes[0];
-
-                //there is no next blocktag
-                if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
-                    nextBlock = self.getEditor().createDefaultBlock();
-
-                    util.forEachArray(util.toArray(current.childNodes), function(node) {
-                        nextBlock.appendChild(node);
-                    });
-
-                    //remove unneccesary br
-                    if ($(nextBlock).find('br').length > 1  &&
-                        nextBlock.childNodes[nextBlock.childNodes.length - 1].nodeType === Node.ELEMENT_NODE &&
-                        nextBlock.childNodes[nextBlock.childNodes.length - 1].tagName === 'BR'
-                       ) {
-                        nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
-                    }
-                }
-
-                if (targetTagName) {
-                    newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
-                } else {
-                    newBlock = nextBlock;
-                }
-
-                newFrag = self.getEditor().getDocument().createDocumentFragment();
-                newFrag.appendChild(newBlock);
-
-                frag = newFrag;
-
-                break;
+        if (srcCondition) {
+            //find last depth
+            while (current.firstChild) {
+                current = current.firstChild;
             }
 
-            current = current.parentNode;
+            //find tag
+            while (current !== frag) {
+                tagName = current.tagName;
+
+                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+                    nextBlock = current.childNodes[0];
+
+                    //there is no next blocktag
+                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
+                        nextBlock = self.getEditor().createDefaultBlock();
+
+                        util.forEachArray(util.toArray(current.childNodes), function(node) {
+                            nextBlock.appendChild(node);
+                        });
+
+                        //remove unneccesary br
+                        if ($(nextBlock).find('br').length > 1  &&
+                            nextBlock.childNodes[nextBlock.childNodes.length - 1].nodeType === Node.ELEMENT_NODE &&
+                                nextBlock.childNodes[nextBlock.childNodes.length - 1].tagName === 'BR'
+                           ) {
+                               nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
+                           }
+                    }
+
+                    if (targetTagName) {
+                        newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
+                    } else {
+                        newBlock = nextBlock;
+                    }
+
+                    newFrag = self.getEditor().getDocument().createDocumentFragment();
+                    newFrag.appendChild(newBlock);
+
+                    frag = newFrag;
+
+                    break;
+                }
+
+                current = current.parentNode;
+            }
         }
 
         //if source condition node is not founded, we wrap current div node with node named targetTagName
@@ -357,6 +362,13 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensurePtagContentWrappedWithDiv();
     this._ensureSpaceNextToTaskInput();
     this._removeTaskListClass();
+
+    this.get$Body().find('div').each(function(index, node) {
+        if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
 
@@ -413,7 +425,7 @@ WysiwygEditor.prototype.getValue = function() {
     html = html.replace(/<div>/g, '');
     html = html.replace(/<\/div>/g, '<br />');
 
-    return html ;
+    return html;
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
