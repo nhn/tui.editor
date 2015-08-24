@@ -319,6 +319,9 @@ var basicRenderer = Renderer.factory({
     'BLOCKQUOTE': function(node, subContent) {
         var res, trimmedText;
 
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '\n');
+
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
