@@ -205,7 +205,7 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-    'BR': function() {
+    'BR': function(node) {
         return '  \n';
     },
     'CODE': function(node, subContent) {
@@ -226,7 +226,7 @@ var basicRenderer = Renderer.factory({
         subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
         if (!this.isEmptyText(subContent)) {
-            res = '\n' + subContent + '\n\n';
+            res = '\n\n' + subContent + '\n\n';
         }
 
         return res;
@@ -257,7 +257,7 @@ var basicRenderer = Renderer.factory({
         res += ' ';
         res += subContent;
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     },
     'LI H1, LI H2, LI H3, LI H4, LI H5, LI H6': function(node) {
         return '<' + node.tagName.toLowerCase() + '>' + node.innerHTML + '</' + node.tagName.toLowerCase() + '>';
@@ -265,15 +265,16 @@ var basicRenderer = Renderer.factory({
 
     //List
     'UL, OL': function(node, subContent) {
-        return '\n' + subContent + '\n';
+        return '\n\n' + subContent + '\n\n';
     },
     'LI OL, LI UL': function(node, subContent) {
         var res, processedSubContent;
 
-        //because parent LI converter add \n too
-        processedSubContent = subContent.replace(FIND_LAST_RETURN_RX, '');
-        //and br remove end of li
-        processedSubContent = processedSubContent.replace(FIND_BR_AND_RETURN_RX, '\n');
+        //remove last br of li
+        processedSubContent = subContent.replace(FIND_BR_AND_RETURN_RX, '\n');
+
+        //parent LI converter add \n too, so we remove last return
+        processedSubContent = processedSubContent.replace(FIND_LAST_RETURN_RX, '');
 
         res = processedSubContent.replace(START_OF_LINES_RX, '    ');
 
@@ -281,6 +282,9 @@ var basicRenderer = Renderer.factory({
     },
     'UL LI': function(node, subContent) {
         var res = '';
+
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
         res += '* ' + subContent + '\n';
 
@@ -298,6 +302,9 @@ var basicRenderer = Renderer.factory({
             }
         }
 
+        //convert multiple brs to one br
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
+
         res += liCounter + '. ' + subContent + '\n';
 
         return res;
@@ -305,7 +312,7 @@ var basicRenderer = Renderer.factory({
 
     //HR
     'HR': function() {
-        return '\n- - -\n\n';
+        return '\n\n- - -\n\n';
     },
 
     //Blockquote
@@ -315,7 +322,7 @@ var basicRenderer = Renderer.factory({
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     },
 
     //Code Block
@@ -325,7 +332,7 @@ var basicRenderer = Renderer.factory({
         lastNremoved = subContent.replace(FIND_LAST_RETURN_RX, '');
         res = lastNremoved.replace(START_OF_LINES_RX, '    ');
 
-        return '\n' + res + '\n\n';
+        return '\n\n' + res + '\n\n';
     }
 });
 
@@ -867,13 +874,18 @@ var DomRunner = require('./domRunner'),
     basicRenderer = require('./renderer.basic'),
     gfmRenderer = require('./renderer.gfm');
 
-var FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
-    FIND_TRIPLE_RETURNS_RX = /\n\n\n/g,
-    FIND_RETURNS_RX = /([ \xA0]){2,}\n/g,
+var     FIND_TRIPLE_OVER_RETURNS_RX = /(\n){3,}/g,
     FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
     FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX = /(\n\n)?([ \xA0]+\n){2,}/g,
     FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
     FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
+
+var FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g,
+    FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
+    FIND_MULTIPLE_BRS_RX = /([ \xA0]+\n){2,}/g,
+    FIND_RETURNS_RX = /([ \xA0]){2,}\n/g,
+    FIND_RETURNS_AND_SPACE_RX = /[ \xA0\n]+/g;
+
 /**
  * toMark
  * @exports toMark
@@ -938,31 +950,44 @@ function parse(runner, renderer) {
  * @return {string} result
  */
 function finalize(text, isGfm) {
-    //collapse duplicated returns made by <br /> and block element
-    text = text.replace(FIND_DUPLICATED_2_RETURNS_WITH_BR_RX, '\n\n');
-
-    //collpase emptyline and additional return
-    text = text.replace(FIND_EMPTYLINE_WITH_RETURN_RX, '\n  \n');
-
     //collapse return and <br>
-    text = text.replace(FIND_DUPLICATED_RETURN_WITH_BR_RX, '\n');
+    //BR뒤에 바로 \n이 이어지면 BR은 불필요하다
+    text = text.replace(FIND_UNUSED_BRS_RX, '\n');
+    //console.log(2, JSON.stringify(text));
 
-    //collapse triple returns made by consecutive block elements
-    text = text.replace(FIND_TRIPLE_RETURNS_RX, '\n\n');
+    //collapse multiple br
+    //두개 이상의 BR개행은 한개로
+    text = text.replace(FIND_MULTIPLE_BRS_RX, '\n\n');
+    //console.log(3, JSON.stringify(text));
 
-    //remove multi empty lines between block
-    text = text.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX, '\n\n');
+    text = text.replace(FIND_RETURNS_AND_SPACE_RX, function(matched) {
+        var returnCount = (matched.match(/\n/g) || []).length;
+
+        if (returnCount >= 3) {
+            return '\n\n';
+        } else if (matched >= 1) {
+            return '\n';
+        } else {
+            return matched;
+        }
+    });
+    //console.log(3, JSON.stringify(text));
 
     //remove first and last \n
+    //시작과 마지막 개행제거
     text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
+    //console.log(JSON.stringify(text));
 
     //in gfm replace '  \n' make by <br> to '\n'
+    //gfm모드인경우 임의 개행에 스페이스를 제거
     if (isGfm) {
         text = text.replace(FIND_RETURNS_RX, '\n');
     }
+    //console.log(7, JSON.stringify(text));
 
     return text;
 }
+
 
 /**
  * tracker
