@@ -52,15 +52,17 @@ describe('Layout', function() {
         it('to Markdown', function() {
             layout.switchToMarkdown();
 
-            expect($('.mdContainer').css('display')).toEqual('block');
-            expect($('.wysiwygContainer').css('display')).toBe('none');
+            expect($('.mdContainer').css('visibility')).toEqual('visible');
+            expect($('.wysiwygContainer').css('visibility')).toBe('hidden');
+            expect($('.wysiwygContainer').css('position')).toBe('absolute');
         });
 
         it('to WYSIWYG', function() {
             layout.switchToWYSIWYG();
 
-            expect($('.mdContainer').css('display')).toEqual('none');
-            expect($('.wysiwygContainer').css('display')).toBe('block');
+            expect($('.mdContainer').css('visibility')).toEqual('hidden');
+            expect($('.mdContainer').css('position')).toBe('absolute');
+            expect($('.wysiwygContainer').css('visibility')).toBe('visible');
         });
     });
 });
