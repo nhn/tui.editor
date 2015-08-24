@@ -188,7 +188,7 @@ var basicRenderer = Renderer.factory({
         var res, trimmedText;
 
         //convert multiple brs to one br
-        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '\n');
+        subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '\n\n');
 
         trimmedText = this.trim(subContent);
         res = trimmedText.replace(START_OF_LINES_RX, '> ');
