@@ -36,6 +36,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwHeading = require('./wysiwygCommands/heading'),
     wwUL = require('./wysiwygCommands/ul'),
     wwOL = require('./wysiwygCommands/ol'),
+    wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
 var util = ne.util;
@@ -159,6 +160,7 @@ NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(wwAddLink);
     this.commandManager.addCommand(wwHR);
     this.commandManager.addCommand(wwHeading);
+    this.commandManager.addCommand(wwIncreaseTask);
     this.commandManager.addCommand(wwTask);
 };
 
