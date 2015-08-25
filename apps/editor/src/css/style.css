@@ -56,6 +56,10 @@
 }
 
 .mdContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
     overflow: hidden;
 }
 
@@ -160,6 +164,25 @@
 .neonEditor .wysiwygContainer {
     border-top: 1px solid #ccc;
 }
+
+/*we cant use display none for ifram because firefox have issue about it*/
+.wysiwygContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden
+}
+
+.markdownMode .mdContainer {
+    position: inherit;
+    visibility: visible
+}
+
+.wysiwygMode .wysiwygContainer {
+    position: inherit;
+    visibility: visible
+}
+
 /* nepopup용 추후 분리해야함 */
 .nepopup-wrapper {
     width: 500px;

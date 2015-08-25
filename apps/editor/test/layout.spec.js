@@ -52,17 +52,15 @@ describe('Layout', function() {
         it('to Markdown', function() {
             layout.switchToMarkdown();
 
-            expect($('.mdContainer').css('visibility')).toEqual('visible');
-            expect($('.wysiwygContainer').css('visibility')).toBe('hidden');
-            expect($('.wysiwygContainer').css('position')).toBe('absolute');
+            expect($('.neonEditor').hasClass('markdownMode')).toEqual(true);
+            expect($('.neonEditor').hasClass('wysiwygMode')).toEqual(false);
         });
 
         it('to WYSIWYG', function() {
             layout.switchToWYSIWYG();
 
-            expect($('.mdContainer').css('visibility')).toEqual('hidden');
-            expect($('.mdContainer').css('position')).toBe('absolute');
-            expect($('.wysiwygContainer').css('visibility')).toBe('visible');
+            expect($('.neonEditor').hasClass('markdownMode')).toEqual(false);
+            expect($('.neonEditor').hasClass('wysiwygMode')).toEqual(true);
         });
     });
 });
