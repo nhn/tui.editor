@@ -170,7 +170,7 @@ var basicRenderer = Renderer.factory({
         var res = '';
 
         if (!this.isEmptyText(subContent)) {
-            res = '*' + subContent + '*';
+            res = '_' + subContent + '_';
         }
 
         return res;
@@ -319,7 +319,7 @@ var basicRenderer = Renderer.factory({
     'BLOCKQUOTE': function(node, subContent) {
         var res, trimmedText;
 
-        //convert multiple brs to one br
+        //convert multiple brs to one emptyline
         subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '\n\n');
 
         trimmedText = this.trim(subContent);
@@ -761,7 +761,7 @@ Renderer.markdownText = {
     em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
-    codeblockGfm: /^(`{3,})[ \.]*(\S+)/
+    codeblockGfm: /^(`{3,})/
 };
 
 Renderer.prototype._isNeedEscape = function(text) {
