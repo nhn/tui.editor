@@ -26,7 +26,7 @@ describe('WysiwygEditor', function() {
         });
 
         it('init() invoke callback', function(done) {
-            wwe.init(300, function() {
+            wwe.init(function() {
                 expect($('iframe').length).toEqual(1);
                 expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
                 done();
@@ -39,7 +39,7 @@ describe('WysiwygEditor', function() {
 
         beforeEach(function(done) {
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 done();
             });
         });
@@ -89,7 +89,7 @@ describe('WysiwygEditor', function() {
 
         beforeEach(function(done) {
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 done();
             });
         });
@@ -160,7 +160,7 @@ describe('WysiwygEditor', function() {
         var wwe;
 
         wwe = new WysiwygEditor($container, null, em);
-        wwe.init(300, function() {
+        wwe.init(function() {
             expect(wwe.get$Body().length).toEqual(1);
             expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
             done();
@@ -172,7 +172,7 @@ describe('WysiwygEditor', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(300, function() {
+        wwe.init(function() {
             wwe.setValue('<h1>hasHeading</h1>');
             expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
             done();
@@ -183,7 +183,7 @@ describe('WysiwygEditor', function() {
         var wwe;
 
         wwe = new WysiwygEditor($container, null, em);
-        wwe.init(300, function() {
+        wwe.init(function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
@@ -203,7 +203,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div>test<br></div></h1>');
@@ -222,7 +222,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div>test<br></div></h1>');
@@ -244,7 +244,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div><input type="checkbox" />test<br></div></h1>');
@@ -266,7 +266,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div>test<br></div></h1>');
@@ -286,7 +286,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div>test<br></div></h1>');
@@ -306,7 +306,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<ul><li><div>test<br></div></li></ul>');
@@ -326,7 +326,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<div>test<br></div>');
@@ -348,7 +348,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<h1><div>test<br></div></h1>');
@@ -368,7 +368,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
@@ -390,7 +390,7 @@ describe('WysiwygEditor', function() {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
@@ -408,7 +408,7 @@ describe('WysiwygEditor', function() {
 
         beforeEach(function(done) {
             wwe = new WysiwygEditor($container, null, em);
-            wwe.init(300, function() {
+            wwe.init(function() {
                 done();
             });
         });

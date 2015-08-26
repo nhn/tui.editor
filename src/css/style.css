@@ -4,9 +4,6 @@
     position: relative;
 }
 
-.neonEditor * {
-    box-sizing: content-box;
-}
 .neonEditor:after,
 .neonEditor .toolbar:after,
 .neonEditor .statusbar:after
@@ -35,8 +32,8 @@
     border-color: #ccc;
     border-style: solid;
     border-width: 1px 1px 1px 0;
-    float: left;
     outline: none;
+    float: left;
     cursor: pointer;
 }
 .neonEditor .toolbar button:hover {
@@ -97,15 +94,18 @@
 
 .mdContainer .editor,
 .mdContainer .preview {
-    box-sizing: border-box;
     height:400px;
+    box-sizing: border-box;
 }
 .mdContainer .CodeMirror {
     height: 100%;
 }
 .mdContainer .preview {
-    padding: 5px;
+    padding: 0;
     overflow: auto;
+}
+.mdContainer .previewContent {
+    padding: 5px;
 }
 .neonEditor .preview-style-tab>.editor,
 .neonEditor .preview-style-tab>.preview {
@@ -126,7 +126,6 @@
 }
 .neonEditor .preview-style-vertical>.preview {
     float: right;
-    padding: 5px;
 }
 
 .neonEditor .preview-style-vertical>.tabSection {
