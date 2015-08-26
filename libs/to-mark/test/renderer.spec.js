@@ -230,6 +230,7 @@ describe('renderer', function() {
 
         it('em, strong', function() {
             expect(renderer._isNeedEscape('*em*')).toEqual(true);
+            expect(renderer._isNeedEscape('_em_')).toEqual(true);
             expect(renderer._isNeedEscape('**strong**')).toEqual(true);
             expect(renderer._isNeedEscape('__strong__')).toEqual(true);
 
