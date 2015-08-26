@@ -37,7 +37,7 @@ describe('Italic', function() {
 
             Italic.exec(mde);
 
-            expect(cm.getValue()).toEqual(['mytext1', '', 'myt**ext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['mytext1', '', 'myt__ext2', 'mytext3'].join('\n'));
         });
 
         it('빈 라인시작에 **가 추가되었다', function() {
@@ -45,7 +45,7 @@ describe('Italic', function() {
 
             Italic.exec(mde);
 
-            expect(cm.getValue()).toEqual(['mytext1', '**', 'mytext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['mytext1', '__', 'mytext2', 'mytext3'].join('\n'));
         });
     });
 
@@ -55,7 +55,7 @@ describe('Italic', function() {
 
             Italic.exec(mde);
 
-            expect(cm.getValue()).toEqual(['*mytext1*', '', 'mytext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['_mytext1_', '', 'mytext2', 'mytext3'].join('\n'));
         });
     });
 });

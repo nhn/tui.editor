@@ -88,7 +88,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
      * @return {string} 이탤릭이 적용된 텍스트
      */
     append: function(text) {
-        return '*' + text + '*';
+        return '_' + text + '_';
     },
     /**
      * remove
