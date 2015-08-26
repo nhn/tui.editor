@@ -221,6 +221,7 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('``` awefwaef')).toEqual(true);
             expect(renderer._isNeedEscape('```` awefwaef')).toEqual(true);
             expect(renderer._isNeedEscape('`awefwaef`')).toEqual(true);
+            expect(renderer._isNeedEscape('```')).toEqual(true);
 
             expect(renderer._isNeedEscape('``awefwaef')).toEqual(false);
             expect(renderer._isNeedEscape('`awefwaef')).toEqual(false);

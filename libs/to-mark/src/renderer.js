@@ -298,7 +298,7 @@ Renderer.markdownText = {
     em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
-    codeblockGfm: /^(`{3,})[ \.]*(\S+)/
+    codeblockGfm: /^(`{3,})/
 };
 
 Renderer.prototype._isNeedEscape = function(text) {
