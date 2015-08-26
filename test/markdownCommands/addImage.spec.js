@@ -41,7 +41,7 @@ describe('AddImage', function() {
             };
         });
 
-        it('빈라인에서 링크가 추가된다', function() {
+        it('빈라인에서 이미지가 추가된다', function() {
             doc.setCursor(1, 0);
 
             AddImage.exec(mde, data);
@@ -49,7 +49,7 @@ describe('AddImage', function() {
             expect(doc.getLine(1)).toEqual('![' + data.altText + '](' + data.imageUrl + ')');
         });
 
-        it('영역선택후 링크가 추가된다', function() {
+        it('영역선택후 이미지가 추가된다', function() {
             doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
 
             AddImage.exec(mde, data);
