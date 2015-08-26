@@ -22,6 +22,8 @@ function Preview($el, eventManager, converter) {
     this.converter = converter;
     this.$el = $el;
 
+    this._initContentSection();
+
     this.lazyRunner = new LazyRunner();
 
     this.lazyRunner.registerLazyRunFunction(
@@ -30,6 +32,7 @@ function Preview($el, eventManager, converter) {
         800,
         this
     );
+
     this._initEvent();
 }
 
@@ -39,6 +42,11 @@ Preview.prototype._initEvent = function() {
     this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
         self.lazyRunner.run('refresh', markdown);
     });
+};
+
+Preview.prototype._initContentSection = function() {
+    this.$previewContent = $('<div class="previewContent neonEditor-content" />');
+    this.$el.append(this.$previewContent);
 };
 
 Preview.prototype.refresh = function(markdown) {
@@ -55,8 +63,12 @@ Preview.prototype.render = function(html) {
         finalHtml = processedDataByHook[0];
     }
 
-    this.$el.empty();
-    this.$el.html(finalHtml);
+    this.$previewContent.empty();
+    this.$previewContent.html(finalHtml);
+};
+
+Preview.prototype.setHeight = function(height) {
+    this.$el.height(height);
 };
 
 module.exports = Preview;

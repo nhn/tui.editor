@@ -14,7 +14,7 @@ describe('Task', function() {
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(300, function() {
+        wwe.init(function() {
             sq = wwe.getEditor();
             done();
         });

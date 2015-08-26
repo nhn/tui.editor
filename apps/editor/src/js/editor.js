@@ -94,11 +94,13 @@ function NeonEditor(options) {
         });
     }
 
+    this.contentHeight(this.options.height);
+
     this.changePreviewStyle(this.options.previewStyle);
 
     this.mdEditor.init();
 
-    this.wwEditor.init(this.options.height, function() {
+    this.wwEditor.init(function() {
         extManager.applyExtension(self, self.options.exts);
 
         self._initDefaultCommands();
@@ -213,6 +215,17 @@ NeonEditor.prototype.getValue = function() {
 
 NeonEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
+};
+
+NeonEditor.prototype.contentHeight  = function(height) {
+    if (height) {
+        this._contentHeight = height;
+        this.mdEditor.setHeight(height);
+        this.preview.setHeight(height);
+        this.wwEditor.setHeight(height);
+    }
+
+    return this._contentHeight;
 };
 
 NeonEditor.prototype.getCurrentModeEditor = function() {

@@ -100,9 +100,6 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
     this.$previewEl = this.$containerEl.find('.mdContainer .preview');
 
-    this.$mdEditorContainerEl.css('height', this.height);
-    this.$previewEl.css('height', this.height);
-
     this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],
         sections: [this.$mdEditorContainerEl, this.$previewEl]
@@ -113,7 +110,6 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
 
 Layout.prototype._initWysiwygSection = function() {
     this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
-    this.$wwEditorContainerEl.height(this.height);
 };
 
 Layout.prototype._initPopupAddLink = function() {

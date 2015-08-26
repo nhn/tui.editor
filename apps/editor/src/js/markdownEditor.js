@@ -169,4 +169,8 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
     this.replaceSelection(content, selection);
 };
 
+MarkdownEditor.prototype.setHeight = function(height) {
+    this.$editorContainerEl.height(height);
+};
+
 module.exports = MarkdownEditor;
