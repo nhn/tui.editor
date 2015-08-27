@@ -179,6 +179,10 @@ Returns self (the Squire instance).
 
 Returns the path through the DOM tree from the `<body>` element to the current current cursor position. This is a string consisting of the tag, id and class names in CSS format. For example `BODY>BLOCKQUOTE>DIV#id>STRONG>SPAN.font>EM`. If a selection has been made, so different parts of the selection may have different paths, the value will be `(selection)`. The path is useful for efficiently determining the current formatting for bold, italic, underline etc, and thus determining button state. If a selection has been made, you can has the `hasFormat` method instead to get the current state for the properties you care about.
 
+### getFontInfo
+
+Returns an object containing the font-family and font-size information for the element the cursor is in, if any was set. It uses style declarations to detect this, and so will not detect FONT tags. If a selection across multiple elements has been made, it will return an empty object.
+
 ### getSelection
 
 Returns a [W3C Range object](https://developer.mozilla.org/en-US/docs/Web/API/Range) representing the current selection/cursor position.
