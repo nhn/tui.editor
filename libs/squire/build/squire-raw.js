@@ -3772,7 +3772,7 @@ function removeFormatting ( self, root, clean ) {
     for ( node = root.firstChild; node; node = next ) {
         next = node.nextSibling;
         if ( isInline( node ) ) {
-            if ( node.nodeType === TEXT_NODE || isLeaf( node ) ) {
+            if ( node.nodeType === TEXT_NODE || node.nodeName === 'BR' || node.nodeName === 'IMG' ) {
                 clean.appendChild( node );
                 continue;
             }
