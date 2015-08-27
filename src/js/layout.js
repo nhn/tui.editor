@@ -40,6 +40,8 @@ function Layout(options, eventManager) {
     this.height = options.height;
     this.type = options.initialEditType;
     this.eventManager = eventManager;
+
+    this.init();
 }
 
 Layout.prototype.init = function() {
@@ -69,20 +71,6 @@ Layout.prototype._initModeSwitch = function() {
 
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
-
-    this.modeSwitch.on('modeSwitched', function(ev, info) {
-        var type;
-
-        if (info.type === ModeSwitch.TYPE.WYSIWYG) {
-            self.eventManager.emit('changeMode.wysiwyg');
-            type = "wysiwyg";
-        } else {
-            self.eventManager.emit('changeMode.markdown');
-            type = "markdown";
-        }
-
-        self.eventManager.emit('changeMode', type);
-    });
 };
 
 Layout.prototype.switchToWYSIWYG = function() {

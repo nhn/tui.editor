@@ -73,6 +73,7 @@ $("#editSection").neonEditor("setValue", "# Hello!!");
 * show: 에디터를 보입니다.
 * getValue: 입력된 마크다운 컨텐트를 가져옵니다.
 * setValue: 에디터에 마크다운 컨텐트를 셋팅합니다.
+* changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
 
 ## 설치
 

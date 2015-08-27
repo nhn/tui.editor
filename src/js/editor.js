@@ -76,13 +76,14 @@ function NeonEditor(options) {
 
     this.eventManager = new EventManager();
 
-    this._initEvent();
-
     this.commandManager = new CommandManager(this);
     this.convertor = new Convertor();
-    this.layout = new Layout(options, this.eventManager);
-    this.layout.init();
 
+    this.layout = new Layout(options, this.eventManager);
+    this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
+        console.log(info.text);
+        self.changeMode(info.text);
+    });
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
@@ -105,13 +106,7 @@ function NeonEditor(options) {
 
         self._initDefaultCommands();
 
-        if (self.options.initialEditType === 'markdown') {
-            self.eventManager.emit('changeMode.markdown');
-        } else {
-            self.eventManager.emit('changeMode.wysiwyg');
-        }
-
-        self.eventManager.emit('changeMode', self.options.initialEditType);
+        self.changeMode(self.options.initialEditType);
 
         self.setValue(self.options.initialValue);
 
@@ -124,22 +119,6 @@ function NeonEditor(options) {
 
     __nedInstance.push(this);
 }
-
-NeonEditor.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('changeMode.wysiwyg', function() {
-        self.currentMode = 'wysiwyg';
-        self.layout.switchToWYSIWYG();
-        self.wwEditor.setValue(self.convertor.toHTML(self.mdEditor.getValue()));
-    });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.currentMode = 'markdown';
-        self.layout.switchToMarkdown();
-        self.mdEditor.setValue(self.convertor.toMarkdown(self.wwEditor.getValue()));
-    });
-};
 
 NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(mdcBold);
@@ -246,6 +225,26 @@ NeonEditor.prototype.isMarkdownMode = function() {
 
 NeonEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
+};
+
+NeonEditor.prototype.changeMode = function(mode) {
+    if (this.currentMode === mode) {
+        return;
+    }
+
+    this.currentMode = mode;
+
+    if (this.isWysiwygMode()) {
+        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
+        this.layout.switchToWYSIWYG();
+        this.eventManager.emit('changeMode.wysiwyg');
+    } else {
+        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+        this.layout.switchToMarkdown();
+        this.eventManager.emit('changeMode.markdown');
+    }
+
+    this.eventManager.emit('changeMode', mode);
 };
 
 NeonEditor.prototype.remove = function() {
