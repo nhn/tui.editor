@@ -16,8 +16,6 @@ describe('Layout', function() {
             el: $('body'),
             height: 100
         }, em);
-
-        layout.init();
     });
 
     it('All layout elements are exist', function() {

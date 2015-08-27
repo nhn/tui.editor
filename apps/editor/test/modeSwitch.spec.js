@@ -50,6 +50,6 @@ describe('ModeSwitch', function() {
 
         expect($('.modeSwitch button').text()).toEqual('toMarkdown');
         expect(switchedType).toEqual(ModeSwitch.TYPE.WYSIWYG);
-        expect(switchedTypeText).toEqual('WYSIWYG');
+        expect(switchedTypeText).toEqual('wysiwyg');
     });
 });

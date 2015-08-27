@@ -65,7 +65,7 @@ ModeSwitch.prototype._switchType = function() {
 
     this.trigger('modeSwitched', {
         type: this.type,
-        text: typeToSwitch
+        text: typeToSwitch.toLowerCase()
     });
 };
 
