@@ -734,12 +734,16 @@ proto._addFormat = function ( tag, attributes, range ) {
         // Therefore we wrap this in the tag as well, as this will then cause it
         // to apply when the user types something in the block, which is
         // presumably what was intended.
+        //
+        // IMG tags are included because we may want to create a link around them,
+        // and adding other styles is harmless.
         walker = new TreeWalker(
             range.commonAncestorContainer,
             SHOW_TEXT|SHOW_ELEMENT,
             function ( node ) {
                 return ( node.nodeType === TEXT_NODE ||
-                                                    node.nodeName === 'BR' ) &&
+                                                    node.nodeName === 'BR'||
+                                                    node.nodeName === 'IMG' ) &&
                     isNodeContainedInRange( range, node, true );
             },
             false
