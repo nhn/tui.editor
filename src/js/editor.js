@@ -81,7 +81,6 @@ function NeonEditor(options) {
 
     this.layout = new Layout(options, this.eventManager);
     this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
-        console.log(info.text);
         self.changeMode(info.text);
     });
 
@@ -114,8 +113,6 @@ function NeonEditor(options) {
             self.options.onload(self);
         }
     });
-
-    window.dd = this;
 
     __nedInstance.push(this);
 }
