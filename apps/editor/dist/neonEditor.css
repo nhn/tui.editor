@@ -1,923 +1,268 @@
-/* BASICS */
-
-.CodeMirror {
-  /* Set height, width, borders, and global font properties here */
-  font-family: monospace;
-  height: 300px;
-  color: black;
-}
-
-/* PADDING */
-
-.CodeMirror-lines {
-  padding: 4px 0;
-  /* Vertical padding around content */
-}
-
-.CodeMirror pre {
-  padding: 0 4px;
-  /* Horizontal padding of content */
-}
-
-.CodeMirror-scrollbar-filler,
-.CodeMirror-gutter-filler {
-  background-color: white;
-  /* The little square between H and V scrollbars */
-}
-
-/* GUTTER */
-
-.CodeMirror-gutters {
-  border-right: 1px solid #ddd;
-  background-color: #f7f7f7;
-  white-space: nowrap;
-}
-
-
-
-.CodeMirror-linenumber {
-  padding: 0 3px 0 5px;
-  min-width: 20px;
-  text-align: right;
-  color: #999;
-  white-space: nowrap;
-}
-
-.CodeMirror-guttermarker {
-  color: black;
-}
-
-.CodeMirror-guttermarker-subtle {
-  color: #999;
-}
-
-/* CURSOR */
-
-.CodeMirror div.CodeMirror-cursor {
-  border-left: 1px solid black;
-}
-
-/* Shown when moving in bi-directional text */
-
-.CodeMirror div.CodeMirror-secondarycursor {
-  border-left: 1px solid silver;
-}
-
-.CodeMirror.cm-fat-cursor div.CodeMirror-cursor {
-  width: auto;
-  border: 0;
-  background: #7e7;
-}
-
-.CodeMirror.cm-fat-cursor div.CodeMirror-cursors {
-  z-index: 1;
-}
-
-.cm-animate-fat-cursor {
-  width: auto;
-  border: 0;
-  -webkit-animation: blink 1.06s steps(1) infinite;
-  -moz-animation: blink 1.06s steps(1) infinite;
-  animation: blink 1.06s steps(1) infinite;
-  background-color: #7e7;
-}
-
-@-moz-keyframes blink {
-  0% {
-
-  }
-
-  50% {
-    background-color: transparent;
-  }
-
-  100% {
-
-  }
-}
-
-@-webkit-keyframes blink {
-  0% {
-
-  }
-
-  50% {
-    background-color: transparent;
-  }
-
-  100% {
-
-  }
-}
-
-@keyframes blink {
-  0% {
-
-  }
-
-  50% {
-    background-color: transparent;
-  }
-
-  100% {
-
-  }
-}
-
-/* Can style cursor different in overwrite (non-insert) mode */
-
-
-
-.cm-tab {
-  display: inline-block;
-  text-decoration: inherit;
-}
-
-.CodeMirror-ruler {
-  border-left: 1px solid #ccc;
-  position: absolute;
-}
-
-/* DEFAULT THEME */
-
-.cm-s-default .cm-header {
-  color: blue;
-}
-
-.cm-s-default .cm-quote {
-  color: #090;
-}
-
-.cm-negative {
-  color: #d44;
-}
-
-.cm-positive {
-  color: #292;
-}
-
-.cm-header,
-.cm-strong {
-  font-weight: bold;
-}
-
-.cm-em {
-  font-style: italic;
-}
-
-.cm-link {
-  text-decoration: underline;
-}
-
-.cm-strikethrough {
-  text-decoration: line-through;
-}
-
-.cm-s-default .cm-keyword {
-  color: #708;
-}
-
-.cm-s-default .cm-atom {
-  color: #219;
-}
-
-.cm-s-default .cm-number {
-  color: #164;
-}
-
-.cm-s-default .cm-def {
-  color: #00f;
-}
-
-
-
-.cm-s-default .cm-variable-2 {
-  color: #05a;
-}
-
-.cm-s-default .cm-variable-3 {
-  color: #085;
-}
-
-.cm-s-default .cm-comment {
-  color: #a50;
-}
-
-.cm-s-default .cm-string {
-  color: #a11;
-}
-
-.cm-s-default .cm-string-2 {
-  color: #f50;
-}
-
-.cm-s-default .cm-meta {
-  color: #555;
-}
-
-.cm-s-default .cm-qualifier {
-  color: #555;
-}
-
-.cm-s-default .cm-builtin {
-  color: #30a;
-}
-
-.cm-s-default .cm-bracket {
-  color: #997;
-}
-
-.cm-s-default .cm-tag {
-  color: #170;
-}
-
-.cm-s-default .cm-attribute {
-  color: #00c;
-}
-
-.cm-s-default .cm-hr {
-  color: #999;
-}
-
-.cm-s-default .cm-link {
-  color: #00c;
-}
-
-.cm-s-default .cm-error {
-  color: #f00;
-}
-
-.cm-invalidchar {
-  color: #f00;
-}
-
-.CodeMirror-composing {
-  border-bottom: 2px solid;
-}
-
-/* Default styles for common addons */
-
-div.CodeMirror span.CodeMirror-matchingbracket {
-  color: #0f0;
-}
-
-div.CodeMirror span.CodeMirror-nonmatchingbracket {
-  color: #f22;
-}
-
-.CodeMirror-matchingtag {
-  background: rgba(255, 150, 0, .3);
-}
-
-.CodeMirror-activeline-background {
-  background: #e8f2ff;
-}
-
-/* STOP */
-
-/* The rest of this file contains styles related to the mechanics of
-   the editor. You probably shouldn't touch them. */
-
-.CodeMirror {
-  position: relative;
-  overflow: hidden;
-  background: white;
-}
-
-.CodeMirror-scroll {
-  overflow: scroll !important;
-  /* Things will break if this is overridden */
-  /* 30px is the magic margin used to hide the element's real scrollbars */
-  /* See overflow: hidden in .CodeMirror */
-  margin-bottom: -30px;
-  margin-right: -30px;
-  padding-bottom: 30px;
-  height: 100%;
-  outline: none;
-  /* Prevent dragging from highlighting the element */
-  position: relative;
-}
-
-.CodeMirror-sizer {
-  position: relative;
-  border-right: 30px solid transparent;
-}
-
-/* The fake, visible scrollbars. Used to force redraw during scrolling
-   before actuall scrolling happens, thus preventing shaking and
-   flickering artifacts. */
-
-.CodeMirror-vscrollbar,
-.CodeMirror-hscrollbar,
-.CodeMirror-scrollbar-filler,
-.CodeMirror-gutter-filler {
-  position: absolute;
-  z-index: 6;
-  display: none;
-}
-
-.CodeMirror-vscrollbar {
-  right: 0;
-  top: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
-
-.CodeMirror-hscrollbar {
-  bottom: 0;
-  left: 0;
-  overflow-y: hidden;
-  overflow-x: scroll;
-}
-
-.CodeMirror-scrollbar-filler {
-  right: 0;
-  bottom: 0;
-}
-
-.CodeMirror-gutter-filler {
-  left: 0;
-  bottom: 0;
-}
-
-.CodeMirror-gutters {
-  position: absolute;
-  left: 0;
-  top: 0;
-  z-index: 3;
-}
-
-.CodeMirror-gutter {
-  white-space: normal;
-  height: 100%;
-  display: inline-block;
-  margin-bottom: -30px;
-  /* Hack to make IE7 behave */
-  *zoom: 1;
-  *display: inline;
-}
-
-.CodeMirror-gutter-wrapper {
-  position: absolute;
-  z-index: 4;
-  background: none !important;
-  border: none !important;
-}
-
-.CodeMirror-gutter-background {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 4;
-}
-
-.CodeMirror-gutter-elt {
-  position: absolute;
-  cursor: default;
-  z-index: 4;
-}
-
-.CodeMirror-gutter-wrapper {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-}
-
-.CodeMirror-lines {
-  cursor: text;
-  min-height: 1px;
-  /* prevents collapsing before first draw */
-}
-
-.CodeMirror pre {
-  /* Reset some styles that the rest of the page might have set */
-  -moz-border-radius: 0;
-  -webkit-border-radius: 0;
-  border-radius: 0;
-  border-width: 0;
-  background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  margin: 0;
-  white-space: pre;
-  word-wrap: normal;
-  line-height: inherit;
-  color: inherit;
-  z-index: 2;
-  position: relative;
-  overflow: visible;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.CodeMirror-wrap pre {
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  word-break: normal;
-}
-
-.CodeMirror-linebackground {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.CodeMirror-linewidget {
-  position: relative;
-  z-index: 2;
-  overflow: auto;
-}
-
-
-
-.CodeMirror-code {
-  outline: none;
-}
-
-/* Force content-box sizing for the elements where we expect it */
-
-.CodeMirror-scroll,
-.CodeMirror-sizer,
-.CodeMirror-gutter,
-.CodeMirror-gutters,
-.CodeMirror-linenumber {
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-}
-
-.CodeMirror-measure {
-  position: absolute;
-  width: 100%;
-  height: 0;
-  overflow: hidden;
-  visibility: hidden;
-}
-
-.CodeMirror-measure pre {
-  position: static;
-}
-
-.CodeMirror div.CodeMirror-cursor {
-  position: absolute;
-  border-right: none;
-  width: 0;
-}
-
-div.CodeMirror-cursors {
-  visibility: hidden;
-  position: relative;
-  z-index: 3;
-}
-
-.CodeMirror-focused div.CodeMirror-cursors {
-  visibility: visible;
-}
-
-.CodeMirror-selected {
-  background: #d9d9d9;
-}
-
-.CodeMirror-focused .CodeMirror-selected {
-  background: #d7d4f0;
-}
-
-.CodeMirror-crosshair {
-  cursor: crosshair;
-}
-
-.CodeMirror-line::selection,
-.CodeMirror-line > span::selection,
-.CodeMirror-line > span > span::selection {
-  background: #d7d4f0;
-}
-
-.CodeMirror-line::-moz-selection,
-.CodeMirror-line > span::-moz-selection,
-.CodeMirror-line > span > span::-moz-selection {
-  background: #d7d4f0;
-}
-
-.cm-searching {
-  background: #ffa;
-  background: rgba(255, 255, 0, .4);
-}
-
-/* IE7 hack to prevent it from returning funny offsetTops on the spans */
-
-.CodeMirror span {
-  *vertical-align: text-bottom;
-}
-
-/* Used to force a border model for a node */
-
-.cm-force-border {
-  padding-right: .1px;
-}
-
-@media print {
-  /* Hide the cursor when printing */
-
-  .CodeMirror div.CodeMirror-cursors {
-    visibility: hidden;
-  }
-}
-
-/* See issue #2901 */
-
-.cm-tab-wrap-hack:after {
-  content: '';
-}
-
-/* Help users use markselection to safely style text background */
-
-span.CodeMirror-selectedtext {
-  background: none;
-}
-/*
-
-github.com style (c) Vasily Polovnyov <vast@whiteants.net>
-
-*/
-
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  color: #333;
-  background: #f8f8f8;
-  -webkit-text-size-adjust: none;
-}
-
-.hljs-comment,
-.diff .hljs-header,
-.hljs-javadoc {
-  color: #998;
-  font-style: italic;
-}
-
-.hljs-keyword,
-.css .rule .hljs-keyword,
-.hljs-winutils,
-.nginx .hljs-title,
-.hljs-subst,
-.hljs-request,
-.hljs-status {
-  color: #333;
-  font-weight: bold;
-}
-
-.hljs-number,
-.hljs-hexcolor,
-.ruby .hljs-constant {
-  color: #008080;
-}
-
-.hljs-string,
-.hljs-tag .hljs-value,
-.hljs-phpdoc,
-.hljs-dartdoc,
-.tex .hljs-formula {
-  color: #d14;
-}
-
-.hljs-title,
-.hljs-id,
-.scss .hljs-preprocessor {
-  color: #900;
-  font-weight: bold;
-}
-
-.hljs-list .hljs-keyword,
-.hljs-subst {
-  font-weight: normal;
-}
-
-.hljs-class .hljs-title,
-.hljs-type,
-.vhdl .hljs-literal,
-.tex .hljs-command {
-  color: #458;
-  font-weight: bold;
-}
-
-.hljs-tag,
-.hljs-tag .hljs-title,
-.hljs-rules .hljs-property,
-.django .hljs-tag .hljs-keyword {
-  color: #000080;
-  font-weight: normal;
-}
-
-.hljs-attribute,
-.hljs-variable,
-.lisp .hljs-body {
-  color: #008080;
-}
-
-.hljs-regexp {
-  color: #009926;
-}
-
-.hljs-symbol,
-.ruby .hljs-symbol .hljs-string,
-.lisp .hljs-keyword,
-.clojure .hljs-keyword,
-.scheme .hljs-keyword,
-.tex .hljs-special,
-.hljs-prompt {
-  color: #990073;
-}
-
-.hljs-built_in {
-  color: #0086b3;
-}
-
-.hljs-preprocessor,
-.hljs-pragma,
-.hljs-pi,
-.hljs-doctype,
-.hljs-shebang,
-.hljs-cdata {
-  color: #999;
-  font-weight: bold;
-}
-
-.hljs-deletion {
-  background: #fdd;
-}
-
-.hljs-addition {
-  background: #dfd;
-}
-
-.diff .hljs-change {
-  background: #0086b3;
-}
-
-.hljs-chunk {
-  color: #aaa;
-}
 @charset "UTF-8";
 
 .neonEditor {
-  position: relative;
-}
-
-.neonEditor * {
-  box-sizing: content-box;
+    position: relative;
 }
 
 .neonEditor:after,
 .neonEditor .toolbar:after,
-.neonEditor .statusbar:after {
-  content: "";
-  display: block;
-  height: 0;
-  clear: both;
+.neonEditor .statusbar:after
+{
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
 }
-
 .neonEditor {
-  border: 1px solid #ccc;
+    border: 1px solid #ccc;
 }
-
 .neonEditor .toolbar {
-  padding: 5px;
-  height: 30px;
-  background: #eee;
+    padding: 5px;
+    height: 30px;
+    background: #eee;
 }
-
 .neonEditor.preview-style-vetical .toolbar {
-  border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
-
 .neonEditor .toolbar button {
-  box-sizing: border-box;
-  min-width: 30px;
-  height: 30px;
-  background: white;
-  border-color: #ccc;
-  border-style: solid;
-  border-width: 1px 1px 1px 0;
-  float: left;
-  outline: none;
-  cursor: pointer;
+    box-sizing: border-box;
+    min-width: 30px;
+    height: 30px;
+    background: white;
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    outline: none;
+    float: left;
+    cursor: pointer;
 }
-
 .neonEditor .toolbar button:hover {
-  background: #eee;
+    background: #eee;
 }
-
 .neonEditor .toolbar button:active {
-  box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
+    box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
-
 .neonEditor .toolbar button:first-child {
-  border-left-width: 1px;
+    border-left-width: 1px;
 }
-
 .neonEditor .toolbar button.bold {
-  font-weight: bold;
+    font-weight: bold;
 }
-
 .neonEditor .toolbar button.italic {
-  font-style: italic;
+    font-style: italic;
 }
 
 .mdContainer {
-  overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
 }
 
-.mdContainer .tab {
-  padding: 0 5px;
-  background: #eee;
-  border-bottom: 1px solid #ccc;
+.mdContainer .tab{
+    padding: 0 5px;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
 }
-
 .mdContainer .tab button {
-  box-sizing: border-box;
-  padding: 5px;
-  height: 23px;
-  font-size: 11px;
-  line-height: 100%;
-  background: #ddd;
-  border: 1px solid #ccc;
-  position: relative;
-  top: 1px;
-  left: -1px;
-  outline: none;
-  cursor: pointer;
+    box-sizing: border-box;
+    padding: 5px;
+    height: 23px;
+    font-size: 11px;
+    line-height: 100%;
+    background: #ddd;
+    border: 1px solid #ccc;
+    position: relative;
+    top: 1px;
+    left: -1px;
+    outline: none;
+    cursor: pointer;
 }
-
 .mdContainer .tab button:first-child {
-  left: 0;
+    left: 0;
 }
-
 .mdContainer .tab button.active,
 .mdContainer .tab button:hover.active {
-  background: white;
-  border-bottom-color: white;
+    background: white;
+    border-bottom-color: white;
 }
 
 .mdContainer .tab button:hover {
-  background: #eee;
+    background: #eee;
 }
 
 .mdContainer .editor,
 .mdContainer .preview {
-  box-sizing: border-box;
-  height: 400px;
+    height:400px;
+    box-sizing: border-box;
 }
-
 .mdContainer .CodeMirror {
-  height: 100%;
+    height: 100%;
 }
-
 .mdContainer .preview {
-  padding: 5px;
-  overflow: auto;
+    padding: 0;
+    overflow: auto;
 }
-
+.mdContainer .previewContent {
+    padding: 5px;
+}
 .neonEditor .preview-style-tab>.editor,
 .neonEditor .preview-style-tab>.preview {
-  float: left;
-  width: 100%;
-  display: none;
+    float: left;
+    width: 100%;
+    display: none;
 }
-
 .neonEditor .preview-style-tab>.active {
-  display: block;
+    display: block;
 }
-
 .neonEditor .preview-style-vertical>.editor,
 .neonEditor .preview-style-vertical>.preview {
-  width: 50%;
+    width: 50%;
 }
-
 .neonEditor .preview-style-vertical>.editor {
-  float: left;
-  border-right: 1px solid #ccc;
+    float: left;
+    border-right: 1px solid #ccc;
 }
-
 .neonEditor .preview-style-vertical>.preview {
-  float: right;
-  padding: 5px;
+    float: right;
 }
 
 .neonEditor .preview-style-vertical>.tabSection {
-  display: none;
+    display: none;
 }
 
 .neonEditor .preview-style-tab>.tabSection {
-  display: block;
+    display:block;
 }
 
 .neonEditor .preview-style-vertical .editor {
-  float: left;
-  width: 50%;
-  border-right: 1px solid #ccc;
-  border-top: 1px solid #ccc;
+    float: left;
+    width: 50%;
+    border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 .neonEditor .preview-style-vertical .preview {
-  float: left;
-  width: 50%;
-  border-top: 1px solid #ccc;
+    float: left;
+    width: 50%;
+    border-top: 1px solid #ccc;
 }
 
 .editor iframe {
-  border: none;
-  width: 100%;
+    border: none;
+    width: 100%;
 }
 
 .neonEditor .modeSwitchSection {
-  float: right;
-  margin-top: -23px;
-  margin-right: 5px;
+    float: right;
+    margin-top: -23px;
+    margin-right: 5px;
 }
 
 .neonEditor .wysiwygContainer {
-  border-top: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+
+/*we cant use display none for ifram because firefox have issue about it*/
+.wysiwygContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden
+}
+
+.markdownMode .mdContainer {
+    position: inherit;
+    visibility: visible
+}
+
+.wysiwygMode .wysiwygContainer {
+    position: inherit;
+    visibility: visible
+}
+
+.neonEditor.hide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
 }
 
 /* nepopup용 추후 분리해야함 */
-
 .nepopup-wrapper {
-  width: 500px;
-  left: auto;
-  margin-right: auto;
-  margin-left: auto;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  background: white;
-  z-index: 9999;
+    width: 500px;
+    left: auto;
+    margin-right: auto;
+    margin-left: auto;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    z-index: 9999;
 }
 
 .nepopup-header {
-  height: 30px;
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
-  line-height: 30px;
+    height: 30px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
 }
 
 .nepopup-body {
-  padding: 15px;
+    padding: 15px;
 }
 
 .nepopup-header .nepopup-closeButton {
-  float: right;
-  margin: 0;
-  padding: 0;
-  border: none;
-  line-height: 1;
-  background: none;
-  font-weight: bold;
-  font-size: 20px;
-  color: #aaa;
+    float: right;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1;
+    background: none;
+    font-weight: bold;
+    font-size: 20px;
+    color: #aaa;
 }
 
 .nepopup-header .nepopup-title {
-  font-size: 20px;
-  font-weight: bold;
-  vertical-align: baseline;
+    font-size: 20px;
+    font-weight:bold;
+    vertical-align: baseline;
 }
 
 .neonEditor-popup {
-  position: absolute;
-  top: 30px;
-  left: 50%;
-  margin-left: -250px;
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    margin-left: -250px;
 }
 
 .neonEditor-popup label {
-  display: block;
+    display: block;
 }
 
 .buttonSection {
-  margin-top: 15px;
+    margin-top: 15px;
 }
 
+
 .popupAddImage .tab {
-  padding: 5px 0;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
 }
 
 .popupAddImage .urlType {
-  display: none;
+    display: none;
 }
-
 .popupAddImage .fileType {
-  display: none;
+    display: none;
 }
-
 .popupAddImage div.active,
-.popupAddImage form.active {
-  display: block;
+.popupAddImage form.active{
+    display: block;
 }
-
 .popupAddImage .tab button {
-  border: none;
-  background: none;
+    border: none;
+    background: none;
 }

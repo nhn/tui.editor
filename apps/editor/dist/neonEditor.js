@@ -1418,6 +1418,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwHeading = require('./wysiwygCommands/heading'),
     wwUL = require('./wysiwygCommands/ul'),
     wwOL = require('./wysiwygCommands/ol'),
+    wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
 var util = ne.util;
@@ -1457,13 +1458,13 @@ function NeonEditor(options) {
 
     this.eventManager = new EventManager();
 
-    this._initEvent();
-
     this.commandManager = new CommandManager(this);
     this.convertor = new Convertor();
-    this.layout = new Layout(options, this.eventManager);
-    this.layout.init();
 
+    this.layout = new Layout(options, this.eventManager);
+    this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
+        self.changeMode(info.text);
+    });
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
@@ -1475,22 +1476,18 @@ function NeonEditor(options) {
         });
     }
 
+    this.contentHeight(this.options.height);
+
     this.changePreviewStyle(this.options.previewStyle);
 
     this.mdEditor.init();
 
-    this.wwEditor.init(this.options.height, function() {
+    this.wwEditor.init(function() {
         extManager.applyExtension(self, self.options.exts);
 
         self._initDefaultCommands();
 
-        if (self.options.initialEditType === 'markdown') {
-            self.eventManager.emit('changeMode.markdown');
-        } else {
-            self.eventManager.emit('changeMode.wysiwyg');
-        }
-
-        self.eventManager.emit('changeMode', self.options.initialEditType);
+        self.changeMode(self.options.initialEditType);
 
         self.setValue(self.options.initialValue);
 
@@ -1499,26 +1496,8 @@ function NeonEditor(options) {
         }
     });
 
-    window.dd = this;
-
     __nedInstance.push(this);
 }
-
-NeonEditor.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('changeMode.wysiwyg', function() {
-        self.currentMode = 'wysiwyg';
-        self.layout.switchToWYSIWYG();
-        self.wwEditor.setValue(self.convertor.toHTML(self.mdEditor.getValue()));
-    });
-
-    this.eventManager.listen('changeMode.markdown', function() {
-        self.currentMode = 'markdown';
-        self.layout.switchToMarkdown();
-        self.mdEditor.setValue(self.convertor.toMarkdown(self.wwEditor.getValue()));
-    });
-};
 
 NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(mdcBold);
@@ -1541,6 +1520,7 @@ NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(wwAddLink);
     this.commandManager.addCommand(wwHR);
     this.commandManager.addCommand(wwHeading);
+    this.commandManager.addCommand(wwIncreaseTask);
     this.commandManager.addCommand(wwTask);
 };
 
@@ -1595,6 +1575,17 @@ NeonEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
+NeonEditor.prototype.contentHeight  = function(height) {
+    if (height) {
+        this._contentHeight = height;
+        this.mdEditor.setHeight(height);
+        this.preview.setHeight(height);
+        this.wwEditor.setHeight(height);
+    }
+
+    return this._contentHeight;
+};
+
 NeonEditor.prototype.getCurrentModeEditor = function() {
     var editor;
 
@@ -1615,6 +1606,26 @@ NeonEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
+NeonEditor.prototype.changeMode = function(mode) {
+    if (this.currentMode === mode) {
+        return;
+    }
+
+    this.currentMode = mode;
+
+    if (this.isWysiwygMode()) {
+        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
+        this.layout.switchToWYSIWYG();
+        this.eventManager.emit('changeMode.wysiwyg');
+    } else {
+        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+        this.layout.switchToMarkdown();
+        this.eventManager.emit('changeMode.markdown');
+    }
+
+    this.eventManager.emit('changeMode', mode);
+};
+
 NeonEditor.prototype.remove = function() {
     this.wwEditor.remove();
     this.mdEditor.remove();
@@ -1622,11 +1633,11 @@ NeonEditor.prototype.remove = function() {
 };
 
 NeonEditor.prototype.hide = function() {
-    this.layout.hide();
+    this.eventManager.emit('hide', this);
 };
 
 NeonEditor.prototype.show = function() {
-    this.layout.show();
+    this.eventManager.emit('show', this);
 };
 
 NeonEditor.getInstances = function() {
@@ -1639,7 +1650,7 @@ NeonEditor.defineExtension = function(name, ext) {
 
 module.exports = NeonEditor;
 
-},{"./commandManager":7,"./convertor":8,"./eventManager":10,"./extManager":11,"./extensions/querySplitter":12,"./extensions/taskCounter":13,"./extensions/textPalette":14,"./layout":17,"./markdownCommands/addImage":19,"./markdownCommands/addLink":20,"./markdownCommands/blockquote":21,"./markdownCommands/bold":22,"./markdownCommands/heading":23,"./markdownCommands/hr":24,"./markdownCommands/italic":25,"./markdownCommands/ol":26,"./markdownCommands/task":27,"./markdownCommands/ul":28,"./markdownEditor":29,"./preview":34,"./wysiwygCommands/addImage":39,"./wysiwygCommands/addLink":40,"./wysiwygCommands/blockquote":41,"./wysiwygCommands/bold":42,"./wysiwygCommands/heading":43,"./wysiwygCommands/hr":44,"./wysiwygCommands/italic":45,"./wysiwygCommands/ol":46,"./wysiwygCommands/task":47,"./wysiwygCommands/ul":48,"./wysiwygEditor":49}],10:[function(require,module,exports){
+},{"./commandManager":7,"./convertor":8,"./eventManager":10,"./extManager":11,"./extensions/querySplitter":12,"./extensions/taskCounter":13,"./extensions/textPalette":14,"./layout":17,"./markdownCommands/addImage":19,"./markdownCommands/addLink":20,"./markdownCommands/blockquote":21,"./markdownCommands/bold":22,"./markdownCommands/heading":23,"./markdownCommands/hr":24,"./markdownCommands/italic":25,"./markdownCommands/ol":26,"./markdownCommands/task":27,"./markdownCommands/ul":28,"./markdownEditor":29,"./preview":34,"./wysiwygCommands/addImage":39,"./wysiwygCommands/addLink":40,"./wysiwygCommands/blockquote":41,"./wysiwygCommands/bold":42,"./wysiwygCommands/heading":43,"./wysiwygCommands/hr":44,"./wysiwygCommands/increaseTask":45,"./wysiwygCommands/italic":46,"./wysiwygCommands/ol":47,"./wysiwygCommands/task":48,"./wysiwygCommands/ul":49,"./wysiwygEditor":50}],10:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1668,7 +1679,9 @@ var eventList = [
     'command',
     'htmlUpdate',
     'markdownUpdate',
-    'renderedHtmlUpdated'
+    'renderedHtmlUpdated',
+    'show',
+    'hide'
 ];
 
 /**
@@ -2252,6 +2265,9 @@ function Layout(options, eventManager) {
     this.height = options.height;
     this.type = options.initialEditType;
     this.eventManager = eventManager;
+
+    this.init();
+    this._initEvent();
 }
 
 Layout.prototype.init = function() {
@@ -2265,6 +2281,11 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
+};
+
+Layout.prototype._initEvent = function() {
+    this.eventManager.listen('hide', this.hide.bind(this));
+    this.eventManager.listen('show', this.show.bind(this));
 };
 
 Layout.prototype._renderLayout = function() {
@@ -2281,54 +2302,22 @@ Layout.prototype._initModeSwitch = function() {
 
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
-
-    this.modeSwitch.on('modeSwitched', function(ev, info) {
-        var type;
-
-        if (info.type === ModeSwitch.TYPE.WYSIWYG) {
-            self.eventManager.emit('changeMode.wysiwyg');
-            type = "wysiwyg";
-        } else {
-            self.eventManager.emit('changeMode.markdown');
-            type = "markdown";
-        }
-
-        self.eventManager.emit('changeMode', type);
-    });
 };
 
 Layout.prototype.switchToWYSIWYG = function() {
-    this.$containerEl.find('.mdContainer').css({
-        position: 'absolute',
-        visibility: 'hidden'
-    });
-    this.$containerEl.find('.wysiwygContainer').css({
-        position: 'inherit',
-        visibility: 'visible'
-    });
+    this.$containerEl.removeClass('markdownMode');
+    this.$containerEl.addClass('wysiwygMode');
 };
 
 Layout.prototype.switchToMarkdown = function() {
-    this.$containerEl.find('.mdContainer').css({
-        position: 'inherit',
-        visibility: 'visible'
-    });
-
-    //we cant use display none for ifram because firefox have issue about it
-    this.$containerEl.find('.wysiwygContainer').css({
-        position: 'absolute',
-        visibility: 'hidden'
-    });
-
+    this.$containerEl.removeClass('wysiwygMode');
+    this.$containerEl.addClass('markdownMode');
     this.markdownTab.activate('Editor');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
     this.$previewEl = this.$containerEl.find('.mdContainer .preview');
-
-    this.$mdEditorContainerEl.css('height', this.height);
-    this.$previewEl.css('height', this.height);
 
     this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],
@@ -2340,7 +2329,6 @@ Layout.prototype._initMarkdownAndPreviewSection = function() {
 
 Layout.prototype._initWysiwygSection = function() {
     this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
-    this.$wwEditorContainerEl.height(this.height);
 };
 
 Layout.prototype._initPopupAddLink = function() {
@@ -2376,11 +2364,11 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.neonEditor').css('display', 'none');
+    this.$el.find('.neonEditor').addClass('hide');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.neonEditor').css('display', 'block');
+    this.$el.find('.neonEditor').removeClass('hide');
 };
 
 Layout.prototype.remove = function() {
@@ -3021,7 +3009,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
      * @return {string} 이탤릭이 적용된 텍스트
      */
     append: function(text) {
-        return '*' + text + '*';
+        return '_' + text + '_';
     },
     /**
      * remove
@@ -3445,6 +3433,10 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
     this.replaceSelection(content, selection);
 };
 
+MarkdownEditor.prototype.setHeight = function(height) {
+    this.$editorContainerEl.height(height);
+};
+
 module.exports = MarkdownEditor;
 
 },{}],30:[function(require,module,exports){
@@ -3587,7 +3579,7 @@ ModeSwitch.prototype._switchType = function() {
 
     this.trigger('modeSwitched', {
         type: this.type,
-        text: typeToSwitch
+        text: typeToSwitch.toLowerCase()
     });
 };
 
@@ -3916,6 +3908,8 @@ function Preview($el, eventManager, converter) {
     this.converter = converter;
     this.$el = $el;
 
+    this._initContentSection();
+
     this.lazyRunner = new LazyRunner();
 
     this.lazyRunner.registerLazyRunFunction(
@@ -3924,6 +3918,7 @@ function Preview($el, eventManager, converter) {
         800,
         this
     );
+
     this._initEvent();
 }
 
@@ -3933,6 +3928,11 @@ Preview.prototype._initEvent = function() {
     this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
         self.lazyRunner.run('refresh', markdown);
     });
+};
+
+Preview.prototype._initContentSection = function() {
+    this.$previewContent = $('<div class="previewContent neonEditor-content" />');
+    this.$el.append(this.$previewContent);
 };
 
 Preview.prototype.refresh = function(markdown) {
@@ -3949,8 +3949,12 @@ Preview.prototype.render = function(html) {
         finalHtml = processedDataByHook[0];
     }
 
-    this.$el.empty();
-    this.$el.html(finalHtml);
+    this.$previewContent.empty();
+    this.$previewContent.html(finalHtml);
+};
+
+Preview.prototype.setHeight = function(height) {
+    this.$el.height(height);
 };
 
 module.exports = Preview;
@@ -4794,6 +4798,123 @@ module.exports = HR;
 
 },{"../commandManager":7}],45:[function(require,module,exports){
 /**
+ * @fileoverview Implements inceaseTask wysiwyg command
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var CommandManager = require('../commandManager');
+
+var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+/**
+ * IncreaseTask
+ * increase task depth to wysiwyg Editor
+ * @exports IncreaseTask
+ * @augments Command
+ * @augments WysiwygCommand
+ */
+var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
+    name: 'IncreaseTask',
+    /**
+     *  커맨드 핸들러
+     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     */
+    exec: function(wwe) {
+        var parent, node, range;
+
+        range = wwe.getEditor().getSelection();
+        node = range.startContainer;
+
+        if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
+            while (parent = node.parentNode) {
+                // If we find a UL or OL (so are in a list, node must be an LI)
+                if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
+                    // AND the LI is not the first in the list
+                    if (node.previousSibling) {
+                        // Then increase the list level
+                        wwe.getEditor().modifyBlocks(increaseTaskLevel);
+                    }
+
+                    break;
+                }
+                node = parent;
+            }
+        }
+    }
+});
+
+function isContainer(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && !isBlock(node);
+}
+
+function isInline(node) {
+    return inlineNodeNames.test(node.nodeName);
+}
+
+function isBlock(node) {
+    var type = node.nodeType;
+    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
+        !isInline(node) && every(node.childNodes, isInline);
+}
+
+function every(nodeList, fn) {
+    var l = nodeList.length - 1;
+
+    while (l >= 0) {
+        if (!fn(nodeList[l])) {
+            return false;
+        }
+
+        l -= 1;
+    }
+
+    return true;
+}
+
+function replaceWith(node, node2) {
+    var parent = node.parentNode;
+    if (parent) {
+        parent.replaceChild(node2, node);
+    }
+}
+
+function increaseTaskLevel(frag) {
+    var items = frag.querySelectorAll('LI'),
+        i, l, item,
+        type, newParent,
+        listItemAttrs = {class: 'task-list-item'},
+        listAttrs;
+
+    for (i = 0, l = items.length; i < l; i += 1) {
+        item = items[i];
+        if (!isContainer(item.firstChild)) {
+            // type => 'UL' or 'OL'
+            type = item.parentNode.nodeName;
+            newParent = item.previousSibling;
+
+            if (!newParent || !(newParent = newParent.lastChild) ||
+                newParent.nodeName !== type) {
+                replaceWith(
+                    item,
+                    this.createElement('LI', listItemAttrs, [
+                        newParent = this.createElement(type)
+                    ])
+                );
+            }
+            newParent.appendChild(item);
+        }
+    }
+
+    return frag;
+};
+
+module.exports = IncreaseTask;
+
+},{"../commandManager":7}],46:[function(require,module,exports){
+/**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
@@ -4827,7 +4948,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],46:[function(require,module,exports){
+},{"../commandManager":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4862,7 +4983,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4911,6 +5032,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
             selection.setStart(selection.startContainer, 1);
 
+            //we need some space for safari
             sq.insertElement(sq.getDocument().createTextNode(' \u200B'), selection);
 
             $li.addClass('task-list-item');
@@ -4924,7 +5046,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":7}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4959,7 +5081,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],49:[function(require,module,exports){
+},{"../commandManager":7}],50:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4971,9 +5093,9 @@ var Squire = window.Squire,
     util = ne.util;
 
 var FIND_HEADING_RX = /h[\d]/i,
+    FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
+    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
-
-var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
 
 /**
  * WysiwygEditor
@@ -4990,7 +5112,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.contentStyles = contentStyles;
 }
 
-WysiwygEditor.prototype.init = function(height, callback) {
+WysiwygEditor.prototype.init = function(callback) {
     var self = this;
 
     this.$iframe = $('<iframe />');
@@ -5011,7 +5133,6 @@ WysiwygEditor.prototype.init = function(height, callback) {
             blockTag: 'DIV'
         });
 
-        self.setHeight(height);
         self._initEvent();
         self._initSquireKeyHandler();
 
@@ -5026,168 +5147,6 @@ WysiwygEditor.prototype.init = function(height, callback) {
 
     this.$editorContainerEl.css('position', 'relative');
     this.$editorContainerEl.append(this.$iframe);
-};
-
-WysiwygEditor.prototype._initSquireKeyHandler = function() {
-    var self = this;
-
-    this.getEditor().addEventListener('keydown', function(event) {
-        self._keyEventHandler(event);
-    });
-
-    if (util.browser.firefox) {
-        //prevent last keyevent when composing
-        this.getEditor().addEventListener('compositionend', function(event) {
-            self._keyEventHandler(event);
-        });
-    }
-};
-
-WysiwygEditor.prototype._keyEventHandler = function(event) {
-    var self = this,
-        range, doc, sq;
-
-    //enter
-    if (event.which === 13) {
-        if (this._isTaskList()) {
-            this._removeTaskInputIfNeed();
-
-            setTimeout(function() {
-                if (self._isTaskList()) {
-                    self.eventManager.emit('command', 'Task');
-                }
-            }, 0);
-        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-            setTimeout(function() {
-                self._unwrapHeading();
-            }, 0);
-        } else if (this.getEditor().hasFormat('P')) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-            setTimeout(function() {
-                self._splitPIfNeed();
-            }, 0);
-        }
-    //backspace
-    } else if (event.which === 8) {
-        range = this.getEditor().getSelection();
-
-        if (range.collapsed) {
-            if (this._isTaskList()) {
-                this._removeTaskInputIfNeed();
-            } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
-                this._unwrapHeading();
-
-            //todo for remove hr, not perfect fix need
-            } else if (range.startContainer.previousSibling &&
-                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
-                       range.startContainer.previousSibling.tagName === 'HR') {
-                $(range.startContainer.previousSibling).remove();
-            }
-        }
-    } else if (event.which === 9) {
-        if (this._isTaskList()) {
-            event.preventDefault();
-            this._taskTabHandler();
-        }
-    }
-};
-
-WysiwygEditor.prototype.saveSelection = function(selection) {
-    var sq = this.getEditor();
-
-    if (!selection) {
-        selection = sq.getSelection().cloneRange();
-    }
-
-    this.getEditor()._saveRangeToBookmark(selection);
-};
-
-WysiwygEditor.prototype.restoreSavedSelection = function() {
-    var sq = this.getEditor();
-
-    sq.setSelection(sq._getRangeAndRemoveBookmark());
-};
-
-
-WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
-    var self = this;
-
-    this.getEditor().modifyBlocks(function(frag) {
-        var current = frag.childNodes[0],
-            newFrag, newBlock, nextBlock, tagName;
-
-        //find last depth
-        while (current.firstChild) {
-            current = current.firstChild;
-        }
-
-        //find tag
-        while (current !== frag) {
-            tagName = current.tagName;
-
-            if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
-                nextBlock = current.childNodes[0];
-
-                //there is no next blocktag
-                if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
-                    nextBlock = self.getEditor().createDefaultBlock();
-
-                    util.forEachArray(util.toArray(current.childNodes), function(node) {
-                        nextBlock.appendChild(node);
-                    });
-
-                    //remove unneccesary br
-                    if ($(nextBlock).find('br').length > 1  &&
-                        nextBlock.childNodes[nextBlock.childNodes.length - 1].nodeType === Node.ELEMENT_NODE &&
-                        nextBlock.childNodes[nextBlock.childNodes.length - 1].tagName === 'BR'
-                       ) {
-                        nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
-                    }
-                }
-
-                if (targetTagName) {
-                    newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
-                } else {
-                    newBlock = nextBlock;
-                }
-
-                newFrag = self.getEditor().getDocument().createDocumentFragment();
-                newFrag.appendChild(newBlock);
-
-                frag = newFrag;
-
-                break;
-            }
-
-            current = current.parentNode;
-        }
-
-        //if source condition node is not founded, we wrap current div node with node named targetTagName
-        if ((!newFrag || !srcCondition) && frag.childNodes[0].nodeType === Node.ELEMENT_NODE && frag.childNodes[0].tagName === 'DIV' && targetTagName) {
-            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
-        }
-
-        return frag;
-    });
-};
-
-WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
-    this.changeBlockFormat(function(tagName) {
-        return FIND_BLOCK_TAGNAME_RX.test(tagName);
-    }, targetTagName);
-    this._removeTaskInputInWrongPlace();
-};
-
-WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
-    var self = this;
-
-    this.getEditor().modifyBlocks(function(frag) {
-        if (!frag.textContent) {
-            frag = self.getEditor().createDefaultBlock();
-        }
-        return frag
-    });
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
@@ -5215,6 +5174,7 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     var bodyStyle, body;
 
     doc.querySelector('html').style.height = '100%';
+    this.$iframe.height('100%');
     body = doc.querySelector('body');
     body.className = 'neonEditor-content';
 
@@ -5249,6 +5209,171 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change', eventObj);
     });
 };
+
+WysiwygEditor.prototype._initSquireKeyHandler = function() {
+    var self = this;
+
+    this.getEditor().addEventListener('keydown', function(event) {
+        self._keyEventHandler(event);
+    });
+
+    //firefox has problem about keydown event while composition korean
+    if (util.browser.firefox) {
+        this.getEditor().addEventListener('keypress', function(event) {
+            if (event.keyCode) {
+                self._keyEventHandler(event);
+            }
+        });
+    }
+};
+
+WysiwygEditor.prototype._keyEventHandler = function(event) {
+    var self = this,
+        range, doc, sq;
+
+    //enter
+    if (event.keyCode === 13) {
+        if (this._isInTaskList()) {
+            this._removeTaskInputIfNeed();
+
+            setTimeout(function() {
+                if (self._isInTaskList()) {
+                    self.eventManager.emit('command', 'Task');
+                }
+            }, 0);
+        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
+            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+            setTimeout(function() {
+                self._unwrapHeading();
+            }, 0);
+        }
+    //backspace
+    } else if (event.keyCode === 8) {
+        range = this.getEditor().getSelection();
+
+        if (range.collapsed) {
+            if (this._isInTaskList()) {
+                this._removeTaskInputIfNeed();
+            } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
+                this._unwrapHeading();
+            //todo for remove hr, not perfect fix need
+            } else if (range.startContainer.previousSibling &&
+                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
+                       range.startContainer.previousSibling.tagName === 'HR') {
+                $(range.startContainer.previousSibling).remove();
+            }
+        }
+    } else if (event.which === 9) {
+        if (this._isInTaskList()) {
+            event.preventDefault();
+            self.eventManager.emit('command', 'IncreaseTask');
+        }
+    }
+};
+
+WysiwygEditor.prototype.saveSelection = function(selection) {
+    var sq = this.getEditor();
+
+    if (!selection) {
+        selection = sq.getSelection().cloneRange();
+    }
+
+    this.getEditor()._saveRangeToBookmark(selection);
+};
+
+WysiwygEditor.prototype.restoreSavedSelection = function() {
+    var sq = this.getEditor();
+    sq.setSelection(sq._getRangeAndRemoveBookmark());
+};
+
+WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        var current = frag.childNodes[0],
+            newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+
+        if (srcCondition) {
+            //find last depth
+            while (current.firstChild) {
+                current = current.firstChild;
+            }
+
+            //find tag
+            while (current !== frag) {
+                tagName = current.tagName;
+
+                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+                    nextBlock = current.childNodes[0];
+
+                    //there is no next blocktag
+                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
+                        nextBlock = self.getEditor().createDefaultBlock();
+
+                        util.forEachArray(util.toArray(current.childNodes), function(node) {
+                            nextBlock.appendChild(node);
+                        });
+
+                        lastNodeOfNextBlock = nextBlock.childNodes[nextBlock.childNodes.length - 1];
+
+                        //remove unneccesary br
+                        if (lastNodeOfNextBlock
+                            && lastNodeOfNextBlock.nodeType === Node.ELEMENT_NODE
+                            && lastNodeOfNextBlock.tagName === 'BR'
+                        ) {
+                            nextBlock.removeChild(lastNodeOfNextBlock);
+                        }
+                    }
+
+                    if (targetTagName) {
+                        newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
+                    } else {
+                        newBlock = nextBlock;
+                    }
+
+                    newFrag = self.getEditor().getDocument().createDocumentFragment();
+                    newFrag.appendChild(newBlock);
+
+                    frag = newFrag;
+
+                    break;
+                }
+
+                current = current.parentNode;
+            }
+        }
+
+        //if source condition node is not founded, we wrap current div node with node named targetTagName
+        if ((!newFrag || !srcCondition)
+            && targetTagName
+            && frag.childNodes[0].nodeType === Node.ELEMENT_NODE
+            && frag.childNodes[0].tagName === 'DIV'
+        ) {
+            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
+        }
+
+        return frag;
+    });
+};
+
+WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
+    this.changeBlockFormat(function(tagName) {
+        return FIND_BLOCK_TAGNAME_RX.test(tagName);
+    }, targetTagName);
+    this._removeTaskInputInWrongPlace();
+};
+
+WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        if (!frag.textContent) {
+            frag = self.getEditor().createDefaultBlock();
+        }
+        return frag
+    });
+};
+
 
 //from http://jsfiddle.net/9ThVr/24/
 WysiwygEditor.prototype.getCaretPosition = function() {
@@ -5303,7 +5428,7 @@ WysiwygEditor.prototype.remove = function() {
 };
 
 WysiwygEditor.prototype.setHeight = function(height) {
-    this.$iframe.height(height);
+    this.$editorContainerEl.height(height);
 };
 
 WysiwygEditor.prototype.setValue = function(html) {
@@ -5311,15 +5436,26 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensurePtagContentWrappedWithDiv();
     this._ensureSpaceNextToTaskInput();
     this._removeTaskListClass();
+
+    this.get$Body().find('div').each(function(index, node) {
+        if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
 
-//this because we need new line inside ptag
+//this because we need new line inside ptag, and additional empty line added
 //p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
 WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
     this.get$Body().find('p').each(function(index, node) {
         if ($(node).find('div').length <= 0) {
             $(node).wrapInner('<div />');
+        }
+
+        if ($(node).next().is('p')) {
+            $(node).append('<div><br></div>');
         }
     });
 };
@@ -5355,19 +5491,19 @@ WysiwygEditor.prototype.getValue = function() {
     html = this.editor.getHTML();
 
     //empty line replace to br
-    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, function(match, tag) {
+    html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
         //we maintain empty list
         return tag === 'li' ? match : '<br />';
     });
 
     //remove unnecessary brs
-    html = html.replace(/(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g, '</$1>');
+    html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
     //remove contenteditable block, in this case div
     html = html.replace(/<div>/g, '');
     html = html.replace(/<\/div>/g, '<br />');
 
-    return html ;
+    return html;
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
@@ -5419,16 +5555,16 @@ WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, of
     this.replaceSelection(content, selection);
 };
 
-function getTextLengthOfElement(element) {
-    var textLength;
+function getOffsetLengthOfElement(element) {
+    var len;
 
     if (element.nodeType === 1) {
-       textLength = element.textContent.length;
+       len = element.textContent.length;
     } else if (element.nodeType === 3) {
-       textLength = element.nodeValue.length;
+       len = element.nodeValue.length;
     }
 
-    return textLength;
+    return len;
 }
 
 WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
@@ -5439,7 +5575,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     stepLength = 0;
 
     while (traceElement) {
-        traceElementLength = getTextLengthOfElement(traceElement);
+        traceElementLength = getOffsetLengthOfElement(traceElement);
         stepLength += traceElementLength;
 
         if (offset <= stepLength) {
@@ -5448,7 +5584,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
         traceOffset -= traceElementLength;
 
-        if (getTextLengthOfElement(traceElement) > 0) {
+        if (getOffsetLengthOfElement(traceElement) > 0) {
             latestAvailableElement = traceElement;
         }
 
@@ -5457,7 +5593,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
     if (!traceElement) {
         traceElement = latestAvailableElement;
-        traceOffset = getTextLengthOfElement(traceElement);
+        traceOffset = getOffsetLengthOfElement(traceElement);
     }
 
     return {
@@ -5542,15 +5678,17 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
     var isNotInsideTask, parent,
         self = this;
 
-    this.get$Body().find('input:checkbox').each(function(index, node) {
-        isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
+    this.get$Body()
+        .find('input:checkbox')
+        .each(function(index, node) {
+            isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
 
-        if (isNotInsideTask) {
-            parent = $(node).parent();
-            $(node).remove();
-            self.replaceContentText(parent, /\s\u200B/g, '');
-        }
-    });
+            if (isNotInsideTask) {
+                parent = $(node).parent();
+                $(node).remove();
+                self.replaceContentText(parent, /\s\u200B/g, '');
+            }
+        });
 };
 
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
@@ -5561,111 +5699,8 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     $(container).html(before.replace(from, to));
 };
 
-WysiwygEditor.prototype._isTaskList = function() {
+WysiwygEditor.prototype._isInTaskList = function() {
     return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
-};
-
-function isContainer(node) {
-    var type = node.nodeType;
-    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-        !isInline(node) && !isBlock(node);
-}
-
-function isInline(node) {
-    return inlineNodeNames.test(node.nodeName);
-}
-
-function isBlock(node) {
-    var type = node.nodeType;
-    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-        !isInline(node) && every(node.childNodes, isInline);
-}
-
-function every(nodeList, fn) {
-    var l = nodeList.length - 1;
-
-    while (l >= 0) {
-        if (!fn(nodeList[l])) {
-            return false;
-        }
-
-        l -= 1;
-    }
-
-    return true;
-}
-
-function replaceWith(node, node2) {
-    var parent = node.parentNode;
-    if (parent) {
-        parent.replaceChild(node2, node);
-    }
-}
-
-function increaseTaskLevel(frag) {
-    var items = frag.querySelectorAll('LI'),
-        i, l, item,
-        type, newParent,
-        listItemAttrs = {class: 'task-list-item'},
-        listAttrs;
-
-    for (i = 0, l = items.length; i < l; i += 1) {
-        item = items[i];
-        if (!isContainer(item.firstChild)) {
-            // type => 'UL' or 'OL'
-            type = item.parentNode.nodeName;
-            newParent = item.previousSibling;
-
-            if (!newParent || !(newParent = newParent.lastChild) ||
-                newParent.nodeName !== type) {
-                replaceWith(
-                    item,
-                    this.createElement('LI', listItemAttrs, [
-                        newParent = this.createElement(type)
-                    ])
-                );
-            }
-            newParent.appendChild(item);
-        }
-    }
-
-    return frag;
-};
-
-WysiwygEditor.prototype._taskTabHandler = function() {
-    var parent, node, range;
-
-    range = this.getEditor().getSelection();
-    node = range.startContainer;
-
-    if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
-        while (parent = node.parentNode) {
-            // If we find a UL or OL (so are in a list, node must be an LI)
-            if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
-                // AND the LI is not the first in the list
-                if (node.previousSibling) {
-                    // Then increase the list level
-                    this.getEditor().modifyBlocks(increaseTaskLevel);
-                }
-
-                break;
-            }
-            node = parent;
-        }
-    }
-};
-
-WysiwygEditor.prototype._splitPIfNeed = function() {
-    var range = this.getEditor().getSelection(),
-        prev = range.startContainer.previousSibling;
-
-    if (prev && prev.parentNode && prev.parentNode.tagName === 'P' &&
-        prev.nodeType === Node.ELEMENT_NODE &&
-        prev.tagName === 'DIV' &&
-        !prev.textContent) {
-        $(prev).remove();
-        this.unwrapBlockTag('P');
-    }
 };
 
 WysiwygEditor.prototype._unwrapHeading = function() {
