@@ -4,7 +4,6 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
     concat = require('gulp-concat'),
-    concatCss = require('gulp-concat-css'),
 
     //sourcemaps = require('gulp-sourcemaps'),
     source = require('vinyl-source-stream'),
@@ -85,7 +84,7 @@ gulp.task('connect', function() {
 /*
  * watch
  */
-gulp.task('watch', function () {
+gulp.task('watch', function() {
     livereload.listen();
     gulp.watch(['./build/*.js'], livereload.changed);
     gulp.watch(['./src/css/*.css'], livereload.changed);
@@ -95,7 +94,7 @@ gulp.task('watch', function () {
 /*
  * gulp-strip-debug
  */
-gulp.task('stripDebug', function () {
+gulp.task('stripDebug', function() {
     return gulp.src('dist/neonEditor.js')
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
@@ -111,37 +110,12 @@ gulp.task('uglify', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('makeFull', function() {
-    return gulp.src([
-            './lib/codemirror/lib/codemirror.js',
-            './lib/highlightjs/highlight.pack.js',
-            './lib/marked/lib/marked.js',
-            './lib/ne-code-snippet/code-snippet.js',
-            './lib/squire-rte/build/squire-raw.js',
-            './lib/toMark/dist/toMark.js',
-            './dist/neonEditor.js'
-         ])
-        .pipe(ugilfy())
-        .pipe(concat('neonEditor.full.min.js'))
-        .pipe(gulp.dest('./dist'));
-});
-
-gulp.task('css', function() {
-    return gulp.src([
-            './lib/codemirror/lib/codemirror.css',
-            './lib/highlightjs/styles/github.css',
-            './src/css/style.css'
-         ])
-        .pipe(concatCss('neonEditor.css'))
-        .pipe(gulp.dest('./dist'));
-});
-
 gulp.task('contentCssCopy', function() {
     return gulp.src([
-            './src/css/contentStyle.css'
+            './src/css/contentStyle.css',
+            './src/css/neonEditor.css'
          ])
         .pipe(gulp.dest('./dist'));
 });
 
-
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'makeFull', 'uglify', 'css', 'contentCssCopy']));
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify', 'contentCssCopy']));
