@@ -13,7 +13,8 @@
     ],
     "main": [
         "dist/neonEditor.js",
-        "dist/neonEditor.css"
+        "dist/neonEditor.css",
+        "dist/contentStyle.css"
     ],
     "license": "MIT",
     "ignore": [
