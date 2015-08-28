@@ -1,23 +1,62 @@
+## 설치
+
+```
+bower install git@github.com:shiren/neon-editor.git#develop
+```
+
+bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일들을 다운로드 하셔도 됩니다.
+디펜던시 라이브러리설치 편의를 위해서는 bower를 이용하는 편이 좋습니다.
+이후 업데이트는 아래와같이 할수있습니다.
+
+```
+bower update
+```
+
+
 ## 임시 설치 가이드
 
 현재 에디터가 개발중에 있습니다. 미리 에디터를 적용하기 위한 임시 배포입니다.
 *demo/*디렉토리의 demoDist.html파일을 참고하시면 간단한 설치 예제가 있습니다.
-특별한 경우가 아니라면 neonEditor.full.min.js파일을 이용하시면 됩니다.
-jQuery최신 버전이 필요합니다..
-dist디렉토리의 neonEditor.css와 contentStyle.css를 링크해야합니다.
+디펜던시 스크립트들을 로드한후 에디터스크립트를 로드합니다.
+그리고 dist디렉토리의 neonEditor.css와 contentStyle.css를 링크해야합니다.
 neonEditor.css는 에디터에 필요한 css스타일들이고
 contentStyle.css는 wysiwyg에디터나 preview에서 보여질 컨텐트의 스타일들입니다.
 contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통해 만들어진 컨텐츠를 보여줄때 같은 내용을 사용하실수 있습니다.(css파일 내용 참고)
 
-``` javascript
-$('#editSection').neonEditor({
-    initialEditType: 'markdown',
-    previewStyle: 'tab',
-    height: 300,
-    contentCSSStyles: [
-        '../dist/contentStyle.css'
-    ]
-});
+
+``` html
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DEMO</title>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/ne-code-snippet/code-snippet.js"></script>
+    <script src="../lib/marked/lib/marked.js"></script>
+    <script src="../lib/toMark/dist/toMark.js"></script>
+    <script src="../lib/codemirror/lib/codemirror.js"></script>
+    <script src="../lib/highlightjs/highlight.pack.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
+    <script src="../dist/neonEditor.min.js"></script>
+    <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="../dist/neonEditor.css">
+    <link rel="stylesheet" href="../dist/contentStyle.css">
+</head>
+<body>
+<div id="editSection"></div>
+<script>
+    $('#editSection').neonEditor({
+        initialEditType: 'markdown',
+        previewStyle: 'tab',
+        height: 300,
+        contentCSSStyles: [
+            '../dist/contentStyle.css'
+        ]
+    });
+</script>
+</body>
+</html>
 ```
 
 ## 옵션 설명
@@ -74,11 +113,6 @@ $("#editSection").neonEditor("setValue", "# Hello!!");
 * getValue: 입력된 마크다운 컨텐트를 가져옵니다.
 * setValue: 에디터에 마크다운 컨텐트를 셋팅합니다.
 * changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
+* contentHeight: 에디터의 컨텐트 영역의 높이값을 인자로 넘겨 지정하거나 현재의 높이값을 반환합니다
 
-## 설치
 
-```
-bower install git@github.com:shiren/neon-editor.git#develop
-```
-
-bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일을 다운로드 하셔도 됩니다.
