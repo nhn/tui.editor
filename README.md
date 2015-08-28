@@ -12,7 +12,6 @@ bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파�
 bower update
 ```
 
-
 ## 임시 설치 가이드
 
 현재 에디터가 개발중에 있습니다. 미리 에디터를 적용하기 위한 임시 배포입니다.
@@ -23,25 +22,24 @@ neonEditor.css는 에디터에 필요한 css스타일들이고
 contentStyle.css는 wysiwyg에디터나 preview에서 보여질 컨텐트의 스타일들입니다.
 contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통해 만들어진 컨텐츠를 보여줄때 같은 내용을 사용하실수 있습니다.(css파일 내용 참고)
 
-
 ``` html
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>DEMO</title>
-    <script src="../lib/jquery/dist/jquery.js"></script>
-    <script src="../lib/ne-code-snippet/code-snippet.js"></script>
-    <script src="../lib/marked/lib/marked.js"></script>
-    <script src="../lib/toMark/dist/toMark.js"></script>
-    <script src="../lib/codemirror/lib/codemirror.js"></script>
-    <script src="../lib/highlightjs/highlight.pack.js"></script>
-    <script src="../lib/squire-rte/build/squire-raw.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/ne-code-snippet/code-snippet.js"></script>
+    <script src="bower_components/marked/lib/marked.js"></script>
+    <script src="bower_components/toMark/dist/toMark.js"></script>
+    <script src="bower_components/codemirror/lib/codemirror.js"></script>
+    <script src="bower_components/highlightjs/highlight.pack.js"></script>
+    <script src="bower_components/squire-rte/build/squire-raw.js"></script>
     <script src="../dist/neonEditor.min.js"></script>
-    <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="../dist/neonEditor.css">
-    <link rel="stylesheet" href="../dist/contentStyle.css">
+    <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="bower_components/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="bower_components/neon-editor/dist/neonEditor.css">
+    <link rel="stylesheet" href="bower_components/neon-editor/dist/contentStyle.css">
 </head>
 <body>
 <div id="editSection"></div>
