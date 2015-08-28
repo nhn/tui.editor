@@ -1,5 +1,5 @@
 {
-    "name": "NeonEditor",
+    "name": "neon-editor",
     "version": "0.0.1",
     "description": "private",
     "authors": [
@@ -13,6 +13,7 @@
     ],
     "main": [
         "dist/neonEditor.js",
+        "dist/neonEditor.min.js",
         "dist/neonEditor.css",
         "dist/contentStyle.css"
     ],
