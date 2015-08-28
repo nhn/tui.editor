@@ -182,6 +182,13 @@
     visibility: visible
 }
 
+.neonEditor.hide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
 /* nepopup용 추후 분리해야함 */
 .nepopup-wrapper {
     width: 500px;

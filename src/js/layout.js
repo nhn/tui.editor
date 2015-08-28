@@ -42,6 +42,7 @@ function Layout(options, eventManager) {
     this.eventManager = eventManager;
 
     this.init();
+    this._initEvent();
 }
 
 Layout.prototype.init = function() {
@@ -55,6 +56,11 @@ Layout.prototype.init = function() {
 
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
+};
+
+Layout.prototype._initEvent = function() {
+    this.eventManager.listen('hide', this.hide.bind(this));
+    this.eventManager.listen('show', this.show.bind(this));
 };
 
 Layout.prototype._renderLayout = function() {
@@ -133,11 +139,11 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.neonEditor').css('display', 'none');
+    this.$el.find('.neonEditor').addClass('hide');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.neonEditor').css('display', 'block');
+    this.$el.find('.neonEditor').removeClass('hide');
 };
 
 Layout.prototype.remove = function() {

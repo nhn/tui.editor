@@ -43,7 +43,7 @@ describe('Layout', function() {
 
             expect($('.mdContainer').hasClass('preview-style-tab')).toBe(true);
             expect($('.mdContainer').hasClass('preview-style-vertical')).toBe(false);
-        });
+        })
     });
 
     describe('Markdown and WYSIWYG type switching by eventManager', function() {
@@ -59,6 +59,15 @@ describe('Layout', function() {
 
             expect($('.neonEditor').hasClass('markdownMode')).toEqual(false);
             expect($('.neonEditor').hasClass('wysiwygMode')).toEqual(true);
+        });
+    });
+
+    describe('show/hide', function() {
+        it('hide and show editor', function() {
+            layout.hide();
+            expect($('.neonEditor').hasClass('hide')).toEqual(true);
+            layout.show();
+            expect($('.neonEditor').hasClass('hide')).toEqual(false);
         });
     });
 });

@@ -26,7 +26,9 @@ var eventList = [
     'command',
     'htmlUpdate',
     'markdownUpdate',
-    'renderedHtmlUpdated'
+    'renderedHtmlUpdated',
+    'show',
+    'hide'
 ];
 
 /**
