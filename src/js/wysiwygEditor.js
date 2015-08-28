@@ -9,6 +9,8 @@ var Squire = window.Squire,
     util = ne.util;
 
 var FIND_HEADING_RX = /h[\d]/i,
+    FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
+    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
 
 /**
@@ -61,165 +63,6 @@ WysiwygEditor.prototype.init = function(callback) {
 
     this.$editorContainerEl.css('position', 'relative');
     this.$editorContainerEl.append(this.$iframe);
-};
-
-WysiwygEditor.prototype._initSquireKeyHandler = function() {
-    var self = this;
-
-    this.getEditor().addEventListener('keydown', function(event) {
-        self._keyEventHandler(event);
-    });
-
-    if (util.browser.firefox) {
-        this.getEditor().addEventListener('keypress', function(event) {
-            if (event.keyCode) {
-                self._keyEventHandler(event);
-            }
-        });
-    }
-};
-
-WysiwygEditor.prototype._keyEventHandler = function(event) {
-    var self = this,
-        range, doc, sq;
-
-    //enter
-    if (event.keyCode === 13) {
-        if (this._isTaskList()) {
-            this._removeTaskInputIfNeed();
-
-            setTimeout(function() {
-                if (self._isTaskList()) {
-                    self.eventManager.emit('command', 'Task');
-                }
-            }, 0);
-        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-            setTimeout(function() {
-                self._unwrapHeading();
-            }, 0);
-        }
-    //backspace
-    } else if (event.keyCode === 8) {
-        range = this.getEditor().getSelection();
-
-        if (range.collapsed) {
-            if (this._isTaskList()) {
-                this._removeTaskInputIfNeed();
-            } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
-                this._unwrapHeading();
-
-            //todo for remove hr, not perfect fix need
-            } else if (range.startContainer.previousSibling &&
-                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
-                       range.startContainer.previousSibling.tagName === 'HR') {
-                $(range.startContainer.previousSibling).remove();
-            }
-        }
-    } else if (event.which === 9) {
-        if (this._isTaskList()) {
-            event.preventDefault();
-            self.eventManager.emit('command', 'IncreaseTask');
-        }
-    }
-};
-
-WysiwygEditor.prototype.saveSelection = function(selection) {
-    var sq = this.getEditor();
-
-    if (!selection) {
-        selection = sq.getSelection().cloneRange();
-    }
-
-    this.getEditor()._saveRangeToBookmark(selection);
-};
-
-WysiwygEditor.prototype.restoreSavedSelection = function() {
-    var sq = this.getEditor();
-    sq.setSelection(sq._getRangeAndRemoveBookmark());
-};
-
-
-WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
-    var self = this;
-
-    this.getEditor().modifyBlocks(function(frag) {
-        var current = frag.childNodes[0],
-            newFrag, newBlock, nextBlock, tagName;
-
-        if (srcCondition) {
-            //find last depth
-            while (current.firstChild) {
-                current = current.firstChild;
-            }
-
-            //find tag
-            while (current !== frag) {
-                tagName = current.tagName;
-
-                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
-                    nextBlock = current.childNodes[0];
-
-                    //there is no next blocktag
-                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
-                        nextBlock = self.getEditor().createDefaultBlock();
-
-                        util.forEachArray(util.toArray(current.childNodes), function(node) {
-                            nextBlock.appendChild(node);
-                        });
-
-                        //remove unneccesary br
-                        if ($(nextBlock).find('br').length > 1  &&
-                            nextBlock.childNodes[nextBlock.childNodes.length - 1].nodeType === Node.ELEMENT_NODE &&
-                                nextBlock.childNodes[nextBlock.childNodes.length - 1].tagName === 'BR'
-                           ) {
-                               nextBlock.removeChild(nextBlock.childNodes[nextBlock.childNodes.length - 1]);
-                           }
-                    }
-
-                    if (targetTagName) {
-                        newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
-                    } else {
-                        newBlock = nextBlock;
-                    }
-
-                    newFrag = self.getEditor().getDocument().createDocumentFragment();
-                    newFrag.appendChild(newBlock);
-
-                    frag = newFrag;
-
-                    break;
-                }
-
-                current = current.parentNode;
-            }
-        }
-
-        //if source condition node is not founded, we wrap current div node with node named targetTagName
-        if ((!newFrag || !srcCondition) && frag.childNodes[0].nodeType === Node.ELEMENT_NODE && frag.childNodes[0].tagName === 'DIV' && targetTagName) {
-            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
-        }
-
-        return frag;
-    });
-};
-
-WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
-    this.changeBlockFormat(function(tagName) {
-        return FIND_BLOCK_TAGNAME_RX.test(tagName);
-    }, targetTagName);
-    this._removeTaskInputInWrongPlace();
-};
-
-WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
-    var self = this;
-
-    this.getEditor().modifyBlocks(function(frag) {
-        if (!frag.textContent) {
-            frag = self.getEditor().createDefaultBlock();
-        }
-        return frag
-    });
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
@@ -282,6 +125,171 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change', eventObj);
     });
 };
+
+WysiwygEditor.prototype._initSquireKeyHandler = function() {
+    var self = this;
+
+    this.getEditor().addEventListener('keydown', function(event) {
+        self._keyEventHandler(event);
+    });
+
+    //firefox has problem about keydown event while composition korean
+    if (util.browser.firefox) {
+        this.getEditor().addEventListener('keypress', function(event) {
+            if (event.keyCode) {
+                self._keyEventHandler(event);
+            }
+        });
+    }
+};
+
+WysiwygEditor.prototype._keyEventHandler = function(event) {
+    var self = this,
+        range, doc, sq;
+
+    //enter
+    if (event.keyCode === 13) {
+        if (this._isInTaskList()) {
+            this._removeTaskInputIfNeed();
+
+            setTimeout(function() {
+                if (self._isInTaskList()) {
+                    self.eventManager.emit('command', 'Task');
+                }
+            }, 0);
+        } else if (this.hasFormatWithRx(FIND_HEADING_RX)) {
+            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+            setTimeout(function() {
+                self._unwrapHeading();
+            }, 0);
+        }
+    //backspace
+    } else if (event.keyCode === 8) {
+        range = this.getEditor().getSelection();
+
+        if (range.collapsed) {
+            if (this._isInTaskList()) {
+                this._removeTaskInputIfNeed();
+            } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
+                this._unwrapHeading();
+            //todo for remove hr, not perfect fix need
+            } else if (range.startContainer.previousSibling &&
+                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
+                       range.startContainer.previousSibling.tagName === 'HR') {
+                $(range.startContainer.previousSibling).remove();
+            }
+        }
+    } else if (event.which === 9) {
+        if (this._isInTaskList()) {
+            event.preventDefault();
+            self.eventManager.emit('command', 'IncreaseTask');
+        }
+    }
+};
+
+WysiwygEditor.prototype.saveSelection = function(selection) {
+    var sq = this.getEditor();
+
+    if (!selection) {
+        selection = sq.getSelection().cloneRange();
+    }
+
+    this.getEditor()._saveRangeToBookmark(selection);
+};
+
+WysiwygEditor.prototype.restoreSavedSelection = function() {
+    var sq = this.getEditor();
+    sq.setSelection(sq._getRangeAndRemoveBookmark());
+};
+
+WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        var current = frag.childNodes[0],
+            newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+
+        if (srcCondition) {
+            //find last depth
+            while (current.firstChild) {
+                current = current.firstChild;
+            }
+
+            //find tag
+            while (current !== frag) {
+                tagName = current.tagName;
+
+                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+                    nextBlock = current.childNodes[0];
+
+                    //there is no next blocktag
+                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
+                        nextBlock = self.getEditor().createDefaultBlock();
+
+                        util.forEachArray(util.toArray(current.childNodes), function(node) {
+                            nextBlock.appendChild(node);
+                        });
+
+                        lastNodeOfNextBlock = nextBlock.childNodes[nextBlock.childNodes.length - 1];
+
+                        //remove unneccesary br
+                        if (lastNodeOfNextBlock
+                            && lastNodeOfNextBlock.nodeType === Node.ELEMENT_NODE
+                            && lastNodeOfNextBlock.tagName === 'BR'
+                        ) {
+                            nextBlock.removeChild(lastNodeOfNextBlock);
+                        }
+                    }
+
+                    if (targetTagName) {
+                        newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
+                    } else {
+                        newBlock = nextBlock;
+                    }
+
+                    newFrag = self.getEditor().getDocument().createDocumentFragment();
+                    newFrag.appendChild(newBlock);
+
+                    frag = newFrag;
+
+                    break;
+                }
+
+                current = current.parentNode;
+            }
+        }
+
+        //if source condition node is not founded, we wrap current div node with node named targetTagName
+        if ((!newFrag || !srcCondition)
+            && targetTagName
+            && frag.childNodes[0].nodeType === Node.ELEMENT_NODE
+            && frag.childNodes[0].tagName === 'DIV'
+        ) {
+            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
+        }
+
+        return frag;
+    });
+};
+
+WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
+    this.changeBlockFormat(function(tagName) {
+        return FIND_BLOCK_TAGNAME_RX.test(tagName);
+    }, targetTagName);
+    this._removeTaskInputInWrongPlace();
+};
+
+WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
+    var self = this;
+
+    this.getEditor().modifyBlocks(function(frag) {
+        if (!frag.textContent) {
+            frag = self.getEditor().createDefaultBlock();
+        }
+        return frag
+    });
+};
+
 
 //from http://jsfiddle.net/9ThVr/24/
 WysiwygEditor.prototype.getCaretPosition = function() {
@@ -399,13 +407,13 @@ WysiwygEditor.prototype.getValue = function() {
     html = this.editor.getHTML();
 
     //empty line replace to br
-    html = html.replace(/<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g, function(match, tag) {
+    html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
         //we maintain empty list
         return tag === 'li' ? match : '<br />';
     });
 
     //remove unnecessary brs
-    html = html.replace(/(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g, '</$1>');
+    html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
     //remove contenteditable block, in this case div
     html = html.replace(/<div>/g, '');
@@ -463,16 +471,16 @@ WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, of
     this.replaceSelection(content, selection);
 };
 
-function getTextLengthOfElement(element) {
-    var textLength;
+function getOffsetLengthOfElement(element) {
+    var len;
 
     if (element.nodeType === 1) {
-       textLength = element.textContent.length;
+       len = element.textContent.length;
     } else if (element.nodeType === 3) {
-       textLength = element.nodeValue.length;
+       len = element.nodeValue.length;
     }
 
-    return textLength;
+    return len;
 }
 
 WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
@@ -483,7 +491,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     stepLength = 0;
 
     while (traceElement) {
-        traceElementLength = getTextLengthOfElement(traceElement);
+        traceElementLength = getOffsetLengthOfElement(traceElement);
         stepLength += traceElementLength;
 
         if (offset <= stepLength) {
@@ -492,7 +500,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
         traceOffset -= traceElementLength;
 
-        if (getTextLengthOfElement(traceElement) > 0) {
+        if (getOffsetLengthOfElement(traceElement) > 0) {
             latestAvailableElement = traceElement;
         }
 
@@ -501,7 +509,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
     if (!traceElement) {
         traceElement = latestAvailableElement;
-        traceOffset = getTextLengthOfElement(traceElement);
+        traceOffset = getOffsetLengthOfElement(traceElement);
     }
 
     return {
@@ -586,15 +594,17 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
     var isNotInsideTask, parent,
         self = this;
 
-    this.get$Body().find('input:checkbox').each(function(index, node) {
-        isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
+    this.get$Body()
+        .find('input:checkbox')
+        .each(function(index, node) {
+            isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
 
-        if (isNotInsideTask) {
-            parent = $(node).parent();
-            $(node).remove();
-            self.replaceContentText(parent, /\s\u200B/g, '');
-        }
-    });
+            if (isNotInsideTask) {
+                parent = $(node).parent();
+                $(node).remove();
+                self.replaceContentText(parent, /\s\u200B/g, '');
+            }
+        });
 };
 
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
@@ -605,21 +615,8 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     $(container).html(before.replace(from, to));
 };
 
-WysiwygEditor.prototype._isTaskList = function() {
+WysiwygEditor.prototype._isInTaskList = function() {
     return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
-};
-
-WysiwygEditor.prototype._splitPIfNeed = function() {
-    var range = this.getEditor().getSelection(),
-        prev = range.startContainer.previousSibling;
-
-    if (prev && prev.parentNode && prev.parentNode.tagName === 'P' &&
-        prev.nodeType === Node.ELEMENT_NODE &&
-        prev.tagName === 'DIV' &&
-        !prev.textContent) {
-        $(prev).remove();
-        this.unwrapBlockTag('P');
-    }
 };
 
 WysiwygEditor.prototype._unwrapHeading = function() {
