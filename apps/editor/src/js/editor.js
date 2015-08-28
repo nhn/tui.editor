@@ -251,11 +251,11 @@ NeonEditor.prototype.remove = function() {
 };
 
 NeonEditor.prototype.hide = function() {
-    this.layout.hide();
+    this.eventManager.emit('hide', this);
 };
 
 NeonEditor.prototype.show = function() {
-    this.layout.show();
+    this.eventManager.emit('show', this);
 };
 
 NeonEditor.getInstances = function() {

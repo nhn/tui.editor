@@ -136,7 +136,6 @@ WysiwygEditor.prototype.saveSelection = function(selection) {
 
 WysiwygEditor.prototype.restoreSavedSelection = function() {
     var sq = this.getEditor();
-
     sq.setSelection(sq._getRangeAndRemoveBookmark());
 };
 
