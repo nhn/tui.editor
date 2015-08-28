@@ -41,7 +41,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
             'Enter': 'newlineAndIndentContinueMarkdownList',
             'Tab': 'subListIndentTab',
             'Shift-Tab': 'indentLess'
-            },
+        },
         'indentUnit': 4
     });
 
