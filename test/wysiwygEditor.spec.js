@@ -179,22 +179,124 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    it('remove input if current selection\'s have task', function(done) {
-        var wwe;
+    describe('_removeTaskInputIfNeed()', function() {
+        it('remove input if current selection is empty task', function(done) {
+            var wwe;
 
-        wwe = new WysiwygEditor($container, null, em);
-        wwe.init(function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
+                wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('LI')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-            wwe._removeTaskInputIfNeed();
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('LI')[0].firstChild);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe._removeTaskInputIfNeed();
 
-            expect(wwe.getValue()).toBe('<ul><li></li></ul>');
-            done();
+                expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
+                done();
+            });
+        });
+
+        it('remove input if current selection has placed at start of task item', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li><b></b><input type="checkbox" />text</li></ul>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe._removeTaskInputIfNeed();
+
+                expect(wwe.getValue()).toEqual('<ul><li><b></b>text</li></ul>');
+                done();
+            });
+        });
+
+        it('dont remove necessary input', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li><input type="checkbox">text<b>a</b></li></ul>');
+
+                range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe._removeTaskInputIfNeed();
+
+                expect(wwe.getValue()).toEqual('<ul><li><input type="checkbox">text<b>a</b></li></ul>');
+                done();
+            });
+        });
+    });
+
+    describe('_removeTaskInputInWrongPlace', function() {
+        it('remove inputbox in wrong parent', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
+
+                wwe._removeTaskInputInWrongPlace();
+
+                expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
+                done();
+            });
+        });
+
+        it('remove inputbox in wrong place', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">text<input type="checkbox" /></li></ul>');
+
+                wwe._removeTaskInputInWrongPlace();
+
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
+                done();
+            });
+        });
+    });
+
+    describe('getTextOffsetToBlock()', function() {
+        it('return offset of el that count form root block parent #2', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var offset;
+                wwe.setValue('<ul><li class="task-list-item"><div><input type="checkbox"><b>text</b></div></li></ul>');
+                offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
+                expect(offset).toEqual(0);
+                done();
+            });
+        });
+
+        it('return offset of el that count form root block parent #2', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var offset;
+                wwe.setValue('<ul><li class="task-list-item"><div>abc<input type="checkbox"><b>text</b></div></li></ul>');
+                offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
+                expect(offset).toEqual(3);
+                done();
+            });
         });
     });
 
@@ -213,7 +315,7 @@ describe('WysiwygEditor', function() {
                 wwe.getEditor().setSelection(range);
                 wwe.unwrapBlockTag('H1');
 
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
+                expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('test');
                 done();
             });
         });
@@ -456,7 +558,7 @@ describe('WysiwygEditor', function() {
             expect(wwe.getValue()).toEqual('te123t<br />');
         });
 
-        describe('find element and offset by passing element and offset', function() {
+        describe('getSelectionInfoByOffset() find element and offset by passing element and offset', function() {
             var firstBlock;
 
             beforeEach(function() {
