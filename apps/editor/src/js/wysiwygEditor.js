@@ -11,7 +11,8 @@ var Squire = window.Squire,
 var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
-    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
+    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
+    FIND_TASK_SPACES_RX = /\s\u200B/g;
 
 /**
  * WysiwygEditor
@@ -150,7 +151,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList()) {
-            this._removeTaskInputIfNeed();
+            //this._removeTaskInputIfNeed();
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -518,7 +519,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     };
 };
 
-WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) {
+WysiwygEditor.prototype.getSelectionPosition = function(selection, style, offset) {
     var pos, range, endSelectionInfo,
         marker = this.editor.createElement('INPUT');
 
@@ -547,7 +548,7 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) 
 };
 
 WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
-    var pos = this.getSelectionOffset(selection, style, offset);
+    var pos = this.getSelectionPosition(selection, style, offset);
 
     if (node.parentNode !== this.$editorContainerEl[0]) {
         this.$editorContainerEl.append(node);
@@ -569,40 +570,60 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 }
 
+WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
+    var prev,
+        offset = 0;
+
+    prev = el.previousSibling;
+
+    while (prev) {
+       offset += getOffsetLengthOfElement(prev);
+       prev = prev.previousSibling;
+    }
+
+    return offset;
+}
+
 WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
-    var selection, $selected, $li;
+    var selection, $selected, $li, $inputs, isCursorAtStart, isEmptyTask;
 
     selection = this.getEditor().getSelection().cloneRange();
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
+    $inputs = $li.find('input:checkbox');
+    isCursorAtStart = (this.getTextOffsetToBlock(selection.startContainer) + selection.startOffset === 0);
+    isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
 
-    if ($li.length
-        && $li.find('input').length
-        && ($li.text().replace(/\s\u200B/g, '') === '')
+    // check 2 condition
+    // 1.empty task
+    // 2.current selection has placed at start of task item
+    if ($li.length && $inputs.length
+        && (isEmptyTask || isCursorAtStart)
     ) {
         this.saveSelection(selection);
 
-        $li.find('input:checkbox').remove();
+        $inputs.remove();
         $li.removeClass('task-list-item');
-        $li.text('');
-
+        this.replaceContentText($li, FIND_TASK_SPACES_RX, '');
         this.restoreSavedSelection();
     }
 };
 
 WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
-    var isNotInsideTask, parent,
-        self = this;
+    var self = this;
 
     this.get$Body()
         .find('input:checkbox')
         .each(function(index, node) {
-            isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
+            var isInsideTask, isCorrectPlace, parent;
 
-            if (isNotInsideTask) {
+            isInsideTask = ($(node).parents('li').length > 1 || $(node).parents('li').hasClass('task-list-item'));
+            isCorrectPlace = !node.previousSibling;
+
+            if (!isInsideTask || !isCorrectPlace) {
                 parent = $(node).parent();
                 $(node).remove();
-                self.replaceContentText(parent, /\s\u200B/g, '');
+                self.replaceContentText(parent, FIND_TASK_SPACES_RX, '');
             }
         });
 };
