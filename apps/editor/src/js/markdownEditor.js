@@ -39,8 +39,10 @@ MarkdownEditor.prototype.init = function(initialValue) {
         dragDrop: false,
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
-            'Tab': 'subListIndentTab'
-        }
+            'Tab': 'subListIndentTab',
+            'Shift-Tab': 'indentLess'
+        },
+        'indentUnit': 4
     });
 
     this._initEvent();
