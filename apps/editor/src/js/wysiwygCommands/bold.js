@@ -22,10 +22,19 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            removeMode;
+
+        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+            removeMode = true;
+        }
 
         sq.removeAllFormatting();
-        sq.bold();
+
+        if (!removeMode) {
+            sq.bold();
+        }
+
         sq.focus();
     }
 });
