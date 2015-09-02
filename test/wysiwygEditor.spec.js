@@ -179,22 +179,41 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('_removeTaskInputIfNeed()', function() {
-        it('remove input if current selection is empty task', function(done) {
+    describe('_unformatTaskIfNeedOnBackspace()', function() {
+        it('remove input if current selection is right of input with one space', function(done) {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li><input type="checkbox" /></li></ul>');
+                wwe.setValue('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('LI')[0].firstChild);
+                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
                 range.collapse(true);
                 wwe.getEditor().setSelection(range);
-                wwe._removeTaskInputIfNeed();
+                wwe._unformatTaskIfNeedOnBackspace();
 
-                expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
+                done();
+            });
+        });
+
+        it('remove input if current selection is right of input with one space wrapped inline tag', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" /><b>&nbsp;text</b></li></ul>');
+
+                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe._unformatTaskIfNeedOnBackspace();
+
+                expect(wwe.getValue()).toEqual('<ul><li class=""><b>text</b></li></ul>');
                 done();
             });
         });
@@ -206,14 +225,14 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li><b></b><input type="checkbox" />text</li></ul>');
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />text</li></ul>');
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('Input')[0]);
                 range.collapse(true);
                 wwe.getEditor().setSelection(range);
-                wwe._removeTaskInputIfNeed();
+                wwe._unformatTaskIfNeedOnBackspace();
 
-                expect(wwe.getValue()).toEqual('<ul><li><b></b>text</li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li class=""> text</li></ul>');
                 done();
             });
         });
@@ -225,18 +244,40 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li><input type="checkbox">text<b>a</b></li></ul>');
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
 
                 range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
                 range.collapse(true);
                 wwe.getEditor().setSelection(range);
-                wwe._removeTaskInputIfNeed();
+                wwe._unformatTaskIfNeedOnBackspace();
 
-                expect(wwe.getValue()).toEqual('<ul><li><input type="checkbox">text<b>a</b></li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
                 done();
             });
         });
     });
+
+    describe('_unformatTaskIfNeedOnEnter()', function() {
+        it('remove input if current selection is right of input with one space', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
+
+                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
+                range.collapse(true);
+                wwe.getEditor().setSelection(range);
+                wwe._unformatTaskIfNeedOnEnter();
+
+                expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
+                done();
+            });
+        });
+    });
+
 
     describe('_removeTaskInputInWrongPlace', function() {
         it('remove inputbox in wrong parent', function(done) {
