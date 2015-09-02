@@ -109,7 +109,7 @@ WysiwygEditor.prototype._initEvent = function() {
     });
 
     this.editor.addEventListener('input', function() {
-        self.eventManager.emit('contentChanged.wysiwygEditor', self.getValue());
+        self.eventManager.emit('contentChanged.wysiwygEditor', self);
     });
 
     this.editor.addEventListener('input', function() {

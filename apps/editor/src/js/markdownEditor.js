@@ -42,7 +42,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
             'Tab': 'subListIndentTab',
             'Shift-Tab': 'indentLess'
         },
-        'indentUnit': 4
+        indentUnit: 4
     });
 
     this._initEvent();
@@ -97,7 +97,7 @@ MarkdownEditor.prototype.getEditor = function() {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
-    this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
+    this.eventManager.emit('contentChanged.markdownEditor', this);
 };
 
 MarkdownEditor.prototype._cloneCMEventObject = function(e) {

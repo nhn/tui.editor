@@ -8,10 +8,8 @@
 var util = ne.util;
 
 var eventList = [
-    'htmlRenderAfterHook',
     'previewBeforeHook',
     'addImageFileHook',
-    'markdownEditorContentChanged',
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
     'contentChanged.markdownEditor',
