@@ -92,6 +92,7 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 
     doc.querySelector('html').style.height = '100%';
     this.$iframe.height('100%');
+
     body = doc.querySelector('body');
     body.className = 'neonEditor-content';
 
@@ -135,6 +136,7 @@ WysiwygEditor.prototype._initSquireKeyHandler = function() {
     });
 
     //firefox has problem about keydown event while composition korean
+    //파폭에서 한글입력하다 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(event) {
             if (event.keyCode) {
@@ -153,7 +155,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (this._isInTaskList()) {
             //we need remove empty task then Squire control list
             //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
-            this._removeTaskInputIfNeed();
+            this._unformatTaskIfNeedOnEnter();
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -172,7 +174,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
 
         if (range.collapsed) {
             if (this._isInTaskList()) {
-                this._removeTaskInputIfNeed();
+                this._unformatTaskIfNeedOnBackspace();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             //todo for remove hr, not perfect fix need
@@ -292,7 +294,6 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
         return frag
     });
 };
-
 
 //from http://jsfiddle.net/9ThVr/24/
 WysiwygEditor.prototype.getCaretPosition = function() {
@@ -586,27 +587,72 @@ WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
     return offset;
 }
 
-WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
-    var selection, $selected, $li, $inputs, isCursorAtStart, isEmptyTask;
+WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
+    var selection, startContainer, startOffset,
+        prevEl, needRemove;
+
+    selection = this.getEditor().getSelection().cloneRange();
+    startContainer = selection.startContainer;
+    startOffset = selection.startOffset;
+
+    //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
+    //유저가 임의로 Task빈칸에 수정을 가했을경우
+    if (startContainer.nodeType === Node.ELEMENT_NODE) {
+        //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
+        if (startOffset === 0) {
+            prevEl = startContainer.childNodes[startOffset];
+        //inputbox 바로 오른편에서 지워지는경우
+        } else {
+            prevEl = startContainer.childNodes[startOffset-1];
+        }
+
+        needRemove = prevEl ? prevEl.tagName === 'INPUT' : false;
+    //텍스트 노드인경우
+    } else if (startContainer.nodeType === Node.TEXT_NODE) {
+        //previousSibling이 있다면 그건 div바로 아래의 텍스트 노드임 아닌경우가생기면 버그
+        //있고 그게 input이라면 offset체크
+        if (startContainer.previousSibling) {
+            prevEl = startContainer.previousSibling;
+        //previsousSibling이 없는 경우, 인라인태그로 감싸져있는경우다
+        } else {
+            prevEl = startContainer.parentNode.previousSibling;
+        }
+
+        //inputbox 이후의 텍스트노드에서 빈칸한개가 지워지는경우 같이 지운다
+        //(input과 빈칸한개는 같이 지워지는게 옳다고판단)
+        if (prevEl.tagName === 'INPUT' && startOffset === 1 && FIND_TASK_SPACES_RX.test(startContainer.nodeValue)) {
+            startContainer.nodeValue =  startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+            needRemove = true;
+        }
+    }
+
+    if (needRemove) {
+        this.saveSelection(selection);
+
+        $(prevEl).closest('li').removeClass('task-list-item');
+        $(prevEl).remove();
+
+        this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
+    var selection, $selected, $li, $inputs,
+        isEmptyTask;
 
     selection = this.getEditor().getSelection().cloneRange();
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
     $inputs = $li.find('input:checkbox');
-    isCursorAtStart = (this.getTextOffsetToBlock(selection.startContainer) + selection.startOffset === 0);
     isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
 
-    // check 2 condition
-    // 1.empty task
-    // 2.current selection has placed at start of task item
-    if ($li.length && $inputs.length
-        && (isEmptyTask || isCursorAtStart)
-    ) {
+    if ($li.length && $inputs.length && isEmptyTask) {
         this.saveSelection(selection);
 
         $inputs.remove();
         $li.removeClass('task-list-item');
-        this.replaceContentText($li, FIND_TASK_SPACES_RX, '');
+        $li.text('');
+
         this.restoreSavedSelection();
     }
 };
@@ -636,6 +682,10 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     this._addCheckedAttrToCheckedInput();
     before = $(container).html()
     $(container).html(before.replace(from, to));
+};
+
+WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
+
 };
 
 WysiwygEditor.prototype._isInTaskList = function() {
