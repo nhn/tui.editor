@@ -32,8 +32,8 @@ describe('MarkdownEditor', function() {
         });
 
         it('when something change emit contentChanged.MarkdownEditor event', function(done) {
-            em.listen('contentChanged.markdownEditor', function(data) {
-                expect(data).toEqual('myText');
+            em.listen('contentChanged.markdownEditor', function(editor) {
+                expect(editor).toEqual(mde);
                 done();
             });
 

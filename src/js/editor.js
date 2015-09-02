@@ -61,7 +61,6 @@ require('./extensions/textPalette');
  * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
  * @param {function} options.onload invoke function when editor loaded complete
  * @param {object} options.hooks 외부 연결 훅 목록
- * @param {function} options.hooks.htmlRenderAfterHook DOM으로 그려질 HTML텍스트가 만들어진후 실행되는 훅, 만들어진 HTML텍스트가 인자로 전달되고 리턴값이 HTML텍스트로 대체된다.
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */

@@ -45,8 +45,8 @@ describe('WysiwygEditor', function() {
         });
 
         it('when something changed in editor Emit contentChanged.wysiwygEditor event', function(done) {
-            em.listen('contentChanged.wysiwygEditor', function(data) {
-                expect(data.replace(/<br \/>/g, '')).toEqual('<p>test</p>');
+            em.listen('contentChanged.wysiwygEditor', function(editor) {
+                expect(editor).toBe(wwe);
                 done();
             });
 
