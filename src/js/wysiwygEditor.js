@@ -12,7 +12,7 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
-    FIND_TASK_SPACES_RX = /\s\u200B/g;
+    FIND_TASK_SPACES_RX = /^\s/g;
 
 /**
  * WysiwygEditor
@@ -151,7 +151,9 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList()) {
-            //this._removeTaskInputIfNeed();
+            //we need remove empty task then Squire control list
+            //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
+            this._removeTaskInputIfNeed();
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -387,8 +389,8 @@ WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     this.get$Body().find('.task-list-item').each(function(i, node) {
         firstTextNode = $(node).contents().filter(findTextNodeFilter)[0];
 
-        if (firstTextNode && !(/^\s\u200B/g.test(firstTextNode.nodeValue))) {
-            firstTextNode.nodeValue = ' \u200B' + firstTextNode.nodeValue;
+        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
+            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
         }
     });
 };

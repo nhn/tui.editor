@@ -147,7 +147,7 @@ describe('WysiwygEditor', function() {
 
         it('put space and ZWS into input tag next', function() {
             wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
-            expect(wwe.get$Body().find('li')[0].textContent).toEqual(' \u200BTASK');
+            expect(wwe.get$Body().find('li')[0].textContent).toEqual(' TASK');
         });
 
         it('remove task-list class of element, it may block merge normal list and task list', function() {
@@ -262,11 +262,11 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">text<input type="checkbox" /></li></ul>');
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox" /></li></ul>');
 
                 wwe._removeTaskInputInWrongPlace();
 
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> text</li></ul>');
                 done();
             });
         });

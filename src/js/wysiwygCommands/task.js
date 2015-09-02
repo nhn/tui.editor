@@ -47,7 +47,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
             selection.setStart(selection.startContainer, 1);
 
             //we need some space for safari
-            sq.insertElement(sq.getDocument().createTextNode(' \u200B'), selection);
+            sq.insertElement(sq.getDocument().createTextNode(' '), selection);
 
             $li.addClass('task-list-item');
 
