@@ -7,15 +7,13 @@ describe('WysiwygEditor', function() {
     var $container, em;
 
     beforeEach(function() {
+        $('body').empty();
+
         $container = $('<div />');
 
         $('body').append($container);
 
         em = new EventManager();
-    });
-
-    afterEach(function() {
-        $('body').empty();
     });
 
     describe('Initialize', function() {
@@ -31,6 +29,53 @@ describe('WysiwygEditor', function() {
                 expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
                 done();
             });
+        });
+    });
+
+    describe('_isIframeReady()', function() {
+        var wwe;
+
+        beforeEach(function(done) {
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                done();
+            });
+        });
+
+        it('isPrepared() check iframe has prepared or need re init with squire', function() {
+            expect(wwe._isIframeReady()).toBe(true);
+        });
+
+        it('when editor detached from dom for any reason isPrepared return false', function() {
+            $container.detach();
+            expect(wwe._isIframeReady()).toBe(false);
+        });
+    });
+
+    describe('reset()', function() {
+        var wwe;
+
+        beforeEach(function(done) {
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                done();
+            });
+        });
+
+        it('set content blank', function() {
+            wwe.setValue('<h1>HELLO WORLD</h1>');
+            wwe.reset();
+            expect(wwe.getValue()).toEqual('<br />');
+        });
+
+        it('Init Squire again if need', function() {
+            wwe.setValue('<h1>HELLO WORLD</h1>');
+            $container.detach();
+            $container.appendTo('body');
+            expect(wwe._isIframeReady()).toBe(false);
+
+            wwe.reset();
+            expect(wwe._isIframeReady()).toBe(true);
         });
     });
 
