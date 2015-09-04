@@ -35,6 +35,6 @@ describe('IncreaseTask', function() {
 
         IncreaseTask.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox">abcde</div><ul><li class="task-list-item"><div><input type="checkbox"></div></li></ul></li></ul><div></div>');
+        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"> abcde</div><ul><li class="task-list-item"><div><input type="checkbox"></div></li></ul></li></ul><div></div>');
     });
 });

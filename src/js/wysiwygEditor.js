@@ -379,7 +379,7 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensureSpaceNextToTaskInput();
     this._removeTaskListClass();
 
-    this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
+    this.eventManager.emit('contentChanged.wysiwygEditor', this);
 };
 
 //this because we need new line inside ptag, and additional empty line added
@@ -406,17 +406,46 @@ WysiwygEditor.prototype._unwrapPtags = function() {
 }
 
 WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode;
+    var findTextNodeFilter, firstTextNode, $wrapper;
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+
+    this.get$Body().find('.task-list-item').each(function(i, node) {
+        $wrapper = $(node).find('div');
+
+        if (!$wrapper.length) {
+            $wrapper = $(node);
+        }
+
+        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
+
+        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
+            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
+        }
+    });
+};
+
+WysiwygEditor.prototype._removeSpaceNextToTaskInput = function() {
+    var findTextNodeFilter, firstTextNode, $wrapper;
 
     findTextNodeFilter = function() {
         return this.nodeType === 3;
     };
 
     this.get$Body().find('.task-list-item').each(function(i, node) {
-        firstTextNode = $(node).contents().filter(findTextNodeFilter)[0];
+        $wrapper = $(node).find('div');
 
-        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
-            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
+        if (!$wrapper.length) {
+            $wrapper = $(node);
+        }
+
+        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
+
+        if (firstTextNode) {
+            firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
         }
     });
 };
@@ -434,6 +463,9 @@ WysiwygEditor.prototype.getValue = function() {
     this._prepareGetHTML();
 
     html = this.editor.getHTML();
+
+    //we need recover task space for safari
+    this._ensureSpaceNextToTaskInput();
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
@@ -454,6 +486,7 @@ WysiwygEditor.prototype.getValue = function() {
 WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
     this._addCheckedAttrToCheckedInput();
+    this._removeSpaceNextToTaskInput();
 };
 
 WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
