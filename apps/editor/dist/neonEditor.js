@@ -1443,7 +1443,6 @@ require('./extensions/textPalette');
  * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
  * @param {function} options.onload invoke function when editor loaded complete
  * @param {object} options.hooks 외부 연결 훅 목록
- * @param {function} options.hooks.htmlRenderAfterHook DOM으로 그려질 HTML텍스트가 만들어진후 실행되는 훅, 만들어진 HTML텍스트가 인자로 전달되고 리턴값이 HTML텍스트로 대체된다.
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */
@@ -1640,6 +1639,11 @@ NeonEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
 };
 
+NeonEditor.prototype.reset = function() {
+    this.wwEditor.reset();
+    this.mdEditor.reset();
+};
+
 NeonEditor.getInstances = function() {
     return __nedInstance;
 };
@@ -1661,10 +1665,8 @@ module.exports = NeonEditor;
 var util = ne.util;
 
 var eventList = [
-    'htmlRenderAfterHook',
     'previewBeforeHook',
     'addImageFileHook',
-    'markdownEditorContentChanged',
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
     'contentChanged.markdownEditor',
@@ -3303,8 +3305,10 @@ MarkdownEditor.prototype.init = function(initialValue) {
         dragDrop: false,
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
-            'Tab': 'subListIndentTab'
-        }
+            'Tab': 'subListIndentTab',
+            'Shift-Tab': 'indentLess'
+        },
+        indentUnit: 4
     });
 
     this._initEvent();
@@ -3358,8 +3362,12 @@ MarkdownEditor.prototype.getEditor = function() {
     return this.cm;
 };
 
+MarkdownEditor.prototype.reset = function() {
+    this.setValue('');
+}
+
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
-    this.eventManager.emit('contentChanged.markdownEditor', value || this.getValue());
+    this.eventManager.emit('contentChanged.markdownEditor', this);
 };
 
 MarkdownEditor.prototype._cloneCMEventObject = function(e) {
@@ -3925,8 +3933,8 @@ function Preview($el, eventManager, converter) {
 Preview.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdown) {
-        self.lazyRunner.run('refresh', markdown);
+    this.eventManager.listen('contentChanged.markdownEditor', function(markdownEditor) {
+        self.lazyRunner.run('refresh', markdownEditor.getValue());
     });
 };
 
@@ -4700,10 +4708,19 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            removeMode;
+
+        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+            removeMode = true;
+        }
 
         sq.removeAllFormatting();
-        sq.bold();
+
+        if (!removeMode) {
+            sq.bold();
+        }
+
         sq.focus();
     }
 });
@@ -4938,10 +4955,19 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            removeMode;
+
+        if (sq.hasFormat('i') || sq.hasFormat('em')) {
+            removeMode = true;
+        }
 
         sq.removeAllFormatting();
-        sq.italic();
+
+        if (!removeMode) {
+            sq.italic();
+        }
+
         sq.focus();
     }
 });
@@ -5033,7 +5059,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
             selection.setStart(selection.startContainer, 1);
 
             //we need some space for safari
-            sq.insertElement(sq.getDocument().createTextNode(' \u200B'), selection);
+            sq.insertElement(sq.getDocument().createTextNode(' '), selection);
 
             $li.addClass('task-list-item');
 
@@ -5095,7 +5121,10 @@ var Squire = window.Squire,
 var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
-    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE)\b/;
+    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
+    FIND_TASK_SPACES_RX = /^\s/g;
+
+var EDITOR_CONTENT_CSS_CLASSNAME = 'neonEditor-content';
 
 /**
  * WysiwygEditor
@@ -5118,35 +5147,45 @@ WysiwygEditor.prototype.init = function(callback) {
     this.$iframe = $('<iframe />');
 
     this.$iframe.load(function() {
-        var doc = self.$iframe[0].contentDocument;
-
-        self._makeSureStandardMode(doc);
-
-        if (self.editor) {
-            return;
-        }
-
-        self._initStyleSheet(doc);
-        self._initEditorContainerStyles(doc);
-
-        self.editor = new Squire(doc, {
-            blockTag: 'DIV'
-        });
-
-        self._initEvent();
-        self._initSquireKeyHandler();
-
-        $(doc).on('click', function() {
-            self.focus();
-        });
+        self._initSquire();
 
         if (callback) {
            callback();
+           callback = null;
         }
     });
 
     this.$editorContainerEl.css('position', 'relative');
     this.$editorContainerEl.append(this.$iframe);
+};
+
+WysiwygEditor.prototype._initSquire = function() {
+    var self = this,
+        doc = self.$iframe[0].contentDocument;
+
+    self._makeSureStandardMode(doc);
+
+    if (self.editor) {
+        return;
+    }
+
+    self._initStyleSheet(doc);
+    self._initEditorContainerStyles(doc);
+
+    self.editor = new Squire(doc, {
+        blockTag: 'DIV'
+    });
+
+    self._initSquireEvent();
+
+    $(doc).on('click', function() {
+        self.focus();
+    });
+}
+
+WysiwygEditor.prototype._isIframeReady = function() {
+    var iframeWindow = this.$iframe[0].contentWindow;
+    return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
@@ -5175,8 +5214,9 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 
     doc.querySelector('html').style.height = '100%';
     this.$iframe.height('100%');
+
     body = doc.querySelector('body');
-    body.className = 'neonEditor-content';
+    body.className = EDITOR_CONTENT_CSS_CLASSNAME;
 
     bodyStyle = body.style;
     bodyStyle.height = '100%';
@@ -5186,12 +5226,16 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('htmlUpdate', function(html) {
-        self.setValue(html);
+    this.eventManager.listen('show', function() {
+        self.prepareToDetach();
     });
+}
+
+WysiwygEditor.prototype._initSquireEvent = function() {
+    var self = this;
 
     this.editor.addEventListener('input', function() {
-        self.eventManager.emit('contentChanged.wysiwygEditor', self.getValue());
+        self.eventManager.emit('contentChanged.wysiwygEditor', self);
     });
 
     this.editor.addEventListener('input', function() {
@@ -5208,16 +5252,13 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
-};
-
-WysiwygEditor.prototype._initSquireKeyHandler = function() {
-    var self = this;
 
     this.getEditor().addEventListener('keydown', function(event) {
         self._keyEventHandler(event);
     });
 
     //firefox has problem about keydown event while composition korean
+    //파폭에서 한글입력하다 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(event) {
             if (event.keyCode) {
@@ -5234,7 +5275,9 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList()) {
-            this._removeTaskInputIfNeed();
+            //we need remove empty task then Squire control list
+            //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
+            this._unformatTaskIfNeedOnEnter();
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -5253,7 +5296,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
 
         if (range.collapsed) {
             if (this._isInTaskList()) {
-                this._removeTaskInputIfNeed();
+                this._unformatTaskIfNeedOnBackspace();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             //todo for remove hr, not perfect fix need
@@ -5285,6 +5328,15 @@ WysiwygEditor.prototype.restoreSavedSelection = function() {
     var sq = this.getEditor();
     sq.setSelection(sq._getRangeAndRemoveBookmark());
 };
+
+WysiwygEditor.prototype.reset = function() {
+    if (!this._isIframeReady()) {
+        this.remove();
+        this._initSquire();
+    }
+
+    this.setValue('');
+}
 
 WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
     var self = this;
@@ -5374,7 +5426,6 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
     });
 };
 
-
 //from http://jsfiddle.net/9ThVr/24/
 WysiwygEditor.prototype.getCaretPosition = function() {
     var range, sel, rect, range2, rect2,
@@ -5434,16 +5485,11 @@ WysiwygEditor.prototype.setHeight = function(height) {
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
     this._ensurePtagContentWrappedWithDiv();
+    this._unwrapPtags();
     this._ensureSpaceNextToTaskInput();
     this._removeTaskListClass();
 
-    this.get$Body().find('div').each(function(index, node) {
-        if ($(node).parent().is('p')) {
-            $(node).unwrap();
-        }
-    });
-
-    this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
+    this.eventManager.emit('contentChanged.wysiwygEditor', this);
 };
 
 //this because we need new line inside ptag, and additional empty line added
@@ -5460,18 +5506,56 @@ WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
     });
 };
 
+//we use divs for paragraph so we dont need any p tags
+WysiwygEditor.prototype._unwrapPtags = function() {
+    this.get$Body().find('div').each(function(index, node) {
+        if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+}
+
 WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode;
+    var findTextNodeFilter, firstTextNode, $wrapper;
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+
+    this.get$Body().find('.task-list-item').each(function(i, node) {
+        $wrapper = $(node).find('div');
+
+        if (!$wrapper.length) {
+            $wrapper = $(node);
+        }
+
+        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
+
+        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
+            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
+        }
+    });
+};
+
+WysiwygEditor.prototype._removeSpaceNextToTaskInput = function() {
+    var findTextNodeFilter, firstTextNode, $wrapper;
 
     findTextNodeFilter = function() {
         return this.nodeType === 3;
     };
 
     this.get$Body().find('.task-list-item').each(function(i, node) {
-        firstTextNode = $(node).contents().filter(findTextNodeFilter)[0];
+        $wrapper = $(node).find('div');
 
-        if (firstTextNode && !(/^\s\u200B/g.test(firstTextNode.nodeValue))) {
-            firstTextNode.nodeValue = ' \u200B' + firstTextNode.nodeValue;
+        if (!$wrapper.length) {
+            $wrapper = $(node);
+        }
+
+        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
+
+        if (firstTextNode) {
+            firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
         }
     });
 };
@@ -5489,6 +5573,9 @@ WysiwygEditor.prototype.getValue = function() {
     this._prepareGetHTML();
 
     html = this.editor.getHTML();
+
+    //we need recover task space for safari
+    this._ensureSpaceNextToTaskInput();
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
@@ -5509,6 +5596,7 @@ WysiwygEditor.prototype.getValue = function() {
 WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
     this._addCheckedAttrToCheckedInput();
+    this._removeSpaceNextToTaskInput();
 };
 
 WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
@@ -5602,7 +5690,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     };
 };
 
-WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) {
+WysiwygEditor.prototype.getSelectionPosition = function(selection, style, offset) {
     var pos, range, endSelectionInfo,
         marker = this.editor.createElement('INPUT');
 
@@ -5631,7 +5719,7 @@ WysiwygEditor.prototype.getSelectionOffset = function(selection, style, offset) 
 };
 
 WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
-    var pos = this.getSelectionOffset(selection, style, offset);
+    var pos = this.getSelectionPosition(selection, style, offset);
 
     if (node.parentNode !== this.$editorContainerEl[0]) {
         this.$editorContainerEl.append(node);
@@ -5653,20 +5741,83 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 }
 
-WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
-    var selection, $selected, $li;
+WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
+    var prev,
+        offset = 0;
+
+    prev = el.previousSibling;
+
+    while (prev) {
+       offset += getOffsetLengthOfElement(prev);
+       prev = prev.previousSibling;
+    }
+
+    return offset;
+}
+
+WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
+    var selection, startContainer, startOffset,
+        prevEl, needRemove;
+
+    selection = this.getEditor().getSelection().cloneRange();
+    startContainer = selection.startContainer;
+    startOffset = selection.startOffset;
+
+    //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
+    //유저가 임의로 Task빈칸에 수정을 가했을경우
+    if (startContainer.nodeType === Node.ELEMENT_NODE) {
+        //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
+        if (startOffset === 0) {
+            prevEl = startContainer.childNodes[startOffset];
+        //inputbox 바로 오른편에서 지워지는경우
+        } else {
+            prevEl = startContainer.childNodes[startOffset-1];
+        }
+
+        needRemove = prevEl ? prevEl.tagName === 'INPUT' : false;
+    //텍스트 노드인경우
+    } else if (startContainer.nodeType === Node.TEXT_NODE) {
+        //previousSibling이 있다면 그건 div바로 아래의 텍스트 노드임 아닌경우가생기면 버그
+        //있고 그게 input이라면 offset체크
+        if (startContainer.previousSibling) {
+            prevEl = startContainer.previousSibling;
+        //previsousSibling이 없는 경우, 인라인태그로 감싸져있는경우다
+        } else {
+            prevEl = startContainer.parentNode.previousSibling;
+        }
+
+        //inputbox 이후의 텍스트노드에서 빈칸한개가 지워지는경우 같이 지운다
+        //(input과 빈칸한개는 같이 지워지는게 옳다고판단)
+        if (prevEl.tagName === 'INPUT' && startOffset === 1 && FIND_TASK_SPACES_RX.test(startContainer.nodeValue)) {
+            startContainer.nodeValue =  startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+            needRemove = true;
+        }
+    }
+
+    if (needRemove) {
+        this.saveSelection(selection);
+
+        $(prevEl).closest('li').removeClass('task-list-item');
+        $(prevEl).remove();
+
+        this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
+    var selection, $selected, $li, $inputs,
+        isEmptyTask;
 
     selection = this.getEditor().getSelection().cloneRange();
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
+    $inputs = $li.find('input:checkbox');
+    isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
 
-    if ($li.length
-        && $li.find('input').length
-        && ($li.text().replace(/\s\u200B/g, '') === '')
-    ) {
+    if ($li.length && $inputs.length && isEmptyTask) {
         this.saveSelection(selection);
 
-        $li.find('input:checkbox').remove();
+        $inputs.remove();
         $li.removeClass('task-list-item');
         $li.text('');
 
@@ -5675,18 +5826,20 @@ WysiwygEditor.prototype._removeTaskInputIfNeed = function() {
 };
 
 WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
-    var isNotInsideTask, parent,
-        self = this;
+    var self = this;
 
     this.get$Body()
         .find('input:checkbox')
         .each(function(index, node) {
-            isNotInsideTask = ($(node).parents('li').length === 0 || !$(node).parents('li').hasClass('task-list-item'));
+            var isInsideTask, isCorrectPlace, parent;
 
-            if (isNotInsideTask) {
+            isInsideTask = ($(node).parents('li').length > 1 || $(node).parents('li').hasClass('task-list-item'));
+            isCorrectPlace = !node.previousSibling;
+
+            if (!isInsideTask || !isCorrectPlace) {
                 parent = $(node).parent();
                 $(node).remove();
-                self.replaceContentText(parent, /\s\u200B/g, '');
+                self.replaceContentText(parent, FIND_TASK_SPACES_RX, '');
             }
         });
 };
@@ -5697,6 +5850,10 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     this._addCheckedAttrToCheckedInput();
     before = $(container).html()
     $(container).html(before.replace(from, to));
+};
+
+WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
+
 };
 
 WysiwygEditor.prototype._isInTaskList = function() {

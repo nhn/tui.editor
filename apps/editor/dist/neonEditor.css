@@ -182,7 +182,8 @@
     visibility: visible
 }
 
-.neonEditor.hide {
+.neonEditor.hide,
+.neonEditor.hide iframe {
     position: absolute;
     top: 0;
     left: 0;
