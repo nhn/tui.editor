@@ -257,6 +257,11 @@ NeonEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
 };
 
+NeonEditor.prototype.reset = function() {
+    this.wwEditor.reset();
+    this.mdEditor.reset();
+};
+
 NeonEditor.getInstances = function() {
     return __nedInstance;
 };

@@ -7,16 +7,16 @@ describe('MarkdownEditor', function() {
     var mde, em;
 
     beforeEach(function() {
-        var $container = $('<div />');
+        var $container;
+
+        $('body').empty();
+
+        $container = $('<div />');
 
         $('body').append($container);
 
         em = new EventManager();
         mde = new MarkdownEditor($container, em);
-    });
-
-    afterEach(function() {
-        $('body').empty();
     });
 
     describe('Initialize', function() {
@@ -60,14 +60,13 @@ describe('MarkdownEditor', function() {
                 source = ev.source;
                 textContent = ev.textContent;
 
-                expect(textContent).toEqual('my');
+                expect(textContent).toEqual('m');
                 expect(source).toEqual('markdown');
 
                 done();
             });
 
             mde.getEditor().replaceSelection('m');
-            mde.getEditor().replaceSelection('y');
         });
 
         it('replace selection content with passed content', function() {

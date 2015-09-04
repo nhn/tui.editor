@@ -14,6 +14,8 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
     FIND_TASK_SPACES_RX = /^\s/g;
 
+var EDITOR_CONTENT_CSS_CLASSNAME = 'neonEditor-content';
+
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -35,35 +37,45 @@ WysiwygEditor.prototype.init = function(callback) {
     this.$iframe = $('<iframe />');
 
     this.$iframe.load(function() {
-        var doc = self.$iframe[0].contentDocument;
-
-        self._makeSureStandardMode(doc);
-
-        if (self.editor) {
-            return;
-        }
-
-        self._initStyleSheet(doc);
-        self._initEditorContainerStyles(doc);
-
-        self.editor = new Squire(doc, {
-            blockTag: 'DIV'
-        });
-
-        self._initEvent();
-        self._initSquireKeyHandler();
-
-        $(doc).on('click', function() {
-            self.focus();
-        });
+        self._initSquire();
 
         if (callback) {
            callback();
+           callback = null;
         }
     });
 
     this.$editorContainerEl.css('position', 'relative');
     this.$editorContainerEl.append(this.$iframe);
+};
+
+WysiwygEditor.prototype._initSquire = function() {
+    var self = this,
+        doc = self.$iframe[0].contentDocument;
+
+    self._makeSureStandardMode(doc);
+
+    if (self.editor) {
+        return;
+    }
+
+    self._initStyleSheet(doc);
+    self._initEditorContainerStyles(doc);
+
+    self.editor = new Squire(doc, {
+        blockTag: 'DIV'
+    });
+
+    self._initSquireEvent();
+
+    $(doc).on('click', function() {
+        self.focus();
+    });
+}
+
+WysiwygEditor.prototype._isIframeReady = function() {
+    var iframeWindow = this.$iframe[0].contentWindow;
+    return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
@@ -94,7 +106,7 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     this.$iframe.height('100%');
 
     body = doc.querySelector('body');
-    body.className = 'neonEditor-content';
+    body.className = EDITOR_CONTENT_CSS_CLASSNAME;
 
     bodyStyle = body.style;
     bodyStyle.height = '100%';
@@ -104,9 +116,13 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('htmlUpdate', function(html) {
-        self.setValue(html);
+    this.eventManager.listen('show', function() {
+        self.prepareToDetach();
     });
+}
+
+WysiwygEditor.prototype._initSquireEvent = function() {
+    var self = this;
 
     this.editor.addEventListener('input', function() {
         self.eventManager.emit('contentChanged.wysiwygEditor', self);
@@ -126,10 +142,6 @@ WysiwygEditor.prototype._initEvent = function() {
         self.eventManager.emit('change.wysiwygEditor', eventObj);
         self.eventManager.emit('change', eventObj);
     });
-};
-
-WysiwygEditor.prototype._initSquireKeyHandler = function() {
-    var self = this;
 
     this.getEditor().addEventListener('keydown', function(event) {
         self._keyEventHandler(event);
@@ -206,6 +218,15 @@ WysiwygEditor.prototype.restoreSavedSelection = function() {
     var sq = this.getEditor();
     sq.setSelection(sq._getRangeAndRemoveBookmark());
 };
+
+WysiwygEditor.prototype.reset = function() {
+    if (!this._isIframeReady()) {
+        this.remove();
+        this._initSquire();
+    }
+
+    this.setValue('');
+}
 
 WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
     var self = this;
@@ -354,14 +375,9 @@ WysiwygEditor.prototype.setHeight = function(height) {
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
     this._ensurePtagContentWrappedWithDiv();
+    this._unwrapPtags();
     this._ensureSpaceNextToTaskInput();
     this._removeTaskListClass();
-
-    this.get$Body().find('div').each(function(index, node) {
-        if ($(node).parent().is('p')) {
-            $(node).unwrap();
-        }
-    });
 
     this.eventManager.emit('contentChanged.wysiwygEditor', this.getValue());
 };
@@ -379,6 +395,15 @@ WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
         }
     });
 };
+
+//we use divs for paragraph so we dont need any p tags
+WysiwygEditor.prototype._unwrapPtags = function() {
+    this.get$Body().find('div').each(function(index, node) {
+        if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+}
 
 WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode;
