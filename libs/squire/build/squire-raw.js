@@ -1547,7 +1547,6 @@ var keyHandlers = {
                 }
                 node = parent;
             }
-            event.preventDefault();
         }
     },
     space: function ( self, _, range ) {
