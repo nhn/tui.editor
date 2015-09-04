@@ -29,12 +29,12 @@ describe('gfmRenderer', function() {
     describe('pre code', function() {
         it('code with ```', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('\n```\nfunction(){\n    var in=0;\n}\n```\n');
+                .toEqual('\n\n```\nfunction(){\n    var in=0;\n}\n```\n\n');
         });
 
         it('code with specific language', function() {
             expect(getMarkdownText('<pre><code data-language="javascript"></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('\n```javascript\nfunction(){\n    var in=0;\n}\n```\n');
+                .toEqual('\n\n``` javascript\nfunction(){\n    var in=0;\n}\n```\n\n');
         });
     });
 
@@ -49,6 +49,12 @@ describe('gfmRenderer', function() {
     });
 
     describe('table', function() {
+        describe('TABLE', function() {
+            it('wrap subContent with \\n\\n', function() {
+                expect(getMarkdownText('<table></table>', '\n| text |\n| ---- |\n')).toEqual('\n\n\n| text |\n| ---- |\n\n\n');
+            });
+        });
+
         describe('TR TD, TR TH', function() {
             it('should return subContent and |', function() {
                 expect(getMarkdownText('<table><tr><td>text</td></tr></table>', 'text', 4)).toEqual(' text |');
