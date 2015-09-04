@@ -369,10 +369,10 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         var language = '';
 
         if (node.getAttribute('data-language')) {
-            language = node.getAttribute('data-language');
+            language = ' ' + node.getAttribute('data-language');
         }
 
-        return '\n```' + language + '\n' + subContent + '\n```\n';
+        return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
     'LI INPUT': function(node) {
         var condition;
@@ -387,6 +387,9 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
     },
 
     //Table
+    'TABLE': function(node, subContent) {
+        return '\n\n' + subContent + '\n\n';
+    },
     'TR TD, TR TH': function(node, subContent) {
         return ' ' + subContent + ' |';
     },
