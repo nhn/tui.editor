@@ -199,6 +199,11 @@ describe('WysiwygEditor', function() {
             wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
             expect(wwe.get$Body().find('ul').eq(0).hasClass('task-list')).toEqual(false);
         });
+
+        it('add one space to task-list-item input\'s next for safari cursor issue', function() {
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
+            expect(wwe.get$Body().find('.task-list-item').eq(0).text()).toEqual(' TASK');
+        });
     });
 
     it('get current wysiwyg iframe body that wrapped jquery', function(done) {
@@ -296,7 +301,7 @@ describe('WysiwygEditor', function() {
                 wwe.getEditor().setSelection(range);
                 wwe._unformatTaskIfNeedOnBackspace();
 
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
                 done();
             });
         });
@@ -352,14 +357,14 @@ describe('WysiwygEditor', function() {
 
                 wwe._removeTaskInputInWrongPlace();
 
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> text</li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
                 done();
             });
         });
     });
 
     describe('getTextOffsetToBlock()', function() {
-        it('return offset of el that count form root block parent #2', function(done) {
+        it('return offset of el that count form root block parent #1', function(done) {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
@@ -380,7 +385,7 @@ describe('WysiwygEditor', function() {
                 var offset;
                 wwe.setValue('<ul><li class="task-list-item"><div>abc<input type="checkbox"><b>text</b></div></li></ul>');
                 offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
-                expect(offset).toEqual(3);
+                expect(offset).toEqual(4);
                 done();
             });
         });
