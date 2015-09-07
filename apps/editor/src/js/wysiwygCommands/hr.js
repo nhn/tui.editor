@@ -21,13 +21,25 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            hr = sq.createElement('HR', {
-                'contentEditable': false
-            });
+        var sq = wwe.getEditor();
 
         sq.modifyBlocks(function(frag) {
-            return hr;
+            var block = sq.createElement('DIV', {
+                'data-component-type': 'hr'
+            });
+
+            var newFrag = sq._doc.createDocumentFragment();
+/*
+            newFrag.appendChild(frag);
+            newFrag.appendChild(block);
+
+            block.appendChild(sq.createElement('HR'));
+            block.appendChild(sq.createElement('BR'));*/
+
+            newFrag.appendChild(frag);
+            newFrag.appendChild(sq.createElement('HR'));
+
+            return newFrag;
         });
 
         sq.focus();
