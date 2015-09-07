@@ -124,11 +124,11 @@ WysiwygEditor.prototype._initEvent = function() {
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
 
-    this.editor.addEventListener('input', function() {
+    this.getEditor().addEventListener('input', function() {
         self.eventManager.emit('contentChanged.wysiwygEditor', self);
     });
 
-    this.editor.addEventListener('input', function() {
+    this.getEditor().addEventListener('input', function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
@@ -162,6 +162,17 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
         range, doc, sq;
 
+    var range = this.getEditor().getSelection();
+/*
+    console.log('-------->', event.keyCode);
+    console.log('startContainer', range.startContainer);
+    console.log('startOffset', range.startOffset);
+    console.log('startContainer.parentNode', range.startContainer.parentNode);
+    console.log('startContainer.previousSibling', range.startContainer.previousSibling);
+    console.log('startContainer.nextSibling', range.startContainer.nextSibling);
+    console.log('currentPosition', range.startContainer.childNodes[range.startOffset] || range.startContainer.nodeValue[range.startOffset]);
+    if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
+    console.log('path', this.editor.getPath());*/
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList()) {
@@ -182,25 +193,37 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         }
     //backspace
     } else if (event.keyCode === 8) {
-        range = this.getEditor().getSelection();
-
         if (range.collapsed) {
             if (this._isInTaskList()) {
                 this._unformatTaskIfNeedOnBackspace();
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
-            //todo for remove hr, not perfect fix need
-            } else if (range.startContainer.previousSibling &&
-                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
-                       range.startContainer.previousSibling.tagName === 'HR') {
-                $(range.startContainer.previousSibling).remove();
+            //todo for remove hr
+            } else if (range.startOffset === 0) {
+                var prev = range.startContainer.previousSibling || range.startContainer.parentNode.previousSibling;
+
+                if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
+                    $(prev).remove();
+                }
+            } else if (range.startOffset > 0 && range.startContainer.childNodes.length && range.startContainer.childNodes[range.startOffset - 1]
+                && range.startContainer.childNodes[range.startOffset - 1].tagName === 'HR') {
+                $(range.startContainer.childNodes[range.startOffset - 1]).remove();
+            } else if (range.startContainer.childNodes[range.startOffset]
+                && range.startContainer.childNodes[range.startOffset].tagName === 'HR') {
+                $(range.startContainer.childNodes[range.startOffset]).remove();
             }
         }
-    } else if (event.which === 9) {
+    } else if (event.keyCode === 9) {
         if (this._isInTaskList()) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
+    } else if (range.startContainer.childNodes[range.startOffset] && range.startContainer.childNodes[range.startOffset].tagName === 'HR') {
+        var div = this.editor.createDefaultBlock();
+
+        $(range.startContainer.childNodes[range.startOffset]).after(div);
+        range.selectNode(div);
+        this.editor.setSelection(range);
     }
 };
 

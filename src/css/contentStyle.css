@@ -1,5 +1,4 @@
 @charset "UTF-8";
-
 .neonEditor-content {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -12,6 +11,11 @@
     margin: 0;
     cursor: text;
     color: #2b2b2b;
+}
+
+.neonEditor-content * {
+    margin:0;
+    padding:0;
 }
 
 .neonEditor-content > *:first-child {
