@@ -241,8 +241,7 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
                 range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe._unformatTaskIfNeedOnBackspace();
+                wwe._unformatTaskIfNeedOnBackspace(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
                 done();
@@ -260,8 +259,7 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
                 range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe._unformatTaskIfNeedOnBackspace();
+                wwe._unformatTaskIfNeedOnBackspace(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li class=""><b>text</b></li></ul>');
                 done();
@@ -279,8 +277,7 @@ describe('WysiwygEditor', function() {
 
                 range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('Input')[0]);
                 range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe._unformatTaskIfNeedOnBackspace();
+                wwe._unformatTaskIfNeedOnBackspace(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li class=""> text</li></ul>');
                 done();
@@ -298,8 +295,7 @@ describe('WysiwygEditor', function() {
 
                 range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
                 range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe._unformatTaskIfNeedOnBackspace();
+                wwe._unformatTaskIfNeedOnBackspace(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
                 done();
@@ -319,15 +315,13 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
                 range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe._unformatTaskIfNeedOnEnter();
+                wwe._unformatTaskIfNeedOnEnter(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
                 done();
             });
         });
     });
-
 
     describe('_removeTaskInputInWrongPlace', function() {
         it('remove inputbox in wrong parent', function(done) {
