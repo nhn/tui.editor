@@ -376,6 +376,7 @@ WysiwygEditor.prototype.focus = function() {
 
 WysiwygEditor.prototype.remove = function() {
     this.editor = null;
+    this.$body = null;
 };
 
 WysiwygEditor.prototype.setHeight = function(height) {
