@@ -738,9 +738,21 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
 };
 
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection) {
-    var div = this.editor.createDefaultBlock();
+    var div, pathToBody, appendBefore,
+        currentNode = selection.startContainer.childNodes[selection.startOffset];
 
-    $(selection.startContainer.childNodes[selection.startOffset]).after(div);
+    pathToBody = $(currentNode).parentsUntil('body');
+
+    if (pathToBody.length) {
+        appendBefore = pathToBody[pathToBody.length - 1];
+    } else {
+        appendBefore = currentNode;
+    }
+
+    div = this.editor.createDefaultBlock();
+
+    $(appendBefore).after(div);
+
     selection.setStart(div, 0);
     selection.collapse(true);
     this.editor.setSelection(selection);
@@ -802,7 +814,10 @@ WysiwygEditor.prototype._isInTaskList = function() {
 };
 
 WysiwygEditor.prototype._isInHr = function(selection) {
-    return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
+    //return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
+    return this.getEditor().hasFormat('DIV', {
+        'data-component-type': 'hr'
+    });
 }
 
 WysiwygEditor.prototype._unwrapHeading = function() {

@@ -429,7 +429,7 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range;
 
-                wwe.setValue('<hr>');
+                wwe.setValue('<div>aef<br></div>');
 
                 range = wwe.getEditor().getSelection().cloneRange();
 
@@ -437,7 +437,31 @@ describe('WysiwygEditor', function() {
                 range.collapse(true);
                 wwe.breakToNewDefaultBlock(range);
 
-                expect(wwe.getEditor().getHTML()).toEqual('<hr><div><br></div>');
+                expect(wwe.getEditor().getHTML()).toEqual('<div>aef<br></div><div><br></div>');
+                expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
+                expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
+                done();
+            });
+        });
+
+        it('make new defulatBlock to body child then move selection to it', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range;
+
+                wwe.setValue('<h1><div>aef<br></div></h1>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                //select text node
+                range.setStart(wwe.get$Body().find('div')[0], 0);
+                range.collapse(true);
+                wwe.breakToNewDefaultBlock(range);
+
+                expect(wwe.getEditor().getHTML()).toEqual('<h1><div>aef<br></div></h1><div><br></div>');
+                expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
                 expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
                 done();
             });
