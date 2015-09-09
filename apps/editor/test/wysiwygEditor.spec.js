@@ -204,6 +204,11 @@ describe('WysiwygEditor', function() {
             wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
             expect(wwe.get$Body().find('.task-list-item').eq(0).text()).toEqual(' TASK');
         });
+
+        it('setValue unwrap div on hr', function() {
+            wwe.setValue('<hr><h1>abcd</h1>');
+            expect(wwe.getEditor().getHTML()).toEqual('<hr><h1>abcd<br></h1>');
+        });
     });
 
     it('get current wysiwyg iframe body that wrapped jquery', function(done) {
@@ -318,6 +323,27 @@ describe('WysiwygEditor', function() {
                 wwe._unformatTaskIfNeedOnEnter(range);
 
                 expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
+                done();
+            });
+        });
+    });
+
+    describe('_removeHrIfNeedOnBackspace()', function() {
+        it('remove hr if current is on first offset and prev elemet is hr', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<hr><div>abcd<br></div>');
+                console.log(wwe.editor.getHTML());
+
+                //range.setStart(wwe.getEditor().getDocument());
+                //range.collapse(true);
+                //wwe._unformatTaskIfNeedOnEnter(range);
+
+                //expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
                 done();
             });
         });
