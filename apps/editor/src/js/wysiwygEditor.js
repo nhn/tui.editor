@@ -162,7 +162,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
         range, doc, sq;
 
-    var range = this.getEditor().getSelection();
+    var range = this.getEditor().getSelection().cloneRange();
 /*
     console.log('-------->', event.keyCode);
     console.log('startContainer', range.startContainer);
@@ -173,12 +173,13 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     console.log('currentPosition', range.startContainer.childNodes[range.startOffset] || range.startContainer.nodeValue[range.startOffset]);
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());*/
+
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList()) {
             //we need remove empty task then Squire control list
             //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
-            this._unformatTaskIfNeedOnEnter();
+            this._unformatTaskIfNeedOnEnter(range);
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -195,22 +196,12 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     } else if (event.keyCode === 8) {
         if (range.collapsed) {
             if (this._isInTaskList()) {
-                this._unformatTaskIfNeedOnBackspace();
+                this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             //todo for remove hr
-            } else if (range.startOffset === 0) {
-                var prev = range.startContainer.previousSibling || range.startContainer.parentNode.previousSibling;
-
-                if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
-                    $(prev).remove();
-                }
-            } else if (range.startOffset > 0 && range.startContainer.childNodes.length && range.startContainer.childNodes[range.startOffset - 1]
-                && range.startContainer.childNodes[range.startOffset - 1].tagName === 'HR') {
-                $(range.startContainer.childNodes[range.startOffset - 1]).remove();
-            } else if (range.startContainer.childNodes[range.startOffset]
-                && range.startContainer.childNodes[range.startOffset].tagName === 'HR') {
-                $(range.startContainer.childNodes[range.startOffset]).remove();
+            } else {
+                this._removeHrIfNeedOnBackspace(range);
             }
         }
     } else if (event.keyCode === 9) {
@@ -218,12 +209,8 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-    } else if (range.startContainer.childNodes[range.startOffset] && range.startContainer.childNodes[range.startOffset].tagName === 'HR') {
-        var div = this.editor.createDefaultBlock();
-
-        $(range.startContainer.childNodes[range.startOffset]).after(div);
-        range.selectNode(div);
-        this.editor.setSelection(range);
+    } else {
+        this._breakToNewDivIfInHr(range);
     }
 };
 
@@ -668,11 +655,10 @@ WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
     return offset;
 }
 
-WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
-    var selection, startContainer, startOffset,
+WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
+    var startContainer, startOffset,
         prevEl, needRemove;
 
-    selection = this.getEditor().getSelection().cloneRange();
     startContainer = selection.startContainer;
     startOffset = selection.startOffset;
 
@@ -717,11 +703,10 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
     }
 };
 
-WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
-    var selection, $selected, $li, $inputs,
+WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
+    var $selected, $li, $inputs,
         isEmptyTask;
 
-    selection = this.getEditor().getSelection().cloneRange();
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
     $inputs = $li.find('input:checkbox');
@@ -735,6 +720,39 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
         $li.text('');
 
         this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype._breakToNewDivIfInHr = function(selection) {
+    var div;
+
+    if (selection.startContainer.childNodes[selection.startOffset]
+        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
+        div = this.editor.createDefaultBlock();
+
+        $(selection.startContainer.childNodes[selection.startOffset]).after(div);
+        selection.selectNode(div);
+        this.editor.setSelection(selection);
+    }
+};
+
+WysiwygEditor.prototype._removeHrIfNeedOnBackspace = function(selection) {
+    var prev;
+
+    if (selection.startOffset === 0) {
+        prev = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
+
+        if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
+            $(prev).remove();
+        }
+    } else if (selection.startOffset > 0
+        && selection.startContainer.childNodes.length
+        && selection.startContainer.childNodes[selection.startOffset - 1]
+        && selection.startContainer.childNodes[selection.startOffset - 1].tagName === 'HR') {
+            $(selection.startContainer.childNodes[selection.startOffset - 1]).remove();
+    } else if (selection.startContainer.childNodes[selection.startOffset]
+        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
+            $(selection.startContainer.childNodes[selection.startOffset]).remove();
     }
 };
 
