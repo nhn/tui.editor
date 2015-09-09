@@ -163,7 +163,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         range, doc, sq;
 
     var range = this.getEditor().getSelection().cloneRange();
-/*
     console.log('-------->', event.keyCode);
     console.log('startContainer', range.startContainer);
     console.log('startOffset', range.startOffset);
@@ -172,7 +171,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     console.log('startContainer.nextSibling', range.startContainer.nextSibling);
     console.log('currentPosition', range.startContainer.childNodes[range.startOffset] || range.startContainer.nodeValue[range.startOffset]);
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
-    console.log('path', this.editor.getPath());*/
+    console.log('path', this.editor.getPath());
 
     //enter
     if (event.keyCode === 13) {
@@ -191,6 +190,9 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
+        } else if (this._isInHr(range)) {
+            event.preventDefault();
+            this.breakToNewDefaultBlock(range);
         }
     //backspace
     } else if (event.keyCode === 8) {
@@ -209,8 +211,8 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-    } else {
-        this._breakToNewDivIfInHr(range);
+    } else if (this._isInHr(range)) {
+        this.breakToNewDefaultBlock(range);
     }
 };
 
@@ -735,23 +737,22 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
     }
 };
 
-WysiwygEditor.prototype._breakToNewDivIfInHr = function(selection) {
-    var div;
+WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection) {
+    var div = this.editor.createDefaultBlock();
 
-    if (selection.startContainer.childNodes[selection.startOffset]
-        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
-        div = this.editor.createDefaultBlock();
-
-        $(selection.startContainer.childNodes[selection.startOffset]).after(div);
-        selection.selectNode(div);
-        this.editor.setSelection(selection);
-    }
+    $(selection.startContainer.childNodes[selection.startOffset]).after(div);
+    selection.setStart(div, 0);
+    selection.collapse(true);
+    this.editor.setSelection(selection);
 };
 
 WysiwygEditor.prototype._removeHrIfNeedOnBackspace = function(selection) {
     var prev;
 
-    if (selection.startOffset === 0) {
+    if (selection.startContainer.childNodes[selection.startOffset]
+        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
+            $(selection.startContainer.childNodes[selection.startOffset]).remove();
+    } else if (selection.startOffset === 0) {
         prev = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
 
         if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
@@ -762,9 +763,6 @@ WysiwygEditor.prototype._removeHrIfNeedOnBackspace = function(selection) {
         && selection.startContainer.childNodes[selection.startOffset - 1]
         && selection.startContainer.childNodes[selection.startOffset - 1].tagName === 'HR') {
             $(selection.startContainer.childNodes[selection.startOffset - 1]).remove();
-    } else if (selection.startContainer.childNodes[selection.startOffset]
-        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
-            $(selection.startContainer.childNodes[selection.startOffset]).remove();
     }
 };
 
@@ -802,6 +800,10 @@ WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
 WysiwygEditor.prototype._isInTaskList = function() {
     return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
 };
+
+WysiwygEditor.prototype._isInHr = function(selection) {
+    return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
+}
 
 WysiwygEditor.prototype._unwrapHeading = function() {
     this.unwrapBlockTag(function(node) {
