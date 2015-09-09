@@ -387,6 +387,7 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensurePtagContentWrappedWithDiv();
     this._unwrapPtags();
     this._ensureSpaceNextToTaskInput();
+    this._unwrapDivOnHr();
     this._removeTaskListClass();
 
     this.eventManager.emit('contentChanged.wysiwygEditor', this);
@@ -410,6 +411,16 @@ WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
 WysiwygEditor.prototype._unwrapPtags = function() {
     this.get$Body().find('div').each(function(index, node) {
         if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+}
+
+//we use divs for paragraph so we dont need any p tags
+WysiwygEditor.prototype._unwrapDivOnHr = function() {
+    this.get$Body().find('hr').each(function(index, node) {
+        if ($(node).parent().is('div')) {
+            $(node).parent().find('br').remove();
             $(node).unwrap();
         }
     });
