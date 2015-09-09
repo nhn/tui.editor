@@ -329,7 +329,8 @@ describe('WysiwygEditor', function() {
     });
 
     describe('_removeHrIfNeedOnBackspace()', function() {
-        it('remove hr if current is on first offset and prev elemet is hr', function(done) {
+        //같은 부모의 이전 offset의 엘리먼트가 hr일때
+        it('remove hr if current is on first offset and previousSibling elemet is hr', function(done) {
             var wwe;
 
             wwe = new WysiwygEditor($container, null, em);
@@ -337,13 +338,50 @@ describe('WysiwygEditor', function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<hr><div>abcd<br></div>');
-                console.log(wwe.editor.getHTML());
 
-                //range.setStart(wwe.getEditor().getDocument());
-                //range.collapse(true);
-                //wwe._unformatTaskIfNeedOnEnter(range);
+                range.setStart(wwe.getEditor().getDocument().body, 1);
+                range.collapse(true);
+                wwe._removeHrIfNeedOnBackspace(range);
 
-                //expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
+                expect(wwe.get$Body().find('hr').length).toEqual(0);
+                done();
+            });
+        });
+
+        //현재커서가 hr을 가르키는 경우
+        it('remove hr current selection is hr', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<hr><div>abcd<br></div>');
+
+                range.setStart(wwe.getEditor().getDocument().body, 0);
+                range.collapse(true);
+                wwe._removeHrIfNeedOnBackspace(range);
+
+                expect(wwe.get$Body().find('hr').length).toEqual(0);
+                done();
+            });
+        });
+
+        //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
+        it('remove hr current selections parentNode previousSibling is hr when offset 0', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+
+                range.setStart(wwe.get$Body().find('b')[0], 0);
+                range.collapse(true);
+                wwe._removeHrIfNeedOnBackspace(range);
+
+                expect(wwe.get$Body().find('hr').length).toEqual(0);
                 done();
             });
         });
@@ -378,6 +416,29 @@ describe('WysiwygEditor', function() {
                 wwe._removeTaskInputInWrongPlace();
 
                 expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
+                done();
+            });
+        });
+    });
+
+    describe('breakToNewDefaultBlock()', function() {
+        it('make new defulatBlock then move selection to it', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range;
+
+                wwe.setValue('<hr>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.getEditor().getDocument().body, 0);
+                range.collapse(true);
+                wwe.breakToNewDefaultBlock(range);
+
+                expect(wwe.getEditor().getHTML()).toEqual('<hr><div><br></div>');
+                expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
                 done();
             });
         });
