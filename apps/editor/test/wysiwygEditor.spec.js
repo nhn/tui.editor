@@ -207,7 +207,7 @@ describe('WysiwygEditor', function() {
 
         it('setValue unwrap div on hr', function() {
             wwe.setValue('<hr><h1>abcd</h1>');
-            expect(wwe.getEditor().getHTML()).toEqual('<hr><h1>abcd<br></h1>');
+            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
         });
     });
 
@@ -242,7 +242,7 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
+                wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
                 range.collapse(true);
@@ -260,13 +260,14 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" /><b>&nbsp;text</b></li></ul>');
+                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><b>&nbsp;text</b></li></ul>');
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                expect(wwe.getValue()).toEqual('<ul><li class=""><b>text</b></li></ul>');
+                //replace하는것은 ie때문
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
                 done();
             });
         });
@@ -278,13 +279,13 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />text</li></ul>');
+                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('Input')[0]);
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                expect(wwe.getValue()).toEqual('<ul><li class=""> text</li></ul>');
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
                 done();
             });
         });
@@ -318,17 +319,17 @@ describe('WysiwygEditor', function() {
 
                 wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
 
-                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnEnter(range);
 
-                expect(wwe.getValue()).toEqual('<ul><li class=""></li></ul>');
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
                 done();
             });
         });
     });
 
-    describe('_removeHrIfNeedOnBackspace()', function() {
+    describe('_removeHrIfNeed()', function() {
         //같은 부모의 이전 offset의 엘리먼트가 hr일때
         it('remove hr if current is on first offset and previousSibling elemet is hr', function(done) {
             var wwe;
@@ -341,7 +342,7 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.getEditor().getDocument().body, 1);
                 range.collapse(true);
-                wwe._removeHrIfNeedOnBackspace(range);
+                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
                 expect(wwe.get$Body().find('hr').length).toEqual(0);
                 done();
@@ -360,7 +361,7 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.getEditor().getDocument().body, 0);
                 range.collapse(true);
-                wwe._removeHrIfNeedOnBackspace(range);
+                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
                 expect(wwe.get$Body().find('hr').length).toEqual(0);
                 done();
@@ -379,9 +380,49 @@ describe('WysiwygEditor', function() {
 
                 range.setStart(wwe.get$Body().find('b')[0], 0);
                 range.collapse(true);
-                wwe._removeHrIfNeedOnBackspace(range);
+                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
                 expect(wwe.get$Body().find('hr').length).toEqual(0);
+                done();
+            });
+        });
+    });
+
+    describe('_wrapDefaultBlockTo', function() {
+        it('wrap selection defulat block', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                $(wwe.getEditor().getDocument().body).html('abcdef');
+
+                range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
+                range.collapse(true);
+                wwe._wrapDefaultBlockTo(range);
+
+                expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div>');
+                done();
+            });
+        });
+    });
+
+    describe('_wrapDefaultBlockToOrphanTexts', function() {
+        it('wrap selection defulat block to all orphan texts', function(done) {
+            var wwe;
+
+            wwe = new WysiwygEditor($container, null, em);
+            wwe.init(function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                $(wwe.getEditor().getDocument().body).html('abcdef<div>ghijk<br></div>');
+
+                range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
+                range.collapse(true);
+                wwe._wrapDefaultBlockToOrphanTexts();
+
+                expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
                 done();
             });
         });
@@ -411,7 +452,7 @@ describe('WysiwygEditor', function() {
             wwe.init(function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox" /></li></ul>');
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
 
                 wwe._removeTaskInputInWrongPlace();
 
