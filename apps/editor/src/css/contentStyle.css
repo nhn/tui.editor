@@ -83,6 +83,7 @@
 }
 
 .neonEditor-content hr {
+    display:block;
     height: 1px;
     padding: 0;
     margin: 10px 0;
