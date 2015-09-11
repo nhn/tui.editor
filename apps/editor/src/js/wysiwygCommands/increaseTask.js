@@ -27,7 +27,7 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
         range = wwe.getEditor().getSelection();
         node = range.startContainer;
 
-        if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
+        if (range.collapsed && range.startContainer.textContent.replace(/^[\s]+/g, '') === '') {
             while (parent = node.parentNode) {
                 // If we find a UL or OL (so are in a list, node must be an LI)
                 if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {

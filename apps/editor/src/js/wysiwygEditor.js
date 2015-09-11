@@ -59,6 +59,7 @@ WysiwygEditor.prototype._initSquire = function() {
         return;
     }
 
+
     self._initStyleSheet(doc);
     self._initEditorContainerStyles(doc);
 
