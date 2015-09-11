@@ -12,7 +12,7 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
-    FIND_TASK_SPACES_RX = /^\s/g;
+    FIND_TASK_SPACES_RX = /^\s+/g;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'neonEditor-content';
 
@@ -34,7 +34,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 WysiwygEditor.prototype.init = function(callback) {
     var self = this;
 
-    this.$iframe = $('<iframe />');
+    this.$iframe = $('<iframe height="100%" />');
 
     this.$iframe.load(function() {
         self._initSquire();
@@ -103,7 +103,6 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     var bodyStyle, body;
 
     doc.querySelector('html').style.height = '100%';
-    this.$iframe.height('100%');
 
     body = doc.querySelector('body');
     body.className = EDITOR_CONTENT_CSS_CLASSNAME;
@@ -160,18 +159,24 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
-        range, doc, sq;
-
-    var range = this.getEditor().getSelection().cloneRange();
-    console.log('-------->', event.keyCode);
+        doc, sq,
+        range = this.getEditor().getSelection().cloneRange();
+/*
+    console.log(event);
+    console.log('-------->', event.keyCode, event.keyIdentifier);
     console.log('startContainer', range.startContainer);
     console.log('startOffset', range.startOffset);
     console.log('startContainer.parentNode', range.startContainer.parentNode);
     console.log('startContainer.previousSibling', range.startContainer.previousSibling);
     console.log('startContainer.nextSibling', range.startContainer.nextSibling);
-    console.log('currentPosition', range.startContainer.childNodes[range.startOffset] || range.startContainer.nodeValue[range.startOffset]);
+    if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
+        console.dir('currentPosition', range.startContainer.childNodes[range.startOffset]);
+    } else {
+        console.dir('currentPosition', range.startContainer.nodeValue[range.startOffset]);
+    }
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
+*/
 
     //enter
     if (event.keyCode === 13) {
@@ -190,9 +195,10 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
-        } else if (this._isInHr(range)) {
-            event.preventDefault();
-            this.breakToNewDefaultBlock(range);
+        } else if (this._isInHr(range) || this._isNearHr(range)) {
+            this._removeHrIfNeed(range);
+        } else if (this._isInOrphanText(range)) {
+            this._wrapDefaultBlockTo(range);
         }
     //backspace
     } else if (event.keyCode === 8) {
@@ -201,9 +207,8 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
-            //todo for remove hr
             } else {
-                this._removeHrIfNeedOnBackspace(range);
+                this._removeHrIfNeed(range, event);
             }
         }
     } else if (event.keyCode === 9) {
@@ -211,9 +216,97 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-    } else if (this._isInHr(range)) {
-        this.breakToNewDefaultBlock(range);
     }
+};
+
+WysiwygEditor.prototype._isInOrphanText = function(selection) {
+    return selection.startContainer.nodeType === Node.TEXT_NODE && selection.startContainer.parentNode.tagName  === 'BODY';
+};
+
+WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
+    var block, textElem, cursorOffset, cursorTarget;
+
+    this.saveSelection(selection);
+    this._joinSplitedTextNodes();
+    this.restoreSavedSelection();
+
+    selection = this.getEditor().getSelection().cloneRange();
+
+    textElem = selection.startContainer;
+    cursorOffset = selection.startOffset;
+
+    //이때 selection의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
+    //after code below, selection selection is arselectiond by body
+    block = this.getEditor().createDefaultBlock([selection.startContainer]);
+
+    //selection for insert block
+    if (selection.startContainer.childNodes[selection.startOffset]) {
+        selection.setStartBefore(selection.startContainer.childNodes[selection.startOffset]);
+    } else {
+        //컨테이너의 차일드가 이노드 한개뿐일경우
+        selection.selectNodeContents(selection.startContainer);
+    }
+
+    selection.collapse(true);
+
+    selection.insertNode(block);
+
+    //revert selection to original node
+    selection.setStart(textElem, cursorOffset);
+    selection.collapse(true);
+
+    this.getEditor().setSelection(selection);
+};
+
+WysiwygEditor.prototype._joinSplitedTextNodes = function() {
+    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+        lastGroup,
+        nodesToRemove = [];
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        if (prevNode === node.previousSibling) {
+            lastGroup.nodeValue += node.nodeValue;
+            nodesToRemove.push(node);
+        } else {
+            lastGroup = node;
+        }
+
+        prevNode = node;
+    });
+
+    $(nodesToRemove).remove();
+};
+
+WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
+    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+        nodeGroup = [],
+        nodesToRemove = [];
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        $(node).wrap('<div />');
+    });
+};
+
+//특수키가 아닌 텍스트가 입력되는 키입력인지 체크
+WysiwygEditor.prototype._isValueKeyCode = function(keyCode) {
+    var isNumberOrAlphabet = (keyCode >= 48 && keyCode <= 90),
+        isNumberPad = (keyCode >= 96 && keyCode <= 111),
+        isMarks =  (keyCode >= 186 && keyCode <= 222),
+        isKorean = keyCode === 229;
+
+    return (isNumberOrAlphabet || isNumberPad || isMarks || isKorean);
 };
 
 WysiwygEditor.prototype.saveSelection = function(selection) {
@@ -244,8 +337,16 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
     var self = this;
 
     this.getEditor().modifyBlocks(function(frag) {
-        var current = frag.childNodes[0],
-            newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+        var current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+
+        //HR은 Block으로 치지 않아서 frag에나타나지 않는다
+        //디폴트 블럭을 만들어준다.
+        if (frag.childNodes.length) {
+            current = frag.childNodes[0];
+        } else {
+            current = self.getEditor().createDefaultBlock();
+            frag.appendChild(current);
+        }
 
         if (srcCondition) {
             //find last depth
@@ -511,6 +612,8 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
     this._addCheckedAttrToCheckedInput();
     this._removeSpaceNextToTaskInput();
+    this._joinSplitedTextNodes();
+    this._wrapDefaultBlockToOrphanTexts();
 };
 
 WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
@@ -737,9 +840,13 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
     }
 };
 
-WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection) {
+WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
     var div, pathToBody, appendBefore,
         currentNode = selection.startContainer.childNodes[selection.startOffset];
+
+    if (!currentNode) {
+        currentNode = selection.startContainer;
+    }
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -751,30 +858,58 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection) {
 
     div = this.editor.createDefaultBlock();
 
-    $(appendBefore).after(div);
+    if (where === 'before') {
+        $(appendBefore).before(div);
+    } else {
+        $(appendBefore).after(div);
+    }
 
     selection.setStart(div, 0);
     selection.collapse(true);
     this.editor.setSelection(selection);
 };
 
-WysiwygEditor.prototype._removeHrIfNeedOnBackspace = function(selection) {
-    var prev;
+WysiwygEditor.prototype._isInHr = function(selection) {
+    return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
+};
 
-    if (selection.startContainer.childNodes[selection.startOffset]
-        && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR') {
-            $(selection.startContainer.childNodes[selection.startOffset]).remove();
+WysiwygEditor.prototype._isNearHr = function(selection) {
+    var result;
+
+    if (selection.startOffset > 0
+        && selection.startContainer.childNodes.length
+        && selection.startContainer.childNodes[selection.startOffset - 1]
+        && selection.startContainer.childNodes[selection.startOffset - 1].tagName === 'HR') {
+            result = true;
+    }
+
+    return result;
+}
+
+WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
+    var prev, cursorTarget;
+
+    if (this._isInHr(selection)) {
+        cursorTarget = selection.startContainer.childNodes[selection.startOffset].nextSibling;
+
+        $(selection.startContainer.childNodes[selection.startOffset]).remove();
     } else if (selection.startOffset === 0) {
         prev = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
 
         if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
+            cursorTarget = prev.nextSibling;
             $(prev).remove();
         }
-    } else if (selection.startOffset > 0
-        && selection.startContainer.childNodes.length
-        && selection.startContainer.childNodes[selection.startOffset - 1]
-        && selection.startContainer.childNodes[selection.startOffset - 1].tagName === 'HR') {
-            $(selection.startContainer.childNodes[selection.startOffset - 1]).remove();
+    } else if (this._isNearHr(selection)) {
+        cursorTarget = selection.startContainer.childNodes[selection.startOffset - 1].nextSibling;
+        $(selection.startContainer.childNodes[selection.startOffset - 1]).remove();
+    }
+
+    if (cursorTarget) {
+        event.preventDefault();
+        selection.setStartBefore(cursorTarget);
+        selection.collapse(true);
+        this.getEditor().setSelection(selection);
     }
 };
 
@@ -812,13 +947,6 @@ WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
 WysiwygEditor.prototype._isInTaskList = function() {
     return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
 };
-
-WysiwygEditor.prototype._isInHr = function(selection) {
-    //return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
-    return this.getEditor().hasFormat('DIV', {
-        'data-component-type': 'hr'
-    });
-}
 
 WysiwygEditor.prototype._unwrapHeading = function() {
     this.unwrapBlockTag(function(node) {

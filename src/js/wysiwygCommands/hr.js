@@ -24,22 +24,19 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
         var sq = wwe.getEditor();
 
         sq.modifyBlocks(function(frag) {
-            var block = sq.createElement('DIV', {
-                'data-component-type': 'hr'
-            });
-
+            /*
+            var block = sq.createElement('DIV');
             var newFrag = sq._doc.createDocumentFragment();
-/*
+
             newFrag.appendChild(frag);
             newFrag.appendChild(block);
 
+            block.appendChild(sq.createElement('BR'));
             block.appendChild(sq.createElement('HR'));
-            block.appendChild(sq.createElement('BR'));*/
+*/
+            frag.appendChild(sq.createElement('HR'));
 
-            newFrag.appendChild(frag);
-            newFrag.appendChild(sq.createElement('HR'));
-
-            return newFrag;
+            return frag;
         });
 
         sq.focus();
