@@ -24,6 +24,8 @@
     "karma-coverage": "^0.4.2",
     "karma-firefox-launcher": "latest",
     "karma-jasmine": "latest",
+    "karma-jasmine-ajax": "^0.1.13",
+    "karma-jasmine-jquery": "^0.1.1",
     "karma-junit-reporter": "^0.2.2",
     "karma-narrow-reporter": "latest",
     "karma-phantomjs-launcher": "latest",

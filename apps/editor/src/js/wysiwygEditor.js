@@ -148,7 +148,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
 
     //firefox has problem about keydown event while composition korean
-    //파폭에서 한글입력하다 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
+    //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(event) {
             if (event.keyCode) {
@@ -156,6 +156,25 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             }
         });
     }
+
+    this.getEditor().addEventListener('focus', function() {
+        self.eventManager.emit('focus', {
+            source: 'wysiwyg'
+        });
+    });
+
+    this.getEditor().addEventListener('blur', function() {
+        self.eventManager.emit('blur', {
+            source: 'wysiwyg'
+        });
+    });
+
+    this.getEditor().addEventListener('paste', function(clipboardEvent) {
+        self.eventManager.emit('paste', {
+            source: 'wysiwyg',
+            clipboardEvent: clipboardEvent
+        });
+    });
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
