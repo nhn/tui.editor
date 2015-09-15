@@ -55,6 +55,25 @@ MarkdownEditor.prototype._initEvent = function() {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
     });
+
+    this.cm.on('focus', function() {
+        self.eventManager.emit('focus', {
+            source: 'markdown'
+        });
+    });
+
+    this.cm.on('blur', function() {
+        self.eventManager.emit('blur', {
+            source: 'markdown'
+        });
+    });
+
+    this.cm.getWrapperElement().addEventListener('paste', function(clipboardEvent) {
+        self.eventManager.emit('paste', {
+            source: 'markdown',
+            clipboardEvent: clipboardEvent
+        });
+    });
 };
 
 /**
