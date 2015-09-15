@@ -94,8 +94,9 @@ describe('WysiwygEditor', function() {
                 done();
             });
 
-            //because squire input event
+            //because squire input event, without this code, change event fire twice
             wwe.editor._ignoreChange = false;
+
             wwe.editor.insertHTML('<p>test</p>');
         });
 
@@ -108,8 +109,8 @@ describe('WysiwygEditor', function() {
                 done();
             });
 
-            //because squire input event
             wwe.editor._ignoreChange = false;
+
             wwe.editor.insertPlainText('t');
         });
 
@@ -122,9 +123,25 @@ describe('WysiwygEditor', function() {
                 done();
             });
 
-            //because squire input event
             wwe.editor._ignoreChange = false;
+
             wwe.editor.insertHTML('t');
+        });
+
+        it('when editor gain focus, emit focus event', function() {
+            em.listen('focus', function(ev) {
+                expect(ev.source).toEqual('wysiwyg');
+            });
+
+            wwe.editor.focus();
+        });
+
+        it('when editor lost focus, emit blur event', function() {
+            em.listen('blur', function(ev) {
+                expect(ev.source).toEqual('wysiwyg');
+            });
+
+            wwe.editor.blur();
         });
     });
 

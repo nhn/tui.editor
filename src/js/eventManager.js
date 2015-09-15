@@ -25,6 +25,9 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'focus',
+    'blur',
+    'paste',
     'show',
     'hide'
 ];
