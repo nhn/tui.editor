@@ -63,8 +63,19 @@
                 //callback('이미지URL');
             }
         },
-        onload: function(editor) {
-           editor.focus();
+        events: {
+            'load': function(editor) {
+                editor.focus();
+            },
+            'focus': function(ev) {
+                console.log('focus', ev.source);
+            },
+            'blur': function(ev) {
+                console.log('blur', ev.source);
+            },
+            'paste': function(ev) {
+                console.log('paste', ev.source);
+            }
         }
     });
 
