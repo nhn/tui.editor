@@ -10,25 +10,29 @@ describe('Editor', function() {
         beforeEach(function(done) {
             $('body').empty();
 
-            (new Editor({
+            editor = new Editor({
                 el: $('body'),
                 height: 300,
-                onload: function(ed) {
-                    editor = ed;
-                    done();
+                events: {
+                    'load': function(editor) {
+                        em = editor.eventManager;
+                        done();
+                    }
                 }
-            }));
+            });
         });
 
         describe('contentHeight()', function() {
-            it('set content height', function() {
+            it('set content height', function(done) {
+                done();
                 editor.contentHeight(500);
                 expect($('.mdContainer .editor').height()).toEqual(500);
                 expect($('.preview').height()).toEqual(500);
                 expect($('.wysiwygContainer .editor').height()).toEqual(500);
             });
 
-            it('get content height', function() {
+            it('get content height', function(done) {
+                done();
                 expect(editor.contentHeight()).toEqual(300);
             });
         });
