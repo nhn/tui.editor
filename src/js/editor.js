@@ -89,7 +89,13 @@ function NeonEditor(options) {
 
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
-            self.eventManager.listen(key, fn);
+            self.on(key, fn);
+        });
+    }
+
+    if (this.options.events) {
+        util.forEach(this.options.events, function(fn, key) {
+            self.on(key, fn);
         });
     }
 
@@ -108,9 +114,7 @@ function NeonEditor(options) {
 
         self.setValue(self.options.initialValue);
 
-        if (self.options.onload) {
-            self.options.onload(self);
-        }
+        self.eventManager.emit('load', self);
     });
 
     __nedInstance.push(this);
@@ -152,6 +156,10 @@ NeonEditor.prototype.changePreviewStyle = function(style) {
 
 NeonEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
+};
+
+NeonEditor.prototype.on = function(type, handler) {
+    this.eventManager.listen(type, handler);
 };
 
 NeonEditor.prototype.getCodeMirror = function() {
