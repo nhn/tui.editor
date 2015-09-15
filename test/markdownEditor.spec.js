@@ -69,6 +69,28 @@ describe('MarkdownEditor', function() {
             mde.getEditor().replaceSelection('m');
         });
 
+        it('when editor gain focus, emit focus event', function() {
+            em.listen('focus', function(ev) {
+                expect(ev.source).toEqual('markdown');
+            });
+
+            mde.getEditor().focus();
+        });
+
+        it('when editor lost focus, emit blur event', function() {
+            em.listen('blur', function(ev) {
+                expect(ev.source).toEqual('markdown');
+            });
+
+            mde.getEditor().getWrapperElement().blur();
+        });
+    });
+
+    describe('replaceSelection', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+
         it('replace selection content with passed content', function() {
             var selection = {
                 from: {line: 0, ch: 0},
