@@ -22,15 +22,17 @@ describe('taskCounter', function() {
                 querySplitter: {
                     queryRx: /@[^@\s]*/
                 },
-                onload: function(editor) {
-                    ned = editor;
-                    em = editor.eventManager;
-                    done();
+                events: {
+                    'load': function(editor) {
+                        em = editor.eventManager;
+                        done();
+                    }
                 }
             });
         });
 
-        it('get task count of content', function() {
+        it('get task count of content', function(done) {
+            done();
             ned.setValue('* [ ] task1\n* [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -44,7 +46,8 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function() {
+        it('get checked task count of content', function(done) {
+            done();
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 
@@ -71,15 +74,17 @@ describe('taskCounter', function() {
                 querySplitter: {
                     queryRx: /@[^@\s]*/
                 },
-                onload: function(editor) {
-                    ned = editor;
-                    em = editor.eventManager;
-                    done();
+                events: {
+                    'load': function(editor) {
+                        em = editor.eventManager;
+                        done();
+                    }
                 }
             });
         });
 
-        it('get task count of content', function() {
+        it('get task count of content', function(done) {
+            done();
             ned.setValue('* [ ] task1\n    * [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -93,7 +98,8 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function() {
+        it('get checked task count of content', function(done) {
+            done();
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 

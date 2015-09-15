@@ -22,10 +22,11 @@ describe('querySplitter', function() {
                 querySplitter: {
                     queryRx: /@[^@\s]*/
                 },
-                onload: function(editor) {
-                    ned = editor;
-                    em = editor.eventManager;
-                    done();
+                events: {
+                    'load': function(editor) {
+                        em = editor.eventManager;
+                        done();
+                    }
                 }
             });
         });
@@ -37,7 +38,6 @@ describe('querySplitter', function() {
                     caretOffset: 10
                 },
                 handler = jasmine.createSpy('handler');
-
 
             em.listen('query', handler);
 
@@ -273,10 +273,11 @@ describe('querySplitter', function() {
                 querySplitter: {
                     queryRx: /@[^@\s]*/
                 },
-                onload: function(editor) {
-                    ned = editor;
-                    em = editor.eventManager;
-                    done();
+                events: {
+                    'load': function(editor) {
+                        em = editor.eventManager;
+                        done();
+                    }
                 }
             });
         });
@@ -507,6 +508,5 @@ describe('querySplitter', function() {
             expect(result[1].caretOffset).toEqual(13);
             expect(result[1].startOffset).toEqual(11);
         });
-
     });
 });
