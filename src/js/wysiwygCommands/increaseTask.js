@@ -35,6 +35,12 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
                     if (node.previousSibling) {
                         // Then increase the list level
                         wwe.getEditor().modifyBlocks(increaseTaskLevel);
+/*
+                        if (node.parentElement.parentElement.firstChild.tagName === 'DIV'
+                            && node.parentElement.parentElement.firstChild.textContent === '') {
+                                debugger;
+                                $(node.parentElement.parentElement.firstChild).remove();
+                        }*/
                     }
 
                     break;
@@ -83,11 +89,9 @@ function replaceWith(node, node2) {
 }
 
 function increaseTaskLevel(frag) {
-    var items = frag.querySelectorAll('LI'),
-        i, l, item,
-        type, newParent,
-        listItemAttrs = {class: 'task-list-item'},
-        listAttrs;
+    var i, l, item, type, newParent, listAttrs,
+        items = frag.querySelectorAll('LI'),
+        listItemAttrs = {class: 'task-list-item'};
 
     for (i = 0, l = items.length; i < l; i += 1) {
         item = items[i];

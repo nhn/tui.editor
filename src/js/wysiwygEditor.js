@@ -239,8 +239,20 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         }
     } else if (event.keyCode === 9) {
         if (this._isInTaskList()) {
-            event.preventDefault();
-            self.eventManager.emit('command', 'IncreaseTask');
+            if (!$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+                this._unformatTaskIfNeedOnEnter(range);
+                setTimeout(function() {
+                    self.eventManager.emit('command', 'Task');
+                }, 0);
+            } else {
+                event.preventDefault();
+                self.eventManager.emit('command', 'IncreaseTask');
+            }
+        } else if (this.getEditor().hasFormat('li')) {
+            if ($($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+                event.preventDefault();
+                self.eventManager.emit('command', 'IncreaseTask');
+            }
         }
     }
 };
@@ -975,8 +987,16 @@ WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
 
 };
 
-WysiwygEditor.prototype._isInTaskList = function() {
-    return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
+WysiwygEditor.prototype._isInTaskList = function(range) {
+    var li;
+
+    if (!range) {
+        range = this.getEditor().getSelection().cloneRange();
+    }
+
+    li = $(range.startContainer).parents('li')[0];
+
+    return $(li).hasClass('task-list-item');
 };
 
 WysiwygEditor.prototype._unwrapHeading = function() {
