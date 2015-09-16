@@ -4,44 +4,51 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager');
 
 describe('WysiwygEditor', function() {
-    var $container, em;
+    var $container, em, wwe;
 
-    beforeEach(function() {
-        $('body').empty();
-
+    beforeEach(function(done) {
         $container = $('<div />');
 
         $('body').append($container);
 
         em = new EventManager();
+
+        wwe = new WysiwygEditor($container, null, em);
+
+        wwe.init(function() {
+            done();
+        });
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('Initialize', function() {
-        var wwe;
-
-        beforeEach(function() {
-            wwe = new WysiwygEditor($container, null, em);
+        it('init() invoke callback', function() {
+            expect($('iframe').length).toEqual(1);
+            expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
         });
+    });
 
-        it('init() invoke callback', function(done) {
-            wwe.init(function() {
-                expect($('iframe').length).toEqual(1);
-                expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
+    describe('Init Squire again if need', function() {
+        it('Init Squire again if need', function(done) {
+            wwe.setValue('<h1>HELLO WORLD</h1>');
+            $container.detach();
+            expect(wwe._isIframeReady()).toBe(false);
+            $container.appendTo('body');
+
+            //아이프레임의 load이벤트 이후를 테스트해야하기때문에 프레임지연
+            //IE,FF 에서는 아이프레임의 load이벤트가 돔조작 이후 프레임에서 발생한다.
+            //크롬은 바로 한프레임에서 돔조작 하자마자 발생함
+            setTimeout(function() {
+                expect(wwe._isIframeReady()).toBe(true);
                 done();
-            });
+            }, 100);
         });
     });
 
     describe('_isIframeReady()', function() {
-        var wwe;
-
-        beforeEach(function(done) {
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                done();
-            });
-        });
-
         it('isPrepared() check iframe has prepared or need re init with squire', function() {
             expect(wwe._isIframeReady()).toBe(true);
         });
@@ -53,41 +60,14 @@ describe('WysiwygEditor', function() {
     });
 
     describe('reset()', function() {
-        var wwe;
-
-        beforeEach(function(done) {
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                done();
-            });
-        });
-
         it('set content blank', function() {
             wwe.setValue('<h1>HELLO WORLD</h1>');
             wwe.reset();
             expect(wwe.getValue()).toEqual('<br />');
         });
-
-        it('Init Squire again if need', function() {
-            wwe.setValue('<h1>HELLO WORLD</h1>');
-            $container.detach();
-            $container.appendTo('body');
-            expect(wwe._isIframeReady()).toBe(false);
-            wwe.reset();
-            expect(wwe._isIframeReady()).toBe(true);
-        });
     });
 
     describe('Event', function() {
-        var wwe;
-
-        beforeEach(function(done) {
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                done();
-            });
-        });
-
         it('when something changed in editor Emit contentChanged.wysiwygEditor event', function(done) {
             em.listen('contentChanged.wysiwygEditor', function(editor) {
                 expect(editor).toBe(wwe);
@@ -146,15 +126,6 @@ describe('WysiwygEditor', function() {
     });
 
     describe('getValue, setValue', function() {
-        var wwe;
-
-        beforeEach(function(done) {
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                done();
-            });
-        });
-
         it('checked checkbox should have checked attribute', function() {
             wwe.getEditor().setHTML('<input type="checkbox" id="task" />');
             wwe.getEditor().getDocument().getElementById('task').checked = true;
@@ -227,547 +198,374 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    it('get current wysiwyg iframe body that wrapped jquery', function(done) {
-        var wwe;
-
-        wwe = new WysiwygEditor($container, null, em);
-        wwe.init(function() {
-            expect(wwe.get$Body().length).toEqual(1);
-            expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
-            done();
-        });
+    it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
+        expect(wwe.get$Body().length).toEqual(1);
+        expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
     });
 
-    it('hasFormat with RegExp', function(done) {
-        var wwe;
-
-        wwe = new WysiwygEditor($container, null, em);
-
-        wwe.init(function() {
-            wwe.setValue('<h1>hasHeading</h1>');
-            expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
-            done();
-        });
+    it('hasFormatWithRx() check hasFormat with RegExp', function() {
+        wwe.setValue('<h1>hasHeading</h1>');
+        expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
     });
 
     describe('_unformatTaskIfNeedOnBackspace()', function() {
-        it('remove input if current selection is right of input with one space', function(done) {
-            var wwe;
+        it('remove input if current selection is right of input with one space', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
 
-                wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
+            range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
+            range.collapse(true);
+            wwe._unformatTaskIfNeedOnBackspace(range);
 
-                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
-                range.collapse(true);
-                wwe._unformatTaskIfNeedOnBackspace(range);
-
-                expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
-                done();
-            });
+            expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
         });
 
-        it('remove input if current selection is right of input with one space wrapped inline tag', function(done) {
-            var wwe;
+        it('remove input if current selection is right of input with one space wrapped inline tag', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><b>&nbsp;text</b></li></ul>');
 
-                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><b>&nbsp;text</b></li></ul>');
+            range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
+            range.collapse(true);
+            wwe._unformatTaskIfNeedOnBackspace(range);
 
-                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
-                range.collapse(true);
-                wwe._unformatTaskIfNeedOnBackspace(range);
-
-                //replace하는것은 ie때문
-                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
-                done();
-            });
+            //replace하는것은 ie때문
+            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
         });
 
-        it('remove input if current selection has placed at start of task item', function(done) {
-            var wwe;
+        it('remove input if current selection has placed at start of task item', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
 
-                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
+            range.collapse(true);
+            wwe._unformatTaskIfNeedOnBackspace(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
-                range.collapse(true);
-                wwe._unformatTaskIfNeedOnBackspace(range);
-
-                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
-                done();
-            });
+            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
         });
 
-        it('dont remove necessary input', function(done) {
-            var wwe;
+        it('dont remove necessary input', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
+            range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
+            range.collapse(true);
+            wwe._unformatTaskIfNeedOnBackspace(range);
 
-                range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
-                range.collapse(true);
-                wwe._unformatTaskIfNeedOnBackspace(range);
-
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
-                done();
-            });
+            expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
         });
     });
 
     describe('_unformatTaskIfNeedOnEnter()', function() {
-        it('remove input if current selection is right of input with one space', function(done) {
-            var wwe;
+        it('remove input if current selection is right of input with one space', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
 
-                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
+            range.collapse(true);
+            wwe._unformatTaskIfNeedOnEnter(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
-                range.collapse(true);
-                wwe._unformatTaskIfNeedOnEnter(range);
-
-                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
-                done();
-            });
+            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
         });
     });
 
     describe('_removeHrIfNeed()', function() {
         //같은 부모의 이전 offset의 엘리먼트가 hr일때
-        it('remove hr if current is on first offset and previousSibling elemet is hr', function(done) {
-            var wwe;
+        it('remove hr if current is on first offset and previousSibling elemet is hr', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.setValue('<hr><div>abcd<br></div>');
 
-                wwe.setValue('<hr><div>abcd<br></div>');
+            range.setStart(wwe.getEditor().getDocument().body, 1);
+            range.collapse(true);
+            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
-                range.setStart(wwe.getEditor().getDocument().body, 1);
-                range.collapse(true);
-                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-                expect(wwe.get$Body().find('hr').length).toEqual(0);
-                done();
-            });
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
         //현재커서가 hr을 가르키는 경우
-        it('remove hr current selection is hr', function(done) {
-            var wwe;
+        it('remove hr current selection is hr', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.setValue('<hr><div>abcd<br></div>');
 
-                wwe.setValue('<hr><div>abcd<br></div>');
+            range.setStart(wwe.getEditor().getDocument().body, 0);
+            range.collapse(true);
+            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
-                range.setStart(wwe.getEditor().getDocument().body, 0);
-                range.collapse(true);
-                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-                expect(wwe.get$Body().find('hr').length).toEqual(0);
-                done();
-            });
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
         //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
-        it('remove hr current selections parentNode previousSibling is hr when offset 0', function(done) {
-            var wwe;
+        it('remove hr current selections parentNode previousSibling is hr when offset 0', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
 
-                wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+            range.setStart(wwe.get$Body().find('b')[0], 0);
+            range.collapse(true);
+            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
 
-                range.setStart(wwe.get$Body().find('b')[0], 0);
-                range.collapse(true);
-                wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-                expect(wwe.get$Body().find('hr').length).toEqual(0);
-                done();
-            });
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
     });
 
     describe('_wrapDefaultBlockTo', function() {
         it('wrap selection defulat block', function(done) {
-            var wwe;
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('abcdef');
 
-                wwe.get$Body().html('abcdef');
+            range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
+            range.collapse(true);
+            wwe._wrapDefaultBlockTo(range);
 
-                range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
-                range.collapse(true);
-                wwe._wrapDefaultBlockTo(range);
-
-                expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div>');
-                done();
-            });
+            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div>');
+            done();
         });
     });
 
     describe('_wrapDefaultBlockToOrphanTexts', function() {
-        it('wrap selection defulat block to all orphan texts', function(done) {
-            var wwe;
+        it('wrap selection defulat block to all orphan texts', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('abcdef<div>ghijk<br></div>');
 
-                wwe.get$Body().html('abcdef<div>ghijk<br></div>');
+            range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
+            range.collapse(true);
+            wwe._wrapDefaultBlockToOrphanTexts();
 
-                range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
-                range.collapse(true);
-                wwe._wrapDefaultBlockToOrphanTexts();
-
-                expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
-                done();
-            });
+            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
         });
     });
 
     describe('_removeTaskInputInWrongPlace', function() {
-        it('remove inputbox in wrong parent', function(done) {
-            var wwe;
+        it('remove inputbox in wrong parent', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li><input type="checkbox" /></li></ul>');
 
-                wwe.get$Body().html('<ul><li><input type="checkbox" /></li></ul>');
+            wwe._removeTaskInputInWrongPlace();
 
-                wwe._removeTaskInputInWrongPlace();
-
-                expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
-                done();
-            });
+            expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
         });
 
-        it('remove inputbox in wrong place', function(done) {
-            var wwe;
+        it('remove inputbox in wrong place', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
 
-                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
+            wwe._removeTaskInputInWrongPlace();
 
-                wwe._removeTaskInputInWrongPlace();
-
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
-                done();
-            });
+            expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
         });
     });
 
     describe('breakToNewDefaultBlock()', function() {
-        it('make new defulatBlock then move selection to it', function(done) {
-            var wwe;
+        it('make new defulatBlock then move selection to it', function() {
+            var range;
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range;
+            wwe.get$Body().html('<div>aef<br></div>');
 
-                wwe.get$Body().html('<div>aef<br></div>');
+            range = wwe.getEditor().getSelection().cloneRange();
 
-                range = wwe.getEditor().getSelection().cloneRange();
+            range.setStart(wwe.getEditor().getDocument().body, 0);
+            range.collapse(true);
+            wwe.breakToNewDefaultBlock(range);
 
-                range.setStart(wwe.getEditor().getDocument().body, 0);
-                range.collapse(true);
-                wwe.breakToNewDefaultBlock(range);
-
-                expect(wwe.getEditor().getHTML()).toEqual('<div>aef<br></div><div><br></div>');
-                expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
-                expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
-                done();
-            });
+            expect(wwe.getEditor().getHTML()).toEqual('<div>aef<br></div><div><br></div>');
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
+            expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
         });
 
-        it('make new defulatBlock to body child then move selection to it', function(done) {
-            var wwe;
+        it('make new defulatBlock to body child then move selection to it', function() {
+            var range;
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range;
+            wwe.get$Body().html('<h1><div>aef<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>aef<br></div></h1>');
+            range = wwe.getEditor().getSelection().cloneRange();
 
-                range = wwe.getEditor().getSelection().cloneRange();
+            //select text node
+            range.setStart(wwe.get$Body().find('div')[0], 0);
+            range.collapse(true);
+            wwe.breakToNewDefaultBlock(range);
 
-                //select text node
-                range.setStart(wwe.get$Body().find('div')[0], 0);
-                range.collapse(true);
-                wwe.breakToNewDefaultBlock(range);
-
-                expect(wwe.getEditor().getHTML()).toEqual('<h1><div>aef<br></div></h1><div><br></div>');
-                expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
-                expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
-                done();
-            });
+            expect(wwe.getEditor().getHTML()).toEqual('<h1><div>aef<br></div></h1><div><br></div>');
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('');
+            expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
         });
     });
 
     describe('getTextOffsetToBlock()', function() {
-        it('return offset of el that count form root block parent #1', function(done) {
-            var wwe;
+        it('return offset of el that count form root block parent #1', function() {
+            var offset;
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var offset;
-                wwe.get$Body().html('<ul><li class="task-list-item"><div><input type="checkbox"><b>text</b></div></li></ul>');
-                offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
-                expect(offset).toEqual(0);
-                done();
-            });
+            wwe.editor._ignoreChange = true;
+            wwe.get$Body().html('<ul><li class="task-list-item"><div><input type="checkbox"><b>text</b></div></li></ul>');
+            offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
+            expect(offset).toEqual(0);
         });
 
-        it('return offset of el that count form root block parent #2', function(done) {
-            var wwe;
+        it('return offset of el that count form root block parent #2', function() {
+            var offset;
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var offset;
-                wwe.get$Body().html('<ul><li class="task-list-item"><div>abc<input type="checkbox"><b>text</b></div></li></ul>');
-                offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
-                expect(offset).toEqual(3);
-                done();
-            });
+            wwe.editor._ignoreChange = true;
+            wwe.get$Body().html('<ul><li class="task-list-item"><div>abc<input type="checkbox"><b>text</b></div></li></ul>');
+            offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
+            expect(offset).toEqual(3);
         });
     });
 
     describe('unwrapBlockTag()', function() {
-        it('unwrap tag of current selection with tag name', function(done) {
-            var wwe;
+        it('unwrap tag of current selection with tag name', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+            wwe.unwrapBlockTag('H1');
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
-                wwe.unwrapBlockTag('H1');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('test');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('test');
         });
 
-        it('unwrap tag of current selection with condition callback', function(done) {
-            var wwe;
+        it('unwrap tag of current selection with condition callback', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
-
-                wwe.unwrapBlockTag(function(tagName) {
-                    return tagName === 'H1';
-                });
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
-                done();
+            wwe.unwrapBlockTag(function(tagName) {
+                return tagName === 'H1';
             });
+
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
         });
 
-        it('remove unused inputbox when change from task to another', function(done) {
-            var wwe;
+        it('remove unused inputbox when change from task to another', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div><input type="checkbox" />test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div><input type="checkbox" />test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.unwrapBlockTag();
 
-                wwe.unwrapBlockTag();
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
         });
     });
 
     describe('changeBlockFormat', function() {
-        it('change block format', function(done) {
-            var wwe;
+        it('change block format', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormat('H1', 'P');
 
-                wwe.changeBlockFormat('H1', 'P');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
         });
 
-        it('unwrap block format', function(done) {
-            var wwe;
+        it('unwrap block format', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormat('H1');
 
-                wwe.changeBlockFormat('H1');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
         });
 
-        it('unwrap block format list', function(done) {
-            var wwe;
+        it('unwrap block format list', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li><div>test<br></div></li></ul>');
 
-                wwe.get$Body().html('<ul><li><div>test<br></div></li></ul>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormat('UL', 'OL');
 
-                wwe.changeBlockFormat('UL', 'OL');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ol><li>test</li></ol>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ol><li>test</li></ol>');
         });
 
-        it('if not mached any condition, wrap targetTagName node to first div node', function(done) {
-            var wwe;
+        it('if not mached any condition, wrap targetTagName node to first div node', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<div>test<br></div>');
 
-                wwe.get$Body().html('<div>test<br></div>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormat('UL', 'P');
 
-                wwe.changeBlockFormat('UL', 'P');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
         });
     });
 
     describe('changeBlockFormatTo', function() {
-        it('change any block for to passed tagName', function(done) {
-            var wwe;
+        it('change any block for to passed tagName', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-                wwe.get$Body().html('<h1><div>test<br></div></h1>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormatTo('P');
 
-                wwe.changeBlockFormatTo('P');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
         });
 
-        it('remove unused inputbox when change from task to another', function(done) {
-            var wwe;
+        it('remove unused inputbox when change from task to another', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
 
-                wwe.get$Body().html('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
 
-                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-                range.collapse(true);
-                wwe.getEditor().setSelection(range);
+            wwe.changeBlockFormatTo('H1');
 
-                wwe.changeBlockFormatTo('H1');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<h1>test</h1>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<h1>test</h1>');
         });
     });
 
     describe('replace node\'s content text', function() {
-        it('replace text without affect tags', function(done) {
-            var wwe;
+        it('replace text without affect tags', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
 
-                wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
+            wwe.replaceContentText(wwe.getEditor().getDocument().body, 'list1', 'list2');
 
-                wwe.replaceContentText(wwe.getEditor().getDocument().body, 'list1', 'list2');
-
-                expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
-                done();
-            });
+            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
         });
     });
 
     describe('editing functions', function() {
-        var wwe;
-
-        beforeEach(function(done) {
-            wwe = new WysiwygEditor($container, null, em);
-            wwe.init(function() {
-                done();
-            });
-        });
-
         it('focus to ww editor', function() {
             $('body').focus();
             expect(document.activeElement).not.toBe(wwe.$iframe[0]);
