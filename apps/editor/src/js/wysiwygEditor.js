@@ -206,7 +206,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
 
     //enter
     if (event.keyCode === 13) {
-        if (this._isInTaskList()) {
+        if (this._isInTaskList(range)) {
             //we need remove empty task then Squire control list
             //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
             this._unformatTaskIfNeedOnEnter(range);
@@ -229,7 +229,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     //backspace
     } else if (event.keyCode === 8) {
         if (range.collapsed) {
-            if (this._isInTaskList()) {
+            if (this._isInTaskList(range)) {
                 this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
@@ -238,7 +238,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             }
         }
     } else if (event.keyCode === 9) {
-        if (this._isInTaskList()) {
+        if (this._isInTaskList(range)) {
             if (!$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
                 this._unformatTaskIfNeedOnEnter(range);
                 setTimeout(function() {
@@ -994,7 +994,12 @@ WysiwygEditor.prototype._isInTaskList = function(range) {
         range = this.getEditor().getSelection().cloneRange();
     }
 
-    li = $(range.startContainer).parents('li')[0];
+    if (range.startContainer.nodeType === Node.ELEMENT_NODE
+        && range.startContainer.tagName === 'LI') {
+            li = range.startContainer;
+    } else {
+        li = $(range.startContainer).parents('li')[0];
+    }
 
     return $(li).hasClass('task-list-item');
 };
