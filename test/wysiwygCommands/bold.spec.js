@@ -50,4 +50,19 @@ describe('Bold', function() {
 
         expect(wwe.getValue()).toEqual('line1<br />line2<br />');
     });
+
+    it('if there have bold already remove format in colappsed selection', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<b>line</b>');
+
+        range.setStart(wwe.get$Body().find('b')[0].firstChild, 4);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        Bold.exec(wwe);
+        wwe.getEditor().insertPlainText('a');
+
+        expect(wwe.getValue()).toEqual('<b>line</b>a<br />');
+    });
 });

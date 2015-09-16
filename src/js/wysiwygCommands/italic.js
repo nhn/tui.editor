@@ -30,6 +30,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
         }
 
         sq.removeAllFormatting();
+        sq.changeFormat(null, {tag:'i'});
 
         if (!removeMode) {
             sq.italic();

@@ -30,6 +30,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
         }
 
         sq.removeAllFormatting();
+        sq.changeFormat(null, {tag:'b'});
 
         if (!removeMode) {
             sq.bold();
