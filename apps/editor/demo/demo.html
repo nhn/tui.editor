@@ -62,20 +62,6 @@
                 //callback으로 url전달
                 //callback('이미지URL');
             }
-        },
-        events: {
-            'load': function(editor) {
-                editor.focus();
-            },
-            'focus': function(ev) {
-                console.log('focus', ev.source);
-            },
-            'blur': function(ev) {
-                console.log('blur', ev.source);
-            },
-            'paste': function(ev) {
-                console.log('paste', ev.source);
-            }
         }
     });
 
