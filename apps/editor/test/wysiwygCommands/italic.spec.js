@@ -50,4 +50,20 @@ describe('Italic', function() {
 
         expect(wwe.getValue()).toEqual('line1<br />line2<br />');
     });
+
+    it('if there have italic already remove format in colappsed selection', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<i>line</i>');
+
+        range.setStart(wwe.get$Body().find('i')[0].firstChild, 4);
+        range.collapse(true);
+        wwe.getEditor().setSelection(range);
+
+        Italic.exec(wwe);
+        wwe.getEditor().insertPlainText('a');
+
+        expect(wwe.getValue()).toEqual('<i>line</i>a<br />');
+    });
+
 });
