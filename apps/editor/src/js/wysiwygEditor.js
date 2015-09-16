@@ -39,9 +39,9 @@ WysiwygEditor.prototype.init = function(callback) {
     this.$iframe.load(function() {
         self._initSquire();
 
-        //쿽스모드 방지 코드(makeSureStandardMode)로 인해 load 이벤트가 다시 발생하는 시점이
-        //브라우저별로 달라(어떤 브라우저는 같은 프레임에서 재귀호출처럼 실행, 어떤 브라우저는 프레임지연실행)
-        //콜백이 실행되는 시점을 프레임지연실행으로 맞출수있도록 한다.
+        //쿽스모드 방지 코드(makeSureStandardMode)로 인해
+        //load 이벤트가 발생되는 브라우저들이있다(IE)
+        //에디터의 동작을 맞추기해 완료콜백을 프레임지연해서 모든 과정이 완료되도록 동작을 일치 시켜준다.
         setTimeout(function() {
             if (callback) {
                 callback();
@@ -76,7 +76,7 @@ WysiwygEditor.prototype._initSquire = function() {
     $(doc).on('click', function() {
         self.focus();
     });
-}
+};
 
 WysiwygEditor.prototype._isIframeReady = function() {
     var iframeWindow = this.$iframe[0].contentWindow;
@@ -86,14 +86,11 @@ WysiwygEditor.prototype._isIframeReady = function() {
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
     //if Not in quirks mode
     if (doc.compatMode !== 'CSS1Compat') {
-        //아이프레임이 다시로드되어 load콜백이 다시 실행됨
-        //브라우저별로 load콜백이 실행되는 시점이 다르다(같은 프레임일수도있고 이후 프레임일수있다)
-        //IE는 같은 프레임에서 재귀호출처럼 실행됨
+        //독타입 삽입후 IE는 load 콜백이 다시 호출되는데 같은 프레임에서 재귀호출처럼 실행됨
         doc.open();
         doc.write('<!DOCTYPE html><title></title>');
         doc.close();
-        //그과정이 한프레임에서 진행되며 아이프레임 로드이후 모든과정이 실행되고
-        //끝나면 첫번째 진행이 다시 진행됨(initSquire의 나머지부분이 이어서 실행됨)
+        //load콜백이 끝나면 첫번째 진행이 다시 진행됨(initSquire의 나머지부분이 이어서 재귀호출처럼 실행됨)
     }
 };
 
@@ -355,7 +352,6 @@ WysiwygEditor.prototype.restoreSavedSelection = function() {
 
 WysiwygEditor.prototype.reset = function() {
     if (!this._isIframeReady()) {
-        console.log('reset');
         this.remove();
         this._initSquire();
     }
