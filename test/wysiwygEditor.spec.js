@@ -400,26 +400,6 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('getTextOffsetToBlock()', function() {
-        it('return offset of el that count form root block parent #1', function() {
-            var offset;
-
-            wwe.editor._ignoreChange = true;
-            wwe.get$Body().html('<ul><li class="task-list-item"><div><input type="checkbox"><b>text</b></div></li></ul>');
-            offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
-            expect(offset).toEqual(0);
-        });
-
-        it('return offset of el that count form root block parent #2', function() {
-            var offset;
-
-            wwe.editor._ignoreChange = true;
-            wwe.get$Body().html('<ul><li class="task-list-item"><div>abc<input type="checkbox"><b>text</b></div></li></ul>');
-            offset = wwe.getTextOffsetToBlock(wwe.getEditor().getDocument().getElementsByTagName('b')[0]);
-            expect(offset).toEqual(3);
-        });
-    });
-
     describe('unwrapBlockTag()', function() {
         it('unwrap tag of current selection with tag name', function() {
             var range = wwe.getEditor().getSelection().cloneRange();

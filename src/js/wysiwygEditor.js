@@ -5,6 +5,8 @@
 
 'use strict';
 
+var domUtils = require('./domUtils');
+
 var Squire = window.Squire,
     util = ne.util;
 
@@ -262,7 +264,7 @@ WysiwygEditor.prototype._isInOrphanText = function(selection) {
 };
 
 WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
-    var block, textElem, cursorOffset, cursorTarget;
+    var block, textElem, cursorOffset, cursorTarget, insertTargetNode;
 
     this.saveSelection(selection);
     this._joinSplitedTextNodes();
@@ -278,8 +280,9 @@ WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
     block = this.getEditor().createDefaultBlock([selection.startContainer]);
 
     //selection for insert block
-    if (selection.startContainer.childNodes[selection.startOffset]) {
-        selection.setStartBefore(selection.startContainer.childNodes[selection.startOffset]);
+    insertTargetNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
+    if (insertTargetNode) {
+        selection.setStartBefore(insertTargetNode);
     } else {
         //컨테이너의 차일드가 이노드 한개뿐일경우
         selection.selectNodeContents(selection.startContainer);
@@ -400,20 +403,17 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
                     nextBlock = current.childNodes[0];
 
                     //there is no next blocktag
-                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
+                    if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
                         nextBlock = self.getEditor().createDefaultBlock();
 
                         util.forEachArray(util.toArray(current.childNodes), function(node) {
                             nextBlock.appendChild(node);
                         });
 
-                        lastNodeOfNextBlock = nextBlock.childNodes[nextBlock.childNodes.length - 1];
+                        lastNodeOfNextBlock = nextBlock.lastChild;
 
                         //remove unneccesary br
-                        if (lastNodeOfNextBlock
-                            && lastNodeOfNextBlock.nodeType === Node.ELEMENT_NODE
-                            && lastNodeOfNextBlock.tagName === 'BR'
-                        ) {
+                        if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
                             nextBlock.removeChild(lastNodeOfNextBlock);
                         }
                     }
@@ -437,10 +437,10 @@ WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName
         }
 
         //if source condition node is not founded, we wrap current div node with node named targetTagName
-        if ((!newFrag || !srcCondition)
+        if (
+            (!newFrag || !srcCondition)
             && targetTagName
-            && frag.childNodes[0].nodeType === Node.ELEMENT_NODE
-            && frag.childNodes[0].tagName === 'DIV'
+            && domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
         ) {
             frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
         }
@@ -703,18 +703,6 @@ WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, of
     this.replaceSelection(content, selection);
 };
 
-function getOffsetLengthOfElement(element) {
-    var len;
-
-    if (element.nodeType === 1) {
-       len = element.textContent.length;
-    } else if (element.nodeType === 3) {
-       len = element.nodeValue.length;
-    }
-
-    return len;
-}
-
 WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
     var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
 
@@ -723,7 +711,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
     stepLength = 0;
 
     while (traceElement) {
-        traceElementLength = getOffsetLengthOfElement(traceElement);
+        traceElementLength = domUtils.getTextLength(traceElement);
         stepLength += traceElementLength;
 
         if (offset <= stepLength) {
@@ -732,7 +720,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
         traceOffset -= traceElementLength;
 
-        if (getOffsetLengthOfElement(traceElement) > 0) {
+        if (domUtils.getTextLength(traceElement) > 0) {
             latestAvailableElement = traceElement;
         }
 
@@ -741,7 +729,7 @@ WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offse
 
     if (!traceElement) {
         traceElement = latestAvailableElement;
-        traceOffset = getOffsetLengthOfElement(traceElement);
+        traceOffset =  domUtils.getTextLength(traceElement);
     }
 
     return {
@@ -801,20 +789,6 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 }
 
-WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
-    var prev,
-        offset = 0;
-
-    prev = el.previousSibling;
-
-    while (prev) {
-       offset += getOffsetLengthOfElement(prev);
-       prev = prev.previousSibling;
-    }
-
-    return offset;
-}
-
 WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
     var startContainer, startOffset,
         prevEl, needRemove;
@@ -824,18 +798,18 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
 
     //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
     //유저가 임의로 Task빈칸에 수정을 가했을경우
-    if (startContainer.nodeType === Node.ELEMENT_NODE) {
+    if (domUtils.isElemNode(startContainer)) {
         //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
         if (startOffset === 0) {
-            prevEl = startContainer.childNodes[startOffset];
+            prevEl = domUtils.getChildNodeAt(startContainer, startOffset);
         //inputbox 바로 오른편에서 지워지는경우
         } else {
-            prevEl = startContainer.childNodes[startOffset-1];
+            prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
         }
 
-        needRemove = prevEl ? prevEl.tagName === 'INPUT' : false;
+        needRemove = (domUtils.getNodeName(prevEl) === 'INPUT');
     //텍스트 노드인경우
-    } else if (startContainer.nodeType === Node.TEXT_NODE) {
+    } else if (domUtils.isTextNode(startContainer)) {
         //previousSibling이 있다면 그건 div바로 아래의 텍스트 노드임 아닌경우가생기면 버그
         //있고 그게 input이라면 offset체크
         if (startContainer.previousSibling) {
@@ -848,7 +822,7 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
         //inputbox 이후의 텍스트노드에서 빈칸한개가 지워지는경우 같이 지운다
         //(input과 빈칸한개는 같이 지워지는게 옳다고판단)
         if (prevEl.tagName === 'INPUT' && startOffset === 1 && FIND_TASK_SPACES_RX.test(startContainer.nodeValue)) {
-            startContainer.nodeValue =  startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+            startContainer.nodeValue = startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
             needRemove = true;
         }
     }
@@ -884,12 +858,9 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
 };
 
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
-    var div, pathToBody, appendBefore,
-        currentNode = selection.startContainer.childNodes[selection.startOffset];
+    var div, pathToBody, appendBefore, currentNode;
 
-    if (!currentNode) {
-        currentNode = selection.startContainer;
-    }
+    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selction.startContainer;
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -913,43 +884,35 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
 };
 
 WysiwygEditor.prototype._isInHr = function(selection) {
-    return selection.startContainer.childNodes[selection.startOffset] && selection.startContainer.childNodes[selection.startOffset].tagName === 'HR';
+    return domUtils.getNodeName(selection.startContainer.childNodes[selection.startOffset]) === 'HR';
 };
 
 WysiwygEditor.prototype._isNearHr = function(selection) {
-    var result;
-
-    if (selection.startOffset > 0
-        && selection.startContainer.childNodes.length
-        && selection.startContainer.childNodes[selection.startOffset - 1]
-        && selection.startContainer.childNodes[selection.startOffset - 1].tagName === 'HR') {
-            result = true;
-    }
-
-    return result;
+    var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
+    return domUtils.getNodeName(prevNode) === 'HR';
 }
 
 WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
-    var prev, cursorTarget;
+    var hrSuspect, cursorTarget;
 
     if (this._isInHr(selection)) {
-        cursorTarget = selection.startContainer.childNodes[selection.startOffset].nextSibling;
-
-        $(selection.startContainer.childNodes[selection.startOffset]).remove();
+        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
     } else if (selection.startOffset === 0) {
-        prev = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
+        hrSuspect = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
 
-        if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.tagName === 'HR') {
-            cursorTarget = prev.nextSibling;
-            $(prev).remove();
+        if (domUtils.getNodeName(hrSuspect) !== 'HR') {
+            hrSuspect = null;
         }
     } else if (this._isNearHr(selection)) {
-        cursorTarget = selection.startContainer.childNodes[selection.startOffset - 1].nextSibling;
-        $(selection.startContainer.childNodes[selection.startOffset - 1]).remove();
+        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
     }
 
-    if (cursorTarget) {
+    if (hrSuspect) {
         event.preventDefault();
+
+        cursorTarget = hrSuspect.nextSibling;
+        $(hrSuspect).remove();
+
         selection.setStartBefore(cursorTarget);
         selection.collapse(true);
         this.getEditor().setSelection(selection);
@@ -981,10 +944,6 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     this._addCheckedAttrToCheckedInput();
     before = $(container).html()
     $(container).html(before.replace(from, to));
-};
-
-WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
-
 };
 
 WysiwygEditor.prototype._isInTaskList = function(range) {
