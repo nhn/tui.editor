@@ -87,7 +87,6 @@ module.exports = function(config) {
             suite: ''
         },
 
-
         // web server port
         port: 9876,
 
