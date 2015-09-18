@@ -445,91 +445,22 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('changeBlockFormat', function() {
-        it('change block format', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<h1><div>test<br></div></h1>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            wwe.changeBlockFormat('H1', 'P');
-
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-        });
-
-        it('unwrap block format', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<h1><div>test<br></div></h1>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            wwe.changeBlockFormat('H1');
-
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
-        });
-
-        it('unwrap block format list', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<ul><li><div>test<br></div></li></ul>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            wwe.changeBlockFormat('UL', 'OL');
-
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ol><li>test</li></ol>');
-        });
-
-        it('if not mached any condition, wrap targetTagName node to first div node', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<div>test<br></div>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            wwe.changeBlockFormat('UL', 'P');
-
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-        });
-    });
-
     describe('changeBlockFormatTo', function() {
-        it('change any block for to passed tagName', function() {
+        it('after changeBlockFormatTo remove inputs in wrong place', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" /> test</li></ul>')
+
+            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('li')[0].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             wwe.changeBlockFormatTo('P');
 
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<p>test</p>');
-        });
-
-        it('remove unused inputbox when change from task to another', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            wwe.changeBlockFormatTo('H1');
-
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<h1>test</h1>');
+            expect(wwe.get$Body().find('h1').length).toEqual(0);
+            expect(wwe.get$Body().find('p').length).toEqual(1);
+            expect(wwe.get$Body().find('input').length).toEqual(0);
         });
     });
 
@@ -545,80 +476,12 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('editing functions', function() {
+    describe('focus()', function() {
         it('focus to ww editor', function() {
             $('body').focus();
             expect(document.activeElement).not.toBe(wwe.$iframe[0]);
             wwe.focus();
             expect(document.activeElement).toBe(wwe.$iframe[0]);
-        });
-
-        it('when get html data, remove contenteditable block tag which is div', function() {
-            wwe.setValue('<ul><li>list</li></ul>');
-
-            //in ie, squire dont make br so we clean up necessary
-            expect(wwe.getValue().replace(/<br>/g, '')).toEqual('<ul><li>list</li></ul>');
-        });
-
-        it('replace selection content with passed content', function() {
-            var selection;
-
-            selection = wwe.getEditor().getSelection();
-            wwe.replaceSelection('test', selection);
-            expect(wwe.getValue()).toEqual('test<br />');
-        });
-
-        it('if replace selection without selection, use current selection', function() {
-            wwe.replaceSelection('test');
-            expect(wwe.getValue()).toEqual('test<br />');
-        });
-
-        it('replace with current cursor\'s containers offset', function() {
-            var selection;
-
-            wwe.getEditor().setHTML('test');
-
-            //selection for user cursor mocking
-            selection = wwe.getEditor().getSelection();
-            selection.setStart(selection.startContainer, 4);
-            selection.collapse(true);
-            wwe.getEditor().setSelection(selection);
-
-            wwe.replaceRelativeOffset('123', -2, 1);
-
-            expect(wwe.getValue()).toEqual('te123t<br />');
-        });
-
-        describe('getSelectionInfoByOffset() find element and offset by passing element and offset', function() {
-            var firstBlock;
-
-            beforeEach(function() {
-                wwe.getEditor().insertPlainText('text1');
-                wwe.getEditor().insertPlainText('text2');
-
-                firstBlock = wwe.getEditor().getDocument().body.childNodes[0];
-            });
-
-            it('offset is lower than passed element\'s length', function() {
-                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 3)).toEqual({
-                    element: firstBlock.childNodes[0],
-                    offset: 3
-                });
-            });
-
-            it('offset is higher than passed element\'s length', function() {
-                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 7)).toEqual({
-                    element: firstBlock.childNodes[1],
-                    offset: 2
-                });
-            });
-
-            it('offset is higher than exist content length', function() {
-                expect(wwe.getSelectionInfoByOffset(firstBlock.childNodes[0], 11)).toEqual({
-                    element: firstBlock.childNodes[1],
-                    offset: 5
-                });
-            });
         });
     });
 });
