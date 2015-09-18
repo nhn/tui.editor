@@ -71,7 +71,7 @@ Button.prototype._onClick = function() {
 
 module.exports = Button;
 
-},{"./uicontroller":38}],2:[function(require,module,exports){
+},{"./uicontroller":40}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 'use strict';
@@ -1379,7 +1379,74 @@ Convertor.factory = function(eventManager) {
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":30}],9:[function(require,module,exports){
+},{"./markedCustomRenderer":31}],9:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+/**
+ * domUtils
+ * @exports domUtils
+ */
+
+var isTextNode = function(node) {
+    return node && node.nodeType === Node.TEXT_NODE;
+}
+
+var isElemNode = function(node) {
+    return node && node.nodeType === Node.ELEMENT_NODE;
+}
+var getChildNodeAt = function(elem, index) {
+    if (elem.childNodes.length && index >= 0) {
+        return elem.childNodes[index];
+    }
+};
+
+var getNodeName = function(node) {
+    if (isElemNode(node)) {
+        return node.tagName;
+    } else if (isTextNode(node)) {
+        return 'TEXT';
+    }
+};
+
+var getTextLength = function(node) {
+    var len;
+
+    if (isElemNode(node)) {
+       len = node.textContent.length;
+    } else if (isTextNode(node)) {
+       len = node.nodeValue.length;
+    }
+
+    return len;
+}
+
+var getOffsetLength = function(node) {
+    var len;
+
+    if (isElemNode(node)) {
+       len = node.childNodes.length;
+    } else if (isTextNode(node)) {
+       len = node.nodeValue.length;
+    }
+
+    return len;
+}
+
+module.exports = {
+    getChildNodeAt: getChildNodeAt,
+    getNodeName: getNodeName,
+    isTextNode: isTextNode,
+    isElemNode: isElemNode,
+    getTextLength: getTextLength,
+    getOffsetLength: getOffsetLength
+};
+
+},{}],10:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1471,7 +1538,13 @@ function NeonEditor(options) {
 
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
-            self.eventManager.listen(key, fn);
+            self.on(key, fn);
+        });
+    }
+
+    if (this.options.events) {
+        util.forEach(this.options.events, function(fn, key) {
+            self.on(key, fn);
         });
     }
 
@@ -1490,9 +1563,7 @@ function NeonEditor(options) {
 
         self.setValue(self.options.initialValue);
 
-        if (self.options.onload) {
-            self.options.onload(self);
-        }
+        self.eventManager.emit('load', self);
     });
 
     __nedInstance.push(this);
@@ -1534,6 +1605,10 @@ NeonEditor.prototype.changePreviewStyle = function(style) {
 
 NeonEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
+};
+
+NeonEditor.prototype.on = function(type, handler) {
+    this.eventManager.listen(type, handler);
 };
 
 NeonEditor.prototype.getCodeMirror = function() {
@@ -1654,7 +1729,7 @@ NeonEditor.defineExtension = function(name, ext) {
 
 module.exports = NeonEditor;
 
-},{"./commandManager":7,"./convertor":8,"./eventManager":10,"./extManager":11,"./extensions/querySplitter":12,"./extensions/taskCounter":13,"./extensions/textPalette":14,"./layout":17,"./markdownCommands/addImage":19,"./markdownCommands/addLink":20,"./markdownCommands/blockquote":21,"./markdownCommands/bold":22,"./markdownCommands/heading":23,"./markdownCommands/hr":24,"./markdownCommands/italic":25,"./markdownCommands/ol":26,"./markdownCommands/task":27,"./markdownCommands/ul":28,"./markdownEditor":29,"./preview":34,"./wysiwygCommands/addImage":39,"./wysiwygCommands/addLink":40,"./wysiwygCommands/blockquote":41,"./wysiwygCommands/bold":42,"./wysiwygCommands/heading":43,"./wysiwygCommands/hr":44,"./wysiwygCommands/increaseTask":45,"./wysiwygCommands/italic":46,"./wysiwygCommands/ol":47,"./wysiwygCommands/task":48,"./wysiwygCommands/ul":49,"./wysiwygEditor":50}],10:[function(require,module,exports){
+},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/querySplitter":13,"./extensions/taskCounter":14,"./extensions/textPalette":15,"./layout":18,"./markdownCommands/addImage":20,"./markdownCommands/addLink":21,"./markdownCommands/blockquote":22,"./markdownCommands/bold":23,"./markdownCommands/heading":24,"./markdownCommands/hr":25,"./markdownCommands/italic":26,"./markdownCommands/ol":27,"./markdownCommands/task":28,"./markdownCommands/ul":29,"./markdownEditor":30,"./preview":35,"./wysiwygCommands/addImage":41,"./wysiwygCommands/addLink":42,"./wysiwygCommands/blockquote":43,"./wysiwygCommands/bold":44,"./wysiwygCommands/heading":45,"./wysiwygCommands/hr":46,"./wysiwygCommands/increaseTask":47,"./wysiwygCommands/italic":48,"./wysiwygCommands/ol":49,"./wysiwygCommands/task":50,"./wysiwygCommands/ul":51,"./wysiwygEditor":52}],11:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1682,6 +1757,10 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'load',
+    'focus',
+    'blur',
+    'paste',
     'show',
     'hide'
 ];
@@ -1749,7 +1828,7 @@ EventManager.prototype.addEventType = function(type) {
 
 module.exports = EventManager;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1788,7 +1867,7 @@ ExtManager.prototype.applyExtension = function(context, extNames) {
 
 module.exports = new ExtManager();
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
 @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 */
@@ -1856,7 +1935,7 @@ extManager.defineExtension('querySplitter', function(editor) {
     }
 });
 
-},{"../extManager":11}],13:[function(require,module,exports){
+},{"../extManager":12}],14:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -1888,7 +1967,7 @@ extManager.defineExtension('taskCounter', function(editor) {
     }
 });
 
-},{"../extManager":11}],14:[function(require,module,exports){
+},{"../extManager":12}],15:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -1938,7 +2017,7 @@ function updateUI($layer, list) {
     void 0;
 }
 
-},{"../extManager":11}],15:[function(require,module,exports){
+},{"../extManager":12}],16:[function(require,module,exports){
 /**
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1987,7 +2066,7 @@ $.fn.neonEditor = function() {
 window.ne = window.ne || {};
 window.ne.NeonEditor = NeonEditor;
 
-},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":9}],16:[function(require,module,exports){
+},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],17:[function(require,module,exports){
 /**
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2224,7 +2303,7 @@ LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
 
 module.exports = LayerPopup;
 
-},{"./uicontroller":38}],17:[function(require,module,exports){
+},{"./uicontroller":40}],18:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2403,7 +2482,7 @@ Layout.prototype.getWwEditorContainerEl = function() {
 
 module.exports = Layout;
 
-},{"./modeSwitch":31,"./popupAddImage":32,"./popupAddLink":33,"./tab":35,"./toolbar":37}],18:[function(require,module,exports){
+},{"./modeSwitch":32,"./popupAddImage":33,"./popupAddLink":34,"./tab":37,"./toolbar":39}],19:[function(require,module,exports){
 /**
  * @fileoverview Implements LazyRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2482,7 +2561,7 @@ LazyRunner.prototype._clearTOIDIfNeed = function(TOID) {
 
 module.exports = LazyRunner;
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2542,7 +2621,7 @@ var AddImage = CommandManager.command('markdown',
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],20:[function(require,module,exports){
+},{"../commandManager":7}],21:[function(require,module,exports){
 /**
  * @fileoverview Implements Addlink markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2600,7 +2679,7 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],21:[function(require,module,exports){
+},{"../commandManager":7}],22:[function(require,module,exports){
 /**
  * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2673,7 +2752,7 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],22:[function(require,module,exports){
+},{"../commandManager":7}],23:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2785,7 +2864,7 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],23:[function(require,module,exports){
+},{"../commandManager":7}],24:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2857,7 +2936,7 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],24:[function(require,module,exports){
+},{"../commandManager":7}],25:[function(require,module,exports){
 /**
  * @fileoverview HR markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2920,7 +2999,7 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],25:[function(require,module,exports){
+},{"../commandManager":7}],26:[function(require,module,exports){
 /**
  * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3092,7 +3171,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],26:[function(require,module,exports){
+},{"../commandManager":7}],27:[function(require,module,exports){
 /**
  * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3149,7 +3228,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],27:[function(require,module,exports){
+},{"../commandManager":7}],28:[function(require,module,exports){
 /**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3206,7 +3285,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],28:[function(require,module,exports){
+},{"../commandManager":7}],29:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3263,7 +3342,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],29:[function(require,module,exports){
+},{"../commandManager":7}],30:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3320,6 +3399,25 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('change', function(cm, cmEvent) {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
+    });
+
+    this.cm.on('focus', function() {
+        self.eventManager.emit('focus', {
+            source: 'markdown'
+        });
+    });
+
+    this.cm.on('blur', function() {
+        self.eventManager.emit('blur', {
+            source: 'markdown'
+        });
+    });
+
+    this.cm.getWrapperElement().addEventListener('paste', function(clipboardEvent) {
+        self.eventManager.emit('paste', {
+            source: 'markdown',
+            clipboardEvent: clipboardEvent
+        });
     });
 };
 
@@ -3447,7 +3545,7 @@ MarkdownEditor.prototype.setHeight = function(height) {
 
 module.exports = MarkdownEditor;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -3519,7 +3617,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3603,7 +3701,7 @@ ModeSwitch.TYPE = TYPE;
 
 module.exports = ModeSwitch;
 
-},{"./uicontroller":38}],32:[function(require,module,exports){
+},{"./uicontroller":40}],33:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3788,7 +3886,7 @@ PopupAddImage.prototype.resetInputs = function() {
 
 module.exports = PopupAddImage;
 
-},{"./layerpopup":16,"./tab":35}],33:[function(require,module,exports){
+},{"./layerpopup":17,"./tab":37}],34:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3891,7 +3989,7 @@ PopupAddLink.prototype.resetInputs = function() {
 
 module.exports = PopupAddLink;
 
-},{"./layerpopup":16}],34:[function(require,module,exports){
+},{"./layerpopup":17}],35:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3967,7 +4065,259 @@ Preview.prototype.setHeight = function(height) {
 
 module.exports = Preview;
 
-},{"./lazyRunner":18}],35:[function(require,module,exports){
+},{"./lazyRunner":19}],36:[function(require,module,exports){
+/**
+ * @fileoverview Implements %filltext:name=Name%
+ * @author
+ */
+
+'use strict';
+
+var domUtils = require('./domUtils');
+
+var Squire = window.Squire,
+    util = ne.util;
+
+var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
+/**
+ * SquireExt
+ * @exports SquireExt
+ * @augments Squire
+ * @constructor
+ * @class
+ */
+function SquireExt() {
+    Squire.apply(this, arguments);
+}
+
+SquireExt.prototype = util.extend(
+    {},
+    Squire.prototype
+);
+
+SquireExt.prototype.get$Body = function() {
+    this.$body = this.$body || $(this.getDocument().body);
+    return this.$body;
+};
+
+SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
+    var self = this;
+
+    this.modifyBlocks(function(frag) {
+        var current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+
+        //HR은 Block으로 치지 않아서 frag에나타나지 않는다
+        //디폴트 블럭을 만들어준다.
+        if (frag.childNodes.length) {
+            current = frag.childNodes[0];
+        } else {
+            current = self.createDefaultBlock();
+            frag.appendChild(current);
+        }
+
+        if (srcCondition) {
+            //find last depth
+            while (current.firstChild) {
+                current = current.firstChild;
+            }
+
+            //find tag
+            while (current !== frag) {
+                tagName = current.tagName;
+
+                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+                    nextBlock = current.childNodes[0];
+
+                    //there is no next blocktag
+                    if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
+                        nextBlock = self.createDefaultBlock();
+
+                        util.forEachArray(util.toArray(current.childNodes), function(node) {
+                            nextBlock.appendChild(node);
+                        });
+
+                        lastNodeOfNextBlock = nextBlock.lastChild;
+
+                        //remove unneccesary br
+                        if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
+                            nextBlock.removeChild(lastNodeOfNextBlock);
+                        }
+                    }
+
+                    if (targetTagName) {
+                        newBlock = self.createElement(targetTagName, [nextBlock]);
+                    } else {
+                        newBlock = nextBlock;
+                    }
+
+                    newFrag = self.getDocument().createDocumentFragment();
+                    newFrag.appendChild(newBlock);
+
+                    frag = newFrag;
+
+                    break;
+                }
+
+                current = current.parentNode;
+            }
+        }
+
+        //if source condition node is not founded, we wrap current div node with node named targetTagName
+        if (
+            (!newFrag || !srcCondition)
+            && targetTagName
+            && domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
+        ) {
+            frag = self.createElement(targetTagName, [frag.childNodes[0]]);
+        }
+
+        return frag;
+    });
+};
+
+SquireExt.prototype.changeBlockFormatTo = function(targetTagName) {
+    this.changeBlockFormat(function(tagName) {
+        return FIND_BLOCK_TAGNAME_RX.test(tagName);
+    }, targetTagName);
+};
+
+//from http://jsfiddle.net/9ThVr/24/
+SquireExt.prototype.getCaretPosition = function() {
+    var range, sel, rect, range2, rect2,
+        offsetx = 0,
+        offsety = 0;
+
+    var $node = this.getDocument().body,
+        nodeLeft = $node.offsetLeft,
+        nodeTop = $node.offsetTop;
+
+    var pos = {left: 0, top: 0};
+
+    sel = this.getSelection();
+    range = sel.cloneRange();
+
+    range.setStart(range.startContainer, range.startOffset - 1);
+    rect = range.getBoundingClientRect();
+
+    if (range.endOffset === 0 || range.toString() === '') {
+        // first char of line
+        if (range.startContainer === $node) {
+            // empty div
+            if (range.endOffset === 0) {
+                pos.top = '0';
+                pos.left = '0';
+            } else {
+                // firefox need this
+                range2 = range.cloneRange();
+                range2.setStart(range2.startContainer, 0);
+                rect2 = range2.getBoundingClientRect();
+                pos.left = rect2.left + offsetx - nodeLeft;
+                pos.top = rect2.top + rect2.height + offsety - nodeTop;
+            }
+        } else {
+            pos.top = range.startContainer.offsetTop;
+            pos.left = range.startContainer.offsetLeft;
+        }
+    } else {
+        pos.left = rect.left + rect.width + offsetx - nodeLeft;
+        pos.top = rect.top + offsety - nodeTop;
+    }
+    return pos;
+};
+
+SquireExt.prototype.replaceSelection = function(content, selection) {
+    if (selection) {
+        this.setSelection(selection);
+    }
+
+    this._ignoreChange = true;
+    this.insertPlainText(content);
+};
+
+SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
+    var selection;
+
+    selection = this.getSelection().cloneRange();
+
+    this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
+};
+
+SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
+    var endSelectionInfo;
+
+    selection.setStart(selection.endContainer, selection.endOffset + offset);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
+    selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+
+    this.replaceSelection(content, selection);
+};
+
+SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
+    var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
+
+    traceElement = anchorElement;
+    traceOffset = offset;
+    stepLength = 0;
+
+    while (traceElement) {
+        traceElementLength = domUtils.getTextLength(traceElement);
+        stepLength += traceElementLength;
+
+        if (offset <= stepLength) {
+            break;
+        }
+
+        traceOffset -= traceElementLength;
+
+        if (domUtils.getTextLength(traceElement) > 0) {
+            latestAvailableElement = traceElement;
+        }
+
+        traceElement = traceElement.nextSibling;
+    }
+
+    if (!traceElement) {
+        traceElement = latestAvailableElement;
+        traceOffset =  domUtils.getTextLength(traceElement);
+    }
+
+    return {
+        element: traceElement,
+        offset: traceOffset
+    };
+};
+
+SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
+    var pos, range, endSelectionInfo,
+        marker = this.createElement('INPUT');
+
+    range = selection.cloneRange();
+
+    range.setStart(range.startContainer, range.startOffset);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset || 0));
+    range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+
+    //to prevent squire input event fire
+    this._ignoreChange = true;
+    this.insertElement(marker, range);
+    pos = $(marker).offset();
+
+    if (style !== 'over') {
+        pos.top += $(marker).outerHeight();
+    }
+
+    marker.parentNode.removeChild(marker);
+
+    this.setSelection(selection);
+
+    pos.top -= this.get$Body().scrollTop();
+
+    return pos;
+};
+
+module.exports = SquireExt;
+
+},{"./domUtils":9}],37:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4165,7 +4515,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":36,"./uicontroller":38}],36:[function(require,module,exports){
+},{"./templater":38,"./uicontroller":40}],38:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4204,7 +4554,7 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4338,7 +4688,7 @@ Toolbar.prototype._initButton = function() {
 
 module.exports = Toolbar;
 
-},{"./button":1,"./uicontroller":38}],38:[function(require,module,exports){
+},{"./button":1,"./uicontroller":40}],40:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4578,7 +4928,7 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4613,7 +4963,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],40:[function(require,module,exports){
+},{"../commandManager":7}],42:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4649,7 +4999,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],41:[function(require,module,exports){
+},{"../commandManager":7}],43:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4683,7 +5033,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],42:[function(require,module,exports){
+},{"../commandManager":7}],44:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4716,6 +5066,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
         }
 
         sq.removeAllFormatting();
+        sq.changeFormat(null, {tag:'b'});
 
         if (!removeMode) {
             sq.bold();
@@ -4727,7 +5078,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],43:[function(require,module,exports){
+},{"../commandManager":7}],45:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4773,7 +5124,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],44:[function(require,module,exports){
+},{"../commandManager":7}],46:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4797,13 +5148,22 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            hr = sq.createElement('HR', {
-                'contentEditable': false
-            });
+        var sq = wwe.getEditor();
 
         sq.modifyBlocks(function(frag) {
-            return hr;
+            /*
+            var block = sq.createElement('DIV');
+            var newFrag = sq._doc.createDocumentFragment();
+
+            newFrag.appendChild(frag);
+            newFrag.appendChild(block);
+
+            block.appendChild(sq.createElement('BR'));
+            block.appendChild(sq.createElement('HR'));
+*/
+            frag.appendChild(sq.createElement('HR'));
+
+            return frag;
         });
 
         sq.focus();
@@ -4813,7 +5173,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],45:[function(require,module,exports){
+},{"../commandManager":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Implements inceaseTask wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4843,7 +5203,7 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
         range = wwe.getEditor().getSelection();
         node = range.startContainer;
 
-        if (range.collapsed && range.startContainer.textContent.replace(/[\u200B\s]/g, '') === '') {
+        if (range.collapsed && range.startContainer.textContent.replace(/^[\s]+/g, '') === '') {
             while (parent = node.parentNode) {
                 // If we find a UL or OL (so are in a list, node must be an LI)
                 if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
@@ -4851,6 +5211,12 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
                     if (node.previousSibling) {
                         // Then increase the list level
                         wwe.getEditor().modifyBlocks(increaseTaskLevel);
+/*
+                        if (node.parentElement.parentElement.firstChild.tagName === 'DIV'
+                            && node.parentElement.parentElement.firstChild.textContent === '') {
+                                debugger;
+                                $(node.parentElement.parentElement.firstChild).remove();
+                        }*/
                     }
 
                     break;
@@ -4899,11 +5265,9 @@ function replaceWith(node, node2) {
 }
 
 function increaseTaskLevel(frag) {
-    var items = frag.querySelectorAll('LI'),
-        i, l, item,
-        type, newParent,
-        listItemAttrs = {class: 'task-list-item'},
-        listAttrs;
+    var i, l, item, type, newParent, listAttrs,
+        items = frag.querySelectorAll('LI'),
+        listItemAttrs = {class: 'task-list-item'};
 
     for (i = 0, l = items.length; i < l; i += 1) {
         item = items[i];
@@ -4930,7 +5294,7 @@ function increaseTaskLevel(frag) {
 
 module.exports = IncreaseTask;
 
-},{"../commandManager":7}],46:[function(require,module,exports){
+},{"../commandManager":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4963,6 +5327,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
         }
 
         sq.removeAllFormatting();
+        sq.changeFormat(null, {tag:'i'});
 
         if (!removeMode) {
             sq.italic();
@@ -4974,7 +5339,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":7}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5009,7 +5374,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":7}],50:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5072,7 +5437,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],49:[function(require,module,exports){
+},{"../commandManager":7}],51:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5107,7 +5472,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],50:[function(require,module,exports){
+},{"../commandManager":7}],52:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5115,14 +5480,16 @@ module.exports = UL;
 
 'use strict';
 
-var Squire = window.Squire,
-    util = ne.util;
+var domUtils = require('./domUtils'),
+    SquireExt = require('./squireExt');
+
+var util = ne.util;
 
 var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
-    FIND_TASK_SPACES_RX = /^\s/g;
+    FIND_TASK_SPACES_RX = /^\s+/g;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'neonEditor-content';
 
@@ -5144,15 +5511,20 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 WysiwygEditor.prototype.init = function(callback) {
     var self = this;
 
-    this.$iframe = $('<iframe />');
+    this.$iframe = $('<iframe height="100%" />');
 
     this.$iframe.load(function() {
         self._initSquire();
 
-        if (callback) {
-           callback();
-           callback = null;
-        }
+        //쿽스모드 방지 코드(makeSureStandardMode)로 인해
+        //load 이벤트가 발생되는 브라우저들이있다(IE)
+        //에디터의 동작을 맞추기해 완료콜백을 프레임지연해서 모든 과정이 완료되도록 동작을 일치 시켜준다.
+        setTimeout(function() {
+            if (callback) {
+                callback();
+                callback = null;
+            }
+        }, 0);
     });
 
     this.$editorContainerEl.css('position', 'relative');
@@ -5165,14 +5537,14 @@ WysiwygEditor.prototype._initSquire = function() {
 
     self._makeSureStandardMode(doc);
 
-    if (self.editor) {
+    if (self.editor && self._isIframeReady()) {
         return;
     }
 
     self._initStyleSheet(doc);
     self._initEditorContainerStyles(doc);
 
-    self.editor = new Squire(doc, {
+    self.editor = new SquireExt(doc, {
         blockTag: 'DIV'
     });
 
@@ -5181,7 +5553,7 @@ WysiwygEditor.prototype._initSquire = function() {
     $(doc).on('click', function() {
         self.focus();
     });
-}
+};
 
 WysiwygEditor.prototype._isIframeReady = function() {
     var iframeWindow = this.$iframe[0].contentWindow;
@@ -5189,11 +5561,13 @@ WysiwygEditor.prototype._isIframeReady = function() {
 };
 
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
-    //Not in quirks mode
+    //if Not in quirks mode
     if (doc.compatMode !== 'CSS1Compat') {
+        //독타입 삽입후 IE는 load 콜백이 다시 호출되는데 같은 프레임에서 재귀호출처럼 실행됨
         doc.open();
         doc.write('<!DOCTYPE html><title></title>');
         doc.close();
+        //load콜백이 끝나면 첫번째 진행이 다시 진행됨(initSquire의 나머지부분이 이어서 재귀호출처럼 실행됨)
     }
 };
 
@@ -5213,7 +5587,6 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     var bodyStyle, body;
 
     doc.querySelector('html').style.height = '100%';
-    this.$iframe.height('100%');
 
     body = doc.querySelector('body');
     body.className = EDITOR_CONTENT_CSS_CLASSNAME;
@@ -5234,11 +5607,11 @@ WysiwygEditor.prototype._initEvent = function() {
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
 
-    this.editor.addEventListener('input', function() {
+    this.getEditor().addEventListener('input', function() {
         self.eventManager.emit('contentChanged.wysiwygEditor', self);
     });
 
-    this.editor.addEventListener('input', function() {
+    this.getEditor().addEventListener('input', function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
@@ -5258,7 +5631,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
 
     //firefox has problem about keydown event while composition korean
-    //파폭에서 한글입력하다 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
+    //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(event) {
             if (event.keyCode) {
@@ -5266,18 +5639,54 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             }
         });
     }
+
+    this.getEditor().addEventListener('focus', function() {
+        self.eventManager.emit('focus', {
+            source: 'wysiwyg'
+        });
+    });
+
+    this.getEditor().addEventListener('blur', function() {
+        self.eventManager.emit('blur', {
+            source: 'wysiwyg'
+        });
+    });
+
+    this.getEditor().addEventListener('paste', function(clipboardEvent) {
+        self.eventManager.emit('paste', {
+            source: 'wysiwyg',
+            clipboardEvent: clipboardEvent
+        });
+    });
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
-        range, doc, sq;
+        doc, sq,
+        range = this.getEditor().getSelection().cloneRange();
+/*
+    console.log(event);
+    console.log('-------->', event.keyCode, event.keyIdentifier);
+    console.log('startContainer', range.startContainer);
+    console.log('startOffset', range.startOffset);
+    console.log('startContainer.parentNode', range.startContainer.parentNode);
+    console.log('startContainer.previousSibling', range.startContainer.previousSibling);
+    console.log('startContainer.nextSibling', range.startContainer.nextSibling);
+    if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
+        console.dir('currentPosition', range.startContainer.childNodes[range.startOffset]);
+    } else {
+        console.dir('currentPosition', range.startContainer.nodeValue[range.startOffset]);
+    }
+    if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
+    console.log('path', this.editor.getPath());
+*/
 
     //enter
     if (event.keyCode === 13) {
-        if (this._isInTaskList()) {
+        if (this._isInTaskList(range)) {
             //we need remove empty task then Squire control list
             //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
-            this._unformatTaskIfNeedOnEnter();
+            this._unformatTaskIfNeedOnEnter(range);
 
             setTimeout(function() {
                 if (self._isInTaskList()) {
@@ -5289,29 +5698,131 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
+        } else if (this._isInHr(range) || this._isNearHr(range)) {
+            this._removeHrIfNeed(range);
+        } else if (this._isInOrphanText(range)) {
+            this._wrapDefaultBlockTo(range);
         }
     //backspace
     } else if (event.keyCode === 8) {
-        range = this.getEditor().getSelection();
-
         if (range.collapsed) {
-            if (this._isInTaskList()) {
-                this._unformatTaskIfNeedOnBackspace();
+            if (this._isInTaskList(range)) {
+                this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
-            //todo for remove hr, not perfect fix need
-            } else if (range.startContainer.previousSibling &&
-                       range.startContainer.previousSibling.nodeType === Node.ELEMENT_NODE &&
-                       range.startContainer.previousSibling.tagName === 'HR') {
-                $(range.startContainer.previousSibling).remove();
+            } else {
+                this._removeHrIfNeed(range, event);
             }
         }
-    } else if (event.which === 9) {
-        if (this._isInTaskList()) {
-            event.preventDefault();
-            self.eventManager.emit('command', 'IncreaseTask');
+    } else if (event.keyCode === 9) {
+        if (this._isInTaskList(range)) {
+            if (!$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+                this._unformatTaskIfNeedOnEnter(range);
+                setTimeout(function() {
+                    self.eventManager.emit('command', 'Task');
+                }, 0);
+            } else {
+                event.preventDefault();
+                self.eventManager.emit('command', 'IncreaseTask');
+            }
+        } else if (this.getEditor().hasFormat('li')) {
+            if ($($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+                event.preventDefault();
+                self.eventManager.emit('command', 'IncreaseTask');
+            }
         }
     }
+};
+
+WysiwygEditor.prototype._isInOrphanText = function(selection) {
+    return selection.startContainer.nodeType === Node.TEXT_NODE && selection.startContainer.parentNode.tagName  === 'BODY';
+};
+
+WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
+    var block, textElem, cursorOffset, cursorTarget, insertTargetNode;
+
+    this.saveSelection(selection);
+    this._joinSplitedTextNodes();
+    this.restoreSavedSelection();
+
+    selection = this.getEditor().getSelection().cloneRange();
+
+    textElem = selection.startContainer;
+    cursorOffset = selection.startOffset;
+
+    //이때 selection의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
+    //after code below, selection selection is arselectiond by body
+    block = this.getEditor().createDefaultBlock([selection.startContainer]);
+
+    //selection for insert block
+    insertTargetNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
+    if (insertTargetNode) {
+        selection.setStartBefore(insertTargetNode);
+    } else {
+        //컨테이너의 차일드가 이노드 한개뿐일경우
+        selection.selectNodeContents(selection.startContainer);
+    }
+
+    selection.collapse(true);
+
+    selection.insertNode(block);
+
+    //revert selection to original node
+    selection.setStart(textElem, cursorOffset);
+    selection.collapse(true);
+
+    this.getEditor().setSelection(selection);
+};
+
+WysiwygEditor.prototype._joinSplitedTextNodes = function() {
+    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+        lastGroup,
+        nodesToRemove = [];
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        if (prevNode === node.previousSibling) {
+            lastGroup.nodeValue += node.nodeValue;
+            nodesToRemove.push(node);
+        } else {
+            lastGroup = node;
+        }
+
+        prevNode = node;
+    });
+
+    $(nodesToRemove).remove();
+};
+
+WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
+    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+        nodeGroup = [],
+        nodesToRemove = [];
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        $(node).wrap('<div />');
+    });
+};
+
+//특수키가 아닌 텍스트가 입력되는 키입력인지 체크
+WysiwygEditor.prototype._isValueKeyCode = function(keyCode) {
+    var isNumberOrAlphabet = (keyCode >= 48 && keyCode <= 90),
+        isNumberPad = (keyCode >= 96 && keyCode <= 111),
+        isMarks =  (keyCode >= 186 && keyCode <= 222),
+        isKorean = keyCode === 229;
+
+    return (isNumberOrAlphabet || isNumberPad || isMarks || isKorean);
 };
 
 WysiwygEditor.prototype.saveSelection = function(selection) {
@@ -5338,80 +5849,8 @@ WysiwygEditor.prototype.reset = function() {
     this.setValue('');
 }
 
-WysiwygEditor.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
-    var self = this;
-
-    this.getEditor().modifyBlocks(function(frag) {
-        var current = frag.childNodes[0],
-            newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
-
-        if (srcCondition) {
-            //find last depth
-            while (current.firstChild) {
-                current = current.firstChild;
-            }
-
-            //find tag
-            while (current !== frag) {
-                tagName = current.tagName;
-
-                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
-                    nextBlock = current.childNodes[0];
-
-                    //there is no next blocktag
-                    if (nextBlock.nodeType !== Node.ELEMENT_NODE || current.childNodes.length > 1) {
-                        nextBlock = self.getEditor().createDefaultBlock();
-
-                        util.forEachArray(util.toArray(current.childNodes), function(node) {
-                            nextBlock.appendChild(node);
-                        });
-
-                        lastNodeOfNextBlock = nextBlock.childNodes[nextBlock.childNodes.length - 1];
-
-                        //remove unneccesary br
-                        if (lastNodeOfNextBlock
-                            && lastNodeOfNextBlock.nodeType === Node.ELEMENT_NODE
-                            && lastNodeOfNextBlock.tagName === 'BR'
-                        ) {
-                            nextBlock.removeChild(lastNodeOfNextBlock);
-                        }
-                    }
-
-                    if (targetTagName) {
-                        newBlock = self.getEditor().createElement(targetTagName, [nextBlock]);
-                    } else {
-                        newBlock = nextBlock;
-                    }
-
-                    newFrag = self.getEditor().getDocument().createDocumentFragment();
-                    newFrag.appendChild(newBlock);
-
-                    frag = newFrag;
-
-                    break;
-                }
-
-                current = current.parentNode;
-            }
-        }
-
-        //if source condition node is not founded, we wrap current div node with node named targetTagName
-        if ((!newFrag || !srcCondition)
-            && targetTagName
-            && frag.childNodes[0].nodeType === Node.ELEMENT_NODE
-            && frag.childNodes[0].tagName === 'DIV'
-        ) {
-            frag = self.getEditor().createElement(targetTagName, [frag.childNodes[0]]);
-        }
-
-        return frag;
-    });
-};
-
 WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
-    this.changeBlockFormat(function(tagName) {
-        return FIND_BLOCK_TAGNAME_RX.test(tagName);
-    }, targetTagName);
+    this.getEditor().changeBlockFormatTo(targetTagName);
     this._removeTaskInputInWrongPlace();
 };
 
@@ -5426,56 +5865,18 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
     });
 };
 
-//from http://jsfiddle.net/9ThVr/24/
-WysiwygEditor.prototype.getCaretPosition = function() {
-    var range, sel, rect, range2, rect2,
-        offsetx = 0,
-        offsety = 0;
-
-    var $node = this.editor.getDocument().body,
-        nodeLeft = $node.offsetLeft,
-        nodeTop = $node.offsetTop;
-
-    var pos = {left: 0, top: 0};
-
-    sel = this.editor.getSelection();
-    range = sel.cloneRange();
-
-    range.setStart(range.startContainer, range.startOffset - 1);
-    rect = range.getBoundingClientRect();
-
-    if (range.endOffset === 0 || range.toString() === '') {
-        // first char of line
-        if (range.startContainer === $node) {
-            // empty div
-            if (range.endOffset === 0) {
-                pos.top = '0';
-                pos.left = '0';
-            } else {
-                // firefox need this
-                range2 = range.cloneRange();
-                range2.setStart(range2.startContainer, 0);
-                rect2 = range2.getBoundingClientRect();
-                pos.left = rect2.left + offsetx - nodeLeft;
-                pos.top = rect2.top + rect2.height + offsety - nodeTop;
-            }
-        } else {
-            pos.top = range.startContainer.offsetTop;
-            pos.left = range.startContainer.offsetLeft;
-        }
-    } else {
-        pos.left = rect.left + rect.width + offsetx - nodeLeft;
-        pos.top = rect.top + offsety - nodeTop;
-    }
-    return pos;
-};
-
 WysiwygEditor.prototype.focus = function() {
     this.editor.focus();
 };
 
 WysiwygEditor.prototype.remove = function() {
+    this.editor.removeEventListener('focus');
+    this.editor.removeEventListener('blur');
+    this.editor.removeEventListener('keydown');
+    this.editor.removeEventListener('keypress');
+    this.editor.removeEventListener('paste');
     this.editor = null;
+    this.$body = null;
 };
 
 WysiwygEditor.prototype.setHeight = function(height) {
@@ -5487,6 +5888,7 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensurePtagContentWrappedWithDiv();
     this._unwrapPtags();
     this._ensureSpaceNextToTaskInput();
+    this._unwrapDivOnHr();
     this._removeTaskListClass();
 
     this.eventManager.emit('contentChanged.wysiwygEditor', this);
@@ -5510,6 +5912,16 @@ WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
 WysiwygEditor.prototype._unwrapPtags = function() {
     this.get$Body().find('div').each(function(index, node) {
         if ($(node).parent().is('p')) {
+            $(node).unwrap();
+        }
+    });
+}
+
+//we use divs for paragraph so we dont need any p tags
+WysiwygEditor.prototype._unwrapDivOnHr = function() {
+    this.get$Body().find('hr').each(function(index, node) {
+        if ($(node).parent().is('div')) {
+            $(node).parent().find('br').remove();
             $(node).unwrap();
         }
     });
@@ -5597,6 +6009,8 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
     this._addCheckedAttrToCheckedInput();
     this._removeSpaceNextToTaskInput();
+    this._joinSplitedTextNodes();
+    this._wrapDefaultBlockToOrphanTexts();
 };
 
 WysiwygEditor.prototype._addCheckedAttrToCheckedInput = function() {
@@ -5617,109 +6031,15 @@ WysiwygEditor.prototype.getEditor = function() {
 };
 
 WysiwygEditor.prototype.replaceSelection = function(content, selection) {
-    if (selection) {
-        this.editor.setSelection(selection);
-    }
-
-    this.editor._ignoreChange = true;
-    this.editor.insertPlainText(content);
+    return this.getEditor().replaceSelection(content, selection);
 };
 
 WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
-    var selection;
-
-    selection = this.editor.getSelection().cloneRange();
-
-    this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
-};
-
-WysiwygEditor.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
-    var endSelectionInfo;
-
-    selection.setStart(selection.endContainer, selection.endOffset + offset);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
-    selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
-
-    this.replaceSelection(content, selection);
-};
-
-function getOffsetLengthOfElement(element) {
-    var len;
-
-    if (element.nodeType === 1) {
-       len = element.textContent.length;
-    } else if (element.nodeType === 3) {
-       len = element.nodeValue.length;
-    }
-
-    return len;
-}
-
-WysiwygEditor.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
-    var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
-
-    traceElement = anchorElement;
-    traceOffset = offset;
-    stepLength = 0;
-
-    while (traceElement) {
-        traceElementLength = getOffsetLengthOfElement(traceElement);
-        stepLength += traceElementLength;
-
-        if (offset <= stepLength) {
-            break;
-        }
-
-        traceOffset -= traceElementLength;
-
-        if (getOffsetLengthOfElement(traceElement) > 0) {
-            latestAvailableElement = traceElement;
-        }
-
-        traceElement = traceElement.nextSibling;
-    }
-
-    if (!traceElement) {
-        traceElement = latestAvailableElement;
-        traceOffset = getOffsetLengthOfElement(traceElement);
-    }
-
-    return {
-        element: traceElement,
-        offset: traceOffset
-    };
-};
-
-WysiwygEditor.prototype.getSelectionPosition = function(selection, style, offset) {
-    var pos, range, endSelectionInfo,
-        marker = this.editor.createElement('INPUT');
-
-    range = selection.cloneRange();
-
-    range.setStart(range.startContainer, range.startOffset);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset || 0));
-    range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
-
-    //to prevent squire input event fire
-    this.editor._ignoreChange = true;
-    this.editor.insertElement(marker, range);
-    pos = $(marker).offset();
-
-    if (style !== 'over') {
-        pos.top += $(marker).outerHeight();
-    }
-
-    marker.parentNode.removeChild(marker);
-
-    this.editor.setSelection(selection);
-
-    pos.top -= this.get$Body().scrollTop();
-
-    return pos;
+    return this.getEditor().replaceRelativeOffset(content, offset, overwriteLength);
 };
 
 WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
-    var pos = this.getSelectionPosition(selection, style, offset);
+    var pos = this.getEditor().getSelectionPosition(selection, style, offset);
 
     if (node.parentNode !== this.$editorContainerEl[0]) {
         this.$editorContainerEl.append(node);
@@ -5733,50 +6053,34 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
 };
 
 WysiwygEditor.prototype.get$Body = function() {
-    this.$body = this.$body || $(this.getEditor().getDocument().body);
-    return this.$body;
+    return this.getEditor().get$Body();
 };
 
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 }
 
-WysiwygEditor.prototype.getTextOffsetToBlock = function(el) {
-    var prev,
-        offset = 0;
-
-    prev = el.previousSibling;
-
-    while (prev) {
-       offset += getOffsetLengthOfElement(prev);
-       prev = prev.previousSibling;
-    }
-
-    return offset;
-}
-
-WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
-    var selection, startContainer, startOffset,
+WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
+    var startContainer, startOffset,
         prevEl, needRemove;
 
-    selection = this.getEditor().getSelection().cloneRange();
     startContainer = selection.startContainer;
     startOffset = selection.startOffset;
 
     //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
     //유저가 임의로 Task빈칸에 수정을 가했을경우
-    if (startContainer.nodeType === Node.ELEMENT_NODE) {
+    if (domUtils.isElemNode(startContainer)) {
         //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
         if (startOffset === 0) {
-            prevEl = startContainer.childNodes[startOffset];
+            prevEl = domUtils.getChildNodeAt(startContainer, startOffset);
         //inputbox 바로 오른편에서 지워지는경우
         } else {
-            prevEl = startContainer.childNodes[startOffset-1];
+            prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
         }
 
-        needRemove = prevEl ? prevEl.tagName === 'INPUT' : false;
+        needRemove = (domUtils.getNodeName(prevEl) === 'INPUT');
     //텍스트 노드인경우
-    } else if (startContainer.nodeType === Node.TEXT_NODE) {
+    } else if (domUtils.isTextNode(startContainer)) {
         //previousSibling이 있다면 그건 div바로 아래의 텍스트 노드임 아닌경우가생기면 버그
         //있고 그게 input이라면 offset체크
         if (startContainer.previousSibling) {
@@ -5789,7 +6093,7 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
         //inputbox 이후의 텍스트노드에서 빈칸한개가 지워지는경우 같이 지운다
         //(input과 빈칸한개는 같이 지워지는게 옳다고판단)
         if (prevEl.tagName === 'INPUT' && startOffset === 1 && FIND_TASK_SPACES_RX.test(startContainer.nodeValue)) {
-            startContainer.nodeValue =  startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+            startContainer.nodeValue = startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
             needRemove = true;
         }
     }
@@ -5804,11 +6108,10 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function() {
     }
 };
 
-WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
-    var selection, $selected, $li, $inputs,
+WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
+    var $selected, $li, $inputs,
         isEmptyTask;
 
-    selection = this.getEditor().getSelection().cloneRange();
     $selected = $(selection.startContainer);
     $li = $selected.closest('li');
     $inputs = $li.find('input:checkbox');
@@ -5822,6 +6125,68 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function() {
         $li.text('');
 
         this.restoreSavedSelection();
+    }
+};
+
+WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
+    var div, pathToBody, appendBefore, currentNode;
+
+    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selction.startContainer;
+
+    pathToBody = $(currentNode).parentsUntil('body');
+
+    if (pathToBody.length) {
+        appendBefore = pathToBody[pathToBody.length - 1];
+    } else {
+        appendBefore = currentNode;
+    }
+
+    div = this.editor.createDefaultBlock();
+
+    if (where === 'before') {
+        $(appendBefore).before(div);
+    } else {
+        $(appendBefore).after(div);
+    }
+
+    selection.setStart(div, 0);
+    selection.collapse(true);
+    this.editor.setSelection(selection);
+};
+
+WysiwygEditor.prototype._isInHr = function(selection) {
+    return domUtils.getNodeName(selection.startContainer.childNodes[selection.startOffset]) === 'HR';
+};
+
+WysiwygEditor.prototype._isNearHr = function(selection) {
+    var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
+    return domUtils.getNodeName(prevNode) === 'HR';
+}
+
+WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
+    var hrSuspect, cursorTarget;
+
+    if (this._isInHr(selection)) {
+        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
+    } else if (selection.startOffset === 0) {
+        hrSuspect = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
+
+        if (domUtils.getNodeName(hrSuspect) !== 'HR') {
+            hrSuspect = null;
+        }
+    } else if (this._isNearHr(selection)) {
+        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
+    }
+
+    if (hrSuspect) {
+        event.preventDefault();
+
+        cursorTarget = hrSuspect.nextSibling;
+        $(hrSuspect).remove();
+
+        selection.setStartBefore(cursorTarget);
+        selection.collapse(true);
+        this.getEditor().setSelection(selection);
     }
 };
 
@@ -5852,12 +6217,21 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     $(container).html(before.replace(from, to));
 };
 
-WysiwygEditor.prototype.eachTextNode = function(container, from, to) {
+WysiwygEditor.prototype._isInTaskList = function(range) {
+    var li;
 
-};
+    if (!range) {
+        range = this.getEditor().getSelection().cloneRange();
+    }
 
-WysiwygEditor.prototype._isInTaskList = function() {
-    return this.getEditor().hasFormat('LI', {class: 'task-list-item'});
+    if (range.startContainer.nodeType === Node.ELEMENT_NODE
+        && range.startContainer.tagName === 'LI') {
+            li = range.startContainer;
+    } else {
+        li = $(range.startContainer).parents('li')[0];
+    }
+
+    return $(li).hasClass('task-list-item');
 };
 
 WysiwygEditor.prototype._unwrapHeading = function() {
@@ -5873,10 +6247,10 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
         };
     }
 
-    this.changeBlockFormat(condition);
+    this.getEditor().changeBlockFormat(condition);
     this._removeTaskInputInWrongPlace();
 };
 
 module.exports = WysiwygEditor;
 
-},{}]},{},[15]);
+},{"./domUtils":9,"./squireExt":36}]},{},[16]);
