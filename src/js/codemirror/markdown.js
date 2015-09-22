@@ -46,9 +46,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   var header   = 'header'
   ,   code     = 'comment'
   ,   quote    = 'quote'
-  ,   list1    = 'variable-2'
-  ,   list2    = 'variable-3'
-  ,   list3    = 'keyword'
+  ,   list     = 'variable-3'
   ,   hr       = 'hr'
   ,   image    = 'tag'
   ,   formatting = 'formatting'
@@ -103,6 +101,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     state.trailingSpaceNewLine = false;
     // Mark this line as blank
     state.thisLineHasContent = false;
+
+    // reset list
+    state.list = false;
+    state.listDepth = 0;
+
     return null;
   }
 
@@ -115,6 +118,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     state.indentedCode = false;
 
+    console.log(stream);
+
     if (prevLineIsList) {
       if (state.indentationDiff >= 0) { // Continued list
         if (state.indentationDiff < 4) { // Only adjust indentation if *not* a code block
@@ -124,7 +129,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       } else if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4);
-      } else { // No longer a list
+      } else if (stream.string.length) {
+        console.log(stream.string);
+        state.list = null;
+      }  else { // No longer a list
         state.list = false;
         state.listDepth = 0;
       }
@@ -291,14 +299,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     }
 
     if (state.list !== false) {
-      var listMod = (state.listDepth - 1) % 3;
-      if (!listMod) {
-        styles.push(list1);
-      } else if (listMod === 1) {
-        styles.push(list2);
-      } else {
-        styles.push(list3);
-      }
+        styles.push(list);
     }
 
     if (state.trailingSpaceNewLine) {
