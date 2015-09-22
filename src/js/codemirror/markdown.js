@@ -136,7 +136,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     }
 
     var match = null;
-    if (state.indentationDiff >= 4) {
+    if (state.indentationDiff >= 4 && !prevLineIsList) {
       stream.skipToEnd();
       if (prevLineIsIndentedCode || !state.prevLineHasContent) {
         state.indentation -= 4;
