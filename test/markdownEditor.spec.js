@@ -9,14 +9,16 @@ describe('MarkdownEditor', function() {
     beforeEach(function() {
         var $container;
 
-        $('body').empty();
-
         $container = $('<div />');
 
         $('body').append($container);
 
         em = new EventManager();
         mde = new MarkdownEditor($container, em);
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('Initialize', function() {

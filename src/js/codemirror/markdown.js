@@ -102,7 +102,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     // Mark this line as blank
     state.thisLineHasContent = false;
 
-    // reset list
+    // Reset list
     state.list = false;
     state.listDepth = 0;
 
@@ -167,7 +167,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     } else if (stream.match(hrRE, true)) {
       state.hr = true;
       return hr;
-    } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+    } else if (prevLineIsList || (stream.match(ulRE, false) || stream.match(olRE, false))) {
       var listType = null;
       if (stream.match(ulRE, true)) {
         listType = 'ul';
