@@ -118,8 +118,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     state.indentedCode = false;
 
-    console.log(stream);
-
     if (prevLineIsList) {
       if (state.indentationDiff >= 0) { // Continued list
         if (state.indentationDiff < 4) { // Only adjust indentation if *not* a code block
@@ -130,7 +128,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4);
       } else if (stream.string.length) {
-        console.log(stream.string);
         state.list = null;
       }  else { // No longer a list
         state.list = false;
