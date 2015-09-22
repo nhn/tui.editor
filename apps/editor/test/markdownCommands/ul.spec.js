@@ -21,6 +21,9 @@ describe('UL', function() {
 
         cm = mde.getEditor();
 
+        //disable modes(such as syntax highlight)
+        cm.setOption('mode', null);
+
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
