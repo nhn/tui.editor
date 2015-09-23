@@ -8,24 +8,41 @@
   },
   "globals": {
     "ne": true,
-    "Prism": true,
-    "rangy": true,
     "loadFixtures": true
   },
   "rules": {
     "strict": [2, "global"],
 
     //Possible Errors
+    "comma-dangle": [2, "never"],
     "no-console": 1,
-    "no-extra-parens": 0,
+    "no-constant-condition": 1,
+    "no-debugger": 1,
+    "no-dupe-args": 2,
+    "no-dupe-keys": 2,
+    "no-dupe-case": 2,
+    "no-empty-character-class": 2,
+    "no-empty": 1,
+    "no-ex-assign": 2,
+    "no-extra-parens": 2,
+    "no-extra-semi": 2,
+    "no-invalid-regexp": 2,
+    "no-irregular-whitespace": 2,
+    "no-negated-in-lhs": 2,
+    "no-obj-calls": 2,
+    "no-regex-spaces": 2,
+    "no-sparse-arrays": 2,
     "quote-props": [2, consistent],
+    "no-unreachable": 2,
     "valid-jsdoc": [2, {
         "requireReturn": false
     }],
     "valid-typeof": 1,
+    "no-unexpected-multiline": 2,
 
 
     //Best Practices
+    "no-fallthrough": 1,
     "block-scoped-var": 2,
     "complexity": 1,
     "default-case": 2,
@@ -41,8 +58,9 @@
     "wrap-iife": [2, "any"],
 
     //Variables
-    "no-undefined": 2,
+    "no-undef": 2,
     "no-use-before-define": [2, "nofunc"],
+    "no-unused-vars": 2,
 
     //Stylistic Issues
     "brace-style": [2, "1tbs", {"allowSingleLine": true}],
