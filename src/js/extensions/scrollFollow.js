@@ -27,7 +27,32 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
             if (state.base.header) {
                 type = 'header';
-            } else if (state.base.hr) {
+            } else {
+                type = 'block';
+            }
+
+            //헤더영역 다음 빈칸이 헤더로 취급되는부분 해결
+            if (type === 'header' && !cm.getLine(i)) {
+                type = 'blank';
+            }
+
+            if (!lastSection || type === 'header') {
+                lastSection = {
+                    type: type,
+                    content: cm.getLine(i),
+                    start: i,
+                    end: i,
+                    state: state
+                }
+
+                sectionlist.push(lastSection);
+            } else {
+                lastSection.end = i;
+                lastSection.content += cm.getLine(i)
+            }
+
+            /*
+            else if (state.base.hr) {
                 type = 'hr';
             } else if (state.base.list) {
                 type = 'list';
@@ -74,6 +99,7 @@ extManager.defineExtension('scrollFollow', function(editor) {
                 lastSection.end = i;
                 lastSection.content += cm.getLine(i)
             }
+            */
         }
 
         lastSection = null;
@@ -136,16 +162,19 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
         //console.log(sectionIndex, sectionlist[sectionIndex], sectionlist[sectionIndex].type);
 
-        var el = editor.preview.$el.find('.previewContent').contents().filter(function() {
+        /*var el = editor.preview.$el.find('.previewContent').contents().filter(function() {
             return this.nodeType === Node.ELEMENT_NODE && this.textContent;
         })[sectionIndex];
+*/
+        var el = editor.preview.$el.find('.previewContent > .content-id-' + sectionIndex);
 
         console.log('mardown target', sectionlist[sectionIndex].content);
 
         //프리뷰에 렌더되기 전일경우는 무시
-        if (el) {
+        if (el.length) {
+            el = el[0];
             console.log('preview target', el.innerHTML);
-            var scrollTop = markdownBottom ? editor.preview.$el.find('.previewContent').height() : el.offsetTop + ($(el).height() * ratio) - 50;
+            var scrollTop = markdownBottom ? editor.preview.$el.find('.previewContent').height() : el.offsetTop + ($(el).height() * ratio);
 
             console.log('preview scrolltop', scrollTop);
             //editor.preview.$el.scrollTop(el.offsetTop + ($(el).height() * ratio) - 50);
