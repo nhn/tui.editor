@@ -24,7 +24,6 @@
     "no-empty-character-class": 2,
     "no-empty": 1,
     "no-ex-assign": 2,
-    "no-extra-parens": 2,
     "no-extra-semi": 2,
     "no-invalid-regexp": 2,
     "no-irregular-whitespace": 2,

@@ -25,10 +25,6 @@ extManager.defineExtension('scrollFollow', function(editor) {
             var state = cm.getStateAfter(i);
             var type;
 
-            //console.log(i, cm.getStateAfter(i));
-            //
-
-
             if (state.base.header) {
                 type = 'header';
             } else if (state.base.hr) {
@@ -55,6 +51,7 @@ extManager.defineExtension('scrollFollow', function(editor) {
                 type = 'blank';
             }
 
+            //코드블럭을 닫는 라인은 코드블럭으로 인식하지않아처리.
             if (lastSection && type !== 'codeBlock' && lastSection.type === 'codeBlock' && cm.getLine(i).match(/^```/)) {
                 type = 'codeBlock';
             }
@@ -93,13 +90,15 @@ extManager.defineExtension('scrollFollow', function(editor) {
         console.log(sectionlist);
     });
 
-    cm.on('cursorActivity', function() {
+    //cm.on('cursorActivity', ne.util.throttle(function() {
+    cm.on('scroll', ne.util.throttle(function() {
         var cursor;
         var scrollInfo = cm.getScrollInfo();
+        var markdownBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
 
         console.log('scrollInfo', scrollInfo);
-        //cursor = d.coordsChar({left: scrollInfo.left, top: scrollInfo.top}, 'local');
-        cursor = cm.getCursor();
+        cursor = d.coordsChar({left: scrollInfo.left, top: scrollInfo.top}, 'local');
+        //cursor = cm.getCursor();
         console.log('cursor', cursor);
 
         var sectionIndex;
@@ -146,42 +145,48 @@ extManager.defineExtension('scrollFollow', function(editor) {
         //프리뷰에 렌더되기 전일경우는 무시
         if (el) {
             console.log('preview target', el.innerHTML);
-            console.log('preview scrolltop', el.offsetTop + ($(el).height() * ratio) - 50);
-            editor.preview.$el.scrollTop(el.offsetTop + ($(el).height() * ratio) - 50);
-/*
-            editor.preview.$el.animate({
-                scrollTop: $(el).offset().top
-            }, 500);*/
+            var scrollTop = markdownBottom ? editor.preview.$el.find('.previewContent').height() : el.offsetTop + ($(el).height() * ratio) - 50;
+
+            console.log('preview scrolltop', scrollTop);
+            //editor.preview.$el.scrollTop(el.offsetTop + ($(el).height() * ratio) - 50);
+            /*editor.preview.$el.animate({
+                scrollTop: el.offsetTop + ($(el).height() * ratio) - 50
+            }, 100, 'linear');*/
+           animate(editor.preview.$el[0], editor.preview.$el.scrollTop(), scrollTop, function() {}, function() {});
         }
-        /*
-        console.log('getLineTokens', d.getLineTokens(cursor.line));
-        console.log('getTokenTypeAt', d.getTokenTypeAt(cursor));
-
-
-        console.log('startLine Info');
-        for (var i = 0; i < cm.getDoc().lineCount(); i+=1) {
-            console.log(cm.getLine(i));
-        }
-
-        console.log('eachLineTo');
-        d.eachLine(0, d.coordsChar({left: scrollInfo.left, top: scrollInfo.top}).line, function(line) {
-            console.log(line);
-        });
-
-        console.log('eachLine');
-        d.eachLine(function(line) {
-            console.log(line);
-        });
-
-        console.log('each blocks');
-        editor.preview.$el.find('.previewContent').contents().filter(function() {
-            return this.nodeType === Node.ELEMENT_NODE;
-        }).each(function(each, el) {
-            console.log(each, el);
-        });*/
-    });
+    }, 100));
 });
 
+var timeoutId;
+var currentEndCb;
+
+function animate(elt, startValue, endValue, stepCb, endCb) {
+    if(currentEndCb) {
+        clearTimeout(timeoutId);
+        currentEndCb();
+    }
+    currentEndCb = endCb;
+    var diff = endValue - startValue;
+    var startTime = Date.now();
+
+    function tick() {
+        var currentTime = Date.now();
+        var progress = (currentTime - startTime) / 200;
+        if(progress < 1) {
+            var scrollTop = startValue + diff * Math.cos((1 - progress) * Math.PI / 2);
+            elt.scrollTop = scrollTop;
+            stepCb(scrollTop);
+            timeoutId = setTimeout(tick, 1);
+        }
+        else {
+            currentEndCb = undefined;
+            elt.scrollTop = endValue;
+            setTimeout(endCb, 100);
+        }
+    }
+
+    tick();
+}
 /*
 [>*
  * ScrollFollow
