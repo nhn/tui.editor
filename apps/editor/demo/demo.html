@@ -37,19 +37,19 @@
         previewStyle: 'vertical',
         height: 300,
         delay: 300,
-        //initialValue: '* 목록\n```\nprint();\n\nprint();\nprint();```',
+        //initialValue: 'a\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\n',
         //initialValue: 'test1\ntest2\ntest3\ntest4',
         contentCSSStyles: [
             '../src/css/contentStyle.css'
         ],
-        initialEditType: 'wysiwyg',
+        initialEditType: 'markdown',
         textPalette: {
             triggers: '@',
             querySender: function(query, done) {
                 done([1,2,3]);
             }
         },
-        exts: ['textPalette', 'taskCounter'],
+        exts: ['textPalette', 'taskCounter', 'scrollFollow'],
         hooks: {
             'previewBeforeHook': function($dom) {
                 //console.log('previewBeforeHook', $dom);

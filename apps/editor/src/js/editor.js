@@ -47,6 +47,7 @@ var __nedInstance = [];
 require('./extensions/querySplitter');
 require('./extensions/taskCounter');
 require('./extensions/textPalette');
+require('./extensions/scrollFollow');
 
 /**
  * NeonEditor
