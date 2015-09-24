@@ -3,7 +3,7 @@
 var NeonEditor = require('../../src/js/editor');
 
 fdescribe('scrollFollow', function() {
-    var ned, em, scrollFollow;
+    var ned, sectionManager;
 
     beforeEach(function(done) {
         $('body').html('<div id="editSection"></div>');
@@ -16,8 +16,7 @@ fdescribe('scrollFollow', function() {
             exts: ['scrollFollow'],
             events: {
                 'load': function(editor) {
-                    em = editor.eventManager;
-                    scrollFollow = editor.scrollFollow;
+                    sectionManager = editor.scrollFollow.sectionManager;
                     done();
                 }
             }
@@ -28,15 +27,15 @@ fdescribe('scrollFollow', function() {
         $('body').empty();
     });
 
-    describe('markdown section list', function() {
+    describe('sectionManager', function() {
         it('make new section', function() {
             var sectionList;
 
-            scrollFollow._sectionList = [];
+            sectionManager._sectionList = [];
 
-            scrollFollow._addNewSection(0, 1);
+            sectionManager._addNewSection(0, 1);
 
-            sectionList = scrollFollow.getSectionList();
+            sectionList = sectionManager.getSectionList();
 
             expect(sectionList.length).toEqual(1);
             expect(sectionList[0].start).toEqual(0);
@@ -44,11 +43,11 @@ fdescribe('scrollFollow', function() {
         });
 
         it('update current section', function() {
-            scrollFollow._sectionList = [];
-            scrollFollow._addNewSection(0, 1);
-            scrollFollow._updateCurrentSectionEnd(3);
+            sectionManager._sectionList = [];
+            sectionManager._addNewSection(0, 1);
+            sectionManager._updateCurrentSectionEnd(3);
 
-            expect(scrollFollow.getSectionList()[0].end).toEqual(3);
+            expect(sectionManager.getSectionList()[0].end).toEqual(3);
         });
 
         it('iterate each line with info', function() {
@@ -63,7 +62,7 @@ fdescribe('scrollFollow', function() {
                 'paragraph'
             ].join('\n'));
 
-            scrollFollow._eachLineState(function(type, lineNumber) {
+            sectionManager._eachLineState(function(type, lineNumber) {
                 lineType[lineNumber] = type;
             });
 
@@ -80,9 +79,9 @@ fdescribe('scrollFollow', function() {
                 'paragraph'
             ].join('\n'));
 
-            scrollFollow.makeSectionList();
+            sectionManager.makeSectionList();
 
-            expect(scrollFollow.getSectionList().length).toEqual(3);
+            expect(sectionManager.getSectionList().length).toEqual(3);
         });
 
         it('section list have line info', function() {
@@ -97,9 +96,9 @@ fdescribe('scrollFollow', function() {
                 'paragraph'
             ].join('\n'));
 
-            scrollFollow.makeSectionList();
+            sectionManager.makeSectionList();
 
-            sectionList = scrollFollow.getSectionList();
+            sectionList = sectionManager.getSectionList();
 
             expect(sectionList[0].start).toEqual(0);
             expect(sectionList[0].end).toEqual(0);
