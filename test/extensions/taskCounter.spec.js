@@ -6,8 +6,11 @@ describe('taskCounter', function() {
     var ned, em;
 
     beforeEach(function() {
-        $('body').empty();
         $('body').html('<div id="editSection"></div>');
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('wysiwyg', function() {
@@ -16,7 +19,6 @@ describe('taskCounter', function() {
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,
-                delay: 300,
                 initialEditType: 'wysiwyg',
                 exts: ['taskCounter'],
                 querySplitter: {
@@ -31,8 +33,7 @@ describe('taskCounter', function() {
             });
         });
 
-        it('get task count of content', function(done) {
-            done();
+        it('get task count of content', function() {
             ned.setValue('* [ ] task1\n* [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -46,8 +47,7 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function(done) {
-            done();
+        it('get checked task count of content', function() {
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 
@@ -68,7 +68,6 @@ describe('taskCounter', function() {
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,
-                delay: 300,
                 initialEditType: 'markdown',
                 exts: ['taskCounter'],
                 querySplitter: {
@@ -83,8 +82,7 @@ describe('taskCounter', function() {
             });
         });
 
-        it('get task count of content', function(done) {
-            done();
+        it('get task count of content', function() {
             ned.setValue('* [ ] task1\n    * [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -98,8 +96,7 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function(done) {
-            done();
+        it('get checked task count of content', function() {
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 
