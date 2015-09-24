@@ -112,11 +112,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     // Mark this line as blank
     state.prevLine = state.thisLine
     state.thisLine = null
-
-    if (state.listDepth <= 1) {
-        state.list = false;
-        state.listDepth = 0;
-    }
     return null;
   }
 
@@ -138,8 +133,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       } else if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4);
-      } else if (stream.string.length) {
-        state.list = null;
       } else { // No longer a list
         state.list = false;
         state.listDepth = 0;
@@ -212,6 +205,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function htmlBlock(stream, state) {
     var style = htmlMode.token(stream, state.htmlState);
+
     if ((htmlFound && state.htmlState.tagStart === null &&
          (!state.htmlState.context && state.htmlState.tokenize.isInText)) ||
         (state.md_inside && stream.current().indexOf(">") > -1)) {
@@ -457,7 +451,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
       return type + linkemail;
     }
-
+/*
+//we dont need html Block it ruin markdown blocks
     if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
@@ -468,7 +463,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.htmlState = CodeMirror.startState(htmlMode);
       return switchBlock(stream, state, htmlBlock);
     }
-
+*/
     if (ch === '<' && stream.match(/^\/\w*?>/)) {
       state.md_inside = false;
       return "tag";
