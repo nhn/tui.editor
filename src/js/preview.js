@@ -66,34 +66,9 @@ Preview.prototype.render = function(html) {
     this.$previewContent.empty();
     this.$previewContent.html(finalHtml);
 
-    this.wrapSection();
+    this.eventManager.emit('previewRenderAfter', this);
 };
 
-Preview.prototype.wrapSection = function() {
-    var currentContainer, id;
-
-    var sections = [];
-
-    sections[0] = [];
-
-    this.$el.find('.previewContent').contents().filter(function() {
-        return this.nodeType === Node.ELEMENT_NODE;
-    }).each(function(index, el) {
-        if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
-            if(sections[sections.length - 1].length) {
-                sections.push([]);
-            }
-        }
-
-        sections[sections.length - 1].push(el);
-    });
-
-    console.log(sections);
-
-    sections.forEach(function(childs, index) {
-        $(childs).wrapAll('<div class="content-id-'+ index + '"></div>');
-    });
-};
 Preview.prototype.setHeight = function(height) {
     this.$el.height(height);
 };
