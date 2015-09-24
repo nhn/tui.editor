@@ -74,8 +74,25 @@ SectionManager.prototype.makeSectionList = function() {
 };
 
 SectionManager.prototype.sectionMatch = function() {
-    var self = this,
-        sections = [];
+    var sections;
+
+    sections = this._getPreviewSections();
+    this._matchPreviewSectionsWithSectionlist(sections);
+};
+
+SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
+    var self = this;
+
+    sections.forEach(function(childs, index) {
+        var $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
+        $(childs).wrapAll($sectionDiv);
+
+        self._sectionList[index].$previewSectionEl = $sectionDiv;
+    });
+};
+
+SectionManager.prototype._getPreviewSections = function() {
+    var sections = [];
 
     sections[0] = [];
 
@@ -91,12 +108,7 @@ SectionManager.prototype.sectionMatch = function() {
         sections[sections.length - 1].push(el);
     });
 
-    sections.forEach(function(childs, index) {
-        var $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
-        $(childs).wrapAll($sectionDiv);
-
-        self._sectionList[index].$previewSectionEl = $sectionDiv;
-    });
+    return sections;
 };
 
 //scollFollow Extension
