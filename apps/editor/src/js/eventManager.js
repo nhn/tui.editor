@@ -9,6 +9,7 @@ var util = ne.util;
 
 var eventList = [
     'previewBeforeHook',
+    'previewRenderAfter',
     'addImageFileHook',
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
