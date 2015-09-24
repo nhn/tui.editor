@@ -107,6 +107,31 @@ fdescribe('scrollFollow', function() {
             expect(sectionList[2].start).toEqual(4);
             expect(sectionList[2].end).toEqual(5);
         });
+
+        it('section match with preview', function(done) {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+
+            ned.on('previewRenderAfter', function() {
+                var sectionList;
+                sectionManager.sectionMatch();
+                sectionList = sectionManager.getSectionList();
+
+                expect(sectionList.length).toEqual(3)
+                expect(sectionList[0].$previewSectionEl.hasClass('content-id-0')).toBe(true);
+                expect(sectionList[1].$previewSectionEl.hasClass('content-id-1')).toBe(true);
+                expect(sectionList[2].$previewSectionEl.hasClass('content-id-2')).toBe(true);
+                done();
+            });
+        });
     });
 
     describe('preview section', function() {
