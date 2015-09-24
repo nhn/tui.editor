@@ -37,7 +37,6 @@ MarkdownEditor.prototype.init = function(initialValue) {
         mode: 'gfm',
         theme: 'default',
         dragDrop: false,
-        lineNumbers: true,
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
             'Tab': 'subListIndentTab',
