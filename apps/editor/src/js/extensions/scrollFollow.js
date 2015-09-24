@@ -8,42 +8,43 @@
 var extManager = require('../extManager');
 
 /*
- * ScrollFollow
- * @exports ScrollFollow
+ * SectionManager
+ * @exports SectionManager
  * @augments
  * @constructor
  * @class
  */
-function ScrollFollow(cm, preview) {
+function SectionManager(cm, preview) {
     this.cm = cm;
     this.preview = preview;
+    this.$previewContent = preview.$el.find('.previewContent');
 
     this._sectionList = null;
     this._currentSection = null;
 }
 
-ScrollFollow.prototype._addNewSection = function(start, end) {
+SectionManager.prototype._addNewSection = function(start, end) {
     var newSection = this._makeSectionData(start, end);
     this._sectionList.push(newSection);
     this._currentSection = newSection;
 }
 
-ScrollFollow.prototype.getSectionList = function() {
+SectionManager.prototype.getSectionList = function() {
     return this._sectionList;
 };
 
-ScrollFollow.prototype._makeSectionData = function(start, end) {
+SectionManager.prototype._makeSectionData = function(start, end) {
     return {
         start: start,
         end: end
     };
 };
 
-ScrollFollow.prototype._updateCurrentSectionEnd = function(end) {
+SectionManager.prototype._updateCurrentSectionEnd = function(end) {
     this._currentSection.end = end;
 };
 
-ScrollFollow.prototype._eachLineState = function(iteratee) {
+SectionManager.prototype._eachLineState = function(iteratee) {
     this.cm.eachLine(function(line) {
         var type;
 
@@ -57,7 +58,7 @@ ScrollFollow.prototype._eachLineState = function(iteratee) {
     });
 };
 
-ScrollFollow.prototype.makeSectionList = function() {
+SectionManager.prototype.makeSectionList = function() {
     var self = this;
 
     this._sectionList = [];
@@ -71,12 +72,18 @@ ScrollFollow.prototype.makeSectionList = function() {
     });
 };
 
+SectionManager.prototype.sectionMatch = function() {
+};
+
 //scollFollow Extension
 extManager.defineExtension('scrollFollow', function(editor) {
     var cm = editor.getCodeMirror();
 
-    var scrollFollow = editor.scrollFollow = new ScrollFollow(cm, editor.preview);
+    editor.scrollFollow = {};
+
+    var sectionManager = editor.scrollFollow.sectionManager = new SectionManager(cm, editor.preview);
 });
+
 /*
 extManager.defineExtension('scrollFollow', function(editor) {
     var cm = editor.getCodeMirror();
