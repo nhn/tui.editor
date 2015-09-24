@@ -23,16 +23,35 @@ function SectionManager(cm, preview) {
     this._currentSection = null;
 }
 
+
+/**
+ * _addNewSection
+ * add new section
+ * @param {number} start initial start line number
+ * @param {number} end initial end line number
+ */
 SectionManager.prototype._addNewSection = function(start, end) {
     var newSection = this._makeSectionData(start, end);
     this._sectionList.push(newSection);
     this._currentSection = newSection;
 }
 
+/**
+ * getSectionList
+ * return section list
+ * @return {object[]}
+ */
 SectionManager.prototype.getSectionList = function() {
     return this._sectionList;
 };
 
+/**
+ * _makeSectionData
+ * make default section object
+ * @param {number} start initial start line number
+ * @param {number} end initial end line number
+ * @return {object}
+ */
 SectionManager.prototype._makeSectionData = function(start, end) {
     return {
         start: start,
@@ -41,10 +60,20 @@ SectionManager.prototype._makeSectionData = function(start, end) {
     };
 };
 
+/**
+ * _updateCurrentSectionEnd
+ * update current section's end line number
+ * @param end
+ */
 SectionManager.prototype._updateCurrentSectionEnd = function(end) {
     this._currentSection.end = end;
 };
 
+/**
+ * _eachLineState
+ * iterate codemiror lines, callback function parameter pass line type and line number
+ * @param {function} iteratee callback function
+ */
 SectionManager.prototype._eachLineState = function(iteratee) {
     this.cm.eachLine(function(line) {
         var type;
@@ -59,6 +88,10 @@ SectionManager.prototype._eachLineState = function(iteratee) {
     });
 };
 
+/**
+ * makeSectionList
+ * make section list
+ */
 SectionManager.prototype.makeSectionList = function() {
     var self = this;
 
@@ -73,6 +106,11 @@ SectionManager.prototype.makeSectionList = function() {
     });
 };
 
+
+/**
+ * sectionMatch
+ * make preview sections then match section list with preview section element
+ */
 SectionManager.prototype.sectionMatch = function() {
     var sections;
 
@@ -80,6 +118,12 @@ SectionManager.prototype.sectionMatch = function() {
     this._matchPreviewSectionsWithSectionlist(sections);
 };
 
+/**
+ * _matchPreviewSectionsWithSectionlist
+ * match section list with preview section element
+ * @param sections
+ * @return {undefined}
+ */
 SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
     var self = this;
 
@@ -91,6 +135,11 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
     });
 };
 
+/**
+ * _getPreviewSections
+ * get preview html section group to make section
+ * @return {array[]} element node array
+ */
 SectionManager.prototype._getPreviewSections = function() {
     var sections = [];
 
@@ -110,6 +159,15 @@ SectionManager.prototype._getPreviewSections = function() {
 
     return sections;
 };
+
+/*
+ * ScrollSync
+ * @exports ScrollSync
+ * @augments
+ * @constructor
+ * @class
+ */
+
 
 //scollFollow Extension
 extManager.defineExtension('scrollFollow', function(editor) {
