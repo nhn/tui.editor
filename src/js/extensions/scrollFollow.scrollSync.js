@@ -1,3 +1,10 @@
+'use strict';
+
+/**
+ * @fileoverview Implements Scroll Follow Extension ScrollSync Module
+ * @author
+ */
+
 var MAX_SECTION_RATIO = 0.9;
 
 /**
