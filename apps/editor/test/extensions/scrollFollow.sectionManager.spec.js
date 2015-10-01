@@ -1,8 +1,9 @@
 'use strict';
 
-var NeonEditor = require('../../src/js/editor');
+var NeonEditor = require('../../src/js/editor'),
+    SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
 
-describe('scrollFollow', function() {
+xdescribe('scrollFollow', function() {
     var ned, sectionManager, scrollSync;
 
     beforeEach(function(done) {
@@ -15,14 +16,12 @@ describe('scrollFollow', function() {
             previewStyle: 'vertical',
             height: 100,
             initialEditType: 'markdown',
-            exts: ['scrollFollow'],
             events: {
                 'load': function(editor) {
-                    sectionManager = editor.scrollFollow.sectionManager;
-                    scrollSync = editor.scrollFollow.scrollSync;
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
+                    sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
                     done();
                 }
             }
@@ -84,6 +83,7 @@ describe('scrollFollow', function() {
                 '## header2',
                 'paragraph'
             ].join('\n'));
+
 
             sectionManager.makeSectionList();
 
