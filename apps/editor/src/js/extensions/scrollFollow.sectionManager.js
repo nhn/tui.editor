@@ -1,3 +1,10 @@
+'use strict';
+
+/**
+ * @fileoverview Implements Scroll Follow Extension SectionManager Module
+ * @author
+ */
+
 /*
  * SectionManager
  * @exports SectionManager

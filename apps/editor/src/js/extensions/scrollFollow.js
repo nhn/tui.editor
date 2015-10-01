@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements %filltext:name=Name%
+ * @fileoverview Implements Scroll Follow Extension
  * @author
  */
 
