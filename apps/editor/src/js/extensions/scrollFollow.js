@@ -7,6 +7,8 @@
 
 var extManager = require('../extManager');
 
+var MAX_SECTION_RATIO = 0.9;
+
 /*
  * SectionManager
  * @exports SectionManager
@@ -39,7 +41,7 @@ SectionManager.prototype._addNewSection = function(start, end) {
 /**
  * getSectionList
  * return section list
- * @return {object[]}
+ * @return {object[]} section object list
  */
 SectionManager.prototype.getSectionList = function() {
     return this._sectionList;
@@ -50,7 +52,7 @@ SectionManager.prototype.getSectionList = function() {
  * make default section object
  * @param {number} start initial start line number
  * @param {number} end initial end line number
- * @return {object}
+ * @return {object} section object
  */
 SectionManager.prototype._makeSectionData = function(start, end) {
     return {
@@ -63,7 +65,7 @@ SectionManager.prototype._makeSectionData = function(start, end) {
 /**
  * _updateCurrentSectionEnd
  * update current section's end line number
- * @param end
+ * @param {number} end end value to update
  */
 SectionManager.prototype._updateCurrentSectionEnd = function(end) {
     this._currentSection.end = end;
@@ -75,17 +77,38 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    this.cm.eachLine(function(line) {
+    /*this.cm.eachLine(function(line) {
         var type;
 
-        if (line.stateAfter.base.header && line.text) {
+
+        if (line.text && line.stateAfter.base.header) {
+            //console.log(line.text, '해더');
             type = 'header';
         } else {
             type = 'etc';
+            //console.log(line.text, 'paoin');
         }
 
+        console.log(line.text, line.stateAfter, type);
         iteratee(type, line.lineNo());
-    });
+    });*/
+
+    var type, state;
+
+    for (var i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
+        state = this.cm.getStateAfter(i);
+
+        if (this.cm.getLine(i) && state.base.header) {
+            //console.log(line.text, '해더');
+            type = 'header';
+        } else {
+            type = 'etc';
+            //console.log(line.text, 'paoin');
+        }
+
+        //console.log(this.cm.getLine(i), state, type);
+        iteratee(type, i);
+    }
 };
 
 /**
@@ -114,6 +137,10 @@ SectionManager.prototype.makeSectionList = function() {
 SectionManager.prototype.sectionMatch = function() {
     var sections;
 
+    if (!this._sectionList) {
+        return;
+    }
+
     sections = this._getPreviewSections();
     this._matchPreviewSectionsWithSectionlist(sections);
 };
@@ -121,18 +148,22 @@ SectionManager.prototype.sectionMatch = function() {
 /**
  * _matchPreviewSectionsWithSectionlist
  * match section list with preview section element
- * @param sections
- * @return {undefined}
+ * @param {HTMLNode[]} sections section nodes
  */
 SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
     var self = this;
 
     sections.forEach(function(childs, index) {
         var $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
-        $(childs).wrapAll($sectionDiv);
 
-        self._sectionList[index].$previewSectionEl = $sectionDiv;
+        if (self._sectionList[index]) {
+            self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
+        }
     });
+
+    if (this._sectionList.length !== sections.length) {
+        console.log('somethings happend');
+    }
 };
 
 /**
@@ -160,22 +191,140 @@ SectionManager.prototype._getPreviewSections = function() {
     return sections;
 };
 
-/*
+/**
+ * _sectionByLine
+ * get section by markdown line
+ * @param {number} line markdown editor line number
+ * @return {object} section
+ */
+SectionManager.prototype.sectionByLine = function(line) {
+    var sectionIndex,
+        sectionList = this._sectionList,
+        sectionLength = sectionList.length;
+
+    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex+=1) {
+        if (line <= sectionList[sectionIndex].end) {
+            break;
+        }
+    }
+
+    if (sectionIndex === sectionLength) {
+        sectionIndex = sectionLength - 1;
+    }
+
+    return sectionList[sectionIndex];
+};
+
+/**
  * ScrollSync
  * @exports ScrollSync
  * @augments
  * @constructor
  * @class
  */
+function ScrollSync(sectionManager, cm, $previewContainerEl) {
+    this.sectionManager = sectionManager;
+    this.cm = cm;
+    this.$previewContainerEl = $previewContainerEl;
+}
+
+
+ScrollSync.prototype._getEditorSectionHeight = function(section) {
+    return this.cm.heightAtLine(section.end, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+};
+
+ScrollSync.prototype._getLineHeightGapInSection = function(section, line) {
+    var gap = this.cm.heightAtLine(line, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+    return Math.max(gap, 0);
+};
+
+ScrollSync.prototype._getSectionScrollRatio = function(section, line) {
+    var ratio;
+
+    if (section.end !== section.start) {
+        ratio = this._getLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
+    } else if (section.end === section.start) {
+        ratio = 0;
+    }
+
+    return ratio > 0 ? Math.min(ratio, MAX_SECTION_RATIO) : 0;
+};
+
+ScrollSync.prototype._getScrollFactorsOfEditor = function() {
+    var topLine, topSection, ratio, isEditorBottom,
+        cm = this.cm,
+        scrollInfo = cm.getScrollInfo();
+
+    isEditorBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
+
+    if (!isEditorBottom) {
+        topLine = cm.coordsChar({left: scrollInfo.left, top: scrollInfo.top}, 'local').line;
+
+        topSection = this.sectionManager.sectionByLine(topLine);
+
+        ratio = this._getSectionScrollRatio(topSection, topLine);
+
+        return {
+            section: topSection,
+            sectionRatio: ratio
+        };
+    } else {
+        return {
+            isEditorBottom : isEditorBottom
+        }
+    }
+};
+
+ScrollSync.prototype.syncWithEditor = function() {
+};
+
+ScrollSync.prototype.syncToPreview = function() {
+    var scrollTop, scrollFactors, section, ratio;
+
+    scrollFactors = this._getScrollFactorsOfEditor();
+    section = scrollFactors.section,
+    ratio = scrollFactors.sectionRatio;
+
+    if (scrollFactors.isEditorBottom) {
+        scrollTop = this.$previewContainerEl.find('.previewContent').height()
+    } else {
+        scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio);
+    }
+
+    this.$previewContainerEl.scrollTop(scrollTop);
+};
+
+module.exports = ScrollSync;
 
 
 //scollFollow Extension
 extManager.defineExtension('scrollFollow', function(editor) {
     var cm = editor.getCodeMirror();
 
+    var scrollerable = false;
+
     editor.scrollFollow = {};
 
+    window.dd = cm;
+
     var sectionManager = editor.scrollFollow.sectionManager = new SectionManager(cm, editor.preview);
+    var scrollSync = editor.scrollFollow.scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+
+    cm.on('change', function() {
+        scrollerable = false;
+        sectionManager.makeSectionList();
+    });
+
+    editor.on('previewRenderAfter', function() {
+        sectionManager.sectionMatch();
+        scrollerable = true;
+    });
+
+    cm.on('scroll', function() {
+        if (scrollerable) {
+            scrollSync.syncToPreview();
+        }
+    });
 });
 
 /*
