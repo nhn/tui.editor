@@ -3,6 +3,8 @@
 var NeonEditor = require('../../src/js/editor'),
     SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
 
+var loadStyleFixtures = window.loadStyleFixtures;
+
 describe('scrollFollow.sectionManager', function() {
     var ned, sectionManager;
 
@@ -157,7 +159,5 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
         });
-
-        it('find section with preview scroll top', function() {});
     });
 });

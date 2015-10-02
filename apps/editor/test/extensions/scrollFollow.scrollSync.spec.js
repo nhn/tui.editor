@@ -4,6 +4,8 @@ var NeonEditor = require('../../src/js/editor'),
     ScrollSync = require('../../src/js/extensions/scrollFollow.scrollSync'),
     SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
 
+var loadStyleFixtures = window.loadStyleFixtures;
+
 describe('scrollFollow.ScrollSync', function() {
     var ned, sectionManager, scrollSync;
 
