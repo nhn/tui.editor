@@ -1,16 +1,16 @@
-'use strict';
-
 /**
  * @fileoverview Implements Scroll Follow Extension ScrollSync Module
- * @author
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+
+'use strict';
 
 var MAX_SECTION_RATIO = 0.9;
 
 /**
  * ScrollSync
+ * manage scroll sync between markdown editor and preview
  * @exports ScrollSync
- * @augments
  * @constructor
  * @class
  * @param {SectionManager} sectionManager sectionManager
@@ -21,13 +21,19 @@ function ScrollSync(sectionManager, cm, $previewContainerEl) {
     this.sectionManager = sectionManager;
     this.cm = cm;
     this.$previewContainerEl = $previewContainerEl;
+
+    /**
+     * current timeout id needs animation
+     * @type {number}
+     */
+    this._currentTimeoutId = null;
 }
 
 /**
  * _getEditorSectionHeight
  * get section height of editor
  * @param {object} section section be caculated height
- * @return {number}
+ * @return {number} height
  */
 ScrollSync.prototype._getEditorSectionHeight = function(section) {
     return this.cm.heightAtLine(section.end, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
@@ -38,7 +44,7 @@ ScrollSync.prototype._getEditorSectionHeight = function(section) {
  * get height gap between passed line in passed section
  * @param {object} section section be caculated
  * @param {number} line line number
- * @return {number}
+ * @return {number} gap
  */
 ScrollSync.prototype._getLineHeightGapInSection = function(section, line) {
     var gap = this.cm.heightAtLine(line, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
@@ -50,7 +56,7 @@ ScrollSync.prototype._getLineHeightGapInSection = function(section, line) {
  * get ratio of height between scrollTop line and scrollTop section
  * @param {object} section section be caculated
  * @param {number} line line number
- * @return {number}
+ * @return {number} ratio
  */
 ScrollSync.prototype._getSectionScrollRatio = function(section, line) {
     var ratio;
@@ -67,7 +73,7 @@ ScrollSync.prototype._getSectionScrollRatio = function(section, line) {
 /**
  * _getScrollFactorsOfEditor
  * get Scroll Information of editor for preivew scroll sync
- * @return {undefined}
+ * @return {object} scroll factors
  */
 ScrollSync.prototype._getScrollFactorsOfEditor = function() {
     var topLine, topSection, ratio, isEditorBottom,
@@ -76,7 +82,7 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
 
     isEditorBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
 
-    if(isEditorBottom) {
+    if (isEditorBottom) {
         return {
             isEditorBottom : isEditorBottom
         };
@@ -97,7 +103,7 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
 /**
  * _getScrollTopForPreview
  * get ScrolTop value for preview
- * @return {number}
+ * @return {number} scrollTop value
  */
 ScrollSync.prototype._getScrollTopForPreview = function() {
     var scrollTop, scrollFactors, section, ratio;
@@ -136,7 +142,7 @@ ScrollSync.prototype.syncToPreview = function() {
  * @param {number} targetValue target value
  * @param {function} stepCB callback function
  */
-ScrollSync.prototype._animateRun = function (originValue, targetValue, stepCB) {
+ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
     var valueDiff = targetValue - originValue,
         startTime = Date.now(),
         self = this;
@@ -159,7 +165,7 @@ ScrollSync.prototype._animateRun = function (originValue, targetValue, stepCB) {
             stepCB(targetValue);
             self._currentTimeoutId = null;
         }
-    };
+    }
 
     step();
 }

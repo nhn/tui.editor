@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements Scroll Follow Extension
- * @author
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
