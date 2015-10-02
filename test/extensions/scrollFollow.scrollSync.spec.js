@@ -69,18 +69,6 @@ describe('scrollFollow.ScrollSync', function() {
             expect(scrollFactors.sectionRatio).not.toEqual(0);
         });
 
-        it('maximum ratio is 0.9', function() {
-            var cm = ned.getCodeMirror(),
-            scrollFactors;
-
-            cm.scrollTo(0, cm.heightAtLine(0, 'local'));
-
-            scrollFactors = scrollSync._getScrollFactorsOfEditor();
-
-            expect(scrollFactors.section.end).toEqual(0);
-            expect(scrollFactors.sectionRatio).toEqual(0);
-        });
-
         it('if editor scroll to bottom then return isEditorBottom === true ', function() {
             var cm = ned.getCodeMirror(),
             scrollFactors;
@@ -118,7 +106,7 @@ describe('scrollFollow.ScrollSync', function() {
     describe('sync preview scroll by markdown scroll top', function() {
         it('get preview scrollTop that synced with markdown scroll top', function(done) {
             var cm = ned.getCodeMirror(),
-            previewScrollTop;
+                previewScrollTop;
 
             ned.setValue([
                     'paragraph',
@@ -140,6 +128,40 @@ describe('scrollFollow.ScrollSync', function() {
                 scrollSync.syncToPreview();
 
                 expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+
+                done();
+            });
+        });
+
+        it('if scroll factors have something wrong, dont scroll control', function(done) {
+            var cm = ned.getCodeMirror(),
+                previewScrollTop;
+
+            ned.setValue([
+                    'paragraph',
+                    '# header1',
+                    'paragraph',
+                    'paragraph',
+                    '## header2',
+                    'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+
+            previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+
+            ned.on('previewRenderAfter', function() {
+                sectionManager.sectionMatch();
+
+                sectionManager.getSectionList().forEach(function(section) {
+                    section.$previewSectionEl = null;
+                });
+
+                cm.scrollTo(0, cm.heightAtLine(1, 'local'));
+
+                scrollSync.syncToPreview();
+
+                expect(scrollSync.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
 
                 done();
             });

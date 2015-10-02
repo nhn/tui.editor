@@ -5,7 +5,7 @@
 
 'use strict';
 
-var MAX_SECTION_RATIO = 0.9;
+var SCROLL_TOP_PADDING = 20;
 
 /**
  * ScrollSync
@@ -46,7 +46,7 @@ ScrollSync.prototype._getEditorSectionHeight = function(section) {
  * @param {number} line line number
  * @return {number} gap
  */
-ScrollSync.prototype._getLineHeightGapInSection = function(section, line) {
+ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) {
     var gap = this.cm.heightAtLine(line, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
     return Math.max(gap, 0);
 };
@@ -58,16 +58,16 @@ ScrollSync.prototype._getLineHeightGapInSection = function(section, line) {
  * @param {number} line line number
  * @return {number} ratio
  */
-ScrollSync.prototype._getSectionScrollRatio = function(section, line) {
+ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
     var ratio;
 
     if (section.end !== section.start) {
-        ratio = this._getLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
+        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
     } else if (section.end === section.start) {
         ratio = 0;
     }
 
-    return ratio > 0 ? Math.min(ratio, MAX_SECTION_RATIO) : 0;
+    return ratio > 0 ? ratio : 0;
 };
 
 /**
@@ -92,7 +92,7 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
 
     topSection = this.sectionManager.sectionByLine(topLine);
 
-    ratio = this._getSectionScrollRatio(topSection, topLine);
+    ratio = this._getEditorSectionScrollRatio(topSection, topLine);
 
     return {
         section: topSection,
@@ -114,11 +114,11 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
 
     if (scrollFactors.isEditorBottom) {
         scrollTop = this.$previewContainerEl.find('.previewContent').height()
-    } else {
+    } else if (section.$previewSectionEl) {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio);
     }
 
-    return scrollTop;
+    return Math.max(scrollTop - SCROLL_TOP_PADDING, 0);
 };
 
 
@@ -129,6 +129,10 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
 ScrollSync.prototype.syncToPreview = function() {
     var self = this,
         targetScrollTop = this._getScrollTopForPreview();
+
+    if (ne.util.isUndefined(targetScrollTop)) {
+        return;
+    }
 
     this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
         self.$previewContainerEl.scrollTop(deltaScrollTop);

@@ -77,6 +77,31 @@ describe('scrollFollow.sectionManager', function() {
             expect(lineType[1]).toEqual('header');
         });
 
+        it('trimming top lines while _eachLineState', function() {
+            var lineType = [];
+
+            ned.setValue([
+                ' ',
+                '',
+                'paragraph',
+                '# header1',
+                ' ',
+                'paragraph',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager._eachLineState(function(type, lineNumber) {
+                lineType[lineNumber] = type;
+            });
+
+            expect(lineType[0]).toBeUndefined();
+            expect(lineType[1]).toBeUndefined();
+            expect(lineType[2]).toEqual('etc');
+            expect(lineType[3]).toEqual('header');
+        });
+
+
         it('make section list', function() {
             ned.setValue([
                 'paragraph',
