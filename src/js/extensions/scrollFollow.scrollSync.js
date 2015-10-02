@@ -94,11 +94,7 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
     };
 };
 
-/**
- * syncToPreview
- * sync preview with markdown scroll
- */
-ScrollSync.prototype.syncToPreview = function() {
+ScrollSync.prototype._getScrollTopForPreview = function() {
     var scrollTop, scrollFactors, section, ratio;
 
     scrollFactors = this._getScrollFactorsOfEditor();
@@ -111,7 +107,56 @@ ScrollSync.prototype.syncToPreview = function() {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio);
     }
 
-    this.$previewContainerEl.scrollTop(scrollTop);
+    return scrollTop;
 };
+
+
+/**
+ * syncToPreview
+ * sync preview with markdown scroll
+ */
+ScrollSync.prototype.syncToPreview = function() {
+    var self = this,
+        targetScrollTop = this._getScrollTopForPreview();
+
+    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+        self.$previewContainerEl.scrollTop(deltaScrollTop);
+    });
+};
+
+/**
+ * _animateRun
+ * animate with passed Callback
+ * @param {number} originValue original value
+ * @param {number} targetValue target value
+ * @param {function} stepCB callback function
+ */
+ScrollSync.prototype._animateRun = function (originValue, targetValue, stepCB) {
+    var valueDiff = targetValue - originValue,
+        startTime = Date.now(),
+        self = this;
+
+    //if already doing animation
+    if (this._currentTimeoutId) {
+        clearTimeout(this._currentTimeoutId);
+    }
+
+    function step() {
+        var deltaValue,
+            stepTime = Date.now(),
+            progress = (stepTime - startTime) / 200; //200 is animation time
+
+        if (progress < 1) {
+            deltaValue = originValue + valueDiff * Math.cos((1 - progress) * Math.PI / 2);
+            stepCB(Math.ceil(deltaValue));
+            self._currentTimeoutId = setTimeout(step, 1);
+        } else {
+            stepCB(targetValue);
+            self._currentTimeoutId = null;
+        }
+    };
+
+    step();
+}
 
 module.exports = ScrollSync;
