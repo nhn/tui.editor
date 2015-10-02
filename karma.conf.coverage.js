@@ -16,10 +16,11 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'lib/jquery/dist/jquery.js',
-            'lib/ne-code-snippet/code-snippet.js',
+            'lib/code-snippet/code-snippet.js',
             'lib/toMark/dist/toMark.js',
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',
+            'lib/codemirror/lib/codemirror.css',
             'lib/codemirror/addon/mode/overlay.js',
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
@@ -85,9 +86,8 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'PhantomJS'
             //'Firefox'
-            //'Chrome'
+            'Chrome'
         ],
 
         // Continuous Integration mode
