@@ -83,15 +83,32 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var type, state, i;
+    var type, state, i,
+        isTrimming = true,
+        trimCapture = '';
 
     for (i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
         state = this.cm.getStateAfter(i);
 
-        if (this.cm.getLine(i) && state.base.header) {
+        if (this.cm.getLine(i)
+            && state.base.header
+            && !state.base.quote
+            && !state.base.list
+            && !state.base.taskList
+        ) {
             type = 'header';
         } else {
             type = 'etc';
+        }
+
+        if (isTrimming) {
+            trimCapture += this.cm.getLine(i).trim();
+
+            if (trimCapture) {
+                isTrimming = false;
+            } else {
+                continue;
+            }
         }
 
         iteratee(type, i);
