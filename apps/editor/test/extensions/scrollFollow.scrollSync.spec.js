@@ -4,7 +4,7 @@ var NeonEditor = require('../../src/js/editor'),
     ScrollSync = require('../../src/js/extensions/scrollFollow.scrollSync'),
     SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
 
-describe('scrollFollow', function() {
+describe('scrollFollow.ScrollSync', function() {
     var ned, sectionManager, scrollSync;
 
     beforeEach(function(done) {
@@ -34,10 +34,9 @@ describe('scrollFollow', function() {
         $('body').empty();
     });
 
-    describe('scroll sync', function() {
-        describe('get scroll data for preview from markdown', function() {
-            beforeEach(function() {
-                ned.setValue([
+    describe('get scroll data for preview from markdown', function() {
+        beforeEach(function() {
+            ned.setValue([
                     'paragraph',
                     '# header1',
                     'paragraph',
@@ -51,88 +50,97 @@ describe('scrollFollow', function() {
                     'paragraph',
                     'paragraph',
                     'paragraph'
-                ].join('\n'));
+            ].join('\n'));
 
-                sectionManager.makeSectionList();
-            });
-
-            it('get section by markdown scroll top', function() {
-                var cm = ned.getCodeMirror(),
-                    scrollFactors;
-
-                cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
-
-                scrollFactors = scrollSync._getScrollFactorsOfEditor();
-
-                expect(scrollFactors.section.end).toEqual(4);
-                expect(scrollFactors.sectionRatio).not.toEqual(0);
-            });
-
-            it('maximum ratio is 0.9', function() {
-                var cm = ned.getCodeMirror(),
-                    scrollFactors;
-
-                cm.scrollTo(0, cm.heightAtLine(0, 'local'));
-
-                scrollFactors = scrollSync._getScrollFactorsOfEditor();
-
-                expect(scrollFactors.section.end).toEqual(0);
-                expect(scrollFactors.sectionRatio).toEqual(0);
-            });
-
-            it('if editor scroll to bottom then return isEditorBottom === true ', function() {
-                var cm = ned.getCodeMirror(),
-                    scrollFactors;
-
-                cm.scrollTo(0, cm.heightAtLine(12, 'local'));
-
-                scrollFactors = scrollSync._getScrollFactorsOfEditor();
-
-                expect(scrollFactors.isEditorBottom).toBe(true);
-            });
+            sectionManager.makeSectionList();
         });
 
-        describe('sync preview scroll by markdown scroll top', function() {
-            it('get preview scrollTop that synced with markdown scroll top', function(done) {
-                var cm = ned.getCodeMirror(),
-                    previewScrollTop;
+        it('get section by markdown scroll top', function() {
+            var cm = ned.getCodeMirror(),
+            scrollFactors;
 
-                ned.setValue([
-                    'paragraph',
-                    '# header1',
-                    'paragraph',
-                    'paragraph',
-                    '## header2',
-                    'paragraph'
-                ].join('\n'));
+            cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
 
-                sectionManager.makeSectionList();
+            scrollFactors = scrollSync._getScrollFactorsOfEditor();
 
-                previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+            expect(scrollFactors.section.end).toEqual(4);
+            expect(scrollFactors.sectionRatio).not.toEqual(0);
+        });
 
-                ned.on('previewRenderAfter', function() {
-                    sectionManager.sectionMatch();
-                    cm.scrollTo(0, cm.heightAtLine(3, 'local'));
+        it('maximum ratio is 0.9', function() {
+            var cm = ned.getCodeMirror(),
+            scrollFactors;
 
-                    scrollSync.syncToPreview();
+            cm.scrollTo(0, cm.heightAtLine(0, 'local'));
 
-                    expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+            scrollFactors = scrollSync._getScrollFactorsOfEditor();
 
+            expect(scrollFactors.section.end).toEqual(0);
+            expect(scrollFactors.sectionRatio).toEqual(0);
+        });
+
+        it('if editor scroll to bottom then return isEditorBottom === true ', function() {
+            var cm = ned.getCodeMirror(),
+            scrollFactors;
+
+            cm.scrollTo(0, cm.heightAtLine(12, 'local'));
+
+            scrollFactors = scrollSync._getScrollFactorsOfEditor();
+
+            expect(scrollFactors.isEditorBottom).toBe(true);
+        });
+    });
+
+    describe('running animation', function() {
+        it('call step callback function', function() {
+            var stepCallback = jasmine.createSpy('stepCallback');
+            scrollSync._animateRun(0, 10, stepCallback);
+
+            expect(stepCallback).toHaveBeenCalled();
+        });
+
+        it('value', function(done) {
+            var values = [];
+
+            scrollSync._animateRun(0, 100, function(value) {
+                values.push(value);
+
+                if (value === 100) {
+                    expect(values.length).toBeGreaterThan(1);
                     done();
-                });
-            });
-
-            it('animate preview scrolltop', function() {
+                }
             });
         });
-        it('sync markdown scroll by preview scroll top', function() {});
     });
 
-    describe('preview section', function() {
+    describe('sync preview scroll by markdown scroll top', function() {
+        it('get preview scrollTop that synced with markdown scroll top', function(done) {
+            var cm = ned.getCodeMirror(),
+            previewScrollTop;
 
-    });
+            ned.setValue([
+                    'paragraph',
+                    '# header1',
+                    'paragraph',
+                    'paragraph',
+                    '## header2',
+                    'paragraph'
+            ].join('\n'));
 
-    describe('sync scroll', function() {
+            sectionManager.makeSectionList();
 
+            previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+
+            ned.on('previewRenderAfter', function() {
+                sectionManager.sectionMatch();
+                cm.scrollTo(0, cm.heightAtLine(3, 'local'));
+
+                scrollSync.syncToPreview();
+
+                expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+
+                done();
+            });
+        });
     });
 });
