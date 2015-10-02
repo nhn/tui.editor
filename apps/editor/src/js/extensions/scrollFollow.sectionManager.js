@@ -1,23 +1,34 @@
 /**
  * @fileoverview Implements Scroll Follow Extension SectionManager Module
- * @author
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';
 
 /*
  * SectionManager
+ * manage logical markdown content sections
  * @exports SectionManager
- * @augments
  * @constructor
  * @class
+ * @param {CodeMirror} cm codemirror
+ * @param {Preview} preview preview
  */
 function SectionManager(cm, preview) {
     this.cm = cm;
     this.preview = preview;
     this.$previewContent = preview.$el.find('.previewContent');
 
+    /**
+     *  section list
+     * @type {object[]}
+     */
     this._sectionList = null;
+
+    /**
+     * current working section needs making section list
+     * @type {object}
+     */
     this._currentSection = null;
 }
 
@@ -72,36 +83,17 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    /*this.cm.eachLine(function(line) {
-        var type;
+    var type, state, i;
 
-
-        if (line.text && line.stateAfter.base.header) {
-            //console.log(line.text, '해더');
-            type = 'header';
-        } else {
-            type = 'etc';
-            //console.log(line.text, 'paoin');
-        }
-
-        console.log(line.text, line.stateAfter, type);
-        iteratee(type, line.lineNo());
-    });*/
-
-    var type, state;
-
-    for (var i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
+    for (i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
         state = this.cm.getStateAfter(i);
 
         if (this.cm.getLine(i) && state.base.header) {
-            //console.log(line.text, '해더');
             type = 'header';
         } else {
             type = 'etc';
-            //console.log(line.text, 'paoin');
         }
 
-        //console.log(this.cm.getLine(i), state, type);
         iteratee(type, i);
     }
 };
@@ -155,10 +147,6 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
             self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
         }
     });
-
-    if (this._sectionList.length !== sections.length) {
-        console.log('somethings happend');
-    }
 };
 
 /**
