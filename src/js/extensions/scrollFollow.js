@@ -11,24 +11,24 @@ var extManager = require('../extManager'),
 
 extManager.defineExtension('scrollFollow', function(editor) {
     var cm = editor.getCodeMirror(),
-        scrollerable = false,
+        scrollable = false,
         sectionManager, scrollSync;
 
     sectionManager = new SectionManager(cm, editor.preview);
     scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
 
     cm.on('change', function() {
-        scrollerable = false;
+        scrollable = false;
         sectionManager.makeSectionList();
     });
 
     editor.on('previewRenderAfter', function() {
         sectionManager.sectionMatch();
-        scrollerable = true;
+        scrollable = true;
     });
 
     cm.on('scroll', function() {
-        if (scrollerable) {
+        if (scrollable) {
             scrollSync.syncToPreview();
         }
     });

@@ -94,6 +94,11 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
     };
 };
 
+/**
+ * _getScrollTopForPreview
+ * get ScrolTop value for preview
+ * @return {number}
+ */
 ScrollSync.prototype._getScrollTopForPreview = function() {
     var scrollTop, scrollFactors, section, ratio;
 
