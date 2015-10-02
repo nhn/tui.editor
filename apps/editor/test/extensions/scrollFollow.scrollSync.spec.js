@@ -9,7 +9,7 @@ describe('scrollFollow', function() {
 
     beforeEach(function(done) {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css')
+        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
 
         ned = new NeonEditor({
