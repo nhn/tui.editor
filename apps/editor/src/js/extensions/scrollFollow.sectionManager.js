@@ -44,7 +44,7 @@ SectionManager.prototype._addNewSection = function(start, end) {
     var newSection = this._makeSectionData(start, end);
     this._sectionList.push(newSection);
     this._currentSection = newSection;
-}
+};
 
 /**
  * getSectionList

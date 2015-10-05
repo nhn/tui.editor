@@ -52,6 +52,10 @@ Toolbar.prototype.render = function() {
 Toolbar.prototype.addButton = function(button) {
     var ev = this.eventManager;
 
+    if (!button.render) {
+        button = new Button(button);
+    }
+
     button.on('command', function emitCommandEvent($, commandName) {
         ev.emit('command', commandName);
     });

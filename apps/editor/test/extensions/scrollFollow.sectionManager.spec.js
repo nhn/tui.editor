@@ -10,7 +10,7 @@ describe('scrollFollow.sectionManager', function() {
 
     beforeEach(function(done) {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css')
+        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
 
         ned = new NeonEditor({
@@ -175,7 +175,7 @@ describe('scrollFollow.sectionManager', function() {
                 sectionManager.sectionMatch();
                 sectionList = sectionManager.getSectionList();
 
-                expect(sectionList.length).toEqual(3)
+                expect(sectionList.length).toEqual(3);
                 expect(sectionList[0].$previewSectionEl.hasClass('content-id-0')).toBe(true);
                 expect(sectionList[1].$previewSectionEl.hasClass('content-id-1')).toBe(true);
                 expect(sectionList[2].$previewSectionEl.hasClass('content-id-2')).toBe(true);
