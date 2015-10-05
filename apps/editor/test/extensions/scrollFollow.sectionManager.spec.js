@@ -69,12 +69,12 @@ describe('scrollFollow.sectionManager', function() {
                 'paragraph'
             ].join('\n'));
 
-            sectionManager._eachLineState(function(type, lineNumber) {
-                lineType[lineNumber] = type;
+            sectionManager._eachLineState(function(isSection, lineNumber) {
+                lineType[lineNumber] = isSection;
             });
 
-            expect(lineType[0]).toEqual('etc');
-            expect(lineType[1]).toEqual('header');
+            expect(lineType[0]).toEqual(false);
+            expect(lineType[1]).toEqual(true);
         });
 
         it('trimming top lines while _eachLineState', function() {
@@ -97,8 +97,8 @@ describe('scrollFollow.sectionManager', function() {
 
             expect(lineType[0]).toBeUndefined();
             expect(lineType[1]).toBeUndefined();
-            expect(lineType[2]).toEqual('etc');
-            expect(lineType[3]).toEqual('header');
+            expect(lineType[2]).toEqual(false);
+            expect(lineType[3]).toEqual(true);
         });
 
 
@@ -108,6 +108,23 @@ describe('scrollFollow.sectionManager', function() {
                 '# header1',
                 'paragraph',
                 '## header2',
+                'paragraph'
+            ].join('\n'));
+
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(3);
+        });
+
+        it('make section list with setext type header ', function() {
+            ned.setValue([
+                'paragraph',
+                'header1',
+                '=======',
+                'paragraph',
+                'header2',
+                '------',
                 'paragraph'
             ].join('\n'));
 

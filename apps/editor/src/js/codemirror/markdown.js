@@ -205,7 +205,6 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function htmlBlock(stream, state) {
     var style = htmlMode.token(stream, state.htmlState);
-
     if ((htmlFound && state.htmlState.tagStart === null &&
          (!state.htmlState.context && state.htmlState.tokenize.isInText)) ||
         (state.md_inside && stream.current().indexOf(">") > -1)) {
@@ -451,8 +450,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
       return type + linkemail;
     }
-/*
-//we dont need html Block it ruin markdown blocks
+
     if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
@@ -463,7 +461,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.htmlState = CodeMirror.startState(htmlMode);
       return switchBlock(stream, state, htmlBlock);
     }
-*/
+
     if (ch === '<' && stream.match(/^\/\w*?>/)) {
       state.md_inside = false;
       return "tag";

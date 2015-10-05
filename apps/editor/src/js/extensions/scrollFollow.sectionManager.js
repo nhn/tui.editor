@@ -5,6 +5,8 @@
 
 'use strict';
 
+var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
+
 /*
  * SectionManager
  * manage logical markdown content sections
@@ -83,22 +85,25 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var type, state, i,
+    var isSection, state, i,
         isTrimming = true,
         trimCapture = '';
 
     for (i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
         state = this.cm.getStateAfter(i);
+        isSection = false;
 
+        //atx header
         if (this.cm.getLine(i)
             && state.base.header
             && !state.base.quote
             && !state.base.list
             && !state.base.taskList
         ) {
-            type = 'header';
-        } else {
-            type = 'etc';
+            isSection = true;
+        //setext header
+        } else if (this.cm.getLine(i+1) && this.cm.getLine(i+1).match(setextHeaderRx)) {
+            isSection = true;
         }
 
         if (isTrimming) {
@@ -111,7 +116,7 @@ SectionManager.prototype._eachLineState = function(iteratee) {
             }
         }
 
-        iteratee(type, i);
+        iteratee(isSection, i);
     }
 };
 
@@ -124,8 +129,8 @@ SectionManager.prototype.makeSectionList = function() {
 
     this._sectionList = [];
 
-    this._eachLineState(function(type, lineNumber) {
-        if (lineNumber === 0 || type === 'header') {
+    this._eachLineState(function(isSection, lineNumber) {
+        if (lineNumber === 0 || isSection) {
             self._addNewSection(lineNumber, lineNumber);
         } else {
             self._updateCurrentSectionEnd(lineNumber);
