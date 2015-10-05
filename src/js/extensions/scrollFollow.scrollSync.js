@@ -67,7 +67,7 @@ ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
         ratio = 0;
     }
 
-    return ratio > 0 ? ratio : 0;
+    return Math.max(ratio, 0);
 };
 
 /**
@@ -115,10 +115,10 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
     if (scrollFactors.isEditorBottom) {
         scrollTop = this.$previewContainerEl.find('.previewContent').height()
     } else if (section.$previewSectionEl) {
-        scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio);
+        scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
 
-    return Math.max(scrollTop - SCROLL_TOP_PADDING, 0);
+    return Math.max(scrollTop, 0);
 };
 
 
