@@ -159,6 +159,14 @@ NeonEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
 };
 
+NeonEditor.prototype.addCommand = function(type, props) {
+    if (!props) {
+        this.commandManager.addCommand(type);
+    } else {
+        this.commandManager.addCommand(CommandManager.command(type, props));
+    }
+};
+
 NeonEditor.prototype.on = function(type, handler) {
     this.eventManager.listen(type, handler);
 };

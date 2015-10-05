@@ -113,7 +113,7 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
     ratio = scrollFactors.sectionRatio;
 
     if (scrollFactors.isEditorBottom) {
-        scrollTop = this.$previewContainerEl.find('.previewContent').height()
+        scrollTop = this.$previewContainerEl.find('.previewContent').height();
     } else if (section.$previewSectionEl) {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
@@ -172,6 +172,6 @@ ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
     }
 
     step();
-}
+};
 
 module.exports = ScrollSync;

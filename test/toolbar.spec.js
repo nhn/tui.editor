@@ -1,3 +1,5 @@
+'use strict';
+
 var Toolbar = require('../src/js/toolbar'),
     CommandMangager = require('../src/js/commandManager'),
     Command = require('../src/js/command'),
@@ -5,8 +7,6 @@ var Toolbar = require('../src/js/toolbar'),
     Button = require('../src/js/button');
 
 describe('Toolbar', function() {
-    'use strict';
-
     var toolbar,
         em,
         cm;
@@ -32,6 +32,20 @@ describe('Toolbar', function() {
                 command: 'test',
                 text: 'test'
             }));
+
+            expect(toolbar.buttons.length).toBe(len + 1);
+        });
+
+        it('if addButton param is not a button make button with props', function() {
+            var len;
+
+            len = toolbar.buttons.length;
+
+            toolbar.addButton({
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            });
 
             expect(toolbar.buttons.length).toBe(len + 1);
         });

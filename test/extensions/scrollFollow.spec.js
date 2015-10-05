@@ -9,7 +9,7 @@ xdescribe('scrollFollow', function() {
 
     beforeEach(function(done) {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css')
+        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
 
         ned = new NeonEditor({
@@ -33,7 +33,21 @@ xdescribe('scrollFollow', function() {
         $('body').empty();
     });
 
-    it('how could i test it?', function() {
-        expect(ned).toHaveDefined();
+
+    describe('disable/enable, 어찌테스트해야할지 고민중', function() {
+        beforeEach(function() {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+        });
+
+        it('disable scrollFollow', function() {
+            ned.exec('scrollFollow.diasable');
+        });
     });
 });
