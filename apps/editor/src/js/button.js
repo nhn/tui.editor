@@ -27,18 +27,26 @@ function Button(options) {
         className: options.className
     });
 
-    this.command = options.command;
-    this.event = options.event;
-    this.text = options.text;
-    this.style = options.style;
+    this._setOptions(options);
 
     this.render();
+
+    this.attachEvents({
+        'click': '_onClick'
+    });
 }
 
 Button.prototype = util.extend(
     {},
     UIController.prototype
 );
+
+Button.prototype._setOptions = function(options) {
+    this.command = options.command;
+    this.event = options.event;
+    this.text = options.text;
+    this.style = options.style;
+};
 
 /**
  * Button의 모습을 그린다
@@ -50,10 +58,6 @@ Button.prototype.render = function() {
     if (this.style) {
         this.$el.attr('style', this.style);
     }
-
-    this.attachEvents({
-        'click': '_onClick'
-    });
 };
 
 /**
@@ -66,6 +70,8 @@ Button.prototype._onClick = function() {
     } else {
         this.trigger('event', this.event);
     }
+
+    this.trigger('clicked');
 };
 
 module.exports = Button;

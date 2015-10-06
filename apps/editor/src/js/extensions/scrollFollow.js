@@ -53,15 +53,15 @@ extManager.defineExtension('scrollFollow', function(editor) {
     });
 
     //UI
-    editor.layout.toolbar.addButton({
-        className: 'scrollFollowEnable',
-        command: 'scrollFollow.enable',
-        text: 'SF_ON'
-    });
-
-    editor.layout.toolbar.addButton({
-        className: 'scrollFollowDisable',
+    editor.layout.toolbar.addButton([{
+        classname: 'scrollfollowEnable',
         command: 'scrollFollow.disable',
-        text: 'SF_OFF'
-    });
+        text: 'SF',
+        style: 'background-color: #fff'
+    }, {
+        className: 'scrollFollowDisable',
+        command: 'scrollFollow.enable',
+        text: 'SF',
+        style: 'background-color: #ddd'
+    }]);
 });
