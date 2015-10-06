@@ -28,7 +28,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         tables: true,
         breaks: true,
         pedantic: false,
-        sanitize: true,
+        sanitize: false,
         smartLists: true,
         smartypants: false,
         highlight: function(code, type) {
@@ -44,7 +44,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         tables: true,
         breaks: true,
         pedantic: false,
-        sanitize: true,
+        sanitize: false,
         smartLists: true,
         smartypants: false
     });
