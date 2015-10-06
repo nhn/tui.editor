@@ -1,8 +1,8 @@
+'use strict';
+
 var Button = require('../src/js/button');
 
 describe('Button', function() {
-    'use strict';
-
     var button;
 
     beforeEach(function() {
