@@ -59,15 +59,15 @@ ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) 
  * @return {number} ratio
  */
 ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
-    var ratio;
+    var ratio,
+        isOneLine = (section.end === section.start);
 
-    if (section.end !== section.start) {
-        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
-    } else if (section.end === section.start) {
+    if (isOneLine) {
         ratio = 0;
+    } else {
+        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
     }
-
-    return Math.max(ratio, 0);
+    return ratio;
 };
 
 /**
@@ -76,34 +76,39 @@ ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
  * @return {object} scroll factors
  */
 ScrollSync.prototype._getScrollFactorsOfEditor = function() {
-    var topLine, topSection, ratio, isEditorBottom,
+    var topLine, topSection, ratio, isEditorBottom, factors,
         cm = this.cm,
         scrollInfo = cm.getScrollInfo();
 
-    isEditorBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
+    isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
 
     if (isEditorBottom) {
-        return {
+        factors = {
             isEditorBottom : isEditorBottom
+        };
+    } else {
+        topLine = cm.coordsChar({
+            left: scrollInfo.left,
+            top: scrollInfo.top
+        }, 'local').line;
+
+        topSection = this.sectionManager.sectionByLine(topLine);
+
+        ratio = this._getEditorSectionScrollRatio(topSection, topLine);
+
+        factors = {
+            section: topSection,
+            sectionRatio: ratio
         };
     }
 
-    topLine = cm.coordsChar({left: scrollInfo.left, top: scrollInfo.top}, 'local').line;
-
-    topSection = this.sectionManager.sectionByLine(topLine);
-
-    ratio = this._getEditorSectionScrollRatio(topSection, topLine);
-
-    return {
-        section: topSection,
-        sectionRatio: ratio
-    };
+    return factors;
 };
 
 /**
  * _getScrollTopForPreview
  * get ScrolTop value for preview
- * @return {number} scrollTop value
+ * @return {number|undefined} scrollTop value, when something wrong then return undefined
  */
 ScrollSync.prototype._getScrollTopForPreview = function() {
     var scrollTop, scrollFactors, section, ratio;
@@ -118,7 +123,9 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
 
-    return Math.max(scrollTop, 0);
+    scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+    return scrollTop;
 };
 
 
@@ -130,13 +137,11 @@ ScrollSync.prototype.syncToPreview = function() {
     var self = this,
         targetScrollTop = this._getScrollTopForPreview();
 
-    if (ne.util.isUndefined(targetScrollTop)) {
-        return;
+    if (targetScrollTop) {
+        this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+            self.$previewContainerEl.scrollTop(deltaScrollTop);
+        });
     }
-
-    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
-        self.$previewContainerEl.scrollTop(deltaScrollTop);
-    });
 };
 
 /**
