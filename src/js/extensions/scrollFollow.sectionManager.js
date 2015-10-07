@@ -85,11 +85,13 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var isSection, state, i,
+    var isSection, state, i, lineLength,
         isTrimming = true,
         trimCapture = '';
 
-    for (i = 0; i < this.cm.getDoc().lineCount(); i+=1) {
+    lineLength = this.cm.getDoc().lineCount();
+
+    for (i = 0; i < lineLength; i+=1) {
         state = this.cm.getStateAfter(i);
         isSection = false;
 
@@ -146,12 +148,10 @@ SectionManager.prototype.makeSectionList = function() {
 SectionManager.prototype.sectionMatch = function() {
     var sections;
 
-    if (!this._sectionList) {
-        return;
+    if (this._sectionList) {
+        sections = this._getPreviewSections();
+        this._matchPreviewSectionsWithSectionlist(sections);
     }
-
-    sections = this._getPreviewSections();
-    this._matchPreviewSectionsWithSectionlist(sections);
 };
 
 /**
@@ -163,9 +163,10 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
     var self = this;
 
     sections.forEach(function(childs, index) {
-        var $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
+        var $sectionDiv;
 
         if (self._sectionList[index]) {
+            $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
             self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
         }
     });
@@ -177,7 +178,8 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
  * @return {array[]} element node array
  */
 SectionManager.prototype._getPreviewSections = function() {
-    var sections = [];
+    var lastSection = 0,
+        sections = [];
 
     sections[0] = [];
 
@@ -185,12 +187,13 @@ SectionManager.prototype._getPreviewSections = function() {
         return this.nodeType === Node.ELEMENT_NODE;
     }).each(function(index, el) {
         if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
-            if (sections[sections.length - 1].length) {
+            if (sections[lastSection].length) {
                 sections.push([]);
+                lastSection += 1;
             }
         }
 
-        sections[sections.length - 1].push(el);
+        sections[lastSection].push(el);
     });
 
     return sections;
