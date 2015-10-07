@@ -22,7 +22,6 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
      */
     exec: function(wwe) {
         var sq = wwe.getEditor(),
-            range = sq.getSelection(),
             foundedHeading = wwe.hasFormatWithRx(/h[\d]/i),
             depth = 1,
             beforeDepth;

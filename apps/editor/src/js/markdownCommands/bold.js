@@ -93,9 +93,9 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * 커서를 센터로 이동시킨다

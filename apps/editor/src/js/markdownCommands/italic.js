@@ -113,9 +113,9 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
         if (tmpSelection === '******' || tmpSelection === '______') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * expendOnlyBoldSelection
@@ -150,9 +150,9 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
         if (tmpSelection === '**' || tmpSelection === '__') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * setCursorToCenter

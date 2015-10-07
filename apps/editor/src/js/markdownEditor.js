@@ -117,9 +117,9 @@ MarkdownEditor.prototype.getEditor = function() {
 
 MarkdownEditor.prototype.reset = function() {
     this.setValue('');
-}
+};
 
-MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
+MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function() {
     this.eventManager.emit('contentChanged.markdownEditor', this);
 };
 

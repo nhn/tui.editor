@@ -21,7 +21,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li, savedSelection,
+        var selection, $selected, $li,
             sq = wwe.getEditor();
 
         if (!sq.hasFormat('li')) {

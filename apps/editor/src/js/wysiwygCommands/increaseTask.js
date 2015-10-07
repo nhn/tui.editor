@@ -89,7 +89,7 @@ function replaceWith(node, node2) {
 }
 
 function increaseTaskLevel(frag) {
-    var i, l, item, type, newParent, listAttrs,
+    var i, l, item, type, newParent,
         items = frag.querySelectorAll('LI'),
         listItemAttrs = {class: 'task-list-item'};
 
@@ -114,6 +114,6 @@ function increaseTaskLevel(frag) {
     }
 
     return frag;
-};
+}
 
 module.exports = IncreaseTask;

@@ -97,7 +97,7 @@ WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
 };
 
 WysiwygEditor.prototype._initStyleSheet = function(doc) {
-    var styleLink, body;
+    var styleLink;
 
     util.forEach(this.contentStyles, function(stylePath) {
         styleLink = doc.createElement('link');
@@ -127,7 +127,7 @@ WysiwygEditor.prototype._initEvent = function() {
     this.eventManager.listen('show', function() {
         self.prepareToDetach();
     });
-}
+};
 
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
@@ -187,7 +187,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
-        doc, sq,
         range = this.getEditor().getSelection().cloneRange();
 /*
     console.log(event);
@@ -264,7 +263,7 @@ WysiwygEditor.prototype._isInOrphanText = function(selection) {
 };
 
 WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
-    var block, textElem, cursorOffset, cursorTarget, insertTargetNode;
+    var block, textElem, cursorOffset, insertTargetNode;
 
     this.saveSelection(selection);
     this._joinSplitedTextNodes();
@@ -300,7 +299,7 @@ WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
 };
 
 WysiwygEditor.prototype._joinSplitedTextNodes = function() {
-    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+    var findTextNodeFilter, textNodes, prevNode,
         lastGroup,
         nodesToRemove = [];
 
@@ -325,9 +324,7 @@ WysiwygEditor.prototype._joinSplitedTextNodes = function() {
 };
 
 WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
-    var findTextNodeFilter, textNodes, $wrapper, prevNode,
-        nodeGroup = [],
-        nodesToRemove = [];
+    var findTextNodeFilter, textNodes,
 
     findTextNodeFilter = function() {
         return this.nodeType === 3;
@@ -372,7 +369,7 @@ WysiwygEditor.prototype.reset = function() {
     }
 
     this.setValue('');
-}
+};
 
 WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
     this.getEditor().changeBlockFormatTo(targetTagName);
@@ -386,7 +383,7 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
         if (!frag.textContent) {
             frag = self.getEditor().createDefaultBlock();
         }
-        return frag
+        return frag;
     });
 };
 
@@ -440,7 +437,7 @@ WysiwygEditor.prototype._unwrapPtags = function() {
             $(node).unwrap();
         }
     });
-}
+};
 
 //we use divs for paragraph so we dont need any p tags
 WysiwygEditor.prototype._unwrapDivOnHr = function() {
@@ -450,7 +447,7 @@ WysiwygEditor.prototype._unwrapDivOnHr = function() {
             $(node).unwrap();
         }
     });
-}
+};
 
 WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode, $wrapper;
@@ -583,7 +580,7 @@ WysiwygEditor.prototype.get$Body = function() {
 
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
-}
+};
 
 WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
     var startContainer, startOffset,
@@ -656,7 +653,7 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
     var div, pathToBody, appendBefore, currentNode;
 
-    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selction.startContainer;
+    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selection.startContainer;
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -686,7 +683,7 @@ WysiwygEditor.prototype._isInHr = function(selection) {
 WysiwygEditor.prototype._isNearHr = function(selection) {
     var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
     return domUtils.getNodeName(prevNode) === 'HR';
-}
+};
 
 WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
     var hrSuspect, cursorTarget;
@@ -738,7 +735,7 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
     this._addCheckedAttrToCheckedInput();
-    before = $(container).html()
+    before = $(container).html();
     $(container).html(before.replace(from, to));
 };
 

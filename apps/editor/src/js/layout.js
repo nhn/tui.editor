@@ -73,8 +73,6 @@ Layout.prototype._initToolbar = function() {
 };
 
 Layout.prototype._initModeSwitch = function() {
-    var self = this;
-
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
 };

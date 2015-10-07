@@ -12,11 +12,12 @@
 
 var isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
-}
+};
 
 var isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
-}
+};
+
 var getChildNodeAt = function(elem, index) {
     if (elem.childNodes.length && index >= 0) {
         return elem.childNodes[index];
@@ -41,7 +42,7 @@ var getTextLength = function(node) {
     }
 
     return len;
-}
+};
 
 var getOffsetLength = function(node) {
     var len;
@@ -53,7 +54,7 @@ var getOffsetLength = function(node) {
     }
 
     return len;
-}
+};
 
 module.exports = {
     getChildNodeAt: getChildNodeAt,
