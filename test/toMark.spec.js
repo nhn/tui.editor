@@ -19,9 +19,9 @@ describe('toMark', function() {
         expect(toMark('<h2>Hello  <em>World</em></h2>')).toEqual('## Hello _World_');
         expect(toMark('<h2>Hello  <em>World </em></h2>')).toEqual('## Hello _World_');
         expect(toMark('<h2><em>Hello</em> <em>World</em></h2>')).toEqual('## _Hello_ _World_');
-        expect(toMark('<h2><em>Hello</em> World</em></h2>')).toEqual('## _Hello_ World');
-        expect(toMark('<h2><em>Hello </em> World</em></h2>')).toEqual('## _Hello_ World');
-        expect(toMark('<h2><em>Hello </em>World</em></h2>')).toEqual('## _Hello_ World');
+        expect(toMark('<h2><em>Hello</em> World</h2>')).toEqual('## _Hello_ World');
+        expect(toMark('<h2><em>Hello </em> World</h2>')).toEqual('## _Hello_ World');
+        expect(toMark('<h2><em>Hello </em>World</h2>')).toEqual('## _Hello_ World');
         expect(toMark('<h2><em>Hello</em>  &nbsp;&nbsp;World</h2>')).toEqual('## _Hello_ \u00a0\u00a0World');
         expect(toMark('<h2><em>Hello&nbsp;</em>  &nbsp;&nbsp;World</h2>')).toEqual('## _Hello\u00a0_ \u00a0\u00a0World');
     });
@@ -35,7 +35,7 @@ describe('toMark', function() {
     it('pass gfm false option to using basic markdown renderer', function() {
         expect(toMark('<del>strike</del>', {
             gfm: false
-        })).toEqual('strike');
+        }).toLowerCase()).toEqual('<del>strike</del>');
 
         expect(toMark('<del>strike</del>')).toEqual('~~strike~~');
     });
@@ -62,8 +62,8 @@ describe('toMark', function() {
             expect(toMark('<ul><li>text2<br><ul><li>text2<br>text2</li><li>text2<br></li></ul></li></ul>', {gfm: false})).toEqual('* text2\n    * text2  \n    text2\n    * text2');
             expect(toMark('<ul><li>text<br><ul><li>text<br></li><li>text<br></li></ul></li></ul>', {gfm: false})).toEqual('* text\n    * text\n    * text');
             expect(toMark('<ul><li>text4<br></li></ul><p>text4</p>', {gfm: false})).toEqual('* text4\n\ntext4');
-            expect(toMark('<ul><li>text5<br></li></ul><p><div>text5<br></div><div>text5<br></div></p>', {gfm: false})).toEqual('* text5\n\ntext5  \ntext5');
-            expect(toMark('<ul><li>text<br></li></ul><p><div>text<br></div><div>text<br></div></p>')).toEqual('* text\n\ntext\ntext');
+            expect(toMark('<ul><li>text5<br></li></ul><p>text5<br>text5<br></p>', {gfm: false})).toEqual('* text5\n\ntext5  \ntext5');
+            expect(toMark('<ul><li>text<br></li></ul><p>text<br>text</p>')).toEqual('* text\n\ntext\ntext');
             expect(toMark('<ul><li>text</li></ul><p></p><ul><li>text</li></ul>', {gfm: false})).toEqual('* text\n\n* text');
         });
 

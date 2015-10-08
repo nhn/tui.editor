@@ -129,8 +129,8 @@ Renderer.prototype.convert = function(node, subContent) {
 
     if (converter) {
         result = converter.call(this, node, subContent);
-    } else {
-        result = subContent;
+    } else if (node) {
+        result = node.outerHTML;
     }
 
     //console.log(JSON.stringify(result), converter.fname);
@@ -283,7 +283,7 @@ Renderer.prototype.escapeText = function(text) {
     return text;
 };
 
-Renderer.markdownText = {
+Renderer.markdownTextToEscapeRx = {
     codeblock: /(^ {4}[^\n]+\n*)+/,
     hr: /(^ *[-*_]){3,} */,
     heading: /^(#{1,6}) +[\s\S]+/,
@@ -304,10 +304,10 @@ Renderer.markdownText = {
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false,
         type,
-        markdownText = Renderer.markdownText;
+        markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
 
-    for (type in markdownText) {
-        if (markdownText[type].test(text)) {
+    for (type in markdownTextToEscapeRx) {
+        if (markdownTextToEscapeRx[type].test(text)) {
             res = true;
             break;
        }

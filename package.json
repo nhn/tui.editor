@@ -17,7 +17,7 @@
     "gulp-sync": "^0.1.4",
     "gulp-uglify": "^1.1.0",
     "gulp-util": "^3.0.3",
-    "karma": "^0.12.33",
+    "karma": "^0.13.10",
     "karma-browserify": "^4.2.1",
     "karma-chrome-launcher": "^0.1.7",
     "karma-coverage": "^0.3.1",

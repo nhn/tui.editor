@@ -7,9 +7,11 @@ describe('toMark', function() {
         it('single td', function() {
             var htmlStr = [
                 '<table>',
-                    '<tr>',
-                        '<td>text</td>',
-                    '</tr>',
+                    '<tbody>',
+                        '<tr>',
+                            '<td>text</td>',
+                        '</tr>',
+                    '</tbody>',
                 '</table>'
             ].join('');
 
@@ -91,7 +93,7 @@ describe('toMark', function() {
     });
 
     describe('code block', function() {
-       it('preserve text node(not trimed) in code block', function() {
+       fit('preserve text node(not trimed) in code block', function() {
             var htmlStr = [
                 '<pre>',
                     '<code>',

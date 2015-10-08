@@ -30,6 +30,9 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
 
         return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
+    'PRE': function(node, subContent) {
+        return subContent;
+    },
     'LI INPUT': function(node) {
         var condition;
 
@@ -45,6 +48,9 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
     //Table
     'TABLE': function(node, subContent) {
         return '\n\n' + subContent + '\n\n';
+    },
+    'TBODY, TFOOT': function(node, subContent) {
+        return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
         return ' ' + subContent + ' |';
