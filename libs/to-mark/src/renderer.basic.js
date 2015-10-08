@@ -73,7 +73,7 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-    'BR': function(node) {
+    'BR': function() {
         return '  \n';
     },
     'CODE': function(node, subContent) {

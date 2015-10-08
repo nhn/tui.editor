@@ -39,16 +39,16 @@ describe('renderer', function() {
         expect(convertedText).toEqual('markdownText');
     });
 
-    it('if there is no rule, conveter returns subContent', function() {
+    it('if there is no rule, conveter returns html', function() {
         var convertedText,
             renderer = Renderer.factory();
 
-        runner = new DomRunner(toDom('<h1>test</h1>'));
+        runner = new DomRunner(toDom('<h1><em>test</em></h1>'));
         runner.next();
 
         convertedText = renderer.convert(runner.getNode(), 'subContents');
 
-        expect(convertedText).toEqual('subContents');
+        expect(convertedText.toLowerCase().replace(/[\n\s\t]/g, '')).toEqual('<h1><em>test</em></h1>');
     });
 
     it('if rule converter returns falsy renderer.converter returns empty string', function() {
