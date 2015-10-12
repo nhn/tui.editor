@@ -93,12 +93,12 @@ describe('toMark', function() {
     });
 
     describe('code block', function() {
-       fit('preserve text node(not trimed) in code block', function() {
+       it('preserve text node(not trimed) in code block', function() {
             var htmlStr = [
                 '<pre>',
                     '<code>',
-                        'function my() {\n',
-                        '    var dd = 1;\n',
+                        'function my() {<br>',
+                        '    var dd = 1;<br>',
                         '}',
                     '</code>',
                 '</pre>'
