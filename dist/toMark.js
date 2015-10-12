@@ -205,7 +205,7 @@ var basicRenderer = Renderer.factory({
 
         return res;
     },
-    'BR': function(node) {
+    'BR': function() {
         return '  \n';
     },
     'CODE': function(node, subContent) {
@@ -374,6 +374,9 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
 
         return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
+    'PRE': function(node, subContent) {
+        return subContent;
+    },
     'LI INPUT': function(node) {
         var condition;
 
@@ -389,6 +392,9 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
     //Table
     'TABLE': function(node, subContent) {
         return '\n\n' + subContent + '\n\n';
+    },
+    'TBODY, TFOOT': function(node, subContent) {
+        return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
         return ' ' + subContent + ' |';
@@ -595,8 +601,8 @@ Renderer.prototype.convert = function(node, subContent) {
 
     if (converter) {
         result = converter.call(this, node, subContent);
-    } else {
-        result = subContent;
+    } else if (node) {
+        result = node.outerHTML;
     }
 
     //console.log(JSON.stringify(result), converter.fname);
@@ -749,7 +755,7 @@ Renderer.prototype.escapeText = function(text) {
     return text;
 };
 
-Renderer.markdownText = {
+Renderer.markdownTextToEscapeRx = {
     codeblock: /(^ {4}[^\n]+\n*)+/,
     hr: /(^ *[-*_]){3,} */,
     heading: /^(#{1,6}) +[\s\S]+/,
@@ -770,10 +776,10 @@ Renderer.markdownText = {
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false,
         type,
-        markdownText = Renderer.markdownText;
+        markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
 
-    for (type in markdownText) {
-        if (markdownText[type].test(text)) {
+    for (type in markdownTextToEscapeRx) {
+        if (markdownTextToEscapeRx[type].test(text)) {
             res = true;
             break;
        }
@@ -845,17 +851,7 @@ function toDom(html) {
 
     if (Object.prototype.toString.call(html) === '[object String]') {
         wrapper = document.createElement('div');
-
-        //trim text
-        html = html.replace(FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX, '');
-
-        //trim between tags
-        html = html.replace(FIND_RETURN_OR_TAB_BETWEEN_TAGS_RX, '><');
-
-        //remove spaces more than 1(if need more space, must use &nbsp)
-        html = html.replace(FIND_WHOLE_SPACE_MORE_THAN_ONE_BETWEEN_TAGS_RX, '> <');
-
-        wrapper.innerHTML = html;
+        wrapper.innerHTML = preProcess(html);
     } else {
         wrapper = html;
     }
@@ -864,6 +860,21 @@ function toDom(html) {
 
     return wrapper;
 }
+
+function preProcess(html) {
+    //trim text
+    html = html.replace(FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX, '');
+
+    //trim between tags
+    html = html.replace(FIND_RETURN_OR_TAB_BETWEEN_TAGS_RX, '><');
+
+    //remove spaces more than 1(if need more space, must use &nbsp)
+    html = html.replace(FIND_WHOLE_SPACE_MORE_THAN_ONE_BETWEEN_TAGS_RX, '> <');
+
+    return html;
+}
+
+toDom.preProcess = preProcess;
 
 module.exports = toDom;
 
@@ -879,12 +890,6 @@ var DomRunner = require('./domRunner'),
     toDom = require('./toDom'),
     basicRenderer = require('./renderer.basic'),
     gfmRenderer = require('./renderer.gfm');
-
-var     FIND_TRIPLE_OVER_RETURNS_RX = /(\n){3,}/g,
-    FIND_EMPTYLINE_WITH_RETURN_RX = /\n[ \xA0]+\n\n/g,
-    FIND_MULTIPLE_EMPTYLINE_BETWEEN_BLOCK_RX = /(\n\n)?([ \xA0]+\n){2,}/g,
-    FIND_DUPLICATED_2_RETURNS_WITH_BR_RX = /[ \xA0]+\n\n\n/g,
-    FIND_DUPLICATED_RETURN_WITH_BR_RX = /[ \xA0]+\n\n/g;
 
 var FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g,
     FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX = /^[\n]+|[\s\n]+$/g,
