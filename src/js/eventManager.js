@@ -26,6 +26,8 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'convertorAfterMarkdownToHtmlConverted',
+    'convertorAfterHtmlToMarkdownConverted',
     'load',
     'focus',
     'blur',

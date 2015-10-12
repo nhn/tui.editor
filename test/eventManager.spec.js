@@ -68,7 +68,7 @@ describe('eventManager', function() {
             expect(result).toBeUndefined();
         });
     });
-    fdescribe('emitReduce()', function() {
+    describe('emitReduce()', function() {
         beforeEach(function() {
             ev.addEventType('reduceTest');
         });
