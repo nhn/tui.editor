@@ -48,7 +48,7 @@ describe('renderer', function() {
 
         convertedText = renderer.convert(runner.getNode(), 'subContents');
 
-        expect(convertedText.toLowerCase().replace(/[\n\s\t]/g, '')).toEqual('<h1><em>test</em></h1>');
+        expect(convertedText.replace(/[\n\s\t]/g, '')).toEqual('<h1>subContents</h1>');
     });
 
     it('if rule converter returns falsy renderer.converter returns empty string', function() {
@@ -59,6 +59,17 @@ describe('renderer', function() {
         });
 
         expect(renderer.convert({tagName: 'H1'})).toEqual('');
+    });
+
+    it('_getInlineHtml() make inline html with subcontent', function() {
+        var renderer = Renderer.factory();
+        runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><em>test</em></span>'));
+        runner.next();
+        expect(renderer._getInlineHtml(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
+
+        runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><span>test</span></span>'));
+        runner.next();
+        expect(renderer._getInlineHtml(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
     });
 
     xit('if rule\'s converter returns falsy, conveter returns subContent', function() {

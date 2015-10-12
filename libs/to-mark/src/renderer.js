@@ -130,12 +130,19 @@ Renderer.prototype.convert = function(node, subContent) {
     if (converter) {
         result = converter.call(this, node, subContent);
     } else if (node) {
-        result = node.outerHTML;
+        result = this._getInlineHtml(node, subContent);
     }
 
     //console.log(JSON.stringify(result), converter.fname);
 
     return result || '';
+};
+
+Renderer.prototype._getInlineHtml = function(node, subContent) {
+    var html = node.outerHTML,
+        tagName = node.tagName.toLowerCase();
+
+    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(<\/' + tagName + '>)'), '$1' + subContent + '$2');
 };
 
 /**
