@@ -28,18 +28,26 @@ function Button(options) {
         className: options.className
     });
 
-    this.command = options.command;
-    this.event = options.event;
-    this.text = options.text;
-    this.style = options.style;
+    this._setOptions(options);
 
     this.render();
+
+    this.attachEvents({
+        'click': '_onClick'
+    });
 }
 
 Button.prototype = util.extend(
     {},
     UIController.prototype
 );
+
+Button.prototype._setOptions = function(options) {
+    this.command = options.command;
+    this.event = options.event;
+    this.text = options.text;
+    this.style = options.style;
+};
 
 /**
  * Button의 모습을 그린다
@@ -51,10 +59,6 @@ Button.prototype.render = function() {
     if (this.style) {
         this.$el.attr('style', this.style);
     }
-
-    this.attachEvents({
-        'click': '_onClick'
-    });
 };
 
 /**
@@ -67,11 +71,13 @@ Button.prototype._onClick = function() {
     } else {
         this.trigger('event', this.event);
     }
+
+    this.trigger('clicked');
 };
 
 module.exports = Button;
 
-},{"./uicontroller":40}],2:[function(require,module,exports){
+},{"./uicontroller":44}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 'use strict';
@@ -145,6 +151,8 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
 'use strict';
 
 /*eslint-disable */
+var urlRE = /^((?:(?:aaas?|about|acap|adiumxtra|af[ps]|aim|apt|attachment|aw|beshare|bitcoin|bolo|callto|cap|chrome(?:-extension)?|cid|coap|com-eventbrite-attendee|content|crid|cvs|data|dav|dict|dlna-(?:playcontainer|playsingle)|dns|doi|dtn|dvb|ed2k|facetime|feed|file|finger|fish|ftp|geo|gg|git|gizmoproject|go|gopher|gtalk|h323|hcp|https?|iax|icap|icon|im|imap|info|ipn|ipp|irc[6s]?|iris(?:\.beep|\.lwz|\.xpc|\.xpcs)?|itms|jar|javascript|jms|keyparc|lastfm|ldaps?|magnet|mailto|maps|market|message|mid|mms|ms-help|msnim|msrps?|mtqp|mumble|mupdate|mvn|news|nfs|nih?|nntp|notes|oid|opaquelocktoken|palm|paparazzi|platform|pop|pres|proxy|psyc|query|res(?:ource)?|rmi|rsync|rtmp|rtsp|secondlife|service|session|sftp|sgn|shttp|sieve|sips?|skype|sm[bs]|snmp|soap\.beeps?|soldat|spotify|ssh|steam|svn|tag|teamspeak|tel(?:net)?|tftp|things|thismessage|tip|tn3270|tv|udp|unreal|urn|ut2004|vemmi|ventrilo|view-source|webcal|wss?|wtai|wyciwyg|xcon(?:-userid)?|xfire|xmlrpc\.beeps?|xmpp|xri|ymsgr|z39\.50[rs]?):(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]|\([^\s()<>]*\))+(?:\([^\s()<>]*\)|[^\s`*!()\[\]{};:'".,<>?«»“”‘’]))/i
+
 CodeMirror.defineMode("gfm", function(config, modeConfig) {
   var codeDepth = 0;
   function blankLine(state) {
@@ -171,7 +179,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
 
       // Hack to prevent formatting override inside code blocks (block and inline)
       if (state.codeBlock) {
-        if (stream.match(/^```/)) {
+        if (stream.match(/^```+/)) {
           state.codeBlock = false;
           return null;
         }
@@ -181,7 +189,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
       if (stream.sol()) {
         state.code = false;
       }
-      if (stream.sol() && stream.match(/^```/)) {
+      if (stream.sol() && stream.match(/^```+/)) {
         stream.skipToEnd();
         state.codeBlock = true;
         return null;
@@ -212,6 +220,34 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
       }
       if (stream.sol() || state.ateSpace) {
         state.ateSpace = false;
+        /*
+        //we dont need this
+        if (modeConfig.gitHubSpice !== false) {
+          if(stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+@)?(?:[a-f0-9]{7,40}\b)/)) {
+            // User/Project@SHA
+            // User@SHA
+            // SHA
+            state.combineTokens = true;
+            return "link";
+          } else if (stream.match(/^(?:[a-zA-Z0-9\-_]+\/)?(?:[a-zA-Z0-9\-_]+)?#[0-9]+\b/)) {
+            // User/Project#Num
+            // User#Num
+            // #Num
+            state.combineTokens = true;
+            return "link";
+          }
+        }
+      }
+      if (stream.match(urlRE) &&
+          stream.string.slice(stream.start - 2, stream.start) != "](" &&
+          (stream.start == 0 || /\W/.test(stream.string.charAt(stream.start - 1)))) {
+        // URLs
+        // Taken from http://daringfireball.net/2010/07/improved_regex_for_matching_urls
+        // And then (issue #1160) simplified to make it not crash the Chrome Regexp engine
+        // And then limited url schemes to the CommonMark list, so foo:bar isn't matched as a URL
+        state.combineTokens = true;
+        return "link";
+        */
       }
       stream.next();
       return null;
@@ -222,7 +258,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   var markdownConfig = {
     underscoresBreakWords: false,
     taskLists: true,
-    fencedCodeBlocks: true,
+    fencedCodeBlocks: '```',
     strikethrough: true
   };
   for (var attr in modeConfig) {
@@ -230,17 +266,18 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
   }
   markdownConfig.name = "markdown";
   return CodeMirror.overlayMode(CodeMirror.getMode(config, markdownConfig), gfmOverlay);
+
 }, "markdown");
 
-CodeMirror.defineMIME("text/x-gfm", "gfm");
-/*eslint-enable */
+  CodeMirror.defineMIME("text/x-gfm", "gfm");/*eslint-enable */
 
 },{}],4:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
-'use strict';
 
 /*eslint-disable */
+"use strict";
+
 CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   var htmlFound = CodeMirror.modes.hasOwnProperty("xml");
@@ -269,8 +306,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   if (modeCfg.underscoresBreakWords === undefined)
     modeCfg.underscoresBreakWords = true;
 
-  // Turn on fenced code blocks? ("```" to start/end)
-  if (modeCfg.fencedCodeBlocks === undefined) modeCfg.fencedCodeBlocks = false;
+  // Use `fencedCodeBlocks` to configure fenced code blocks. false to
+  // disable, string to specify a precise regexp that the fence should
+  // match, and true to allow three or more backticks or tildes (as
+  // per CommonMark).
 
   // Turn on task lists? ("- [ ] " and "- [x] ")
   if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
@@ -302,9 +341,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   ,   ulRE = /^[*\-+]\s+/
   ,   olRE = /^[0-9]+([.)])\s+/
   ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
-  ,   atxHeaderRE = /^(#+)(?: |$)/
+  ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
   ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
-  ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/;
+  ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/
+  ,   fencedCodeRE = new RegExp("^(" + (modeCfg.fencedCodeBlocks === true ? "~~~+|```+" : modeCfg.fencedCodeBlocks) +
+                                ")[ \\t]*([\\w+#]*)");
 
   function switchInline(stream, state, f) {
     state.f = state.inline = f;
@@ -316,6 +357,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     return f(stream, state);
   }
 
+  function lineIsEmpty(line) {
+    return !line || !/\S/.test(line.string)
+  }
 
   // Blocks
 
@@ -340,7 +384,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     state.trailingSpace = 0;
     state.trailingSpaceNewLine = false;
     // Mark this line as blank
-    state.thisLineHasContent = false;
+    state.prevLine = state.thisLine
+    state.thisLine = null
     return null;
   }
 
@@ -371,7 +416,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     var match = null;
     if (state.indentationDiff >= 4) {
       stream.skipToEnd();
-      if (prevLineIsIndentedCode || !state.prevLineHasContent) {
+      if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
         state.indentation -= 4;
         state.indentedCode = true;
         return code;
@@ -385,7 +430,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
       return getType(state);
-    } else if (state.prevLineHasContent && !state.quote && !prevLineIsList && !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
+    } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList &&
+               !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
       state.header = match[0].charAt(0) == '=' ? 1 : 2;
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
@@ -400,7 +446,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     } else if (stream.match(hrRE, true)) {
       state.hr = true;
       return hr;
-    } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+    } else if ((lineIsEmpty(state.prevLine) || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
       var listType = null;
       if (stream.match(ulRE, true)) {
         listType = 'ul';
@@ -408,7 +454,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         stream.match(olRE, true);
         listType = 'ol';
       }
-      state.indentation += 4;
+      state.indentation = stream.column() + stream.current().length;
       state.list = true;
       state.listDepth++;
       if (modeCfg.taskLists && stream.match(taskListRE, false)) {
@@ -417,9 +463,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
       return getType(state);
-    } else if (modeCfg.fencedCodeBlocks && stream.match(/^```[ \t]*([\w+#]*)/, true)) {
+    } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
+      state.fencedChars = match[1]
       // try switching mode
-      state.localMode = getMode(RegExp.$1);
+      state.localMode = getMode(match[2]);
       if (state.localMode) state.localState = state.localMode.startState();
       state.f = state.block = local;
       if (modeCfg.highlightFormatting) state.formatting = "code-block";
@@ -443,7 +490,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
-    if (stream.sol() && stream.match("```", false)) {
+    if (stream.sol() && state.fencedChars && stream.match(state.fencedChars, false)) {
       state.localMode = state.localState = null;
       state.f = state.block = leavingLocal;
       return null;
@@ -456,9 +503,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function leavingLocal(stream, state) {
-    stream.match("```");
+    stream.match(state.fencedChars);
     state.block = blockNormal;
     state.f = inlineNormal;
+    state.fencedChars = null;
     if (modeCfg.highlightFormatting) state.formatting = "code-block";
     state.code = true;
     var returnType = getType(state);
@@ -886,8 +934,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {
         f: blockNormal,
 
-        prevLineHasContent: false,
-        thisLineHasContent: false,
+        prevLine: null,
+        thisLine: null,
 
         block: blockNormal,
         htmlState: null,
@@ -910,7 +958,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         quote: 0,
         trailingSpace: 0,
         trailingSpaceNewLine: false,
-        strikethrough: false
+        strikethrough: false,
+        fencedChars: null
       };
     },
 
@@ -918,8 +967,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {
         f: s.f,
 
-        prevLineHasContent: s.prevLineHasContent,
-        thisLineHasContent: s.thisLineHasContent,
+        prevLine: s.prevLine,
+        thisLine: s.this,
 
         block: s.block,
         htmlState: s.htmlState && CodeMirror.copyState(htmlMode, s.htmlState),
@@ -932,6 +981,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         text: s.text,
         formatting: false,
         linkTitle: s.linkTitle,
+        code: s.code,
         em: s.em,
         strong: s.strong,
         strikethrough: s.strikethrough,
@@ -944,7 +994,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         indentedCode: s.indentedCode,
         trailingSpace: s.trailingSpace,
         trailingSpaceNewLine: s.trailingSpaceNewLine,
-        md_inside: s.md_inside
+        md_inside: s.md_inside,
+        fencedChars: s.fencedChars
       };
     },
 
@@ -953,27 +1004,24 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       // Reset state.formatting
       state.formatting = false;
 
-      if (stream.sol()) {
-        var forceBlankLine = !!state.header || state.hr;
+      if (stream != state.thisLine) {
+        var forceBlankLine = state.header || state.hr;
 
         // Reset state.header and state.hr
         state.header = 0;
         state.hr = false;
 
         if (stream.match(/^\s*$/, true) || forceBlankLine) {
-          state.prevLineHasContent = false;
           blankLine(state);
-          return forceBlankLine ? this.token(stream, state) : null;
-        } else {
-          state.prevLineHasContent = state.thisLineHasContent;
-          state.thisLineHasContent = true;
+          if (!forceBlankLine) return null
+          state.prevLine = null
         }
+
+        state.prevLine = state.thisLine
+        state.thisLine = stream
 
         // Reset state.taskList
         state.taskList = false;
-
-        // Reset state.code
-        state.code = false;
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;
@@ -1339,7 +1387,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         tables: true,
         breaks: true,
         pedantic: false,
-        sanitize: true,
+        sanitize: false,
         smartLists: true,
         smartypants: false,
         highlight: function(code, type) {
@@ -1355,7 +1403,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         tables: true,
         breaks: true,
         pedantic: false,
-        sanitize: true,
+        sanitize: false,
         smartLists: true,
         smartypants: false
     });
@@ -1379,7 +1427,7 @@ Convertor.factory = function(eventManager) {
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":31}],9:[function(require,module,exports){
+},{"./markedCustomRenderer":34}],9:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1394,11 +1442,12 @@ module.exports = Convertor;
 
 var isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
-}
+};
 
 var isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
-}
+};
+
 var getChildNodeAt = function(elem, index) {
     if (elem.childNodes.length && index >= 0) {
         return elem.childNodes[index];
@@ -1423,7 +1472,7 @@ var getTextLength = function(node) {
     }
 
     return len;
-}
+};
 
 var getOffsetLength = function(node) {
     var len;
@@ -1435,7 +1484,7 @@ var getOffsetLength = function(node) {
     }
 
     return len;
-}
+};
 
 module.exports = {
     getChildNodeAt: getChildNodeAt,
@@ -1496,6 +1545,7 @@ var __nedInstance = [];
 require('./extensions/querySplitter');
 require('./extensions/taskCounter');
 require('./extensions/textPalette');
+require('./extensions/scrollFollow');
 
 /**
  * NeonEditor
@@ -1605,6 +1655,14 @@ NeonEditor.prototype.changePreviewStyle = function(style) {
 
 NeonEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
+};
+
+NeonEditor.prototype.addCommand = function(type, props) {
+    if (!props) {
+        this.commandManager.addCommand(type);
+    } else {
+        this.commandManager.addCommand(CommandManager.command(type, props));
+    }
 };
 
 NeonEditor.prototype.on = function(type, handler) {
@@ -1729,7 +1787,7 @@ NeonEditor.defineExtension = function(name, ext) {
 
 module.exports = NeonEditor;
 
-},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/querySplitter":13,"./extensions/taskCounter":14,"./extensions/textPalette":15,"./layout":18,"./markdownCommands/addImage":20,"./markdownCommands/addLink":21,"./markdownCommands/blockquote":22,"./markdownCommands/bold":23,"./markdownCommands/heading":24,"./markdownCommands/hr":25,"./markdownCommands/italic":26,"./markdownCommands/ol":27,"./markdownCommands/task":28,"./markdownCommands/ul":29,"./markdownEditor":30,"./preview":35,"./wysiwygCommands/addImage":41,"./wysiwygCommands/addLink":42,"./wysiwygCommands/blockquote":43,"./wysiwygCommands/bold":44,"./wysiwygCommands/heading":45,"./wysiwygCommands/hr":46,"./wysiwygCommands/increaseTask":47,"./wysiwygCommands/italic":48,"./wysiwygCommands/ol":49,"./wysiwygCommands/task":50,"./wysiwygCommands/ul":51,"./wysiwygEditor":52}],11:[function(require,module,exports){
+},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/querySplitter":13,"./extensions/scrollFollow":14,"./extensions/taskCounter":17,"./extensions/textPalette":18,"./layout":21,"./markdownCommands/addImage":23,"./markdownCommands/addLink":24,"./markdownCommands/blockquote":25,"./markdownCommands/bold":26,"./markdownCommands/heading":27,"./markdownCommands/hr":28,"./markdownCommands/italic":29,"./markdownCommands/ol":30,"./markdownCommands/task":31,"./markdownCommands/ul":32,"./markdownEditor":33,"./preview":38,"./wysiwygCommands/addImage":45,"./wysiwygCommands/addLink":46,"./wysiwygCommands/blockquote":47,"./wysiwygCommands/bold":48,"./wysiwygCommands/heading":49,"./wysiwygCommands/hr":50,"./wysiwygCommands/increaseTask":51,"./wysiwygCommands/italic":52,"./wysiwygCommands/ol":53,"./wysiwygCommands/task":54,"./wysiwygCommands/ul":55,"./wysiwygEditor":56}],11:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1741,6 +1799,7 @@ var util = ne.util;
 
 var eventList = [
     'previewBeforeHook',
+    'previewRenderAfter',
     'addImageFileHook',
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
@@ -1936,6 +1995,487 @@ extManager.defineExtension('querySplitter', function(editor) {
 });
 
 },{"../extManager":12}],14:[function(require,module,exports){
+/**
+ * @fileoverview Implements Scroll Follow Extension
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var extManager = require('../extManager'),
+    ScrollSync = require('./scrollFollow.scrollSync'),
+    SectionManager = require('./scrollFollow.sectionManager');
+
+extManager.defineExtension('scrollFollow', function(editor) {
+    var cm = editor.getCodeMirror(),
+        scrollable = false,
+        active = true,
+        sectionManager, scrollSync;
+
+    sectionManager = new SectionManager(cm, editor.preview);
+    scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+
+    //Commands
+    editor.addCommand('markdown', {
+        name: 'scrollFollow.disable',
+        exec: function() {
+            active = false;
+        }
+    });
+
+    editor.addCommand('markdown', {
+        name: 'scrollFollow.enable',
+        exec: function() {
+            active = true;
+        }
+    });
+
+    //Events
+    cm.on('change', function() {
+        scrollable = false;
+        sectionManager.makeSectionList();
+    });
+
+    editor.on('previewRenderAfter', function() {
+        sectionManager.sectionMatch();
+        scrollable = true;
+    });
+
+    cm.on('scroll', function() {
+        if (!active || !scrollable) {
+            return;
+        }
+
+        scrollSync.syncToPreview();
+    });
+
+    //UI
+    editor.layout.toolbar.addButton([{
+        classname: 'scrollfollowEnable',
+        command: 'scrollFollow.disable',
+        text: 'SF',
+        style: 'background-color: #fff'
+    }, {
+        className: 'scrollFollowDisable',
+        command: 'scrollFollow.enable',
+        text: 'SF',
+        style: 'background-color: #ddd'
+    }]);
+});
+
+},{"../extManager":12,"./scrollFollow.scrollSync":15,"./scrollFollow.sectionManager":16}],15:[function(require,module,exports){
+/**
+ * @fileoverview Implements Scroll Follow Extension ScrollSync Module
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var SCROLL_TOP_PADDING = 20;
+
+/**
+ * ScrollSync
+ * manage scroll sync between markdown editor and preview
+ * @exports ScrollSync
+ * @constructor
+ * @class
+ * @param {SectionManager} sectionManager sectionManager
+ * @param {CodeMirror} cm codemirror
+ * @param {jQuery} $previewContainerEl preview container
+ */
+function ScrollSync(sectionManager, cm, $previewContainerEl) {
+    this.sectionManager = sectionManager;
+    this.cm = cm;
+    this.$previewContainerEl = $previewContainerEl;
+
+    /**
+     * current timeout id needs animation
+     * @type {number}
+     */
+    this._currentTimeoutId = null;
+}
+
+/**
+ * _getEditorSectionHeight
+ * get section height of editor
+ * @param {object} section section be caculated height
+ * @return {number} height
+ */
+ScrollSync.prototype._getEditorSectionHeight = function(section) {
+    return this.cm.heightAtLine(section.end, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+};
+
+/**
+ * _getLineHeightGapInSection
+ * get height gap between passed line in passed section
+ * @param {object} section section be caculated
+ * @param {number} line line number
+ * @return {number} gap
+ */
+ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) {
+    var gap = this.cm.heightAtLine(line, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+    return Math.max(gap, 0);
+};
+
+/**
+ * _getSectionScrollRatio
+ * get ratio of height between scrollTop line and scrollTop section
+ * @param {object} section section be caculated
+ * @param {number} line line number
+ * @return {number} ratio
+ */
+ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
+    var ratio,
+        isOneLine = (section.end === section.start);
+
+    if (isOneLine) {
+        ratio = 0;
+    } else {
+        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
+    }
+    return ratio;
+};
+
+/**
+ * _getScrollFactorsOfEditor
+ * get Scroll Information of editor for preivew scroll sync
+ * @return {object} scroll factors
+ */
+ScrollSync.prototype._getScrollFactorsOfEditor = function() {
+    var topLine, topSection, ratio, isEditorBottom, factors,
+        cm = this.cm,
+        scrollInfo = cm.getScrollInfo();
+
+    isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
+
+    if (isEditorBottom) {
+        factors = {
+            isEditorBottom : isEditorBottom
+        };
+    } else {
+        topLine = cm.coordsChar({
+            left: scrollInfo.left,
+            top: scrollInfo.top
+        }, 'local').line;
+
+        topSection = this.sectionManager.sectionByLine(topLine);
+
+        ratio = this._getEditorSectionScrollRatio(topSection, topLine);
+
+        factors = {
+            section: topSection,
+            sectionRatio: ratio
+        };
+    }
+
+    return factors;
+};
+
+/**
+ * _getScrollTopForPreview
+ * get ScrolTop value for preview
+ * @return {number|undefined} scrollTop value, when something wrong then return undefined
+ */
+ScrollSync.prototype._getScrollTopForPreview = function() {
+    var scrollTop, scrollFactors, section, ratio;
+
+    scrollFactors = this._getScrollFactorsOfEditor();
+    section = scrollFactors.section,
+    ratio = scrollFactors.sectionRatio;
+
+    if (scrollFactors.isEditorBottom) {
+        scrollTop = this.$previewContainerEl.find('.previewContent').height();
+    } else if (section.$previewSectionEl) {
+        scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
+    }
+
+    scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+    return scrollTop;
+};
+
+
+/**
+ * syncToPreview
+ * sync preview with markdown scroll
+ */
+ScrollSync.prototype.syncToPreview = function() {
+    var self = this,
+        targetScrollTop = this._getScrollTopForPreview();
+
+    if (targetScrollTop) {
+        this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+            self.$previewContainerEl.scrollTop(deltaScrollTop);
+        });
+    }
+};
+
+/**
+ * _animateRun
+ * animate with passed Callback
+ * @param {number} originValue original value
+ * @param {number} targetValue target value
+ * @param {function} stepCB callback function
+ */
+ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
+    var valueDiff = targetValue - originValue,
+        startTime = Date.now(),
+        self = this;
+
+    //if already doing animation
+    if (this._currentTimeoutId) {
+        clearTimeout(this._currentTimeoutId);
+    }
+
+    function step() {
+        var deltaValue,
+            stepTime = Date.now(),
+            progress = (stepTime - startTime) / 200; //200 is animation time
+
+        if (progress < 1) {
+            deltaValue = originValue + valueDiff * Math.cos((1 - progress) * Math.PI / 2);
+            stepCB(Math.ceil(deltaValue));
+            self._currentTimeoutId = setTimeout(step, 1);
+        } else {
+            stepCB(targetValue);
+            self._currentTimeoutId = null;
+        }
+    }
+
+    step();
+};
+
+module.exports = ScrollSync;
+
+},{}],16:[function(require,module,exports){
+/**
+ * @fileoverview Implements Scroll Follow Extension SectionManager Module
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
+
+/*
+ * SectionManager
+ * manage logical markdown content sections
+ * @exports SectionManager
+ * @constructor
+ * @class
+ * @param {CodeMirror} cm codemirror
+ * @param {Preview} preview preview
+ */
+function SectionManager(cm, preview) {
+    this.cm = cm;
+    this.preview = preview;
+    this.$previewContent = preview.$el.find('.previewContent');
+
+    /**
+     *  section list
+     * @type {object[]}
+     */
+    this._sectionList = null;
+
+    /**
+     * current working section needs making section list
+     * @type {object}
+     */
+    this._currentSection = null;
+}
+
+/**
+ * _addNewSection
+ * add new section
+ * @param {number} start initial start line number
+ * @param {number} end initial end line number
+ */
+SectionManager.prototype._addNewSection = function(start, end) {
+    var newSection = this._makeSectionData(start, end);
+    this._sectionList.push(newSection);
+    this._currentSection = newSection;
+};
+
+/**
+ * getSectionList
+ * return section list
+ * @return {object[]} section object list
+ */
+SectionManager.prototype.getSectionList = function() {
+    return this._sectionList;
+};
+
+/**
+ * _makeSectionData
+ * make default section object
+ * @param {number} start initial start line number
+ * @param {number} end initial end line number
+ * @return {object} section object
+ */
+SectionManager.prototype._makeSectionData = function(start, end) {
+    return {
+        start: start,
+        end: end,
+        $previewSectionEl: null
+    };
+};
+
+/**
+ * _updateCurrentSectionEnd
+ * update current section's end line number
+ * @param {number} end end value to update
+ */
+SectionManager.prototype._updateCurrentSectionEnd = function(end) {
+    this._currentSection.end = end;
+};
+
+/**
+ * _eachLineState
+ * iterate codemiror lines, callback function parameter pass line type and line number
+ * @param {function} iteratee callback function
+ */
+SectionManager.prototype._eachLineState = function(iteratee) {
+    var isSection, state, i, lineLength,
+        isTrimming = true,
+        trimCapture = '';
+
+    lineLength = this.cm.getDoc().lineCount();
+
+    for (i = 0; i < lineLength; i+=1) {
+        state = this.cm.getStateAfter(i);
+        isSection = false;
+
+        //atx header
+        if (this.cm.getLine(i)
+            && state.base.header
+            && !state.base.quote
+            && !state.base.list
+            && !state.base.taskList
+        ) {
+            isSection = true;
+        //setext header
+        } else if (this.cm.getLine(i+1) && this.cm.getLine(i+1).match(setextHeaderRx)) {
+            isSection = true;
+        }
+
+        if (isTrimming) {
+            trimCapture += this.cm.getLine(i).trim();
+
+            if (trimCapture) {
+                isTrimming = false;
+            } else {
+                continue;
+            }
+        }
+
+        iteratee(isSection, i);
+    }
+};
+
+/**
+ * makeSectionList
+ * make section list
+ */
+SectionManager.prototype.makeSectionList = function() {
+    var self = this;
+
+    this._sectionList = [];
+
+    this._eachLineState(function(isSection, lineNumber) {
+        if (lineNumber === 0 || isSection) {
+            self._addNewSection(lineNumber, lineNumber);
+        } else {
+            self._updateCurrentSectionEnd(lineNumber);
+        }
+    });
+};
+
+
+/**
+ * sectionMatch
+ * make preview sections then match section list with preview section element
+ */
+SectionManager.prototype.sectionMatch = function() {
+    var sections;
+
+    if (this._sectionList) {
+        sections = this._getPreviewSections();
+        this._matchPreviewSectionsWithSectionlist(sections);
+    }
+};
+
+/**
+ * _matchPreviewSectionsWithSectionlist
+ * match section list with preview section element
+ * @param {HTMLNode[]} sections section nodes
+ */
+SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
+    var self = this;
+
+    sections.forEach(function(childs, index) {
+        var $sectionDiv;
+
+        if (self._sectionList[index]) {
+            $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
+            self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
+        }
+    });
+};
+
+/**
+ * _getPreviewSections
+ * get preview html section group to make section
+ * @return {array[]} element node array
+ */
+SectionManager.prototype._getPreviewSections = function() {
+    var lastSection = 0,
+        sections = [];
+
+    sections[0] = [];
+
+    this.$previewContent.contents().filter(function() {
+        return this.nodeType === Node.ELEMENT_NODE;
+    }).each(function(index, el) {
+        if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
+            if (sections[lastSection].length) {
+                sections.push([]);
+                lastSection += 1;
+            }
+        }
+
+        sections[lastSection].push(el);
+    });
+
+    return sections;
+};
+
+/**
+ * _sectionByLine
+ * get section by markdown line
+ * @param {number} line markdown editor line number
+ * @return {object} section
+ */
+SectionManager.prototype.sectionByLine = function(line) {
+    var sectionIndex,
+        sectionList = this._sectionList,
+        sectionLength = sectionList.length;
+
+    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex+=1) {
+        if (line <= sectionList[sectionIndex].end) {
+            break;
+        }
+    }
+
+    if (sectionIndex === sectionLength) {
+        sectionIndex = sectionLength - 1;
+    }
+
+    return sectionList[sectionIndex];
+};
+
+module.exports = SectionManager;
+
+},{}],17:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -1945,29 +2485,33 @@ var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
 
 extManager.defineExtension('taskCounter', function(editor) {
     editor.getTaskCount = function() {
-        var found;
+        var found, count;
 
         if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_TASK_RX);
-            return found ? found.length : 0;
+            count = found ? found.length : 0;
         } else {
-            return editor.wwEditor.get$Body().find('input').length;
+            count = editor.wwEditor.get$Body().find('input').length;
         }
-    }
+
+        return count;
+    };
 
     editor.getCheckedTaskCount = function() {
-        var found;
+        var found, count;
 
         if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
-            return found ? found.length : 0;
+            count = found ? found.length : 0;
         } else {
-            return editor.wwEditor.get$Body().find('input:checked').length;
+            count = editor.wwEditor.get$Body().find('input:checked').length;
         }
-    }
+
+        return count;
+    };
 });
 
-},{"../extManager":12}],15:[function(require,module,exports){
+},{"../extManager":12}],18:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -2017,7 +2561,7 @@ function updateUI($layer, list) {
     void 0;
 }
 
-},{"../extManager":12}],16:[function(require,module,exports){
+},{"../extManager":12}],19:[function(require,module,exports){
 /**
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2066,7 +2610,7 @@ $.fn.neonEditor = function() {
 window.ne = window.ne || {};
 window.ne.NeonEditor = NeonEditor;
 
-},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],17:[function(require,module,exports){
+},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],20:[function(require,module,exports){
 /**
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2303,7 +2847,7 @@ LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
 
 module.exports = LayerPopup;
 
-},{"./uicontroller":40}],18:[function(require,module,exports){
+},{"./uicontroller":44}],21:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2379,8 +2923,6 @@ Layout.prototype._initToolbar = function() {
 };
 
 Layout.prototype._initModeSwitch = function() {
-    var self = this;
-
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
     this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
 };
@@ -2482,7 +3024,7 @@ Layout.prototype.getWwEditorContainerEl = function() {
 
 module.exports = Layout;
 
-},{"./modeSwitch":32,"./popupAddImage":33,"./popupAddLink":34,"./tab":37,"./toolbar":39}],19:[function(require,module,exports){
+},{"./modeSwitch":35,"./popupAddImage":36,"./popupAddLink":37,"./tab":40,"./toolbar":43}],22:[function(require,module,exports){
 /**
  * @fileoverview Implements LazyRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2561,7 +3103,7 @@ LazyRunner.prototype._clearTOIDIfNeed = function(TOID) {
 
 module.exports = LazyRunner;
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2621,7 +3163,7 @@ var AddImage = CommandManager.command('markdown',
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],21:[function(require,module,exports){
+},{"../commandManager":7}],24:[function(require,module,exports){
 /**
  * @fileoverview Implements Addlink markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2679,7 +3221,7 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],22:[function(require,module,exports){
+},{"../commandManager":7}],25:[function(require,module,exports){
 /**
  * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2752,7 +3294,7 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],23:[function(require,module,exports){
+},{"../commandManager":7}],26:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2848,9 +3390,9 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * 커서를 센터로 이동시킨다
@@ -2864,7 +3406,7 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],24:[function(require,module,exports){
+},{"../commandManager":7}],27:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2936,7 +3478,7 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],25:[function(require,module,exports){
+},{"../commandManager":7}],28:[function(require,module,exports){
 /**
  * @fileoverview HR markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2999,7 +3541,7 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],26:[function(require,module,exports){
+},{"../commandManager":7}],29:[function(require,module,exports){
 /**
  * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3115,9 +3657,9 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
         if (tmpSelection === '******' || tmpSelection === '______') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * expendOnlyBoldSelection
@@ -3152,9 +3694,9 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
         if (tmpSelection === '**' || tmpSelection === '__') {
             return tmpSelection;
-        } else {
-            doc.setSelection(cursor);
         }
+
+        doc.setSelection(cursor);
     },
     /**
      * setCursorToCenter
@@ -3171,7 +3713,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],27:[function(require,module,exports){
+},{"../commandManager":7}],30:[function(require,module,exports){
 /**
  * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3228,7 +3770,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],28:[function(require,module,exports){
+},{"../commandManager":7}],31:[function(require,module,exports){
 /**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3285,7 +3827,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],29:[function(require,module,exports){
+},{"../commandManager":7}],32:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3342,7 +3884,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],30:[function(require,module,exports){
+},{"../commandManager":7}],33:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3462,9 +4004,9 @@ MarkdownEditor.prototype.getEditor = function() {
 
 MarkdownEditor.prototype.reset = function() {
     this.setValue('');
-}
+};
 
-MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function(value) {
+MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function() {
     this.eventManager.emit('contentChanged.markdownEditor', this);
 };
 
@@ -3545,7 +4087,7 @@ MarkdownEditor.prototype.setHeight = function(height) {
 
 module.exports = MarkdownEditor;
 
-},{}],31:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -3617,7 +4159,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3701,7 +4243,7 @@ ModeSwitch.TYPE = TYPE;
 
 module.exports = ModeSwitch;
 
-},{"./uicontroller":40}],33:[function(require,module,exports){
+},{"./uicontroller":44}],36:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3886,7 +4428,7 @@ PopupAddImage.prototype.resetInputs = function() {
 
 module.exports = PopupAddImage;
 
-},{"./layerpopup":17,"./tab":37}],34:[function(require,module,exports){
+},{"./layerpopup":20,"./tab":40}],37:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3989,7 +4531,7 @@ PopupAddLink.prototype.resetInputs = function() {
 
 module.exports = PopupAddLink;
 
-},{"./layerpopup":17}],35:[function(require,module,exports){
+},{"./layerpopup":20}],38:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4057,6 +4599,8 @@ Preview.prototype.render = function(html) {
 
     this.$previewContent.empty();
     this.$previewContent.html(finalHtml);
+
+    this.eventManager.emit('previewRenderAfter', this);
 };
 
 Preview.prototype.setHeight = function(height) {
@@ -4065,7 +4609,7 @@ Preview.prototype.setHeight = function(height) {
 
 module.exports = Preview;
 
-},{"./lazyRunner":19}],36:[function(require,module,exports){
+},{"./lazyRunner":22}],39:[function(require,module,exports){
 /**
  * @fileoverview Implements %filltext:name=Name%
  * @author
@@ -4317,7 +4861,7 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
 module.exports = SquireExt;
 
-},{"./domUtils":9}],37:[function(require,module,exports){
+},{"./domUtils":9}],40:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4515,7 +5059,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":38,"./uicontroller":40}],38:[function(require,module,exports){
+},{"./templater":41,"./uicontroller":44}],41:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4554,7 +5098,66 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],39:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+'use strict';
+
+var Button = require('./button');
+
+var util = ne.util;
+
+/**
+ * ToggleButton
+ * initialize toggle button
+ * @exports ToggleButton
+ * @augments Button
+ * @constructor
+ * @class
+ * @param {object[]} options 옵션
+ * @param {string} options.className 만들어진 RootElement에 추가할 클래스
+ * @param {string} options.command 클릭되면 실행될 커맨드명
+ * @param {string} options.text 버튼안에 들어갈 텍스트
+ * @param {string} options.style 추가적으로 적용될 CSS스타일
+ */
+function ToggleButton(options) {
+    this.options = options;
+    this.current = this.options[0];
+
+    Button.call(this, this.current);
+
+    this._initEvent();
+}
+
+ToggleButton.prototype = util.extend(
+    {},
+    Button.prototype
+);
+
+ToggleButton.prototype._initEvent = function() {
+    var self = this;
+
+    this.on('clicked', function() {
+        self._toggle();
+    });
+};
+
+ToggleButton.prototype._toggle = function() {
+    if (this.current === this.options[0]) {
+        this.current = this.options[1];
+    } else {
+        this.current = this.options[0];
+    }
+
+    this._setOptions(this.current);
+    this.render();
+};
+
+module.exports = ToggleButton;
+
+},{"./button":1}],43:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4563,7 +5166,8 @@ module.exports = templater;
 'use strict';
 
 var UIController = require('./uicontroller'),
-    Button = require('./button');
+    Button = require('./button'),
+    ToggleButton = require('./toggleButton');
 
 var util = ne.util;
 
@@ -4608,6 +5212,14 @@ Toolbar.prototype.render = function() {
  */
 Toolbar.prototype.addButton = function(button) {
     var ev = this.eventManager;
+
+    if (!button.render) {
+        if (!util.isArray(button)) {
+            button = new Button(button);
+        } else {
+            button = new ToggleButton(button);
+        }
+    }
 
     button.on('command', function emitCommandEvent($, commandName) {
         ev.emit('command', commandName);
@@ -4688,7 +5300,7 @@ Toolbar.prototype._initButton = function() {
 
 module.exports = Toolbar;
 
-},{"./button":1,"./uicontroller":40}],40:[function(require,module,exports){
+},{"./button":1,"./toggleButton":42,"./uicontroller":44}],44:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4928,7 +5540,7 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],41:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4963,7 +5575,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],42:[function(require,module,exports){
+},{"../commandManager":7}],46:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4999,7 +5611,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],43:[function(require,module,exports){
+},{"../commandManager":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5033,7 +5645,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],44:[function(require,module,exports){
+},{"../commandManager":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5078,7 +5690,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],45:[function(require,module,exports){
+},{"../commandManager":7}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5103,7 +5715,6 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
      */
     exec: function(wwe) {
         var sq = wwe.getEditor(),
-            range = sq.getSelection(),
             foundedHeading = wwe.hasFormatWithRx(/h[\d]/i),
             depth = 1,
             beforeDepth;
@@ -5124,7 +5735,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],46:[function(require,module,exports){
+},{"../commandManager":7}],50:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5173,7 +5784,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":7}],51:[function(require,module,exports){
 /**
  * @fileoverview Implements inceaseTask wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5265,7 +5876,7 @@ function replaceWith(node, node2) {
 }
 
 function increaseTaskLevel(frag) {
-    var i, l, item, type, newParent, listAttrs,
+    var i, l, item, type, newParent,
         items = frag.querySelectorAll('LI'),
         listItemAttrs = {class: 'task-list-item'};
 
@@ -5290,11 +5901,11 @@ function increaseTaskLevel(frag) {
     }
 
     return frag;
-};
+}
 
 module.exports = IncreaseTask;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":7}],52:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5339,7 +5950,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],49:[function(require,module,exports){
+},{"../commandManager":7}],53:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5374,7 +5985,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],50:[function(require,module,exports){
+},{"../commandManager":7}],54:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5398,7 +6009,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li, savedSelection,
+        var selection, $selected, $li,
             sq = wwe.getEditor();
 
         if (!sq.hasFormat('li')) {
@@ -5437,7 +6048,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],51:[function(require,module,exports){
+},{"../commandManager":7}],55:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5472,7 +6083,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],52:[function(require,module,exports){
+},{"../commandManager":7}],56:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5572,7 +6183,7 @@ WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
 };
 
 WysiwygEditor.prototype._initStyleSheet = function(doc) {
-    var styleLink, body;
+    var styleLink;
 
     util.forEach(this.contentStyles, function(stylePath) {
         styleLink = doc.createElement('link');
@@ -5602,7 +6213,7 @@ WysiwygEditor.prototype._initEvent = function() {
     this.eventManager.listen('show', function() {
         self.prepareToDetach();
     });
-}
+};
 
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
@@ -5662,7 +6273,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
     var self = this,
-        doc, sq,
         range = this.getEditor().getSelection().cloneRange();
 /*
     console.log(event);
@@ -5739,7 +6349,7 @@ WysiwygEditor.prototype._isInOrphanText = function(selection) {
 };
 
 WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
-    var block, textElem, cursorOffset, cursorTarget, insertTargetNode;
+    var block, textElem, cursorOffset, insertTargetNode;
 
     this.saveSelection(selection);
     this._joinSplitedTextNodes();
@@ -5775,7 +6385,7 @@ WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
 };
 
 WysiwygEditor.prototype._joinSplitedTextNodes = function() {
-    var findTextNodeFilter, textNodes, $wrapper, prevNode,
+    var findTextNodeFilter, textNodes, prevNode,
         lastGroup,
         nodesToRemove = [];
 
@@ -5800,9 +6410,7 @@ WysiwygEditor.prototype._joinSplitedTextNodes = function() {
 };
 
 WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
-    var findTextNodeFilter, textNodes, $wrapper, prevNode,
-        nodeGroup = [],
-        nodesToRemove = [];
+    var findTextNodeFilter, textNodes,
 
     findTextNodeFilter = function() {
         return this.nodeType === 3;
@@ -5847,7 +6455,7 @@ WysiwygEditor.prototype.reset = function() {
     }
 
     this.setValue('');
-}
+};
 
 WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
     this.getEditor().changeBlockFormatTo(targetTagName);
@@ -5861,7 +6469,7 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
         if (!frag.textContent) {
             frag = self.getEditor().createDefaultBlock();
         }
-        return frag
+        return frag;
     });
 };
 
@@ -5915,7 +6523,7 @@ WysiwygEditor.prototype._unwrapPtags = function() {
             $(node).unwrap();
         }
     });
-}
+};
 
 //we use divs for paragraph so we dont need any p tags
 WysiwygEditor.prototype._unwrapDivOnHr = function() {
@@ -5925,7 +6533,7 @@ WysiwygEditor.prototype._unwrapDivOnHr = function() {
             $(node).unwrap();
         }
     });
-}
+};
 
 WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode, $wrapper;
@@ -6058,7 +6666,7 @@ WysiwygEditor.prototype.get$Body = function() {
 
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
-}
+};
 
 WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
     var startContainer, startOffset,
@@ -6131,7 +6739,7 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnEnter = function(selection) {
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
     var div, pathToBody, appendBefore, currentNode;
 
-    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selction.startContainer;
+    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selection.startContainer;
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -6161,7 +6769,7 @@ WysiwygEditor.prototype._isInHr = function(selection) {
 WysiwygEditor.prototype._isNearHr = function(selection) {
     var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
     return domUtils.getNodeName(prevNode) === 'HR';
-}
+};
 
 WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
     var hrSuspect, cursorTarget;
@@ -6213,7 +6821,7 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
     this._addCheckedAttrToCheckedInput();
-    before = $(container).html()
+    before = $(container).html();
     $(container).html(before.replace(from, to));
 };
 
@@ -6253,4 +6861,4 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
 module.exports = WysiwygEditor;
 
-},{"./domUtils":9,"./squireExt":36}]},{},[16]);
+},{"./domUtils":9,"./squireExt":39}]},{},[19]);
