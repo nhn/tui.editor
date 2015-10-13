@@ -51,7 +51,12 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
         height: 300,
         contentCSSStyles: [
             'bower_components/neonEditor/dist/contentStyle.css'
-        ]
+        ],
+        events: {
+            'load': function() {
+                console.log('handler');
+            }
+        }
     });
 </script>
 </body>
@@ -92,11 +97,6 @@ $('#editSection').neonEditor({
 
             //callback으로 url전달
             //callback('이미지URL');
-        }
-    },
-    events: {
-        'load': function() {
-            console.log('handler');
         }
     }
 });
