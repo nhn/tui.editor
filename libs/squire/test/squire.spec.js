@@ -32,6 +32,88 @@ describe('Squire RTE', function () {
         editor.setSelection(range);
     }
 
+    describe('hasFormat', function () {
+        var startHTML;
+        beforeEach( function () {
+            startHTML = '<div>one <b>two three</b> four <i>five</i></div>';
+            editor.setHTML(startHTML);
+        });
+
+        it('returns false when range not touching format', function () {
+            var range = doc.createRange();
+            range.setStart(doc.body.childNodes.item(0), 0);
+            range.setEnd(doc.body.childNodes.item(0), 1);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be false');
+        });
+
+        it('returns false when range inside other format', function () {
+            var range = doc.createRange();
+            range.setStart(doc.querySelector('i').childNodes[0], 1);
+            range.setEnd(doc.querySelector('i').childNodes[0], 2);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be false');
+        });
+
+        it('returns false when range covers anything outside format', function () {
+            var range = doc.createRange();
+            range.setStart(doc.querySelector('b').previousSibling, 2);
+            range.setEnd(doc.querySelector('b').childNodes[0], 8);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be false');
+        });
+
+        it('returns true when range inside format', function () {
+            var range = doc.createRange();
+            range.setStart(doc.querySelector('b').childNodes[0], 2);
+            range.setEnd(doc.querySelector('b').childNodes[0], 8);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+
+        it('returns true when range covers start of format', function () {
+            var range = doc.createRange();
+            range.setStartBefore(doc.querySelector('b'));
+            range.setEnd(doc.querySelector('b').childNodes[0], 8);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+
+        it('returns true when range covers start of format, even in weird cases', function () {
+            var range = doc.createRange();
+            var prev = doc.querySelector('b').previousSibling;
+            range.setStart(prev, prev.length);
+            range.setEnd(doc.querySelector('b').childNodes[0], 8);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+
+        it('returns true when range covers end of format', function () {
+            var range = doc.createRange();
+            range.setStart(doc.querySelector('b').childNodes[0], 2);
+            range.setEndAfter(doc.querySelector('b'));
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+
+        it('returns true when range covers end of format, even in weird cases', function () {
+            var range = doc.createRange();
+            range.setStart(doc.querySelector('b').childNodes[0], 2);
+            var next = doc.querySelector('b').nextSibling;
+            range.setEnd(next, 0);
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+
+        it('returns true when range covers all of format', function () {
+            var range = doc.createRange();
+            range.setStartBefore(doc.querySelector('b'));
+            range.setEndAfter(doc.querySelector('b'));
+            editor.setSelection(range);
+            expect(editor.hasFormat('b'), 'to be true');
+        });
+    });
+
     describe('removeAllFormatting', function () {
         // Trivial cases
         it('removes inline styles', function () {

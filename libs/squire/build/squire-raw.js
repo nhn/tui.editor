@@ -2803,6 +2803,20 @@ proto.hasFormat = function ( tag, attributes, range ) {
         return false;
     }
 
+    // Sanitize range to prevent weird IE artifacts
+    if ( !range.collapsed &&
+            range.startContainer.nodeType === TEXT_NODE &&
+            range.startOffset === range.startContainer.length &&
+            range.startContainer.nextSibling ) {
+        range.setStartBefore( range.startContainer.nextSibling );
+    }
+    if ( !range.collapsed &&
+            range.endContainer.nodeType === TEXT_NODE &&
+            range.endOffset === 0 &&
+            range.endContainer.previousSibling ) {
+        range.setEndAfter( range.endContainer.previousSibling );
+    }
+
     // If the common ancestor is inside the tag we require, we definitely
     // have the format.
     var root = range.commonAncestorContainer,
