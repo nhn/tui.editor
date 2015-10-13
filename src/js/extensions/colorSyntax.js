@@ -7,61 +7,37 @@
 
 var extManager = require('../extManager');
 
-var colorSyntax = /{color:(.+?)}(.*?){color}/g,
-    colorHtml = /<span class="colour" style="color:(.+?)">(.*?)<\/span>/g;
+var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
+    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
+    decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 extManager.defineExtension('colorSyntax', function(editor) {
     editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
-        return html.replace(colorSyntax, '<span style="color:$1">$2</span>');
+        return html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
     });
+
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-        return markdown.replace(colorHtml, '{color:$1}$2{color}');
-    });
-/*
-    //Commands
-    editor.addCommand('markdown', {
-        name: 'scrollFollow.disable',
-        exec: function() {
-            active = false;
-        }
-    });
+        return markdown.replace(colorHtmlRx, function(founded, color, text) {
+            if (color.match(decimalColorRx)) {
+                color = changeDecColorToHex(color);
+            }
 
-    editor.addCommand('markdown', {
-        name: 'scrollFollow.enable',
-        exec: function() {
-            active = true;
-        }
+            return '{color:' + color + '}' + text + '{color}';
+        });
     });
-
-    //Events
-    cm.on('change', function() {
-        scrollable = false;
-        sectionManager.makeSectionList();
-    });
-
-    editor.on('previewRenderAfter', function() {
-        sectionManager.sectionMatch();
-        scrollable = true;
-    });
-
-    cm.on('scroll', function() {
-        if (!active || !scrollable) {
-            return;
-        }
-
-        scrollSync.syncToPreview();
-    });
-
-    //UI
-    editor.layout.toolbar.addButton([{
-        classname: 'scrollfollowEnable',
-        command: 'scrollFollow.disable',
-        text: 'SF',
-        style: 'background-color: #fff'
-    }, {
-        className: 'scrollFollowDisable',
-        command: 'scrollFollow.enable',
-        text: 'SF',
-        style: 'background-color: #ddd'
-    }]);*/
 });
+
+function changeDecColorToHex(color) {
+    return color.replace(decimalColorRx, function(colorValue, r, g, b) {
+        r = parseInt(r, 10);
+        g = parseInt(g, 10);
+        b = parseInt(b, 10);
+
+        return '#' + get2DigitNumberString(r.toString(16)) + get2DigitNumberString(g.toString(16)) + get2DigitNumberString(b.toString(16));
+    });
+}
+
+function get2DigitNumberString(numberStr) {
+    return numberStr === '0' ? '00' : numberStr;
+}
+
