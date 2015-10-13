@@ -26,6 +26,8 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'convertorAfterMarkdownToHtmlConverted',
+    'convertorAfterHtmlToMarkdownConverted',
     'load',
     'focus',
     'blur',
@@ -81,6 +83,24 @@ EventManager.prototype.emit = function() {
     if (results && results.length) {
         return results;
     }
+};
+
+EventManager.prototype.emitReduce = function() {
+    var args = util.toArray(arguments),
+        type = args.shift(),
+        eventHandlers = this.events.get(type);
+
+    if (eventHandlers) {
+        util.forEach(eventHandlers, function(handler) {
+            var result = handler.apply(null, args);
+
+            if (!util.isFalsy(result)) {
+                args[0] = result;
+            }
+       });
+    }
+
+    return args[0];
 };
 
 EventManager.prototype._hasEventType = function(type) {

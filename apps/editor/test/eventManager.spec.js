@@ -1,8 +1,8 @@
+'use strict';
+
 var EventManager = require('../src/js/eventManager');
 
 describe('eventManager', function() {
-    'use strict';
-
     var ev;
 
     beforeEach(function() {
@@ -66,6 +66,50 @@ describe('eventManager', function() {
             result = ev.emit('testEvent');
 
             expect(result).toBeUndefined();
+        });
+    });
+    describe('emitReduce()', function() {
+        beforeEach(function() {
+            ev.addEventType('reduceTest');
+        });
+
+        it('emit handlers reduce style return value', function() {
+            ev.listen('reduceTest', function(data) {
+                data += 1;
+                return data;
+            });
+
+            ev.listen('reduceTest', function(data) {
+                data += 2;
+                return data;
+            });
+
+            expect(ev.emitReduce('reduceTest', 1)).toEqual(4);
+        });
+
+        it('emitReduce can have additional parameter', function() {
+            ev.listen('reduceTest', function(data, addition) {
+                data += addition;
+                return data;
+            });
+
+            ev.listen('reduceTest', function(data, addition) {
+                data += (addition + 1);
+                return data;
+            });
+            expect(ev.emitReduce('reduceTest', 1, 2)).toEqual(6);
+        });
+
+        it('emitReduce pass handler return value if return value is falsy', function() {
+            ev.listen('reduceTest', function() {
+                return;
+            });
+
+            ev.listen('reduceTest', function(data, addition) {
+                data += (addition + 1);
+                return data;
+            });
+            expect(ev.emitReduce('reduceTest', 1, 2)).toEqual(4);
         });
     });
 });
