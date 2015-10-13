@@ -43,12 +43,8 @@ describe('MarkdownEditor', function() {
         });
 
         it('when something change emit change.MarkdownEditor event', function(done) {
-            var textContent;
-
             em.listen('change.markdownEditor', function(ev) {
-                textContent = ev.textContent;
-
-                expect(textContent).toEqual('my');
+                expect(ev.textContent).toEqual('my');
                 done();
             });
 
@@ -56,19 +52,15 @@ describe('MarkdownEditor', function() {
         });
 
         it('when something change emit change event', function(done) {
-            var textContent, source;
-
             em.listen('change', function(ev) {
-                source = ev.source;
-                textContent = ev.textContent;
-
-                expect(textContent).toEqual('m');
-                expect(source).toEqual('markdown');
+                expect(ev.textContent).toEqual('comment');
+                expect(ev.caretOffset).toEqual(7);
+                expect(ev.source).toEqual('markdown');
 
                 done();
             });
 
-            mde.getEditor().replaceSelection('m');
+            mde.getEditor().replaceSelection('comment');
         });
 
         it('when editor gain focus, emit focus event', function() {
