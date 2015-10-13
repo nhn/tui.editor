@@ -19,7 +19,9 @@ var marked = window.marked,
  * @class
  */
 
-function Convertor() {}
+function Convertor(em) {
+    this.eventManager = em;
+}
 
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
@@ -51,15 +53,21 @@ Convertor.prototype._markdownToHtml = function(markdown) {
 };
 
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
-    return this._markdownToHtmlWithCodeHighlight(markdown);
+    var html = this._markdownToHtmlWithCodeHighlight(markdown);
+    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+    return html;
 };
 
 Convertor.prototype.toHTML = function(markdown) {
-    return this._markdownToHtml(markdown);
+    var html =  this._markdownToHtml(markdown);
+    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+    return html;
 };
 
 Convertor.prototype.toMarkdown = function(html) {
-    return toMark(html);
+    var markdown = toMark(html);
+    markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+    return markdown;
 };
 
 Convertor.factory = function(eventManager) {

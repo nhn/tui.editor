@@ -48,6 +48,7 @@ require('./extensions/querySplitter');
 require('./extensions/taskCounter');
 require('./extensions/textPalette');
 require('./extensions/scrollFollow');
+require('./extensions/colorSyntax');
 
 /**
  * NeonEditor
@@ -77,7 +78,7 @@ function NeonEditor(options) {
     this.eventManager = new EventManager();
 
     this.commandManager = new CommandManager(this);
-    this.convertor = new Convertor();
+    this.convertor = new Convertor(this.eventManager);
 
     this.layout = new Layout(options, this.eventManager);
     this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
