@@ -2163,7 +2163,6 @@ function Squire ( doc, config ) {
 
     this._events = {};
 
-    this._sel = win.getSelection();
     this._lastSelection = null;
 
     // IE loses selection state of iframe on blur, so make sure we
@@ -2449,17 +2448,23 @@ proto.setSelection = function ( range ) {
         if ( isIOS ) {
             this._win.focus();
         }
-        var sel = this._sel;
-        sel.removeAllRanges();
-        sel.addRange( range );
+        var sel = this._getWindowSelection();
+        if ( sel ) {
+            sel.removeAllRanges();
+            sel.addRange( range );
+        }
     }
     return this;
 };
 
+proto._getWindowSelection = function () {
+    return this._win.getSelection() || null;
+};
+
 proto.getSelection = function () {
-    var sel = this._sel,
+    var sel = this._getWindowSelection(),
         selection, startContainer, endContainer;
-    if ( sel.rangeCount ) {
+    if ( sel && sel.rangeCount ) {
         selection  = sel.getRangeAt( 0 ).cloneRange();
         startContainer = selection.startContainer;
         endContainer = selection.endContainer;
