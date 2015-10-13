@@ -137,19 +137,16 @@ MarkdownEditor.prototype._cloneCMEventObject = function(e) {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-    var eventObj,
-        cmEventCloned;
+    var eventObj, cursor;
 
     if (e.origin !== 'setValue') {
-        cmEventCloned = this._cloneCMEventObject(e);
-
-        cmEventCloned.to.ch += 1;
+        cursor = this.getEditor().getCursor();
 
         eventObj = {
             source: 'markdown',
-            selection: cmEventCloned,
-            textContent: this.cm.getDoc().getLine(e.to.line) || '',
-            caretOffset: cmEventCloned.to.ch
+            selection: cursor,
+            textContent: this.cm.getDoc().getLine(cursor.line) || '',
+            caretOffset: cursor.ch
         };
 
         this.eventManager.emit('change.markdownEditor', eventObj);
@@ -163,10 +160,10 @@ MarkdownEditor.prototype.getCaretPosition = function() {
 
 MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
     if (offset) {
-        selection.to.ch += offset;
+        selection.ch += offset;
     }
 
-    this.cm.addWidget(selection.to, node, true, style);
+    this.cm.addWidget(selection, node, true, style);
 };
 
 MarkdownEditor.prototype.replaceSelection = function(content, selection) {
