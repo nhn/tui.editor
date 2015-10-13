@@ -30,7 +30,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
     <meta charset="UTF-8">
     <title>DEMO</title>
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/ne-code-snippet/code-snippet.js"></script>
+    <script src="bower_components/code-snippet/code-snippet.js"></script>
     <script src="bower_components/marked/lib/marked.js"></script>
     <script src="bower_components/toMark/dist/toMark.js"></script>
     <script src="bower_components/codemirror/lib/codemirror.js"></script>
@@ -63,7 +63,11 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자)
-* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 demoDist.html파일처럼 contentStyle.css의 경로를 다시 지정하면됩니다.
+* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 contentStyle.css의 경로를 다시 지정하면됩니다.
+* events: 내부 이벤트에 대응하는 핸들러를 셋팅합니다.
+* exts: 사용할 익스텐션들을 배열로 지정합니다.
+    * `exts: ['scrollFollow']`
+* hooks: 이미지서버와의 연동등을 처리하는 훅을 바인드합니다.
 
 ## 이미지 서버 연동
 
@@ -89,6 +93,11 @@ $('#editSection').neonEditor({
             //callback으로 url전달
             //callback('이미지URL');
         }
+    },
+    events: {
+        'load': function() {
+            console.log('handler');
+        }
     }
 });
 ```
@@ -103,7 +112,6 @@ $('#editSection').neonEditor('focus');
 var content = $("#editSection").neonEditor("getValue");
 
 $("#editSection").neonEditor("setValue", "# Hello!!");
-
 ```
 
 * focus: 에디터에 포커스를 줍니다.
@@ -113,5 +121,14 @@ $("#editSection").neonEditor("setValue", "# Hello!!");
 * setValue: 에디터에 마크다운 컨텐트를 셋팅합니다.
 * changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
 * contentHeight: 에디터의 컨텐트 영역의 높이값을 인자로 넘겨 지정하거나 현재의 높이값을 반환합니다
+* on: 이벤트핸들러와 핸들러평션을 파라메터로 넘겨 에디터 내부이벤트를 바인드 할수있습니다.
 
+``` javascript
+$('#editSection').neonEditor('on', 'load', handler);
+```
 
+## 주요변경점
+* 0.0.2
+    * 에디터 셋팅한뒤 바로 에디터에 접근할때 iframe이 셋팅되지 않아 문제가될수있습니다.
+    에디터의 셋팅이 비동기로 이루어집니다. 에디터 API를 이용한다던지 에디터에 접근할때는 load이벤트를 이용해주시기바랍니다.
+    * 기존에 디펜던시 모듈들이 모두포함된 full버전이 제거되었습니다 따라서 디펜던시 모듈들을 직접 로드해야합니다(샘플 참조)
