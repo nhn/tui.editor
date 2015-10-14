@@ -91,8 +91,8 @@ describe('scrollFollow.sectionManager', function() {
                 'paragraph'
             ].join('\n'));
 
-            sectionManager._eachLineState(function(type, lineNumber) {
-                lineType[lineNumber] = type;
+            sectionManager._eachLineState(function(isSection, lineNumber) {
+                lineType[lineNumber] = isSection;
             });
 
             expect(lineType[0]).toBeUndefined();
