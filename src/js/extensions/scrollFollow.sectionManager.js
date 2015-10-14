@@ -131,10 +131,8 @@ SectionManager.prototype.makeSectionList = function() {
 
     this._sectionList = [];
 
-    this._addNewSection(0, 0);
-
     this._eachLineState(function(isSection, lineNumber) {
-        if (isSection) {
+        if (isSection || !self._sectionList.length) {
             self._addNewSection(lineNumber, lineNumber);
         } else {
             self._updateCurrentSectionEnd(lineNumber);
