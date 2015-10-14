@@ -4,12 +4,8 @@ var HR = require('../../src/js/markdownCommands/hr'),
     MarkdownEditor = require('../../src/js/markdownEditor'),
     EventManager = require('../../src/js/eventManager');
 
-var CodeMirror = window.CodeMirror;
-
 describe('HR', function() {
-    var cm,
-        doc,
-        mde;
+    var cm, doc, mde;
 
     beforeEach(function() {
         var $container = $('<div />'),
@@ -26,6 +22,7 @@ describe('HR', function() {
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
+
         doc = cm.getDoc();
     });
 
@@ -39,7 +36,15 @@ describe('HR', function() {
 
             HR.exec(mde);
 
-            expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '***', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '\n* * *\n', '', 'mytext3'].join('\n'));
+        });
+
+        it('add hr empty line', function() {
+            cm.setCursor(1, 0);
+
+            HR.exec(mde);
+
+            expect(cm.getValue()).toEqual(['mytext1', '\n* * *\n', 'mytext2', 'mytext3'].join('\n'));
         });
     });
 
@@ -49,7 +54,7 @@ describe('HR', function() {
 
             HR.exec(mde);
 
-            expect(cm.getValue()).toEqual(['m***text2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['m\n\n* * *\n\ntext2', 'mytext3'].join('\n'));
         });
     });
 });
