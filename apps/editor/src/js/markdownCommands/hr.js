@@ -24,8 +24,9 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
      *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde) {
-        var replaceText, range, from, to,
+        var range, from, to,
             cm = mde.getEditor(),
+            replaceText = '',
             doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
@@ -45,11 +46,15 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
         };
 
         if (range.collapsed) {
-            replaceText = doc.getLine(from.line) + '\n***';
+            replaceText = doc.getLine(from.line);
             from.ch = 0;
             to.ch = doc.getLineHandle(range.to.line).text.length;
+        }
+
+        if (doc.getLine(from.line).length) {
+            replaceText += '\n\n* * *\n\n';
         } else {
-            replaceText = '***';
+            replaceText += '\n* * *\n';
         }
 
         doc.replaceRange(replaceText, from, to);
