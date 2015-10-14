@@ -130,6 +130,20 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(1);
         });
 
+        it('make section list use default section if first contents is header ', function() {
+            ned.setValue([
+                '# header',
+                '***',
+                'paragraph'
+            ].join('\n'));
+
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(1);
+        });
+
+
         it('make section list with setext type header ', function() {
             ned.setValue([
                 'paragraph',
