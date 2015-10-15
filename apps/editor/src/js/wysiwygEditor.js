@@ -529,6 +529,10 @@ WysiwygEditor.prototype.getValue = function() {
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
+
+    //for ensure to fire change event
+    this.get$Body().attr('lastGetValue', Date.now());
+
     this._addCheckedAttrToCheckedInput();
     this._removeSpaceNextToTaskInput();
     this._joinSplitedTextNodes();
