@@ -74,9 +74,6 @@ describe('WysiwygEditor', function() {
                 done();
             });
 
-            //because squire input event, without this code, change event fire twice
-            wwe.editor._ignoreChange = false;
-
             wwe.editor.insertHTML('<p>test</p>');
         });
 
@@ -88,8 +85,6 @@ describe('WysiwygEditor', function() {
                 //expect(ev.caretOffset).toEqual(1);
                 done();
             });
-
-            wwe.editor._ignoreChange = false;
 
             wwe.editor.insertPlainText('t');
         });
@@ -103,9 +98,25 @@ describe('WysiwygEditor', function() {
                 done();
             });
 
-            wwe.editor._ignoreChange = false;
-
             wwe.editor.insertHTML('t');
+        });
+
+        it('fire change event when getValue after', function(done) {
+            em.listen('change', function(ev) {
+                expect(ev.source).toEqual('wysiwyg');
+                done();
+            });
+
+            wwe.getEditor().setHTML('TEST');
+
+            //이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
+            setTimeout(function() {
+                wwe.getValue();
+
+                setTimeout(function() {
+                    wwe.getEditor().insertHTML('TEST2');
+                }, 0);
+            }, 0);
         });
 
         it('when editor gain focus, emit focus event', function() {
@@ -345,8 +356,6 @@ describe('WysiwygEditor', function() {
 
     describe('_removeTaskInputInWrongPlace', function() {
         it('remove inputbox in wrong parent', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
             wwe.get$Body().html('<ul><li><input type="checkbox" /></li></ul>');
 
             wwe._removeTaskInputInWrongPlace();
@@ -355,8 +364,6 @@ describe('WysiwygEditor', function() {
         });
 
         it('remove inputbox in wrong place', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
             wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
 
             wwe._removeTaskInputInWrongPlace();
@@ -450,7 +457,7 @@ describe('WysiwygEditor', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
 
-            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" /> test</li></ul>')
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" /> test</li></ul>');
 
             range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('li')[0].firstChild);
             range.collapse(true);
@@ -466,8 +473,6 @@ describe('WysiwygEditor', function() {
 
     describe('replace node\'s content text', function() {
         it('replace text without affect tags', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
             wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
 
             wwe.replaceContentText(wwe.getEditor().getDocument().body, 'list1', 'list2');
