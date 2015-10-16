@@ -22,10 +22,31 @@ extManager.defineExtension('colorSyntax', function(editor) {
                 color = changeDecColorToHex(color);
             }
 
-            return '{color:' + color + '}' + text + '{color}';
+            return makeMarkdownColorSyntax(text, color);
         });
     });
+
+    editor.addCommand('markdown', {
+        name: 'color',
+        exec: function(mde, color) {
+            var cm = mde.getEditor();
+            cm.replaceSelection(makeMarkdownColorSyntax(cm.getSelection(), color));
+            mde.focus();
+        }
+    });
+
+    editor.addCommand('wysiwyg', {
+        name: 'color',
+        exec: function(wwe, color) {
+            wwe.getEditor().setTextColour(color);
+            wwe.focus();
+        }
+    });
 });
+
+function makeMarkdownColorSyntax(text, color) {
+    return '{color:' + color + '}' + text + '{color}';
+}
 
 function changeDecColorToHex(color) {
     return color.replace(decimalColorRx, function(colorValue, r, g, b) {
