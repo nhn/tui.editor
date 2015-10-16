@@ -69,4 +69,36 @@ describe('colorSyntax', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('commands', function() {
+        it('add color in markdown', function() {
+            ned.setValue('text');
+            ned.getCodeMirror().execCommand('selectAll');
+            ned.exec('color', '#f0f');
+
+            expect(ned.getValue()).toEqual('{color:#f0f}text{color}');
+        });
+
+        it('add color in wysiwyg', function() {
+            var sq, $body, selection, $span;
+
+            ned.changeMode('wysiwyg');
+
+            sq = ned.getSquire();
+            $body = ned.wwEditor.get$Body();
+
+            sq.setHTML('text');
+
+            selection = sq.getSelection().cloneRange();
+            selection.selectNodeContents($body.find('div')[0].childNodes[0]);
+            sq.setSelection(selection);
+
+            ned.exec('color', '#f0f');
+
+            $span = ned.wwEditor.get$Body().find('span');
+
+            expect($span.hasClass('colour')).toBe(true);
+            expect($span.css('color')).toEqual('rgb(255, 0, 255)');
+        });
+    });
 });
