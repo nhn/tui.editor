@@ -16,8 +16,7 @@ bower update
 ## 임시 설치 가이드
 
 현재 에디터가 개발중에 있습니다. 미리 에디터를 적용하기 위한 임시 배포입니다.
-디펜던시 스크립트들을 로드한후 에디터스크립트를 로드합니다.
-그리고 dist디렉토리의 neonEditor.css와 contentStyle.css를 링크해야합니다.
+에디터를 정상적으로 사용하기 위해서는 하단에 샘플 코드와같이 디펜던시 js, css 파일들과 에디터js, css파일이 로드가 되어야합니다.
 neonEditor.css는 에디터에 필요한 css스타일들이고
 contentStyle.css는 wysiwyg에디터나 preview에서 보여질 컨텐트의 스타일들입니다.
 contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통해 만들어진 컨텐츠를 보여줄때 같은 내용을 사용하실수 있습니다.(css파일 내용 참고)
