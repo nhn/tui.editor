@@ -409,7 +409,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
       stream.match(/\[[^\]]*\]/);
-      //현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음 
+      //현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
       //state.inline = state.f = linkHref;
       return image;
     }
@@ -451,7 +451,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
       return type + linkemail;
     }
-
+/*
+// modified
+// we dont need html Block it ruin markdown blocks
     if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
@@ -462,6 +464,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.htmlState = CodeMirror.startState(htmlMode);
       return switchBlock(stream, state, htmlBlock);
     }
+*/
 
     if (ch === '<' && stream.match(/^\/\w*?>/)) {
       state.md_inside = false;
