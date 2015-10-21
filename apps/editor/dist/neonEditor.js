@@ -77,7 +77,7 @@ Button.prototype._onClick = function() {
 
 module.exports = Button;
 
-},{"./uicontroller":44}],2:[function(require,module,exports){
+},{"./uicontroller":45}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 'use strict';
@@ -683,7 +683,8 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
       stream.match(/\[[^\]]*\]/);
-      state.inline = state.f = linkHref;
+      //현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음 
+      //state.inline = state.f = linkHref;
       return image;
     }
 
@@ -1378,7 +1379,9 @@ var marked = window.marked,
  * @class
  */
 
-function Convertor() {}
+function Convertor(em) {
+    this.eventManager = em;
+}
 
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
@@ -1410,15 +1413,21 @@ Convertor.prototype._markdownToHtml = function(markdown) {
 };
 
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
-    return this._markdownToHtmlWithCodeHighlight(markdown);
+    var html = this._markdownToHtmlWithCodeHighlight(markdown);
+    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+    return html;
 };
 
 Convertor.prototype.toHTML = function(markdown) {
-    return this._markdownToHtml(markdown);
+    var html =  this._markdownToHtml(markdown);
+    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+    return html;
 };
 
 Convertor.prototype.toMarkdown = function(html) {
-    return toMark(html);
+    var markdown = toMark(html);
+    markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+    return markdown;
 };
 
 Convertor.factory = function(eventManager) {
@@ -1427,7 +1436,7 @@ Convertor.factory = function(eventManager) {
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":34}],9:[function(require,module,exports){
+},{"./markedCustomRenderer":35}],9:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1546,6 +1555,7 @@ require('./extensions/querySplitter');
 require('./extensions/taskCounter');
 require('./extensions/textPalette');
 require('./extensions/scrollFollow');
+require('./extensions/colorSyntax');
 
 /**
  * NeonEditor
@@ -1575,7 +1585,7 @@ function NeonEditor(options) {
     this.eventManager = new EventManager();
 
     this.commandManager = new CommandManager(this);
-    this.convertor = new Convertor();
+    this.convertor = new Convertor(this.eventManager);
 
     this.layout = new Layout(options, this.eventManager);
     this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
@@ -1787,7 +1797,7 @@ NeonEditor.defineExtension = function(name, ext) {
 
 module.exports = NeonEditor;
 
-},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/querySplitter":13,"./extensions/scrollFollow":14,"./extensions/taskCounter":17,"./extensions/textPalette":18,"./layout":21,"./markdownCommands/addImage":23,"./markdownCommands/addLink":24,"./markdownCommands/blockquote":25,"./markdownCommands/bold":26,"./markdownCommands/heading":27,"./markdownCommands/hr":28,"./markdownCommands/italic":29,"./markdownCommands/ol":30,"./markdownCommands/task":31,"./markdownCommands/ul":32,"./markdownEditor":33,"./preview":38,"./wysiwygCommands/addImage":45,"./wysiwygCommands/addLink":46,"./wysiwygCommands/blockquote":47,"./wysiwygCommands/bold":48,"./wysiwygCommands/heading":49,"./wysiwygCommands/hr":50,"./wysiwygCommands/increaseTask":51,"./wysiwygCommands/italic":52,"./wysiwygCommands/ol":53,"./wysiwygCommands/task":54,"./wysiwygCommands/ul":55,"./wysiwygEditor":56}],11:[function(require,module,exports){
+},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/colorSyntax":13,"./extensions/querySplitter":14,"./extensions/scrollFollow":15,"./extensions/taskCounter":18,"./extensions/textPalette":19,"./layout":22,"./markdownCommands/addImage":24,"./markdownCommands/addLink":25,"./markdownCommands/blockquote":26,"./markdownCommands/bold":27,"./markdownCommands/heading":28,"./markdownCommands/hr":29,"./markdownCommands/italic":30,"./markdownCommands/ol":31,"./markdownCommands/task":32,"./markdownCommands/ul":33,"./markdownEditor":34,"./preview":39,"./wysiwygCommands/addImage":46,"./wysiwygCommands/addLink":47,"./wysiwygCommands/blockquote":48,"./wysiwygCommands/bold":49,"./wysiwygCommands/heading":50,"./wysiwygCommands/hr":51,"./wysiwygCommands/increaseTask":52,"./wysiwygCommands/italic":53,"./wysiwygCommands/ol":54,"./wysiwygCommands/task":55,"./wysiwygCommands/ul":56,"./wysiwygEditor":57}],11:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1816,6 +1826,8 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'convertorAfterMarkdownToHtmlConverted',
+    'convertorAfterHtmlToMarkdownConverted',
     'load',
     'focus',
     'blur',
@@ -1873,6 +1885,24 @@ EventManager.prototype.emit = function() {
     }
 };
 
+EventManager.prototype.emitReduce = function() {
+    var args = util.toArray(arguments),
+        type = args.shift(),
+        eventHandlers = this.events.get(type);
+
+    if (eventHandlers) {
+        util.forEach(eventHandlers, function(handler) {
+            var result = handler.apply(null, args);
+
+            if (!util.isFalsy(result)) {
+                args[0] = result;
+            }
+       });
+    }
+
+    return args[0];
+};
+
 EventManager.prototype._hasEventType = function(type) {
     return !util.isUndefined(this.TYPE[type]);
 };
@@ -1927,6 +1957,72 @@ ExtManager.prototype.applyExtension = function(context, extNames) {
 module.exports = new ExtManager();
 
 },{}],13:[function(require,module,exports){
+/**
+ * @fileoverview Implements Color syntax Extension
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var extManager = require('../extManager');
+
+var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
+    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
+    decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
+
+extManager.defineExtension('colorSyntax', function(editor) {
+    editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
+        return html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+    });
+
+    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
+        return markdown.replace(colorHtmlRx, function(founded, color, text) {
+            if (color.match(decimalColorRx)) {
+                color = changeDecColorToHex(color);
+            }
+
+            return makeMarkdownColorSyntax(text, color);
+        });
+    });
+
+    editor.addCommand('markdown', {
+        name: 'color',
+        exec: function(mde, color) {
+            var cm = mde.getEditor();
+            cm.replaceSelection(makeMarkdownColorSyntax(cm.getSelection(), color));
+            mde.focus();
+        }
+    });
+
+    editor.addCommand('wysiwyg', {
+        name: 'color',
+        exec: function(wwe, color) {
+            wwe.getEditor().setTextColour(color);
+            wwe.focus();
+        }
+    });
+});
+
+function makeMarkdownColorSyntax(text, color) {
+    return '{color:' + color + '}' + text + '{color}';
+}
+
+function changeDecColorToHex(color) {
+    return color.replace(decimalColorRx, function(colorValue, r, g, b) {
+        r = parseInt(r, 10);
+        g = parseInt(g, 10);
+        b = parseInt(b, 10);
+
+        return '#' + get2DigitNumberString(r.toString(16)) + get2DigitNumberString(g.toString(16)) + get2DigitNumberString(b.toString(16));
+    });
+}
+
+function get2DigitNumberString(numberStr) {
+    return numberStr === '0' ? '00' : numberStr;
+}
+
+
+},{"../extManager":12}],14:[function(require,module,exports){
 /**
 @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 */
@@ -1994,7 +2090,7 @@ extManager.defineExtension('querySplitter', function(editor) {
     }
 });
 
-},{"../extManager":12}],14:[function(require,module,exports){
+},{"../extManager":12}],15:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2063,7 +2159,7 @@ extManager.defineExtension('scrollFollow', function(editor) {
     }]);
 });
 
-},{"../extManager":12,"./scrollFollow.scrollSync":15,"./scrollFollow.sectionManager":16}],15:[function(require,module,exports){
+},{"../extManager":12,"./scrollFollow.scrollSync":16,"./scrollFollow.sectionManager":17}],16:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension ScrollSync Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2247,7 +2343,7 @@ ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
 
 module.exports = ScrollSync;
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension SectionManager Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2358,6 +2454,8 @@ SectionManager.prototype._eachLineState = function(iteratee) {
             isSection = true;
         }
 
+        //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
+        //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
         if (isTrimming) {
             trimCapture += this.cm.getLine(i).trim();
 
@@ -2382,7 +2480,7 @@ SectionManager.prototype.makeSectionList = function() {
     this._sectionList = [];
 
     this._eachLineState(function(isSection, lineNumber) {
-        if (lineNumber === 0 || isSection) {
+        if (isSection || !self._sectionList.length) {
             self._addNewSection(lineNumber, lineNumber);
         } else {
             self._updateCurrentSectionEnd(lineNumber);
@@ -2475,7 +2573,7 @@ SectionManager.prototype.sectionByLine = function(line) {
 
 module.exports = SectionManager;
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -2511,7 +2609,7 @@ extManager.defineExtension('taskCounter', function(editor) {
     };
 });
 
-},{"../extManager":12}],18:[function(require,module,exports){
+},{"../extManager":12}],19:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -2561,7 +2659,7 @@ function updateUI($layer, list) {
     void 0;
 }
 
-},{"../extManager":12}],19:[function(require,module,exports){
+},{"../extManager":12}],20:[function(require,module,exports){
 /**
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2610,7 +2708,7 @@ $.fn.neonEditor = function() {
 window.ne = window.ne || {};
 window.ne.NeonEditor = NeonEditor;
 
-},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],20:[function(require,module,exports){
+},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],21:[function(require,module,exports){
 /**
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2847,7 +2945,7 @@ LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
 
 module.exports = LayerPopup;
 
-},{"./uicontroller":44}],21:[function(require,module,exports){
+},{"./uicontroller":45}],22:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3024,7 +3122,7 @@ Layout.prototype.getWwEditorContainerEl = function() {
 
 module.exports = Layout;
 
-},{"./modeSwitch":35,"./popupAddImage":36,"./popupAddLink":37,"./tab":40,"./toolbar":43}],22:[function(require,module,exports){
+},{"./modeSwitch":36,"./popupAddImage":37,"./popupAddLink":38,"./tab":41,"./toolbar":44}],23:[function(require,module,exports){
 /**
  * @fileoverview Implements LazyRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3103,7 +3201,7 @@ LazyRunner.prototype._clearTOIDIfNeed = function(TOID) {
 
 module.exports = LazyRunner;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 /**
  * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3163,7 +3261,7 @@ var AddImage = CommandManager.command('markdown',
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],24:[function(require,module,exports){
+},{"../commandManager":7}],25:[function(require,module,exports){
 /**
  * @fileoverview Implements Addlink markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3221,7 +3319,7 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],25:[function(require,module,exports){
+},{"../commandManager":7}],26:[function(require,module,exports){
 /**
  * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3294,7 +3392,7 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],26:[function(require,module,exports){
+},{"../commandManager":7}],27:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3406,7 +3504,7 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],27:[function(require,module,exports){
+},{"../commandManager":7}],28:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3478,7 +3576,7 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],28:[function(require,module,exports){
+},{"../commandManager":7}],29:[function(require,module,exports){
 /**
  * @fileoverview HR markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3505,8 +3603,9 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
      *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde) {
-        var replaceText, range, from, to,
+        var range, from, to,
             cm = mde.getEditor(),
+            replaceText = '',
             doc = cm.getDoc();
 
         if (cm.getOption('disableInput')) {
@@ -3526,11 +3625,15 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
         };
 
         if (range.collapsed) {
-            replaceText = doc.getLine(from.line) + '\n***';
+            replaceText = doc.getLine(from.line);
             from.ch = 0;
             to.ch = doc.getLineHandle(range.to.line).text.length;
+        }
+
+        if (doc.getLine(from.line).length) {
+            replaceText += '\n\n* * *\n\n';
         } else {
-            replaceText = '***';
+            replaceText += '\n* * *\n';
         }
 
         doc.replaceRange(replaceText, from, to);
@@ -3541,7 +3644,7 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],29:[function(require,module,exports){
+},{"../commandManager":7}],30:[function(require,module,exports){
 /**
  * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3713,7 +3816,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],30:[function(require,module,exports){
+},{"../commandManager":7}],31:[function(require,module,exports){
 /**
  * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3770,7 +3873,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],31:[function(require,module,exports){
+},{"../commandManager":7}],32:[function(require,module,exports){
 /**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3827,7 +3930,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],32:[function(require,module,exports){
+},{"../commandManager":7}],33:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3884,7 +3987,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],33:[function(require,module,exports){
+},{"../commandManager":7}],34:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4024,19 +4127,16 @@ MarkdownEditor.prototype._cloneCMEventObject = function(e) {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-    var eventObj,
-        cmEventCloned;
+    var eventObj, cursor;
 
     if (e.origin !== 'setValue') {
-        cmEventCloned = this._cloneCMEventObject(e);
-
-        cmEventCloned.to.ch += 1;
+        cursor = this.getEditor().getCursor();
 
         eventObj = {
             source: 'markdown',
-            selection: cmEventCloned,
-            textContent: this.cm.getDoc().getLine(e.to.line) || '',
-            caretOffset: cmEventCloned.to.ch
+            selection: cursor,
+            textContent: this.cm.getDoc().getLine(cursor.line) || '',
+            caretOffset: cursor.ch
         };
 
         this.eventManager.emit('change.markdownEditor', eventObj);
@@ -4050,10 +4150,10 @@ MarkdownEditor.prototype.getCaretPosition = function() {
 
 MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
     if (offset) {
-        selection.to.ch += offset;
+        selection.ch += offset;
     }
 
-    this.cm.addWidget(selection.to, node, true, style);
+    this.cm.addWidget(selection, node, true, style);
 };
 
 MarkdownEditor.prototype.replaceSelection = function(content, selection) {
@@ -4087,7 +4187,7 @@ MarkdownEditor.prototype.setHeight = function(height) {
 
 module.exports = MarkdownEditor;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -4159,7 +4259,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4243,7 +4343,7 @@ ModeSwitch.TYPE = TYPE;
 
 module.exports = ModeSwitch;
 
-},{"./uicontroller":44}],36:[function(require,module,exports){
+},{"./uicontroller":45}],37:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4428,7 +4528,7 @@ PopupAddImage.prototype.resetInputs = function() {
 
 module.exports = PopupAddImage;
 
-},{"./layerpopup":20,"./tab":40}],37:[function(require,module,exports){
+},{"./layerpopup":21,"./tab":41}],38:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4531,7 +4631,7 @@ PopupAddLink.prototype.resetInputs = function() {
 
 module.exports = PopupAddLink;
 
-},{"./layerpopup":20}],38:[function(require,module,exports){
+},{"./layerpopup":21}],39:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4609,7 +4709,7 @@ Preview.prototype.setHeight = function(height) {
 
 module.exports = Preview;
 
-},{"./lazyRunner":22}],39:[function(require,module,exports){
+},{"./lazyRunner":23}],40:[function(require,module,exports){
 /**
  * @fileoverview Implements %filltext:name=Name%
  * @author
@@ -4861,7 +4961,7 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
 module.exports = SquireExt;
 
-},{"./domUtils":9}],40:[function(require,module,exports){
+},{"./domUtils":9}],41:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5059,7 +5159,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":41,"./uicontroller":44}],41:[function(require,module,exports){
+},{"./templater":42,"./uicontroller":45}],42:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5098,7 +5198,7 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5157,7 +5257,7 @@ ToggleButton.prototype._toggle = function() {
 
 module.exports = ToggleButton;
 
-},{"./button":1}],43:[function(require,module,exports){
+},{"./button":1}],44:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5300,7 +5400,7 @@ Toolbar.prototype._initButton = function() {
 
 module.exports = Toolbar;
 
-},{"./button":1,"./toggleButton":42,"./uicontroller":44}],44:[function(require,module,exports){
+},{"./button":1,"./toggleButton":43,"./uicontroller":45}],45:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5540,7 +5640,7 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5575,7 +5675,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],46:[function(require,module,exports){
+},{"../commandManager":7}],47:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5611,7 +5711,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":7}],48:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5645,7 +5745,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":7}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5690,7 +5790,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],49:[function(require,module,exports){
+},{"../commandManager":7}],50:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5735,7 +5835,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],50:[function(require,module,exports){
+},{"../commandManager":7}],51:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5784,7 +5884,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],51:[function(require,module,exports){
+},{"../commandManager":7}],52:[function(require,module,exports){
 /**
  * @fileoverview Implements inceaseTask wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5905,7 +6005,7 @@ function increaseTaskLevel(frag) {
 
 module.exports = IncreaseTask;
 
-},{"../commandManager":7}],52:[function(require,module,exports){
+},{"../commandManager":7}],53:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5950,7 +6050,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],53:[function(require,module,exports){
+},{"../commandManager":7}],54:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5985,7 +6085,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],54:[function(require,module,exports){
+},{"../commandManager":7}],55:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6048,7 +6148,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],55:[function(require,module,exports){
+},{"../commandManager":7}],56:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6083,7 +6183,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],56:[function(require,module,exports){
+},{"../commandManager":7}],57:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6615,6 +6715,10 @@ WysiwygEditor.prototype.getValue = function() {
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
     this.editor._ignoreChange = true;
+
+    //for ensure to fire change event
+    this.get$Body().attr('lastGetValue', Date.now());
+
     this._addCheckedAttrToCheckedInput();
     this._removeSpaceNextToTaskInput();
     this._joinSplitedTextNodes();
@@ -6861,4 +6965,4 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
 module.exports = WysiwygEditor;
 
-},{"./domUtils":9,"./squireExt":39}]},{},[19]);
+},{"./domUtils":9,"./squireExt":40}]},{},[20]);
