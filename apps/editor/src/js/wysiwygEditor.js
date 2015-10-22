@@ -204,7 +204,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
 */
-
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList(range)) {
@@ -223,7 +222,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 self._unwrapHeading();
             }, 0);
         } else if (this._isInHr(range) || this._isNearHr(range)) {
-            this._removeHrIfNeed(range);
+            this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
         }
