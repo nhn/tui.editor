@@ -16,6 +16,9 @@ describe('colorSyntax', function() {
             height: 100,
             initialEditType: 'markdown',
             exts: ['colorSyntax'],
+            colorSyntax: {
+                useCustomSyntax: true
+            },
             events: {
                 'load': function() {
                     done();
@@ -45,6 +48,26 @@ describe('colorSyntax', function() {
             expect(actual).toEqual(expected);
         });
 
+        it('convert html to html when dont use custom syntax', function(done) {
+            var src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
+
+            ned = new NeonEditor({
+                el: $('#editSection'),
+                previewStyle: 'vertical',
+                height: 100,
+                initialEditType: 'markdown',
+                exts: ['colorSyntax'],
+                events: {
+                    'load': function() {
+                        actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
+                        expected = '<span style="color:#ff00ff">test</span>';
+                        expect(actual).toEqual(expected);
+                        done();
+                    }
+                }
+            });
+        });
+
         it('convert multiple color html to color syntax', function() {
             var src = '<span class="colour" style="color:rgb(255,0,255)">test</span>test2<span class="colour" style="color:rgb(255,0,255)">test3</span>';
             actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
@@ -59,6 +82,26 @@ describe('colorSyntax', function() {
             expected = '<span style="color:#ff00ff">test</span>';
 
             expect(actual).toEqual(expected);
+        });
+
+        it('do not convert color syntax to html when dont use custom syntax', function(done) {
+            var src = '{color:#ff00ff}test{color}';
+
+            ned = new NeonEditor({
+                el: $('#editSection'),
+                previewStyle: 'vertical',
+                height: 100,
+                initialEditType: 'markdown',
+                exts: ['colorSyntax'],
+                events: {
+                    'load': function() {
+                        actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
+                        expected = '{color:#ff00ff}test{color}';
+                        expect(actual).toEqual(expected);
+                        done();
+                    }
+                }
+            });
         });
 
         it('convert multiple color syntax to html', function() {
