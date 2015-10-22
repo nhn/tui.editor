@@ -12,17 +12,39 @@ var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
     decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 extManager.defineExtension('colorSyntax', function(editor) {
+    var useCustomSyntax;
+
+    if (editor.options.colorSyntax) {
+        useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
+    }
+
     editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
-        return html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+        var replacement;
+
+        if (!useCustomSyntax) {
+            replacement = html;
+        } else {
+            replacement = html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+        }
+
+        return replacement;
     });
 
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
         return markdown.replace(colorHtmlRx, function(founded, color, text) {
+            var replacement;
+
             if (color.match(decimalColorRx)) {
                 color = changeDecColorToHex(color);
             }
 
-            return makeMarkdownColorSyntax(text, color);
+            if (!useCustomSyntax) {
+                replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
+            } else {
+                replacement = makeMarkdownColorSyntax(text, color);
+            }
+
+            return replacement;
         });
     });
 
@@ -61,4 +83,3 @@ function changeDecColorToHex(color) {
 function get2DigitNumberString(numberStr) {
     return numberStr === '0' ? '00' : numberStr;
 }
-
