@@ -25,7 +25,7 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
      *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde) {
-        var textToModify, range, from, to, textLinesToModify, lineLength, i,
+        var textToModify, range, from, to, textLinesToModify, lineLength, i, lengthOfCurrentLineBefore,
             cm = mde.getEditor(),
             doc = cm.getDoc();
 
@@ -46,6 +46,8 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
             ch: doc.getLineHandle(range.to.line).text.length
         };
 
+        lengthOfCurrentLineBefore = doc.getLine(to.line).length;
+
         //영역의 텍스트를 가저오고
         textToModify = doc.getRange(from, to);
 
@@ -54,17 +56,38 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
         lineLength = textLinesToModify.length;
 
         for (i = 0; i < lineLength; i += 1) {
-            textLinesToModify[i] = '#' + textLinesToModify[i];
+            textLinesToModify[i] = getHeadingMarkdown(textLinesToModify[i]);
         }
 
         //해당 에디터의 내용을 변경한다
         doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
-        range.to.ch += 1;
+        range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
         doc.setCursor(range.to);
 
         cm.focus();
     }
 });
+
+var FIND_HEADING_RX = /^#+\s/g;
+
+function getHeadingMarkdown(text) {
+    var foundedHeading = text.match(FIND_HEADING_RX),
+        heading;
+
+    if (foundedHeading) {
+        heading = '#' + foundedHeading[0];
+
+        if (heading.match(/#/g).length === 7) {
+            heading = '# ';
+        }
+
+        text = text.split(foundedHeading[0])[1];
+    } else {
+        heading = '# ';
+    }
+
+    return heading + text;
+}
 
 module.exports = Heading;

@@ -38,7 +38,7 @@ describe('Heading', function() {
 
             Heading.exec(mde);
 
-            expect(cm.getValue()).toEqual(['mytext1', '', '#mytext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['mytext1', '', '# mytext2', 'mytext3'].join('\n'));
         });
 
         it('빈 라인시작에 #가 추가되었다', function() {
@@ -46,17 +46,43 @@ describe('Heading', function() {
 
             Heading.exec(mde);
 
-            expect(cm.getValue()).toEqual(['mytext1', '#', 'mytext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['mytext1', '# ', 'mytext2', 'mytext3'].join('\n'));
         });
     });
 
     describe('셀렉션을 지정한상태에서 커맨드를 사용하면 해당 텍스트들에 해딩이 추가된다.', function() {
-        it('인용구가 정상적으로 추가되었다', function() {
+        it('해딩이 정상적으로 추가되었다', function() {
             doc.setSelection({line: 0, ch: 3}, {line: 2, ch: 2});
 
             Heading.exec(mde);
 
-            expect(cm.getValue()).toEqual(['#mytext1', '#', '#mytext2', 'mytext3'].join('\n'));
+            expect(cm.getValue()).toEqual(['# mytext1', '# ', '# mytext2', 'mytext3'].join('\n'));
+        });
+    });
+
+    describe('Toggle', function() {
+        it('if already have heading toggle to next heading', function() {
+            doc.setCursor(2, 3);
+
+            Heading.exec(mde);
+            Heading.exec(mde);
+
+            expect(cm.getValue()).toEqual(['mytext1', '', '## mytext2', 'mytext3'].join('\n'));
+        });
+
+        it('if current heading is 6, next heaing is 1', function() {
+            doc.setCursor(2, 3);
+
+            Heading.exec(mde);
+            Heading.exec(mde);
+            Heading.exec(mde);
+            Heading.exec(mde);
+            Heading.exec(mde);
+            Heading.exec(mde);
+
+            Heading.exec(mde);
+
+            expect(cm.getValue()).toEqual(['mytext1', '', '# mytext2', 'mytext3'].join('\n'));
         });
     });
 });
