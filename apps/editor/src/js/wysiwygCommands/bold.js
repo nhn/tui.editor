@@ -22,17 +22,13 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            removeMode;
+        var sq = wwe.getEditor();
+
+        sq.removeItalic();
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-            removeMode = true;
-        }
-
-        sq.removeAllFormatting();
-        sq.changeFormat(null, {tag:'b'});
-
-        if (!removeMode) {
+            sq.changeFormat(null, {tag:'b'});
+        } else if (!sq.hasFormat('a')) {
             sq.bold();
         }
 
