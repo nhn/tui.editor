@@ -10,31 +10,23 @@ var CommandManager = require('../commandManager');
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Italic
  * Add italic markdown syntax to markdown editor
  * @exports Italic
  * @augments Command
- * @augments MarkdownCommand
  */
 var Italic = CommandManager.command('markdown',/** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var cursor, selection, tmpSelection, isRemoved, result, isEmpty, isWithBold,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         cursor = doc.getCursor();
         selection = doc.getSelection();

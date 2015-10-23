@@ -7,33 +7,25 @@
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * AddImage
  * Add Image markdown syntax to markdown Editor
  * @exports AddImage
  * @augments Command
- * @augments MarkdownCommand
  */
 var AddImage = CommandManager.command('markdown',
 /** @lends AddImage */
 {
     name: 'AddImage',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @param {object} data data for image
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     * @param {object} data data for image
      */
     exec: function(mde, data) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 

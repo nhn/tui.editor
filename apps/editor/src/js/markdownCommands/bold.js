@@ -9,31 +9,23 @@ var CommandManager = require('../commandManager');
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Bold
  * Add bold markdown syntax to markdown editor
  * @exports Bold
  * @augments Command
- * @augments MarkdownCommand
  */
 var Bold = CommandManager.command('markdown',/** @lends Bold */{
     name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var cursor, selection, tmpSelection, isRemoved, result, isEmpty,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         cursor = doc.getCursor();
         selection = doc.getSelection();
