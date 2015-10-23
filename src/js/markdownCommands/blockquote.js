@@ -7,14 +7,11 @@
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
  * @exports Blockquote
  * @augments Command
- * @augments MarkdownCommand
  */
 var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     name: 'Blockquote',
@@ -22,16 +19,11 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     /**
      *  커맨드 핸들러
      *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde) {
         var textToModify, range, from, to, textLinesToModify, lineLength, i,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         //range 을 가공함
         range = mde.getCurrentRange();

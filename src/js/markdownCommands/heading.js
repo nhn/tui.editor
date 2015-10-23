@@ -7,31 +7,23 @@
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Heading
  * Add heading markdown syntax to markdown editor
  * @exports Heading
  * @augments Command
- * @augments MarkdownCommand
  */
 var Heading = CommandManager.command('markdown',/** @lends Heading */{
     name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var textToModify, range, from, to, textLinesToModify, lineLength, i, lengthOfCurrentLineBefore,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         // 선택된 영역을 가공함
         range = mde.getCurrentRange();
