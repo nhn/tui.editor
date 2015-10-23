@@ -22,17 +22,13 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            removeMode;
+        var sq = wwe.getEditor();
+
+        sq.removeBold();
 
         if (sq.hasFormat('i') || sq.hasFormat('em')) {
-            removeMode = true;
-        }
-
-        sq.removeAllFormatting();
-        sq.changeFormat(null, {tag:'i'});
-
-        if (!removeMode) {
+            sq.changeFormat(null, {tag:'i'});
+        } else if (!sq.hasFormat('a')) {
             sq.italic();
         }
 
