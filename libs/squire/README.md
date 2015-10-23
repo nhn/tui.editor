@@ -415,3 +415,13 @@ Returns self (the Squire instance).
 Removes all formatting from the selection. Block elements (list items, table cells, etc.) are kept as separate blocks.
 
 Returns self (the Squire instance).
+
+### changeFormat
+
+Change the **inline** formatting of the current selection. This is a high-level method which is used to implement the bold, italic etc. helper methods. THIS METHOD IS ONLY FOR USE WITH INLINE TAGS, NOT BLOCK TAGS. It takes 4 arguments:
+
+1. An object describing the formatting to add, or `null` if you only wish to remove formatting. If supplied, this object should have a `tag` property with the string name of the tag to wrap around the selected text (e.g. `"STRONG"`) and optionally an `attributes` property, consisting of an object of attributes to apply to the tag (e.g. `{"class": "bold"}`).
+2. An object describing the formatting to remove, in the same format as the object given to add formatting, or `null` if you only wish to add formatting.
+3. A Range object with the range to apply the formatting changes to (or `null`/omit to apply to current selection).
+4. A boolean (defaults to `false` if omitted). If `true`, any formatting nodes that cover at least part of the selected range will be removed entirely (so will potentially be removed from text outside the selected range as well). If `false`, the formatting nodes will continue to apply to any text outside the selection. This is useful, for example, when removing links. If any of the text in the selection is part of a link, the whole link is removed, rather than the link continuing to apply to bits of text outside the selection.
+
