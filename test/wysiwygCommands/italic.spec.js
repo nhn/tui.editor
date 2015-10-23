@@ -5,7 +5,7 @@ var Italic = require('../../src/js/wysiwygCommands/italic'),
     EventManager = require('../../src/js/eventManager');
 
 describe('Italic', function() {
-    var wwe, sq;
+    var wwe;
 
     beforeEach(function(done) {
         var $container = $('<div />');
@@ -15,7 +15,6 @@ describe('Italic', function() {
         wwe = new WysiwygEditor($container, null, new EventManager());
 
         wwe.init(function() {
-            sq = wwe.getEditor();
             done();
         });
     });
@@ -29,7 +28,7 @@ describe('Italic', function() {
 
         wwe.setValue('line1<br />line2');
 
-        range.selectNodeContents(wwe.get$Body().children()[0])
+        range.selectNodeContents(wwe.get$Body().children()[0]);
         wwe.getEditor().setSelection(range);
 
         Italic.exec(wwe);
@@ -37,12 +36,25 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<i>line1</i><br />line2<br />');
     });
 
+    it('dont add italic in Achor tag', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<a href="#">line1</a>');
+
+        range.selectNodeContents(wwe.get$Body().find('a')[0]);
+        wwe.getEditor().setSelection(range);
+
+        Italic.exec(wwe);
+
+        expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
+    });
+
     it('if there have italic already remove format', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line1<br />line2');
 
-        range.selectNodeContents(wwe.get$Body().children()[0])
+        range.selectNodeContents(wwe.get$Body().children()[0]);
         wwe.getEditor().setSelection(range);
 
         Italic.exec(wwe);
@@ -66,4 +78,16 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<i>line</i>a<br />');
     });
 
+    it('if there have bold remove and add italic', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<b>line</b>');
+
+        range.selectNodeContents(wwe.get$Body().children()[0]);
+        wwe.getEditor().setSelection(range);
+
+        Italic.exec(wwe);
+
+        expect(wwe.getValue()).toEqual('<i>line</i><br />');
+    });
 });
