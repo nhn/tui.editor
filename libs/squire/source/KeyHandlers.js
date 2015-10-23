@@ -246,11 +246,9 @@ var keyHandlers = {
         if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
             nodeAfterSplit = nodeAfterSplit.parentNode;
         }
-        var doc = self._doc,
-            body = self._body;
-        if ( nodeAfterSplit.offsetTop + nodeAfterSplit.offsetHeight >
-                ( doc.documentElement.scrollTop || body.scrollTop ) +
-                body.offsetHeight ) {
+        // 16 ~ one standard line height in px.
+        if ( nodeAfterSplit.getBoundingClientRect().top + 16 >
+                self._doc.documentElement.clientHeight ) {
             nodeAfterSplit.scrollIntoView( false );
         }
     },
