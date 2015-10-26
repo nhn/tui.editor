@@ -41,6 +41,7 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     editor.on('previewRenderAfter', function() {
         sectionManager.sectionMatch();
+        scrollSync.syncToPreview();
         scrollable = true;
     });
 
