@@ -1,7 +1,19 @@
 @charset "UTF-8";
 
+.neonEditor,
+.neonEditor * {
+    margin:0;
+    padding:0;
+    border:0;
+    box-sizing: content-box;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
 .neonEditor {
     position: relative;
+    line-height: 1;
 }
 
 .neonEditor:after,
@@ -90,6 +102,9 @@
 
 .mdContainer .tab button:hover {
     background: #eee;
+}
+.mdContainer .editor {
+    line-height: 1.5;
 }
 
 .mdContainer .editor,
@@ -190,7 +205,11 @@
     visibility: hidden;
 }
 
-/* nepopup용 추후 분리해야함 */
+.neonEditor .switchButton {
+    background: none;
+    text-decoration: underline;
+}
+
 .nepopup-wrapper {
     width: 500px;
     left: auto;
