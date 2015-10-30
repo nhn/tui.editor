@@ -1362,7 +1362,7 @@ module.exports = CommandManager;
 
 },{"./command":6}],8:[function(require,module,exports){
 /**
- * @fileoverview
+ * @fileoverview Convertor have responsible to convert markdown and html
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -1386,6 +1386,12 @@ function Convertor(em) {
     this.eventManager = em;
 }
 
+/**
+ * _markdownToHtmlWithCodeHighlight
+ * Convert markdown to html with Codehighlight
+ * @param {string} markdown markdown text
+ * @return {string} html text
+ */
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
         renderer: markedCustomRenderer,
@@ -1402,6 +1408,12 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     });
 };
 
+/**
+ * _markdownToHtml
+ * Convert markdown to html
+ * @param {string} markdown markdown text
+ * @return {string} html text
+ */
 Convertor.prototype._markdownToHtml = function(markdown) {
     return marked(markdown, {
         renderer: markedCustomRenderer,
@@ -1415,18 +1427,39 @@ Convertor.prototype._markdownToHtml = function(markdown) {
     });
 };
 
+/**
+ * toHTMLWithCodeHightlight
+ * Convert markdown to html with Codehighlight
+ * emit convertorAfterMarkdownToHtmlConverted
+ * @param {string} markdown markdown text
+ * @return {string} html text
+ */
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
     return html;
 };
 
+/**
+ * toHTML
+ * Convert markdown to html
+ * emit convertorAfterMarkdownToHtmlConverted
+ * @param {string} markdown markdown text
+ * @return {string} html text
+ */
 Convertor.prototype.toHTML = function(markdown) {
     var html =  this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
     return html;
 };
 
+/**
+ * toMarkdown
+ * Convert html to markdown
+ * emit convertorAfterHtmlToMarkdownConverted
+ * @param {string} html html text
+ * @return {string} markdown text
+ */
 Convertor.prototype.toMarkdown = function(html) {
     var markdown = toMark(html);
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
@@ -1448,24 +1481,44 @@ module.exports = Convertor;
 'use strict';
 
 /**
- * domUtils
- * @exports domUtils
+ * isTextNode
+ * Check if node is text node
+ * @param {Node} node node to check
+ * @return {boolean} result
  */
-
 var isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
 };
 
+/**
+ * isElemNode
+ * Check if node is element node
+ * @param {Node} node node to check
+ * @return {boolean} result
+ */
 var isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
 };
 
+/**
+ * getChildNodeAt
+ * Get child node in given parent and index
+ * @param {HTMLElement} elem parent element
+ * @param {number} index node index
+ * @return {Node} child
+ */
 var getChildNodeAt = function(elem, index) {
     if (elem.childNodes.length && index >= 0) {
         return elem.childNodes[index];
     }
 };
 
+/**
+ * getNodeName
+ * Get node name of node
+ * @param {Node} node node
+ * @return {string} node name
+ */
 var getNodeName = function(node) {
     if (isElemNode(node)) {
         return node.tagName;
@@ -1474,6 +1527,12 @@ var getNodeName = function(node) {
     }
 };
 
+/**
+ * getTextLength
+ * Get node offset length of node(for Range API)
+ * @param {Node} node node
+ * @return {number} length
+ */
 var getTextLength = function(node) {
     var len;
 
@@ -1486,6 +1545,12 @@ var getTextLength = function(node) {
     return len;
 };
 
+/**
+ * getOffsetLength
+ * Get node offset length of node(for Range API)
+ * @param {Node} node node
+ * @return {number} length
+ */
 var getOffsetLength = function(node) {
     var len;
 
@@ -1974,17 +2039,39 @@ var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
     decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 extManager.defineExtension('colorSyntax', function(editor) {
+    var useCustomSyntax;
+
+    if (editor.options.colorSyntax) {
+        useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
+    }
+
     editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
-        return html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+        var replacement;
+
+        if (!useCustomSyntax) {
+            replacement = html;
+        } else {
+            replacement = html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+        }
+
+        return replacement;
     });
 
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
         return markdown.replace(colorHtmlRx, function(founded, color, text) {
+            var replacement;
+
             if (color.match(decimalColorRx)) {
                 color = changeDecColorToHex(color);
             }
 
-            return makeMarkdownColorSyntax(text, color);
+            if (!useCustomSyntax) {
+                replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
+            } else {
+                replacement = makeMarkdownColorSyntax(text, color);
+            }
+
+            return replacement;
         });
     });
 
@@ -2023,7 +2110,6 @@ function changeDecColorToHex(color) {
 function get2DigitNumberString(numberStr) {
     return numberStr === '0' ? '00' : numberStr;
 }
-
 
 },{"../extManager":12}],14:[function(require,module,exports){
 /**
@@ -2137,6 +2223,7 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     editor.on('previewRenderAfter', function() {
         sectionManager.sectionMatch();
+        scrollSync.syncToPreview();
         scrollable = true;
     });
 
@@ -3214,33 +3301,25 @@ module.exports = LazyRunner;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * AddImage
  * Add Image markdown syntax to markdown Editor
  * @exports AddImage
  * @augments Command
- * @augments MarkdownCommand
  */
 var AddImage = CommandManager.command('markdown',
 /** @lends AddImage */
 {
     name: 'AddImage',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @param {object} data data for image
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     * @param {object} data data for image
      */
     exec: function(mde, data) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -3274,14 +3353,11 @@ module.exports = AddImage;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * AddLink
  * Add link markdown syntax to markdown editor
  * @exports AddLink
  * @augments Command
- * @augments MarkdownCommand
  */
 var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
     name: 'AddLink',
@@ -3289,16 +3365,11 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
      *  커맨드 핸들러
      *  @param {MarkdownEditor} mde MarkdownEditor instance
      *  @param {object} data data for image
-     *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde, data) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -3332,14 +3403,11 @@ module.exports = AddLink;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
  * @exports Blockquote
  * @augments Command
- * @augments MarkdownCommand
  */
 var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     name: 'Blockquote',
@@ -3347,16 +3415,11 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
     /**
      *  커맨드 핸들러
      *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
      */
     exec: function(mde) {
         var textToModify, range, from, to, textLinesToModify, lineLength, i,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         //range 을 가공함
         range = mde.getCurrentRange();
@@ -3407,31 +3470,23 @@ var CommandManager = require('../commandManager');
 
 var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Bold
  * Add bold markdown syntax to markdown editor
  * @exports Bold
  * @augments Command
- * @augments MarkdownCommand
  */
 var Bold = CommandManager.command('markdown',/** @lends Bold */{
     name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var cursor, selection, tmpSelection, isRemoved, result, isEmpty,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         cursor = doc.getCursor();
         selection = doc.getSelection();
@@ -3517,31 +3572,23 @@ module.exports = Bold;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Heading
  * Add heading markdown syntax to markdown editor
  * @exports Heading
  * @augments Command
- * @augments MarkdownCommand
  */
 var Heading = CommandManager.command('markdown',/** @lends Heading */{
     name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command Handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
-        var textToModify, range, from, to, textLinesToModify, lineLength, i,
+        var textToModify, range, from, to, textLinesToModify, lineLength, i, lengthOfCurrentLineBefore,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         // 선택된 영역을 가공함
         range = mde.getCurrentRange();
@@ -3556,6 +3603,8 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
             ch: doc.getLineHandle(range.to.line).text.length
         };
 
+        lengthOfCurrentLineBefore = doc.getLine(to.line).length;
+
         //영역의 텍스트를 가저오고
         textToModify = doc.getRange(from, to);
 
@@ -3564,18 +3613,39 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
         lineLength = textLinesToModify.length;
 
         for (i = 0; i < lineLength; i += 1) {
-            textLinesToModify[i] = '#' + textLinesToModify[i];
+            textLinesToModify[i] = getHeadingMarkdown(textLinesToModify[i]);
         }
 
         //해당 에디터의 내용을 변경한다
         doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
-        range.to.ch += 1;
+        range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
         doc.setCursor(range.to);
 
         cm.focus();
     }
 });
+
+var FIND_HEADING_RX = /^#+\s/g;
+
+function getHeadingMarkdown(text) {
+    var foundedHeading = text.match(FIND_HEADING_RX),
+        heading;
+
+    if (foundedHeading) {
+        heading = '#' + foundedHeading[0];
+
+        if (heading.match(/#/g).length === 7) {
+            heading = '# ';
+        }
+
+        text = text.split(foundedHeading[0])[1];
+    } else {
+        heading = '# ';
+    }
+
+    return heading + text;
+}
 
 module.exports = Heading;
 
@@ -3589,31 +3659,23 @@ module.exports = Heading;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * HR
  * Add HR markdown syntax to markdown editor
  * @exports HR
  * @augments Command
- * @augments MarkdownCommand
  */
 var HR = CommandManager.command('markdown',/** @lends HR */{
     name: 'HR',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var range, from, to,
             cm = mde.getEditor(),
             replaceText = '',
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -3660,31 +3722,23 @@ var CommandManager = require('../commandManager');
 var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 var italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Italic
  * Add italic markdown syntax to markdown editor
  * @exports Italic
  * @augments Command
- * @augments MarkdownCommand
  */
 var Italic = CommandManager.command('markdown',/** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var cursor, selection, tmpSelection, isRemoved, result, isEmpty, isWithBold,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         cursor = doc.getCursor();
         selection = doc.getSelection();
@@ -3829,30 +3883,22 @@ module.exports = Italic;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * OL
  * Add ordered list markdown syntax to markdown editor
  * @exports OL
  * @augments Command
- * @augments MarkdownCommand
  */
 var OL = CommandManager.command('markdown',/** @lends OL */{
     name: 'OL',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -3886,30 +3932,22 @@ module.exports = OL;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * Task
  * @exports Task
  * @augments Command
- * @augments MarkdownCommand
  */
 
 var Task = CommandManager.command('markdown',/** @lends Task */{
     name: 'Task',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -3943,30 +3981,22 @@ module.exports = Task;
 
 var CommandManager = require('../commandManager');
 
-var CodeMirror = window.CodeMirror;
-
 /**
  * UL
  * Add unordered list markdown syntax to markdown editor
  * @exports UL
  * @augments Command
- * @augments MarkdownCommand
  */
 var UL = CommandManager.command('markdown',/** @lends UL */{
     name: 'UL',
     /**
-     *  커맨드 핸들러
-     *  @param {MarkdownEditor} mde MarkdownEditor instance
-     *  @return {CodeMirror} 코드미러 상수
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
         var replaceText, range, from, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
-
-        if (cm.getOption('disableInput')) {
-            return CodeMirror.Pass;
-        }
 
         range = mde.getCurrentRange();
 
@@ -5773,17 +5803,13 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            removeMode;
+        var sq = wwe.getEditor();
+
+        sq.removeItalic();
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-            removeMode = true;
-        }
-
-        sq.removeAllFormatting();
-        sq.changeFormat(null, {tag:'b'});
-
-        if (!removeMode) {
+            sq.changeFormat(null, {tag:'b'});
+        } else if (!sq.hasFormat('a')) {
             sq.bold();
         }
 
@@ -6033,17 +6059,13 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            removeMode;
+        var sq = wwe.getEditor();
+
+        sq.removeBold();
 
         if (sq.hasFormat('i') || sq.hasFormat('em')) {
-            removeMode = true;
-        }
-
-        sq.removeAllFormatting();
-        sq.changeFormat(null, {tag:'i'});
-
-        if (!removeMode) {
+            sq.changeFormat(null, {tag:'i'});
+        } else if (!sq.hasFormat('a')) {
             sq.italic();
         }
 
@@ -6393,7 +6415,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
 */
-
     //enter
     if (event.keyCode === 13) {
         if (this._isInTaskList(range)) {
@@ -6412,7 +6433,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 self._unwrapHeading();
             }, 0);
         } else if (this._isInHr(range) || this._isNearHr(range)) {
-            this._removeHrIfNeed(range);
+            this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
         }
