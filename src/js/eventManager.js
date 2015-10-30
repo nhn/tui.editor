@@ -11,6 +11,7 @@ var eventList = [
     'previewBeforeHook',
     'previewRenderAfter',
     'addImageFileHook',
+    'addImageBlobHook',
     'contentChanged.wysiwygEditor',
     'change.wysiwygEditor',
     'contentChanged.markdownEditor',
@@ -32,6 +33,7 @@ var eventList = [
     'focus',
     'blur',
     'paste',
+    'drop',
     'show',
     'hide'
 ];

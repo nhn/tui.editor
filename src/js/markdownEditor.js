@@ -36,7 +36,8 @@ MarkdownEditor.prototype.init = function(initialValue) {
         lineWrapping: true,
         mode: 'gfm',
         theme: 'default',
-        dragDrop: false,
+        dragDrop: true,
+        allowDropFileTypes: ['image'],
         extraKeys: {
             'Enter': 'newlineAndIndentContinueMarkdownList',
             'Tab': 'subListIndentTab',
@@ -71,8 +72,58 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.getWrapperElement().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'markdown',
-            clipboardEvent: clipboardEvent
+            data: clipboardEvent
         });
+    });
+
+    this.cm.on('drop', function(cm, eventData) {
+        console.log(eventData);
+        self.eventManager.emit('drop', {
+            source: 'markdown',
+            data: eventData
+        });
+    });
+
+    this.eventManager.listen('paste', function(ev) {
+        var items, blob, i, itemLen;
+
+        items = ev.data.clipboardData && ev.data.clipboardData.items;
+
+        if (items) {
+            itemLen = items.length;
+
+            for (i = 0; i < itemLen; i += 1) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    blob = items[i].getAsFile();
+
+                    self.eventManager.emit('addImageBlobHook', blob, function(url) {
+                        self.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
+                    });
+                }
+            }
+        }
+    });
+
+    this.eventManager.listen('drop', function(ev) {
+        var items, blob, i, itemLen;
+
+        items = ev.data.dataTransfer && ev.data.dataTransfer.files;
+
+            ev.data.preventDefault();
+        if (items) {
+            ev.data.preventDefault();
+            itemLen = items.length;
+
+            for (i = 0; i < itemLen; i += 1) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    blob = items[i];
+
+                    self.eventManager.emit('addImageBlobHook', blob, function(url) {
+                        self.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
+                    });
+                }
+            }
+        }
     });
 };
 

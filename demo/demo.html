@@ -21,11 +21,6 @@
 </head>
 <body>
 <div id="editSection"></div>
-<div contenteditable = "true">
-    <ul><li><input type="checkbox" />waefawef</li></ul>
-    <hr>
-    <div>awefawefWE</div>
-</div>
 <script src="/build/bundle.js"></script>
 <script>
     if (!window.console || !console.log) {
@@ -41,8 +36,8 @@
         contentCSSStyles: [
             '../src/css/contentStyle.css'
         ],
-        initialEditType: 'markdown',
-        //initialEditType: 'wysiwyg',
+        //initialEditType: 'markdown',
+        initialEditType: 'wysiwyg',
         textPalette: {
             triggers: '@',
             querySender: function(query, done) {
@@ -61,10 +56,18 @@
                 $form[0].submit();
                 //callback으로 url전달
                 //callback('이미지URL');
+            },
+            'addImageBlobHook': function(blob, callback) {
+                var reader = new FileReader();
+
+                reader.onload = function(event){
+                    callback(event.target.result);
+                };
+
+                reader.readAsDataURL(blob);
             }
         }
     });
-
 
 /*
     $('#editSection').ned('setValue', "#Heading\n##Heading2");
