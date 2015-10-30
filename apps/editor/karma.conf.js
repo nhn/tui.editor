@@ -20,7 +20,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'lib/jquery/dist/jquery.js',
-            'lib/code-snippet/code-snippet.js',
+            'lib/tui-code-snippet/code-snippet.js',
             'lib/toMark/dist/toMark.js',
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',

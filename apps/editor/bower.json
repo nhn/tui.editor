@@ -28,7 +28,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "code-snippet": "ne-code-snippet#~1.0.4",
+    "tui-code-snippet": "1.0.3",
     "codemirror": "~5.5.0",
     "highlightjs": "~8.4.0",
     "jquery": "~2.1.3",
