@@ -143,11 +143,20 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
+    this.getEditor().addEventListener('dragover', function(e) {
+        e.preventDefault();
+        return false;
+    });
+
     this.getEditor().addEventListener('drop', function(eventData) {
+        eventData.preventDefault();
+
         self.eventManager.emit('drop', {
             source: 'wysiwyg',
             data: eventData
         });
+
+        return false;
     });
 
     this.getEditor().addEventListener('input', function() {
