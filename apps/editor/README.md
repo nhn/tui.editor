@@ -29,7 +29,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
     <meta charset="UTF-8">
     <title>DEMO</title>
     <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/code-snippet/code-snippet.js"></script>
+    <script src="bower_components/tui-code-snippet/code-snippet.js"></script>
     <script src="bower_components/marked/lib/marked.js"></script>
     <script src="bower_components/toMark/dist/toMark.js"></script>
     <script src="bower_components/codemirror/lib/codemirror.js"></script>
