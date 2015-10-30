@@ -136,6 +136,20 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self.eventManager.emit('contentChanged.wysiwygEditor', self);
     });
 
+    this.getEditor().addEventListener('paste', function(clipboardEvent) {
+        self.eventManager.emit('paste', {
+            source: 'wysiwyg',
+            data: clipboardEvent
+        });
+    });
+
+    this.getEditor().addEventListener('drop', function(eventData) {
+        self.eventManager.emit('drop', {
+            source: 'wysiwyg',
+            data: eventData
+        });
+    });
+
     this.getEditor().addEventListener('input', function() {
         var sel = self.editor.getSelection(),
             eventObj;
