@@ -56,15 +56,6 @@
                 $form[0].submit();
                 //callback으로 url전달
                 //callback('이미지URL');
-            },
-            'addImageBlobHook': function(blob, callback) {
-                var reader = new FileReader();
-
-                reader.onload = function(event){
-                    callback(event.target.result);
-                };
-
-                reader.readAsDataURL(blob);
             }
         }
     });

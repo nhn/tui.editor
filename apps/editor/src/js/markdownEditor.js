@@ -77,6 +77,8 @@ MarkdownEditor.prototype._initEvent = function() {
     });
 
     this.cm.on('drop', function(cm, eventData) {
+        eventData.preventDefault();
+
         self.eventManager.emit('drop', {
             source: 'markdown',
             data: eventData
