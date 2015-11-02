@@ -199,13 +199,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             source: 'wysiwyg'
         });
     });
-
-    this.getEditor().addEventListener('paste', function(clipboardEvent) {
-        self.eventManager.emit('paste', {
-            source: 'wysiwyg',
-            clipboardEvent: clipboardEvent
-        });
-    });
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {

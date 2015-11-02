@@ -12,6 +12,7 @@ var MarkdownEditor = require('./markdownEditor'),
     EventManager = require('./eventManager'),
     CommandManager = require('./commandManager'),
     extManager = require('./extManager'),
+    ImportManager = require('./importManager'),
     Convertor = require('./convertor');
 
 //markdown commands
@@ -77,6 +78,8 @@ function NeonEditor(options) {
 
     this.eventManager = new EventManager();
 
+    this.importManager = new ImportManager(this.eventManager);
+
     this.commandManager = new CommandManager(this);
     this.convertor = new Convertor(this.eventManager);
 
@@ -119,8 +122,6 @@ function NeonEditor(options) {
         self.eventManager.emit('load', self);
     });
 
-    this._initImportEvent();
-
     __nedInstance.push(this);
 }
 
@@ -147,50 +148,6 @@ NeonEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(wwHeading);
     this.commandManager.addCommand(wwIncreaseTask);
     this.commandManager.addCommand(wwTask);
-};
-
-NeonEditor.prototype._initImportEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('paste', function(ev) {
-        var items, blob, i, itemLen;
-
-        items = ev.data.clipboardData && ev.data.clipboardData.items;
-
-        if (items) {
-            itemLen = items.length;
-
-            for (i = 0; i < itemLen; i += 1) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    blob = items[i].getAsFile();
-
-                    self.eventManager.emit('addImageBlobHook', blob, function(url) {
-                        self.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
-                    });
-                }
-            }
-        }
-    });
-
-    this.eventManager.listen('drop', function(ev) {
-        var items, blob, i, itemLen;
-
-        items = ev.data.dataTransfer && ev.data.dataTransfer.files;
-
-        if (items) {
-            itemLen = items.length;
-
-            for (i = 0; i < itemLen; i += 1) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    blob = items[i];
-
-                    self.eventManager.emit('addImageBlobHook', blob, function(url) {
-                        self.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
-                    });
-                }
-            }
-        }
-    });
 };
 
 /**
