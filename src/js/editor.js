@@ -267,11 +267,11 @@ NeonEditor.prototype.changeMode = function(mode) {
     if (this.isWysiwygMode()) {
         this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
         this.layout.switchToWYSIWYG();
-        this.eventManager.emit('changeMode.wysiwyg');
+        this.eventManager.emit('changeModeToWysiwyg');
     } else {
         this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
         this.layout.switchToMarkdown();
-        this.eventManager.emit('changeMode.markdown');
+        this.eventManager.emit('changeModeToMarkdown');
     }
 
     this.eventManager.emit('changeMode', mode);
