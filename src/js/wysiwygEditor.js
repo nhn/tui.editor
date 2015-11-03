@@ -487,28 +487,6 @@ WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
     });
 };
 
-WysiwygEditor.prototype._removeSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode, $wrapper;
-
-    findTextNodeFilter = function() {
-        return this.nodeType === 3;
-    };
-
-    this.get$Body().find('.task-list-item').each(function(i, node) {
-        $wrapper = $(node).find('div');
-
-        if (!$wrapper.length) {
-            $wrapper = $(node);
-        }
-
-        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
-
-        if (firstTextNode) {
-            firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
-        }
-    });
-};
-
 WysiwygEditor.prototype._removeTaskListClass = function() {
     //because task-list class is block merge normal list and task list
     this.get$Body().find('.task-list').each(function(index, node) {
@@ -523,8 +501,8 @@ WysiwygEditor.prototype.getValue = function() {
 
     html = this.editor.getHTML();
 
-    //we need recover task space for safari
-    this._ensureSpaceNextToTaskInput();
+    //we need remove task input space for safari
+    html = html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
@@ -539,6 +517,7 @@ WysiwygEditor.prototype.getValue = function() {
     html = html.replace(/<div>/g, '');
     html = html.replace(/<\/div>/g, '<br />');
 
+
     return html;
 };
 
@@ -549,7 +528,6 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
     this.get$Body().attr('lastGetValue', Date.now());
 
     this._addCheckedAttrToCheckedInput();
-    this._removeSpaceNextToTaskInput();
     this._joinSplitedTextNodes();
     this._wrapDefaultBlockToOrphanTexts();
 };
