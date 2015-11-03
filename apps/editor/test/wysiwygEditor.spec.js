@@ -182,6 +182,11 @@ describe('WysiwygEditor', function() {
             expect(wwe.getValue()).toEqual(html);
         });
 
+        it('remove space next to input when getValue()', function() {
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
+            expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
+        });
+
         it('setValue make single line p tag have div block tag', function() {
             wwe.setValue('<p>text1</p>');
             expect(wwe.get$Body().find('div').length).toEqual(1);
@@ -189,12 +194,12 @@ describe('WysiwygEditor', function() {
         });
 
         it('put space and ZWS into input tag next', function() {
-            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
             expect(wwe.get$Body().find('li')[0].textContent).toEqual(' TASK');
         });
 
         it('remove task-list class of element, it may block merge normal list and task list', function() {
-            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK<li></li></ul>');
+            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
             expect(wwe.get$Body().find('ul').eq(0).hasClass('task-list')).toEqual(false);
         });
 
