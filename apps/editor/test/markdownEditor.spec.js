@@ -33,8 +33,8 @@ describe('MarkdownEditor', function() {
             mde.init();
         });
 
-        it('when something change emit contentChanged.MarkdownEditor event', function(done) {
-            em.listen('contentChanged.markdownEditor', function(editor) {
+        it('when something change emit contentChangedFromMarkdown event', function(done) {
+            em.listen('contentChangedFromMarkdown', function(editor) {
                 expect(editor).toEqual(mde);
                 done();
             });
@@ -42,8 +42,8 @@ describe('MarkdownEditor', function() {
             mde.getEditor().replaceSelection('myText');
         });
 
-        it('when something change emit change.MarkdownEditor event', function(done) {
-            em.listen('change.markdownEditor', function(ev) {
+        it('when something change emit changeFromMarkdown event', function(done) {
+            em.listen('changeFromMarkdown', function(ev) {
                 expect(ev.textContent).toEqual('my');
                 done();
             });

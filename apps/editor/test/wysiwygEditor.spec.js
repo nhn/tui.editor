@@ -68,8 +68,8 @@ describe('WysiwygEditor', function() {
     });
 
     describe('Event', function() {
-        it('when something changed in editor Emit contentChanged.wysiwygEditor event', function(done) {
-            em.listen('contentChanged.wysiwygEditor', function(editor) {
+        it('when something changed in editor Emit contentChangedFromWysiwyg event', function(done) {
+            em.listen('contentChangedFromWysiwyg', function(editor) {
                 expect(editor).toBe(wwe);
                 done();
             });
@@ -79,7 +79,7 @@ describe('WysiwygEditor', function() {
 
         it('when something changed in editor Emit change.wysiwygEditor event', function(done) {
             //events of squire are asynchronous
-            em.listen('change.wysiwygEditor', function(ev) {
+            em.listen('changeFromWysiwyg', function(ev) {
                 expect(ev.textContent).toEqual('t');
                 //cuz, we cant simulate caret change
                 //expect(ev.caretOffset).toEqual(1);

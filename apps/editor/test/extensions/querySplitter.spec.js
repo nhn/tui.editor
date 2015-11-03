@@ -41,7 +41,7 @@ describe('querySplitter', function() {
 
             em.listen('query', handler);
 
-            em.emit('change.wysiwygEditor', eventObject);
+            em.emit('changeFromWysiwyg', eventObject);
             expect(handler).not.toHaveBeenCalled();
         });
 
@@ -56,7 +56,7 @@ describe('querySplitter', function() {
 
             em.listen('query', handler);
 
-            em.emit('change.wysiwygEditor', eventObject);
+            em.emit('changeFromWysiwyg', eventObject);
             expect(handler).toHaveBeenCalled();
         });
 
@@ -78,8 +78,8 @@ describe('querySplitter', function() {
                 queryObject = q;
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(queryObject).toBeUndefined();
         });
@@ -101,8 +101,8 @@ describe('querySplitter', function() {
                 queryObject = q;
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(queryObject).toBeUndefined();
         });
@@ -124,8 +124,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@abcdef');
@@ -151,8 +151,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[0].text).toEqual('@');
             expect(result[0].currentText).toEqual('@');
@@ -177,8 +177,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[1]).toBeUndefined();
         });
@@ -200,8 +200,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@ef');
@@ -227,8 +227,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[1]).toBeUndefined();
         });
@@ -250,8 +250,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.wysiwygEditor', eventObject1);
-            em.emit('change.wysiwygEditor', eventObject2);
+            em.emit('changeFromWysiwyg', eventObject1);
+            em.emit('changeFromWysiwyg', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@i');
@@ -291,7 +291,7 @@ describe('querySplitter', function() {
                 handler = jasmine.createSpy('handler');
 
             em.listen('query', handler);
-            em.emit('change.markdownEditor', eventObject);
+            em.emit('changeFromMarkdown', eventObject);
             expect(handler).not.toHaveBeenCalled();
         });
 
@@ -305,7 +305,7 @@ describe('querySplitter', function() {
 
 
             em.listen('query', handler);
-            em.emit('change.markdownEditor', eventObject);
+            em.emit('changeFromMarkdown', eventObject);
             expect(handler).toHaveBeenCalled();
         });
 
@@ -327,8 +327,8 @@ describe('querySplitter', function() {
                 queryObject = q;
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(queryObject).toBeUndefined();
         });
@@ -350,8 +350,8 @@ describe('querySplitter', function() {
                 queryObject = q;
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(queryObject).toBeUndefined();
         });
@@ -373,8 +373,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@abcdef');
@@ -400,8 +400,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[0].text).toEqual('@');
             expect(result[0].currentText).toEqual('@');
@@ -426,8 +426,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[1]).toBeUndefined();
         });
@@ -449,8 +449,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@ef');
@@ -476,8 +476,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[1]).toBeUndefined();
         });
@@ -499,8 +499,8 @@ describe('querySplitter', function() {
                 result.push(q);
             });
 
-            em.emit('change.markdownEditor', eventObject1);
-            em.emit('change.markdownEditor', eventObject2);
+            em.emit('changeFromMarkdown', eventObject1);
+            em.emit('changeFromMarkdown', eventObject2);
 
             expect(result[0]).toBeUndefined();
             expect(result[1].text).toEqual('@i');
