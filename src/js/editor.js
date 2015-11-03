@@ -94,7 +94,7 @@ function NeonEditor(options) {
 
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
-            self.on(key, fn);
+            self.addHook(key, fn);
         });
     }
 
@@ -173,6 +173,19 @@ NeonEditor.prototype.addCommand = function(type, props) {
 
 NeonEditor.prototype.on = function(type, handler) {
     this.eventManager.listen(type, handler);
+};
+
+NeonEditor.prototype.off = function(type) {
+    this.eventManager.removeEventHandler(type);
+};
+
+NeonEditor.prototype.addHook = function(type, handler) {
+    this.eventManager.removeEventHandler(type);
+    this.eventManager.listen(type, handler);
+};
+
+NeonEditor.prototype.removeHook = function(type) {
+    this.eventManager.removeEventHandler(type);
 };
 
 NeonEditor.prototype.getCodeMirror = function() {

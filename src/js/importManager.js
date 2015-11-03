@@ -56,8 +56,6 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
     var self = this,
         blob = item.name ? item : item.getAsFile(); //Blob or File
 
-    console.log('dd');
-
     this.eventManager.emit('addImageBlobHook', blob, function(url) {
         self.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
     });
