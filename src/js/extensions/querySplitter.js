@@ -14,11 +14,11 @@ extManager.defineExtension('querySplitter', function(editor) {
 
     editor.eventManager.addEventType('query');
 
-    editor.eventManager.listen('change.wysiwygEditor', function(ev) {
+    editor.eventManager.listen('changeFromWysiwyg', function(ev) {
         process(ev);
     });
 
-    editor.eventManager.listen('change.markdownEditor', function(ev) {
+    editor.eventManager.listen('changeFromMarkdown', function(ev) {
         process(ev);
     });
 

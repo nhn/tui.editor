@@ -133,7 +133,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
 
     this.getEditor().addEventListener('input', function() {
-        self.eventManager.emit('contentChanged.wysiwygEditor', self);
+        self.eventManager.emit('contentChangedFromWysiwyg', self);
     });
 
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
@@ -170,7 +170,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             caretOffset: sel.endOffset
         };
 
-        self.eventManager.emit('change.wysiwygEditor', eventObj);
+        self.eventManager.emit('changeFromWysiwyg', eventObj);
         self.eventManager.emit('change', eventObj);
     });
 
@@ -428,7 +428,7 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._unwrapDivOnHr();
     this._removeTaskListClass();
 
-    this.eventManager.emit('contentChanged.wysiwygEditor', this);
+    this.eventManager.emit('contentChangedFromWysiwyg', this);
 };
 
 //this because we need new line inside ptag, and additional empty line added

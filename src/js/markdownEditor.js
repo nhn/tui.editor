@@ -130,7 +130,7 @@ MarkdownEditor.prototype.reset = function() {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function() {
-    this.eventManager.emit('contentChanged.markdownEditor', this);
+    this.eventManager.emit('contentChangedFromMarkdown', this);
 };
 
 MarkdownEditor.prototype._cloneCMEventObject = function(e) {
@@ -159,7 +159,7 @@ MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
             caretOffset: cursor.ch
         };
 
-        this.eventManager.emit('change.markdownEditor', eventObj);
+        this.eventManager.emit('changeFromMarkdown', eventObj);
         this.eventManager.emit('change', eventObj);
     }
 };

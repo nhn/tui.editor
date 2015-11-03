@@ -39,7 +39,7 @@ function Preview($el, eventManager, converter) {
 Preview.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('contentChanged.markdownEditor', function(markdownEditor) {
+    this.eventManager.listen('contentChangedFromMarkdown', function(markdownEditor) {
         self.lazyRunner.run('refresh', markdownEditor.getValue());
     });
 };
