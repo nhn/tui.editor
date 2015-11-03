@@ -45,7 +45,6 @@ var util = ne.util;
 var __nedInstance = [];
 
 //default extensions
-require('./extensions/querySplitter');
 require('./extensions/taskCounter');
 require('./extensions/textPalette');
 require('./extensions/scrollFollow');
