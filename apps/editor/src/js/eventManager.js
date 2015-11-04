@@ -29,6 +29,7 @@ var eventList = [
     'renderedHtmlUpdated',
     'convertorAfterMarkdownToHtmlConverted',
     'convertorAfterHtmlToMarkdownConverted',
+    'stateChange',
     'load',
     'focus',
     'blur',
