@@ -134,6 +134,15 @@ describe('WysiwygEditor', function() {
 
             wwe.editor.blur();
         });
+
+        it('fire stateChange event when state changed', function() {
+            em.listen('stateChange', function(data) {
+                expect(data.bold).toBe(true);
+            });
+
+            wwe.editor.insertPlainText('test');
+            wwe.editor.bold();
+        });
     });
 
     describe('getValue, setValue', function() {

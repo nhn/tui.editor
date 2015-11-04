@@ -199,6 +199,15 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             source: 'wysiwyg'
         });
     });
+
+    this.getEditor().addEventListener('pathChange', function(data) {
+        var state =  {
+            bold: /(>B$)|(>B>)|(>STRONG$)|(>STRONG>)/.test(data.path),
+            italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path)
+        };
+
+        self.eventManager.emit('stateChange', state);
+    });
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
