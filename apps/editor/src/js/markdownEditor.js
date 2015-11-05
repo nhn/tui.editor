@@ -20,6 +20,11 @@ var CodeMirror = window.CodeMirror;
 function MarkdownEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
+
+    this._latestState = {
+        bold: false,
+        italic: false
+    };
 }
 
 MarkdownEditor.prototype.init = function(initialValue) {
@@ -83,6 +88,22 @@ MarkdownEditor.prototype._initEvent = function() {
             source: 'markdown',
             data: eventData
         });
+    });
+
+    this.cm.on('cursorActivity', function() {
+        var token, state;
+
+        token = self.cm.getTokenAt(self.cm.getCursor());
+
+        state =  {
+            bold: !!token.state.base.strong,
+            italic: !!token.state.base.em
+        };
+
+        if (self._latestState.bold !== state.bold || self._latestState.italic !== state.italic) {
+            self.eventManager.emit('stateChange', state);
+            self._latestState = state;
+        }
     });
 };
 
