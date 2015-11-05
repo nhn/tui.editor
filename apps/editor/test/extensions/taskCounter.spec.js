@@ -1,6 +1,6 @@
 'use strict';
 
-var NeonEditor = require('../../src/js/editor');
+var TuiEditor = require('../../src/js/editor');
 
 describe('taskCounter', function() {
     var ned, em;
@@ -15,7 +15,7 @@ describe('taskCounter', function() {
 
     describe('wysiwyg', function() {
         beforeEach(function(done) {
-            ned = new NeonEditor({
+            ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,
@@ -64,7 +64,7 @@ describe('taskCounter', function() {
 
     describe('markdown', function() {
         beforeEach(function(done) {
-            ned = new NeonEditor({
+            ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
                 height: 300,
