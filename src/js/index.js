@@ -5,7 +5,7 @@
 
 'use strict';
 
-var NeonEditor;
+var ToastUIEditor;
 
 //codemirror modes&addons
 require('./codemirror/overlay');
@@ -13,10 +13,10 @@ require('./codemirror/markdown');
 require('./codemirror/gfm');
 require('./codemirror/continuelist');
 
-NeonEditor = require('./editor');
+ToastUIEditor = require('./editor');
 
 //for jquery
-$.fn.neonEditor = function() {
+$.fn.tuiEditor = function() {
     var args = $.makeArray(arguments),
         options,
         instance,
@@ -27,7 +27,7 @@ $.fn.neonEditor = function() {
     if (el) {
         options = args[0] || {};
 
-        instance = $.data(el, 'neonEditor');
+        instance = $.data(el, 'tuiEditor');
 
         if (instance) {
             if (typeof options === 'string') {
@@ -35,13 +35,13 @@ $.fn.neonEditor = function() {
             }
         } else {
             options.el = el;
-            instance = new NeonEditor(options);
-            $.data(el, 'neonEditor', instance);
+            instance = new ToastUIEditor(options);
+            $.data(el, 'tuiEditor', instance);
         }
     }
 
     return this;
 };
 
-window.ne = window.ne || {};
-window.ne.NeonEditor = NeonEditor;
+window.tui = window.tui || {};
+window.tui.Editor = ToastUIEditor;

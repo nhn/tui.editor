@@ -8,7 +8,7 @@
 var domUtils = require('./domUtils'),
     SquireExt = require('./squireExt');
 
-var util = ne.util;
+var util = tui.util;
 
 var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
@@ -16,7 +16,7 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
     FIND_TASK_SPACES_RX = /^\s+/g;
 
-var EDITOR_CONTENT_CSS_CLASSNAME = 'neonEditor-content';
+var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
 /**
  * WysiwygEditor
@@ -268,7 +268,8 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-        /*if (this._isInTaskList(range)) {
+        /*
+         * if (this._isInTaskList(range)) {
             if ($(range.startContainer).parents('li')[0].previousSibling && !$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
                 self.eventManager.emit('command', 'IncreaseTask');
                 this._unformatTaskIfNeedOnEnter(range);

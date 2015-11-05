@@ -5,7 +5,7 @@
 
 'use strict';
 
-var util = ne.util,
+var util = tui.util,
     _id = 0;
 /**
  * UIController 클래스

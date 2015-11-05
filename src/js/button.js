@@ -6,7 +6,7 @@
 
 var UIController = require('./uicontroller');
 
-var util = ne.util;
+var util = tui.util;
 
 /**
  * Button

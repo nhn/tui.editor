@@ -10,60 +10,28 @@
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/Squire/build/squire-raw.js"></script>
+    <script src="../dist/tui-editor.min.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="../src/css/neonEditor.css">
-    <link rel="stylesheet" href="../src/css/contentStyle.css">
-    <style type="text/css">
-      .cm-header { color:blue; }
-      .cm-strong { font-weight:bold; }
-    </style>
+    <link rel="stylesheet" href="../src/css/tui-editor.css">
+    <link rel="stylesheet" href="../src/css/tui-editor-contents.css">
 </head>
 <body>
 <div id="editSection"></div>
-<script src="/build/bundle.js"></script>
 <script>
-    if (!window.console || !console.log) {
-        window.console = {};
-        window.console.log = function(){};
-    }
-
-    $('#editSection').neonEditor({
+    $('#editSection').tuiEditor({
+        initialEditType: 'markdown',
         previewStyle: 'vertical',
-        height: 800,
-        //initialValue: 'a\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\n',
-        //initialValue: 'test1\ntest2\ntest3\ntest4',
+        height: 300,
         contentCSSStyles: [
-            '../src/css/contentStyle.css'
+            '../dist/tui-editor-contents.css'
         ],
-        //initialEditType: 'markdown',
-        initialEditType: 'wysiwyg',
-        textPalette: {
-            triggers: '@',
-            querySender: function(query, done) {
-                done([1,2,3]);
-            }
-        },
-        exts: ['scrollFollow', 'colorSyntax', 'textPalette'],
-        hooks: {
-            'previewBeforeHook': function($dom) {
-                //console.log('previewBeforeHook', $dom);
-            },
-            'addImageFileHook': function($form, callback) {
-                $form.find('.imageFileInput').attr('name','fileName');
-                $form[0].action = 'http://posttestserver.com/post.php';
-                $form[0].method = 'POST';
-                $form[0].submit();
-                //callback으로 url전달
-                //callback('이미지URL');
+        events: {
+            'load': function() {
+                console.log('editor Loaded');
             }
         }
     });
-
-/*
-    $('#editSection').ned('setValue', "#Heading\n##Heading2");
-    console.log($('#editSection').ned('getValue'));
-    */
 </script>
 </body>
 </html>

@@ -40,7 +40,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
-var util = ne.util;
+var util = tui.util;
 
 var __nedInstance = [];
 
@@ -51,8 +51,8 @@ require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 
 /**
- * NeonEditor
- * @exports NeonEditor
+ * ToastUI Editor
+ * @exports ToastUIEditor
  * @constructor
  * @class
  * @param {object} options 옵션
@@ -66,7 +66,7 @@ require('./extensions/colorSyntax');
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
  * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
  */
-function NeonEditor(options) {
+function ToastUIEditor(options) {
     var self = this;
 
     this.options = $.extend({
@@ -124,7 +124,7 @@ function NeonEditor(options) {
     __nedInstance.push(this);
 }
 
-NeonEditor.prototype._initDefaultCommands = function() {
+ToastUIEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(mdcBold);
     this.commandManager.addCommand(mdcItalic);
     this.commandManager.addCommand(mdcBlockquote);
@@ -153,16 +153,16 @@ NeonEditor.prototype._initDefaultCommands = function() {
  * 프리뷰가 보여지는 방식을 변경한다
  * @param {string} style 스타일 이름 tab, vertical
  */
-NeonEditor.prototype.changePreviewStyle = function(style) {
+ToastUIEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
 };
 
-NeonEditor.prototype.exec = function() {
+ToastUIEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
 };
 
-NeonEditor.prototype.addCommand = function(type, props) {
+ToastUIEditor.prototype.addCommand = function(type, props) {
     if (!props) {
         this.commandManager.addCommand(type);
     } else {
@@ -170,36 +170,36 @@ NeonEditor.prototype.addCommand = function(type, props) {
     }
 };
 
-NeonEditor.prototype.on = function(type, handler) {
+ToastUIEditor.prototype.on = function(type, handler) {
     this.eventManager.listen(type, handler);
 };
 
-NeonEditor.prototype.off = function(type) {
+ToastUIEditor.prototype.off = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
-NeonEditor.prototype.addHook = function(type, handler) {
+ToastUIEditor.prototype.addHook = function(type, handler) {
     this.eventManager.removeEventHandler(type);
     this.eventManager.listen(type, handler);
 };
 
-NeonEditor.prototype.removeHook = function(type) {
+ToastUIEditor.prototype.removeHook = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
-NeonEditor.prototype.getCodeMirror = function() {
+ToastUIEditor.prototype.getCodeMirror = function() {
     return this.mdEditor.getEditor();
 };
 
-NeonEditor.prototype.getSquire = function() {
+ToastUIEditor.prototype.getSquire = function() {
     return this.wwEditor.getEditor();
 };
 
-NeonEditor.prototype.focus = function() {
+ToastUIEditor.prototype.focus = function() {
    this.getCurrentModeEditor().focus();
 };
 
-NeonEditor.prototype.setValue = function(markdown) {
+ToastUIEditor.prototype.setValue = function(markdown) {
     markdown = markdown || '';
 
     if (this.isMarkdownMode()) {
@@ -209,7 +209,7 @@ NeonEditor.prototype.setValue = function(markdown) {
     }
 };
 
-NeonEditor.prototype.getValue = function() {
+ToastUIEditor.prototype.getValue = function() {
     var markdown;
 
     if (this.isMarkdownMode()) {
@@ -221,11 +221,11 @@ NeonEditor.prototype.getValue = function() {
     return markdown;
 };
 
-NeonEditor.prototype.addWidget = function(selection, node, style, offset) {
+ToastUIEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
-NeonEditor.prototype.contentHeight  = function(height) {
+ToastUIEditor.prototype.contentHeight  = function(height) {
     if (height) {
         this._contentHeight = height;
         this.mdEditor.setHeight(height);
@@ -236,7 +236,7 @@ NeonEditor.prototype.contentHeight  = function(height) {
     return this._contentHeight;
 };
 
-NeonEditor.prototype.getCurrentModeEditor = function() {
+ToastUIEditor.prototype.getCurrentModeEditor = function() {
     var editor;
 
     if (this.isMarkdownMode()) {
@@ -248,15 +248,15 @@ NeonEditor.prototype.getCurrentModeEditor = function() {
     return editor;
 };
 
-NeonEditor.prototype.isMarkdownMode = function() {
+ToastUIEditor.prototype.isMarkdownMode = function() {
     return this.currentMode === 'markdown';
 };
 
-NeonEditor.prototype.isWysiwygMode = function() {
+ToastUIEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
-NeonEditor.prototype.changeMode = function(mode) {
+ToastUIEditor.prototype.changeMode = function(mode) {
     if (this.currentMode === mode) {
         return;
     }
@@ -276,31 +276,31 @@ NeonEditor.prototype.changeMode = function(mode) {
     this.eventManager.emit('changeMode', mode);
 };
 
-NeonEditor.prototype.remove = function() {
+ToastUIEditor.prototype.remove = function() {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
 };
 
-NeonEditor.prototype.hide = function() {
+ToastUIEditor.prototype.hide = function() {
     this.eventManager.emit('hide', this);
 };
 
-NeonEditor.prototype.show = function() {
+ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
 };
 
-NeonEditor.prototype.reset = function() {
+ToastUIEditor.prototype.reset = function() {
     this.wwEditor.reset();
     this.mdEditor.reset();
 };
 
-NeonEditor.getInstances = function() {
+ToastUIEditor.getInstances = function() {
     return __nedInstance;
 };
 
-NeonEditor.defineExtension = function(name, ext) {
+ToastUIEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
 };
 
-module.exports = NeonEditor;
+module.exports = ToastUIEditor;

@@ -7,7 +7,7 @@
 
 var LayerPopup = require('./layerpopup');
 
-var util = ne.util;
+var util = tui.util;
 
 var POPUP_CONTENT = [
     '<label for="linkText">Link Text</label>',
@@ -32,7 +32,7 @@ var POPUP_CONTENT = [
 function PopupAddLink(options) {
     options = util.extend({
         title: 'Add Link',
-        className: 'popupAddLink neonEditor-popup',
+        className: 'popupAddLink tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 
