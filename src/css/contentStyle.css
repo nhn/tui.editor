@@ -299,3 +299,11 @@
     background-color: transparent;
     border: none;
 }
+
+.neonEditor-content strong {
+    font-weight: bold;
+}
+
+.neonEditor-content em {
+    font-style: italic;
+}

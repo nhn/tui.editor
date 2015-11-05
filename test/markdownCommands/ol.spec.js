@@ -21,8 +21,6 @@ describe('OL', function() {
 
         cm = mde.getEditor();
 
-        cm.setOption('mode', null);
-
         sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
