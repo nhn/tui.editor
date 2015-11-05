@@ -1,0 +1,290 @@
+@charset "UTF-8";
+
+.tui-editor,
+.tui-editor * {
+    margin:0;
+    padding:0;
+    box-sizing: content-box;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+.tui-editor {
+    position: relative;
+    line-height: 1;
+}
+
+.tui-editor:after,
+.tui-editor .toolbar:after,
+.tui-editor .statusbar:after
+{
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+}
+.tui-editor {
+    border: 1px solid #ccc;
+}
+.tui-editor .toolbar {
+    padding: 5px;
+    height: 30px;
+    background: #eee;
+}
+.tui-editor.preview-style-vetical .toolbar {
+    border-bottom: 1px solid #ccc;
+}
+.tui-editor .toolbar button {
+    box-sizing: border-box;
+    min-width: 30px;
+    height: 30px;
+    background: white;
+    border-color: #ccc;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    outline: none;
+    float: left;
+    cursor: pointer;
+}
+.tui-editor .toolbar button:hover {
+    background: #eee;
+}
+.tui-editor .toolbar button:active {
+    box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
+}
+.tui-editor .toolbar button:first-child {
+    border-left-width: 1px;
+}
+
+.tui-editor .toolbar button.bold {
+    font-weight: bold;
+}
+
+.tui-editor .toolbar button.italic {
+    font-style: italic;
+}
+
+.mdContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
+
+.mdContainer .tab{
+    padding: 0 5px;
+    background: #eee;
+    border-bottom: 1px solid #ccc;
+}
+.mdContainer .tab button {
+    box-sizing: border-box;
+    padding: 5px;
+    height: 23px;
+    font-size: 11px;
+    line-height: 100%;
+    background: #ddd;
+    border: 1px solid #ccc;
+    position: relative;
+    top: 1px;
+    left: -1px;
+    outline: none;
+    cursor: pointer;
+}
+.mdContainer .tab button:first-child {
+    left: 0;
+}
+.mdContainer .tab button.active,
+.mdContainer .tab button:hover.active {
+    background: white;
+    border-bottom-color: white;
+}
+
+.mdContainer .tab button:hover {
+    background: #eee;
+}
+.mdContainer .editor {
+    line-height: 1.5;
+}
+
+.mdContainer .editor,
+.mdContainer .preview {
+    height:400px;
+    box-sizing: border-box;
+}
+.mdContainer .CodeMirror {
+    height: 100%;
+}
+.mdContainer .preview {
+    padding: 0;
+    overflow: auto;
+}
+.mdContainer .previewContent {
+    padding: 5px;
+}
+.tui-editor .preview-style-tab>.editor,
+.tui-editor .preview-style-tab>.preview {
+    float: left;
+    width: 100%;
+    display: none;
+}
+.tui-editor .preview-style-tab>.active {
+    display: block;
+}
+.tui-editor .preview-style-vertical>.editor,
+.tui-editor .preview-style-vertical>.preview {
+    width: 50%;
+}
+.tui-editor .preview-style-vertical>.editor {
+    float: left;
+    border-right: 1px solid #ccc;
+}
+.tui-editor .preview-style-vertical>.preview {
+    float: right;
+}
+
+.tui-editor .preview-style-vertical>.tabSection {
+    display: none;
+}
+
+.tui-editor .preview-style-tab>.tabSection {
+    display:block;
+}
+
+.tui-editor .preview-style-vertical .editor {
+    float: left;
+    width: 50%;
+    border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+}
+
+.tui-editor .preview-style-vertical .preview {
+    float: left;
+    width: 50%;
+    border-top: 1px solid #ccc;
+}
+
+.editor iframe {
+    border: none;
+    width: 100%;
+}
+
+.tui-editor .modeSwitchSection {
+    float: right;
+    margin-top: -23px;
+    margin-right: 5px;
+}
+
+.tui-editor .wysiwygContainer {
+    border-top: 1px solid #ccc;
+}
+
+/*we cant use display none for ifram because firefox have issue about it*/
+.wysiwygContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden
+}
+
+.markdownMode .mdContainer {
+    position: inherit;
+    visibility: visible
+}
+
+.wysiwygMode .wysiwygContainer {
+    position: inherit;
+    visibility: visible
+}
+
+.tui-editor.hide,
+.tui-editor.hide iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+}
+
+.tui-editor .switchButton {
+    background: none;
+    text-decoration: underline;
+    border: 0;
+}
+
+.tui-popup-wrapper {
+    width: 500px;
+    left: auto;
+    margin-right: auto;
+    margin-left: auto;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    z-index: 9999;
+}
+
+.tui-popup-header {
+    height: 30px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    line-height: 30px;
+}
+
+.tui-popup-body {
+    padding: 15px;
+}
+
+.tui-popup-header .tui-popup-closeButton {
+    float: right;
+    margin: 0;
+    padding: 0;
+    border: none;
+    line-height: 1;
+    background: none;
+    font-weight: bold;
+    font-size: 20px;
+    color: #aaa;
+}
+
+.tui-popup-header .tui-popup-title {
+    font-size: 20px;
+    font-weight:bold;
+    vertical-align: baseline;
+}
+
+.tui-editor-popup {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    margin-left: -250px;
+}
+
+.tui-editor-popup label {
+    display: block;
+}
+
+.buttonSection {
+    margin-top: 15px;
+}
+
+
+.popupAddImage .tab {
+    padding: 5px 0;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
+}
+
+.popupAddImage .urlType {
+    display: none;
+}
+.popupAddImage .fileType {
+    display: none;
+}
+.popupAddImage div.active,
+.popupAddImage form.active{
+    display: block;
+}
+.popupAddImage .tab button {
+    border: none;
+    background: none;
+}
