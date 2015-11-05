@@ -19,7 +19,7 @@ describe('Layout', function() {
     });
 
     it('All layout elements are exist', function() {
-        expect($('.neonEditor').length).toEqual(1);
+        expect($('.tui-editor').length).toEqual(1);
         expect($('.toolbarSection').length).toEqual(1);
         expect($('.modeSwitchSection').length).toEqual(1);
         expect($('.mdContainer').length).toEqual(1);
@@ -50,24 +50,24 @@ describe('Layout', function() {
         it('to Markdown', function() {
             layout.switchToMarkdown();
 
-            expect($('.neonEditor').hasClass('markdownMode')).toEqual(true);
-            expect($('.neonEditor').hasClass('wysiwygMode')).toEqual(false);
+            expect($('.tui-editor').hasClass('markdownMode')).toEqual(true);
+            expect($('.tui-editor').hasClass('wysiwygMode')).toEqual(false);
         });
 
         it('to WYSIWYG', function() {
             layout.switchToWYSIWYG();
 
-            expect($('.neonEditor').hasClass('markdownMode')).toEqual(false);
-            expect($('.neonEditor').hasClass('wysiwygMode')).toEqual(true);
+            expect($('.tui-editor').hasClass('markdownMode')).toEqual(false);
+            expect($('.tui-editor').hasClass('wysiwygMode')).toEqual(true);
         });
     });
 
     describe('show/hide', function() {
         it('hide and show editor', function() {
             layout.hide();
-            expect($('.neonEditor').hasClass('hide')).toEqual(true);
+            expect($('.tui-editor').hasClass('hide')).toEqual(true);
             layout.show();
-            expect($('.neonEditor').hasClass('hide')).toEqual(false);
+            expect($('.tui-editor').hasClass('hide')).toEqual(false);
         });
     });
 });

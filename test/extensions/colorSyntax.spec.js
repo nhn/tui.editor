@@ -1,6 +1,6 @@
 'use strict';
 
-var NeonEditor = require('../../src/js/editor');
+var TuiEditor = require('../../src/js/editor');
 
 //var loadStyleFixtures = window.loadStyleFixtures;
 
@@ -10,7 +10,7 @@ describe('colorSyntax', function() {
     beforeEach(function(done) {
         $('body').html('<div id="editSection"></div>');
 
-        ned = new NeonEditor({
+        ned = new TuiEditor({
             el: $('#editSection'),
             previewStyle: 'vertical',
             height: 100,
@@ -51,7 +51,7 @@ describe('colorSyntax', function() {
         it('convert html to html when dont use custom syntax', function(done) {
             var src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
 
-            ned = new NeonEditor({
+            ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'vertical',
                 height: 100,
@@ -87,7 +87,7 @@ describe('colorSyntax', function() {
         it('do not convert color syntax to html when dont use custom syntax', function(done) {
             var src = '{color:#ff00ff}test{color}';
 
-            ned = new NeonEditor({
+            ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'vertical',
                 height: 100,

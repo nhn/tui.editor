@@ -27,7 +27,7 @@ describe('WysiwygEditor', function() {
     describe('Initialize', function() {
         it('init() invoke callback', function() {
             expect($('iframe').length).toEqual(1);
-            expect($('iframe').contents().find('body').hasClass('neonEditor-content')).toBe(true);
+            expect($('iframe').contents().find('body').hasClass('tui-editor-contents')).toBe(true);
         });
     });
 

@@ -1,6 +1,6 @@
 'use strict';
 
-var NeonEditor = require('../../src/js/editor'),
+var TuiEditor = require('../../src/js/editor'),
     SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
 
 var loadStyleFixtures = window.loadStyleFixtures;
@@ -13,7 +13,7 @@ describe('scrollFollow.sectionManager', function() {
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
 
-        ned = new NeonEditor({
+        ned = new TuiEditor({
             el: $('#editSection'),
             previewStyle: 'vertical',
             height: 100,
