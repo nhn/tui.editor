@@ -1,0 +1,309 @@
+@charset "UTF-8";
+.tui-editor-contents {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: Helvetica, arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background-color: white;
+    padding: 1em;
+    margin: 0;
+    cursor: text;
+    color: #2b2b2b;
+}
+
+.tui-editor-contents * {
+    margin:0;
+    padding:0;
+}
+
+.tui-editor-contents > *:first-child {
+    margin-top: 0 !important;
+}
+
+.tui-editor-contents > *:last-child {
+    margin-bottom: 0 !important;
+}
+
+.tui-editor-contents a {
+    color: #4183C4;
+}
+
+.tui-editor-contents h1,
+.tui-editor-contents h2,
+.tui-editor-contents h3,
+.tui-editor-contents h4,
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
+    margin: 20px 0 10px;
+    padding: 0;
+    font-weight: bold;
+    -webkit-font-smoothing: antialiased;
+    cursor: text;
+    position: relative;
+}
+
+.tui-editor-contents h1 {
+    font-size: 28px;
+    color: black;
+}
+
+.tui-editor-contents h2 {
+    font-size: 24px;
+    border-bottom: 1px solid #cccccc;
+    color: black;
+}
+
+.tui-editor-contents h3 {
+    font-size: 18px;
+}
+
+.tui-editor-contents h4 {
+    font-size: 16px;
+}
+
+.tui-editor-contents h5 {
+    font-size: 14px;
+}
+
+.tui-editor-contents h6 {
+    color: #777777;
+    font-size: 14px;
+}
+
+.tui-editor-contents p,
+.tui-editor-contents blockquote,
+.tui-editor-contents ul,
+.tui-editor-contents ol,
+.tui-editor-contents dl,
+.tui-editor-contents table,
+.tui-editor-contents pre {
+    margin: 15px 0;
+}
+
+.tui-editor-contents hr {
+    display:block;
+    height: 1px;
+    padding: 0;
+    margin: 10px 0;
+    border: 0;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+.tui-editor-contents body > h2:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.tui-editor-contents body > h1:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.tui-editor-contents body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.tui-editor-contents body > h3:first-child,
+.tui-editor-contents body > h4:first-child,
+.tui-editor-contents body > h5:first-child,
+.tui-editor-contents body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.tui-editor-contents a:first-child h1,
+.tui-editor-contents a:first-child h2,
+.tui-editor-contents a:first-child h3,
+.tui-editor-contents a:first-child h4,
+.tui-editor-contents a:first-child h5,
+.tui-editor-contents a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.tui-editor-contents h1 p,
+.tui-editor-contents h2 p,
+.tui-editor-contents h3 p,
+.tui-editor-contents h4 p,
+.tui-editor-contents h5 p,
+.tui-editor-contents h6 p {
+    margin-top: 0;
+}
+
+.tui-editor-contents li p.first {
+    display: inline-block;
+}
+
+.tui-editor-contents ul,
+.tui-editor-contents ol {
+    padding-left: 30px;
+}
+
+.tui-editor-contents ul :first-child,
+.tui-editor-contents ol :first-child {
+    margin-top: 0;
+}
+
+.tui-editor-contents ul ul,
+.tui-editor-contents ol ol {
+    margin-top: 0;
+}
+
+.tui-editor-contents li.task-list-item {
+    list-style-type: none;
+}
+
+.tui-editor-contents .task-list-item input {
+    margin-left: -1.5em;
+}
+
+.tui-editor-contents ul :last-child,
+.tui-editor-contents ol :last-child {
+    margin-bottom: 0;
+}
+
+.tui-editor-contents dl {
+    padding: 0;
+}
+
+.tui-editor-contents dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px;
+}
+
+.tui-editor-contents dl dt:first-child {
+    padding: 0;
+}
+
+.tui-editor-contents dl dt > :first-child {
+    margin-top: 0;
+}
+
+.tui-editor-contents dl dt > :last-child {
+    margin-bottom: 0;
+}
+
+.tui-editor-contents dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px;
+}
+
+.tui-editor-contents dl dd > :first-child {
+    margin-top: 0;
+}
+
+.tui-editor-contents dl dd > :last-child {
+    margin-bottom: 0;
+}
+
+.tui-editor-contents blockquote {
+    border-left: 4px solid #dddddd;
+    padding: 0 15px;
+    color: #777777;
+}
+
+.tui-editor-contents blockquote > :first-child {
+    margin-top: 0;
+}
+
+.tui-editor-contents  blockquote > :last-child {
+    margin-bottom: 0;
+}
+
+.tui-editor-contents table {
+    padding: 0;
+}
+
+.tui-editor-contents table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.tui-editor-contents table tr:nth-child(2n) {
+    background-color: #f8f8f8;
+}
+
+.tui-editor-contents table tr th {
+    font-weight: bold;
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+.tui-editor-contents table tr td {
+    border: 1px solid #cccccc;
+    text-align: left;
+    margin: 0;
+    padding: 6px 13px;
+}
+
+.tui-editor-contents table tr th :first-child,
+.tui-editor-contents table tr td :first-child {
+    margin-top: 0;
+}
+
+.tui-editor-contents table tr th :last-child,
+.tui-editor-contents table tr td :last-child {
+    margin-bottom: 0;
+}
+
+.tui-editor-contents img {
+    max-width: 100%;
+}
+
+.tui-editor-contents code{
+    margin: 0 2px;
+    padding: 0 5px;
+    white-space: nowrap;
+    border: 1px solid #eaeaea;
+    background-color: #f8f8f8;
+    border-radius: 3px;
+}
+
+.tui-editor-contents pre code {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    border: none;
+    background: transparent;
+}
+
+.tui-editor-contents .highlight pre {
+    background-color: #f8f8f8;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
+}
+
+.tui-editor-contents pre {
+    background-color: #f8f8f8;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+    border-radius: 3px;
+}
+
+.tui-editor-contents pre code{
+    background-color: transparent;
+    border: none;
+}
+
+.tui-editor-contents strong {
+    font-weight: bold;
+}
+
+.tui-editor-contents em {
+    font-style: italic;
+}
