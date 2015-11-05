@@ -78,7 +78,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 
 ## 이미지 서버 연동
 
-기존에 addImageFileHook훅을 이용해  폼을 전달하는 방식의 서버연동은 아래와 같지만 deprecated됩니다.
+기존에 addImageFileHook훅을 이용해  폼을 전달하는 방식의 서버연동은 아래 예제에 포함되어 있지만 deprecated됩니다.
 addImageBlobHook을 이용해서 이미지 파일을 blob으로 전달받아서 연동합니다.
 https://developer.mozilla.org/en/docs/Using_files_from_web_applications
 상단 링크의 Handling the upload process for a file파트를 참조해주세요
