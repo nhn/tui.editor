@@ -9,7 +9,7 @@ var UIController = require('./uicontroller'),
     Button = require('./button'),
     ToggleButton = require('./toggleButton');
 
-var util = ne.util;
+var util = tui.util;
 
 /**
  * Toolbar

@@ -8,7 +8,7 @@
 var LayerPopup = require('./layerpopup'),
     Tab = require('./tab');
 
-var util = ne.util;
+var util = tui.util;
 
 var POPUP_CONTENT = [
     '<div class="tabSection"></div>',
@@ -40,7 +40,7 @@ var POPUP_CONTENT = [
 function PopupAddImage(options) {
     options = util.extend({
         title: 'Add Image',
-        className: 'popupAddImage neonEditor-popup',
+        className: 'popupAddImage tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 

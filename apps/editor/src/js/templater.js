@@ -5,7 +5,7 @@
 
 'use strict';
 
-var util = ne.util;
+var util = tui.util;
 
 /**
  * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.

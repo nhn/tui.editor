@@ -1,5 +1,5 @@
 @charset "UTF-8";
-.neonEditor-content {
+.tui-editor-contents {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -13,29 +13,29 @@
     color: #2b2b2b;
 }
 
-.neonEditor-content * {
+.tui-editor-contents * {
     margin:0;
     padding:0;
 }
 
-.neonEditor-content > *:first-child {
+.tui-editor-contents > *:first-child {
     margin-top: 0 !important;
 }
 
-.neonEditor-content > *:last-child {
+.tui-editor-contents > *:last-child {
     margin-bottom: 0 !important;
 }
 
-.neonEditor-content a {
+.tui-editor-contents a {
     color: #4183C4;
 }
 
-.neonEditor-content h1,
-.neonEditor-content h2,
-.neonEditor-content h3,
-.neonEditor-content h4,
-.neonEditor-content h5,
-.neonEditor-content h6 {
+.tui-editor-contents h1,
+.tui-editor-contents h2,
+.tui-editor-contents h3,
+.tui-editor-contents h4,
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
     margin: 20px 0 10px;
     padding: 0;
     font-weight: bold;
@@ -44,45 +44,45 @@
     position: relative;
 }
 
-.neonEditor-content h1 {
+.tui-editor-contents h1 {
     font-size: 28px;
     color: black;
 }
 
-.neonEditor-content h2 {
+.tui-editor-contents h2 {
     font-size: 24px;
     border-bottom: 1px solid #cccccc;
     color: black;
 }
 
-.neonEditor-content h3 {
+.tui-editor-contents h3 {
     font-size: 18px;
 }
 
-.neonEditor-content h4 {
+.tui-editor-contents h4 {
     font-size: 16px;
 }
 
-.neonEditor-content h5 {
+.tui-editor-contents h5 {
     font-size: 14px;
 }
 
-.neonEditor-content h6 {
+.tui-editor-contents h6 {
     color: #777777;
     font-size: 14px;
 }
 
-.neonEditor-content p,
-.neonEditor-content blockquote,
-.neonEditor-content ul,
-.neonEditor-content ol,
-.neonEditor-content dl,
-.neonEditor-content table,
-.neonEditor-content pre {
+.tui-editor-contents p,
+.tui-editor-contents blockquote,
+.tui-editor-contents ul,
+.tui-editor-contents ol,
+.tui-editor-contents dl,
+.tui-editor-contents table,
+.tui-editor-contents pre {
     margin: 15px 0;
 }
 
-.neonEditor-content hr {
+.tui-editor-contents hr {
     display:block;
     height: 1px;
     padding: 0;
@@ -91,83 +91,83 @@
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
 
-.neonEditor-content body > h2:first-child {
+.tui-editor-contents body > h2:first-child {
     margin-top: 0;
     padding-top: 0;
 }
-.neonEditor-content body > h1:first-child {
+.tui-editor-contents body > h1:first-child {
     margin-top: 0;
     padding-top: 0;
 }
-.neonEditor-content body > h1:first-child + h2 {
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.neonEditor-content body > h3:first-child,
-.neonEditor-content body > h4:first-child,
-.neonEditor-content body > h5:first-child,
-.neonEditor-content body > h6:first-child {
+.tui-editor-contents body > h1:first-child + h2 {
     margin-top: 0;
     padding-top: 0;
 }
 
-.neonEditor-content a:first-child h1,
-.neonEditor-content a:first-child h2,
-.neonEditor-content a:first-child h3,
-.neonEditor-content a:first-child h4,
-.neonEditor-content a:first-child h5,
-.neonEditor-content a:first-child h6 {
+.tui-editor-contents body > h3:first-child,
+.tui-editor-contents body > h4:first-child,
+.tui-editor-contents body > h5:first-child,
+.tui-editor-contents body > h6:first-child {
     margin-top: 0;
     padding-top: 0;
 }
 
-.neonEditor-content h1 p,
-.neonEditor-content h2 p,
-.neonEditor-content h3 p,
-.neonEditor-content h4 p,
-.neonEditor-content h5 p,
-.neonEditor-content h6 p {
+.tui-editor-contents a:first-child h1,
+.tui-editor-contents a:first-child h2,
+.tui-editor-contents a:first-child h3,
+.tui-editor-contents a:first-child h4,
+.tui-editor-contents a:first-child h5,
+.tui-editor-contents a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.tui-editor-contents h1 p,
+.tui-editor-contents h2 p,
+.tui-editor-contents h3 p,
+.tui-editor-contents h4 p,
+.tui-editor-contents h5 p,
+.tui-editor-contents h6 p {
     margin-top: 0;
 }
 
-.neonEditor-content li p.first {
+.tui-editor-contents li p.first {
     display: inline-block;
 }
 
-.neonEditor-content ul,
-.neonEditor-content ol {
+.tui-editor-contents ul,
+.tui-editor-contents ol {
     padding-left: 30px;
 }
 
-.neonEditor-content ul :first-child,
-.neonEditor-content ol :first-child {
+.tui-editor-contents ul :first-child,
+.tui-editor-contents ol :first-child {
     margin-top: 0;
 }
 
-.neonEditor-content ul ul,
-.neonEditor-content ol ol {
+.tui-editor-contents ul ul,
+.tui-editor-contents ol ol {
     margin-top: 0;
 }
 
-.neonEditor-content li.task-list-item {
+.tui-editor-contents li.task-list-item {
     list-style-type: none;
 }
 
-.neonEditor-content .task-list-item input {
+.tui-editor-contents .task-list-item input {
     margin-left: -1.5em;
 }
 
-.neonEditor-content ul :last-child,
-.neonEditor-content ol :last-child {
+.tui-editor-contents ul :last-child,
+.tui-editor-contents ol :last-child {
     margin-bottom: 0;
 }
 
-.neonEditor-content dl {
+.tui-editor-contents dl {
     padding: 0;
 }
 
-.neonEditor-content dl dt {
+.tui-editor-contents dl dt {
     font-size: 14px;
     font-weight: bold;
     font-style: italic;
@@ -175,61 +175,61 @@
     margin: 15px 0 5px;
 }
 
-.neonEditor-content dl dt:first-child {
+.tui-editor-contents dl dt:first-child {
     padding: 0;
 }
 
-.neonEditor-content dl dt > :first-child {
+.tui-editor-contents dl dt > :first-child {
     margin-top: 0;
 }
 
-.neonEditor-content dl dt > :last-child {
+.tui-editor-contents dl dt > :last-child {
     margin-bottom: 0;
 }
 
-.neonEditor-content dl dd {
+.tui-editor-contents dl dd {
     margin: 0 0 15px;
     padding: 0 15px;
 }
 
-.neonEditor-content dl dd > :first-child {
+.tui-editor-contents dl dd > :first-child {
     margin-top: 0;
 }
 
-.neonEditor-content dl dd > :last-child {
+.tui-editor-contents dl dd > :last-child {
     margin-bottom: 0;
 }
 
-.neonEditor-content blockquote {
+.tui-editor-contents blockquote {
     border-left: 4px solid #dddddd;
     padding: 0 15px;
     color: #777777;
 }
 
-.neonEditor-content blockquote > :first-child {
+.tui-editor-contents blockquote > :first-child {
     margin-top: 0;
 }
 
-.neonEditor-content  blockquote > :last-child {
+.tui-editor-contents  blockquote > :last-child {
     margin-bottom: 0;
 }
 
-.neonEditor-content table {
+.tui-editor-contents table {
     padding: 0;
 }
 
-.neonEditor-content table tr {
+.tui-editor-contents table tr {
     border-top: 1px solid #cccccc;
     background-color: white;
     margin: 0;
     padding: 0;
 }
 
-.neonEditor-content table tr:nth-child(2n) {
+.tui-editor-contents table tr:nth-child(2n) {
     background-color: #f8f8f8;
 }
 
-.neonEditor-content table tr th {
+.tui-editor-contents table tr th {
     font-weight: bold;
     border: 1px solid #cccccc;
     text-align: left;
@@ -237,28 +237,28 @@
     padding: 6px 13px;
 }
 
-.neonEditor-content table tr td {
+.tui-editor-contents table tr td {
     border: 1px solid #cccccc;
     text-align: left;
     margin: 0;
     padding: 6px 13px;
 }
 
-.neonEditor-content table tr th :first-child,
-.neonEditor-content table tr td :first-child {
+.tui-editor-contents table tr th :first-child,
+.tui-editor-contents table tr td :first-child {
     margin-top: 0;
 }
 
-.neonEditor-content table tr th :last-child,
-.neonEditor-content table tr td :last-child {
+.tui-editor-contents table tr th :last-child,
+.tui-editor-contents table tr td :last-child {
     margin-bottom: 0;
 }
 
-.neonEditor-content img {
+.tui-editor-contents img {
     max-width: 100%;
 }
 
-.neonEditor-content code{
+.tui-editor-contents code{
     margin: 0 2px;
     padding: 0 5px;
     white-space: nowrap;
@@ -267,7 +267,7 @@
     border-radius: 3px;
 }
 
-.neonEditor-content pre code {
+.tui-editor-contents pre code {
     margin: 0;
     padding: 0;
     white-space: pre;
@@ -275,7 +275,7 @@
     background: transparent;
 }
 
-.neonEditor-content .highlight pre {
+.tui-editor-contents .highlight pre {
     background-color: #f8f8f8;
     border: 1px solid #cccccc;
     font-size: 13px;
@@ -285,7 +285,7 @@
     border-radius: 3px;
 }
 
-.neonEditor-content pre {
+.tui-editor-contents pre {
     background-color: #f8f8f8;
     border: 1px solid #cccccc;
     font-size: 13px;
@@ -295,15 +295,15 @@
     border-radius: 3px;
 }
 
-.neonEditor-content pre code{
+.tui-editor-contents pre code{
     background-color: transparent;
     border: none;
 }
 
-.neonEditor-content strong {
+.tui-editor-contents strong {
     font-weight: bold;
 }
 
-.neonEditor-content em {
+.tui-editor-contents em {
     font-style: italic;
 }

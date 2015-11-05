@@ -6,7 +6,7 @@
 
 var Button = require('./button');
 
-var util = ne.util;
+var util = tui.util;
 
 /**
  * ToggleButton

@@ -7,7 +7,7 @@
 
 var UIController = require('./uicontroller');
 
-var util = ne.util;
+var util = tui.util;
 
 var nextTypeString = ['WYSIWYG', 'Markdown'],
     TYPE = {

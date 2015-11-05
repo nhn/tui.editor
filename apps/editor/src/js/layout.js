@@ -12,13 +12,13 @@ var Toolbar = require('./toolbar'),
     PopupAddImage = require('./popupAddImage');
 
 var containerTmpl = [
-    '<div class="neonEditor">',
+    '<div class="tui-editor">',
         '<div class="toolbarSection" />',
         '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
             '<div class="tabSection" />',
             '<div class="editor" />',
-            '<div class="preview neonEditor-content" />',
+            '<div class="preview tui-editor-contents" />',
         '</div>',
         '<div class="wysiwygContainer">',
             '<div class="editor" />',
@@ -106,14 +106,14 @@ Layout.prototype._initWysiwygSection = function() {
 
 Layout.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.neonEditor'),
+        $target: this.$el.find('.tui-editor'),
         eventManager: this.eventManager
     });
 };
 
 Layout.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.neonEditor'),
+        $target: this.$el.find('.tui-editor'),
         eventManager: this.eventManager
     });
 };
@@ -137,15 +137,15 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.neonEditor').addClass('hide');
+    this.$el.find('.tui-editor').addClass('hide');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.neonEditor').removeClass('hide');
+    this.$el.find('.tui-editor').removeClass('hide');
 };
 
 Layout.prototype.remove = function() {
-    this.$el.find('.neonEditor').remove();
+    this.$el.find('.tui-editor').remove();
 };
 
 Layout.prototype.getEditorEl = function() {

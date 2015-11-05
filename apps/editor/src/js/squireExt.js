@@ -8,7 +8,7 @@
 var domUtils = require('./domUtils');
 
 var Squire = window.Squire,
-    util = ne.util;
+    util = tui.util;
 
 var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 /**

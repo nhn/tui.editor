@@ -1,6 +1,6 @@
 {
-  "name": "NeonEditor",
-  "version": "0.0.6",
+  "name": "tui-editor",
+  "version": "0.0.7",
   "description": "private",
   "authors": [
     {
@@ -12,10 +12,10 @@
     "globals"
   ],
   "main": [
-    "dist/neonEditor.js",
-    "dist/neonEditor.min.js",
-    "dist/neonEditor.css",
-    "dist/contentStyle.css"
+    "dist/tui-editor.js",
+    "dist/tui-editor.min.js",
+    "dist/tui-editor.css",
+    "dist/tui-editor-contents.css"
   ],
   "license": "MIT",
   "ignore": [
@@ -28,7 +28,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "tui-code-snippet": "1.0.3",
+    "tui-code-snippet": "1.0.4",
     "codemirror": "~5.5.0",
     "highlightjs": "~8.4.0",
     "jquery": "~2.1.3",

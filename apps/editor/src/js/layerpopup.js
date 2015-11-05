@@ -7,9 +7,9 @@
 
 var UIController = require('./uicontroller');
 
-var util = ne.util,
+var util = tui.util,
     _id = 0,
-    CLASS_PREFIX = 'nepopup-',
+    CLASS_PREFIX = 'tui-popup-',
     LAYOUT_TEMPLATE = [
         '<div class="' + CLASS_PREFIX + 'header">',
         '<span class="' + CLASS_PREFIX + 'title"></span>',

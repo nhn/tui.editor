@@ -1,42 +1,41 @@
 @charset "UTF-8";
 
-.neonEditor,
-.neonEditor * {
+.tui-editor,
+.tui-editor * {
     margin:0;
     padding:0;
-    border:0;
     box-sizing: content-box;
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
 }
 
-.neonEditor {
+.tui-editor {
     position: relative;
     line-height: 1;
 }
 
-.neonEditor:after,
-.neonEditor .toolbar:after,
-.neonEditor .statusbar:after
+.tui-editor:after,
+.tui-editor .toolbar:after,
+.tui-editor .statusbar:after
 {
     content: "";
     display: block;
     height: 0;
     clear: both;
 }
-.neonEditor {
+.tui-editor {
     border: 1px solid #ccc;
 }
-.neonEditor .toolbar {
+.tui-editor .toolbar {
     padding: 5px;
     height: 30px;
     background: #eee;
 }
-.neonEditor.preview-style-vetical .toolbar {
+.tui-editor.preview-style-vetical .toolbar {
     border-bottom: 1px solid #ccc;
 }
-.neonEditor .toolbar button {
+.tui-editor .toolbar button {
     box-sizing: border-box;
     min-width: 30px;
     height: 30px;
@@ -48,19 +47,21 @@
     float: left;
     cursor: pointer;
 }
-.neonEditor .toolbar button:hover {
+.tui-editor .toolbar button:hover {
     background: #eee;
 }
-.neonEditor .toolbar button:active {
+.tui-editor .toolbar button:active {
     box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
-.neonEditor .toolbar button:first-child {
+.tui-editor .toolbar button:first-child {
     border-left-width: 1px;
 }
-.neonEditor .toolbar button.bold {
+
+.tui-editor .toolbar button.bold {
     font-weight: bold;
 }
-.neonEditor .toolbar button.italic {
+
+.tui-editor .toolbar button.italic {
     font-style: italic;
 }
 
@@ -122,43 +123,43 @@
 .mdContainer .previewContent {
     padding: 5px;
 }
-.neonEditor .preview-style-tab>.editor,
-.neonEditor .preview-style-tab>.preview {
+.tui-editor .preview-style-tab>.editor,
+.tui-editor .preview-style-tab>.preview {
     float: left;
     width: 100%;
     display: none;
 }
-.neonEditor .preview-style-tab>.active {
+.tui-editor .preview-style-tab>.active {
     display: block;
 }
-.neonEditor .preview-style-vertical>.editor,
-.neonEditor .preview-style-vertical>.preview {
+.tui-editor .preview-style-vertical>.editor,
+.tui-editor .preview-style-vertical>.preview {
     width: 50%;
 }
-.neonEditor .preview-style-vertical>.editor {
+.tui-editor .preview-style-vertical>.editor {
     float: left;
     border-right: 1px solid #ccc;
 }
-.neonEditor .preview-style-vertical>.preview {
+.tui-editor .preview-style-vertical>.preview {
     float: right;
 }
 
-.neonEditor .preview-style-vertical>.tabSection {
+.tui-editor .preview-style-vertical>.tabSection {
     display: none;
 }
 
-.neonEditor .preview-style-tab>.tabSection {
+.tui-editor .preview-style-tab>.tabSection {
     display:block;
 }
 
-.neonEditor .preview-style-vertical .editor {
+.tui-editor .preview-style-vertical .editor {
     float: left;
     width: 50%;
     border-right: 1px solid #ccc;
     border-top: 1px solid #ccc;
 }
 
-.neonEditor .preview-style-vertical .preview {
+.tui-editor .preview-style-vertical .preview {
     float: left;
     width: 50%;
     border-top: 1px solid #ccc;
@@ -169,13 +170,13 @@
     width: 100%;
 }
 
-.neonEditor .modeSwitchSection {
+.tui-editor .modeSwitchSection {
     float: right;
     margin-top: -23px;
     margin-right: 5px;
 }
 
-.neonEditor .wysiwygContainer {
+.tui-editor .wysiwygContainer {
     border-top: 1px solid #ccc;
 }
 
@@ -197,20 +198,21 @@
     visibility: visible
 }
 
-.neonEditor.hide,
-.neonEditor.hide iframe {
+.tui-editor.hide,
+.tui-editor.hide iframe {
     position: absolute;
     top: 0;
     left: 0;
     visibility: hidden;
 }
 
-.neonEditor .switchButton {
+.tui-editor .switchButton {
     background: none;
     text-decoration: underline;
+    border: 0;
 }
 
-.nepopup-wrapper {
+.tui-popup-wrapper {
     width: 500px;
     left: auto;
     margin-right: auto;
@@ -221,18 +223,18 @@
     z-index: 9999;
 }
 
-.nepopup-header {
+.tui-popup-header {
     height: 30px;
     padding: 10px;
     border-bottom: 1px solid #ccc;
     line-height: 30px;
 }
 
-.nepopup-body {
+.tui-popup-body {
     padding: 15px;
 }
 
-.nepopup-header .nepopup-closeButton {
+.tui-popup-header .tui-popup-closeButton {
     float: right;
     margin: 0;
     padding: 0;
@@ -244,20 +246,20 @@
     color: #aaa;
 }
 
-.nepopup-header .nepopup-title {
+.tui-popup-header .tui-popup-title {
     font-size: 20px;
     font-weight:bold;
     vertical-align: baseline;
 }
 
-.neonEditor-popup {
+.tui-editor-popup {
     position: absolute;
     top: 30px;
     left: 50%;
     margin-left: -250px;
 }
 
-.neonEditor-popup label {
+.tui-editor-popup label {
     display: block;
 }
 

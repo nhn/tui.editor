@@ -1,12 +1,15 @@
 ## 설치
 
+bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일들을 다운로드 하셔도 됩니다.
+[릴리즈노트][https://github.com/shiren/tui-editor/releases]를 참고하여 버전을 지정해서 설치합니다.
+
 ```
-bower install git@github.com:shiren/neon-editor.git#develop
+bower install git@github.com:shiren/tui-editor.git#0.0.7
 ```
 
-bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일들을 다운로드 하셔도 됩니다.
 디펜던시 모듈 정보는 bower.json을 참고 바랍니다.
 디펜던시 라이브러리설치 편의를 위해서는 bower를 이용하는 편이 좋습니다.
+
 이후 업데이트는 아래와같이 할수있습니다.
 
 ```
@@ -17,7 +20,7 @@ bower update
 
 현재 에디터가 개발중에 있습니다. 미리 에디터를 적용하기 위한 임시 배포입니다.
 에디터를 정상적으로 사용하기 위해서는 하단에 샘플 코드와같이 디펜던시 js, css 파일들과 에디터js, css파일이 로드가 되어야합니다.
-neonEditor.css는 에디터에 필요한 css스타일들이고
+tuiEditor.css는 에디터에 필요한 css스타일들이고
 contentStyle.css는 wysiwyg에디터나 마크다운 preview에서 보여질 컨텐트의 스타일들입니다.
 contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통해 만들어진 컨텐츠를 보여줄때 같은 내용을 사용하실수 있습니다.(css파일 내용 참고)
 아래 예제를 확인 바랍니다.
@@ -35,21 +38,21 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
     <script src="bower_components/codemirror/lib/codemirror.js"></script>
     <script src="bower_components/highlightjs/highlight.pack.js"></script>
     <script src="bower_components/Squire/build/squire-raw.js"></script>
-    <script src="bower_components/neonEditor/dist/neonEditor.min.js"></script>
+    <script src="bower_components/tui-editor/dist/tui-editor.min.js"></script>
     <link rel="stylesheet" href="bower_components/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="bower_components/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="bower_components/neonEditor/dist/neonEditor.css">
-    <link rel="stylesheet" href="bower_components/neonEditor/dist/contentStyle.css">
+    <link rel="stylesheet" href="bower_components/tui-editor/dist/tui-editor.css">
+    <link rel="stylesheet" href="bower_components/tui-editor/dist/tui-editor-contents.css">
 </head>
 <body>
 <div id="editSection"></div>
 <script>
-    $('#editSection').neonEditor({
+    $('#editSection').tuiEditor({
         initialEditType: 'markdown',
         previewStyle: 'tab',
         height: 300,
         contentCSSStyles: [
-            'bower_components/neonEditor/dist/contentStyle.css'
+            'bower_components/tui-editor/dist/tui-editor-contents.css'
         ],
         events: {
             'load': function() {
@@ -67,7 +70,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자)
-* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 contentStyle.css의 경로를 다시 지정하면됩니다.
+* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 tui-editor-contents.css의 경로를 다시 지정하면됩니다.
 * events: 내부 이벤트에 대응하는 핸들러를 셋팅합니다.
 * exts: 사용할 익스텐션들을 배열로 지정합니다.
     * `exts: ['scrollFollow']`
@@ -75,26 +78,33 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 
 ## 이미지 서버 연동
 
-이미지 추가 팝업에서 전달받은 form데이터를 이용해서 서버통신후
-해당 이미지의 url을 콜백으로 넘겨 처리합니다.
-예제는 form submit으로 화면이 전환되지만 실사용시에는 ajaxForm과 같은 툴을 이용해 ajax나 iframe으로 통신을 해야합니다.
+기존에 addImageFileHook훅을 이용해  폼을 전달하는 방식의 서버연동은 아래와 같지만 deprecated됩니다.
+addImageBlobHook을 이용해서 이미지 파일을 blob으로 전달받아서 연동합니다.
+https://developer.mozilla.org/en/docs/Using_files_from_web_applications
+상단 링크의 Handling the upload process for a file파트를 참조해주세요
+
 
 ``` javascript
-$('#editSection').neonEditor({
+$('#editSection').tuiEditor({
     initialEditType: 'markdown',
     previewStyle: 'tab',
     height: 300,
     contentCSSStyles: [
-        '../dist/contentStyle.css'
+        'bower_components/tui-editor/dist/tui-editor-contents.css'
     ],
     hooks: {
         'addImageFileHook': function($form, callback) {
+            //addImageFileHook은 deprecated됩니다.
             $form.find('.imageFileInput').attr('name','fileName');
             $form[0].action = 'http://posttestserver.com/post.php';
             $form[0].method = 'POST';
             $form[0].submit();
 
             //callback으로 url전달
+            //callback('이미지URL');
+        },
+        'addImageBlobHook': function(blob, callback) {
+            //이미지 블롭을 이용해 서버 연동 후 콜백실행
             //callback('이미지URL');
         }
     }
@@ -106,11 +116,11 @@ $('#editSection').neonEditor({
 ``` javascript
 //아래와 같이 일반적인 jQuery 플러그인 인터페이스를 이용합니다.
 
-$('#editSection').neonEditor('focus');
+$('#editSection').tuiEditor('focus');
 
-var content = $("#editSection").neonEditor("getValue");
+var content = $("#editSection").tuiEditor("getValue");
 
-$("#editSection").neonEditor("setValue", "# Hello!!");
+$("#editSection").tuiEditor("setValue", "# Hello!!");
 ```
 
 * focus: 에디터에 포커스를 줍니다.
@@ -123,10 +133,12 @@ $("#editSection").neonEditor("setValue", "# Hello!!");
 * on: 이벤트핸들러와 핸들러평션을 파라메터로 넘겨 에디터 내부이벤트를 바인드 할수있습니다.
 
 ``` javascript
-$('#editSection').neonEditor('on', 'load', handler);
+$('#editSection').tuiEditor('on', 'load', handler);
 ```
 
 ## 주요변경점
+* 0.0.7
+    * 네이밍 변경으로 리포지토리부터 경로들이 모두 바뀌었습니다.
 * 0.0.6
     * 디펜던시 모듈 code-snippets의 네이밍이 변경됨에 따라 사용 경로도 바뀌었습니다. tui-code-snippets의 경로를 확인바랍니다.
 * 0.0.2

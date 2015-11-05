@@ -8,7 +8,7 @@
 var UIController = require('./uicontroller'),
     templater = require('./templater');
 
-var util = ne.util;
+var util = tui.util;
 
 var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
 

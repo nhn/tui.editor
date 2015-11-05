@@ -3,8 +3,6 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
-    concat = require('gulp-concat'),
-
     //sourcemaps = require('gulp-sourcemaps'),
     source = require('vinyl-source-stream'),
     buffer = require('vinyl-buffer'),
@@ -50,7 +48,7 @@ gulp.task('develop', bundle);
 gulp.task('bundle', function() {
     return browserify('./src/js/index.js')
         .bundle()
-        .pipe(source('neonEditor.js'))
+        .pipe(source('tui-editor.js'))
         .pipe(buffer())
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
@@ -95,7 +93,7 @@ gulp.task('watch', function() {
  * gulp-strip-debug
  */
 gulp.task('stripDebug', function() {
-    return gulp.src('dist/neonEditor.js')
+    return gulp.src('dist/tui-editor.js')
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
 });
@@ -104,16 +102,16 @@ gulp.task('stripDebug', function() {
  * Uglify
  */
 gulp.task('uglify', function() {
-    return gulp.src('./dist/neonEditor.js')
+    return gulp.src('./dist/tui-editor.js')
         .pipe(ugilfy())
-        .pipe(rename('neonEditor.min.js'))
+        .pipe(rename('tui-editor.min.js'))
         .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('contentCssCopy', function() {
     return gulp.src([
-            './src/css/contentStyle.css',
-            './src/css/neonEditor.css'
+            './src/css/tui-editor-contents.css',
+            './src/css/tui-editor.css'
          ])
         .pipe(gulp.dest('./dist'));
 });

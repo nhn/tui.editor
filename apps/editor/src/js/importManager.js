@@ -5,7 +5,7 @@
 
 'use strict';
 
-var util = ne.util;
+var util = tui.util;
 
 /**
  * ImportManager
