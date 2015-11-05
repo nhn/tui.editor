@@ -262,9 +262,15 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._removeHrIfNeed(range, event);
             }
         }
+    //tab
     } else if (event.keyCode === 9) {
         if (this._isInTaskList(range)) {
-            if (!$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+            event.preventDefault();
+            self.eventManager.emit('command', 'IncreaseTask');
+        }
+        /*if (this._isInTaskList(range)) {
+            if ($(range.startContainer).parents('li')[0].previousSibling && !$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
+                self.eventManager.emit('command', 'IncreaseTask');
                 this._unformatTaskIfNeedOnEnter(range);
                 setTimeout(function() {
                     self.eventManager.emit('command', 'Task');
@@ -278,7 +284,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 event.preventDefault();
                 self.eventManager.emit('command', 'IncreaseTask');
             }
-        }
+        }*/
     }
 };
 
