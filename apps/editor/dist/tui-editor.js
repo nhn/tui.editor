@@ -1845,6 +1845,7 @@ ToastUIEditor.prototype.changeMode = function(mode) {
     } else {
         this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
         this.layout.switchToMarkdown();
+        this.getCodeMirror().refresh();
         this.eventManager.emit('changeModeToMarkdown');
     }
 
@@ -1863,6 +1864,7 @@ ToastUIEditor.prototype.hide = function() {
 
 ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
+    this.getCodeMirror().refresh();
 };
 
 ToastUIEditor.prototype.reset = function() {
