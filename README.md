@@ -4,7 +4,7 @@
 이경우 bower.json의 디펜던시 라이브러리들을 따로 받으셔야합니다.
 
 bower를 이용해서 설치하는것을 추천합니다.
-[릴리즈노트][https://github.com/shiren/tui-editor/releases]를 참고하여 #뒤에 버전을 지정해서 설치합니다.
+[릴리즈노트](https://github.com/shiren/tui-editor/releases)를 참고하여 #뒤에 버전을 지정해서 설치합니다.
 예제는 0.0.7버전의 설치예제입니다.
 
 ```
@@ -135,14 +135,17 @@ $("#editSection").tuiEditor("setValue", "# Hello!!");
 * changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
 * contentHeight: 에디터의 컨텐트 영역의 높이값을 인자로 넘겨 지정하거나 현재의 높이값을 반환합니다
 * on: 이벤트핸들러와 핸들러평션을 파라메터로 넘겨 에디터 내부이벤트를 바인드 할수있습니다.
-    * load: 에디터가 정상적으로 설치된후 발생
-    * change: 에디터의 컨텐츠가 변경되면 발생
-    * changeMode: 에디터 모드가 변경되는 발생
-    * stateChange: 커서상의 위치에 해당하는 컨텐츠의 종류가 변경되면 발생(bold, italic)
-    * focus
-    * blur
-    * show
-    * hide
+    * jQuery의 이벤트 네임스페이스와 동일하게 적용할수 있어 추후 특정 이벤트핸들러만 삭제할수있습니다(ex. change.dooray)
+    * event목록
+        * load: 에디터가 정상적으로 설치된후 발생
+        * change: 에디터의 컨텐츠가 변경되면 발생
+        * changeMode: 에디터 모드가 변경되는 발생
+        * stateChange: 커서상의 위치에 해당하는 컨텐츠의 종류가 변경되면 발생(bold, italic)
+        * focus
+        * blur
+        * show
+        * hide
+* off : 이벤트 핸들러를 제거합니다. 네임스페이스로 특정이벤핸들러만 삭제할수있습니다
 
 ``` javascript
 $('#editSection').tuiEditor('on', 'load', handler);
