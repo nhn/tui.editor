@@ -199,10 +199,10 @@
 }
 
 .tui-editor.hide,
+.tui-editor.hide .wysiwygContainer,
+.tui-editor.hide .mdContainer,
 .tui-editor.hide iframe {
     position: absolute;
-    top: 0;
-    left: 0;
     visibility: hidden;
 }
 
