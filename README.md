@@ -50,7 +50,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 <script>
     $('#editSection').tuiEditor({
         initialEditType: 'markdown',
-        previewStyle: 'tab',
+        previewStyle: 'vertical',
         height: 300,
         contentCSSStyles: [
             'bower_components/tui-editor/dist/tui-editor-contents.css'
