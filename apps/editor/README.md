@@ -84,8 +84,7 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 
 기존에 addImageFileHook훅을 이용해  폼을 전달하는 방식의 서버연동은 아래 예제에 포함되어 있지만 deprecated됩니다.
 addImageBlobHook을 이용해서 이미지 파일을 blob으로 전달받아서 연동합니다.
-https://developer.mozilla.org/en/docs/Using_files_from_web_applications
-상단 링크의 Handling the upload process for a file파트를 참조해주세요
+블롭을 통한 이미지 서버 연동은 [여기](https://developer.mozilla.org/en/docs/Using_files_from_web_applications)의 Handling the upload process for a file파트를 참조해주세요
 
 
 ``` javascript
@@ -145,10 +144,14 @@ $("#editSection").tuiEditor("setValue", "# Hello!!");
         * blur
         * show
         * hide
-* off : 이벤트 핸들러를 제거합니다. 네임스페이스로 특정이벤핸들러만 삭제할수있습니다
+* off : 이벤트 핸들러를 제거합니다. 네임스페이스로 특정 이벤트 핸들러만 삭제할수있습니다
+    * "change"와 실행시 모든 change이벤트 제거 "change.dooray"는 dooray라는 네임스페이스가 있는 change이벤트만 제거 ".dooray"는 모든 이벤트의 ".dooray"네임스페이스를 가진 핸들러제거
 
 ``` javascript
 $('#editSection').tuiEditor('on', 'load', handler);
+$('#editSection').tuiEditor('on', 'load.dooray', handler);
+$('#editSection').tuiEditor('off', '.dooray', handler);
+$('#editSection').tuiEditor('off', 'load.dooray', handler);
 ```
 
 ## 주요변경점
