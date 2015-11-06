@@ -1,14 +1,15 @@
 ## 설치
 
-bower를 이용하시거나 리포의 dist폴더의 내용에서 필요한 파일들을 다운로드 하셔도 됩니다.
-[릴리즈노트][https://github.com/shiren/tui-editor/releases]를 참고하여 버전을 지정해서 설치합니다.
+리포의 dist 디렉토리의 파일들을 다운로드 받아서 사용하실수있습니다.
+이경우 bower.json의 디펜던시 라이브러리들을 따로 받으셔야합니다.
+
+bower를 이용해서 설치하는것을 추천합니다.
+[릴리즈노트][https://github.com/shiren/tui-editor/releases]를 참고하여 #뒤에 버전을 지정해서 설치합니다.
+예제는 0.0.7버전의 설치예제입니다.
 
 ```
 bower install git@github.com:shiren/tui-editor.git#0.0.7
 ```
-
-디펜던시 모듈 정보는 bower.json을 참고 바랍니다.
-디펜던시 라이브러리설치 편의를 위해서는 bower를 이용하는 편이 좋습니다.
 
 이후 업데이트는 아래와같이 할수있습니다.
 
@@ -72,9 +73,12 @@ contentStyle.css는 기호에 맞게 수정하실수 있으며 에디터를 통�
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자)
 * contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 tui-editor-contents.css의 경로를 다시 지정하면됩니다.
 * events: 내부 이벤트에 대응하는 핸들러를 셋팅합니다.
+    * 이벤트 목록은 하단 API파트에 있습니다.
 * exts: 사용할 익스텐션들을 배열로 지정합니다.
     * `exts: ['scrollFollow']`
 * hooks: 이미지서버와의 연동등을 처리하는 훅을 바인드합니다.
+    * addImageFileHook : 폼객체를 이용해 이미지를 서버에 업로드합니다. deprecated예정입니다.
+    * addImageBlobHook : 파일 blob을 이용해 이미지를 서버에 업로드합니다.
 
 ## 이미지 서버 연동
 
@@ -131,6 +135,14 @@ $("#editSection").tuiEditor("setValue", "# Hello!!");
 * changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
 * contentHeight: 에디터의 컨텐트 영역의 높이값을 인자로 넘겨 지정하거나 현재의 높이값을 반환합니다
 * on: 이벤트핸들러와 핸들러평션을 파라메터로 넘겨 에디터 내부이벤트를 바인드 할수있습니다.
+    * load: 에디터가 정상적으로 설치된후 발생
+    * change: 에디터의 컨텐츠가 변경되면 발생
+    * changeMode: 에디터 모드가 변경되는 발생
+    * stateChange: 커서상의 위치에 해당하는 컨텐츠의 종류가 변경되면 발생(bold, italic)
+    * focus
+    * blur
+    * show
+    * hide
 
 ``` javascript
 $('#editSection').tuiEditor('on', 'load', handler);
@@ -138,7 +150,10 @@ $('#editSection').tuiEditor('on', 'load', handler);
 
 ## 주요변경점
 * 0.0.7
-    * 네이밍 변경으로 리포지토리부터 경로들이 모두 바뀌었습니다.
+    * 네이밍 변경
+        * 리포지토리 경로
+        * jQuery API명
+        * 파일 경로
 * 0.0.6
     * 디펜던시 모듈 code-snippets의 네이밍이 변경됨에 따라 사용 경로도 바뀌었습니다. tui-code-snippets의 경로를 확인바랍니다.
 * 0.0.2
