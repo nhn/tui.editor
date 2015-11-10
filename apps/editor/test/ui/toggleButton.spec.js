@@ -1,6 +1,6 @@
 'use strict';
 
-var ToggleButton = require('../src/js/toggleButton');
+var ToggleButton = require('../../src/js/ui/toggleButton');
 
 describe('ToggleButton', function() {
     var button;

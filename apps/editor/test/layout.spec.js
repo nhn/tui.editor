@@ -20,10 +20,7 @@ describe('Layout', function() {
 
     it('All layout elements are exist', function() {
         expect($('.tui-editor').length).toEqual(1);
-        expect($('.toolbarSection').length).toEqual(1);
-        expect($('.modeSwitchSection').length).toEqual(1);
         expect($('.mdContainer').length).toEqual(1);
-        expect($('.mdContainer .tabSection').length).toEqual(1);
         expect($('.mdContainer .editor').length).toEqual(1);
         expect($('.mdContainer .preview').length).toEqual(1);
         expect($('.wysiwygContainer').length).toEqual(1);

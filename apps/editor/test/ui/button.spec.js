@@ -1,6 +1,6 @@
 'use strict';
 
-var Button = require('../src/js/button');
+var Button = require('../../src/js/ui/button');
 
 describe('Button', function() {
     var button;

@@ -94,6 +94,10 @@ PopupAddImage.prototype._bindContentEvent = function() {
 PopupAddImage.prototype._linkWithEventManager = function() {
     var self = this;
 
+    this.eventManager.listen('focus', function() {
+        self.hide();
+    });
+
     this.eventManager.listen('openPopupAddImage', function() {
         self.eventManager.emit('closeAllPopup');
         self.show();

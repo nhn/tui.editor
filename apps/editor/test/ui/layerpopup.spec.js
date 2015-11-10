@@ -1,4 +1,4 @@
-var Layerpopup = require('../src/js/layerpopup');
+var Layerpopup = require('../../src/js/ui/layerpopup');
 
 describe('Layerpopup', function() {
     'use strict';

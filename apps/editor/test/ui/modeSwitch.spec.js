@@ -1,4 +1,4 @@
-var ModeSwitch = require('../src/js/modeSwitch');
+var ModeSwitch = require('../../src/js/ui/modeSwitch');
 
 describe('ModeSwitch', function() {
     'use strict';

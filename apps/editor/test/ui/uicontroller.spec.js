@@ -1,6 +1,6 @@
 'use strict';
 
-var UIController = require('../src/js/uicontroller');
+var UIController = require('../../src/js/ui/uicontroller');
 
 describe('UIController', function() {
     var uic;

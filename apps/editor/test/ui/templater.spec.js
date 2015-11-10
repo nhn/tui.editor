@@ -1,6 +1,6 @@
 'use strict';
 
-var templater = require('../src/js/templater');
+var templater = require('../../src/js/ui/templater');
 
 describe('templater', function() {
     describe('template()', function() {

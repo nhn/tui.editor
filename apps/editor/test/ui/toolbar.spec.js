@@ -1,10 +1,10 @@
 'use strict';
 
-var Toolbar = require('../src/js/toolbar'),
-    CommandMangager = require('../src/js/commandManager'),
-    Command = require('../src/js/command'),
-    EventManager = require('../src/js/eventManager'),
-    Button = require('../src/js/button');
+var Toolbar = require('../../src/js/ui/toolbar'),
+    CommandMangager = require('../../src/js/commandManager'),
+    Command = require('../../src/js/command'),
+    EventManager = require('../../src/js/eventManager'),
+    Button = require('../../src/js/ui/button');
 
 describe('Toolbar', function() {
     var toolbar,

@@ -1,4 +1,4 @@
-var Tab = require('../src/js/tab');
+var Tab = require('../../src/js/ui/tab');
 
 describe('Tab', function() {
     'use strict';

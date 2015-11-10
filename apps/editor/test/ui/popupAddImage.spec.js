@@ -1,7 +1,7 @@
 'use strict';
 
-var PopupAddImage = require('../src/js/popupAddImage'),
-    EventManager = require('../src/js/eventManager');
+var PopupAddImage = require('../../src/js/ui/popupAddImage'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('PopupAddImage', function() {
     var popup,
