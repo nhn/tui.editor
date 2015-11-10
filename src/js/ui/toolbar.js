@@ -22,7 +22,7 @@ var util = tui.util;
 function Toolbar(eventManager) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'toolbar'
+        className: 'tui-editor-defaultUI-toolbar'
     });
 
     this.buttons = [];

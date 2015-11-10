@@ -73,6 +73,10 @@ PopupAddLink.prototype._bindContentEvent = function() {
 PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
     var self = this;
 
+    eventManager.listen('focus', function() {
+        self.hide();
+    });
+
     eventManager.listen('openPopupAddLink', function() {
         eventManager.emit('closeAllPopup');
         self.show();

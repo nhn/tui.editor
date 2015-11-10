@@ -13,7 +13,8 @@ var MarkdownEditor = require('./markdownEditor'),
     CommandManager = require('./commandManager'),
     extManager = require('./extManager'),
     ImportManager = require('./importManager'),
-    Convertor = require('./convertor');
+    Convertor = require('./convertor'),
+    DefaultUI = require('./ui/defaultUI.js');
 
 //markdown commands
 var mdcBold = require('./markdownCommands/bold'),
@@ -83,9 +84,8 @@ function ToastUIEditor(options) {
     this.convertor = new Convertor(this.eventManager);
 
     this.layout = new Layout(options, this.eventManager);
-    this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
-        self.changeMode(info.text);
-    });
+
+    this.setUI(new DefaultUI(this));
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
@@ -156,6 +156,7 @@ ToastUIEditor.prototype._initDefaultCommands = function() {
 ToastUIEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
+    this.eventManager.emit('changePreviewStyle', style);
 };
 
 ToastUIEditor.prototype.exec = function() {
@@ -256,6 +257,10 @@ ToastUIEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
+ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
+    return this.mdPreviewStyle;
+}
+
 ToastUIEditor.prototype.changeMode = function(mode) {
     if (this.currentMode === mode) {
         return;
@@ -281,6 +286,10 @@ ToastUIEditor.prototype.remove = function() {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
+
+    if (this.getUI()) {
+        this.getUI().remove();
+    }
 };
 
 ToastUIEditor.prototype.hide = function() {
@@ -290,6 +299,14 @@ ToastUIEditor.prototype.hide = function() {
 ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
     this.getCodeMirror().refresh();
+};
+
+ToastUIEditor.prototype.setUI = function(UI) {
+    this._ui = UI;
+};
+
+ToastUIEditor.prototype.getUI = function() {
+    return this._ui;
 };
 
 ToastUIEditor.prototype.reset = function() {

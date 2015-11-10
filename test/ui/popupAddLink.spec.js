@@ -1,5 +1,5 @@
-var PopupAddLink = require('../src/js/popupAddLink'),
-    EventManager = require('../src/js/eventManager');
+var PopupAddLink = require('../../src/js/ui/popupAddLink'),
+    EventManager = require('../../src/js/eventManager');
 
 describe('PopupAddLink', function() {
     'use strict';

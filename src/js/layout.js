@@ -5,18 +5,9 @@
 
 'use strict';
 
-var Toolbar = require('./toolbar'),
-    Tab = require('./tab'),
-    ModeSwitch = require('./modeSwitch'),
-    PopupAddLink = require('./popupAddLink'),
-    PopupAddImage = require('./popupAddImage');
-
 var containerTmpl = [
     '<div class="tui-editor">',
-        '<div class="toolbarSection" />',
-        '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
-            '<div class="tabSection" />',
             '<div class="editor" />',
             '<div class="preview tui-editor-contents" />',
         '</div>',
@@ -48,12 +39,6 @@ function Layout(options, eventManager) {
 Layout.prototype.init = function() {
     this._renderLayout();
 
-    this._initToolbar();
-    this._initModeSwitch();
-
-    this._initPopupAddLink();
-    this._initPopupAddImage();
-
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
 };
@@ -67,16 +52,6 @@ Layout.prototype._renderLayout = function() {
     this.$containerEl = $(containerTmpl).appendTo(this.$el);
 };
 
-Layout.prototype._initToolbar = function() {
-    this.toolbar = new Toolbar(this.eventManager);
-    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
-};
-
-Layout.prototype._initModeSwitch = function() {
-    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
-};
-
 Layout.prototype.switchToWYSIWYG = function() {
     this.$containerEl.removeClass('markdownMode');
     this.$containerEl.addClass('wysiwygMode');
@@ -85,37 +60,15 @@ Layout.prototype.switchToWYSIWYG = function() {
 Layout.prototype.switchToMarkdown = function() {
     this.$containerEl.removeClass('wysiwygMode');
     this.$containerEl.addClass('markdownMode');
-    this.markdownTab.activate('Editor');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
     this.$previewEl = this.$containerEl.find('.mdContainer .preview');
-
-    this.markdownTab = new Tab({
-        items: ['Editor', 'Preview'],
-        sections: [this.$mdEditorContainerEl, this.$previewEl]
-    });
-
-    this.$containerEl.find('.mdContainer .tabSection').append(this.markdownTab.$el);
 };
 
 Layout.prototype._initWysiwygSection = function() {
     this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
-};
-
-Layout.prototype._initPopupAddLink = function() {
-    this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.tui-editor'),
-        eventManager: this.eventManager
-    });
-};
-
-Layout.prototype._initPopupAddImage = function() {
-    this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.tui-editor'),
-        eventManager: this.eventManager
-    });
 };
 
 Layout.prototype._verticalSplitStyle = function() {
@@ -154,14 +107,6 @@ Layout.prototype.getEditorEl = function() {
 
 Layout.prototype.getPreviewEl = function() {
     return this.$previewEl;
-};
-
-Layout.prototype.getStatusbarLeftAreaEl = function() {
-    return this.$statusbarLeftAreaEl;
-};
-
-Layout.prototype.getStatusbarRightAreaEl = function() {
-    return this.$statusbarRightAreaEl;
 };
 
 Layout.prototype.getMdEditorContainerEl = function() {
