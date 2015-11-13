@@ -136,6 +136,24 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self.eventManager.emit('contentChangedFromWysiwyg', self);
     });
 
+    this.getEditor().addEventListener('copy', function(clipboardEvent) {
+        var range = self.editor.getSelection().cloneRange();
+
+        console.log('copy');
+        setTimeout(function() {
+            //카피가 끝나면 텍스트 에리어 제거
+            self.get$Body().find('textarea').remove();
+            //여기서 셀렉션도 복구
+            //
+            self.getEditor().setSelection(self._copyBeforeSelection);
+        }, 0);
+        self.eventManager.emit('copy', {
+            source: 'wysiwyg',
+            data: clipboardEvent,
+            content: range.cloneContents()
+        });
+    });
+
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'wysiwyg',
@@ -208,6 +226,38 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('stateChange', state);
     });
+
+    /*
+    this.$editorContainerEl.append('<textarea />');
+
+    if (navigator.appVersion.indexOf("Mac") !== -1) {
+        this.getEditor().setKeyHandler('meta-c', function() {
+            var range = self.getEditor().getSelection().cloneRange();
+
+            var divTemp = $('<div />');
+
+            console.log(range);
+
+            divTemp.append(range.cloneContents());
+
+            self.$editorContainerEl.find('textarea').val(divTemp[0].innerHTML);
+
+            self.$editorContainerEl.find('textarea')[0].focus();
+            self.$editorContainerEl.find('textarea').select();
+
+            console.log('meta-c');
+        });
+    } else {
+        this.getEditor().setKeyHandler('ctrl-c', function() {
+            console.log('ctrl-c');
+            var range = self.getEditor().getSelection().cloneRange();
+
+            range.selectNode(self.getEditor().getDocument().body);
+
+            self.getEditor().setSelection(range);
+        });
+    }*/
+
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
@@ -286,6 +336,20 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 self.eventManager.emit('command', 'IncreaseTask');
             }
         }*/
+    }
+
+    if(event.metaKey && event.keyCode === 67) {
+        var range = self.getEditor().getSelection().cloneRange();
+
+        var divTemp = $('<div />');
+
+        self._copyBeforeSelection = range;
+
+        divTemp.append(range.cloneContents());
+
+        self.get$Body().append('<textarea style="position:absolute;top:-9999px;left:-9999px;" />');
+        self.get$Body().find('textarea').val(divTemp[0].innerHTML);
+        self.get$Body().find('textarea').select();
     }
 };
 

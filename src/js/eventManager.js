@@ -35,6 +35,7 @@ var eventList = [
     'focus',
     'blur',
     'paste',
+    'copy',
     'drop',
     'show',
     'hide'

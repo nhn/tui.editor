@@ -34,6 +34,12 @@ ImportManager.prototype._initDropEvent = function() {
 ImportManager.prototype._initPasteEvent = function() {
     var self = this;
 
+    this.eventManager.listen('copy', function(ev) {
+        if (ev.source === 'wysiwyg') {
+            self.wysiwygLastestCopyEvent = ev;
+        }
+    });
+
     this.eventManager.listen('paste', function(ev) {
         var items = ev.data.clipboardData && ev.data.clipboardData.items;
         self._forEachItems(items);
@@ -68,6 +74,12 @@ ImportManager.prototype._forEachItems = function(items) {
         util.forEachArray(items, function(item) {
             if (item.type.indexOf('image') !== -1) {
                 self._emitAddImageBlobHook(item);
+                return false;
+            } else {
+                console.log(item.type, item);
+                item.getAsString(function(text) {
+                    console.log(text);
+                });
             }
         });
     }
