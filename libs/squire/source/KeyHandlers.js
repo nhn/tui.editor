@@ -396,6 +396,18 @@ var keyHandlers = {
             }
         }
     },
+    'shift-tab': function ( self, event, range ) {
+        self._removeZWS();
+        // If no selection and at start of block
+        if ( range.collapsed && rangeDoesStartAtBlockBoundary( range ) ) {
+            // Break list
+            var node = range.startContainer;
+            if ( getNearest( node, 'UL' ) || getNearest( node, 'OL' ) ) {
+                event.preventDefault();
+                self.modifyBlocks( decreaseListLevel, range );
+            }
+        }
+    },
     space: function ( self, _, range ) {
         var node, parent;
         self._recordUndoState( range );
