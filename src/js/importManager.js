@@ -19,7 +19,7 @@ function ImportManager(eventManager) {
 
     this._initDropEvent();
     this._initPasteEvent();
-    this._initDefaultImporter();
+    this._initDefaultImageImporter();
 }
 
 ImportManager.prototype._initDropEvent = function() {
@@ -27,26 +27,20 @@ ImportManager.prototype._initDropEvent = function() {
 
     this.eventManager.listen('drop', function(ev) {
         var items = ev.data.dataTransfer && ev.data.dataTransfer.files;
-        self._forEachItems(items);
+        self._processEachItems(items);
     });
 };
 
 ImportManager.prototype._initPasteEvent = function() {
     var self = this;
 
-    this.eventManager.listen('copy', function(ev) {
-        if (ev.source === 'wysiwyg') {
-            self.wysiwygLastestCopyEvent = ev;
-        }
-    });
-
     this.eventManager.listen('paste', function(ev) {
         var items = ev.data.clipboardData && ev.data.clipboardData.items;
-        self._forEachItems(items);
+        self._processEachItems(items);
     });
 };
 
-ImportManager.prototype._initDefaultImporter = function() {
+ImportManager.prototype._initDefaultImageImporter = function() {
     this.eventManager.listen('addImageBlobHook', function(blob, callback) {
         var reader = new FileReader();
 
@@ -67,7 +61,7 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
     });
 };
 
-ImportManager.prototype._forEachItems = function(items) {
+ImportManager.prototype._processEachItems = function(items) {
     var self = this;
 
     if (items) {
@@ -75,11 +69,6 @@ ImportManager.prototype._forEachItems = function(items) {
             if (item.type.indexOf('image') !== -1) {
                 self._emitAddImageBlobHook(item);
                 return false;
-            } else {
-                console.log(item.type, item);
-                item.getAsString(function(text) {
-                    console.log(text);
-                });
             }
         });
     }

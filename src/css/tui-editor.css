@@ -27,13 +27,6 @@
     border: 1px solid #ccc;
 }
 
-.mdContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    visibility: hidden;
-    overflow: hidden;
-}
 .mdContainer .editor {
     line-height: 1.5;
 }
@@ -94,8 +87,9 @@
 }
 
 .editor iframe {
-    border: none;
     width: 100%;
+    border: none;
+    box-sizing: border-box;
 }
 
 /*we cant use display none for ifram because firefox have issue about it*/
@@ -103,17 +97,28 @@
     position: absolute;
     top: 0;
     left: 0;
-    visibility: hidden
+    visibility: hidden;
+    overflow: hidden;
+    z-index: 10;
 }
 
+.mdContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    overflow: hidden;
+}
 .markdownMode .mdContainer {
     position: inherit;
-    visibility: visible
+    visibility: visible;
+    z-index: 100;
 }
 
 .wysiwygMode .wysiwygContainer {
     position: inherit;
-    visibility: visible
+    visibility: visible;
+    z-index: 100;
 }
 
 .tui-editor.hide,

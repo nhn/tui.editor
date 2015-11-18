@@ -6,6 +6,7 @@
 'use strict';
 
 var domUtils = require('./domUtils'),
+    WwClipboardManager = require('./wwClipboardManager'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
@@ -31,6 +32,8 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
+
+    this._clipboardManager = new WwClipboardManager(this);
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -74,6 +77,7 @@ WysiwygEditor.prototype._initSquire = function() {
     });
 
     self._initSquireEvent();
+    self._clipboardManager.init();
 
     $(doc).on('click', function() {
         self.focus();
@@ -136,24 +140,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self.eventManager.emit('contentChangedFromWysiwyg', self);
     });
 
-    this.getEditor().addEventListener('copy', function(clipboardEvent) {
-        var range = self.editor.getSelection().cloneRange();
-
-        console.log('copy');
-        setTimeout(function() {
-            //카피가 끝나면 텍스트 에리어 제거
-            self.get$Body().find('textarea').remove();
-            //여기서 셀렉션도 복구
-            //
-            self.getEditor().setSelection(self._copyBeforeSelection);
-        }, 0);
-        self.eventManager.emit('copy', {
-            source: 'wysiwyg',
-            data: clipboardEvent,
-            content: range.cloneContents()
-        });
-    });
-
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'wysiwyg',
@@ -161,12 +147,12 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
-    this.getEditor().addEventListener('dragover', function(e) {
+    this.getEditor().getDocument().addEventListener('dragover', function(e) {
         e.preventDefault();
         return false;
     });
 
-    this.getEditor().addEventListener('drop', function(eventData) {
+    this.getEditor().getDocument().addEventListener('drop', function(eventData) {
         eventData.preventDefault();
 
         self.eventManager.emit('drop', {
@@ -226,38 +212,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('stateChange', state);
     });
-
-    /*
-    this.$editorContainerEl.append('<textarea />');
-
-    if (navigator.appVersion.indexOf("Mac") !== -1) {
-        this.getEditor().setKeyHandler('meta-c', function() {
-            var range = self.getEditor().getSelection().cloneRange();
-
-            var divTemp = $('<div />');
-
-            console.log(range);
-
-            divTemp.append(range.cloneContents());
-
-            self.$editorContainerEl.find('textarea').val(divTemp[0].innerHTML);
-
-            self.$editorContainerEl.find('textarea')[0].focus();
-            self.$editorContainerEl.find('textarea').select();
-
-            console.log('meta-c');
-        });
-    } else {
-        this.getEditor().setKeyHandler('ctrl-c', function() {
-            console.log('ctrl-c');
-            var range = self.getEditor().getSelection().cloneRange();
-
-            range.selectNode(self.getEditor().getDocument().body);
-
-            self.getEditor().setSelection(range);
-        });
-    }*/
-
 };
 
 WysiwygEditor.prototype._keyEventHandler = function(event) {
@@ -318,38 +272,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-        /*
-         * if (this._isInTaskList(range)) {
-            if ($(range.startContainer).parents('li')[0].previousSibling && !$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
-                self.eventManager.emit('command', 'IncreaseTask');
-                this._unformatTaskIfNeedOnEnter(range);
-                setTimeout(function() {
-                    self.eventManager.emit('command', 'Task');
-                }, 0);
-            } else {
-                event.preventDefault();
-                self.eventManager.emit('command', 'IncreaseTask');
-            }
-        } else if (this.getEditor().hasFormat('li')) {
-            if ($($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
-                event.preventDefault();
-                self.eventManager.emit('command', 'IncreaseTask');
-            }
-        }*/
-    }
-
-    if(event.metaKey && event.keyCode === 67) {
-        var range = self.getEditor().getSelection().cloneRange();
-
-        var divTemp = $('<div />');
-
-        self._copyBeforeSelection = range;
-
-        divTemp.append(range.cloneContents());
-
-        self.get$Body().append('<textarea style="position:absolute;top:-9999px;left:-9999px;" />');
-        self.get$Body().find('textarea').val(divTemp[0].innerHTML);
-        self.get$Body().find('textarea').select();
     }
 };
 
