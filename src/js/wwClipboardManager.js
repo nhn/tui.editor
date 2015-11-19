@@ -18,7 +18,7 @@ function WwClipboardManager(wwe) {
     this.wwe = wwe;
 
     if (util.browser.msie) {
-        this.$hiddenArea = $('<div style="position:absolute;top:0;left:-9999px;height:1px;width:1px;overflow:hidden;"/>');
+        this.$hiddenArea = $('<div style="position:absolute;top:0;left:-9999px;height:1px;width:1px;overflow:hidden;" />');
         this.wwe.$editorContainerEl.append(this.$hiddenArea);
     }
 }
