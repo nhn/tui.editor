@@ -1536,14 +1536,18 @@ proto.insertHTML = function ( html, isPaste ) {
 
 proto.insertPlainText = function ( plainText, isPaste ) {
     var lines = plainText.split( '\n' ),
-        i, l;
-    for ( i = 1, l = lines.length - 1; i < l; i += 1 ) {
-        lines[i] = '<DIV>' +
-            lines[i].split( '&' ).join( '&amp;' )
-                    .split( '<' ).join( '&lt;'  )
-                    .split( '>' ).join( '&gt;'  )
-                    .replace( / (?= )/g, '&nbsp;' ) +
-        '</DIV>';
+        i, l, line;
+    for ( i = 0, l = lines.length; i < l; i += 1 ) {
+        line = lines[i];
+        line = line.split( '&' ).join( '&amp;' )
+                   .split( '<' ).join( '&lt;'  )
+                   .split( '>' ).join( '&gt;'  )
+                   .replace( / (?= )/g, '&nbsp;' );
+        // Wrap all but first/last lines in <div></div>
+        if ( i && i + 1 < l ) {
+            line = '<DIV>' + ( line || '<BR>' ) + '</DIV>';
+        }
+        lines[i] = line;
     }
     return this.insertHTML( lines.join( '' ), isPaste );
 };
