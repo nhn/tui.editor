@@ -13,7 +13,9 @@ CodeMirror.commands.subListIndentTab = function (cm) {
     for (var i = 0; i < ranges.length; i++) {
         var pos = ranges[i].head;
         var line = cm.getLine(pos.line);
-        if (emptyListRE.test(line)) {
+        var cursorBeforeTextInline = line.substr(0, pos.ch);
+        
+        if (emptyListRE.test(cursorBeforeTextInline)) {
             cm.replaceRange("\t" + line, {
                 line: pos.line, ch: 0
             }, {
