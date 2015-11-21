@@ -54,6 +54,18 @@ describe('WwClipboardManager', function() {
 
             expect(cbm._getContentFromRange(range)).toEqual('<ul><li>list1<br></li><li>lis</li></ul>');
         });
+
+        it('if start is partial text node then make it text node', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<div>abcde</div><div>fghi</div>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 3);
+            range.setEnd(wwe.get$Body().find('div')[1].childNodes[0], 3);
+
+            expect(cbm._getContentFromRange(range)).toEqual('de<div>fgh</div>');
+        });
     });
 
     describe('_processFragment', function() {
@@ -70,6 +82,57 @@ describe('WwClipboardManager', function() {
 
             expect(result.childNodes[0].nodeType).toEqual(Node.ELEMENT_NODE);
             expect(result.childNodes[0].outerHTML).toEqual(textHTML);
+        });
+    });
+
+    describe('_extendRange', function() {
+        it('Extend start selection if whole content of startContainer are contained', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
+            range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 3);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('LI');
+            expect(range.startContainer.childNodes[range.startOffset].textContent).toEqual('list1');
+            expect(range.endContainer.nodeType).toEqual(Node.TEXT_NODE);
+            expect(range.endContainer.nodeValue[range.endOffset]).toEqual('t');
+        });
+
+        it('Extend end selection if whole content of endContainer are contained', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 3);
+            range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer.nodeType).toEqual(Node.TEXT_NODE);
+            expect(range.startContainer.nodeValue[range.startOffset]).toEqual('t');
+            expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('LI');
+            expect(range.endContainer.childNodes[range.endOffset - 1].textContent).toEqual('list2');
+        });
+
+        it('if selection area is whole content of commonAncestorContainer then select commonAncestorContainer', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
+            range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('UL');
+            expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
     });
 });

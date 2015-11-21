@@ -88,11 +88,23 @@ var getOffsetLength = function(node) {
     return len;
 };
 
+var getNodeOffsetOfParent = function(node) {
+    var i, t,
+        childNodesOfParent = node.parentNode.childNodes;
+
+    for (i = 0, t = childNodesOfParent.length; i < t; i+=1) {
+        if (childNodesOfParent[i] === node) {
+            return i;
+        }
+    }
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
     isTextNode: isTextNode,
     isElemNode: isElemNode,
     getTextLength: getTextLength,
-    getOffsetLength: getOffsetLength
+    getOffsetLength: getOffsetLength,
+    getNodeOffsetOfParent: getNodeOffsetOfParent
 };

@@ -7,6 +7,7 @@
 
 var domUtils = require('./domUtils'),
     WwClipboardManager = require('./wwClipboardManager'),
+    WwSelectionMarker = require('./wwSelectionMarker'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
@@ -34,6 +35,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.contentStyles = contentStyles;
 
     this._clipboardManager = new WwClipboardManager(this);
+    this._selectionMarker = new WwSelectionMarker();
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -770,6 +772,14 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 
     this.getEditor().changeBlockFormat(condition);
     this._removeTaskInputInWrongPlace();
+};
+
+WysiwygEditor.prototype.insertSelectionMarker = function(range) {
+    return this._selectionMarker.insertMarker(range, this.getEditor());
+};
+
+WysiwygEditor.prototype.restoreSelectionMarker = function() {
+    return this._selectionMarker.restore(this.getEditor());
 };
 
 module.exports = WysiwygEditor;

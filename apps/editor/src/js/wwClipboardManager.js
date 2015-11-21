@@ -5,6 +5,8 @@
 
 'use strict';
 
+var domUtils = require('./domUtils');
+
 var util = tui.util;
 
 /**
@@ -45,7 +47,23 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             //Ctrl + C
             if (event.ctrlKey && event.keyCode === 67) {
                 range = self.wwe.getEditor().getSelection().cloneRange();
+                range = self._extendRange(range);
+
                 self.copyWithTextarea(range);
+            //Ctrl + X
+            } else if (event.ctrlKey && event.keyCode === 88) {
+                range = self.wwe.getEditor().getSelection().cloneRange();
+                range = self._extendRange(range);
+
+                self.copyWithTextarea(range);
+
+                range = self.wwe.insertSelectionMarker(range);
+                range.deleteContents();
+
+                setTimeout(function() {
+                    self.wwe.restoreSelectionMarker();
+                    self.wwe.getEditor()._ensureBottomLine();
+                });
             }
         });
 
@@ -55,9 +73,29 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     } else {
         this.wwe.getEditor().addEventListener('copy', function(clipboardEvent) {
             var range;
+
             clipboardEvent.preventDefault();
+
             range = self.wwe.getEditor().getSelection().cloneRange();
+            range = self._extendRange(range);
+
             self.makeClipboardData(range, clipboardEvent);
+        });
+
+        this.wwe.getEditor().addEventListener('cut', function(clipboardEvent) {
+            var range;
+
+            clipboardEvent.preventDefault();
+
+            range = self.wwe.getEditor().getSelection().cloneRange();
+            range = self._extendRange(range);
+
+            self.makeClipboardData(range, clipboardEvent);
+
+            range = self.wwe.insertSelectionMarker(range);
+            range.deleteContents();
+            self.wwe.restoreSelectionMarker();
+            self.wwe.getEditor()._ensureBottomLine();
         });
     }
 };
@@ -92,22 +130,24 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
  * @return {string} processed contents
  */
 WwClipboardManager.prototype._getContentFromRange = function(range) {
-    var resultContent,
+    var resultContents,
         self = this,
         cloneContents = range.cloneContents();
 
     if (this._isOneTextNodeFullySelected(range)) {
         this._eachCurrentPath(function(pathStep) {
-            resultContent = self._makeNodeAndAppend(pathStep, resultContent || cloneContents);
+            resultContents = self._makeNodeAndAppend(pathStep, resultContents || cloneContents);
         });
     } else if (this._isOrphanListItem(range)) {
-        resultContent = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
+        resultContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
+    } else if (this._isStartWithPartialTextNode(range)) {
+        resultContents = this._makeFirstChildToTextNode(cloneContents);
     }
 
     //wrap all result content with div to get HTML data
-    resultContent = this._makeNodeAndAppend('div', resultContent || cloneContents);
+    resultContents = this._makeNodeAndAppend('div', resultContents || cloneContents);
 
-    return resultContent.html();
+    return resultContents.html();
 };
 
 /**
@@ -139,6 +179,20 @@ WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
 };
 
 /**
+ * _makeFirstChildToTextNode
+ * Make firstchild of fragment into textnode
+ * @param {DocumentFragment} frag fragment
+ * @return {DocumentFragment} result fragment
+ */
+WwClipboardManager.prototype._makeFirstChildToTextNode = function(frag) {
+    var newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
+    $(frag).find('div').first().remove();
+    $(frag).prepend(newFirstChild);
+
+    return frag;
+};
+
+/**
  * _isOneTextNodeFullySelected
  * check if one text node fully selected with range
  * @param {Range} range range of selection
@@ -150,6 +204,17 @@ WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
         && range.startContainer === range.commonAncestorContainer
         && range.startOffset === 0
         && range.endOffset === range.commonAncestorContainer.nodeValue.length);
+};
+
+/**
+ * _isStartWithPartialTextNode
+ * check if start is partial textnode
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
+    return (range.startContainer.nodeType === Node.TEXT_NODE
+        && range.startOffset > 0);
 };
 
 /**
@@ -197,6 +262,64 @@ WwClipboardManager.prototype.copyWithTextarea = function(range) {
  */
 WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent) {
     clipboardEvent.clipboardData.setData('text/plain', this._getContentFromRange(range));
+};
+
+
+/**
+ * _extendRange
+ * extend range if need
+ * @param {Range} range to extend
+ * @return {Range} range
+ */
+WwClipboardManager.prototype._extendRange = function(range) {
+    var newBound;
+
+    //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
+    //이런경우 텍스트노드인데 한텍스트노드인경우는 텍스트노드만 지우는게 맞다.
+    if (range.startContainer !== range.endContainer) {
+        if (range.startOffset === 0) {
+            newBound = range.startContainer;
+
+            //레인지 확장
+            while (newBound.parentNode !== range.commonAncestorContainer
+                    && !newBound.previousSibling
+                  ) {
+                newBound = newBound.parentNode;
+            }
+
+            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+            range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+        }
+
+        if (range.endOffset === range.endContainer.length) {
+            newBound = range.endContainer;
+
+            //레인지 확장
+            while (newBound.parentNode !== range.commonAncestorContainer
+                    && (!newBound.nextSibling || (newBound.nextSibling.tagName === 'BR' && newBound.parentNode.lastChild === newBound.nextSibling))
+                  ) {
+                newBound = newBound.parentNode;
+            }
+
+            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+            range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+        }
+    }
+
+    //선택된 영역이 commonAncestorContainer의 모든 컨텐츠면 commonAncestor를 선택
+    if (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        && range.commonAncestorContainer.tagName !== 'BODY'
+        && range.startOffset === 0
+        && range.endOffset === range.commonAncestorContainer.childNodes.length
+        && range.commonAncestorContainer === range.startContainer
+        && range.commonAncestorContainer === range.endContainer
+    ) {
+        newBound = range.commonAncestorContainer;
+        range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+        range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+    }
+
+    return range;
 };
 
 module.exports = WwClipboardManager;

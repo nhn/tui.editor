@@ -14,13 +14,12 @@ var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
  * @constructor
  * @class
  */
-function WwSelectionMarker(sq) {
+function WwSelectionMarker() {
     this._markerNode = null;
-    this._sq = sq;
 }
 
-WwSelectionMarker.prototype.addMarker = function(range) {
-    this._markerNode = this._makeMarker();
+WwSelectionMarker.prototype.insertMarker = function(range, sq) {
+    this._markerNode = this._makeMarker(sq);
 
     range.insertNode(this._markerNode);
     range.setStartAfter(this._markerNode);
@@ -28,17 +27,21 @@ WwSelectionMarker.prototype.addMarker = function(range) {
     return range;
 };
 
-WwSelectionMarker.prototype._makeMarker = function() {
-    return this._sq.createElement('INPUT', {type:'hidden', class: MARKER_CSS_CLASS});
+WwSelectionMarker.prototype._makeMarker = function(sq) {
+    return sq.createElement('INPUT', {type:'hidden', class: MARKER_CSS_CLASS});
 };
 
-WwSelectionMarker.prototype.restore = function() {
-    var newRange = this._sq.getSelection().cloneRange();
+WwSelectionMarker.prototype.restore = function(sq) {
+    var newRange = sq.getSelection().cloneRange();
 
     newRange.setStartAfter(this._markerNode);
     newRange.collapse(true);
 
-    this._sq.setSelection(newRange);
+    sq.setSelection(newRange);
+
+    $(this._markerNode).remove();
+
+    return newRange;
 };
 
 module.exports = WwSelectionMarker;
