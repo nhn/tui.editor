@@ -134,6 +134,7 @@ WwClipboardManager.prototype._getContentFromRange = function(range) {
         self = this,
         cloneContents = range.cloneContents();
 
+
     if (this._isOneTextNodeFullySelected(range)) {
         this._eachCurrentPath(function(pathStep) {
             resultContents = self._makeNodeAndAppend(pathStep, resultContents || cloneContents);
@@ -141,7 +142,7 @@ WwClipboardManager.prototype._getContentFromRange = function(range) {
     } else if (this._isOrphanListItem(range)) {
         resultContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
     } else if (this._isStartWithPartialTextNode(range)) {
-        resultContents = this._makeFirstChildToTextNode(cloneContents);
+        resultContents = this._makeFirstChildToTextNodeIfNeed(cloneContents);
     }
 
     //wrap all result content with div to get HTML data
@@ -179,15 +180,19 @@ WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
 };
 
 /**
- * _makeFirstChildToTextNode
+ * _makeFirstChildToTextNodeIfNeed
  * Make firstchild of fragment into textnode
  * @param {DocumentFragment} frag fragment
  * @return {DocumentFragment} result fragment
  */
-WwClipboardManager.prototype._makeFirstChildToTextNode = function(frag) {
-    var newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
-    $(frag).find('div').first().remove();
-    $(frag).prepend(newFirstChild);
+WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
+    var newFirstChild;
+
+    if (!domUtils.isTextNode(frag.firstChild)) {
+        newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
+        $(frag).find('*').first().remove();
+        $(frag).prepend(newFirstChild);
+    }
 
     return frag;
 };
