@@ -22,18 +22,18 @@ describe('WwSelectionMarker', function() {
             done();
         });
 
-        wwsm = new WwSelectionMarker(wwe.getEditor());
+        wwsm = new WwSelectionMarker();
     });
 
     afterEach(function() {
         $('body').empty();
     });
 
-    describe('add current selection marker', function() {
+    describe('insert selection marker', function() {
         it('mark non callapsed range', function() {
             range.selectNodeContents(wwe.get$Body().find('h1')[0].childNodes[0]);
 
-            wwsm.addMarker(range);
+            wwsm.insertMarker(range, wwe.getEditor());
 
             expect(range.startContainer.childNodes[range.startOffset].nodeValue).toEqual('hello world');
             expect(range.startContainer.childNodes[range.startOffset].previousSibling.tagName).toEqual('INPUT');
@@ -43,7 +43,7 @@ describe('WwSelectionMarker', function() {
             range.setStart(wwe.get$Body().find('h1')[0].childNodes[0], 1);
             range.collapse(true);
 
-            wwsm.addMarker(range);
+            wwsm.insertMarker(range, wwe.getEditor());
 
             expect(range.startContainer.childNodes[range.startOffset].nodeValue).toEqual('ello world');
             expect(range.startContainer.childNodes[range.startOffset].previousSibling.tagName).toEqual('INPUT');
@@ -55,16 +55,17 @@ describe('WwSelectionMarker', function() {
             range.setStart(wwe.get$Body().find('h1')[0].childNodes[0], 1);
             range.collapse(true);
 
-            wwsm.addMarker(range);
+            wwsm.insertMarker(range, wwe.getEditor());
 
             range.selectNodeContents(wwe.get$Body().find('h1')[0].childNodes[0]);
             wwe.getEditor().setSelection(range);
 
-            wwsm.restore();
+            wwsm.restore(wwe.getEditor());
 
             range = wwe.getEditor().getSelection().cloneRange();
 
             expect(range.startContainer.childNodes[range.startOffset].nodeValue).toEqual('ello world');
+            expect(wwe.get$Body().find('input').length).toEqual(0);
         });
     });
 });

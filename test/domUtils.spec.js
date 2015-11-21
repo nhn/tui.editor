@@ -109,4 +109,12 @@ describe('domUtils', function() {
             expect(domUtils.getOffsetLength($('<p>hi</p>')[0].firstChild)).toBe(2);
         });
     });
+
+    describe('getNodeOffsetOfParent', function() {
+        it('', function() {
+            var ul = $('<ul><li>list1</li><li>list2</li></ul>');
+
+            expect(domUtils.getNodeOffsetOfParent(ul.find('li')[1])).toBe(1);
+        });
+    });
 });
