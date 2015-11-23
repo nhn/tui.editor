@@ -35,5 +35,8 @@
     "marked": "~0.3.5",
     "Squire": "squire-rte#~1.4.2",
     "toMark": "https://github.com/shiren/toMark.git#develop"
+  },
+  "devDependencies": {
+    "tui-component-colorpicker": "~1.0.0"
   }
 }
