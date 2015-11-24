@@ -13,8 +13,8 @@
     <script src="../dist/tui-editor.min.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="../src/css/tui-editor.css">
-    <link rel="stylesheet" href="../src/css/tui-editor-contents.css">
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
 </head>
 <body>
 <div id="editSection"></div>
@@ -23,6 +23,7 @@
         initialEditType: 'markdown',
         previewStyle: 'vertical',
         height: 300,
+        exts: ['colorSyntax'],
         contentCSSStyles: [
             '../dist/tui-editor-contents.css'
         ],
