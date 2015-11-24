@@ -85,7 +85,7 @@ function ToastUIEditor(options) {
 
     this.layout = new Layout(options, this.eventManager);
 
-    this.setUI(new DefaultUI(this));
+    this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
@@ -259,7 +259,7 @@ ToastUIEditor.prototype.isWysiwygMode = function() {
 
 ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
     return this.mdPreviewStyle;
-}
+};
 
 ToastUIEditor.prototype.changeMode = function(mode) {
     if (this.currentMode === mode) {

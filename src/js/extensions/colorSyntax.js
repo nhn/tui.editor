@@ -8,11 +8,14 @@
 var extManager = require('../extManager');
 
 var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
-    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
+    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,
+    colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
     decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
+var RESET_COLOR = '#181818';
+
 extManager.defineExtension('colorSyntax', function(editor) {
-    var useCustomSyntax;
+    var useCustomSyntax = false;
 
     if (editor.options.colorSyntax) {
         useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
@@ -24,14 +27,18 @@ extManager.defineExtension('colorSyntax', function(editor) {
         if (!useCustomSyntax) {
             replacement = html;
         } else {
-            replacement = html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+            replacement = html.replace(colorSyntaxRx, function(matched, p1, p2) {
+                return makeHTMLColorSyntax(p2, p1);
+            });
         }
 
         return replacement;
     });
 
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-        return markdown.replace(colorHtmlRx, function(founded, color, text) {
+        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+
+        return markdown.replace(findRx, function(founded, color, text) {
             var replacement;
 
             if (color.match(decimalColorRx)) {
@@ -41,7 +48,7 @@ extManager.defineExtension('colorSyntax', function(editor) {
             if (!useCustomSyntax) {
                 replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
             } else {
-                replacement = makeMarkdownColorSyntax(text, color);
+                replacement = makeCustomColorSyntax(text, color);
             }
 
             return replacement;
@@ -52,7 +59,13 @@ extManager.defineExtension('colorSyntax', function(editor) {
         name: 'color',
         exec: function(mde, color) {
             var cm = mde.getEditor();
-            cm.replaceSelection(makeMarkdownColorSyntax(cm.getSelection(), color));
+
+            if (!useCustomSyntax) {
+                cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
+            } else {
+                cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
+            }
+
             mde.focus();
         }
     });
@@ -60,14 +73,88 @@ extManager.defineExtension('colorSyntax', function(editor) {
     editor.addCommand('wysiwyg', {
         name: 'color',
         exec: function(wwe, color) {
-            wwe.getEditor().setTextColour(color);
+            if (color === RESET_COLOR) {
+               wwe.getEditor().changeFormat(null, {
+                   class: 'colour',
+                   tag: 'span'
+               });
+            } else {
+                wwe.getEditor().setTextColour(color);
+            }
             wwe.focus();
         }
     });
+
+    if (editor.getUI().name === 'default') {
+        initUI(editor);
+    }
 });
 
-function makeMarkdownColorSyntax(text, color) {
+function initUI(editor) {
+    var $colorPickerContainer, colorPicker, popup, $buttonBar, selectedColor;
+
+    editor.eventManager.addEventType('colorButtonClicked');
+
+    editor.getUI().toolbar.addButton({
+        className: 'color',
+        event: 'colorButtonClicked',
+        text: 'Color'
+    });
+
+    $colorPickerContainer =  $('<div />');
+
+    $buttonBar = $('<div><button type="button" class="applyButton">입력</button></div>');
+    $buttonBar.css('margin-top', 10);
+
+    colorPicker = tui.component.colorpicker.create({
+        container: $colorPickerContainer[0]
+    });
+
+    $colorPickerContainer.append($buttonBar);
+
+    popup = editor.getUI().createPopup({
+        title: false,
+        content: $colorPickerContainer,
+        $target: editor.getUI().$el,
+        css: {
+            'width': 178,
+            'position': 'absolute',
+            'top': $('button.color').offset().top + $('button.color').height() + 5,
+            'left': $('button.color').offset().left
+        }
+    });
+
+    editor.eventManager.listen('focus', function() {
+        popup.hide();
+    });
+
+    editor.eventManager.listen('colorButtonClicked', function() {
+        if (popup.isShow()) {
+            popup.hide();
+        } else {
+            popup.show();
+        }
+    });
+
+    editor.eventManager.listen('closeAllPopup', function() {
+        popup.hide();
+    });
+
+    colorPicker.on('selectColor', function(e) {
+        selectedColor = e.color;
+    });
+
+    popup.$el.find('.applyButton').on('click', function() {
+        editor.exec('color', selectedColor);
+    });
+}
+
+function makeCustomColorSyntax(text, color) {
     return '{color:' + color + '}' + text + '{color}';
+}
+
+function makeHTMLColorSyntax(text, color) {
+    return '<span style="color:' + color + '">' + text + '</span>';
 }
 
 function changeDecColorToHex(color) {

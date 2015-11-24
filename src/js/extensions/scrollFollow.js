@@ -20,14 +20,14 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     //Commands
     editor.addCommand('markdown', {
-        name: 'scrollFollow.disable',
+        name: 'scrollFollowDisable',
         exec: function() {
             active = false;
         }
     });
 
     editor.addCommand('markdown', {
-        name: 'scrollFollow.enable',
+        name: 'scrollFollowEnable',
         exec: function() {
             active = true;
         }
@@ -54,15 +54,17 @@ extManager.defineExtension('scrollFollow', function(editor) {
     });
 
     //UI
-    editor.getUI().toolbar.addButton([{
-        classname: 'scrollfollowEnable',
-        command: 'scrollFollow.disable',
-        text: 'SF',
-        style: 'background-color: #fff'
-    }, {
-        className: 'scrollFollowDisable',
-        command: 'scrollFollow.enable',
-        text: 'SF',
-        style: 'background-color: #ddd'
-    }]);
+    if (editor.getUI().name === 'default') {
+        editor.getUI().toolbar.addButton([{
+            classname: 'scrollfollowEnable',
+            command: 'scrollFollowDisable',
+            text: 'SF',
+            style: 'background-color: #fff'
+        }, {
+            className: 'scrollFollowDisable',
+            command: 'scrollFollowEnable',
+            text: 'SF',
+            style: 'background-color: #ddd'
+        }]);
+    }
 });
