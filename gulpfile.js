@@ -57,9 +57,6 @@ gulp.task('bundle', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-/*
- * eslint
- */
 gulp.task('lint', function lint() {
     return gulp.src(['src/js/**/*.js'])
         .pipe(eslint())
@@ -71,10 +68,6 @@ gulp.task('lintw', function lint() {
     gulp.watch(['src/js/**/*.js'], ['lint']);
 });
 
-
-/*
- * gulp-connect
- */
 gulp.task('connect', function() {
     connect.server({
         root: '',
@@ -82,9 +75,6 @@ gulp.task('connect', function() {
     });
 });
 
-/*
- * watch
- */
 gulp.task('watch', function() {
     livereload.listen();
     gulp.watch(['./build/*.js'], livereload.changed);
@@ -92,18 +82,12 @@ gulp.task('watch', function() {
     gulp.watch(['./demo/*'], livereload.changed);
 });
 
-/*
- * gulp-strip-debug
- */
 gulp.task('stripDebug', function() {
     return gulp.src('dist/tui-editor.js')
         .pipe(stripDebug())
         .pipe(gulp.dest('./dist'));
 });
 
-/*
- * Uglify
- */
 gulp.task('uglify', function() {
     return gulp.src('./dist/tui-editor.js')
         .pipe(ugilfy())
@@ -119,9 +103,9 @@ gulp.task('contentCssCopy', function() {
 });
 
 gulp.task('depsCssConcat', function() {
-  return gulp.src(['./src/css/tui-editor.css', './lib/tui-component-colorpicker/dist/colorpicker.css'])
-    .pipe(concatCss('tui-editor.css'))
-    .pipe(gulp.dest('./dist'));
+    return gulp.src(['./src/css/tui-editor.css', './lib/tui-component-colorpicker/dist/colorpicker.css'])
+        .pipe(concatCss('tui-editor.css'))
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('depsModuleConcat', function() {
