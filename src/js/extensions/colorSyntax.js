@@ -142,6 +142,11 @@ function initUI(editor) {
 
     colorPicker.on('selectColor', function(e) {
         selectedColor = e.color;
+
+        if (e.origin === 'palette') {
+            editor.exec('color', selectedColor);
+            popup.hide();
+        }
     });
 
     popup.$el.find('.applyButton').on('click', function() {
