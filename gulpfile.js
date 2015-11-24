@@ -16,6 +16,7 @@ var gulp = require('gulp'),
     stripDebug = require('gulp-strip-debug'),
     livereload = require('gulp-livereload'),
 
+    concatCss = require('gulp-concat-css'),
     concat = require('gulp-concat');
 
 var gulpSync = require('gulp-sync')(gulp);
@@ -112,16 +113,21 @@ gulp.task('uglify', function() {
 
 gulp.task('contentCssCopy', function() {
     return gulp.src([
-            './src/css/tui-editor-contents.css',
-            './src/css/tui-editor.css'
+            './src/css/tui-editor-contents.css'
          ])
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('dependencyModuleConcat', function() {
-    return gulp.src(['./lib/tui-component-colorpicker/dist/colorpicker.js', './dist/tui-editor.js'])
-        .pipe(concat('all.js'))
+gulp.task('depsCssConcat', function() {
+  return gulp.src(['./src/css/tui-editor.css', './lib/tui-component-colorpicker/dist/colorpicker.css'])
+    .pipe(concatCss('tui-editor.css'))
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('depsModuleConcat', function() {
+    return gulp.src(['./lib/tui-component-colorpicker/dist/colorpicker.min.js', './dist/tui-editor.js'])
+        .pipe(concat('tui-editor.js'))
         .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'dependencyModuleConcat', 'uglify', 'contentCssCopy']));
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'depsModuleConcat', 'uglify', 'contentCssCopy', 'depsCssConcat']));
