@@ -7,6 +7,7 @@
 
 var Toolbar = require('./toolbar'),
     Tab = require('./tab'),
+    Layerpopup = require('./layerpopup'),
     ModeSwitch = require('./modeSwitch'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage');
@@ -29,6 +30,8 @@ var containerTmpl = [
  * @param {ToastUIEditor} editor editor
  */
 function DefaultUI(editor) {
+    this.name = 'default';
+
     this.$el = $(editor.options.el);
     this.type = editor.options.initialEditType;
     this.editor = editor;
@@ -109,14 +112,14 @@ DefaultUI.prototype._initMarkdownTab = function() {
 
 DefaultUI.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.tui-editor'),
+        $target: this.$el,
         eventManager: this.editor.eventManager
     });
 };
 
 DefaultUI.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.tui-editor'),
+        $target: this.$el,
         eventManager: this.editor.eventManager
     });
 };
@@ -131,6 +134,10 @@ DefaultUI.prototype.show = function() {
 
 DefaultUI.prototype.remove = function() {
     this.$el.find('.tui-editor-defaultUI').remove();
+};
+
+DefaultUI.prototype.createPopup = function(options) {
+    return Layerpopup.factory(options);
 };
 
 module.exports = DefaultUI;

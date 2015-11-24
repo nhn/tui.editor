@@ -25,6 +25,7 @@
     position: relative;
     line-height: 1;
     border: 1px solid #ccc;
+    color: #181818;
 }
 
 .mdContainer .editor {
@@ -132,6 +133,9 @@
 
 
 /* default UI Styles */
+.tui-editor-defaultUI {
+    position: relative;
+}
 .tui-editor-defaultUI button {
     border: none;
     background: none;

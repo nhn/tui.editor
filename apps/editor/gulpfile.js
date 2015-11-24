@@ -14,7 +14,9 @@ var gulp = require('gulp'),
     rename = require('gulp-rename'),
     ugilfy = require('gulp-uglify'),
     stripDebug = require('gulp-strip-debug'),
-    livereload = require('gulp-livereload');
+    livereload = require('gulp-livereload'),
+
+    concat = require('gulp-concat');
 
 var gulpSync = require('gulp-sync')(gulp);
 
@@ -116,4 +118,10 @@ gulp.task('contentCssCopy', function() {
         .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify', 'contentCssCopy']));
+gulp.task('dependencyModuleConcat', function() {
+    return gulp.src(['./lib/tui-component-colorpicker/dist/colorpicker.js', './dist/tui-editor.js'])
+        .pipe(concat('all.js'))
+        .pipe(gulp.dest('./dist/'));
+});
+
+gulp.task('build', gulpSync.sync(['lint', 'bundle', 'dependencyModuleConcat', 'uglify', 'contentCssCopy']));
