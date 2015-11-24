@@ -51,6 +51,7 @@ function LayerPopup(options) {
     this._initContent(options);
     this._initTitle(options);
     this._initClassName(options);
+    this._initCssStyles(options);
 }
 
 LayerPopup.prototype = util.extend(
@@ -70,13 +71,8 @@ LayerPopup.prototype._initExternalPopupHtmlIfNeed = function(options) {
 };
 
 LayerPopup.prototype._initCloserOpener = function(options) {
-    if (options.openerCssQuery) {
-        this.openerCssQuery = options.openerCssQuery;
-    }
-
-    if (options.closerCssQuery) {
-        this.closerCssQuery = options.closerCssQuery;
-    }
+    this.openerCssQuery = options.openerCssQuery;
+    this.closerCssQuery = options.closerCssQuery;
 };
 
 LayerPopup.prototype._initContent = function(options) {
@@ -88,9 +84,7 @@ LayerPopup.prototype._initContent = function(options) {
 };
 
 LayerPopup.prototype._initTitle = function(options) {
-    if (options.title) {
-        this.title = options.title;
-    }
+    this.title = options.title;
 };
 
 LayerPopup.prototype._initClassName = function(options) {
@@ -114,8 +108,16 @@ LayerPopup.prototype._renderLayout = function() {
         this.hide();
         this.$target.append(this.$el);
         this.$body = this.$el.find(this._getFullClassName('body'));
+
+        if (this.title === false) {
+           this.$el.find(this._getFullClassName('header')).remove();
+        }
     } else {
         this.hide();
+
+        if (this.$target) {
+            this.$target.append(this.$el);
+        }
     }
 };
 
@@ -126,7 +128,7 @@ LayerPopup.prototype._renderContent = function() {
 };
 
 LayerPopup.prototype._renderTitle = function() {
-    if (!this._isExternalHtmlUse) {
+    if (!this._isExternalHtmlUse && this.title !== false) {
         this.setTitle(this.title);
     }
 };
@@ -222,6 +224,16 @@ LayerPopup.prototype.remove = function() {
 
     this.$el.empty();
     this.$el.remove();
+};
+
+LayerPopup.prototype.css = function() {
+    this.$el.css.apply(this.$el, arguments);
+};
+
+LayerPopup.prototype._initCssStyles = function(options) {
+    if (options.css) {
+        this.css(options.css);
+    }
 };
 
 LayerPopup.factory = function(options) {
