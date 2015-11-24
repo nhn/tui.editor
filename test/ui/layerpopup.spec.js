@@ -114,6 +114,43 @@ describe('Layerpopup', function() {
 
             expect($('.' + CLASS_PREFIX + 'title').text()).toEqual('mytitle');
         });
+
+        it('if title option is false, does not render header', function() {
+            var popup = new Layerpopup({
+                title: false
+            });
+
+            popup.render();
+
+            expect($('.' + CLASS_PREFIX + 'header').length).toEqual(0);
+        });
+    });
+
+    describe('css', function() {
+        it('css() can apply style to popup wrapper', function() {
+            var popup = new Layerpopup({
+                content: '<p>test</p>'
+            });
+
+            popup.render();
+            popup.css({
+                width: 10
+            });
+
+            expect($('.' + CLASS_PREFIX + 'wrapper').width()).toEqual(10);
+        });
+        it('css option can apply style to popup wrapper', function() {
+            var popup = new Layerpopup({
+                content: '<p>test</p>',
+                css: {
+                    width: 10
+                }
+            });
+
+            popup.render();
+
+            expect($('.' + CLASS_PREFIX + 'wrapper').width()).toEqual(10);
+        });
     });
 
     describe('setContent', function() {
