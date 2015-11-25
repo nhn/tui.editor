@@ -798,6 +798,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     setTimeout(function() {
         self.getEditor()._ignoreChange = true;
         self._unformatIncompleteTask();
+        self._ensureSpaceNextToTaskInput();
         self = null;
     }, 0);
 };
