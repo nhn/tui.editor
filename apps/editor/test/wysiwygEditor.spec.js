@@ -503,4 +503,14 @@ describe('WysiwygEditor', function() {
             expect(document.activeElement).toBe(wwe.$iframe[0]);
         });
     });
+
+    describe('_unformatIncompleteTask', function() {
+        it('if wysiwyg contents has incomplete task then make it list', function() {
+            wwe.getEditor().setHTML('<ul><li class="task-list-item">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+
+            wwe._unformatIncompleteTask();
+
+            expect(wwe.getEditor().getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+        });
+    });
 });

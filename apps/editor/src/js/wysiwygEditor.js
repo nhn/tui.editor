@@ -732,6 +732,16 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
         });
 };
 
+WysiwygEditor.prototype._unformatIncompleteTask = function() {
+    this.get$Body().find('.task-list-item').each(function(index, task) {
+        if ((!domUtils.isElemNode(task.firstChild) || task.firstChild.tagName !== 'INPUT')
+            && (!domUtils.isElemNode(task.firstChild.firstChild) || task.firstChild.firstChild.tagName !== 'INPUT')
+        ) {
+            $(task).removeClass('task-list-item');
+        }
+    });
+};
+
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
@@ -782,4 +792,13 @@ WysiwygEditor.prototype.restoreSelectionMarker = function() {
     return this._selectionMarker.restore(this.getEditor());
 };
 
+WysiwygEditor.prototype.postProcessForChange = function() {
+    var self = this;
+
+    setTimeout(function() {
+        self.getEditor()._ignoreChange = true;
+        self._unformatIncompleteTask();
+        self = null;
+    }, 0);
+};
 module.exports = WysiwygEditor;

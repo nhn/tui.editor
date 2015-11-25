@@ -66,7 +66,8 @@ describe('WwClipboardManager', function() {
 
             expect(cbm._getContentFromRange(range)).toEqual('de<div>fgh</div>');
         });
-    });
+     });
+
 
     describe('_processFragment', function() {
         it('return new fragment that have parsed html', function() {
@@ -134,5 +135,6 @@ describe('WwClipboardManager', function() {
             expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('UL');
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
-    });
+
+     });
 });

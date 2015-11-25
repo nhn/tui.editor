@@ -96,8 +96,14 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             range.deleteContents();
             self.wwe.restoreSelectionMarker();
             self.wwe.getEditor()._ensureBottomLine();
+
+            self.wwe.postProcessForChange();
         });
     }
+
+    this.wwe.getEditor().addEventListener('paste', function() {
+        self.wwe.postProcessForChange();
+    });
 };
 
 /**
@@ -122,7 +128,6 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
     return  processedFragment || fragment;
 };
 
-
 /**
  * _getContentFromRange
  * get processed contents of range
@@ -133,7 +138,6 @@ WwClipboardManager.prototype._getContentFromRange = function(range) {
     var resultContents,
         self = this,
         cloneContents = range.cloneContents();
-
 
     if (this._isOneTextNodeFullySelected(range)) {
         this._eachCurrentPath(function(pathStep) {
@@ -188,49 +192,13 @@ WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
 WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
     var newFirstChild;
 
-    if (!domUtils.isTextNode(frag.firstChild)) {
+    if (domUtils.isElemNode(frag.firstChild) && frag.firstChild.tagName === 'DIV') {
         newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
         $(frag).find('*').first().remove();
         $(frag).prepend(newFirstChild);
     }
 
     return frag;
-};
-
-/**
- * _isOneTextNodeFullySelected
- * check if one text node fully selected with range
- * @param {Range} range range of selection
- * @return {boolean} result
- */
-WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
-    return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-        && range.startContainer === range.endContainer
-        && range.startContainer === range.commonAncestorContainer
-        && range.startOffset === 0
-        && range.endOffset === range.commonAncestorContainer.nodeValue.length);
-};
-
-/**
- * _isStartWithPartialTextNode
- * check if start is partial textnode
- * @param {Range} range range of selection
- * @return {boolean} result
- */
-WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
-    return (range.startContainer.nodeType === Node.TEXT_NODE
-        && range.startOffset > 0);
-};
-
-/**
- * _isOrphanListItem
- * check if range have orphan list
- * @param {Range} range range of selection
- * @return {boolean} result
- */
-WwClipboardManager.prototype._isOrphanListItem = function(range) {
-    return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-        && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
 };
 
 /**
@@ -280,7 +248,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
     var newBound;
 
     //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
-    //이런경우 텍스트노드인데 한텍스트노드인경우는 텍스트노드만 지우는게 맞다.
+    //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
     if (range.startContainer !== range.endContainer) {
         if (range.startOffset === 0) {
             newBound = range.startContainer;
@@ -311,20 +279,66 @@ WwClipboardManager.prototype._extendRange = function(range) {
         }
     }
 
-    //선택된 영역이 commonAncestorContainer의 모든 컨텐츠면 commonAncestor를 선택
-    if (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-        && range.commonAncestorContainer.tagName !== 'BODY'
-        && range.startOffset === 0
-        && range.endOffset === range.commonAncestorContainer.childNodes.length
-        && range.commonAncestorContainer === range.startContainer
-        && range.commonAncestorContainer === range.endContainer
-    ) {
+    // commonAncestor를 선택
+    if (this._isWholeCommonAncestorContainerSelected(range)) {
         newBound = range.commonAncestorContainer;
         range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
         range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
     }
 
     return range;
+};
+
+/**
+ * _isWholeCommonAncestorContainerSelected
+ * check if selection has whole commonAncestorContainter
+ * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
+    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        && range.commonAncestorContainer.tagName !== 'BODY'
+        && range.startOffset === 0
+        && range.endOffset === range.commonAncestorContainer.childNodes.length
+        && range.commonAncestorContainer === range.startContainer
+        && range.commonAncestorContainer === range.endContainer;
+};
+
+/**
+ * _isOneTextNodeFullySelected
+ * check if one text node fully selected with range
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
+    return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+        && range.startContainer === range.endContainer
+        && range.startContainer === range.commonAncestorContainer
+        && range.startOffset === 0
+        && range.endOffset === range.commonAncestorContainer.nodeValue.length);
+};
+
+/**
+ * _isStartWithPartialTextNode
+ * check if start is partial textnode
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
+    return (range.startContainer.nodeType === Node.TEXT_NODE
+        && range.startOffset > 0);
+};
+
+/**
+ * _isOrphanListItem
+ * check if range have orphan list
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isOrphanListItem = function(range) {
+    return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
 };
 
 module.exports = WwClipboardManager;
