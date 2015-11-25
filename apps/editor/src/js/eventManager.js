@@ -10,7 +10,6 @@ var util = tui.util;
 var eventList = [
     'previewBeforeHook',
     'previewRenderAfter',
-    'addImageFileHook',
     'addImageBlobHook',
     'contentChangedFromWysiwyg',
     'changeFromWysiwyg',

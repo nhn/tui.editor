@@ -123,36 +123,18 @@ describe('PopupAddImage', function() {
         });
     });
 
-    describe('file입력 방식', function() {
-        it('addImageFileHook이 없으면 UI에서 file 입력을 할수 없다.', function() {
-
-        });
-
+    describe('image입력 방식', function() {
         describe('ok버튼이 클릭', function() {
-            it('addImageFileHook을 실행한다.', function() {
-                var hook = jasmine.createSpy('addImageFileHook');
-                em.listen('addImageFileHook', hook);
+            it('addImageBlobHook을 실행한다.', function() {
+                var hook = jasmine.createSpy('addImageBlobHook');
+                em.listen('addImageBlobHook', hook);
 
                 $('.okButton').trigger('click');
 
                 expect(hook).toHaveBeenCalled();
             });
-            it('addImageFileHook을 실행되면 폼과 콜백이 전달된다.', function() {
-                var form,
-                    callback;
 
-                em.listen('addImageFileHook', function(oForm, oCallback) {
-                    form = oForm;
-                    callback = oCallback;
-                });
-
-                $('.okButton').trigger('click');
-
-                expect(form.selector).toEqual('form');
-                expect(callback).toBeDefined();
-            });
-
-            it('addImageFileHook에 전달되는 콜백으로 완성된 url을 비동기로 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', function(done) {
+            it('addImageBlobHook에 전달되는 콜백으로 완성된 url을 비동기로 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', function(done) {
                 var addImage = jasmine.createSpy('addImage'),
                     value = {
                         imageUrl: 'imageUrlText',
@@ -163,7 +145,7 @@ describe('PopupAddImage', function() {
                     addImage(imageValue);
                 });
 
-                em.listen('addImageFileHook', function(oForm, callback) {
+                em.listen('addImageBlobHook', function(fileBlob, callback) {
                     setTimeout(function() {
                         callback(value.imageUrl);
                         expect(addImage).toHaveBeenCalledWith({imageUrl: value.imageUrl, altText: value.altText});

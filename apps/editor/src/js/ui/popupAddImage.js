@@ -112,8 +112,7 @@ PopupAddImage.prototype._linkWithEventManager = function() {
             self.applyImage();
         } else {
             self._preAltValue = self.$el.find('.altTextInput').val();
-            self.eventManager.emit('addImageFileHook', self._getImageFileForm(), self.applyImage);
-            //self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
+            self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
         }
     });
 };

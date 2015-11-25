@@ -50,14 +50,6 @@
         hooks: {
             'previewBeforeHook': function($dom) {
                 //console.log('previewBeforeHook', $dom);
-            },
-            'addImageFileHook': function($form, callback) {
-                $form.find('.imageFileInput').attr('name','fileName');
-                $form[0].action = 'http://posttestserver.com/post.php';
-                $form[0].method = 'POST';
-                $form[0].submit();
-                //callback으로 url전달
-                //callback('이미지URL');
             }
         }
     });
