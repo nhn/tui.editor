@@ -485,7 +485,7 @@ WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
 
         firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
 
-        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
+        if (firstTextNode && !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
             firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
         }
     });
