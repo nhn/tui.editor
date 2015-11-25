@@ -52,7 +52,7 @@ describe('WwClipboardManager', function() {
             range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 0);
             range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
 
-            expect(cbm._getContentFromRange(range)).toEqual('<ul><li>list1<br></li><li>lis</li></ul>');
+            expect(cbm._getContentFromRange(range).replace(/<br>/g, '')).toEqual('<ul><li>list1</li><li>lis</li></ul>');
         });
 
         it('if start is partial text node then make it text node', function() {
