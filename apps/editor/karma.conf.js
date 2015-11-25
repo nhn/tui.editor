@@ -21,6 +21,7 @@ module.exports = function(config) {
         files: [
             'lib/jquery/dist/jquery.js',
             'lib/tui-code-snippet/code-snippet.js',
+            'lib/tui-component-colorpicker/dist/colorpicker.js',
             'lib/toMark/dist/toMark.js',
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',
@@ -109,7 +110,6 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE9',
             'IE10',
             'IE11',
             'Chrome-WebDriver',
@@ -117,12 +117,6 @@ module.exports = function(config) {
         ],
 
         customLaunchers: {
-            'IE9': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: 9
-            },
             'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
