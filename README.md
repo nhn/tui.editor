@@ -146,7 +146,7 @@ $('#editSection').tuiEditor('off', 'load.dooray', handler);
 ```
 
 ## 버전별 업데이트 유의점
-*.0.0.8
+* 0.0.8
     * addImageFileHook 삭제
 * 0.0.7
     * 네이밍 변경
