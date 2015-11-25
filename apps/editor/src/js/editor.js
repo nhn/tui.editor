@@ -62,10 +62,15 @@ require('./extensions/colorSyntax');
  * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
  * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
  * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
- * @param {function} options.onload invoke function when editor loaded complete
+ * @param {object} options.events eventlist
+ * @param {function} options.events.load it would be emitted when editor fully load
+ * @param {function} options.events.change it would be emitted when content changed
+ * @param {function} options.events.stateChange it would be emitted when format change by cursor position
+ * @param {function} options.events.focus it would be emitted when editor get focus
+ * @param {function} options.events.blur it would be emitted when editor loose focus
  * @param {object} options.hooks 외부 연결 훅 목록
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
- * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
+ * @param {function} options.hooks.addImageBlobHook hook for image upload.
  */
 function ToastUIEditor(options) {
     var self = this;

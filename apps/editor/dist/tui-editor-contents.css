@@ -10,12 +10,13 @@
     padding: 1em;
     margin: 0;
     cursor: text;
-    color: #2b2b2b;
+    color: #181818;
 }
 
 .tui-editor-contents * {
     margin:0;
     padding:0;
+    word-break: break-all;
 }
 
 .tui-editor-contents > *:first-child {

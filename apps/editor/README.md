@@ -76,8 +76,9 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
     * 이벤트 목록은 하단 API파트에 있습니다.
 * exts: 사용할 익스텐션들을 배열로 지정합니다.
     * `exts: ['scrollFollow']`
+    * scrollFollow: 마크다운 에디터에서 프리뷰영역이 에디팅 영역의 스크롤을 따라갑니다..
+    * colorSyntax: 컬러를 사용할수 있게합니다.
 * hooks: 이미지서버와의 연동등을 처리하는 훅을 바인드합니다.
-    * addImageFileHook : 폼객체를 이용해 이미지를 서버에 업로드합니다. deprecated예정입니다.
     * addImageBlobHook : 파일 blob을 이용해 이미지를 서버에 업로드합니다.
 
 ## 이미지 서버 연동
@@ -96,16 +97,6 @@ $('#editSection').tuiEditor({
         'bower_components/tui-editor/dist/tui-editor-contents.css'
     ],
     hooks: {
-        'addImageFileHook': function($form, callback) {
-            //addImageFileHook은 deprecated됩니다.
-            $form.find('.imageFileInput').attr('name','fileName');
-            $form[0].action = 'http://posttestserver.com/post.php';
-            $form[0].method = 'POST';
-            $form[0].submit();
-
-            //callback으로 url전달
-            //callback('이미지URL');
-        },
         'addImageBlobHook': function(blob, callback) {
             //이미지 블롭을 이용해 서버 연동 후 콜백실행
             //callback('이미지URL');
@@ -154,7 +145,9 @@ $('#editSection').tuiEditor('off', '.dooray', handler);
 $('#editSection').tuiEditor('off', 'load.dooray', handler);
 ```
 
-## 주요변경점
+## 버전별 업데이트 유의점
+*.0.0.8
+    * addImageFileHook 삭제
 * 0.0.7
     * 네이밍 변경
         * 리포지토리 경로

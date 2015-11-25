@@ -1,290 +1,510 @@
 @charset "UTF-8";
 
 .tui-editor,
+.tui-editor-defaultUI,
+.tui-editor-defaultUI *,
 .tui-editor * {
-    margin:0;
-    padding:0;
-    box-sizing: content-box;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
-
-.tui-editor {
-    position: relative;
-    line-height: 1;
+  margin: 0;
+  padding: 0;
+  box-sizing: content-box;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
 .tui-editor:after,
-.tui-editor .toolbar:after,
-.tui-editor .statusbar:after
-{
-    content: "";
-    display: block;
-    height: 0;
-    clear: both;
+.tui-editor-defaultUI-toolbar:after {
+  content: "";
+  display: block;
+  height: 0;
+  clear: both;
 }
+
 .tui-editor {
-    border: 1px solid #ccc;
-}
-.tui-editor .toolbar {
-    padding: 5px;
-    height: 30px;
-    background: #eee;
-}
-.tui-editor.preview-style-vetical .toolbar {
-    border-bottom: 1px solid #ccc;
-}
-.tui-editor .toolbar button {
-    box-sizing: border-box;
-    min-width: 30px;
-    height: 30px;
-    background: white;
-    border-color: #ccc;
-    border-style: solid;
-    border-width: 1px 1px 1px 0;
-    outline: none;
-    float: left;
-    cursor: pointer;
-}
-.tui-editor .toolbar button:hover {
-    background: #eee;
-}
-.tui-editor .toolbar button:active {
-    box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
-}
-.tui-editor .toolbar button:first-child {
-    border-left-width: 1px;
+  position: relative;
+  line-height: 1;
+  border: 1px solid #ccc;
+  color: #181818;
 }
 
-.tui-editor .toolbar button.bold {
-    font-weight: bold;
-}
-
-.tui-editor .toolbar button.italic {
-    font-style: italic;
-}
-
-.mdContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    visibility: hidden;
-    overflow: hidden;
-}
-
-.mdContainer .tab{
-    padding: 0 5px;
-    background: #eee;
-    border-bottom: 1px solid #ccc;
-}
-.mdContainer .tab button {
-    box-sizing: border-box;
-    padding: 5px;
-    height: 23px;
-    font-size: 11px;
-    line-height: 100%;
-    background: #ddd;
-    border: 1px solid #ccc;
-    position: relative;
-    top: 1px;
-    left: -1px;
-    outline: none;
-    cursor: pointer;
-}
-.mdContainer .tab button:first-child {
-    left: 0;
-}
-.mdContainer .tab button.active,
-.mdContainer .tab button:hover.active {
-    background: white;
-    border-bottom-color: white;
-}
-
-.mdContainer .tab button:hover {
-    background: #eee;
-}
 .mdContainer .editor {
-    line-height: 1.5;
+  line-height: 1.5;
 }
 
 .mdContainer .editor,
 .mdContainer .preview {
-    height:400px;
-    box-sizing: border-box;
+  height: 400px;
+  box-sizing: border-box;
 }
+
 .mdContainer .CodeMirror {
-    height: 100%;
+  height: 100%;
 }
+
 .mdContainer .preview {
-    padding: 0;
-    overflow: auto;
+  padding: 0;
+  overflow: auto;
 }
+
 .mdContainer .previewContent {
-    padding: 5px;
+  padding: 5px;
 }
+
 .tui-editor .preview-style-tab>.editor,
 .tui-editor .preview-style-tab>.preview {
-    float: left;
-    width: 100%;
-    display: none;
+  float: left;
+  width: 100%;
+  display: none;
 }
+
 .tui-editor .preview-style-tab>.active {
-    display: block;
+  display: block;
 }
+
 .tui-editor .preview-style-vertical>.editor,
 .tui-editor .preview-style-vertical>.preview {
-    width: 50%;
+  width: 50%;
 }
+
 .tui-editor .preview-style-vertical>.editor {
-    float: left;
-    border-right: 1px solid #ccc;
+  float: left;
+  border-right: 1px solid #ccc;
 }
+
 .tui-editor .preview-style-vertical>.preview {
-    float: right;
+  float: right;
 }
 
 .tui-editor .preview-style-vertical>.tabSection {
-    display: none;
+  display: none;
 }
 
 .tui-editor .preview-style-tab>.tabSection {
-    display:block;
+  display: block;
 }
 
 .tui-editor .preview-style-vertical .editor {
-    float: left;
-    width: 50%;
-    border-right: 1px solid #ccc;
-    border-top: 1px solid #ccc;
+  float: left;
+  width: 50%;
+  border-right: 1px solid #ccc;
 }
 
 .tui-editor .preview-style-vertical .preview {
-    float: left;
-    width: 50%;
-    border-top: 1px solid #ccc;
+  float: left;
+  width: 50%;
 }
 
 .editor iframe {
-    border: none;
-    width: 100%;
-}
-
-.tui-editor .modeSwitchSection {
-    float: right;
-    margin-top: -23px;
-    margin-right: 5px;
-}
-
-.tui-editor .wysiwygContainer {
-    border-top: 1px solid #ccc;
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
 }
 
 /*we cant use display none for ifram because firefox have issue about it*/
+
 .wysiwygContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    visibility: hidden
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.mdContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  overflow: hidden;
 }
 
 .markdownMode .mdContainer {
-    position: inherit;
-    visibility: visible
+  position: inherit;
+  visibility: visible;
+  z-index: 100;
 }
 
 .wysiwygMode .wysiwygContainer {
-    position: inherit;
-    visibility: visible
+  position: inherit;
+  visibility: visible;
+  z-index: 100;
 }
 
 .tui-editor.hide,
+.tui-editor-defaultUI.hide,
 .tui-editor.hide .wysiwygContainer,
 .tui-editor.hide .mdContainer,
 .tui-editor.hide iframe {
-    position: absolute;
-    visibility: hidden;
+  position: absolute;
+  visibility: hidden;
 }
 
-.tui-editor .switchButton {
-    background: none;
-    text-decoration: underline;
-    border: 0;
+/* default UI Styles */
+
+.tui-editor-defaultUI {
+  position: relative;
+}
+
+.tui-editor-defaultUI button {
+  border: none;
+  background: none;
+}
+
+.tui-editor-defaultUI-toolbar {
+  padding: 5px;
+  height: 30px;
+  background: #eee;
+  border-style: solid;
+  border-color: #ccc;
+  border-width: 1px 1px 0 1px;
+}
+
+.tui-editor-defaultUI-toolbar button {
+  box-sizing: border-box;
+  min-width: 30px;
+  height: 30px;
+  background: white;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px 1px 1px 0;
+  outline: none;
+  float: left;
+  cursor: pointer;
+}
+
+.tui-editor-defaultUI-toolbar button:hover {
+  background: #eee;
+}
+
+.tui-editor-defaultUI-toolbar button:active {
+  box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
+}
+
+.tui-editor-defaultUI-toolbar button:first-child {
+  border-left-width: 1px;
+}
+
+.tui-editor-defaultUI-toolbar button.bold {
+  font-weight: bold;
+}
+
+.tui-editor-defaultUI-toolbar button.italic {
+  font-style: italic;
+}
+
+.tui-editor-defaultUI .switchButton {
+  background: none;
+  text-decoration: underline;
+  border: 0;
+}
+
+.tui-editor-defaultUI .modeSwitchSection {
+  float: right;
+  margin-top: -23px;
+  margin-right: 5px;
+}
+
+/*
+.tui-editor-defaultUI .wysiwygContainer {
+    border-top: 1px solid #ccc;
+}
+
+
+.tui-editor-defaultUI.preview-style-vetical .toolbar {
+    border-bottom: 1px solid #ccc;
+}
+*/
+
+.tui-editor-defaultUI .markdownTabSection {
+  border-style: solid;
+  border-color: #ccc;
+  border-width: 0 1px 0 1px;
+}
+
+.markdownTabSection .tab {
+  padding: 0 5px;
+  background: #eee;
+}
+
+.tui-editor-defaultUI .tab button {
+  box-sizing: border-box;
+  padding: 5px;
+  height: 23px;
+  font-size: 11px;
+  line-height: 100%;
+  background: #ddd;
+  border: 1px solid #ccc;
+  position: relative;
+  top: 1px;
+  left: -1px;
+  outline: none;
+  cursor: pointer;
+}
+
+.markdownTabSection .tab button:first-child {
+  left: 0;
+}
+
+.markdownTabSection .tab button.active,
+.markdownTabSection .tab button:hover.active {
+  background: white;
+  border-bottom-color: white;
+}
+
+.markdownTabSection .tab button:hover {
+  background: #eee;
 }
 
 .tui-popup-wrapper {
-    width: 500px;
-    left: auto;
-    margin-right: auto;
-    margin-left: auto;
-    border: 2px solid #ccc;
-    border-radius: 5px;
-    background: white;
-    z-index: 9999;
+  width: 500px;
+  left: auto;
+  margin-right: auto;
+  margin-left: auto;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  background: white;
+  z-index: 9999;
 }
 
 .tui-popup-header {
-    height: 30px;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-    line-height: 30px;
+  height: 30px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  line-height: 30px;
 }
 
 .tui-popup-body {
-    padding: 15px;
+  padding: 15px;
 }
 
 .tui-popup-header .tui-popup-closeButton {
-    float: right;
-    margin: 0;
-    padding: 0;
-    border: none;
-    line-height: 1;
-    background: none;
-    font-weight: bold;
-    font-size: 20px;
-    color: #aaa;
+  float: right;
+  margin: 0;
+  padding: 0;
+  border: none;
+  line-height: 1;
+  background: none;
+  font-weight: bold;
+  font-size: 20px;
+  color: #aaa;
 }
 
 .tui-popup-header .tui-popup-title {
-    font-size: 20px;
-    font-weight:bold;
-    vertical-align: baseline;
+  font-size: 20px;
+  font-weight: bold;
+  vertical-align: baseline;
 }
 
 .tui-editor-popup {
-    position: absolute;
-    top: 30px;
-    left: 50%;
-    margin-left: -250px;
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  margin-left: -250px;
 }
 
 .tui-editor-popup label {
-    display: block;
+  display: block;
 }
 
-.buttonSection {
-    margin-top: 15px;
+.tui-editor-popup .buttonSection {
+  margin-top: 15px;
 }
 
+.tui-editor-popup .buttonSection button {
+  margin-right: 15px;
+}
 
 .popupAddImage .tab {
-    padding: 5px 0;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 8px;
 }
 
 .popupAddImage .urlType {
-    display: none;
+  display: none;
 }
+
 .popupAddImage .fileType {
-    display: none;
+  display: none;
 }
+
 .popupAddImage div.active,
-.popupAddImage form.active{
-    display: block;
+.popupAddImage form.active {
+  display: block;
 }
+
 .popupAddImage .tab button {
-    border: none;
-    background: none;
+  border: none;
+  background: none;
+}
+/**
+ * Toast UI Colorpicker
+ * @version 1.0.1
+ */
+
+.tui-colorpicker-clearfix {
+  zoom: 1;
+}
+
+.tui-colorpicker-clearfix:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.tui-colorpicker-vml {
+  behavior: url("../../lib/tui-component-colorpicker/dist/#default#VML");
+  display: block;
+}
+
+.tui-colorpicker-container {
+  width: 152px;
+}
+
+.tui-colorpicker-palette-container {
+  width: 152px;
+}
+
+.tui-colorpicker-palette-container ul {
+  width: 152px;
+  margin: 0px;
+  padding: 0px;
+}
+
+.tui-colorpicker-palette-container li {
+  float: left;
+  margin: 0;
+  padding: 0 3px 3px 0;
+  list-style: none;
+}
+
+.tui-colorpicker-palette-button {
+  display: block;
+  border: none;
+  overflow: hidden;
+  outline: none;
+  margin: 0px;
+  padding: 0px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.tui-colorpicker-palette-button.tui-colorpicker-selected {
+  border: 2px solid #000;
+}
+
+.tui-colorpicker-palette-hex {
+  font-family: monospace;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  width: 60px;
+  vertical-align: middle;
+}
+
+.tui-colorpicker-palette-preview {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #ccc;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.tui-colorpicker-palette-toggle-slider {
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  vertical-align: middle;
+  float: right;
+}
+
+.tui-colorpicker-slider-container {
+  margin: 5px 0 0 0;
+  height: 122px;
+  zoom: 1;
+}
+
+.tui-colorpicker-slider-container:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.tui-colorpicker-slider-left {
+  float: left;
+  width: 120px;
+  height: 120px;
+}
+
+.tui-colorpicker-slider-right {
+  float: right;
+  width: 32px;
+  height: 120px;
+}
+
+.tui-colorpicker-svg {
+  display: block;
+}
+
+.tui-colorpicker-slider-handle {
+  position: absolute;
+  overflow: visible;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  z-index: 2;
+  opacity: 0.9;
+}
+
+.tui-colorpicker-svg-slider {
+  width: 120px;
+  height: 120px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.tui-colorpicker-vml-slider {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.tui-colorpicker-vml-slider-bg {
+  position: absolute;
+  margin: -1px 0 0 -1px;
+  top: 0;
+  left: 0;
+  width: 122px;
+  height: 122px;
+}
+
+.tui-colorpicker-svg-huebar {
+  float: right;
+  width: 18px;
+  height: 120px;
+  border: 1px solid #ccc;
+  overflow: visible;
+}
+
+.tui-colorpicker-vml-huebar {
+  width: 32px;
+  position: relative;
+}
+
+.tui-colorpicker-vml-huebar-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 18px;
+  height: 121px;
 }
