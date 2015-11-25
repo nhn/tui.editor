@@ -1,83 +1,9 @@
+/**
+ * Toast UI Colorpicker
+ * @version 1.0.1
+ */
+!function e(t,o,n){function i(s,l){if(!o[s]){if(!t[s]){var a="function"==typeof require&&require;if(!l&&a)return a(s,!0);if(r)return r(s,!0);var c=new Error("Cannot find module '"+s+"'");throw c.code="MODULE_NOT_FOUND",c}var u=o[s]={exports:{}};t[s][0].call(u.exports,function(e){var o=t[s][1][e];return i(o?o:e)},u,u.exports,e,t,o,n)}return o[s].exports}for(var r="function"==typeof require&&require,s=0;s<n.length;s++)i(n[s]);return i}({1:[function(e,t,o){"use strict";tui.util.defineNamespace("tui.component.colorpicker",{domutil:e("./src/js/core/domutil"),domevent:e("./src/js/core/domevent"),Collection:e("./src/js/core/collection"),View:e("./src/js/core/view"),Drag:e("./src/js/core/drag"),create:e("./src/js/factory"),Palette:e("./src/js/palette"),Slider:e("./src/js/slider"),colorutil:e("./src/js/colorutil"),svgvml:e("./src/js/svgvml")})},{"./src/js/colorutil":2,"./src/js/core/collection":3,"./src/js/core/domevent":4,"./src/js/core/domutil":5,"./src/js/core/drag":6,"./src/js/core/view":7,"./src/js/factory":8,"./src/js/palette":10,"./src/js/slider":11,"./src/js/svgvml":12}],2:[function(e,t,o){"use strict";var n=/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,i={leadingZero:function(e,t){var o="",n=0;if((e+"").length>t)return e+"";for(;t-1>n;n+=1)o+="0";return(o+e).slice(-1*t)},isValidRGB:function(e){return n.test(e)},hexToRGB:function(e){var t,o,n;return i.isValidRGB(e)?(e=e.substring(1),t=parseInt(e.substr(0,2),16),o=parseInt(e.substr(2,2),16),n=parseInt(e.substr(4,2),16),[t,o,n]):!1},rgbToHEX:function(e,t,o){var n="#"+i.leadingZero(e.toString(16),2)+i.leadingZero(t.toString(16),2)+i.leadingZero(o.toString(16),2);return i.isValidRGB(n)?n:!1},rgbToHSV:function(e,t,o){var n,i,r,s,l,a;if(e/=255,t/=255,o/=255,n=Math.max(e,t,o),i=Math.min(e,t,o),l=n,a=n-i,s=0===n?0:a/n,n===i)r=0;else{switch(n){case e:r=(t-o)/a+(o>t?6:0);break;case t:r=(o-e)/a+2;break;case o:r=(e-t)/a+4}r/=6}return[Math.round(360*r),Math.round(100*s),Math.round(100*l)]},hsvToRGB:function(e,t,o){var n,i,r,s,l,a,c,u;if(e=Math.max(0,Math.min(360,e)),t=Math.max(0,Math.min(100,t)),o=Math.max(0,Math.min(100,o)),t/=100,o/=100,0===t)return n=i=r=o,[Math.round(255*n),Math.round(255*i),Math.round(255*r)];switch(e/=60,s=Math.floor(e),l=e-s,a=o*(1-t),c=o*(1-t*l),u=o*(1-t*(1-l)),s){case 0:n=o,i=u,r=a;break;case 1:n=c,i=o,r=a;break;case 2:n=a,i=o,r=u;break;case 3:n=a,i=c,r=o;break;case 4:n=u,i=a,r=o;break;default:n=o,i=a,r=c}return[Math.round(255*n),Math.round(255*i),Math.round(255*r)]}};t.exports=i},{}],3:[function(e,t,o){(function(e){"use strict";function o(e){this.items={},this.length=0,s(e)&&(this.getItemID=e)}var n=e.tui.util,i=n.forEachOwnProperties,r=n.forEachArray,s=n.isFunction,l=n.isObject,a=Array.prototype.slice;o.and=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=0;t>n;n+=1)if(!e[n].call(null,o))return!1;return!0}},o.or=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=1,i=e[0].call(null,o);t>n;n+=1)i=i||e[n].call(null,o);return i}},o.merge=function(e){var t=a.call(arguments),i={},s=new o(t[0].getItemID),l=n.extend;return r(t,function(e){l(i,e.items)}),s.items=i,s.length=n.keys(s.items).length,s},o.prototype.getItemID=function(e){return e._id+""},o.prototype.add=function(e){var t,o;return arguments.length>1?void r(a.call(arguments),function(e){this.add(e)},this):(t=this.getItemID(e),o=this.items,o[t]||(this.length+=1),void(o[t]=e))},o.prototype.remove=function(e){var t,o,i=[];return this.length?arguments.length>1?i=n.map(a.call(arguments),function(e){return this.remove(e)},this):(t=this.items,l(e)&&(e=this.getItemID(e)),t[e]?(this.length-=1,o=t[e],delete t[e],o):i):i},o.prototype.clear=function(){this.items={},this.length=0},o.prototype.has=function(e){var t,o;return this.length?(t=s(e),o=!1,t?this.each(function(t){return e(t)===!0?(o=!0,!1):void 0}):(e=l(e)?this.getItemID(e):e,o=n.isExisty(this.items[e])),o):!1},o.prototype.doWhenHas=function(e,t,o){var i=this.items[e];n.isExisty(i)&&t.call(o||this,i)},o.prototype.find=function(e){var t=new o;return this.hasOwnProperty("getItemID")&&(t.getItemID=this.getItemID),this.each(function(o){e(o)===!0&&t.add(o)}),t},o.prototype.groupBy=function(e,t){var i,r,s={},l=n.isFunction,a=l(e),c=this.getItemID;if(n.isArray(e)){if(n.forEachArray(e,function(e){s[e+""]=new o(c)}),!t)return s;e=t,a=!0}return this.each(function(t){a?r=e(t):(r=t[e],l(r)&&(r=r.apply(t))),i=s[r],i||(i=s[r]=new o(c)),i.add(t)}),s},o.prototype.single=function(){var e;return this.each(function(t){return e=t,!1},this),e},o.prototype.sort=function(e){var t=[];return this.each(function(e){t.push(e)}),s(e)&&(t=t.sort(e)),t},o.prototype.each=function(e,t){i(this.items,e,t||this)},o.prototype.toArray=function(){return this.length?n.map(this.items,function(e){return e}):[]},t.exports=o}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],4:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=o.browser,i="_evt",r={START:["touchstart","mousedown"],END:{mousedown:"mouseup",touchstart:"touchend",pointerdown:"touchend",MSPointerDown:"touchend"},MOVE:{mousedown:"mousemove",touchstart:"touchmove",pointerdown:"touchmove",MSPointerDown:"touchmove"}},s={on:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._on(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._on(e,o,t,n)})},_on:function(e,t,n,r){var l,a,c;l=t+o.stamp(n)+(r?"_"+o.stamp(r):""),e[i]&&e[i][l]||(a=function(t){n.call(r||e,t||window.event)},c=a,"addEventListener"in e?"mouseenter"===t||"mouseleave"===t?(a=function(t){t=t||window.event,s._checkMouse(e,t)&&c(t)},e.addEventListener("mouseenter"===t?"mouseover":"mouseout",a,!1)):("mousewheel"===t&&e.addEventListener("DOMMouseScroll",a,!1),e.addEventListener(t,a,!1)):"attachEvent"in e&&e.attachEvent("on"+t,a),e[i]=e[i]||{},e[i][l]=a)},off:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._off(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._off(e,o,t,n)})},_off:function(e,t,n,r){var s=t+o.stamp(n)+(r?"_"+o.stamp(r):""),l=e[i]&&e[i][s];if(l){if("removeEventListener"in e)"mouseenter"===t||"mouseleave"===t?e.removeEventListener("mouseenter"===t?"mouseover":"mouseout",l,!1):("mousewheel"===t&&e.removeEventListener("DOMMouseScroll",l,!1),e.removeEventListener(t,l,!1));else if("detachEvent"in e)try{e.detachEvent("on"+t,l)}catch(a){}if(delete e[i][s],!o.keys(e[i]).length)return o.browser.msie&&o.browser.version<9?void(e[i]=null):void delete e[i]}},once:function(e,t,n,i){function r(){n.apply(i||e,arguments),l._off(e,t,r,i)}var l=this;return o.isObject(t)?void o.forEachOwnProperties(t,function(t,o){s.once(e,o,t,n)}):void s.on(e,t,r,i)},stopPropagation:function(e){e.stopPropagation?e.stopPropagation():e.cancelBubble=!0},preventDefault:function(e){e.preventDefault?e.preventDefault():e.returnValue=!1},stop:function(e){s.preventDefault(e),s.stopPropagation(e)},disableScrollPropagation:function(e){s.on(e,"mousewheel MozMousePixelScroll",s.stopPropagation)},disableClickPropagation:function(e){s.on(e,r.START.join(" ")+" click dblclick",s.stopPropagation)},getMousePosition:function(e,t){var o;return t?(o=t.getBoundingClientRect(),[e.clientX-o.left-t.clientLeft,e.clientY-o.top-t.clientTop]):[e.clientX,e.clientY]},getWheelDelta:function(e){var t=0;return e.wheelDelta&&(t=e.wheelDelta/120),e.detail&&(t=-e.detail/3),t},_checkMouse:function(e,t){var o=t.relatedTarget;if(!o)return!0;try{for(;o&&o!==e;)o=o.parentNode}catch(n){return!1}return o!==e},trigger:function(e,t,n){var i=/(mouse|click)/;o.isUndefined(n)&&i.exec(t)&&(n=s.mouseEvent(t)),e.dispatchEvent?e.dispatchEvent(n):e.fireEvent&&e.fireEvent("on"+t,n)},mouseEvent:function(e,t){var i,r;return r=o.extend({bubbles:!0,cancelable:"mousemove"!==e,view:window,wheelDelta:0,detail:0,screenX:0,screenY:0,clientX:0,clientY:0,ctrlKey:!1,altKey:!1,shiftKey:!1,metaKey:!1,button:0,relatedTarget:void 0},t),n.msie&&n.version<9&&delete r.wheelDelta,"function"==typeof document.createEvent?(i=document.createEvent("MouseEvents"),i.initMouseEvent(e,r.bubbles,r.cancelable,r.view,r.detail,r.screenX,r.screenY,r.clientX,r.clientY,r.ctrlKey,r.altKey,r.shiftKey,r.metaKey,r.button,document.body.parentNode)):document.createEventObject&&(i=document.createEventObject(),o.forEach(r,function(e,t){i[t]=e},this),i.button={0:1,1:4,2:2}[i.button]||i.button),i},getMouseButton:function(e){var t,o="0,1,3,5,7",n="2,6",i="4";return document.implementation.hasFeature("MouseEvents","2.0")?e.button:(t=e.button+"",~o.indexOf(t)?0:~n.indexOf(t)?2:~i.indexOf(t)?1:void 0)}};t.exports=s}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],5:[function(e,t,o){(function(o){"use strict";function n(e){return e.replace(/^\s\s*/,"").replace(/\s\s*$/,"")}var i,r=e("./domevent"),s=e("./collection"),l=o.tui.util,a="_pos",c=/^auto$|^$|%/;i={appendHTMLElement:function(e,t,o){var n;return o=o||"",n=document.createElement(e),n.className=o,t?t.appendChild(n):document.body.appendChild(n),n},remove:function(e){e&&e.parentNode&&e.parentNode.removeChild(e)},get:function(e){return document.getElementById(e)},_matcher:function(e,t){var o=/^\./,n=/^#/;return o.test(t)?i.hasClass(e,t.replace(".","")):n.test(t)?e.id===t.replace("#",""):e.nodeName.toLowerCase()===t.toLowerCase()},find:function(e,t,o){function n(e,t){for(var l,u=e.childNodes,d=0,f=u.length;f>d;d+=1)if(l=u[d],"#text"!==l.nodeName)if(i._matcher(l,t)){if((c&&o(l)||!c)&&r.push(l),a){s=!0;break}}else if(l.childNodes.length>0&&(n(l,t),s))break}var r=[],s=!1,a=l.isUndefined(o)||o===!1,c=l.isFunction(o);return l.isString(t)&&(t=i.get(t)),t=t||window.document.body,n(t,e),a?r[0]||null:r},closest:function(e,t){var o=e.parentNode;if(i._matcher(e,t))return e;for(;o&&o!==window.document.body;){if(i._matcher(o,t))return o;o=o.parentNode}},text:function(e){var t="",o=0,n=e.nodeType;if(n){if(1===n||9===n||11===n){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)t+=i.text(e)}else if(3===n||4===n)return e.nodeValue}else for(;e[o];o+=1)t+=i.text(e[o]);return t},setData:function(e,t,o){return"dataset"in e?void(e.dataset[t]=o):void e.setAttribute("data-"+t,o)},getData:function(e,t){return"dataset"in e?e.dataset[t]:e.getAttribute("data-"+t)},hasClass:function(e,t){var o;return l.isUndefined(e.classList)?(o=i.getClass(e),o.length>0&&new RegExp("(^|\\s)"+t+"(\\s|$)").test(o)):e.classList.contains(t)},addClass:function(e,t){var o;l.isUndefined(e.classList)?i.hasClass(e,t)||(o=i.getClass(e),i.setClass(e,(o?o+" ":"")+t)):l.forEachArray(t.split(" "),function(t){e.classList.add(t)})},setClass:function(e,t){l.isUndefined(e.className.baseVal)?e.className=t:e.className.baseVal=t},removeClass:function(e,t){var o="";l.isUndefined(e.classList)?(o=(" "+i.getClass(e)+" ").replace(" "+t+" "," "),i.setClass(e,n(o))):e.classList.remove(t)},getClass:function(e){return e&&e.className?l.isUndefined(e.className.baseVal)?e.className:e.className.baseVal:""},getStyle:function(e,t){var o,n=e.style[t]||e.currentStyle&&e.currentStyle[t];return n&&"auto"!==n||!document.defaultView||(o=document.defaultView.getComputedStyle(e,null),n=o?o[t]:null),"auto"===n?null:n},getComputedStyle:function(e){var t=document.defaultView;return t&&t.getComputedStyle?document.defaultView.getComputedStyle(e):{getPropertyValue:function(t){var o=/(\-([a-z]){1})/g;return"float"===t&&(t="styleFloat"),o.test(t)&&(t=t.replace(o,function(){return arguments[2].toUpperCase()})),e.currentStyle[t]?e.currentStyle[t]:null}}},setPosition:function(e,t,o){t=l.isUndefined(t)?0:t,o=l.isUndefined(o)?0:o,e[a]=[t,o],e.style.left=t+"px",e.style.top=o+"px"},getPosition:function(e,t){var o,n,i;return t&&(e[a]=null),e[a]?e[a]:(o=0,n=0,(c.test(e.style.left)||c.test(e.style.top))&&"getBoundingClientRect"in e?(i=e.getBoundingClientRect(),o=i.left,n=i.top):(o=parseFloat(e.style.left||0),n=parseFloat(e.style.top||0)),[o,n])},getSize:function(e){var t,o=i.getStyle(e,"width"),n=i.getStyle(e,"height");return(c.test(o)||c.test(n))&&"getBoundingClientRect"in e?(t=e.getBoundingClientRect(),o=t.width,n=t.height):(o=parseFloat(o||0),n=parseFloat(n||0)),[o,n]},testProp:function(e){for(var t=document.documentElement.style,o=0,n=e.length;n>o;o+=1)if(e[o]in t)return e[o];return!1},getFormData:function(e){var t=new s(function(){return this.length}),o=function(e){return!e.disabled},n={};return t.add.apply(t,i.find("input",e,o).concat(i.find("select",e,o)).concat(i.find("textarea",e,o))),t=t.groupBy(function(e){return e&&e.getAttribute("name")||"_other"}),l.forEach(t,function(e,t){"_other"!==t&&e.each(function(o){var r=o.nodeName.toLowerCase(),s=o.type,a=[];"radio"===s?a=[e.find(function(e){return e.checked}).toArray().pop()]:"checkbox"===s?a=e.find(function(e){return e.checked}).toArray():"select"===r?e.find(function(e){return!!e.childNodes.length}).each(function(e){a=a.concat(i.find("option",e,function(e){return e.selected}))}):a=e.find(function(e){return""!==e.value}).toArray(),a=l.map(a,function(e){return e.value}),a.length?1===a.length&&(a=a[0]):a="",n[t]=a})}),n}};var u=i.testProp(["userSelect","WebkitUserSelect","OUserSelect","MozUserSelect","msUserSelect"]),d="onselectstart"in document,f="";i.disableTextSelection=function(){return d?function(){r.on(window,"selectstart",r.preventDefault)}:function(){var e=document.documentElement.style;f=e[u],e[u]="none"}}(),i.enableTextSelection=function(){return d?function(){r.off(window,"selectstart",r.preventDefault)}:function(){document.documentElement.style[u]=f}}(),i.disableImageDrag=function(){r.on(window,"dragstart",r.preventDefault)},i.enableImageDrag=function(){r.off(window,"dragstart",r.preventDefault)},t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domevent":4}],6:[function(e,t,o){(function(o){"use strict";function n(e,t){s.on(t,"mousedown",this._onMouseDown,this),this.options=i.extend({distance:10},e),this.container=t,this._isMoved=!1,this._distance=0,this._dragStartFired=!1,this._dragStartEventData=null}var i=o.tui.util,r=e("./domutil"),s=e("./domevent");n.prototype.destroy=function(){s.off(this.container,"mousedown",this._onMouseDown,this),this.options=this.container=this._isMoved=this._distance=this._dragStartFired=this._dragStartEventData=null},n.prototype._toggleDragEvent=function(e){var t,n,i=this.container;e?(t="on",n="disable"):(t="off",n="enable"),r[n+"TextSelection"](i),r[n+"ImageDrag"](i),s[t](o.document,{mousemove:this._onMouseMove,mouseup:this._onMouseUp},this)},n.prototype._getEventData=function(e){return{target:e.target||e.srcElement,originEvent:e}},n.prototype._onMouseDown=function(e){0===s.getMouseButton(e)&&(this._distance=0,this._dragStartFired=!1,this._dragStartEventData=this._getEventData(e),this._toggleDragEvent(!0))},n.prototype._onMouseMove=function(e){var t=this.options.distance;return s.preventDefault(e),this._isMoved=!0,this._distance<t?void(this._distance+=1):this._dragStartFired||(this._dragStartFired=!0,this.invoke("dragStart",this._dragStartEventData))?void this.fire("drag",this._getEventData(e)):void this._toggleDragEvent(!1)},n.prototype._onMouseUp=function(e){return this._toggleDragEvent(!1),this._isMoved?(this._isMoved=!1,void this.fire("dragEnd",this._getEventData(e))):void this.fire("click",this._getEventData(e))},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./domevent":4,"./domutil":5}],7:[function(e,t,o){(function(o){"use strict";function n(e,t){var o=i.stamp(this);e=e||{},i.isUndefined(t)&&(t=r.appendHTMLElement("div")),r.addClass(t,"tui-view-"+o),this.id=o,this.container=t,this.childs=new s(function(e){return i.stamp(e)}),this.parent=null}var i=o.tui.util,r=e("./domutil"),s=e("./collection");n.prototype.addChild=function(e,t){t&&t.call(e,this),e.parent=this,this.childs.add(e)},n.prototype.removeChild=function(e,t){var o=i.isNumber(e)?this.childs.items[e]:e;e=i.stamp(o),t&&t.call(o,this),this.childs.remove(e)},n.prototype.render=function(){this.childs.each(function(e){e.render()})},n.prototype.recursive=function(e,t){i.isFunction(e)&&(t||e(this),this.childs.each(function(t){t.recursive(e)}))},n.prototype.resize=function(){for(var e=Array.prototype.slice.call(arguments),t=this.parent;t;)i.isFunction(t._onResize)&&t._onResize.apply(t,e),t=t.parent},n.prototype._beforeDestroy=function(){},n.prototype._destroy=function(){this._beforeDestroy(),this.childs.clear(),this.container.innerHTML="",this.id=this.parent=this.childs=this.container=null},n.prototype.destroy=function(e){this.childs.each(function(e){e.destroy(!0),e._destroy()}),e||this._destroy()},n.prototype.getViewBound=function(){var e=this.container,t=r.getPosition(e),o=r.getSize(e);return{x:t[0],y:t[1],width:o[0],height:o[1]}},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domutil":5}],8:[function(e,t,o){(function(o){"use strict";function n(e){alert(e)}function i(e){var t;return this instanceof i?(e=this.options=r.extend({container:null,color:"#f8f8f8",preset:["#181818","#282828","#383838","#585858","#b8b8b8","#d8d8d8","#e8e8e8","#f8f8f8","#ab4642","#dc9656","#f7ca88","#a1b56c","#86c1b9","#7cafc2","#ba8baf","#a16946"],cssPrefix:"tui-colorpicker-",detailTxt:"Detail"},e),e.container?(t=this.layout=new l(e,e.container),this.palette=new a(e,t.container),this.palette.on({_selectColor:this._onSelectColorInPalette,_toggleSlider:this._onToggleSlider},this),this.slider=new c(e,t.container),this.slider.on("_selectColor",this._onSelectColorInSlider,this),t.addChild(this.palette),t.addChild(this.slider),void this.render(e.color)):void n("Colorpicker(): need container option.")):new i(e)}var r=o.tui.util,s=e("./colorutil"),l=e("./layout"),a=e("./palette"),c=e("./slider");i.prototype._onSelectColorInPalette=function(e){var t=e.color,o=this.options;return s.isValidRGB(t)?void(o.color!==t&&(o.color=t,this.render(t),this.fire("selectColor",{color:t,origin:"palette"}))):void this.render()},i.prototype._onToggleSlider=function(){this.slider.toggle(!this.slider.isVisible())},i.prototype._onSelectColorInSlider=function(e){var t=e.color,o=this.options;o.color!==t&&(o.color=t,this.palette.render(t),this.fire("selectColor",{color:t,origin:"slider"}))},i.prototype.setColor=function(e){s.isValidRGB(e)||n("Colorpicker#setColor(): need valid hex string color value"),this.options.color=e,this.render(e)},i.prototype.getColor=function(){return this.options.color},i.prototype.toggle=function(e){this.layout.container.style.display=e?"block":"none"},i.prototype.render=function(e){this.layout.render(e||this.options.color)},i.prototype.destroy=function(){this.layout.destroy(),this.options.container.innerHTML="",this.layout=this.slider=this.palette=this.options=null},r.CustomEvents.mixin(i),t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./colorutil":2,"./layout":9,"./palette":10,"./slider":11}],9:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"container"),s.call(this,e,t),this.render()}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/view");i.inherit(n,s),n.prototype.render=function(e){this.recursive(function(t){t.render(e)},!0)},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./core/domutil":5,"./core/view":7}],10:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-",preset:["#181818","#282828","#383838","#585858","#B8B8B8","#D8D8D8","#E8E8E8","#F8F8F8","#AB4642","#DC9656","#F7CA88","#A1B56C","#86C1B9","#7CAFC2","#BA8BAF","#A16946"],detailTxt:"Detail"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"palette-container"),l.call(this,e,t)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./core/view"),a=e("../template/palette");i.inherit(n,l),n.prototype._onClick=function(e){var t=this.options,o=e.srcElement||e.target,n={};return r.hasClass(o,t.cssPrefix+"palette-button")?(n.color=o.value,void this.fire("_selectColor",n)):void(r.hasClass(o,t.cssPrefix+"palette-toggle-slider")&&this.fire("_toggleSlider"))},n.prototype._onChange=function(e){var t=this.options,o=e.srcElement||e.target,n={};return r.hasClass(o,t.cssPrefix+"palette-hex")?(n.color=o.value,void this.fire("_selectColor",n)):void 0},n.prototype._beforeDestroy=function(){this._toggleEvent(!1)},n.prototype._toggleEvent=function(e){var t,o=this.options,n=this.container,i=s[e?"on":"off"];i(n,"click",this._onClick,this),t=r.find("."+o.cssPrefix+"palette-hex",n),t&&i(t,"change",this._onChange,this)},n.prototype.render=function(e){var t=this.options,o="";this._toggleEvent(!1),o=a.layout.replace("{{colorList}}",i.map(t.preset,function(o){var n=a.item.replace(/{{color}}/g,o);return n=n.replace("{{selected}}",o===e?" "+t.cssPrefix+"selected":"")}).join("")),o=o.replace(/{{cssPrefix}}/g,t.cssPrefix).replace("{{detailTxt}}",t.detailTxt).replace(/{{color}}/g,e),this.container.innerHTML=o,this._toggleEvent(!0)},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/palette":13,"./core/domevent":4,"./core/domutil":5,"./core/view":7}],11:[function(e,t,o){(function(o){"use strict";function n(e,t){t=r.appendHTMLElement("div",t,e.cssPrefix+"slider-container"),t.style.display="none",c.call(this,e,t),this.options=i.extend({color:"#f8f8f8",cssPrefix:"tui-colorpicker-"},e),this._dragDataCache={},this.sliderHandleElement=null,this.huebarHandleElement=null,this.baseColorElement=null,this.drag=new u({distance:0},t),this.drag.on({dragStart:this._onDragStart,drag:this._onDrag,dragEnd:this._onDragEnd,click:this._onClick},this)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./svgvml"),a=e("./colorutil"),c=e("./core/view"),u=e("./core/drag"),d=e("../template/slider"),f=[-7,112],p=[-3,115],h=359.99;i.inherit(n,c),n.prototype._beforeDestroy=function(){this.drag.off(),this.drag=this.options=this._dragDataCache=this.sliderHandleElement=this.huebarHandleElement=this.baseColorElement=null},n.prototype.toggle=function(e){this.container.style.display=e?"block":"none"},n.prototype.isVisible=function(){return"block"===this.container.style.display},n.prototype.render=function(e){var t,o,n=this,i=n.container,s=n.options,l=d.layout;l=l.replace(/{{slider}}/,d.slider),l=l.replace(/{{huebar}}/,d.huebar),l=l.replace(/{{cssPrefix}}/g,s.cssPrefix),n.container.innerHTML=l,n.sliderHandleElement=r.find("."+s.cssPrefix+"slider-handle",i),n.huebarHandleElement=r.find("."+s.cssPrefix+"huebar-handle",i),n.baseColorElement=r.find("."+s.cssPrefix+"slider-basecolor",i),t=a.hexToRGB(e),o=a.rgbToHSV.apply(null,t),this.moveHue(o[0],!0),this.moveSaturationAndValue(o[1],o[2],!0)},n.prototype._moveColorSliderHandle=function(e,t,o){var n,i=this.sliderHandleElement;t=Math.max(f[0],t),t=Math.min(f[1],t),e=Math.max(f[0],e),e=Math.min(f[1],e),l.setTranslateXY(i,e,t),n=t>50?"white":"black",l.setStrokeColor(i,n),o||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveSaturationAndValue=function(e,t,o){var n,i,r,s;e=e||0,t=t||0,n=Math.abs(f[0]),i=f[1],r=e*i/100-n,s=i-t*i/100-n,this._moveColorSliderHandle(r,s,o)},n.prototype._moveColorSliderByPosition=function(e,t){var o=f[0];this._moveColorSliderHandle(e+o,t+o)},n.prototype.getSaturationAndValue=function(){var e,t,o=Math.abs(f[0]),n=o+f[1],i=l.getTranslateXY(this.sliderHandleElement);return e=(i[1]+o)/n*100,t=100-(i[0]+o)/n*100,[e,t]},n.prototype._moveHueHandle=function(e,t){var o,n,i=this.huebarHandleElement,r=this.baseColorElement;e=Math.max(p[0],e),e=Math.min(p[1],e),l.setTranslateY(i,e),o=a.hsvToRGB(this.getHue(),100,100),n=a.rgbToHEX.apply(null,o),l.setGradientColorStop(r,n),t||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveHue=function(e,t){var o,n,i=0;o=Math.abs(p[0]),n=o+p[1],e=e||0,i=n*e/h-o,this._moveHueHandle(i,t)},n.prototype._moveHueByPosition=function(e){var t=p[0];this._moveHueHandle(e+t)},n.prototype.getHue=function(){var e,t,o=this.huebarHandleElement,n=l.getTranslateXY(o);return e=Math.abs(p[0]),t=e+p[1],(n[0]+e)*h/t},n.prototype.getHSV=function(){var e=this.getSaturationAndValue(),t=this.getHue();return[t].concat(e)},n.prototype.getRGB=function(){return a.hsvToRGB.apply(null,this.getHSV())},n.prototype._prepareColorSliderForMouseEvent=function(e){var t,o=this.options,n=r.closest(e.target,"."+o.cssPrefix+"slider-part");return t=this._dragDataCache={isColorSlider:r.hasClass(n,o.cssPrefix+"slider-left"),parentElement:n}},n.prototype._onClick=function(e){var t=this._prepareColorSliderForMouseEvent(e),o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1]),this._dragDataCache=null},n.prototype._onDragStart=function(e){this._prepareColorSliderForMouseEvent(e)},n.prototype._onDrag=function(e){var t=this._dragDataCache,o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1])},n.prototype._onDragEnd=function(){this._dragDataCache=null},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/slider":14,"./colorutil":2,"./core/domevent":4,"./core/domutil":5,"./core/drag":6,"./core/view":7,"./svgvml":12}],12:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=/[\.\-0-9]+/g,i=-6,r={isOldBrowser:function(){var e=r._isOldBrowser;return o.isExisty(e)||(r._isOldBrowser=e=o.browser.msie&&o.browser.version<9),e},getTranslateXY:function(e){var t;return r.isOldBrowser()?(t=e.style,[parseFloat(t.top),parseFloat(t.left)]):(t=e.getAttribute("transform"))?(t=t.match(n),[parseFloat(t[1]),parseFloat(t[0])]):[0,0]},setTranslateXY:function(e,t,o){r.isOldBrowser()?(e.style.left=t+"px",e.style.top=o+"px"):e.setAttribute("transform","translate("+t+","+o+")")},setTranslateY:function(e,t){r.isOldBrowser()?e.style.top=t+"px":e.setAttribute("transform","translate("+i+","+t+")")},setStrokeColor:function(e,t){r.isOldBrowser()?e.strokecolor=t:e.setAttribute("stroke",t)},setGradientColorStop:function(e,t){r.isOldBrowser()?e.color=t:e.setAttribute("stop-color",t)}};t.exports=r}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],13:[function(e,t,o){"use strict";var n=['<ul class="{{cssPrefix}}clearfix">{{colorList}}</ul>','<div class="{{cssPrefix}}clearfix" style="overflow:hidden">','<input type="button" class="{{cssPrefix}}palette-toggle-slider" value="{{detailTxt}}" />','<input type="text" class="{{cssPrefix}}palette-hex" value="{{color}}" maxlength="7" />','<span class="{{cssPrefix}}palette-preview" style="background-color:{{color}};color:{{color}}">{{color}}</span>',"</div>"].join("\n"),i='<li><input class="{{cssPrefix}}palette-button{{selected}}" type="button" style="background-color:{{color}};color:{{color}}" title="{{color}}" value="{{color}}" /></li>';t.exports={layout:n,item:i}},{}],14:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=['<div class="{{cssPrefix}}slider-left {{cssPrefix}}slider-part">{{slider}}</div>','<div class="{{cssPrefix}}slider-right {{cssPrefix}}slider-part">{{huebar}}</div>'].join("\n"),i=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-slider">',"<defs>",'<linearGradient id="{{cssPrefix}}svg-fill-color" x1="0%" y1="0%" x2="100%" y2="0%">','<stop offset="0%" stop-color="rgb(255,255,255)" />','<stop class="{{cssPrefix}}slider-basecolor" offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>",'<linearGradient id="{{cssPrefix}}svn-fill-black" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:0" />','<stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:1" />',"</linearGradient>","</defs>",'<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svg-fill-color)"></rect>','<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svn-fill-black)"></rect>','<path transform="translate(0,0)" class="{{cssPrefix}}slider-handle" d="M0 7.5 L15 7.5 M7.5 15 L7.5 0 M2 7 a5.5 5.5 0 1 1 0 1 Z" stroke="black" stroke-width="0.75" fill="none" />',"</svg>"].join("\n"),r=['<div class="{{cssPrefix}}vml-slider">','<v:rect strokecolor="none" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill class="{{cssPrefix}}vml {{cssPrefix}}slider-basecolor" type="gradient" method="none" color="#ff0000" color2="#fff" angle="90" />',"</v:rect>",'<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill type="gradient" method="none" color="black" color2="white" o:opacity2="0%" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}slider-handle" coordsize="1 1" style="width:1px;height:1px;"path="m 0,7 l 14,7 m 7,14 l 7,0 ar 12,12 2,2 z" filled="false" stroked="true" />',"</div>"].join("\n"),s=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-huebar">',"<defs>",'<linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" stop-color="rgb(255,0,0)" />','<stop offset="16.666%" stop-color="rgb(255,255,0)" />','<stop offset="33.333%" stop-color="rgb(0,255,0)" />','<stop offset="50%" stop-color="rgb(0,255,255)" />','<stop offset="66.666%" stop-color="rgb(0,0,255)" />','<stop offset="83.333%" stop-color="rgb(255,0,255)" />','<stop offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>","</defs>",'<rect width="18px" height="100%" fill="url(#g)"></rect>','<path transform="translate(-6,-3)" class="{{cssPrefix}}huebar-handle" d="M0 0 L4 4 L0 8 L0 0 Z" fill="black" stroke="none" />',"</svg>"].join("\n"),l=['<div class="{{cssPrefix}}vml-huebar">','<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-huebar-bg">','<v:fill type="gradient" method="none" colors="0% rgb(255,0,0), 16.666% rgb(255,255,0), 33.333% rgb(0,255,0), 50% rgb(0,255,255), 66.666% rgb(0,0,255), 83.333% rgb(255,0,255), 100% rgb(255,0,0)" angle="180" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}huebar-handle" coordsize="1 1" style="width:1px;height:1px;position:absolute;z-index:1;right:22px;top:-3px;"path="m 0,0 l 4,4 l 0,8 l 0,0 z" filled="true" fillcolor="black" stroked="false" />',"</div>"].join("\n"),a=o.browser.msie&&o.browser.version<9;a&&e.document.namespaces.add("v","urn:schemas-microsoft-com:vml"),t.exports={layout:n,slider:a?r:i,huebar:a?l:s}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1]);
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
-'use strict';
-
-var UIController = require('./uicontroller');
-
-var util = tui.util;
-
-/**
- * Button
- * initialize button
- * @exports Button
- * @augments UIController
- * @constructor
- * @class
- * @param {object} options 옵션
- * @param {string} options.className 만들어진 RootElement에 추가할 클래스
- * @param {string} options.command 클릭되면 실행될 커맨드명
- * @param {string} options.text 버튼안에 들어갈 텍스트
- * @param {string} options.style 추가적으로 적용될 CSS스타일
- */
-function Button(options) {
-    UIController.call(this, {
-        tagName: 'button',
-        className: options.className
-    });
-
-    this._setOptions(options);
-
-    this.render();
-
-    this.attachEvents({
-        'click': '_onClick'
-    });
-}
-
-Button.prototype = util.extend(
-    {},
-    UIController.prototype
-);
-
-Button.prototype._setOptions = function(options) {
-    this.command = options.command;
-    this.event = options.event;
-    this.text = options.text;
-    this.style = options.style;
-};
-
-/**
- * Button의 모습을 그린다
- */
-Button.prototype.render = function() {
-    this.$el.text(this.text);
-    this.$el.attr('type', 'button');
-
-    if (this.style) {
-        this.$el.attr('style', this.style);
-    }
-};
-
-/**
- * _onClick
- * Click event handler
- */
-Button.prototype._onClick = function() {
-    if (this.command) {
-        this.trigger('command', this.command);
-    } else {
-        this.trigger('event', this.event);
-    }
-
-    this.trigger('clicked');
-};
-
-module.exports = Button;
-
-},{"./uicontroller":45}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 'use strict';
@@ -93,7 +19,9 @@ CodeMirror.commands.subListIndentTab = function (cm) {
     for (var i = 0; i < ranges.length; i++) {
         var pos = ranges[i].head;
         var line = cm.getLine(pos.line);
-        if (emptyListRE.test(line)) {
+        var cursorBeforeTextInline = line.substr(0, pos.ch);
+        
+        if (emptyListRE.test(cursorBeforeTextInline)) {
             cm.replaceRange("\t" + line, {
                 line: pos.line, ch: 0
             }, {
@@ -144,7 +72,7 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
 };
 /*eslint-enable */
 
-},{}],3:[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -271,7 +199,7 @@ CodeMirror.defineMode("gfm", function(config, modeConfig) {
 
   CodeMirror.defineMIME("text/x-gfm", "gfm");/*eslint-enable */
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -404,9 +332,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
           state.indentation -= state.indentationDiff;
         }
         state.list = null;
-      } else if (state.indentation > 0) {
+      } 
+      if (state.indentation > 0) {
         state.list = null;
-        state.listDepth = Math.floor(state.indentation / 4);
+        state.listDepth = Math.floor(state.indentation / 4) + 1;
       } else { // No longer a list
         state.list = false;
         state.listDepth = 0;
@@ -1061,7 +990,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 CodeMirror.defineMIME("text/x-markdown", "markdown");
 /*eslint-enable */
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 
@@ -1139,7 +1068,7 @@ CodeMirror.overlayMode = function(base, overlay, combine) {
 };
 /*eslint-enable */
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /**
  * @fileoverview Implements Command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1247,7 +1176,7 @@ Command.TYPE = {
 
 module.exports = Command;
 
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @fileoverview Implements CommandManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1360,7 +1289,7 @@ CommandManager.command = function(type, props) {
 
 module.exports = CommandManager;
 
-},{"./command":6}],8:[function(require,module,exports){
+},{"./command":5}],7:[function(require,module,exports){
 /**
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1472,7 +1401,7 @@ Convertor.factory = function(eventManager) {
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":35}],9:[function(require,module,exports){
+},{"./markedCustomRenderer":33}],8:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1563,16 +1492,28 @@ var getOffsetLength = function(node) {
     return len;
 };
 
+var getNodeOffsetOfParent = function(node) {
+    var i, t,
+        childNodesOfParent = node.parentNode.childNodes;
+
+    for (i = 0, t = childNodesOfParent.length; i < t; i+=1) {
+        if (childNodesOfParent[i] === node) {
+            return i;
+        }
+    }
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
     isTextNode: isTextNode,
     isElemNode: isElemNode,
     getTextLength: getTextLength,
-    getOffsetLength: getOffsetLength
+    getOffsetLength: getOffsetLength,
+    getNodeOffsetOfParent: getNodeOffsetOfParent
 };
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1588,7 +1529,8 @@ var MarkdownEditor = require('./markdownEditor'),
     CommandManager = require('./commandManager'),
     extManager = require('./extManager'),
     ImportManager = require('./importManager'),
-    Convertor = require('./convertor');
+    Convertor = require('./convertor'),
+    DefaultUI = require('./ui/defaultUI.js');
 
 //markdown commands
 var mdcBold = require('./markdownCommands/bold'),
@@ -1636,10 +1578,15 @@ require('./extensions/colorSyntax');
  * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
  * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
  * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
- * @param {function} options.onload invoke function when editor loaded complete
+ * @param {object} options.events eventlist
+ * @param {function} options.events.load it would be emitted when editor fully load
+ * @param {function} options.events.change it would be emitted when content changed
+ * @param {function} options.events.stateChange it would be emitted when format change by cursor position
+ * @param {function} options.events.focus it would be emitted when editor get focus
+ * @param {function} options.events.blur it would be emitted when editor loose focus
  * @param {object} options.hooks 외부 연결 훅 목록
  * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
- * @param {function} options.hooks.addImageFileHook 이미지 추가 팝업에서 이미지가 선택되면 hook에 이미지정보가 전달되고 hook에서 이미지를 붙인다.
+ * @param {function} options.hooks.addImageBlobHook hook for image upload.
  */
 function ToastUIEditor(options) {
     var self = this;
@@ -1658,9 +1605,8 @@ function ToastUIEditor(options) {
     this.convertor = new Convertor(this.eventManager);
 
     this.layout = new Layout(options, this.eventManager);
-    this.layout.modeSwitch.on('modeSwitched', function(ev, info) {
-        self.changeMode(info.text);
-    });
+
+    this.setUI(this.options.UI || new DefaultUI(this));
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
@@ -1731,6 +1677,7 @@ ToastUIEditor.prototype._initDefaultCommands = function() {
 ToastUIEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
+    this.eventManager.emit('changePreviewStyle', style);
 };
 
 ToastUIEditor.prototype.exec = function() {
@@ -1831,6 +1778,10 @@ ToastUIEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
+ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
+    return this.mdPreviewStyle;
+};
+
 ToastUIEditor.prototype.changeMode = function(mode) {
     if (this.currentMode === mode) {
         return;
@@ -1856,6 +1807,10 @@ ToastUIEditor.prototype.remove = function() {
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
+
+    if (this.getUI()) {
+        this.getUI().remove();
+    }
 };
 
 ToastUIEditor.prototype.hide = function() {
@@ -1865,6 +1820,14 @@ ToastUIEditor.prototype.hide = function() {
 ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
     this.getCodeMirror().refresh();
+};
+
+ToastUIEditor.prototype.setUI = function(UI) {
+    this._ui = UI;
+};
+
+ToastUIEditor.prototype.getUI = function() {
+    return this._ui;
 };
 
 ToastUIEditor.prototype.reset = function() {
@@ -1882,7 +1845,7 @@ ToastUIEditor.defineExtension = function(name, ext) {
 
 module.exports = ToastUIEditor;
 
-},{"./commandManager":7,"./convertor":8,"./eventManager":11,"./extManager":12,"./extensions/colorSyntax":13,"./extensions/scrollFollow":14,"./extensions/taskCounter":17,"./extensions/textPalette":18,"./importManager":19,"./layout":22,"./markdownCommands/addImage":24,"./markdownCommands/addLink":25,"./markdownCommands/blockquote":26,"./markdownCommands/bold":27,"./markdownCommands/heading":28,"./markdownCommands/hr":29,"./markdownCommands/italic":30,"./markdownCommands/ol":31,"./markdownCommands/task":32,"./markdownCommands/ul":33,"./markdownEditor":34,"./preview":39,"./wysiwygCommands/addImage":46,"./wysiwygCommands/addLink":47,"./wysiwygCommands/blockquote":48,"./wysiwygCommands/bold":49,"./wysiwygCommands/heading":50,"./wysiwygCommands/hr":51,"./wysiwygCommands/increaseTask":52,"./wysiwygCommands/italic":53,"./wysiwygCommands/ol":54,"./wysiwygCommands/task":55,"./wysiwygCommands/ul":56,"./wysiwygEditor":57}],11:[function(require,module,exports){
+},{"./commandManager":6,"./convertor":7,"./eventManager":10,"./extManager":11,"./extensions/colorSyntax":12,"./extensions/scrollFollow":13,"./extensions/taskCounter":16,"./extensions/textPalette":17,"./importManager":18,"./layout":20,"./markdownCommands/addImage":22,"./markdownCommands/addLink":23,"./markdownCommands/blockquote":24,"./markdownCommands/bold":25,"./markdownCommands/heading":26,"./markdownCommands/hr":27,"./markdownCommands/italic":28,"./markdownCommands/ol":29,"./markdownCommands/task":30,"./markdownCommands/ul":31,"./markdownEditor":32,"./preview":34,"./ui/defaultUI.js":37,"./wysiwygCommands/addImage":49,"./wysiwygCommands/addLink":50,"./wysiwygCommands/blockquote":51,"./wysiwygCommands/bold":52,"./wysiwygCommands/heading":53,"./wysiwygCommands/hr":54,"./wysiwygCommands/increaseTask":55,"./wysiwygCommands/italic":56,"./wysiwygCommands/ol":57,"./wysiwygCommands/task":58,"./wysiwygCommands/ul":59,"./wysiwygEditor":60}],10:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1895,7 +1858,6 @@ var util = tui.util;
 var eventList = [
     'previewBeforeHook',
     'previewRenderAfter',
-    'addImageFileHook',
     'addImageBlobHook',
     'contentChangedFromWysiwyg',
     'changeFromWysiwyg',
@@ -1905,6 +1867,7 @@ var eventList = [
     'changeModeToWysiwyg',
     'changeModeToMarkdown',
     'changeMode',
+    'changePreviewStyle',
     'openPopupAddLink',
     'openPopupAddImage',
     'closeAllPopup',
@@ -1919,6 +1882,7 @@ var eventList = [
     'focus',
     'blur',
     'paste',
+    'copy',
     'drop',
     'show',
     'hide'
@@ -2054,7 +2018,7 @@ EventManager.prototype._removeEventHandlerWithTypeInfo = function(type, namespac
 
 module.exports = EventManager;
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2093,7 +2057,7 @@ ExtManager.prototype.applyExtension = function(context, extNames) {
 
 module.exports = new ExtManager();
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * @fileoverview Implements Color syntax Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2104,11 +2068,14 @@ module.exports = new ExtManager();
 var extManager = require('../extManager');
 
 var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
-    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
+    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,
+    colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
     decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
+var RESET_COLOR = '#181818';
+
 extManager.defineExtension('colorSyntax', function(editor) {
-    var useCustomSyntax;
+    var useCustomSyntax = false;
 
     if (editor.options.colorSyntax) {
         useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
@@ -2120,14 +2087,18 @@ extManager.defineExtension('colorSyntax', function(editor) {
         if (!useCustomSyntax) {
             replacement = html;
         } else {
-            replacement = html.replace(colorSyntaxRx, '<span style="color:$1">$2</span>');
+            replacement = html.replace(colorSyntaxRx, function(matched, p1, p2) {
+                return makeHTMLColorSyntax(p2, p1);
+            });
         }
 
         return replacement;
     });
 
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-        return markdown.replace(colorHtmlRx, function(founded, color, text) {
+        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+
+        return markdown.replace(findRx, function(founded, color, text) {
             var replacement;
 
             if (color.match(decimalColorRx)) {
@@ -2137,7 +2108,7 @@ extManager.defineExtension('colorSyntax', function(editor) {
             if (!useCustomSyntax) {
                 replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
             } else {
-                replacement = makeMarkdownColorSyntax(text, color);
+                replacement = makeCustomColorSyntax(text, color);
             }
 
             return replacement;
@@ -2148,7 +2119,13 @@ extManager.defineExtension('colorSyntax', function(editor) {
         name: 'color',
         exec: function(mde, color) {
             var cm = mde.getEditor();
-            cm.replaceSelection(makeMarkdownColorSyntax(cm.getSelection(), color));
+
+            if (!useCustomSyntax) {
+                cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
+            } else {
+                cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
+            }
+
             mde.focus();
         }
     });
@@ -2156,14 +2133,93 @@ extManager.defineExtension('colorSyntax', function(editor) {
     editor.addCommand('wysiwyg', {
         name: 'color',
         exec: function(wwe, color) {
-            wwe.getEditor().setTextColour(color);
+            if (color === RESET_COLOR) {
+               wwe.getEditor().changeFormat(null, {
+                   class: 'colour',
+                   tag: 'span'
+               });
+            } else {
+                wwe.getEditor().setTextColour(color);
+            }
             wwe.focus();
         }
     });
+
+    if (editor.getUI().name === 'default') {
+        initUI(editor);
+    }
 });
 
-function makeMarkdownColorSyntax(text, color) {
+function initUI(editor) {
+    var $colorPickerContainer, colorPicker, popup, $buttonBar, selectedColor;
+
+    editor.eventManager.addEventType('colorButtonClicked');
+
+    editor.getUI().toolbar.addButton({
+        className: 'color',
+        event: 'colorButtonClicked',
+        text: 'Color'
+    });
+
+    $colorPickerContainer =  $('<div />');
+
+    $buttonBar = $('<div><button type="button" class="applyButton">입력</button></div>');
+    $buttonBar.css('margin-top', 10);
+
+    colorPicker = tui.component.colorpicker.create({
+        container: $colorPickerContainer[0]
+    });
+
+    $colorPickerContainer.append($buttonBar);
+
+    popup = editor.getUI().createPopup({
+        title: false,
+        content: $colorPickerContainer,
+        $target: editor.getUI().$el,
+        css: {
+            'width': 178,
+            'position': 'absolute',
+            'top': $('button.color').offset().top + $('button.color').height() + 5,
+            'left': $('button.color').offset().left
+        }
+    });
+
+    editor.eventManager.listen('focus', function() {
+        popup.hide();
+    });
+
+    editor.eventManager.listen('colorButtonClicked', function() {
+        if (popup.isShow()) {
+            popup.hide();
+        } else {
+            popup.show();
+        }
+    });
+
+    editor.eventManager.listen('closeAllPopup', function() {
+        popup.hide();
+    });
+
+    colorPicker.on('selectColor', function(e) {
+        selectedColor = e.color;
+
+        if (e.origin === 'palette') {
+            editor.exec('color', selectedColor);
+            popup.hide();
+        }
+    });
+
+    popup.$el.find('.applyButton').on('click', function() {
+        editor.exec('color', selectedColor);
+    });
+}
+
+function makeCustomColorSyntax(text, color) {
     return '{color:' + color + '}' + text + '{color}';
+}
+
+function makeHTMLColorSyntax(text, color) {
+    return '<span style="color:' + color + '">' + text + '</span>';
 }
 
 function changeDecColorToHex(color) {
@@ -2180,7 +2236,7 @@ function get2DigitNumberString(numberStr) {
     return numberStr === '0' ? '00' : numberStr;
 }
 
-},{"../extManager":12}],14:[function(require,module,exports){
+},{"../extManager":11}],13:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2203,14 +2259,14 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     //Commands
     editor.addCommand('markdown', {
-        name: 'scrollFollow.disable',
+        name: 'scrollFollowDisable',
         exec: function() {
             active = false;
         }
     });
 
     editor.addCommand('markdown', {
-        name: 'scrollFollow.enable',
+        name: 'scrollFollowEnable',
         exec: function() {
             active = true;
         }
@@ -2237,20 +2293,22 @@ extManager.defineExtension('scrollFollow', function(editor) {
     });
 
     //UI
-    editor.layout.toolbar.addButton([{
-        classname: 'scrollfollowEnable',
-        command: 'scrollFollow.disable',
-        text: 'SF',
-        style: 'background-color: #fff'
-    }, {
-        className: 'scrollFollowDisable',
-        command: 'scrollFollow.enable',
-        text: 'SF',
-        style: 'background-color: #ddd'
-    }]);
+    if (editor.getUI().name === 'default') {
+        editor.getUI().toolbar.addButton([{
+            classname: 'scrollfollowEnable',
+            command: 'scrollFollowDisable',
+            text: 'SF',
+            style: 'background-color: #fff'
+        }, {
+            className: 'scrollFollowDisable',
+            command: 'scrollFollowEnable',
+            text: 'SF',
+            style: 'background-color: #ddd'
+        }]);
+    }
 });
 
-},{"../extManager":12,"./scrollFollow.scrollSync":15,"./scrollFollow.sectionManager":16}],15:[function(require,module,exports){
+},{"../extManager":11,"./scrollFollow.scrollSync":14,"./scrollFollow.sectionManager":15}],14:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension ScrollSync Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2434,7 +2492,7 @@ ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
 
 module.exports = ScrollSync;
 
-},{}],16:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * @fileoverview Implements Scroll Follow Extension SectionManager Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2664,7 +2722,7 @@ SectionManager.prototype.sectionByLine = function(line) {
 
 module.exports = SectionManager;
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -2700,7 +2758,7 @@ extManager.defineExtension('taskCounter', function(editor) {
     };
 });
 
-},{"../extManager":12}],18:[function(require,module,exports){
+},{"../extManager":11}],17:[function(require,module,exports){
 'use strict';
 
 var extManager = require('../extManager');
@@ -2750,7 +2808,7 @@ function updateUI($layer, list) {
     void 0;
 }
 
-},{"../extManager":12}],19:[function(require,module,exports){
+},{"../extManager":11}],18:[function(require,module,exports){
 /**
  * @fileoverview Implement Module for managing import external data such as image
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2772,7 +2830,7 @@ function ImportManager(eventManager) {
 
     this._initDropEvent();
     this._initPasteEvent();
-    this._initDefaultImporter();
+    this._initDefaultImageImporter();
 }
 
 ImportManager.prototype._initDropEvent = function() {
@@ -2780,7 +2838,7 @@ ImportManager.prototype._initDropEvent = function() {
 
     this.eventManager.listen('drop', function(ev) {
         var items = ev.data.dataTransfer && ev.data.dataTransfer.files;
-        self._forEachItems(items);
+        self._processEachItems(items);
     });
 };
 
@@ -2789,11 +2847,11 @@ ImportManager.prototype._initPasteEvent = function() {
 
     this.eventManager.listen('paste', function(ev) {
         var items = ev.data.clipboardData && ev.data.clipboardData.items;
-        self._forEachItems(items);
+        self._processEachItems(items);
     });
 };
 
-ImportManager.prototype._initDefaultImporter = function() {
+ImportManager.prototype._initDefaultImageImporter = function() {
     this.eventManager.listen('addImageBlobHook', function(blob, callback) {
         var reader = new FileReader();
 
@@ -2814,13 +2872,14 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
     });
 };
 
-ImportManager.prototype._forEachItems = function(items) {
+ImportManager.prototype._processEachItems = function(items) {
     var self = this;
 
     if (items) {
         util.forEachArray(items, function(item) {
             if (item.type.indexOf('image') !== -1) {
                 self._emitAddImageBlobHook(item);
+                return false;
             }
         });
     }
@@ -2828,7 +2887,7 @@ ImportManager.prototype._forEachItems = function(items) {
 
 module.exports = ImportManager;
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -2877,244 +2936,7 @@ $.fn.tuiEditor = function() {
 window.tui = window.tui || {};
 window.tui.Editor = ToastUIEditor;
 
-},{"./codemirror/continuelist":2,"./codemirror/gfm":3,"./codemirror/markdown":4,"./codemirror/overlay":5,"./editor":10}],21:[function(require,module,exports){
-/**
- * @fileoverview Implements LayerPopup
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
-
-'use strict';
-
-var UIController = require('./uicontroller');
-
-var util = tui.util,
-    _id = 0,
-    CLASS_PREFIX = 'tui-popup-',
-    LAYOUT_TEMPLATE = [
-        '<div class="' + CLASS_PREFIX + 'header">',
-        '<span class="' + CLASS_PREFIX + 'title"></span>',
-        '<button class="' + CLASS_PREFIX + 'closeButton">x</button>',
-        '</div>',
-        '<div class="' + CLASS_PREFIX + 'body"></div>'
-    ].join('');
-
-/**
- * LayerPopup
- * @exports LayerPopup
- * @augments UIController
- * @constructor
- * @class
- * @param {object} options 옵션
- * @param {string[]} options.openerCssQuery Css Query list to bind clickevent that open popup
- * @param {string[]} options.closerCssQuery Css Query list to bind clickevent that close popup
- * @param {jQuery} options.$el popup root element
- * @param {jQuery|string} options.content popup content that html string or jQuery element
- * @param {string} options.textContent popup text content
- * @param {string} options.title popup title
- * @param {jQuery} options.$target element to append popup
- */
-function LayerPopup(options) {
-    options = util.extend({}, options);
-
-    UIController.call(this, {
-        tagName: 'div',
-        className: CLASS_PREFIX + 'wrapper',
-        rootElement: options.$el
-    });
-
-    options = util.extend({}, options);
-
-    this._setId();
-    this._initTarget(options);
-    this._initExternalPopupHtmlIfNeed(options);
-    this._initCloserOpener(options);
-    this._initContent(options);
-    this._initTitle(options);
-    this._initClassName(options);
-}
-
-LayerPopup.prototype = util.extend(
-    {},
-    UIController.prototype
-);
-
-LayerPopup.prototype._initTarget = function(options) {
-    this.$target = options.$target || $('body');
-};
-
-LayerPopup.prototype._initExternalPopupHtmlIfNeed = function(options) {
-    if (options.$el) {
-        this.$el = options.$el;
-        this._isExternalHtmlUse = true;
-    }
-};
-
-LayerPopup.prototype._initCloserOpener = function(options) {
-    if (options.openerCssQuery) {
-        this.openerCssQuery = options.openerCssQuery;
-    }
-
-    if (options.closerCssQuery) {
-        this.closerCssQuery = options.closerCssQuery;
-    }
-};
-
-LayerPopup.prototype._initContent = function(options) {
-    if (options.content) {
-        this.$content = $(options.content);
-    } else if (options.textContent) {
-        this.$content = options.textContent;
-    }
-};
-
-LayerPopup.prototype._initTitle = function(options) {
-    if (options.title) {
-        this.title = options.title;
-    }
-};
-
-LayerPopup.prototype._initClassName = function(options) {
-    if (options.className) {
-        this.className = options.className;
-    }
-};
-
-LayerPopup.prototype.render = function() {
-    this._renderLayout();
-    this._renderTitle();
-    this._renderContent();
-
-    this._attachPopupEvent();
-};
-
-LayerPopup.prototype._renderLayout = function() {
-    if (!this._isExternalHtmlUse) {
-        this.$el.html(LAYOUT_TEMPLATE);
-        this.$el.addClass(this.className);
-        this.hide();
-        this.$target.append(this.$el);
-        this.$body = this.$el.find(this._getFullClassName('body'));
-    } else {
-        this.hide();
-    }
-};
-
-LayerPopup.prototype._renderContent = function() {
-    if (!this._isExternalHtmlUse) {
-        this.setContent(this.$content);
-    }
-};
-
-LayerPopup.prototype._renderTitle = function() {
-    if (!this._isExternalHtmlUse) {
-        this.setTitle(this.title);
-    }
-};
-
-LayerPopup.prototype._getFullClassName = function(lastName) {
-    return '.' + CLASS_PREFIX + lastName;
-};
-
-LayerPopup.prototype._attachOpenerCloserEvent = function() {
-    var self = this;
-
-    if (this.openerCssQuery) {
-        $(this.openerCssQuery).on('click.' + this._getId(), function() {
-            self.show();
-        });
-    }
-
-    if (this.closerCssQuery) {
-        $(this.closerCssQuery).on('click.' + this._getId(), function() {
-            self.hide();
-        });
-    }
-};
-
-LayerPopup.prototype._detachOpenerCloserEvent = function() {
-    if (this.openerCssQuery) {
-        $(this.openerCssQuery).off('.' + this._getId());
-    }
-
-    if (this.closerCssQuery) {
-        $(this.closerCssQuery).off('.' + this._getId());
-    }
-};
-
-LayerPopup.prototype._attachPopupControlEvent = function() {
-    var self = this;
-
-    this.on('click ' + this._getFullClassName('closeButton'), function() {
-        self.hide();
-    });
-};
-
-LayerPopup.prototype._detachPopupEvent = function() {
-    this.off();
-    this._detachOpenerCloserEvent();
-};
-
-LayerPopup.prototype._attachPopupEvent = function() {
-    this._attachPopupControlEvent();
-    this._attachOpenerCloserEvent();
-};
-
-LayerPopup.prototype._setId = function() {
-    this._id = _id;
-    _id += 1;
-};
-
-LayerPopup.prototype._getId = function() {
-    return this._id;
-};
-
-LayerPopup.prototype.setContent = function($content) {
-    this.$body.empty();
-    this.$body.append($content);
-};
-
-LayerPopup.prototype.setTitle = function(title) {
-    var $title = this.$el.find(this._getFullClassName('title'));
-
-    $title.empty();
-    $title.append(title);
-};
-
-LayerPopup.prototype.hide = function() {
-    this.$el.css('display', 'none');
-    this._isShow = false;
-    this.trigger('hidden', this);
-};
-
-LayerPopup.prototype.show = function() {
-    this.$el.css('display', 'block');
-    this._isShow = true;
-    this.trigger('shown', this);
-};
-
-LayerPopup.prototype.isShow = function() {
-    return this._isShow;
-};
-
-LayerPopup.prototype.remove = function() {
-    this.trigger('remove', this);
-    this._detachPopupEvent();
-
-    this.$el.empty();
-    this.$el.remove();
-};
-
-LayerPopup.factory = function(options) {
-    var popup = new LayerPopup(options);
-    popup.render();
-    return popup;
-};
-
-LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
-
-module.exports = LayerPopup;
-
-},{"./uicontroller":45}],22:[function(require,module,exports){
+},{"./codemirror/continuelist":1,"./codemirror/gfm":2,"./codemirror/markdown":3,"./codemirror/overlay":4,"./editor":9}],20:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3122,18 +2944,9 @@ module.exports = LayerPopup;
 
 'use strict';
 
-var Toolbar = require('./toolbar'),
-    Tab = require('./tab'),
-    ModeSwitch = require('./modeSwitch'),
-    PopupAddLink = require('./popupAddLink'),
-    PopupAddImage = require('./popupAddImage');
-
 var containerTmpl = [
     '<div class="tui-editor">',
-        '<div class="toolbarSection" />',
-        '<div class="modeSwitchSection" />',
         '<div class="mdContainer">',
-            '<div class="tabSection" />',
             '<div class="editor" />',
             '<div class="preview tui-editor-contents" />',
         '</div>',
@@ -3165,12 +2978,6 @@ function Layout(options, eventManager) {
 Layout.prototype.init = function() {
     this._renderLayout();
 
-    this._initToolbar();
-    this._initModeSwitch();
-
-    this._initPopupAddLink();
-    this._initPopupAddImage();
-
     this._initMarkdownAndPreviewSection();
     this._initWysiwygSection();
 };
@@ -3184,16 +2991,6 @@ Layout.prototype._renderLayout = function() {
     this.$containerEl = $(containerTmpl).appendTo(this.$el);
 };
 
-Layout.prototype._initToolbar = function() {
-    this.toolbar = new Toolbar(this.eventManager);
-    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
-};
-
-Layout.prototype._initModeSwitch = function() {
-    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
-};
-
 Layout.prototype.switchToWYSIWYG = function() {
     this.$containerEl.removeClass('markdownMode');
     this.$containerEl.addClass('wysiwygMode');
@@ -3202,37 +2999,15 @@ Layout.prototype.switchToWYSIWYG = function() {
 Layout.prototype.switchToMarkdown = function() {
     this.$containerEl.removeClass('wysiwygMode');
     this.$containerEl.addClass('markdownMode');
-    this.markdownTab.activate('Editor');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
     this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
     this.$previewEl = this.$containerEl.find('.mdContainer .preview');
-
-    this.markdownTab = new Tab({
-        items: ['Editor', 'Preview'],
-        sections: [this.$mdEditorContainerEl, this.$previewEl]
-    });
-
-    this.$containerEl.find('.mdContainer .tabSection').append(this.markdownTab.$el);
 };
 
 Layout.prototype._initWysiwygSection = function() {
     this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
-};
-
-Layout.prototype._initPopupAddLink = function() {
-    this.popupAddLink = new PopupAddLink({
-        $target: this.$el.find('.tui-editor'),
-        eventManager: this.eventManager
-    });
-};
-
-Layout.prototype._initPopupAddImage = function() {
-    this.popupAddImage = new PopupAddImage({
-        $target: this.$el.find('.tui-editor'),
-        eventManager: this.eventManager
-    });
 };
 
 Layout.prototype._verticalSplitStyle = function() {
@@ -3273,14 +3048,6 @@ Layout.prototype.getPreviewEl = function() {
     return this.$previewEl;
 };
 
-Layout.prototype.getStatusbarLeftAreaEl = function() {
-    return this.$statusbarLeftAreaEl;
-};
-
-Layout.prototype.getStatusbarRightAreaEl = function() {
-    return this.$statusbarRightAreaEl;
-};
-
 Layout.prototype.getMdEditorContainerEl = function() {
     return this.$mdEditorContainerEl;
 };
@@ -3291,7 +3058,7 @@ Layout.prototype.getWwEditorContainerEl = function() {
 
 module.exports = Layout;
 
-},{"./modeSwitch":36,"./popupAddImage":37,"./popupAddLink":38,"./tab":41,"./toolbar":44}],23:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * @fileoverview Implements LazyRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3370,7 +3137,7 @@ LazyRunner.prototype._clearTOIDIfNeed = function(TOID) {
 
 module.exports = LazyRunner;
 
-},{}],24:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * @fileoverview Implments AddImage markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3422,7 +3189,7 @@ var AddImage = CommandManager.command('markdown',
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],25:[function(require,module,exports){
+},{"../commandManager":6}],23:[function(require,module,exports){
 /**
  * @fileoverview Implements Addlink markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3472,7 +3239,7 @@ var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],26:[function(require,module,exports){
+},{"../commandManager":6}],24:[function(require,module,exports){
 /**
  * @fileoverview Implements Blockquote markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3537,7 +3304,7 @@ var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],27:[function(require,module,exports){
+},{"../commandManager":6}],25:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3641,7 +3408,7 @@ var Bold = CommandManager.command('markdown',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],28:[function(require,module,exports){
+},{"../commandManager":6}],26:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3728,7 +3495,7 @@ function getHeadingMarkdown(text) {
 
 module.exports = Heading;
 
-},{"../commandManager":7}],29:[function(require,module,exports){
+},{"../commandManager":6}],27:[function(require,module,exports){
 /**
  * @fileoverview HR markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3788,7 +3555,7 @@ var HR = CommandManager.command('markdown',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],30:[function(require,module,exports){
+},{"../commandManager":6}],28:[function(require,module,exports){
 /**
  * @fileoverview Implements Italic markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3952,7 +3719,7 @@ var Italic = CommandManager.command('markdown',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],31:[function(require,module,exports){
+},{"../commandManager":6}],29:[function(require,module,exports){
 /**
  * @fileoverview Implements OL markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4001,7 +3768,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],32:[function(require,module,exports){
+},{"../commandManager":6}],30:[function(require,module,exports){
 /**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4050,7 +3817,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],33:[function(require,module,exports){
+},{"../commandManager":6}],31:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4099,7 +3866,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],34:[function(require,module,exports){
+},{"../commandManager":6}],32:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4330,7 +4097,7 @@ MarkdownEditor.prototype.setHeight = function(height) {
 
 module.exports = MarkdownEditor;
 
-},{}],35:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -4402,380 +4169,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],36:[function(require,module,exports){
-/**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
-
-'use strict';
-
-var UIController = require('./uicontroller');
-
-var util = tui.util;
-
-var nextTypeString = ['WYSIWYG', 'Markdown'],
-    TYPE = {
-        'MARKDOWN': 0,
-        'WYSIWYG': 1
-    };
-
-/**
- * ModeSwitch
- * UI Control for switch between Markdown and WYSIWYG
- * @exports ModeSwitch
- * @augments UIController
- * @constructor
- * @class
- * @param {number} initialType initial type of editor
- */
-function ModeSwitch(initialType) {
-    UIController.call(this, {
-        tagName: 'div',
-        className: 'modeSwitch'
-    });
-
-    this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
-    this._render();
-}
-
-ModeSwitch.prototype = util.extend(
-    {},
-    UIController.prototype
-);
-
-ModeSwitch.prototype._render = function() {
-    this.$button = $('<button class="switchButton" type="button" />');
-    this._setButtonTitle();
-    this.$el.append(this.$button);
-
-    this.attachEvents({
-        'click button': '_buttonClicked'
-    });
-};
-
-ModeSwitch.prototype._setButtonTitle = function() {
-    this.$button.text('to' + this._getNextTypeString());
-};
-
-ModeSwitch.prototype._buttonClicked = function() {
-    this._switchType();
-};
-
-ModeSwitch.prototype._switchType = function() {
-    var typeToSwitch = this._getNextTypeString();
-
-    this._toggleType();
-    this._setButtonTitle();
-
-    this.trigger('modeSwitched', {
-        type: this.type,
-        text: typeToSwitch.toLowerCase()
-    });
-};
-
-ModeSwitch.prototype._getNextTypeString = function() {
-    return nextTypeString[this.type];
-};
-
-ModeSwitch.prototype._toggleType = function() {
-    this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
-};
-
-ModeSwitch.TYPE = TYPE;
-
-module.exports = ModeSwitch;
-
-},{"./uicontroller":45}],37:[function(require,module,exports){
-/**
- * @fileoverview Implements PopupAddImage
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
-
-'use strict';
-
-var LayerPopup = require('./layerpopup'),
-    Tab = require('./tab');
-
-var util = tui.util;
-
-var POPUP_CONTENT = [
-    '<div class="tabSection"></div>',
-    '<div class="urlType">',
-        '<label for="">Image URL</label>',
-        '<input type="text" class="imageUrlInput" />',
-    '</div>',
-    '<form enctype="multipart/form-data" class="fileType">',
-        '<label for="">Image File</label>',
-        '<input type="file" class="imageFileInput" accept="image/*" />',
-    '</form>',
-    '<label for="url">Alt Text</label>',
-    '<input type="text" class="altTextInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
-    '</div>'
-].join('');
-
-/**
- * PopupAddImage
- * It implements a Image Add Popup
- * @exports PopupAddImage
- * @augments LayerPopup
- * @constructor
- * @class
- * @param {object} options options
- */
-function PopupAddImage(options) {
-    options = util.extend({
-        title: 'Add Image',
-        className: 'popupAddImage tui-editor-popup',
-        content: POPUP_CONTENT
-    }, options);
-
-    LayerPopup.call(this, options);
-
-    this.eventManager = options.eventManager;
-
-    this.render();
-
-    this._bindContentEvent();
-    this._linkWithEventManager();
-    this._initApplyImageBindContext();
-}
-
-PopupAddImage.prototype = util.extend(
-    {},
-    LayerPopup.prototype
-);
-
-PopupAddImage.prototype._bindContentEvent = function() {
-    var self = this;
-
-    this.on('click .okButton', function() {
-        self.trigger('okButtonClicked', this);
-        self.hide();
-    });
-
-    this.on('click .closeButton', function() {
-        self.trigger('closeButtonClicked', this);
-        self.hide();
-    });
-
-    this.on('shown', function() {
-        self.$el.find('.imageUrlInput').focus();
-    });
-
-    this.on('hidden', function() {
-        self.resetInputs();
-    });
-
-    this.tab.on('itemClick', function() {
-        self.resetInputs();
-    });
-
-    this.on('change .imageFileInput', function() {
-        var filename = self.$el.find('.imageFileInput').val().split('\\').pop();
-        self.$el.find('.altTextInput').val(filename);
-    });
-};
-
-PopupAddImage.prototype._linkWithEventManager = function() {
-    var self = this;
-
-    this.eventManager.listen('openPopupAddImage', function() {
-        self.eventManager.emit('closeAllPopup');
-        self.show();
-    });
-
-    this.eventManager.listen('closeAllPopup', function() {
-        self.hide();
-    });
-
-    this.on('okButtonClicked', function() {
-        if (self._isUrlType()) {
-            self.applyImage();
-        } else {
-            self._preAltValue = self.$el.find('.altTextInput').val();
-            self.eventManager.emit('addImageFileHook', self._getImageFileForm(), self.applyImage);
-            //self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
-        }
-    });
-};
-
-PopupAddImage.prototype._initApplyImageBindContext = function() {
-    var self = this;
-
-    this.applyImage = function(url) {
-        var info;
-
-        if (url) {
-            info = self._getImageInfoWithGivenUrl(url);
-        } else {
-            info = self._getImageInfo();
-        }
-
-        self.eventManager.emit('command', 'AddImage', info);
-        self.hide();
-    };
-};
-
-PopupAddImage.prototype._isUrlType = function() {
-    return !!this.$el.find('.imageUrlInput').val();
-};
-
-/**
- * _renderContent
- * @override
- */
-PopupAddImage.prototype._renderContent = function() {
-    var $popup = this.$el;
-
-    LayerPopup.prototype._renderContent.call(this);
-
-    this.tab = new Tab({
-        initName: 'File',
-        items: ['File', 'URL'],
-        sections: [$popup.find('.fileType'), $popup.find('.urlType')]
-    });
-
-    this.$body.find('.tabSection').append(this.tab.$el);
-};
-
-PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
-    var altText = this._preAltValue;
-    this._preAltValue = '';
-    return this._makeImageInfo(imageUrl, altText);
-};
-
-PopupAddImage.prototype._getImageInfo = function() {
-    var imageUrl = this.$el.find('.imageUrlInput').val(),
-    altText = this.$el.find('.altTextInput').val();
-
-    return this._makeImageInfo(imageUrl, altText);
-};
-
-PopupAddImage.prototype._makeImageInfo = function(url, alt) {
-    return {
-        imageUrl: url,
-        altText: alt
-    };
-};
-
-PopupAddImage.prototype._getImageFileForm = function() {
-    return this.$el.find('form');
-};
-
-PopupAddImage.prototype.resetInputs = function() {
-    this.$el.find('input').val('');
-};
-
-module.exports = PopupAddImage;
-
-},{"./layerpopup":21,"./tab":41}],38:[function(require,module,exports){
-/**
- * @fileoverview Implements PopupAddLink
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
-
-'use strict';
-
-var LayerPopup = require('./layerpopup');
-
-var util = tui.util;
-
-var POPUP_CONTENT = [
-    '<label for="linkText">Link Text</label>',
-    '<input type="text" class="linkTextInput" />',
-    '<label for="url">URL</label>',
-    '<input type="text" class="urlInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
-    '</div>'
-].join('');
-
-/**
- * PopupAddLink
- * It implements a link Add Popup
- * @exports PopupAddLink
- * @augments LayerPopup
- * @constructor
- * @class
- * @param {object} options options
- */
-function PopupAddLink(options) {
-    options = util.extend({
-        title: 'Add Link',
-        className: 'popupAddLink tui-editor-popup',
-        content: POPUP_CONTENT
-    }, options);
-
-    LayerPopup.call(this, options);
-
-    this.render();
-    this._bindContentEvent();
-    this._linkWithEventManager(options.eventManager);
-}
-
-PopupAddLink.prototype = util.extend(
-    {},
-    LayerPopup.prototype
-);
-
-PopupAddLink.prototype._bindContentEvent = function() {
-    var self = this;
-
-    this.on('click .okButton', function() {
-        self.trigger('okButtonClicked', this);
-        self.hide();
-    });
-
-    this.on('click .closeButton', function() {
-        self.trigger('closeButtonClicked', this);
-        self.hide();
-    });
-
-    this.on('shown', function() {
-        self.$el.find('.linkTextInput').focus();
-    });
-
-    this.on('hidden', function() {
-        self.resetInputs();
-    });
-};
-
-PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
-    var self = this;
-
-    eventManager.listen('openPopupAddLink', function() {
-        eventManager.emit('closeAllPopup');
-        self.show();
-    });
-
-    eventManager.listen('closeAllPopup', function() {
-        self.hide();
-    });
-
-    this.on('okButtonClicked', function() {
-        eventManager.emit('command', 'AddLink', self.getValue());
-    });
-};
-
-PopupAddLink.prototype.getValue = function() {
-    return {
-        linkText: this.$el.find('.linkTextInput').val(),
-        url: this.$el.find('.urlInput').val()
-    };
-};
-
-PopupAddLink.prototype.resetInputs = function() {
-    this.$el.find('input').val('');
-};
-
-module.exports = PopupAddLink;
-
-},{"./layerpopup":21}],39:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4853,7 +4247,7 @@ Preview.prototype.setHeight = function(height) {
 
 module.exports = Preview;
 
-},{"./lazyRunner":23}],40:[function(require,module,exports){
+},{"./lazyRunner":21}],35:[function(require,module,exports){
 /**
  * @fileoverview Implements %filltext:name=Name%
  * @author
@@ -5105,7 +4499,860 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
 module.exports = SquireExt;
 
-},{"./domUtils":9}],41:[function(require,module,exports){
+},{"./domUtils":8}],36:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+'use strict';
+
+var UIController = require('./uicontroller');
+
+var util = tui.util;
+
+/**
+ * Button
+ * initialize button
+ * @exports Button
+ * @augments UIController
+ * @constructor
+ * @class
+ * @param {object} options 옵션
+ * @param {string} options.className 만들어진 RootElement에 추가할 클래스
+ * @param {string} options.command 클릭되면 실행될 커맨드명
+ * @param {string} options.text 버튼안에 들어갈 텍스트
+ * @param {string} options.style 추가적으로 적용될 CSS스타일
+ */
+function Button(options) {
+    UIController.call(this, {
+        tagName: 'button',
+        className: options.className
+    });
+
+    this._setOptions(options);
+
+    this.render();
+
+    this.attachEvents({
+        'click': '_onClick'
+    });
+}
+
+Button.prototype = util.extend(
+    {},
+    UIController.prototype
+);
+
+Button.prototype._setOptions = function(options) {
+    this.command = options.command;
+    this.event = options.event;
+    this.text = options.text;
+    this.style = options.style;
+};
+
+/**
+ * Button의 모습을 그린다
+ */
+Button.prototype.render = function() {
+    this.$el.text(this.text);
+    this.$el.attr('type', 'button');
+
+    if (this.style) {
+        this.$el.attr('style', this.style);
+    }
+};
+
+/**
+ * _onClick
+ * Click event handler
+ */
+Button.prototype._onClick = function() {
+    if (this.command) {
+        this.trigger('command', this.command);
+    } else {
+        this.trigger('event', this.event);
+    }
+
+    this.trigger('clicked');
+};
+
+module.exports = Button;
+
+},{"./uicontroller":46}],37:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var Toolbar = require('./toolbar'),
+    Tab = require('./tab'),
+    Layerpopup = require('./layerpopup'),
+    ModeSwitch = require('./modeSwitch'),
+    PopupAddLink = require('./popupAddLink'),
+    PopupAddImage = require('./popupAddImage');
+
+var containerTmpl = [
+    '<div class="tui-editor-defaultUI">',
+        '<div class="toolbarSection" />',
+        '<div class="modeSwitchSection" />',
+        '<div class="markdownTabSection" />',
+        '<div class="editorContainer"  />',
+    '</div>'
+].join('');
+
+/**
+ * DefaultUI
+ * @exports DefaultUI
+ * @extends {}
+ * @constructor
+ * @class
+ * @param {ToastUIEditor} editor editor
+ */
+function DefaultUI(editor) {
+    this.name = 'default';
+
+    this.$el = $(editor.options.el);
+    this.type = editor.options.initialEditType;
+    this.editor = editor;
+
+    this.init();
+    this._initEvent();
+}
+
+DefaultUI.prototype.init = function() {
+    this._renderLayout();
+
+    this._initEditorSection();
+
+    this._initToolbar();
+    this._initModeSwitch();
+
+    this._initPopupAddLink();
+    this._initPopupAddImage();
+
+    this._initMarkdownTab();
+};
+
+DefaultUI.prototype._initEditorSection = function() {
+    this.$el.find('.editorContainer').append(this.editor.layout.getEditorEl());
+};
+
+DefaultUI.prototype._initEvent = function() {
+    var self = this;
+
+    this.editor.eventManager.listen('hide', this.hide.bind(this));
+    this.editor.eventManager.listen('show', this.show.bind(this));
+    this.editor.eventManager.listen('changeMode', function() {
+        self.markdownTabControl();
+    });
+
+    this.editor.eventManager.listen('changePreviewStyle', function() {
+        self.markdownTabControl();
+    });
+};
+
+DefaultUI.prototype._renderLayout = function() {
+    this.$containerEl = $(containerTmpl).appendTo(this.$el);
+};
+
+DefaultUI.prototype._initToolbar = function() {
+    this.toolbar = new Toolbar(this.editor.eventManager);
+    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
+};
+
+DefaultUI.prototype._initModeSwitch = function() {
+    var self = this;
+
+    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+    this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
+
+    this.modeSwitch.on('modeSwitched', function(ev, info) {
+        self.editor.changeMode(info.text);
+    });
+};
+
+DefaultUI.prototype.markdownTabControl = function() {
+    if (this.editor.isMarkdownMode() && this.editor.getCurrentPreviewStyle() === 'tab') {
+        this.$containerEl.find('.markdownTabSection').show();
+        this.markdownTab.activate('Editor');
+    } else {
+        this.$containerEl.find('.markdownTabSection').hide();
+    }
+};
+
+DefaultUI.prototype._initMarkdownTab = function() {
+    this.markdownTab = new Tab({
+        items: ['Editor', 'Preview'],
+        sections: [this.editor.layout.getMdEditorContainerEl(), this.editor.layout.getPreviewEl()]
+    });
+
+    this.$containerEl.find('.markdownTabSection').append(this.markdownTab.$el);
+};
+
+DefaultUI.prototype._initPopupAddLink = function() {
+    this.popupAddLink = new PopupAddLink({
+        $target: this.$el,
+        eventManager: this.editor.eventManager
+    });
+};
+
+DefaultUI.prototype._initPopupAddImage = function() {
+    this.popupAddImage = new PopupAddImage({
+        $target: this.$el,
+        eventManager: this.editor.eventManager
+    });
+};
+
+DefaultUI.prototype.hide = function() {
+    this.$el.find('.tui-editor-defaultUI').addClass('hide');
+};
+
+DefaultUI.prototype.show = function() {
+    this.$el.find('.tui-editor-defaultUI').removeClass('hide');
+};
+
+DefaultUI.prototype.remove = function() {
+    this.$el.find('.tui-editor-defaultUI').remove();
+};
+
+DefaultUI.prototype.createPopup = function(options) {
+    return Layerpopup.factory(options);
+};
+
+module.exports = DefaultUI;
+
+},{"./layerpopup":38,"./modeSwitch":39,"./popupAddImage":40,"./popupAddLink":41,"./tab":42,"./toolbar":45}],38:[function(require,module,exports){
+/**
+ * @fileoverview Implements LayerPopup
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var UIController = require('./uicontroller');
+
+var util = tui.util,
+    _id = 0,
+    CLASS_PREFIX = 'tui-popup-',
+    LAYOUT_TEMPLATE = [
+        '<div class="' + CLASS_PREFIX + 'header">',
+        '<span class="' + CLASS_PREFIX + 'title"></span>',
+        '<button class="' + CLASS_PREFIX + 'closeButton">x</button>',
+        '</div>',
+        '<div class="' + CLASS_PREFIX + 'body"></div>'
+    ].join('');
+
+/**
+ * LayerPopup
+ * @exports LayerPopup
+ * @augments UIController
+ * @constructor
+ * @class
+ * @param {object} options 옵션
+ * @param {string[]} options.openerCssQuery Css Query list to bind clickevent that open popup
+ * @param {string[]} options.closerCssQuery Css Query list to bind clickevent that close popup
+ * @param {jQuery} options.$el popup root element
+ * @param {jQuery|string} options.content popup content that html string or jQuery element
+ * @param {string} options.textContent popup text content
+ * @param {string} options.title popup title
+ * @param {jQuery} options.$target element to append popup
+ */
+function LayerPopup(options) {
+    options = util.extend({}, options);
+
+    UIController.call(this, {
+        tagName: 'div',
+        className: CLASS_PREFIX + 'wrapper',
+        rootElement: options.$el
+    });
+
+    options = util.extend({}, options);
+
+    this._setId();
+    this._initTarget(options);
+    this._initExternalPopupHtmlIfNeed(options);
+    this._initCloserOpener(options);
+    this._initContent(options);
+    this._initTitle(options);
+    this._initClassName(options);
+    this._initCssStyles(options);
+}
+
+LayerPopup.prototype = util.extend(
+    {},
+    UIController.prototype
+);
+
+LayerPopup.prototype._initTarget = function(options) {
+    this.$target = options.$target || $('body');
+};
+
+LayerPopup.prototype._initExternalPopupHtmlIfNeed = function(options) {
+    if (options.$el) {
+        this.$el = options.$el;
+        this._isExternalHtmlUse = true;
+    }
+};
+
+LayerPopup.prototype._initCloserOpener = function(options) {
+    this.openerCssQuery = options.openerCssQuery;
+    this.closerCssQuery = options.closerCssQuery;
+};
+
+LayerPopup.prototype._initContent = function(options) {
+    if (options.content) {
+        this.$content = $(options.content);
+    } else if (options.textContent) {
+        this.$content = options.textContent;
+    }
+};
+
+LayerPopup.prototype._initTitle = function(options) {
+    this.title = options.title;
+};
+
+LayerPopup.prototype._initClassName = function(options) {
+    if (options.className) {
+        this.className = options.className;
+    }
+};
+
+LayerPopup.prototype.render = function() {
+    this._renderLayout();
+    this._renderTitle();
+    this._renderContent();
+
+    this._attachPopupEvent();
+};
+
+LayerPopup.prototype._renderLayout = function() {
+    if (!this._isExternalHtmlUse) {
+        this.$el.html(LAYOUT_TEMPLATE);
+        this.$el.addClass(this.className);
+        this.hide();
+        this.$target.append(this.$el);
+        this.$body = this.$el.find(this._getFullClassName('body'));
+
+        if (this.title === false) {
+           this.$el.find(this._getFullClassName('header')).remove();
+        }
+    } else {
+        this.hide();
+
+        if (this.$target) {
+            this.$target.append(this.$el);
+        }
+    }
+};
+
+LayerPopup.prototype._renderContent = function() {
+    if (!this._isExternalHtmlUse) {
+        this.setContent(this.$content);
+    }
+};
+
+LayerPopup.prototype._renderTitle = function() {
+    if (!this._isExternalHtmlUse && this.title !== false) {
+        this.setTitle(this.title);
+    }
+};
+
+LayerPopup.prototype._getFullClassName = function(lastName) {
+    return '.' + CLASS_PREFIX + lastName;
+};
+
+LayerPopup.prototype._attachOpenerCloserEvent = function() {
+    var self = this;
+
+    if (this.openerCssQuery) {
+        $(this.openerCssQuery).on('click.' + this._getId(), function() {
+            self.show();
+        });
+    }
+
+    if (this.closerCssQuery) {
+        $(this.closerCssQuery).on('click.' + this._getId(), function() {
+            self.hide();
+        });
+    }
+};
+
+LayerPopup.prototype._detachOpenerCloserEvent = function() {
+    if (this.openerCssQuery) {
+        $(this.openerCssQuery).off('.' + this._getId());
+    }
+
+    if (this.closerCssQuery) {
+        $(this.closerCssQuery).off('.' + this._getId());
+    }
+};
+
+LayerPopup.prototype._attachPopupControlEvent = function() {
+    var self = this;
+
+    this.on('click ' + this._getFullClassName('closeButton'), function() {
+        self.hide();
+    });
+};
+
+LayerPopup.prototype._detachPopupEvent = function() {
+    this.off();
+    this._detachOpenerCloserEvent();
+};
+
+LayerPopup.prototype._attachPopupEvent = function() {
+    this._attachPopupControlEvent();
+    this._attachOpenerCloserEvent();
+};
+
+LayerPopup.prototype._setId = function() {
+    this._id = _id;
+    _id += 1;
+};
+
+LayerPopup.prototype._getId = function() {
+    return this._id;
+};
+
+LayerPopup.prototype.setContent = function($content) {
+    this.$body.empty();
+    this.$body.append($content);
+};
+
+LayerPopup.prototype.setTitle = function(title) {
+    var $title = this.$el.find(this._getFullClassName('title'));
+
+    $title.empty();
+    $title.append(title);
+};
+
+LayerPopup.prototype.hide = function() {
+    this.$el.css('display', 'none');
+    this._isShow = false;
+    this.trigger('hidden', this);
+};
+
+LayerPopup.prototype.show = function() {
+    this.$el.css('display', 'block');
+    this._isShow = true;
+    this.trigger('shown', this);
+};
+
+LayerPopup.prototype.isShow = function() {
+    return this._isShow;
+};
+
+LayerPopup.prototype.remove = function() {
+    this.trigger('remove', this);
+    this._detachPopupEvent();
+
+    this.$el.empty();
+    this.$el.remove();
+};
+
+LayerPopup.prototype.css = function() {
+    this.$el.css.apply(this.$el, arguments);
+};
+
+LayerPopup.prototype._initCssStyles = function(options) {
+    if (options.css) {
+        this.css(options.css);
+    }
+};
+
+LayerPopup.factory = function(options) {
+    var popup = new LayerPopup(options);
+    popup.render();
+    return popup;
+};
+
+LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
+
+module.exports = LayerPopup;
+
+},{"./uicontroller":46}],39:[function(require,module,exports){
+/**
+ * @fileoverview
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var UIController = require('./uicontroller');
+
+var util = tui.util;
+
+var nextTypeString = ['WYSIWYG', 'Markdown'],
+    TYPE = {
+        'MARKDOWN': 0,
+        'WYSIWYG': 1
+    };
+
+/**
+ * ModeSwitch
+ * UI Control for switch between Markdown and WYSIWYG
+ * @exports ModeSwitch
+ * @augments UIController
+ * @constructor
+ * @class
+ * @param {number} initialType initial type of editor
+ */
+function ModeSwitch(initialType) {
+    UIController.call(this, {
+        tagName: 'div',
+        className: 'modeSwitch'
+    });
+
+    this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
+    this._render();
+}
+
+ModeSwitch.prototype = util.extend(
+    {},
+    UIController.prototype
+);
+
+ModeSwitch.prototype._render = function() {
+    this.$button = $('<button class="switchButton" type="button" />');
+    this._setButtonTitle();
+    this.$el.append(this.$button);
+
+    this.attachEvents({
+        'click button': '_buttonClicked'
+    });
+};
+
+ModeSwitch.prototype._setButtonTitle = function() {
+    this.$button.text('to' + this._getNextTypeString());
+};
+
+ModeSwitch.prototype._buttonClicked = function() {
+    this._switchType();
+};
+
+ModeSwitch.prototype._switchType = function() {
+    var typeToSwitch = this._getNextTypeString();
+
+    this._toggleType();
+    this._setButtonTitle();
+
+    this.trigger('modeSwitched', {
+        type: this.type,
+        text: typeToSwitch.toLowerCase()
+    });
+};
+
+ModeSwitch.prototype._getNextTypeString = function() {
+    return nextTypeString[this.type];
+};
+
+ModeSwitch.prototype._toggleType = function() {
+    this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
+};
+
+ModeSwitch.TYPE = TYPE;
+
+module.exports = ModeSwitch;
+
+},{"./uicontroller":46}],40:[function(require,module,exports){
+/**
+ * @fileoverview Implements PopupAddImage
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var LayerPopup = require('./layerpopup'),
+    Tab = require('./tab');
+
+var util = tui.util;
+
+var POPUP_CONTENT = [
+    '<div class="tabSection"></div>',
+    '<div class="urlType">',
+        '<label for="">Image URL</label>',
+        '<input type="text" class="imageUrlInput" />',
+    '</div>',
+    '<form enctype="multipart/form-data" class="fileType">',
+        '<label for="">Image File</label>',
+        '<input type="file" class="imageFileInput" accept="image/*" />',
+    '</form>',
+    '<label for="url">Alt Text</label>',
+    '<input type="text" class="altTextInput" />',
+    '<div class="buttonSection">',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
+    '</div>'
+].join('');
+
+/**
+ * PopupAddImage
+ * It implements a Image Add Popup
+ * @exports PopupAddImage
+ * @augments LayerPopup
+ * @constructor
+ * @class
+ * @param {object} options options
+ */
+function PopupAddImage(options) {
+    options = util.extend({
+        title: 'Add Image',
+        className: 'popupAddImage tui-editor-popup',
+        content: POPUP_CONTENT
+    }, options);
+
+    LayerPopup.call(this, options);
+
+    this.eventManager = options.eventManager;
+
+    this.render();
+
+    this._bindContentEvent();
+    this._linkWithEventManager();
+    this._initApplyImageBindContext();
+}
+
+PopupAddImage.prototype = util.extend(
+    {},
+    LayerPopup.prototype
+);
+
+PopupAddImage.prototype._bindContentEvent = function() {
+    var self = this;
+
+    this.on('click .okButton', function() {
+        self.trigger('okButtonClicked', this);
+        self.hide();
+    });
+
+    this.on('click .closeButton', function() {
+        self.trigger('closeButtonClicked', this);
+        self.hide();
+    });
+
+    this.on('shown', function() {
+        self.$el.find('.imageUrlInput').focus();
+    });
+
+    this.on('hidden', function() {
+        self.resetInputs();
+    });
+
+    this.tab.on('itemClick', function() {
+        self.resetInputs();
+    });
+
+    this.on('change .imageFileInput', function() {
+        var filename = self.$el.find('.imageFileInput').val().split('\\').pop();
+        self.$el.find('.altTextInput').val(filename);
+    });
+};
+
+PopupAddImage.prototype._linkWithEventManager = function() {
+    var self = this;
+
+    this.eventManager.listen('focus', function() {
+        self.hide();
+    });
+
+    this.eventManager.listen('openPopupAddImage', function() {
+        self.eventManager.emit('closeAllPopup');
+        self.show();
+    });
+
+    this.eventManager.listen('closeAllPopup', function() {
+        self.hide();
+    });
+
+    this.on('okButtonClicked', function() {
+        if (self._isUrlType()) {
+            self.applyImage();
+        } else {
+            self._preAltValue = self.$el.find('.altTextInput').val();
+            self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
+        }
+    });
+};
+
+PopupAddImage.prototype._initApplyImageBindContext = function() {
+    var self = this;
+
+    this.applyImage = function(url) {
+        var info;
+
+        if (url) {
+            info = self._getImageInfoWithGivenUrl(url);
+        } else {
+            info = self._getImageInfo();
+        }
+
+        self.eventManager.emit('command', 'AddImage', info);
+        self.hide();
+    };
+};
+
+PopupAddImage.prototype._isUrlType = function() {
+    return !!this.$el.find('.imageUrlInput').val();
+};
+
+/**
+ * _renderContent
+ * @override
+ */
+PopupAddImage.prototype._renderContent = function() {
+    var $popup = this.$el;
+
+    LayerPopup.prototype._renderContent.call(this);
+
+    this.tab = new Tab({
+        initName: 'File',
+        items: ['File', 'URL'],
+        sections: [$popup.find('.fileType'), $popup.find('.urlType')]
+    });
+
+    this.$body.find('.tabSection').append(this.tab.$el);
+};
+
+PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
+    var altText = this._preAltValue;
+    this._preAltValue = '';
+    return this._makeImageInfo(imageUrl, altText);
+};
+
+PopupAddImage.prototype._getImageInfo = function() {
+    var imageUrl = this.$el.find('.imageUrlInput').val(),
+    altText = this.$el.find('.altTextInput').val();
+
+    return this._makeImageInfo(imageUrl, altText);
+};
+
+PopupAddImage.prototype._makeImageInfo = function(url, alt) {
+    return {
+        imageUrl: url,
+        altText: alt
+    };
+};
+
+PopupAddImage.prototype._getImageFileForm = function() {
+    return this.$el.find('form');
+};
+
+PopupAddImage.prototype.resetInputs = function() {
+    this.$el.find('input').val('');
+};
+
+module.exports = PopupAddImage;
+
+},{"./layerpopup":38,"./tab":42}],41:[function(require,module,exports){
+/**
+ * @fileoverview Implements PopupAddLink
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var LayerPopup = require('./layerpopup');
+
+var util = tui.util;
+
+var POPUP_CONTENT = [
+    '<label for="linkText">Link Text</label>',
+    '<input type="text" class="linkTextInput" />',
+    '<label for="url">URL</label>',
+    '<input type="text" class="urlInput" />',
+    '<div class="buttonSection">',
+        '<button type="button" class="okButton">OK</button>',
+        '<button type="button" class="closeButton">Cancel</button>',
+    '</div>'
+].join('');
+
+/**
+ * PopupAddLink
+ * It implements a link Add Popup
+ * @exports PopupAddLink
+ * @augments LayerPopup
+ * @constructor
+ * @class
+ * @param {object} options options
+ */
+function PopupAddLink(options) {
+    options = util.extend({
+        title: 'Add Link',
+        className: 'popupAddLink tui-editor-popup',
+        content: POPUP_CONTENT
+    }, options);
+
+    LayerPopup.call(this, options);
+
+    this.render();
+    this._bindContentEvent();
+    this._linkWithEventManager(options.eventManager);
+}
+
+PopupAddLink.prototype = util.extend(
+    {},
+    LayerPopup.prototype
+);
+
+PopupAddLink.prototype._bindContentEvent = function() {
+    var self = this;
+
+    this.on('click .okButton', function() {
+        self.trigger('okButtonClicked', this);
+        self.hide();
+    });
+
+    this.on('click .closeButton', function() {
+        self.trigger('closeButtonClicked', this);
+        self.hide();
+    });
+
+    this.on('shown', function() {
+        self.$el.find('.linkTextInput').focus();
+    });
+
+    this.on('hidden', function() {
+        self.resetInputs();
+    });
+};
+
+PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
+    var self = this;
+
+    eventManager.listen('focus', function() {
+        self.hide();
+    });
+
+    eventManager.listen('openPopupAddLink', function() {
+        eventManager.emit('closeAllPopup');
+        self.show();
+    });
+
+    eventManager.listen('closeAllPopup', function() {
+        self.hide();
+    });
+
+    this.on('okButtonClicked', function() {
+        eventManager.emit('command', 'AddLink', self.getValue());
+    });
+};
+
+PopupAddLink.prototype.getValue = function() {
+    return {
+        linkText: this.$el.find('.linkTextInput').val(),
+        url: this.$el.find('.urlInput').val()
+    };
+};
+
+PopupAddLink.prototype.resetInputs = function() {
+    this.$el.find('input').val('');
+};
+
+module.exports = PopupAddLink;
+
+},{"./layerpopup":38}],42:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5303,7 +5550,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":42,"./uicontroller":45}],42:[function(require,module,exports){
+},{"./templater":43,"./uicontroller":46}],43:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5342,7 +5589,7 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5401,7 +5648,7 @@ ToggleButton.prototype._toggle = function() {
 
 module.exports = ToggleButton;
 
-},{"./button":1}],44:[function(require,module,exports){
+},{"./button":36}],45:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5426,7 +5673,7 @@ var util = tui.util;
 function Toolbar(eventManager) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'toolbar'
+        className: 'tui-editor-defaultUI-toolbar'
     });
 
     this.buttons = [];
@@ -5544,7 +5791,7 @@ Toolbar.prototype._initButton = function() {
 
 module.exports = Toolbar;
 
-},{"./button":1,"./toggleButton":43,"./uicontroller":45}],45:[function(require,module,exports){
+},{"./button":36,"./toggleButton":44,"./uicontroller":46}],46:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5784,7 +6031,403 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
+/**
+ * @fileoverview Implements wysiwyg editor clipboard manager
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var domUtils = require('./domUtils');
+
+var util = tui.util;
+
+/**
+ * WwClipboardManager
+ * @exports WwClipboardManager
+ * @constructor
+ * @class
+ * @param {WysiwygEditor} wwe WysiwygEditor instance
+ */
+function WwClipboardManager(wwe) {
+    this.wwe = wwe;
+
+    if (util.browser.msie) {
+        this.$hiddenArea = $('<div style="position:absolute;top:0;left:-9999px;height:1px;width:1px;overflow:hidden;" />');
+        this.wwe.$editorContainerEl.append(this.$hiddenArea);
+    }
+}
+
+/**
+ * init
+ * initialize
+ */
+WwClipboardManager.prototype.init = function() {
+    this._initSquireEvent();
+};
+
+/**
+ * _initSquireEvent
+ * initialize squire events
+ */
+WwClipboardManager.prototype._initSquireEvent = function() {
+    var self = this;
+
+    if (util.browser.msie) {
+        this.wwe.getEditor().addEventListener('keydown', function(event) {
+            var range;
+
+            //Ctrl + C
+            if (event.ctrlKey && event.keyCode === 67) {
+                range = self.wwe.getEditor().getSelection().cloneRange();
+                range = self._extendRange(range);
+
+                self.copyWithTextarea(range);
+            //Ctrl + X
+            } else if (event.ctrlKey && event.keyCode === 88) {
+                range = self.wwe.getEditor().getSelection().cloneRange();
+                range = self._extendRange(range);
+
+                self.copyWithTextarea(range);
+
+                range = self.wwe.insertSelectionMarker(range);
+                range.deleteContents();
+
+                setTimeout(function() {
+                    self.wwe.restoreSelectionMarker();
+                    self.wwe.getEditor()._ensureBottomLine();
+                });
+            }
+        });
+
+        this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
+            pasteData.fragment = self._processFragment(pasteData.fragment);
+        });
+    } else {
+        this.wwe.getEditor().addEventListener('copy', function(clipboardEvent) {
+            var range;
+
+            clipboardEvent.preventDefault();
+
+            range = self.wwe.getEditor().getSelection().cloneRange();
+            range = self._extendRange(range);
+
+            self.makeClipboardData(range, clipboardEvent);
+        });
+
+        this.wwe.getEditor().addEventListener('cut', function(clipboardEvent) {
+            var range;
+
+            clipboardEvent.preventDefault();
+
+            range = self.wwe.getEditor().getSelection().cloneRange();
+            range = self._extendRange(range);
+
+            self.makeClipboardData(range, clipboardEvent);
+
+            range = self.wwe.insertSelectionMarker(range);
+            range.deleteContents();
+            self.wwe.restoreSelectionMarker();
+            self.wwe.getEditor()._ensureBottomLine();
+
+            self.wwe.postProcessForChange();
+        });
+    }
+
+    this.wwe.getEditor().addEventListener('paste', function() {
+        self.wwe.postProcessForChange();
+    });
+};
+
+/**
+ * _processFragment
+ * process fragment if it was from textarea
+ * @param {DocumentFragment} fragment frament to process
+ * @return {DocumentFragment} new fragment
+ */
+WwClipboardManager.prototype._processFragment = function(fragment) {
+    var parsedChilds, processedFragment, i, t;
+
+    if (this._latestTextareaContent === fragment.textContent) {
+        parsedChilds = $.parseHTML(fragment.textContent);
+
+        processedFragment = document.createDocumentFragment();
+
+        for (i = 0, t = parsedChilds.length; i < t; i+=1) {
+            processedFragment.appendChild(parsedChilds[i]);
+        }
+    }
+
+    return  processedFragment || fragment;
+};
+
+/**
+ * _getContentFromRange
+ * get processed contents of range
+ * @param {Range} range range of selection
+ * @return {string} processed contents
+ */
+WwClipboardManager.prototype._getContentFromRange = function(range) {
+    var resultContents,
+        self = this,
+        cloneContents = range.cloneContents();
+
+    if (this._isOneTextNodeFullySelected(range)) {
+        this._eachCurrentPath(function(pathStep) {
+            resultContents = self._makeNodeAndAppend(pathStep, resultContents || cloneContents);
+        });
+    } else if (this._isOrphanListItem(range)) {
+        resultContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
+    } else if (this._isStartWithPartialTextNode(range)) {
+        resultContents = this._makeFirstChildToTextNodeIfNeed(cloneContents);
+    }
+
+    //wrap all result content with div to get HTML data
+    resultContents = this._makeNodeAndAppend('div', resultContents || cloneContents);
+
+    return resultContents.html();
+};
+
+/**
+ * _makeNodeAndAppend
+ * make node and append childs
+ * @param {string} tagName tagName to make
+ * @param {Node} content nodes to append
+ * @return {Node} node
+ */
+WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
+    var node = $('<' + tagName + '/>');
+    node.append(content);
+
+    return node;
+};
+
+/**
+ * _eachCurrentPath
+ * iterate path depths
+ * @param {function} iteratee callback
+ */
+WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
+   var paths =  this.wwe.getEditor().getPath().split('>'),
+       i;
+
+   for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i-=1) {
+       iteratee(paths[i]);
+   }
+};
+
+/**
+ * _makeFirstChildToTextNodeIfNeed
+ * Make firstchild of fragment into textnode
+ * @param {DocumentFragment} frag fragment
+ * @return {DocumentFragment} result fragment
+ */
+WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
+    var newFirstChild;
+
+    if (domUtils.isElemNode(frag.firstChild) && frag.firstChild.tagName === 'DIV') {
+        newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
+        $(frag).find('*').first().remove();
+        $(frag).prepend(newFirstChild);
+    }
+
+    return frag;
+};
+
+/**
+ * copyWithTextarea
+ * copy clipboard using textarea for IEs
+ * @param {Range} range range of selection
+ */
+WwClipboardManager.prototype.copyWithTextarea = function(range) {
+    var self = this,
+        textarea = $('<textarea />');
+
+    this.$hiddenArea.append(textarea);
+
+    this._latestTextareaContent = this._getContentFromRange(range);
+    textarea.val(this._latestTextareaContent);
+
+    textarea.select();
+
+    setTimeout(function() {
+        //카피가 끝나면 텍스트 에리어 제거
+        textarea.remove();
+        //여기서 셀렉션도 복구
+        //파폭에선 focus를 다시이동 해줘야함
+        self.wwe.getEditor().focus();
+        self.wwe.getEditor().setSelection(range);
+    }, 0);
+};
+
+/**
+ * makeClipboardData
+ * make clipboard data with range
+ * @param {Range} range range of selection
+ * @param {ClipboardEvent} clipboardEvent current clipboardEvent
+ */
+WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent) {
+    var htmlText = this._getContentFromRange(range);
+    clipboardEvent.clipboardData.setData('text/plain', htmlText);
+};
+
+
+/**
+ * _extendRange
+ * extend range if need
+ * @param {Range} range to extend
+ * @return {Range} range
+ */
+WwClipboardManager.prototype._extendRange = function(range) {
+    var newBound;
+
+    //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
+    //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
+    if (range.startContainer !== range.endContainer) {
+        if (range.startOffset === 0) {
+            newBound = range.startContainer;
+
+            //레인지 확장
+            while (newBound.parentNode !== range.commonAncestorContainer
+                    && !newBound.previousSibling
+                  ) {
+                newBound = newBound.parentNode;
+            }
+
+            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+            range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+        }
+
+        if (range.endOffset === range.endContainer.length) {
+            newBound = range.endContainer;
+
+            //레인지 확장
+            while (newBound.parentNode !== range.commonAncestorContainer
+                    && (!newBound.nextSibling || (newBound.nextSibling.tagName === 'BR' && newBound.parentNode.lastChild === newBound.nextSibling))
+                  ) {
+                newBound = newBound.parentNode;
+            }
+
+            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+            range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+        }
+    }
+
+    // commonAncestor를 선택
+    if (this._isWholeCommonAncestorContainerSelected(range)) {
+        newBound = range.commonAncestorContainer;
+        range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+        range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+    }
+
+    return range;
+};
+
+/**
+ * _isWholeCommonAncestorContainerSelected
+ * check if selection has whole commonAncestorContainter
+ * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
+    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        && range.commonAncestorContainer.tagName !== 'BODY'
+        && range.startOffset === 0
+        && range.endOffset === range.commonAncestorContainer.childNodes.length
+        && range.commonAncestorContainer === range.startContainer
+        && range.commonAncestorContainer === range.endContainer;
+};
+
+/**
+ * _isOneTextNodeFullySelected
+ * check if one text node fully selected with range
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
+    return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+        && range.startContainer === range.endContainer
+        && range.startContainer === range.commonAncestorContainer
+        && range.startOffset === 0
+        && range.endOffset === range.commonAncestorContainer.nodeValue.length);
+};
+
+/**
+ * _isStartWithPartialTextNode
+ * check if start is partial textnode
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
+    return (range.startContainer.nodeType === Node.TEXT_NODE
+        && range.startOffset > 0);
+};
+
+/**
+ * _isOrphanListItem
+ * check if range have orphan list
+ * @param {Range} range range of selection
+ * @return {boolean} result
+ */
+WwClipboardManager.prototype._isOrphanListItem = function(range) {
+    return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
+        && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
+};
+
+module.exports = WwClipboardManager;
+
+},{"./domUtils":8}],48:[function(require,module,exports){
+/**
+ * @fileoverview Implements selection marker for wysiwyg
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
+
+/**
+ * WwSelectionMarker
+ * @exports WwSelectionMarker
+ * @augments
+ * @constructor
+ * @class
+ */
+function WwSelectionMarker() {
+    this._markerNode = null;
+}
+
+WwSelectionMarker.prototype.insertMarker = function(range, sq) {
+    this._markerNode = this._makeMarker(sq);
+
+    range.insertNode(this._markerNode);
+    range.setStartAfter(this._markerNode);
+
+    return range;
+};
+
+WwSelectionMarker.prototype._makeMarker = function(sq) {
+    return sq.createElement('INPUT', {type:'hidden', class: MARKER_CSS_CLASS});
+};
+
+WwSelectionMarker.prototype.restore = function(sq) {
+    var newRange = sq.getSelection().cloneRange();
+
+    newRange.setStartAfter(this._markerNode);
+    newRange.collapse(true);
+
+    sq.setSelection(newRange);
+
+    $(this._markerNode).remove();
+
+    return newRange;
+};
+
+module.exports = WwSelectionMarker;
+
+},{}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5819,7 +6462,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":7}],47:[function(require,module,exports){
+},{"../commandManager":6}],50:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5855,7 +6498,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":7}],48:[function(require,module,exports){
+},{"../commandManager":6}],51:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5889,7 +6532,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":7}],49:[function(require,module,exports){
+},{"../commandManager":6}],52:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5930,7 +6573,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":7}],50:[function(require,module,exports){
+},{"../commandManager":6}],53:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5975,7 +6618,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":7}],51:[function(require,module,exports){
+},{"../commandManager":6}],54:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6024,7 +6667,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":7}],52:[function(require,module,exports){
+},{"../commandManager":6}],55:[function(require,module,exports){
 /**
  * @fileoverview Implements inceaseTask wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6145,7 +6788,7 @@ function increaseTaskLevel(frag) {
 
 module.exports = IncreaseTask;
 
-},{"../commandManager":7}],53:[function(require,module,exports){
+},{"../commandManager":6}],56:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6186,7 +6829,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":7}],54:[function(require,module,exports){
+},{"../commandManager":6}],57:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6221,7 +6864,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":7}],55:[function(require,module,exports){
+},{"../commandManager":6}],58:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6284,7 +6927,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":7}],56:[function(require,module,exports){
+},{"../commandManager":6}],59:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6319,7 +6962,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":7}],57:[function(require,module,exports){
+},{"../commandManager":6}],60:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6328,6 +6971,8 @@ module.exports = UL;
 'use strict';
 
 var domUtils = require('./domUtils'),
+    WwClipboardManager = require('./wwClipboardManager'),
+    WwSelectionMarker = require('./wwSelectionMarker'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
@@ -6353,6 +6998,9 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
+
+    this._clipboardManager = new WwClipboardManager(this);
+    this._selectionMarker = new WwSelectionMarker();
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -6396,6 +7044,7 @@ WysiwygEditor.prototype._initSquire = function() {
     });
 
     self._initSquireEvent();
+    self._clipboardManager.init();
 
     $(doc).on('click', function() {
         self.focus();
@@ -6465,12 +7114,12 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
-    this.getEditor().addEventListener('dragover', function(e) {
+    this.getEditor().getDocument().addEventListener('dragover', function(e) {
         e.preventDefault();
         return false;
     });
 
-    this.getEditor().addEventListener('drop', function(eventData) {
+    this.getEditor().getDocument().addEventListener('drop', function(eventData) {
         eventData.preventDefault();
 
         self.eventManager.emit('drop', {
@@ -6590,24 +7239,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
         }
-        /*
-         * if (this._isInTaskList(range)) {
-            if ($(range.startContainer).parents('li')[0].previousSibling && !$($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
-                self.eventManager.emit('command', 'IncreaseTask');
-                this._unformatTaskIfNeedOnEnter(range);
-                setTimeout(function() {
-                    self.eventManager.emit('command', 'Task');
-                }, 0);
-            } else {
-                event.preventDefault();
-                self.eventManager.emit('command', 'IncreaseTask');
-            }
-        } else if (this.getEditor().hasFormat('li')) {
-            if ($($(range.startContainer).parents('li')[0].previousSibling).hasClass('task-list-item')) {
-                event.preventDefault();
-                self.eventManager.emit('command', 'IncreaseTask');
-            }
-        }*/
     }
 };
 
@@ -7066,6 +7697,16 @@ WysiwygEditor.prototype._removeTaskInputInWrongPlace = function() {
         });
 };
 
+WysiwygEditor.prototype._unformatIncompleteTask = function() {
+    this.get$Body().find('.task-list-item').each(function(index, task) {
+        if ((!domUtils.isElemNode(task.firstChild) || task.firstChild.tagName !== 'INPUT')
+            && (!domUtils.isElemNode(task.firstChild.firstChild) || task.firstChild.firstChild.tagName !== 'INPUT')
+        ) {
+            $(task).removeClass('task-list-item');
+        }
+    });
+};
+
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
@@ -7108,6 +7749,24 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
     this._removeTaskInputInWrongPlace();
 };
 
+WysiwygEditor.prototype.insertSelectionMarker = function(range) {
+    return this._selectionMarker.insertMarker(range, this.getEditor());
+};
+
+WysiwygEditor.prototype.restoreSelectionMarker = function() {
+    return this._selectionMarker.restore(this.getEditor());
+};
+
+WysiwygEditor.prototype.postProcessForChange = function() {
+    var self = this;
+
+    setTimeout(function() {
+        self.getEditor()._ignoreChange = true;
+        self._unformatIncompleteTask();
+        self._ensureSpaceNextToTaskInput();
+        self = null;
+    }, 0);
+};
 module.exports = WysiwygEditor;
 
-},{"./domUtils":9,"./squireExt":40}]},{},[20]);
+},{"./domUtils":8,"./squireExt":35,"./wwClipboardManager":47,"./wwSelectionMarker":48}]},{},[19]);
