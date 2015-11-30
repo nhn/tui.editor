@@ -4,10 +4,7 @@
 .tui-editor-defaultUI,
 .tui-editor-defaultUI *,
 .tui-editor * {
-    margin:0;
-    padding:0;
     box-sizing: content-box;
-    font-size: 100%;
     font: inherit;
     vertical-align: baseline;
 }
@@ -141,24 +138,25 @@
     background: none;
 }
 .tui-editor-defaultUI-toolbar {
-    padding: 5px;
-    height: 30px;
-    background: #eee;
+    padding: 3px;
+    height: 27px;
+    background: #f5f5f7;
     border-style: solid;
     border-color: #ccc;
     border-width: 1px 1px 0 1px;
 }
 .tui-editor-defaultUI-toolbar button {
+    float: left;
     box-sizing: border-box;
     min-width: 30px;
-    height: 30px;
+    height: 26px;
+    padding: 2px;
+    margin-left: 4px;
     background: white;
-    border-color: #ccc;
-    border-style: solid;
-    border-width: 1px 1px 1px 0;
     outline: none;
-    float: left;
     cursor: pointer;
+    background: #f5f5f7;
+    color: #a0aabf;
 }
 .tui-editor-defaultUI-toolbar button:hover {
     background: #eee;
@@ -170,7 +168,7 @@
     border-left-width: 1px;
 }
 .tui-editor-defaultUI-toolbar button.bold {
-    font-weight: bold;
+    font-weight: 700;
 }
 .tui-editor-defaultUI-toolbar button.italic {
     font-style: italic;
