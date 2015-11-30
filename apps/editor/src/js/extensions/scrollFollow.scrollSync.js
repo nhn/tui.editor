@@ -137,11 +137,9 @@ ScrollSync.prototype.syncToPreview = function() {
     var self = this,
         targetScrollTop = this._getScrollTopForPreview();
 
-    if (targetScrollTop) {
-        this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
-            self.$previewContainerEl.scrollTop(deltaScrollTop);
-        });
-    }
+    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+        self.$previewContainerEl.scrollTop(deltaScrollTop);
+    });
 };
 
 /**
