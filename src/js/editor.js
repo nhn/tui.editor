@@ -38,6 +38,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwHeading = require('./wysiwygCommands/heading'),
     wwUL = require('./wysiwygCommands/ul'),
     wwOL = require('./wysiwygCommands/ol'),
+    wwTable = require('./wysiwygCommands/table'),
     wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
@@ -152,6 +153,7 @@ ToastUIEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(wwHeading);
     this.commandManager.addCommand(wwIncreaseTask);
     this.commandManager.addCommand(wwTask);
+    this.commandManager.addCommand(wwTable);
 };
 
 /**

@@ -217,6 +217,8 @@
 
 .tui-editor-contents table {
     padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 .tui-editor-contents table tr {
