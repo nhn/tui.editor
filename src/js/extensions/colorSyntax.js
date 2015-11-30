@@ -98,7 +98,7 @@ function initUI(editor) {
     editor.getUI().toolbar.addButton({
         className: 'color',
         event: 'colorButtonClicked',
-        text: 'Color'
+        text: '\u03FE'
     });
 
     $colorPickerContainer =  $('<div />');

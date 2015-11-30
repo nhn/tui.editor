@@ -58,12 +58,12 @@ extManager.defineExtension('scrollFollow', function(editor) {
         editor.getUI().toolbar.addButton([{
             classname: 'scrollfollowEnable',
             command: 'scrollFollowDisable',
-            text: 'SF',
-            style: 'background-color: #fff'
+            text: '\u0191',
+            style: 'background-color: #f5f5f7'
         }, {
             className: 'scrollFollowDisable',
             command: 'scrollFollowEnable',
-            text: 'SF',
+            text: '\u0191',
             style: 'background-color: #ddd'
         }]);
     }
