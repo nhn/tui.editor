@@ -104,7 +104,7 @@ Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
         className: 'hrline',
         command: 'HR',
-        text: 'HR'
+        text: '\u035F'
     }));
 
     this.addButton(new Button({
@@ -134,7 +134,7 @@ Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
         className: 'task',
         command: 'Task',
-        text: 'TASK'
+        text: '\u2611'
     }));
 };
 
