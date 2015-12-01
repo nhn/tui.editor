@@ -17,8 +17,10 @@ var CommandManager = require('../commandManager');
 var Table = CommandManager.command('wysiwyg',/** @lends Table */{
     name: 'Table',
     /**
-     *  Command Handler
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     * Command Handler
+     * @param {WysiwygEditor} wwe WYsiwygEditor instance
+     * @param {number} row row count
+     * @param {number} col column count
      */
     exec: function(wwe, row, col) {
         var sq = wwe.getEditor(),
@@ -56,7 +58,7 @@ function makeHeader(col) {
 
 /**
  * makeBody
- *make table body html string
+ * make table body html string
  * @param {number} row row count
  * @param {number} col column count
  * @return {string} html string
