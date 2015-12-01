@@ -31,8 +31,8 @@ describe('Table', function() {
         expect(wwe.get$Body().find('tbody tr').eq(1).find('td').length).toEqual(2);
     });
 
-    it('add Table 3x4', function() {
-        Table.exec(wwe, 3, 4);
+    it('add Table 4x3', function() {
+        Table.exec(wwe, 4, 3);
 
         expect(wwe.get$Body().find('thead tr th').length).toEqual(4);
         expect(wwe.get$Body().find('tbody tr').eq(0).find('td').length).toEqual(4);

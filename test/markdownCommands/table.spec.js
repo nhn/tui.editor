@@ -39,8 +39,8 @@ describe('Table', function() {
             ].join('\n'));
         });
 
-        it('Add table 3x4', function() {
-            Table.exec(mde, 3, 4);
+        it('Add table 4x3', function() {
+            Table.exec(mde, 4, 3);
 
             expect(doc.getValue()).toEqual([
                 '\n|    |    |    |    |',
