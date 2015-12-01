@@ -17,16 +17,17 @@ var MarkdownEditor = require('./markdownEditor'),
     DefaultUI = require('./ui/defaultUI.js');
 
 //markdown commands
-var mdcBold = require('./markdownCommands/bold'),
-    mdcItalic = require('./markdownCommands/italic'),
-    mdcBlockquote = require('./markdownCommands/blockquote'),
-    mdcHeading = require('./markdownCommands/heading'),
-    mdcHR = require('./markdownCommands/hr'),
-    mdcAddLink = require('./markdownCommands/addLink'),
-    mdcAddImage = require('./markdownCommands/addImage'),
-    mdcUL = require('./markdownCommands/ul'),
-    mdcOL = require('./markdownCommands/ol'),
-    mdcTask = require('./markdownCommands/task');
+var mdBold = require('./markdownCommands/bold'),
+    mdItalic = require('./markdownCommands/italic'),
+    mdBlockquote = require('./markdownCommands/blockquote'),
+    mdHeading = require('./markdownCommands/heading'),
+    mdHR = require('./markdownCommands/hr'),
+    mdAddLink = require('./markdownCommands/addLink'),
+    mdAddImage = require('./markdownCommands/addImage'),
+    mdUL = require('./markdownCommands/ul'),
+    mdOL = require('./markdownCommands/ol'),
+    mdTable = require('./markdownCommands/table'),
+    mdTask = require('./markdownCommands/task');
 
 //wysiwyg Commands
 var wwBold = require('./wysiwygCommands/bold'),
@@ -131,16 +132,17 @@ function ToastUIEditor(options) {
 }
 
 ToastUIEditor.prototype._initDefaultCommands = function() {
-    this.commandManager.addCommand(mdcBold);
-    this.commandManager.addCommand(mdcItalic);
-    this.commandManager.addCommand(mdcBlockquote);
-    this.commandManager.addCommand(mdcHeading);
-    this.commandManager.addCommand(mdcHR);
-    this.commandManager.addCommand(mdcAddLink);
-    this.commandManager.addCommand(mdcAddImage);
-    this.commandManager.addCommand(mdcUL);
-    this.commandManager.addCommand(mdcOL);
-    this.commandManager.addCommand(mdcTask);
+    this.commandManager.addCommand(mdBold);
+    this.commandManager.addCommand(mdItalic);
+    this.commandManager.addCommand(mdBlockquote);
+    this.commandManager.addCommand(mdHeading);
+    this.commandManager.addCommand(mdHR);
+    this.commandManager.addCommand(mdAddLink);
+    this.commandManager.addCommand(mdAddImage);
+    this.commandManager.addCommand(mdUL);
+    this.commandManager.addCommand(mdOL);
+    this.commandManager.addCommand(mdTable);
+    this.commandManager.addCommand(mdTask);
 
     this.commandManager.addCommand(wwBold);
     this.commandManager.addCommand(wwItalic);
