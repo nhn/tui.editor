@@ -10,8 +10,7 @@ describe('Table', function() {
         mde;
 
     beforeEach(function() {
-        var $container = $('<div />'),
-            sourceText;
+        var $container = $('<div />');
 
         $('body').append($container);
 
