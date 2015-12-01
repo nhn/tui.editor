@@ -22,13 +22,13 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
      * @param {number} row row count
      * @param {number} col column count
      */
-    exec: function(wwe, row, col) {
+    exec: function(wwe, col, row) {
         var sq = wwe.getEditor(),
             table;
 
         table = '<table>';
         table += makeHeader(col);
-        table += makeBody(row, col);
+        table += makeBody(col, row);
         table += '</table>';
 
         sq.insertHTML(table);
@@ -63,7 +63,7 @@ function makeHeader(col) {
  * @param {number} col column count
  * @return {string} html string
  */
-function makeBody(row, col) {
+function makeBody(col, row) {
     var body = '<tbody>',
         irow, icol;
 

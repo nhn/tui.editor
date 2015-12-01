@@ -21,7 +21,7 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
      * @param {number} row row count
      * @param {number} col column count
      */
-    exec: function(mde, row, col) {
+    exec: function(mde, col, row) {
         var cm = mde.getEditor(),
             doc = cm.getDoc(),
             table = '\n';
@@ -31,7 +31,7 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
         }
 
         table += makeHeader(col);
-        table += makeBody(row, col);
+        table += makeBody(col, row);
 
         doc.replaceSelection(table);
 
@@ -66,7 +66,7 @@ function makeHeader(col) {
  * @param {number} col column count
  * @return {string} html string
  */
-function makeBody(row, col) {
+function makeBody(col, row) {
     var body = '',
         irow, icol;
 
