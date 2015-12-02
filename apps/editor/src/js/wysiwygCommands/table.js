@@ -28,7 +28,7 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
 
         table = '<table>';
         table += makeHeader(col);
-        table += makeBody(col, row);
+        table += makeBody(col, row - 1);
         table += '</table>';
 
         sq.insertHTML(table);

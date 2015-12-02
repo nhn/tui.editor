@@ -96,8 +96,8 @@ describe('Toolbar', function() {
             $('body').append(toolbar.$el);
         });
 
-        it('추가된 툴바의 갯수는 7개', function() {
-            expect($('button').length).toEqual(10);
+        it('toolbar have 11 buttons', function() {
+            expect($('button').length).toEqual(11);
         });
 
         it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {

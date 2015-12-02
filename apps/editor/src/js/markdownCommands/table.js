@@ -31,11 +31,13 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
         }
 
         table += makeHeader(col);
-        table += makeBody(col, row);
+        table += makeBody(col, row - 1);
 
         doc.replaceSelection(table);
 
-        cm.setCursor(cm.getCursor().line - (row + 2), 2); //2 means header row count
+        cm.setCursor(cm.getCursor().line - (row + 1), 2); //+1 means header border line
+
+        mde.focus();
     }
 });
 
