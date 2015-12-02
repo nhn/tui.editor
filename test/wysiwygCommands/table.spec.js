@@ -28,7 +28,6 @@ describe('Table', function() {
 
         expect(wwe.get$Body().find('thead tr th').length).toEqual(2);
         expect(wwe.get$Body().find('tbody tr').eq(0).find('td').length).toEqual(2);
-        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').length).toEqual(2);
     });
 
     it('add Table 4x3', function() {
@@ -37,6 +36,5 @@ describe('Table', function() {
         expect(wwe.get$Body().find('thead tr th').length).toEqual(4);
         expect(wwe.get$Body().find('tbody tr').eq(0).find('td').length).toEqual(4);
         expect(wwe.get$Body().find('tbody tr').eq(1).find('td').length).toEqual(4);
-        expect(wwe.get$Body().find('tbody tr').eq(2).find('td').length).toEqual(4);
     });
 });

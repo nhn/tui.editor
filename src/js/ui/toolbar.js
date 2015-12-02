@@ -136,6 +136,12 @@ Toolbar.prototype._initButton = function() {
         command: 'Task',
         text: '\u2611'
     }));
+
+    this.addButton(new Button({
+        className: 'table',
+        event: 'openPopupAddTable',
+        text: 'TABLE'
+    }));
 };
 
 module.exports = Toolbar;

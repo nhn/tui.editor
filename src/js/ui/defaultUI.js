@@ -10,7 +10,8 @@ var Toolbar = require('./toolbar'),
     Layerpopup = require('./layerpopup'),
     ModeSwitch = require('./modeSwitch'),
     PopupAddLink = require('./popupAddLink'),
-    PopupAddImage = require('./popupAddImage');
+    PopupAddImage = require('./popupAddImage'),
+    PopupAddTable = require('./popupAddTable');
 
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
@@ -50,6 +51,7 @@ DefaultUI.prototype.init = function() {
 
     this._initPopupAddLink();
     this._initPopupAddImage();
+    this._initPopupAddTable();
 
     this._initMarkdownTab();
 };
@@ -121,6 +123,18 @@ DefaultUI.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
         $target: this.$el,
         eventManager: this.editor.eventManager
+    });
+};
+
+DefaultUI.prototype._initPopupAddTable = function() {
+    this.popupAddTable = new PopupAddTable({
+        $target: this.$el,
+        eventManager: this.editor.eventManager,
+        css: {
+            'position': 'absolute',
+            'top': $('button.table').offset().top + $('button.table').height() + 5,
+            'left': $('button.table').offset().left
+        }
     });
 };
 

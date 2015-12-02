@@ -22,6 +22,7 @@ var eventList = [
     'changePreviewStyle',
     'openPopupAddLink',
     'openPopupAddImage',
+    'openPopupAddTable',
     'closeAllPopup',
     'command',
     'htmlUpdate',
