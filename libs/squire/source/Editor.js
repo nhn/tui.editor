@@ -425,6 +425,7 @@ var removeZWS = function ( root ) {
                     parent = node.parentNode;
                     parent.removeChild( node );
                     node = parent;
+                    walker.currentNode = parent;
                 } while ( isInline( node ) && !getLength( node ) );
                 break;
             } else {
