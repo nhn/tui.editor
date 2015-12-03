@@ -734,10 +734,13 @@ proto.hasFormat = function ( tag, attributes, range ) {
 // holding the cursor. If there's a selection, returns an empty object.
 proto.getFontInfo = function ( range ) {
     var fontInfo = {
-            family: undefined,
-            size: undefined
-        },
-        element, style;
+        color: undefined,
+        backgroundColor: undefined,
+        family: undefined,
+        size: undefined
+    };
+    var seenAttributes = 0;
+    var element, style;
 
     if ( !range && !( range = this.getSelection() ) ) {
         return fontInfo;
@@ -748,13 +751,22 @@ proto.getFontInfo = function ( range ) {
         if ( element.nodeType === TEXT_NODE ) {
             element = element.parentNode;
         }
-        while ( !( fontInfo.family && fontInfo.size ) &&
-                element && ( style = element.style ) ) {
+        while ( seenAttributes < 4 && element && ( style = element.style ) ) {
+            if ( !fontInfo.color ) {
+                fontInfo.color = style.color;
+                seenAttributes += 1;
+            }
+            if ( !fontInfo.backgroundColor ) {
+                fontInfo.backgroundColor = style.backgroundColor;
+                seenAttributes += 1;
+            }
             if ( !fontInfo.family ) {
                 fontInfo.family = style.fontFamily;
+                seenAttributes += 1;
             }
             if ( !fontInfo.size ) {
                 fontInfo.size = style.fontSize;
+                seenAttributes += 1;
             }
             element = element.parentNode;
         }
