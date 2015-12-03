@@ -110,7 +110,6 @@ function ToastUIEditor(options) {
         });
     }
 
-    this.contentHeight(this.options.height);
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -122,6 +121,8 @@ function ToastUIEditor(options) {
         self._initDefaultCommands();
 
         self.changeMode(self.options.initialEditType);
+
+        self.contentHeight(self.options.height);
 
         self.setValue(self.options.initialValue);
 

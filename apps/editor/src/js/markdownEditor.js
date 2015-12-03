@@ -224,6 +224,10 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
 
 MarkdownEditor.prototype.setHeight = function(height) {
     this.$editorContainerEl.height(height);
+
+    if (height === 'auto') {
+        this.$editorContainerEl.find('.CodeMirror').height('auto');
+    }
 };
 
 module.exports = MarkdownEditor;
