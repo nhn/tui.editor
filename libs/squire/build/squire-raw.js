@@ -1640,7 +1640,7 @@ var spanToSemantic = {
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
                 'class': 'highlight',
-                style: 'background-color: ' + colour
+                style: 'background-color:' + colour
             });
         }
     },
@@ -2557,6 +2557,7 @@ var removeZWS = function ( root ) {
                     parent = node.parentNode;
                     parent.removeChild( node );
                     node = parent;
+                    walker.currentNode = parent;
                 } while ( isInline( node ) && !getLength( node ) );
                 break;
             } else {
@@ -3785,7 +3786,7 @@ proto.setTextColour = function ( colour ) {
         tag: 'SPAN',
         attributes: {
             'class': 'colour',
-            style: 'color: ' + colour
+            style: 'color:' + colour
         }
     }, {
         tag: 'SPAN',
@@ -3799,7 +3800,7 @@ proto.setHighlightColour = function ( colour ) {
         tag: 'SPAN',
         attributes: {
             'class': 'highlight',
-            style: 'background-color: ' + colour
+            style: 'background-color:' + colour
         }
     }, {
         tag: 'SPAN',

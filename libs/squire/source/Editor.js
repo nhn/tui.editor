@@ -1654,7 +1654,7 @@ proto.setTextColour = function ( colour ) {
         tag: 'SPAN',
         attributes: {
             'class': 'colour',
-            style: 'color: ' + colour
+            style: 'color:' + colour
         }
     }, {
         tag: 'SPAN',
@@ -1668,7 +1668,7 @@ proto.setHighlightColour = function ( colour ) {
         tag: 'SPAN',
         attributes: {
             'class': 'highlight',
-            style: 'background-color: ' + colour
+            style: 'background-color:' + colour
         }
     }, {
         tag: 'SPAN',

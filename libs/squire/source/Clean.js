@@ -16,7 +16,7 @@ var spanToSemantic = {
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
                 'class': 'highlight',
-                style: 'background-color: ' + colour
+                style: 'background-color:' + colour
             });
         }
     },
