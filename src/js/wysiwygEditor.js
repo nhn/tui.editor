@@ -34,6 +34,8 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
 
+    this._height = 0;
+
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
 }
@@ -138,10 +140,6 @@ WysiwygEditor.prototype._initEvent = function() {
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
 
-    this.getEditor().addEventListener('input', function() {
-        self.eventManager.emit('contentChangedFromWysiwyg', self);
-    });
-
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'wysiwyg',
@@ -178,6 +176,9 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('changeFromWysiwyg', eventObj);
         self.eventManager.emit('change', eventObj);
+        self.eventManager.emit('contentChangedFromWysiwyg', self);
+
+        self._autoResizeHeightIfNeed();
     });
 
     this.getEditor().addEventListener('keydown', function(event) {
@@ -275,6 +276,16 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             self.eventManager.emit('command', 'IncreaseTask');
         }
     }
+};
+
+WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
+    if (this._height === 'auto') {
+        this._heightToFitContents();
+    }
+};
+
+WysiwygEditor.prototype._heightToFitContents = function() {
+    this.$editorContainerEl.height(this.get$Body()[0].scrollHeight);
 };
 
 WysiwygEditor.prototype._isInOrphanText = function(selection) {
@@ -421,7 +432,15 @@ WysiwygEditor.prototype.remove = function() {
 };
 
 WysiwygEditor.prototype.setHeight = function(height) {
-    this.$editorContainerEl.height(height);
+    this._height = height;
+
+    if (height === 'auto') {
+        this.get$Body().css('overflow', 'hidden');
+        this._heightToFitContents();
+    } else {
+        this.get$Body().css('overflow', 'visible');
+        this.$editorContainerEl.height(height);
+    }
 };
 
 WysiwygEditor.prototype.setValue = function(html) {

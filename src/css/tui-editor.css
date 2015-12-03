@@ -31,12 +31,12 @@
 
 .mdContainer .editor,
 .mdContainer .preview {
-    height:400px;
     box-sizing: border-box;
 }
 .mdContainer .CodeMirror {
     height: 100%;
 }
+
 .mdContainer .preview {
     padding: 0;
     overflow: auto;
@@ -53,17 +53,6 @@
 .tui-editor .preview-style-tab>.active {
     display: block;
 }
-.tui-editor .preview-style-vertical>.editor,
-.tui-editor .preview-style-vertical>.preview {
-    width: 50%;
-}
-.tui-editor .preview-style-vertical>.editor {
-    float: left;
-    border-right: 1px solid #ccc;
-}
-.tui-editor .preview-style-vertical>.preview {
-    float: right;
-}
 
 .tui-editor .preview-style-vertical>.tabSection {
     display: none;
@@ -76,12 +65,25 @@
 .tui-editor .preview-style-vertical .editor {
     float: left;
     width: 50%;
-    border-right: 1px solid #ccc;
 }
 
 .tui-editor .preview-style-vertical .preview {
     float: left;
     width: 50%;
+}
+
+.tui-editor .splitter {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    border-left: 1px dashed #ccc;
+}
+
+.tui-editor .preview-style-vertical .splitter {
+    display: block;
 }
 
 .editor iframe {
@@ -204,7 +206,7 @@
 }
 .markdownTabSection .tab{
     padding: 0 5px;
-    background: #eee;
+    background: #f5f5f7;
 }
 .tui-editor-defaultUI .tab button {
     box-sizing: border-box;

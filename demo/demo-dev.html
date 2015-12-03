@@ -32,7 +32,7 @@
 
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
-        height: 500,
+        height: 504,
         //initialValue: 'a\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\na\nb\nc\nd\ne\nf\ng\n\n',
         //initialValue: 'test1\ntest2\ntest3\ntest4',
         contentCSSStyles: [
@@ -46,7 +46,7 @@
                 done([1,2,3]);
             }
         },
-        exts: ['scrollFollow', 'colorSyntax', 'textPalette'],
+        exts: ['scrollFollow', 'colorSyntax'],
         hooks: {
             'previewBeforeHook': function($dom) {
                 //console.log('previewBeforeHook', $dom);

@@ -9,6 +9,7 @@ var containerTmpl = [
     '<div class="tui-editor">',
         '<div class="mdContainer">',
             '<div class="editor" />',
+            '<div class="splitter" />',
             '<div class="preview tui-editor-contents" />',
         '</div>',
         '<div class="wysiwygContainer">',
