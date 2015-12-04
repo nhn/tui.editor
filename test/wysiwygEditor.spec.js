@@ -233,70 +233,111 @@ describe('WysiwygEditor', function() {
         expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
     });
 
-    describe('_unformatTaskIfNeedOnBackspace()', function() {
-        it('remove input if current selection is right of input with one space', function() {
+    fdescribe('Table', function() {
+        it('_isInTable() check if passed range is in table', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
-
-            range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
+            wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead><tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
+            range.setStart(wwe.get$Body().find('td')[0], 0);
             range.collapse(true);
-            wwe._unformatTaskIfNeedOnBackspace(range);
 
-            expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
-        });
-
-        it('remove input if current selection is right of input with one space wrapped inline tag', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><b>&nbsp;text</b></li></ul>');
-
-            range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
-            range.collapse(true);
-            wwe._unformatTaskIfNeedOnBackspace(range);
-
-            //replace하는것은 ie때문
-            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
-        });
-
-        it('remove input if current selection has placed at start of task item', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
-
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
-            range.collapse(true);
-            wwe._unformatTaskIfNeedOnBackspace(range);
-
-            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
-        });
-
-        it('dont remove necessary input', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
-
-            range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
-            range.collapse(true);
-            wwe._unformatTaskIfNeedOnBackspace(range);
-
-            expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
+            expect(wwe._isInTable()).toEqual(true);
         });
     });
 
-    describe('_unformatTaskIfNeedOnEnter()', function() {
-        it('remove input if current selection is right of input with one space', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('Task', function() {
+        describe('_unformatTaskIfNeedOnBackspace()', function() {
+            it('remove input if current selection is right of input with one space', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
+                wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
-            range.collapse(true);
-            wwe._unformatTaskIfNeedOnEnter(range);
+                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnBackspace(range);
 
-            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
+                expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
+            });
+
+            it('remove input if current selection is right of input with one space wrapped inline tag', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><b>&nbsp;text</b></li></ul>');
+
+                range.setStart(wwe.getEditor().getDocument().getElementsByTagName('B')[0].firstChild, 1);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnBackspace(range);
+
+                //replace하는것은 ie때문
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
+            });
+
+            it('remove input if current selection has placed at start of task item', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnBackspace(range);
+
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
+            });
+
+            it('dont remove necessary input', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox"> text<b>a</b></li></ul>');
+
+                range.selectNodeContents(wwe.getEditor().getDocument().getElementsByTagName('B')[0]);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnBackspace(range);
+
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
+            });
+        });
+
+        describe('_unformatTaskIfNeedOnEnter()', function() {
+            it('remove input if current selection is right of input with one space', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
+
+                range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnEnter(range);
+
+                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
+            });
+        });
+        describe('_removeTaskInputInWrongPlace', function() {
+            it('remove inputbox in wrong parent', function() {
+                wwe.get$Body().html('<ul><li><input type="checkbox" /></li></ul>');
+
+                wwe._removeTaskInputInWrongPlace();
+
+                expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
+            });
+
+            it('remove inputbox in wrong place', function() {
+                wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
+
+                wwe._removeTaskInputInWrongPlace();
+
+                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
+            });
+        });
+
+        describe('_unformatIncompleteTask', function() {
+            it('if wysiwyg contents has incomplete task then make it list', function() {
+                wwe.getEditor().setHTML('<ul><li class="task-list-item">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+
+                wwe._unformatIncompleteTask();
+
+                expect(wwe.getEditor().getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+            });
         });
     });
+
 
     describe('_removeHrIfNeed()', function() {
         //같은 부모의 이전 offset의 엘리먼트가 hr일때
@@ -368,23 +409,6 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('_removeTaskInputInWrongPlace', function() {
-        it('remove inputbox in wrong parent', function() {
-            wwe.get$Body().html('<ul><li><input type="checkbox" /></li></ul>');
-
-            wwe._removeTaskInputInWrongPlace();
-
-            expect(wwe.getValue()).toEqual('<ul><li></li></ul>');
-        });
-
-        it('remove inputbox in wrong place', function() {
-            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"> text<input type="checkbox"></li></ul>');
-
-            wwe._removeTaskInputInWrongPlace();
-
-            expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
-        });
-    });
 
     describe('breakToNewDefaultBlock()', function() {
         it('make new defulatBlock then move selection to it', function() {
@@ -501,16 +525,6 @@ describe('WysiwygEditor', function() {
             expect(document.activeElement).not.toBe(wwe.$iframe[0]);
             wwe.focus();
             expect(document.activeElement).toBe(wwe.$iframe[0]);
-        });
-    });
-
-    describe('_unformatIncompleteTask', function() {
-        it('if wysiwyg contents has incomplete task then make it list', function() {
-            wwe.getEditor().setHTML('<ul><li class="task-list-item">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
-
-            wwe._unformatIncompleteTask();
-
-            expect(wwe.getEditor().getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
         });
     });
 });
