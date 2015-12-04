@@ -229,9 +229,9 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     console.log('startContainer.previousSibling', range.startContainer.previousSibling);
     console.log('startContainer.nextSibling', range.startContainer.nextSibling);
     if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-        console.dir('currentPosition', range.startContainer.childNodes[range.startOffset]);
+        console.log('currentPosition', range.startContainer.childNodes[range.startOffset]);
     } else {
-        console.dir('currentPosition', range.startContainer.nodeValue[range.startOffset]);
+        console.log('currentPosition', range.startContainer.nodeValue[range.startOffset]);
     }
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
@@ -257,6 +257,17 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
+        } else if (range.startOffset !== 0
+            && domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1)) === 'TABLE'
+        ) {
+            //커서가 테이블 바로 다음에 있을때
+            event.preventDefault();
+            range.setStart(range.startContainer, range.startOffset - 1);
+            this.breakToNewDefaultBlock(range);
+        } else if (domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset)) === 'TABLE') {
+            //커서가 테이블 바로 이전에 있을때
+            event.preventDefault();
+            this.breakToNewDefaultBlock(range, 'before');
         }
     //backspace
     } else if (event.keyCode === 8) {
@@ -265,6 +276,15 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
+            } else if (this._isInTable()) {
+                //td나 th안에서 제일 처음에 커서가 있을때는 backspace취소
+                if (range.startOffset === 0 || range.startContainer.textContent === '') {
+                    event.preventDefault();
+
+                    if (domUtils.getNodeName(range.startContainer.childNodes[range.startOffset - 1]) === 'BR') {
+                        $(range.startContainer.childNodes[range.startOffset - 1]).remove();
+                    }
+                }
             } else {
                 this._removeHrIfNeed(range, event);
             }
@@ -821,4 +841,9 @@ WysiwygEditor.prototype.postProcessForChange = function() {
         self = null;
     }, 0);
 };
+
+WysiwygEditor.prototype._isInTable = function() {
+    return !!this.hasFormatWithRx(/TABLE/);
+};
+
 module.exports = WysiwygEditor;
