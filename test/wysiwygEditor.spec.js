@@ -233,7 +233,7 @@ describe('WysiwygEditor', function() {
         expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
     });
 
-    fdescribe('Table', function() {
+    describe('Table', function() {
         it('_isInTable() check if passed range is in table', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
             wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead><tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
