@@ -27,7 +27,7 @@ var nextTypeString = ['WYSIWYG', 'Markdown'],
 function ModeSwitch(initialType) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'modeSwitch'
+        className: 'te-mode-switch'
     });
 
     this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
@@ -40,7 +40,7 @@ ModeSwitch.prototype = util.extend(
 );
 
 ModeSwitch.prototype._render = function() {
-    this.$button = $('<button class="switchButton" type="button" />');
+    this.$button = $('<button class="te-switch-button" type="button" />');
     this._setButtonTitle();
     this.$el.append(this.$button);
 

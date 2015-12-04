@@ -77,7 +77,7 @@ describe('Tab', function() {
 
             $clickedButton.trigger('click');
 
-            expect($clickedButton.hasClass('active')).toBe(true);
+            expect($clickedButton.hasClass('te-tab-active')).toBe(true);
         });
 
         it('기존버튼은 active클래스가 사라지고 새로 클릭된 버튼에 active가 존재한다', function() {
@@ -90,8 +90,8 @@ describe('Tab', function() {
             $clickedButton1.trigger('click');
             $clickedButton2.trigger('click');
 
-            expect($clickedButton1.hasClass('active')).not.toBe(true);
-            expect($clickedButton2.hasClass('active')).toBe(true);
+            expect($clickedButton1.hasClass('te-tab-active')).not.toBe(true);
+            expect($clickedButton2.hasClass('te-tab-active')).toBe(true);
         });
     });
 
@@ -119,11 +119,11 @@ describe('Tab', function() {
 
             buttons = $('button');
 
-            expect($(buttons[1]).hasClass('active')).toBe(true);
+            expect($(buttons[1]).hasClass('te-tab-active')).toBe(true);
         });
 
         it('해당 섹션에 active클래스가 추가되어있다', function() {
-            expect($('div').eq(1).hasClass('active')).toBe(true);
+            expect($('div').eq(1).hasClass('te-tab-active')).toBe(true);
         });
     });
 
@@ -147,15 +147,15 @@ describe('Tab', function() {
 
         it('섹션에 .active 클래스가 추가된다', function() {
             $('button').eq(1).trigger('click');
-            expect(tabSection2.hasClass('active')).toBe(true);
+            expect(tabSection2.hasClass('te-tab-active')).toBe(true);
         });
 
         it('기본섹션의  .active 클래스는 삭제되고 새로 선택된 섹션에 추가된다', function() {
             $('button').eq(0).trigger('click');
             $('button').eq(1).trigger('click');
 
-            expect(tabSection1.hasClass('active')).toBe(false);
-            expect(tabSection2.hasClass('active')).toBe(true);
+            expect(tabSection1.hasClass('te-tab-active')).toBe(false);
+            expect(tabSection2.hasClass('te-tab-active')).toBe(true);
         });
     });
 
@@ -171,7 +171,7 @@ describe('Tab', function() {
         it('특정 버튼을 활성화한다', function() {
             tab.activate('tab1');
 
-            expect($('button:contains("tab1")').hasClass('active')).toBe(true);
+            expect($('button:contains("tab1")').hasClass('te-tab-active')).toBe(true);
         });
     });
 });

@@ -13,7 +13,7 @@ var util = tui.util,
     LAYOUT_TEMPLATE = [
         '<div class="' + CLASS_PREFIX + 'header">',
         '<span class="' + CLASS_PREFIX + 'title"></span>',
-        '<button class="' + CLASS_PREFIX + 'closeButton">x</button>',
+        '<button class="' + CLASS_PREFIX + 'close-button">x</button>',
         '</div>',
         '<div class="' + CLASS_PREFIX + 'body"></div>'
     ].join('');
@@ -166,7 +166,7 @@ LayerPopup.prototype._detachOpenerCloserEvent = function() {
 LayerPopup.prototype._attachPopupControlEvent = function() {
     var self = this;
 
-    this.on('click ' + this._getFullClassName('closeButton'), function() {
+    this.on('click ' + this._getFullClassName('close-button'), function() {
         self.hide();
     });
 };

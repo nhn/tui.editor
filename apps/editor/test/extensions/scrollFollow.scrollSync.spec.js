@@ -22,8 +22,8 @@ describe('scrollFollow.ScrollSync', function() {
             events: {
                 'load': function(editor) {
                     editor.getCodeMirror().setSize(200, 50);
-                    $('.preview').css('padding', '0');
-                    $('.preview').css('overflow', 'auto');
+                    $('.te-preview').css('padding', '0');
+                    $('.te-preview').css('overflow', 'auto');
                     sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
                     scrollSync = new ScrollSync(sectionManager, editor.getCodeMirror(), editor.preview.$el);
                     done();

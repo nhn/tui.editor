@@ -19,11 +19,11 @@ describe('PopupAddImage', function() {
 
     describe('생성', function() {
         it('PopupAddImage클래스가 추가되었다', function() {
-            expect(popup.$el.hasClass('popupAddImage')).toBe(true);
+            expect(popup.$el.hasClass('te-popup-add-image')).toBe(true);
         });
         it('버튼들이 생성되었다', function() {
-            expect(popup.$el.find('.closeButton').length).toEqual(1);
-            expect(popup.$el.find('.okButton').length).toEqual(1);
+            expect(popup.$el.find('.te-close-button').length).toEqual(1);
+            expect(popup.$el.find('.te-ok-button').length).toEqual(1);
         });
     });
 
@@ -37,7 +37,7 @@ describe('PopupAddImage', function() {
         it('ok버튼을 누르면 okButtonClicked이벤트가 발생한다', function() {
             popup.on('okButtonClicked', handler);
 
-            $('.okButton').trigger('click');
+            $('.te-ok-button').trigger('click');
 
             expect(handler).toHaveBeenCalled();
         });
@@ -45,7 +45,7 @@ describe('PopupAddImage', function() {
         it('close버튼을 누르면 closeButtonClicked이벤트가 발생한다', function() {
             popup.on('closeButtonClicked', handler);
 
-            $('.closeButton').trigger('click');
+            $('.te-close-button').trigger('click');
 
             expect(handler).toHaveBeenCalled();
         });
@@ -66,10 +66,10 @@ describe('PopupAddImage', function() {
 
             em.listen('command', handler);
 
-            $('.imageUrlInput').val(value.imageUrl);
-            $('.altTextInput').val(value.altText);
+            $('.te-image-url-input').val(value.imageUrl);
+            $('.te-alt-text-input').val(value.altText);
 
-            $('.okButton').trigger('click');
+            $('.te-ok-button').trigger('click');
 
             expect(handler).toHaveBeenCalledWith('AddImage', value);
         });
@@ -95,31 +95,31 @@ describe('PopupAddImage', function() {
                     altText: 'altText'
                 };
 
-            $('.imageUrlInput').val('imageUrlText');
-            $('.altTextInput').val('altText');
+            $('.te-image-url-input').val('imageUrlText');
+            $('.te-alt-text-input').val('altText');
 
-            expect($('.imageUrlInput').val()).toEqual(value.imageUrl);
-            expect($('.altTextInput').val()).toEqual(value.altText);
+            expect($('.te-image-url-input').val()).toEqual(value.imageUrl);
+            expect($('.te-alt-text-input').val()).toEqual(value.altText);
         });
 
         it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 리셋된다', function() {
-            $('.imageUrlInput').val('imageUrlText');
-            $('.altTextInput').val('altText');
+            $('.te-image-url-input').val('imageUrlText');
+            $('.te-alt-text-input').val('altText');
 
             popup.hide();
 
-            expect($('.imageUrlInput').val()).toEqual('');
-            expect($('.altTextInput').val()).toEqual('');
+            expect($('.te-image-url-input').val()).toEqual('');
+            expect($('.te-alt-text-input').val()).toEqual('');
         });
 
         it('when tab has changed then reset inputs', function() {
-            $('.imageUrlInput').val('imageUrlText');
-            $('.altTextInput').val('altText');
+            $('.te-image-url-input').val('imageUrlText');
+            $('.te-alt-text-input').val('altText');
 
-            popup.$el.find('.tab button').eq(1).trigger('click');
+            popup.$el.find('.te-tab button').eq(1).trigger('click');
 
-            expect($('.imageUrlInput').val()).toEqual('');
-            expect($('.altTextInput').val()).toEqual('');
+            expect($('.te-image-url-input').val()).toEqual('');
+            expect($('.te-alt-text-input').val()).toEqual('');
         });
     });
 
@@ -129,7 +129,7 @@ describe('PopupAddImage', function() {
                 var hook = jasmine.createSpy('addImageBlobHook');
                 em.listen('addImageBlobHook', hook);
 
-                $('.okButton').trigger('click');
+                $('.te-ok-button').trigger('click');
 
                 expect(hook).toHaveBeenCalled();
             });
@@ -154,9 +154,9 @@ describe('PopupAddImage', function() {
                     }, 0);
                 });
 
-                $('.altTextInput').val(value.altText);
+                $('.te-alt-text-input').val(value.altText);
 
-                $('.okButton').trigger('click');
+                $('.te-ok-button').trigger('click');
             });
         });
     });

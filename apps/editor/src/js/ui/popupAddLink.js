@@ -11,12 +11,12 @@ var util = tui.util;
 
 var POPUP_CONTENT = [
     '<label for="linkText">Link Text</label>',
-    '<input type="text" class="linkTextInput" />',
+    '<input type="text" class="te-link-text-input" />',
     '<label for="url">URL</label>',
-    '<input type="text" class="urlInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
+    '<input type="text" class="te-url-input" />',
+    '<div class="te-button-section">',
+        '<button type="button" class="te-ok-button">OK</button>',
+        '<button type="button" class="te-close-button">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -32,7 +32,7 @@ var POPUP_CONTENT = [
 function PopupAddLink(options) {
     options = util.extend({
         title: 'Add Link',
-        className: 'popupAddLink tui-editor-popup',
+        className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -51,18 +51,18 @@ PopupAddLink.prototype = util.extend(
 PopupAddLink.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('click .okButton', function() {
+    this.on('click .te-ok-button', function() {
         self.trigger('okButtonClicked', this);
         self.hide();
     });
 
-    this.on('click .closeButton', function() {
+    this.on('click .te-close-button', function() {
         self.trigger('closeButtonClicked', this);
         self.hide();
     });
 
     this.on('shown', function() {
-        self.$el.find('.linkTextInput').focus();
+        self.$el.find('.te-link-text-input').focus();
     });
 
     this.on('hidden', function() {
@@ -93,8 +93,8 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 
 PopupAddLink.prototype.getValue = function() {
     return {
-        linkText: this.$el.find('.linkTextInput').val(),
-        url: this.$el.find('.urlInput').val()
+        linkText: this.$el.find('.te-link-text-input').val(),
+        url: this.$el.find('.te-url-input').val()
     };
 };
 

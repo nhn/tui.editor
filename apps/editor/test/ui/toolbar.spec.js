@@ -101,16 +101,17 @@ describe('Toolbar', function() {
         });
 
         it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {
-            expect($('.bold').length).toEqual(1);
-            expect($('.italic').length).toEqual(1);
-            expect($('.quote').length).toEqual(1);
-            expect($('.heading').length).toEqual(1);
-            expect($('.hrline').length).toEqual(1);
-            expect($('.link').length).toEqual(1);
-            expect($('.image').length).toEqual(1);
-            expect($('.ul').length).toEqual(1);
-            expect($('.ol').length).toEqual(1);
-            expect($('.task').length).toEqual(1);
+            expect($('.te-bold').length).toEqual(1);
+            expect($('.te-italic').length).toEqual(1);
+            expect($('.te-quote').length).toEqual(1);
+            expect($('.te-heading').length).toEqual(1);
+            expect($('.te-hrline').length).toEqual(1);
+            expect($('.te-link').length).toEqual(1);
+            expect($('.te-image').length).toEqual(1);
+            expect($('.te-ul').length).toEqual(1);
+            expect($('.te-ol').length).toEqual(1);
+            expect($('.te-task').length).toEqual(1);
+            expect($('.te-table').length).toEqual(1);
         });
     });
 });

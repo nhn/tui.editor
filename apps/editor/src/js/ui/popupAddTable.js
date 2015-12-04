@@ -10,12 +10,12 @@ var LayerPopup = require('./layerpopup');
 var util = tui.util;
 
 var POPUP_CONTENT = [
-    '<div class="tableSelection">',
-        '<div class="tableHeader"></div>',
-        '<div class="tableBody"></div>',
-        '<div class="selectionArea"></div>',
+    '<div class="te-table-selection">',
+        '<div class="te-table-header"></div>',
+        '<div class="te-table-body"></div>',
+        '<div class="te-selection-area"></div>',
     '</div>',
-    '<p class="description"></p>'
+    '<p class="te-description"></p>'
 ].join('');
 
 var CELL_WIDTH = 25,
@@ -41,7 +41,7 @@ var CELL_WIDTH = 25,
 function PopupAddTable(options) {
     options = util.extend({
         title: false,
-        className: 'popupAddTable',
+        className: 'te-popup-add-table',
         content: POPUP_CONTENT
     }, options);
 
@@ -66,23 +66,23 @@ PopupAddTable.prototype = util.extend(
 
 /**
  * _cacheElements
- * cache elements for use
+ * Cache elements for use
  */
 PopupAddTable.prototype._cacheElements = function() {
-    this.$header = this.$el.find('.tableHeader');
-    this.$body = this.$el.find('.tableBody');
-    this.$selection = this.$el.find('.selectionArea');
-    this.$desc = this.$el.find('.description');
+    this.$header = this.$el.find('.te-table-header');
+    this.$body = this.$el.find('.te-table-body');
+    this.$selection = this.$el.find('.te-selection-area');
+    this.$desc = this.$el.find('.te-description');
 };
 
 /**
  * _bindContentEvent
- * bind element events
+ * Bind element events
  */
 PopupAddTable.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('mousemove .tableSelection', function(ev) {
+    this.on('mousemove .te-table-selection', function(ev) {
         var x = ev.pageX - self._selectionOffset.left,
             y = ev.pageY - self._selectionOffset.top,
             bound;
@@ -96,7 +96,7 @@ PopupAddTable.prototype._bindContentEvent = function() {
         self._setSelectedBound(bound.col, bound.row);
     });
 
-    this.on('click .tableSelection', function() {
+    this.on('click .te-table-selection', function() {
         var tableSize = self._getSelectedTableSize();
         self.eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
     });
@@ -104,7 +104,7 @@ PopupAddTable.prototype._bindContentEvent = function() {
 
 /**
  * _linkWithEventManager
- * bind event manager event
+ * Bind event manager event
  */
 PopupAddTable.prototype._linkWithEventManager = function() {
     var self = this;
@@ -116,7 +116,7 @@ PopupAddTable.prototype._linkWithEventManager = function() {
     this.eventManager.listen('openPopupAddTable', function() {
         self.eventManager.emit('closeAllPopup');
         self.show();
-        self._selectionOffset = self.$el.find('.tableSelection').offset();
+        self._selectionOffset = self.$el.find('.te-table-selection').offset();
     });
 
     this.eventManager.listen('closeAllPopup', function() {
@@ -126,7 +126,7 @@ PopupAddTable.prototype._linkWithEventManager = function() {
 
 /**
  * _resizeTableBySelectionIfNeed
- * resize table if need
+ * Resize table if need
  * @param {number} col column index
  * @param {number} row row index
  */
@@ -140,7 +140,7 @@ PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row)  {
 
 /**
  * _getResizedTableBound
- * get resized table bound if Need
+ * Get resized table bound if Need
  * @param {number} col column index
  * @param {number} row row index
  * @return {object} bound
@@ -184,7 +184,7 @@ PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
 
 /**
  * _getBoundByOffset
- * get bound by offset
+ * Get bound by offset
  * @param {number} x offset
  * @param {number} y offset
  * @return {object} bound
@@ -201,7 +201,7 @@ PopupAddTable.prototype._getBoundByOffset = function(x, y) {
 
 /**
  * _getOffsetByBound
- * get offset by bound
+ * Get offset by bound
  * @param {number} col column index
  * @param {number} row row index
  * @return {object} offset
@@ -218,7 +218,7 @@ PopupAddTable.prototype._getOffsetByBound = function(col, row) {
 
 /**
  * _setTableSizeByBound
- * set table size with bound
+ * Set table size with bound
  * @param {number} col column index
  * @param {number} row row index
  */
@@ -231,7 +231,7 @@ PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
 
 /**
  * _getSelectionBoundByOffset
- * get selection bound that process with range by offset
+ * Get selection bound that process with range by offset
  * @param {number} x offset
  * @param {number} y offset
  * @return {object} bound
@@ -256,7 +256,7 @@ PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
 
 /**
  * _setSelectionAreaByBound
- * set selection area with bound
+ * Set selection area with bound
  * @param {number} col column index
  * @param {number} row row index
  */
@@ -270,7 +270,7 @@ PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
 
 /**
  * _setSelectedBound
- * set selected bound
+ * Set selected bound
  * @param {number} col column index
  * @param {number} row row index
  */
@@ -281,7 +281,7 @@ PopupAddTable.prototype._setSelectedBound = function(col, row) {
 
 /**
  * _getSelectedTableSize
- * get selected table size
+ * Get selected table size
  * @return {object} bound
  */
 PopupAddTable.prototype._getSelectedTableSize = function() {
@@ -293,7 +293,7 @@ PopupAddTable.prototype._getSelectedTableSize = function() {
 
 /**
  * _setDisplayText
- * set selected table size text for display
+ * Set selected table size text for display
  * @param {number} col column index
  * @param {number} row row index
  */
@@ -303,7 +303,7 @@ PopupAddTable.prototype._setDisplayText = function(col, row) {
 
 /**
  * _setTableSize
- * set table element size
+ * Set table element size
  * @param {number} x offset
  * @param {number} y offset
  */
@@ -328,7 +328,7 @@ PopupAddTable.prototype._setTableSize = function(x, y) {
 
 /**
  * _setSelectionArea
- * set selection element size
+ * Set selection element size
  * @param {number} x offset
  * @param {number} y offset
  */

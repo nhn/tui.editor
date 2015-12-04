@@ -31,7 +31,7 @@ var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
 function Tab(options) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'tab'
+        className: 'te-tab'
     });
 
     options = util.extend({}, options);
@@ -115,10 +115,10 @@ Tab.prototype._onButtonClick = function(ev) {
  */
 Tab.prototype._deactivate = function() {
     if (this._$activeButton) {
-        this._$activeButton.removeClass('active');
+        this._$activeButton.removeClass('te-tab-active');
 
         if (this.sections) {
-            this.sections[this._$activeButton.attr('data-index')].removeClass('active');
+            this.sections[this._$activeButton.attr('data-index')].removeClass('te-tab-active');
         }
     }
 };
@@ -130,7 +130,7 @@ Tab.prototype._deactivate = function() {
  */
 Tab.prototype._activateButton = function($button) {
     this._$activeButton = $button;
-    this._$activeButton.addClass('active');
+    this._$activeButton.addClass('te-tab-active');
 };
 
 /**
@@ -140,7 +140,7 @@ Tab.prototype._activateButton = function($button) {
  */
 Tab.prototype._activateSection = function(index) {
     if (this.sections) {
-        this.sections[index].addClass('active');
+        this.sections[index].addClass('te-tab-active');
     }
 };
 
