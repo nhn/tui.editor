@@ -277,14 +277,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             } else if (this._isInTable()) {
-                //td나 th안에서 제일 처음에 커서가 있을때는 backspace취소
-                if (range.startOffset === 0 || range.startContainer.textContent === '') {
-                    event.preventDefault();
-
-                    if (domUtils.getNodeName(range.startContainer.childNodes[range.startOffset - 1]) === 'BR') {
-                        $(range.startContainer.childNodes[range.startOffset - 1]).remove();
-                    }
-                }
+                this._tableHandlerOnBackspace(range, event);
             } else {
                 this._removeHrIfNeed(range, event);
             }
@@ -294,6 +287,18 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (this._isInTaskList(range)) {
             event.preventDefault();
             self.eventManager.emit('command', 'IncreaseTask');
+        }
+    }
+};
+
+WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
+    //td나 th안에서 제일 처음에 커서가 있을때는 backspace취소
+    //td안에서는 startOffset이 0이면 무조건 해당위치의 td를 지움
+    if (range.startOffset === 0 || range.startContainer.textContent === '') {
+        event.preventDefault();
+
+        if (domUtils.getNodeName(range.startContainer.childNodes[range.startOffset - 1]) === 'BR') {
+            $(range.startContainer.childNodes[range.startOffset - 1]).remove();
         }
     }
 };
