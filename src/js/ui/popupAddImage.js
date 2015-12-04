@@ -11,20 +11,20 @@ var LayerPopup = require('./layerpopup'),
 var util = tui.util;
 
 var POPUP_CONTENT = [
-    '<div class="tabSection"></div>',
-    '<div class="urlType">',
+    '<div class="te-tab-section"></div>',
+    '<div class="te-url-type">',
         '<label for="">Image URL</label>',
-        '<input type="text" class="imageUrlInput" />',
+        '<input type="text" class="te-image-url-input" />',
     '</div>',
-    '<form enctype="multipart/form-data" class="fileType">',
+    '<form enctype="multipart/form-data" class="te-file-type">',
         '<label for="">Image File</label>',
-        '<input type="file" class="imageFileInput" accept="image/*" />',
+        '<input type="file" class="te-image-file-input" accept="image/*" />',
     '</form>',
     '<label for="url">Alt Text</label>',
-    '<input type="text" class="altTextInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
+    '<input type="text" class="te-alt-text-input" />',
+    '<div class="te-button-section">',
+        '<button type="button" class="te-ok-button">OK</button>',
+        '<button type="button" class="te-close-button">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -40,7 +40,7 @@ var POPUP_CONTENT = [
 function PopupAddImage(options) {
     options = util.extend({
         title: 'Add Image',
-        className: 'popupAddImage tui-editor-popup',
+        className: 'te-popup-add-image tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -63,18 +63,18 @@ PopupAddImage.prototype = util.extend(
 PopupAddImage.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('click .okButton', function() {
+    this.on('click .te-ok-button', function() {
         self.trigger('okButtonClicked', this);
         self.hide();
     });
 
-    this.on('click .closeButton', function() {
+    this.on('click .te-close-button', function() {
         self.trigger('closeButtonClicked', this);
         self.hide();
     });
 
     this.on('shown', function() {
-        self.$el.find('.imageUrlInput').focus();
+        self.$el.find('.te-image-url-input').focus();
     });
 
     this.on('hidden', function() {
@@ -85,9 +85,9 @@ PopupAddImage.prototype._bindContentEvent = function() {
         self.resetInputs();
     });
 
-    this.on('change .imageFileInput', function() {
-        var filename = self.$el.find('.imageFileInput').val().split('\\').pop();
-        self.$el.find('.altTextInput').val(filename);
+    this.on('change .te-image-file-input', function() {
+        var filename = self.$el.find('.te-image-file-input').val().split('\\').pop();
+        self.$el.find('.te-alt-text-input').val(filename);
     });
 };
 
@@ -111,8 +111,8 @@ PopupAddImage.prototype._linkWithEventManager = function() {
         if (self._isUrlType()) {
             self.applyImage();
         } else {
-            self._preAltValue = self.$el.find('.altTextInput').val();
-            self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
+            self._preAltValue = self.$el.find('.te-alt-text-input').val();
+            self.eventManager.emit('addImageBlobHook', self.$el.find('.te-image-file-input')[0].files[0], self.applyImage);
         }
     });
 };
@@ -135,7 +135,7 @@ PopupAddImage.prototype._initApplyImageBindContext = function() {
 };
 
 PopupAddImage.prototype._isUrlType = function() {
-    return !!this.$el.find('.imageUrlInput').val();
+    return !!this.$el.find('.te-image-url-input').val();
 };
 
 /**
@@ -150,10 +150,10 @@ PopupAddImage.prototype._renderContent = function() {
     this.tab = new Tab({
         initName: 'File',
         items: ['File', 'URL'],
-        sections: [$popup.find('.fileType'), $popup.find('.urlType')]
+        sections: [$popup.find('.te-file-type'), $popup.find('.te-url-type')]
     });
 
-    this.$body.find('.tabSection').append(this.tab.$el);
+    this.$body.find('.te-tab-section').append(this.tab.$el);
 };
 
 PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
@@ -163,8 +163,8 @@ PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
 };
 
 PopupAddImage.prototype._getImageInfo = function() {
-    var imageUrl = this.$el.find('.imageUrlInput').val(),
-    altText = this.$el.find('.altTextInput').val();
+    var imageUrl = this.$el.find('.te-image-url-input').val(),
+    altText = this.$el.find('.te-alt-text-input').val();
 
     return this._makeImageInfo(imageUrl, altText);
 };

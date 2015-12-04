@@ -1,9 +1,9 @@
+'use strict';
+
 var PopupAddLink = require('../../src/js/ui/popupAddLink'),
     EventManager = require('../../src/js/eventManager');
 
 describe('PopupAddLink', function() {
-    'use strict';
-
     var popup,
         em;
 
@@ -19,11 +19,11 @@ describe('PopupAddLink', function() {
 
     describe('생성', function() {
         it('popupAddLink클래스가 추가되었다', function() {
-            expect(popup.$el.hasClass('popupAddLink')).toBe(true);
+            expect(popup.$el.hasClass('te-popup-add-link')).toBe(true);
         });
         it('버튼들이 생성되었다', function() {
-            expect(popup.$el.find('.closeButton').length).toEqual(1);
-            expect(popup.$el.find('.okButton').length).toEqual(1);
+            expect(popup.$el.find('.te-close-button').length).toEqual(1);
+            expect(popup.$el.find('.te-ok-button').length).toEqual(1);
         });
     });
 
@@ -37,7 +37,7 @@ describe('PopupAddLink', function() {
         it('ok버튼을 누르면 okButtonClicked이벤트가 발생한다', function() {
             popup.on('okButtonClicked', handler);
 
-            $('.okButton').trigger('click');
+            $('.te-ok-button').trigger('click');
 
             expect(handler).toHaveBeenCalled();
         });
@@ -45,7 +45,7 @@ describe('PopupAddLink', function() {
         it('close버튼을 누르면 closeButtonClicked이벤트가 발생한다', function() {
             popup.on('closeButtonClicked', handler);
 
-            $('.closeButton').trigger('click');
+            $('.te-close-button').trigger('click');
 
             expect(handler).toHaveBeenCalled();
         });
@@ -65,10 +65,10 @@ describe('PopupAddLink', function() {
                 };
 
             em.listen('command', handler);
-            $('.linkTextInput').val(value.linkText);
-            $('.urlInput').val(value.url);
+            $('.te-link-text-input').val(value.linkText);
+            $('.te-url-input').val(value.url);
 
-            $('.okButton').trigger('click');
+            $('.te-ok-button').trigger('click');
 
             expect(handler).toHaveBeenCalledWith('AddLink', value);
         });
@@ -91,8 +91,8 @@ describe('PopupAddLink', function() {
         it('getValue()로 입력된 값들을 객체형식으로 받는다', function() {
             var value;
 
-            $('.linkTextInput').val('myLinkText');
-            $('.urlInput').val('myUrl');
+            $('.te-link-text-input').val('myLinkText');
+            $('.te-url-input').val('myUrl');
 
             value = popup.getValue();
 
@@ -103,8 +103,8 @@ describe('PopupAddLink', function() {
         it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
             var value;
 
-            $('.linkTextInput').val('myLinkText');
-            $('.urlInput').val('myUrl');
+            $('.te-link-text-input').val('myLinkText');
+            $('.te-url-input').val('myUrl');
 
             popup.hide();
             value = popup.getValue();

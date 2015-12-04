@@ -1,8 +1,8 @@
+'use strict';
+
 var Layerpopup = require('../../src/js/ui/layerpopup');
 
 describe('Layerpopup', function() {
-    'use strict';
-
     var CLASS_PREFIX = Layerpopup.CLASS_PREFIX;
 
     beforeEach(function() {
@@ -63,7 +63,7 @@ describe('Layerpopup', function() {
             expect(popup.$target.find('.' + CLASS_PREFIX + 'wrapper').length).toBe(1);
             expect(popup.$target.find('.' + CLASS_PREFIX + 'header').length).toBe(1);
             expect(popup.$target.find('.' + CLASS_PREFIX + 'body').length).toBe(1);
-            expect(popup.$target.find('.' + CLASS_PREFIX + 'closeButton').length).toBe(1);
+            expect(popup.$target.find('.' + CLASS_PREFIX + 'close-button').length).toBe(1);
         });
 
         it('className을 옵션으로 전달하면 래퍼 엘리먼트에 해당 클래스네임을 추가한다', function() {
@@ -192,7 +192,7 @@ describe('Layerpopup', function() {
         });
     });
 
-    describe('내부의 ' + CLASS_PREFIX + 'closeButton란 클래스가 붙은 엘리먼트가 클릭되면 팝업이 닫힌다', function() {
+    describe('내부의 ' + CLASS_PREFIX + 'close-button란 클래스가 붙은 엘리먼트가 클릭되면 팝업이 닫힌다', function() {
         var popup;
 
         beforeEach(function() {
@@ -204,7 +204,7 @@ describe('Layerpopup', function() {
             popup.show();
             expect(popup.isShow()).toBe(true);
 
-            $('.' + CLASS_PREFIX + 'closeButton').trigger('click');
+            $('.' + CLASS_PREFIX + 'close-button').trigger('click');
             expect(popup.isShow()).toBe(false);
         });
     });
@@ -320,8 +320,8 @@ describe('Layerpopup', function() {
             expect(popup.isShow()).toBe(false);
         });
 
-        it('closeButton이벤트가 발생하지 않는다', function() {
-            var button = $('.' + CLASS_PREFIX + 'closeButton');
+        it('close-button이벤트가 발생하지 않는다', function() {
+            var button = $('.' + CLASS_PREFIX + 'close-button');
             popup.show();
             popup.remove();
             button.trigger('click');

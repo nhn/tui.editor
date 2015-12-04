@@ -7,13 +7,13 @@
 
 var containerTmpl = [
     '<div class="tui-editor">',
-        '<div class="mdContainer">',
-            '<div class="editor" />',
-            '<div class="splitter" />',
-            '<div class="preview tui-editor-contents" />',
+        '<div class="te-md-container">',
+            '<div class="te-editor" />',
+            '<div class="te-md-splitter" />',
+            '<div class="te-preview tui-editor-contents" />',
         '</div>',
-        '<div class="wysiwygContainer">',
-            '<div class="editor" />',
+        '<div class="te-ww-container">',
+            '<div class="te-editor" />',
         '</div>',
     '</div>'
 ].join('');
@@ -54,32 +54,32 @@ Layout.prototype._renderLayout = function() {
 };
 
 Layout.prototype.switchToWYSIWYG = function() {
-    this.$containerEl.removeClass('markdownMode');
-    this.$containerEl.addClass('wysiwygMode');
+    this.$containerEl.removeClass('te-md-mode');
+    this.$containerEl.addClass('te-ww-mode');
 };
 
 Layout.prototype.switchToMarkdown = function() {
-    this.$containerEl.removeClass('wysiwygMode');
-    this.$containerEl.addClass('markdownMode');
+    this.$containerEl.removeClass('te-ww-mode');
+    this.$containerEl.addClass('te-md-mode');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
-    this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
-    this.$previewEl = this.$containerEl.find('.mdContainer .preview');
+    this.$mdEditorContainerEl = this.$containerEl.find('.te-md-container .te-editor');
+    this.$previewEl = this.$containerEl.find('.te-md-container .te-preview');
 };
 
 Layout.prototype._initWysiwygSection = function() {
-    this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
+    this.$wwEditorContainerEl = this.$containerEl.find('.te-ww-container .te-editor');
 };
 
 Layout.prototype._verticalSplitStyle = function() {
-    this.$containerEl.find('.mdContainer').removeClass('preview-style-tab');
-    this.$containerEl.find('.mdContainer').addClass('preview-style-vertical');
+    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-tab');
+    this.$containerEl.find('.te-md-container').addClass('te-preview-style-vertical');
 };
 
 Layout.prototype._tabStyle = function() {
-    this.$containerEl.find('.mdContainer').removeClass('preview-style-vertical');
-    this.$containerEl.find('.mdContainer').addClass('preview-style-tab');
+    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-vertical');
+    this.$containerEl.find('.te-md-container').addClass('te-preview-style-tab');
 };
 
 Layout.prototype.changePreviewStyle = function(style) {
@@ -91,11 +91,11 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.tui-editor').addClass('hide');
+    this.$el.find('.tui-editor').addClass('te-hide');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.tui-editor').removeClass('hide');
+    this.$el.find('.tui-editor').removeClass('te-hide');
 };
 
 Layout.prototype.remove = function() {

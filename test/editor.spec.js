@@ -23,9 +23,9 @@ describe('Editor', function() {
         describe('contentHeight()', function() {
             it('set content height', function() {
                 editor.contentHeight(500);
-                expect($('.mdContainer .editor').height()).toEqual(500);
-                expect($('.preview').height()).toEqual(500);
-                expect($('.wysiwygContainer .editor').height()).toEqual(500);
+                expect($('.te-md-container .te-editor').height()).toEqual(500);
+                expect($('.te-preview').height()).toEqual(500);
+                expect($('.te-ww-container .te-editor').height()).toEqual(500);
             });
 
             it('get content height', function() {
@@ -33,18 +33,18 @@ describe('Editor', function() {
             });
 
             it('set content height "auto" to fit contents height of wysiwyg', function() {
-                var height = $('.wysiwygContainer .editor').height();
+                var height = $('.te-ww-container .te-editor').height();
                 editor.contentHeight('auto');
                 editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
-                expect($('.wysiwygContainer .editor').height()).not.toEqual(height);
+                expect($('.te-ww-container .te-editor').height()).not.toEqual(height);
             });
 
             it('set content height "auto" to fit contents height of markdown', function() {
-                var height = $('.mdContainer .editor').height();
+                var height = $('.te-md-container .te-editor').height();
                 editor.changeMode('markdown');
                 editor.contentHeight('auto');
                 editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
-                expect($('.mdContainer .editor').height()).not.toEqual(height);
+                expect($('.te-md-container .te-editor').height()).not.toEqual(height);
             });
         });
     });

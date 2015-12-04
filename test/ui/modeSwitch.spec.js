@@ -1,8 +1,8 @@
+'use strict';
+
 var ModeSwitch = require('../../src/js/ui/modeSwitch');
 
 describe('ModeSwitch', function() {
-    'use strict';
-
     beforeEach(function() {
         $('body').empty();
     });
@@ -11,23 +11,23 @@ describe('ModeSwitch', function() {
         var modeSwitch = new ModeSwitch();
         $('body').append(modeSwitch.$el);
 
-        expect($('.modeSwitch').length).toEqual(1);
+        expect($('.te-mode-switch').length).toEqual(1);
     });
 
     it('버튼 한개를 만든다', function() {
         var modeSwitch = new ModeSwitch();
         $('body').append(modeSwitch.$el);
 
-        expect($('.modeSwitch button').length).toEqual(1);
-        expect($('.modeSwitch button').text()).toEqual('toWYSIWYG');
+        expect($('.te-mode-switch button').length).toEqual(1);
+        expect($('.te-mode-switch button').text()).toEqual('toWYSIWYG');
     });
 
     it('옵션으로 시작 타입을 결정할수 있다', function() {
         var modeSwitch = new ModeSwitch(ModeSwitch.TYPE.WYSIWYG);
         $('body').append(modeSwitch.$el);
 
-        expect($('.modeSwitch button').length).toEqual(1);
-        expect($('.modeSwitch button').text()).toEqual('toMarkdown');
+        expect($('.te-mode-switch button').length).toEqual(1);
+        expect($('.te-mode-switch button').text()).toEqual('toMarkdown');
     });
 
 
@@ -43,12 +43,12 @@ describe('ModeSwitch', function() {
 
         $('body').append(modeSwitch.$el);
 
-        expect($('.modeSwitch button').text()).toEqual('toWYSIWYG');
+        expect($('.te-mode-switch button').text()).toEqual('toWYSIWYG');
 
 
         $('button').trigger('click');
 
-        expect($('.modeSwitch button').text()).toEqual('toMarkdown');
+        expect($('.te-mode-switch button').text()).toEqual('toMarkdown');
         expect(switchedType).toEqual(ModeSwitch.TYPE.WYSIWYG);
         expect(switchedTypeText).toEqual('wysiwyg');
     });

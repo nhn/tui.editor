@@ -78,67 +78,67 @@ Toolbar.prototype.addButton = function(button) {
  */
 Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
-        className: 'bold',
+        className: 'te-bold',
         command: 'Bold',
         text: 'B'
     }));
 
     this.addButton(new Button({
-        className: 'italic',
+        className: 'te-italic',
         command: 'Italic',
         text: 'I'
     }));
 
     this.addButton(new Button({
-        className: 'quote',
+        className: 'te-quote',
         command: 'Blockquote',
         text: 'Q'
     }));
 
     this.addButton(new Button({
-        className: 'heading',
+        className: 'te-heading',
         command: 'Heading',
         text: 'HH'
     }));
 
     this.addButton(new Button({
-        className: 'hrline',
+        className: 'te-hrline',
         command: 'HR',
         text: '\u035F'
     }));
 
     this.addButton(new Button({
-        className: 'link',
+        className: 'te-link',
         event: 'openPopupAddLink',
         text: 'A'
     }));
 
     this.addButton(new Button({
-        className: 'image',
+        className: 'te-image',
         event: 'openPopupAddImage',
         text: 'IMG'
     }));
 
     this.addButton(new Button({
-        className: 'ul',
+        className: 'te-ul',
         command: 'UL',
         text: 'UL'
     }));
 
     this.addButton(new Button({
-        className: 'ol',
+        className: 'te-ol',
         command: 'OL',
         text: 'OL'
     }));
 
     this.addButton(new Button({
-        className: 'task',
+        className: 'te-task',
         command: 'Task',
         text: '\u2611'
     }));
 
     this.addButton(new Button({
-        className: 'table',
+        className: 'te-table',
         event: 'openPopupAddTable',
         text: 'TABLE'
     }));
