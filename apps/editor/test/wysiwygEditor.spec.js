@@ -221,6 +221,11 @@ describe('WysiwygEditor', function() {
             wwe.setValue('<hr><h1>abcd</h1>');
             expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
         });
+
+        it('remove last br in td or th when getValue', function() {
+            wwe.setValue('<table><thead><tr><th>wef<br>wef<br></th></tr></thead><tbody><tr><td>waf<br>waef<br></td></tr></tbody></table>');
+            expect(wwe.getValue()).toEqual('<table><thead><tr><th>wef<br />wef</th></tr></thead><tbody><tr><td>waf<br />waef</td></tr></tbody></table>');
+        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {

@@ -597,6 +597,8 @@ WysiwygEditor.prototype.getValue = function() {
     html = html.replace(/<div>/g, '');
     html = html.replace(/<\/div>/g, '<br />');
 
+    //remove last br in td or th
+    html = html.replace(/\<br \/\>(\<\/td\>|\<\/th\>)/g, '$1');
 
     return html;
 };
