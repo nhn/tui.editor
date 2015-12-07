@@ -21,7 +21,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li,
+        var selection, $selected, $li, hasInput,
             sq = wwe.getEditor();
 
         if (!sq.hasFormat('li')) {
@@ -33,9 +33,10 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         $selected = $(selection.startContainer);
         $li = $selected.closest('li');
 
-        if ($li.find('input').length === 0) {
-            //todo modifyBlock로 커버가능할듯
-            wwe.saveSelection(selection);
+        hasInput = $li.children('input').length || $li.children('div').eq(0).children('input').length;
+
+        if (!hasInput) {
+            selection = wwe.insertSelectionMarker(selection);
 
             selection.setStart(selection.startContainer, 0);
             selection.collapse(true);
@@ -51,7 +52,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
             $li.addClass('task-list-item');
 
-            wwe.restoreSavedSelection();
+            wwe.restoreSelectionMarker();
         }
 
         sq.focus();

@@ -36,4 +36,20 @@ describe('Task', function() {
 
         expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul>');
     });
+
+    it('add input too if there is nested task list', function() {
+        var range = sq.getSelection().cloneRange();
+
+        sq.setHTML('<ul><li><div><br></div><ul><li><input type="checkbox"></li></ul>');
+
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+
+        sq.setSelection(range);
+
+        Task.exec(wwe);
+
+        expect(wwe.get$Body().find('input').length).toEqual(2);
+        expect(wwe.get$Body().find('div').eq(0).find('input').length).toEqual(1);
+    });
 });
