@@ -268,6 +268,8 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             //커서가 테이블 바로 이전에 있을때
             event.preventDefault();
             this.breakToNewDefaultBlock(range, 'before');
+        } else if (this._isInTable()) {
+            this._appendBrIfTdOrThNotHaveAsLastChild(range);
         }
     //backspace
     } else if (event.keyCode === 8) {
@@ -301,6 +303,15 @@ WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
         if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
             $(prevNode).remove();
         }
+    }
+};
+
+WysiwygEditor.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
+    var paths = $(range.startContainer).parentsUntil('tr'),
+    tdOrTh = paths[paths.length - 1];
+
+    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR') {
+        $(tdOrTh).append('<br>');
     }
 };
 
