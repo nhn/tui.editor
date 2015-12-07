@@ -104,12 +104,10 @@ Convertor.prototype.toMarkdown = function(html) {
 };
 
 Convertor.prototype._sanitizeScript = function(html) {
-    return html.replace(/\<script.*?\>.*?\<\/script\>/g, function(founded) {
-        founded = founded.replace(/\<script.*?\>/g, '&lt;script&gt;');
-        founded = founded.replace(/\<\/script\>/g, '&lt;/script&gt;');
+    html = html.replace(/\<script.*?\>/g, '&lt;script&gt;');
+    html = html.replace(/\<\/script\>/g, '&lt;/script&gt;');
 
-        return founded;
-    });
+    return html;
 };
 
 Convertor.factory = function(eventManager) {
