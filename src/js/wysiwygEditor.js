@@ -292,14 +292,14 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
 };
 
 WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
-    //td나 th안에서 제일 처음에 커서가 있을때는 backspace취소
-    //td안에서는 startOffset이 0이면 무조건 해당위치의 td를 지움
+    var prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
+        prevNodeName = domUtils.getNodeName(prevNode);
 
-    if (range.startOffset === 0 || range.startContainer.textContent === '') {
+    if (!prevNode || prevNodeName === 'BR' || prevNodeName === 'TD' || prevNodeName === 'TH') {
         event.preventDefault();
 
-        if (domUtils.getNodeName(range.startContainer.childNodes[range.startOffset - 1]) === 'BR') {
-            $(range.startContainer.childNodes[range.startOffset - 1]).remove();
+        if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+            $(prevNode).remove();
         }
     }
 };
