@@ -10,7 +10,7 @@ var containerTmpl = [
         '<div class="te-md-container">',
             '<div class="te-editor" />',
             '<div class="te-md-splitter" />',
-            '<div class="te-preview tui-editor-contents" />',
+            '<div class="te-preview" />',
         '</div>',
         '<div class="te-ww-container">',
             '<div class="te-editor" />',

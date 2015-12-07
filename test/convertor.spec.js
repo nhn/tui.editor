@@ -16,6 +16,11 @@ describe('Convertor', function() {
             expect(convertor.toHTML('# HELLO WORLD')).toEqual('<h1 id="hello-world">HELLO WORLD</h1>\n');
             expect(convertor.toHTMLWithCodeHightlight('# HELLO WORLD')).toEqual('<h1 id="hello-world">HELLO WORLD</h1>\n');
         });
+
+        it('sanitize script tags', function() {
+            expect(convertor.toHTML('<script>alert("test");</script>')).toEqual('&lt;script&gt;alert("test");&lt;/script&gt;');
+            expect(convertor.toHTMLWithCodeHightlight('<script>alert("test");</script>')).toEqual('&lt;script&gt;alert("test");&lt;/script&gt;');
+        });
     });
 
     describe('html to markdown', function() {

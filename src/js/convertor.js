@@ -74,7 +74,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-    return html;
+    return this._sanitizeScript(html);
 };
 
 /**
@@ -87,7 +87,7 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
 Convertor.prototype.toHTML = function(markdown) {
     var html =  this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-    return html;
+    return this._sanitizeScript(html);
 };
 
 /**
@@ -101,6 +101,15 @@ Convertor.prototype.toMarkdown = function(html) {
     var markdown = toMark(html);
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
     return markdown;
+};
+
+Convertor.prototype._sanitizeScript = function(html) {
+    return html.replace(/\<script.*?\>.*?\<\/script\>/g, function(founded) {
+        founded = founded.replace(/\<script.*?\>/g, '&lt;script&gt;');
+        founded = founded.replace(/\<\/script\>/g, '&lt;/script&gt;');
+
+        return founded;
+    });
 };
 
 Convertor.factory = function(eventManager) {

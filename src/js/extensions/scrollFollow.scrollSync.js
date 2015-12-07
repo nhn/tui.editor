@@ -21,6 +21,7 @@ function ScrollSync(sectionManager, cm, $previewContainerEl) {
     this.sectionManager = sectionManager;
     this.cm = cm;
     this.$previewContainerEl = $previewContainerEl;
+    this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
 
     /**
      * current timeout id needs animation
@@ -118,7 +119,7 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
     ratio = scrollFactors.sectionRatio;
 
     if (scrollFactors.isEditorBottom) {
-        scrollTop = this.$previewContainerEl.find('.previewContent').height();
+        scrollTop = this.$contents.height();
     } else if (section.$previewSectionEl) {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
