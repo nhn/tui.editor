@@ -19,8 +19,8 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
     /**
      * Command Handler
      * @param {WysiwygEditor} wwe WYsiwygEditor instance
-     * @param {number} row row count
      * @param {number} col column count
+     * @param {number} row row count
      */
     exec: function(wwe, col, row) {
         var sq = wwe.getEditor(),
@@ -59,8 +59,8 @@ function makeHeader(col) {
 /**
  * makeBody
  * make table body html string
- * @param {number} row row count
  * @param {number} col column count
+ * @param {number} row row count
  * @return {string} html string
  */
 function makeBody(col, row) {
