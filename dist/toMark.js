@@ -397,12 +397,15 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
-        return ' ' + subContent + ' |';
+        return subContent ? (' ' + subContent + ' |') : '';
+    },
+    'TD BR, TH BR': function() {
+        return '<br>';
     },
     'TR': function(node, subContent) {
-        return '|' + subContent + '\n';
+        return subContent ? ('|' + subContent + '\n') : '' ;
     },
-    'THEAD': function(node, sbContent) {
+    'THEAD': function(node, subContent) {
         var i, ths, thsLength,
             result = '';
 
@@ -413,7 +416,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
             result += ' ' + makeTableHeadAlignText(ths[i]) + ' |';
         }
 
-        return sbContent + '|' + result + '\n';
+        return subContent ? (subContent + '|' + result + '\n') : '';
     }
 });
 
