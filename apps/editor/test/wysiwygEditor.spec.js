@@ -242,6 +242,33 @@ describe('WysiwygEditor', function() {
 
             expect(wwe._isInTable()).toEqual(true);
         });
+
+        describe('_appendBrIfTdOrThNotHaveAsLastChild()', function() {
+            beforeEach(function() {
+                wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead><tbody><tr><td>1123</td></tr></tbody></table>');
+                wwe.get$Body().find('br').remove();
+            });
+
+            it('append br if td or th does not have br as lastchild, td case', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+                range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 2);
+                range.collapse(true);
+
+                wwe._appendBrIfTdOrThNotHaveAsLastChild(range);
+
+                expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(1);
+            });
+
+            it('append br if td or th does not have br as lastchild, th case', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+                range.setStart(wwe.get$Body().find('th')[0].childNodes[0], 2);
+                range.collapse(true);
+
+                wwe._appendBrIfTdOrThNotHaveAsLastChild(range);
+
+                expect(wwe.get$Body().find('th').eq(0).find('br').length).toEqual(1);
+            });
+        });
     });
 
     describe('Task', function() {
