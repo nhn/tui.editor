@@ -268,7 +268,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             //커서가 테이블 바로 이전에 있을때
             event.preventDefault();
             this.breakToNewDefaultBlock(range, 'before');
-        } else if (this._isInTable()) {
+        } else if (this._isInTable(range)) {
             this._appendBrIfTdOrThNotHaveAsLastChild(range);
         }
     //backspace
@@ -278,7 +278,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
-            } else if (this._isInTable()) {
+            } else if (this._isInTable(range)) {
                 this._tableHandlerOnBackspace(range, event);
             } else {
                 this._removeHrIfNeed(range, event);
@@ -307,8 +307,16 @@ WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
 };
 
 WysiwygEditor.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
-    var paths = $(range.startContainer).parentsUntil('tr'),
-    tdOrTh = paths[paths.length - 1];
+    var paths, tdOrTh, startContainerNodeName;
+
+    startContainerNodeName = domUtils.getNodeName(range.startContainer);
+
+    if (startContainerNodeName === 'TD' || startContainerNodeName === 'TH') {
+        tdOrTh = range.startContainer;
+    } else {
+        paths = $(range.startContainer).parentsUntil('tr');
+        tdOrTh = paths[paths.length - 1];
+    }
 
     if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR') {
         $(tdOrTh).append('<br>');
@@ -859,8 +867,16 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     }, 0);
 };
 
-WysiwygEditor.prototype._isInTable = function() {
-    return !!this.hasFormatWithRx(/TABLE/);
+WysiwygEditor.prototype._isInTable = function(range) {
+    var target;
+
+    if (range.collapsed) {
+        target = range.startContainer;
+    } else {
+        target = range.commonAncestorContainer;
+    }
+
+    return !!$(target).closest('table').length;
 };
 
 module.exports = WysiwygEditor;
