@@ -70,7 +70,7 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
 
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
-* height: 에디팅영역의 기본 높이를 결정합니다.(숫자)
+* height: 에디팅영역의 기본 높이를 결정합니다.(숫자, "auto"), "auto"입력시 컨텐츠에 따라서 에디터가 늘어납니다.
 * contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 tui-editor-contents.css의 경로를 다시 지정하면됩니다.
 * events: 내부 이벤트에 대응하는 핸들러를 셋팅합니다.
     * 이벤트 목록은 하단 API파트에 있습니다.
@@ -146,6 +146,9 @@ $('#editSection').tuiEditor('off', 'load.dooray', handler);
 ```
 
 ## 버전별 업데이트 유의점
+* 0.0.9
+    * CSS 클래스명 대거 수정(에디터 디자인 커스터마이징시 유의)
+    src/css/tui-editor.css 변경점 참고
 * 0.0.8
     * addImageFileHook 삭제
 * 0.0.7

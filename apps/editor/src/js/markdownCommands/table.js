@@ -18,8 +18,8 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
-     * @param {number} row row count
      * @param {number} col column count
+     * @param {number} row row count
      */
     exec: function(mde, col, row) {
         var cm = mde.getEditor(),
@@ -64,8 +64,8 @@ function makeHeader(col) {
 /**
  * makeBody
  * make table body markdown string
- * @param {number} row row count
  * @param {number} col column count
+ * @param {number} row row count
  * @return {string} html string
  */
 function makeBody(col, row) {
