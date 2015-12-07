@@ -111,10 +111,47 @@ describe('domUtils', function() {
     });
 
     describe('getNodeOffsetOfParent', function() {
-        it('', function() {
+        it('get node offset from parent childs', function() {
             var ul = $('<ul><li>list1</li><li>list2</li></ul>');
 
             expect(domUtils.getNodeOffsetOfParent(ul.find('li')[1])).toBe(1);
+        });
+    });
+
+    describe('getPrevNodeUntil()', function() {
+        it('if node is text node and not first offset then return text node', function() {
+            var node = $('<p>text</p>');
+
+            expect(domUtils.getPrevOffsetNodeUntil(node[0].childNodes[0], 1)).toEqual(node[0].childNodes[0]);
+        });
+
+        it('if node is text node and offset is first then return prev element', function() {
+            var node = $('<div>textPrev</div><p>text</p>');
+
+            expect(domUtils.getPrevOffsetNodeUntil(node[1].childNodes[0], 0)).toEqual(node[0]);
+        });
+
+        it('if node is text node that have multiple parent node and offset is first then return prev element', function() {
+            var node = $('<div>textPrev</div><p><span>text</span></p>');
+
+            expect(domUtils.getPrevOffsetNodeUntil(node.find('span')[0].childNodes[0], 0)).toEqual(node[0]);
+        });
+
+        it('find prev offset node from element node', function() {
+            var node = $('<div>textPrev</div><p><em>text</em><span>text</span></p>');
+
+            expect(domUtils.getPrevOffsetNodeUntil(node[1], 1)).toEqual(node.find('em')[0]);
+        });
+
+        it('find prev offset node from element node at first offset', function() {
+            var node = $('<div>textPrev</div><p><span>text</span></p>');
+
+            expect(domUtils.getPrevOffsetNodeUntil(node[1], 0)).toEqual(node[0]);
+        });
+
+        it('find prev node until nodename', function() {
+            var node = $('<div>textPrev</div><p><span>text</span></p>');
+            expect(domUtils.getPrevOffsetNodeUntil(node.find('span')[0].childNodes[0], 0, 'P')).toBeUndefined();
         });
     });
 });
