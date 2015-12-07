@@ -1366,7 +1366,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-    return html;
+    return this._sanitizeScript(html);
 };
 
 /**
@@ -1379,7 +1379,7 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
 Convertor.prototype.toHTML = function(markdown) {
     var html =  this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-    return html;
+    return this._sanitizeScript(html);
 };
 
 /**
@@ -1395,13 +1395,20 @@ Convertor.prototype.toMarkdown = function(html) {
     return markdown;
 };
 
+Convertor.prototype._sanitizeScript = function(html) {
+    html = html.replace(/\<script.*?\>/g, '&lt;script&gt;');
+    html = html.replace(/\<\/script\>/g, '&lt;/script&gt;');
+
+    return html;
+};
+
 Convertor.factory = function(eventManager) {
     return new Convertor(eventManager);
 };
 
 module.exports = Convertor;
 
-},{"./markedCustomRenderer":33}],8:[function(require,module,exports){
+},{"./markedCustomRenderer":34}],8:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1503,6 +1510,47 @@ var getNodeOffsetOfParent = function(node) {
     }
 };
 
+
+var _getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+    var directionKey = direction + 'Sibling',
+        nodeName, foundedNode;
+
+
+    while (node && !node[directionKey]) {
+        nodeName = getNodeName(node.parentNode);
+
+        if ((nodeName === untilNodeName)
+            || nodeName === 'BODY'
+        ) {
+            break;
+        }
+
+        node = node.parentNode;
+    }
+
+    if (node[directionKey]) {
+        foundedNode = node[directionKey];
+    }
+
+    return foundedNode;
+};
+
+var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
+    var prevNode;
+
+    if (index > 0) {
+        if (isTextNode(node)) {
+            prevNode = node;
+        } else {
+            prevNode = node.childNodes[index - 1];
+        }
+    } else {
+        prevNode = _getNodeWithDirectionUntil('previous', node, untilNodeName);
+    }
+
+    return prevNode;
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
@@ -1510,6 +1558,7 @@ module.exports = {
     isElemNode: isElemNode,
     getTextLength: getTextLength,
     getOffsetLength: getOffsetLength,
+    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
     getNodeOffsetOfParent: getNodeOffsetOfParent
 };
 
@@ -1533,16 +1582,17 @@ var MarkdownEditor = require('./markdownEditor'),
     DefaultUI = require('./ui/defaultUI.js');
 
 //markdown commands
-var mdcBold = require('./markdownCommands/bold'),
-    mdcItalic = require('./markdownCommands/italic'),
-    mdcBlockquote = require('./markdownCommands/blockquote'),
-    mdcHeading = require('./markdownCommands/heading'),
-    mdcHR = require('./markdownCommands/hr'),
-    mdcAddLink = require('./markdownCommands/addLink'),
-    mdcAddImage = require('./markdownCommands/addImage'),
-    mdcUL = require('./markdownCommands/ul'),
-    mdcOL = require('./markdownCommands/ol'),
-    mdcTask = require('./markdownCommands/task');
+var mdBold = require('./markdownCommands/bold'),
+    mdItalic = require('./markdownCommands/italic'),
+    mdBlockquote = require('./markdownCommands/blockquote'),
+    mdHeading = require('./markdownCommands/heading'),
+    mdHR = require('./markdownCommands/hr'),
+    mdAddLink = require('./markdownCommands/addLink'),
+    mdAddImage = require('./markdownCommands/addImage'),
+    mdUL = require('./markdownCommands/ul'),
+    mdOL = require('./markdownCommands/ol'),
+    mdTable = require('./markdownCommands/table'),
+    mdTask = require('./markdownCommands/task');
 
 //wysiwyg Commands
 var wwBold = require('./wysiwygCommands/bold'),
@@ -1554,6 +1604,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwHeading = require('./wysiwygCommands/heading'),
     wwUL = require('./wysiwygCommands/ul'),
     wwOL = require('./wysiwygCommands/ol'),
+    wwTable = require('./wysiwygCommands/table'),
     wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
@@ -1624,7 +1675,6 @@ function ToastUIEditor(options) {
         });
     }
 
-    this.contentHeight(this.options.height);
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -1637,6 +1687,8 @@ function ToastUIEditor(options) {
 
         self.changeMode(self.options.initialEditType);
 
+        self.contentHeight(self.options.height);
+
         self.setValue(self.options.initialValue);
 
         self.eventManager.emit('load', self);
@@ -1646,16 +1698,17 @@ function ToastUIEditor(options) {
 }
 
 ToastUIEditor.prototype._initDefaultCommands = function() {
-    this.commandManager.addCommand(mdcBold);
-    this.commandManager.addCommand(mdcItalic);
-    this.commandManager.addCommand(mdcBlockquote);
-    this.commandManager.addCommand(mdcHeading);
-    this.commandManager.addCommand(mdcHR);
-    this.commandManager.addCommand(mdcAddLink);
-    this.commandManager.addCommand(mdcAddImage);
-    this.commandManager.addCommand(mdcUL);
-    this.commandManager.addCommand(mdcOL);
-    this.commandManager.addCommand(mdcTask);
+    this.commandManager.addCommand(mdBold);
+    this.commandManager.addCommand(mdItalic);
+    this.commandManager.addCommand(mdBlockquote);
+    this.commandManager.addCommand(mdHeading);
+    this.commandManager.addCommand(mdHR);
+    this.commandManager.addCommand(mdAddLink);
+    this.commandManager.addCommand(mdAddImage);
+    this.commandManager.addCommand(mdUL);
+    this.commandManager.addCommand(mdOL);
+    this.commandManager.addCommand(mdTable);
+    this.commandManager.addCommand(mdTask);
 
     this.commandManager.addCommand(wwBold);
     this.commandManager.addCommand(wwItalic);
@@ -1668,6 +1721,7 @@ ToastUIEditor.prototype._initDefaultCommands = function() {
     this.commandManager.addCommand(wwHeading);
     this.commandManager.addCommand(wwIncreaseTask);
     this.commandManager.addCommand(wwTask);
+    this.commandManager.addCommand(wwTable);
 };
 
 /**
@@ -1845,7 +1899,7 @@ ToastUIEditor.defineExtension = function(name, ext) {
 
 module.exports = ToastUIEditor;
 
-},{"./commandManager":6,"./convertor":7,"./eventManager":10,"./extManager":11,"./extensions/colorSyntax":12,"./extensions/scrollFollow":13,"./extensions/taskCounter":16,"./extensions/textPalette":17,"./importManager":18,"./layout":20,"./markdownCommands/addImage":22,"./markdownCommands/addLink":23,"./markdownCommands/blockquote":24,"./markdownCommands/bold":25,"./markdownCommands/heading":26,"./markdownCommands/hr":27,"./markdownCommands/italic":28,"./markdownCommands/ol":29,"./markdownCommands/task":30,"./markdownCommands/ul":31,"./markdownEditor":32,"./preview":34,"./ui/defaultUI.js":37,"./wysiwygCommands/addImage":49,"./wysiwygCommands/addLink":50,"./wysiwygCommands/blockquote":51,"./wysiwygCommands/bold":52,"./wysiwygCommands/heading":53,"./wysiwygCommands/hr":54,"./wysiwygCommands/increaseTask":55,"./wysiwygCommands/italic":56,"./wysiwygCommands/ol":57,"./wysiwygCommands/task":58,"./wysiwygCommands/ul":59,"./wysiwygEditor":60}],10:[function(require,module,exports){
+},{"./commandManager":6,"./convertor":7,"./eventManager":10,"./extManager":11,"./extensions/colorSyntax":12,"./extensions/scrollFollow":13,"./extensions/taskCounter":16,"./extensions/textPalette":17,"./importManager":18,"./layout":20,"./markdownCommands/addImage":22,"./markdownCommands/addLink":23,"./markdownCommands/blockquote":24,"./markdownCommands/bold":25,"./markdownCommands/heading":26,"./markdownCommands/hr":27,"./markdownCommands/italic":28,"./markdownCommands/ol":29,"./markdownCommands/table":30,"./markdownCommands/task":31,"./markdownCommands/ul":32,"./markdownEditor":33,"./preview":35,"./ui/defaultUI.js":38,"./wysiwygCommands/addImage":51,"./wysiwygCommands/addLink":52,"./wysiwygCommands/blockquote":53,"./wysiwygCommands/bold":54,"./wysiwygCommands/heading":55,"./wysiwygCommands/hr":56,"./wysiwygCommands/increaseTask":57,"./wysiwygCommands/italic":58,"./wysiwygCommands/ol":59,"./wysiwygCommands/table":60,"./wysiwygCommands/task":61,"./wysiwygCommands/ul":62,"./wysiwygEditor":63}],10:[function(require,module,exports){
 /**
  * @fileoverview Implements EventManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1870,6 +1924,7 @@ var eventList = [
     'changePreviewStyle',
     'openPopupAddLink',
     'openPopupAddImage',
+    'openPopupAddTable',
     'closeAllPopup',
     'command',
     'htmlUpdate',
@@ -2158,7 +2213,7 @@ function initUI(editor) {
     editor.getUI().toolbar.addButton({
         className: 'color',
         event: 'colorButtonClicked',
-        text: 'Color'
+        text: '\u03FE'
     });
 
     $colorPickerContainer =  $('<div />');
@@ -2295,14 +2350,14 @@ extManager.defineExtension('scrollFollow', function(editor) {
     //UI
     if (editor.getUI().name === 'default') {
         editor.getUI().toolbar.addButton([{
-            classname: 'scrollfollowEnable',
+            classname: 'te-scrollfollow-enable',
             command: 'scrollFollowDisable',
-            text: 'SF',
-            style: 'background-color: #fff'
+            text: '\u0191',
+            style: 'background-color: #f5f5f7'
         }, {
-            className: 'scrollFollowDisable',
+            className: 'te-scrollfollow-disable',
             command: 'scrollFollowEnable',
-            text: 'SF',
+            text: '\u0191',
             style: 'background-color: #ddd'
         }]);
     }
@@ -2332,6 +2387,7 @@ function ScrollSync(sectionManager, cm, $previewContainerEl) {
     this.sectionManager = sectionManager;
     this.cm = cm;
     this.$previewContainerEl = $previewContainerEl;
+    this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
 
     /**
      * current timeout id needs animation
@@ -2429,7 +2485,7 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
     ratio = scrollFactors.sectionRatio;
 
     if (scrollFactors.isEditorBottom) {
-        scrollTop = this.$previewContainerEl.find('.previewContent').height();
+        scrollTop = this.$contents.height();
     } else if (section.$previewSectionEl) {
         scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
@@ -2448,11 +2504,9 @@ ScrollSync.prototype.syncToPreview = function() {
     var self = this,
         targetScrollTop = this._getScrollTopForPreview();
 
-    if (targetScrollTop) {
-        this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
-            self.$previewContainerEl.scrollTop(deltaScrollTop);
-        });
-    }
+    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+        self.$previewContainerEl.scrollTop(deltaScrollTop);
+    });
 };
 
 /**
@@ -2514,7 +2568,7 @@ var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
 function SectionManager(cm, preview) {
     this.cm = cm;
     this.preview = preview;
-    this.$previewContent = preview.$el.find('.previewContent');
+    this.$previewContent = preview.$el.find('.tui-editor-contents');
 
     /**
      *  section list
@@ -2946,12 +3000,13 @@ window.tui.Editor = ToastUIEditor;
 
 var containerTmpl = [
     '<div class="tui-editor">',
-        '<div class="mdContainer">',
-            '<div class="editor" />',
-            '<div class="preview tui-editor-contents" />',
+        '<div class="te-md-container">',
+            '<div class="te-editor" />',
+            '<div class="te-md-splitter" />',
+            '<div class="te-preview" />',
         '</div>',
-        '<div class="wysiwygContainer">',
-            '<div class="editor" />',
+        '<div class="te-ww-container">',
+            '<div class="te-editor" />',
         '</div>',
     '</div>'
 ].join('');
@@ -2992,32 +3047,32 @@ Layout.prototype._renderLayout = function() {
 };
 
 Layout.prototype.switchToWYSIWYG = function() {
-    this.$containerEl.removeClass('markdownMode');
-    this.$containerEl.addClass('wysiwygMode');
+    this.$containerEl.removeClass('te-md-mode');
+    this.$containerEl.addClass('te-ww-mode');
 };
 
 Layout.prototype.switchToMarkdown = function() {
-    this.$containerEl.removeClass('wysiwygMode');
-    this.$containerEl.addClass('markdownMode');
+    this.$containerEl.removeClass('te-ww-mode');
+    this.$containerEl.addClass('te-md-mode');
 };
 
 Layout.prototype._initMarkdownAndPreviewSection = function() {
-    this.$mdEditorContainerEl = this.$containerEl.find('.mdContainer .editor');
-    this.$previewEl = this.$containerEl.find('.mdContainer .preview');
+    this.$mdEditorContainerEl = this.$containerEl.find('.te-md-container .te-editor');
+    this.$previewEl = this.$containerEl.find('.te-md-container .te-preview');
 };
 
 Layout.prototype._initWysiwygSection = function() {
-    this.$wwEditorContainerEl = this.$containerEl.find('.wysiwygContainer .editor');
+    this.$wwEditorContainerEl = this.$containerEl.find('.te-ww-container .te-editor');
 };
 
 Layout.prototype._verticalSplitStyle = function() {
-    this.$containerEl.find('.mdContainer').removeClass('preview-style-tab');
-    this.$containerEl.find('.mdContainer').addClass('preview-style-vertical');
+    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-tab');
+    this.$containerEl.find('.te-md-container').addClass('te-preview-style-vertical');
 };
 
 Layout.prototype._tabStyle = function() {
-    this.$containerEl.find('.mdContainer').removeClass('preview-style-vertical');
-    this.$containerEl.find('.mdContainer').addClass('preview-style-tab');
+    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-vertical');
+    this.$containerEl.find('.te-md-container').addClass('te-preview-style-tab');
 };
 
 Layout.prototype.changePreviewStyle = function(style) {
@@ -3029,11 +3084,11 @@ Layout.prototype.changePreviewStyle = function(style) {
 };
 
 Layout.prototype.hide = function() {
-    this.$el.find('.tui-editor').addClass('hide');
+    this.$el.find('.tui-editor').addClass('te-hide');
 };
 
 Layout.prototype.show = function() {
-    this.$el.find('.tui-editor').removeClass('hide');
+    this.$el.find('.tui-editor').removeClass('te-hide');
 };
 
 Layout.prototype.remove = function() {
@@ -3770,6 +3825,95 @@ module.exports = OL;
 
 },{"../commandManager":6}],30:[function(require,module,exports){
 /**
+ * @fileoverview Implements Table markdown command
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var CommandManager = require('../commandManager');
+
+/**
+ * Table
+ * Add table markdown syntax to markdown editor
+ * @exports Table
+ * @augments Command
+ */
+var Table = CommandManager.command('markdown',/** @lends Table */{
+    name: 'Table',
+    /**
+     * Command handler
+     * @param {MarkdownEditor} mde MarkdownEditor instance
+     * @param {number} col column count
+     * @param {number} row row count
+     */
+    exec: function(mde, col, row) {
+        var cm = mde.getEditor(),
+            doc = cm.getDoc(),
+            table = '\n';
+
+        if (cm.getCursor().ch > 0) {
+            table += '\n';
+        }
+
+        table += makeHeader(col);
+        table += makeBody(col, row - 1);
+
+        doc.replaceSelection(table);
+
+        cm.setCursor(cm.getCursor().line - (row + 1), 2); //+1 means header border line
+
+        mde.focus();
+    }
+});
+
+/*
+ * makeHeader
+ * make table header markdown string
+ * @param {number} col column count
+ * @return {string} markdown string
+ */
+function makeHeader(col) {
+    var header = '|',
+        border = '|';
+
+    while (col) {
+        header += '    |';
+        border +=' -- |';
+
+        col -= 1;
+    }
+
+    return header + '\n' + border + '\n';
+}
+
+/**
+ * makeBody
+ * make table body markdown string
+ * @param {number} col column count
+ * @param {number} row row count
+ * @return {string} html string
+ */
+function makeBody(col, row) {
+    var body = '',
+        irow, icol;
+
+    for (irow = 0; irow < row; irow += 1) {
+        body += '|';
+
+        for (icol = 0; icol < col; icol += 1) {
+            body += '    |';
+        }
+
+        body += '\n';
+    }
+
+    return body;
+}
+module.exports = Table;
+
+},{"../commandManager":6}],31:[function(require,module,exports){
+/**
  * @fileoverview Implements Task markdown command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
@@ -3817,7 +3961,7 @@ var Task = CommandManager.command('markdown',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":6}],31:[function(require,module,exports){
+},{"../commandManager":6}],32:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -3866,7 +4010,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":6}],32:[function(require,module,exports){
+},{"../commandManager":6}],33:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4093,11 +4237,15 @@ MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overw
 
 MarkdownEditor.prototype.setHeight = function(height) {
     this.$editorContainerEl.height(height);
+
+    if (height === 'auto') {
+        this.$editorContainerEl.find('.CodeMirror').height('auto');
+    }
 };
 
 module.exports = MarkdownEditor;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * @fileoverview Implements markedCustomRenderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent
@@ -4169,7 +4317,7 @@ function escape(html, encode) {
 
 module.exports = markedCustomRenderer;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4217,7 +4365,7 @@ Preview.prototype._initEvent = function() {
 };
 
 Preview.prototype._initContentSection = function() {
-    this.$previewContent = $('<div class="previewContent tui-editor--contents" />');
+    this.$previewContent = $('<div class="tui-editor-contents" />');
     this.$el.append(this.$previewContent);
 };
 
@@ -4247,7 +4395,7 @@ Preview.prototype.setHeight = function(height) {
 
 module.exports = Preview;
 
-},{"./lazyRunner":21}],35:[function(require,module,exports){
+},{"./lazyRunner":21}],36:[function(require,module,exports){
 /**
  * @fileoverview Implements %filltext:name=Name%
  * @author
@@ -4499,7 +4647,7 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
 module.exports = SquireExt;
 
-},{"./domUtils":8}],36:[function(require,module,exports){
+},{"./domUtils":8}],37:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4578,7 +4726,7 @@ Button.prototype._onClick = function() {
 
 module.exports = Button;
 
-},{"./uicontroller":46}],37:[function(require,module,exports){
+},{"./uicontroller":48}],38:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4591,14 +4739,15 @@ var Toolbar = require('./toolbar'),
     Layerpopup = require('./layerpopup'),
     ModeSwitch = require('./modeSwitch'),
     PopupAddLink = require('./popupAddLink'),
-    PopupAddImage = require('./popupAddImage');
+    PopupAddImage = require('./popupAddImage'),
+    PopupAddTable = require('./popupAddTable');
 
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
-        '<div class="toolbarSection" />',
-        '<div class="modeSwitchSection" />',
-        '<div class="markdownTabSection" />',
-        '<div class="editorContainer"  />',
+        '<div class="te-toolbar-section" />',
+        '<div class="te-mode-switch-section" />',
+        '<div class="te-markdown-tab-section" />',
+        '<div class="te-editor-section"  />',
     '</div>'
 ].join('');
 
@@ -4631,12 +4780,13 @@ DefaultUI.prototype.init = function() {
 
     this._initPopupAddLink();
     this._initPopupAddImage();
+    this._initPopupAddTable();
 
     this._initMarkdownTab();
 };
 
 DefaultUI.prototype._initEditorSection = function() {
-    this.$el.find('.editorContainer').append(this.editor.layout.getEditorEl());
+    this.$el.find('.te-editor-section').append(this.editor.layout.getEditorEl());
 };
 
 DefaultUI.prototype._initEvent = function() {
@@ -4659,14 +4809,14 @@ DefaultUI.prototype._renderLayout = function() {
 
 DefaultUI.prototype._initToolbar = function() {
     this.toolbar = new Toolbar(this.editor.eventManager);
-    this.$containerEl.find('.toolbarSection').append(this.toolbar.$el);
+    this.$containerEl.find('.te-toolbar-section').append(this.toolbar.$el);
 };
 
 DefaultUI.prototype._initModeSwitch = function() {
     var self = this;
 
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$containerEl.find('.modeSwitchSection').append(this.modeSwitch.$el);
+    this.$containerEl.find('.te-mode-switch-section').append(this.modeSwitch.$el);
 
     this.modeSwitch.on('modeSwitched', function(ev, info) {
         self.editor.changeMode(info.text);
@@ -4675,10 +4825,10 @@ DefaultUI.prototype._initModeSwitch = function() {
 
 DefaultUI.prototype.markdownTabControl = function() {
     if (this.editor.isMarkdownMode() && this.editor.getCurrentPreviewStyle() === 'tab') {
-        this.$containerEl.find('.markdownTabSection').show();
+        this.$containerEl.find('.te-markdown-tab-section').show();
         this.markdownTab.activate('Editor');
     } else {
-        this.$containerEl.find('.markdownTabSection').hide();
+        this.$containerEl.find('.te-markdown-tab-section').hide();
     }
 };
 
@@ -4688,7 +4838,7 @@ DefaultUI.prototype._initMarkdownTab = function() {
         sections: [this.editor.layout.getMdEditorContainerEl(), this.editor.layout.getPreviewEl()]
     });
 
-    this.$containerEl.find('.markdownTabSection').append(this.markdownTab.$el);
+    this.$containerEl.find('.te-markdown-tab-section').append(this.markdownTab.$el);
 };
 
 DefaultUI.prototype._initPopupAddLink = function() {
@@ -4702,6 +4852,18 @@ DefaultUI.prototype._initPopupAddImage = function() {
     this.popupAddImage = new PopupAddImage({
         $target: this.$el,
         eventManager: this.editor.eventManager
+    });
+};
+
+DefaultUI.prototype._initPopupAddTable = function() {
+    this.popupAddTable = new PopupAddTable({
+        $target: this.$el,
+        eventManager: this.editor.eventManager,
+        css: {
+            'position': 'absolute',
+            'top': $('button.te-table').offset().top + $('button.te-table').height() + 5,
+            'left': $('button.te-table').offset().left
+        }
     });
 };
 
@@ -4723,7 +4885,7 @@ DefaultUI.prototype.createPopup = function(options) {
 
 module.exports = DefaultUI;
 
-},{"./layerpopup":38,"./modeSwitch":39,"./popupAddImage":40,"./popupAddLink":41,"./tab":42,"./toolbar":45}],38:[function(require,module,exports){
+},{"./layerpopup":39,"./modeSwitch":40,"./popupAddImage":41,"./popupAddLink":42,"./popupAddTable":43,"./tab":44,"./toolbar":47}],39:[function(require,module,exports){
 /**
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -4739,7 +4901,7 @@ var util = tui.util,
     LAYOUT_TEMPLATE = [
         '<div class="' + CLASS_PREFIX + 'header">',
         '<span class="' + CLASS_PREFIX + 'title"></span>',
-        '<button class="' + CLASS_PREFIX + 'closeButton">x</button>',
+        '<button class="' + CLASS_PREFIX + 'close-button">x</button>',
         '</div>',
         '<div class="' + CLASS_PREFIX + 'body"></div>'
     ].join('');
@@ -4892,7 +5054,7 @@ LayerPopup.prototype._detachOpenerCloserEvent = function() {
 LayerPopup.prototype._attachPopupControlEvent = function() {
     var self = this;
 
-    this.on('click ' + this._getFullClassName('closeButton'), function() {
+    this.on('click ' + this._getFullClassName('close-button'), function() {
         self.hide();
     });
 };
@@ -4972,7 +5134,7 @@ LayerPopup.CLASS_PREFIX = CLASS_PREFIX;
 
 module.exports = LayerPopup;
 
-},{"./uicontroller":46}],39:[function(require,module,exports){
+},{"./uicontroller":48}],40:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5002,7 +5164,7 @@ var nextTypeString = ['WYSIWYG', 'Markdown'],
 function ModeSwitch(initialType) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'modeSwitch'
+        className: 'te-mode-switch'
     });
 
     this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
@@ -5015,7 +5177,7 @@ ModeSwitch.prototype = util.extend(
 );
 
 ModeSwitch.prototype._render = function() {
-    this.$button = $('<button class="switchButton" type="button" />');
+    this.$button = $('<button class="te-switch-button" type="button" />');
     this._setButtonTitle();
     this.$el.append(this.$button);
 
@@ -5056,7 +5218,7 @@ ModeSwitch.TYPE = TYPE;
 
 module.exports = ModeSwitch;
 
-},{"./uicontroller":46}],40:[function(require,module,exports){
+},{"./uicontroller":48}],41:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5070,20 +5232,20 @@ var LayerPopup = require('./layerpopup'),
 var util = tui.util;
 
 var POPUP_CONTENT = [
-    '<div class="tabSection"></div>',
-    '<div class="urlType">',
+    '<div class="te-tab-section"></div>',
+    '<div class="te-url-type">',
         '<label for="">Image URL</label>',
-        '<input type="text" class="imageUrlInput" />',
+        '<input type="text" class="te-image-url-input" />',
     '</div>',
-    '<form enctype="multipart/form-data" class="fileType">',
+    '<form enctype="multipart/form-data" class="te-file-type">',
         '<label for="">Image File</label>',
-        '<input type="file" class="imageFileInput" accept="image/*" />',
+        '<input type="file" class="te-image-file-input" accept="image/*" />',
     '</form>',
     '<label for="url">Alt Text</label>',
-    '<input type="text" class="altTextInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
+    '<input type="text" class="te-alt-text-input" />',
+    '<div class="te-button-section">',
+        '<button type="button" class="te-ok-button">OK</button>',
+        '<button type="button" class="te-close-button">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -5099,7 +5261,7 @@ var POPUP_CONTENT = [
 function PopupAddImage(options) {
     options = util.extend({
         title: 'Add Image',
-        className: 'popupAddImage tui-editor-popup',
+        className: 'te-popup-add-image tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -5122,18 +5284,18 @@ PopupAddImage.prototype = util.extend(
 PopupAddImage.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('click .okButton', function() {
+    this.on('click .te-ok-button', function() {
         self.trigger('okButtonClicked', this);
         self.hide();
     });
 
-    this.on('click .closeButton', function() {
+    this.on('click .te-close-button', function() {
         self.trigger('closeButtonClicked', this);
         self.hide();
     });
 
     this.on('shown', function() {
-        self.$el.find('.imageUrlInput').focus();
+        self.$el.find('.te-image-url-input').focus();
     });
 
     this.on('hidden', function() {
@@ -5144,9 +5306,9 @@ PopupAddImage.prototype._bindContentEvent = function() {
         self.resetInputs();
     });
 
-    this.on('change .imageFileInput', function() {
-        var filename = self.$el.find('.imageFileInput').val().split('\\').pop();
-        self.$el.find('.altTextInput').val(filename);
+    this.on('change .te-image-file-input', function() {
+        var filename = self.$el.find('.te-image-file-input').val().split('\\').pop();
+        self.$el.find('.te-alt-text-input').val(filename);
     });
 };
 
@@ -5170,8 +5332,8 @@ PopupAddImage.prototype._linkWithEventManager = function() {
         if (self._isUrlType()) {
             self.applyImage();
         } else {
-            self._preAltValue = self.$el.find('.altTextInput').val();
-            self.eventManager.emit('addImageBlobHook', self.$el.find('.imageFileInput')[0].files[0], self.applyImage);
+            self._preAltValue = self.$el.find('.te-alt-text-input').val();
+            self.eventManager.emit('addImageBlobHook', self.$el.find('.te-image-file-input')[0].files[0], self.applyImage);
         }
     });
 };
@@ -5194,7 +5356,7 @@ PopupAddImage.prototype._initApplyImageBindContext = function() {
 };
 
 PopupAddImage.prototype._isUrlType = function() {
-    return !!this.$el.find('.imageUrlInput').val();
+    return !!this.$el.find('.te-image-url-input').val();
 };
 
 /**
@@ -5209,10 +5371,10 @@ PopupAddImage.prototype._renderContent = function() {
     this.tab = new Tab({
         initName: 'File',
         items: ['File', 'URL'],
-        sections: [$popup.find('.fileType'), $popup.find('.urlType')]
+        sections: [$popup.find('.te-file-type'), $popup.find('.te-url-type')]
     });
 
-    this.$body.find('.tabSection').append(this.tab.$el);
+    this.$body.find('.te-tab-section').append(this.tab.$el);
 };
 
 PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
@@ -5222,8 +5384,8 @@ PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
 };
 
 PopupAddImage.prototype._getImageInfo = function() {
-    var imageUrl = this.$el.find('.imageUrlInput').val(),
-    altText = this.$el.find('.altTextInput').val();
+    var imageUrl = this.$el.find('.te-image-url-input').val(),
+    altText = this.$el.find('.te-alt-text-input').val();
 
     return this._makeImageInfo(imageUrl, altText);
 };
@@ -5245,7 +5407,7 @@ PopupAddImage.prototype.resetInputs = function() {
 
 module.exports = PopupAddImage;
 
-},{"./layerpopup":38,"./tab":42}],41:[function(require,module,exports){
+},{"./layerpopup":39,"./tab":44}],42:[function(require,module,exports){
 /**
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5259,12 +5421,12 @@ var util = tui.util;
 
 var POPUP_CONTENT = [
     '<label for="linkText">Link Text</label>',
-    '<input type="text" class="linkTextInput" />',
+    '<input type="text" class="te-link-text-input" />',
     '<label for="url">URL</label>',
-    '<input type="text" class="urlInput" />',
-    '<div class="buttonSection">',
-        '<button type="button" class="okButton">OK</button>',
-        '<button type="button" class="closeButton">Cancel</button>',
+    '<input type="text" class="te-url-input" />',
+    '<div class="te-button-section">',
+        '<button type="button" class="te-ok-button">OK</button>',
+        '<button type="button" class="te-close-button">Cancel</button>',
     '</div>'
 ].join('');
 
@@ -5280,7 +5442,7 @@ var POPUP_CONTENT = [
 function PopupAddLink(options) {
     options = util.extend({
         title: 'Add Link',
-        className: 'popupAddLink tui-editor-popup',
+        className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
 
@@ -5299,18 +5461,18 @@ PopupAddLink.prototype = util.extend(
 PopupAddLink.prototype._bindContentEvent = function() {
     var self = this;
 
-    this.on('click .okButton', function() {
+    this.on('click .te-ok-button', function() {
         self.trigger('okButtonClicked', this);
         self.hide();
     });
 
-    this.on('click .closeButton', function() {
+    this.on('click .te-close-button', function() {
         self.trigger('closeButtonClicked', this);
         self.hide();
     });
 
     this.on('shown', function() {
-        self.$el.find('.linkTextInput').focus();
+        self.$el.find('.te-link-text-input').focus();
     });
 
     this.on('hidden', function() {
@@ -5341,8 +5503,8 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 
 PopupAddLink.prototype.getValue = function() {
     return {
-        linkText: this.$el.find('.linkTextInput').val(),
-        url: this.$el.find('.urlInput').val()
+        linkText: this.$el.find('.te-link-text-input').val(),
+        url: this.$el.find('.te-url-input').val()
     };
 };
 
@@ -5352,7 +5514,359 @@ PopupAddLink.prototype.resetInputs = function() {
 
 module.exports = PopupAddLink;
 
-},{"./layerpopup":38}],42:[function(require,module,exports){
+},{"./layerpopup":39}],43:[function(require,module,exports){
+/**
+ * @fileoverview Implements PopupAddTable
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var LayerPopup = require('./layerpopup');
+
+var util = tui.util;
+
+var POPUP_CONTENT = [
+    '<div class="te-table-selection">',
+        '<div class="te-table-header"></div>',
+        '<div class="te-table-body"></div>',
+        '<div class="te-selection-area"></div>',
+    '</div>',
+    '<p class="te-description"></p>'
+].join('');
+
+var CELL_WIDTH = 25,
+    CELL_HEIGHT = 17,
+    MIN_ROW_INDEX = 7,
+    MAX_ROW_INDEX = 14,
+    MIN_COL_INDEX = 5,
+    MAX_COL_INDEX = 9,
+    MIN_ROW_SELECTION_INDEX = 1,
+    MIN_COL_SELECTION_INDEX = 1,
+    HEADER_ROW_COUNT = 1,
+    LAST_BORDER = 1;
+
+/**
+ * PopupAddTable
+ * It implements Popup to add a table
+ * @exports PopupAddTable
+ * @augments LayerPopup
+ * @constructor
+ * @class
+ * @param {object} options options
+ */
+function PopupAddTable(options) {
+    options = util.extend({
+        title: false,
+        className: 'te-popup-add-table',
+        content: POPUP_CONTENT
+    }, options);
+
+    LayerPopup.call(this, options);
+
+    this._selectedBound = {};
+    this._tableBound = {};
+    this.eventManager = options.eventManager;
+
+    this.render();
+    this._cacheElements();
+    this._bindContentEvent();
+    this._linkWithEventManager();
+
+    this._setTableSizeByBound(MIN_COL_INDEX, MIN_ROW_INDEX);
+}
+
+PopupAddTable.prototype = util.extend(
+    {},
+    LayerPopup.prototype
+);
+
+/**
+ * _cacheElements
+ * Cache elements for use
+ */
+PopupAddTable.prototype._cacheElements = function() {
+    this.$header = this.$el.find('.te-table-header');
+    this.$body = this.$el.find('.te-table-body');
+    this.$selection = this.$el.find('.te-selection-area');
+    this.$desc = this.$el.find('.te-description');
+};
+
+/**
+ * _bindContentEvent
+ * Bind element events
+ */
+PopupAddTable.prototype._bindContentEvent = function() {
+    var self = this;
+
+    this.on('mousemove .te-table-selection', function(ev) {
+        var x = ev.pageX - self._selectionOffset.left,
+            y = ev.pageY - self._selectionOffset.top,
+            bound;
+
+        bound = self._getSelectionBoundByOffset(x, y);
+
+        self._resizeTableBySelectionIfNeed(bound.col, bound.row);
+
+        self._setSelectionAreaByBound(bound.col, bound.row);
+        self._setDisplayText(bound.col, bound.row);
+        self._setSelectedBound(bound.col, bound.row);
+    });
+
+    this.on('click .te-table-selection', function() {
+        var tableSize = self._getSelectedTableSize();
+        self.eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
+    });
+};
+
+/**
+ * _linkWithEventManager
+ * Bind event manager event
+ */
+PopupAddTable.prototype._linkWithEventManager = function() {
+    var self = this;
+
+    this.eventManager.listen('focus', function() {
+        self.hide();
+    });
+
+    this.eventManager.listen('openPopupAddTable', function() {
+        self.eventManager.emit('closeAllPopup');
+        self.show();
+        self._selectionOffset = self.$el.find('.te-table-selection').offset();
+    });
+
+    this.eventManager.listen('closeAllPopup', function() {
+        self.hide();
+    });
+};
+
+/**
+ * _resizeTableBySelectionIfNeed
+ * Resize table if need
+ * @param {number} col column index
+ * @param {number} row row index
+ */
+PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row)  {
+    var resizedBound = this._getResizedTableBound(col, row);
+
+    if (resizedBound) {
+        this._setTableSizeByBound(resizedBound.col, resizedBound.row);
+    }
+};
+
+/**
+ * _getResizedTableBound
+ * Get resized table bound if Need
+ * @param {number} col column index
+ * @param {number} row row index
+ * @return {object} bound
+ */
+PopupAddTable.prototype._getResizedTableBound  = function(col, row)  {
+    var resizedCol, resizedRow, resizedBound;
+
+    if (col >= MIN_COL_INDEX && col < MAX_COL_INDEX) {
+        resizedCol = col + 1;
+    } else if (col < MIN_COL_INDEX) {
+        resizedCol = MIN_COL_INDEX;
+    }
+
+    if (row >= MIN_ROW_INDEX && row < MAX_ROW_INDEX) {
+        resizedRow = row + 1;
+    } else if (row < MIN_ROW_INDEX) {
+        resizedRow = MIN_ROW_INDEX;
+    }
+
+    if (this._isNeedResizeTable(resizedCol, resizedRow)) {
+        resizedBound = {
+            row: resizedRow || this._tableBound.row,
+            col: resizedCol || this._tableBound.col
+        };
+    }
+
+    return resizedBound;
+};
+
+/**
+ * _isNeedResizeTable
+ * check if need resize table
+ * @param {number} col column index
+ * @param {number} row row index
+ * @return {boolean} result
+ */
+PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
+    return (col && col !== this._tableBound.col)
+        || (row && row !== this._tableBound.row);
+};
+
+/**
+ * _getBoundByOffset
+ * Get bound by offset
+ * @param {number} x offset
+ * @param {number} y offset
+ * @return {object} bound
+ */
+PopupAddTable.prototype._getBoundByOffset = function(x, y) {
+    var rowBound = parseInt(y / CELL_HEIGHT, 10),
+        colBound = parseInt(x / CELL_WIDTH, 10);
+
+    return {
+        row: rowBound,
+        col: colBound
+    };
+};
+
+/**
+ * _getOffsetByBound
+ * Get offset by bound
+ * @param {number} col column index
+ * @param {number} row row index
+ * @return {object} offset
+ */
+PopupAddTable.prototype._getOffsetByBound = function(col, row) {
+    var x = (col * CELL_WIDTH) + CELL_WIDTH,
+        y = (row * CELL_HEIGHT) + CELL_HEIGHT;
+
+    return {
+        x: x,
+        y: y
+    };
+};
+
+/**
+ * _setTableSizeByBound
+ * Set table size with bound
+ * @param {number} col column index
+ * @param {number} row row index
+ */
+PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
+    var boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
+    this._setTableSize(boundOffset.x, boundOffset.y);
+    this._tableBound.row = row;
+    this._tableBound.col = col;
+};
+
+/**
+ * _getSelectionBoundByOffset
+ * Get selection bound that process with range by offset
+ * @param {number} x offset
+ * @param {number} y offset
+ * @return {object} bound
+ */
+PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
+    var bound = this._getBoundByOffset(x, y);
+
+    if (bound.row < MIN_ROW_SELECTION_INDEX) {
+        bound.row = MIN_ROW_SELECTION_INDEX;
+    } else if (bound.row > this._tableBound.row) {
+        bound.row = this._tableBound.row;
+    }
+
+    if (bound.col < MIN_COL_SELECTION_INDEX) {
+        bound.col = MIN_COL_SELECTION_INDEX;
+    } else if (bound.col > this._tableBound.col) {
+        bound.col = this._tableBound.col;
+    }
+
+    return bound;
+};
+
+/**
+ * _setSelectionAreaByBound
+ * Set selection area with bound
+ * @param {number} col column index
+ * @param {number} row row index
+ */
+PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
+    var boundOffset,
+
+    boundOffset = this._getOffsetByBound(col, row);
+    this._setSelectionArea(boundOffset.x, boundOffset.y);
+};
+
+
+/**
+ * _setSelectedBound
+ * Set selected bound
+ * @param {number} col column index
+ * @param {number} row row index
+ */
+PopupAddTable.prototype._setSelectedBound = function(col, row) {
+   this._selectedBound.col = col;
+   this._selectedBound.row = row;
+};
+
+/**
+ * _getSelectedTableSize
+ * Get selected table size
+ * @return {object} bound
+ */
+PopupAddTable.prototype._getSelectedTableSize = function() {
+    return {
+        row: this._selectedBound.row + 1,
+        col: this._selectedBound.col + 1
+    };
+};
+
+/**
+ * _setDisplayText
+ * Set selected table size text for display
+ * @param {number} col column index
+ * @param {number} row row index
+ */
+PopupAddTable.prototype._setDisplayText = function(col, row) {
+    this.$desc.html((col + 1) + ' x ' + (row + 1));
+};
+
+/**
+ * _setTableSize
+ * Set table element size
+ * @param {number} x offset
+ * @param {number} y offset
+ */
+PopupAddTable.prototype._setTableSize = function(x, y) {
+    x += LAST_BORDER;
+    y += LAST_BORDER;
+
+    this.$header.css({
+        height: CELL_HEIGHT,
+        width: x
+    });
+
+    this.$body.css({
+        height: y,
+        width: x
+    });
+
+    this.$el.css({
+        width: x + 30
+    });
+};
+
+/**
+ * _setSelectionArea
+ * Set selection element size
+ * @param {number} x offset
+ * @param {number} y offset
+ */
+PopupAddTable.prototype._setSelectionArea = function(x, y) {
+    x += LAST_BORDER;
+    y += LAST_BORDER;
+
+    this.$selection.css({
+        height: y,
+        width: x
+    });
+};
+
+PopupAddTable.CELL_WIDTH = CELL_WIDTH;
+PopupAddTable.CELL_HEIGHT = CELL_HEIGHT;
+PopupAddTable.MIN_ROW_SELECTION_INDEX = MIN_ROW_SELECTION_INDEX;
+PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
+
+module.exports = PopupAddTable;
+
+},{"./layerpopup":39}],44:[function(require,module,exports){
 /**
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5386,7 +5900,7 @@ var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
 function Tab(options) {
     UIController.call(this, {
         tagName: 'div',
-        className: 'tab'
+        className: 'te-tab'
     });
 
     options = util.extend({}, options);
@@ -5470,10 +5984,10 @@ Tab.prototype._onButtonClick = function(ev) {
  */
 Tab.prototype._deactivate = function() {
     if (this._$activeButton) {
-        this._$activeButton.removeClass('active');
+        this._$activeButton.removeClass('te-tab-active');
 
         if (this.sections) {
-            this.sections[this._$activeButton.attr('data-index')].removeClass('active');
+            this.sections[this._$activeButton.attr('data-index')].removeClass('te-tab-active');
         }
     }
 };
@@ -5485,7 +5999,7 @@ Tab.prototype._deactivate = function() {
  */
 Tab.prototype._activateButton = function($button) {
     this._$activeButton = $button;
-    this._$activeButton.addClass('active');
+    this._$activeButton.addClass('te-tab-active');
 };
 
 /**
@@ -5495,7 +6009,7 @@ Tab.prototype._activateButton = function($button) {
  */
 Tab.prototype._activateSection = function(index) {
     if (this.sections) {
-        this.sections[index].addClass('active');
+        this.sections[index].addClass('te-tab-active');
     }
 };
 
@@ -5550,7 +6064,7 @@ Tab.prototype._initItemClickEvent = function(handler) {
 
 module.exports = Tab;
 
-},{"./templater":43,"./uicontroller":46}],43:[function(require,module,exports){
+},{"./templater":45,"./uicontroller":48}],45:[function(require,module,exports){
 /**
  * @fileoverview Implements templater function
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5589,7 +6103,7 @@ function templater(template, mapper) {
 module.exports = templater;
 
 
-},{}],44:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5648,7 +6162,7 @@ ToggleButton.prototype._toggle = function() {
 
 module.exports = ToggleButton;
 
-},{"./button":36}],45:[function(require,module,exports){
+},{"./button":37}],47:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -5729,69 +6243,75 @@ Toolbar.prototype.addButton = function(button) {
  */
 Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
-        className: 'bold',
+        className: 'te-bold',
         command: 'Bold',
         text: 'B'
     }));
 
     this.addButton(new Button({
-        className: 'italic',
+        className: 'te-italic',
         command: 'Italic',
         text: 'I'
     }));
 
     this.addButton(new Button({
-        className: 'quote',
+        className: 'te-quote',
         command: 'Blockquote',
         text: 'Q'
     }));
 
     this.addButton(new Button({
-        className: 'heading',
+        className: 'te-heading',
         command: 'Heading',
         text: 'HH'
     }));
 
     this.addButton(new Button({
-        className: 'hrline',
+        className: 'te-hrline',
         command: 'HR',
-        text: 'HR'
+        text: '\u035F'
     }));
 
     this.addButton(new Button({
-        className: 'link',
+        className: 'te-link',
         event: 'openPopupAddLink',
         text: 'A'
     }));
 
     this.addButton(new Button({
-        className: 'image',
+        className: 'te-image',
         event: 'openPopupAddImage',
         text: 'IMG'
     }));
 
     this.addButton(new Button({
-        className: 'ul',
+        className: 'te-ul',
         command: 'UL',
         text: 'UL'
     }));
 
     this.addButton(new Button({
-        className: 'ol',
+        className: 'te-ol',
         command: 'OL',
         text: 'OL'
     }));
 
     this.addButton(new Button({
-        className: 'task',
+        className: 'te-task',
         command: 'Task',
-        text: 'TASK'
+        text: '\u2611'
+    }));
+
+    this.addButton(new Button({
+        className: 'te-table',
+        event: 'openPopupAddTable',
+        text: 'TABLE'
     }));
 };
 
 module.exports = Toolbar;
 
-},{"./button":36,"./toggleButton":44,"./uicontroller":46}],46:[function(require,module,exports){
+},{"./button":37,"./toggleButton":46,"./uicontroller":48}],48:[function(require,module,exports){
 /**
  * @fileoverview HTML UI를 관리하는 컨트롤러
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6031,7 +6551,7 @@ UIController.extend = function(props) {
 
 module.exports = UIController;
 
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * @fileoverview Implements wysiwyg editor clipboard manager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6378,7 +6898,7 @@ WwClipboardManager.prototype._isOrphanListItem = function(range) {
 
 module.exports = WwClipboardManager;
 
-},{"./domUtils":8}],48:[function(require,module,exports){
+},{"./domUtils":8}],50:[function(require,module,exports){
 /**
  * @fileoverview Implements selection marker for wysiwyg
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6427,7 +6947,7 @@ WwSelectionMarker.prototype.restore = function(sq) {
 
 module.exports = WwSelectionMarker;
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6462,7 +6982,7 @@ var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
 
 module.exports = AddImage;
 
-},{"../commandManager":6}],50:[function(require,module,exports){
+},{"../commandManager":6}],52:[function(require,module,exports){
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6498,7 +7018,7 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
 
 module.exports = AddLink;
 
-},{"../commandManager":6}],51:[function(require,module,exports){
+},{"../commandManager":6}],53:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6532,7 +7052,7 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
 
 module.exports = Blockquote;
 
-},{"../commandManager":6}],52:[function(require,module,exports){
+},{"../commandManager":6}],54:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6573,7 +7093,7 @@ var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
 
 module.exports = Bold;
 
-},{"../commandManager":6}],53:[function(require,module,exports){
+},{"../commandManager":6}],55:[function(require,module,exports){
 /**
  * @fileoverview Implements Heading wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6618,7 +7138,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
 
 module.exports = Heading;
 
-},{"../commandManager":6}],54:[function(require,module,exports){
+},{"../commandManager":6}],56:[function(require,module,exports){
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6667,7 +7187,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
 
 module.exports = HR;
 
-},{"../commandManager":6}],55:[function(require,module,exports){
+},{"../commandManager":6}],57:[function(require,module,exports){
 /**
  * @fileoverview Implements inceaseTask wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6788,7 +7308,7 @@ function increaseTaskLevel(frag) {
 
 module.exports = IncreaseTask;
 
-},{"../commandManager":6}],56:[function(require,module,exports){
+},{"../commandManager":6}],58:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6829,7 +7349,7 @@ var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
 
 module.exports = Italic;
 
-},{"../commandManager":6}],57:[function(require,module,exports){
+},{"../commandManager":6}],59:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6864,7 +7384,94 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
 
 module.exports = OL;
 
-},{"../commandManager":6}],58:[function(require,module,exports){
+},{"../commandManager":6}],60:[function(require,module,exports){
+/**
+ * @fileoverview Implements WysiwygCommand
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
+'use strict';
+
+var CommandManager = require('../commandManager');
+
+/**
+ * Table
+ * Add table to selected wysiwyg editor content
+ * @exports Table
+ * @augments Command
+ * @augments WysiwygCommand
+ */
+var Table = CommandManager.command('wysiwyg',/** @lends Table */{
+    name: 'Table',
+    /**
+     * Command Handler
+     * @param {WysiwygEditor} wwe WYsiwygEditor instance
+     * @param {number} col column count
+     * @param {number} row row count
+     */
+    exec: function(wwe, col, row) {
+        var sq = wwe.getEditor(),
+            table;
+
+        table = '<table>';
+        table += makeHeader(col);
+        table += makeBody(col, row - 1);
+        table += '</table>';
+
+        sq.insertHTML(table);
+
+        sq.focus();
+    }
+});
+
+/**
+ * makeHeader
+ * make table header html string
+ * @param {number} col column count
+ * @return {string} html string
+ */
+function makeHeader(col) {
+    var header = '<thead><tr>';
+
+    while (col) {
+        header += '<th></th>';
+        col -= 1;
+    }
+
+    header += '</tr></thead>';
+
+    return header;
+}
+
+/**
+ * makeBody
+ * make table body html string
+ * @param {number} col column count
+ * @param {number} row row count
+ * @return {string} html string
+ */
+function makeBody(col, row) {
+    var body = '<tbody>',
+        irow, icol;
+
+    for (irow = 0; irow < row; irow += 1) {
+        body += '<tr>';
+
+        for (icol = 0; icol < col; icol += 1) {
+            body += '<td></td>';
+        }
+
+        body += '</tr>';
+    }
+
+    body += '</tbody>';
+
+    return body;
+}
+
+module.exports = Table;
+
+},{"../commandManager":6}],61:[function(require,module,exports){
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6888,7 +7495,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li,
+        var selection, $selected, $li, hasInput,
             sq = wwe.getEditor();
 
         if (!sq.hasFormat('li')) {
@@ -6900,9 +7507,10 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         $selected = $(selection.startContainer);
         $li = $selected.closest('li');
 
-        if ($li.find('input').length === 0) {
-            //todo modifyBlock로 커버가능할듯
-            wwe.saveSelection(selection);
+        hasInput = $li.children('input').length || $li.children('div').eq(0).children('input').length;
+
+        if (!hasInput) {
+            selection = wwe.insertSelectionMarker(selection);
 
             selection.setStart(selection.startContainer, 0);
             selection.collapse(true);
@@ -6918,7 +7526,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
             $li.addClass('task-list-item');
 
-            wwe.restoreSavedSelection();
+            wwe.restoreSelectionMarker();
         }
 
         sq.focus();
@@ -6927,7 +7535,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
 
 module.exports = Task;
 
-},{"../commandManager":6}],59:[function(require,module,exports){
+},{"../commandManager":6}],62:[function(require,module,exports){
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6962,7 +7570,7 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
 
 module.exports = UL;
 
-},{"../commandManager":6}],60:[function(require,module,exports){
+},{"../commandManager":6}],63:[function(require,module,exports){
 /**
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -6999,8 +7607,12 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.$editorContainerEl = $el;
     this.contentStyles = contentStyles;
 
+    this._height = 0;
+
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
+
+    this._initEvent();
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -7095,17 +7707,13 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('show', function() {
-        self.prepareToDetach();
+    this.eventManager.listen('changeModeToWysiwyg', function() {
+        self._autoResizeHeightIfNeed();
     });
 };
 
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
-
-    this.getEditor().addEventListener('input', function() {
-        self.eventManager.emit('contentChangedFromWysiwyg', self);
-    });
 
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
@@ -7143,6 +7751,9 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('changeFromWysiwyg', eventObj);
         self.eventManager.emit('change', eventObj);
+        self.eventManager.emit('contentChangedFromWysiwyg', self);
+
+        self._autoResizeHeightIfNeed();
     });
 
     this.getEditor().addEventListener('keydown', function(event) {
@@ -7193,9 +7804,9 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
     console.log('startContainer.previousSibling', range.startContainer.previousSibling);
     console.log('startContainer.nextSibling', range.startContainer.nextSibling);
     if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-        console.dir('currentPosition', range.startContainer.childNodes[range.startOffset]);
+        console.log('currentPosition', range.startContainer.childNodes[range.startOffset]);
     } else {
-        console.dir('currentPosition', range.startContainer.nodeValue[range.startOffset]);
+        console.log('currentPosition', range.startContainer.nodeValue[range.startOffset]);
     }
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
@@ -7221,6 +7832,15 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
+        } else if (this._isAfterTable(range)) {
+            event.preventDefault();
+            range.setStart(range.startContainer, range.startOffset - 1);
+            this.breakToNewDefaultBlock(range);
+        } else if (this._isBeforeTable(range)) {
+            event.preventDefault();
+            this.breakToNewDefaultBlock(range, 'before');
+        } else if (this._isInTable(range)) {
+            this._appendBrIfTdOrThNotHaveAsLastChild(range);
         }
     //backspace
     } else if (event.keyCode === 8) {
@@ -7229,6 +7849,12 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unformatTaskIfNeedOnBackspace(range);
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
+            } else if (this._isInTable(range)) {
+                this._tableHandlerOnBackspace(range, event);
+            } else if (this._isAfterTable(range)) {
+                event.preventDefault();
+                //테이블 전체선택후 backspace시 다른 에디터처럼 아무작업도 하지 않는다
+                //we dont do anything table on backspace when cursor is after table
             } else {
                 this._removeHrIfNeed(range, event);
             }
@@ -7240,6 +7866,55 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             self.eventManager.emit('command', 'IncreaseTask');
         }
     }
+};
+
+WysiwygEditor.prototype._isBeforeTable = function(range) {
+    return domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset)) === 'TABLE';
+};
+
+WysiwygEditor.prototype._isAfterTable = function(range) {
+    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+    return domUtils.getNodeName(prevElem) === 'TABLE' && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY';
+};
+
+WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
+    var prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
+        prevNodeName = domUtils.getNodeName(prevNode);
+
+    if (!prevNode || prevNodeName === 'BR' || prevNodeName === 'TD' || prevNodeName === 'TH') {
+        event.preventDefault();
+
+        if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+            $(prevNode).remove();
+        }
+    }
+};
+
+WysiwygEditor.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
+    var paths, tdOrTh, startContainerNodeName;
+
+    startContainerNodeName = domUtils.getNodeName(range.startContainer);
+
+    if (startContainerNodeName === 'TD' || startContainerNodeName === 'TH') {
+        tdOrTh = range.startContainer;
+    } else {
+        paths = $(range.startContainer).parentsUntil('tr');
+        tdOrTh = paths[paths.length - 1];
+    }
+
+    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR') {
+        $(tdOrTh).append('<br>');
+    }
+};
+
+WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
+    if (this._height === 'auto') {
+        this._heightToFitContents();
+    }
+};
+
+WysiwygEditor.prototype._heightToFitContents = function() {
+    this.$editorContainerEl.height(this.get$Body()[0].scrollHeight);
 };
 
 WysiwygEditor.prototype._isInOrphanText = function(selection) {
@@ -7386,6 +8061,15 @@ WysiwygEditor.prototype.remove = function() {
 };
 
 WysiwygEditor.prototype.setHeight = function(height) {
+    this._height = height;
+
+    if (height === 'auto') {
+        this.get$Body().css('overflow', 'hidden');
+        this._heightToFitContents();
+    } else {
+        this.get$Body().css('overflow', 'visible');
+    }
+
     this.$editorContainerEl.height(height);
 };
 
@@ -7450,7 +8134,7 @@ WysiwygEditor.prototype._ensureSpaceNextToTaskInput = function() {
 
         firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
 
-        if (firstTextNode && !(FIND_TASK_SPACES_RX.test(firstTextNode.nodeValue))) {
+        if (firstTextNode && !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
             firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
         }
     });
@@ -7486,6 +8170,8 @@ WysiwygEditor.prototype.getValue = function() {
     html = html.replace(/<div>/g, '');
     html = html.replace(/<\/div>/g, '<br />');
 
+    //remove last br in td or th
+    html = html.replace(/\<br \/\>(\<\/td\>|\<\/th\>)/g, '$1');
 
     return html;
 };
@@ -7767,6 +8453,19 @@ WysiwygEditor.prototype.postProcessForChange = function() {
         self = null;
     }, 0);
 };
+
+WysiwygEditor.prototype._isInTable = function(range) {
+    var target;
+
+    if (range.collapsed) {
+        target = range.startContainer;
+    } else {
+        target = range.commonAncestorContainer;
+    }
+
+    return !!$(target).closest('table').length;
+};
+
 module.exports = WysiwygEditor;
 
-},{"./domUtils":8,"./squireExt":35,"./wwClipboardManager":47,"./wwSelectionMarker":48}]},{},[19]);
+},{"./domUtils":8,"./squireExt":36,"./wwClipboardManager":49,"./wwSelectionMarker":50}]},{},[19]);

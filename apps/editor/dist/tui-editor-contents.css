@@ -7,7 +7,7 @@
     font-size: 14px;
     line-height: 1.6;
     background-color: white;
-    padding: 1em;
+    padding: 0;
     margin: 0;
     cursor: text;
     color: #181818;
@@ -217,6 +217,8 @@
 
 .tui-editor-contents table {
     padding: 0;
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 .tui-editor-contents table tr {
@@ -226,16 +228,13 @@
     padding: 0;
 }
 
-.tui-editor-contents table tr:nth-child(2n) {
-    background-color: #f8f8f8;
-}
-
 .tui-editor-contents table tr th {
     font-weight: bold;
     border: 1px solid #cccccc;
     text-align: left;
     margin: 0;
     padding: 6px 13px;
+    background-color: #f8f8f8;
 }
 
 .tui-editor-contents table tr td {
