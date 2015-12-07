@@ -99,6 +99,47 @@ var getNodeOffsetOfParent = function(node) {
     }
 };
 
+
+var _getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+    var directionKey = direction + 'Sibling',
+        nodeName, foundedNode;
+
+
+    while (node && !node[directionKey]) {
+        nodeName = getNodeName(node.parentNode);
+
+        if ((nodeName === untilNodeName)
+            || nodeName === 'BODY'
+        ) {
+            break;
+        }
+
+        node = node.parentNode;
+    }
+
+    if (node[directionKey]) {
+        foundedNode = node[directionKey];
+    }
+
+    return foundedNode;
+};
+
+var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
+    var prevNode;
+
+    if (index > 0) {
+        if (isTextNode(node)) {
+            prevNode = node;
+        } else {
+            prevNode = node.childNodes[index - 1];
+        }
+    } else {
+        prevNode = _getNodeWithDirectionUntil('previous', node, untilNodeName);
+    }
+
+    return prevNode;
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
@@ -106,5 +147,6 @@ module.exports = {
     isElemNode: isElemNode,
     getTextLength: getTextLength,
     getOffsetLength: getOffsetLength,
+    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
     getNodeOffsetOfParent: getNodeOffsetOfParent
 };
