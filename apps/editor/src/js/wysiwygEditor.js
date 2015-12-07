@@ -276,7 +276,7 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unwrapHeading();
             } else if (this._isInTable(range)) {
                 this._tableHandlerOnBackspace(range, event);
-            } else if (this._isAfterTable(range) && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY') {
+            } else if (this._isAfterTable(range)) {
                 event.preventDefault();
                 //테이블 전체선택후 backspace시 다른 에디터처럼 아무작업도 하지 않는다
                 //we dont do anything table on backspace when cursor is after table
@@ -299,7 +299,7 @@ WysiwygEditor.prototype._isBeforeTable = function(range) {
 
 WysiwygEditor.prototype._isAfterTable = function(range) {
     var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
-    return domUtils.getNodeName(prevElem) === 'TABLE';
+    return domUtils.getNodeName(prevElem) === 'TABLE' && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY';
 };
 
 WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
