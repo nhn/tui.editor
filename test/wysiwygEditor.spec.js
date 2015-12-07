@@ -360,7 +360,7 @@ describe('WysiwygEditor', function() {
 
                 wwe._unformatIncompleteTask();
 
-                expect(wwe.getEditor().getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
             });
         });
     });

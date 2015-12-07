@@ -38,6 +38,8 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
+
+    this._initEvent();
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -132,8 +134,8 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
-    this.eventManager.listen('show', function() {
-        self.prepareToDetach();
+    this.eventManager.listen('changeModeToWysiwyg', function() {
+        self._autoResizeHeightIfNeed();
     });
 };
 
@@ -493,8 +495,9 @@ WysiwygEditor.prototype.setHeight = function(height) {
         this._heightToFitContents();
     } else {
         this.get$Body().css('overflow', 'visible');
-        this.$editorContainerEl.height(height);
     }
+
+    this.$editorContainerEl.height(height);
 };
 
 WysiwygEditor.prototype.setValue = function(html) {
