@@ -240,7 +240,7 @@ describe('WysiwygEditor', function() {
             range.setStart(wwe.get$Body().find('td')[0], 0);
             range.collapse(true);
 
-            expect(wwe._isInTable()).toEqual(true);
+            expect(wwe._isInTable(range)).toEqual(true);
         });
 
         describe('_appendBrIfTdOrThNotHaveAsLastChild()', function() {
