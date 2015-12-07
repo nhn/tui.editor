@@ -19,7 +19,7 @@ var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
 function SectionManager(cm, preview) {
     this.cm = cm;
     this.preview = preview;
-    this.$previewContent = preview.$el.find('.previewContent');
+    this.$previewContent = preview.$el.find('.tui-editor-contents');
 
     /**
      *  section list

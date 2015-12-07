@@ -45,7 +45,7 @@ Preview.prototype._initEvent = function() {
 };
 
 Preview.prototype._initContentSection = function() {
-    this.$previewContent = $('<div class="previewContent tui-editor--contents" />');
+    this.$previewContent = $('<div class="tui-editor-contents" />');
     this.$el.append(this.$previewContent);
 };
 
