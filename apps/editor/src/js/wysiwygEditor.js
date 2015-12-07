@@ -257,15 +257,11 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
-        } else if (range.startOffset !== 0
-            && domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1)) === 'TABLE'
-        ) {
-            //커서가 테이블 바로 다음에 있을때
+        } else if (this._isAfterTable(range)) {
             event.preventDefault();
             range.setStart(range.startContainer, range.startOffset - 1);
             this.breakToNewDefaultBlock(range);
-        } else if (domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset)) === 'TABLE') {
-            //커서가 테이블 바로 이전에 있을때
+        } else if (this._isBeforeTable(range)) {
             event.preventDefault();
             this.breakToNewDefaultBlock(range, 'before');
         } else if (this._isInTable(range)) {
@@ -280,6 +276,10 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
                 this._unwrapHeading();
             } else if (this._isInTable(range)) {
                 this._tableHandlerOnBackspace(range, event);
+            } else if (this._isAfterTable(range) && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY') {
+                event.preventDefault();
+                //테이블 전체선택후 backspace시 다른 에디터처럼 아무작업도 하지 않는다
+                //we dont do anything table on backspace when cursor is after table
             } else {
                 this._removeHrIfNeed(range, event);
             }
@@ -291,6 +291,15 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             self.eventManager.emit('command', 'IncreaseTask');
         }
     }
+};
+
+WysiwygEditor.prototype._isBeforeTable = function(range) {
+    return domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset)) === 'TABLE';
+};
+
+WysiwygEditor.prototype._isAfterTable = function(range) {
+    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+    return domUtils.getNodeName(prevElem) === 'TABLE';
 };
 
 WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
