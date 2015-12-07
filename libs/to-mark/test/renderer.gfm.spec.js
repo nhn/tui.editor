@@ -62,15 +62,30 @@ describe('gfmRenderer', function() {
             });
         });
 
+        describe('TD BR, TH BR', function() {
+            it('br should return inline tag in table', function() {
+                expect(getMarkdownText('<table><tr><td>text<br>text</td></tr></table>', 'text', 6)).toEqual('<br>');
+                expect(getMarkdownText('<table><tr><th>text<br>text</th></tr></table>', 'text', 6)).toEqual('<br>');
+            });
+        });
+
         describe('TR', function() {
             it('should return | and subContent', function() {
                 expect(getMarkdownText('<table><tr><td>text</td></tr></table>', ' text |', 3)).toEqual('| text |\n');
+            });
+
+            it('should return nothing when subContents have nothing', function() {
+                expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 3)).toEqual('');
             });
         });
 
         describe('THEAD', function() {
             it('table with head', function() {
                 expect(getMarkdownText('<table><thead><tr><th>text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| ---- |\n');
+            });
+
+            it('should return nothing when subContents have nothing', function() {
+                expect(getMarkdownText('<table><thead><tr><th>text</th></tr></thead></table>', '', 2)).toEqual('');
             });
 
             it('table with left align head', function() {
