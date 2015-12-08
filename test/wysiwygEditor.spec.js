@@ -281,13 +281,27 @@ describe('WysiwygEditor', function() {
             it('remove input if current selection is right of input with one space', function() {
                 var range = wwe.getEditor().getSelection().cloneRange();
 
-                wwe.getEditor().setHTML('<ul><li><input type="checkbox" />&nbsp;text</li></ul>');
+                wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
 
                 range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                expect(wwe.getValue()).toEqual('<ul><li>text</li></ul>');
+                expect(wwe.get$Body().find('input').length).toEqual(0);
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
+            });
+
+            it('remove empty task', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox" />&nbsp</li></ul>');
+
+                range.setStart(wwe.get$Body().find('li')[0], 2);
+                range.collapse(true);
+                wwe._unformatTaskIfNeedOnBackspace(range);
+
+                expect(wwe.get$Body().find('input').length).toEqual(0);
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
             });
 
             it('remove input if current selection is right of input with one space wrapped inline tag', function() {
@@ -299,8 +313,8 @@ describe('WysiwygEditor', function() {
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                //replace하는것은 ie때문
-                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li><b>text</b></li></ul>');
+                expect(wwe.get$Body().find('input').length).toEqual(0);
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
             });
 
             it('remove input if current selection has placed at start of task item', function() {
@@ -312,7 +326,8 @@ describe('WysiwygEditor', function() {
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li>&nbsp;text</li></ul>');
+                expect(wwe.get$Body().find('input').length).toEqual(0);
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
             });
 
             it('dont remove necessary input', function() {
@@ -324,7 +339,8 @@ describe('WysiwygEditor', function() {
                 range.collapse(true);
                 wwe._unformatTaskIfNeedOnBackspace(range);
 
-                expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text<b>a</b></li></ul>');
+                expect(wwe.get$Body().find('input').length).toEqual(1);
+                expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
             });
         });
 

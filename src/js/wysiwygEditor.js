@@ -16,7 +16,7 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
-    FIND_TASK_SPACES_RX = /^\s+/g;
+    FIND_TASK_SPACES_RX = /^\s+/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -274,13 +274,14 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (range.collapsed) {
             if (this._isInTaskList(range)) {
                 this._unformatTaskIfNeedOnBackspace(range);
+                //and delete list by squire
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             } else if (this._isInTable(range)) {
                 this._tableHandlerOnBackspace(range, event);
             } else if (this._isAfterTable(range)) {
                 event.preventDefault();
-                //테이블 전체선택후 backspace시 다른 에디터처럼 아무작업도 하지 않는다
+                //테이블을 왼쪽에둔 커서위치에서 backspace시 다른 에디터처럼 아무작업도 하지 않는다
                 //we dont do anything table on backspace when cursor is after table
             } else {
                 this._removeHrIfNeed(range, event);
@@ -674,9 +675,14 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
         //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
         if (startOffset === 0) {
             prevEl = domUtils.getChildNodeAt(startContainer, startOffset);
-        //inputbox 바로 오른편에서 지워지는경우
+        //inputbox 오른편 어딘가에서 지워지는경우
         } else {
             prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
+
+            //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
+            if (domUtils.isTextNode(prevEl) && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
+                prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 2);
+            }
         }
 
         needRemove = (domUtils.getNodeName(prevEl) === 'INPUT');
