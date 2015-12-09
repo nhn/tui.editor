@@ -2424,22 +2424,30 @@ proto._createRange =
 };
 
 proto.scrollRangeIntoView = function ( range ) {
-    var win = this._win;
-    var top = range.getBoundingClientRect().top;
-    var height = win.innerHeight;
+    // Get the bounding rect
+    var rect = range.getBoundingClientRect();
     var node, parent;
-    if ( !top ) {
+    if ( !rect.top ) {
         node = this._doc.createElement( 'SPAN' );
         range = range.cloneRange();
         insertNodeInRange( range, node );
-        top = node.getBoundingClientRect().top;
+        rect = node.getBoundingClientRect();
         parent = node.parentNode;
         parent.removeChild( node );
         parent.normalize();
     }
+    // Then check and scroll
+    var win = this._win;
+    var height = win.innerHeight;
+    var top = rect.top;
     if ( top > height ) {
         win.scrollBy( 0, top - height + 20 );
     }
+    // And fire event for integrations to use
+    this.fireEvent( 'scrollPointIntoView', {
+        x: rect.left,
+        y: top
+    });
 };
 
 proto._moveCursorTo = function ( toStart ) {
