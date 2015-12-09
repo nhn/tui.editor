@@ -241,16 +241,6 @@ var keyHandlers = {
         range = self._createRange( nodeAfterSplit, 0 );
         self.setSelection( range );
         self._updatePath( range, true );
-
-        // Scroll into view
-        if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
-            nodeAfterSplit = nodeAfterSplit.parentNode;
-        }
-        // 16 ~ one standard line height in px.
-        if ( nodeAfterSplit.getBoundingClientRect().top + 16 >
-                self._doc.documentElement.clientHeight ) {
-            nodeAfterSplit.scrollIntoView( false );
-        }
     },
     backspace: function ( self, event, range ) {
         self._removeZWS();

@@ -1390,16 +1390,6 @@ var keyHandlers = {
         range = self._createRange( nodeAfterSplit, 0 );
         self.setSelection( range );
         self._updatePath( range, true );
-
-        // Scroll into view
-        if ( nodeAfterSplit.nodeType === TEXT_NODE ) {
-            nodeAfterSplit = nodeAfterSplit.parentNode;
-        }
-        // 16 ~ one standard line height in px.
-        if ( nodeAfterSplit.getBoundingClientRect().top + 16 >
-                self._doc.documentElement.clientHeight ) {
-            nodeAfterSplit.scrollIntoView( false );
-        }
     },
     backspace: function ( self, event, range ) {
         self._removeZWS();
@@ -2433,6 +2423,25 @@ proto._createRange =
     return domRange;
 };
 
+proto.scrollRangeIntoView = function ( range ) {
+    var win = this._win;
+    var top = range.getBoundingClientRect().top;
+    var height = win.innerHeight;
+    var node, parent;
+    if ( !top ) {
+        node = this._doc.createElement( 'SPAN' );
+        range = range.cloneRange();
+        insertNodeInRange( range, node );
+        top = node.getBoundingClientRect().top;
+        parent = node.parentNode;
+        parent.removeChild( node );
+        parent.normalize();
+    }
+    if ( top > height ) {
+        win.scrollBy( 0, top - height + 20 );
+    }
+};
+
 proto._moveCursorTo = function ( toStart ) {
     var body = this._body,
         range = this._createRange( body, toStart ? 0 : body.childNodes.length );
@@ -2460,6 +2469,7 @@ proto.setSelection = function ( range ) {
         if ( sel ) {
             sel.removeAllRanges();
             sel.addRange( range );
+            this.scrollRangeIntoView( range );
         }
     }
     return this;
