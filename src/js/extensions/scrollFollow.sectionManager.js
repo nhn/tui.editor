@@ -5,7 +5,10 @@
 
 'use strict';
 
-var FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
+var FIND_HEADER_RX = /^ *(#{1,6}) *([^\n]+?) *#* *(?:\n+|$)/,
+    FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
+    FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/,
+    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
     FIND_SPACE = /\s/g;
 
 /*
@@ -86,29 +89,35 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var isSection, state, i, lineLength,
+    var isSection, i, lineLength, lineString,
         isTrimming = true,
+        onTable = false,
+        onCodeBlock = false,
         trimCapture = '';
 
     lineLength = this.cm.getDoc().lineCount();
 
     for (i = 0; i < lineLength; i+=1) {
-        state = this.cm.getStateAfter(i);
         isSection = false;
+        lineString = this.cm.getLine(i);
+
+        if (onTable && !(this._isTableCode(lineString) || this._isTableAligner(lineString))) {
+            onTable = false;
+        } else if (this._isTable(lineString, this.cm.getLine(i+1))) {
+            onTable = true;
+        }
+
+        if (onCodeBlock && this._isCodeBlockEnd(this.cm.getLine(i-1))) {
+            onCodeBlock = false;
+        } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
+            onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+        }
 
         //atx header
-        if (this.cm.getLine(i)
-            && state.base.header
-            && !state.base.quote
-            && !state.base.list
-            && !state.base.taskList
-        ) {
+        if (this._isAtxHeader(lineString)) {
             isSection = true;
         //setext header
-        } else if (this.cm.getLine(i).replace(FIND_SPACE, '') !== ''
-            && this.cm.getLine(i+1)
-            && this.cm.getLine(i+1).match(FIND_SETEXT_HEADER_RX)
-        ) {
+        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, this.cm.getLine(i+1))) {
             isSection = true;
         }
 
@@ -126,6 +135,98 @@ SectionManager.prototype._eachLineState = function(iteratee) {
 
         iteratee(isSection, i);
     }
+};
+
+/**
+ * _doFollowedLinesHaveCodeBlockEnd
+ * Check if follow lines have codeblock end
+ * @param {number} lineIndex current index
+ * @param {number} lineLength line length
+ * @return {boolean} result
+ */
+SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, lineLength) {
+    var i,
+        doLineHaveCodeBlockEnd = false;
+
+    for (i = lineIndex + 1; i < lineLength; i+=1) {
+        if (this._isCodeBlockEnd(this.cm.getLine(i))) {
+            doLineHaveCodeBlockEnd = true;
+            break;
+        }
+    }
+
+    return doLineHaveCodeBlockEnd;
+};
+
+/**
+ * _isCodeBlockStart
+ * Check if passed string have code block start
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isCodeBlockStart = function(string) {
+    return FIND_CODEBLOCK_START_RX.test(string);
+};
+
+/**
+ * _isCodeBlockEnd
+ * Check if passed string have code block end
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isCodeBlockEnd = function(string) {
+    return FIND_CODEBLOCK_END_RX.test(string);
+};
+
+/**
+ * _isTable
+ * Check if passed string have table
+ * @param {string} lineString current line string
+ * @param {string} nextLineString next line string
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTable = function(lineString, nextLineString) {
+    return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
+};
+
+/**
+ * _isTableCode
+ * Check if passed string have table code
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTableCode = function(string) {
+    return !!(string.match(/^ *(\S.*\|.*)/) && string.match(/^ *\|(.+)/));
+};
+
+/**
+ * _isTableAligner
+ * Check if passed string have table align code
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTableAligner = function(string) {
+    return !!(string.match(/ *([-:]+ *\|[-| :]*)/) && string.match(/ *\|( *[-:]+[-| :]*)/));
+};
+
+/**
+ * _isAtxHeader
+ * Check if passed string have atx header
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isAtxHeader = function(string) {
+    return FIND_HEADER_RX.test(string);
+};
+
+/**
+ * _isSeTextHeader
+ * @param {string} lineString current line string
+ * @param {string} nextLineString next line string
+ * @return {boolean} result
+ */
+SectionManager.prototype._isSeTextHeader = function(lineString, nextLineString) {
+    return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
 };
 
 /**
