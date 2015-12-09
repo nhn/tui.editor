@@ -22,10 +22,19 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
      *  @param {object} data data for image
      */
     exec: function(wwe, data) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            link;
 
         sq.removeAllFormatting();
-        sq.makeLink(data.url);
+
+        if (sq.getSelectedText()) {
+            sq.makeLink(data.url);
+        } else {
+            link = sq.createElement('A', {href: data.url});
+            $(link).text(data.linkText);
+            sq.insertElement(link);
+        }
+
         sq.focus();
     }
 });
