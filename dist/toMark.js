@@ -142,6 +142,7 @@ var Renderer = require('./renderer');
 var FIND_LAST_RETURN_RX = /\n$/g,
     FIND_BR_AND_RETURN_RX = /[ \xA0]+\n\n/g,
     FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX = /([ \xA0]+\n){2,}/g,
+    FIND_LINK_HREF = /href\=\"(.*?)\"/,
     START_OF_LINES_RX = /^/gm;
 
 /**
@@ -186,7 +187,13 @@ var basicRenderer = Renderer.factory({
     },
     'A': function(node, subContent) {
         var res = subContent,
-            url = node.href;
+            foundedHref, url;
+
+        foundedHref = FIND_LINK_HREF.exec(node.outerHTML);
+
+        if (foundedHref) {
+            url = foundedHref[1];
+        }
 
         if (!this.isEmptyText(subContent) && url) {
             res = '[' + subContent + '](' + url + ')';
