@@ -130,7 +130,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
           state.indentation -= state.indentationDiff;
         }
         state.list = null;
-      } 
+      }
       if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4) + 1;

@@ -23,6 +23,7 @@ module.exports = function(config) {
             'lib/tui-code-snippet/code-snippet.js',
             'lib/tui-component-colorpicker/dist/colorpicker.js',
             'lib/toMark/dist/toMark.js',
+            'lib/highlightjs/highlight.pack.js',
             'lib/marked/marked.min.js',
             'lib/codemirror/lib/codemirror.js',
             'lib/codemirror/lib/codemirror.css',
