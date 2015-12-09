@@ -5,7 +5,8 @@
 
 'use strict';
 
-var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
+var FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
+    FIND_SPACE = /\s/g;
 
 /*
  * SectionManager
@@ -104,7 +105,10 @@ SectionManager.prototype._eachLineState = function(iteratee) {
         ) {
             isSection = true;
         //setext header
-        } else if (this.cm.getLine(i+1) && this.cm.getLine(i+1).match(setextHeaderRx)) {
+        } else if (this.cm.getLine(i).replace(FIND_SPACE, '') !== ''
+            && this.cm.getLine(i+1)
+            && this.cm.getLine(i+1).match(FIND_SETEXT_HEADER_RX)
+        ) {
             isSection = true;
         }
 
