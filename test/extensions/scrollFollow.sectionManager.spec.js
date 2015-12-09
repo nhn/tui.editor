@@ -161,6 +161,41 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(3);
         });
 
+        it('dont make section with line', function() {
+            ned.setValue([
+                'paragraph',
+                'header1',
+                '=======',
+                'paragraph',
+                ' ',
+                '------',
+                'paragraph'
+            ].join('\n'));
+
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(2);
+        });
+
+        xit('dont make section with line #2', function() {
+            ned.setValue([
+                'paragraph',
+                'header1',
+                '=======',
+                '``` javascript',
+                'var mm = 1;',
+                '```',
+                '------',
+                'paragraph'
+            ].join('\n'));
+
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(2);
+        });
+
         it('section list have line info', function() {
             var sectionList;
 
