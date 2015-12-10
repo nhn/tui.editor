@@ -17,7 +17,9 @@ var gulp = require('gulp'),
     livereload = require('gulp-livereload'),
 
     concatCss = require('gulp-concat-css'),
-    concat = require('gulp-concat');
+    concat = require('gulp-concat'),
+
+    csslint = require('gulp-csslint');
 
 var gulpSync = require('gulp-sync')(gulp);
 
@@ -62,6 +64,48 @@ gulp.task('lint', function lint() {
         .pipe(eslint())
         .pipe(eslint.format())
         .pipe(eslint.failOnError());
+});
+
+gulp.task('csslint', function() {
+    gulp.src('src/css/*.css')
+        .pipe(csslint({
+            'important': false,
+            'adjoining-classes': false,
+            'known-properties': true,
+            'box-sizing': false,
+            'box-model': false,
+            'overqualified-elements': false,
+            'display-property-grouping': false,
+            'bulletproof-font-face': true,
+            'compatible-vendor-prefixes': true,
+            'regex-selectors': false,
+            'errors': true,
+            'duplicate-background-images': true,
+            'duplicate-properties': true,
+            'empty-rules': true,
+            'selector-max-approaching': false,
+            'gradients': false,
+            'fallback-colors': false,
+            'font-sizes': false,
+            'font-faces': false,
+            'floats': true,
+            'star-property-hack': false,
+            'outline-none': false,
+            'import': true,
+            'ids': true,
+            'underscore-property-hack': false,
+            'rules-count': false,
+            'qualified-headings': false,
+            'selector-max': true,
+            'shorthand': false,
+            'text-indent': false,
+            'unique-headings': false,
+            'universal-selector': false,
+            'unqualified-attributes': false,
+            'vendor-prefix': false,
+            'zero-units': true
+        }))
+        .pipe(csslint.reporter());
 });
 
 gulp.task('lintw', function lint() {
@@ -114,4 +158,4 @@ gulp.task('depsModuleConcat', function() {
         .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('build', gulpSync.sync(['lint', 'bundle', 'depsModuleConcat', 'uglify', 'contentCssCopy', 'depsCssConcat']));
+gulp.task('build', gulpSync.sync(['lint', 'csslint', 'bundle', 'depsModuleConcat', 'uglify', 'contentCssCopy', 'depsCssConcat']));
