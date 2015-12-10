@@ -32,9 +32,9 @@ describe('Table', function() {
             Table.exec(mde, 2, 2);
 
             expect(doc.getValue()).toEqual([
-                '\n|    |    |',
-                '| -- | -- |',
-                '|    |    |\n'
+                '\n|  |  |',
+                '| --- | --- |',
+                '|  |  |\n'
             ].join('\n'));
         });
 
@@ -42,10 +42,10 @@ describe('Table', function() {
             Table.exec(mde, 4, 3);
 
             expect(doc.getValue()).toEqual([
-                '\n|    |    |    |    |',
-                '| -- | -- | -- | -- |',
-                '|    |    |    |    |',
-                '|    |    |    |    |\n'
+                '\n|  |  |  |  |',
+                '| --- | --- | --- | --- |',
+                '|  |  |  |  |',
+                '|  |  |  |  |\n'
             ].join('\n'));
         });
 
@@ -53,9 +53,9 @@ describe('Table', function() {
             Table.exec(mde, 2, 2);
 
             expect(doc.getValue()).toEqual([
-                '\n|    |    |',
-                '| -- | -- |',
-                '|    |    |\n'
+                '\n|  |  |',
+                '| --- | --- |',
+                '|  |  |\n'
             ].join('\n'));
 
             expect(cm.getCursor().line).toEqual(1);
