@@ -52,8 +52,8 @@ function makeHeader(col) {
         border = '|';
 
     while (col) {
-        header += '    |';
-        border +=' -- |';
+        header += '  |';
+        border +=' --- |';
 
         col -= 1;
     }
@@ -76,7 +76,7 @@ function makeBody(col, row) {
         body += '|';
 
         for (icol = 0; icol < col; icol += 1) {
-            body += '    |';
+            body += '  |';
         }
 
         body += '\n';
