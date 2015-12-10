@@ -117,6 +117,21 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(3);
         });
 
+        it('dont make section with only #', function() {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                '##not header',
+                'paragraph'
+            ].join('\n'));
+
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(2);
+        });
+
         it('make section list with default section ', function() {
             ned.setValue([
                 ' ',
