@@ -212,6 +212,22 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
+        it('any problem with table in bottom', function() {
+            ned.setValue([
+                'paragraph',
+                'header1',
+                '=======',
+                'paragraph',
+                '| th | th |',
+                '| -- | -- |',
+                '| td | td |'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+
+            expect(sectionManager.getSectionList().length).toEqual(2);
+        });
+
         it('dont make section with line followed by codeBlock', function() {
             ned.setValue([
                 'paragraph',
