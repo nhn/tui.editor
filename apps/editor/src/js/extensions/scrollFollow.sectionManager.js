@@ -89,7 +89,7 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var isSection, i, lineLength, lineString,
+    var isSection, i, lineLength, lineString, nextLineString, prevLineString,
         isTrimming = true,
         onTable = false,
         onCodeBlock = false,
@@ -100,14 +100,16 @@ SectionManager.prototype._eachLineState = function(iteratee) {
     for (i = 0; i < lineLength; i+=1) {
         isSection = false;
         lineString = this.cm.getLine(i);
+        nextLineString = this.cm.getLine(i+1) || '';
+        prevLineString = this.cm.getLine(i-1) || '';
 
-        if (onTable && !(this._isTableCode(lineString) || this._isTableAligner(lineString))) {
+        if (onTable && (!lineString || !(this._isTableCode(lineString) || this._isTableAligner(lineString)))) {
             onTable = false;
-        } else if (this._isTable(lineString, this.cm.getLine(i+1))) {
+        } else if (!onTable && this._isTable(lineString, nextLineString)) {
             onTable = true;
         }
 
-        if (onCodeBlock && this._isCodeBlockEnd(this.cm.getLine(i-1))) {
+        if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
             onCodeBlock = false;
         } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
             onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
@@ -117,14 +119,14 @@ SectionManager.prototype._eachLineState = function(iteratee) {
         if (this._isAtxHeader(lineString)) {
             isSection = true;
         //setext header
-        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, this.cm.getLine(i+1))) {
+        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
             isSection = true;
         }
 
         //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
         //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
         if (isTrimming) {
-            trimCapture += this.cm.getLine(i).trim();
+            trimCapture += lineString.trim();
 
             if (trimCapture) {
                 isTrimming = false;
@@ -196,7 +198,7 @@ SectionManager.prototype._isTable = function(lineString, nextLineString) {
  * @return {boolean} result
  */
 SectionManager.prototype._isTableCode = function(string) {
-    return !!(string.match(/^ *(\S.*\|.*)/) && string.match(/^ *\|(.+)/));
+    return !!(string.match(/ *(\S.*\|.*)/) && string.match(/ *\|(.+)/));
 };
 
 /**
