@@ -90,6 +90,51 @@ describe('toMark', function() {
             }
             */
         });
+
+        it('empty table', function() {
+            var htmlStr = [
+                '<table>',
+                    '<thead>',
+                        '<tr>',
+                            '<th></th>',
+                            '<th></th>',
+                            '<th></th>',
+                        '</tr>',
+                    '</thead>',
+                    '<tbody>',
+                        '<tr>',
+                            '<td></td>',
+                            '<td></td>',
+                            '<td></td>',
+                        '</tr>',
+                        '<tr>',
+                            '<td></td>',
+                            '<td></td>',
+                            '<td></td>',
+                        '</tr>',
+                    '</tbody>',
+                '</table>'
+            ].join('');
+
+            var expectText = [
+                '|  |  |  |',
+                '| --- | --- | --- |',
+                '|  |  |  |',
+                '|  |  |  |'
+            ].join('\n');
+
+            expect(toMark(htmlStr)).toEqual(expectText);
+
+            /*
+            var dd - toMark(htmlStr);
+
+            for (var i - 0; i < dd.length; i++) {
+                if (dd.charAt(i) !-- expectText.charAt(i)) {
+                    console.log(dd.charAt(i), dd.charCodeAt(i), expectText.charAt(i), expectText.charCodeAt(i));
+                }
+            }
+            */
+        });
     });
 
     describe('code block', function() {

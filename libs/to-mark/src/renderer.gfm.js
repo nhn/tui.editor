@@ -53,7 +53,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
-        return ' ' + (subContent || ' ') + ' |';
+        return ' ' + subContent + ' |';
     },
     'TD BR, TH BR': function() {
         return '<br>';
@@ -118,6 +118,8 @@ function findChildTag(node, tagName) {
 
 function repeatString(pattern, count) {
     var result = pattern;
+
+    count = Math.max(count, 3);
 
     while (count > 1) {
         result += pattern;
