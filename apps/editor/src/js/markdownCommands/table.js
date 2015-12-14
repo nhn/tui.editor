@@ -35,7 +35,7 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
 
         doc.replaceSelection(table);
 
-        cm.setCursor(cm.getCursor().line - (row + 1), 2); //+1 means header border line
+        cm.setCursor(cm.getCursor().line - row, 2);
 
         mde.focus();
     }
@@ -81,6 +81,8 @@ function makeBody(col, row) {
 
         body += '\n';
     }
+
+    body = body.replace(/\n$/g, '');
 
     return body;
 }
