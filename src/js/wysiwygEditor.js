@@ -127,7 +127,6 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     body.className = EDITOR_CONTENT_CSS_CLASSNAME;
 
     bodyStyle = body.style;
-    bodyStyle.height = '100%';
     bodyStyle.padding = '0 5px';
 };
 
@@ -342,7 +341,7 @@ WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
 };
 
 WysiwygEditor.prototype._heightToFitContents = function() {
-    this.$editorContainerEl.height(this.get$Body()[0].scrollHeight);
+    this.$editorContainerEl.height(this.get$Body().height());
 };
 
 WysiwygEditor.prototype._isInOrphanText = function(selection) {
@@ -493,12 +492,13 @@ WysiwygEditor.prototype.setHeight = function(height) {
 
     if (height === 'auto') {
         this.get$Body().css('overflow', 'hidden');
+        this.get$Body().css('height', 'auto');
         this._heightToFitContents();
     } else {
         this.get$Body().css('overflow', 'visible');
+        this.get$Body().css('height', '100%');
+        this.$editorContainerEl.height(height);
     }
-
-    this.$editorContainerEl.height(height);
 };
 
 WysiwygEditor.prototype.setValue = function(html) {
@@ -508,6 +508,8 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensureSpaceNextToTaskInput();
     this._unwrapDivOnHr();
     this._removeTaskListClass();
+
+    this._autoResizeHeightIfNeed();
 
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 };
