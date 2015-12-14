@@ -61,37 +61,24 @@ describe('renderer', function() {
         expect(renderer.convert({tagName: 'H1'})).toEqual('');
     });
 
-    it('_getInlineHtml() make inline html with subcontent', function() {
+    it('should make inline html with subcontent', function() {
         var renderer = Renderer.factory();
         runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><em>test</em></span>'));
         runner.next();
-        expect(renderer._getInlineHtml(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
 
         runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><span>test</span></span>'));
         runner.next();
-        expect(renderer._getInlineHtml(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
     });
 
-    xit('if rule\'s converter returns falsy, conveter returns subContent', function() {
-        var convertedText,
-            renderer = Renderer.factory({
-                'H1, H2, H3, H4, H5, H6': function() {
-                    return false;
-                },
-                'EM': function() {}
-            });
-
-        runner = new DomRunner(toDom('<h1>test</h1>'));
+    it('inline tag with getSpaceControlled', function() {
+        var renderer = Renderer.factory();
+        runner = new DomRunner(toDom('pre <span class="myClass" id="myId" style="color:#ff0"><em>test</em></span> post'));
         runner.next();
-        convertedText = renderer.convert(runner.getNode(), 'subContents');
-
-        expect(convertedText).toEqual('subContents');
-
-        runner = new DomRunner(toDom('<em>test</em>'));
         runner.next();
-        convertedText = renderer.convert(runner.getNode(), 'subContents');
 
-        expect(convertedText).toEqual('subContents');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual(' <span class="myClass" id="myId" style="color:#ff0">**test**</span> ');
     });
 
     it('rules can be assigned separately with comma', function() {
