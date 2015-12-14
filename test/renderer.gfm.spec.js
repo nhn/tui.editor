@@ -62,8 +62,8 @@ describe('gfmRenderer', function() {
             });
 
             it('should return markdown table even if subContents have nothing', function() {
-                expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 4)).toEqual('   |');
-                expect(getMarkdownText('<table><tr><th></th></tr></table>', '', 4)).toEqual('   |');
+                expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 4)).toEqual('  |');
+                expect(getMarkdownText('<table><tr><th></th></tr></table>', '', 4)).toEqual('  |');
             });
         });
 
@@ -98,7 +98,7 @@ describe('gfmRenderer', function() {
             });
 
             it('table with center align head', function() {
-                expect(getMarkdownText('<table><thead><tr><th align="center">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :--: |\n');
+                expect(getMarkdownText('<table><thead><tr><th align="center">text</th></tr></thead></table>', '\n| text |\n', 2)).toEqual('\n| text |\n| :---: |\n');
             });
         });
     });
