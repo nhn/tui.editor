@@ -221,6 +221,11 @@
     border-spacing: 0;
 }
 
+.tui-editor-contents table th,
+.tui-editor-contents table td {
+    vertical-align: middle
+}
+
 .tui-editor-contents table tr {
     border-top: 1px solid #cccccc;
     background-color: white;
@@ -238,10 +243,10 @@
 }
 
 .tui-editor-contents table tr td {
-    border: 1px solid #cccccc;
-    text-align: left;
     margin: 0;
     padding: 6px 13px;
+    border: 1px solid #cccccc;
+    text-align: left;
 }
 
 .tui-editor-contents table tr th :first-child,
