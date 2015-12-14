@@ -37,4 +37,16 @@ describe('Table', function() {
         expect(wwe.get$Body().find('tbody tr').eq(0).find('td').length).toEqual(4);
         expect(wwe.get$Body().find('tbody tr').eq(1).find('td').length).toEqual(4);
     });
+
+    it('table have class', function() {
+        Table.exec(wwe, 4, 3);
+
+        expect(wwe.get$Body().find('table').attr('class')).toBeDefined();
+    });
+
+    it('first th in table have focus', function() {
+        Table.exec(wwe, 4, 3);
+
+        expect(wwe.getEditor().getSelection().startContainer).toBe(wwe.get$Body().find('th')[0]);
+    });
 });
