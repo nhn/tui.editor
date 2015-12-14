@@ -15,6 +15,7 @@ describe('AddLink', function() {
         wwe = new WysiwygEditor($container, null, new EventManager());
 
         wwe.init(function() {
+            wwe.getEditor()._ignoreChange = true;
             done();
         });
     });

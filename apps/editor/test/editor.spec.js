@@ -13,7 +13,8 @@ describe('Editor', function() {
                 el: $('body'),
                 height: 300,
                 events: {
-                    'load': function() {
+                    'load': function(editor) {
+                        editor.getSquire()._ignoreChange = true;
                         done();
                     }
                 }

@@ -36,6 +36,8 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 
     this._height = 0;
 
+    this._silentChange = false;
+
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
 
@@ -168,16 +170,20 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        eventObj = {
-            source: 'wysiwyg',
-            selection: sel,
-            textContent: sel.endContainer.textContent,
-            caretOffset: sel.endOffset
-        };
+        if (!this._silentChange) {
+            eventObj = {
+                source: 'wysiwyg',
+                selection: sel,
+                textContent: sel.endContainer.textContent,
+                caretOffset: sel.endOffset
+            };
 
-        self.eventManager.emit('changeFromWysiwyg', eventObj);
-        self.eventManager.emit('change', eventObj);
-        self.eventManager.emit('contentChangedFromWysiwyg', self);
+            self.eventManager.emit('changeFromWysiwyg', eventObj);
+            self.eventManager.emit('change', eventObj);
+            self.eventManager.emit('contentChangedFromWysiwyg', self);
+        } else {
+            this._silentChange = false;
+        }
 
         self._autoResizeHeightIfNeed();
     });
@@ -617,7 +623,7 @@ WysiwygEditor.prototype.getValue = function() {
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
-    this.editor._ignoreChange = true;
+    this._silentChange = true;
 
     //for ensure to fire change event
     this.get$Body().attr('lastGetValue', Date.now());
@@ -892,7 +898,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     var self = this;
 
     setTimeout(function() {
-        self.getEditor()._ignoreChange = true;
+        self._silentChange = true;
         self._unformatIncompleteTask();
         self._ensureSpaceNextToTaskInput();
         self = null;
