@@ -587,8 +587,18 @@ WysiwygEditor.prototype.getValue = function() {
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
+        var result;
+
         //we maintain empty list
-        return tag === 'li' ? match : '<br />';
+        if (tag === 'li') {
+            result = match;
+        } else if (tag === 'td' || tag === 'th') {
+            result = '<' + tag + '>'+'</' + tag + '>';
+        } else {
+            result = '<br />';
+        }
+
+        return result;
     });
 
     //remove unnecessary brs
