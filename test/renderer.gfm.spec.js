@@ -60,6 +60,11 @@ describe('gfmRenderer', function() {
                 expect(getMarkdownText('<table><tr><td>text</td></tr></table>', 'text', 4)).toEqual(' text |');
                 expect(getMarkdownText('<table><tr><th>text</th></tr></table>', 'text', 4)).toEqual(' text |');
             });
+
+            it('should return markdown table even if subContents have nothing', function() {
+                expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 4)).toEqual('   |');
+                expect(getMarkdownText('<table><tr><th></th></tr></table>', '', 4)).toEqual('   |');
+            });
         });
 
         describe('TD BR, TH BR', function() {
@@ -72,10 +77,6 @@ describe('gfmRenderer', function() {
         describe('TR', function() {
             it('should return | and subContent', function() {
                 expect(getMarkdownText('<table><tr><td>text</td></tr></table>', ' text |', 3)).toEqual('| text |\n');
-            });
-
-            it('should return nothing when subContents have nothing', function() {
-                expect(getMarkdownText('<table><tr><td></td></tr></table>', '', 3)).toEqual('');
             });
         });
 

@@ -53,13 +53,13 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
-        return subContent ? (' ' + subContent + ' |') : '';
+        return ' ' + (subContent || ' ') + ' |';
     },
     'TD BR, TH BR': function() {
         return '<br>';
     },
     'TR': function(node, subContent) {
-        return subContent ? ('|' + subContent + '\n') : '' ;
+        return '|' + subContent + '\n';
     },
     'THEAD': function(node, subContent) {
         var i, ths, thsLength,
