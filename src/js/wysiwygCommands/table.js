@@ -29,6 +29,11 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
         var sq = wwe.getEditor(),
             table;
 
+        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+            sq.focus();
+            return;
+        }
+
         table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
         table += makeHeader(col);
         table += makeBody(col, row - 1);

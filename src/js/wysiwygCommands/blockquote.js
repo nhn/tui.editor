@@ -23,8 +23,11 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.increaseQuoteLevel();
+        if (!wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.increaseQuoteLevel();
+        }
+
         sq.focus();
     }
 });
