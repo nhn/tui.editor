@@ -20,7 +20,8 @@ describe('colorSyntax', function() {
                 useCustomSyntax: true
             },
             events: {
-                'load': function() {
+                'load': function(editor) {
+                    editor.getSquire()._ignoreChange = true;
                     done();
                 }
             }
@@ -58,7 +59,8 @@ describe('colorSyntax', function() {
                 initialEditType: 'markdown',
                 exts: ['colorSyntax'],
                 events: {
-                    'load': function() {
+                    'load': function(editor) {
+                        editor.getSquire()._ignoreChange = true;
                         actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
                         expected = '<span style="color:#ff00ff">test</span>';
                         expect(actual).toEqual(expected);
@@ -94,7 +96,8 @@ describe('colorSyntax', function() {
                 initialEditType: 'markdown',
                 exts: ['colorSyntax'],
                 events: {
-                    'load': function() {
+                    'load': function(editor) {
+                        editor.getSquire()._ignoreChange = true;
                         actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
                         expected = '{color:#ff00ff}test{color}';
                         expect(actual).toEqual(expected);

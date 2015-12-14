@@ -26,6 +26,7 @@ describe('taskCounter', function() {
                 },
                 events: {
                     'load': function(editor) {
+                        editor.getSquire()._ignoreChange = true;
                         em = editor.eventManager;
                         done();
                     }
@@ -75,6 +76,7 @@ describe('taskCounter', function() {
                 },
                 events: {
                     'load': function(editor) {
+                        editor.getSquire()._ignoreChange = true;
                         em = editor.eventManager;
                         done();
                     }

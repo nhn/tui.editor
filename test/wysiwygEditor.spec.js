@@ -16,6 +16,7 @@ describe('WysiwygEditor', function() {
         wwe = new WysiwygEditor($container, null, em);
 
         wwe.init(function() {
+            wwe.getEditor()._ignoreChange = true;
             done();
         });
     });
@@ -68,6 +69,10 @@ describe('WysiwygEditor', function() {
     });
 
     describe('Event', function() {
+        beforeEach(function() {
+            wwe.getEditor()._ignoreChange = false;
+        });
+
         it('when something changed in editor Emit contentChangedFromWysiwyg event', function(done) {
             em.listen('contentChangedFromWysiwyg', function(editor) {
                 expect(editor).toBe(wwe);

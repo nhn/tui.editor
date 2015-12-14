@@ -20,6 +20,7 @@ describe('scrollFollow.sectionManager', function() {
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
+                    editor.getSquire()._ignoreChange = true;
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');

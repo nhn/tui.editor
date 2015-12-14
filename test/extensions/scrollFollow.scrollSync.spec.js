@@ -21,6 +21,7 @@ describe('scrollFollow.ScrollSync', function() {
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
+                    editor.getSquire()._ignoreChange = true;
                     editor.getCodeMirror().setSize(200, 50);
                     $('.te-preview').css('padding', '0');
                     $('.te-preview').css('overflow', 'auto');
