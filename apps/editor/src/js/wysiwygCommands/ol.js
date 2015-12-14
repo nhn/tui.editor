@@ -24,8 +24,11 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.makeOrderedList();
+        if (sq.getSelection().collapsed || !wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.makeOrderedList();
+        }
+
         sq.focus();
     }
 });

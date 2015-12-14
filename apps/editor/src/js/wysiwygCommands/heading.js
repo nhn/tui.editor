@@ -26,15 +26,17 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
             depth = 1,
             beforeDepth;
 
-        if (foundedHeading) {
-            beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
-        }
+        if (!wwe.hasFormatWithRx(/TABLE/)) {
+            if (foundedHeading) {
+                beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
+            }
 
-        if (beforeDepth && beforeDepth < 6) {
-            depth = beforeDepth + 1;
-        }
+            if (beforeDepth && beforeDepth < 6) {
+                depth = beforeDepth + 1;
+            }
 
-        wwe.changeBlockFormatTo('H' + depth);
+            wwe.changeBlockFormatTo('H' + depth);
+        }
 
         sq.focus();
     }

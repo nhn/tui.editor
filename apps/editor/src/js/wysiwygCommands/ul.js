@@ -24,8 +24,11 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.makeUnorderedList();
+        if (sq.getSelection().collapsed || !wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.makeUnorderedList();
+        }
+
         sq.focus();
     }
 });
