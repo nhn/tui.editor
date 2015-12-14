@@ -34,7 +34,7 @@ describe('Table', function() {
             expect(doc.getValue()).toEqual([
                 '\n|  |  |',
                 '| --- | --- |',
-                '|  |  |\n'
+                '|  |  |'
             ].join('\n'));
         });
 
@@ -45,7 +45,7 @@ describe('Table', function() {
                 '\n|  |  |  |  |',
                 '| --- | --- | --- | --- |',
                 '|  |  |  |  |',
-                '|  |  |  |  |\n'
+                '|  |  |  |  |'
             ].join('\n'));
         });
 
@@ -55,7 +55,7 @@ describe('Table', function() {
             expect(doc.getValue()).toEqual([
                 '\n|  |  |',
                 '| --- | --- |',
-                '|  |  |\n'
+                '|  |  |'
             ].join('\n'));
 
             expect(cm.getCursor().line).toEqual(1);
