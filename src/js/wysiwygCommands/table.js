@@ -7,6 +7,9 @@
 
 var CommandManager = require('../commandManager');
 
+var tableID = 0,
+    TABLE_CLASS_PREFIX = 'te-content-table-';
+
 /**
  * Table
  * Add table to selected wysiwyg editor content
@@ -24,9 +27,9 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
      */
     exec: function(wwe, col, row) {
         var sq = wwe.getEditor(),
-            table;
+            range, table;
 
-        table = '<table>';
+        table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
         table += makeHeader(col);
         table += makeBody(col, row - 1);
         table += '</table>';
@@ -34,6 +37,14 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
         sq.insertHTML(table);
 
         sq.focus();
+
+        range = sq.getSelection();
+
+        range.selectNodeContents(wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID).find('th').eq(0)[0]);
+
+        sq.setSelection(range);
+
+        tableID += 1;
     }
 });
 
