@@ -27,7 +27,7 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
      */
     exec: function(wwe, col, row) {
         var sq = wwe.getEditor(),
-            range, table;
+            table;
 
         table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
         table += makeHeader(col);
@@ -38,15 +38,19 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
 
         sq.focus();
 
-        range = sq.getSelection();
-
-        range.selectNodeContents(wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID).find('th').eq(0)[0]);
-
-        sq.setSelection(range);
+        focusToFirstTh(sq, wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID));
 
         tableID += 1;
     }
 });
+
+function focusToFirstTh(sq, $table) {
+    var range;
+
+    range = sq.getSelection();
+    range.selectNodeContents($table.find('th').eq(0)[0]);
+    sq.setSelection(range);
+}
 
 /**
  * makeHeader
