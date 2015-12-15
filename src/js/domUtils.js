@@ -88,6 +88,12 @@ var getOffsetLength = function(node) {
     return len;
 };
 
+/**
+ * getNodeOffsetOfParent
+ * get node offset between parent's childnodes
+ * @param {Node} node node
+ * @return {number} offset(index)
+ */
 var getNodeOffsetOfParent = function(node) {
     var i, t,
         childNodesOfParent = node.parentNode.childNodes;
@@ -99,8 +105,35 @@ var getNodeOffsetOfParent = function(node) {
     }
 };
 
+/**
+ * getChildNodeByOffset
+ * get child node by offset
+ * @param {Node} node node
+ * @param {number} index offset index
+ * @return {Node} foudned node
+ */
+var getChildNodeByOffset = function(node, index) {
+    var currentNode;
 
-var _getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+    if (isTextNode(node)) {
+        currentNode = node;
+    } else {
+        currentNode = node.childNodes[index];
+    }
+
+    return currentNode;
+};
+
+/**
+ * getNodeWithDirectionUntil
+ * find next node from passed node
+ * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
+ * @param {strong} direction previous or next
+ * @param {Node} node node
+ * @param {string} untilNodeName parent node name to limit
+ * @return {Node} founded node
+ */
+var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
     var directionKey = direction + 'Sibling',
         nodeName, foundedNode;
 
@@ -124,32 +157,25 @@ var _getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
     return foundedNode;
 };
 
+/**
+ * getPrevOffsetNodeUntil
+ * get prev node of childnode pointed with index
+ * 인덱스에 해당하는 차일드 노드의 이전 노드를 찾는다.
+ * @param {Node} node node
+ * @param {number} index offset index
+ * @param {string} untilNodeName parent node name to limit
+ * @return {Node} founded node
+ */
 var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     var prevNode;
 
     if (index > 0) {
-        if (isTextNode(node)) {
-            prevNode = node;
-        } else {
-            prevNode = node.childNodes[index - 1];
-        }
+        prevNode = getChildNodeByOffset(node, index - 1);
     } else {
-        prevNode = _getNodeWithDirectionUntil('previous', node, untilNodeName);
+        prevNode = getNodeWithDirectionUntil('previous', node, untilNodeName);
     }
 
     return prevNode;
-};
-
-var getNodeByOffset = function(node, index) {
-    var currentNode;
-
-    if (isTextNode(node)) {
-        currentNode = node;
-    } else {
-        currentNode = node.childNodes[index];
-    }
-
-    return currentNode;
 };
 
 module.exports = {
@@ -161,5 +187,5 @@ module.exports = {
     getOffsetLength: getOffsetLength,
     getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
     getNodeOffsetOfParent: getNodeOffsetOfParent,
-    getNodeByOffset: getNodeByOffset
+    getChildNodeByOffset: getChildNodeByOffset
 };
