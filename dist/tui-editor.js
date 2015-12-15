@@ -332,7 +332,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
           state.indentation -= state.indentationDiff;
         }
         state.list = null;
-      } 
+      }
       if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4) + 1;
@@ -2554,7 +2554,11 @@ module.exports = ScrollSync;
 
 'use strict';
 
-var setextHeaderRx = /^ *(?:\={1,}|-{1,})\s*$/;
+var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/,
+    FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
+    FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/,
+    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
+    FIND_SPACE = /\s/g;
 
 /*
  * SectionManager
@@ -2634,33 +2638,44 @@ SectionManager.prototype._updateCurrentSectionEnd = function(end) {
  * @param {function} iteratee callback function
  */
 SectionManager.prototype._eachLineState = function(iteratee) {
-    var isSection, state, i, lineLength,
+    var isSection, i, lineLength, lineString, nextLineString, prevLineString,
         isTrimming = true,
+        onTable = false,
+        onCodeBlock = false,
         trimCapture = '';
 
     lineLength = this.cm.getDoc().lineCount();
 
     for (i = 0; i < lineLength; i+=1) {
-        state = this.cm.getStateAfter(i);
         isSection = false;
+        lineString = this.cm.getLine(i);
+        nextLineString = this.cm.getLine(i+1) || '';
+        prevLineString = this.cm.getLine(i-1) || '';
+
+        if (onTable && (!lineString || !(this._isTableCode(lineString) || this._isTableAligner(lineString)))) {
+            onTable = false;
+        } else if (!onTable && this._isTable(lineString, nextLineString)) {
+            onTable = true;
+        }
+
+        if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
+            onCodeBlock = false;
+        } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
+            onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+        }
 
         //atx header
-        if (this.cm.getLine(i)
-            && state.base.header
-            && !state.base.quote
-            && !state.base.list
-            && !state.base.taskList
-        ) {
+        if (this._isAtxHeader(lineString)) {
             isSection = true;
         //setext header
-        } else if (this.cm.getLine(i+1) && this.cm.getLine(i+1).match(setextHeaderRx)) {
+        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
             isSection = true;
         }
 
         //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
         //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
         if (isTrimming) {
-            trimCapture += this.cm.getLine(i).trim();
+            trimCapture += lineString.trim();
 
             if (trimCapture) {
                 isTrimming = false;
@@ -2671,6 +2686,98 @@ SectionManager.prototype._eachLineState = function(iteratee) {
 
         iteratee(isSection, i);
     }
+};
+
+/**
+ * _doFollowedLinesHaveCodeBlockEnd
+ * Check if follow lines have codeblock end
+ * @param {number} lineIndex current index
+ * @param {number} lineLength line length
+ * @return {boolean} result
+ */
+SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, lineLength) {
+    var i,
+        doLineHaveCodeBlockEnd = false;
+
+    for (i = lineIndex + 1; i < lineLength; i+=1) {
+        if (this._isCodeBlockEnd(this.cm.getLine(i))) {
+            doLineHaveCodeBlockEnd = true;
+            break;
+        }
+    }
+
+    return doLineHaveCodeBlockEnd;
+};
+
+/**
+ * _isCodeBlockStart
+ * Check if passed string have code block start
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isCodeBlockStart = function(string) {
+    return FIND_CODEBLOCK_START_RX.test(string);
+};
+
+/**
+ * _isCodeBlockEnd
+ * Check if passed string have code block end
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isCodeBlockEnd = function(string) {
+    return FIND_CODEBLOCK_END_RX.test(string);
+};
+
+/**
+ * _isTable
+ * Check if passed string have table
+ * @param {string} lineString current line string
+ * @param {string} nextLineString next line string
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTable = function(lineString, nextLineString) {
+    return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
+};
+
+/**
+ * _isTableCode
+ * Check if passed string have table code
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTableCode = function(string) {
+    return !!(string.match(/ *(\S.*\|.*)/) && string.match(/ *\|(.+)/));
+};
+
+/**
+ * _isTableAligner
+ * Check if passed string have table align code
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isTableAligner = function(string) {
+    return !!(string.match(/ *([-:]+ *\|[-| :]*)/) && string.match(/ *\|( *[-:]+[-| :]*)/));
+};
+
+/**
+ * _isAtxHeader
+ * Check if passed string have atx header
+ * @param {string} string string to check
+ * @return {boolean} result
+ */
+SectionManager.prototype._isAtxHeader = function(string) {
+    return FIND_HEADER_RX.test(string);
+};
+
+/**
+ * _isSeTextHeader
+ * @param {string} lineString current line string
+ * @param {string} nextLineString next line string
+ * @return {boolean} result
+ */
+SectionManager.prototype._isSeTextHeader = function(lineString, nextLineString) {
+    return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
 };
 
 /**
@@ -3861,7 +3968,7 @@ var Table = CommandManager.command('markdown',/** @lends Table */{
 
         doc.replaceSelection(table);
 
-        cm.setCursor(cm.getCursor().line - (row + 1), 2); //+1 means header border line
+        cm.setCursor(cm.getCursor().line - row, 2);
 
         mde.focus();
     }
@@ -3878,8 +3985,8 @@ function makeHeader(col) {
         border = '|';
 
     while (col) {
-        header += '    |';
-        border +=' -- |';
+        header += '  |';
+        border +=' --- |';
 
         col -= 1;
     }
@@ -3902,11 +4009,13 @@ function makeBody(col, row) {
         body += '|';
 
         for (icol = 0; icol < col; icol += 1) {
-            body += '    |';
+            body += '  |';
         }
 
         body += '\n';
     }
+
+    body = body.replace(/\n$/g, '');
 
     return body;
 }
@@ -7007,10 +7116,19 @@ var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
      *  @param {object} data data for image
      */
     exec: function(wwe, data) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            link;
 
         sq.removeAllFormatting();
-        sq.makeLink(data.url);
+
+        if (sq.getSelectedText()) {
+            sq.makeLink(data.url);
+        } else {
+            link = sq.createElement('A', {href: data.url});
+            $(link).text(data.linkText);
+            sq.insertElement(link);
+        }
+
         sq.focus();
     }
 });
@@ -7044,8 +7162,11 @@ var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.increaseQuoteLevel();
+        if (!wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.increaseQuoteLevel();
+        }
+
         sq.focus();
     }
 });
@@ -7122,15 +7243,17 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
             depth = 1,
             beforeDepth;
 
-        if (foundedHeading) {
-            beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
-        }
+        if (!wwe.hasFormatWithRx(/TABLE/)) {
+            if (foundedHeading) {
+                beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
+            }
 
-        if (beforeDepth && beforeDepth < 6) {
-            depth = beforeDepth + 1;
-        }
+            if (beforeDepth && beforeDepth < 6) {
+                depth = beforeDepth + 1;
+            }
 
-        wwe.changeBlockFormatTo('H' + depth);
+            wwe.changeBlockFormatTo('H' + depth);
+        }
 
         sq.focus();
     }
@@ -7376,8 +7499,11 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.makeOrderedList();
+        if (sq.getSelection().collapsed || !wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.makeOrderedList();
+        }
+
         sq.focus();
     }
 });
@@ -7393,6 +7519,9 @@ module.exports = OL;
 'use strict';
 
 var CommandManager = require('../commandManager');
+
+var tableID = 0,
+    TABLE_CLASS_PREFIX = 'te-content-table-';
 
 /**
  * Table
@@ -7413,7 +7542,12 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
         var sq = wwe.getEditor(),
             table;
 
-        table = '<table>';
+        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+            sq.focus();
+            return;
+        }
+
+        table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
         table += makeHeader(col);
         table += makeBody(col, row - 1);
         table += '</table>';
@@ -7421,8 +7555,20 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
         sq.insertHTML(table);
 
         sq.focus();
+
+        focusToFirstTh(sq, wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID));
+
+        tableID += 1;
     }
 });
+
+function focusToFirstTh(sq, $table) {
+    var range;
+
+    range = sq.getSelection();
+    range.selectNodeContents($table.find('th').eq(0)[0]);
+    sq.setSelection(range);
+}
 
 /**
  * makeHeader
@@ -7498,6 +7644,11 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         var selection, $selected, $li, hasInput,
             sq = wwe.getEditor();
 
+        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+            sq.focus();
+            return;
+        }
+
         if (!sq.hasFormat('li')) {
             wwe.unwrapBlockTag();
             sq.makeUnorderedList();
@@ -7562,8 +7713,11 @@ var UL = CommandManager.command('wysiwyg',/** @lends UL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        wwe.unwrapBlockTag();
-        sq.makeUnorderedList();
+        if (sq.getSelection().collapsed || !wwe.hasFormatWithRx(/TABLE/)) {
+            wwe.unwrapBlockTag();
+            sq.makeUnorderedList();
+        }
+
         sq.focus();
     }
 });
@@ -7589,7 +7743,7 @@ var FIND_HEADING_RX = /h[\d]/i,
     FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/,
-    FIND_TASK_SPACES_RX = /^\s+/g;
+    FIND_TASK_SPACES_RX = /^\s+/;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -7608,6 +7762,8 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this.contentStyles = contentStyles;
 
     this._height = 0;
+
+    this._silentChange = false;
 
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
@@ -7700,7 +7856,6 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     body.className = EDITOR_CONTENT_CSS_CLASSNAME;
 
     bodyStyle = body.style;
-    bodyStyle.height = '100%';
     bodyStyle.padding = '0 5px';
 };
 
@@ -7742,16 +7897,20 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        eventObj = {
-            source: 'wysiwyg',
-            selection: sel,
-            textContent: sel.endContainer.textContent,
-            caretOffset: sel.endOffset
-        };
+        if (!this._silentChange) {
+            eventObj = {
+                source: 'wysiwyg',
+                selection: sel,
+                textContent: sel.endContainer.textContent,
+                caretOffset: sel.endOffset
+            };
 
-        self.eventManager.emit('changeFromWysiwyg', eventObj);
-        self.eventManager.emit('change', eventObj);
-        self.eventManager.emit('contentChangedFromWysiwyg', self);
+            self.eventManager.emit('changeFromWysiwyg', eventObj);
+            self.eventManager.emit('change', eventObj);
+            self.eventManager.emit('contentChangedFromWysiwyg', self);
+        } else {
+            this._silentChange = false;
+        }
 
         self._autoResizeHeightIfNeed();
     });
@@ -7847,13 +8006,14 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (range.collapsed) {
             if (this._isInTaskList(range)) {
                 this._unformatTaskIfNeedOnBackspace(range);
+                //and delete list by squire
             } else if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
             } else if (this._isInTable(range)) {
                 this._tableHandlerOnBackspace(range, event);
             } else if (this._isAfterTable(range)) {
                 event.preventDefault();
-                //테이블 전체선택후 backspace시 다른 에디터처럼 아무작업도 하지 않는다
+                //테이블을 왼쪽에둔 커서위치에서 backspace시 다른 에디터처럼 아무작업도 하지 않는다
                 //we dont do anything table on backspace when cursor is after table
             } else {
                 this._removeHrIfNeed(range, event);
@@ -7902,7 +8062,7 @@ WysiwygEditor.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
         tdOrTh = paths[paths.length - 1];
     }
 
-    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR') {
+    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR' && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV') {
         $(tdOrTh).append('<br>');
     }
 };
@@ -7914,7 +8074,7 @@ WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
 };
 
 WysiwygEditor.prototype._heightToFitContents = function() {
-    this.$editorContainerEl.height(this.get$Body()[0].scrollHeight);
+    this.$editorContainerEl.height(this.get$Body().height());
 };
 
 WysiwygEditor.prototype._isInOrphanText = function(selection) {
@@ -8065,12 +8225,13 @@ WysiwygEditor.prototype.setHeight = function(height) {
 
     if (height === 'auto') {
         this.get$Body().css('overflow', 'hidden');
+        this.get$Body().css('height', 'auto');
         this._heightToFitContents();
     } else {
         this.get$Body().css('overflow', 'visible');
+        this.get$Body().css('height', '100%');
+        this.$editorContainerEl.height(height);
     }
-
-    this.$editorContainerEl.height(height);
 };
 
 WysiwygEditor.prototype.setValue = function(html) {
@@ -8080,6 +8241,8 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensureSpaceNextToTaskInput();
     this._unwrapDivOnHr();
     this._removeTaskListClass();
+
+    this._autoResizeHeightIfNeed();
 
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 };
@@ -8159,8 +8322,18 @@ WysiwygEditor.prototype.getValue = function() {
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
+        var result;
+
         //we maintain empty list
-        return tag === 'li' ? match : '<br />';
+        if (tag === 'li') {
+            result = match;
+        } else if (tag === 'td' || tag === 'th') {
+            result = '<' + tag + '>'+'</' + tag + '>';
+        } else {
+            result = '<br />';
+        }
+
+        return result;
     });
 
     //remove unnecessary brs
@@ -8177,7 +8350,7 @@ WysiwygEditor.prototype.getValue = function() {
 };
 
 WysiwygEditor.prototype._prepareGetHTML = function() {
-    this.editor._ignoreChange = true;
+    this._silentChange = true;
 
     //for ensure to fire change event
     this.get$Body().attr('lastGetValue', Date.now());
@@ -8247,9 +8420,14 @@ WysiwygEditor.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
         //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
         if (startOffset === 0) {
             prevEl = domUtils.getChildNodeAt(startContainer, startOffset);
-        //inputbox 바로 오른편에서 지워지는경우
+        //inputbox 오른편 어딘가에서 지워지는경우
         } else {
             prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
+
+            //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
+            if (domUtils.isTextNode(prevEl) && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
+                prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 2);
+            }
         }
 
         needRemove = (domUtils.getNodeName(prevEl) === 'INPUT');
@@ -8447,7 +8625,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     var self = this;
 
     setTimeout(function() {
-        self.getEditor()._ignoreChange = true;
+        self._silentChange = true;
         self._unformatIncompleteTask();
         self._ensureSpaceNextToTaskInput();
         self = null;
