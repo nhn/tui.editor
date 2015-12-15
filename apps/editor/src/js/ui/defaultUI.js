@@ -33,16 +33,15 @@ var containerTmpl = [
 function DefaultUI(editor) {
     this.name = 'default';
 
-    this.$el = $(editor.options.el);
     this.type = editor.options.initialEditType;
     this.editor = editor;
 
-    this.init();
+    this.init(editor.options.el);
     this._initEvent();
 }
 
-DefaultUI.prototype.init = function() {
-    this._renderLayout();
+DefaultUI.prototype.init = function($container) {
+    this._renderLayout($container);
 
     this._initEditorSection();
 
@@ -74,20 +73,20 @@ DefaultUI.prototype._initEvent = function() {
     });
 };
 
-DefaultUI.prototype._renderLayout = function() {
-    this.$containerEl = $(containerTmpl).appendTo(this.$el);
+DefaultUI.prototype._renderLayout = function($container) {
+    this.$el = $(containerTmpl).appendTo($container);
 };
 
 DefaultUI.prototype._initToolbar = function() {
     this.toolbar = new Toolbar(this.editor.eventManager);
-    this.$containerEl.find('.te-toolbar-section').append(this.toolbar.$el);
+    this.$el.find('.te-toolbar-section').append(this.toolbar.$el);
 };
 
 DefaultUI.prototype._initModeSwitch = function() {
     var self = this;
 
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$containerEl.find('.te-mode-switch-section').append(this.modeSwitch.$el);
+    this.$el.find('.te-mode-switch-section').append(this.modeSwitch.$el);
 
     this.modeSwitch.on('modeSwitched', function(ev, info) {
         self.editor.changeMode(info.text);
@@ -96,10 +95,10 @@ DefaultUI.prototype._initModeSwitch = function() {
 
 DefaultUI.prototype.markdownTabControl = function() {
     if (this.editor.isMarkdownMode() && this.editor.getCurrentPreviewStyle() === 'tab') {
-        this.$containerEl.find('.te-markdown-tab-section').show();
+        this.$el.find('.te-markdown-tab-section').show();
         this.markdownTab.activate('Editor');
     } else {
-        this.$containerEl.find('.te-markdown-tab-section').hide();
+        this.$el.find('.te-markdown-tab-section').hide();
     }
 };
 
@@ -109,7 +108,7 @@ DefaultUI.prototype._initMarkdownTab = function() {
         sections: [this.editor.layout.getMdEditorContainerEl(), this.editor.layout.getPreviewEl()]
     });
 
-    this.$containerEl.find('.te-markdown-tab-section').append(this.markdownTab.$el);
+    this.$el.find('.te-markdown-tab-section').append(this.markdownTab.$el);
 };
 
 DefaultUI.prototype._initPopupAddLink = function() {
@@ -139,15 +138,15 @@ DefaultUI.prototype._initPopupAddTable = function() {
 };
 
 DefaultUI.prototype.hide = function() {
-    this.$el.find('.tui-editor-defaultUI').addClass('hide');
+    this.$el.addClass('te-hide');
 };
 
 DefaultUI.prototype.show = function() {
-    this.$el.find('.tui-editor-defaultUI').removeClass('hide');
+    this.$el.removeClass('te-hide');
 };
 
 DefaultUI.prototype.remove = function() {
-    this.$el.find('.tui-editor-defaultUI').remove();
+    this.$el.remove();
 };
 
 DefaultUI.prototype.createPopup = function(options) {
