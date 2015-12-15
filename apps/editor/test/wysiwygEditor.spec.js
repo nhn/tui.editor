@@ -229,7 +229,7 @@ describe('WysiwygEditor', function() {
 
         it('remove last br in td or th when getValue', function() {
             wwe.setValue('<table><thead><tr><th>wef<br>wef<br></th></tr></thead><tbody><tr><td>waf<br>waef<br></td></tr></tbody></table>');
-            expect(wwe.getValue()).toEqual('<table><thead><tr><th>wef<br />wef</th></tr></thead><tbody><tr><td>waf<br />waef</td></tr></tbody></table>');
+            expect(wwe.getValue()).toEqual('<table><thead><tr><th>wef<br>wef</th></tr></thead><tbody><tr><td>waf<br>waef</td></tr></tbody></table>');
         });
 
         it('empty td or th won\'t be deleted by getValue', function() {

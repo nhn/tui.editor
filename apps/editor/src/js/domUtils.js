@@ -140,6 +140,18 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
+var getNodeByOffset = function(node, index) {
+    var currentNode;
+
+    if (isTextNode(node)) {
+        currentNode = node;
+    } else {
+        currentNode = node.childNodes[index];
+    }
+
+    return currentNode;
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
@@ -148,5 +160,6 @@ module.exports = {
     getTextLength: getTextLength,
     getOffsetLength: getOffsetLength,
     getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
-    getNodeOffsetOfParent: getNodeOffsetOfParent
+    getNodeOffsetOfParent: getNodeOffsetOfParent,
+    getNodeByOffset: getNodeByOffset
 };
