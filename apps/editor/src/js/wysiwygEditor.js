@@ -335,7 +335,7 @@ WysiwygEditor.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
         tdOrTh = paths[paths.length - 1];
     }
 
-    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR') {
+    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR' && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV') {
         $(tdOrTh).append('<br>');
     }
 };
