@@ -152,12 +152,12 @@ describe('domUtils', function() {
    describe('getNodeByOffset()', function() {
         it('return node\'s childNode with index', function() {
             var node = $('<p><em>text</em><strong>weafwae</strong></p>');
-            expect(domUtils.getNodeByOffset(node[0], 1)).toBe(node[0].childNodes[1]);
+            expect(domUtils.getChildNodeByOffset(node[0], 1)).toBe(node[0].childNodes[1]);
         });
 
         it('if node is text node then return passed node', function() {
             var node = $('<p>text</p>');
-            expect(domUtils.getNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
+            expect(domUtils.getChildNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
         });
     });
 });
