@@ -1551,6 +1551,18 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
+var getNodeByOffset = function(node, index) {
+    var currentNode;
+
+    if (isTextNode(node)) {
+        currentNode = node;
+    } else {
+        currentNode = node.childNodes[index];
+    }
+
+    return currentNode;
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
@@ -1559,7 +1571,8 @@ module.exports = {
     getTextLength: getTextLength,
     getOffsetLength: getOffsetLength,
     getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
-    getNodeOffsetOfParent: getNodeOffsetOfParent
+    getNodeOffsetOfParent: getNodeOffsetOfParent,
+    getNodeByOffset: getNodeByOffset
 };
 
 },{}],9:[function(require,module,exports){
@@ -8041,12 +8054,11 @@ WysiwygEditor.prototype._tableHandlerOnBackspace = function(range, event) {
     var prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
         prevNodeName = domUtils.getNodeName(prevNode);
 
-    if (!prevNode || prevNodeName === 'BR' || prevNodeName === 'TD' || prevNodeName === 'TH') {
+    if (!prevNode || prevNodeName === 'TD' || prevNodeName === 'TH') {
         event.preventDefault();
-
-        if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
-            $(prevNode).remove();
-        }
+    } else if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
+        event.preventDefault();
+        $(prevNode).remove();
     }
 };
 
@@ -8241,10 +8253,17 @@ WysiwygEditor.prototype.setValue = function(html) {
     this._ensureSpaceNextToTaskInput();
     this._unwrapDivOnHr();
     this._removeTaskListClass();
+    this._unwrapBlockInTable();
 
     this._autoResizeHeightIfNeed();
 
     this.eventManager.emit('contentChangedFromWysiwyg', this);
+};
+
+WysiwygEditor.prototype._unwrapBlockInTable = function() {
+    this.get$Body().find('td div, th div').each(function(index, node) {
+        $(node).children().unwrap();
+    });
 };
 
 //this because we need new line inside ptag, and additional empty line added
@@ -8628,6 +8647,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
         self._silentChange = true;
         self._unformatIncompleteTask();
         self._ensureSpaceNextToTaskInput();
+        self._unwrapBlockInTable();
         self = null;
     }, 0);
 };
