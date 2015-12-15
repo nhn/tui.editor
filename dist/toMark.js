@@ -404,13 +404,13 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent;
     },
     'TR TD, TR TH': function(node, subContent) {
-        return subContent ? (' ' + subContent + ' |') : '';
+        return ' ' + subContent + ' |';
     },
     'TD BR, TH BR': function() {
         return '<br>';
     },
     'TR': function(node, subContent) {
-        return subContent ? ('|' + subContent + '\n') : '' ;
+        return '|' + subContent + '\n';
     },
     'THEAD': function(node, subContent) {
         var i, ths, thsLength,
@@ -469,6 +469,8 @@ function findChildTag(node, tagName) {
 
 function repeatString(pattern, count) {
     var result = pattern;
+
+    count = Math.max(count, 3);
 
     while (count > 1) {
         result += pattern;
@@ -580,7 +582,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         trail = '',
         text;
 
-    if (node.previousSibling && isInlineNode(node.previousSibling)) {
+    if (node.previousSibling && (node.previousSibling.nodeType === Node.TEXT_NODE || isInlineNode(node.previousSibling))) {
         text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
 
         if (FIND_TRAIL_SPACE_RX.test(text) || FIND_LEAD_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
@@ -588,7 +590,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         }
     }
 
-    if (node.nextSibling && isInlineNode(node.nextSibling)) {
+    if (node.nextSibling && (node.nextSibling.nodeType === Node.TEXT_NODE || isInlineNode(node.nextSibling))) {
         text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
         if (FIND_LEAD_SPACE_RX.test(text) || FIND_TRAIL_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
             trail = ' ';
@@ -612,10 +614,8 @@ Renderer.prototype.convert = function(node, subContent) {
     if (converter) {
         result = converter.call(this, node, subContent);
     } else if (node) {
-        result = this._getInlineHtml(node, subContent);
+        result = this.getSpaceControlled(this._getInlineHtml(node, subContent), node);
     }
-
-    //console.log(JSON.stringify(result), converter.fname);
 
     return result || '';
 };
