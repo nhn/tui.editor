@@ -170,7 +170,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
-        if (!this._silentChange) {
+        if (!self._silentChange) {
             eventObj = {
                 source: 'wysiwyg',
                 selection: sel,
@@ -182,7 +182,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             self.eventManager.emit('change', eventObj);
             self.eventManager.emit('contentChangedFromWysiwyg', self);
         } else {
-            this._silentChange = false;
+            self._silentChange = false;
         }
 
         self._autoResizeHeightIfNeed();
