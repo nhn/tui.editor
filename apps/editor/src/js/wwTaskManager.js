@@ -46,6 +46,11 @@ WwTaskManager.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygGetValueBefore', function() {
         self._addCheckedAttrToCheckedInput();
     });
+
+    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
+        //we need remove task input space for safari
+        return html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
+    });
 };
 
 WwTaskManager.prototype._initKeyHandler = function() {

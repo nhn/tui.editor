@@ -33,6 +33,7 @@ var eventList = [
     'stateChange',
     'wysiwygSetValueAfter',
     'wysiwygGetValueBefore',
+    'wysiwygProcessHTMLText',
     'wysiwygRangeChangeAfter',
     'load',
     'focus',
