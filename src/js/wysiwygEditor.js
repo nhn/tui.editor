@@ -567,8 +567,7 @@ WysiwygEditor.prototype.getValue = function() {
 
     html = this.editor.getHTML();
 
-    //we need remove task input space for safari
-    html = html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
+    html = this.eventManager.emitReduce('wysiwygProcessHTMLText', html);
 
     //empty line replace to br
     html = html.replace(FIND_EMPTY_LINE, function(match, tag) {
