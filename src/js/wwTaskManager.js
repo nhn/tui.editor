@@ -57,6 +57,8 @@ WwTaskManager.prototype._initKeyHandler = function() {
     var self = this;
 
     this.wwe.addKeyEventHandler(function(event, range) {
+        var isHandled;
+
         //enter
         if (event.keyCode === 13) {
             if (self._isInTaskList(range)) {
@@ -69,6 +71,8 @@ WwTaskManager.prototype._initKeyHandler = function() {
                         self.eventManager.emit('command', 'Task');
                     }
                 }, 0);
+
+                isHandled = true;
             }
         //backspace
         } else if (event.keyCode === 8) {
@@ -76,6 +80,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
                 if (self._isInTaskList(range)) {
                     self._unformatTaskIfNeedOnBackspace(range);
                     //and delete list by squire
+                    isHandled = true;
                 }
             }
         //tab
@@ -83,8 +88,11 @@ WwTaskManager.prototype._initKeyHandler = function() {
             if (self._isInTaskList(range)) {
                 event.preventDefault();
                 self.eventManager.emit('command', 'IncreaseTask');
+                isHandled = true;
             }
         }
+
+        return isHandled;
     });
 };
 
