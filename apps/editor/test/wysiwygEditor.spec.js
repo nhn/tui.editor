@@ -190,12 +190,6 @@ describe('WysiwygEditor', function() {
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual(html);
         });
-
-        it('setValue make single line p tag have div block tag', function() {
-            wwe.setValue('<p>text1</p>');
-            expect(wwe.get$Body().find('div').length).toEqual(1);
-            expect(wwe.get$Body().find('div')[0].textContent).toEqual('text1');
-        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
