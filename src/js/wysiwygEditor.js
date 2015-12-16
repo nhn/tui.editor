@@ -10,6 +10,7 @@ var domUtils = require('./domUtils'),
     WwSelectionMarker = require('./wwSelectionMarker'),
     WwTaskManager = require('./wwTaskManager'),
     WwTableManager = require('./wwTableManager'),
+    WwHrManager = require('./wwHrManager'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
@@ -272,8 +273,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
             setTimeout(function() {
                 self._unwrapHeading();
             }, 0);
-        } else if (this._isInHr(range) || this._isNearHr(range)) {
-            this._removeHrIfNeed(range, event);
         } else if (this._isInOrphanText(range)) {
             this._wrapDefaultBlockTo(range);
         }
@@ -282,8 +281,6 @@ WysiwygEditor.prototype._keyEventHandler = function(event) {
         if (range.collapsed) {
             if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
                 this._unwrapHeading();
-            }  else {
-                this._removeHrIfNeed(range, event);
             }
         }
     }
@@ -450,7 +447,6 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
     this._ensurePtagContentWrappedWithDiv();
     this._unwrapPtags();
-    this._unwrapDivOnHr();
 
     this._autoResizeHeightIfNeed();
 
@@ -482,15 +478,6 @@ WysiwygEditor.prototype._unwrapPtags = function() {
     });
 };
 
-//we use divs for paragraph so we dont need any p tags
-WysiwygEditor.prototype._unwrapDivOnHr = function() {
-    this.get$Body().find('hr').each(function(index, node) {
-        if ($(node).parent().is('div')) {
-            $(node).parent().find('br').remove();
-            $(node).unwrap();
-        }
-    });
-};
 
 WysiwygEditor.prototype.getValue = function() {
     var html;
@@ -609,42 +596,6 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
     this.editor.setSelection(selection);
 };
 
-WysiwygEditor.prototype._isInHr = function(selection) {
-    return domUtils.getNodeName(selection.startContainer.childNodes[selection.startOffset]) === 'HR';
-};
-
-WysiwygEditor.prototype._isNearHr = function(selection) {
-    var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
-    return domUtils.getNodeName(prevNode) === 'HR';
-};
-
-WysiwygEditor.prototype._removeHrIfNeed = function(selection, event) {
-    var hrSuspect, cursorTarget;
-
-    if (this._isInHr(selection)) {
-        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
-    } else if (selection.startOffset === 0) {
-        hrSuspect = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
-
-        if (domUtils.getNodeName(hrSuspect) !== 'HR') {
-            hrSuspect = null;
-        }
-    } else if (this._isNearHr(selection)) {
-        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
-    }
-
-    if (hrSuspect) {
-        event.preventDefault();
-
-        cursorTarget = hrSuspect.nextSibling;
-        $(hrSuspect).remove();
-
-        selection.setStartBefore(cursorTarget);
-        selection.collapse(true);
-        this.getEditor().setSelection(selection);
-    }
-};
-
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
@@ -682,6 +633,7 @@ WysiwygEditor.factory = function($el, contentStyles, eventManager) {
 
     wwe._taskMgr = new WwTaskManager(wwe);
     wwe._tableMgr = new WwTableManager(wwe);
+    wwe._hrMgr = new WwHrManager(wwe);
 
     return wwe;
 };

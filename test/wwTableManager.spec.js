@@ -4,7 +4,7 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager'),
     WwTableManager = require('../src/js/wwTableManager');
 
-fdescribe('WwTableManager', function() {
+describe('WwTableManager', function() {
     var $container, em, wwe, mgr;
 
     beforeEach(function(done) {
@@ -23,10 +23,8 @@ fdescribe('WwTableManager', function() {
         });
     });
 
-    describe('', function() {
-        it('', function() {
-            expect(true).toEqual(true);
-        });
+    afterEach(function() {
+        $('body').empty();
     });
 
     it('_isInTable() check if passed range is in table', function() {

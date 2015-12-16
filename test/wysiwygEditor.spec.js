@@ -196,11 +196,6 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('div').length).toEqual(1);
             expect(wwe.get$Body().find('div')[0].textContent).toEqual('text1');
         });
-
-        it('setValue unwrap div on hr', function() {
-            wwe.setValue('<hr><h1>abcd</h1>');
-            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
-        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
@@ -211,47 +206,6 @@ describe('WysiwygEditor', function() {
     it('hasFormatWithRx() check hasFormat with RegExp', function() {
         wwe.setValue('<h1>hasHeading</h1>');
         expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
-    });
-
-    describe('_removeHrIfNeed()', function() {
-        //같은 부모의 이전 offset의 엘리먼트가 hr일때
-        it('remove hr if current is on first offset and previousSibling elemet is hr', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div>abcd<br></div>');
-
-            range.setStart(wwe.getEditor().getDocument().body, 1);
-            range.collapse(true);
-            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        //현재커서가 hr을 가르키는 경우
-        it('remove hr current selection is hr', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div>abcd<br></div>');
-
-            range.setStart(wwe.getEditor().getDocument().body, 0);
-            range.collapse(true);
-            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
-        it('remove hr current selections parentNode previousSibling is hr when offset 0', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
-
-            range.setStart(wwe.get$Body().find('b')[0], 0);
-            range.collapse(true);
-            wwe._removeHrIfNeed(range, {preventDefault: function() {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
     });
 
     describe('_wrapDefaultBlockTo', function() {
