@@ -244,7 +244,6 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
         return this.nodeType === 3;
     };
 
-
     this.wwe.get$Body().find('.task-list-item').each(function(i, node) {
         $wrapper = $(node).find('div');
 
