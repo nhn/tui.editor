@@ -12,12 +12,12 @@ var domUtils = require('./domUtils'),
     WwTableManager = require('./wwTableManager'),
     WwHrManager = require('./wwHrManager'),
     WwPManager = require('./wwPManager'),
+    WwHeadingManager = require('./wwHeadingManager'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
 
-var FIND_HEADING_RX = /h[\d]/i,
-    FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
+var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
     FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 
@@ -47,6 +47,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this._selectionMarker = new WwSelectionMarker();
 
     this._initEvent();
+    this._initDefaultKeyEventHandler();
 }
 
 WysiwygEditor.prototype.init = function(callback) {
@@ -223,11 +224,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self._autoResizeHeightIfNeed();
     });
 
-    //todo 지워야함
-    this.addKeyEventHandler(function(event) {
-        self._keyEventHandler(event);
-    });
-
     this.getEditor().addEventListener('keydown', function(event) {
         self._runKeyEventHandlers(event);
     });
@@ -262,29 +258,24 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('stateChange', state);
     });
-};
+ };
 
-WysiwygEditor.prototype._keyEventHandler = function(event) {
-    var self = this,
-        range = this.getEditor().getSelection().cloneRange();
-    //enter
-    if (event.keyCode === 13) {
-        if (this.hasFormatWithRx(FIND_HEADING_RX)) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-            setTimeout(function() {
-                self._unwrapHeading();
-            }, 0);
-        } else if (this._isInOrphanText(range)) {
-            this._wrapDefaultBlockTo(range);
-        }
-    //backspace
-    } else if (event.keyCode === 8) {
-        if (range.collapsed) {
-            if (this.hasFormatWithRx(FIND_HEADING_RX) && range.startOffset === 0) {
-                this._unwrapHeading();
+WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
+    var self = this;
+
+    this.addKeyEventHandler(function(event, range) {
+        var isHandled;
+
+        //enter
+        if (event.keyCode === 13) {
+            if (self._isInOrphanText(range)) {
+                self._wrapDefaultBlockTo(range);
+                isHandled = true;
             }
         }
-    }
+
+        return isHandled;
+    });
 };
 
 WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
@@ -466,6 +457,7 @@ WysiwygEditor.prototype.getValue = function() {
         //we maintain empty list
         if (tag === 'li') {
             result = match;
+        //we maintain empty table
         } else if (tag === 'td' || tag === 'th') {
             result = '<' + tag + '>'+'</' + tag + '>';
         } else {
@@ -576,12 +568,6 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     $(container).html(before.replace(from, to));
 };
 
-WysiwygEditor.prototype._unwrapHeading = function() {
-    this.unwrapBlockTag(function(node) {
-        return FIND_HEADING_RX.test(node);
-    });
-};
-
 WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
     if (!condition) {
         condition = function(tagName) {
@@ -608,6 +594,7 @@ WysiwygEditor.factory = function($el, contentStyles, eventManager) {
     wwe._tableMgr = new WwTableManager(wwe);
     wwe._hrMgr = new WwHrManager(wwe);
     wwe._pMgr = new WwPManager(wwe);
+    wwe._headingMgr = new WwHeadingManager(wwe);
 
     return wwe;
 };
