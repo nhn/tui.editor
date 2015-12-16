@@ -11,6 +11,7 @@ var domUtils = require('./domUtils'),
     WwTaskManager = require('./wwTaskManager'),
     WwTableManager = require('./wwTableManager'),
     WwHrManager = require('./wwHrManager'),
+    WwPManager = require('./wwPManager'),
     SquireExt = require('./squireExt');
 
 var util = tui.util;
@@ -222,7 +223,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self._autoResizeHeightIfNeed();
     });
 
-    // @todo 지워야함
+    //todo 지워야함
     this.addKeyEventHandler(function(event) {
         self._keyEventHandler(event);
     });
@@ -445,39 +446,11 @@ WysiwygEditor.prototype.setHeight = function(height) {
 
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
-    this._ensurePtagContentWrappedWithDiv();
-    this._unwrapPtags();
-
     this._autoResizeHeightIfNeed();
 
     this.eventManager.emit('wysiwygSetValueAfter', this);
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 };
-
-
-//this because we need new line inside ptag, and additional empty line added
-//p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
-WysiwygEditor.prototype._ensurePtagContentWrappedWithDiv = function() {
-    this.get$Body().find('p').each(function(index, node) {
-        if ($(node).find('div').length <= 0) {
-            $(node).wrapInner('<div />');
-        }
-
-        if ($(node).next().is('p')) {
-            $(node).append('<div><br></div>');
-        }
-    });
-};
-
-//we use divs for paragraph so we dont need any p tags
-WysiwygEditor.prototype._unwrapPtags = function() {
-    this.get$Body().find('div').each(function(index, node) {
-        if ($(node).parent().is('p')) {
-            $(node).unwrap();
-        }
-    });
-};
-
 
 WysiwygEditor.prototype.getValue = function() {
     var html;
@@ -634,6 +607,7 @@ WysiwygEditor.factory = function($el, contentStyles, eventManager) {
     wwe._taskMgr = new WwTaskManager(wwe);
     wwe._tableMgr = new WwTableManager(wwe);
     wwe._hrMgr = new WwHrManager(wwe);
+    wwe._pMgr = new WwPManager(wwe);
 
     return wwe;
 };

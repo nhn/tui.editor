@@ -13,7 +13,7 @@ var domUtils = require('./domUtils');
  * @augments
  * @constructor
  * @class
- * @param {WwHrManager} wwe WwHrManager instance
+ * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwHrManager(wwe) {
     this.wwe = wwe;
