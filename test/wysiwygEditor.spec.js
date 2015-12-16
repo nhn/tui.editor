@@ -68,6 +68,16 @@ describe('WysiwygEditor', function() {
         });
     });
 
+    describe('managing key event handlers', function() {
+        it('add key event handler and run', function() {
+            var handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler(handler);
+            wwe._runKeyEventHandlers({keyCode: 0});
+
+            expect(handler).toHaveBeenCalled();
+        });
+    });
+
     describe('Event', function() {
         beforeEach(function() {
             wwe.getEditor()._ignoreChange = false;
