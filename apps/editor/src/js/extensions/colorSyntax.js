@@ -103,7 +103,7 @@ function initUI(editor) {
 
     $colorPickerContainer =  $('<div />');
 
-    $buttonBar = $('<div><button type="button" class="applyButton">입력</button></div>');
+    $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
     $buttonBar.css('margin-top', 10);
 
     colorPicker = tui.component.colorpicker.create({
@@ -149,7 +149,7 @@ function initUI(editor) {
         }
     });
 
-    popup.$el.find('.applyButton').on('click', function() {
+    popup.$el.find('.te-apply-button').on('click', function() {
         editor.exec('color', selectedColor);
     });
 }
