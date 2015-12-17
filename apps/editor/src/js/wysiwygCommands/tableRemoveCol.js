@@ -24,15 +24,18 @@ var RemoveCol = CommandManager.command('wysiwyg',/** @lends RemoveCol */{
     exec: function(wwe) {
         var sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange(),
-            $cell;
+            $cell, $nextFocus;
 
-        if (range.collapsed && sq.hasFormat('TR')) {
-            sq._recordUndoState(range);
+        if (range.collapsed && sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
+            sq._recordUndoState();
             $cell = getCellByRange(range);
+            $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
 
             removeColByCell($cell);
 
             sq.focus();
+
+            focusToCell(sq, $nextFocus);
         } else {
             sq.focus();
         }
@@ -57,6 +60,17 @@ function removeColByCell($cell) {
     $cell.parents('table').find('tr').each(function(n, tr) {
         $(tr).children().eq(index).remove();
     });
+}
+
+function focusToCell(sq, $cell) {
+    var range;
+
+    if ($cell.length) {
+        range = sq.getSelection();
+        range.selectNodeContents($cell[0]);
+        range.collapse(true);
+        sq.setSelection(range);
+    }
 }
 
 module.exports = RemoveCol;

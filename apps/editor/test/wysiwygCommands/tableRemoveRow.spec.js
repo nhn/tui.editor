@@ -51,6 +51,33 @@ describe('Table - RemoveRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
+    it('dont remove row if there have only one row', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+                '<thead>',
+                    '<tr><th>1</th><th>2</th></tr>',
+                '</thead>',
+                '<tbody>',
+                    '<tr><td>3</td><td>4</td></tr>',
+                '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+        range.collapse(true);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        RemoveRow.exec(wwe);
+
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+    });
+
     it('focus to next row\'s first td', function() {
         var sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();

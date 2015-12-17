@@ -25,8 +25,8 @@ var RemoveRow = CommandManager.command('wysiwyg',/** @lends RemoveRow */{
             range = sq.getSelection().cloneRange(),
             $tr, $nextFocus;
 
-        if (range.collapsed && sq.hasFormat('TD')) {
-            sq._recordUndoState(range);
+        if (range.collapsed && sq.hasFormat('TD') && $(range.startContainer).closest('table').find('tbody tr').length > 1) {
+            sq._recordUndoState();
             $tr = $(range.startContainer).closest('tr');
 
             $nextFocus = $tr.next().length ? $tr.next() : $tr.prev();
@@ -35,7 +35,7 @@ var RemoveRow = CommandManager.command('wysiwyg',/** @lends RemoveRow */{
 
             sq.focus();
 
-            if ($nextFocus) {
+            if ($nextFocus.length) {
                 focusToFirstTd(sq, $nextFocus);
             }
         } else {

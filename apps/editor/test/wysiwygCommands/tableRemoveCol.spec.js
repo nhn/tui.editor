@@ -49,4 +49,31 @@ describe('Table - RemoveCol', function() {
         expect(wwe.get$Body().find('thead th').length).toEqual(1);
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
+
+    it('dont remove col if there have only one col', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+                '<thead>',
+                    '<tr><th>1</th></tr>',
+                '</thead>',
+                '<tbody>',
+                    '<tr><td>3</td></tr>',
+                    '<tr><td>5</td></tr>',
+                '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+        range.collapse(true);
+
+        sq.setSelection(range);
+
+        RemoveCol.exec(wwe);
+
+        expect(wwe.get$Body().find('thead th').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+    });
 });
