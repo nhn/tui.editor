@@ -24,7 +24,7 @@ var OL = CommandManager.command('wysiwyg',/** @lends OL */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        if (sq.getSelection().collapsed || !wwe.hasFormatWithRx(/TABLE/)) {
+        if (sq.getSelection().collapsed && !wwe.hasFormatWithRx(/TABLE/)) {
             wwe.unwrapBlockTag();
             sq.makeOrderedList();
         }
