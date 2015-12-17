@@ -29,7 +29,7 @@ var Table = CommandManager.command('wysiwyg',/** @lends Table */{
         var sq = wwe.getEditor(),
             table;
 
-        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }
@@ -53,7 +53,8 @@ function focusToFirstTh(sq, $table) {
     var range;
 
     range = sq.getSelection();
-    range.selectNodeContents($table.find('th').eq(0)[0]);
+    range.selectNodeContents($table.find('th')[0]);
+    range.collapse(true);
     sq.setSelection(range);
 }
 

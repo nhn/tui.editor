@@ -26,7 +26,7 @@ var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
             depth = 1,
             beforeDepth;
 
-        if (sq.getSelection().collapsed && !wwe.hasFormatWithRx(/TABLE/)) {
+        if (sq.getSelection().collapsed && !sq.hasFormat('TABLE')) {
             if (foundedHeading) {
                 beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
             }

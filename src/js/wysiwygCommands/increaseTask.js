@@ -27,7 +27,7 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
         range = wwe.getEditor().getSelection();
         node = range.startContainer;
 
-        if (!wwe.getEditor().getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+        if (!wwe.getEditor().getSelection().collapsed || wwe.getEditor().hasFormat('TABLE')) {
             wwe.getEditor().focus();
             return;
         }

@@ -24,7 +24,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         var selection, $selected, $li, hasInput,
             sq = wwe.getEditor();
 
-        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }

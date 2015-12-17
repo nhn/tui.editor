@@ -23,7 +23,7 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }
