@@ -40,6 +40,10 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwUL = require('./wysiwygCommands/ul'),
     wwOL = require('./wysiwygCommands/ol'),
     wwTable = require('./wysiwygCommands/table'),
+    wwTableAddRow = require('./wysiwygCommands/tableAddRow'),
+    wwTableAddCol = require('./wysiwygCommands/tableAddCol'),
+    wwTableRemoveRow = require('./wysiwygCommands/tableRemoveRow'),
+    wwTableRemoveCol = require('./wysiwygCommands/tableRemoveCol'),
     wwIncreaseTask = require('./wysiwygCommands/increaseTask'),
     wwTask = require('./wysiwygCommands/task');
 
@@ -118,8 +122,6 @@ function ToastUIEditor(options) {
     this.wwEditor.init(function() {
         extManager.applyExtension(self, self.options.exts);
 
-        self._initDefaultCommands();
-
         self.changeMode(self.options.initialEditType);
 
         self.contentHeight(self.options.height);
@@ -133,31 +135,7 @@ function ToastUIEditor(options) {
 }
 
 ToastUIEditor.prototype._initDefaultCommands = function() {
-    this.commandManager.addCommand(mdBold);
-    this.commandManager.addCommand(mdItalic);
-    this.commandManager.addCommand(mdBlockquote);
-    this.commandManager.addCommand(mdHeading);
-    this.commandManager.addCommand(mdHR);
-    this.commandManager.addCommand(mdAddLink);
-    this.commandManager.addCommand(mdAddImage);
-    this.commandManager.addCommand(mdUL);
-    this.commandManager.addCommand(mdOL);
-    this.commandManager.addCommand(mdTable);
-    this.commandManager.addCommand(mdTask);
-
-    this.commandManager.addCommand(wwBold);
-    this.commandManager.addCommand(wwItalic);
-    this.commandManager.addCommand(wwBlockquote);
-    this.commandManager.addCommand(wwUL);
-    this.commandManager.addCommand(wwOL);
-    this.commandManager.addCommand(wwAddImage);
-    this.commandManager.addCommand(wwAddLink);
-    this.commandManager.addCommand(wwHR);
-    this.commandManager.addCommand(wwHeading);
-    this.commandManager.addCommand(wwIncreaseTask);
-    this.commandManager.addCommand(wwTask);
-    this.commandManager.addCommand(wwTable);
-};
+    };
 
 /**
  * 프리뷰가 보여지는 방식을 변경한다
@@ -330,6 +308,41 @@ ToastUIEditor.getInstances = function() {
 
 ToastUIEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
+};
+
+ToastUIEditor.factory = function(options) {
+    var tuiEditor = new ToastUIEditor(options);
+
+    tuiEditor.addCommand(mdBold);
+    tuiEditor.addCommand(mdItalic);
+    tuiEditor.addCommand(mdBlockquote);
+    tuiEditor.addCommand(mdHeading);
+    tuiEditor.addCommand(mdHR);
+    tuiEditor.addCommand(mdAddLink);
+    tuiEditor.addCommand(mdAddImage);
+    tuiEditor.addCommand(mdUL);
+    tuiEditor.addCommand(mdOL);
+    tuiEditor.addCommand(mdTable);
+    tuiEditor.addCommand(mdTask);
+
+    tuiEditor.addCommand(wwBold);
+    tuiEditor.addCommand(wwItalic);
+    tuiEditor.addCommand(wwBlockquote);
+    tuiEditor.addCommand(wwUL);
+    tuiEditor.addCommand(wwOL);
+    tuiEditor.addCommand(wwAddImage);
+    tuiEditor.addCommand(wwAddLink);
+    tuiEditor.addCommand(wwHR);
+    tuiEditor.addCommand(wwHeading);
+    tuiEditor.addCommand(wwIncreaseTask);
+    tuiEditor.addCommand(wwTask);
+    tuiEditor.addCommand(wwTable);
+    tuiEditor.addCommand(wwTableAddRow);
+    tuiEditor.addCommand(wwTableAddCol);
+    tuiEditor.addCommand(wwTableRemoveRow);
+    tuiEditor.addCommand(wwTableRemoveCol);
+
+    return tuiEditor;
 };
 
 module.exports = ToastUIEditor;
