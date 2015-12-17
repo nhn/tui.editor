@@ -30,6 +30,8 @@ describe('Heading', function() {
         wwe.setValue('text');
 
         range.selectNodeContents(wwe.getEditor().getDocument().body.childNodes[0]);
+        range.collapse(true);
+
         wwe.getEditor().setSelection(range);
 
         Heading.exec(wwe);
