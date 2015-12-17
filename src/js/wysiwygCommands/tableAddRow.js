@@ -40,7 +40,6 @@ var AddRow = CommandManager.command('wysiwyg',/** @lends AddRow */{
     }
 });
 
-
 function getNewRow($tr) {
     var cloned = $tr.clone();
 

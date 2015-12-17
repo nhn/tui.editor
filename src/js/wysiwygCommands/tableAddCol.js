@@ -53,9 +53,18 @@ function getCellByRange(range) {
 }
 
 function addColToCellAfter($cell) {
-    var index = $cell.index();
-    $('<th><br></th>').insertAfter($cell.parents('table').find('thead tr th:eq(' + index + ')'));
-    $('<td><br></td>').insertAfter($cell.parents('table').find('tbody tr td:eq(' + index + ')'));
+    var index = $cell.index(),
+        cellToAdd;
+
+    $cell.parents('table').find('tr').each(function(n, tr) {
+        if (domUtils.getNodeName(tr.parentNode) === 'TBODY') {
+            cellToAdd = $('<td><br></td>');
+        } else {
+            cellToAdd = $('<th><br></th>');
+        }
+
+        $(cellToAdd).insertAfter($(tr).children().eq(index));
+    });
 }
 
 function focusToNextCell(sq, $cell) {
