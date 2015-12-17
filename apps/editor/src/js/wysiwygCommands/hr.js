@@ -23,6 +23,11 @@ var HR = CommandManager.command('wysiwyg',/** @lends HR */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        if (!sq.getSelection().collapsed || wwe.hasFormatWithRx(/TABLE/)) {
+            sq.focus();
+            return;
+        }
+
         sq.modifyBlocks(function(frag) {
             /*
             var block = sq.createElement('DIV');
