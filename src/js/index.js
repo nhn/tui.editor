@@ -35,7 +35,7 @@ $.fn.tuiEditor = function() {
             }
         } else {
             options.el = el;
-            instance = new ToastUIEditor(options);
+            instance = ToastUIEditor.factory(options);
             $.data(el, 'tuiEditor', instance);
         }
     }
