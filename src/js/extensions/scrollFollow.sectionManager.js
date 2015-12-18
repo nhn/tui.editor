@@ -103,7 +103,7 @@ SectionManager.prototype._eachLineState = function(iteratee) {
         nextLineString = this.cm.getLine(i+1) || '';
         prevLineString = this.cm.getLine(i-1) || '';
 
-        if (onTable && (!lineString || !(this._isTableCode(lineString) || this._isTableAligner(lineString)))) {
+        if (onTable && (!lineString || !this._isTableCode(lineString))) {
             onTable = false;
         } else if (!onTable && this._isTable(lineString, nextLineString)) {
             onTable = true;
@@ -198,7 +198,7 @@ SectionManager.prototype._isTable = function(lineString, nextLineString) {
  * @return {boolean} result
  */
 SectionManager.prototype._isTableCode = function(string) {
-    return !!(string.match(/ *(\S.*\|.*)/) && string.match(/ *\|(.+)/));
+    return /(^\S?.*\|.*)/.test(string);
 };
 
 /**
@@ -208,7 +208,7 @@ SectionManager.prototype._isTableCode = function(string) {
  * @return {boolean} result
  */
 SectionManager.prototype._isTableAligner = function(string) {
-    return !!(string.match(/ *([-:]+ *\|[-| :]*)/) && string.match(/ *\|( *[-:]+[-| :]*)/));
+    return /(\s*[-:]+\s*\|)+/.test(string);
 };
 
 /**
