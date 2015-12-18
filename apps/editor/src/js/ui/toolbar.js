@@ -142,36 +142,6 @@ Toolbar.prototype._initButton = function() {
         event: 'openPopupAddTable',
         text: 'TABLE'
     }));
-
-    this.addButton(new Button({
-        className: 'te-table1',
-        command: 'AddRow',
-        text: '+Row'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-table1',
-        command: 'AddCol',
-        text: '+Col'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-table1',
-        command: 'RemoveRow',
-        text: '-Row'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-table1',
-        command: 'RemoveCol',
-        text: '-Col'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-table1',
-        command: 'RemoveTable',
-        text: '-TABLE'
-    }));
 };
 
 module.exports = Toolbar;

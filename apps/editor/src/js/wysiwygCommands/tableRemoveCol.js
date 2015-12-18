@@ -26,7 +26,7 @@ var RemoveCol = CommandManager.command('wysiwyg',/** @lends RemoveCol */{
             range = sq.getSelection().cloneRange(),
             $cell, $nextFocus;
 
-        if (range.collapsed && sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
+        if (sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
             sq._recordUndoState();
             $cell = getCellByRange(range);
             $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();

@@ -333,3 +333,10 @@
     text-align: center;
 }
 
+.te-popup-table-utils {
+    width: 200px;
+}
+
+.te-popup-table-utils button {
+    display: block;
+}

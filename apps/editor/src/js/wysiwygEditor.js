@@ -228,6 +228,34 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self._runKeyEventHandlers(event);
     });
 
+    this.getEditor().addEventListener('click', function(event) {
+        self.eventManager.emit('click', {
+            source: 'wysiwyg',
+            data: event
+        });
+    });
+
+    this.getEditor().addEventListener('mousedown', function(event) {
+        self.eventManager.emit('mousedown', {
+            source: 'wysiwyg',
+            data: event
+        });
+    });
+
+    this.getEditor().addEventListener('mouseup', function(event) {
+        self.eventManager.emit('mouseup', {
+            source: 'wysiwyg',
+            data: event
+        });
+    });
+
+    this.getEditor().addEventListener('contextmenu', function(event) {
+        self.eventManager.emit('contextmenu', {
+            source: 'wysiwyg',
+            data: event
+        });
+    });
+
     //firefox has problem about keydown event while composition korean
     //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
