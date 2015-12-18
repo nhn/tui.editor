@@ -73,8 +73,7 @@ WwTableManager.prototype._initKeyHandler = function() {
                     isHandled = true;
                 } else if (self._isAfterTable(range)) {
                     event.preventDefault();
-                    //테이블을 왼쪽에둔 커서위치에서 backspace시 다른 에디터처럼 아무작업도 하지 않는다
-                    //we dont do anything table on backspace when cursor is after table
+                    self._removeTableOnBackspace(range);
                     isHandled = true;
                 }
             }
@@ -138,6 +137,16 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
     this.wwe.get$Body().find('td div, th div').each(function(index, node) {
         $(node).children().unwrap();
     });
+};
+
+WwTableManager.prototype._removeTableOnBackspace = function(range) {
+    var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+
+    this.wwe.getEditor()._recordUndoState();
+
+    this.wwe.insertSelectionMarker(range);
+    $(table).remove();
+    this.wwe.restoreSelectionMarker();
 };
 
 module.exports = WwTableManager;
