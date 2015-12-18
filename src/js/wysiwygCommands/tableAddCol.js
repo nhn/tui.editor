@@ -26,7 +26,7 @@ var AddCol = CommandManager.command('wysiwyg',/** @lends AddCol */{
             range = sq.getSelection().cloneRange(),
             $cell;
 
-        if (range.collapsed && sq.hasFormat('TR')) {
+        if (sq.hasFormat('TR')) {
             sq._recordUndoState();
 
             $cell = getCellByRange(range);

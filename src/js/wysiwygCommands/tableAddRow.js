@@ -25,7 +25,7 @@ var AddRow = CommandManager.command('wysiwyg',/** @lends AddRow */{
             range = sq.getSelection().cloneRange(),
             $tr, $newRow;
 
-        if (range.collapsed && sq.hasFormat('TD')) {
+        if (sq.hasFormat('TD')) {
             sq._recordUndoState();
             $tr = $(range.startContainer).closest('tr');
             $newRow = getNewRow($tr);

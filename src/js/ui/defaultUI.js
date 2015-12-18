@@ -11,7 +11,10 @@ var Toolbar = require('./toolbar'),
     ModeSwitch = require('./modeSwitch'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage'),
+    PopupTableUtils = require('./popupTableUtils'),
     PopupAddTable = require('./popupAddTable');
+
+var util = tui.util;
 
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
@@ -51,6 +54,7 @@ DefaultUI.prototype.init = function($container) {
     this._initPopupAddLink();
     this._initPopupAddImage();
     this._initPopupAddTable();
+    this._initPopupTableUtils();
 
     this._initMarkdownTab();
 };
@@ -134,6 +138,22 @@ DefaultUI.prototype._initPopupAddTable = function() {
             'top': $('button.te-table').offset().top + $('button.te-table').height() + 5,
             'left': $('button.te-table').offset().left
         }
+    });
+};
+
+DefaultUI.prototype._initPopupTableUtils = function() {
+    var self = this;
+
+    this.editor.eventManager.listen('contextmenu', function(ev) {
+        if ($(ev.data.target).parents('table').length > 0) {
+            ev.data.preventDefault();
+            self.editor.eventManager.emit('openPopupTableUtils', ev.data);
+        }
+    });
+
+    this.popupTableUtils = new PopupTableUtils({
+        $target: this.$el,
+        eventManager: this.editor.eventManager
     });
 };
 
