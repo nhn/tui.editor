@@ -19,7 +19,7 @@ var POPUP_CONTENT = [
 
 /**
  * PopupTableUtils
- * It implements Popup to add a table
+ * It implements table utils popup
  * @exports PopupTableUtils
  * @augments LayerPopup
  * @constructor
