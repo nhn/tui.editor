@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @fileoverview Implments wysiwygEditor
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -28,9 +28,9 @@ var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
  * @exports WysiwygEditor
  * @constructor
  * @class
- * @param {jQuery} $el 에디터가 들어갈 엘리먼트
+ * @param {jQuery} $el element to insert editor
  * @param {string[]} contentStyles List of CSS style file path for HTML content
- * @param {EventManager} eventManager 이벤트 매니저
+ * @param {EventManager} eventManager EventManager instance
  */
 function WysiwygEditor($el, contentStyles, eventManager) {
     this.eventManager = eventManager;
@@ -50,6 +50,10 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this._initDefaultKeyEventHandler();
 }
 
+/**
+ * init
+ * @param {function} callback when editor is ready invoke callback function
+ */
 WysiwygEditor.prototype.init = function(callback) {
     var self = this;
 
@@ -73,12 +77,15 @@ WysiwygEditor.prototype.init = function(callback) {
     this.$editorContainerEl.append(this.$iframe);
 };
 
+/**
+ * _initSquire
+ * Initialize squire
+ */
 WysiwygEditor.prototype._initSquire = function() {
     var self = this,
         doc = self.$iframe[0].contentDocument;
 
     self._makeSureStandardMode(doc);
-
     if (self.editor && self._isIframeReady()) {
         return;
     }
@@ -98,11 +105,21 @@ WysiwygEditor.prototype._initSquire = function() {
     });
 };
 
+/**
+ * _isIframeReady
+ * Check is ifream ready with squire
+ * @returns {undefined}
+ */
 WysiwygEditor.prototype._isIframeReady = function() {
     var iframeWindow = this.$iframe[0].contentWindow;
     return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
 };
 
+/**
+ * _makeSureStandardMode
+ * Make document standard mode if not
+ * @param {Document} doc document
+ */
 WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
     //if Not in quirks mode
     if (doc.compatMode !== 'CSS1Compat') {
@@ -114,6 +131,11 @@ WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
     }
 };
 
+/**
+ * _initStyleSheet
+ * Initialize style sheet
+ * @param {Document} doc document
+ */
 WysiwygEditor.prototype._initStyleSheet = function(doc) {
     var styleLink;
 
@@ -126,6 +148,11 @@ WysiwygEditor.prototype._initStyleSheet = function(doc) {
     });
 };
 
+/**
+ * _initEditorContainerStyles
+ * Initialize editor container style
+ * @param {Document} doc document
+ */
 WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     var bodyStyle, body;
 
@@ -138,6 +165,10 @@ WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
     bodyStyle.padding = '0 5px';
 };
 
+/**
+ * _initEvent
+ * Initialize EventManager event handler
+ */
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
@@ -146,10 +177,20 @@ WysiwygEditor.prototype._initEvent = function() {
     });
 };
 
+/**
+ * addKeyEventHandler
+ * Add key event handler
+ * @param {function} handler handler
+ */
 WysiwygEditor.prototype.addKeyEventHandler = function(handler) {
    this._keyEventHandlers.push(handler);
 };
 
+/**
+ * _runKeyEventHandlers
+ * Run key event handler
+ * @param {Event} event event object
+ */
 WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
     var range = this.getEditor().getSelection().cloneRange();
 
@@ -176,6 +217,10 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
     });
 };
 
+/**
+ * _initSquireEvent
+ * Initialize squire event
+ */
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
 
@@ -288,6 +333,10 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
  };
 
+/**
+ * _initDefaultKeyEventHandler
+ * Initialize default event handler
+ */
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
@@ -306,56 +355,79 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     });
 };
 
+/**
+ * _autoResizeHeightIfNeed
+ * Auto resize height if need
+ */
 WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
     if (this._height === 'auto') {
         this._heightToFitContents();
     }
 };
 
+/**
+ * _heightToFitContents
+ * Resize height to fit contents
+ */
 WysiwygEditor.prototype._heightToFitContents = function() {
     this.$editorContainerEl.height(this.get$Body().height());
 };
 
-WysiwygEditor.prototype._isInOrphanText = function(selection) {
-    return selection.startContainer.nodeType === Node.TEXT_NODE && selection.startContainer.parentNode.tagName  === 'BODY';
+/**
+ * _isInOrphanText
+ * check if range is orphan text
+ * @param {Range} range range
+ * @returns {boolean} result
+ */
+WysiwygEditor.prototype._isInOrphanText = function(range) {
+    return range.startContainer.nodeType === Node.TEXT_NODE && range.startContainer.parentNode.tagName  === 'BODY';
 };
 
-WysiwygEditor.prototype._wrapDefaultBlockTo = function(selection) {
+/**
+ * _wrapDefaultBlockTo
+ * Wrap default block to passed range
+ * @param {Range} range range
+ */
+WysiwygEditor.prototype._wrapDefaultBlockTo = function(range) {
     var block, textElem, cursorOffset, insertTargetNode;
 
-    this.saveSelection(selection);
+    this.saveSelection(range);
     this._joinSplitedTextNodes();
     this.restoreSavedSelection();
 
-    selection = this.getEditor().getSelection().cloneRange();
+    range = this.getEditor().getSelection().cloneRange();
 
-    textElem = selection.startContainer;
-    cursorOffset = selection.startOffset;
+    textElem = range.startContainer;
+    cursorOffset = range.startOffset;
 
-    //이때 selection의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
-    //after code below, selection selection is arselectiond by body
-    block = this.getEditor().createDefaultBlock([selection.startContainer]);
+    //이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
+    //after code below, range range is arranged by body
+    block = this.getEditor().createDefaultBlock([range.startContainer]);
 
-    //selection for insert block
-    insertTargetNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
+    //range for insert block
+    insertTargetNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset);
     if (insertTargetNode) {
-        selection.setStartBefore(insertTargetNode);
+        range.setStartBefore(insertTargetNode);
     } else {
         //컨테이너의 차일드가 이노드 한개뿐일경우
-        selection.selectNodeContents(selection.startContainer);
+        range.selectNodeContents(range.startContainer);
     }
 
-    selection.collapse(true);
+    range.collapse(true);
 
-    selection.insertNode(block);
+    range.insertNode(block);
 
-    //revert selection to original node
-    selection.setStart(textElem, cursorOffset);
-    selection.collapse(true);
+    //revert range to original node
+    range.setStart(textElem, cursorOffset);
+    range.collapse(true);
 
-    this.getEditor().setSelection(selection);
+    this.getEditor().setSelection(range);
 };
 
+/**
+ * _joinSplitedTextNodes
+ * Join spliated text nodes
+ */
 WysiwygEditor.prototype._joinSplitedTextNodes = function() {
     var findTextNodeFilter, textNodes, prevNode,
         lastGroup,
@@ -381,6 +453,11 @@ WysiwygEditor.prototype._joinSplitedTextNodes = function() {
     $(nodesToRemove).remove();
 };
 
+/**
+ * _wrapDefaultBlockToOrphanTexts
+ * Wrap default block to orphan texts
+ * mainly, this is used for orhan text that made by controlling hr
+ */
 WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
     var findTextNodeFilter, textNodes,
 
@@ -395,21 +472,34 @@ WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
     });
 };
 
-WysiwygEditor.prototype.saveSelection = function(selection) {
+/**
+ * saveSelection
+ * Save current selection before modification
+ * @param {Range} range range
+ */
+WysiwygEditor.prototype.saveSelection = function(range) {
     var sq = this.getEditor();
 
-    if (!selection) {
-        selection = sq.getSelection().cloneRange();
+    if (!range) {
+        range = sq.getSelection().cloneRange();
     }
 
-    this.getEditor()._saveRangeToBookmark(selection);
+    this.getEditor()._saveRangeToBookmark(range);
 };
 
+/**
+ * restoreSavedSelection
+ * Restore saved selection
+ */
 WysiwygEditor.prototype.restoreSavedSelection = function() {
     var sq = this.getEditor();
     sq.setSelection(sq._getRangeAndRemoveBookmark());
 };
 
+/**
+ * reset
+ * Reset wysiwyg editor
+ */
 WysiwygEditor.prototype.reset = function() {
     if (!this._isIframeReady()) {
         this.remove();
@@ -419,11 +509,20 @@ WysiwygEditor.prototype.reset = function() {
     this.setValue('');
 };
 
+/**
+ * changeBlockFormatTo
+ * Change current range block format to passed tag
+ * @param {string} targetTagName tag name
+ */
 WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
     this.getEditor().changeBlockFormatTo(targetTagName);
     this.eventManager.emit('wysiwygRangeChangeAfter', this);
 };
 
+/**
+ * makeEmptyBlockCurrentSelection
+ * Make current selection to empy block
+ */
 WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
     var self = this;
 
@@ -435,10 +534,18 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
     });
 };
 
+/**
+ * focus
+ * Focus to editor
+ */
 WysiwygEditor.prototype.focus = function() {
     this.editor.focus();
 };
 
+/**
+ * remove
+ * Remove wysiwyg editor
+ */
 WysiwygEditor.prototype.remove = function() {
     this.editor.removeEventListener('focus');
     this.editor.removeEventListener('blur');
@@ -449,6 +556,11 @@ WysiwygEditor.prototype.remove = function() {
     this.$body = null;
 };
 
+/**
+ * setHeight
+ * Set editor height
+ * @param {number|string} height pixel or "auto"
+ */
 WysiwygEditor.prototype.setHeight = function(height) {
     this._height = height;
 
@@ -463,6 +575,11 @@ WysiwygEditor.prototype.setHeight = function(height) {
     }
 };
 
+/**
+ * setValue
+ * Set value to wysiwyg editor
+ * @param {string} html html text
+ */
 WysiwygEditor.prototype.setValue = function(html) {
     this.editor.setHTML(html);
     this._autoResizeHeightIfNeed();
@@ -471,6 +588,11 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 };
 
+/**
+ * getValue
+ * Get value of wysiwyg editor
+ * @return {string} html text
+ */
 WysiwygEditor.prototype.getValue = function() {
     var html;
 
@@ -507,6 +629,10 @@ WysiwygEditor.prototype.getValue = function() {
     return html;
 };
 
+/**
+ * _prepareGetHTML
+ * Prepare before get html
+ */
 WysiwygEditor.prototype._prepareGetHTML = function() {
     this._silentChange = true;
 
@@ -519,6 +645,10 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
     this.eventManager.emit('wysiwygGetValueBefore', this);
 };
 
+/**
+ * postProcessForChange
+ * Post process for change
+ */
 WysiwygEditor.prototype.postProcessForChange = function() {
     var self = this;
 
@@ -529,20 +659,46 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     }, 0);
 };
 
+/**
+ * getEditor
+ * Get squire
+ * @returns {SquireExt} squire
+ */
 WysiwygEditor.prototype.getEditor = function() {
     return this.editor;
 };
 
-WysiwygEditor.prototype.replaceSelection = function(content, selection) {
-    return this.getEditor().replaceSelection(content, selection);
+/**
+ * replaceSelection
+ * Replace text of passed range
+ * @param {string} content content to change
+ * @param {Range} range range
+ */
+WysiwygEditor.prototype.replaceSelection = function(content, range) {
+    this.getEditor().replaceSelection(content, range);
 };
 
+/**
+ * replaceRelativeOffset
+ * Replace content by relative offset
+ * @param {string} content content to change
+ * @param {number} offset offset by current range
+ * @param {number} overwriteLength count to overwrite
+ */
 WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
-    return this.getEditor().replaceRelativeOffset(content, offset, overwriteLength);
+    this.getEditor().replaceRelativeOffset(content, offset, overwriteLength);
 };
 
-WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
-    var pos = this.getEditor().getSelectionPosition(selection, style, offset);
+/**
+ * addWidget
+ * Add widget to selection
+ * @param {Range} range range
+ * @param {Node} node widget node
+ * @param {string} style adding style "over" or "bottom"
+ * @param {number} [offset] offset to adjust
+ */
+WysiwygEditor.prototype.addWidget = function(range, node, style, offset) {
+    var pos = this.getEditor().getSelectionPosition(range, style, offset);
 
     if (node.parentNode !== this.$editorContainerEl[0]) {
         this.$editorContainerEl.append(node);
@@ -555,18 +711,35 @@ WysiwygEditor.prototype.addWidget = function(selection, node, style, offset) {
     });
 };
 
+/**
+ * get$Body
+ * get jquery wraped body content of squire
+ * @returns {JQuery} jquery body
+ */
 WysiwygEditor.prototype.get$Body = function() {
     return this.getEditor().get$Body();
 };
 
+/**
+ * hasFormatWithRx
+ * check has format with current path with passed regexp
+ * @param {RegExp} rx regexp
+ * @returns {boolean} result
+ */
 WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
     return this.getEditor().getPath().match(rx);
 };
 
-WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
+/**
+ * breakToNewDefaultBlock
+ * Break to new default block from passed range
+ * @param {Range} range range
+ * @param {string} [where] "before" or not
+ */
+WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     var div, pathToBody, appendBefore, currentNode;
 
-    currentNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset) || selection.startContainer;
+    currentNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset) || range.startContainer;
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -584,11 +757,18 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(selection, where) {
         $(appendBefore).after(div);
     }
 
-    selection.setStart(div, 0);
-    selection.collapse(true);
-    this.editor.setSelection(selection);
+    range.setStart(div, 0);
+    range.collapse(true);
+    this.editor.setSelection(range);
 };
 
+/**
+ * replaceContentText
+ * Replace textContet of node
+ * @param {Node} container node
+ * @param {string} from target text to change
+ * @param {string} to text that replacement
+ */
 WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     var before;
 
@@ -596,6 +776,11 @@ WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
     $(container).html(before.replace(from, to));
 };
 
+/**
+ * unwrapBlockTag
+ * Unwrap Block tag of current range
+ * @param {function} condition interate with tagName
+ */
 WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
     if (!condition) {
         condition = function(tagName) {
@@ -607,14 +792,32 @@ WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
     this.eventManager.emit('wysiwygRangeChangeAfter', this);
 };
 
+/**
+ * insertSelectionMarker
+ * Insert selection marker
+ * @param {Range} range range to save selection
+ * @returns {Range} range
+ */
 WysiwygEditor.prototype.insertSelectionMarker = function(range) {
     return this._selectionMarker.insertMarker(range, this.getEditor());
 };
 
+/**
+ * restoreSelectionMarker
+ * Restore marker to selection
+ * @returns {Range} range
+ */
 WysiwygEditor.prototype.restoreSelectionMarker = function() {
     return this._selectionMarker.restore(this.getEditor());
 };
 
+/**
+ * WysiwygEditor factory
+ * @param {jQuery} $el element to insert editor
+ * @param {string[]} contentStyles List of CSS style file path for HTML content
+ * @param {EventManager} eventManager EventManager instance
+ * @returns {WysiwygEditor} wysiwygEditor
+ */
 WysiwygEditor.factory = function($el, contentStyles, eventManager) {
     var wwe = new WysiwygEditor($el, contentStyles, eventManager);
 
