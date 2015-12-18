@@ -7,7 +7,7 @@
 
 var domUtils = require('./domUtils');
 
-var FIND_TASK_SPACES_RX = /^\s+/;
+var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 
 /**
  * WwTaskManager

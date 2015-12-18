@@ -7,7 +7,9 @@
 
 var CommandManager = require('../commandManager');
 
-var inlineNodeNames = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+var INLINE_NODE_RX = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+
+var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 /**
  * IncreaseTask
  * increase task depth to wysiwyg Editor
@@ -32,7 +34,7 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
             return;
         }
 
-        if (range.collapsed && range.startContainer.textContent.replace(/^[\s]+/g, '') === '') {
+        if (range.collapsed && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
             while (parent = node.parentNode) {
                 // If we find a UL or OL (so are in a list, node must be an LI)
                 if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
@@ -63,7 +65,7 @@ function isContainer(node) {
 }
 
 function isInline(node) {
-    return inlineNodeNames.test(node.nodeName);
+    return INLINE_NODE_RX.test(node.nodeName);
 }
 
 function isBlock(node) {
