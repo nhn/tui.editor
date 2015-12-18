@@ -14,8 +14,6 @@ var Toolbar = require('./toolbar'),
     PopupTableUtils = require('./popupTableUtils'),
     PopupAddTable = require('./popupAddTable');
 
-var util = tui.util;
-
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
         '<div class="te-toolbar-section" />',
