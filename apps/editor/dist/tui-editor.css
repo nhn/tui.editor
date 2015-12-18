@@ -1,12 +1,8 @@
 @charset "UTF-8";
 
-.tui-editor,
-.tui-editor-defaultUI,
-.tui-editor-defaultUI *,
-.tui-editor * {
-  box-sizing: content-box;
+.tui-editor *,
+.tui-editor-defaultUI * {
   font: inherit;
-  vertical-align: baseline;
 }
 
 .tui-editor:after,
@@ -354,6 +350,14 @@
 .te-popup-add-table .te-description {
   margin: 10px 0 0 0;
   text-align: center;
+}
+
+.te-popup-table-utils {
+  width: 200px;
+}
+
+.te-popup-table-utils button {
+  display: block;
 }
 /**
  * Toast UI Colorpicker
