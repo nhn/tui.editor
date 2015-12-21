@@ -24,11 +24,19 @@ function WwTaskManager(wwe) {
     this._init();
 }
 
+/**
+ * _init
+ * Init
+ */
 WwTaskManager.prototype._init = function() {
     this._initKeyHandler();
     this._initEvent();
 };
 
+/**
+ * _initEvent
+ * Initialize eventmanager event
+ */
 WwTaskManager.prototype._initEvent = function() {
     var self = this;
 
@@ -53,6 +61,10 @@ WwTaskManager.prototype._initEvent = function() {
     });
 };
 
+/**
+ * _initKeyHandler
+ * Initialize key event handler
+ */
 WwTaskManager.prototype._initKeyHandler = function() {
     var self = this;
 
@@ -96,6 +108,12 @@ WwTaskManager.prototype._initKeyHandler = function() {
     });
 };
 
+/**
+ * _isInTaskList
+ * Check whether passed range is in task list or not
+ * @param {Range} range range
+ * @returns {boolean} result
+ */
 WwTaskManager.prototype._isInTaskList = function(range) {
     var li;
 
@@ -113,6 +131,10 @@ WwTaskManager.prototype._isInTaskList = function(range) {
     return $(li).hasClass('task-list-item');
 };
 
+/**
+ * _unformatIncompleteTask
+ * Unformat incomplete task
+ */
 WwTaskManager.prototype._unformatIncompleteTask = function() {
     this.wwe.get$Body().find('.task-list-item').each(function(index, task) {
         if ((!domUtils.isElemNode(task.firstChild) || task.firstChild.tagName !== 'INPUT')
@@ -123,6 +145,10 @@ WwTaskManager.prototype._unformatIncompleteTask = function() {
     });
 };
 
+/**
+ * _removeTaskInputInWrongPlace
+ * Remove task input in wrong place while user editing
+ */
 WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
     var self = this;
 
@@ -144,17 +170,22 @@ WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
         });
 };
 
-WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(selection) {
+/**
+ * _unformatTaskIfNeedOnEnter
+ * Unformat task if need on enter
+ * @param {Range} range range
+ */
+WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
     var $selected, $li, $inputs,
         isEmptyTask;
 
-    $selected = $(selection.startContainer);
+    $selected = $(range.startContainer);
     $li = $selected.closest('li');
     $inputs = $li.find('input:checkbox');
     isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
 
     if ($li.length && $inputs.length && isEmptyTask) {
-        this.wwe.saveSelection(selection);
+        this.wwe.saveSelection(range);
 
         $inputs.remove();
         $li.removeClass('task-list-item');
@@ -164,12 +195,17 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(selection) {
     }
 };
 
-WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
+/**
+ * _unformatTaskIfNeedOnBackspace
+ * Unformat task if need on backspace
+ * @param {Range} range range
+ */
+WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
     var startContainer, startOffset,
         prevEl, needRemove;
 
-    startContainer = selection.startContainer;
-    startOffset = selection.startOffset;
+    startContainer = range.startContainer;
+    startOffset = range.startOffset;
 
     //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
     //유저가 임의로 Task빈칸에 수정을 가했을경우
@@ -208,7 +244,7 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
     }
 
     if (needRemove) {
-        this.wwe.saveSelection(selection);
+        this.wwe.saveSelection(range);
 
         $(prevEl).closest('li').removeClass('task-list-item');
         $(prevEl).remove();
@@ -217,6 +253,10 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(selection) {
     }
 };
 
+/**
+ * _addCheckedAttrToCheckedInput
+ * Add checked attr to checked input
+ */
 WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
     var doc = this.wwe.getEditor().getDocument();
 
@@ -230,6 +270,10 @@ WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
     });
 };
 
+/**
+ * _removeTaskListClass
+ * Remove tasklist class
+ */
 WwTaskManager.prototype._removeTaskListClass = function() {
     //because task-list class is block merge normal list and task list
     this.wwe.get$Body().find('.task-list').each(function(index, node) {
@@ -237,6 +281,11 @@ WwTaskManager.prototype._removeTaskListClass = function() {
     });
 };
 
+/**
+ * _ensureSpaceNextToTaskInput
+ * Ensure space next to task input
+ * this because we need some space after input for safari cursor issue
+ */
 WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode, $wrapper;
 

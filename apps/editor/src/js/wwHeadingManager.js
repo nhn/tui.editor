@@ -22,10 +22,17 @@ function WwHeadingManager(wwe) {
     this._init();
 }
 
+/**
+ * _init
+ */
 WwHeadingManager.prototype._init = function() {
     this._initKeyHandler();
 };
 
+/**
+ * _initKeyHandler
+ * Initialize key event handler
+ */
 WwHeadingManager.prototype._initKeyHandler = function() {
     var self = this;
 
@@ -55,6 +62,10 @@ WwHeadingManager.prototype._initKeyHandler = function() {
     });
 };
 
+/**
+ * _unwrapHeading
+ * Unwrap heading
+ */
 WwHeadingManager.prototype._unwrapHeading = function() {
     this.wwe.unwrapBlockTag(function(node) {
         return FIND_HEADING_RX.test(node);
