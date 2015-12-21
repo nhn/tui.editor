@@ -22,11 +22,19 @@ function WwHrManager(wwe) {
     this._init();
 }
 
+/**
+ * _init
+ * Init
+ */
 WwHrManager.prototype._init = function() {
     this._initKeyHandler();
     this._initEvent();
 };
 
+/**
+ * _initEvent
+ * Initialize eventmanager event
+ */
 WwHrManager.prototype._initEvent = function() {
     var self = this;
 
@@ -35,6 +43,10 @@ WwHrManager.prototype._initEvent = function() {
     });
 };
 
+/**
+ * _initKeyHandler
+ * Initialize key event handler
+ */
 WwHrManager.prototype._initKeyHandler = function() {
     var self = this;
 
@@ -55,28 +67,47 @@ WwHrManager.prototype._initKeyHandler = function() {
     });
 };
 
-WwHrManager.prototype._isInHr = function(selection) {
-    return domUtils.getNodeName(selection.startContainer.childNodes[selection.startOffset]) === 'HR';
+/**
+ * _isInHr
+ * Check whether passed range is in hr or not
+ * @param {Range} range range
+ * @returns {boolean} result
+ */
+WwHrManager.prototype._isInHr = function(range) {
+    return domUtils.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
 };
 
-WwHrManager.prototype._isNearHr = function(selection) {
-    var prevNode = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
+/**
+ * _isNearHr
+ * Check whether passed range is near hr or not
+ * @param {Range} range range
+ * @returns {boolean} result
+ */
+WwHrManager.prototype._isNearHr = function(range) {
+    var prevNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1);
     return domUtils.getNodeName(prevNode) === 'HR';
 };
 
-WwHrManager.prototype._removeHrIfNeed = function(selection, event) {
+/**
+ * _removeHrIfNeed
+ * Remove hr if need
+ * @param {Range} range range
+ * @param {Event} event event
+ * @returns {boolean} return true if hr was removed
+ */
+WwHrManager.prototype._removeHrIfNeed = function(range, event) {
     var hrSuspect, cursorTarget;
 
-    if (this._isInHr(selection)) {
-        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset);
-    } else if (selection.startOffset === 0) {
-        hrSuspect = selection.startContainer.previousSibling || selection.startContainer.parentNode.previousSibling;
+    if (this._isInHr(range)) {
+        hrSuspect = domUtils.getChildNodeAt(range.startContainer, range.startOffset);
+    } else if (range.startOffset === 0) {
+        hrSuspect = range.startContainer.previousSibling || range.startContainer.parentNode.previousSibling;
 
         if (domUtils.getNodeName(hrSuspect) !== 'HR') {
             hrSuspect = null;
         }
-    } else if (this._isNearHr(selection)) {
-        hrSuspect = domUtils.getChildNodeAt(selection.startContainer, selection.startOffset - 1);
+    } else if (this._isNearHr(range)) {
+        hrSuspect = domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1);
     }
 
     if (hrSuspect) {
@@ -85,15 +116,18 @@ WwHrManager.prototype._removeHrIfNeed = function(selection, event) {
         cursorTarget = hrSuspect.nextSibling;
         $(hrSuspect).remove();
 
-        selection.setStartBefore(cursorTarget);
-        selection.collapse(true);
-        this.wwe.getEditor().setSelection(selection);
+        range.setStartBefore(cursorTarget);
+        range.collapse(true);
+        this.wwe.getEditor().setSelection(range);
 
         return true;
     }
 };
 
-//we use divs for paragraph so we dont need any p tags
+/**
+ * _unwrapDivOnHr
+ * Unwrap default block on hr
+ */
 WwHrManager.prototype._unwrapDivOnHr = function() {
     this.wwe.get$Body().find('hr').each(function(index, node) {
         if ($(node).parent().is('div')) {

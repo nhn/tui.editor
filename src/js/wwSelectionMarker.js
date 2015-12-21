@@ -18,6 +18,12 @@ function WwSelectionMarker() {
     this._markerNode = null;
 }
 
+/**
+ * insertMarker
+ * @param {Range} range range
+ * @param {SquireExt} sq SquireExt instance
+ * @returns {Range} range range
+ */
 WwSelectionMarker.prototype.insertMarker = function(range, sq) {
     this._markerNode = this._makeMarker(sq);
 
@@ -27,10 +33,22 @@ WwSelectionMarker.prototype.insertMarker = function(range, sq) {
     return range;
 };
 
+/**
+ * _makeMarker
+ * Make marker element
+ * @param {SquireExt} sq SquireExt instance
+ * @returns {Node} marker
+ */
 WwSelectionMarker.prototype._makeMarker = function(sq) {
     return sq.createElement('INPUT', {type:'hidden', class: MARKER_CSS_CLASS});
 };
 
+/**
+ * restore
+ * Restore marker to selection
+ * @param {SquireExt} sq SquireExt instance
+ * @returns {Range} range
+ */
 WwSelectionMarker.prototype.restore = function(sq) {
     var newRange = sq.getSelection().cloneRange();
 

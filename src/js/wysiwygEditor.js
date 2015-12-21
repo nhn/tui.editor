@@ -107,8 +107,8 @@ WysiwygEditor.prototype._initSquire = function() {
 
 /**
  * _isIframeReady
- * Check is ifream ready with squire
- * @returns {undefined}
+ * Check whether iframe ready or not
+ * @returns {boolean} result
  */
 WysiwygEditor.prototype._isIframeReady = function() {
     var iframeWindow = this.$iframe[0].contentWindow;
