@@ -52,8 +52,24 @@ describe('UL', function() {
 
             UL.exec(mde);
 
-            expect(doc.getLine(0)).toEqual('* ');
-            expect(doc.getLine(1)).toEqual('mytext3');
+            expect(doc.getLine(0)).toEqual('* mytext1');
+        });
+
+        it('Add ol markdown text to line start', function() {
+            doc.setCursor(0, 4);
+
+            UL.exec(mde);
+
+            expect(doc.getLine(0)).toEqual('* mytext1');
+        });
+
+        it('Don\'t add already have ol markdown text in line start', function() {
+            doc.setCursor(0, 4);
+
+            UL.exec(mde);
+            UL.exec(mde);
+
+            expect(doc.getLine(0)).toEqual('* mytext1');
         });
     });
 });

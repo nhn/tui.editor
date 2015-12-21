@@ -39,6 +39,21 @@ describe('OL', function() {
 
             expect(doc.getLine(0)).toEqual('1. mytext1');
         });
+        it('Add ul markdown text to line start', function() {
+            doc.setCursor(0, 4);
+
+            OL.exec(mde);
+
+            expect(doc.getLine(0)).toEqual('1. mytext1');
+        });
+        it('Don\'t add already have ul markdown text in line start', function() {
+            doc.setCursor(0, 4);
+
+            OL.exec(mde);
+            OL.exec(mde);
+
+            expect(doc.getLine(0)).toEqual('1. mytext1');
+        });
         it('빈라인에서 추가된다', function() {
             doc.setCursor(1, 0);
 
@@ -52,8 +67,7 @@ describe('OL', function() {
 
             OL.exec(mde);
 
-            expect(doc.getLine(0)).toEqual('1. ');
-            expect(doc.getLine(1)).toEqual('mytext3');
+            expect(doc.getLine(0)).toEqual('1. mytext1');
         });
     });
 });
