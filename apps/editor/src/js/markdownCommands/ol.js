@@ -20,7 +20,7 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
-        var replaceText, range, from, to,
+        var range, from,
             cm = mde.getEditor(),
             doc = cm.getDoc();
 
@@ -28,17 +28,12 @@ var OL = CommandManager.command('markdown',/** @lends OL */{
 
         from = {
             line: range.from.line,
-            ch: range.from.ch
+            ch: 0
         };
 
-        to = {
-            line: range.to.line,
-            ch: range.to.ch
-        };
-
-        replaceText = '1. ';
-
-        doc.replaceRange(replaceText, from, to);
+        if (!doc.getLine(from.line).match(/^[ \t]*[\d]+\. .*/)) {
+            doc.replaceRange('1. ', from);
+        }
 
         cm.focus();
     }
