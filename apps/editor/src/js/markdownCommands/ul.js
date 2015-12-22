@@ -7,6 +7,9 @@
 
 var CommandManager = require('../commandManager');
 
+var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
+    FIND_MD_UL_RX = /^[ \t]*\* .*/;
+
 /**
  * UL
  * Add unordered list markdown syntax to markdown editor
@@ -20,7 +23,7 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
     exec: function(mde) {
-        var range, from,
+        var range, from, line, to,
             cm = mde.getEditor(),
             doc = cm.getDoc();
 
@@ -31,7 +34,19 @@ var UL = CommandManager.command('markdown',/** @lends UL */{
             ch: 0
         };
 
-        if (!doc.getLine(from.line).match(/^[ \t]*\* .*/)) {
+
+        line = doc.getLine(from.line);
+
+        if (line.match(FIND_MD_OL_RX)) {
+            line = line.replace(/[\d]+\. /, '* ');
+
+            to  = {
+                line: from.line,
+                ch: line.length + 1
+            };
+
+            doc.replaceRange(line, from, to);
+        } else if (!line.match(FIND_MD_UL_RX)) {
             doc.replaceRange('* ', from);
         }
 
