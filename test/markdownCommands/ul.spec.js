@@ -21,7 +21,7 @@ describe('UL', function() {
 
         cm = mde.getEditor();
 
-        sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
+        sourceText = ['mytext1', '', 'mytext2', 'mytext3', '1. mytext4'];
 
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
@@ -54,7 +54,13 @@ describe('UL', function() {
 
             expect(doc.getLine(0)).toEqual('* mytext1');
         });
+        it('replace  ul markdown text if line have ol', function() {
+            doc.setCursor(4, 4);
 
+            UL.exec(mde);
+
+            expect(doc.getLine(4)).toEqual('* mytext4');
+        });
         it('Add ol markdown text to line start', function() {
             doc.setCursor(0, 4);
 
