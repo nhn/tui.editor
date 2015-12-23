@@ -10,13 +10,13 @@ var LayerPopup = require('./layerpopup');
 var util = tui.util;
 
 var POPUP_CONTENT = [
-    '<label for="linkText">Link Text</label>',
+    '<label for="linkText">링크에 표시할 내용</label>',
     '<input type="text" class="te-link-text-input" />',
     '<label for="url">URL</label>',
     '<input type="text" class="te-url-input" />',
     '<div class="te-button-section">',
-        '<button type="button" class="te-ok-button">OK</button>',
-        '<button type="button" class="te-close-button">Cancel</button>',
+        '<button type="button" class="te-ok-button">확인</button>',
+        '<button type="button" class="te-close-button">취소</button>',
     '</div>'
 ].join('');
 
@@ -31,7 +31,7 @@ var POPUP_CONTENT = [
  */
 function PopupAddLink(options) {
     options = util.extend({
-        title: 'Add Link',
+        title: '링크 추가',
         className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT
     }, options);

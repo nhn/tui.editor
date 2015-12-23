@@ -5,8 +5,10 @@
 'use strict';
 
 var UIController = require('./uicontroller');
+var Tooltip = require('./tooltip');
 
 var util = tui.util;
+var tooltip = new Tooltip();
 
 /**
  * Button
@@ -24,7 +26,7 @@ var util = tui.util;
 function Button(options) {
     UIController.call(this, {
         tagName: 'button',
-        className: options.className
+        className: options.className + ' tui-toolbar-icons'
     });
 
     this._setOptions(options);
@@ -34,6 +36,13 @@ function Button(options) {
     this.attachEvents({
         'click': '_onClick'
     });
+
+    if (options.tooltip) {
+        this.attachEvents({
+            'mouseover': '_onOver',
+            'mouseout': '_onOut'
+        });
+    }
 }
 
 Button.prototype = util.extend(
@@ -45,6 +54,7 @@ Button.prototype._setOptions = function(options) {
     this.command = options.command;
     this.event = options.event;
     this.text = options.text;
+    this.tooltip = options.tooltip;
     this.style = options.style;
 };
 
@@ -72,6 +82,14 @@ Button.prototype._onClick = function() {
     }
 
     this.trigger('clicked');
+};
+
+Button.prototype._onOver = function() {
+    tooltip.show(this.$el, this.tooltip);
+};
+
+Button.prototype._onOut = function() {
+    tooltip.hide();
 };
 
 module.exports = Button;

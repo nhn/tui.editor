@@ -12,7 +12,9 @@ var Toolbar = require('./toolbar'),
     PopupAddLink = require('./popupAddLink'),
     PopupAddImage = require('./popupAddImage'),
     PopupTableUtils = require('./popupTableUtils'),
-    PopupAddTable = require('./popupAddTable');
+    PopupAddTable = require('./popupAddTable'),
+    PopupAddHeading = require('./popupAddHeading');
+
 
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
@@ -52,6 +54,7 @@ DefaultUI.prototype.init = function($container) {
     this._initPopupAddLink();
     this._initPopupAddImage();
     this._initPopupAddTable();
+    this._initPopupAddHeading();
     this._initPopupTableUtils();
 
     this._initMarkdownTab();
@@ -128,13 +131,27 @@ DefaultUI.prototype._initPopupAddImage = function() {
 };
 
 DefaultUI.prototype._initPopupAddTable = function() {
+    var $button = this.$el.find('button.tui-table');
     this.popupAddTable = new PopupAddTable({
         $target: this.$el,
         eventManager: this.editor.eventManager,
         css: {
             'position': 'absolute',
-            'top': $('button.te-table').offset().top + $('button.te-table').height() + 5,
-            'left': $('button.te-table').offset().left
+            'top': $button.offset().top + $button.height() + 5,
+            'left':$button.offset().left
+        }
+    });
+};
+
+DefaultUI.prototype._initPopupAddHeading = function() {
+    var $button = this.$el.find('button.tui-table');
+    this.popupAddHeading = new PopupAddHeading({
+        $target: this.$el,
+        eventManager: this.editor.eventManager,
+        css: {
+            'position': 'absolute',
+            'top': $button.offset().top + $button.height() + 5,
+            'left': $button.offset().left
         }
     });
 };

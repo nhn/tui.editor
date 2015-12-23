@@ -13,10 +13,29 @@ extManager.defineExtension('scrollFollow', function(editor) {
     var cm = editor.getCodeMirror(),
         scrollable = false,
         active = true,
-        sectionManager, scrollSync;
+        sectionManager, scrollSync,
+        className = 'tui-scrollfollow',
+        $button;
 
     sectionManager = new SectionManager(cm, editor.preview);
     scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+
+    //UI
+    if (editor.getUI().name === 'default') {
+        editor.getUI().toolbar.addButton([{
+            className: [className, 'active'].join(' '),
+            command: 'scrollFollowDisable',
+            tooltip: '자동 스크롤 끄기',
+            style: 'background-color: #ddedfb'
+        }, {
+            className: className,
+            command: 'scrollFollowEnable',
+            tooltip: '자동 스크롤 켜기',
+            style: 'background-color: #fff'
+        }]);
+    }
+
+    $button = editor.getUI().toolbar.$el.find(className);
 
     //Commands
     editor.addCommand('markdown', {
@@ -53,18 +72,12 @@ extManager.defineExtension('scrollFollow', function(editor) {
         scrollSync.syncToPreview();
     });
 
-    //UI
-    if (editor.getUI().name === 'default') {
-        editor.getUI().toolbar.addButton([{
-            classname: 'te-scrollfollow-enable',
-            command: 'scrollFollowDisable',
-            text: '\u0191',
-            style: 'background-color: #f5f5f7'
-        }, {
-            className: 'te-scrollfollow-disable',
-            command: 'scrollFollowEnable',
-            text: '\u0191',
-            style: 'background-color: #ddd'
-        }]);
-    }
+    //위지윅에서는 숨김
+    editor.on('changeModeToWysiwyg', function() {
+        $button.hide();
+    });
+
+    editor.on('changeModeToMarkdown', function() {
+        $button.show();
+    });
 });

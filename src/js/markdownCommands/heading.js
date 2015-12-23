@@ -13,14 +13,16 @@ var CommandManager = require('../commandManager');
  * @exports Heading
  * @augments Command
  */
-var Heading = CommandManager.command('markdown',/** @lends Heading */{
+var Heading = CommandManager.command('markdown', /** @lends Heading */{
     name: 'Heading',
     keyMap: ['Ctrl-H', 'Ctrl-H'],
+
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
+     * @param {number} size heading size
      */
-    exec: function(mde) {
+    exec: function(mde, size) {
         var textToModify, range, from, to, textLinesToModify, lineLength, i, lengthOfCurrentLineBefore,
             cm = mde.getEditor(),
             doc = cm.getDoc();
@@ -48,13 +50,14 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
         lineLength = textLinesToModify.length;
 
         for (i = 0; i < lineLength; i += 1) {
-            textLinesToModify[i] = getHeadingMarkdown(textLinesToModify[i]);
+            textLinesToModify[i] = getHeadingMarkdown(textLinesToModify[i], size);
         }
 
         //해당 에디터의 내용을 변경한다
         doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
         range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
+
         doc.setCursor(range.to);
 
         cm.focus();
@@ -63,23 +66,21 @@ var Heading = CommandManager.command('markdown',/** @lends Heading */{
 
 var FIND_HEADING_RX = /^#+\s/g;
 
-function getHeadingMarkdown(text) {
+function getHeadingMarkdown(text, size) {
     var foundedHeading = text.match(FIND_HEADING_RX),
-        heading;
+        heading = '';
 
-    if (foundedHeading) {
-        heading = '#' + foundedHeading[0];
-
-        if (heading.match(/#/g).length === 7) {
-            heading = '# ';
-        }
-
-        text = text.split(foundedHeading[0])[1];
-    } else {
-        heading = '# ';
+    for (;;) {
+        heading += '#';
+        size = size - 1;
+        if (size < 1) break;
     }
 
-    return heading + text;
+    if (foundedHeading) {
+        text = text.split(foundedHeading[0])[1];
+    }
+
+    return heading + ' ' + text;
 }
 
 module.exports = Heading;
