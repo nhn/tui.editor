@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Bold = CommandManager.command('wysiwyg',/** @lends Bold */{
+var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
     name: 'Bold',
     keyMap: ['Ctrl-B', 'Ctrl-B'],
     /**

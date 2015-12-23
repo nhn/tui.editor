@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddLink = CommandManager.command('wysiwyg',/** @lends AddLink */{
+var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
