@@ -43,14 +43,14 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         if (!hasInput) {
             selection = wwe.insertSelectionMarker(selection);
 
-            selection.setStart(selection.startContainer, 0);
+            selection.setStart($(selection.startContainer).closest('div')[0], 0);
             selection.collapse(true);
 
             sq.insertElement(sq.createElement('INPUT', {
                 type: 'checkbox'
             }), selection);
 
-            selection.setStart(selection.startContainer, 1);
+            selection.setStart($(selection.startContainer).closest('div')[0], 1);
 
             //we need some space for safari
             sq.insertElement(sq.getDocument().createTextNode(' '), selection);

@@ -189,7 +189,7 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
 
         $inputs.remove();
         $li.removeClass('task-list-item');
-        $li.text('');
+        $li.find('div').eq(0).html('<br>');
 
         this.wwe.restoreSavedSelection();
     }
@@ -218,7 +218,7 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
             prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
 
             //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
-            if (domUtils.isTextNode(prevEl) && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
+            if (domUtils.isTextNode(prevEl) && prevEl.nodeValue.length === 1 && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
                 prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 2);
             }
         }

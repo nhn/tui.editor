@@ -31,7 +31,7 @@ describe('WwTaskManager', function() {
         it('remove input if current selection is right of input with one space', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
+            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;text</div></li></ul>');
 
             range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
             range.collapse(true);
@@ -80,6 +80,19 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
         });
 
+        it('dont remove input if current selection has placed at end of task item', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;text</li></ul>');
+
+            range.setStart(wwe.getEditor().getDocument().getElementsByTagName('LI')[0], 2);
+            range.collapse(true);
+            mgr._unformatTaskIfNeedOnBackspace(range);
+
+            expect(wwe.get$Body().find('input').length).toEqual(1);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+        });
+
         it('dont remove necessary input', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
@@ -98,7 +111,7 @@ describe('WwTaskManager', function() {
         it('remove input if current selection is right of input with one space', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<ul><li class="task-list-item"><input type="checkbox" />&nbsp;</li></ul>');
+            wwe.setValue('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;</div></li></ul>');
 
             range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
             range.collapse(true);
