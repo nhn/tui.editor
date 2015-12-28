@@ -101,7 +101,7 @@ function initUI(editor) {
         className: className,
         event: 'colorButtonClicked',
         tooltip: '글자색상'
-    });
+    }, 2);
     $button = editor.getUI().toolbar.$el.find('button.' + className);
 
     $colorPickerContainer =  $('<div />');
