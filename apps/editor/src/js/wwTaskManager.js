@@ -287,7 +287,8 @@ WwTaskManager.prototype._removeTaskListClass = function() {
  * this because we need some space after input for safari cursor issue
  */
 WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode, $wrapper;
+    var findTextNodeFilter, firstTextNode, $wrapper,
+        self = this;
 
     findTextNodeFilter = function() {
         return this.nodeType === 3;
@@ -302,7 +303,10 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
 
         firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
 
-        if (firstTextNode && !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
+        if (!firstTextNode) {
+            firstTextNode = self.wwe.getEditor().getDocument().createTextNode(' ');
+            $(firstTextNode).insertAfter($wrapper.find('input'));
+        } else if (!(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
             firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
         }
     });
