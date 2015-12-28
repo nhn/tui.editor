@@ -348,6 +348,11 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
                 self._wrapDefaultBlockTo(range);
                 isHandled = true;
             }
+        //backspace
+        } else if (event.keyCode === 8) {
+            if (!range.collapsed) {
+                self.postProcessForChange();
+            }
         }
 
         return isHandled;
