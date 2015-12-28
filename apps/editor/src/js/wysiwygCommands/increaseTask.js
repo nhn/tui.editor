@@ -42,12 +42,6 @@ var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
                     if (node.previousSibling) {
                         // Then increase the list level
                         wwe.getEditor().modifyBlocks(increaseTaskLevel);
-/*
-                        if (node.parentElement.parentElement.firstChild.tagName === 'DIV'
-                            && node.parentElement.parentElement.firstChild.textContent === '') {
-                                debugger;
-                                $(node.parentElement.parentElement.firstChild).remove();
-                        }*/
                     }
 
                     break;

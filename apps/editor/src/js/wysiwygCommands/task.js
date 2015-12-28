@@ -21,7 +21,7 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li, hasInput,
+        var selection, $selected, $li, hasInput, $block,
             sq = wwe.getEditor();
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
@@ -43,14 +43,20 @@ var Task = CommandManager.command('wysiwyg',/** @lends Task */{
         if (!hasInput) {
             selection = wwe.insertSelectionMarker(selection);
 
-            selection.setStart($(selection.startContainer).closest('div')[0], 0);
+            $block = $(selection.startContainer).closest('div').eq(0);
+
+            if (!$block.length) {
+                $block = $(selection.startContainer).closest('li').eq(0);
+            }
+
+            selection.setStart($block[0], 0);
             selection.collapse(true);
 
             sq.insertElement(sq.createElement('INPUT', {
                 type: 'checkbox'
             }), selection);
 
-            selection.setStart($(selection.startContainer).closest('div')[0], 1);
+            selection.setStart($block[0], 1);
 
             //we need some space for safari
             sq.insertElement(sq.getDocument().createTextNode(' '), selection);
