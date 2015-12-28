@@ -193,7 +193,6 @@ WysiwygEditor.prototype.addKeyEventHandler = function(handler) {
  */
 WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
     var range = this.getEditor().getSelection().cloneRange();
-
 /*
     console.log(event);
     console.log('-------->', event.keyCode, event.keyIdentifier);

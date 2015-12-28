@@ -170,6 +170,25 @@ describe('WwTaskManager', function() {
         });
     });
 
+    describe('_ensureSpaceNextToTaskInput', function() {
+        it('add space next to task input', function() {
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
+
+            mgr._ensureSpaceNextToTaskInput();
+
+            expect(wwe.getEditor().getHTML()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> text</li></ul>');
+        });
+
+        it('add space next to task input with inline tag', function() {
+            wwe.get$Body().html('<ul><li class="task-list-item"><input type="checkbox"><span>text</span></li></ul>');
+
+            mgr._ensureSpaceNextToTaskInput();
+
+            expect(wwe.getEditor().getHTML()).toEqual('<ul><li class="task-list-item"><input type="checkbox"> <span>text</span></li></ul>');
+            expect(wwe.get$Body().find('li')[0].childNodes[1].textContent).toEqual(' ');
+        });
+    });
+
     describe('Events', function() {
         it('remove unused inputbox when wysiwygRangeChangeAfter event fire', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
