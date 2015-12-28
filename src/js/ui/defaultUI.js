@@ -131,27 +131,23 @@ DefaultUI.prototype._initPopupAddImage = function() {
 };
 
 DefaultUI.prototype._initPopupAddTable = function() {
-    var $button = this.$el.find('button.tui-table');
     this.popupAddTable = new PopupAddTable({
         $target: this.$el,
         eventManager: this.editor.eventManager,
+        $button: this.$el.find('button.tui-table'),
         css: {
-            'position': 'absolute',
-            'top': $button.offset().top + $button.height() + 5,
-            'left':$button.offset().left
+            'position': 'absolute'
         }
     });
 };
 
 DefaultUI.prototype._initPopupAddHeading = function() {
-    var $button = this.$el.find('button.tui-table');
     this.popupAddHeading = new PopupAddHeading({
         $target: this.$el,
         eventManager: this.editor.eventManager,
+        $button: this.$el.find('button.tui-heading'),
         css: {
-            'position': 'absolute',
-            'top': $button.offset().top + $button.height() + 5,
-            'left': $button.offset().left
+            'position': 'absolute'
         }
     });
 };

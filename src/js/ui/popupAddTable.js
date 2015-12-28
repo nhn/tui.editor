@@ -50,6 +50,7 @@ function PopupAddTable(options) {
     this._selectedBound = {};
     this._tableBound = {};
     this.eventManager = options.eventManager;
+    this.$button = options.$button;
 
     this.render();
     this._cacheElements();
@@ -115,6 +116,10 @@ PopupAddTable.prototype._linkWithEventManager = function() {
 
     this.eventManager.listen('openPopupAddTable', function() {
         self.eventManager.emit('closeAllPopup');
+        self.$el.css({
+            'top': self.$button.position().top + self.$button.height() + 5,
+            'left': self.$button.position().left
+        });
         self.show();
         self._selectionOffset = self.$el.find('.te-table-selection').offset();
     });

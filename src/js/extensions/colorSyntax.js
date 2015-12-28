@@ -121,9 +121,7 @@ function initUI(editor) {
         $target: editor.getUI().$el,
         css: {
             'width': 178,
-            'position': 'absolute',
-            'top': $button.offset().top + $button.height() + 5,
-            'left': $button.offset().left
+            'position': 'absolute'
         }
     });
 
@@ -136,6 +134,10 @@ function initUI(editor) {
         if (popup.isShow()) {
             popup.hide();
         } else {
+            popup.$el.css({
+                'top': $button.position().top + $button.height() + 5,
+                'left': $button.position().left
+            });
             popup.show();
         }
     });

@@ -35,6 +35,7 @@ function PopupAddHeading(options) {
     }, options);
     LayerPopup.call(this, options);
     this.eventManager = options.eventManager;
+    this.$button = options.$button;
     this.render();
     this._linkWithEventManager();
     this._bindEvent();
@@ -46,8 +47,7 @@ PopupAddHeading.prototype = util.extend(
 );
 
 PopupAddHeading.prototype._linkWithEventManager = function() {
-    var self = this,
-        $button = $('button.tui-heading');
+    var self = this;
 
   this.eventManager.listen('focus', function() {
         self.hide();
@@ -56,8 +56,8 @@ PopupAddHeading.prototype._linkWithEventManager = function() {
     this.eventManager.listen('openHeadingSelect', function() {
         self.eventManager.emit('closeAllPopup');
         self.$el.css({
-            'top': $button.position().top + $button.height() + 5,
-            'left': $button.position().left
+            'top': self.$button.position().top + self.$button.height() + 5,
+            'left': self.$button.position().left
         });
         self.show();
     });
