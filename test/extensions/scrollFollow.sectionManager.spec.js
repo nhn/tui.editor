@@ -21,6 +21,7 @@ describe('scrollFollow.sectionManager', function() {
             events: {
                 'load': function(editor) {
                     editor.getSquire()._ignoreChange = true;
+                    editor.wwEditor.readySilentChange();
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');

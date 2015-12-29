@@ -22,6 +22,7 @@ describe('colorSyntax', function() {
             events: {
                 'load': function(editor) {
                     editor.getSquire()._ignoreChange = true;
+                    editor.wwEditor.readySilentChange();
                     done();
                 }
             }

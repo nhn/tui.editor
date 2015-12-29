@@ -22,6 +22,7 @@ describe('scrollFollow.ScrollSync', function() {
             events: {
                 'load': function(editor) {
                     editor.getSquire()._ignoreChange = true;
+                    editor.wwEditor.readySilentChange();
                     editor.getCodeMirror().setSize(200, 50);
                     $('.te-preview').css('padding', '0');
                     $('.te-preview').css('overflow', 'auto');
