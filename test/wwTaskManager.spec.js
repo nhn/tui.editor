@@ -141,7 +141,8 @@ describe('WwTaskManager', function() {
 
     describe('_unformatIncompleteTask', function() {
         it('if wysiwyg contents has incomplete task then make it list', function() {
-            wwe.getEditor().setHTML('<ul><li class="task-list-item">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
+            //squire의 setHTML을 이용하면 IE10에서 중간 빈 텍스트노드가 생긴다.
+            wwe.get$Body().html('<ul><li class="task-list-item">task1</li><li class="task-list-item"><input type="checkbox">&nbsp;task2</li></ul>');
 
             mgr._unformatIncompleteTask();
 

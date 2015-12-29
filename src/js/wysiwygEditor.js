@@ -23,6 +23,8 @@ var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
+var canObserveMutations = (typeof MutationObserver !== 'undefined');
+
 /**
  * WysiwygEditor
  * @exports WysiwygEditor
@@ -638,7 +640,9 @@ WysiwygEditor.prototype.getValue = function() {
  * Prepare before get html
  */
 WysiwygEditor.prototype._prepareGetHTML = function() {
-    this._silentChange = true;
+    if (canObserveMutations) {
+        this._silentChange = true;
+    }
 
     //for ensure to fire change event
     this.get$Body().attr('lastGetValue', Date.now());
@@ -657,7 +661,9 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     var self = this;
 
     setTimeout(function() {
-        self._silentChange = true;
+        if (canObserveMutations) {
+            self._silentChange = true;
+        }
         self.eventManager.emit('wysiwygRangeChangeAfter', this);
         self = null;
     }, 0);

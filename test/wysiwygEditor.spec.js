@@ -130,7 +130,7 @@ describe('WysiwygEditor', function() {
 
                 setTimeout(function() {
                     wwe.getEditor().insertHTML('TEST2');
-                }, 0);
+                }, 1000);
             }, 0);
         });
 
