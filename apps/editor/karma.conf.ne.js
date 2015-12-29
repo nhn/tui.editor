@@ -1,11 +1,17 @@
+var istanbul = require('browserify-istanbul');
+
 module.exports = function(config) {
     'use strict';
 
-    config.set({
+    var webdriverConfig = {
+        hostname: 'fe.nhnent.com',
+        port: 4444,
+        remoteHost: true
+    };
 
+    config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
-
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -29,7 +35,6 @@ module.exports = function(config) {
             {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
         ],
 
-
         // list of files to exclude
         exclude: [],
 
@@ -42,15 +47,48 @@ module.exports = function(config) {
         },
 
         browserify: {
-            debug: true
+            debug: true,
+            transform: [istanbul({
+                ignore: ['**/test/**', '**/tmpl/**'],
+                defaultIgnore: true
+            })]
         },
+
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: [
-            'narrow'
+            'dots',
+            'coverage',
+            'junit'
         ],
+
+        // optionally, configure the reporter
+        coverageReporter: {
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return 'report-cobertura/' + browser;
+                    },
+                    file: 'cobertura.txt'
+                }
+            ]
+        },
+
+
+        junitReporter: {
+            outputFile: 'report/junit-result.xml',
+            suite: ''
+        },
 
         // web server port
         port: 9876,
@@ -68,17 +106,43 @@ module.exports = function(config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
 
-        autoWatchBatchDelay: 300,
+        autoWatchBatchDelay: 500,
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            //'Firefox'
-            'Chrome'
+            'IE10',
+            'IE11',
+            'Chrome-WebDriver',
+            'Firefox-WebDriver'
         ],
+
+        customLaunchers: {
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            },
+            'Firefox-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
+            }
+        },
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     });
 };
-

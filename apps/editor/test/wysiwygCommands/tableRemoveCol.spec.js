@@ -39,7 +39,7 @@ describe('Table - RemoveCol', function() {
             '</table>'
         ].join('\n'));
 
-        range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+        range.setStartBefore(wwe.get$Body().find('tbody td')[0].firstChild);
         range.collapse(true);
 
         sq.setSelection(range);
@@ -66,7 +66,7 @@ describe('Table - RemoveCol', function() {
             '</table>'
         ].join('\n'));
 
-        range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+        range.setStartBefore(wwe.get$Body().find('tbody td')[0].firstChild);
         range.collapse(true);
 
         sq.setSelection(range);
