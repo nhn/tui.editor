@@ -27,6 +27,7 @@ describe('taskCounter', function() {
                 events: {
                     'load': function(editor) {
                         editor.getSquire()._ignoreChange = true;
+                        editor.wwEditor.readySilentChange();
                         em = editor.eventManager;
                         done();
                     }
