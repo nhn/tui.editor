@@ -1,8 +1,8 @@
+'use strict';
+
 var istanbul = require('browserify-istanbul');
 
 module.exports = function(config) {
-    'use strict';
-
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
         port: 4444,

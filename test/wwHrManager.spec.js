@@ -17,15 +17,19 @@ describe('WwHrManager', function() {
         wwe = new WysiwygEditor($container, null, em);
 
         wwe.init(function() {
-            wwe.getEditor()._ignoreChange = true;
             mgr = new WwHrManager(wwe);
             done();
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
+
 
     describe('_removeHrIfNeed()', function() {
         //같은 부모의 이전 offset의 엘리먼트가 hr일때

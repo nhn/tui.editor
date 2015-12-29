@@ -17,14 +17,17 @@ describe('WwPManager', function() {
         wwe = new WysiwygEditor($container, null, em);
 
         wwe.init(function() {
-            wwe.getEditor()._ignoreChange = true;
             wwe._pMgr = new WwPManager(wwe);
             done();
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('make p tag to div default block when wysiwygSetValueAfter event fire', function() {

@@ -21,8 +21,6 @@ describe('scrollFollow.ScrollSync', function() {
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
-                    editor.getSquire()._ignoreChange = true;
-                    editor.wwEditor.readySilentChange();
                     editor.getCodeMirror().setSize(200, 50);
                     $('.te-preview').css('padding', '0');
                     $('.te-preview').css('overflow', 'auto');
@@ -34,8 +32,12 @@ describe('scrollFollow.ScrollSync', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     describe('get scroll data for preview from markdown', function() {
