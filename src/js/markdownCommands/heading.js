@@ -70,11 +70,10 @@ function getHeadingMarkdown(text, size) {
     var foundedHeading = text.match(FIND_HEADING_RX),
         heading = '';
 
-    for (;;) {
+    do {
         heading += '#';
-        size = size - 1;
-        if (size < 1) break;
-    }
+        size--;
+    } while (size > 0);
 
     if (foundedHeading) {
         text = text.split(foundedHeading[0])[1];

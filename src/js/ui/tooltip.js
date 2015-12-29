@@ -13,9 +13,9 @@ var TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span c
  * @constructor
  */
 function Tooltip() {
-  this.$el = $(TOOLTIP_CONTENT);
-  this.$el.appendTo('body');
-  this.$el.hide();
+    this.$el = $(TOOLTIP_CONTENT);
+    this.$el.appendTo('body');
+    this.$el.hide();
 }
 
 /**
@@ -24,16 +24,14 @@ function Tooltip() {
  * @param {String} text 툴팁내용
  */
 Tooltip.prototype.show = function(target, text) {
-  this.$el.css({
-    'top': target.offset().top + target.height() + 13,
-    'left': target.offset().left + 3
-  });
-  this.$el.find('.text').html(text);
-  this.$el.show();
+    this.$el.css({
+      'top': target.offset().top + target.height() + 13,
+      'left': target.offset().left + 3
+    }).find('.text').html(text).end().show();
 };
 
 Tooltip.prototype.hide = function() {
-  this.$el.hide();
+    this.$el.hide();
 };
 
 module.exports = Tooltip;
