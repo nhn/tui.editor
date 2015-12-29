@@ -11,7 +11,7 @@ module.exports = function(config) {
 
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
-        basePath: './',
+        basePath: '',
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
@@ -31,8 +31,10 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/Squire/build/squire-raw.js',
-            {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
-            {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
+            'src/js/**/*.js',
+            'test/**/*.spec.js'
+            //{pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
+            //{pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
         ],
 
         // list of files to exclude
