@@ -16,13 +16,16 @@ describe('WysiwygEditor', function() {
         wwe = new WysiwygEditor($container, null, em);
 
         wwe.init(function() {
-            wwe.getEditor()._ignoreChange = true;
             done();
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     describe('Initialize', function() {
@@ -302,7 +305,7 @@ describe('WysiwygEditor', function() {
         it('replace text without affect tags', function() {
             wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
 
-            wwe.replaceContentText(wwe.getEditor().getDocument().body, 'list1', 'list2');
+            wwe.replaceContentText(wwe.get$Body().find('li')[0], 'list1', 'list2');
 
             expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
         });

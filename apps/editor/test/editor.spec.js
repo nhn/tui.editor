@@ -7,18 +7,23 @@ describe('Editor', function() {
 
     describe('Api', function() {
         beforeEach(function(done) {
-            $('body').empty();
-
             editor = new Editor({
                 el: $('body'),
                 height: 300,
+                initialEditType: 'markdown',
                 events: {
-                    'load': function(editor) {
-                        editor.getSquire()._ignoreChange = true;
-                        editor.wwEditor.readySilentChange();
+                    'load': function() {
                         done();
                     }
                 }
+            });
+        });
+
+        //we need to wait squire input event process
+        afterEach(function(done) {
+            setTimeout(function() {
+                $('body').empty();
+                done();
             });
         });
 
@@ -37,13 +42,13 @@ describe('Editor', function() {
             it('set content height "auto" to fit contents height of wysiwyg', function() {
                 var height = $('.te-ww-container .te-editor').height();
                 editor.contentHeight('auto');
+                editor.changeMode('wysiwyg');
                 editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-ww-container .te-editor').height()).not.toEqual(height);
             });
 
             it('set content height "auto" to fit contents height of markdown', function() {
                 var height = $('.te-md-container .te-editor').height();
-                editor.changeMode('markdown');
                 editor.contentHeight('auto');
                 editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-md-container .te-editor').height()).not.toEqual(height);

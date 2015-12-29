@@ -20,8 +20,6 @@ xdescribe('scrollFollow', function() {
             exts: ['scrollFollow'],
             events: {
                 'load': function(editor) {
-                    editor.getSquire()._ignoreChange = true;
-                    editor.wwEditor.readySilentChange();
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
@@ -31,10 +29,13 @@ xdescribe('scrollFollow', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
-
 
     describe('disable/enable, 어찌테스트해야할지 고민중', function() {
         beforeEach(function() {

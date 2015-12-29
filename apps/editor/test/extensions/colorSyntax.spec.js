@@ -2,8 +2,6 @@
 
 var TuiEditor = require('../../src/js/editor');
 
-//var loadStyleFixtures = window.loadStyleFixtures;
-
 describe('colorSyntax', function() {
     var ned;
 
@@ -20,19 +18,20 @@ describe('colorSyntax', function() {
                 useCustomSyntax: true
             },
             events: {
-                'load': function(editor) {
-                    editor.getSquire()._ignoreChange = true;
-                    editor.wwEditor.readySilentChange();
+                'load': function() {
                     done();
                 }
             }
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
-
 
     describe('conversion', function() {
         var actual, expected;
@@ -60,8 +59,7 @@ describe('colorSyntax', function() {
                 initialEditType: 'markdown',
                 exts: ['colorSyntax'],
                 events: {
-                    'load': function(editor) {
-                        editor.getSquire()._ignoreChange = true;
+                    'load': function() {
                         actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
                         expected = '<span style="color:#ff00ff">test</span>';
                         expect(actual).toEqual(expected);
@@ -97,8 +95,7 @@ describe('colorSyntax', function() {
                 initialEditType: 'markdown',
                 exts: ['colorSyntax'],
                 events: {
-                    'load': function(editor) {
-                        editor.getSquire()._ignoreChange = true;
+                    'load': function() {
                         actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
                         expected = '{color:#ff00ff}test{color}';
                         expect(actual).toEqual(expected);

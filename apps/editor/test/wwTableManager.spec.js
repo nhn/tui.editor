@@ -17,14 +17,17 @@ describe('WwTableManager', function() {
         wwe = new WysiwygEditor($container, null, em);
 
         wwe.init(function() {
-            wwe.getEditor()._ignoreChange = true;
             mgr = new WwTableManager(wwe);
             done();
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('_isInTable() check if passed range is in table', function() {

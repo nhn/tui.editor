@@ -20,8 +20,6 @@ describe('scrollFollow.sectionManager', function() {
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
-                    editor.getSquire()._ignoreChange = true;
-                    editor.wwEditor.readySilentChange();
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
@@ -32,8 +30,12 @@ describe('scrollFollow.sectionManager', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     describe('sectionManager', function() {

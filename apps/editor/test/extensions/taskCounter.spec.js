@@ -3,14 +3,18 @@
 var TuiEditor = require('../../src/js/editor');
 
 describe('taskCounter', function() {
-    var ned, em;
+    var ned;
 
     beforeEach(function() {
         $('body').html('<div id="editSection"></div>');
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     describe('wysiwyg', function() {
@@ -25,10 +29,7 @@ describe('taskCounter', function() {
                     queryRx: /@[^@\s]*/
                 },
                 events: {
-                    'load': function(editor) {
-                        editor.getSquire()._ignoreChange = true;
-                        editor.wwEditor.readySilentChange();
-                        em = editor.eventManager;
+                    'load': function() {
                         done();
                     }
                 }
@@ -76,9 +77,7 @@ describe('taskCounter', function() {
                     queryRx: /@[^@\s]*/
                 },
                 events: {
-                    'load': function(editor) {
-                        editor.getSquire()._ignoreChange = true;
-                        em = editor.eventManager;
+                    'load': function() {
                         done();
                     }
                 }
