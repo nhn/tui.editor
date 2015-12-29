@@ -38,7 +38,7 @@ describe('Table - AddCol', function() {
             '</table>'
         ].join('\n'));
 
-        range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+        range.setStartBefore(wwe.get$Body().find('tbody td')[1].firstChild);
         range.collapse(true);
 
         sq.setSelection(range);
@@ -66,7 +66,7 @@ describe('Table - AddCol', function() {
             '</table>'
         ].join('\n'));
 
-        range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+        range.setStartBefore(wwe.get$Body().find('thead th')[0].firstChild);
         range.collapse(true);
 
         sq.setSelection(range);

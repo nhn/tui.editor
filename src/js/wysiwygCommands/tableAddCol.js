@@ -33,6 +33,7 @@ var AddCol = CommandManager.command('wysiwyg',/** @lends AddCol */{
             addColToCellAfter($cell);
 
             sq.focus();
+
             focusToNextCell(sq, $cell);
         } else {
             sq.focus();
