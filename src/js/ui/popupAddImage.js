@@ -13,18 +13,18 @@ var util = tui.util;
 var POPUP_CONTENT = [
     '<div class="te-tab-section"></div>',
     '<div class="te-url-type">',
-        '<label for="">Image URL</label>',
+        '<label for="">이미지 URL</label>',
         '<input type="text" class="te-image-url-input" />',
     '</div>',
     '<form enctype="multipart/form-data" class="te-file-type">',
-        '<label for="">Image File</label>',
+        '<label for="">이미지 선택</label>',
         '<input type="file" class="te-image-file-input" accept="image/*" />',
     '</form>',
-    '<label for="url">Alt Text</label>',
+    '<label for="url">설명</label>',
     '<input type="text" class="te-alt-text-input" />',
     '<div class="te-button-section">',
-        '<button type="button" class="te-ok-button">OK</button>',
-        '<button type="button" class="te-close-button">Cancel</button>',
+        '<button type="button" class="te-ok-button">삽입</button>',
+        '<button type="button" class="te-close-button">취소</button>',
     '</div>'
 ].join('');
 
@@ -39,7 +39,7 @@ var POPUP_CONTENT = [
  */
 function PopupAddImage(options) {
     options = util.extend({
-        title: 'Add Image',
+        title: '이미지 삽입',
         className: 'te-popup-add-image tui-editor-popup',
         content: POPUP_CONTENT
     }, options);

@@ -24,6 +24,7 @@ var eventList = [
     'openPopupAddImage',
     'openPopupAddTable',
     'openPopupTableUtils',
+    'openHeadingSelect',
     'closeAllPopup',
     'command',
     'htmlUpdate',

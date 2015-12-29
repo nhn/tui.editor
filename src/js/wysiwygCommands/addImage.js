@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddImage = CommandManager.command('wysiwyg',/** @lends AddImage */{
+var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
     name: 'AddImage',
     /**
      *  커맨드 핸들러

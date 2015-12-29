@@ -16,7 +16,7 @@ var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
  * @exports OL
  * @augments Command
  */
-var OL = CommandManager.command('markdown',/** @lends OL */{
+var OL = CommandManager.command('markdown', /** @lends OL */{
     name: 'OL',
     /**
      * Command handler

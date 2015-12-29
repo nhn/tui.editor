@@ -13,7 +13,7 @@ var CommandManager = require('../commandManager');
  * @exports Blockquote
  * @augments Command
  */
-var Blockquote = CommandManager.command('markdown',/** @lends Blockquote */{
+var Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     name: 'Blockquote',
     keyMap: ['Ctrl-Q', 'Ctrl-Q'],
     /**

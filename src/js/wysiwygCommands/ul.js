@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var UL = CommandManager.command('wysiwyg',/** @lends UL */{
+var UL = CommandManager.command('wysiwyg', /** @lends UL */{
     name: 'UL',
     keyMap: ['Ctrl-U', 'Ctrl-U'],
     /**

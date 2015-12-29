@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var OL = CommandManager.command('wysiwyg',/** @lends OL */{
+var OL = CommandManager.command('wysiwyg', /** @lends OL */{
     name: 'OL',
     keyMap: ['Ctrl-O', 'Ctrl-O'],
     /**

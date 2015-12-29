@@ -91,15 +91,18 @@ extManager.defineExtension('colorSyntax', function(editor) {
 });
 
 function initUI(editor) {
-    var $colorPickerContainer, colorPicker, popup, $buttonBar, selectedColor;
+    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className;
+
+    className = 'tui-color';
 
     editor.eventManager.addEventType('colorButtonClicked');
 
     editor.getUI().toolbar.addButton({
-        className: 'color',
+        className: className,
         event: 'colorButtonClicked',
-        text: '\u03FE'
-    });
+        tooltip: '글자색상'
+    }, 2);
+    $button = editor.getUI().toolbar.$el.find('button.' + className);
 
     $colorPickerContainer =  $('<div />');
 
@@ -118,9 +121,7 @@ function initUI(editor) {
         $target: editor.getUI().$el,
         css: {
             'width': 178,
-            'position': 'absolute',
-            'top': $('button.color').offset().top + $('button.color').height() + 5,
-            'left': $('button.color').offset().left
+            'position': 'absolute'
         }
     });
 
@@ -129,9 +130,14 @@ function initUI(editor) {
     });
 
     editor.eventManager.listen('colorButtonClicked', function() {
+        editor.eventManager.emit('closeAllPopup');
         if (popup.isShow()) {
             popup.hide();
         } else {
+            popup.$el.css({
+                'top': $button.position().top + $button.height() + 5,
+                'left': $button.position().left
+            });
             popup.show();
         }
     });

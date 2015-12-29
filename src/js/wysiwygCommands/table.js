@@ -17,7 +17,7 @@ var tableID = 0,
  * @augments Command
  * @augments WysiwygCommand
  */
-var Table = CommandManager.command('wysiwyg',/** @lends Table */{
+var Table = CommandManager.command('wysiwyg', /** @lends Table */{
     name: 'Table',
     /**
      * Command Handler

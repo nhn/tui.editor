@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var HR = CommandManager.command('wysiwyg',/** @lends HR */{
+var HR = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'HR',
     /**
      *  커맨드 핸들러

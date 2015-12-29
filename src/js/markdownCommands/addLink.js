@@ -13,7 +13,7 @@ var CommandManager = require('../commandManager');
  * @exports AddLink
  * @augments Command
  */
-var AddLink = CommandManager.command('markdown',/** @lends AddLink */{
+var AddLink = CommandManager.command('markdown', /** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
