@@ -2,7 +2,7 @@
 
 var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager'),
-    WwHrManager = require('../src/js/WwHrManager');
+    WwHrManager = require('../src/js/wwHrManager');
 
 describe('WwHrManager', function() {
     var $container, em, wwe, mgr;

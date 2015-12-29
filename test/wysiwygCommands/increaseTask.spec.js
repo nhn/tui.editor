@@ -1,6 +1,6 @@
 'use strict';
 
-var IncreaseTask = require('../../src/js/wysiwygCommands/IncreaseTask'),
+var IncreaseTask = require('../../src/js/wysiwygCommands/increaseTask'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager');
 

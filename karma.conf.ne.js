@@ -31,10 +31,8 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/Squire/build/squire-raw.js',
-            'src/js/**/*.js',
-            'test/**/*.spec.js'
-            //{pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
-            //{pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
+            {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
+            {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
         ],
 
         // list of files to exclude

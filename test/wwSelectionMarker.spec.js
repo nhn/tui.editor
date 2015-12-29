@@ -1,6 +1,6 @@
 'use strict';
 
-var WwSelectionMarker = require('../src/js/WwSelectionMarker'),
+var WwSelectionMarker = require('../src/js/wwSelectionMarker'),
     WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager');
 
