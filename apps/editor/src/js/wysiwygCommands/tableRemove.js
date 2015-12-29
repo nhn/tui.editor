@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var RemoveTable = CommandManager.command('wysiwyg',/** @lends RemoveTable */{
+var RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
     name: 'RemoveTable',
     /**
      *  커맨드 핸들러

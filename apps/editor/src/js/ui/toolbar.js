@@ -49,8 +49,9 @@ Toolbar.prototype.render = function() {
 /**
  * 버튼을 추가한다
  * @param {Button} button 버튼
+ * @param {Number} index 버튼위치 (optional)
  */
-Toolbar.prototype.addButton = function(button) {
+Toolbar.prototype.addButton = function(button, index) {
     var ev = this.eventManager;
 
     if (!button.render) {
@@ -70,7 +71,12 @@ Toolbar.prototype.addButton = function(button) {
     });
 
     this.buttons.push(button);
-    this.$buttonContainer.append(button.$el);
+
+    if (index) {
+        this.$buttonContainer.find('button').eq(index - 1).after(button.$el);
+    } else {
+        this.$buttonContainer.append(button.$el);
+    }
 };
 
 /**
@@ -78,69 +84,69 @@ Toolbar.prototype.addButton = function(button) {
  */
 Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
-        className: 'te-bold',
+        className: 'tui-heading',
+        event: 'openHeadingSelect',
+        tooltip: '제목크기'
+    }));
+
+    this.addButton(new Button({
+        className: 'tui-bold',
         command: 'Bold',
-        text: 'B'
+        tooltip: '굵게'
     }));
 
     this.addButton(new Button({
-        className: 'te-italic',
+        className: 'tui-italic',
         command: 'Italic',
-        text: 'I'
+        tooltip: '기울임꼴'
     }));
 
     this.addButton(new Button({
-        className: 'te-quote',
-        command: 'Blockquote',
-        text: 'Q'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-heading',
-        command: 'Heading',
-        text: 'HH'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-hrline',
+        className: 'tui-hrline',
         command: 'HR',
-        text: '\u035F'
+        tooltip: '문단나눔'
     }));
 
     this.addButton(new Button({
-        className: 'te-link',
-        event: 'openPopupAddLink',
-        text: 'A'
+        className: 'tui-quote',
+        command: 'Blockquote',
+        tooltip: '인용구'
     }));
 
     this.addButton(new Button({
-        className: 'te-image',
-        event: 'openPopupAddImage',
-        text: 'IMG'
-    }));
-
-    this.addButton(new Button({
-        className: 'te-ul',
+        className: 'tui-ul',
         command: 'UL',
-        text: 'UL'
+        tooltip: '글머리 기호'
     }));
 
     this.addButton(new Button({
-        className: 'te-ol',
+        className: 'tui-ol',
         command: 'OL',
-        text: 'OL'
+        tooltip: '번호 매기기'
     }));
 
     this.addButton(new Button({
-        className: 'te-task',
+        className: 'tui-task',
         command: 'Task',
-        text: '\u2611'
+        tooltip: '체크박스'
     }));
 
     this.addButton(new Button({
-        className: 'te-table',
+        className: 'tui-table',
         event: 'openPopupAddTable',
-        text: 'TABLE'
+        tooltip: '표 삽입'
+    }));
+
+    this.addButton(new Button({
+        className: 'tui-link',
+        event: 'openPopupAddLink',
+        tooltip: '링크 삽입'
+    }));
+
+    this.addButton(new Button({
+        className: 'tui-image',
+        event: 'openPopupAddImage',
+        tooltip: '이미지 삽입'
     }));
 };
 

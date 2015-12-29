@@ -13,7 +13,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  */
 
-var Task = CommandManager.command('markdown',/** @lends Task */{
+var Task = CommandManager.command('markdown', /** @lends Task */{
     name: 'Task',
     /**
      * Command handler

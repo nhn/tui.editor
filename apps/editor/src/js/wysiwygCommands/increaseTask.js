@@ -17,7 +17,7 @@ var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
  * @augments Command
  * @augments WysiwygCommand
  */
-var IncreaseTask = CommandManager.command('wysiwyg',/** @lends HR */{
+var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'IncreaseTask',
     /**
      *  커맨드 핸들러

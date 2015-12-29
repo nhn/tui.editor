@@ -36,7 +36,7 @@ describe('Heading', function() {
         it('텍스트가 있는 라인시작에 #가 추가되었다', function() {
             doc.setCursor(2, 3);
 
-            Heading.exec(mde);
+            Heading.exec(mde, 1);
 
             expect(cm.getValue()).toEqual(['mytext1', '', '# mytext2', 'mytext3'].join('\n'));
         });
@@ -44,7 +44,7 @@ describe('Heading', function() {
         it('빈 라인시작에 #가 추가되었다', function() {
             doc.setCursor(1, 3);
 
-            Heading.exec(mde);
+            Heading.exec(mde, 1);
 
             expect(cm.getValue()).toEqual(['mytext1', '# ', 'mytext2', 'mytext3'].join('\n'));
         });
@@ -54,7 +54,7 @@ describe('Heading', function() {
         it('해딩이 정상적으로 추가되었다', function() {
             doc.setSelection({line: 0, ch: 3}, {line: 2, ch: 2});
 
-            Heading.exec(mde);
+            Heading.exec(mde, 1);
 
             expect(cm.getValue()).toEqual(['# mytext1', '# ', '# mytext2', 'mytext3'].join('\n'));
         });
@@ -64,25 +64,9 @@ describe('Heading', function() {
         it('if already have heading toggle to next heading', function() {
             doc.setCursor(2, 3);
 
-            Heading.exec(mde);
-            Heading.exec(mde);
+            Heading.exec(mde, 2);
 
             expect(cm.getValue()).toEqual(['mytext1', '', '## mytext2', 'mytext3'].join('\n'));
-        });
-
-        it('if current heading is 6, next heaing is 1', function() {
-            doc.setCursor(2, 3);
-
-            Heading.exec(mde);
-            Heading.exec(mde);
-            Heading.exec(mde);
-            Heading.exec(mde);
-            Heading.exec(mde);
-            Heading.exec(mde);
-
-            Heading.exec(mde);
-
-            expect(cm.getValue()).toEqual(['mytext1', '', '# mytext2', 'mytext3'].join('\n'));
         });
     });
 });

@@ -13,7 +13,7 @@ var CommandManager = require('../commandManager');
  * @exports HR
  * @augments Command
  */
-var HR = CommandManager.command('markdown',/** @lends HR */{
+var HR = CommandManager.command('markdown', /** @lends HR */{
     name: 'HR',
     /**
      * Command handler

@@ -43,6 +43,5 @@ function hideUI($layer) {
     $layer.find('input').val('');
 }
 
-function updateUI($layer, list) {
-    console.log(list);
+function updateUI() {
 }
