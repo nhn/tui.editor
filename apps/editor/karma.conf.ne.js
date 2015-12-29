@@ -87,6 +87,7 @@ module.exports = function(config) {
 
         junitReporter: {
             outputFile: 'report/junit-result.xml',
+            outputDir: 'report',
             suite: ''
         },
 
