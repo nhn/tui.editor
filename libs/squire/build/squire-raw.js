@@ -1580,11 +1580,17 @@ var keyHandlers = {
 if ( isMac && isGecko && win.getSelection().modify ) {
     keyHandlers[ 'meta-left' ] = function ( self, event ) {
         event.preventDefault();
-        self._sel.modify( 'move', 'backward', 'lineboundary' );
+        var sel = getWindowSelection( self );
+        if ( sel ) {
+            sel.modify( 'move', 'backward', 'lineboundary' );
+        }
     };
     keyHandlers[ 'meta-right' ] = function ( self, event ) {
         event.preventDefault();
-        self._sel.modify( 'move', 'forward', 'lineboundary' );
+        var sel = getWindowSelection( self );
+        if ( sel ) {
+            sel.modify( 'move', 'forward', 'lineboundary' );
+        }
     };
 }
 
@@ -2464,6 +2470,10 @@ proto.moveCursorToEnd = function () {
     return this._moveCursorTo( false );
 };
 
+var getWindowSelection = function ( self ) {
+    return self._win.getSelection() || null;
+};
+
 proto.setSelection = function ( range ) {
     if ( range ) {
         // iOS bug: if you don't focus the iframe before setting the
@@ -2473,7 +2483,7 @@ proto.setSelection = function ( range ) {
         if ( isIOS ) {
             this._win.focus();
         }
-        var sel = this._getWindowSelection();
+        var sel = getWindowSelection( this );
         if ( sel ) {
             sel.removeAllRanges();
             sel.addRange( range );
@@ -2483,12 +2493,8 @@ proto.setSelection = function ( range ) {
     return this;
 };
 
-proto._getWindowSelection = function () {
-    return this._win.getSelection() || null;
-};
-
 proto.getSelection = function () {
-    var sel = this._getWindowSelection(),
+    var sel = getWindowSelection( this ),
         selection, startContainer, endContainer;
     if ( sel && sel.rangeCount ) {
         selection  = sel.getRangeAt( 0 ).cloneRange();

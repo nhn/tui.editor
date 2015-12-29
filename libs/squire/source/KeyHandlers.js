@@ -431,11 +431,17 @@ var keyHandlers = {
 if ( isMac && isGecko && win.getSelection().modify ) {
     keyHandlers[ 'meta-left' ] = function ( self, event ) {
         event.preventDefault();
-        self._sel.modify( 'move', 'backward', 'lineboundary' );
+        var sel = getWindowSelection( self );
+        if ( sel ) {
+            sel.modify( 'move', 'backward', 'lineboundary' );
+        }
     };
     keyHandlers[ 'meta-right' ] = function ( self, event ) {
         event.preventDefault();
-        self._sel.modify( 'move', 'forward', 'lineboundary' );
+        var sel = getWindowSelection( self );
+        if ( sel ) {
+            sel.modify( 'move', 'forward', 'lineboundary' );
+        }
     };
 }
 
