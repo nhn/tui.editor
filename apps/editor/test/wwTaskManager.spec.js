@@ -2,7 +2,7 @@
 
 var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager'),
-    WwTaskManager = require('../src/js/WwTaskManager');
+    WwTaskManager = require('../src/js/wwTaskManager');
 
 describe('WwTaskManager', function() {
     var $container, em, wwe, mgr;

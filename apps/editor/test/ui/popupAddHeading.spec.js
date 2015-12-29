@@ -1,6 +1,6 @@
 'use strict';
 
-var PopupAddHeading = require('../../src/js/ui/PopupAddHeading'),
+var PopupAddHeading = require('../../src/js/ui/popupAddHeading'),
     EventManager = require('../../src/js/eventManager');
 
 describe('PopupAddHeading', function() {
