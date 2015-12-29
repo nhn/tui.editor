@@ -640,9 +640,7 @@ WysiwygEditor.prototype.getValue = function() {
  * Prepare before get html
  */
 WysiwygEditor.prototype._prepareGetHTML = function() {
-    if (canObserveMutations) {
-        this._silentChange = true;
-    }
+    this.readySilentChange();
 
     //for ensure to fire change event
     this.get$Body().attr('lastGetValue', Date.now());
@@ -661,12 +659,20 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     var self = this;
 
     setTimeout(function() {
-        if (canObserveMutations) {
-            self._silentChange = true;
-        }
+        self.readySilentChange();
         self.eventManager.emit('wysiwygRangeChangeAfter', this);
         self = null;
     }, 0);
+};
+
+/**
+ * readySilentChange
+ * Ready to silent change
+ */
+WysiwygEditor.prototype.readySilentChange = function() {
+    if (canObserveMutations) {
+        this._silentChange = true;
+    }
 };
 
 /**
