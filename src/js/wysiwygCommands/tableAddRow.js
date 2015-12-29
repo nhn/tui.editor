@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddRow = CommandManager.command('wysiwyg',/** @lends AddRow */{
+var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     name: 'AddRow',
     /**
      *  커맨드 핸들러

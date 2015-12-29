@@ -14,28 +14,18 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Heading = CommandManager.command('wysiwyg',/** @lends Heading */{
+var Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
     name: 'Heading',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     *  @param {Number} size size
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            foundedHeading = wwe.hasFormatWithRx(/h[\d]/i),
-            depth = 1,
-            beforeDepth;
+    exec: function(wwe, size) {
+        var sq = wwe.getEditor();
 
         if (sq.getSelection().collapsed && !sq.hasFormat('TABLE')) {
-            if (foundedHeading) {
-                beforeDepth = parseInt(foundedHeading[0].replace(/h/i, ''), 10);
-            }
-
-            if (beforeDepth && beforeDepth < 6) {
-                depth = beforeDepth + 1;
-            }
-
-            wwe.changeBlockFormatTo('H' + depth);
+            wwe.changeBlockFormatTo('H' + size);
         }
 
         sq.focus();

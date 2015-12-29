@@ -13,7 +13,7 @@ var CommandManager = require('../commandManager');
  * @exports Table
  * @augments Command
  */
-var Table = CommandManager.command('markdown',/** @lends Table */{
+var Table = CommandManager.command('markdown', /** @lends Table */{
     name: 'Table',
     /**
      * Command handler

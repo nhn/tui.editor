@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Blockquote = CommandManager.command('wysiwyg',/** @lends Blockquote */{
+var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     name: 'Blockquote',
     /**
      *  커맨드 핸들러

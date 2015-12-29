@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Task = CommandManager.command('wysiwyg',/** @lends Task */{
+var Task = CommandManager.command('wysiwyg', /** @lends Task */{
     name: 'Task',
     /**
      *  커맨드 핸들러

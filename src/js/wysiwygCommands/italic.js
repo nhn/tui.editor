@@ -14,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Italic = CommandManager.command('wysiwyg',/** @lends Italic */{
+var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     name: 'Italic',
     keyMap: ['Ctrl-I', 'Ctrl-I'],
     /**

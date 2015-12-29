@@ -12,7 +12,7 @@
  */
 var markedCustomRenderer = new window.marked.Renderer();
 
-var regexTaskList = /^((?:<p>|))\[(?:x| )\] /;
+var regexTaskList = /^((?:<p>|))(\[(?:x| )\]) /i;
 
 markedCustomRenderer.listitem = function(text) {
     var cap,
@@ -25,7 +25,7 @@ markedCustomRenderer.listitem = function(text) {
     if (cap) {
         text = text.substring(cap[0].length);
         className = ' class="task-list-item"';
-        checked = cap[0] === '[x] ' ? ' checked' : '';
+        checked = cap[2].toLowerCase() === '[x]' ? ' checked' : '';
         output += cap[1] + '<input type="checkbox" class="task-list-item-checkbox"' + checked + '> ';
     }
 

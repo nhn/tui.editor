@@ -73,7 +73,7 @@
     top: 0;
     height: 100%;
     width: 1px;
-    border-left: 1px dashed #ccc;
+    border-left: 1px solid #ccc;
 }
 
 .tui-editor .te-preview-style-vertical .te-md-splitter {
@@ -129,13 +129,10 @@
 .tui-editor-defaultUI {
     position: relative;
 }
-.tui-editor-defaultUI button {
-    border: none;
-    background: none;
-}
+
 .tui-editor-defaultUI-toolbar {
     padding: 3px;
-    height: 27px;
+    height: 35px;
     background: #f5f5f7;
     border-style: solid;
     border-color: #ccc;
@@ -150,13 +147,14 @@
     margin-left: 4px;
     outline: none;
     cursor: pointer;
-    background: #f5f5f7;
-    color: #a0aabf;
+    background-color: #fff;
+    border: 1px solid #ccc;
 }
 .tui-editor-defaultUI-toolbar button:hover {
-    background: #eee;
+    background-color: #eee;
 }
-.tui-editor-defaultUI-toolbar button:active {
+.tui-editor-defaultUI-toolbar button:active
+.tui-editor-defaultUI-toolbar button.active {
     box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }
 .tui-editor-defaultUI-toolbar button:first-child {
@@ -334,9 +332,188 @@
 }
 
 .te-popup-table-utils {
-    width: 200px;
+    width: 80px;
 }
 
 .te-popup-table-utils button {
-    display: block;
+    width: 100%;
+}
+
+.te-heading-add {
+    width: 100px;
+}
+
+.te-heading-add .tui-popup-body {
+    padding: 0;
+}
+
+.te-heading-add h1,
+.te-heading-add h2,
+.te-heading-add h3,
+.te-heading-add h4,
+.te-heading-add h5,
+.te-heading-add h6,
+.te-heading-add ul {
+    padding: 0;
+    margin: 0;
+}
+
+.te-heading-add ul {
+    list-style: none;
+}
+
+.te-heading-add ul li{
+    padding: 2px;
+    cursor: pointer;
+}
+
+.te-heading-add ul li:hover{
+    background-color: #eee;
+}
+
+
+.te-heading-add h1{
+    font-size: 24px;
+}
+
+.te-heading-add h2{
+    font-size: 22px;
+}
+
+.te-heading-add h3{
+    font-size: 20px;
+}
+
+.te-heading-add h4{
+    font-size: 18px;
+}
+
+.te-heading-add h5{
+    font-size: 16px;
+}
+
+.te-heading-add h6{
+    font-size: 14px;
+}
+
+.tui-tooltip {
+    position: absolute;
+    background-color: #222;
+    z-index: 999;
+    opacity: 0.8;
+    color: #fff;
+    padding: 2px 5px;
+    font-size: 10px;
+}
+
+.tui-tooltip .arrow {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: #222;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    position: absolute;
+    top: -3px;
+    left: 6px;
+    z-index: -1;
+}
+
+.tui-toolbar-icons {
+    background: url(../images/toolbar.png) top left no-repeat;
+    display: inline-block;
+    width: 34px;
+}
+
+.tui-toolbar-icons.tui-bold {
+    background-position: -14px -24px;
+}
+
+.tui-toolbar-icons.tui-color {
+    background-position: -39px -23px;
+}
+
+.tui-toolbar-icons.tui-italic {
+    background-position: -64px -24px;
+}
+
+.tui-toolbar-icons.tui-quote {
+    background-position: -90px -24px;
+}
+
+.tui-toolbar-icons.tui-heading {
+    background-position: -115px -25px;
+}
+
+.tui-toolbar-icons.tui-hrline {
+    background-position: -140px -24px;
+}
+
+.tui-toolbar-icons.tui-task {
+    background-position: -163px -24px;
+}
+
+.tui-toolbar-icons.tui-ol {
+    background-position: -188px -25px;
+}
+
+.tui-toolbar-icons.tui-ul {
+    background-position: -214px -25px;
+}
+
+.tui-toolbar-icons.tui-table {
+    background-position: -242px -26px;
+}
+
+.tui-toolbar-icons.tui-code {
+    background-position: -265px -25px;
+}
+
+.tui-toolbar-icons.tui-scrollfollow {
+    background-position: -292px -26px;
+}
+
+.tui-toolbar-icons.tui-link {
+    background-position: -321px -27px;
+}
+
+.tui-toolbar-icons.tui-image {
+    background-position: -348px -27px;
+}
+
+.CodeMirror .cm-header {
+    font-weight: bold;
+    color: inherit;
+}
+
+.CodeMirror .cm-header-1 {
+    font-size: 24px;
+}
+
+.CodeMirror .cm-header-2 {
+    font-size: 22px;
+}
+
+.CodeMirror .cm-header-3 {
+    font-size: 20px;
+}
+
+.CodeMirror .cm-header-4 {
+    font-size: 18px;
+}
+
+.CodeMirror .cm-header-5 {
+    font-size: 16px;
+}
+
+.CodeMirror .cm-header-6 {
+    font-size: 14px;
+}
+
+.CodeMirror .cm-variable-2 {
+    color: inherit;
 }

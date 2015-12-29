@@ -10,11 +10,11 @@ var LayerPopup = require('./layerpopup');
 var util = tui.util;
 
 var POPUP_CONTENT = [
-    '<button type="button" class="te-table-add-row">Add Row</button>',
-    '<button type="button" class="te-table-add-col">Add Col</button>',
-    '<button type="button" class="te-table-remove-row">Remove Row</button>',
-    '<button type="button" class="te-table-remove-col">Remove Col</button>',
-    '<button type="button" class="te-table-remove">Remove Table</button>'
+    '<button type="button" class="te-table-add-row">행 삽입</button>',
+    '<button type="button" class="te-table-add-col">열 삽입</button>',
+    '<button type="button" class="te-table-remove-row">행 삭제</button>',
+    '<button type="button" class="te-table-remove-col">열 삭제</button>',
+    '<button type="button" class="te-table-remove">표 삭제</button>'
 ].join('');
 
 /**
