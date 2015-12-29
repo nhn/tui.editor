@@ -185,13 +185,9 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
     isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
 
     if ($li.length && $inputs.length && isEmptyTask) {
-        this.wwe.saveSelection(range);
-
         $inputs.remove();
         $li.removeClass('task-list-item');
-        $li.find('div').eq(0).html('<br>');
-
-        this.wwe.restoreSavedSelection();
+        $li.html('<div><br></div>');
     }
 };
 
