@@ -20,8 +20,8 @@ var POPUP_CONTENT = ['<ul>',
 
 /**
  * PopupHeading
- * It implements Popup to add a table
- * @exports PopupAddTable
+ * It implements Popup to add headings
+ * @exports PopupAddHeading
  * @augments LayerPopup
  * @constructor
  * @class
