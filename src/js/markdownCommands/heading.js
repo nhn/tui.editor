@@ -7,6 +7,8 @@
 
 var CommandManager = require('../commandManager');
 
+var util = tui.util;
+
 /**
  * Heading
  * Add heading markdown syntax to markdown editor
@@ -23,7 +25,7 @@ var Heading = CommandManager.command('markdown', /** @lends Heading */{
      * @param {number} size heading size
      */
     exec: function(mde, size) {
-        var textToModify, range, from, to, textLinesToModify, lineLength, i, lengthOfCurrentLineBefore,
+        var textToModify, range, from, to, textLinesToModify, lengthOfCurrentLineBefore,
             cm = mde.getEditor(),
             doc = cm.getDoc();
 
@@ -47,11 +49,10 @@ var Heading = CommandManager.command('markdown', /** @lends Heading */{
 
         //원하는 대로 가공한다
         textLinesToModify = textToModify.split('\n');
-        lineLength = textLinesToModify.length;
 
-        for (i = 0; i < lineLength; i += 1) {
-            textLinesToModify[i] = getHeadingMarkdown(textLinesToModify[i], size);
-        }
+        util.forEachArray(textLinesToModify, function(line, index) {
+            textLinesToModify[index] = getHeadingMarkdown(line, size);
+        });
 
         //해당 에디터의 내용을 변경한다
         doc.replaceRange(textLinesToModify.join('\n'), from, to);
@@ -72,7 +73,7 @@ function getHeadingMarkdown(text, size) {
 
     do {
         heading += '#';
-        size--;
+        size -= 1;
     } while (size > 0);
 
     if (foundedHeading) {
