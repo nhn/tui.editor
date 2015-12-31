@@ -6,6 +6,7 @@
 'use strict';
 
 var CommandManager = require('../commandManager');
+var domUtils = require('../domUtils');
 
 /**
  * Heading
@@ -22,10 +23,16 @@ var Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
      *  @param {Number} size size
      */
     exec: function(wwe, size) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
 
-        if (sq.getSelection().collapsed && !sq.hasFormat('TABLE')) {
-            wwe.changeBlockFormatTo('H' + size);
+        if (!sq.hasFormat('TABLE')) {
+            if (range.collapsed
+                || domUtils.getNodeName(range.commonAncestorContainer) === 'DIV'
+                || domUtils.getNodeName(range.commonAncestorContainer) === 'TEXT'
+            ) {
+                wwe.changeBlockFormatTo('H' + size);
+            }
         }
 
         sq.focus();
