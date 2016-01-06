@@ -1573,22 +1573,22 @@ var keyHandlers = {
     }
 };
 
-// Firefox incorrectly handles Cmd-left/Cmd-right on Mac:
+// Firefox pre v29 incorrectly handles Cmd-left/Cmd-right on Mac:
 // it goes back/forward in history! Override to do the right
 // thing.
 // https://bugzilla.mozilla.org/show_bug.cgi?id=289384
-if ( isMac && isGecko && win.getSelection().modify ) {
+if ( isMac && isGecko ) {
     keyHandlers[ 'meta-left' ] = function ( self, event ) {
         event.preventDefault();
         var sel = getWindowSelection( self );
-        if ( sel ) {
+        if ( sel && sel.modify ) {
             sel.modify( 'move', 'backward', 'lineboundary' );
         }
     };
     keyHandlers[ 'meta-right' ] = function ( self, event ) {
         event.preventDefault();
         var sel = getWindowSelection( self );
-        if ( sel ) {
+        if ( sel && sel.modify ) {
             sel.modify( 'move', 'forward', 'lineboundary' );
         }
     };
