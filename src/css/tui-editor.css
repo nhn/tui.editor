@@ -424,7 +424,7 @@
 }
 
 .tui-toolbar-icons {
-    background: url(../images/toolbar.png) top left no-repeat;
+    background: url(/src/images/toolbar.png) top left no-repeat;
     display: inline-block;
     width: 34px;
 }
