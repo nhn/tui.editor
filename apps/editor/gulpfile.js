@@ -25,7 +25,7 @@ gulp.task('bundle', function(callback) {
         entry: './src/js/index.js',
         output: {
             pathinfo: true,
-            filename: './build/bundle.js'
+            filename: './dist/tui-editor.js'
         }
     }, function(err, stats) {
         if (err) {
