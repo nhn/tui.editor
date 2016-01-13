@@ -60,9 +60,7 @@ describe('WwSelectionMarker', function() {
             range.selectNodeContents(wwe.get$Body().find('h1')[0].childNodes[0]);
             wwe.getEditor().setSelection(range);
 
-            wwsm.restore(wwe.getEditor());
-
-            range = wwe.getEditor().getSelection().cloneRange();
+            range = wwsm.restore(wwe.getEditor());
 
             expect(range.startContainer.childNodes[range.startOffset].nodeValue).toEqual('ello world');
             expect(wwe.get$Body().find('input').length).toEqual(0);

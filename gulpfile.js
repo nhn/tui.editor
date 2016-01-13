@@ -3,11 +3,7 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
-    //sourcemaps = require('gulp-sourcemaps'),
-    source = require('vinyl-source-stream'),
-    buffer = require('vinyl-buffer'),
-    watchify = require('watchify'),
-    browserify = require('browserify'),
+    webpack = require('webpack'),
 
     eslint = require('gulp-eslint'),
     connect = require('gulp-connect'),
@@ -23,42 +19,50 @@ var gulp = require('gulp'),
 
 var gulpSync = require('gulp-sync')(gulp);
 
-/*
- * Browserify
- */
-var bundler = watchify(browserify('./src/js/index.js', {
-    debug: true
-}));
+gulp.task('bundle', function(callback) {
+    // run webpack
+    webpack({
+        entry: './src/js/index.js',
+        output: {
+            pathinfo: true,
+            filename: './build/bundle.js'
+        }
+    }, function(err, stats) {
+        if (err) {
+            throw new gutil.PluginError('webpack', err);
+        }
 
-//Development Build
-function bundle() {
-    return bundler.bundle()
-        // log errors if they happen
-        .on('error', gutil.log.bind(gutil, 'browserify error'))
-        .pipe(source('bundle.js'))
-        // optional, remove if you dont want sourcemaps
-        //.pipe(buffer())
-        //.pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
-        //.pipe(sourcemaps.write('./')) // writes .map file
-        //
-        .pipe(gulp.dest('./build'));
-}
+        gutil.log('[webpack]', stats.toString({
+            colors: true
+        }));
 
-bundler.on('update', bundle);
-bundler.on('log', gutil.log);
-
-gulp.task('develop', bundle);
-
-//Production Build
-gulp.task('bundle', function() {
-    return browserify('./src/js/index.js')
-        .bundle()
-        .pipe(source('tui-editor.js'))
-        .pipe(buffer())
-        .pipe(stripDebug())
-        .pipe(gulp.dest('./dist'));
+        callback();
+    });
 });
 
+gulp.task('develop', function() {
+    // run webpack
+    webpack({
+        entry: './src/js/index.js',
+        output: {
+            pathinfo: true,
+            filename: './build/bundle.js'
+        },
+        watch: true,
+        debug: true,
+        devtool: 'source-map'
+    }, function(err, stats) {
+        if (err) {
+            throw new gutil.PluginError('webpack', err);
+        }
+
+        gutil.log('[webpack]', stats.toString({
+            colors: true
+        }));
+    });
+});
+
+//Production Build
 gulp.task('lint', function lint() {
     return gulp.src(['src/js/**/*.js'])
         .pipe(eslint())
