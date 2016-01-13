@@ -1,7 +1,5 @@
 'use strict';
 
-var istanbul = require('browserify-istanbul');
-
 module.exports = function(config) {
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
@@ -15,7 +13,22 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['browserify', 'jasmine-ajax', 'jasmine-jquery', 'jasmine'],
+        frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
+
+        plugins: [
+            //common
+            'karma-jasmine',
+            'karma-jasmine-ajax',
+            'karma-jasmine-jquery',
+            'karma-sourcemap-loader',
+            'karma-webpack',
+
+            //this config only
+            'karma-webdriver-launcher',
+            'istanbul-instrumenter-loader',
+            'karma-coverage',
+            'karma-junit-reporter'
+        ],
 
         // list of files / patterns to load in the browser
         files: [
@@ -31,28 +44,11 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/Squire/build/squire-raw.js',
-            {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
-            {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
+            'test/test.bundle.js'
         ],
 
         // list of files to exclude
         exclude: [],
-
-
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'src/js/**/*.js': ['browserify'],
-            'test/**/*.spec.js': ['browserify']
-        },
-
-        browserify: {
-            transform: [istanbul({
-                ignore: ['**/test/**', '**/tmpl/**'],
-                defaultIgnore: true
-            })]
-        },
-
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
@@ -62,6 +58,28 @@ module.exports = function(config) {
             'coverage',
             'junit'
         ],
+
+        // preprocess matching files before serving them to the browser
+        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+        preprocessors: {
+            'test/test.bundle.js': ['webpack', 'sourcemap']
+        },
+
+        webpack: {
+            module: {
+                postLoaders: [{
+                    test: /\.js/,
+                    exclude: /\.(spec|bundle)\.js/,
+                    loader: 'istanbul-instrumenter'
+                }]
+            }
+        },
+
+        webpackMiddleware: {
+            // webpack-dev-middleware configuration
+            // i. e.
+            noInfo: true
+        },
 
         // optionally, configure the reporter
         coverageReporter: {
@@ -108,6 +126,10 @@ module.exports = function(config) {
 
         autoWatchBatchDelay: 500,
 
+        // Continuous Integration mode
+        // if true, Karma captures browsers, runs the tests and exits
+        singleRun: true,
+
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
@@ -140,9 +162,6 @@ module.exports = function(config) {
                 config: webdriverConfig,
                 browserName: 'firefox'
             }
-        },
-        // Continuous Integration mode
-        // if true, Karma captures browsers, runs the tests and exits
-        singleRun: true
+        }
     });
 };

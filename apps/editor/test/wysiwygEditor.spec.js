@@ -313,10 +313,9 @@ describe('WysiwygEditor', function() {
 
     describe('focus()', function() {
         it('focus to ww editor', function() {
-            $('body').focus();
-            expect(document.activeElement).not.toBe(wwe.$iframe[0]);
+            wwe.getEditor().focus = jasmine.createSpy('focus');
             wwe.focus();
-            expect(document.activeElement).toBe(wwe.$iframe[0]);
+            expect(wwe.getEditor().focus).toHaveBeenCalled();
         });
     });
 });

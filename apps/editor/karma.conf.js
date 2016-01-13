@@ -9,10 +9,25 @@ module.exports = function(config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['source-map-support', 'browserify', 'jasmine-ajax', 'jasmine-jquery', 'jasmine'],
+        frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
+
+        plugins: [
+            //common
+            'karma-jasmine',
+            'karma-jasmine-ajax',
+            'karma-jasmine-jquery',
+            'karma-sourcemap-loader',
+            'karma-webpack',
+
+            //this config only
+            'karma-chrome-launcher',
+            'karma-phantomjs-launcher',
+            'karma-narrow-reporter'
+        ],
 
         // list of files / patterns to load in the browser
         files: [
+            'node_modules/phantomjs-polyfill/bind-polyfill.js',
             'lib/jquery/dist/jquery.js',
             'lib/tui-code-snippet/code-snippet.js',
             'lib/tui-component-colorpicker/dist/colorpicker.js',
@@ -25,25 +40,12 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/Squire/build/squire-raw.js',
-            {pattern: 'src/js/**/*.js', watched: false, include: true, served: true},
-            {pattern: 'test/**/*.spec.js', watched: false, include: true, served: true}
+            'test/test.bundle.js'
         ],
 
 
         // list of files to exclude
         exclude: [],
-
-
-        // preprocess matching files before serving them to the browser
-        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-            'src/js/**/*.js': ['browserify'],
-            'test/**/*.spec.js': ['browserify']
-        },
-
-        browserify: {
-            debug: true
-        },
 
         // test results reporter to use
         // possible values: 'dots', 'progress'
@@ -51,6 +53,23 @@ module.exports = function(config) {
         reporters: [
             'narrow'
         ],
+
+        // preprocess matching files before serving them to the browser
+        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+
+        preprocessors: {
+            'test/test.bundle.js': ['webpack', 'sourcemap']
+        },
+
+        webpack: {
+            devtool: 'inline-source-map'
+        },
+
+        webpackMiddleware: {
+            // webpack-dev-middleware configuration
+            // i. e.
+            noInfo: true
+        },
 
         // web server port
         port: 9876,
@@ -68,17 +87,31 @@ module.exports = function(config) {
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
 
-        autoWatchBatchDelay: 300,
+        autoWatchBatchDelay: 100,
+
+        // Continuous Integration mode
+        // if true, Karma captures browsers, runs the tests and exits
+        singleRun: false,
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            //'Firefox'
-            'Chrome'
+            //'Chrome',
+            'PhantomJS_custom'
         ],
-        // Continuous Integration mode
-        // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        customLaunchers: {
+            'PhantomJS_custom': {
+                base: 'PhantomJS',
+                options: {
+                    windowName: 'my-window',
+                    settings: {
+                        webSecurityEnabled: false
+                    }
+                },
+                flags: ['--load-images=true'],
+                debug: true
+            }
+        }
     });
 };
 

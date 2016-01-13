@@ -102,7 +102,7 @@ describe('Table - RemoveRow', function() {
 
         RemoveRow.exec(wwe);
 
-        expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('tbody td')[0]);
+        expect(sq.getSelection().startContainer.textContent).toBe(wwe.get$Body().find('tbody td')[0].textContent);
     });
 
     it('focus to prev row\'s first td if it doesn\'t have next row', function() {
@@ -129,6 +129,6 @@ describe('Table - RemoveRow', function() {
 
         RemoveRow.exec(wwe);
 
-        expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('tbody td')[0]);
+        expect(sq.getSelection().startContainer.textContent).toEqual(wwe.get$Body().find('tbody td')[0].textContent);
     });
 });
