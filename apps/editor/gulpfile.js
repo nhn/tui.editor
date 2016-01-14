@@ -19,7 +19,6 @@ var gulp = require('gulp'),
 
 var gulpSync = require('gulp-sync')(gulp);
 
-
 //Webpack
 var WEBPACK_MAIN_ENTRY = './src/js/index.js',
     WEBPACK_DEV_PATH = __dirname + '/build/',
@@ -68,9 +67,23 @@ gulp.task('develop', function() {
             colors: true
         }
     }).listen(8080, 'localhost', function(err) {
-        if (err) throw new gutil.PluginError('webpack-dev-server', err);
+        if (err) {
+            throw new gutil.PluginError('webpack-dev-server', err);
+        }
+
         gutil.log('[webpack-dev-server]', 'http://localhost:8080/webpack-dev-server/index.html');
     });
+});
+
+//For Development
+gulp.task('watch', function() {
+    livereload.listen();
+    gulp.watch(['./src/**/*'], livereload.changed);
+    gulp.watch(['./demo/*'], livereload.changed);
+});
+
+gulp.task('lintwatch', function lint() {
+    gulp.watch(['src/js/**/*.js'], ['lint']);
 });
 
 //Production Build
@@ -121,16 +134,6 @@ gulp.task('csslint', function() {
             'zero-units': true
         }))
         .pipe(csslint.reporter());
-});
-
-gulp.task('lintw', function lint() {
-    gulp.watch(['src/js/**/*.js'], ['lint']);
-});
-
-gulp.task('watch', function() {
-    livereload.listen();
-    gulp.watch(['./src/**/*'], livereload.changed);
-    gulp.watch(['./demo/*'], livereload.changed);
 });
 
 gulp.task('stripDebug', function() {
