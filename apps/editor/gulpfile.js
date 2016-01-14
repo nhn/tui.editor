@@ -4,9 +4,9 @@ var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
     webpack = require('webpack'),
+    WebpackDevServer = require('webpack-dev-server'),
 
     eslint = require('gulp-eslint'),
-    connect = require('gulp-connect'),
     rename = require('gulp-rename'),
     ugilfy = require('gulp-uglify'),
     stripDebug = require('gulp-strip-debug'),
@@ -19,13 +19,23 @@ var gulp = require('gulp'),
 
 var gulpSync = require('gulp-sync')(gulp);
 
+
+//Webpack
+var WEBPACK_MAIN_ENTRY = './src/js/index.js',
+    WEBPACK_DEV_PATH = __dirname + '/build/',
+    WEBPACK_DEV_FILE = 'bundle.js',
+    WEBPACK_DIST_PATH = __dirname + '/dist/',
+    WEBPACK_DIST_FILE ='tui-editor.js';
+
 gulp.task('bundle', function(callback) {
     // run webpack
     webpack({
-        entry: './src/js/index.js',
+        cache: false,
+        entry: WEBPACK_MAIN_ENTRY,
         output: {
-            pathinfo: true,
-            filename: './dist/tui-editor.js'
+            path: WEBPACK_DIST_PATH,
+            pathinfo: false,
+            filename: WEBPACK_DIST_FILE
         }
     }, function(err, stats) {
         if (err) {
@@ -41,24 +51,25 @@ gulp.task('bundle', function(callback) {
 });
 
 gulp.task('develop', function() {
-    // run webpack
-    webpack({
-        entry: './src/js/index.js',
+    // Start a webpack-dev-server
+    new WebpackDevServer(webpack({
+        entry: WEBPACK_MAIN_ENTRY,
         output: {
+            path: WEBPACK_DEV_PATH,
+            publicPath: '/build/',
             pathinfo: true,
-            filename: './build/bundle.js'
+            filename: WEBPACK_DEV_FILE
         },
-        watch: true,
-        debug: true,
-        devtool: 'source-map'
-    }, function(err, stats) {
-        if (err) {
-            throw new gutil.PluginError('webpack', err);
-        }
-
-        gutil.log('[webpack]', stats.toString({
+        devtool: 'eval'
+    }), {
+        publicPath: '/build/',
+        hot: true,
+        stats: {
             colors: true
-        }));
+        }
+    }).listen(8080, 'localhost', function(err) {
+        if (err) throw new gutil.PluginError('webpack-dev-server', err);
+        gutil.log('[webpack-dev-server]', 'http://localhost:8080/webpack-dev-server/index.html');
     });
 });
 
@@ -116,17 +127,9 @@ gulp.task('lintw', function lint() {
     gulp.watch(['src/js/**/*.js'], ['lint']);
 });
 
-gulp.task('connect', function() {
-    connect.server({
-        root: '',
-        port: 8080
-    });
-});
-
 gulp.task('watch', function() {
     livereload.listen();
-    gulp.watch(['./build/*.js'], livereload.changed);
-    gulp.watch(['./src/css/*.css'], livereload.changed);
+    gulp.watch(['./src/**/*'], livereload.changed);
     gulp.watch(['./demo/*'], livereload.changed);
 });
 

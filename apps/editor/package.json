@@ -8,7 +8,6 @@
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-concat-css": "^2.2.0",
-    "gulp-connect": "^2.2.0",
     "gulp-csslint": "^0.2.0",
     "gulp-eslint": "^1.0.0",
     "gulp-livereload": "^3.7.0",
@@ -34,6 +33,7 @@
     "karma-webpack": "^1.7.0",
     "phantomjs": "^1.9.19",
     "phantomjs-polyfill": "0.0.1",
-    "webpack": "^1.12.10"
+    "webpack": "^1.12.10",
+    "webpack-dev-server": "^1.14.1"
   }
 }
