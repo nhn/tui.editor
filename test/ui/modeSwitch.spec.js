@@ -3,7 +3,7 @@
 var ModeSwitch = require('../../src/js/ui/modeSwitch');
 
 describe('ModeSwitch', function() {
-    beforeEach(function() {
+    afterEach(function() {
         $('body').empty();
     });
 

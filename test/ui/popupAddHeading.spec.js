@@ -8,7 +8,6 @@ describe('PopupAddHeading', function() {
         em;
 
     beforeEach(function() {
-        $('body').empty();
         $('body').append('<button class="tui-heading"></button>');
 
         em = new EventManager();
@@ -19,6 +18,10 @@ describe('PopupAddHeading', function() {
         });
 
         popup._bindEvent();
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('생성', function() {

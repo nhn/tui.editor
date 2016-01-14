@@ -9,6 +9,10 @@ describe('eventManager', function() {
         em = new EventManager();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('사용하는 이벤트를 등록 관리', function() {
         it('등록되지 않은 이벤트를 사용하는 경우 에러', function() {
             expect(function() {

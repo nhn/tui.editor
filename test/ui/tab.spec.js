@@ -5,7 +5,7 @@ describe('Tab', function() {
 
     var tab;
 
-    beforeEach(function() {
+    afterEach(function() {
         $('body').empty();
     });
 

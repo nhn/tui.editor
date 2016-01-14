@@ -8,13 +8,15 @@ describe('PopupAddTable', function() {
         em;
 
     beforeEach(function() {
-        $('body').empty();
-
         em = new EventManager();
 
         popup = new PopupAddTable({
             eventManager: em
         });
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('cell bound caculation', function() {

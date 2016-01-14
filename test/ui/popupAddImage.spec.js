@@ -8,13 +8,15 @@ describe('PopupAddImage', function() {
         em;
 
     beforeEach(function() {
-        $('body').empty();
-
         em = new EventManager();
 
         popup = new PopupAddImage({
             eventManager: em
         });
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('생성', function() {

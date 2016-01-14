@@ -11,6 +11,10 @@ describe('Convertor', function() {
         convertor = new Convertor(em);
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('markdown to html', function() {
         it('converting markdown to html', function() {
             expect(convertor.toHTML('# HELLO WORLD')).toEqual('<h1 id="hello-world">HELLO WORLD</h1>\n');

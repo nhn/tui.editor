@@ -25,6 +25,7 @@ describe('AddLink', function() {
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
     });
+
     afterEach(function() {
         $('body').empty();
     });

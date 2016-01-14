@@ -3,6 +3,10 @@
 var templater = require('../../src/js/ui/templater');
 
 describe('templater', function() {
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('template()', function() {
         it('템플릿 텍스트와 매핑할 데이터 객체를 넘기면 맵핑된 텍스트가 리턴된다.', function() {
             var tmpl = '<div>${text}</div>',

@@ -8,14 +8,16 @@ describe('Layout', function() {
         em;
 
     beforeEach(function() {
-        $('body').empty();
-
         em = new EventManager();
 
         layout = new Layout({
             el: $('body'),
             height: 100
         }, em);
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     it('All layout elements are exist', function() {

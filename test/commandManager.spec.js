@@ -31,6 +31,10 @@ describe('CommandManager', function() {
         };
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('addCommand', function() {
         it('마크다운타입으로 등록하게되면 _mdCommand에 등록된다.', function() {
             var command = new Command('mycommand', Command.TYPE.MD);

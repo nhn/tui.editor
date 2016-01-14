@@ -19,6 +19,10 @@ describe('WwClipboardManager', function() {
         });
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('_getContentFromRange', function() {
         it('if select textnodes of one node partly, return text', function() {
             var range;

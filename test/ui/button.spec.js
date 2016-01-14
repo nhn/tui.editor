@@ -5,7 +5,7 @@ var Button = require('../../src/js/ui/button');
 describe('Button', function() {
     var button;
 
-    beforeEach(function() {
+    afterEach(function() {
         $('body').empty();
     });
 
