@@ -193,7 +193,7 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
 WwTableManager.prototype._removeTableOnBackspace = function(range) {
     var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
-    this.wwe.getEditor()._recordUndoState();
+    this.wwe.getEditor().recordUndoState(range);
 
     this.wwe.insertSelectionMarker(range);
     $(table).remove();
