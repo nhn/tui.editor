@@ -174,4 +174,16 @@ describe('domUtils', function() {
             expect(domUtils.getNextTopBlockNode($('em')[0].firstChild)).toBe($('p')[0]);
        });
    });
+
+   describe('getParentUntil', function() {
+       it('return parent node of passed node until passed parent', function() {
+            $('body').append('<div><p>awef<em>text1</em></p></div>');
+            expect(domUtils.getParentUntil($('em')[0].firstChild, 'DIV')).toBe($('p')[0]);
+       });
+
+       it('return parent node of passed node until passed parent #2', function() {
+            $('body').append('<div><p>awef<em>text1</em></p></div>');
+            expect(domUtils.getParentUntil($('em')[0].firstChild, 'P')).toBe($('EM')[0]);
+       });
+   });
 });
