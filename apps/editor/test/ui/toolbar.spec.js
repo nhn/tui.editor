@@ -12,13 +12,16 @@ describe('Toolbar', function() {
         cm;
 
     beforeEach(function() {
-        $('body').empty();
         em = new EventManager();
         em.addEventType('test');
         cm = new CommandMangager({
             eventManager: em
         });
         toolbar = new Toolbar(em, cm);
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('버튼을 추가할 수 있다', function() {

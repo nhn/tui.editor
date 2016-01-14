@@ -160,4 +160,11 @@ describe('domUtils', function() {
             expect(domUtils.getChildNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
         });
     });
+
+   describe('getPrevTopBlockNode', function() {
+       it('return previous block element of passed node', function() {
+            $('body').append('<div>text1</div><p>text2</p>');
+            expect(domUtils.getPrevTopBlockNode($('p')[0].firstChild)).toBe($('div')[0]);
+       });
+   });
 });

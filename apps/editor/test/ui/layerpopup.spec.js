@@ -5,7 +5,7 @@ var Layerpopup = require('../../src/js/ui/layerpopup');
 describe('Layerpopup', function() {
     var CLASS_PREFIX = Layerpopup.CLASS_PREFIX;
 
-    beforeEach(function() {
+    afterEach(function() {
         $('body').empty();
     });
 

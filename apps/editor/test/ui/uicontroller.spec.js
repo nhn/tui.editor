@@ -9,6 +9,10 @@ describe('UIController', function() {
         uic = new UIController();
     });
 
+    afterEach(function() {
+        $('body').empty();
+    });
+
     describe('on()', function() {
         it('커스텀 이벤트를 바인드할수있다.', function() {
             var spy = jasmine.createSpy();

@@ -8,13 +8,15 @@ describe('PopupAddLink', function() {
         em;
 
     beforeEach(function() {
-        $('body').empty();
-
         em = new EventManager();
 
         popup = new PopupAddLink({
             eventManager: em
         });
+    });
+
+    afterEach(function() {
+        $('body').empty();
     });
 
     describe('생성', function() {

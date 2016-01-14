@@ -12,6 +12,7 @@ describe('LazyRunner', function() {
 
     afterEach(function() {
         jasmine.clock().uninstall();
+        $('body').empty();
     });
 
     describe('invoke function after delay time', function() {
