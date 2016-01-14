@@ -167,4 +167,11 @@ describe('domUtils', function() {
             expect(domUtils.getPrevTopBlockNode($('p')[0].firstChild)).toBe($('div')[0]);
        });
    });
+
+   describe('getNextTopBlockNode', function() {
+       it('return next block element of passed node', function() {
+            $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
+            expect(domUtils.getNextTopBlockNode($('em')[0].firstChild)).toBe($('p')[0]);
+       });
+   });
 });

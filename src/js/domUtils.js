@@ -178,6 +178,31 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
+var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
+    var directionKey = direction + 'Sibling',
+        nodeName = getNodeName(node.parentNode),
+        foundedNode;
+
+    while (nodeName !== underParentNodeName || nodeName !== 'BODY') {
+        node = node.parentNode;
+        nodeName = getNodeName(node.parentNode);
+    }
+
+    if (node[directionKey]) {
+        foundedNode = node[directionKey];
+    }
+
+    return foundedNode;
+};
+
+var getPrevTopBlockNode = function(node) {
+    return getNodeWithDirectionUnderParent('previous', node, 'BODY');
+};
+
+var getNextTopBlockNode = function(node) {
+    return getNodeWithDirectionUnderParent('next', node, 'BODY');
+};
+
 module.exports = {
     getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
@@ -187,5 +212,7 @@ module.exports = {
     getOffsetLength: getOffsetLength,
     getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
     getNodeOffsetOfParent: getNodeOffsetOfParent,
-    getChildNodeByOffset: getChildNodeByOffset
+    getChildNodeByOffset: getChildNodeByOffset,
+    getPrevTopBlockNode: getPrevTopBlockNode,
+    getNextTopBlockNode: getNextTopBlockNode
 };
