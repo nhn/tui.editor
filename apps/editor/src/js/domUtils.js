@@ -128,6 +128,7 @@ var getChildNodeByOffset = function(node, index) {
  * getNodeWithDirectionUntil
  * find next node from passed node
  * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
+ * 부모노드를 따라 올라가며 방향에 맞는 노드를 찾는다.
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string} untilNodeName parent node name to limit
@@ -178,27 +179,72 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
-var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
-    var directionKey = direction + 'Sibling',
-        nodeName = getNodeName(node.parentNode),
+/**
+ * getParentUntil
+ * get parent node until paseed node name
+ * 특정 노드이전의 부모 노드를 찾는다
+ * @param {Node} node node
+ * @param {string} untilNodeName node name to limit
+ * @returns {Node} founded node
+ */
+var getParentUntil = function(node, untilNodeName) {
+    var parentNodeName = getNodeName(node.parentNode),
         foundedNode;
 
-    while (nodeName !== underParentNodeName || nodeName !== 'BODY') {
+    while (
+        parentNodeName !== untilNodeName
+        && parentNodeName !== 'BODY'
+        && node.parentNode
+    ) {
         node = node.parentNode;
-        nodeName = getNodeName(node.parentNode);
+        parentNodeName = getNodeName(node.parentNode);
     }
 
-    if (node[directionKey]) {
+    if (parentNodeName === untilNodeName) {
+        foundedNode = node;
+    }
+
+    return foundedNode;
+};
+
+/**
+ * getNodeWithDirectionUnderParent
+ * get node of direction before passed parent
+ * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
+ * @param {strong} direction previous or next
+ * @param {Node} node node
+ * @param {string} underParentNodeName parent node name to limit
+ * @return {Node} founded node
+ */
+var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
+    var directionKey = direction + 'Sibling',
+        foundedNode;
+
+    node = getParentUntil(node, underParentNodeName);
+
+    if (node && node[directionKey]) {
         foundedNode = node[directionKey];
     }
 
     return foundedNode;
 };
 
+/**
+ * getPrevTopBlockNode
+ * get previous top level block node
+ * @param {Node} node node
+ * @return {Node} founded node
+ */
 var getPrevTopBlockNode = function(node) {
     return getNodeWithDirectionUnderParent('previous', node, 'BODY');
 };
 
+/**
+ * getNextTopBlockNode
+ * get next top level block node
+ * @param {Node} node node
+ * @return {Node} founded node
+ */
 var getNextTopBlockNode = function(node) {
     return getNodeWithDirectionUnderParent('next', node, 'BODY');
 };
@@ -214,5 +260,6 @@ module.exports = {
     getNodeOffsetOfParent: getNodeOffsetOfParent,
     getChildNodeByOffset: getChildNodeByOffset,
     getPrevTopBlockNode: getPrevTopBlockNode,
-    getNextTopBlockNode: getNextTopBlockNode
+    getNextTopBlockNode: getNextTopBlockNode,
+    getParentUntil: getParentUntil
 };
