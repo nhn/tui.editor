@@ -26,7 +26,7 @@ var RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
             $table;
 
         if (sq.hasFormat('TABLE')) {
-            sq._recordUndoState();
+            sq.recordUndoState(range);
             $table = $(range.startContainer).closest('table');
 
             $table.remove();
