@@ -19,6 +19,7 @@ function WwTableManager(wwe) {
     this.wwe = wwe;
     this.eventManager = wwe.eventManager;
 
+    this._lastCellNode = null;
     this._init();
 }
 
@@ -89,6 +90,11 @@ WwTableManager.prototype._initKeyHandler = function() {
                     isHandled = true;
                 }
             }
+        //for recordUndoState
+        } else if (self._isInTable(range)) {
+            self._recordUndoStateIfNeed(range);
+        } else if (self._lastCellNode) {
+            self._recordUndoStateAndResetCellNode(range);
         }
 
         return isHandled;
@@ -198,6 +204,30 @@ WwTableManager.prototype._removeTableOnBackspace = function(range) {
     this.wwe.insertSelectionMarker(range);
     $(table).remove();
     this.wwe.restoreSelectionMarker();
+};
+
+/**
+ * _recordUndoStateIfNeed
+ * record undo state if need
+ * @param {Range} range range
+ */
+WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
+    var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
+
+    if (range.collapsed &&  this._lastCellNode !== currentCellNode) {
+        this.wwe.getEditor().recordUndoState(range);
+        this._lastCellNode = currentCellNode;
+    }
+};
+
+/**
+ * _recordUndoStateAndResetCellNode
+ * record undo state and reset last cell node
+ * @param {Range} range range
+ */
+WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
+    this.wwe.getEditor().recordUndoState(range);
+    this._lastCellNode = null;
 };
 
 module.exports = WwTableManager;
