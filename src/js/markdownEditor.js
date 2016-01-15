@@ -97,7 +97,8 @@ MarkdownEditor.prototype._initEvent = function() {
 
         state =  {
             bold: !!token.state.base.strong,
-            italic: !!token.state.base.em
+            italic: !!token.state.base.em,
+            source: 'markdown'
         };
 
         if (self._latestState.bold !== state.bold || self._latestState.italic !== state.italic) {

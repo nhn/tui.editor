@@ -327,7 +327,8 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     this.getEditor().addEventListener('pathChange', function(data) {
         var state =  {
             bold: /(>B$)|(>B>)|(>STRONG$)|(>STRONG>)/.test(data.path),
-            italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path)
+            italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path),
+            source: 'wysiwyg'
         };
 
         self.eventManager.emit('stateChange', state);

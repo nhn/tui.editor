@@ -66,6 +66,47 @@ describe('WwTableManager', function() {
         });
     });
 
+    describe('undo', function() {
+        //스콰이어에서 컨텐츠를 변화를 인지해서 컨텐츠에 변화가 일어나면 다음프레임에서  undo와 관련된 프로세스를 통해야하는데
+        //이를 지원하지않는(mutationObserver)에서는 keydown이벤트로 처리한다 억지로 keydown이벤트를 발생시키는것보다는
+        //그냥 단순하게 스파이콜로 테스트함
+        beforeEach(function() {
+            wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead><tbody><tr><td>1123</td></tr></tbody></table>');
+        });
+
+        it('_recordUndoStateIfNeed record undo state if range is in different cell', function() {
+            var range;
+
+            wwe.getEditor().recordUndoState = jasmine.createSpy('recordUndoState');
+
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('th')[0], 0);
+            range.collapse(true);
+
+            mgr._recordUndoStateIfNeed(range);
+            mgr._recordUndoStateIfNeed(range);
+
+            expect(wwe.getEditor().recordUndoState.calls.count()).toEqual(1);
+        });
+
+        it('_recordUndoStateAndResetCellNode record undo state and reset laste cell node info', function() {
+            var range;
+
+            wwe.getEditor().recordUndoState = jasmine.createSpy('recordUndoState');
+
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('th')[0], 0);
+            range.collapse(true);
+
+            mgr._recordUndoStateAndResetCellNode(range);
+
+            expect(wwe.getEditor().recordUndoState).toHaveBeenCalled();
+            expect(mgr._lastCellNode).toEqual(null);
+        });
+    });
+
     describe('Events', function() {
         it('remove last br in td or th when getValue', function() {
             wwe.setValue('<table><thead><tr><th>wef<br>wef<br></th></tr></thead><tbody><tr><td>waf<br>waef<br></td></tr></tbody></table>');
