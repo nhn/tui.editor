@@ -193,6 +193,15 @@ describe('WysiwygEditor', function() {
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual(html);
         });
+
+        //todo squire버그 수정할때 다시 켜기 (#414)
+        xit('prevent text, image merge', function() {
+            var html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
+            wwe.setValue(html);
+            expect(wwe.get$Body().find('p').length).toEqual(2);
+            expect(wwe.get$Body().find('p').eq(0).text()).toEqual('test');
+            expect(wwe.get$Body().find('p').eq(1).find('img').length).toEqual(1);
+        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
