@@ -52,7 +52,7 @@ describe('KeyMapper', function() {
 
         it('convert ctrl + alt combination', function() {
             var ke = {
-                keyCode: '['.charCodeAt(0),
+                keyCode: 219,
                 ctrlKey: true,
                 altKey: true
             };
@@ -61,7 +61,7 @@ describe('KeyMapper', function() {
 
         it('convert shift + ctrl + alt combination', function() {
             var ke = {
-                keyCode: ';'.charCodeAt(0),
+                keyCode: 59,
                 ctrlKey: true,
                 altKey: true,
                 shiftKey: true
@@ -71,7 +71,7 @@ describe('KeyMapper', function() {
 
         it('convert shift + ctrl + alt + meta combination', function() {
             var ke = {
-                keyCode: ';'.charCodeAt(0),
+                keyCode: 59,
                 ctrlKey: true,
                 altKey: true,
                 shiftKey: true,
