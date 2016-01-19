@@ -177,6 +177,10 @@ WysiwygEditor.prototype._initEvent = function() {
     this.eventManager.listen('changeModeToWysiwyg', function() {
         self._autoResizeHeightIfNeed();
     });
+
+    this.eventManager.listen('wysiwygSetValueBefore', function(html) {
+        return html.replace(/\<br\>( *)\<img/g, '<br><br>$1<img');
+    });
 };
 
 /**
@@ -588,6 +592,7 @@ WysiwygEditor.prototype.setHeight = function(height) {
  * @param {string} html html text
  */
 WysiwygEditor.prototype.setValue = function(html) {
+    html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
     this.editor.setHTML(html);
     this._autoResizeHeightIfNeed();
 

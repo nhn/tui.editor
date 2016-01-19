@@ -34,6 +34,7 @@ var eventList = [
     'convertorAfterHtmlToMarkdownConverted',
     'stateChange',
     'wysiwygSetValueAfter',
+    'wysiwygSetValueBefore',
     'wysiwygGetValueBefore',
     'wysiwygProcessHTMLText',
     'wysiwygRangeChangeAfter',
