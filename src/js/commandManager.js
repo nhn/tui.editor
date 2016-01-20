@@ -9,6 +9,9 @@ var util = tui.util;
 
 var Command = require('./command');
 
+var isMac = /Mac/.test(navigator.platform),
+    KEYMAP_OS_INDEX = isMac ? 1 : 0;
+
 /**
  * CommandManager
  * @exports CommandManager
@@ -21,6 +24,8 @@ function CommandManager(base) {
     this._mdCommand = new util.Map();
     this._wwCommand = new util.Map();
     this.base = base;
+
+    this.keyMapCommand = {};
 
     this._initEvent();
 }
@@ -51,6 +56,10 @@ CommandManager.prototype.addCommand = function(command) {
 
     commandBase.set(name, command);
 
+    if (command.keyMap) {
+        this.keyMapCommand[command.keyMap[KEYMAP_OS_INDEX]] = name;
+    }
+
     return command;
 };
 
@@ -64,6 +73,15 @@ CommandManager.prototype._initEvent = function() {
 
     this.base.eventManager.listen('command', function() {
         self.exec.apply(self, arguments);
+    });
+
+    this.base.eventManager.listen('keyMap', function(ev) {
+        var command = self.keyMapCommand[ev.keyMap];
+
+        if (command) {
+            ev.data.preventDefault();
+            self.exec(self.keyMapCommand[ev.keyMap]);
+        }
     });
 };
 
@@ -100,7 +118,7 @@ CommandManager.prototype.exec = function(name) {
 CommandManager.command = function(type, props) {
     var command;
 
-    command = Command.factory(type, props.name);
+    command = Command.factory(type, props.name, props.keyMap);
 
     util.extend(command, props);
 

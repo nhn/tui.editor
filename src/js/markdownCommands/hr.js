@@ -15,6 +15,7 @@ var CommandManager = require('../commandManager');
  */
 var HR = CommandManager.command('markdown', /** @lends HR */{
     name: 'HR',
+    keyMap: ['CTRL+L', 'CTRL+L'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

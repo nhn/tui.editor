@@ -15,6 +15,8 @@ var domUtils = require('./domUtils'),
     WwHeadingManager = require('./wwHeadingManager'),
     SquireExt = require('./squireExt');
 
+var keyMapper = require('./keyMapper').getGlobalInstance();
+
 var util = tui.util;
 
 var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
@@ -274,44 +276,54 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self._autoResizeHeightIfNeed();
     });
 
-    this.getEditor().addEventListener('keydown', function(event) {
-        self._runKeyEventHandlers(event);
+    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
+        self.eventManager.emit('keyMap', {
+            source: 'wysiwyg',
+            keyMap: keyMapper.convert(keyboardEvent),
+            data: keyboardEvent
+        });
+        self._runKeyEventHandlers(keyboardEvent, keyMapper.convert(keyboardEvent));
     });
 
-    this.getEditor().addEventListener('click', function(event) {
+    this.getEditor().addEventListener('click', function(ev) {
         self.eventManager.emit('click', {
             source: 'wysiwyg',
-            data: event
+            data: ev
         });
     });
 
-    this.getEditor().addEventListener('mousedown', function(event) {
+    this.getEditor().addEventListener('mousedown', function(ev) {
         self.eventManager.emit('mousedown', {
             source: 'wysiwyg',
-            data: event
+            data: ev
         });
     });
 
-    this.getEditor().addEventListener('mouseup', function(event) {
+    this.getEditor().addEventListener('mouseup', function(ev) {
         self.eventManager.emit('mouseup', {
             source: 'wysiwyg',
-            data: event
+            data: ev
         });
     });
 
-    this.getEditor().addEventListener('contextmenu', function(event) {
+    this.getEditor().addEventListener('contextmenu', function(ev) {
         self.eventManager.emit('contextmenu', {
             source: 'wysiwyg',
-            data: event
+            data: ev
         });
     });
 
     //firefox has problem about keydown event while composition korean
     //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
-        this.getEditor().addEventListener('keypress', function(event) {
+        this.getEditor().addEventListener('keypress', function(keyboardEvent) {
             if (event.keyCode) {
-                self._runKeyEventHandlers(event);
+                self.eventManager.emit('keyMap', {
+                    source: 'wysiwyg',
+                    keyMap: keyMapper.convert(keyboardEvent),
+                    data: keyboardEvent
+                });
+                self._runKeyEventHandlers(keyboardEvent);
             }
         });
     }
@@ -346,17 +358,17 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler(function(event, range) {
+    this.addKeyEventHandler(function(ev, range) {
         var isHandled;
 
         //enter
-        if (event.keyCode === 13) {
+        if (ev.keyCode === 13) {
             if (self._isInOrphanText(range)) {
                 self._wrapDefaultBlockTo(range);
                 isHandled = true;
             }
         //backspace
-        } else if (event.keyCode === 8) {
+        } else if (ev.keyCode === 8) {
             if (!range.collapsed) {
                 self.postProcessForChange();
             }
