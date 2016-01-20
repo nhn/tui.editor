@@ -15,6 +15,7 @@ var CommandManager = require('../commandManager');
 
 var Task = CommandManager.command('markdown', /** @lends Task */{
     name: 'Task',
+    keyMap: ['CTRL+T', 'CTRL+T'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

@@ -15,10 +15,15 @@ var util = tui.util;
  * @class
  * @param {string} name Command name
  * @param {number} type Command type (Command.TYPE)
+ * @param {Array<string>} keyMap keyMap
  */
-function Command(name, type) {
+function Command(name, type, keyMap) {
     this.name = name;
     this.type = type;
+
+    if (keyMap) {
+        this.setKeyMap(keyMap);
+    }
 }
 
 /**
@@ -69,7 +74,7 @@ Command.prototype.isGlobalType = function() {
 /**
  * setKeyMap
  * Set keymap value for each os
- * @param {string} win window Key
+ * @param {string} win window Key(and etc)
  * @param {string} mac mac osx key
  */
 Command.prototype.setKeyMap = function(win, mac) {

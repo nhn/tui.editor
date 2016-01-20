@@ -150,4 +150,30 @@ describe('CommandManager', function() {
             expect(execSpy).toHaveBeenCalled();
         });
     });
+
+    describe('keyMap', function() {
+        it('when command added with keymap, it can be invoked by keyMap', function() {
+            var command = new Command('mycommand', Command.TYPE.WW),
+                execSpy = jasmine.createSpy('spy'),
+                preventDefault = jasmine.createSpy('preventDefault');
+
+            command.setKeyMap('CTRL+B', 'META+B');
+            command.exec = execSpy;
+            cmgr.addCommand(command);
+
+            mockupBase.isMarkdownMode = function() {
+                return false;
+            };
+
+            mockupBase.eventManager.emit('keyMap', {
+                keyMap: 'META+B',
+                data: {
+                    preventDefault: preventDefault
+                }
+            });
+
+            expect(execSpy).toHaveBeenCalled();
+            expect(preventDefault).toHaveBeenCalled();
+        });
+    });
 });

@@ -17,8 +17,6 @@ var util = tui.util;
  */
 var Heading = CommandManager.command('markdown', /** @lends Heading */{
     name: 'Heading',
-    keyMap: ['Ctrl-H', 'Ctrl-H'],
-
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
