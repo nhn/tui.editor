@@ -198,8 +198,9 @@ WysiwygEditor.prototype.addKeyEventHandler = function(handler) {
  * _runKeyEventHandlers
  * Run key event handler
  * @param {Event} event event object
+ * @param {string} keyMap keyMapString
  */
-WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
+WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
     var range = this.getEditor().getSelection().cloneRange();
 /*
     console.log(event);
@@ -218,7 +219,7 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
     console.log('path', this.editor.getPath());
 */
     util.forEachArray(this._keyEventHandlers, function(handler) {
-        if (handler(event, range)) {
+        if (handler(event, range, keyMap)) {
             return false;
         }
     });
@@ -277,12 +278,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
 
     this.getEditor().addEventListener('keydown', function(keyboardEvent) {
-        self.eventManager.emit('keyMap', {
-            source: 'wysiwyg',
-            keyMap: keyMapper.convert(keyboardEvent),
-            data: keyboardEvent
-        });
-        self._runKeyEventHandlers(keyboardEvent, keyMapper.convert(keyboardEvent));
+        self._onKeyDown(keyboardEvent);
     });
 
     this.getEditor().addEventListener('click', function(ev) {
@@ -317,13 +313,8 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(keyboardEvent) {
-            if (event.keyCode) {
-                self.eventManager.emit('keyMap', {
-                    source: 'wysiwyg',
-                    keyMap: keyMapper.convert(keyboardEvent),
-                    data: keyboardEvent
-                });
-                self._runKeyEventHandlers(keyboardEvent);
+            if (keyboardEvent.keyCode) {
+                self._onKeyDown(keyboardEvent);
             }
         });
     }
@@ -351,6 +342,18 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
  };
 
+WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
+    var keyMap = keyMapper.convert(keyboardEvent);
+
+    this.eventManager.emit('keyMap', {
+        source: 'wysiwyg',
+        keyMap: keyMap,
+        data: keyboardEvent
+    });
+
+    this._runKeyEventHandlers(keyboardEvent, keyMap);
+};
+
 /**
  * _initDefaultKeyEventHandler
  * Initialize default event handler
@@ -358,17 +361,17 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler(function(ev, range) {
+    this.addKeyEventHandler(function(ev, range, keyMap) {
         var isHandled;
 
         //enter
-        if (ev.keyCode === 13) {
+        if (keyMap === 'ENTER') {
             if (self._isInOrphanText(range)) {
                 self._wrapDefaultBlockTo(range);
                 isHandled = true;
             }
         //backspace
-        } else if (ev.keyCode === 8) {
+        } else if (keyMap === 'BACKSPACE') {
             if (!range.collapsed) {
                 self.postProcessForChange();
             }
