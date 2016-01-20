@@ -18,6 +18,7 @@ var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
  */
 var UL = CommandManager.command('markdown', /** @lends UL */{
     name: 'UL',
+    keyMap: ['CTRL+U', 'CTRL+U'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

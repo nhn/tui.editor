@@ -16,7 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var UL = CommandManager.command('wysiwyg', /** @lends UL */{
     name: 'UL',
-    keyMap: ['Ctrl-U', 'Ctrl-U'],
+    keyMap: ['CTRL+U', 'CTRL+U'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance

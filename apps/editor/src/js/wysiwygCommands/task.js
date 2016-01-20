@@ -16,6 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var Task = CommandManager.command('wysiwyg', /** @lends Task */{
     name: 'Task',
+    keyMap: ['CTRL+T', 'CTRL+T'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance

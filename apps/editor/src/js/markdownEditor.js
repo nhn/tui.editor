@@ -5,6 +5,8 @@
 
 'use strict';
 
+var keyMapper = require('./keyMapper').getGlobalInstance();
+
 var CodeMirror = window.CodeMirror;
 
 /**
@@ -71,6 +73,14 @@ MarkdownEditor.prototype._initEvent = function() {
     this.cm.on('blur', function() {
         self.eventManager.emit('blur', {
             source: 'markdown'
+        });
+    });
+
+    this.cm.on('keydown', function(cm, keyboardEvent) {
+        self.eventManager.emit('keyMap', {
+            source: 'markdown',
+            keyMap: keyMapper.convert(keyboardEvent),
+            data: keyboardEvent
         });
     });
 
