@@ -41,6 +41,8 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
 
         hasInput = $li.children('input').length || $li.children('div').eq(0).children('input').length;
 
+        $li.addClass('task-list-item');
+
         if (!hasInput) {
             selection = wwe.insertSelectionMarker(selection);
 
@@ -62,7 +64,6 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
             //we need some space for safari
             sq.insertElement(sq.getDocument().createTextNode(' '), selection);
 
-            $li.addClass('task-list-item');
 
             wwe.restoreSelectionMarker();
         }

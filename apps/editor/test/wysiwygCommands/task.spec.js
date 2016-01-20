@@ -30,11 +30,13 @@ describe('Task', function() {
         expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"> </div></li></ul><div></div>');
     });
 
-    it('if already in empty task, dont make task', function() {
-        sq.setHTML('<ul><li><input type="checkbox"></li></ul>');
+    it('if already in empty task, dont do anything', function() {
+        sq.setHTML('<ul><li class="task-list-item"><input type="checkbox"></li></ul>');
         Task.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li><input type="checkbox"></li></ul>');
+        expect(wwe.get$Body().find('li').length).toEqual(1);
+        expect(wwe.get$Body().find('input').length).toEqual(1);
+        expect(wwe.get$Body().find('li').hasClass('task-list-item')).toEqual(true);
     });
 
     it('add input too if there is nested task list', function() {

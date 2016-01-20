@@ -68,7 +68,7 @@ WwTaskManager.prototype._initEvent = function() {
 WwTaskManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(event, range) {
+    this.wwe.addKeyEventHandler(function(event, range, keyMap) {
         var isHandled;
 
         //enter
@@ -95,11 +95,17 @@ WwTaskManager.prototype._initKeyHandler = function() {
                     isHandled = true;
                 }
             }
-        //tab
-        } else if (event.keyCode === 9) {
-            if (self._isInTaskList(range)) {
+        } else if (keyMap === 'TAB') {
+            if (range.collapsed && self._isInTaskList(range)) {
                 event.preventDefault();
                 self.eventManager.emit('command', 'IncreaseTask');
+                isHandled = true;
+            }
+        } else if (keyMap === 'SHIFT+TAB') {
+            if (range.collapsed && self._isInTaskList(range)) {
+                event.preventDefault();
+                self.wwe.getEditor().decreaseListLevel();
+                self.eventManager.emit('command', 'Task');
                 isHandled = true;
             }
         }
