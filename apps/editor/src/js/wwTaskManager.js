@@ -71,11 +71,12 @@ WwTaskManager.prototype._initKeyHandler = function() {
     this.wwe.addKeyEventHandler(function(event, range, keyMap) {
         var isHandled;
 
-        //enter
-        if (event.keyCode === 13) {
-            if (self._isInTaskList(range)) {
-                //we need remove empty task then Squire control list
+        if (keyMap === 'ENTER') {
+             if (self.wwe.getEditor().hasFormat('LI')) {
+                //we need unformat task then let Squire control list and make task again
                 //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
+                //if문에 task가 아닌 li인지를 체크하는것은
+                //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
                 self._unformatTaskIfNeedOnEnter(range);
 
                 setTimeout(function() {
@@ -86,8 +87,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
 
                 isHandled = true;
             }
-        //backspace
-        } else if (event.keyCode === 8) {
+        } else if (keyMap === 'BACKSPACE') {
             if (range.collapsed) {
                 if (self._isInTaskList(range)) {
                     self._unformatTaskIfNeedOnBackspace(range);
@@ -104,6 +104,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
         } else if (keyMap === 'SHIFT+TAB') {
             if (range.collapsed && self._isInTaskList(range)) {
                 event.preventDefault();
+                //todo DecreaseTask로 커맨드 뽑자
                 self.wwe.getEditor().recordUndoState(range);
                 self.wwe.getEditor().decreaseListLevel();
                 self.eventManager.emit('command', 'Task');
@@ -289,32 +290,6 @@ WwTaskManager.prototype._removeTaskListClass = function() {
  * Ensure space next to task input
  * this because we need some space after input for safari cursor issue
  */
-WwTaskManager.prototype.______ensureSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode, $wrapper,
-        self = this;
-
-    findTextNodeFilter = function() {
-        return this.nodeType === 3;
-    };
-
-    this.wwe.get$Body().find('.task-list-item').each(function(i, node) {
-        $wrapper = $(node).find('div');
-
-        if (!$wrapper.length) {
-            $wrapper = $(node);
-        }
-
-        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
-
-        if (!firstTextNode) {
-            firstTextNode = self.wwe.getEditor().getDocument().createTextNode(' ');
-            $(firstTextNode).insertAfter($wrapper.find('input'));
-        } else if (!(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
-            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
-        }
-    });
-};
-
 WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode, $wrapper,
         self = this;
@@ -337,4 +312,5 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
         }
     });
 };
+
 module.exports = WwTaskManager;
