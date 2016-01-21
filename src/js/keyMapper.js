@@ -264,7 +264,7 @@ var KEYBOARD_MAP = [
   '' // [255]
 ];
 
-var globalInstance;
+var sharedInstance;
 
 /**
  * KeyMapper
@@ -320,12 +320,12 @@ KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
     return keyCodeChar;
 };
 
-KeyMapper.getGlobalInstance = function() {
-    if (!globalInstance) {
-        globalInstance = new KeyMapper();
+KeyMapper.getSharedInstance = function() {
+    if (!sharedInstance) {
+        sharedInstance = new KeyMapper();
     }
 
-    return globalInstance;
+    return sharedInstance;
 };
 
 module.exports = KeyMapper;
