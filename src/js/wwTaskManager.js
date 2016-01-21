@@ -56,7 +56,7 @@ WwTaskManager.prototype._initEvent = function() {
     });
 
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
-        //we need remove task input space for safari
+        //we need remove task input space that made for safari
         return html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
     });
 };
@@ -104,6 +104,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
         } else if (keyMap === 'SHIFT+TAB') {
             if (range.collapsed && self._isInTaskList(range)) {
                 event.preventDefault();
+                self.wwe.getEditor().recordUndoState(range);
                 self.wwe.getEditor().decreaseListLevel();
                 self.eventManager.emit('command', 'Task');
                 isHandled = true;
@@ -288,7 +289,7 @@ WwTaskManager.prototype._removeTaskListClass = function() {
  * Ensure space next to task input
  * this because we need some space after input for safari cursor issue
  */
-WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
+WwTaskManager.prototype.______ensureSpaceNextToTaskInput = function() {
     var findTextNodeFilter, firstTextNode, $wrapper,
         self = this;
 
@@ -314,4 +315,26 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
     });
 };
 
+WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
+    var findTextNodeFilter, firstTextNode, $wrapper,
+        self = this;
+
+    findTextNodeFilter = function() {
+        return this.nodeType === 3;
+    };
+
+    this.wwe.get$Body().find('.task-list-item').each(function(i, node) {
+        $wrapper = $(node).find('div');
+
+        if (!$wrapper.length) {
+            $wrapper = $(node);
+        }
+
+        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
+
+        if (!firstTextNode || !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
+            $(self.wwe.getEditor().getDocument().createTextNode(' ')).insertAfter($wrapper.find('input'));
+        }
+    });
+};
 module.exports = WwTaskManager;
