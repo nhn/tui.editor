@@ -15,7 +15,7 @@ var domUtils = require('./domUtils'),
     WwHeadingManager = require('./wwHeadingManager'),
     SquireExt = require('./squireExt');
 
-var keyMapper = require('./keyMapper').getGlobalInstance();
+var keyMapper = require('./keyMapper').getSharedInstance();
 
 var util = tui.util;
 

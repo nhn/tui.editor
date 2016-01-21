@@ -5,7 +5,7 @@
 
 'use strict';
 
-var keyMapper = require('./keyMapper').getGlobalInstance();
+var keyMapper = require('./keyMapper').getSharedInstance();
 
 var CodeMirror = window.CodeMirror;
 
