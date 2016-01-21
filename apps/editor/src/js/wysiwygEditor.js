@@ -629,6 +629,9 @@ WysiwygEditor.prototype.setValue = function(html) {
 
     this.eventManager.emit('wysiwygSetValueAfter', this);
     this.eventManager.emit('contentChangedFromWysiwyg', this);
+
+    this.getEditor().removeLastUndoStack();
+    this.getEditor().recordUndoState();
 };
 
 /**

@@ -248,13 +248,20 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 };
 
 SquireExt.prototype.recordUndoState = function(range) {
+    if (!range) {
+        range = this.getSelection();
+    }
     this._recordUndoState(range);
-    this._getRangeAndRemoveBookmark(range);
+    this._getRangeAndRemoveBookmark();
 };
 
 SquireExt.prototype.removeLastUndoStack = function() {
-    this._undoStackLength -= 1;
-    this._undoIndex -= 1;
+    if (this._undoStack.length) {
+        this._undoStackLength -= 1;
+        this._undoIndex -= 1;
+        this._undoStack.pop();
+        this._isInUndoState = false;
+    }
 };
 
 module.exports = SquireExt;
