@@ -201,6 +201,14 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
             expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
         });
+
+        it('wrap list inner to div after setValue', function() {
+            var html = '<ul><li>test</li></ul>';
+            wwe.setValue(html);
+
+            expect(wwe.get$Body().find('li div').length).toEqual(1);
+            expect(wwe.get$Body().find('li div').text()).toEqual('test');
+        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
