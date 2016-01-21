@@ -209,6 +209,24 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('li div').length).toEqual(1);
             expect(wwe.get$Body().find('li div').text()).toEqual('test');
         });
+
+        it('record undo state after all setValue process not setHTML', function(done) {
+            var html = '<ul><li>test</li></ul>';
+
+            em.listen('wysiwygSetValueAfter', function() {
+                wwe.get$Body().html('<h2>test<br></h2>');
+            });
+
+            wwe.setValue(html);
+
+            setTimeout(function() {
+                wwe.getEditor().insertHTML('<h1>test</h1>');
+                wwe.getEditor().undo();
+                expect(wwe.get$Body().find('h1').length).toEqual(0);
+                expect(wwe.get$Body().find('h2').length).toEqual(1);
+                done();
+            });
+        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
