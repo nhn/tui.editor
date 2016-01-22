@@ -46,6 +46,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
     this._silentChange = false;
 
     this._keyEventHandlers = [];
+    this._managers = {};
 
     this._clipboardManager = new WwClipboardManager(this);
     this._selectionMarker = new WwSelectionMarker();
@@ -868,6 +869,34 @@ WysiwygEditor.prototype.restoreSelectionMarker = function() {
 };
 
 /**
+ * addManager
+ * Add manger
+ * @param {string} name manager name
+ * @param {function} Manager constructor
+ */
+WysiwygEditor.prototype.addManager = function(name, Manager) {
+    var instance;
+
+    if (!Manager) {
+        Manager = name;
+        name = null;
+    }
+
+    instance = new Manager(this);
+    this._managers[name || instance.name] = instance;
+};
+
+/**
+ * getManager
+ * Get manager by name
+ * @param {string} name manager name
+ * @returns {object} manager
+ */
+WysiwygEditor.prototype.getManager = function(name) {
+    return this._managers[name];
+};
+
+/**
  * WysiwygEditor factory
  * @param {jQuery} $el element to insert editor
  * @param {string[]} contentStyles List of CSS style file path for HTML content
@@ -877,11 +906,11 @@ WysiwygEditor.prototype.restoreSelectionMarker = function() {
 WysiwygEditor.factory = function($el, contentStyles, eventManager) {
     var wwe = new WysiwygEditor($el, contentStyles, eventManager);
 
-    wwe._taskMgr = new WwTaskManager(wwe);
-    wwe._tableMgr = new WwTableManager(wwe);
-    wwe._hrMgr = new WwHrManager(wwe);
-    wwe._pMgr = new WwPManager(wwe);
-    wwe._headingMgr = new WwHeadingManager(wwe);
+    wwe.addManager(WwTaskManager);
+    wwe.addManager(WwTableManager);
+    wwe.addManager(WwHrManager);
+    wwe.addManager(WwPManager);
+    wwe.addManager(WwHeadingManager);
 
     return wwe;
 };

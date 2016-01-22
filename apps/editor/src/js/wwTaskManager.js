@@ -24,6 +24,8 @@ function WwTaskManager(wwe) {
     this._init();
 }
 
+WwTaskManager.prototype.name = 'task';
+
 /**
  * _init
  * Init
@@ -311,6 +313,34 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
             $(self.wwe.getEditor().getDocument().createTextNode(' ')).insertAfter($wrapper.find('input'));
         }
     });
+};
+
+WwTaskManager.prototype.unformatTask = function unformatTask(node) {
+    var $li, firstTextNode, $wrapper;
+
+    $li = $(node).closest('li');
+
+    $wrapper = $li.find('div');
+
+    if (!$wrapper.length) {
+        $wrapper = $li;
+    }
+
+    $wrapper.find('input:checkbox').remove();
+
+    $li.removeClass('task-list-item');
+
+    if (!$li.attr('class')) {
+        $li.removeAttr('class');
+    }
+
+    firstTextNode = $wrapper.contents().filter(function() {
+        return this.nodeType === 3;
+    })[0];
+
+    if (firstTextNode && firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX)) {
+        firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+    }
 };
 
 module.exports = WwTaskManager;

@@ -22,6 +22,8 @@ function WwHrManager(wwe) {
     this._init();
 }
 
+WwHrManager.prototype.name = 'hr';
+
 /**
  * _init
  * Init

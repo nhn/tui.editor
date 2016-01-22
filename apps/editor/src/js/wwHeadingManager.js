@@ -24,6 +24,8 @@ function WwHeadingManager(wwe) {
     this._init();
 }
 
+WwHeadingManager.prototype.name = 'heading';
+
 /**
  * _init
  */

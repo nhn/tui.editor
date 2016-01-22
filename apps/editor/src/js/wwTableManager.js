@@ -23,6 +23,8 @@ function WwTableManager(wwe) {
     this._init();
 }
 
+WwTableManager.prototype.name = 'table';
+
 /**
  * _init
  * Init
