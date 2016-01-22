@@ -89,7 +89,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
 
                 isHandled = true;
             }
-        } else if (keyMap === 'BACKSPACE') {
+        } else if (keyMap === 'BACK_SPACE') {
             if (range.collapsed) {
                 if (self._isInTaskList(range)) {
                     self._unformatTaskIfNeedOnBackspace(range);
@@ -212,6 +212,8 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
 
     startContainer = range.startContainer;
     startOffset = range.startOffset;
+
+    debugger;
 
     //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
     //유저가 임의로 Task빈칸에 수정을 가했을경우

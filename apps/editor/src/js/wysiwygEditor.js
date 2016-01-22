@@ -376,7 +376,7 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
                 isHandled = true;
             }
         //backspace
-        } else if (keyMap === 'BACKSPACE') {
+        } else if (keyMap === 'BACK_SPACE') {
             if (!range.collapsed) {
                 self.postProcessForChange();
             }
