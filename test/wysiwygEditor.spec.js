@@ -352,4 +352,24 @@ describe('WysiwygEditor', function() {
             expect(wwe.getEditor().focus).toHaveBeenCalled();
         });
     });
+
+    describe('manager handling', function() {
+        it('add and get manager', function() {
+            var manager = jasmine.createSpy('manager');
+            wwe.addManager('myManager', manager);
+
+            expect(manager).toHaveBeenCalledWith(wwe);
+            expect(wwe.getManager('myManager')).toBeDefined();
+        });
+
+        it('add manager with manager default', function() {
+            var manager = function() {
+                return {name:'myManager'};
+            };
+
+            wwe.addManager(manager);
+
+            expect(wwe.getManager('myManager')).toBeDefined();
+        });
+    });
 });

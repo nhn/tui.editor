@@ -2,6 +2,7 @@
 
 var UL = require('../../src/js/wysiwygCommands/ul'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
+    WwTaskManager = require('../../src/js/wwTaskManager'),
     EventManager = require('../../src/js/eventManager');
 
 describe('UL', function() {
@@ -16,6 +17,7 @@ describe('UL', function() {
 
         wwe.init(function() {
             sq = wwe.getEditor();
+            wwe.addManager('task', WwTaskManager);
             done();
         });
     });

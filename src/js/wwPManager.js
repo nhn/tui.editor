@@ -20,6 +20,8 @@ function WwPManager(wwe) {
     this._init();
 }
 
+WwPManager.prototype.name = 'p';
+
 /**
  * _init
  * Init
