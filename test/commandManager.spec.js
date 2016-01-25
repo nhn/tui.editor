@@ -157,7 +157,7 @@ describe('CommandManager', function() {
                 execSpy = jasmine.createSpy('spy'),
                 preventDefault = jasmine.createSpy('preventDefault');
 
-            command.setKeyMap('CTRL+B', 'META+B');
+            command.setKeyMap('CTRL+B', 'CTRL+B');
             command.exec = execSpy;
             cmgr.addCommand(command);
 
@@ -166,7 +166,7 @@ describe('CommandManager', function() {
             };
 
             mockupBase.eventManager.emit('keyMap', {
-                keyMap: 'META+B',
+                keyMap: 'CTRL+B',
                 data: {
                     preventDefault: preventDefault
                 }

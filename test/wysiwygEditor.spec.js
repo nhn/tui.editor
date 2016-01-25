@@ -221,11 +221,13 @@ describe('WysiwygEditor', function() {
 
             setTimeout(function() {
                 wwe.getEditor().insertHTML('<h1>test</h1>');
-                wwe.getEditor().undo();
-                expect(wwe.get$Body().find('h1').length).toEqual(0);
-                expect(wwe.get$Body().find('h2').length).toEqual(1);
-                done();
-            });
+                setTimeout(function() {
+                    wwe.getEditor().undo();
+                    expect(wwe.get$Body().find('h1').length).toEqual(0);
+                    expect(wwe.get$Body().find('h2').length).toEqual(1);
+                    done();
+                }, 0);
+            }, 0);
         });
     });
 

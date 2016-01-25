@@ -80,7 +80,7 @@ CommandManager.prototype._initEvent = function() {
 
         if (command) {
             ev.data.preventDefault();
-            self.exec(self.keyMapCommand[ev.keyMap]);
+            self.exec(command);
         }
     });
 };

@@ -35,7 +35,7 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
             $task = $(range.startContainer).closest('li');
             $prev = $task.prev();
 
-            if (!$prev) {
+            if (!$prev.length) {
                 return;
             }
 
