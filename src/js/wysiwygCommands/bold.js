@@ -24,11 +24,13 @@ var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        sq.removeItalic();
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
             sq.changeFormat(null, {tag:'b'});
         } else if (!sq.hasFormat('a')) {
+            if (sq.hasFormat('i')) {
+                sq.removeItalic();
+            }
             sq.bold();
         }
 
