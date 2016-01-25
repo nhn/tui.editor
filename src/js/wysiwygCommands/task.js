@@ -22,10 +22,12 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var selection, $selected, $li, hasInput, $block,
+        var range,
             sq = wwe.getEditor();
 
-        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
+        range = sq.getSelection().cloneRange();
+
+        if (!range.collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }
@@ -33,41 +35,12 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
         if (!sq.hasFormat('li')) {
             wwe.unwrapBlockTag();
             sq.makeUnorderedList();
+            range = sq.getSelection().cloneRange();
         }
 
-        selection = sq.getSelection().cloneRange();
-        $selected = $(selection.startContainer);
-        $li = $selected.closest('li');
-
-        hasInput = $li.children('input').length || $li.children('div').eq(0).children('input').length;
-
-        $li.addClass('task-list-item');
-
-        if (!hasInput) {
-            selection = wwe.insertSelectionMarker(selection);
-
-            $block = $(selection.startContainer).closest('div').eq(0);
-
-            if (!$block.length) {
-                $block = $(selection.startContainer).closest('li').eq(0);
-            }
-
-            selection.setStart($block[0], 0);
-            selection.collapse(true);
-
-            sq.insertElement(sq.createElement('INPUT', {
-                type: 'checkbox'
-            }), selection);
-
-            selection.setStart($block[0], 1);
-
-            //we need some space for safari
-            sq.insertElement(sq.getDocument().createTextNode(' '), selection);
-
-
-            wwe.restoreSelectionMarker();
-        }
-
+        range = wwe.insertSelectionMarker(range);
+        wwe.getManager('task').formatTask(range.startContainer);
+        wwe.restoreSelectionMarker();
         sq.focus();
     }
 });

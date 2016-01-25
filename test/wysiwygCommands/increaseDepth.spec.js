@@ -1,10 +1,10 @@
 'use strict';
 
-var IncreaseTask = require('../../src/js/wysiwygCommands/increaseTask'),
+var IncreaseDepth = require('../../src/js/wysiwygCommands/increaseDepth'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager');
 
-describe('IncreaseTask', function() {
+describe('IncreaseDepth', function() {
     var wwe, sq;
 
     beforeEach(function(done) {
@@ -24,7 +24,7 @@ describe('IncreaseTask', function() {
         $('body').empty();
     });
 
-    it('Increase Task Depth', function() {
+    it('Increase Depth', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
         wwe.get$Body().html([
             '<ul>',
@@ -38,7 +38,7 @@ describe('IncreaseTask', function() {
 
         sq.setSelection(range);
 
-        IncreaseTask.exec(wwe);
+        IncreaseDepth.exec(wwe);
 
         expect(sq.getHTML().replace(/<br>/g, '')).toEqual([
             '<ul>',

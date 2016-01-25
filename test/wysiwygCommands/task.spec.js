@@ -1,6 +1,7 @@
 'use strict';
 
 var Task = require('../../src/js/wysiwygCommands/task'),
+    WwTaskManager = require('../../src/js/wwTaskManager'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager');
 
@@ -16,6 +17,7 @@ describe('Task', function() {
 
         wwe.init(function() {
             sq = wwe.getEditor();
+            wwe.addManager(WwTaskManager);
             done();
         });
     });
