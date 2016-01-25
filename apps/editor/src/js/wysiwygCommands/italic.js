@@ -24,11 +24,12 @@ var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        sq.removeBold();
-
         if (sq.hasFormat('i') || sq.hasFormat('em')) {
             sq.changeFormat(null, {tag:'i'});
         } else if (!sq.hasFormat('a')) {
+            if (sq.hasFormat('b')) {
+                sq.removeBold();
+            }
             sq.italic();
         }
 
