@@ -104,14 +104,29 @@ WwTaskManager.prototype._initKeyHandler = function() {
                 isHandled = true;
             }
         } else if (keyMap === 'SHIFT+TAB') {
-            if (range.collapsed && self._isInTaskList(range)) {
-                event.preventDefault();
-                //todo DecreaseTask로 커맨드 뽑자
-                self.wwe.getEditor().recordUndoState(range);
-                self.wwe.getEditor().decreaseListLevel();
-                self.eventManager.emit('command', 'Task');
-                isHandled = true;
-            }
+            if (range.collapsed) {
+                if (self._isInTaskList(range) && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
+                    //todo DecreaseTask로 커맨드 뽑자
+                    //self.wwe.getEditor().recordUndoState(range);
+                    //self.wwe.getEditor().decreaseListLevel();
+                    //self.eventManager.emit('command', 'Task');
+                    //isHandled = true;
+                    self.unformatTask(range.startContainer);
+                    setTimeout(function() {
+                        if (self._isInTaskList()) {
+                            self.eventManager.emit('command', 'Task');
+                        }
+                    }, 0);
+                    isHandled = true;
+                } else if (self.wwe.getEditor().hasFormat('LI')) {
+                    setTimeout(function() {
+                        if (self._isInTaskList()) {
+                            self.eventManager.emit('command', 'Task');
+                        }
+                    }, 0);
+                    isHandled = true;
+                }
+             }
         }
 
         return isHandled;
@@ -212,8 +227,6 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
 
     startContainer = range.startContainer;
     startOffset = range.startOffset;
-
-    debugger;
 
     //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
     //유저가 임의로 Task빈칸에 수정을 가했을경우
