@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements inceaseTask wysiwyg command
+ * @fileoverview Implements incease depth wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -9,20 +9,20 @@ var CommandManager = require('../commandManager');
 
 var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 /**
- * IncreaseTask
- * increase task depth to wysiwyg Editor
- * @exports IncreaseTask
+ * IncreaseDepth
+ * increase depth of list or task to wysiwyg Editor
+ * @exports IncreaseDepth
  * @augments Command
  * @augments WysiwygCommand
  */
 var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
-    name: 'IncreaseTask',
+    name: 'IncreaseDepth',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var range, $prev, prevClasses, $task, taskClasses;
+        var range, $prev, prevClasses, $node, nodeClasses;
 
         range = wwe.getEditor().getSelection();
 
@@ -32,8 +32,8 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
         }
 
         if (range.collapsed && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
-            $task = $(range.startContainer).closest('li');
-            $prev = $task.prev();
+            $node = $(range.startContainer).closest('li');
+            $prev = $node.prev();
 
             if (!$prev.length) {
                 return;
@@ -41,15 +41,15 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
 
             wwe.getEditor().recordUndoState(range);
 
-            taskClasses = $task.attr('class');
+            nodeClasses = $node.attr('class');
             prevClasses = $prev.attr('class');
 
-            $task.removeAttr('class');
+            $node.removeAttr('class');
             $prev.removeAttr('class');
 
             wwe.getEditor().increaseListLevel();
 
-            $task.attr('class', taskClasses);
+            $node.attr('class', nodeClasses);
             $prev.attr('class', prevClasses);
         }
     }

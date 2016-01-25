@@ -80,13 +80,9 @@ WwTaskManager.prototype._initKeyHandler = function() {
                 //if문에 task가 아닌 li인지를 체크하는것은
                 //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
                 self._unformatTaskIfNeedOnEnter(range);
-
                 setTimeout(function() {
-                    if (self._isInTaskList()) {
-                        self.eventManager.emit('command', 'Task');
-                    }
+                    self._formatTaskIfNeed();
                 }, 0);
-
                 isHandled = true;
             }
         } else if (keyMap === 'BACK_SPACE') {
@@ -98,31 +94,26 @@ WwTaskManager.prototype._initKeyHandler = function() {
                 }
             }
         } else if (keyMap === 'TAB') {
-            if (range.collapsed && self._isInTaskList(range)) {
-                event.preventDefault();
-                self.eventManager.emit('command', 'IncreaseTask');
-                isHandled = true;
+            if (range.collapsed) {
+                if (self.wwe.getEditor().hasFormat('LI')) {
+                    event.preventDefault();
+                    self.eventManager.emit('command', 'IncreaseDepth');
+                    isHandled = true;
+                }
             }
         } else if (keyMap === 'SHIFT+TAB') {
             if (range.collapsed) {
-                if (self._isInTaskList(range) && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
-                    //todo DecreaseTask로 커맨드 뽑자
-                    //self.wwe.getEditor().recordUndoState(range);
-                    //self.wwe.getEditor().decreaseListLevel();
-                    //self.eventManager.emit('command', 'Task');
-                    //isHandled = true;
+                if (self._isEmptyTask(range)) {
+                    self.wwe.getEditor().recordUndoState(range);
                     self.unformatTask(range.startContainer);
                     setTimeout(function() {
-                        if (self._isInTaskList()) {
-                            self.eventManager.emit('command', 'Task');
-                        }
+                        self._formatTaskIfNeed();
                     }, 0);
                     isHandled = true;
                 } else if (self.wwe.getEditor().hasFormat('LI')) {
+                    self.wwe.getEditor().recordUndoState(range);
                     setTimeout(function() {
-                        if (self._isInTaskList()) {
-                            self.eventManager.emit('command', 'Task');
-                        }
+                        self._formatTaskIfNeed();
                     }, 0);
                     isHandled = true;
                 }
@@ -201,19 +192,22 @@ WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
  * @param {Range} range range
  */
 WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
-    var $selected, $li, $inputs,
-        isEmptyTask;
+    var $li;
 
-    $selected = $(range.startContainer);
-    $li = $selected.closest('li');
-    $inputs = $li.find('input:checkbox');
-    isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
+    $li = $(range.startContainer).closest('li');
 
-    if ($li.length && $inputs.length && isEmptyTask) {
-        $inputs.remove();
-        $li.removeClass('task-list-item');
+    if (this._isEmptyTask(range)) {
+        this.unformatTask(range.startContainer);
         $li.html('<div><br></div>');
     }
+};
+
+WwTaskManager.prototype._isEmptyTask = function(range) {
+    return this._isInTaskList(range) && this._isEmptyContainer(range.startContainer);
+};
+
+WwTaskManager.prototype._isEmptyContainer = function(node) {
+    return node.textContent.replace(FIND_TASK_SPACES_RX, '') === '';
 };
 
 /**
@@ -330,6 +324,11 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
     });
 };
 
+/**
+ * unformatTask
+ * Unforamt task
+ * @param {Node} node target
+ */
 WwTaskManager.prototype.unformatTask = function unformatTask(node) {
     var $li, firstTextNode, $wrapper;
 
@@ -355,6 +354,59 @@ WwTaskManager.prototype.unformatTask = function unformatTask(node) {
 
     if (firstTextNode && firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX)) {
         firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+    }
+};
+
+/**
+ * formatTask
+ * Format task
+ * @param {Node} node target
+ */
+WwTaskManager.prototype.formatTask = function(node) {
+    var range, $selected, $li, hasInput, $block, sq;
+
+    sq = this.wwe.getEditor();
+    $selected = $(node);
+    $li = $selected.closest('li');
+
+    hasInput = $li.children('input:checkbox').length || $li.children('div').eq(0).children('input:checkbox').length;
+
+    $li.addClass('task-list-item');
+
+    if (!hasInput) {
+        $block = $selected.closest('div').eq(0);
+
+        if (!$block.length) {
+            $block = $selected.closest('li').eq(0);
+        }
+
+        range = sq.getSelection().cloneRange();
+
+        range.setStart($block[0], 0);
+        range.collapse(true);
+
+        sq.insertElement(sq.createElement('INPUT', {
+            type: 'checkbox'
+        }), range);
+
+        range.setStart($block[0], 1);
+
+        //we need some space for safari
+        sq.insertElement(sq.getDocument().createTextNode(' '), range);
+    }
+};
+
+/**
+ * _formatTaskIfNeed
+ * Format task if current range has task class name
+ */
+WwTaskManager.prototype._formatTaskIfNeed = function() {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+    if (this._isInTaskList(range)) {
+        range = this.wwe.insertSelectionMarker(range);
+        this.formatTask(range.startContainer);
+        this.wwe.restoreSelectionMarker();
     }
 };
 

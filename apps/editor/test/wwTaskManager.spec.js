@@ -238,4 +238,37 @@ describe('WwTaskManager', function() {
             expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
         });
     });
+
+    describe('formatTask()', function() {
+        it('Format task to passed node', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
+
+            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.collapse(true);
+
+            mgr.formatTask(range.startContainer);
+
+            expect(wwe.get$Body().find('input').length).toEqual(1);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+        });
+    });
+
+    describe('unformatTask()', function() {
+        it('unformat task to passed node', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test</div></li></ul>');
+
+            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.collapse(true);
+
+            mgr.unformatTask(range.startContainer);
+
+            expect(wwe.get$Body().find('input').length).toEqual(0);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
+            expect(wwe.get$Body().find('div').text()).toEqual('test');
+        });
+    });
 });
