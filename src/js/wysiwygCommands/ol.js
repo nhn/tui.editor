@@ -5,8 +5,7 @@
 
 'use strict';
 
-var CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+var CommandManager = require('../commandManager');
 
 /**
  * OL

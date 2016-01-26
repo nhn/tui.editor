@@ -1191,57 +1191,57 @@
 	'use strict';
 
 	var MarkdownEditor = __webpack_require__(6),
-	    Preview = __webpack_require__(7),
-	    WysiwygEditor = __webpack_require__(9),
-	    Layout = __webpack_require__(19),
-	    EventManager = __webpack_require__(20),
-	    CommandManager = __webpack_require__(21),
-	    extManager = __webpack_require__(23),
-	    ImportManager = __webpack_require__(24),
-	    Convertor = __webpack_require__(25),
-	    DefaultUI = __webpack_require__(27);
+	    Preview = __webpack_require__(8),
+	    WysiwygEditor = __webpack_require__(10),
+	    Layout = __webpack_require__(20),
+	    EventManager = __webpack_require__(21),
+	    CommandManager = __webpack_require__(22),
+	    extManager = __webpack_require__(24),
+	    ImportManager = __webpack_require__(25),
+	    Convertor = __webpack_require__(26),
+	    DefaultUI = __webpack_require__(28);
 
 	//markdown commands
-	var mdBold = __webpack_require__(42),
-	    mdItalic = __webpack_require__(43),
-	    mdBlockquote = __webpack_require__(44),
-	    mdHeading = __webpack_require__(45),
-	    mdHR = __webpack_require__(46),
-	    mdAddLink = __webpack_require__(47),
-	    mdAddImage = __webpack_require__(48),
-	    mdUL = __webpack_require__(49),
-	    mdOL = __webpack_require__(50),
-	    mdTable = __webpack_require__(51),
-	    mdTask = __webpack_require__(52);
+	var mdBold = __webpack_require__(43),
+	    mdItalic = __webpack_require__(44),
+	    mdBlockquote = __webpack_require__(45),
+	    mdHeading = __webpack_require__(46),
+	    mdHR = __webpack_require__(47),
+	    mdAddLink = __webpack_require__(48),
+	    mdAddImage = __webpack_require__(49),
+	    mdUL = __webpack_require__(50),
+	    mdOL = __webpack_require__(51),
+	    mdTable = __webpack_require__(52),
+	    mdTask = __webpack_require__(53);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(53),
-	    wwItalic = __webpack_require__(54),
-	    wwBlockquote = __webpack_require__(55),
-	    wwAddImage = __webpack_require__(56),
-	    wwAddLink = __webpack_require__(57),
-	    wwHR = __webpack_require__(58),
-	    wwHeading = __webpack_require__(59),
-	    wwUL = __webpack_require__(60),
-	    wwOL = __webpack_require__(61),
-	    wwTable = __webpack_require__(62),
-	    wwTableAddRow = __webpack_require__(63),
-	    wwTableAddCol = __webpack_require__(64),
-	    wwTableRemoveRow = __webpack_require__(65),
-	    wwTableRemoveCol = __webpack_require__(66),
-	    wwTableRemove = __webpack_require__(67),
-	    wwIncreaseTask = __webpack_require__(68),
-	    wwTask = __webpack_require__(69);
+	var wwBold = __webpack_require__(54),
+	    wwItalic = __webpack_require__(55),
+	    wwBlockquote = __webpack_require__(56),
+	    wwAddImage = __webpack_require__(57),
+	    wwAddLink = __webpack_require__(58),
+	    wwHR = __webpack_require__(59),
+	    wwHeading = __webpack_require__(60),
+	    wwUL = __webpack_require__(61),
+	    wwOL = __webpack_require__(62),
+	    wwTable = __webpack_require__(63),
+	    wwTableAddRow = __webpack_require__(64),
+	    wwTableAddCol = __webpack_require__(65),
+	    wwTableRemoveRow = __webpack_require__(66),
+	    wwTableRemoveCol = __webpack_require__(67),
+	    wwTableRemove = __webpack_require__(68),
+	    wwIncreaseDepth = __webpack_require__(69),
+	    wwTask = __webpack_require__(70);
 
 	var util = tui.util;
 
 	var __nedInstance = [];
 
 	//default extensions
-	__webpack_require__(70);
 	__webpack_require__(71);
 	__webpack_require__(72);
-	__webpack_require__(75);
+	__webpack_require__(73);
+	__webpack_require__(76);
 
 	/**
 	 * ToastUI Editor
@@ -1520,7 +1520,7 @@
 	    tuiEditor.addCommand(wwAddLink);
 	    tuiEditor.addCommand(wwHR);
 	    tuiEditor.addCommand(wwHeading);
-	    tuiEditor.addCommand(wwIncreaseTask);
+	    tuiEditor.addCommand(wwIncreaseDepth);
 	    tuiEditor.addCommand(wwTask);
 	    tuiEditor.addCommand(wwTable);
 	    tuiEditor.addCommand(wwTableAddRow);
@@ -1537,7 +1537,7 @@
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview
@@ -1545,6 +1545,8 @@
 	 */
 
 	'use strict';
+
+	var keyMapper = __webpack_require__(7).getSharedInstance();
 
 	var CodeMirror = window.CodeMirror;
 
@@ -1612,6 +1614,14 @@
 	    this.cm.on('blur', function() {
 	        self.eventManager.emit('blur', {
 	            source: 'markdown'
+	        });
+	    });
+
+	    this.cm.on('keydown', function(cm, keyboardEvent) {
+	        self.eventManager.emit('keyMap', {
+	            source: 'markdown',
+	            keyMap: keyMapper.convert(keyboardEvent),
+	            data: keyboardEvent
 	        });
 	    });
 
@@ -1777,6 +1787,343 @@
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements KeyMapper
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var KEYBOARD_MAP = [
+	  '', // [0]
+	  '', // [1]
+	  '', // [2]
+	  'CANCEL', // [3]
+	  '', // [4]
+	  '', // [5]
+	  'HELP', // [6]
+	  '', // [7]
+	  'BACK_SPACE', // [8]
+	  'TAB', // [9]
+	  '', // [10]
+	  '', // [11]
+	  'CLEAR', // [12]
+	  'ENTER', // [13]
+	  'ENTER_SPECIAL', // [14]
+	  '', // [15]
+	  '', // [16] SHIFT
+	  '', // [17] CONTROL
+	  '', // [18] ALT
+	  'PAUSE', // [19]
+	  'CAPS_LOCK', // [20]
+	  'KANA', // [21]
+	  'EISU', // [22]
+	  'JUNJA', // [23]
+	  'FINAL', // [24]
+	  'HANJA', // [25]
+	  '', // [26]
+	  'ESCAPE', // [27]
+	  'CONVERT', // [28]
+	  'NONCONVERT', // [29]
+	  'ACCEPT', // [30]
+	  'MODECHANGE', // [31]
+	  'SPACE', // [32]
+	  'PAGE_UP', // [33]
+	  'PAGE_DOWN', // [34]
+	  'END', // [35]
+	  'HOME', // [36]
+	  'LEFT', // [37]
+	  'UP', // [38]
+	  'RIGHT', // [39]
+	  'DOWN', // [40]
+	  'SELECT', // [41]
+	  'PRINT', // [42]
+	  'EXECUTE', // [43]
+	  'PRINTSCREEN', // [44]
+	  'INSERT', // [45]
+	  'DELETE', // [46]
+	  '', // [47]
+	  '0', // [48]
+	  '1', // [49]
+	  '2', // [50]
+	  '3', // [51]
+	  '4', // [52]
+	  '5', // [53]
+	  '6', // [54]
+	  '7', // [55]
+	  '8', // [56]
+	  '9', // [57]
+	  ':', // [58]
+	  ';', // [59]
+	  '<', // [60]
+	  '=', // [61]
+	  '>', // [62]
+	  '?', // [63]
+	  'AT', // [64]
+	  'A', // [65]
+	  'B', // [66]
+	  'C', // [67]
+	  'D', // [68]
+	  'E', // [69]
+	  'F', // [70]
+	  'G', // [71]
+	  'H', // [72]
+	  'I', // [73]
+	  'J', // [74]
+	  'K', // [75]
+	  'L', // [76]
+	  'M', // [77]
+	  'N', // [78]
+	  'O', // [79]
+	  'P', // [80]
+	  'Q', // [81]
+	  'R', // [82]
+	  'S', // [83]
+	  'T', // [84]
+	  'U', // [85]
+	  'V', // [86]
+	  'W', // [87]
+	  'X', // [88]
+	  'Y', // [89]
+	  'Z', // [90]
+	  '', // [91] META
+	  '', // [92]
+	  'CONTEXT_MENU', // [93]
+	  '', // [94]
+	  'SLEEP', // [95]
+	  'NUMPAD0', // [96]
+	  'NUMPAD1', // [97]
+	  'NUMPAD2', // [98]
+	  'NUMPAD3', // [99]
+	  'NUMPAD4', // [100]
+	  'NUMPAD5', // [101]
+	  'NUMPAD6', // [102]
+	  'NUMPAD7', // [103]
+	  'NUMPAD8', // [104]
+	  'NUMPAD9', // [105]
+	  'MULTIPLY', // [106]
+	  'ADD', // [107]
+	  'SEPARATOR', // [108]
+	  'SUBTRACT', // [109]
+	  'DECIMAL', // [110]
+	  'DIVIDE', // [111]
+	  'F1', // [112]
+	  'F2', // [113]
+	  'F3', // [114]
+	  'F4', // [115]
+	  'F5', // [116]
+	  'F6', // [117]
+	  'F7', // [118]
+	  'F8', // [119]
+	  'F9', // [120]
+	  'F10', // [121]
+	  'F11', // [122]
+	  'F12', // [123]
+	  'F13', // [124]
+	  'F14', // [125]
+	  'F15', // [126]
+	  'F16', // [127]
+	  'F17', // [128]
+	  'F18', // [129]
+	  'F19', // [130]
+	  'F20', // [131]
+	  'F21', // [132]
+	  'F22', // [133]
+	  'F23', // [134]
+	  'F24', // [135]
+	  '', // [136]
+	  '', // [137]
+	  '', // [138]
+	  '', // [139]
+	  '', // [140]
+	  '', // [141]
+	  '', // [142]
+	  '', // [143]
+	  'NUM_LOCK', // [144]
+	  'SCROLL_LOCK', // [145]
+	  'WIN_OEM_FJ_JISHO', // [146]
+	  'WIN_OEM_FJ_MASSHOU', // [147]
+	  'WIN_OEM_FJ_TOUROKU', // [148]
+	  'WIN_OEM_FJ_LOYA', // [149]
+	  'WIN_OEM_FJ_ROYA', // [150]
+	  '', // [151]
+	  '', // [152]
+	  '', // [153]
+	  '', // [154]
+	  '', // [155]
+	  '', // [156]
+	  '', // [157]
+	  '', // [158]
+	  '', // [159]
+	  '@', // [160]
+	  '!', // [161]
+	  '\"', // [162]
+	  '#', // [163]
+	  '$', // [164]
+	  '%', // [165]
+	  '&', // [166]
+	  '_', // [167]
+	  '(', // [168]
+	  ')', // [169]
+	  '*', // [170]
+	  '+', // [171]
+	  '|', // [172]
+	  '-', // [173]
+	  '{', // [174]
+	  '}', // [175]
+	  '~', // [176]
+	  '', // [177]
+	  '', // [178]
+	  '', // [179]
+	  '', // [180]
+	  'VOLUME_MUTE', // [181]
+	  'VOLUME_DOWN', // [182]
+	  'VOLUME_UP', // [183]
+	  '', // [184]
+	  '', // [185]
+	  ';', // [186]
+	  '=', // [187]
+	  ',', // [188]
+	  '-', // [189]
+	  '.', // [190]
+	  '/', // [191]
+	  '`', // [192]
+	  '', // [193]
+	  '', // [194]
+	  '', // [195]
+	  '', // [196]
+	  '', // [197]
+	  '', // [198]
+	  '', // [199]
+	  '', // [200]
+	  '', // [201]
+	  '', // [202]
+	  '', // [203]
+	  '', // [204]
+	  '', // [205]
+	  '', // [206]
+	  '', // [207]
+	  '', // [208]
+	  '', // [209]
+	  '', // [210]
+	  '', // [211]
+	  '', // [212]
+	  '', // [213]
+	  '', // [214]
+	  '', // [215]
+	  '', // [216]
+	  '', // [217]
+	  '', // [218]
+	  '[', // [219]
+	  '\\', // [220]
+	  ']', // [221]
+	  '\'', // [222]
+	  '', // [223]
+	  'META', // [224]
+	  'ALTGR', // [225]
+	  '', // [226]
+	  'WIN_ICO_HELP', // [227]
+	  'WIN_ICO_00', // [228]
+	  '', // [229]
+	  'WIN_ICO_CLEAR', // [230]
+	  '', // [231]
+	  '', // [232]
+	  'WIN_OEM_RESET', // [233]
+	  'WIN_OEM_JUMP', // [234]
+	  'WIN_OEM_PA1', // [235]
+	  'WIN_OEM_PA2', // [236]
+	  'WIN_OEM_PA3', // [237]
+	  'WIN_OEM_WSCTRL', // [238]
+	  'WIN_OEM_CUSEL', // [239]
+	  'WIN_OEM_ATTN', // [240]
+	  'WIN_OEM_FINISH', // [241]
+	  'WIN_OEM_COPY', // [242]
+	  'WIN_OEM_AUTO', // [243]
+	  'WIN_OEM_ENLW', // [244]
+	  'WIN_OEM_BACKTAB', // [245]
+	  'ATTN', // [246]
+	  'CRSEL', // [247]
+	  'EXSEL', // [248]
+	  'EREOF', // [249]
+	  'PLAY', // [250]
+	  'ZOOM', // [251]
+	  '', // [252]
+	  'PA1', // [253]
+	  'WIN_OEM_CLEAR', // [254]
+	  '' // [255]
+	];
+
+	var sharedInstance;
+
+	/**
+	 * KeyMapper
+	 * @exports KeyMapper
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {object} options options
+	 * @param {string} options.splitter splitter string default is +
+	 */
+	function KeyMapper(options) {
+	    this._setSplitter(options);
+	}
+
+	KeyMapper.prototype._setSplitter = function(options) {
+	    var splitter = options ? options.splitter : '+';
+	    this._splitter = splitter;
+	};
+
+	KeyMapper.prototype.convert = function(event) {
+	    var keyMap = [], keyChar;
+
+	    if (event.shiftKey) {
+	        keyMap.push('SHIFT');
+	    }
+
+	    if (event.ctrlKey) {
+	        keyMap.push('CTRL');
+	    }
+
+	    if (event.metaKey) {
+	        keyMap.push('META');
+	    }
+
+	    if (event.altKey) {
+	        keyMap.push('ALT');
+	    }
+
+	    keyChar = this._getKeyCodeChar(event.keyCode);
+
+	    if (keyChar) {
+	        keyMap.push(keyChar);
+	    }
+
+	    return keyMap.join(this._splitter);
+	};
+
+	KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
+	    var keyCodeChar;
+
+	    keyCodeChar = KEYBOARD_MAP[keyCode];
+
+	    return keyCodeChar;
+	};
+
+	KeyMapper.getSharedInstance = function() {
+	    if (!sharedInstance) {
+	        sharedInstance = new KeyMapper();
+	    }
+
+	    return sharedInstance;
+	};
+
+	module.exports = KeyMapper;
+
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1786,7 +2133,7 @@
 
 	'use strict';
 
-	var LazyRunner = __webpack_require__(8);
+	var LazyRunner = __webpack_require__(9);
 
 	/**
 	 * Preview
@@ -1858,7 +2205,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	/**
@@ -1941,7 +2288,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1951,15 +2298,17 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10),
-	    WwClipboardManager = __webpack_require__(11),
-	    WwSelectionMarker = __webpack_require__(12),
-	    WwTaskManager = __webpack_require__(13),
-	    WwTableManager = __webpack_require__(14),
-	    WwHrManager = __webpack_require__(15),
-	    WwPManager = __webpack_require__(16),
-	    WwHeadingManager = __webpack_require__(17),
-	    SquireExt = __webpack_require__(18);
+	var domUtils = __webpack_require__(11),
+	    WwClipboardManager = __webpack_require__(12),
+	    WwSelectionMarker = __webpack_require__(13),
+	    WwTaskManager = __webpack_require__(14),
+	    WwTableManager = __webpack_require__(15),
+	    WwHrManager = __webpack_require__(16),
+	    WwPManager = __webpack_require__(17),
+	    WwHeadingManager = __webpack_require__(18),
+	    SquireExt = __webpack_require__(19);
+
+	var keyMapper = __webpack_require__(7).getSharedInstance();
 
 	var util = tui.util;
 
@@ -1990,6 +2339,7 @@
 	    this._silentChange = false;
 
 	    this._keyEventHandlers = [];
+	    this._managers = {};
 
 	    this._clipboardManager = new WwClipboardManager(this);
 	    this._selectionMarker = new WwSelectionMarker();
@@ -2123,6 +2473,14 @@
 	    this.eventManager.listen('changeModeToWysiwyg', function() {
 	        self._autoResizeHeightIfNeed();
 	    });
+
+	    this.eventManager.listen('wysiwygSetValueBefore', function(html) {
+	        return html.replace(/\<br\>( *)\<img/g, '<br><br>$1<img');
+	    });
+
+	    this.eventManager.listen('wysiwygSetValueAfter', function() {
+	        self._wrapDefaultBlockToListInner();
+	    });
 	};
 
 	/**
@@ -2138,8 +2496,9 @@
 	 * _runKeyEventHandlers
 	 * Run key event handler
 	 * @param {Event} event event object
+	 * @param {string} keyMap keyMapString
 	 */
-	WysiwygEditor.prototype._runKeyEventHandlers = function(event) {
+	WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
 	    var range = this.getEditor().getSelection().cloneRange();
 	/*
 	    console.log(event);
@@ -2158,7 +2517,7 @@
 	    console.log('path', this.editor.getPath());
 	*/
 	    util.forEachArray(this._keyEventHandlers, function(handler) {
-	        if (handler(event, range)) {
+	        if (handler(event, range, keyMap)) {
 	            return false;
 	        }
 	    });
@@ -2216,44 +2575,44 @@
 	        self._autoResizeHeightIfNeed();
 	    });
 
-	    this.getEditor().addEventListener('keydown', function(event) {
-	        self._runKeyEventHandlers(event);
+	    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
+	        self._onKeyDown(keyboardEvent);
 	    });
 
-	    this.getEditor().addEventListener('click', function(event) {
+	    this.getEditor().addEventListener('click', function(ev) {
 	        self.eventManager.emit('click', {
 	            source: 'wysiwyg',
-	            data: event
+	            data: ev
 	        });
 	    });
 
-	    this.getEditor().addEventListener('mousedown', function(event) {
+	    this.getEditor().addEventListener('mousedown', function(ev) {
 	        self.eventManager.emit('mousedown', {
 	            source: 'wysiwyg',
-	            data: event
+	            data: ev
 	        });
 	    });
 
-	    this.getEditor().addEventListener('mouseup', function(event) {
+	    this.getEditor().addEventListener('mouseup', function(ev) {
 	        self.eventManager.emit('mouseup', {
 	            source: 'wysiwyg',
-	            data: event
+	            data: ev
 	        });
 	    });
 
-	    this.getEditor().addEventListener('contextmenu', function(event) {
+	    this.getEditor().addEventListener('contextmenu', function(ev) {
 	        self.eventManager.emit('contextmenu', {
 	            source: 'wysiwyg',
-	            data: event
+	            data: ev
 	        });
 	    });
 
 	    //firefox has problem about keydown event while composition korean
 	    //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
 	    if (util.browser.firefox) {
-	        this.getEditor().addEventListener('keypress', function(event) {
-	            if (event.keyCode) {
-	                self._runKeyEventHandlers(event);
+	        this.getEditor().addEventListener('keypress', function(keyboardEvent) {
+	            if (keyboardEvent.keyCode) {
+	                self._onKeyDown(keyboardEvent);
 	            }
 	        });
 	    }
@@ -2281,6 +2640,18 @@
 	    });
 	 };
 
+	WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
+	    var keyMap = keyMapper.convert(keyboardEvent);
+
+	    this.eventManager.emit('keyMap', {
+	        source: 'wysiwyg',
+	        keyMap: keyMap,
+	        data: keyboardEvent
+	    });
+
+	    this._runKeyEventHandlers(keyboardEvent, keyMap);
+	};
+
 	/**
 	 * _initDefaultKeyEventHandler
 	 * Initialize default event handler
@@ -2288,17 +2659,17 @@
 	WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 	    var self = this;
 
-	    this.addKeyEventHandler(function(event, range) {
+	    this.addKeyEventHandler(function(ev, range, keyMap) {
 	        var isHandled;
 
 	        //enter
-	        if (event.keyCode === 13) {
+	        if (keyMap === 'ENTER') {
 	            if (self._isInOrphanText(range)) {
 	                self._wrapDefaultBlockTo(range);
 	                isHandled = true;
 	            }
 	        //backspace
-	        } else if (event.keyCode === 8) {
+	        } else if (keyMap === 'BACK_SPACE') {
 	            if (!range.collapsed) {
 	                self.postProcessForChange();
 	            }
@@ -2450,6 +2821,18 @@
 	};
 
 	/**
+	 * _wrapDefaultBlockToListInner
+	 * Wrap default block to list inner contents
+	 */
+	WysiwygEditor.prototype._wrapDefaultBlockToListInner = function() {
+	    this.get$Body().find('li').each(function(index, node) {
+	        if ($(node).find('div').length <= 0) {
+	            $(node).wrapInner('<div />');
+	        }
+	    });
+	};
+
+	/**
 	 * reset
 	 * Reset wysiwyg editor
 	 */
@@ -2534,11 +2917,15 @@
 	 * @param {string} html html text
 	 */
 	WysiwygEditor.prototype.setValue = function(html) {
+	    html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
 	    this.editor.setHTML(html);
 	    this._autoResizeHeightIfNeed();
 
 	    this.eventManager.emit('wysiwygSetValueAfter', this);
 	    this.eventManager.emit('contentChangedFromWysiwyg', this);
+
+	    this.getEditor().removeLastUndoStack();
+	    this.getEditor().recordUndoState();
 	};
 
 	/**
@@ -2775,6 +3162,34 @@
 	};
 
 	/**
+	 * addManager
+	 * Add manger
+	 * @param {string} name manager name
+	 * @param {function} Manager constructor
+	 */
+	WysiwygEditor.prototype.addManager = function(name, Manager) {
+	    var instance;
+
+	    if (!Manager) {
+	        Manager = name;
+	        name = null;
+	    }
+
+	    instance = new Manager(this);
+	    this._managers[name || instance.name] = instance;
+	};
+
+	/**
+	 * getManager
+	 * Get manager by name
+	 * @param {string} name manager name
+	 * @returns {object} manager
+	 */
+	WysiwygEditor.prototype.getManager = function(name) {
+	    return this._managers[name];
+	};
+
+	/**
 	 * WysiwygEditor factory
 	 * @param {jQuery} $el element to insert editor
 	 * @param {string[]} contentStyles List of CSS style file path for HTML content
@@ -2784,11 +3199,11 @@
 	WysiwygEditor.factory = function($el, contentStyles, eventManager) {
 	    var wwe = new WysiwygEditor($el, contentStyles, eventManager);
 
-	    wwe._taskMgr = new WwTaskManager(wwe);
-	    wwe._tableMgr = new WwTableManager(wwe);
-	    wwe._hrMgr = new WwHrManager(wwe);
-	    wwe._pMgr = new WwPManager(wwe);
-	    wwe._headingMgr = new WwHeadingManager(wwe);
+	    wwe.addManager(WwTaskManager);
+	    wwe.addManager(WwTableManager);
+	    wwe.addManager(WwHrManager);
+	    wwe.addManager(WwPManager);
+	    wwe.addManager(WwHeadingManager);
 
 	    return wwe;
 	};
@@ -2797,7 +3212,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	/**
@@ -3068,7 +3483,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3078,7 +3493,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	var util = tui.util;
 
@@ -3419,7 +3834,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3429,7 +3844,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
 
@@ -3502,7 +3917,7 @@
 
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3512,7 +3927,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 
@@ -3530,6 +3945,8 @@
 
 	    this._init();
 	}
+
+	WwTaskManager.prototype.name = 'task';
 
 	/**
 	 * _init
@@ -3563,7 +3980,7 @@
 	    });
 
 	    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
-	        //we need remove task input space for safari
+	        //we need remove task input space that made for safari
 	        return html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
 	    });
 	};
@@ -3575,26 +3992,22 @@
 	WwTaskManager.prototype._initKeyHandler = function() {
 	    var self = this;
 
-	    this.wwe.addKeyEventHandler(function(event, range) {
+	    this.wwe.addKeyEventHandler(function(event, range, keyMap) {
 	        var isHandled;
 
-	        //enter
-	        if (event.keyCode === 13) {
-	            if (self._isInTaskList(range)) {
-	                //we need remove empty task then Squire control list
+	        if (keyMap === 'ENTER') {
+	             if (self.wwe.getEditor().hasFormat('LI')) {
+	                //we need unformat task then let Squire control list and make task again
 	                //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
+	                //if문에 task가 아닌 li인지를 체크하는것은
+	                //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
 	                self._unformatTaskIfNeedOnEnter(range);
-
 	                setTimeout(function() {
-	                    if (self._isInTaskList()) {
-	                        self.eventManager.emit('command', 'Task');
-	                    }
+	                    self._formatTaskIfNeed();
 	                }, 0);
-
 	                isHandled = true;
 	            }
-	        //backspace
-	        } else if (event.keyCode === 8) {
+	        } else if (keyMap === 'BACK_SPACE') {
 	            if (range.collapsed) {
 	                if (self._isInTaskList(range)) {
 	                    self._unformatTaskIfNeedOnBackspace(range);
@@ -3602,13 +4015,31 @@
 	                    isHandled = true;
 	                }
 	            }
-	        //tab
-	        } else if (event.keyCode === 9) {
-	            if (self._isInTaskList(range)) {
-	                event.preventDefault();
-	                self.eventManager.emit('command', 'IncreaseTask');
-	                isHandled = true;
+	        } else if (keyMap === 'TAB') {
+	            if (range.collapsed) {
+	                if (self.wwe.getEditor().hasFormat('LI')) {
+	                    event.preventDefault();
+	                    self.eventManager.emit('command', 'IncreaseDepth');
+	                    isHandled = true;
+	                }
 	            }
+	        } else if (keyMap === 'SHIFT+TAB') {
+	            if (range.collapsed) {
+	                if (self._isEmptyTask(range)) {
+	                    self.wwe.getEditor().recordUndoState(range);
+	                    self.unformatTask(range.startContainer);
+	                    setTimeout(function() {
+	                        self._formatTaskIfNeed();
+	                    }, 0);
+	                    isHandled = true;
+	                } else if (self.wwe.getEditor().hasFormat('LI')) {
+	                    self.wwe.getEditor().recordUndoState(range);
+	                    setTimeout(function() {
+	                        self._formatTaskIfNeed();
+	                    }, 0);
+	                    isHandled = true;
+	                }
+	             }
 	        }
 
 	        return isHandled;
@@ -3683,19 +4114,22 @@
 	 * @param {Range} range range
 	 */
 	WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
-	    var $selected, $li, $inputs,
-	        isEmptyTask;
+	    var $li;
 
-	    $selected = $(range.startContainer);
-	    $li = $selected.closest('li');
-	    $inputs = $li.find('input:checkbox');
-	    isEmptyTask = ($li.text().replace(FIND_TASK_SPACES_RX, '') === '');
+	    $li = $(range.startContainer).closest('li');
 
-	    if ($li.length && $inputs.length && isEmptyTask) {
-	        $inputs.remove();
-	        $li.removeClass('task-list-item');
+	    if (this._isEmptyTask(range)) {
+	        this.unformatTask(range.startContainer);
 	        $li.html('<div><br></div>');
 	    }
+	};
+
+	WwTaskManager.prototype._isEmptyTask = function(range) {
+	    return this._isInTaskList(range) && this._isEmptyContainer(range.startContainer);
+	};
+
+	WwTaskManager.prototype._isEmptyContainer = function(node) {
+	    return node.textContent.replace(FIND_TASK_SPACES_RX, '') === '';
 	};
 
 	/**
@@ -3806,20 +4240,103 @@
 
 	        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
 
-	        if (!firstTextNode) {
-	            firstTextNode = self.wwe.getEditor().getDocument().createTextNode(' ');
-	            $(firstTextNode).insertAfter($wrapper.find('input'));
-	        } else if (!(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
-	            firstTextNode.nodeValue = ' ' + firstTextNode.nodeValue;
+	        if (!firstTextNode || !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
+	            $(self.wwe.getEditor().getDocument().createTextNode(' ')).insertAfter($wrapper.find('input'));
 	        }
 	    });
+	};
+
+	/**
+	 * unformatTask
+	 * Unforamt task
+	 * @param {Node} node target
+	 */
+	WwTaskManager.prototype.unformatTask = function unformatTask(node) {
+	    var $li, firstTextNode, $wrapper;
+
+	    $li = $(node).closest('li');
+
+	    $wrapper = $li.find('div');
+
+	    if (!$wrapper.length) {
+	        $wrapper = $li;
+	    }
+
+	    $wrapper.find('input:checkbox').remove();
+
+	    $li.removeClass('task-list-item');
+
+	    if (!$li.attr('class')) {
+	        $li.removeAttr('class');
+	    }
+
+	    firstTextNode = $wrapper.contents().filter(function() {
+	        return this.nodeType === 3;
+	    })[0];
+
+	    if (firstTextNode && firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX)) {
+	        firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
+	    }
+	};
+
+	/**
+	 * formatTask
+	 * Format task
+	 * @param {Node} node target
+	 */
+	WwTaskManager.prototype.formatTask = function(node) {
+	    var range, $selected, $li, hasInput, $block, sq;
+
+	    sq = this.wwe.getEditor();
+	    $selected = $(node);
+	    $li = $selected.closest('li');
+
+	    hasInput = $li.children('input:checkbox').length || $li.children('div').eq(0).children('input:checkbox').length;
+
+	    $li.addClass('task-list-item');
+
+	    if (!hasInput) {
+	        $block = $selected.closest('div').eq(0);
+
+	        if (!$block.length) {
+	            $block = $selected.closest('li').eq(0);
+	        }
+
+	        range = sq.getSelection().cloneRange();
+
+	        range.setStart($block[0], 0);
+	        range.collapse(true);
+
+	        sq.insertElement(sq.createElement('INPUT', {
+	            type: 'checkbox'
+	        }), range);
+
+	        range.setStart($block[0], 1);
+
+	        //we need some space for safari
+	        sq.insertElement(sq.getDocument().createTextNode(' '), range);
+	    }
+	};
+
+	/**
+	 * _formatTaskIfNeed
+	 * Format task if current range has task class name
+	 */
+	WwTaskManager.prototype._formatTaskIfNeed = function() {
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+	    if (this._isInTaskList(range)) {
+	        range = this.wwe.insertSelectionMarker(range);
+	        this.formatTask(range.startContainer);
+	        this.wwe.restoreSelectionMarker();
+	    }
 	};
 
 	module.exports = WwTaskManager;
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3829,7 +4346,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	/**
 	 * WwTableManager
@@ -3846,6 +4363,8 @@
 	    this._lastCellNode = null;
 	    this._init();
 	}
+
+	WwTableManager.prototype.name = 'table';
 
 	/**
 	 * _init
@@ -4058,7 +4577,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4068,7 +4587,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	/**
 	 * WwHrManager
@@ -4084,6 +4603,8 @@
 
 	    this._init();
 	}
+
+	WwHrManager.prototype.name = 'hr';
 
 	/**
 	 * _init
@@ -4204,7 +4725,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/**
@@ -4228,6 +4749,8 @@
 
 	    this._init();
 	}
+
+	WwPManager.prototype.name = 'p';
 
 	/**
 	 * _init
@@ -4285,7 +4808,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4295,7 +4818,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_HEADING_RX = /h[\d]/i;
 
@@ -4313,6 +4836,8 @@
 
 	    this._init();
 	}
+
+	WwHeadingManager.prototype.name = 'heading';
 
 	/**
 	 * _init
@@ -4417,7 +4942,7 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4427,7 +4952,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(10);
+	var domUtils = __webpack_require__(11);
 
 	var Squire = window.Squire,
 	    util = tui.util;
@@ -4670,20 +5195,37 @@
 	};
 
 	SquireExt.prototype.recordUndoState = function(range) {
+	    if (!range) {
+	        range = this.getSelection();
+	    }
 	    this._recordUndoState(range);
-	    this._getRangeAndRemoveBookmark(range);
+	    this._getRangeAndRemoveBookmark();
 	};
 
 	SquireExt.prototype.removeLastUndoStack = function() {
-	    this._undoStackLength -= 1;
-	    this._undoIndex -= 1;
+	    if (this._undoStack.length) {
+	        this._undoStackLength -= 1;
+	        this._undoIndex -= 1;
+	        this._undoStack.pop();
+	        this._isInUndoState = false;
+	    }
+	};
+
+	SquireExt.prototype.replaceParent = function(node, from, to) {
+	    var target;
+	    target = $(node).closest(from);
+
+	    if (target.length) {
+	        target.wrapInner('<' + to + '/>');
+	        target.children().unwrap();
+	    }
 	};
 
 	module.exports = SquireExt;
 
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports) {
 
 	/**
@@ -4810,7 +5352,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/**
@@ -4849,6 +5391,7 @@
 	    'convertorAfterHtmlToMarkdownConverted',
 	    'stateChange',
 	    'wysiwygSetValueAfter',
+	    'wysiwygSetValueBefore',
 	    'wysiwygGetValueBefore',
 	    'wysiwygProcessHTMLText',
 	    'wysiwygRangeChangeAfter',
@@ -4856,6 +5399,7 @@
 	    'mousedown',
 	    'mouseup',
 	    'contextmenu',
+	    'keyMap',
 	    'load',
 	    'focus',
 	    'blur',
@@ -4998,7 +5542,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5010,7 +5554,10 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(22);
+	var Command = __webpack_require__(23);
+
+	var isMac = /Mac/.test(navigator.platform),
+	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
 	/**
 	 * CommandManager
@@ -5024,6 +5571,8 @@
 	    this._mdCommand = new util.Map();
 	    this._wwCommand = new util.Map();
 	    this.base = base;
+
+	    this.keyMapCommand = {};
 
 	    this._initEvent();
 	}
@@ -5054,6 +5603,10 @@
 
 	    commandBase.set(name, command);
 
+	    if (command.keyMap) {
+	        this.keyMapCommand[command.keyMap[KEYMAP_OS_INDEX]] = name;
+	    }
+
 	    return command;
 	};
 
@@ -5067,6 +5620,15 @@
 
 	    this.base.eventManager.listen('command', function() {
 	        self.exec.apply(self, arguments);
+	    });
+
+	    this.base.eventManager.listen('keyMap', function(ev) {
+	        var command = self.keyMapCommand[ev.keyMap];
+
+	        if (command) {
+	            ev.data.preventDefault();
+	            self.exec(command);
+	        }
 	    });
 	};
 
@@ -5103,7 +5665,7 @@
 	CommandManager.command = function(type, props) {
 	    var command;
 
-	    command = Command.factory(type, props.name);
+	    command = Command.factory(type, props.name, props.keyMap);
 
 	    util.extend(command, props);
 
@@ -5115,7 +5677,7 @@
 
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports) {
 
 	/**
@@ -5135,10 +5697,15 @@
 	 * @class
 	 * @param {string} name Command name
 	 * @param {number} type Command type (Command.TYPE)
+	 * @param {Array<string>} keyMap keyMap
 	 */
-	function Command(name, type) {
+	function Command(name, type, keyMap) {
 	    this.name = name;
 	    this.type = type;
+
+	    if (keyMap) {
+	        this.setKeyMap(keyMap);
+	    }
 	}
 
 	/**
@@ -5189,7 +5756,7 @@
 	/**
 	 * setKeyMap
 	 * Set keymap value for each os
-	 * @param {string} win window Key
+	 * @param {string} win window Key(and etc)
 	 * @param {string} mac mac osx key
 	 */
 	Command.prototype.setKeyMap = function(win, mac) {
@@ -5227,7 +5794,7 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports) {
 
 	/**
@@ -5270,7 +5837,7 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/**
@@ -5353,7 +5920,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5363,7 +5930,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(26);
+	var markedCustomRenderer = __webpack_require__(27);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -5476,7 +6043,7 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/**
@@ -5552,7 +6119,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5562,15 +6129,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(28),
-	    Tab = __webpack_require__(33),
-	    Layerpopup = __webpack_require__(35),
-	    ModeSwitch = __webpack_require__(36),
-	    PopupAddLink = __webpack_require__(37),
-	    PopupAddImage = __webpack_require__(38),
-	    PopupTableUtils = __webpack_require__(39),
-	    PopupAddTable = __webpack_require__(40),
-	    PopupAddHeading = __webpack_require__(41);
+	var Toolbar = __webpack_require__(29),
+	    Tab = __webpack_require__(34),
+	    Layerpopup = __webpack_require__(36),
+	    ModeSwitch = __webpack_require__(37),
+	    PopupAddLink = __webpack_require__(38),
+	    PopupAddImage = __webpack_require__(39),
+	    PopupTableUtils = __webpack_require__(40),
+	    PopupAddTable = __webpack_require__(41),
+	    PopupAddHeading = __webpack_require__(42);
 
 
 	var containerTmpl = [
@@ -5745,7 +6312,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5755,9 +6322,9 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(29),
-	    Button = __webpack_require__(30),
-	    ToggleButton = __webpack_require__(32);
+	var UIController = __webpack_require__(30),
+	    Button = __webpack_require__(31),
+	    ToggleButton = __webpack_require__(33);
 
 	var util = tui.util;
 
@@ -5904,7 +6471,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/**
@@ -6148,7 +6715,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6157,8 +6724,8 @@
 	 */
 	'use strict';
 
-	var UIController = __webpack_require__(29);
-	var Tooltip = __webpack_require__(31);
+	var UIController = __webpack_require__(30);
+	var Tooltip = __webpack_require__(32);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -6249,7 +6816,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/**
@@ -6292,7 +6859,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6301,7 +6868,7 @@
 	 */
 	'use strict';
 
-	var Button = __webpack_require__(30);
+	var Button = __webpack_require__(31);
 
 	var util = tui.util;
 
@@ -6355,7 +6922,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6365,8 +6932,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(29),
-	    templater = __webpack_require__(34);
+	var UIController = __webpack_require__(30),
+	    templater = __webpack_require__(35);
 
 	var util = tui.util;
 
@@ -6557,7 +7124,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	/**
@@ -6600,7 +7167,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6610,7 +7177,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(29);
+	var UIController = __webpack_require__(30);
 
 	var util = tui.util,
 	    _id = 0,
@@ -6853,7 +7420,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6863,7 +7430,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(29);
+	var UIController = __webpack_require__(30);
 
 	var util = tui.util;
 
@@ -6941,7 +7508,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6951,7 +7518,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(35);
+	var LayerPopup = __webpack_require__(36);
 
 	var util = tui.util;
 
@@ -7052,7 +7619,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7062,8 +7629,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(35),
-	    Tab = __webpack_require__(33);
+	var LayerPopup = __webpack_require__(36),
+	    Tab = __webpack_require__(34);
 
 	var util = tui.util;
 
@@ -7245,7 +7812,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7255,7 +7822,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(35);
+	var LayerPopup = __webpack_require__(36);
 
 	var util = tui.util;
 
@@ -7362,7 +7929,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7372,7 +7939,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(35);
+	var LayerPopup = __webpack_require__(36);
 
 	var util = tui.util;
 
@@ -7723,7 +8290,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7733,7 +8300,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(35);
+	var LayerPopup = __webpack_require__(36);
 
 	var util = tui.util;
 
@@ -7806,7 +8373,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7816,7 +8383,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -7828,7 +8395,7 @@
 	 */
 	var Bold = CommandManager.command('markdown', /** @lends Bold */{
 	    name: 'Bold',
-	    keyMap: ['Ctrl-B', 'Ctrl-B'],
+	    keyMap: ['CTRL+B', 'CTRL+B'],
 	    /**
 	     * Command Handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -7914,7 +8481,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7924,7 +8491,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -7937,7 +8504,7 @@
 	 */
 	var Italic = CommandManager.command('markdown', /** @lends Italic */{
 	    name: 'Italic',
-	    keyMap: ['Ctrl-I', 'Ctrl-I'],
+	    keyMap: ['CTRL+I', 'CTRL+I'],
 	    /**
 	     * Command handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8082,7 +8649,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8092,7 +8659,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * Blockquote
@@ -8102,7 +8669,7 @@
 	 */
 	var Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
 	    name: 'Blockquote',
-	    keyMap: ['Ctrl-Q', 'Ctrl-Q'],
+	    keyMap: ['CTRL+Q', 'CTRL+Q'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8151,7 +8718,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8161,7 +8728,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	var util = tui.util;
 
@@ -8173,8 +8740,6 @@
 	 */
 	var Heading = CommandManager.command('markdown', /** @lends Heading */{
 	    name: 'Heading',
-	    keyMap: ['Ctrl-H', 'Ctrl-H'],
-
 	    /**
 	     * Command Handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8243,7 +8808,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8253,7 +8818,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * HR
@@ -8263,6 +8828,7 @@
 	 */
 	var HR = CommandManager.command('markdown', /** @lends HR */{
 	    name: 'HR',
+	    keyMap: ['CTRL+L', 'CTRL+L'],
 	    /**
 	     * Command handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8307,7 +8873,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8317,7 +8883,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * AddLink
@@ -8361,7 +8927,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8371,7 +8937,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * AddImage
@@ -8417,7 +8983,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8427,7 +8993,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -8440,6 +9006,7 @@
 	 */
 	var UL = CommandManager.command('markdown', /** @lends UL */{
 	    name: 'UL',
+	    keyMap: ['CTRL+U', 'CTRL+U'],
 	    /**
 	     * Command handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8480,7 +9047,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8490,7 +9057,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -8503,6 +9070,7 @@
 	 */
 	var OL = CommandManager.command('markdown', /** @lends OL */{
 	    name: 'OL',
+	    keyMap: ['CTRL+O', 'CTRL+O'],
 	    /**
 	     * Command handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8543,7 +9111,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8553,7 +9121,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * Table
@@ -8638,7 +9206,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8648,7 +9216,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * Task
@@ -8658,6 +9226,7 @@
 
 	var Task = CommandManager.command('markdown', /** @lends Task */{
 	    name: 'Task',
+	    keyMap: ['CTRL+T', 'CTRL+T'],
 	    /**
 	     * Command handler
 	     * @param {MarkdownEditor} mde MarkdownEditor instance
@@ -8691,51 +9260,6 @@
 
 
 /***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Implements WysiwygCommand
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var CommandManager = __webpack_require__(21);
-
-	/**
-	 * Bold
-	 * Add bold to selected wysiwyg editor content
-	 * @exports Bold
-	 * @augments Command
-	 * @augments WysiwygCommand
-	 */
-	var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
-	    name: 'Bold',
-	    keyMap: ['Ctrl-B', 'Ctrl-B'],
-	    /**
-	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-	     */
-	    exec: function(wwe) {
-	        var sq = wwe.getEditor();
-
-	        sq.removeItalic();
-
-	        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-	            sq.changeFormat(null, {tag:'b'});
-	        } else if (!sq.hasFormat('a')) {
-	            sq.bold();
-	        }
-
-	        sq.focus();
-	    }
-	});
-
-	module.exports = Bold;
-
-
-/***/ },
 /* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -8746,18 +9270,18 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
-	 * Italic
-	 * Add Italic to selected wysiwyg editor content
-	 * @exports Italic
+	 * Bold
+	 * Add bold to selected wysiwyg editor content
+	 * @exports Bold
 	 * @augments Command
 	 * @augments WysiwygCommand
 	 */
-	var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
-	    name: 'Italic',
-	    keyMap: ['Ctrl-I', 'Ctrl-I'],
+	var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
+	    name: 'Bold',
+	    keyMap: ['CTRL+B', 'CTRL+B'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
@@ -8765,19 +9289,21 @@
 	    exec: function(wwe) {
 	        var sq = wwe.getEditor();
 
-	        sq.removeBold();
 
-	        if (sq.hasFormat('i') || sq.hasFormat('em')) {
-	            sq.changeFormat(null, {tag:'i'});
+	        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+	            sq.changeFormat(null, {tag:'b'});
 	        } else if (!sq.hasFormat('a')) {
-	            sq.italic();
+	            if (sq.hasFormat('i')) {
+	                sq.removeItalic();
+	            }
+	            sq.bold();
 	        }
 
 	        sq.focus();
 	    }
 	});
 
-	module.exports = Italic;
+	module.exports = Bold;
 
 
 /***/ },
@@ -8791,7 +9317,53 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
+
+	/**
+	 * Italic
+	 * Add Italic to selected wysiwyg editor content
+	 * @exports Italic
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
+	    name: 'Italic',
+	    keyMap: ['CTRL+I', 'CTRL+I'],
+	    /**
+	     *  커맨드 핸들러
+	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     */
+	    exec: function(wwe) {
+	        var sq = wwe.getEditor();
+
+	        if (sq.hasFormat('i') || sq.hasFormat('em')) {
+	            sq.changeFormat(null, {tag:'i'});
+	        } else if (!sq.hasFormat('a')) {
+	            if (sq.hasFormat('b')) {
+	                sq.removeBold();
+	            }
+	            sq.italic();
+	        }
+
+	        sq.focus();
+	    }
+	});
+
+	module.exports = Italic;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements WysiwygCommand
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * Blockquote
@@ -8802,6 +9374,7 @@
 	 */
 	var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
 	    name: 'Blockquote',
+	    keyMap: ['CTRL+Q', 'CTRL+Q'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
@@ -8822,7 +9395,7 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8832,7 +9405,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * AddImage
@@ -8861,7 +9434,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8871,7 +9444,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * AddLink
@@ -8910,7 +9483,7 @@
 
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8920,7 +9493,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * HR
@@ -8931,6 +9504,7 @@
 	 */
 	var HR = CommandManager.command('wysiwyg', /** @lends HR */{
 	    name: 'HR',
+	    keyMap: ['CTRL+L', 'CTRL+L'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
@@ -8968,7 +9542,7 @@
 
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8978,8 +9552,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
-	var domUtils = __webpack_require__(10);
+	var CommandManager = __webpack_require__(22);
+	var domUtils = __webpack_require__(11);
 
 	/**
 	 * Heading
@@ -9016,48 +9590,6 @@
 
 
 /***/ },
-/* 60 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Implements WysiwygCommand
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var CommandManager = __webpack_require__(21);
-
-	/**
-	 * UL
-	 * Add UL to selected wysiwyg editor content
-	 * @exports UL
-	 * @augments Command
-	 * @augments WysiwygCommand
-	 */
-	var UL = CommandManager.command('wysiwyg', /** @lends UL */{
-	    name: 'UL',
-	    keyMap: ['Ctrl-U', 'Ctrl-U'],
-	    /**
-	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-	     */
-	    exec: function(wwe) {
-	        var sq = wwe.getEditor();
-
-	        if (sq.getSelection().collapsed && !sq.hasFormat('TABLE')) {
-	            wwe.unwrapBlockTag();
-	            sq.makeUnorderedList();
-	        }
-
-	        sq.focus();
-	    }
-	});
-
-	module.exports = UL;
-
-
-/***/ },
 /* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -9068,35 +9600,46 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
-	 * OL
-	 * Add OL to selected wysiwyg editor content
-	 * @exports OL
+	 * UL
+	 * Add UL to selected wysiwyg editor content
+	 * @exports UL
 	 * @augments Command
 	 * @augments WysiwygCommand
 	 */
-	var OL = CommandManager.command('wysiwyg', /** @lends OL */{
-	    name: 'OL',
-	    keyMap: ['Ctrl-O', 'Ctrl-O'],
+	var UL = CommandManager.command('wysiwyg', /** @lends UL */{
+	    name: 'UL',
+	    keyMap: ['CTRL+U', 'CTRL+U'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var sq = wwe.getEditor();
+	        var sq = wwe.getEditor(),
+	            range = sq.getSelection();
 
-	        if (sq.getSelection().collapsed && !sq.hasFormat('TABLE')) {
+	        if (!range.collapsed) {
+	            return;
+	        }
+
+	        if (sq.hasFormat('LI')) {
+	            sq.recordUndoState(range);
+	            wwe.saveSelection(range);
+	            wwe.getManager('task').unformatTask(range.startContainer);
+	            sq.replaceParent(range.startContainer, 'ol', 'ul');
+	            wwe.restoreSavedSelection();
+	        } else if (!sq.hasFormat('TABLE')) {
 	            wwe.unwrapBlockTag();
-	            sq.makeOrderedList();
+	            sq.makeUnorderedList();
 	        }
 
 	        sq.focus();
 	    }
 	});
 
-	module.exports = OL;
+	module.exports = UL;
 
 
 /***/ },
@@ -9110,7 +9653,61 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
+
+	/**
+	 * OL
+	 * Add OL to selected wysiwyg editor content
+	 * @exports OL
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var OL = CommandManager.command('wysiwyg', /** @lends OL */{
+	    name: 'OL',
+	    keyMap: ['CTRL+O', 'CTRL+O'],
+	    /**
+	     *  커맨드 핸들러
+	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     */
+	    exec: function(wwe) {
+	        var sq = wwe.getEditor(),
+	            range = sq.getSelection();
+
+	        if (!range.collapsed) {
+	            return;
+	        }
+
+	        if (sq.hasFormat('LI')) {
+	            sq.recordUndoState(range);
+
+	            wwe.saveSelection(range);
+	            wwe.getManager('task').unformatTask(range.startContainer);
+	            sq.replaceParent(range.startContainer, 'ul', 'ol');
+	            wwe.restoreSavedSelection();
+	        } else if (!sq.hasFormat('TABLE')) {
+	            wwe.unwrapBlockTag();
+	            sq.makeOrderedList();
+	        }
+
+	        sq.focus();
+	    }
+	});
+
+	module.exports = OL;
+
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements WysiwygCommand
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var CommandManager = __webpack_require__(22);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -9212,7 +9809,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9222,7 +9819,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * AddRow
@@ -9278,7 +9875,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9288,8 +9885,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21),
-	    domUtils = __webpack_require__(10);
+	var CommandManager = __webpack_require__(22),
+	    domUtils = __webpack_require__(11);
 
 	/**
 	 * AddCol
@@ -9365,7 +9962,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9375,7 +9972,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * RemoveRow
@@ -9427,7 +10024,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9437,8 +10034,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21),
-	    domUtils = __webpack_require__(10);
+	var CommandManager = __webpack_require__(22),
+	    domUtils = __webpack_require__(11);
 
 	/**
 	 * RemoveCol
@@ -9509,7 +10106,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9519,7 +10116,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * RemoveTable
@@ -9554,39 +10151,36 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Implements inceaseTask wysiwyg command
+	 * @fileoverview Implements incease depth wysiwyg command
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
-
-	var INLINE_NODE_RX = /^(?:#text|A(?:BBR|CRONYM)?|B(?:R|D[IO])?|C(?:ITE|ODE)|D(?:ATA|EL|FN)|EM|FONT|HR|I(?:MG|NPUT|NS)?|KBD|Q|R(?:P|T|UBY)|S(?:AMP|MALL|PAN|TR(?:IKE|ONG)|U[BP])?|U|VAR|WBR)$/;
+	var CommandManager = __webpack_require__(22);
 
 	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 	/**
-	 * IncreaseTask
-	 * increase task depth to wysiwyg Editor
-	 * @exports IncreaseTask
+	 * IncreaseDepth
+	 * increase depth of list or task to wysiwyg Editor
+	 * @exports IncreaseDepth
 	 * @augments Command
 	 * @augments WysiwygCommand
 	 */
 	var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
-	    name: 'IncreaseTask',
+	    name: 'IncreaseDepth',
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var parent, node, range;
+	        var range, $prev, prevClasses, $node, nodeClasses;
 
 	        range = wwe.getEditor().getSelection();
-	        node = range.startContainer;
 
 	        if (!wwe.getEditor().getSelection().collapsed || wwe.getEditor().hasFormat('TABLE')) {
 	            wwe.getEditor().focus();
@@ -9594,93 +10188,34 @@
 	        }
 
 	        if (range.collapsed && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
-	            while (parent = node.parentNode) {
-	                // If we find a UL or OL (so are in a list, node must be an LI)
-	                if (parent.nodeName === 'UL' || parent.nodeName === 'OL') {
-	                    // AND the LI is not the first in the list
-	                    if (node.previousSibling) {
-	                        // Then increase the list level
-	                        wwe.getEditor().modifyBlocks(increaseTaskLevel);
-	                    }
+	            $node = $(range.startContainer).closest('li');
+	            $prev = $node.prev();
 
-	                    break;
-	                }
-	                node = parent;
+	            if (!$prev.length) {
+	                return;
 	            }
+
+	            wwe.getEditor().recordUndoState(range);
+
+	            nodeClasses = $node.attr('class');
+	            prevClasses = $prev.attr('class');
+
+	            $node.removeAttr('class');
+	            $prev.removeAttr('class');
+
+	            wwe.getEditor().increaseListLevel();
+
+	            $node.attr('class', nodeClasses);
+	            $prev.attr('class', prevClasses);
 	        }
 	    }
 	});
-
-	function isContainer(node) {
-	    var type = node.nodeType;
-	    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-	        !isInline(node) && !isBlock(node);
-	}
-
-	function isInline(node) {
-	    return INLINE_NODE_RX.test(node.nodeName);
-	}
-
-	function isBlock(node) {
-	    var type = node.nodeType;
-	    return (type === Node.ELEMENT_NODE || type === Node.DOCUMENT_FRAGMENT_NODE) &&
-	        !isInline(node) && every(node.childNodes, isInline);
-	}
-
-	function every(nodeList, fn) {
-	    var l = nodeList.length - 1;
-
-	    while (l >= 0) {
-	        if (!fn(nodeList[l])) {
-	            return false;
-	        }
-
-	        l -= 1;
-	    }
-
-	    return true;
-	}
-
-	function replaceWith(node, node2) {
-	    var parent = node.parentNode;
-	    if (parent) {
-	        parent.replaceChild(node2, node);
-	    }
-	}
-
-	function increaseTaskLevel(frag) {
-	    var i, l, item, type, newParent,
-	        items = frag.querySelectorAll('LI'),
-	        listItemAttrs = {class: 'task-list-item'};
-
-	    for (i = 0, l = items.length; i < l; i += 1) {
-	        item = items[i];
-	        if (!isContainer(item.firstChild)) {
-	            // type => 'UL' or 'OL'
-	            type = item.parentNode.nodeName;
-	            newParent = item.previousSibling;
-
-	            if (!newParent || !(newParent = newParent.lastChild) ||
-	                newParent.nodeName !== type) {
-	                replaceWith(
-	                    item,
-	                    this.createElement('LI', listItemAttrs, [
-	                        newParent = this.createElement(type)
-	                    ])
-	                );
-	            }
-	            newParent.appendChild(item);
-	        }
-	    }
-
-	    return frag;
-	}
 
 	module.exports = IncreaseTask;
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9690,7 +10225,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(21);
+	var CommandManager = __webpack_require__(22);
 
 	/**
 	 * Task
@@ -9701,15 +10236,18 @@
 	 */
 	var Task = CommandManager.command('wysiwyg', /** @lends Task */{
 	    name: 'Task',
+	    keyMap: ['CTRL+T', 'CTRL+T'],
 	    /**
 	     *  커맨드 핸들러
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var selection, $selected, $li, hasInput, $block,
+	        var range,
 	            sq = wwe.getEditor();
 
-	        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
+	        range = sq.getSelection().cloneRange();
+
+	        if (!range.collapsed || sq.hasFormat('TABLE')) {
 	            sq.focus();
 	            return;
 	        }
@@ -9717,40 +10255,12 @@
 	        if (!sq.hasFormat('li')) {
 	            wwe.unwrapBlockTag();
 	            sq.makeUnorderedList();
+	            range = sq.getSelection().cloneRange();
 	        }
 
-	        selection = sq.getSelection().cloneRange();
-	        $selected = $(selection.startContainer);
-	        $li = $selected.closest('li');
-
-	        hasInput = $li.children('input').length || $li.children('div').eq(0).children('input').length;
-
-	        if (!hasInput) {
-	            selection = wwe.insertSelectionMarker(selection);
-
-	            $block = $(selection.startContainer).closest('div').eq(0);
-
-	            if (!$block.length) {
-	                $block = $(selection.startContainer).closest('li').eq(0);
-	            }
-
-	            selection.setStart($block[0], 0);
-	            selection.collapse(true);
-
-	            sq.insertElement(sq.createElement('INPUT', {
-	                type: 'checkbox'
-	            }), selection);
-
-	            selection.setStart($block[0], 1);
-
-	            //we need some space for safari
-	            sq.insertElement(sq.getDocument().createTextNode(' '), selection);
-
-	            $li.addClass('task-list-item');
-
-	            wwe.restoreSelectionMarker();
-	        }
-
+	        range = wwe.insertSelectionMarker(range);
+	        wwe.getManager('task').formatTask(range.startContainer);
+	        wwe.restoreSelectionMarker();
 	        sq.focus();
 	    }
 	});
@@ -9759,12 +10269,12 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var extManager = __webpack_require__(23);
+	var extManager = __webpack_require__(24);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -9799,12 +10309,12 @@
 
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var extManager = __webpack_require__(23);
+	var extManager = __webpack_require__(24);
 
 	extManager.defineExtension('textPalette', function(editor) {
 	    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
@@ -9852,7 +10362,7 @@
 
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9862,9 +10372,9 @@
 
 	'use strict';
 
-	var extManager = __webpack_require__(23),
-	    ScrollSync = __webpack_require__(73),
-	    SectionManager = __webpack_require__(74);
+	var extManager = __webpack_require__(24),
+	    ScrollSync = __webpack_require__(74),
+	    SectionManager = __webpack_require__(75);
 
 	extManager.defineExtension('scrollFollow', function(editor) {
 	    var cm = editor.getCodeMirror(),
@@ -9941,7 +10451,7 @@
 
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports) {
 
 	/**
@@ -10128,7 +10638,7 @@
 
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports) {
 
 	/**
@@ -10469,7 +10979,7 @@
 
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10479,7 +10989,7 @@
 
 	'use strict';
 
-	var extManager = __webpack_require__(23);
+	var extManager = __webpack_require__(24);
 
 	var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
 	    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,

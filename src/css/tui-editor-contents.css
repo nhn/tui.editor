@@ -221,7 +221,7 @@
 }
 
 .tui-editor-contents table {
-    display: auto;
+    display: table;
     width: auto;
     padding: 0;
     border-collapse: collapse;
