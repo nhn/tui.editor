@@ -209,4 +209,16 @@ describe('SquireExt', function() {
             });
         });
     });
+
+    describe('replaceParent()', function() {
+        it('replace li\'s parent ul to ol', function() {
+            sqe.setHTML('<ul><li>test</li></ul>');
+
+            sqe.replaceParent(sqe.get$Body().find('li'), 'UL', 'OL');
+
+            expect(sqe.get$Body().find('ul').length).toEqual(0);
+            expect(sqe.get$Body().find('ol').length).toEqual(1);
+            expect(sqe.get$Body().find('li').text()).toEqual('test');
+        });
+    });
 });

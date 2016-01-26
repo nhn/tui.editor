@@ -264,4 +264,14 @@ SquireExt.prototype.removeLastUndoStack = function() {
     }
 };
 
+SquireExt.prototype.replaceParent = function(node, from, to) {
+    var target;
+    target = $(node).closest(from);
+
+    if (target.length) {
+        target.wrapInner('<' + to + '/>');
+        target.children().unwrap();
+    }
+};
+
 module.exports = SquireExt;

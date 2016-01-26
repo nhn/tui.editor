@@ -5,7 +5,8 @@
 
 'use strict';
 
-var CommandManager = require('../commandManager');
+var CommandManager = require('../commandManager'),
+    domUtils = require('../domUtils');
 
 /**
  * OL
@@ -30,14 +31,16 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
         }
 
         if (sq.hasFormat('LI')) {
+            sq.recordUndoState(range);
+
             wwe.saveSelection(range);
             wwe.getManager('task').unformatTask(range.startContainer);
+            sq.replaceParent(range.startContainer, 'ul', 'ol');
             wwe.restoreSavedSelection();
         } else if (!sq.hasFormat('TABLE')) {
             wwe.unwrapBlockTag();
+            sq.makeOrderedList();
         }
-
-        sq.makeOrderedList();
 
         sq.focus();
     }
