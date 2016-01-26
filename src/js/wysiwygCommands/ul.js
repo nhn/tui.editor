@@ -30,14 +30,15 @@ var UL = CommandManager.command('wysiwyg', /** @lends UL */{
         }
 
         if (sq.hasFormat('LI')) {
+            sq.recordUndoState(range);
             wwe.saveSelection(range);
             wwe.getManager('task').unformatTask(range.startContainer);
+            sq.replaceParent(range.startContainer, 'ol', 'ul');
             wwe.restoreSavedSelection();
         } else if (!sq.hasFormat('TABLE')) {
             wwe.unwrapBlockTag();
+            sq.makeUnorderedList();
         }
-
-        sq.makeUnorderedList();
 
         sq.focus();
     }
