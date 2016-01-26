@@ -83,6 +83,11 @@
     margin: 15px 0;
 }
 
+.tui-editor-contents li ul,
+.tui-editor-contents li ol {
+    margin: 0 0;
+}
+
 .tui-editor-contents hr {
     display:block;
     height: 1px;
@@ -216,6 +221,8 @@
 }
 
 .tui-editor-contents table {
+    display: table;
+    width: auto;
     padding: 0;
     border-collapse: collapse;
     border-spacing: 0;
