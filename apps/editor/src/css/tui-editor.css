@@ -1,10 +1,5 @@
 @charset "UTF-8";
 
-.tui-editor *,
-.tui-editor-defaultUI * {
-    font: inherit;
-}
-
 .tui-editor:after,
 .tui-editor-defaultUI-toolbar:after
 {
