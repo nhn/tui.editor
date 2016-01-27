@@ -45,7 +45,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 
     this._silentChange = false;
 
-    this._keyEventHandlers = [];
+    this._keyEventHandlers = {};
     this._managers = {};
 
     this._clipboardManager = new WwClipboardManager(this);
@@ -193,10 +193,22 @@ WysiwygEditor.prototype._initEvent = function() {
 /**
  * addKeyEventHandler
  * Add key event handler
+ * @param {string} keyMap keyMap string
  * @param {function} handler handler
  */
-WysiwygEditor.prototype.addKeyEventHandler = function(handler) {
-   this._keyEventHandlers.push(handler);
+WysiwygEditor.prototype.addKeyEventHandler = function(keyMap, handler) {
+    var keyMap;
+
+    if (!handler) {
+        handler = keyMap;
+        keyMap = 'DEFAULT';
+    }
+
+    if (!this._keyEventHandlers[keyMap]) {
+        this._keyEventHandlers[keyMap] = [];
+    }
+
+    this._keyEventHandlers[keyMap].push(handler);
 };
 
 /**
@@ -206,7 +218,8 @@ WysiwygEditor.prototype.addKeyEventHandler = function(handler) {
  * @param {string} keyMap keyMapString
  */
 WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
-    var range = this.getEditor().getSelection().cloneRange();
+    var range = this.getEditor().getSelection().cloneRange(),
+        handlers, isNeedNext;
 /*
     console.log(event);
     console.log('-------->', event.keyCode, event.keyIdentifier);
@@ -223,11 +236,22 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
     if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
     console.log('path', this.editor.getPath());
 */
-    util.forEachArray(this._keyEventHandlers, function(handler) {
-        if (handler(event, range, keyMap)) {
-            return false;
-        }
-    });
+    handlers = this._keyEventHandlers['DEFAULT'];
+
+    if (handlers) {
+        util.forEachArray(handlers, function(handler) {
+            isNeedNext = handler(event, range, keyMap);
+            return isNeedNext;
+        });
+    }
+
+    handlers = this._keyEventHandlers[keyMap];
+
+    if (handlers && isNeedNext !== false) {
+        util.forEachArray(handlers, function(handler) {
+            return handler(event, range, keyMap);
+        });
+    }
 };
 
 /**
@@ -366,23 +390,17 @@ WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler(function(ev, range, keyMap) {
-        var isHandled;
-
-        //enter
-        if (keyMap === 'ENTER') {
-            if (self._isInOrphanText(range)) {
-                self._wrapDefaultBlockTo(range);
-                isHandled = true;
-            }
-        //backspace
-        } else if (keyMap === 'BACK_SPACE') {
-            if (!range.collapsed) {
-                self.postProcessForChange();
-            }
+    this.addKeyEventHandler('ENTER', function(ev, range) {
+        if (self._isInOrphanText(range)) {
+            self._wrapDefaultBlockTo(range);
+            return false;
         }
+    });
 
-        return isHandled;
+    this.addKeyEventHandler('BACK_SPACE', function(ev, range) {
+        if (!range.collapsed) {
+            self.postProcessForChange();
+        }
     });
 };
 

@@ -70,6 +70,19 @@ describe('WwHrManager', function() {
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
+
+        //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
+        it('remove hr then set cursor to nextSibling if next sibling is exist', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+
+            range.setStart(wwe.get$Body().find('b')[0], 0);
+            range.collapse(true);
+            mgr._removeHrIfNeed(range, {preventDefault: function() {}});
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+        });
     });
 
     it('unwrap div on hr whene wysiwygSetValueAfter event fire', function() {

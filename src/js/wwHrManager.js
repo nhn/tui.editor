@@ -10,7 +10,6 @@ var domUtils = require('./domUtils');
 /**
  * WwHrManager
  * @exports WwHrManager
- * @augments
  * @constructor
  * @class
  * @param {WysiwygEditor} wwe WysiwygEditor instance
@@ -52,20 +51,14 @@ WwHrManager.prototype._initEvent = function() {
 WwHrManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(event, range) {
-        var isHandled;
-
-        //enter
-        if (event.keyCode === 13) {
-            if (self._isInHr(range) || self._isNearHr(range)) {
-                isHandled = self._removeHrIfNeed(range, event);
-            }
-        //backspace
-        } else if (event.keyCode === 8) {
-            isHandled = self._removeHrIfNeed(range, event);
+    this.wwe.addKeyEventHandler('ENTER', function(event, range) {
+        if (self._isInHr(range) || self._isNearHr(range)) {
+            return self._removeHrIfNeed(range, event);
         }
+    });
 
-        return isHandled;
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(event, range) {
+        return self._removeHrIfNeed(range, event);
     });
 };
 
@@ -122,7 +115,7 @@ WwHrManager.prototype._removeHrIfNeed = function(range, event) {
         range.collapse(true);
         this.wwe.getEditor().setSelection(range);
 
-        return true;
+        return false;
     }
 };
 

@@ -10,7 +10,6 @@ var domUtils = require('./domUtils');
 /**
  * WwTableManager
  * @exports WwTableManager
- * @augments
  * @constructor
  * @class
  * @param {WysiwygEditor} wwe WysiwygEditor instance
@@ -62,44 +61,49 @@ WwTableManager.prototype._initEvent = function() {
 WwTableManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(event, range) {
-        var isHandled;
-
-        //enter
-        if (event.keyCode === 13) {
-            if (self._isAfterTable(range)) {
-                event.preventDefault();
-                range.setStart(range.startContainer, range.startOffset - 1);
-                self.wwe.breakToNewDefaultBlock(range);
-                isHandled = true;
-            } else if (self._isBeforeTable(range)) {
-                event.preventDefault();
-                self.wwe.breakToNewDefaultBlock(range, 'before');
-                isHandled = true;
-            } else if (self._isInTable(range)) {
-                self._appendBrIfTdOrThNotHaveAsLastChild(range);
-                isHandled = true;
-            }
-        //backspace
-        } else if (event.keyCode === 8) {
-            if (range.collapsed) {
-                if (self._isInTable(range)) {
-                    self._tableHandlerOnBackspace(range, event);
-                    isHandled = true;
-                } else if (self._isAfterTable(range)) {
-                    event.preventDefault();
-                    self._removeTableOnBackspace(range);
-                    isHandled = true;
-                }
-            }
-        //for recordUndoState
-        } else if (self._isInTable(range)) {
+    this.wwe.addKeyEventHandler(function(ev, range) {
+        if (self._isInTable(range)) {
             self._recordUndoStateIfNeed(range);
         } else if (self._lastCellNode) {
             self._recordUndoStateAndResetCellNode(range);
         }
+    });
 
-        return isHandled;
+    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
+        var isNeedNext;
+
+        if (self._isAfterTable(range)) {
+            ev.preventDefault();
+            range.setStart(range.startContainer, range.startOffset - 1);
+            self.wwe.breakToNewDefaultBlock(range);
+            isNeedNext = false;
+        } else if (self._isBeforeTable(range)) {
+            ev.preventDefault();
+            self.wwe.breakToNewDefaultBlock(range, 'before');
+            isNeedNext = false;
+        } else if (self._isInTable(range)) {
+            self._appendBrIfTdOrThNotHaveAsLastChild(range);
+            isNeedNext = false;
+        }
+
+        return isNeedNext;
+    });
+
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
+        var isNeedNext;
+
+        if (range.collapsed) {
+            if (self._isInTable(range)) {
+                self._tableHandlerOnBackspace(range, ev);
+                isNeedNext = false;
+            } else if (self._isAfterTable(range)) {
+                ev.preventDefault();
+                self._removeTableOnBackspace(range);
+                isNeedNext = false;
+            }
+        }
+
+        return isNeedNext;
     });
 };
 
