@@ -12,7 +12,6 @@ var FIND_HEADING_RX = /h[\d]/i;
 /**
  * WwHeadingManager
  * @exports WwHeadingManager
- * @augments
  * @constructor
  * @class
  * @param {WysiwygEditor} wwe WysiwygEditor instance
@@ -40,20 +39,18 @@ WwHeadingManager.prototype._init = function() {
 WwHeadingManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(event, range) {
-        var isHandled;
-
+    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
         if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
-            //enter
-            if (event.keyCode === 13) {
-                self._onEnter(event, range);
-                isHandled = true;
-            //backspace
-            } else if (event.keyCode === 8) {
-                isHandled = self._removePrevTopNodeIfNeed(event, range);
-            }
+            self._onEnter(ev, range);
+            return false;
         }
-        return isHandled;
+    });
+
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
+        if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
+            self._removePrevTopNodeIfNeed(ev, range);
+            return false;
+        }
     });
 };
 

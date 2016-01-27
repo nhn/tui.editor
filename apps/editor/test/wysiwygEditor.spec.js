@@ -75,9 +75,44 @@ describe('WysiwygEditor', function() {
         it('add key event handler and run', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler(handler);
-            wwe._runKeyEventHandlers({keyCode: 0});
-
+            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
             expect(handler).toHaveBeenCalled();
+        });
+
+        it('add key event with particular keymap and run', function() {
+            var handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler('HOME', handler);
+            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            expect(handler).toHaveBeenCalled();
+        });
+
+        it('run particular keymap and default', function() {
+            var handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler('HOME', handler);
+            wwe.addKeyEventHandler(handler);
+            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            expect(handler.calls.count()).toEqual(2);
+        });
+
+        it('if handler returns false stop invoke next handler', function() {
+            var handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler('HOME', function() {
+                return false;
+            });
+            wwe.addKeyEventHandler('HOME', handler);
+            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            expect(handler).not.toHaveBeenCalled();
+        });
+
+        it('if defalut handler returns false dont invoke keymap handler', function() {
+            var handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler(function() {
+                return false;
+            });
+
+            wwe.addKeyEventHandler('HOME', handler);
+            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            expect(handler).not.toHaveBeenCalled();
         });
     });
 

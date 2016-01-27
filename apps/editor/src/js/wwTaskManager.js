@@ -12,7 +12,6 @@ var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 /**
  * WwTaskManager
  * @exports WwTaskManager
- * @augments
  * @constructor
  * @class
  * @param {WysiwygEditor} wwe WysiwygEditor instance
@@ -70,57 +69,63 @@ WwTaskManager.prototype._initEvent = function() {
 WwTaskManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(event, range, keyMap) {
-        var isHandled;
+    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
+        if (self.wwe.getEditor().hasFormat('LI')) {
+            //we need unformat task then let Squire control list and make task again
+            //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
+            //if문에 task가 아닌 li인지를 체크하는것은
+            //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
+            self._unformatTaskIfNeedOnEnter(range);
+            setTimeout(function() {
+                self._formatTaskIfNeed();
+            }, 0);
 
-        if (keyMap === 'ENTER') {
-             if (self.wwe.getEditor().hasFormat('LI')) {
-                //we need unformat task then let Squire control list and make task again
-                //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
-                //if문에 task가 아닌 li인지를 체크하는것은
-                //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
-                self._unformatTaskIfNeedOnEnter(range);
+            return false;
+        }
+    });
+
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
+        if (range.collapsed) {
+            if (self._isInTaskList(range)) {
+                self._unformatTaskIfNeedOnBackspace(range);
+                //and delete list by squire
+                return false;
+            }
+        }
+    });
+
+    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
+        if (range.collapsed) {
+            if (self.wwe.getEditor().hasFormat('LI')) {
+                ev.preventDefault();
+                self.eventManager.emit('command', 'IncreaseDepth');
+                return false;
+            }
+        }
+    });
+
+    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
+        var isNeedNext;
+
+        if (range.collapsed) {
+            if (self._isEmptyTask(range)) {
+                self.wwe.getEditor().recordUndoState(range);
+                self.unformatTask(range.startContainer);
                 setTimeout(function() {
                     self._formatTaskIfNeed();
                 }, 0);
-                isHandled = true;
+
+                isNeedNext = false;
+            } else if (self.wwe.getEditor().hasFormat('LI')) {
+                self.wwe.getEditor().recordUndoState(range);
+                setTimeout(function() {
+                    self._formatTaskIfNeed();
+                }, 0);
+                isNeedNext = false;
             }
-        } else if (keyMap === 'BACK_SPACE') {
-            if (range.collapsed) {
-                if (self._isInTaskList(range)) {
-                    self._unformatTaskIfNeedOnBackspace(range);
-                    //and delete list by squire
-                    isHandled = true;
-                }
-            }
-        } else if (keyMap === 'TAB') {
-            if (range.collapsed) {
-                if (self.wwe.getEditor().hasFormat('LI')) {
-                    event.preventDefault();
-                    self.eventManager.emit('command', 'IncreaseDepth');
-                    isHandled = true;
-                }
-            }
-        } else if (keyMap === 'SHIFT+TAB') {
-            if (range.collapsed) {
-                if (self._isEmptyTask(range)) {
-                    self.wwe.getEditor().recordUndoState(range);
-                    self.unformatTask(range.startContainer);
-                    setTimeout(function() {
-                        self._formatTaskIfNeed();
-                    }, 0);
-                    isHandled = true;
-                } else if (self.wwe.getEditor().hasFormat('LI')) {
-                    self.wwe.getEditor().recordUndoState(range);
-                    setTimeout(function() {
-                        self._formatTaskIfNeed();
-                    }, 0);
-                    isHandled = true;
-                }
-             }
         }
 
-        return isHandled;
+        return isNeedNext;
     });
 };
 
