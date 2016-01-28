@@ -5,7 +5,8 @@
 
 'use strict';
 
-var CommandManager = require('../commandManager');
+var CommandManager = require('../commandManager'),
+    domUtils = require('../domUtils');
 
 /**
  * HR
@@ -22,28 +23,31 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            range = sq.getSelection(),
+            nextBlockNode;
 
-        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
+        if (!range.collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }
 
+        nextBlockNode = domUtils.getNextTopBlockNode(domUtils.getChildNodeByOffset(range.startContainer, range.startOffset));
+
+        if (!nextBlockNode) {
+            nextBlockNode = sq.createDefaultBlock();
+            wwe.get$Body().append(nextBlockNode);
+        }
+
         sq.modifyBlocks(function(frag) {
-            /*
-            var block = sq.createElement('DIV');
-            var newFrag = sq._doc.createDocumentFragment();
-
-            newFrag.appendChild(frag);
-            newFrag.appendChild(block);
-
-            block.appendChild(sq.createElement('BR'));
-            block.appendChild(sq.createElement('HR'));
-*/
             frag.appendChild(sq.createElement('HR'));
-
             return frag;
         });
+
+        range.selectNodeContents(nextBlockNode);
+        range.collapse(true);
+
+        sq.setSelection(range);
 
         sq.focus();
     }

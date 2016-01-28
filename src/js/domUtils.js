@@ -26,19 +26,6 @@ var isElemNode = function(node) {
 };
 
 /**
- * getChildNodeAt
- * Get child node in given parent and index
- * @param {HTMLElement} elem parent element
- * @param {number} index node index
- * @return {Node} child
- */
-var getChildNodeAt = function(elem, index) {
-    if (elem.childNodes.length && index >= 0) {
-        return elem.childNodes[index];
-    }
-};
-
-/**
  * getNodeName
  * Get node name of node
  * @param {Node} node node
@@ -117,7 +104,7 @@ var getChildNodeByOffset = function(node, index) {
 
     if (isTextNode(node)) {
         currentNode = node;
-    } else {
+    } else if (node.childNodes.length && index >= 0) {
         currentNode = node.childNodes[index];
     }
 
@@ -249,8 +236,11 @@ var getNextTopBlockNode = function(node) {
     return getNodeWithDirectionUnderParent('next', node, 'BODY');
 };
 
+var getTopBlockNode = function(node) {
+    return getParentUntil(node, 'BODY');
+};
+
 module.exports = {
-    getChildNodeAt: getChildNodeAt,
     getNodeName: getNodeName,
     isTextNode: isTextNode,
     isElemNode: isElemNode,
@@ -261,5 +251,6 @@ module.exports = {
     getChildNodeByOffset: getChildNodeByOffset,
     getPrevTopBlockNode: getPrevTopBlockNode,
     getNextTopBlockNode: getNextTopBlockNode,
-    getParentUntil: getParentUntil
+    getParentUntil: getParentUntil,
+    getTopBlockNode: getTopBlockNode
 };

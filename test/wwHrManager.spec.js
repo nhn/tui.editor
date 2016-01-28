@@ -30,21 +30,7 @@ describe('WwHrManager', function() {
         });
     });
 
-
-    describe('_removeHrIfNeed()', function() {
-        //같은 부모의 이전 offset의 엘리먼트가 hr일때
-        it('remove hr if current is on first offset and previousSibling elemet is hr', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div>abcd<br></div>');
-
-            range.setStart(wwe.getEditor().getDocument().body, 1);
-            range.collapse(true);
-            mgr._removeHrIfNeed(range, {preventDefault: function() {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
+    describe('_removeHrOnEnter', function() {
         //현재커서가 hr을 가르키는 경우
         it('remove hr current selection is hr', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
@@ -53,7 +39,73 @@ describe('WwHrManager', function() {
 
             range.setStart(wwe.getEditor().getDocument().body, 0);
             range.collapse(true);
-            mgr._removeHrIfNeed(range, {preventDefault: function() {}});
+            mgr._removeHrOnEnter(range, {preventDefault: function() {}});
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+        });
+
+        //크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+        //그런 상황에서 적용되는 케이스
+        it('remove hr if current is on first offset and previousSibling elemet is hr', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<hr><div>abcd<br></div>');
+
+            range.setStart(wwe.getEditor().getDocument().body, 1);
+            range.collapse(true);
+            mgr._removeHrOnEnter(range, {preventDefault: function() {}});
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+        });
+
+        //hr이후의 엘리먼트가 없을때
+        it('remove hr then set cursor to new block when nextSibling is not exists', function() {
+            var range = wwe.getEditor().getSelection().cloneRange(),
+                newRange;
+
+            wwe.setValue('<div><b>abcd</b><<br></div><hr>');
+
+            range.setStart(wwe.get$Body()[0], 1);
+            range.collapse(true);
+            mgr._removeHrOnEnter(range, {preventDefault: function() {}});
+
+            newRange = wwe.getEditor().getSelection();
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+            expect(newRange.startContainer.tagName).toEqual('DIV');
+            expect(newRange.startOffset).toEqual(0);
+        });
+
+        it('remove hr then set cursor to new block if next sibling is exist', function() {
+            var range = wwe.getEditor().getSelection().cloneRange(),
+                newRange;
+
+            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+
+            range.setStart(wwe.get$Body()[0], 0);
+            range.collapse(true);
+            mgr._removeHrOnEnter(range, {preventDefault: function() {}});
+
+            newRange = wwe.getEditor().getSelection();
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+            expect(newRange.startContainer.tagName).toEqual('DIV');
+            expect(newRange.startOffset).toEqual(0);
+        });
+    });
+
+
+    describe('_removeHrOnBackspace()', function() {
+        //현재커서가 hr을 가르키는 경우
+        it('remove hr current selection is hr', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<hr><div>abcd<br></div>');
+
+            range.selectNode(wwe.get$Body().find('hr')[0]);
+            range.collapse(true);
+
+            mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
@@ -66,20 +118,21 @@ describe('WwHrManager', function() {
 
             range.setStart(wwe.get$Body().find('b')[0], 0);
             range.collapse(true);
-            mgr._removeHrIfNeed(range, {preventDefault: function() {}});
+            mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
-        //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
-        it('remove hr then set cursor to nextSibling if next sibling is exist', function() {
+        //크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+        //그런 상황에서 적용되는 케이스
+        it('remove hr if current is on first offset and previousSibling elemet is hr', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+            wwe.setValue('<hr><div>abcd<br></div>');
 
-            range.setStart(wwe.get$Body().find('b')[0], 0);
+            range.setStart(wwe.getEditor().getDocument().body, 1);
             range.collapse(true);
-            mgr._removeHrIfNeed(range, {preventDefault: function() {}});
+            mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });

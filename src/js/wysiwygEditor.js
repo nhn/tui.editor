@@ -390,13 +390,6 @@ WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler('ENTER', function(ev, range) {
-        if (self._isInOrphanText(range)) {
-            self._wrapDefaultBlockTo(range);
-            return false;
-        }
-    });
-
     this.addKeyEventHandler('BACK_SPACE', function(ev, range) {
         if (!range.collapsed) {
             self.postProcessForChange();
@@ -454,7 +447,7 @@ WysiwygEditor.prototype._wrapDefaultBlockTo = function(range) {
     block = this.getEditor().createDefaultBlock([range.startContainer]);
 
     //range for insert block
-    insertTargetNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset);
+    insertTargetNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
     if (insertTargetNode) {
         range.setStartBefore(insertTargetNode);
     } else {
@@ -814,7 +807,7 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     var div, pathToBody, appendBefore, currentNode;
 
-    currentNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset) || range.startContainer;
+    currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset) || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
     pathToBody = $(currentNode).parentsUntil('body');
 

@@ -51,14 +51,16 @@ WwHrManager.prototype._initEvent = function() {
 WwHrManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler('ENTER', function(event, range) {
-        if (self._isInHr(range) || self._isNearHr(range)) {
-            return self._removeHrIfNeed(range, event);
-        }
+    this.wwe.addKeyEventHandler(function(ev, range, keyMap) {
+        return self._onTypedInHr(range, keyMap);
     });
 
-    this.wwe.addKeyEventHandler('BACK_SPACE', function(event, range) {
-        return self._removeHrIfNeed(range, event);
+    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
+        return self._removeHrOnEnter(range, ev);
+    });
+
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
+        return self._removeHrOnBackspace(range, ev);
     });
 };
 
@@ -79,41 +81,89 @@ WwHrManager.prototype._isInHr = function(range) {
  * @returns {boolean} result
  */
 WwHrManager.prototype._isNearHr = function(range) {
-    var prevNode = domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1);
+    var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
     return domUtils.getNodeName(prevNode) === 'HR';
 };
 
+WwHrManager.prototype._onTypedInHr = function(range, keyMap) {
+    //HR위에서 테스트 컨텐츠 입력을 시도한경우
+    if ((this._isInHr(range) || this._isNearHr(range))
+        && (!keyMap.length || /^[A-Z0-9]$/.test(keyMap))
+    ) {
+       this.wwe.breakToNewDefaultBlock(range, 'before');
+       return false;
+    }
+};
+
 /**
- * _removeHrIfNeed
- * Remove hr if need
+ * _removeHrOnEnter
+ * Remove hr if need on enter
  * @param {Range} range range
- * @param {Event} event event
+ * @param {Event} ev event
  * @returns {boolean} return true if hr was removed
  */
-WwHrManager.prototype._removeHrIfNeed = function(range, event) {
-    var hrSuspect, cursorTarget;
+WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
+    var hrSuspect, blockPosition;
 
-    if (this._isInHr(range)) {
-        hrSuspect = domUtils.getChildNodeAt(range.startContainer, range.startOffset);
-    } else if (range.startOffset === 0) {
-        hrSuspect = range.startContainer.previousSibling || range.startContainer.parentNode.previousSibling;
-
-        if (domUtils.getNodeName(hrSuspect) !== 'HR') {
-            hrSuspect = null;
-        }
-    } else if (this._isNearHr(range)) {
-        hrSuspect = domUtils.getChildNodeAt(range.startContainer, range.startOffset - 1);
+    if (!range.collapsed) {
+        return;
     }
 
-    if (hrSuspect) {
-        event.preventDefault();
+    if (this._isInHr(range)) {
+        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+    } else if (this._isNearHr(range)) {
+        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+        blockPosition = 'before';
+    }
 
-        cursorTarget = hrSuspect.nextSibling;
+    return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
+};
+
+/**
+ * _removeHrOnBackspace
+ * Remove hr if need on backspace
+ * @param {Range} range range
+ * @param {Event} ev event
+ * @returns {boolean} return true if hr was removed
+ */
+WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
+    var hrSuspect, blockPosition;
+
+    if (!range.collapsed) {
+        return;
+    }
+
+    if (this._isInHr(range)) {
+        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+    } else if (range.startOffset === 0) {
+        hrSuspect = domUtils.getPrevTopBlockNode(range.startContainer);
+        blockPosition = 'none';
+    } else if (this._isNearHr(range)) {
+        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+        blockPosition = 'before';
+    }
+
+    return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
+};
+
+/**
+ * _changeHrToNewDefaultBlock
+ * Remove hr and add new default block then set range to it
+ * @param {Node} hrSuspect Node could be hr
+ * @param {Range} range range
+ * @param {Event} ev event
+ * @param {strong} newBlockPosition new default block add position
+ * @returns {boolean} return true if hr was removed
+ */
+WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev, newBlockPosition) {
+    if (hrSuspect && domUtils.getNodeName(hrSuspect) === 'HR') {
+        ev.preventDefault();
+
+        if (newBlockPosition !== 'none') {
+            this.wwe.breakToNewDefaultBlock(range, newBlockPosition);
+        }
+
         $(hrSuspect).remove();
-
-        range.setStartBefore(cursorTarget);
-        range.collapse(true);
-        this.wwe.getEditor().setSelection(range);
 
         return false;
     }
