@@ -291,21 +291,6 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('_wrapDefaultBlockToOrphanTexts', function() {
-        it('wrap selection defulat block to all orphan texts', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.get$Body().html('abcdef<div>ghijk<br></div>');
-
-            range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
-            range.collapse(true);
-            wwe._wrapDefaultBlockToOrphanTexts();
-
-            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
-        });
-    });
-
-
     describe('breakToNewDefaultBlock()', function() {
         it('make new defulatBlock then move selection to it', function() {
             var range;

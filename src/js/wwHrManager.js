@@ -42,6 +42,10 @@ WwHrManager.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygSetValueAfter', function() {
         self._unwrapDivOnHr();
     });
+
+    this.eventManager.listen('wysiwygGetValueBefore', function() {
+        self._wrapDefaultBlockToOrphanTexts();
+    });
 };
 
 /**
@@ -51,8 +55,8 @@ WwHrManager.prototype._initEvent = function() {
 WwHrManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(ev, range, keyMap) {
-        return self._onTypedInHr(range, keyMap);
+    this.wwe.addKeyEventHandler(function(ev, range) {
+        return self._onTypedInHr(range);
     });
 
     this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
@@ -85,13 +89,16 @@ WwHrManager.prototype._isNearHr = function(range) {
     return domUtils.getNodeName(prevNode) === 'HR';
 };
 
-WwHrManager.prototype._onTypedInHr = function(range, keyMap) {
-    //HR위에서 테스트 컨텐츠 입력을 시도한경우
-    if ((this._isInHr(range) || this._isNearHr(range))
-        && (!keyMap.length || /^[A-Z0-9]$/.test(keyMap))
-    ) {
-       this.wwe.breakToNewDefaultBlock(range, 'before');
-       return false;
+WwHrManager.prototype._onTypedInHr = function(range) {
+    var self = this;
+
+    //HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
+    if (this._isInHr(range) || this._isNearHr(range)) {
+        setTimeout(function() {
+            self.wwe.saveSelection();
+            self._wrapDefaultBlockToOrphanTexts();
+            self.wwe.restoreSavedSelection();
+        }, 0);
     }
 };
 
@@ -179,6 +186,26 @@ WwHrManager.prototype._unwrapDivOnHr = function() {
             $(node).parent().find('br').remove();
             $(node).unwrap();
         }
+    });
+};
+
+
+function findTextNodeFilter() {
+    return this.nodeType === 3;
+}
+
+/**
+ * _wrapDefaultBlockToOrphanTexts
+ * Wrap default block to orphan texts
+ * mainly, this is used for orhan text that made by controlling hr
+ */
+WwHrManager.prototype._wrapDefaultBlockToOrphanTexts = function() {
+    var textNodes,
+
+    textNodes = this.wwe.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        $(node).wrap('<div />');
     });
 };
 
