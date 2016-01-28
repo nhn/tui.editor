@@ -495,24 +495,6 @@ WysiwygEditor.prototype._joinSplitedTextNodes = function() {
     $(nodesToRemove).remove();
 };
 
-/**
- * _wrapDefaultBlockToOrphanTexts
- * Wrap default block to orphan texts
- * mainly, this is used for orhan text that made by controlling hr
- */
-WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
-    var findTextNodeFilter, textNodes,
-
-    findTextNodeFilter = function() {
-        return this.nodeType === 3;
-    };
-
-    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
-
-    textNodes.each(function(i, node) {
-        $(node).wrap('<div />');
-    });
-};
 
 /**
  * saveSelection
@@ -698,7 +680,6 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
     this.get$Body().attr('lastGetValue', Date.now());
 
     this._joinSplitedTextNodes();
-    this._wrapDefaultBlockToOrphanTexts();
 
     this.eventManager.emit('wysiwygGetValueBefore', this);
 };

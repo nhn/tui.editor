@@ -94,6 +94,21 @@ describe('WwHrManager', function() {
         });
     });
 
+    describe('_onTypedInHr', function() {
+        it('if text content is typed in hr then break new block', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<hr><div>abcd<br></div>');
+
+            range.selectNode(wwe.get$Body().find('hr')[0]);
+            range.collapse(true);
+
+            mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
+
+            expect(wwe.get$Body().find('hr').length).toEqual(0);
+        });
+    });
+
 
     describe('_removeHrOnBackspace()', function() {
         //현재커서가 hr을 가르키는 경우
@@ -144,5 +159,15 @@ describe('WwHrManager', function() {
         em.emit('wysiwygSetValueAfter');
 
         expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
+    });
+
+    describe('_wrapDefaultBlockToOrphanTexts()', function() {
+        it('wrap selection defulat block to all orphan texts', function() {
+            wwe.get$Body().html('abcdef<div>ghijk<br></div>');
+
+            mgr._wrapDefaultBlockToOrphanTexts();
+
+            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
+        });
     });
 });
