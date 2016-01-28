@@ -7,63 +7,6 @@ describe('domUtils', function() {
         $('body').empty();
     });
 
-    describe('getChildNodeAt()', function() {
-        it('returns childNodes at index', function() {
-            var result;
-
-            $('body').html([
-                '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
-                '</ul>'
-            ].join(''));
-
-            result = domUtils.getChildNodeAt($('ul')[0], 1);
-
-            expect(result).toEqual($('li')[1]);
-        });
-
-        it('returns undefined if theres no result', function() {
-            var result;
-
-            $('body').html([
-                '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
-                '</ul>'
-            ].join(''));
-
-            result = domUtils.getChildNodeAt($('ul')[0], 2);
-
-            expect(result).toBeUndefined();
-        });
-
-        it('returns undefined if there is no child', function() {
-            var result;
-
-            $('body').html('<ul></ul>');
-
-            result = domUtils.getChildNodeAt($('ul')[0], 2);
-
-            expect(result).toBeUndefined();
-        });
-
-        it('returns childNodes if index >= 0', function() {
-            var result;
-
-            $('body').html([
-                '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
-                '</ul>'
-            ].join(''));
-
-            result = domUtils.getChildNodeAt($('ul')[0], -1);
-
-            expect(result).toBeUndefined();
-        });
-    });
-
     describe('getNodeName', function() {
         it('returns tagName if passed Node is ELEMENT_NODE', function() {
             expect(domUtils.getNodeName($('<div />')[0])).toEqual('DIV');
@@ -94,7 +37,7 @@ describe('domUtils', function() {
         });
     });
 
-    describe('getOffsetLength', function() {
+    describe('getTextLength', function() {
         it('returns node\'s text content length', function() {
             expect(domUtils.getTextLength($('<p>hi</p>')[0])).toBe(2);
             expect(domUtils.getTextLength($('<p>hi</p>')[0].firstChild)).toBe(2);
@@ -149,7 +92,7 @@ describe('domUtils', function() {
         });
     });
 
-   describe('getNodeByOffset()', function() {
+   describe('getChildNodeByOffset()', function() {
         it('return node\'s childNode with index', function() {
             var node = $('<p><em>text</em><strong>weafwae</strong></p>');
             expect(domUtils.getChildNodeByOffset(node[0], 1)).toBe(node[0].childNodes[1]);
@@ -158,6 +101,60 @@ describe('domUtils', function() {
         it('if node is text node then return passed node', function() {
             var node = $('<p>text</p>');
             expect(domUtils.getChildNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
+        });
+        it('returns childNodes at index', function() {
+            var result;
+
+            $('body').html([
+                '<ul>',
+                    '<li>0</li>',
+                    '<li>1</li>',
+                '</ul>'
+            ].join(''));
+
+            result = domUtils.getChildNodeByOffset($('ul')[0], 1);
+
+            expect(result).toEqual($('li')[1]);
+        });
+
+        it('returns undefined if theres no result', function() {
+            var result;
+
+            $('body').html([
+                '<ul>',
+                    '<li>0</li>',
+                    '<li>1</li>',
+                '</ul>'
+            ].join(''));
+
+            result = domUtils.getChildNodeByOffset($('ul')[0], 2);
+
+            expect(result).toBeUndefined();
+        });
+
+        it('returns undefined if there is no child', function() {
+            var result;
+
+            $('body').html('<ul></ul>');
+
+            result = domUtils.getChildNodeByOffset($('ul')[0], 2);
+
+            expect(result).toBeUndefined();
+        });
+
+        it('returns childNodes if index >= 0', function() {
+            var result;
+
+            $('body').html([
+                '<ul>',
+                    '<li>0</li>',
+                    '<li>1</li>',
+                '</ul>'
+            ].join(''));
+
+            result = domUtils.getChildNodeByOffset($('ul')[0], -1);
+
+            expect(result).toBeUndefined();
         });
     });
 
@@ -172,6 +169,13 @@ describe('domUtils', function() {
        it('return next block element of passed node', function() {
             $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
             expect(domUtils.getNextTopBlockNode($('em')[0].firstChild)).toBe($('p')[0]);
+       });
+   });
+
+   describe('getTopBlockNode', function() {
+       it('return top block element of passed node', function() {
+            $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
+            expect(domUtils.getTopBlockNode($('em')[0].firstChild)).toBe($('div')[0]);
        });
    });
 

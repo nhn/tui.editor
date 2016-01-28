@@ -132,7 +132,7 @@ WwTableManager.prototype._isInTable = function(range) {
  * @returns {boolean} result
  */
 WwTableManager.prototype._isBeforeTable = function(range) {
-    return domUtils.getNodeName(domUtils.getChildNodeAt(range.startContainer, range.startOffset)) === 'TABLE';
+    return domUtils.getNodeName(domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)) === 'TABLE';
 };
 
 /**

@@ -232,14 +232,14 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
     if (domUtils.isElemNode(startContainer)) {
         //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
         if (startOffset === 0) {
-            prevEl = domUtils.getChildNodeAt(startContainer, startOffset);
+            prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset);
         //inputbox 오른편 어딘가에서 지워지는경우
         } else {
-            prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 1);
+            prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 1);
 
             //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
             if (domUtils.isTextNode(prevEl) && prevEl.nodeValue.length === 1 && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
-                prevEl = domUtils.getChildNodeAt(startContainer, startOffset - 2);
+                prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 2);
             }
         }
 
