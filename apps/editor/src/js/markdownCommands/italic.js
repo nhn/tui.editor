@@ -68,7 +68,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * isNeedRemove
      * 이미 텍스트에 이탤릭이나 볼드가 적용되어 있는지 판단한다
      * @param {string} text 텍스트
-     * @return {boolean} 적용 여부
+     * @returns {boolean} 적용 여부
      */
     isNeedRemove: function(text) {
         return italicRegex.test(text) || boldItalicRegex.test(text);
@@ -77,7 +77,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * append
      * 텍스트에 이탤릭을 적용한다
      * @param {string} text 적용할 텍스트
-     * @return {string} 이탤릭이 적용된 텍스트
+     * @returns {string} 이탤릭이 적용된 텍스트
      */
     append: function(text) {
         return '_' + text + '_';
@@ -86,7 +86,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * remove
      * 텍스트에서 이탤릭을 제거한다
      * @param {string} text 제거할 텍스트
-     * @return {string} 제거된 텍스트
+     * @returns {string} 제거된 텍스트
      */
     remove: function(text) {
         return text.substr(1, text.length - 2);
@@ -96,7 +96,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * 볼드와 함께 적용된 셀렉션 영역을 확장한다
      * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
-     * @return {string} 확장된 영역의 텍스트
+     * @returns {string} 확장된 영역의 텍스트
      */
     expendWithBoldSelection: function(doc, cursor) {
         var tmpSelection = doc.getSelection();
@@ -114,7 +114,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * 볼드만 적용된 셀렉션 영역을 확장한다
      * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
-     * @return {string} 확장된 영역의 텍스트
+     * @returns {string} 확장된 영역의 텍스트
      */
     expendOnlyBoldSelection: function(doc, cursor) {
         var tmpSelection = doc.getSelection();
@@ -133,7 +133,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * 이탤릭이 적용된 셀렉션 영역을 확장한다
      * @param {CodeMirror.doc} doc 코드미러 도큐먼트
      * @param {object} cursor 커서객체
-     * @return {string} 확장된 영역의 텍스트
+     * @returns {string} 확장된 영역의 텍스트
      */
     expendSelection: function(doc, cursor) {
         var tmpSelection = doc.getSelection();

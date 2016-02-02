@@ -27,7 +27,7 @@ function Convertor(em) {
  * _markdownToHtmlWithCodeHighlight
  * Convert markdown to html with Codehighlight
  * @param {string} markdown markdown text
- * @return {string} html text
+ * @returns {string} html text
  */
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
     return marked(markdown, {
@@ -49,7 +49,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
  * _markdownToHtml
  * Convert markdown to html
  * @param {string} markdown markdown text
- * @return {string} html text
+ * @returns {string} html text
  */
 Convertor.prototype._markdownToHtml = function(markdown) {
     return marked(markdown, {
@@ -69,7 +69,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
  * Convert markdown to html with Codehighlight
  * emit convertorAfterMarkdownToHtmlConverted
  * @param {string} markdown markdown text
- * @return {string} html text
+ * @returns {string} html text
  */
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
@@ -82,10 +82,10 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
  * Convert markdown to html
  * emit convertorAfterMarkdownToHtmlConverted
  * @param {string} markdown markdown text
- * @return {string} html text
+ * @returns {string} html text
  */
 Convertor.prototype.toHTML = function(markdown) {
-    var html =  this._markdownToHtml(markdown);
+    var html = this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
     return this._sanitizeScript(html);
 };
@@ -95,7 +95,7 @@ Convertor.prototype.toHTML = function(markdown) {
  * Convert html to markdown
  * emit convertorAfterHtmlToMarkdownConverted
  * @param {string} html html text
- * @return {string} markdown text
+ * @returns {string} markdown text
  */
 Convertor.prototype.toMarkdown = function(html) {
     var markdown = toMark(html);

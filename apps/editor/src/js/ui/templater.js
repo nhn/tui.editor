@@ -12,7 +12,7 @@ var util = tui.util;
  * 매핑데이터를 배열로 전달하면 갯수만큼 템플릿을 반복생성한다.
  * @param {string} template 템플릿 텍스트
  * @param {object|object[]} mapper 템플릿과 합성될 데이터
- * @return {array} rendered text
+ * @returns {array} rendered text
  */
 function templater(template, mapper) {
     var totalReplaced = [],

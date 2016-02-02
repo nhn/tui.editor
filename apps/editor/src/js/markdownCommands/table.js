@@ -45,7 +45,7 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
  * makeHeader
  * make table header markdown string
  * @param {number} col column count
- * @return {string} markdown string
+ * @returns {string} markdown string
  */
 function makeHeader(col) {
     var header = '|',
@@ -66,7 +66,7 @@ function makeHeader(col) {
  * make table body markdown string
  * @param {number} col column count
  * @param {number} row row count
- * @return {string} html string
+ * @returns {string} html string
  */
 function makeBody(col, row) {
     var body = '',

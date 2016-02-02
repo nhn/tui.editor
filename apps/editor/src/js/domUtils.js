@@ -9,7 +9,7 @@
  * isTextNode
  * Check if node is text node
  * @param {Node} node node to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 var isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
@@ -19,7 +19,7 @@ var isTextNode = function(node) {
  * isElemNode
  * Check if node is element node
  * @param {Node} node node to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 var isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
@@ -29,7 +29,7 @@ var isElemNode = function(node) {
  * getNodeName
  * Get node name of node
  * @param {Node} node node
- * @return {string} node name
+ * @returns {string} node name
  */
 var getNodeName = function(node) {
     if (isElemNode(node)) {
@@ -43,7 +43,7 @@ var getNodeName = function(node) {
  * getTextLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
- * @return {number} length
+ * @returns {number} length
  */
 var getTextLength = function(node) {
     var len;
@@ -61,7 +61,7 @@ var getTextLength = function(node) {
  * getOffsetLength
  * Get node offset length of node(for Range API)
  * @param {Node} node node
- * @return {number} length
+ * @returns {number} length
  */
 var getOffsetLength = function(node) {
     var len;
@@ -79,7 +79,7 @@ var getOffsetLength = function(node) {
  * getNodeOffsetOfParent
  * get node offset between parent's childnodes
  * @param {Node} node node
- * @return {number} offset(index)
+ * @returns {number} offset(index)
  */
 var getNodeOffsetOfParent = function(node) {
     var i, t,
@@ -97,7 +97,7 @@ var getNodeOffsetOfParent = function(node) {
  * get child node by offset
  * @param {Node} node node
  * @param {number} index offset index
- * @return {Node} foudned node
+ * @returns {Node} foudned node
  */
 var getChildNodeByOffset = function(node, index) {
     var currentNode;
@@ -119,7 +119,7 @@ var getChildNodeByOffset = function(node, index) {
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string} untilNodeName parent node name to limit
- * @return {Node} founded node
+ * @returns {Node} founded node
  */
 var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
     var directionKey = direction + 'Sibling',
@@ -152,7 +152,7 @@ var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
  * @param {Node} node node
  * @param {number} index offset index
  * @param {string} untilNodeName parent node name to limit
- * @return {Node} founded node
+ * @returns {Node} founded node
  */
 var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     var prevNode;
@@ -201,7 +201,7 @@ var getParentUntil = function(node, untilNodeName) {
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string} underParentNodeName parent node name to limit
- * @return {Node} founded node
+ * @returns {Node} founded node
  */
 var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
     var directionKey = direction + 'Sibling',
@@ -220,7 +220,7 @@ var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeN
  * getPrevTopBlockNode
  * get previous top level block node
  * @param {Node} node node
- * @return {Node} founded node
+ * @returns {Node} founded node
  */
 var getPrevTopBlockNode = function(node) {
     return getNodeWithDirectionUnderParent('previous', node, 'BODY');
@@ -230,7 +230,7 @@ var getPrevTopBlockNode = function(node) {
  * getNextTopBlockNode
  * get next top level block node
  * @param {Node} node node
- * @return {Node} founded node
+ * @returns {Node} founded node
  */
 var getNextTopBlockNode = function(node) {
     return getNodeWithDirectionUnderParent('next', node, 'BODY');

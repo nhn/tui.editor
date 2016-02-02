@@ -174,7 +174,9 @@ function changeDecColorToHex(color) {
         g = parseInt(g, 10);
         b = parseInt(b, 10);
 
-        return '#' + get2DigitNumberString(r.toString(16)) + get2DigitNumberString(g.toString(16)) + get2DigitNumberString(b.toString(16));
+        return '#' + get2DigitNumberString(r.toString(16))
+            + get2DigitNumberString(g.toString(16))
+            + get2DigitNumberString(b.toString(16));
     });
 }
 

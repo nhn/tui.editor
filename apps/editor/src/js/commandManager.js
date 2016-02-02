@@ -34,7 +34,7 @@ function CommandManager(base) {
  * addCommand
  * 커맨드를 추가한다.
  * @param {Command} command 커맨드객체
- * @return {Command} 커맨드
+ * @returns {Command} 커맨드
  */
 CommandManager.prototype.addCommand = function(command) {
     var name,

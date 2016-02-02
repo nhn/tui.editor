@@ -25,14 +25,15 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
     exec: function(wwe) {
         var sq = wwe.getEditor(),
             range = sq.getSelection(),
-            nextBlockNode;
+            currentNode, nextBlockNode;
 
         if (!range.collapsed || sq.hasFormat('TABLE')) {
             sq.focus();
             return;
         }
 
-        nextBlockNode = domUtils.getNextTopBlockNode(domUtils.getChildNodeByOffset(range.startContainer, range.startOffset));
+        currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+        nextBlockNode = domUtils.getNextTopBlockNode(currentNode);
 
         if (!nextBlockNode) {
             nextBlockNode = sq.createDefaultBlock();

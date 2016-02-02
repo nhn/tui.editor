@@ -64,12 +64,12 @@ PopupAddImage.prototype._bindContentEvent = function() {
     var self = this;
 
     this.on('click .te-ok-button', function() {
-        self.trigger('okButtonClicked', this);
+        self.trigger('okButtonClicked', self);
         self.hide();
     });
 
     this.on('click .te-close-button', function() {
-        self.trigger('closeButtonClicked', this);
+        self.trigger('closeButtonClicked', self);
         self.hide();
     });
 
@@ -112,7 +112,9 @@ PopupAddImage.prototype._linkWithEventManager = function() {
             self.applyImage();
         } else {
             self._preAltValue = self.$el.find('.te-alt-text-input').val();
-            self.eventManager.emit('addImageBlobHook', self.$el.find('.te-image-file-input')[0].files[0], self.applyImage);
+            self.eventManager.emit('addImageBlobHook',
+                                    self.$el.find('.te-image-file-input')[0].files[0],
+                                    self.applyImage);
         }
     });
 };

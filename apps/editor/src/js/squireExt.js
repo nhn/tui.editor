@@ -175,10 +175,11 @@ SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteL
 };
 
 SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
-    var endSelectionInfo;
+    var endSelectionInfo, finalOffset;
 
     selection.setStart(selection.endContainer, selection.endOffset + offset);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset + overwriteLength));
+    finalOffset = selection.endOffset + (offset + overwriteLength);
+    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, finalOffset);
     selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
     this.replaceSelection(content, selection);
@@ -210,7 +211,7 @@ SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
 
     if (!traceElement) {
         traceElement = latestAvailableElement;
-        traceOffset =  domUtils.getTextLength(traceElement);
+        traceOffset = domUtils.getTextLength(traceElement);
     }
 
     return {

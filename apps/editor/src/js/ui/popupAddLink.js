@@ -52,12 +52,12 @@ PopupAddLink.prototype._bindContentEvent = function() {
     var self = this;
 
     this.on('click .te-ok-button', function() {
-        self.trigger('okButtonClicked', this);
+        self.trigger('okButtonClicked', self);
         self.hide();
     });
 
     this.on('click .te-close-button', function() {
-        self.trigger('closeButtonClicked', this);
+        self.trigger('closeButtonClicked', self);
         self.hide();
     });
 

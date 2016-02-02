@@ -82,7 +82,7 @@ Tab.prototype._applyInitName = function(initName) {
 /**
  * _getButtonData
  * Make button data by this.items
- * @return {object[]} Button data
+ * @returns {object[]} Button data
  */
 Tab.prototype._getButtonData = function() {
     var buttonData = [],
@@ -176,7 +176,7 @@ Tab.prototype._activateTabByButton = function($button) {
  * _isActivatedButton
  * Check passed button is activated
  * @param {jQuery} $button Button to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 Tab.prototype._isActivatedButton = function($button) {
     return this._$activeButton && this._$activeButton.text() === $button.text();
