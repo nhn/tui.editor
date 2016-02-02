@@ -34,10 +34,15 @@ function ScrollSync(sectionManager, cm, $previewContainerEl) {
  * _getEditorSectionHeight
  * get section height of editor
  * @param {object} section section be caculated height
- * @return {number} height
+ * @returns {number} height
  */
 ScrollSync.prototype._getEditorSectionHeight = function(section) {
-    return this.cm.heightAtLine(section.end, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+    var height;
+
+    height = this.cm.heightAtLine(section.end, 'local');
+    height -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+
+    return height;
 };
 
 /**
@@ -45,10 +50,14 @@ ScrollSync.prototype._getEditorSectionHeight = function(section) {
  * get height gap between passed line in passed section
  * @param {object} section section be caculated
  * @param {number} line line number
- * @return {number} gap
+ * @returns {number} gap
  */
 ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) {
-    var gap = this.cm.heightAtLine(line, 'local') - this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+    var gap;
+
+    gap = this.cm.heightAtLine(line, 'local');
+    gap -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+
     return Math.max(gap, 0);
 };
 
@@ -57,7 +66,7 @@ ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) 
  * get ratio of height between scrollTop line and scrollTop section
  * @param {object} section section be caculated
  * @param {number} line line number
- * @return {number} ratio
+ * @returns {number} ratio
  */
 ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
     var ratio,
@@ -74,7 +83,7 @@ ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
 /**
  * _getScrollFactorsOfEditor
  * get Scroll Information of editor for preivew scroll sync
- * @return {object} scroll factors
+ * @returns {object} scroll factors
  */
 ScrollSync.prototype._getScrollFactorsOfEditor = function() {
     var topLine, topSection, ratio, isEditorBottom, factors,
@@ -109,19 +118,20 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
 /**
  * _getScrollTopForPreview
  * get ScrolTop value for preview
- * @return {number|undefined} scrollTop value, when something wrong then return undefined
+ * @returns {number|undefined} scrollTop value, when something wrong then return undefined
  */
 ScrollSync.prototype._getScrollTopForPreview = function() {
     var scrollTop, scrollFactors, section, ratio;
 
     scrollFactors = this._getScrollFactorsOfEditor();
-    section = scrollFactors.section,
+    section = scrollFactors.section;
     ratio = scrollFactors.sectionRatio;
 
     if (scrollFactors.isEditorBottom) {
         scrollTop = this.$contents.height();
     } else if (section.$previewSectionEl) {
-        scrollTop = section.$previewSectionEl[0].offsetTop + (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
+        scrollTop = section.$previewSectionEl[0].offsetTop;
+        scrollTop += (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
     }
 
     scrollTop = scrollTop && Math.max(scrollTop, 0);

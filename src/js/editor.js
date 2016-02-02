@@ -101,7 +101,8 @@ function ToastUIEditor(options) {
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
+    this.wwEditor = WysiwygEditor.factory(
+                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
@@ -215,7 +216,7 @@ ToastUIEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
-ToastUIEditor.prototype.contentHeight  = function(height) {
+ToastUIEditor.prototype.contentHeight = function(height) {
     if (height) {
         this._contentHeight = height;
         this.mdEditor.setHeight(height);

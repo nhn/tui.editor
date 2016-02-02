@@ -53,7 +53,7 @@ SectionManager.prototype._addNewSection = function(start, end) {
 /**
  * getSectionList
  * return section list
- * @return {object[]} section object list
+ * @returns {object[]} section object list
  */
 SectionManager.prototype.getSectionList = function() {
     return this._sectionList;
@@ -64,7 +64,7 @@ SectionManager.prototype.getSectionList = function() {
  * make default section object
  * @param {number} start initial start line number
  * @param {number} end initial end line number
- * @return {object} section object
+ * @returns {object} section object
  */
 SectionManager.prototype._makeSectionData = function(start, end) {
     return {
@@ -144,7 +144,7 @@ SectionManager.prototype._eachLineState = function(iteratee) {
  * Check if follow lines have codeblock end
  * @param {number} lineIndex current index
  * @param {number} lineLength line length
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, lineLength) {
     var i,
@@ -164,7 +164,7 @@ SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, 
  * _isCodeBlockStart
  * Check if passed string have code block start
  * @param {string} string string to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isCodeBlockStart = function(string) {
     return FIND_CODEBLOCK_START_RX.test(string);
@@ -174,7 +174,7 @@ SectionManager.prototype._isCodeBlockStart = function(string) {
  * _isCodeBlockEnd
  * Check if passed string have code block end
  * @param {string} string string to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isCodeBlockEnd = function(string) {
     return FIND_CODEBLOCK_END_RX.test(string);
@@ -185,7 +185,7 @@ SectionManager.prototype._isCodeBlockEnd = function(string) {
  * Check if passed string have table
  * @param {string} lineString current line string
  * @param {string} nextLineString next line string
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isTable = function(lineString, nextLineString) {
     return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
@@ -195,7 +195,7 @@ SectionManager.prototype._isTable = function(lineString, nextLineString) {
  * _isTableCode
  * Check if passed string have table code
  * @param {string} string string to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isTableCode = function(string) {
     return /(^\S?.*\|.*)/.test(string);
@@ -205,7 +205,7 @@ SectionManager.prototype._isTableCode = function(string) {
  * _isTableAligner
  * Check if passed string have table align code
  * @param {string} string string to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isTableAligner = function(string) {
     return /(\s*[-:]+\s*\|)+/.test(string);
@@ -215,7 +215,7 @@ SectionManager.prototype._isTableAligner = function(string) {
  * _isAtxHeader
  * Check if passed string have atx header
  * @param {string} string string to check
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isAtxHeader = function(string) {
     return FIND_HEADER_RX.test(string);
@@ -225,7 +225,7 @@ SectionManager.prototype._isAtxHeader = function(string) {
  * _isSeTextHeader
  * @param {string} lineString current line string
  * @param {string} nextLineString next line string
- * @return {boolean} result
+ * @returns {boolean} result
  */
 SectionManager.prototype._isSeTextHeader = function(lineString, nextLineString) {
     return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
@@ -282,9 +282,18 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
 };
 
 /**
+ * findElementNodeFilter
+ * @this Node
+ * @returns {boolean} true or not
+ */
+function findElementNodeFilter() {
+    return this.nodeType === Node.ELEMENT_NODE;
+}
+
+/**
  * _getPreviewSections
  * get preview html section group to make section
- * @return {array[]} element node array
+ * @returns {array[]} element node array
  */
 SectionManager.prototype._getPreviewSections = function() {
     var lastSection = 0,
@@ -292,9 +301,7 @@ SectionManager.prototype._getPreviewSections = function() {
 
     sections[0] = [];
 
-    this.$previewContent.contents().filter(function() {
-        return this.nodeType === Node.ELEMENT_NODE;
-    }).each(function(index, el) {
+    this.$previewContent.contents().filter(findElementNodeFilter).each(function(index, el) {
         if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
             if (sections[lastSection].length) {
                 sections.push([]);
@@ -312,7 +319,7 @@ SectionManager.prototype._getPreviewSections = function() {
  * _sectionByLine
  * get section by markdown line
  * @param {number} line markdown editor line number
- * @return {object} section
+ * @returns {object} section
  */
 SectionManager.prototype.sectionByLine = function(line) {
     var sectionIndex,

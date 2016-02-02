@@ -148,7 +148,7 @@ PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row)  {
  * Get resized table bound if Need
  * @param {number} col column index
  * @param {number} row row index
- * @return {object} bound
+ * @returns {object} bound
  */
 PopupAddTable.prototype._getResizedTableBound  = function(col, row)  {
     var resizedCol, resizedRow, resizedBound;
@@ -180,7 +180,7 @@ PopupAddTable.prototype._getResizedTableBound  = function(col, row)  {
  * check if need resize table
  * @param {number} col column index
  * @param {number} row row index
- * @return {boolean} result
+ * @returns {boolean} result
  */
 PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
     return (col && col !== this._tableBound.col)
@@ -192,7 +192,7 @@ PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
  * Get bound by offset
  * @param {number} x offset
  * @param {number} y offset
- * @return {object} bound
+ * @returns {object} bound
  */
 PopupAddTable.prototype._getBoundByOffset = function(x, y) {
     var rowBound = parseInt(y / CELL_HEIGHT, 10),
@@ -209,7 +209,7 @@ PopupAddTable.prototype._getBoundByOffset = function(x, y) {
  * Get offset by bound
  * @param {number} col column index
  * @param {number} row row index
- * @return {object} offset
+ * @returns {object} offset
  */
 PopupAddTable.prototype._getOffsetByBound = function(col, row) {
     var x = (col * CELL_WIDTH) + CELL_WIDTH,
@@ -239,7 +239,7 @@ PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
  * Get selection bound that process with range by offset
  * @param {number} x offset
  * @param {number} y offset
- * @return {object} bound
+ * @returns {object} bound
  */
 PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
     var bound = this._getBoundByOffset(x, y);
@@ -287,7 +287,7 @@ PopupAddTable.prototype._setSelectedBound = function(col, row) {
 /**
  * _getSelectedTableSize
  * Get selected table size
- * @return {object} bound
+ * @returns {object} bound
  */
 PopupAddTable.prototype._getSelectedTableSize = function() {
     return {

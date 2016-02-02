@@ -105,7 +105,7 @@ MarkdownEditor.prototype._initEvent = function() {
 
         token = self.cm.getTokenAt(self.cm.getCursor());
 
-        state =  {
+        state = {
             bold: !!token.state.base.strong,
             italic: !!token.state.base.em,
             source: 'markdown'
@@ -122,7 +122,7 @@ MarkdownEditor.prototype._initEvent = function() {
  * getCurrentRange
  * returns current selection's range
  * @param {CodeMirror} cm codemirror instance
- * @return {object} selection range
+ * @returns {object} selection range
  */
 MarkdownEditor.prototype.getCurrentRange = function() {
     var from = this.cm.getCursor('from'),

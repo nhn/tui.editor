@@ -29,7 +29,7 @@ function Command(name, type, keyMap) {
 /**
  * getName
  * returns Name of command
- * @return {string} Command Name
+ * @returns {string} Command Name
  */
 Command.prototype.getName = function() {
     return this.name;
@@ -38,7 +38,7 @@ Command.prototype.getName = function() {
 /**
  * getType
  * returns Type of command
- * @return {number} Command Type
+ * @returns {number} Command Type
  */
 Command.prototype.getType = function() {
     return this.type;
@@ -47,7 +47,7 @@ Command.prototype.getType = function() {
 /**
  * isMDType
  * returns whether Command Type is Markdown or not
- * @return {boolean} result
+ * @returns {boolean} result
  */
 Command.prototype.isMDType = function() {
     return this.type === Command.TYPE.MD;
@@ -56,7 +56,7 @@ Command.prototype.isMDType = function() {
 /**
  * isWWType
  * returns whether Command Type is Wysiwyg or not
- * @return {boolean} result
+ * @returns {boolean} result
  */
 Command.prototype.isWWType = function() {
     return this.type === Command.TYPE.WW;
@@ -65,7 +65,7 @@ Command.prototype.isWWType = function() {
 /**
  * isGlobalType
  * returns whether Command Type is Global or not
- * @return {boolean} result
+ * @returns {boolean} result
  */
 Command.prototype.isGlobalType = function() {
     return this.type === Command.TYPE.GB;

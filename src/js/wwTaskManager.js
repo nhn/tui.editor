@@ -238,7 +238,8 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
             prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 1);
 
             //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
-            if (domUtils.isTextNode(prevEl) && prevEl.nodeValue.length === 1 && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
+            if (domUtils.isTextNode(prevEl) && prevEl.nodeValue.length === 1
+                && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
                 prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 2);
             }
         }
@@ -301,18 +302,24 @@ WwTaskManager.prototype._removeTaskListClass = function() {
     });
 };
 
+
+/**
+ * findTextNodeFilter
+ * @this Node
+ * @returns {boolean} true or not
+ */
+function findTextNodeFilter() {
+    return this.nodeType === Node.TEXT_NODE;
+}
+
 /**
  * _ensureSpaceNextToTaskInput
  * Ensure space next to task input
  * this because we need some space after input for safari cursor issue
  */
 WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
-    var findTextNodeFilter, firstTextNode, $wrapper,
+    var firstTextNode, $wrapper,
         self = this;
-
-    findTextNodeFilter = function() {
-        return this.nodeType === 3;
-    };
 
     this.wwe.get$Body().find('.task-list-item').each(function(i, node) {
         $wrapper = $(node).find('div');
@@ -353,9 +360,7 @@ WwTaskManager.prototype.unformatTask = function unformatTask(node) {
         $li.removeAttr('class');
     }
 
-    firstTextNode = $wrapper.contents().filter(function() {
-        return this.nodeType === 3;
-    })[0];
+    firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
 
     if (firstTextNode && firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX)) {
         firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');

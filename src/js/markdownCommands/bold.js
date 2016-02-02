@@ -51,7 +51,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
     /**
      * 이미 Bold가 적용이 되어있는지 확인
      * @param {string} text 셀렉션텍스트
-     * @return {boolean} 볼드 적용 여부
+     * @returns {boolean} 볼드 적용 여부
      */
     isNeedRemove: function(text) {
         return boldRegex.test(text);
@@ -59,7 +59,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
     /**
      * Bold를 적용한다
      * @param {string} text 셀렉션텍스트
-     * @return {string} 볼드가 적용된 텍스트
+     * @returns {string} 볼드가 적용된 텍스트
      */
     append: function(text) {
         return '**' + text + '**';
@@ -67,7 +67,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
     /**
      * Bold를 제거한다
      * @param {string} text 셀렉션텍스트
-     * @return {string} 볼드가 제거된 텍스트
+     * @returns {string} 볼드가 제거된 텍스트
      */
     remove: function(text) {
         return text.substr(2, text.length - 4);
@@ -76,7 +76,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * 셀렉션영역을 확장한다
      * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
      * @param {object} cursor 코드미러 커서 객체
-     * @return {string} 셀렉션의 텍스트
+     * @returns {string} 셀렉션의 텍스트
      */
     expendSelection: function(doc, cursor) {
         var tmpSelection = doc.getSelection();

@@ -13,6 +13,7 @@ var domUtils = require('./domUtils'),
     WwHrManager = require('./wwHrManager'),
     WwPManager = require('./wwPManager'),
     WwHeadingManager = require('./wwHeadingManager'),
+    WwCodeBlockManager = require('./wwCodeBlockManager'),
     SquireExt = require('./squireExt');
 
 var keyMapper = require('./keyMapper').getSharedInstance();
@@ -220,22 +221,7 @@ WysiwygEditor.prototype.addKeyEventHandler = function(keyMap, handler) {
 WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
     var range = this.getEditor().getSelection().cloneRange(),
         handlers, isNeedNext;
-/*
-    console.log(event);
-    console.log('-------->', event.keyCode, event.keyIdentifier);
-    console.log('startContainer', range.startContainer);
-    console.log('startOffset', range.startOffset);
-    console.log('startContainer.parentNode', range.startContainer.parentNode);
-    console.log('startContainer.previousSibling', range.startContainer.previousSibling);
-    console.log('startContainer.nextSibling', range.startContainer.nextSibling);
-    if (range.startContainer.nodeType === Node.ELEMENT_NODE) {
-        console.log('currentPosition', range.startContainer.childNodes[range.startOffset]);
-    } else {
-        console.log('currentPosition', range.startContainer.nodeValue[range.startOffset]);
-    }
-    if (range.startOffset > 0) console.log('prev Position', range.startContainer.childNodes[range.startOffset - 1] || range.startContainer.nodeValue[range.startOffset - 1]);
-    console.log('path', this.editor.getPath());
-*/
+
     handlers = this._keyEventHandlers['DEFAULT'];
 
     if (handlers) {
@@ -467,17 +453,22 @@ WysiwygEditor.prototype._wrapDefaultBlockTo = function(range) {
 };
 
 /**
+ * findTextNodeFilter
+ * @this Node
+ * @returns {boolean} true or not
+ */
+function findTextNodeFilter() {
+    return this.nodeType === Node.TEXT_NODE;
+}
+
+/**
  * _joinSplitedTextNodes
  * Join spliated text nodes
  */
 WysiwygEditor.prototype._joinSplitedTextNodes = function() {
-    var findTextNodeFilter, textNodes, prevNode,
+    var textNodes, prevNode,
         lastGroup,
         nodesToRemove = [];
-
-    findTextNodeFilter = function() {
-        return this.nodeType === 3;
-    };
 
     textNodes = this.get$Body().contents().filter(findTextNodeFilter);
 
@@ -631,7 +622,7 @@ WysiwygEditor.prototype.setValue = function(html) {
 /**
  * getValue
  * Get value of wysiwyg editor
- * @return {string} html text
+ * @returns {string} html text
  */
 WysiwygEditor.prototype.getValue = function() {
     var html;
@@ -693,7 +684,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
 
     setTimeout(function() {
         self.readySilentChange();
-        self.eventManager.emit('wysiwygRangeChangeAfter', this);
+        self.eventManager.emit('wysiwygRangeChangeAfter', self);
         self = null;
     }, 0);
 };
@@ -788,7 +779,8 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     var div, pathToBody, appendBefore, currentNode;
 
-    currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset) || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+    currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
+        || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
     pathToBody = $(currentNode).parentsUntil('body');
 
@@ -903,6 +895,7 @@ WysiwygEditor.factory = function($el, contentStyles, eventManager) {
     wwe.addManager(WwHrManager);
     wwe.addManager(WwPManager);
     wwe.addManager(WwHeadingManager);
+    wwe.addManager(WwCodeBlockManager);
 
     return wwe;
 };

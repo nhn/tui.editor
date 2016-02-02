@@ -20,7 +20,8 @@ function WwClipboardManager(wwe) {
     this.wwe = wwe;
 
     if (util.browser.msie) {
-        this.$hiddenArea = $('<div style="position:absolute;top:0;left:-9999px;height:1px;width:1px;overflow:hidden;" />');
+        this.$hiddenArea = $('<div style="position:absolute;top:0;'
+            + 'left:-9999px;height:1px;width:1px;overflow:hidden;" />');
         this.wwe.$editorContainerEl.append(this.$hiddenArea);
     }
 }
@@ -110,7 +111,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
  * _processFragment
  * process fragment if it was from textarea
  * @param {DocumentFragment} fragment frament to process
- * @return {DocumentFragment} new fragment
+ * @returns {DocumentFragment} new fragment
  */
 WwClipboardManager.prototype._processFragment = function(fragment) {
     var parsedChilds, processedFragment, i, t;
@@ -132,7 +133,7 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
  * _getContentFromRange
  * get processed contents of range
  * @param {Range} range range of selection
- * @return {string} processed contents
+ * @returns {string} processed contents
  */
 WwClipboardManager.prototype._getContentFromRange = function(range) {
     var resultContents,
@@ -160,7 +161,7 @@ WwClipboardManager.prototype._getContentFromRange = function(range) {
  * make node and append childs
  * @param {string} tagName tagName to make
  * @param {Node} content nodes to append
- * @return {Node} node
+ * @returns {Node} node
  */
 WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
     var node = $('<' + tagName + '/>');
@@ -187,7 +188,7 @@ WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
  * _makeFirstChildToTextNodeIfNeed
  * Make firstchild of fragment into textnode
  * @param {DocumentFragment} frag fragment
- * @return {DocumentFragment} result fragment
+ * @returns {DocumentFragment} result fragment
  */
 WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
     var newFirstChild;
@@ -243,10 +244,10 @@ WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent)
  * _extendRange
  * extend range if need
  * @param {Range} range to extend
- * @return {Range} range
+ * @returns {Range} range
  */
 WwClipboardManager.prototype._extendRange = function(range) {
-    var newBound;
+    var newBound, boundNext;
 
     //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
     //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
@@ -267,10 +268,11 @@ WwClipboardManager.prototype._extendRange = function(range) {
 
         if (range.endOffset === range.endContainer.length) {
             newBound = range.endContainer;
+            boundNext = newBound.nextSibling;
 
             //레인지 확장
             while (newBound.parentNode !== range.commonAncestorContainer
-                    && (!newBound.nextSibling || (newBound.nextSibling.tagName === 'BR' && newBound.parentNode.lastChild === newBound.nextSibling))
+                    && (!boundNext || (boundNext.tagName === 'BR' && newBound.parentNode.lastChild === boundNext))
                   ) {
                 newBound = newBound.parentNode;
             }
@@ -295,7 +297,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
  * check if selection has whole commonAncestorContainter
  * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
  * @param {Range} range range of selection
- * @return {boolean} result
+ * @returns {boolean} result
  */
 WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
     return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
@@ -310,7 +312,7 @@ WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(
  * _isOneTextNodeFullySelected
  * check if one text node fully selected with range
  * @param {Range} range range of selection
- * @return {boolean} result
+ * @returns {boolean} result
  */
 WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
     return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
@@ -324,7 +326,7 @@ WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
  * _isStartWithPartialTextNode
  * check if start is partial textnode
  * @param {Range} range range of selection
- * @return {boolean} result
+ * @returns {boolean} result
  */
 WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
     return (range.startContainer.nodeType === Node.TEXT_NODE
@@ -335,7 +337,7 @@ WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
  * _isOrphanListItem
  * check if range have orphan list
  * @param {Range} range range of selection
- * @return {boolean} result
+ * @returns {boolean} result
  */
 WwClipboardManager.prototype._isOrphanListItem = function(range) {
     return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE

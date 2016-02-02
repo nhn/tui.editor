@@ -190,8 +190,13 @@ WwHrManager.prototype._unwrapDivOnHr = function() {
 };
 
 
+/**
+ * findTextNodeFilter
+ * @this Node
+ * @returns {boolean} true or not
+ */
 function findTextNodeFilter() {
-    return this.nodeType === 3;
+    return this.nodeType === Node.TEXT_NODE;
 }
 
 /**
@@ -200,7 +205,7 @@ function findTextNodeFilter() {
  * mainly, this is used for orhan text that made by controlling hr
  */
 WwHrManager.prototype._wrapDefaultBlockToOrphanTexts = function() {
-    var textNodes,
+    var textNodes;
 
     textNodes = this.wwe.get$Body().contents().filter(findTextNodeFilter);
 

@@ -216,12 +216,14 @@ UIController.prototype.remove = function() {
  * 소멸자
  */
 UIController.prototype.destroy = function() {
+    var self = this;
+
     this.remove();
     this.detachEvents();
 
     util.forEachOwnProperties(this, function(value, key) {
-        this[key] = null;
-    }, this);
+        self[key] = null;
+    });
 };
 
 /**

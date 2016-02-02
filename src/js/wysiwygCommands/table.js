@@ -62,7 +62,7 @@ function focusToFirstTh(sq, $table) {
  * makeHeader
  * make table header html string
  * @param {number} col column count
- * @return {string} html string
+ * @returns {string} html string
  */
 function makeHeader(col) {
     var header = '<thead><tr>';
@@ -82,7 +82,7 @@ function makeHeader(col) {
  * make table body html string
  * @param {number} col column count
  * @param {number} row row count
- * @return {string} html string
+ * @returns {string} html string
  */
 function makeBody(col, row) {
     var body = '<tbody>',
