@@ -36,7 +36,7 @@ SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
     var self = this;
 
     this.modifyBlocks(function(frag) {
-        var current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock;
+        var current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
 
         //HR은 Block으로 치지 않아서 frag에나타나지 않는다
         //디폴트 블럭을 만들어준다.
@@ -53,6 +53,10 @@ SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
                 current = current.firstChild;
             }
 
+            appendChidToNextBlock = function(node) {
+                nextBlock.appendChild(node);
+            };
+
             //find tag
             while (current !== frag) {
                 tagName = current.tagName;
@@ -64,9 +68,7 @@ SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
                     if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
                         nextBlock = self.createDefaultBlock();
 
-                        util.forEachArray(util.toArray(current.childNodes), function(node) {
-                            nextBlock.appendChild(node);
-                        });
+                        util.forEachArray(util.toArray(current.childNodes), appendChidToNextBlock);
 
                         lastNodeOfNextBlock = nextBlock.lastChild;
 

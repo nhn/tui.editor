@@ -69,7 +69,8 @@ PopupAddHeading.prototype._linkWithEventManager = function() {
 
 PopupAddHeading.prototype._bindEvent = function() {
     var self = this;
-    this.on('click li', function() {
+
+    this.on('click li', /** @this Node */function() {
         self.eventManager.emit('command', 'Heading', $(this).data('value'));
     });
 };

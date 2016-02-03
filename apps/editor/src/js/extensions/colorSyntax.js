@@ -104,7 +104,7 @@ function initUI(editor) {
     }, 2);
     $button = editor.getUI().toolbar.$el.find('button.' + className);
 
-    $colorPickerContainer =  $('<div />');
+    $colorPickerContainer = $('<div />');
 
     $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
     $buttonBar.css('margin-top', 10);

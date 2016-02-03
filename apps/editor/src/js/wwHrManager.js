@@ -60,11 +60,15 @@ WwHrManager.prototype._initKeyHandler = function() {
     });
 
     this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
-        return self._removeHrOnEnter(range, ev);
+        if (range.collapsed) {
+            return self._removeHrOnEnter(range, ev);
+        }
     });
 
     this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-        return self._removeHrOnBackspace(range, ev);
+        if (range.collapsed) {
+            return self._removeHrOnBackspace(range, ev);
+        }
     });
 };
 
@@ -112,10 +116,6 @@ WwHrManager.prototype._onTypedInHr = function(range) {
 WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
     var hrSuspect, blockPosition;
 
-    if (!range.collapsed) {
-        return;
-    }
-
     if (this._isInHr(range)) {
         hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
     } else if (this._isNearHr(range)) {
@@ -135,10 +135,6 @@ WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
  */
 WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
     var hrSuspect, blockPosition;
-
-    if (!range.collapsed) {
-        return;
-    }
 
     if (this._isInHr(range)) {
         hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);

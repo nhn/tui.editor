@@ -58,9 +58,9 @@ function WysiwygEditor($el, contentStyles, eventManager) {
 
 /**
  * init
- * @param {function} callback when editor is ready invoke callback function
+ * @param {function} onInitComplete when editor is ready invoke callback function
  */
-WysiwygEditor.prototype.init = function(callback) {
+WysiwygEditor.prototype.init = function(onInitComplete) {
     var self = this;
 
     this.$iframe = $('<iframe height="100%" />');
@@ -72,9 +72,9 @@ WysiwygEditor.prototype.init = function(callback) {
         //load 이벤트가 발생되는 브라우저들이있다(IE)
         //에디터의 동작을 맞추기해 완료콜백을 프레임지연해서 모든 과정이 완료되도록 동작을 일치 시켜준다.
         setTimeout(function() {
-            if (callback) {
-                callback();
-                callback = null;
+            if (onInitComplete) {
+                onInitComplete();
+                onInitComplete = null;
             }
         }, 0);
     });
@@ -198,8 +198,6 @@ WysiwygEditor.prototype._initEvent = function() {
  * @param {function} handler handler
  */
 WysiwygEditor.prototype.addKeyEventHandler = function(keyMap, handler) {
-    var keyMap;
-
     if (!handler) {
         handler = keyMap;
         keyMap = 'DEFAULT';
@@ -222,7 +220,7 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
     var range = this.getEditor().getSelection().cloneRange(),
         handlers, isNeedNext;
 
-    handlers = this._keyEventHandlers['DEFAULT'];
+    handlers = this._keyEventHandlers.DEFAULT;
 
     if (handlers) {
         util.forEachArray(handlers, function(handler) {
@@ -347,7 +345,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
 
     this.getEditor().addEventListener('pathChange', function(data) {
-        var state =  {
+        var state = {
             bold: /(>B$)|(>B>)|(>STRONG$)|(>STRONG>)/.test(data.path),
             italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path),
             source: 'wysiwyg'
@@ -408,7 +406,7 @@ WysiwygEditor.prototype._heightToFitContents = function() {
  * @returns {boolean} result
  */
 WysiwygEditor.prototype._isInOrphanText = function(range) {
-    return range.startContainer.nodeType === Node.TEXT_NODE && range.startContainer.parentNode.tagName  === 'BODY';
+    return range.startContainer.nodeType === Node.TEXT_NODE && range.startContainer.parentNode.tagName === 'BODY';
 };
 
 /**
@@ -640,7 +638,7 @@ WysiwygEditor.prototype.getValue = function() {
             result = match;
         //we maintain empty table
         } else if (tag === 'td' || tag === 'th') {
-            result = '<' + tag + '>'+'</' + tag + '>';
+            result = '<' + tag + '></' + tag + '>';
         } else {
             result = '<br />';
         }

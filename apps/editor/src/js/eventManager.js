@@ -151,11 +151,13 @@ EventManager.prototype.addEventType = function(type) {
 EventManager.prototype.removeEventHandler = function(type) {
     var self = this,
         typeInfo = this._getTypeInfo(type),
-        type = typeInfo.type,
         namespace = typeInfo.namespace;
 
+    type = typeInfo.type;
+
     if (type && !namespace) {
-        this.events.delete(type);
+        //dont use dot notation cuz eslint
+        this.events['delete'](type);
     } else if (!type && namespace) {
         this.events.forEach(function(eventHandlers, eventType) {
             self._removeEventHandlerWithTypeInfo(eventType, namespace);
