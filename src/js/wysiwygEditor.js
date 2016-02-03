@@ -608,10 +608,11 @@ WysiwygEditor.prototype.setHeight = function(height) {
 WysiwygEditor.prototype.setValue = function(html) {
     html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
     this.editor.setHTML(html);
-    this._autoResizeHeightIfNeed();
 
     this.eventManager.emit('wysiwygSetValueAfter', this);
     this.eventManager.emit('contentChangedFromWysiwyg', this);
+
+    this._autoResizeHeightIfNeed();
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
