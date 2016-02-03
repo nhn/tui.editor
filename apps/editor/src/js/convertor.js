@@ -103,6 +103,12 @@ Convertor.prototype.toMarkdown = function(html) {
     return markdown;
 };
 
+/**
+ * _sanitizeScript
+ * Sanitize script tag
+ * @param {string} html html text
+ * @returns {string}
+ */
 Convertor.prototype._sanitizeScript = function(html) {
     html = html.replace(/\<script.*?\>/g, '&lt;script&gt;');
     html = html.replace(/\<\/script\>/g, '&lt;/script&gt;');
@@ -110,6 +116,12 @@ Convertor.prototype._sanitizeScript = function(html) {
     return html;
 };
 
+/**
+ * factory
+ * Convertor factory
+ * @param {EventManager} eventManager eventmanager
+ * @returns {Convertor}
+ */
 Convertor.factory = function(eventManager) {
     return new Convertor(eventManager);
 };
