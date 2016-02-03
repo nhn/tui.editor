@@ -220,7 +220,7 @@ WwTableManager.prototype._removeTableOnBackspace = function(range) {
 WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
     var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
 
-    if (range.collapsed &&  this._lastCellNode !== currentCellNode) {
+    if (range.collapsed && this._lastCellNode !== currentCellNode) {
         this.wwe.getEditor().recordUndoState(range);
         this._lastCellNode = currentCellNode;
     }

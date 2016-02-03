@@ -41,7 +41,7 @@ var OL = CommandManager.command('markdown', /** @lends OL */{
         if (line.match(FIND_MD_UL_RX)) {
             line = line.replace(/\* /, '1. ');
 
-            to  = {
+            to = {
                 line: from.line,
                 ch: line.length -1
             };

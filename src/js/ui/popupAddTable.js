@@ -135,7 +135,7 @@ PopupAddTable.prototype._linkWithEventManager = function() {
  * @param {number} col column index
  * @param {number} row row index
  */
-PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row)  {
+PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row) {
     var resizedBound = this._getResizedTableBound(col, row);
 
     if (resizedBound) {
@@ -150,7 +150,7 @@ PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row)  {
  * @param {number} row row index
  * @returns {object} bound
  */
-PopupAddTable.prototype._getResizedTableBound  = function(col, row)  {
+PopupAddTable.prototype._getResizedTableBound = function(col, row) {
     var resizedCol, resizedRow, resizedBound;
 
     if (col >= MIN_COL_INDEX && col < MAX_COL_INDEX) {
@@ -266,7 +266,7 @@ PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
  * @param {number} row row index
  */
 PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
-    var boundOffset,
+    var boundOffset;
 
     boundOffset = this._getOffsetByBound(col, row);
     this._setSelectionArea(boundOffset.x, boundOffset.y);

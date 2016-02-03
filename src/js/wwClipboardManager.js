@@ -126,7 +126,7 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
         }
     }
 
-    return  processedFragment || fragment;
+    return processedFragment || fragment;
 };
 
 /**
@@ -176,7 +176,7 @@ WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
  * @param {function} iteratee callback
  */
 WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
-   var paths =  this.wwe.getEditor().getPath().split('>'),
+   var paths = this.wwe.getEditor().getPath().split('>'),
        i;
 
    for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i-=1) {
