@@ -768,7 +768,7 @@ proto.getFontInfo = function ( range ) {
         size: undefined
     };
     var seenAttributes = 0;
-    var element, style;
+    var element, style, attr;
 
     if ( !range && !( range = this.getSelection() ) ) {
         return fontInfo;
@@ -780,20 +780,21 @@ proto.getFontInfo = function ( range ) {
             element = element.parentNode;
         }
         while ( seenAttributes < 4 && element && ( style = element.style ) ) {
-            if ( !fontInfo.color ) {
-                fontInfo.color = style.color;
+            if ( !fontInfo.color && ( attr = style.color ) ) {
+                fontInfo.color = attr;
                 seenAttributes += 1;
             }
-            if ( !fontInfo.backgroundColor ) {
-                fontInfo.backgroundColor = style.backgroundColor;
+            if ( !fontInfo.backgroundColor &&
+                    ( attr = style.backgroundColor ) ) {
+                fontInfo.backgroundColor = attr;
                 seenAttributes += 1;
             }
-            if ( !fontInfo.family ) {
-                fontInfo.family = style.fontFamily;
+            if ( !fontInfo.family && ( attr = style.fontFamily ) ) {
+                fontInfo.family = attr;
                 seenAttributes += 1;
             }
-            if ( !fontInfo.size ) {
-                fontInfo.size = style.fontSize;
+            if ( !fontInfo.size && ( attr = style.fontSize ) ) {
+                fontInfo.size = attr;
                 seenAttributes += 1;
             }
             element = element.parentNode;
