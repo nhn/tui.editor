@@ -94,7 +94,7 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 PopupAddLink.prototype.getValue = function() {
     return {
         linkText: this.$el.find('.te-link-text-input').val(),
-        url: this.$el.find('.te-url-input').val()
+        url: this.$el.find('.te-url-input').val().replace(/\(/g, "%28").replace(/\)/g, "%29")
     };
 };
 
