@@ -117,7 +117,6 @@ module.exports = function(config) {
 
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
 
@@ -135,6 +134,7 @@ module.exports = function(config) {
         browsers: [
             //'IE10',
             'IE11',
+            'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
@@ -151,6 +151,11 @@ module.exports = function(config) {
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 11
+            },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
