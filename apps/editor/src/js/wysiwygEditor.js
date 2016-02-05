@@ -189,6 +189,10 @@ WysiwygEditor.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygSetValueAfter', function() {
         self._wrapDefaultBlockToListInner();
     });
+
+    this.eventManager.listen('wysiwygKeyEvent', function(ev) {
+        self._runKeyEventHandlers(ev.data, ev.keyMap);
+    });
 };
 
 /**
@@ -322,16 +326,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
-    //firefox has problem about keydown event while composition korean
-    //파폭에서는 한글입력할때뿐아니라 한글입력도중에 엔터키와같은 특수키 입력시 keydown이벤트가 발생하지 않는다
-    if (util.browser.firefox) {
-        this.getEditor().addEventListener('keypress', function(keyboardEvent) {
-            if (keyboardEvent.keyCode) {
-                self._onKeyDown(keyboardEvent);
-            }
-        });
-    }
-
     this.getEditor().addEventListener('focus', function() {
         self.eventManager.emit('focus', {
             source: 'wysiwyg'
@@ -364,7 +358,10 @@ WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
         data: keyboardEvent
     });
 
-    this._runKeyEventHandlers(keyboardEvent, keyMap);
+    this.eventManager.emit('wysiwygKeyEvent', {
+        keyMap: keyMap,
+        data: keyboardEvent
+    });
 };
 
 /**
