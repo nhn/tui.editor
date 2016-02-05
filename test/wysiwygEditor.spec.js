@@ -75,14 +75,20 @@ describe('WysiwygEditor', function() {
         it('add key event handler and run', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler(handler);
-            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'HOME',
+                data: {keyCode:0}
+            });
             expect(handler).toHaveBeenCalled();
         });
 
         it('add key event with particular keymap and run', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler('HOME', handler);
-            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'HOME',
+                data: {keyCode:0}
+            });
             expect(handler).toHaveBeenCalled();
         });
 
@@ -90,7 +96,10 @@ describe('WysiwygEditor', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler('HOME', handler);
             wwe.addKeyEventHandler(handler);
-            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'HOME',
+                data: {keyCode:0}
+            });
             expect(handler.calls.count()).toEqual(2);
         });
 
@@ -100,7 +109,10 @@ describe('WysiwygEditor', function() {
                 return false;
             });
             wwe.addKeyEventHandler('HOME', handler);
-            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'HOME',
+                data: {keyCode:0}
+            });
             expect(handler).not.toHaveBeenCalled();
         });
 
@@ -111,7 +123,11 @@ describe('WysiwygEditor', function() {
             });
 
             wwe.addKeyEventHandler('HOME', handler);
-            wwe._runKeyEventHandlers({keyCode:0}, 'HOME');
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'HOME',
+                data: {keyCode:0}
+            });
             expect(handler).not.toHaveBeenCalled();
         });
     });
