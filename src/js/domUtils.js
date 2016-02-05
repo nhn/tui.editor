@@ -5,6 +5,8 @@
 
 'use strict';
 
+var FIND_ZWB = /\u200B/g;
+
 /**
  * isTextNode
  * Check if node is text node
@@ -49,9 +51,9 @@ var getTextLength = function(node) {
     var len;
 
     if (isElemNode(node)) {
-       len = node.textContent.length;
+       len = node.textContent.replace(FIND_ZWB, '').length;
     } else if (isTextNode(node)) {
-       len = node.nodeValue.length;
+       len = node.nodeValue.replace(FIND_ZWB, '').length;
     }
 
     return len;
@@ -69,7 +71,7 @@ var getOffsetLength = function(node) {
     if (isElemNode(node)) {
        len = node.childNodes.length;
     } else if (isTextNode(node)) {
-       len = node.nodeValue.length;
+       len = node.nodeValue.replace(FIND_ZWB, '').length;
     }
 
     return len;
