@@ -99,10 +99,6 @@ describe('Toolbar', function() {
             $('body').append(toolbar.$el);
         });
 
-        it('toolbar have 11 buttons', function() {
-            expect($('button').length).toEqual(11);
-        });
-
         it('추가되야할 버튼들이 정상적으로 추가되어 있다', function() {
             expect($('.tui-bold').length).toEqual(1);
             expect($('.tui-italic').length).toEqual(1);
@@ -115,6 +111,7 @@ describe('Toolbar', function() {
             expect($('.tui-ol').length).toEqual(1);
             expect($('.tui-task').length).toEqual(1);
             expect($('.tui-table').length).toEqual(1);
+            expect($('.tui-codeblock').length).toEqual(1);
         });
     });
 });

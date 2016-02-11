@@ -144,6 +144,13 @@ Toolbar.prototype._initButton = function() {
     }));
 
     this.addButton(new Button({
+        className: 'tui-codeblock',
+        command: 'CodeBlock',
+        text: 'CB',
+        tooltip: '코드블럭 삽입'
+    }));
+
+    this.addButton(new Button({
         className: 'tui-image',
         event: 'openPopupAddImage',
         tooltip: '이미지 삽입'
