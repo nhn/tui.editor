@@ -108,11 +108,11 @@ describe('WwCodeBlockManager', function() {
 
     describe('Event', function() {
         it('split to each code tag in code block on line feed on wysiwygSetValueAfter', function() {
-            wwe.setValue('<pre><code>test\ntest2\ntest3</code></pre>');
+            wwe.setValue('<pre><code>test\ntest2\n\ntest3\n</code></pre>');
 
             expect(wwe.get$Body().find('pre').length).toEqual(1);
-            expect(wwe.get$Body().find('pre div').length).toEqual(3);
-            expect(wwe.get$Body().find('pre code').length).toEqual(3);
+            expect(wwe.get$Body().find('pre div').length).toEqual(4);
+            expect(wwe.get$Body().find('pre code').length).toEqual(4);
         });
 
         it('join each line of code block to one codeblock on wysiwygProcessHTMLText', function() {

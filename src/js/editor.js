@@ -27,7 +27,8 @@ var mdBold = require('./markdownCommands/bold'),
     mdUL = require('./markdownCommands/ul'),
     mdOL = require('./markdownCommands/ol'),
     mdTable = require('./markdownCommands/table'),
-    mdTask = require('./markdownCommands/task');
+    mdTask = require('./markdownCommands/task'),
+    mdCodeBlock = require('./markdownCommands/codeBlock');
 
 //wysiwyg Commands
 var wwBold = require('./wysiwygCommands/bold'),
@@ -46,7 +47,8 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwTableRemoveCol = require('./wysiwygCommands/tableRemoveCol'),
     wwTableRemove = require('./wysiwygCommands/tableRemove'),
     wwIncreaseDepth = require('./wysiwygCommands/increaseDepth'),
-    wwTask = require('./wysiwygCommands/task');
+    wwTask = require('./wysiwygCommands/task'),
+    wwCodeBlock = require('./wysiwygCommands/codeBlock');
 
 var util = tui.util;
 
@@ -326,6 +328,7 @@ ToastUIEditor.factory = function(options) {
     tuiEditor.addCommand(mdOL);
     tuiEditor.addCommand(mdTable);
     tuiEditor.addCommand(mdTask);
+    tuiEditor.addCommand(mdCodeBlock);
 
     tuiEditor.addCommand(wwBold);
     tuiEditor.addCommand(wwItalic);
@@ -344,6 +347,7 @@ ToastUIEditor.factory = function(options) {
     tuiEditor.addCommand(wwTableRemoveRow);
     tuiEditor.addCommand(wwTableRemoveCol);
     tuiEditor.addCommand(wwTableRemove);
+    tuiEditor.addCommand(wwCodeBlock);
 
     return tuiEditor;
 };

@@ -90,14 +90,16 @@ WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(htm
 
 WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
     this.wwe.get$Body().find('pre').each(function(index, pre) {
-        var codelines = pre.textContent.split('\n');
+        var codelines = pre.textContent.replace(/\n+$/, '').split('\n');
 
         $(pre).empty();
 
         util.forEach(codelines, function(line) {
-            if (line) {
-                $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code></div>');
+            if (!line) {
+                line = '\u200B';
             }
+
+            $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code></div>');
         });
     });
 };
