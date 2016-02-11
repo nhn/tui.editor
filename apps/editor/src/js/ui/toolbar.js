@@ -151,6 +151,12 @@ Toolbar.prototype._initButton = function() {
     }));
 
     this.addButton(new Button({
+        className: 'tui-code',
+        command: 'Code',
+        tooltip: '코드 삽입'
+    }));
+
+    this.addButton(new Button({
         className: 'tui-image',
         event: 'openPopupAddImage',
         tooltip: '이미지 삽입'

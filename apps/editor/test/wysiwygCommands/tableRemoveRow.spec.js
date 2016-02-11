@@ -19,8 +19,12 @@ describe('Table - RemoveRow', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('remove row that have selected cell', function() {

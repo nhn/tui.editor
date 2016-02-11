@@ -19,8 +19,12 @@ describe('Bold', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('add bold to current selection', function() {
@@ -82,6 +86,19 @@ describe('Bold', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<i>line</i>');
+
+        range.selectNodeContents(wwe.get$Body().children()[0]);
+        wwe.getEditor().setSelection(range);
+
+        Bold.exec(wwe);
+
+        expect(wwe.getValue()).toEqual('<b>line</b><br />');
+    });
+
+    it('if there have code remove and add bold', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<code>line</code>');
 
         range.selectNodeContents(wwe.get$Body().children()[0]);
         wwe.getEditor().setSelection(range);

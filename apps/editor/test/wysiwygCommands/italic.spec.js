@@ -19,8 +19,12 @@ describe('Italic', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('add italic to current selection', function() {
@@ -82,6 +86,19 @@ describe('Italic', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<b>line</b>');
+
+        range.selectNodeContents(wwe.get$Body().children()[0]);
+        wwe.getEditor().setSelection(range);
+
+        Italic.exec(wwe);
+
+        expect(wwe.getValue()).toEqual('<i>line</i><br />');
+    });
+
+    it('if there have code remove and add italic', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<code>line</code>');
 
         range.selectNodeContents(wwe.get$Body().children()[0]);
         wwe.getEditor().setSelection(range);

@@ -28,6 +28,7 @@ var mdBold = require('./markdownCommands/bold'),
     mdOL = require('./markdownCommands/ol'),
     mdTable = require('./markdownCommands/table'),
     mdTask = require('./markdownCommands/task'),
+    mdCode = require('./markdownCommands/code'),
     mdCodeBlock = require('./markdownCommands/codeBlock');
 
 //wysiwyg Commands
@@ -48,6 +49,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwTableRemove = require('./wysiwygCommands/tableRemove'),
     wwIncreaseDepth = require('./wysiwygCommands/increaseDepth'),
     wwTask = require('./wysiwygCommands/task'),
+    wwCode = require('./wysiwygCommands/code'),
     wwCodeBlock = require('./wysiwygCommands/codeBlock');
 
 var util = tui.util;
@@ -328,6 +330,7 @@ ToastUIEditor.factory = function(options) {
     tuiEditor.addCommand(mdOL);
     tuiEditor.addCommand(mdTable);
     tuiEditor.addCommand(mdTask);
+    tuiEditor.addCommand(mdCode);
     tuiEditor.addCommand(mdCodeBlock);
 
     tuiEditor.addCommand(wwBold);
@@ -347,6 +350,7 @@ ToastUIEditor.factory = function(options) {
     tuiEditor.addCommand(wwTableRemoveRow);
     tuiEditor.addCommand(wwTableRemoveCol);
     tuiEditor.addCommand(wwTableRemove);
+    tuiEditor.addCommand(wwCode);
     tuiEditor.addCommand(wwCodeBlock);
 
     return tuiEditor;
