@@ -30,6 +30,8 @@ var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
         } else if (!sq.hasFormat('a')) {
             if (sq.hasFormat('i')) {
                 sq.removeItalic();
+            } else if (sq.hasFormat('code')) {
+                sq.changeFormat(null, {tag: 'code'});
             }
             sq.bold();
         }

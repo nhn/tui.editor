@@ -112,6 +112,7 @@ describe('Toolbar', function() {
             expect($('.tui-task').length).toEqual(1);
             expect($('.tui-table').length).toEqual(1);
             expect($('.tui-codeblock').length).toEqual(1);
+            expect($('.tui-code').length).toEqual(1);
         });
     });
 });

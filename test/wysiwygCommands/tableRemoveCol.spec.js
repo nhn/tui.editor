@@ -19,8 +19,12 @@ describe('Table - RemoveCol', function() {
         });
     });
 
-    afterEach(function() {
-        $('body').empty();
+    //we need to wait squire input event process
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     it('remove col that have selected cell', function() {

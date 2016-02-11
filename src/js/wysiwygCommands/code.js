@@ -1,3 +1,4 @@
+
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -8,15 +9,15 @@
 var CommandManager = require('../commandManager');
 
 /**
- * Italic
- * Add Italic to selected wysiwyg editor content
- * @exports Italic
+ * Code
+ * Add bold to selected wysiwyg editor content
+ * @exports Code
  * @augments Command
  * @augments WysiwygCommand
  */
-var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
-    name: 'Italic',
-    keyMap: ['CTRL+I', 'CTRL+I'],
+var Code = CommandManager.command('wysiwyg', /** @lends Code */{
+    name: 'Code',
+    keyMap: ['SHIFT+CTRL+C', 'SHIFT+CTRL+C'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
@@ -24,19 +25,19 @@ var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        if (sq.hasFormat('i') || sq.hasFormat('em')) {
-            sq.changeFormat(null, {tag: 'i'});
+        if (sq.hasFormat('code')) {
+            sq.changeFormat(null, {tag: 'code'});
         } else if (!sq.hasFormat('a')) {
             if (sq.hasFormat('b')) {
                 sq.removeBold();
-            } else if (sq.hasFormat('code')) {
-                sq.changeFormat(null, {tag: 'code'});
+            } else if (sq.hasFormat('i')) {
+                sq.removeItalic();
             }
-            sq.italic();
+            sq.changeFormat({tag: 'code'});
         }
 
         sq.focus();
     }
 });
 
-module.exports = Italic;
+module.exports = Code;
