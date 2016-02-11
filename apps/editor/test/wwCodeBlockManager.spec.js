@@ -108,18 +108,21 @@ describe('WwCodeBlockManager', function() {
 
     describe('Event', function() {
         it('split to each code tag in code block on line feed on wysiwygSetValueAfter', function() {
-            wwe.setValue('<pre><code>test\ntest2\n\ntest3\n</code></pre>');
+            wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'test\ntest2\n\ntest3\n</code></pre>');
 
             expect(wwe.get$Body().find('pre').length).toEqual(1);
             expect(wwe.get$Body().find('pre div').length).toEqual(4);
             expect(wwe.get$Body().find('pre code').length).toEqual(4);
+            expect(wwe.get$Body().find('pre').hasClass('lang-javascript')).toBe(true);
+            expect(wwe.get$Body().find('pre').attr('data-language')).toEqual('javascript');
         });
 
         it('join each line of code block to one codeblock on wysiwygProcessHTMLText', function() {
             wwe.getEditor().setHTML([
-                '<pre>',
-                '<div><code class="lang-javascript" data-language="javascript">test1</code><br></div>',
-                '<div><code class="lang-javascript" data-language="javascript">test2</code><br></div>',
+                '<pre class="lang-javascript" data-language="javascript">',
+                '<div><code>test1</code><br></div>',
+                '<div><code>test2</code><br></div>',
                 '</pre>'
             ].join(''));
 
@@ -132,13 +135,13 @@ describe('WwCodeBlockManager', function() {
 
         it('join each line of multiple code block to one codeblock on wysiwygProcessHTMLText', function() {
             wwe.getEditor().setHTML([
-                '<pre>',
-                '<div><code class="lang-javascript" data-language="javascript">test1</code><br></div>',
-                '<div><code class="lang-javascript" data-language="javascript">test2</code><br></div>',
+                '<pre class="lang-javascript" data-language="javascript">',
+                '<div><code>test1</code><br></div>',
+                '<div><code>test2</code><br></div>',
                 '</pre>',
-                '<pre>',
-                '<div><code class="lang-javascript" data-language="javascript">test3</code><br></div>',
-                '<div><code class="lang-javascript" data-language="javascript">test4</code><br></div>',
+                '<pre class="lang-javascript" data-language="javascript">',
+                '<div><code>test3</code><br></div>',
+                '<div><code>test4</code><br></div>',
                 '</pre>'
             ].join(''));
 

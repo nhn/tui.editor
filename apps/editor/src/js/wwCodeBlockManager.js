@@ -74,15 +74,12 @@ WwCodeBlockManager.prototype._initEvent = function() {
 };
 
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
-    html = html.replace(/\<\pre\>(.*?)\<\/pre\>/g, function(match, code) {
-        var codeSplitted = code.match(/\<code ?(.*?)\>/),
-            codeAttr = codeSplitted && codeSplitted[1];
-
+    html = html.replace(/\<\pre( .*?)\>(.*?)\<\/pre\>/g, function(match, codeAttr, code) {
         code = code.replace(/\<\/code\>\<br \/>/g, '\n');
         code = code.replace(/\<code ?(.*?)\>/g, '');
         code = code.replace(/\n$/, '');
 
-        return '<pre><code ' + codeAttr + '>' + code + '</code></pre>';
+        return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
     });
 
     return html;
@@ -90,7 +87,13 @@ WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(htm
 
 WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
     this.wwe.get$Body().find('pre').each(function(index, pre) {
-        var codelines = pre.textContent.replace(/\n+$/, '').split('\n');
+        var codelines = pre.textContent.replace(/\n+$/, '').split('\n'),
+            lang = $(pre).find('code').attr('data-language');
+
+        if (lang) {
+            $(pre).attr('data-language', lang);
+            $(pre).addClass('lang-' + lang);
+        }
 
         $(pre).empty();
 
