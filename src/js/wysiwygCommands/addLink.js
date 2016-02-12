@@ -25,14 +25,16 @@ var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
         var sq = wwe.getEditor(),
             link;
 
-        sq.removeAllFormatting();
+        if (!sq.hasFormat('PRE')) {
+            sq.removeAllFormatting();
 
-        if (sq.getSelectedText()) {
-            sq.makeLink(data.url);
-        } else {
-            link = sq.createElement('A', {href: data.url});
-            $(link).text(data.linkText);
-            sq.insertElement(link);
+            if (sq.getSelectedText()) {
+                sq.makeLink(data.url);
+            } else {
+                link = sq.createElement('A', {href: data.url});
+                $(link).text(data.linkText);
+                sq.insertElement(link);
+            }
         }
 
         sq.focus();

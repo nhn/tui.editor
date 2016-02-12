@@ -73,15 +73,20 @@ extManager.defineExtension('colorSyntax', function(editor) {
     editor.addCommand('wysiwyg', {
         name: 'color',
         exec: function(wwe, color) {
-            if (color === RESET_COLOR) {
-               wwe.getEditor().changeFormat(null, {
-                   class: 'colour',
-                   tag: 'span'
-               });
-            } else {
-                wwe.getEditor().setTextColour(color);
+            var sq = wwe.getEditor();
+
+            if (!sq.hasFormat('PRE')) {
+                if (color === RESET_COLOR) {
+                    sq.changeFormat(null, {
+                        class: 'colour',
+                        tag: 'span'
+                    });
+                } else {
+                    sq.setTextColour(color);
+                }
             }
-            wwe.focus();
+
+            sq.focus();
         }
     });
 

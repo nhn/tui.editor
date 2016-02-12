@@ -24,7 +24,7 @@ var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        if (!sq.hasFormat('TABLE')) {
+        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             wwe.unwrapBlockTag();
             sq.increaseQuoteLevel();
         }

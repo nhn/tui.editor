@@ -26,12 +26,10 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
 
         range = wwe.getEditor().getSelection();
 
-        if (!wwe.getEditor().getSelection().collapsed || wwe.getEditor().hasFormat('TABLE')) {
-            wwe.getEditor().focus();
-            return;
-        }
-
-        if (range.collapsed && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === '') {
+        if (range.collapsed
+            && wwe.getEditor().hasFormat('li')
+            && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === ''
+        ) {
             $node = $(range.startContainer).closest('li');
             $prev = $node.prev();
 

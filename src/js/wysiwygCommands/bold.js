@@ -27,7 +27,7 @@ var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
             sq.changeFormat(null, {tag: 'b'});
-        } else if (!sq.hasFormat('a')) {
+        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
             if (sq.hasFormat('i')) {
                 sq.removeItalic();
             } else if (sq.hasFormat('code')) {

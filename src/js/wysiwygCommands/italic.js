@@ -26,7 +26,7 @@ var Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
 
         if (sq.hasFormat('i') || sq.hasFormat('em')) {
             sq.changeFormat(null, {tag: 'i'});
-        } else if (!sq.hasFormat('a')) {
+        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
             if (sq.hasFormat('b')) {
                 sq.removeBold();
             } else if (sq.hasFormat('code')) {

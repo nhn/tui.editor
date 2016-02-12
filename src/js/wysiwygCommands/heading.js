@@ -26,7 +26,7 @@ var Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
         var sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
-        if (!sq.hasFormat('TABLE')) {
+        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             if (range.collapsed
                 || domUtils.getNodeName(range.commonAncestorContainer) === 'DIV'
                 || domUtils.getNodeName(range.commonAncestorContainer) === 'TEXT'

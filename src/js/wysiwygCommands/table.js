@@ -29,7 +29,7 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
         var sq = wwe.getEditor(),
             table;
 
-        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE')) {
+        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
             sq.focus();
             return;
         }
