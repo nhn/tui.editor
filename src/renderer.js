@@ -53,6 +53,12 @@ function Renderer(rules) {
 }
 
 /**
+ * Line feed replacement text
+ * @type string
+ */
+Renderer.prototype.lineFeedReplacement = '\u200B\u200B';
+
+/**
  * addRule
  * Add rule
  * @param {string} selectorString rule selector

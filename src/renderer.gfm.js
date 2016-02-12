@@ -28,6 +28,8 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
             language = ' ' + node.getAttribute('data-language');
         }
 
+        subContent = subContent.replace(/\n/g, this.lineFeedReplacement);
+
         return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
     'PRE': function(node, subContent) {
