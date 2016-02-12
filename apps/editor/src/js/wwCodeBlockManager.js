@@ -46,12 +46,7 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    var self = this;
-
-    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
-        return self._onEnter(ev, range);
-    });
-
+    this.wwe.addKeyEventHandler('ENTER', this._inserNewCodeIfInEmptyCode.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._removeLastCharInCodeTagIfCodeTagHasOneChar.bind(this));
@@ -102,14 +97,21 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
                 line = '\u200B';
             }
 
-            $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code></div>');
+            $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code><br></div>');
         });
     });
 };
 
-WwCodeBlockManager.prototype._onEnter = function(ev, range) {
+WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
     if (!this._isInCodeBlock(range)) {
         return true;
+    }
+
+    if (domUtils.getTextLength(range.startContainer) === 0) {
+        ev.preventDefault();
+        this.wwe.getEditor().recordUndoState(range);
+        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
+        return false;
     }
 };
 
@@ -164,7 +166,7 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
 
     //텍스트 노드인경우 code블럭이 삭제되는것을 방지(squire가 삭제하면 다시만든다)
     if (currentNodeName === 'TEXT'
-        && domUtils.getOffsetLength(range.startContainer) === 1
+        && domUtils.getOffsetLength(range.startContainer) <= 1
         && range.startOffset <= 2
     ) {
         ev.preventDefault();
