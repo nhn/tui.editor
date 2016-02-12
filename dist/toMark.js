@@ -379,6 +379,8 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
             language = ' ' + node.getAttribute('data-language');
         }
 
+        subContent = subContent.replace(/\n/g, this.lineFeedReplacement);
+
         return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
     'PRE': function(node, subContent) {
@@ -535,6 +537,12 @@ function Renderer(rules) {
         this.addRules(rules);
     }
 }
+
+/**
+ * Line feed replacement text
+ * @type string
+ */
+Renderer.prototype.lineFeedReplacement = '\u200B\u200B';
 
 /**
  * addRule
@@ -950,7 +958,7 @@ function toMark(htmlStr, options) {
 
     runner = new DomRunner(toDom(htmlStr));
 
-    return finalize(parse(runner, renderer), isGfm);
+    return finalize(parse(runner, renderer), isGfm, renderer.lineFeedReplacement);
 }
 
 /**
@@ -975,9 +983,10 @@ function parse(runner, renderer) {
  * Remove first and last return character
  * @param {string} text text to finalize
  * @param {boolean} isGfm isGfm flag
+ * @param {string} lineFeedReplacement Line feed replacement text
  * @return {string} result
  */
-function finalize(text, isGfm) {
+function finalize(text, isGfm, lineFeedReplacement) {
     //collapse return and <br>
     //BR뒤에 바로 \n이 이어지면 BR은 불필요하다
     text = text.replace(FIND_UNUSED_BRS_RX, '\n');
@@ -995,9 +1004,9 @@ function finalize(text, isGfm) {
             return '\n\n';
         } else if (matched >= 1) {
             return '\n';
-        } else {
-            return matched;
         }
+
+        return matched;
     });
     //console.log(3, JSON.stringify(text));
 
@@ -1006,6 +1015,7 @@ function finalize(text, isGfm) {
     text = text.replace(FIND_FIRST_LAST_WITH_SPACE_RETURNS_RX, '');
     //console.log(JSON.stringify(text));
 
+    text = text.replace(new RegExp(lineFeedReplacement, 'g'), '\n');
     //in gfm replace '  \n' make by <br> to '\n'
     //gfm모드인경우 임의 개행에 스페이스를 제거
     if (isGfm) {
