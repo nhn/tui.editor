@@ -46,10 +46,12 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    this.wwe.addKeyEventHandler('ENTER', this._inserNewCodeIfInEmptyCode.bind(this));
+    this.wwe.addKeyEventHandler('ENTER', this._recoverEmptyCodeInPreTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._removeLastCharInCodeTagIfCodeTagHasOneChar.bind(this));
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeIfCodeIsEmpty.bind(this));
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._recoverEmptyCodeInPreTag.bind(this));
 };
 
 /**
@@ -139,18 +141,18 @@ WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, ran
 };
 
 WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
-    var pre, code;
+    var pre, div;
 
     if (!this._isInCodeBlock(range)) {
         return true;
     }
 
     pre = domUtils.getParentUntil(range.startContainer);
-    code = domUtils.getParentUntil(range.startContainer, 'PRE');
+    div = domUtils.getParentUntil(range.startContainer, 'PRE');
 
     //코드블럭이 code하나밖에 없을때
     if (range.startOffset === 0 && $(pre).find('code').length <= 1) {
-        $(code).find('code').children().unwrap('code');
+        $(div).find('code').children().unwrap('code');
         return false;
     }
 };
@@ -164,13 +166,66 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
 
     currentNodeName = domUtils.getNodeName(range.startContainer);
 
-    //텍스트 노드인경우 code블럭이 삭제되는것을 방지(squire가 삭제하면 다시만든다)
+    //텍스트 노드인경우 마지막 케릭터와 code블럭이 함께 삭제되는것을 방지(squire가 삭제하면 다시만든다)
     if (currentNodeName === 'TEXT'
-        && domUtils.getOffsetLength(range.startContainer) <= 1
+        && domUtils.getOffsetLength(range.startContainer) === 1
         && range.startOffset <= 2
     ) {
         ev.preventDefault();
         range.startContainer.textContent = '\u200B';
+        return false;
+    }
+};
+
+WwCodeBlockManager.prototype._recoverEmptyCodeInPreTag = function(ev, range) {
+    var pre,
+        self = this;
+
+    if (!this._isInCodeBlock(range)) {
+        return true;
+    }
+
+    this.wwe.getEditor().recordUndoState();
+
+    pre = domUtils.getParentUntil(range.startContainer, 'BODY');
+
+    setTimeout(function() {
+        var modified;
+
+        $(pre).find('div').each(function(index, div) {
+            if (!$(div).find('code').length) {
+                $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
+                modified = true;
+            }
+        });
+
+        if (modified) {
+            self.wwe.readySilentChange();
+        }
+    }, 0);
+};
+
+WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
+    var currentNodeName, div;
+
+    if (!this._isInCodeBlock(range)) {
+        return true;
+    }
+
+    currentNodeName = domUtils.getNodeName(range.startContainer);
+    div = domUtils.getParentUntil(range.startContainer, 'PRE');
+
+    if (currentNodeName === 'TEXT'
+        && domUtils.getOffsetLength(range.startContainer) === 0
+        && range.startOffset <= 1
+    ) {
+        $(div).html('<br>');
+
+        range.setStart(div, 0);
+        range.collapse(true);
+
+        this.wwe.getEditor().setSelection(range);
+
         return false;
     }
 };
