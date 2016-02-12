@@ -221,4 +221,18 @@ describe('SquireExt', function() {
             expect(sqe.get$Body().find('li').text()).toEqual('test');
         });
     });
+
+    describe('preserveLastLine()', function() {
+        it('insert new emtpy line if dont have any default line in bottom', function() {
+            sqe.setHTML('<h1>HELLO WORLD</h1>');
+            sqe.preserveLastLine();
+            expect(sqe.get$Body().find('div').length).toEqual(1);
+        });
+
+        it('dont insert new emtpy line if have default line in bottom', function() {
+            sqe.setHTML('<h1>HELLO WORLD</h1><div>test<br></div>');
+            sqe.preserveLastLine();
+            expect(sqe.get$Body().find('div').length).toEqual(1);
+        });
+    });
 });
