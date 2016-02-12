@@ -74,7 +74,7 @@ WwCodeBlockManager.prototype._initEvent = function() {
 };
 
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
-    html = html.replace(/\<\pre( .*?)\>(.*?)\<\/pre\>/g, function(match, codeAttr, code) {
+    html = html.replace(/\<\pre( .*?)?\>(.*?)\<\/pre\>/g, function(match, codeAttr, code) {
         code = code.replace(/\<\/code\>\<br \/>/g, '\n');
         code = code.replace(/\<code ?(.*?)\>/g, '');
         code = code.replace(/\n$/, '');

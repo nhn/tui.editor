@@ -120,6 +120,21 @@ describe('WwCodeBlockManager', function() {
 
         it('join each line of code block to one codeblock on wysiwygProcessHTMLText', function() {
             wwe.getEditor().setHTML([
+                '<pre>',
+                '<div><code>test1</code><br></div>',
+                '<div><code>test2</code><br></div>',
+                '</pre>'
+            ].join(''));
+
+            expect(wwe.getValue()).toEqual([
+                '<pre>',
+                '<code>test1\ntest2</code>',
+                '</pre>'
+            ].join(''));
+        });
+
+        it('join each line of code block to one codeblock on wysiwygProcessHTMLText with code attr', function() {
+            wwe.getEditor().setHTML([
                 '<pre class="lang-javascript" data-language="javascript">',
                 '<div><code>test1</code><br></div>',
                 '<div><code>test2</code><br></div>',
