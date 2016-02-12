@@ -159,5 +159,31 @@ describe('toMark', function() {
 
             expect(toMark(htmlStr)).toEqual(expectText);
        });
+
+       it('preserve returns in code block', function() {
+            var htmlStr = [
+                '<pre>',
+                    '<code>',
+                        'text1\n',
+                        '\n',
+                        '\n',
+                        '\n',
+                        'text2',
+                    '</code>',
+                '</pre>'
+            ].join('');
+
+            var expectText = [
+                '```',
+                'text1',
+                '',
+                '',
+                '',
+                'text2',
+                '```'
+            ].join('\n');
+
+            expect(toMark(htmlStr)).toEqual(expectText);
+       });
     });
 });

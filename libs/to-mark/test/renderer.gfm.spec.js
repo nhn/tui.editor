@@ -29,12 +29,16 @@ describe('gfmRenderer', function() {
     describe('pre code', function() {
         it('code with ```', function() {
             expect(getMarkdownText('<pre><code></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('\n\n```\nfunction(){\n    var in=0;\n}\n```\n\n');
+                .toEqual('\n\n```\nfunction(){' + gfmRenderer.lineFeedReplacement
+                         + '    var in=0;' + gfmRenderer.lineFeedReplacement
+                         + '}\n```\n\n');
         });
 
         it('code with specific language', function() {
             expect(getMarkdownText('<pre><code data-language="javascript"></code></pre>', 'function(){\n    var in=0;\n}', 2))
-                .toEqual('\n\n``` javascript\nfunction(){\n    var in=0;\n}\n```\n\n');
+                .toEqual('\n\n``` javascript\nfunction(){' + gfmRenderer.lineFeedReplacement
+                         + '    var in=0;' + gfmRenderer.lineFeedReplacement
+                         + '}\n```\n\n');
         });
     });
 
