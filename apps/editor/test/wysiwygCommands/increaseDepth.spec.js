@@ -32,8 +32,8 @@ describe('IncreaseDepth', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
         wwe.get$Body().html([
             '<ul>',
-                '<li class="task-list-item"><div><input type="checkbox"> abcde</div></li>',
-                '<li class="task-list-item"><div><input type="checkbox"> </div></li>',
+            '<li class="task-list-item"><div><input type="checkbox"> abcde</div></li>',
+            '<li class="task-list-item"><div><input type="checkbox"> </div></li>',
             '</ul>'
         ].join(''));
 
@@ -44,15 +44,9 @@ describe('IncreaseDepth', function() {
 
         IncreaseDepth.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual([
-            '<ul>',
-                '<li class="task-list-item">',
-                    '<div><input type="checkbox"> abcde</div>',
-                    '<ul>',
-                        '<li class="task-list-item"><div><input type="checkbox"> </div></li>',
-                    '</ul>',
-                '</li>',
-            '</ul>'
-        ].join(''));
+        expect(sq.get$Body().find('ul li ul').length).toEqual(1);
+        expect(sq.get$Body().find('ul li ul li').length).toEqual(1);
+        expect(sq.get$Body().find('ul li ul li input').length).toEqual(1);
+        expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(true);
     });
 });

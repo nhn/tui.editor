@@ -277,4 +277,13 @@ SquireExt.prototype.replaceParent = function(node, from, to) {
     }
 };
 
+SquireExt.prototype.preserveLastLine = function() {
+    var lastBlock = this.get$Body().children().last();
+
+    if (domUtils.getNodeName(lastBlock[0]) !== 'DIV') {
+        this._ignoreChange = true;
+        $(this.createDefaultBlock()).insertAfter(lastBlock);
+    }
+};
+
 module.exports = SquireExt;

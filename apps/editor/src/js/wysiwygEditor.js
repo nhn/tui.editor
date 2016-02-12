@@ -292,6 +292,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         }
 
         self._autoResizeHeightIfNeed();
+        self.getEditor().preserveLastLine();
     });
 
     this.getEditor().addEventListener('keydown', function(keyboardEvent) {
@@ -347,7 +348,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
         self.eventManager.emit('stateChange', state);
     });
- };
+};
 
 WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
     var keyMap = keyMapper.convert(keyboardEvent);
@@ -681,7 +682,6 @@ WysiwygEditor.prototype.postProcessForChange = function() {
     setTimeout(function() {
         self.readySilentChange();
         self.eventManager.emit('wysiwygRangeChangeAfter', self);
-        self = null;
     }, 0);
 };
 
@@ -773,18 +773,12 @@ WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
  * @param {string} [where] "before" or not
  */
 WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
-    var div, pathToBody, appendBefore, currentNode;
+    var div, appendBefore, currentNode;
 
     currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
         || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-    pathToBody = $(currentNode).parentsUntil('body');
-
-    if (pathToBody.length) {
-        appendBefore = pathToBody[pathToBody.length - 1];
-    } else {
-        appendBefore = currentNode;
-    }
+    appendBefore = domUtils.getParentUntil(currentNode, 'BODY');
 
     div = this.editor.createDefaultBlock();
 
@@ -798,6 +792,7 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     range.collapse(true);
     this.editor.setSelection(range);
 };
+
 
 /**
  * replaceContentText
