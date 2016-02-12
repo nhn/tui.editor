@@ -104,6 +104,28 @@ describe('WwCodeBlockManager', function() {
             expect(wwe.get$Body().find('code').text()).toEqual('\u200B');
             expect(wwe.get$Body().find('pre').length).toEqual(1);
         });
+        it('enter: insert empty code on empty code', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.setValue('<pre><code>&#8203</code></pre>');
+
+            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'ENTER',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            expect(wwe.get$Body().find('code').length).toEqual(2);
+            expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
+            expect(wwe.get$Body().find('code').eq(1).text()).toEqual('\u200B');
+            expect(wwe.get$Body().find('pre').length).toEqual(1);
+        });
     });
 
     describe('Event', function() {
