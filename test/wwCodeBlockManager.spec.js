@@ -104,10 +104,37 @@ describe('WwCodeBlockManager', function() {
             expect(wwe.get$Body().find('code').text()).toEqual('\u200B');
             expect(wwe.get$Body().find('pre').length).toEqual(1);
         });
-        it('enter: insert empty code on empty code', function() {
+
+        it('backspace: format incomplete line to code', function(done) {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<pre><code>&#8203</code></pre>');
+            wwe.getEditor().setHTML('<pre><div><br></div><code>test&#8203</code></pre>');
+
+            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 3);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'BACK_SPACE',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            setTimeout(function() {
+                done();
+
+                expect(wwe.get$Body().find('code').length).toEqual(2);
+                expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
+                expect(wwe.get$Body().find('pre').length).toEqual(1);
+            }, 0);
+        });
+
+        it('enter: format incomplete line to code', function(done) {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<pre><div><br></div><code>&#8203</code></pre>');
 
             range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
             range.collapse(true);
@@ -121,10 +148,14 @@ describe('WwCodeBlockManager', function() {
                 }
             });
 
-            expect(wwe.get$Body().find('code').length).toEqual(2);
-            expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
-            expect(wwe.get$Body().find('code').eq(1).text()).toEqual('\u200B');
-            expect(wwe.get$Body().find('pre').length).toEqual(1);
+            setTimeout(function() {
+                done();
+
+                expect(wwe.get$Body().find('code').length).toEqual(2);
+                expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
+                expect(wwe.get$Body().find('code').eq(1).text()).toEqual('\u200B');
+                expect(wwe.get$Body().find('pre').length).toEqual(1);
+            }, 0);
         });
     });
 
