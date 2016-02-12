@@ -25,13 +25,15 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
     exec: function(wwe, type) {
         var sq = wwe.getEditor();
 
-        if (type) {
-            type = ' class = "lang-' + type + '" data-language="' + type + '"';
-        } else {
-            type = '';
-        }
+        if (!sq.hasFormat('PRE')) {
+            if (type) {
+                type = ' class = "lang-' + type + '" data-language="' + type + '"';
+            } else {
+                type = '';
+            }
 
-        sq.insertHTML('<pre' + type + '><div><code>&#8203</code><br></div></pre>');
+            sq.insertHTML('<pre' + type + '><div><code>&#8203</code><br></div></pre>');
+        }
 
         sq.focus();
     }

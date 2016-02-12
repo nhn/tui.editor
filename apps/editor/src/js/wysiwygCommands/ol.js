@@ -36,7 +36,7 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
             wwe.getManager('task').unformatTask(range.startContainer);
             sq.replaceParent(range.startContainer, 'ul', 'ol');
             wwe.restoreSavedSelection();
-        } else if (!sq.hasFormat('TABLE')) {
+        } else if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             wwe.unwrapBlockTag();
             sq.makeOrderedList();
         }

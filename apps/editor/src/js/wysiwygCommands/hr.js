@@ -27,28 +27,25 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
             range = sq.getSelection(),
             currentNode, nextBlockNode;
 
-        if (!range.collapsed || sq.hasFormat('TABLE')) {
-            sq.focus();
-            return;
+        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+            currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+            nextBlockNode = domUtils.getNextTopBlockNode(currentNode);
+
+            if (!nextBlockNode) {
+                nextBlockNode = sq.createDefaultBlock();
+                wwe.get$Body().append(nextBlockNode);
+            }
+
+            sq.modifyBlocks(function(frag) {
+                frag.appendChild(sq.createElement('HR'));
+                return frag;
+            });
+
+            range.selectNodeContents(nextBlockNode);
+            range.collapse(true);
+
+            sq.setSelection(range);
         }
-
-        currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-        nextBlockNode = domUtils.getNextTopBlockNode(currentNode);
-
-        if (!nextBlockNode) {
-            nextBlockNode = sq.createDefaultBlock();
-            wwe.get$Body().append(nextBlockNode);
-        }
-
-        sq.modifyBlocks(function(frag) {
-            frag.appendChild(sq.createElement('HR'));
-            return frag;
-        });
-
-        range.selectNodeContents(nextBlockNode);
-        range.collapse(true);
-
-        sq.setSelection(range);
 
         sq.focus();
     }

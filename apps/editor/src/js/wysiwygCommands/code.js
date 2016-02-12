@@ -27,7 +27,7 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
 
         if (sq.hasFormat('code')) {
             sq.changeFormat(null, {tag: 'code'});
-        } else if (!sq.hasFormat('a')) {
+        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
             if (sq.hasFormat('b')) {
                 sq.removeBold();
             } else if (sq.hasFormat('i')) {

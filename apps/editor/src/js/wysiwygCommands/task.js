@@ -27,20 +27,18 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
 
         range = sq.getSelection().cloneRange();
 
-        if (!range.collapsed || sq.hasFormat('TABLE')) {
-            sq.focus();
-            return;
+        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+            if (!sq.hasFormat('li')) {
+                wwe.unwrapBlockTag();
+                sq.makeUnorderedList();
+                range = sq.getSelection().cloneRange();
+            }
+
+            range = wwe.insertSelectionMarker(range);
+            wwe.getManager('task').formatTask(range.startContainer);
+            wwe.restoreSelectionMarker();
         }
 
-        if (!sq.hasFormat('li')) {
-            wwe.unwrapBlockTag();
-            sq.makeUnorderedList();
-            range = sq.getSelection().cloneRange();
-        }
-
-        range = wwe.insertSelectionMarker(range);
-        wwe.getManager('task').formatTask(range.startContainer);
-        wwe.restoreSelectionMarker();
         sq.focus();
     }
 });
