@@ -46,12 +46,12 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    this.wwe.addKeyEventHandler('ENTER', this._recoverEmptyCodeInPreTag.bind(this));
+    this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._removeLastCharInCodeTagIfCodeTagHasOneChar.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeIfCodeIsEmpty.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._recoverEmptyCodeInPreTag.bind(this));
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._recoverIncompleteLineInPreTag.bind(this));
 };
 
 /**
@@ -177,7 +177,7 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
     }
 };
 
-WwCodeBlockManager.prototype._recoverEmptyCodeInPreTag = function(ev, range) {
+WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
     var pre,
         self = this;
 
