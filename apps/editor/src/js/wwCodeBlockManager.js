@@ -46,7 +46,6 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    this.wwe.addKeyEventHandler(this._rangeCorrectionForPreTag.bind(this));
     this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
@@ -68,6 +67,10 @@ WwCodeBlockManager.prototype._initEvent = function() {
 
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
         return self._mergeCodeblockEachlinesFromHTMLText(html);
+    });
+
+    this.eventManager.listen('changeModeToWysiwyg', function() {
+        self._rangeCorrectionForPreTag();
     });
 };
 
@@ -211,15 +214,13 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
  * 에디터 전환후 포커스를 다시 받았을때는 코드블럭이 마지막 컨텐츠인경우 커서가 pre태그 위에 올라갈수가 있다 이럴때는
  * 예상치 못한 동작을 하기때문에 range를 보정해줘야한다.
  * range correction for ie when switch editor cuz, we dont want range on pre element
- * @param {Event} ev event object
- * @param {Range} range range object
- * @returns {Boolean} is need next handler invoke
  */
-WwCodeBlockManager.prototype._rangeCorrectionForPreTag = function(ev, range) {
-    var lineDiv, lineCode, offset;
+WwCodeBlockManager.prototype._rangeCorrectionForPreTag = function() {
+    var lineDiv, lineCode, offset,
+        range = this.wwe.getEditor().getSelection().cloneRange();
 
-    if (!this.wwe.getEditor().hasFormat('PRE') || domUtils.getNodeName(range.startContainer) !== 'PRE') {
-        return true;
+    if (domUtils.getNodeName(range.startContainer) !== 'PRE') {
+        return;
     }
 
     if (range.startOffset === range.startContainer.childNodes.length) {
