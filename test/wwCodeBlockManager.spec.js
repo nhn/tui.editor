@@ -219,45 +219,5 @@ describe('WwCodeBlockManager', function() {
                 '<pre><code class="lang-javascript" data-language="javascript">test3\ntest4</code></pre>'
             ].join(''));
         });
-
-        it('if current range is pre tag\s end offset then correct range to code on changeModeToWysiwyg', function() {
-            var range = wwe.getEditor().getSelection().cloneRange(),
-                afterRange;
-
-            wwe.getEditor().setHTML('<pre><div><code>1&#8203</code><br></div>'
-                                    + '<div><code>2&#8203</code><br></div></pre>');
-
-            range.setStart(wwe.get$Body().find('pre')[0], 2);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            em.emit('changeModeToWysiwyg');
-
-            afterRange = wwe.getEditor().getSelection();
-
-            expect(afterRange.startContainer).toBe(wwe.get$Body().find('code')[1].firstChild);
-            expect(afterRange.startOffset).toEqual(1);
-        });
-
-        it('if current range is pre tag\'s start offset then correct range to code on changeModeToWysiwyg', function() {
-            var range = wwe.getEditor().getSelection().cloneRange(),
-                afterRange;
-
-            wwe.getEditor().setHTML('<pre><div><code>&#8203</code><br></div>'
-                                    + '<div><code>&#8203</code><br></div></pre>');
-
-            range.setStart(wwe.get$Body().find('pre')[0], 0);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            em.emit('changeModeToWysiwyg');
-
-            afterRange = wwe.getEditor().getSelection();
-
-            expect(afterRange.startContainer).toBe(wwe.get$Body().find('code')[0].firstChild);
-            expect(afterRange.startOffset).toEqual(0);
-        });
     });
 });
