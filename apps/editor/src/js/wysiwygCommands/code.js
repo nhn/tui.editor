@@ -6,7 +6,8 @@
 
 'use strict';
 
-var CommandManager = require('../commandManager');
+var CommandManager = require('../commandManager'),
+    domUtils = require('../domUtils');
 
 /**
  * Code
@@ -25,8 +26,9 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
-        if (sq.hasFormat('code')) {
+        if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
             sq.changeFormat(null, {tag: 'code'});
+            removeUnnecessaryCodeInNextToRange(wwe.getEditor().getSelection().cloneRange());
         } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
             if (sq.hasFormat('b')) {
                 sq.removeBold();
@@ -39,5 +41,18 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
         sq.focus();
     }
 });
+
+/**
+ * removeUnnecessaryCodeInNextToRange
+ * Remove unnecessary code tag next to range, code tag made by squire
+ * @param {Range} range range object
+ */
+function removeUnnecessaryCodeInNextToRange(range) {
+    if (domUtils.getNodeName(range.startContainer.nextSibling) === 'CODE'
+        && domUtils.getTextLength(range.startContainer.nextSibling) === 0
+    ) {
+        $(range.startContainer.nextSibling).remove();
+    }
+}
 
 module.exports = Code;

@@ -61,4 +61,20 @@ describe('Code', function() {
 
         expect(wwe.getValue()).toEqual('<code>line</code><br />');
     });
+
+    it('if there have code already stop code tag', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('<code>line&#8203;</code>');
+
+        range.setStart(wwe.get$Body().find('code')[0].firstChild, 4);
+        range.collapse(true);
+
+        wwe.getEditor().setSelection(range);
+
+        Code.exec(wwe);
+
+        expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('\u200B');
+        expect(wwe.getEditor().getSelection().startOffset).toEqual(1);
+    });
 });
