@@ -236,7 +236,7 @@ WwClipboardManager.prototype.copyWithTextarea = function(range) {
  */
 WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent) {
     var htmlText = this._getContentFromRange(range);
-    clipboardEvent.clipboardData.setData('text/plain', htmlText);
+    clipboardEvent.clipboardData.setData('text/html', htmlText);
 };
 
 

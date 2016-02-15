@@ -421,4 +421,18 @@ describe('WysiwygEditor', function() {
             expect(wwe.getManager('myManager')).toBeDefined();
         });
     });
+
+    describe('move cursor to start, end', function() {
+        it('move cursor to end and scroll to end', function() {
+            wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+            wwe.moveCursorToEnd();
+            expect(wwe.get$Body().scrollTop()).not.toEqual(0);
+        });
+        it('move cursor to start and scroll to top', function() {
+            wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+            wwe.moveCursorToEnd();
+            wwe.moveCursorToStart();
+            expect(wwe.get$Body().scrollTop()).toEqual(0);
+        });
+    });
 });
