@@ -181,7 +181,7 @@ WwCodeBlockManager.prototype._recoverEmptyCodeInPreTag = function(ev, range) {
     var pre,
         self = this;
 
-    if (!this._isInCodeBlock(range)) {
+    if (!this.wwe.getEditor().hasFormat('PRE')) {
         return true;
     }
 
