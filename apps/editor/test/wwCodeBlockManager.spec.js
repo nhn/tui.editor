@@ -158,33 +158,55 @@ describe('WwCodeBlockManager', function() {
             }, 0);
         });
 
-        if (tui.util.browser.msie) {
-            it('enter: if current range is pre tag then move range to correct code in msie', function(done) {
-                var range = wwe.getEditor().getSelection().cloneRange();
+        it('if current range is pre tag\s end offset then correct range to code', function() {
+            var range = wwe.getEditor().getSelection().cloneRange(),
+                afterRange;
 
-                wwe.getEditor().setHTML('<pre><div><code>&#8203</code><br></div>'
-                                        + '<div><code>&#8203</code><br></div></pre>');
+            wwe.getEditor().setHTML('<pre><div><code>1&#8203</code><br></div>'
+                                    + '<div><code>2&#8203</code><br></div></pre>');
 
-                range.setStart(wwe.get$Body().find('pre')[0], 1);
-                range.collapse(true);
+            range.setStart(wwe.get$Body().find('pre')[0], 2);
+            range.collapse(true);
 
-                wwe.getEditor().setSelection(range);
+            wwe.getEditor().setSelection(range);
 
-                em.emit('wysiwygKeyEvent', {
-                    keyMap: 'ENTER',
-                    data: {
-                        preventDefault: function() {}
-                    }
-                });
-
-                setTimeout(function() {
-                    done();
-
-                    expect(wwe.get$Body().find('code').length).toEqual(3);
-                    expect(wwe.get$Body().find('pre').length).toEqual(1);
-                }, 0);
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'ENTER',
+                data: {
+                    preventDefault: function() {}
+                }
             });
-        }
+
+            afterRange = wwe.getEditor().getSelection();
+
+            expect(afterRange.startContainer).toBe(wwe.get$Body().find('code')[1].firstChild);
+            expect(afterRange.startOffset).toEqual(1);
+        });
+
+        it('if current range is pre tag\'s start offset then correct range to code', function() {
+            var range = wwe.getEditor().getSelection().cloneRange(),
+                afterRange;
+
+            wwe.getEditor().setHTML('<pre><div><code>&#8203</code><br></div>'
+                                    + '<div><code>&#8203</code><br></div></pre>');
+
+            range.setStart(wwe.get$Body().find('pre')[0], 0);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'ENTER',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            afterRange = wwe.getEditor().getSelection();
+
+            expect(afterRange.startContainer).toBe(wwe.get$Body().find('code')[0].firstChild);
+            expect(afterRange.startOffset).toEqual(0);
+        });
     });
 
     describe('Event', function() {

@@ -38,6 +38,7 @@ describe('CodeBlock', function() {
     it('add CodeBlock with language', function() {
         CodeBlock.exec(wwe, 'javascript');
 
+        expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
         expect($body.find('pre').attr('data-language')).toEqual('javascript');
     });
 });
