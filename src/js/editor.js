@@ -191,7 +191,15 @@ ToastUIEditor.prototype.getSquire = function() {
 };
 
 ToastUIEditor.prototype.focus = function() {
-   this.getCurrentModeEditor().focus();
+    this.getCurrentModeEditor().focus();
+};
+
+ToastUIEditor.prototype.moveCursorToEnd = function() {
+    this.getCurrentModeEditor().moveCursorToEnd();
+};
+
+ToastUIEditor.prototype.moveCursorToStart = function() {
+    this.getCurrentModeEditor().moveCursorToStart();
 };
 
 ToastUIEditor.prototype.setValue = function(markdown) {

@@ -146,6 +146,7 @@ MarkdownEditor.prototype.remove = function() {
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.getEditor().setValue(markdown);
     this._emitMarkdownEditorContentChangedEvent();
+    this.moveCursorToEnd();
     this.getEditor().refresh();
 };
 
@@ -239,6 +240,20 @@ MarkdownEditor.prototype.setHeight = function(height) {
     if (height === 'auto') {
         this.$editorContainerEl.find('.CodeMirror').height('auto');
     }
+};
+
+MarkdownEditor.prototype.moveCursorToEnd = function() {
+    var doc = this.getEditor().getDoc(),
+        lastLine = doc.lastLine();
+
+    doc.setCursor(lastLine, doc.getLine(lastLine).length);
+};
+
+MarkdownEditor.prototype.moveCursorToStart = function() {
+    var doc = this.getEditor().getDoc(),
+        firstLine = doc.firstLine();
+
+    doc.setCursor(firstLine, 0);
 };
 
 module.exports = MarkdownEditor;

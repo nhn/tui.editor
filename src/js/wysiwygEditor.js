@@ -611,11 +611,10 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 
     this._autoResizeHeightIfNeed();
+    this.moveCursorToEnd();
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
-
-    this.moveCursorToEnd();
 };
 
 /**
@@ -874,11 +873,13 @@ WysiwygEditor.prototype.getManager = function(name) {
 };
 
 WysiwygEditor.prototype.moveCursorToEnd = function() {
-    this.editor.moveCursorToEnd();
+    this.getEditor().moveCursorToEnd();
+    this.get$Body().scrollTop(this.get$Body().height());
 };
 
 WysiwygEditor.prototype.moveCursorToStart = function() {
-    this.editor.moveCursorToStart();
+    this.getEditor().moveCursorToStart();
+    this.get$Body().scrollTop(0);
 };
 
 /**
