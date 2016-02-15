@@ -178,33 +178,38 @@ describe('SquireExt', function() {
         });
     });
 
-    describe('getSelectionInfoByOffset() find element and offset by passing element and offset', function() {
+    describe('getSelectionInfoByOffset() find next element and next offset by passed element and replative offset of splited text node', function() {
         var firstBlock;
 
         beforeEach(function() {
-            sqe.insertPlainText('text1');
-            sqe.insertPlainText('text2');
+            sqe.modifyBlocks(function(frag) {
+                frag = sqe.getDocument().createDocumentFragment();
+                frag.appendChild(sqe.getDocument().createTextNode('text1'));
+                frag.appendChild(sqe.getDocument().createTextNode('text2'));
+
+                return frag;
+            });
 
             firstBlock = sqe.getDocument().body.childNodes[0];
         });
 
         it('offset is lower than passed element\'s length', function() {
-            expect(sqe.getSelectionInfoByOffset(firstBlock.childNodes[0], 3)).toEqual({
-                element: firstBlock.childNodes[0],
+            expect(sqe.getSelectionInfoByOffset(firstBlock, 3)).toEqual({
+                element: firstBlock,
                 offset: 3
             });
         });
 
         it('offset is higher than passed element\'s length', function() {
-            expect(sqe.getSelectionInfoByOffset(firstBlock.childNodes[0], 7)).toEqual({
-                element: firstBlock.childNodes[1],
+            expect(sqe.getSelectionInfoByOffset(firstBlock, 7)).toEqual({
+                element: firstBlock.nextSibling,
                 offset: 2
             });
         });
 
         it('offset is higher than exist content length', function() {
-            expect(sqe.getSelectionInfoByOffset(firstBlock.childNodes[0], 11)).toEqual({
-                element: firstBlock.childNodes[1],
+            expect(sqe.getSelectionInfoByOffset(firstBlock, 11)).toEqual({
+                element: firstBlock.nextSibling,
                 offset: 5
             });
         });
