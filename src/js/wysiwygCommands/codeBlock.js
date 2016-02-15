@@ -37,11 +37,28 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
 
             sq.insertHTML('<pre' + attr + '><div><code>&#8203</code><br></div></pre>');
 
+            focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
+
             codeBlockID += 1;
         }
 
         sq.focus();
     }
 });
+
+/**
+ * focusToFirstCode
+ * Focus to first code tag content of pre tag
+ * @param {jQuery} $pre pre tag
+ * @param {WysiwygEditor} wwe wysiwygEditor
+ */
+function focusToFirstCode($pre, wwe) {
+    var range = wwe.getEditor().getSelection().cloneRange();
+
+    range.setStart($pre.find('code')[0].firstChild, 0);
+    range.collapse(true);
+
+    wwe.getEditor().setSelection(range);
+}
 
 module.exports = CodeBlock;
