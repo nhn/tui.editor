@@ -46,6 +46,13 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
+    //IE에서는 코드블럭이 마지막 컨텐츠인경우 커서가 pre태그 위에 올라갈수가 있다 이럴때는
+    //예상치 못한 동작을 하기때문에 range를 보정해줘야한다.
+    //range correction for ie when switch editor cuz, we dont want range on pre element
+    if (util.browser.msie) {
+        this.wwe.addKeyEventHandler(this._rangeCorrectionForPreTag.bind(this));
+    }
+
     this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
@@ -203,6 +210,26 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
             self.wwe.readySilentChange();
         }
     }, 0);
+};
+
+WwCodeBlockManager.prototype._rangeCorrectionForPreTag = function(ev, range) {
+    var lastLineDiv, lastLineCode;
+
+    if (!this.wwe.getEditor().hasFormat('PRE')) {
+        return true;
+    }
+
+    if (domUtils.getNodeName(range.startContainer) === 'PRE'
+       && range.startOffset === range.startContainer.childNodes.length) {
+        lastLineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+        lastLineCode = $(lastLineDiv).find('code')[0];
+
+        range.setStart(lastLineCode.firstChild, lastLineCode.firstChild.length);
+        range.collapse(true);
+
+
+        this.wwe.getEditor().setSelection(range);
+    }
 };
 
 WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
