@@ -614,6 +614,8 @@ WysiwygEditor.prototype.setValue = function(html) {
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
+
+    this.moveCursorToEnd();
 };
 
 /**
@@ -869,6 +871,14 @@ WysiwygEditor.prototype.addManager = function(name, Manager) {
  */
 WysiwygEditor.prototype.getManager = function(name) {
     return this._managers[name];
+};
+
+WysiwygEditor.prototype.moveCursorToEnd = function() {
+    this.editor.moveCursorToEnd();
+};
+
+WysiwygEditor.prototype.moveCursorToStart = function() {
+    this.editor.moveCursorToStart();
 };
 
 /**

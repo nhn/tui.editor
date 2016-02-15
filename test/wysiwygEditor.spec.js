@@ -246,7 +246,9 @@ describe('WysiwygEditor', function() {
         });
 
         it('prevent text, image merge', function() {
+            /* eslint-disable */
             var html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
+            /* eslint-enable */
             wwe.setValue(html);
             expect(wwe.get$Body().find('div').length).toEqual(2);
             expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
@@ -279,6 +281,15 @@ describe('WysiwygEditor', function() {
                     done();
                 }, 0);
             }, 0);
+        });
+
+        it('move cursor to end after setValue() cuz we need new range after whole conntent changed', function() {
+            var range;
+            wwe.setValue('<ul><li>test</li></ul><div>test2<br></div>');
+            range = wwe.getEditor().getSelection();
+
+            expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
+            expect(range.startOffset).toEqual(2);
         });
     });
 
