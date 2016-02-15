@@ -111,4 +111,40 @@ describe('MarkdownEditor', function() {
             expect(mde.getValue()).toEqual('te123t');
         });
     });
+
+    describe('move cursor to end or start', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+
+        it('move cursor to end', function() {
+            mde.setValue('test\ntest\ntest\n');
+
+            mde.moveCursorToEnd();
+
+            expect(mde.getEditor().getCursor().line).toEqual(3);
+            expect(mde.getEditor().getCursor().ch).toEqual(0);
+        });
+
+        it('move cursor to start', function() {
+            mde.setValue('test\ntest\ntest\n');
+
+            mde.moveCursorToStart();
+
+            expect(mde.getEditor().getCursor().line).toEqual(0);
+            expect(mde.getEditor().getCursor().ch).toEqual(0);
+        });
+    });
+
+    describe('setValue', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+        it('move cursor to end after setValue', function() {
+            mde.setValue('test\ntest\ntest\n');
+
+            expect(mde.getEditor().getCursor().line).toEqual(3);
+            expect(mde.getEditor().getCursor().ch).toEqual(0);
+        });
+    });
 });
