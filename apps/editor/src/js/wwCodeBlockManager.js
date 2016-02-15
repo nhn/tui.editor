@@ -68,10 +68,6 @@ WwCodeBlockManager.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
         return self._mergeCodeblockEachlinesFromHTMLText(html);
     });
-
-    this.eventManager.listen('changeModeToWysiwyg', function() {
-        self._rangeCorrectionForPreTag();
-    });
 };
 
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
@@ -207,38 +203,6 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
             self.wwe.readySilentChange();
         }
     }, 0);
-};
-
-/**
- * _rangeCorrectionForPreTag
- * 에디터 전환후 포커스를 다시 받았을때는 코드블럭이 마지막 컨텐츠인경우 커서가 pre태그 위에 올라갈수가 있다 이럴때는
- * 예상치 못한 동작을 하기때문에 range를 보정해줘야한다.
- * range correction for ie when switch editor cuz, we dont want range on pre element
- */
-WwCodeBlockManager.prototype._rangeCorrectionForPreTag = function() {
-    var lineDiv, lineCode, offset,
-        range = this.wwe.getEditor().getSelection().cloneRange();
-
-    if (domUtils.getNodeName(range.startContainer) !== 'PRE') {
-        return;
-    }
-
-    if (range.startOffset === range.startContainer.childNodes.length) {
-        lineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        lineCode = $(lineDiv).find('code')[0];
-        offset = domUtils.getTextLength(lineCode);
-    } else if (range.startOffset === 0) {
-        lineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-        lineCode = $(lineDiv).find('code')[0];
-        offset = 0;
-    }
-
-    if (lineCode) {
-        range.setStart(lineCode.firstChild, offset);
-        range.collapse(true);
-
-        this.wwe.getEditor().setSelection(range);
-    }
 };
 
 WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
