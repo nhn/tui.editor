@@ -7,6 +7,8 @@
 
 var CommandManager = require('../commandManager');
 
+var codeBlockID = 0,
+    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 /**
  * CodeBlock
  * Add CodeBlock to wysiwygEditor
@@ -23,16 +25,19 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
      * @param {string} type of language
      */
     exec: function(wwe, type) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(),
+            attr;
 
         if (!sq.hasFormat('PRE')) {
+            attr = ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
+
             if (type) {
-                type = ' class = "lang-' + type + '" data-language="' + type + '"';
-            } else {
-                type = '';
+                attr += ' data-language="' + type + '"';
             }
 
-            sq.insertHTML('<pre' + type + '><div><code>&#8203</code><br></div></pre>');
+            sq.insertHTML('<pre' + attr + '><div><code>&#8203</code><br></div></pre>');
+
+            codeBlockID += 1;
         }
 
         sq.focus();
