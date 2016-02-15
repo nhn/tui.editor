@@ -46,13 +46,7 @@ WwCodeBlockManager.prototype._init = function() {
  * Initialize key event handler
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    //IE에서는 코드블럭이 마지막 컨텐츠인경우 커서가 pre태그 위에 올라갈수가 있다 이럴때는
-    //예상치 못한 동작을 하기때문에 range를 보정해줘야한다.
-    //range correction for ie when switch editor cuz, we dont want range on pre element
-    if (util.browser.msie) {
-        this.wwe.addKeyEventHandler(this._rangeCorrectionForPreTag.bind(this));
-    }
-
+    this.wwe.addKeyEventHandler(this._rangeCorrectionForPreTag.bind(this));
     this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
     this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
@@ -212,21 +206,35 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
     }, 0);
 };
 
+/**
+ * _rangeCorrectionForPreTag
+ * 에디터 전환후 포커스를 다시 받았을때는 코드블럭이 마지막 컨텐츠인경우 커서가 pre태그 위에 올라갈수가 있다 이럴때는
+ * 예상치 못한 동작을 하기때문에 range를 보정해줘야한다.
+ * range correction for ie when switch editor cuz, we dont want range on pre element
+ * @param {Event} ev event object
+ * @param {Range} range range object
+ * @returns {Boolean} is need next handler invoke
+ */
 WwCodeBlockManager.prototype._rangeCorrectionForPreTag = function(ev, range) {
-    var lastLineDiv, lastLineCode;
+    var lineDiv, lineCode, offset;
 
-    if (!this.wwe.getEditor().hasFormat('PRE')) {
+    if (!this.wwe.getEditor().hasFormat('PRE') || domUtils.getNodeName(range.startContainer) !== 'PRE') {
         return true;
     }
 
-    if (domUtils.getNodeName(range.startContainer) === 'PRE'
-       && range.startOffset === range.startContainer.childNodes.length) {
-        lastLineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        lastLineCode = $(lastLineDiv).find('code')[0];
+    if (range.startOffset === range.startContainer.childNodes.length) {
+        lineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+        lineCode = $(lineDiv).find('code')[0];
+        offset = domUtils.getTextLength(lineCode);
+    } else if (range.startOffset === 0) {
+        lineDiv = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+        lineCode = $(lineDiv).find('code')[0];
+        offset = 0;
+    }
 
-        range.setStart(lastLineCode.firstChild, lastLineCode.firstChild.length);
+    if (lineCode) {
+        range.setStart(lineCode.firstChild, offset);
         range.collapse(true);
-
 
         this.wwe.getEditor().setSelection(range);
     }
