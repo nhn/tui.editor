@@ -274,6 +274,8 @@ ToastUIEditor.prototype.changeMode = function(mode) {
     }
 
     this.eventManager.emit('changeMode', mode);
+
+    this.focus();
 };
 
 ToastUIEditor.prototype.remove = function() {

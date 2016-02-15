@@ -157,6 +157,34 @@ describe('WwCodeBlockManager', function() {
                 expect(wwe.get$Body().find('pre').length).toEqual(1);
             }, 0);
         });
+
+        if (tui.util.browser.msie) {
+            it('enter: if current range is pre tag then move range to correct code in msie', function(done) {
+                var range = wwe.getEditor().getSelection().cloneRange();
+
+                wwe.getEditor().setHTML('<pre><div><code>&#8203</code><br></div>'
+                                        + '<div><code>&#8203</code><br></div></pre>');
+
+                range.setStart(wwe.get$Body().find('pre')[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                em.emit('wysiwygKeyEvent', {
+                    keyMap: 'ENTER',
+                    data: {
+                        preventDefault: function() {}
+                    }
+                });
+
+                setTimeout(function() {
+                    done();
+
+                    expect(wwe.get$Body().find('code').length).toEqual(3);
+                    expect(wwe.get$Body().find('pre').length).toEqual(1);
+                }, 0);
+            });
+        }
     });
 
     describe('Event', function() {
