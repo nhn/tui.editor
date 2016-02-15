@@ -21,13 +21,11 @@ module.exports = function(config) {
 
             //this config only
             'karma-chrome-launcher',
-            'karma-phantomjs-launcher',
             'karma-narrow-reporter'
         ],
 
         // list of files / patterns to load in the browser
         files: [
-            'node_modules/phantomjs-polyfill/bind-polyfill.js',
             'lib/jquery/dist/jquery.js',
             'lib/tui-code-snippet/code-snippet.js',
             'lib/tui-component-colorpicker/dist/colorpicker.js',
@@ -83,7 +81,8 @@ module.exports = function(config) {
 
 
         // level of logging
-        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR ||
+        // config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
 
@@ -99,22 +98,8 @@ module.exports = function(config) {
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            //'Chrome'
-            'PhantomJS_custom'
-        ],
-        customLaunchers: {
-            'PhantomJS_custom': {
-                base: 'PhantomJS',
-                options: {
-                    windowName: 'my-window',
-                    settings: {
-                        webSecurityEnabled: false
-                    }
-                },
-                flags: ['--load-images=true'],
-                debug: true
-            }
-        }
+            'Chrome'
+        ]
     });
 };
 
