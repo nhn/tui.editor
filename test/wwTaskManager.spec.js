@@ -217,7 +217,7 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('li')[0].textContent).toEqual(' TASK');
         });
 
-        it('remove task-list class of element, it may block merge normal list and task list  when wysiwygSetValueAfter fire', function() {
+        it('remove task-list class of element, it may block to merge normal list and task list when wysiwygSetValueAfter fire', function() {
             wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
 
             em.emit('wysiwygSetValueAfter');
@@ -246,7 +246,7 @@ describe('WwTaskManager', function() {
 
             wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
-            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.setStart(wwe.get$Body().find('div')[0], 0);
             range.collapse(true);
 
             mgr.formatTask(range.startContainer);
