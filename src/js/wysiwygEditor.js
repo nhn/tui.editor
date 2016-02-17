@@ -875,11 +875,25 @@ WysiwygEditor.prototype.getManager = function(name) {
 WysiwygEditor.prototype.moveCursorToEnd = function() {
     this.getEditor().moveCursorToEnd();
     this.getEditor().scrollTop(this.get$Body().height());
+    this._correctRangeAfterMoveCursor();
 };
 
 WysiwygEditor.prototype.moveCursorToStart = function() {
     this.getEditor().moveCursorToStart();
     this.getEditor().scrollTop(0);
+    this._correctRangeAfterMoveCursor();
+};
+
+/**
+ * _correctRangeAfterMoveCursor
+ * we need collapse range after moveCursor* api invoke cuz squire bug
+ */
+WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
+    var range = this.getEditor().getSelection().cloneRange();
+
+    range.collapse(true);
+
+    this.getEditor().setSelection(range);
 };
 
 /**
