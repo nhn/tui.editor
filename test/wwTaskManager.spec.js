@@ -34,7 +34,8 @@ describe('WwTaskManager', function() {
         it('remove input if current selection is right of input with one space', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;text</div></li></ul>');
+            wwe.getEditor()
+                .setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;text</div></li></ul>');
 
             range.setStart(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0].nextSibling, 1);
             range.collapse(true);
@@ -259,7 +260,8 @@ describe('WwTaskManager', function() {
         it('unformat task to passed node', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test</div></li></ul>');
+            wwe.getEditor()
+                .setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test</div></li></ul>');
 
             range.setStart(wwe.get$Body().find('li')[0], 0);
             range.collapse(true);

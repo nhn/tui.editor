@@ -390,7 +390,8 @@ describe('WysiwygEditor', function() {
 
             wwe.replaceContentText(wwe.get$Body().find('li')[0], 'list1', 'list2');
 
-            expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
+            expect(wwe.getValue().replace(/<br \/>/g, ''))
+                .toBe('<ul><li class="custom-class">list2</li><li>list2</li></ul>');
         });
     });
 
@@ -426,13 +427,13 @@ describe('WysiwygEditor', function() {
         it('move cursor to end and scroll to end', function() {
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
-            expect(wwe.get$Body().scrollTop()).not.toEqual(0);
+            expect(wwe.getEditor().scrollTop()).not.toEqual(0);
         });
         it('move cursor to start and scroll to top', function() {
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
-            expect(wwe.get$Body().scrollTop()).toEqual(0);
+            expect(wwe.getEditor().scrollTop()).toEqual(0);
         });
     });
 });

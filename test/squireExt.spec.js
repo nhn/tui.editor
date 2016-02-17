@@ -240,4 +240,12 @@ describe('SquireExt', function() {
             expect(sqe.get$Body().find('div').length).toEqual(1);
         });
     });
+
+    describe('scrollTop', function() {
+        it('move scroll or get scrollTop value', function() {
+            sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+            sqe.scrollTop(50);
+            expect(sqe.scrollTop()).not.toEqual(0);
+        });
+    });
 });
