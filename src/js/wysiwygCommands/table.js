@@ -24,8 +24,9 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
      * @param {WysiwygEditor} wwe WYsiwygEditor instance
      * @param {number} col column count
      * @param {number} row row count
+     * @param {Array} data initial table data
      */
-    exec: function(wwe, col, row) {
+    exec: function(wwe, col, row, data) {
         var sq = wwe.getEditor(),
             table;
 
@@ -36,14 +37,16 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
 
         table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
         table += makeHeader(col);
-        table += makeBody(col, row - 1);
+        table += makeBody(col, row - 1, data);
         table += '</table>';
 
         sq.insertHTML(table);
 
         sq.focus();
 
-        focusToFirstTh(sq, wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID));
+        if (!data) {
+            focusToFirstTh(sq, wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID));
+        }
 
         tableID += 1;
     }
@@ -84,15 +87,23 @@ function makeHeader(col) {
  * @param {number} row row count
  * @returns {string} html string
  */
-function makeBody(col, row) {
+function makeBody(col, row, data) {
     var body = '<tbody>',
+        index = 0,
         irow, icol;
 
     for (irow = 0; irow < row; irow += 1) {
         body += '<tr>';
 
         for (icol = 0; icol < col; icol += 1) {
-            body += '<td></td>';
+            body += '<td>';
+
+            if (data) {
+                body += data[index];
+                index += 1;
+            }
+
+            body += '</td>';
         }
 
         body += '</tr>';

@@ -256,17 +256,17 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
-    this.getEditor().getDocument().addEventListener('dragover', function(e) {
-        e.preventDefault();
+    this.getEditor().getDocument().addEventListener('dragover', function(ev) {
+        ev.preventDefault();
         return false;
     });
 
-    this.getEditor().getDocument().addEventListener('drop', function(eventData) {
-        eventData.preventDefault();
+    this.getEditor().getDocument().addEventListener('drop', function(ev) {
+        ev.preventDefault();
 
         self.eventManager.emit('drop', {
             source: 'wysiwyg',
-            data: eventData
+            data: ev
         });
 
         return false;

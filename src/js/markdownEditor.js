@@ -84,7 +84,7 @@ MarkdownEditor.prototype._initEvent = function() {
         });
     });
 
-    this.cm.getWrapperElement().addEventListener('paste', function(clipboardEvent) {
+    this.cm.on('paste', function(cm, clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'markdown',
             data: clipboardEvent

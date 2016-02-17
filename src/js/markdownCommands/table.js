@@ -20,8 +20,9 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
      * @param {MarkdownEditor} mde MarkdownEditor instance
      * @param {number} col column count
      * @param {number} row row count
+     * @param {Array} data initial table data
      */
-    exec: function(mde, col, row) {
+    exec: function(mde, col, row, data) {
         var cm = mde.getEditor(),
             doc = cm.getDoc(),
             table = '\n';
@@ -31,11 +32,13 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
         }
 
         table += makeHeader(col);
-        table += makeBody(col, row - 1);
+        table += makeBody(col, row - 1, data);
 
         doc.replaceSelection(table);
 
-        cm.setCursor(cm.getCursor().line - row, 2);
+        if (!data) {
+            cm.setCursor(cm.getCursor().line - row, 2);
+        }
 
         mde.focus();
     }
@@ -53,7 +56,7 @@ function makeHeader(col) {
 
     while (col) {
         header += '  |';
-        border +=' --- |';
+        border += ' --- |';
 
         col -= 1;
     }
@@ -66,17 +69,24 @@ function makeHeader(col) {
  * make table body markdown string
  * @param {number} col column count
  * @param {number} row row count
+ * @param {Array} data initial table data
  * @returns {string} html string
  */
-function makeBody(col, row) {
+function makeBody(col, row, data) {
     var body = '',
+        index = 0,
         irow, icol;
 
     for (irow = 0; irow < row; irow += 1) {
         body += '|';
 
         for (icol = 0; icol < col; icol += 1) {
-            body += '  |';
+            if (data) {
+                body += ' ' + data[index] + ' |';
+                index += 1;
+            } else {
+                body += '  |';
+            }
         }
 
         body += '\n';

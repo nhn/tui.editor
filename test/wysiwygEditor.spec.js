@@ -413,7 +413,7 @@ describe('WysiwygEditor', function() {
 
         it('add manager with manager default', function() {
             var manager = function() {
-                return {name:'myManager'};
+                return {name: 'myManager'};
             };
 
             wwe.addManager(manager);
