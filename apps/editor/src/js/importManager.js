@@ -5,8 +5,11 @@
 
 'use strict';
 
+var excelTableParser = require('./excelTableParser');
+
 var util = tui.util;
 
+var FIND_EXCEL_DATA = /.+(\t.+?){1,}[\r\n]/;
 /**
  * ImportManager
  * @exports ImportManager
@@ -27,7 +30,7 @@ ImportManager.prototype._initDropEvent = function() {
 
     this.eventManager.listen('drop', function(ev) {
         var items = ev.data.dataTransfer && ev.data.dataTransfer.files;
-        self._processEachItems(items);
+        self._processBlobItems(items, ev.data);
     });
 };
 
@@ -35,8 +38,7 @@ ImportManager.prototype._initPasteEvent = function() {
     var self = this;
 
     this.eventManager.listen('paste', function(ev) {
-        var items = ev.data.clipboardData && ev.data.clipboardData.items;
-        self._processEachItems(items);
+        self._processClipboard(ev.data);
     });
 };
 
@@ -61,16 +63,54 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
     });
 };
 
-ImportManager.prototype._processEachItems = function(items) {
+ImportManager.prototype._addExcelTable = function(content) {
+    var tableInfo = excelTableParser(content),
+        headRowLength = 1;
+
+    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row + headRowLength, tableInfo.data);
+};
+
+ImportManager.prototype._processClipboard = function(evData) {
+    var blobItems,
+        cbData = evData.clipboardData,
+        types = cbData.types;
+
+    blobItems = cbData && cbData.items;
+
+    if (blobItems && types.length === 1 && util.inArray('Files', types) !== -1) {
+        this._processBlobItems(blobItems, evData);
+    } else {
+        this._precessDataTransfer(cbData, evData);
+    }
+};
+
+ImportManager.prototype._processBlobItems = function(items, evData) {
     var self = this;
 
     if (items) {
         util.forEachArray(items, function(item) {
             if (item.type.indexOf('image') !== -1) {
+                evData.preventDefault();
+                evData.codemirrorIgnore = true;
                 self._emitAddImageBlobHook(item);
                 return false;
             }
         });
+    }
+};
+
+ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
+    var types = util.toArray(cbData.types),
+        content;
+
+    if (util.inArray('text/rtf', types) !== -1 && util.inArray('text/plain', types) !== -1) {
+        content = cbData.getData('text/plain');
+
+        if (FIND_EXCEL_DATA.test(content)) {
+            evData.preventDefault();
+            evData.codemirrorIgnore = true;
+            this._addExcelTable(content);
+        }
     }
 };
 

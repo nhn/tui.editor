@@ -61,5 +61,16 @@ describe('Table', function() {
             expect(cm.getCursor().line).toEqual(1);
             expect(cm.getCursor().ch).toEqual(2);
         });
+
+        it('add initial data', function() {
+            Table.exec(mde, 2, 3, ['a', 'b', 'c', 'd']);
+
+            expect(doc.getValue()).toEqual([
+                '\n|  |  |',
+                '| --- | --- |',
+                '| a | b |',
+                '| c | d |'
+            ].join('\n'));
+        });
     });
 });

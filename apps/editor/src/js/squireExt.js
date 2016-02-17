@@ -11,6 +11,9 @@ var Squire = window.Squire,
     util = tui.util;
 
 var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
+
+var isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
+
 /**
  * SquireExt
  * @exports SquireExt
@@ -20,6 +23,8 @@ var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
  */
 function SquireExt() {
     Squire.apply(this, arguments);
+
+    this._decoratePasteHandler();
 }
 
 SquireExt.prototype = util.extend(
@@ -30,6 +35,28 @@ SquireExt.prototype = util.extend(
 SquireExt.prototype.get$Body = function() {
     this.$body = this.$body || $(this.getDocument().body);
     return this.$body;
+};
+
+/**
+ * _decoratePasteHandler
+ * Decorate squire paste handler cuz sometimes, we dont need squire paste handler process
+ */
+SquireExt.prototype._decoratePasteHandler = function() {
+    var handlers, pasteHandler;
+
+    handlers = this._events[isIElt11 ? 'beforepaste' : 'paste'];
+
+    if (handlers.length > 1) {
+        throw new Error('too many paste handlers in squire');
+    }
+
+    pasteHandler = handlers[0].bind(this);
+
+    handlers[0] = function decoratedSquirePastedHandler(event) {
+        if (!event.defaultPrevented) {
+            pasteHandler(event);
+        }
+    };
 };
 
 SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {

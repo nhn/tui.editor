@@ -74,7 +74,6 @@ describe('Code', function() {
 
         Code.exec(wwe);
 
-        expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('\u200B');
-        expect(wwe.getEditor().getSelection().startOffset).toEqual(1);
+        expect(wwe.getEditor().getSelection().startContainer.parentNode.tagName).toEqual('DIV');
     });
 });

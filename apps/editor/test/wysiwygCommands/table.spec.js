@@ -1,6 +1,6 @@
 'use strict';
 
-var Table= require('../../src/js/wysiwygCommands/table'),
+var Table = require('../../src/js/wysiwygCommands/table'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager');
 
@@ -52,5 +52,15 @@ describe('Table', function() {
         Table.exec(wwe, 4, 3);
 
         expect(wwe.getEditor().getSelection().startContainer).toBe(wwe.get$Body().find('th')[0]);
+    });
+
+    it('add initial data', function() {
+        Table.exec(wwe, 2, 3, ['a', 'b', 'c', 'd']);
+
+        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(0).text()).toEqual('a');
+        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(1).text()).toEqual('b');
+        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(0).text()).toEqual('c');
+        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(1).text()).toEqual('d');
+        expect(wwe.getEditor().getSelection().startContainer).not.toBe(wwe.get$Body().find('th')[0]);
     });
 });
