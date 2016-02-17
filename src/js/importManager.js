@@ -72,8 +72,14 @@ ImportManager.prototype._addExcelTable = function(content) {
 
 ImportManager.prototype._processClipboard = function(evData) {
     var blobItems,
-        cbData = evData.clipboardData,
-        types = cbData.types;
+        cbData, types;
+
+    cbData = evData.clipboardData || window.clipboardData;
+    types = cbData.types;
+
+    if (!types) {
+        return;
+    }
 
     blobItems = cbData && cbData.items;
 
