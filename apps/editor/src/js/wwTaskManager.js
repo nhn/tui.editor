@@ -387,7 +387,7 @@ WwTaskManager.prototype.formatTask = function(node) {
         $block = $selected.closest('div').eq(0);
 
         if (!$block.length) {
-            $block = $selected.closest('li').eq(0);
+            $block = $li.eq(0);
         }
 
         range = sq.getSelection().cloneRange();
