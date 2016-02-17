@@ -313,4 +313,22 @@ SquireExt.prototype.preserveLastLine = function() {
     }
 };
 
+SquireExt.prototype.scrollTop = function(top) {
+    var $target;
+
+    if (util.browser.firefox) {
+        $target = $(this._win);
+    } else if (util.browser.msie && util.browser.version === 11) {
+        $target = $(this.getDocument().documentElement);
+    } else {
+        $target = this.get$Body();
+    }
+
+    if (util.isUndefined(top)) {
+        return $target.scrollTop();
+    }
+
+    $target.scrollTop(top);
+};
+
 module.exports = SquireExt;

@@ -874,12 +874,12 @@ WysiwygEditor.prototype.getManager = function(name) {
 
 WysiwygEditor.prototype.moveCursorToEnd = function() {
     this.getEditor().moveCursorToEnd();
-    this.get$Body().scrollTop(this.get$Body().height());
+    this.getEditor().scrollTop(this.get$Body().height());
 };
 
 WysiwygEditor.prototype.moveCursorToStart = function() {
     this.getEditor().moveCursorToStart();
-    this.get$Body().scrollTop(0);
+    this.getEditor().scrollTop(0);
 };
 
 /**
