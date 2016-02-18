@@ -121,7 +121,8 @@ describe('WwTaskManager', function() {
             range.collapse(true);
             mgr._unformatTaskIfNeedOnEnter(range);
 
-            expect(wwe.getValue().replace(' class=""', '')).toEqual('<ul><li></li></ul>');
+            expect(wwe.get$Body().find('input').length).toEqual(0);
+            expect(wwe.get$Body().find('task-list-item').length).toEqual(0);
         });
     });
 
