@@ -218,13 +218,13 @@ describe('WysiwygEditor', function() {
         it('remove all unnecessary brs', function() {
             var html = '<h1>1</h1><h1>2</h1>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual('<h1>1</h1><h1>2</h1>');
+            expect(wwe.getValue()).toEqual('<h1>1</h1><h1>2</h1><br />');
         });
 
         it('dont remove necessary brs', function() {
             var html = '<h1>1</h1><div><br></div><h1>2</h1>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual('<h1>1</h1><br /><h1>2</h1>');
+            expect(wwe.getValue()).toEqual('<h1>1</h1><br /><h1>2</h1><br />');
         });
 
         it('remove contentEditable block tag(div)', function() {
@@ -242,7 +242,7 @@ describe('WysiwygEditor', function() {
         it('empty line li dont replace to br', function() {
             var html = '<ul><li></li></ul>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual(html);
+            expect(wwe.getValue()).toEqual(html + '<br />');
         });
 
         it('prevent text, image merge', function() {
@@ -250,7 +250,7 @@ describe('WysiwygEditor', function() {
             var html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
             /* eslint-enable */
             wwe.setValue(html);
-            expect(wwe.get$Body().find('div').length).toEqual(2);
+            expect(wwe.get$Body().find('div').length).toEqual(3);
             expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
             expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
         });

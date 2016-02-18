@@ -610,8 +610,9 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('wysiwygSetValueAfter', this);
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 
-    this._autoResizeHeightIfNeed();
+    this.getEditor().preserveLastLine();
     this.moveCursorToEnd();
+    this._autoResizeHeightIfNeed();
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
