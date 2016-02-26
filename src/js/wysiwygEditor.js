@@ -692,7 +692,7 @@ WysiwygEditor.prototype.postProcessForChange = function() {
  * Ready to silent change
  */
 WysiwygEditor.prototype.readySilentChange = function() {
-    if (canObserveMutations) {
+    if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
         this._silentChange = true;
     }
 };
