@@ -256,8 +256,15 @@ var keyHandlers = {
         // If at beginning of block, merge with previous
         else if ( rangeDoesStartAtBlockBoundary( range ) ) {
             event.preventDefault();
-            var current = getStartBlockOfRange( range ),
-                previous = current && getPreviousBlock( current );
+            var current = getStartBlockOfRange( range );
+            var previous;
+            if ( !current ) {
+                return;
+            }
+            // In case inline data has somehow got between blocks.
+            fixContainer( current.parentNode );
+            // Now get previous block
+            previous = getPreviousBlock( current );
             // Must not be at the very beginning of the text area.
             if ( previous ) {
                 // If not editable, just delete whole block.
@@ -302,6 +309,8 @@ var keyHandlers = {
         }
     },
     'delete': function ( self, event, range ) {
+        var current, next, originalRange,
+            cursorContainer, cursorOffset, nodeAfterCursor;
         self._removeZWS();
         // Record undo checkpoint.
         self._recordUndoState( range );
@@ -315,8 +324,14 @@ var keyHandlers = {
         // If at end of block, merge next into this block
         else if ( rangeDoesEndAtBlockBoundary( range ) ) {
             event.preventDefault();
-            var current = getStartBlockOfRange( range ),
-                next = current && getNextBlock( current );
+            current = getStartBlockOfRange( range );
+            if ( !current ) {
+                return;
+            }
+            // In case inline data has somehow got between blocks.
+            fixContainer( current.parentNode );
+            // Now get next block
+            next = getNextBlock( current );
             // Must not be at the very end of the text area.
             if ( next ) {
                 // If not editable, just delete whole block.
@@ -345,8 +360,7 @@ var keyHandlers = {
             // But first check if the cursor is just before an IMG tag. If so,
             // delete it ourselves, because the browser won't if it is not
             // inline.
-            var originalRange = range.cloneRange(),
-                cursorContainer, cursorOffset, nodeAfterCursor;
+            originalRange = range.cloneRange();
             moveRangeBoundariesUpTree( range, self._body );
             cursorContainer = range.endContainer;
             cursorOffset = range.endOffset;
