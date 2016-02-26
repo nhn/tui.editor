@@ -331,4 +331,8 @@ SquireExt.prototype.scrollTop = function(top) {
     $target.scrollTop(top);
 };
 
+SquireExt.prototype.isIgnoreChange = function() {
+    return this._ignoreChange;
+};
+
 module.exports = SquireExt;
