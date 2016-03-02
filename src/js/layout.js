@@ -7,14 +7,14 @@
 
 var containerTmpl = [
     '<div class="tui-editor">',
-        '<div class="te-md-container">',
-            '<div class="te-editor" />',
-            '<div class="te-md-splitter" />',
-            '<div class="te-preview" />',
-        '</div>',
-        '<div class="te-ww-container">',
-            '<div class="te-editor" />',
-        '</div>',
+    '<div class="te-md-container">',
+    '<div class="te-editor" />',
+    '<div class="te-md-splitter" />',
+    '<div class="te-preview" />',
+    '</div>',
+    '<div class="te-ww-container">',
+    '<div class="te-editor" />',
+    '</div>',
     '</div>'
 ].join('');
 

@@ -82,8 +82,6 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
     * addImageBlobHook : 파일 blob을 이용해 이미지를 서버에 업로드합니다.
 
 ## 이미지 서버 연동
-
-기존에 addImageFileHook훅을 이용해  폼을 전달하는 방식의 서버연동은 아래 예제에 포함되어 있지만 deprecated됩니다.
 addImageBlobHook을 이용해서 이미지 파일을 blob으로 전달받아서 연동합니다.
 블롭을 통한 이미지 서버 연동은 [여기](https://developer.mozilla.org/en/docs/Using_files_from_web_applications)의 Handling the upload process for a file파트를 참조해주세요
 
@@ -124,6 +122,8 @@ $("#editSection").tuiEditor("setValue", "# Hello!!");
 * setValue: 에디터에 마크다운 컨텐트를 셋팅합니다.
 * changeMode: 에디터의 타입을 변경한다(인자로는 wysiwyg과 markdown)
 * contentHeight: 에디터의 컨텐트 영역의 높이값을 인자로 넘겨 지정하거나 현재의 높이값을 반환합니다
+* moveCursorToEnd: 에디터 컨텐츠의 맨끝으로 스크롤및 커서이동한다.
+* moveCursorToStart: 에디터 컨텐츠의 맨 처음으로 스크롤및 커서이동한다.
 * on: 이벤트핸들러와 핸들러평션을 파라메터로 넘겨 에디터 내부이벤트를 바인드 할수있습니다.
     * jQuery의 이벤트 네임스페이스와 동일하게 적용할수 있어 추후 특정 이벤트핸들러만 삭제할수있습니다(ex. change.dooray)
     * event목록
@@ -135,6 +135,7 @@ $("#editSection").tuiEditor("setValue", "# Hello!!");
         * blur
         * show
         * hide
+        * keyMap: 에디터상에서 입력되는 키조합관련 이벤트를 발생한다.('SHIFT+CTRL+A' 이런식의 키입력 데이터를 얻을수 있다)
 * off : 이벤트 핸들러를 제거합니다. 네임스페이스로 특정 이벤트 핸들러만 삭제할수있습니다
     * "change"와 실행시 모든 change이벤트 제거 "change.dooray"는 dooray라는 네임스페이스가 있는 change이벤트만 제거 ".dooray"는 모든 이벤트의 ".dooray"네임스페이스를 가진 핸들러제거
 

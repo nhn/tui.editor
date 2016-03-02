@@ -51,9 +51,9 @@ var getTextLength = function(node) {
     var len;
 
     if (isElemNode(node)) {
-       len = node.textContent.replace(FIND_ZWB, '').length;
+        len = node.textContent.replace(FIND_ZWB, '').length;
     } else if (isTextNode(node)) {
-       len = node.nodeValue.replace(FIND_ZWB, '').length;
+        len = node.nodeValue.replace(FIND_ZWB, '').length;
     }
 
     return len;
@@ -69,9 +69,9 @@ var getOffsetLength = function(node) {
     var len;
 
     if (isElemNode(node)) {
-       len = node.childNodes.length;
+        len = node.childNodes.length;
     } else if (isTextNode(node)) {
-       len = node.nodeValue.replace(FIND_ZWB, '').length;
+        len = node.nodeValue.replace(FIND_ZWB, '').length;
     }
 
     return len;
@@ -87,7 +87,7 @@ var getNodeOffsetOfParent = function(node) {
     var i, t,
         childNodesOfParent = node.parentNode.childNodes;
 
-    for (i = 0, t = childNodesOfParent.length; i < t; i+=1) {
+    for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
         if (childNodesOfParent[i] === node) {
             return i;
         }

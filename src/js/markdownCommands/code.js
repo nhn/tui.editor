@@ -7,8 +7,6 @@
 
 var CommandManager = require('../commandManager');
 
-var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
-
 /**
  * Code
  * Add code markdown syntax to markdown editor

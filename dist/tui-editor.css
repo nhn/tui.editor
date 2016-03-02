@@ -1,10 +1,5 @@
 @charset "UTF-8";
 
-.tui-editor *,
-.tui-editor-defaultUI * {
-  font: inherit;
-}
-
 .tui-editor:after,
 .tui-editor-defaultUI-toolbar:after {
   content: "";
@@ -34,8 +29,11 @@
 }
 
 .te-md-container .te-preview {
-  padding: 5px;
   overflow: auto;
+}
+
+.te-md-container .te-preview .tui-editor-contents {
+  padding: 5px;
 }
 
 .tui-editor .te-preview-style-tab>.te-editor,

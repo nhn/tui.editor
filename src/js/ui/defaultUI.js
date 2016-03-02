@@ -15,7 +15,7 @@ var Toolbar = require('./toolbar'),
     PopupAddTable = require('./popupAddTable'),
     PopupAddHeading = require('./popupAddHeading');
 
-
+/* eslint-disable indent */
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
         '<div class="te-toolbar-section" />',
@@ -24,6 +24,7 @@ var containerTmpl = [
         '<div class="te-editor-section"  />',
     '</div>'
 ].join('');
+/* eslint-enable indent */
 
 /**
  * DefaultUI

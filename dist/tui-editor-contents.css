@@ -1,9 +1,10 @@
 @charset "UTF-8";
+
 .tui-editor-contents {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: Helvetica, arial, sans-serif;
+    font-family: "나눔고딕", "Nanum Gothic", "Apple SD Gothic Neo", "돋움", dotum, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     background-color: white;
@@ -277,6 +278,7 @@
     border: 1px solid #eaeaea;
     background-color: #f8f8f8;
     border-radius: 3px;
+    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
 }
 
 .tui-editor-contents pre code {
@@ -302,7 +304,6 @@
     border: 1px solid #cccccc;
     font-size: 13px;
     line-height: 19px;
-    overflow: auto;
     padding: 6px 10px;
     border-radius: 3px;
 }

@@ -9,14 +9,18 @@ var LayerPopup = require('./layerpopup');
 
 var util = tui.util;
 
-var POPUP_CONTENT = ['<ul>',
-  '<li data-value="1"><h1>제목</h1></li>',
-  '<li data-value="2"><h2>제목</h2></li>',
-  '<li data-value="3"><h3>제목</h3></li>',
-  '<li data-value="4"><h4>제목</h4></li>',
-  '<li data-value="5"><h5>제목</h5></li>',
-  '<li data-value="6"><h6>제목</h6></li></ul>'].join('');
-
+/* eslint-disable indent */
+var POPUP_CONTENT = [
+    '<ul>',
+        '<li data-value="1"><h1>제목</h1></li>',
+        '<li data-value="2"><h2>제목</h2></li>',
+        '<li data-value="3"><h3>제목</h3></li>',
+        '<li data-value="4"><h4>제목</h4></li>',
+        '<li data-value="5"><h5>제목</h5></li>',
+        '<li data-value="6"><h6>제목</h6></li>',
+    '</ul>'
+].join('');
+/* eslint-enable indent */
 
 /**
  * PopupHeading
@@ -49,7 +53,7 @@ PopupAddHeading.prototype = util.extend(
 PopupAddHeading.prototype._linkWithEventManager = function() {
     var self = this;
 
-  this.eventManager.listen('focus', function() {
+    this.eventManager.listen('focus', function() {
         self.hide();
     });
 
