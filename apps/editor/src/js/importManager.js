@@ -75,15 +75,11 @@ ImportManager.prototype._processClipboard = function(evData) {
         cbData, types;
 
     cbData = evData.clipboardData || window.clipboardData;
-    types = cbData.types;
-
-    if (!types) {
-        return;
-    }
 
     blobItems = cbData && cbData.items;
+    types = cbData.types;
 
-    if (blobItems && types.length === 1 && util.inArray('Files', types) !== -1) {
+    if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
         this._processBlobItems(blobItems, evData);
     } else {
         this._precessDataTransfer(cbData, evData);
@@ -106,17 +102,14 @@ ImportManager.prototype._processBlobItems = function(items, evData) {
 };
 
 ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
-    var types = util.toArray(cbData.types),
-        content;
+    var content;
 
-    if (util.inArray('text/rtf', types) !== -1 && util.inArray('text/plain', types) !== -1) {
-        content = cbData.getData('text/plain');
+    content = cbData.getData('text');
 
-        if (FIND_EXCEL_DATA.test(content)) {
-            evData.preventDefault();
-            evData.codemirrorIgnore = true;
-            this._addExcelTable(content);
-        }
+    if (FIND_EXCEL_DATA.test(content)) {
+        evData.preventDefault();
+        evData.codemirrorIgnore = true;
+        this._addExcelTable(content);
     }
 };
 
