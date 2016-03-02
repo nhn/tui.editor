@@ -5,8 +5,6 @@
 
 'use strict';
 
-var rowSplitter = tui.util.browser.firefox ? '\n' : '\r';
-
 /**
  * excelTableParser
  * Parse excel paste data
@@ -15,7 +13,7 @@ var rowSplitter = tui.util.browser.firefox ? '\n' : '\r';
  * @returns {object} result
  */
 function excelTableParser(content) {
-    var rows = content.split(rowSplitter),
+    var rows = getRows(content),
         data = [],
         rowLength = 0,
         colLength = 0;
@@ -25,7 +23,9 @@ function excelTableParser(content) {
     rows.forEach(function(row) {
         var cols = row.split('\t');
 
-        if (!colLength) {
+        if (!cols) {
+            return;
+        } else if (!colLength) {
             colLength = cols.length;
         }
 
@@ -37,6 +37,15 @@ function excelTableParser(content) {
         row: rowLength,
         data: data
     };
+}
+
+function getRows(content) {
+    //remove last LF or CR
+    content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
+    //CR or CR-LF to LF
+    content = content.replace(/(\r\n)|(\r)/g, '\n');
+
+    return content.split('\n');
 }
 
 module.exports = excelTableParser;
