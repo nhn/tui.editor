@@ -9,6 +9,7 @@ var LayerPopup = require('./layerpopup');
 
 var util = tui.util;
 
+/* eslint-disable indent */
 var POPUP_CONTENT = [
     '<div class="te-table-selection">',
         '<div class="te-table-header"></div>',
@@ -17,6 +18,7 @@ var POPUP_CONTENT = [
     '</div>',
     '<p class="te-description"></p>'
 ].join('');
+/* eslint-enable indent */
 
 var CELL_WIDTH = 25,
     CELL_HEIGHT = 17,
@@ -280,8 +282,8 @@ PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
  * @param {number} row row index
  */
 PopupAddTable.prototype._setSelectedBound = function(col, row) {
-   this._selectedBound.col = col;
-   this._selectedBound.row = row;
+    this._selectedBound.col = col;
+    this._selectedBound.row = row;
 };
 
 /**

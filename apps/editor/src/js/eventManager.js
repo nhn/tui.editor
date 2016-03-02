@@ -103,7 +103,7 @@ EventManager.prototype.emit = function() {
             if (!util.isUndefined(result)) {
                 results.push(result);
             }
-       });
+        });
     }
 
     if (results && results.length) {
@@ -123,7 +123,7 @@ EventManager.prototype.emitReduce = function() {
             if (!util.isFalsy(result)) {
                 args[0] = result;
             }
-       });
+        });
     }
 
     return args[0];

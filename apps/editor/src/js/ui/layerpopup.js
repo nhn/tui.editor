@@ -9,14 +9,18 @@ var UIController = require('./uicontroller');
 
 var util = tui.util,
     _id = 0,
-    CLASS_PREFIX = 'tui-popup-',
-    LAYOUT_TEMPLATE = [
-        '<div class="' + CLASS_PREFIX + 'header">',
+    CLASS_PREFIX = 'tui-popup-';
+
+/* eslint-disable indent */
+var LAYOUT_TEMPLATE = [
+    '<div class="' + CLASS_PREFIX + 'header">',
         '<span class="' + CLASS_PREFIX + 'title"></span>',
         '<button class="' + CLASS_PREFIX + 'close-button">x</button>',
-        '</div>',
-        '<div class="' + CLASS_PREFIX + 'body"></div>'
-    ].join('');
+    '</div>',
+    '<div class="' + CLASS_PREFIX + 'body"></div>'
+].join('');
+/* eslint-enable indent */
+
 
 /**
  * LayerPopup
@@ -110,7 +114,7 @@ LayerPopup.prototype._renderLayout = function() {
         this.$body = this.$el.find(this._getFullClassName('body'));
 
         if (this.title === false) {
-           this.$el.find(this._getFullClassName('header')).remove();
+            this.$el.find(this._getFullClassName('header')).remove();
         }
     } else {
         this.hide();

@@ -16,8 +16,8 @@ var regexTaskList = /^((?:<p>|))(\[(?:x| )\]) /i;
 
 markedCustomRenderer.listitem = function(text) {
     var cap,
-    checked,
-    className = '',
+        checked,
+        className = '',
         output = '';
 
     cap = regexTaskList.exec(text);

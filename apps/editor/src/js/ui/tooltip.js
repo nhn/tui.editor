@@ -25,8 +25,8 @@ function Tooltip() {
  */
 Tooltip.prototype.show = function(target, text) {
     this.$el.css({
-      'top': target.offset().top + target.height() + 13,
-      'left': target.offset().left + 3
+        'top': target.offset().top + target.height() + 13,
+        'left': target.offset().left + 3
     }).find('.text').html(text).end().show();
 };
 

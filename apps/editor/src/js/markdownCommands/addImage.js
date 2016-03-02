@@ -13,9 +13,7 @@ var CommandManager = require('../commandManager');
  * @exports AddImage
  * @augments Command
  */
-var AddImage = CommandManager.command('markdown',
-/** @lends AddImage */
-{
+var AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
     name: 'AddImage',
     /**
      * Command Handler

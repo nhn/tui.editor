@@ -143,8 +143,9 @@ WwTaskManager.prototype._isInTaskList = function(range) {
     }
 
     if (range.startContainer.nodeType === Node.ELEMENT_NODE
-        && range.startContainer.tagName === 'LI') {
-            li = range.startContainer;
+        && range.startContainer.tagName === 'LI'
+    ) {
+        li = range.startContainer;
     } else {
         li = $(range.startContainer).parents('li')[0];
     }

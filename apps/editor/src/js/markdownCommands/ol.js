@@ -43,7 +43,7 @@ var OL = CommandManager.command('markdown', /** @lends OL */{
 
             to = {
                 line: from.line,
-                ch: line.length -1
+                ch: line.length - 1
             };
 
             doc.replaceRange(line, from, to);

@@ -85,6 +85,7 @@ function makeHeader(col) {
  * make table body html string
  * @param {number} col column count
  * @param {number} row row count
+ * @param {string} data cell data
  * @returns {string} html string
  */
 function makeBody(col, row, data) {

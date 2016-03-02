@@ -42,7 +42,7 @@ WwSelectionMarker.prototype.insertMarker = function(range, sq) {
  * @returns {Node} marker
  */
 WwSelectionMarker.prototype._makeMarker = function(sq) {
-    return sq.createElement('INPUT', {type:'hidden', class: MARKER_CSS_CLASS});
+    return sq.createElement('INPUT', {type: 'hidden', class: MARKER_CSS_CLASS});
 };
 
 /**

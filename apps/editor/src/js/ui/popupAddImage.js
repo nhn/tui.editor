@@ -10,6 +10,7 @@ var LayerPopup = require('./layerpopup'),
 
 var util = tui.util;
 
+/* eslint-disable indent */
 var POPUP_CONTENT = [
     '<div class="te-tab-section"></div>',
     '<div class="te-url-type">',
@@ -27,6 +28,7 @@ var POPUP_CONTENT = [
         '<button type="button" class="te-close-button">취소</button>',
     '</div>'
 ].join('');
+/* eslint-enable indent */
 
 /**
  * PopupAddImage
@@ -166,7 +168,7 @@ PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
 
 PopupAddImage.prototype._getImageInfo = function() {
     var imageUrl = this.$el.find('.te-image-url-input').val(),
-    altText = this.$el.find('.te-alt-text-input').val();
+        altText = this.$el.find('.te-alt-text-input').val();
 
     return this._makeImageInfo(imageUrl, altText);
 };

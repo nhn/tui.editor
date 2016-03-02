@@ -121,7 +121,7 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
 
         processedFragment = document.createDocumentFragment();
 
-        for (i = 0, t = parsedChilds.length; i < t; i+=1) {
+        for (i = 0, t = parsedChilds.length; i < t; i += 1) {
             processedFragment.appendChild(parsedChilds[i]);
         }
     }
@@ -176,12 +176,12 @@ WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
  * @param {function} iteratee callback
  */
 WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
-   var paths = this.wwe.getEditor().getPath().split('>'),
-       i;
+    var paths = this.wwe.getEditor().getPath().split('>'),
+        i;
 
-   for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i-=1) {
-       iteratee(paths[i]);
-   }
+    for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i -= 1) {
+        iteratee(paths[i]);
+    }
 };
 
 /**

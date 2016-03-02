@@ -94,7 +94,7 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
 
     if (isEditorBottom) {
         factors = {
-            isEditorBottom : isEditorBottom
+            isEditorBottom: isEditorBottom
         };
     } else {
         topLine = cm.coordsChar({

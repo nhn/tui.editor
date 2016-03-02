@@ -140,9 +140,6 @@ function ToastUIEditor(options) {
     __nedInstance.push(this);
 }
 
-ToastUIEditor.prototype._initDefaultCommands = function() {
-    };
-
 /**
  * 프리뷰가 보여지는 방식을 변경한다
  * @param {string} style 스타일 이름 tab, vertical

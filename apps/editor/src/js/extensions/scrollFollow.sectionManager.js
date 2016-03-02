@@ -97,11 +97,11 @@ SectionManager.prototype._eachLineState = function(iteratee) {
 
     lineLength = this.cm.getDoc().lineCount();
 
-    for (i = 0; i < lineLength; i+=1) {
+    for (i = 0; i < lineLength; i += 1) {
         isSection = false;
         lineString = this.cm.getLine(i);
-        nextLineString = this.cm.getLine(i+1) || '';
-        prevLineString = this.cm.getLine(i-1) || '';
+        nextLineString = this.cm.getLine(i + 1) || '';
+        prevLineString = this.cm.getLine(i - 1) || '';
 
         if (onTable && (!lineString || !this._isTableCode(lineString))) {
             onTable = false;
@@ -150,7 +150,7 @@ SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, 
     var i,
         doLineHaveCodeBlockEnd = false;
 
-    for (i = lineIndex + 1; i < lineLength; i+=1) {
+    for (i = lineIndex + 1; i < lineLength; i += 1) {
         if (this._isCodeBlockEnd(this.cm.getLine(i))) {
             doLineHaveCodeBlockEnd = true;
             break;
@@ -275,7 +275,7 @@ SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(section
         var $sectionDiv;
 
         if (self._sectionList[index]) {
-            $sectionDiv = $('<div class="content-id-'+ index + '"></div>');
+            $sectionDiv = $('<div class="content-id-' + index + '"></div>');
             self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
         }
     });
@@ -326,7 +326,7 @@ SectionManager.prototype.sectionByLine = function(line) {
         sectionList = this._sectionList,
         sectionLength = sectionList.length;
 
-    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex+=1) {
+    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex += 1) {
         if (line <= sectionList[sectionIndex].end) {
             break;
         }

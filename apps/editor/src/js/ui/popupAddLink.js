@@ -9,6 +9,7 @@ var LayerPopup = require('./layerpopup');
 
 var util = tui.util;
 
+/* eslint-disable indent */
 var POPUP_CONTENT = [
     '<label for="linkText">링크에 표시할 내용</label>',
     '<input type="text" class="te-link-text-input" />',
@@ -19,6 +20,7 @@ var POPUP_CONTENT = [
         '<button type="button" class="te-close-button">취소</button>',
     '</div>'
 ].join('');
+/* eslint-enable indent */
 
 /**
  * PopupAddLink
@@ -94,7 +96,7 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 PopupAddLink.prototype.getValue = function() {
     return {
         linkText: this.$el.find('.te-link-text-input').val(),
-        url: this.$el.find('.te-url-input').val().replace(/\(/g, "%28").replace(/\)/g, "%29")
+        url: this.$el.find('.te-url-input').val().replace(/\(/g, '%28').replace(/\)/g, '%29')
     };
 };
 

@@ -86,8 +86,8 @@ Tab.prototype._applyInitName = function(initName) {
  */
 Tab.prototype._getButtonData = function() {
     var buttonData = [],
-    i,
-    len;
+        i,
+        len;
 
     for (i = 0, len = this.items.length; i < len; i += 1) {
         buttonData.push({
