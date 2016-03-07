@@ -305,7 +305,7 @@ proto.scrollRangeIntoView = function ( range ) {
     // Get the bounding rect
     var rect = range.getBoundingClientRect();
     var node, parent;
-    if ( !rect.top ) {
+    if ( rect && !rect.top ) {
         node = this._doc.createElement( 'SPAN' );
         range = range.cloneRange();
         insertNodeInRange( range, node );
@@ -313,6 +313,9 @@ proto.scrollRangeIntoView = function ( range ) {
         parent = node.parentNode;
         parent.removeChild( node );
         parent.normalize();
+    }
+    if ( !rect ) {
+        return;
     }
     // Then check and scroll
     var win = this._win;
@@ -1780,7 +1783,6 @@ proto.removeAllFormatting = function ( range ) {
     // Record undo point
     this._recordUndoState( range );
     this._getRangeAndRemoveBookmark( range );
-
 
     // Avoid splitting where we're already at edges.
     moveRangeBoundariesUpTree( range, stopNode );
