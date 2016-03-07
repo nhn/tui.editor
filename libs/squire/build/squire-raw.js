@@ -2003,7 +2003,7 @@ var onPaste = function ( event ) {
         hasImage = false,
         plainItem = null,
         self = this,
-        l, item, type, data;
+        l, item, type, types, data;
 
     // Current HTML5 Clipboard interface
     // ---------------------------------
@@ -2060,10 +2060,18 @@ var onPaste = function ( event ) {
     // rather than text/html; even from a webpage in Safari. The only way
     // to get an HTML version is to fallback to letting the browser insert
     // the content. Same for getting image data. *Sigh*.
-    if ( clipboardData && (
-            indexOf.call( clipboardData.types, 'text/html' ) > -1 || (
-            indexOf.call( clipboardData.types, 'text/plain' ) > -1 &&
-            indexOf.call( clipboardData.types, 'text/rtf' ) < 0 ) ) ) {
+    //
+    // Firefox is even worse: it doesn't even let you know that there might be
+    // an RTF version on the clipboard, but it will also convert to HTML if you
+    // let the browser insert the content. I've filed
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1254028
+    types = clipboardData && clipboardData.types;
+    if ( types && (
+            indexOf.call( types, 'text/html' ) > -1 || (
+                !isGecko &&
+                indexOf.call( types, 'text/plain' ) > -1 &&
+                indexOf.call( types, 'text/rtf' ) < 0 )
+            )) {
         event.preventDefault();
         // Abiword on Linux copies a plain text and html version, but the HTML
         // version is the empty string! So always try to get HTML, but if none,
