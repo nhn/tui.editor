@@ -145,7 +145,7 @@ var deleteContentsOfRange = function ( range ) {
             ( isInline( endBlock ) || isBlock( endBlock ) );
 
     // Remove selected range
-    extractContentsOfRange( range );
+    var frag = extractContentsOfRange( range );
 
     // Move boundaries back down tree so that they are inside the blocks.
     // If we don't do this, the range may be collapsed to a point between
@@ -175,6 +175,7 @@ var deleteContentsOfRange = function ( range ) {
     } else {
         range.collapse( false );
     }
+    return frag;
 };
 
 // ---

@@ -1,20 +1,47 @@
 /*jshint strict:false, undef:false, unused:false */
 
-var onCut = function () {
-    // Save undo checkpoint
+var onCut = function ( event ) {
+    var clipboardData = event.clipboardData;
     var range = this.getSelection();
+    var node = this.createElement( 'div' );
+    var body = this._body;
     var self = this;
+
+    // Save undo checkpoint
     this._recordUndoState( range );
+
+    // Edge only seems to support setting plain text as of 2016-03-11.
+    if ( !isEdge && clipboardData ) {
+        moveRangeBoundariesUpTree( range, body );
+        node.appendChild( deleteContentsOfRange( range, body ) );
+        clipboardData.setData( 'text/html', node.innerHTML );
+        event.preventDefault();
+    } else {
+        setTimeout( function () {
+            try {
+                // If all content removed, ensure div at start of body.
+                self._ensureBottomLine();
+            } catch ( error ) {
+                self.didError( error );
+            }
+        }, 0 );
+    }
+
     this._getRangeAndRemoveBookmark( range );
     this.setSelection( range );
-    setTimeout( function () {
-        try {
-            // If all content removed, ensure div at start of body.
-            self._ensureBottomLine();
-        } catch ( error ) {
-            self.didError( error );
-        }
-    }, 0 );
+};
+
+var onCopy = function ( event ) {
+    var clipboardData = event.clipboardData;
+    var range = this.getSelection();
+    var node = this.createElement( 'div' );
+
+    // Edge only seems to support setting plain text as of 2016-03-11.
+    if ( !isEdge && clipboardData ) {
+        node.appendChild( range.cloneContents() );
+        clipboardData.setData( 'text/html', node.innerHTML );
+        event.preventDefault();
+    }
 };
 
 var onPaste = function ( event ) {
@@ -30,7 +57,8 @@ var onPaste = function ( event ) {
     // ---------------------------------
     // https://html.spec.whatwg.org/multipage/interaction.html
 
-    if ( items ) {
+    // Edge only provides access to plain text as of 2016-03-11.
+    if ( !isEdge && items ) {
         event.preventDefault();
         l = items.length;
         while ( l-- ) {
@@ -87,7 +115,7 @@ var onPaste = function ( event ) {
     // let the browser insert the content. I've filed
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1254028
     types = clipboardData && clipboardData.types;
-    if ( types && (
+    if ( !isEdge && types && (
             indexOf.call( types, 'text/html' ) > -1 || (
                 !isGecko &&
                 indexOf.call( types, 'text/plain' ) > -1 &&
@@ -105,8 +133,8 @@ var onPaste = function ( event ) {
         return;
     }
 
-    // No interface :(
-    // ---------------
+    // No interface. Includes all versions of IE :(
+    // --------------------------------------------
 
     this._awaitingPaste = true;
 

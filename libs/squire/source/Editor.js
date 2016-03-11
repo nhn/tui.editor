@@ -82,6 +82,7 @@ function Squire ( doc, config ) {
     // again before our after paste function is called.
     this._awaitingPaste = false;
     this.addEventListener( isIElt11 ? 'beforecut' : 'cut', onCut );
+    this.addEventListener( 'copy', onCopy );
     this.addEventListener( isIElt11 ? 'beforepaste' : 'paste', onPaste );
 
     // Opera does not fire keydown repeatedly.
