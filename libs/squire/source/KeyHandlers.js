@@ -61,8 +61,7 @@ var onKey = function ( event ) {
         this._keyHandlers[ key ]( this, event, range );
     } else if ( key.length === 1 && !range.collapsed ) {
         // Record undo checkpoint.
-        this._recordUndoState( range );
-        this._getRangeAndRemoveBookmark( range );
+        this.saveUndoState( range );
         // Delete the selection
         deleteContentsOfRange( range );
         this._ensureBottomLine();
@@ -245,8 +244,7 @@ var keyHandlers = {
     backspace: function ( self, event, range ) {
         self._removeZWS();
         // Record undo checkpoint.
-        self._recordUndoState( range );
-        self._getRangeAndRemoveBookmark( range );
+        self.saveUndoState( range );
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
             event.preventDefault();
@@ -313,8 +311,7 @@ var keyHandlers = {
             cursorContainer, cursorOffset, nodeAfterCursor;
         self._removeZWS();
         // Record undo checkpoint.
-        self._recordUndoState( range );
-        self._getRangeAndRemoveBookmark( range );
+        self.saveUndoState( range );
         // If not collapsed, delete contents
         if ( !range.collapsed ) {
             event.preventDefault();

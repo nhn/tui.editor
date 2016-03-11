@@ -211,6 +211,15 @@ document.
 
 Returns self (the Squire instance).
 
+### saveUndoState
+
+Saves an undo checkpoint with the current editor state. Methods that modify the
+state (e.g. bold/setHighlightColour/modifyBlocks) will automatically save undo
+checkpoints; you only need this method if you want to modify the DOM outside of
+one of these methods, and you want to save an undo checkpoint first.
+
+Returns self (the Squire instance).
+
 ### undo
 
 Undoes the most recent change.

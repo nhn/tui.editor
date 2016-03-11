@@ -8,7 +8,7 @@ var onCut = function ( event ) {
     var self = this;
 
     // Save undo checkpoint
-    this._recordUndoState( range );
+    this.saveUndoState( range );
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     if ( !isEdge && clipboardData ) {
@@ -27,7 +27,6 @@ var onCut = function ( event ) {
         }, 0 );
     }
 
-    this._getRangeAndRemoveBookmark( range );
     this.setSelection( range );
 };
 

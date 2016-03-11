@@ -662,6 +662,17 @@ proto._recordUndoState = function ( range ) {
     }
 };
 
+proto.saveUndoState = function ( range ) {
+    if ( range === undefined ) {
+        range = this.getSelection();
+    }
+    if ( !this._isInUndoState ) {
+        this._recordUndoState( range );
+        this._getRangeAndRemoveBookmark( range );
+    }
+    return this;
+};
+
 proto.undo = function () {
     // Sanity check: must not be at beginning of the history stack
     if ( this._undoIndex !== 0 || !this._isInUndoState ) {
@@ -1032,8 +1043,7 @@ proto.changeFormat = function ( add, remove, range, partial ) {
     }
 
     // Save undo checkpoint
-    this._recordUndoState( range );
-    this._getRangeAndRemoveBookmark( range );
+    this.saveUndoState( range );
 
     if ( remove ) {
         range = this._removeFormat( remove.tag.toUpperCase(),
@@ -1095,8 +1105,7 @@ proto.forEachBlock = function ( fn, mutates, range ) {
 
     // Save undo checkpoint
     if ( mutates ) {
-        this._recordUndoState( range );
-        this._getRangeAndRemoveBookmark( range );
+        this.saveUndoState( range );
     }
 
     var start = getStartBlockOfRange( range ),
@@ -1429,8 +1438,7 @@ proto.setHTML = function ( html ) {
     // Record undo state
     var range = this._getRangeAndRemoveBookmark() ||
         this._createRange( body.firstChild, 0 );
-    this._recordUndoState( range );
-    this._getRangeAndRemoveBookmark( range );
+    this.saveUndoState( range );
     // IE will also set focus when selecting text so don't use
     // setSelection. Instead, just store it in lastSelection, so if
     // anything calls getSelection before first focus, we have a range
@@ -1536,8 +1544,7 @@ proto.insertHTML = function ( html, isPaste ) {
     frag.appendChild( empty( div ) );
 
     // Record undo checkpoint
-    this._recordUndoState( range );
-    this._getRangeAndRemoveBookmark( range );
+    this.saveUndoState( range );
 
     try {
         var node = frag;
@@ -1782,8 +1789,7 @@ proto.removeAllFormatting = function ( range ) {
     }
 
     // Record undo point
-    this._recordUndoState( range );
-    this._getRangeAndRemoveBookmark( range );
+    this.saveUndoState( range );
 
     // Avoid splitting where we're already at edges.
     moveRangeBoundariesUpTree( range, stopNode );
