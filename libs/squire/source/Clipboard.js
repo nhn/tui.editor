@@ -15,7 +15,8 @@ var onCut = function ( event ) {
         moveRangeBoundariesUpTree( range, body );
         node.appendChild( deleteContentsOfRange( range, body ) );
         clipboardData.setData( 'text/html', node.innerHTML );
-        clipboard.setData( 'text/plain', node.innerText || node.textContent );
+        clipboardData.setData( 'text/plain',
+            node.innerText || node.textContent );
         event.preventDefault();
     } else {
         setTimeout( function () {
@@ -40,7 +41,8 @@ var onCopy = function ( event ) {
     if ( !isEdge && clipboardData ) {
         node.appendChild( range.cloneContents() );
         clipboardData.setData( 'text/html', node.innerHTML );
-        clipboard.setData( 'text/plain', node.innerText || node.textContent );
+        clipboardData.setData( 'text/plain',
+            node.innerText || node.textContent );
         event.preventDefault();
     }
 };
