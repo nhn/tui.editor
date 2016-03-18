@@ -794,29 +794,31 @@ proto.getFontInfo = function ( range ) {
         if ( element.nodeType === TEXT_NODE ) {
             element = element.parentNode;
         }
-        while ( seenAttributes < 4 && element && ( style = element.style ) ) {
-            if ( !fontInfo.color && ( attr = style.color ) ) {
-                fontInfo.color = attr;
-                seenAttributes += 1;
-            }
-            if ( !fontInfo.backgroundColor &&
-                    ( attr = style.backgroundColor ) ) {
-                fontInfo.backgroundColor = attr;
-                seenAttributes += 1;
-            }
-            if ( !fontInfo.family && ( attr = style.fontFamily ) ) {
-                fontInfo.family = attr;
-                seenAttributes += 1;
-            }
-            if ( !fontInfo.size && ( attr = style.fontSize ) ) {
-                fontInfo.size = attr;
-                seenAttributes += 1;
+        while ( seenAttributes < 4 && element ) {
+            if ( style = element.style ) {
+                if ( !fontInfo.color && ( attr = style.color ) ) {
+                    fontInfo.color = attr;
+                    seenAttributes += 1;
+                }
+                if ( !fontInfo.backgroundColor &&
+                        ( attr = style.backgroundColor ) ) {
+                    fontInfo.backgroundColor = attr;
+                    seenAttributes += 1;
+                }
+                if ( !fontInfo.family && ( attr = style.fontFamily ) ) {
+                    fontInfo.family = attr;
+                    seenAttributes += 1;
+                }
+                if ( !fontInfo.size && ( attr = style.fontSize ) ) {
+                    fontInfo.size = attr;
+                    seenAttributes += 1;
+                }
             }
             element = element.parentNode;
         }
     }
     return fontInfo;
- };
+};
 
 proto._addFormat = function ( tag, attributes, range ) {
     // If the range is collapsed we simply insert the node by wrapping
