@@ -80,7 +80,7 @@ var insertNodeInRange = function ( range, node ) {
     range.setEnd( endContainer, endOffset );
 };
 
-var extractContentsOfRange = function ( range, common ) {
+var extractContentsOfRange = function ( range, common, root ) {
     var startContainer = range.startContainer,
         startOffset = range.startOffset,
         endContainer = range.endContainer,
@@ -94,8 +94,8 @@ var extractContentsOfRange = function ( range, common ) {
         common = common.parentNode;
     }
 
-    var endNode = split( endContainer, endOffset, common ),
-        startNode = split( startContainer, startOffset, common ),
+    var endNode = split( endContainer, endOffset, common, root ),
+        startNode = split( startContainer, startOffset, common, root ),
         frag = common.ownerDocument.createDocumentFragment(),
         next, before, after;
 
@@ -127,12 +127,12 @@ var extractContentsOfRange = function ( range, common ) {
     range.setStart( startContainer, startOffset );
     range.collapse( true );
 
-    fixCursor( common );
+    fixCursor( common, root );
 
     return frag;
 };
 
-var deleteContentsOfRange = function ( range ) {
+var deleteContentsOfRange = function ( range, root ) {
     // Move boundaries up as much as possible to reduce need to split.
     // But we need to check whether we've moved the boundary outside of a
     // block. If so, the entire block will be removed, so we shouldn't merge
@@ -145,7 +145,7 @@ var deleteContentsOfRange = function ( range ) {
             ( isInline( endBlock ) || isBlock( endBlock ) );
 
     // Remove selected range
-    var frag = extractContentsOfRange( range );
+    var frag = extractContentsOfRange( range, null, root );
 
     // Move boundaries back down tree so that they are inside the blocks.
     // If we don't do this, the range may be collapsed to a point between
@@ -154,8 +154,8 @@ var deleteContentsOfRange = function ( range ) {
 
     // If we split into two different blocks, merge the blocks.
     if ( needsMerge ) {
-        startBlock = getStartBlockOfRange( range );
-        endBlock = getEndBlockOfRange( range );
+        startBlock = getStartBlockOfRange( range, root );
+        endBlock = getEndBlockOfRange( range, root );
         if ( startBlock && endBlock && startBlock !== endBlock ) {
             mergeWithBlock( startBlock, endBlock, range );
         }
@@ -163,15 +163,14 @@ var deleteContentsOfRange = function ( range ) {
 
     // Ensure block has necessary children
     if ( startBlock ) {
-        fixCursor( startBlock );
+        fixCursor( startBlock, root );
     }
 
-    // Ensure body has a block-level element in it.
-    var body = range.endContainer.ownerDocument.body,
-        child = body.firstChild;
+    // Ensure root has a block-level element in it.
+    var child = root.firstChild;
     if ( !child || child.nodeName === 'BR' ) {
-        fixCursor( body );
-        range.selectNodeContents( body.firstChild );
+        fixCursor( root, root );
+        range.selectNodeContents( root.firstChild );
     } else {
         range.collapse( false );
     }
@@ -180,7 +179,7 @@ var deleteContentsOfRange = function ( range ) {
 
 // ---
 
-var insertTreeFragmentIntoRange = function ( range, frag ) {
+var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     // Check if it's all inline content
     var allInline = true,
         children = frag.childNodes,
@@ -194,7 +193,7 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
 
     // Delete any selected content
     if ( !range.collapsed ) {
-        deleteContentsOfRange( range );
+        deleteContentsOfRange( range, root );
     }
 
     // Move range down into text nodes
@@ -206,11 +205,14 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
         range.collapse( false );
     } else {
         // Otherwise...
-        // 1. Split up to blockquote (if a parent) or body
+        // 1. Split up to blockquote (if a parent) or root
         var splitPoint = range.startContainer,
-            nodeAfterSplit = split( splitPoint, range.startOffset,
-                getNearest( splitPoint.parentNode, 'BLOCKQUOTE' ) ||
-                splitPoint.ownerDocument.body ),
+            nodeAfterSplit = split(
+                splitPoint,
+                range.startOffset,
+                getNearest( splitPoint.parentNode, root, 'BLOCKQUOTE' ) || root,
+                root
+            ),
             nodeBeforeSplit = nodeAfterSplit.previousSibling,
             startContainer = nodeBeforeSplit,
             startOffset = startContainer.childNodes.length,
@@ -246,15 +248,15 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
 
         // 3. Fix cursor then insert block(s) in the fragment
         node = frag;
-        while ( node = getNextBlock( node ) ) {
-            fixCursor( node );
+        while ( node = getNextBlock( node, root ) ) {
+            fixCursor( node, root );
         }
         parent.insertBefore( frag, nodeAfterSplit );
 
         // 4. Remove empty nodes created either side of split, then
         // merge containers at the edges.
         next = nodeBeforeSplit.nextSibling;
-        node = getPreviousBlock( next );
+        node = getPreviousBlock( next, root );
         if ( !/\S/.test( node.textContent ) ) {
             do {
                 parent = node.parentNode;
@@ -273,12 +275,12 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
         }
         // Merge inserted containers with edges of split
         if ( isContainer( next ) ) {
-            mergeContainers( next );
+            mergeContainers( next, root );
         }
 
         prev = nodeAfterSplit.previousSibling;
         node = isBlock( nodeAfterSplit ) ?
-            nodeAfterSplit : getNextBlock( nodeAfterSplit );
+            nodeAfterSplit : getNextBlock( nodeAfterSplit, root );
         if ( !/\S/.test( node.textContent ) ) {
             do {
                 parent = node.parentNode;
@@ -296,7 +298,7 @@ var insertTreeFragmentIntoRange = function ( range, frag ) {
         }
         // Merge inserted containers with edges of split
         if ( nodeAfterSplit && isContainer( nodeAfterSplit ) ) {
-            mergeContainers( nodeAfterSplit );
+            mergeContainers( nodeAfterSplit, root );
         }
 
         range.setStart( startContainer, startOffset );
@@ -408,18 +410,18 @@ var moveRangeBoundariesUpTree = function ( range, common ) {
 
 // Returns the first block at least partially contained by the range,
 // or null if no block is contained by the range.
-var getStartBlockOfRange = function ( range ) {
+var getStartBlockOfRange = function ( range, root ) {
     var container = range.startContainer,
         block;
 
     // If inline, get the containing block.
     if ( isInline( container ) ) {
-        block = getPreviousBlock( container );
+        block = getPreviousBlock( container, root );
     } else if ( isBlock( container ) ) {
         block = container;
     } else {
         block = getNodeBefore( container, range.startOffset );
-        block = getNextBlock( block );
+        block = getNextBlock( block, root );
     }
     // Check the block actually intersects the range
     return block && isNodeContainedInRange( range, block, true ) ? block : null;
@@ -427,25 +429,24 @@ var getStartBlockOfRange = function ( range ) {
 
 // Returns the last block at least partially contained by the range,
 // or null if no block is contained by the range.
-var getEndBlockOfRange = function ( range ) {
+var getEndBlockOfRange = function ( range, root ) {
     var container = range.endContainer,
         block, child;
 
     // If inline, get the containing block.
     if ( isInline( container ) ) {
-        block = getPreviousBlock( container );
+        block = getPreviousBlock( container, root );
     } else if ( isBlock( container ) ) {
         block = container;
     } else {
         block = getNodeAfter( container, range.endOffset );
         if ( !block ) {
-            block = container.ownerDocument.body;
+            block = root;
             while ( child = block.lastChild ) {
                 block = child;
             }
         }
-        block = getPreviousBlock( block );
-
+        block = getPreviousBlock( block, root );
     }
     // Check the block actually intersects the range
     return block && isNodeContainedInRange( range, block, true ) ? block : null;
@@ -460,7 +461,7 @@ var contentWalker = new TreeWalker( null,
     }
 );
 
-var rangeDoesStartAtBlockBoundary = function ( range ) {
+var rangeDoesStartAtBlockBoundary = function ( range, root ) {
     var startContainer = range.startContainer,
         startOffset = range.startOffset;
 
@@ -476,12 +477,12 @@ var rangeDoesStartAtBlockBoundary = function ( range ) {
     }
 
     // Otherwise, look for any previous content in the same block.
-    contentWalker.root = getStartBlockOfRange( range );
+    contentWalker.root = getStartBlockOfRange( range, root );
 
     return !contentWalker.previousNode();
 };
 
-var rangeDoesEndAtBlockBoundary = function ( range ) {
+var rangeDoesEndAtBlockBoundary = function ( range, root ) {
     var endContainer = range.endContainer,
         endOffset = range.endOffset,
         length;
@@ -500,14 +501,14 @@ var rangeDoesEndAtBlockBoundary = function ( range ) {
     }
 
     // Otherwise, look for any further content in the same block.
-    contentWalker.root = getEndBlockOfRange( range );
+    contentWalker.root = getEndBlockOfRange( range, root );
 
     return !contentWalker.nextNode();
 };
 
-var expandRangeToBlockBoundaries = function ( range ) {
-    var start = getStartBlockOfRange( range ),
-        end = getEndBlockOfRange( range ),
+var expandRangeToBlockBoundaries = function ( range, root ) {
+    var start = getStartBlockOfRange( range, root ),
+        end = getEndBlockOfRange( range, root ),
         parent;
 
     if ( start && end ) {

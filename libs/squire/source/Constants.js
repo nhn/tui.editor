@@ -3,6 +3,7 @@
 var DOCUMENT_POSITION_PRECEDING = 2; // Node.DOCUMENT_POSITION_PRECEDING
 var ELEMENT_NODE = 1;                // Node.ELEMENT_NODE;
 var TEXT_NODE = 3;                   // Node.TEXT_NODE;
+var DOCUMENT_NODE = 9;               // Node.DOCUMENT_NODE;
 var DOCUMENT_FRAGMENT_NODE = 11;     // Node.DOCUMENT_FRAGMENT_NODE;
 var SHOW_ELEMENT = 1;                // NodeFilter.SHOW_ELEMENT;
 var SHOW_TEXT = 4;                   // NodeFilter.SHOW_TEXT;

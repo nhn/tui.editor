@@ -4,7 +4,7 @@ var onCut = function ( event ) {
     var clipboardData = event.clipboardData;
     var range = this.getSelection();
     var node = this.createElement( 'div' );
-    var body = this._body;
+    var root = this._root;
     var self = this;
 
     // Save undo checkpoint
@@ -12,8 +12,8 @@ var onCut = function ( event ) {
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     if ( !isEdge && clipboardData ) {
-        moveRangeBoundariesUpTree( range, body );
-        node.appendChild( deleteContentsOfRange( range, body ) );
+        moveRangeBoundariesUpTree( range, root );
+        node.appendChild( deleteContentsOfRange( range, root ) );
         clipboardData.setData( 'text/html', node.innerHTML );
         clipboardData.setData( 'text/plain',
             node.innerText || node.textContent );
@@ -21,7 +21,7 @@ var onCut = function ( event ) {
     } else {
         setTimeout( function () {
             try {
-                // If all content removed, ensure div at start of body.
+                // If all content removed, ensure div at start of root.
                 self._ensureBottomLine();
             } catch ( error ) {
                 self.didError( error );
@@ -141,21 +141,18 @@ var onPaste = function ( event ) {
 
     this._awaitingPaste = true;
 
-    var body = this._body,
+    var body = this._doc.body,
         range = this.getSelection(),
         startContainer = range.startContainer,
         startOffset = range.startOffset,
         endContainer = range.endContainer,
-        endOffset = range.endOffset,
-        startBlock = getStartBlockOfRange( range );
+        endOffset = range.endOffset;
 
     // We need to position the pasteArea in the visible portion of the screen
     // to stop the browser auto-scrolling.
     var pasteArea = this.createElement( 'DIV', {
-        style: 'position: absolute; overflow: hidden; top:' +
-            ( body.scrollTop +
-                ( startBlock ? startBlock.getBoundingClientRect().top : 0 ) ) +
-            'px; right: 150%; width: 1px; height: 1px;'
+        contenteditable: 'true',
+        style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
     });
     body.appendChild( pasteArea );
     range.selectNodeContents( pasteArea );

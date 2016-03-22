@@ -20,27 +20,6 @@ function every ( nodeList, fn ) {
 
 // ---
 
-function hasTagAttributes ( node, tag, attributes ) {
-    if ( node.nodeName !== tag ) {
-        return false;
-    }
-    for ( var attr in attributes ) {
-        if ( node.getAttribute( attr ) !== attributes[ attr ] ) {
-            return false;
-        }
-    }
-    return true;
-}
-function areAlike ( node, node2 ) {
-    return !isLeaf( node ) && (
-        node.nodeType === node2.nodeType &&
-        node.nodeName === node2.nodeName &&
-        node.className === node2.className &&
-        ( ( !node.style && !node2.style ) ||
-          node.style.cssText === node2.style.cssText )
-    );
-}
-
 function isLeaf ( node ) {
     return node.nodeType === ELEMENT_NODE &&
         !!leafNodeNames[ node.nodeName ];
@@ -59,48 +38,80 @@ function isContainer ( node ) {
         !isInline( node ) && !isBlock( node );
 }
 
-function getBlockWalker ( node ) {
-    var doc = node.ownerDocument,
-        walker = new TreeWalker(
-            doc.body, SHOW_ELEMENT, isBlock, false );
+function getBlockWalker ( node, root ) {
+    var walker = new TreeWalker( root, SHOW_ELEMENT, isBlock, false );
     walker.currentNode = node;
     return walker;
 }
+function getPreviousBlock ( node, root ) {
+    node = getBlockWalker( node, root ).previousNode();
+    return node !== root ? node : null;
+}
+function getNextBlock ( node, root ) {
+    node = getBlockWalker( node, root ).nextNode();
+    return node !== root ? node : null;
+}
 
-function getPreviousBlock ( node ) {
-    return getBlockWalker( node ).previousNode();
+function areAlike ( node, node2 ) {
+    return !isLeaf( node ) && (
+        node.nodeType === node2.nodeType &&
+        node.nodeName === node2.nodeName &&
+        node.className === node2.className &&
+        ( ( !node.style && !node2.style ) ||
+          node.style.cssText === node2.style.cssText )
+    );
 }
-function getNextBlock ( node ) {
-    return getBlockWalker( node ).nextNode();
+function hasTagAttributes ( node, tag, attributes ) {
+    if ( node.nodeName !== tag ) {
+        return false;
+    }
+    for ( var attr in attributes ) {
+        if ( node.getAttribute( attr ) !== attributes[ attr ] ) {
+            return false;
+        }
+    }
+    return true;
 }
-function getNearest ( node, tag, attributes ) {
-    do {
+function getNearest ( node, root, tag, attributes ) {
+    while ( node && node !== root ) {
         if ( hasTagAttributes( node, tag, attributes ) ) {
             return node;
         }
-    } while ( node = node.parentNode );
+        node = node.parentNode;
+    }
     return null;
 }
+function isOrContains ( parent, node ) {
+    while ( node ) {
+        if ( node === parent ) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
 
-function getPath ( node ) {
+function getPath ( node, root ) {
     var parent = node.parentNode,
         path, id, className, classNames, dir;
-    if ( !parent || node.nodeType !== ELEMENT_NODE ) {
-        path = parent ? getPath( parent ) : '';
+    if ( node === root ) {
+        path = '';
     } else {
-        path = getPath( parent );
-        path += ( path ? '>' : '' ) + node.nodeName;
-        if ( id = node.id ) {
-            path += '#' + id;
-        }
-        if ( className = node.className.trim() ) {
-            classNames = className.split( /\s\s*/ );
-            classNames.sort();
-            path += '.';
-            path += classNames.join( '.' );
-        }
-        if ( dir = node.dir ) {
-            path += '[dir=' + dir + ']';
+        path = getPath( parent, root );
+        if ( node.nodeType === ELEMENT_NODE ) {
+            path += ( path ? '>' : '' ) + node.nodeName;
+            if ( id = node.id ) {
+                path += '#' + id;
+            }
+            if ( className = node.className.trim() ) {
+                classNames = className.split( /\s\s*/ );
+                classNames.sort();
+                path += '.';
+                path += classNames.join( '.' );
+            }
+            if ( dir = node.dir ) {
+                path += '[dir=' + dir + ']';
+            }
         }
     }
     return path;
@@ -158,16 +169,16 @@ function createElement ( doc, tag, props, children ) {
     return el;
 }
 
-function fixCursor ( node ) {
+function fixCursor ( node, root ) {
     // In Webkit and Gecko, block level elements are collapsed and
     // unfocussable if they have no content. To remedy this, a <BR> must be
     // inserted. In Opera and IE, we just need a textnode in order for the
     // cursor to appear.
     var doc = node.ownerDocument,
-        root = node,
+        originalNode = node,
         fixer, child;
 
-    if ( node.nodeName === 'BODY' ) {
+    if ( node === root ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
             fixer = getSquireInstance( doc ).createDefaultBlock();
             if ( child ) {
@@ -227,11 +238,11 @@ function fixCursor ( node ) {
         node.appendChild( fixer );
     }
 
-    return root;
+    return originalNode;
 }
 
 // Recursively examine container nodes and wrap any inline children.
-function fixContainer ( container ) {
+function fixContainer ( container, root ) {
     var children = container.childNodes,
         doc = container.ownerDocument,
         wrapper = null,
@@ -254,7 +265,7 @@ function fixContainer ( container ) {
                 wrapper = createElement( doc,
                     config.blockTag, config.blockAttributes );
             }
-            fixCursor( wrapper );
+            fixCursor( wrapper, root );
             if ( isBR ) {
                 container.replaceChild( wrapper, child );
             } else {
@@ -265,20 +276,21 @@ function fixContainer ( container ) {
             wrapper = null;
         }
         if ( isContainer( child ) ) {
-            fixContainer( child );
+            fixContainer( child, root );
         }
     }
     if ( wrapper ) {
-        container.appendChild( fixCursor( wrapper ) );
+        container.appendChild( fixCursor( wrapper, root ) );
     }
     return container;
 }
 
-function split ( node, offset, stopNode ) {
+function split ( node, offset, stopNode, root ) {
     var nodeType = node.nodeType,
         parent, clone, next;
     if ( nodeType === TEXT_NODE && node !== stopNode ) {
-        return split( node.parentNode, node.splitText( offset ), stopNode );
+        return split(
+            node.parentNode, node.splitText( offset ), stopNode, root );
     }
     if ( nodeType === ELEMENT_NODE ) {
         if ( typeof( offset ) === 'number' ) {
@@ -301,7 +313,8 @@ function split ( node, offset, stopNode ) {
         }
 
         // Maintain li numbering if inside a quote.
-        if ( node.nodeName === 'OL' && getNearest( node, 'BLOCKQUOTE' ) ) {
+        if ( node.nodeName === 'OL' &&
+                getNearest( node, root, 'BLOCKQUOTE' ) ) {
             clone.start = ( +node.start || 1 ) + node.childNodes.length - 1;
         }
 
@@ -309,8 +322,8 @@ function split ( node, offset, stopNode ) {
         // of a node lower down the tree!
 
         // We need something in the element in order for the cursor to appear.
-        fixCursor( node );
-        fixCursor( clone );
+        fixCursor( node, root );
+        fixCursor( clone, root );
 
         // Inject clone after original node
         if ( next = node.nextSibling ) {
@@ -320,7 +333,7 @@ function split ( node, offset, stopNode ) {
         }
 
         // Keep on splitting up the tree
-        return split( parent, clone, stopNode );
+        return split( parent, clone, stopNode, root );
     }
     return offset;
 }
@@ -425,7 +438,7 @@ function mergeWithBlock ( block, next, range ) {
     }
 }
 
-function mergeContainers ( node ) {
+function mergeContainers ( node, root ) {
     var prev = node.previousSibling,
         first = node.firstChild,
         doc = node.ownerDocument,
@@ -451,14 +464,14 @@ function mergeContainers ( node ) {
         needsFix = !isContainer( node );
         prev.appendChild( empty( node ) );
         if ( needsFix ) {
-            fixContainer( prev );
+            fixContainer( prev, root );
         }
         if ( first ) {
-            mergeContainers( first );
+            mergeContainers( first, root );
         }
     } else if ( isListItem ) {
         prev = createElement( doc, 'DIV' );
         node.insertBefore( prev, first );
-        fixCursor( prev );
+        fixCursor( prev, root );
     }
 }

@@ -272,8 +272,8 @@ var cleanTree = function cleanTree ( node ) {
 
 // ---
 
-var removeEmptyInlines = function removeEmptyInlines ( root ) {
-    var children = root.childNodes,
+var removeEmptyInlines = function removeEmptyInlines ( node ) {
+    var children = node.childNodes,
         l = children.length,
         child;
     while ( l-- ) {
@@ -281,10 +281,10 @@ var removeEmptyInlines = function removeEmptyInlines ( root ) {
         if ( child.nodeType === ELEMENT_NODE && !isLeaf( child ) ) {
             removeEmptyInlines( child );
             if ( isInline( child ) && !child.firstChild ) {
-                root.removeChild( child );
+                node.removeChild( child );
             }
         } else if ( child.nodeType === TEXT_NODE && !child.data ) {
-            root.removeChild( child );
+            node.removeChild( child );
         }
     }
 };
@@ -314,8 +314,8 @@ var isLineBreak = function ( br ) {
 // line breaks by wrapping the inline text in a <div>. Browsers that want <br>
 // elements at the end of each block will then have them added back in a later
 // fixCursor method call.
-var cleanupBRs = function ( root ) {
-    var brs = root.querySelectorAll( 'BR' ),
+var cleanupBRs = function ( node, root ) {
+    var brs = node.querySelectorAll( 'BR' ),
         brBreaksLine = [],
         l = brs.length,
         i, br, parent;
@@ -340,7 +340,7 @@ var cleanupBRs = function ( root ) {
         if ( !brBreaksLine[l] ) {
             detach( br );
         } else if ( !isInline( parent ) ) {
-            fixContainer( parent );
+            fixContainer( parent, root );
         }
     }
 };
