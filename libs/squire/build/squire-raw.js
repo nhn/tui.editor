@@ -2012,7 +2012,9 @@ var onCut = function ( event ) {
     this.saveUndoState( range );
 
     // Edge only seems to support setting plain text as of 2016-03-11.
-    if ( !isEdge && clipboardData ) {
+    // Mobile Safari flat out doesn't work:
+    // https://bugs.webkit.org/show_bug.cgi?id=143776
+    if ( !isEdge && !isIOS && clipboardData ) {
         moveRangeBoundariesUpTree( range, root );
         node.appendChild( deleteContentsOfRange( range, root ) );
         clipboardData.setData( 'text/html', node.innerHTML );
@@ -2039,7 +2041,9 @@ var onCopy = function ( event ) {
     var node = this.createElement( 'div' );
 
     // Edge only seems to support setting plain text as of 2016-03-11.
-    if ( !isEdge && clipboardData ) {
+    // Mobile Safari flat out doesn't work:
+    // https://bugs.webkit.org/show_bug.cgi?id=143776
+    if ( !isEdge && !isIOS && clipboardData ) {
         node.appendChild( range.cloneContents() );
         clipboardData.setData( 'text/html', node.innerHTML );
         clipboardData.setData( 'text/plain',
