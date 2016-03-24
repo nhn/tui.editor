@@ -2504,7 +2504,8 @@ proto._createRange =
 };
 
 proto.getCursorPosition = function ( range ) {
-    if ( !range && !( range = this.getSelection() ) ) {
+    if ( ( !range && !( range = this.getSelection() ) ) ||
+            !range.getBoundingClientRect ) {
         return null;
     }
     // Get the bounding rect
