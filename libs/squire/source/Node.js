@@ -235,7 +235,15 @@ function fixCursor ( node, root ) {
         }
     }
     if ( fixer ) {
-        node.appendChild( fixer );
+        try {
+            node.appendChild( fixer );
+        } catch ( error ) {
+            getSquireInstance( doc ).didError({
+                name: 'Squire: fixCursor – ' + error,
+                message: 'Parent: ' + node.nodeName + '/' + node.innerHTML +
+                    ' appendChild: ' + fixer.nodeName
+            });
+        }
     }
 
     return originalNode;
