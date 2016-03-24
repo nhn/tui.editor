@@ -183,6 +183,11 @@ Returns the path through the DOM tree from the `<body>` element to the current c
 
 Returns an object containing the active font family, size, colour and background colour for the the current cursor position, if any are set. The property names are respectively `family`, `size`, `color` and `backgroundColor`. It looks at style attributes to detect this, so will not detect `<FONT>` tags or non-inline styles. If a selection across multiple elements has been made, it will return an empty object.
 
+### getCursorPosition
+
+Returns a bounding client rect (top/left/right/bottom properties relative to
+the viewport) for the current selection/cursor.
+
 ### getSelection
 
 Returns a [W3C Range object](https://developer.mozilla.org/en-US/docs/Web/API/Range) representing the current selection/cursor position.

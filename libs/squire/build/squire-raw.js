@@ -2390,8 +2390,7 @@ proto.getDocument = function () {
 // document node, since these events are fired in a custom manner by the
 // editor code.
 var customEvents = {
-    pathChange: 1, select: 1, input: 1,
-    undoStateChange: 1, scrollPointIntoView: 1
+    pathChange: 1, select: 1, input: 1, undoStateChange: 1
 };
 
 proto.fireEvent = function ( type, event ) {
@@ -2504,26 +2503,29 @@ proto._createRange =
     return domRange;
 };
 
-proto.scrollRangeIntoView = function ( range ) {
+proto.getCursorPosition = function ( range ) {
+    if ( !range && !( range = this.getSelection() ) ) {
+        return null;
+    }
     // Get the bounding rect
     var rect = range.getBoundingClientRect();
     var node, parent;
     if ( rect && !rect.top ) {
+        this._ignoreChange = true;
         node = this._doc.createElement( 'SPAN' );
-        range = range.cloneRange();
+        node.textContent = ZWS;
         insertNodeInRange( range, node );
         rect = node.getBoundingClientRect();
         parent = node.parentNode;
         parent.removeChild( node );
-        parent.normalize();
-    }
-    // And fire event for integrations to use
-    if ( rect ) {
-        this.fireEvent( 'scrollPointIntoView', {
-            x: rect.left,
-            y: rect.top
+        mergeInlines( parent, {
+            startContainer: range.startContainer,
+            endContainer: range.endContainer,
+            startOffset: range.startOffset,
+            endOffset: range.endOffset
         });
     }
+    return rect;
 };
 
 proto._moveCursorTo = function ( toStart ) {
@@ -2557,7 +2559,6 @@ proto.setSelection = function ( range ) {
         if ( sel ) {
             sel.removeAllRanges();
             sel.addRange( range );
-            this.scrollRangeIntoView( range );
         }
     }
     return this;
