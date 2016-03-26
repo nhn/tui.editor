@@ -92,12 +92,10 @@ function isOrContains ( parent, node ) {
 }
 
 function getPath ( node, root ) {
-    var parent = node.parentNode,
-        path, id, className, classNames, dir;
-    if ( node === root ) {
-        path = '';
-    } else {
-        path = getPath( parent, root );
+    var path = '';
+    var id, className, classNames, dir;
+    if ( node && node !== root ) {
+        path = getPath( node.parentNode, root );
         if ( node.nodeType === ELEMENT_NODE ) {
             path += ( path ? '>' : '' ) + node.nodeName;
             if ( id = node.id ) {
