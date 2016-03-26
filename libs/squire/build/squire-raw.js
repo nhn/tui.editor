@@ -1452,10 +1452,10 @@ var keyHandlers = {
                 // If deleted line between containers, merge newly adjacent
                 // containers.
                 current = previous.parentNode;
-                while ( current && !current.nextSibling ) {
+                while ( current !== root && !current.nextSibling ) {
                     current = current.parentNode;
                 }
-                if ( current && ( current = current.nextSibling ) ) {
+                if ( current !== root && ( current = current.nextSibling ) ) {
                     mergeContainers( current, root );
                 }
                 self.setSelection( range );
@@ -1519,10 +1519,10 @@ var keyHandlers = {
                 // If deleted line between containers, merge newly adjacent
                 // containers.
                 next = current.parentNode;
-                while ( next && !next.nextSibling ) {
+                while ( next !== root && !next.nextSibling ) {
                     next = next.parentNode;
                 }
-                if ( next && ( next = next.nextSibling ) ) {
+                if ( next !== root && ( next = next.nextSibling ) ) {
                     mergeContainers( next, root );
                 }
                 self.setSelection( range );
