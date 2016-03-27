@@ -1840,7 +1840,7 @@ var walker = new TreeWalker( null, SHOW_TEXT|SHOW_ELEMENT, function () {
        and whitespace nodes.
     2. Convert inline tags into our preferred format.
 */
-var cleanTree = function cleanTree ( node ) {
+var cleanTree = function cleanTree ( node, preserveWS ) {
     var children = node.childNodes,
         nonInlineParent, i, l, child, nodeName, nodeType, rewriter, childLength,
         startsWithWS, endsWithWS, data, sibling;
@@ -1872,14 +1872,14 @@ var cleanTree = function cleanTree ( node ) {
                 continue;
             }
             if ( childLength ) {
-                cleanTree( child );
+                cleanTree( child, preserveWS || ( nodeName === 'PRE' ) );
             }
         } else {
             if ( nodeType === TEXT_NODE ) {
                 data = child.data;
                 startsWithWS = !notWS.test( data.charAt( 0 ) );
                 endsWithWS = !notWS.test( data.charAt( data.length - 1 ) );
-                if ( !startsWithWS && !endsWithWS ) {
+                if ( preserveWS || ( !startsWithWS && !endsWithWS ) ) {
                     continue;
                 }
                 // Iterate through the nodes; if we hit some other content
@@ -1898,9 +1898,7 @@ var cleanTree = function cleanTree ( node ) {
                             break;
                         }
                     }
-                    if ( !sibling ) {
-                        data = data.replace( /^\s+/g, '' );
-                    }
+                    data = data.replace( /^\s+/g, sibling ? ' ' : '' );
                 }
                 if ( endsWithWS ) {
                     walker.currentNode = child;
@@ -1915,9 +1913,7 @@ var cleanTree = function cleanTree ( node ) {
                             break;
                         }
                     }
-                    if ( !sibling ) {
-                        data = data.replace( /^\s+/g, '' );
-                    }
+                    data = data.replace( /\s+$/g, sibling ? ' ' : '' );
                 }
                 if ( data ) {
                     child.data = data;
