@@ -2396,6 +2396,9 @@ proto.didError = function ( error ) {
 proto.getDocument = function () {
     return this._doc;
 };
+proto.getRoot = function () {
+    return this._root;
+};
 
 // --- Events ---
 
