@@ -7,8 +7,6 @@
 
 var domUtils = require('../../domUtils');
 
-var util = tui.util;
-
 var FIND_ZWB_RX = /\u200B/g;
 
 /**
@@ -123,49 +121,9 @@ WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) 
 };
 
 WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetList) {
-    var result = [],
-        text = '',
-        walkerOffset = 0,
-        offset, walker, newWalkerOffset;
-
-    if (!offsetList.length) {
-        return result;
-    }
-
-    offset = offsetList.shift();
-    walker = document.createTreeWalker(this.sqe.get$Body()[0], 4, null, false);
-
-    while (walker.nextNode()) {
-        text = walker.currentNode.nodeValue.replace(FIND_ZWB_RX, '') || '';
-        newWalkerOffset = walkerOffset + text.length;
-
-        while (newWalkerOffset >= offset) {
-            result.push({
-                container: walker.currentNode,
-                offsetInContainer: offset - walkerOffset,
-                offset: offset
-            });
-
-            if (!offsetList.length) {
-                return result;
-            }
-            offset = offsetList.shift();
-        }
-        walkerOffset = newWalkerOffset;
-    }
-
-    //오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
-    //중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
-    do {
-        result.push({
-            container: walker.currentNode,
-            offsetInContainer: text.length,
-            offset: offset
-        });
-        offset = offsetList.shift();
-    } while (!util.isUndefined(offset));
-
-    return result;
+    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetList, function(text) {
+        return text.replace(FIND_ZWB_RX, '');
+    });
 };
 
 module.exports = WysiwygMarkerHelper;

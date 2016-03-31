@@ -10,12 +10,17 @@ var extManager = require('../extManager'),
     SectionManager = require('./scrollFollow.sectionManager');
 
 extManager.defineExtension('scrollFollow', function(editor) {
-    var cm = editor.getCodeMirror(),
-        scrollable = false,
+    var scrollable = false,
         active = true,
         sectionManager, scrollSync,
         className = 'tui-scrollfollow',
-        $button;
+        $button, cm;
+
+    if (editor.isViewOnly()) {
+        return;
+    }
+
+    cm = editor.getCodeMirror();
 
     sectionManager = new SectionManager(cm, editor.preview);
     scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);

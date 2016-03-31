@@ -14,7 +14,10 @@ var MarkdownEditor = require('./markdownEditor'),
     extManager = require('./extManager'),
     ImportManager = require('./importManager'),
     Convertor = require('./convertor'),
-    DefaultUI = require('./ui/defaultUI.js');
+    ViewOnly = require('./viewOnly'),
+    markedRenderer = require('./markedCustomRenderer'),
+    DefaultUI = require('./ui/defaultUI');
+
 
 //markdown commands
 var mdBold = require('./markdownCommands/bold'),
@@ -93,15 +96,6 @@ function ToastUIEditor(options) {
     this.commandManager = new CommandManager(this);
     this.convertor = new Convertor(this.eventManager);
 
-    this.layout = new Layout(options, this.eventManager);
-
-    this.setUI(this.options.UI || new DefaultUI(this));
-
-    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
-    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-    this.wwEditor = WysiwygEditor.factory(
-                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
-
     if (this.options.hooks) {
         util.forEach(this.options.hooks, function(fn, key) {
             self.addHook(key, fn);
@@ -114,6 +108,14 @@ function ToastUIEditor(options) {
         });
     }
 
+    this.layout = new Layout(options, this.eventManager);
+
+    this.setUI(this.options.UI || new DefaultUI(this));
+
+    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
+    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+    this.wwEditor = WysiwygEditor.factory(
+                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
     this.changePreviewStyle(this.options.previewStyle);
 
@@ -252,6 +254,10 @@ ToastUIEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
+ToastUIEditor.prototype.isViewOnly = function() {
+    return false;
+};
+
 ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
     return this.mdPreviewStyle;
 };
@@ -300,7 +306,7 @@ ToastUIEditor.prototype.show = function() {
 
 ToastUIEditor.prototype.scrollTop = function(value) {
     return this.getCurrentModeEditor().scrollTop(value);
-}
+};
 
 ToastUIEditor.prototype.setUI = function(UI) {
     this._ui = UI;
@@ -324,43 +330,51 @@ ToastUIEditor.defineExtension = function(name, ext) {
 };
 
 ToastUIEditor.factory = function(options) {
-    var tuiEditor = new ToastUIEditor(options);
+    var tuiEditor;
 
-    tuiEditor.addCommand(mdBold);
-    tuiEditor.addCommand(mdItalic);
-    tuiEditor.addCommand(mdBlockquote);
-    tuiEditor.addCommand(mdHeading);
-    tuiEditor.addCommand(mdHR);
-    tuiEditor.addCommand(mdAddLink);
-    tuiEditor.addCommand(mdAddImage);
-    tuiEditor.addCommand(mdUL);
-    tuiEditor.addCommand(mdOL);
-    tuiEditor.addCommand(mdTable);
-    tuiEditor.addCommand(mdTask);
-    tuiEditor.addCommand(mdCode);
-    tuiEditor.addCommand(mdCodeBlock);
+    if (options.viewOnly) {
+        tuiEditor = new ViewOnly(options);
+    } else {
+        tuiEditor = new ToastUIEditor(options);
 
-    tuiEditor.addCommand(wwBold);
-    tuiEditor.addCommand(wwItalic);
-    tuiEditor.addCommand(wwBlockquote);
-    tuiEditor.addCommand(wwUL);
-    tuiEditor.addCommand(wwOL);
-    tuiEditor.addCommand(wwAddImage);
-    tuiEditor.addCommand(wwAddLink);
-    tuiEditor.addCommand(wwHR);
-    tuiEditor.addCommand(wwHeading);
-    tuiEditor.addCommand(wwIncreaseDepth);
-    tuiEditor.addCommand(wwTask);
-    tuiEditor.addCommand(wwTable);
-    tuiEditor.addCommand(wwTableAddRow);
-    tuiEditor.addCommand(wwTableAddCol);
-    tuiEditor.addCommand(wwTableRemoveRow);
-    tuiEditor.addCommand(wwTableRemoveCol);
-    tuiEditor.addCommand(wwTableRemove);
-    tuiEditor.addCommand(wwCode);
-    tuiEditor.addCommand(wwCodeBlock);
+        tuiEditor.addCommand(mdBold);
+        tuiEditor.addCommand(mdItalic);
+        tuiEditor.addCommand(mdBlockquote);
+        tuiEditor.addCommand(mdHeading);
+        tuiEditor.addCommand(mdHR);
+        tuiEditor.addCommand(mdAddLink);
+        tuiEditor.addCommand(mdAddImage);
+        tuiEditor.addCommand(mdUL);
+        tuiEditor.addCommand(mdOL);
+        tuiEditor.addCommand(mdTable);
+        tuiEditor.addCommand(mdTask);
+        tuiEditor.addCommand(mdCode);
+        tuiEditor.addCommand(mdCodeBlock);
+
+        tuiEditor.addCommand(wwBold);
+        tuiEditor.addCommand(wwItalic);
+        tuiEditor.addCommand(wwBlockquote);
+        tuiEditor.addCommand(wwUL);
+        tuiEditor.addCommand(wwOL);
+        tuiEditor.addCommand(wwAddImage);
+        tuiEditor.addCommand(wwAddLink);
+        tuiEditor.addCommand(wwHR);
+        tuiEditor.addCommand(wwHeading);
+        tuiEditor.addCommand(wwIncreaseDepth);
+        tuiEditor.addCommand(wwTask);
+        tuiEditor.addCommand(wwTable);
+        tuiEditor.addCommand(wwTableAddRow);
+        tuiEditor.addCommand(wwTableAddCol);
+        tuiEditor.addCommand(wwTableRemoveRow);
+        tuiEditor.addCommand(wwTableRemoveCol);
+        tuiEditor.addCommand(wwTableRemove);
+        tuiEditor.addCommand(wwCode);
+        tuiEditor.addCommand(wwCodeBlock);
+    }
 
     return tuiEditor;
 };
+
+ToastUIEditor.markedRenderer = markedRenderer;
 
 module.exports = ToastUIEditor;
