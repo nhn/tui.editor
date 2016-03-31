@@ -56,12 +56,6 @@ var util = tui.util;
 
 var __nedInstance = [];
 
-//default extensions
-require('./extensions/taskCounter');
-require('./extensions/textPalette');
-require('./extensions/scrollFollow');
-require('./extensions/colorSyntax');
-
 /**
  * ToastUI Editor
  * @exports ToastUIEditor
@@ -207,6 +201,8 @@ ToastUIEditor.prototype.setValue = function(markdown) {
     } else {
         this.wwEditor.setValue(this.convertor.toHTML(markdown));
     }
+
+    this.eventManager.emit('setValueAfter', markdown);
 };
 
 ToastUIEditor.prototype.getValue = function() {
@@ -301,6 +297,10 @@ ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
     this.getCodeMirror().refresh();
 };
+
+ToastUIEditor.prototype.scrollTop = function(value) {
+    return this.getCurrentModeEditor().scrollTop(value);
+}
 
 ToastUIEditor.prototype.setUI = function(UI) {
     this._ui = UI;

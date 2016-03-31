@@ -18,6 +18,18 @@ function ExtManager() {
     this.exts = new util.Map();
 }
 
+/**
+ * Extension Closure callback
+ * @callback ExtManager~extension
+ * @param {ToastUIEditor} editor editor instance
+ */
+
+/**
+ * defineExtension
+ * Defined Extension
+ * @param {string} name extension name
+ * @param {ExtManager~extension} ext extension
+ */
 ExtManager.prototype.defineExtension = function(name, ext) {
     this.exts.set(name, ext);
 };

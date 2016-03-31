@@ -13,6 +13,13 @@ require('./codemirror/markdown');
 require('./codemirror/gfm');
 require('./codemirror/continuelist');
 
+//default extensions
+require('./extensions/taskCounter');
+require('./extensions/textPalette');
+require('./extensions/scrollFollow');
+require('./extensions/colorSyntax');
+require('./extensions/mark/mark');
+
 ToastUIEditor = require('./editor');
 
 //for jquery

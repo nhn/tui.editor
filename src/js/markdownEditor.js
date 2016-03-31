@@ -76,6 +76,13 @@ MarkdownEditor.prototype._initEvent = function() {
         });
     });
 
+    this.cm.on('scroll', function(cm, eventData) {
+        self.eventManager.emit('scroll', {
+            source: 'markdown',
+            data: eventData
+        });
+    });
+
     this.cm.on('keydown', function(cm, keyboardEvent) {
         self.eventManager.emit('keyMap', {
             source: 'markdown',
@@ -254,6 +261,14 @@ MarkdownEditor.prototype.moveCursorToStart = function() {
         firstLine = doc.firstLine();
 
     doc.setCursor(firstLine, 0);
+};
+
+MarkdownEditor.prototype.scrollTop = function(value) {
+    if (value) {
+        this.cm.scrollTo(0, value);
+    }
+
+    return this.cm.getScrollInfo().top;
 };
 
 module.exports = MarkdownEditor;
