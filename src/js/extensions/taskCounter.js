@@ -9,7 +9,9 @@ extManager.defineExtension('taskCounter', function(editor) {
     editor.getTaskCount = function() {
         var found, count;
 
-        if (editor.isMarkdownMode()) {
+        if (editor.isViewOnly()) {
+            count = editor.preview.$el.find('input').length;
+        } else if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_TASK_RX);
             count = found ? found.length : 0;
         } else {
@@ -22,7 +24,9 @@ extManager.defineExtension('taskCounter', function(editor) {
     editor.getCheckedTaskCount = function() {
         var found, count;
 
-        if (editor.isMarkdownMode()) {
+        if (editor.isViewOnly()) {
+            count = editor.preview.$el.find('input:checked').length;
+        } else if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
             count = found ? found.length : 0;
         } else {

@@ -29,24 +29,13 @@
         window.console = {};
         window.console.log = function(){};
     }
-
     $('#editSection').tuiEditor({
-        previewStyle: 'vertical',
-        height: 500,
-        contentCSSStyles: [
-            '../src/css/tui-editor-contents.css'
-        ],
-        initialEditType: 'markdown',
-        textPalette: {
-            triggers: '@',
-            querySender: function(query, done) {
-                done([1,2,3]);
-            }
-        },
+        viewOnly: true,
+        initialValue: '# Hello\n## this is world\n\nfirst view mode',
         exts: ['mark'],
         events: {
             load: function(editor) {
-                var markers = editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse', [
+                var markers = editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5', [
                     {
                         start: 11,
                         end: 22,
@@ -58,13 +47,11 @@
                         id: 'myId2'
                     }
                 ]);
-
-                $('.te-editor-section').css({
-                    'position': 'relative',
-                    'overflow': 'hidden'
-                });
-
                 var markerUIs = {};
+
+                $('.tui-editor-contents').css({
+                    'position': 'relative'
+                });
 
                 function setUITop() {
                     markers.forEach(function(marker) {
@@ -76,11 +63,11 @@
                                 zIndex: '99999'
                             });
 
-                            markerUIs[marker.id].appendTo('.te-editor-section');
+                            markerUIs[marker.id].appendTo('.tui-editor-contents');
                         }
 
                         markerUIs[marker.id].css({
-                            'top': marker.top - editor.scrollTop() - 10,
+                            'top': marker.top - 10,
                             'left': marker.left
                         });
                     });
@@ -95,7 +82,6 @@
                     setUITop();
                 });
 
-                console.log(markers);
                 setUITop();
             }
         }

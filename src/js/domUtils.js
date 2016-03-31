@@ -7,6 +7,8 @@
 
 var FIND_ZWB = /\u200B/g;
 
+var util = tui.util;
+
 /**
  * isTextNode
  * Check if node is text node
@@ -36,9 +38,9 @@ var isElemNode = function(node) {
 var getNodeName = function(node) {
     if (isElemNode(node)) {
         return node.tagName;
-    } else if (isTextNode(node)) {
-        return 'TEXT';
     }
+
+    return 'TEXT';
 };
 
 /**
@@ -265,6 +267,57 @@ var getPrevTextNode = function(node) {
     return node;
 };
 
+function findOffsetNode(root, offsetList, textNodeFilter) {
+    var result = [],
+        text = '',
+        walkerOffset = 0,
+        offset, walker, newWalkerOffset;
+
+    if (!offsetList.length) {
+        return result;
+    }
+
+    offset = offsetList.shift();
+    walker = document.createTreeWalker(root, 4, null, false);
+
+    while (walker.nextNode()) {
+        text = walker.currentNode.nodeValue || '';
+
+        if (textNodeFilter) {
+            text = textNodeFilter(text);
+        }
+
+        newWalkerOffset = walkerOffset + text.length;
+
+        while (newWalkerOffset >= offset) {
+            result.push({
+                container: walker.currentNode,
+                offsetInContainer: offset - walkerOffset,
+                offset: offset
+            });
+
+            if (!offsetList.length) {
+                return result;
+            }
+            offset = offsetList.shift();
+        }
+        walkerOffset = newWalkerOffset;
+    }
+
+    //오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
+    //중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
+    do {
+        result.push({
+            container: walker.currentNode,
+            offsetInContainer: text.length,
+            offset: offset
+        });
+        offset = offsetList.shift();
+    } while (!util.isUndefined(offset));
+
+    return result;
+}
+
 module.exports = {
     getNodeName: getNodeName,
     isTextNode: isTextNode,
@@ -278,5 +331,6 @@ module.exports = {
     getNextTopBlockNode: getNextTopBlockNode,
     getParentUntil: getParentUntil,
     getTopBlockNode: getTopBlockNode,
-    getPrevTextNode: getPrevTextNode
+    getPrevTextNode: getPrevTextNode,
+    findOffsetNode: findOffsetNode
 };

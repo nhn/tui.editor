@@ -55,42 +55,42 @@ extManager.defineExtension('colorSyntax', function(editor) {
         });
     });
 
-    editor.addCommand('markdown', {
-        name: 'color',
-        exec: function(mde, color) {
-            var cm = mde.getEditor();
+    if (!editor.isViewOnly() && editor.getUI().name === 'default') {
+        editor.addCommand('markdown', {
+            name: 'color',
+            exec: function(mde, color) {
+                var cm = mde.getEditor();
 
-            if (!useCustomSyntax) {
-                cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
-            } else {
-                cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
-            }
-
-            mde.focus();
-        }
-    });
-
-    editor.addCommand('wysiwyg', {
-        name: 'color',
-        exec: function(wwe, color) {
-            var sq = wwe.getEditor();
-
-            if (!sq.hasFormat('PRE')) {
-                if (color === RESET_COLOR) {
-                    sq.changeFormat(null, {
-                        class: 'colour',
-                        tag: 'span'
-                    });
+                if (!useCustomSyntax) {
+                    cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
                 } else {
-                    sq.setTextColour(color);
+                    cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
                 }
+
+                mde.focus();
             }
+        });
 
-            sq.focus();
-        }
-    });
+        editor.addCommand('wysiwyg', {
+            name: 'color',
+            exec: function(wwe, color) {
+                var sq = wwe.getEditor();
 
-    if (editor.getUI().name === 'default') {
+                if (!sq.hasFormat('PRE')) {
+                    if (color === RESET_COLOR) {
+                        sq.changeFormat(null, {
+                            class: 'colour',
+                            tag: 'span'
+                        });
+                    } else {
+                        sq.setTextColour(color);
+                    }
+                }
+
+                sq.focus();
+            }
+        });
+
         initUI(editor);
     }
 });
