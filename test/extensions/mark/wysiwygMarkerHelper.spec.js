@@ -160,4 +160,26 @@ describe('WysiwygMarkerHelper', function() {
         expect(marker.top).toEqual(0);
         expect(marker.left).toEqual(0);
     });
+
+    it('select range by given offset', function() {
+        var range;
+
+        wmh.selectOffsetRange(0, 3);
+
+        range = sqe.getSelection();
+
+        expect(range.cloneContents().textContent).toEqual('TEX');
+    });
+
+    it('clear select', function() {
+        var range;
+
+        wmh.selectOffsetRange(0, 3);
+
+        wmh.clearSelect();
+
+        range = sqe.getSelection();
+
+        expect(range.cloneContents().textContent).not.toEqual('TEX');
+    });
 });

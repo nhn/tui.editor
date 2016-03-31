@@ -71,4 +71,22 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.top).toEqual(0);
         expect(marker.left).toEqual(0);
     });
+
+    it('select range by given offset', function() {
+        var range;
+
+        vmh.selectOffsetRange(0, 3);
+
+        range = window.getSelection().getRangeAt(0);
+
+        expect(range.cloneContents().textContent).toEqual('TEX');
+    });
+
+    it('clear select', function() {
+        vmh.selectOffsetRange(0, 3);
+
+        vmh.clearSelect();
+
+        expect(window.getSelection().rangeCount).toEqual(0);
+    });
 });

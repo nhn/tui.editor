@@ -105,6 +105,17 @@ extManager.defineExtension('mark', function(editor) {
         return markersData;
     };
 
+    editor.selectMarker = function(id) {
+        var helper = getHelper(),
+            marker = editor.getMarker(id);
+
+        helper.selectOffsetRange(marker.start, marker.end);
+    };
+
+    editor.clearSelect = function() {
+        getHelper().clearSelect();
+    };
+
     if (!editor.isViewOnly()) {
         editor.on('changeMode', function() {
             var helper = getHelper();

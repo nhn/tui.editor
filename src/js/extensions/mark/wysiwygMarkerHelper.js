@@ -126,4 +126,20 @@ WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetList) {
     });
 };
 
+WysiwygMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+    var foundNode = this._findOffsetNode([start, end]),
+        range = this.sqe.getSelection().cloneRange();
+
+    range.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+    range.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+    this.sqe.setSelection(range);
+};
+
+WysiwygMarkerHelper.prototype.clearSelect = function() {
+    var range = this.sqe.getSelection().cloneRange();
+    range.collapse(true);
+    this.sqe.setSelection(range);
+};
+
 module.exports = WysiwygMarkerHelper;
