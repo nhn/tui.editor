@@ -299,6 +299,13 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         self._onKeyDown(keyboardEvent);
     });
 
+    this.getEditor().addEventListener('scroll', function(ev) {
+        self.eventManager.emit('scroll', {
+            source: 'wysiwyg',
+            data: ev
+        });
+    });
+
     this.getEditor().addEventListener('click', function(ev) {
         self.eventManager.emit('click', {
             source: 'wysiwyg',
@@ -883,6 +890,10 @@ WysiwygEditor.prototype.moveCursorToStart = function() {
     this.getEditor().moveCursorToStart();
     this.getEditor().scrollTop(0);
     this._correctRangeAfterMoveCursor();
+};
+
+WysiwygEditor.prototype.scrollTop = function(value) {
+    return this.getEditor().scrollTop(value);
 };
 
 /**

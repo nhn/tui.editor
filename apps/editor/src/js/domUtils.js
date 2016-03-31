@@ -242,6 +242,29 @@ var getTopBlockNode = function(node) {
     return getParentUntil(node, 'BODY');
 };
 
+
+var getPrevTextNode = function(node) {
+    node = node.previousSibling || node.parentNode;
+
+    while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
+        if (node.previousSibling) {
+            node = node.previousSibling;
+
+            while (node.lastChild) {
+                node = node.lastChild;
+            }
+        } else {
+            node = node.parentNode;
+        }
+    }
+
+    if (getNodeName(node) === 'BODY') {
+        node = null;
+    }
+
+    return node;
+};
+
 module.exports = {
     getNodeName: getNodeName,
     isTextNode: isTextNode,
@@ -254,5 +277,6 @@ module.exports = {
     getPrevTopBlockNode: getPrevTopBlockNode,
     getNextTopBlockNode: getNextTopBlockNode,
     getParentUntil: getParentUntil,
-    getTopBlockNode: getTopBlockNode
+    getTopBlockNode: getTopBlockNode,
+    getPrevTextNode: getPrevTextNode
 };

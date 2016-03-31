@@ -92,7 +92,7 @@ describe('domUtils', function() {
         });
     });
 
-   describe('getChildNodeByOffset()', function() {
+    describe('getChildNodeByOffset()', function() {
         it('return node\'s childNode with index', function() {
             var node = $('<p><em>text</em><strong>weafwae</strong></p>');
             expect(domUtils.getChildNodeByOffset(node[0], 1)).toBe(node[0].childNodes[1]);
@@ -107,8 +107,8 @@ describe('domUtils', function() {
 
             $('body').html([
                 '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
+                '<li>0</li>',
+                '<li>1</li>',
                 '</ul>'
             ].join(''));
 
@@ -122,8 +122,8 @@ describe('domUtils', function() {
 
             $('body').html([
                 '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
+                '<li>0</li>',
+                '<li>1</li>',
                 '</ul>'
             ].join(''));
 
@@ -147,8 +147,8 @@ describe('domUtils', function() {
 
             $('body').html([
                 '<ul>',
-                    '<li>0</li>',
-                    '<li>1</li>',
+                '<li>0</li>',
+                '<li>1</li>',
                 '</ul>'
             ].join(''));
 
@@ -158,36 +158,59 @@ describe('domUtils', function() {
         });
     });
 
-   describe('getPrevTopBlockNode', function() {
-       it('return previous block element of passed node', function() {
+    describe('getPrevTopBlockNode', function() {
+        it('return previous block element of passed node', function() {
             $('body').append('<div>text1</div><p>text2</p>');
             expect(domUtils.getPrevTopBlockNode($('p')[0].firstChild)).toBe($('div')[0]);
-       });
-   });
+        });
+    });
 
-   describe('getNextTopBlockNode', function() {
-       it('return next block element of passed node', function() {
+    describe('getNextTopBlockNode', function() {
+        it('return next block element of passed node', function() {
             $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
             expect(domUtils.getNextTopBlockNode($('em')[0].firstChild)).toBe($('p')[0]);
-       });
-   });
+        });
+    });
 
-   describe('getTopBlockNode', function() {
-       it('return top block element of passed node', function() {
+    describe('getTopBlockNode', function() {
+        it('return top block element of passed node', function() {
             $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
             expect(domUtils.getTopBlockNode($('em')[0].firstChild)).toBe($('div')[0]);
-       });
-   });
+        });
+    });
 
-   describe('getParentUntil', function() {
-       it('return parent node of passed node until passed parent', function() {
+    describe('getParentUntil', function() {
+        it('return parent node of passed node until passed parent', function() {
             $('body').append('<div><p>awef<em>text1</em></p></div>');
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'DIV')).toBe($('p')[0]);
-       });
+        });
 
-       it('return parent node of passed node until passed parent #2', function() {
+        it('return parent node of passed node until passed parent #2', function() {
             $('body').append('<div><p>awef<em>text1</em></p></div>');
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'P')).toBe($('EM')[0]);
-       });
-   });
+        });
+    });
+
+    describe('getPrevTextNode', function() {
+        it('get prev text node of given node #1', function() {
+            $('body').append('<div class="test"><div>text1<em>text2</em></div><div>text3</div></div>');
+            expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
+        });
+
+        it('get prev text node of given node #2', function() {
+            $('body').append('<div class="test"><div>text1</div><div><br></div><div>text3</div></div>');
+            expect(domUtils.getPrevTextNode($('.test div')[2].lastChild)).toBe($('.test div')[0].firstChild);
+        });
+
+        it('get prev text node of given node #3', function() {
+            $('body').append('<div class="test"><ul><li><em>text1</em></li></ul><div><p><br></p></div><div>text3</div></div>');
+            expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
+        });
+
+        it('if cant find any prev text node then return null', function() {
+            $('body').empty();
+            $('body').append('<div class="test"><div><p><br></p></div><div>text3</div></div>');
+            expect(domUtils.getPrevTextNode($('.test div')[1].firstChild)).toBe(null);
+        });
+    });
 });

@@ -147,4 +147,18 @@ describe('MarkdownEditor', function() {
             expect(mde.getEditor().getCursor().ch).toEqual(0);
         });
     });
+
+    //we dont make codemirror scrollTop tc cuz codemirror css file could not be loaded
+    xdescribe('get, set scrollTop', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+        it('get scrollTop', function() {
+            mde.setHeight(50);
+
+            mde.setValue('1\n2\n3\n4\n5\n1\n2\n3\n4\n5\n');
+            mde.scrollTop(10);
+            expect(mde.scrollTop()).not.toEqual(0);
+        });
+    });
 });

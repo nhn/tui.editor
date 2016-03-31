@@ -54,6 +54,12 @@ describe('Editor', function() {
                 expect($('.te-md-container .te-editor').height()).not.toEqual(height);
             });
         });
+        describe('setValue()', function() {
+            it('fire setValueAfter evnet after setValue', function(done) {
+                editor.on('setValueAfter', done);
+                editor.setValue('dd');
+            });
+        });
     });
 });
 
