@@ -66,9 +66,17 @@ MarkdownMarkerHelper.prototype._getAddtionalInfoOfRange = function(startLine, st
 
 MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     var doc = this.cm.getDoc(),
-        selection, start, end, info, foundCursor;
+        selection, start, end, info, foundCursor, temp;
 
     selection = doc.listSelections()[0];
+
+    if (selection.anchor.line > selection.head.line
+        || (selection.anchor.line === selection.head.line && selection.anchor.ch > selection.head.ch)) {
+        temp = selection.head;
+        selection.head = selection.anchor;
+        selection.anchor = temp;
+    }
+
 
     start = doc.getRange({
         line: 0,

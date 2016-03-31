@@ -99,6 +99,28 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.text).toEqual('TEXT1');
     });
 
+    it('if current selection is backward then make it forward', function() {
+        var marker;
+
+        cm.setValue('# TEXT1\n\n## TEXT2');
+
+        cm.setSelection({
+            line: 1,
+            ch: 0
+        }, {
+            line: 0,
+            ch: 2
+        });
+
+        marker = mmh.getMarkerInfoOfCurrentSelection();
+
+        expect(marker.start).toEqual(2);
+        expect(marker.end).toEqual(7);
+        expect(marker.top).toBeDefined();
+        expect(marker.left).toBeDefined();
+        expect(marker.text).toEqual('TEXT1');
+    });
+
     it('get zero top and left when there is no text content', function() {
         var marker;
 

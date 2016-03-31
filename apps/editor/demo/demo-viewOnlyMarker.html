@@ -32,7 +32,7 @@
     $('#editSection').tuiEditor({
         viewOnly: true,
         initialValue: '# Hello\n## this is world\n\nfirst view mode',
-        exts: ['mark'],
+        exts: ['mark', 'colorSyntax'],
         events: {
             load: function(editor) {
                 var markers = editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5', [
