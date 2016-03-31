@@ -66,17 +66,9 @@ MarkdownMarkerHelper.prototype._getAddtionalInfoOfRange = function(startLine, st
 
 MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     var doc = this.cm.getDoc(),
-        selection, start, end, info, foundCursor, temp;
+        selection, start, end, info, foundCursor;
 
-    selection = doc.listSelections()[0];
-
-    if (selection.anchor.line > selection.head.line
-        || (selection.anchor.line === selection.head.line && selection.anchor.ch > selection.head.ch)) {
-        temp = selection.head;
-        selection.head = selection.anchor;
-        selection.anchor = temp;
-    }
-
+    selection = this._getSelection();
 
     start = doc.getRange({
         line: 0,
@@ -98,6 +90,27 @@ MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
         text: info.text.replace(FIND_CRLF_RX, ' '),
         top: info.top,
         left: info.left
+    };
+};
+
+MarkdownMarkerHelper.prototype._getSelection = function() {
+    var selection, head, anchor, isReversedSelection, temp;
+
+    selection = this.cm.getDoc().listSelections()[0];
+    anchor = selection.anchor;
+    head = selection.head;
+
+    isReversedSelection = (anchor.line > head.line) || (anchor.line === head.line && anchor.ch > head.ch);
+
+    if (isReversedSelection) {
+        temp = head;
+        head = anchor;
+        anchor = temp;
+    }
+
+    return {
+        anchor: anchor,
+        head: head
     };
 };
 
@@ -138,6 +151,26 @@ MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
     }
 
     return result;
+};
+
+MarkdownMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+    var foundCursor = this._findOffsetCursor([start, end]);
+
+    this.cm.setSelection({
+        line: foundCursor[0].line,
+        ch: foundCursor[0].ch
+    }, {
+        line: foundCursor[1].line,
+        ch: foundCursor[1].ch
+    });
+};
+
+MarkdownMarkerHelper.prototype.clearSelect = function() {
+    var selection = this.cm.getDoc().listSelections()[0];
+
+    if (selection) {
+        this.cm.setCursor(selection.to());
+    }
 };
 
 module.exports = MarkdownMarkerHelper;

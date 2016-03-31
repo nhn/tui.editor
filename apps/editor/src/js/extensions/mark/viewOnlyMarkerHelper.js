@@ -81,4 +81,20 @@ ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetList) {
     });
 };
 
+ViewOnlyMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+    var foundNode = this._findOffsetNode([start, end]),
+        range = document.createRange(),
+        sel = window.getSelection();
+
+    range.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+    range.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+    sel.removeAllRanges();
+    sel.addRange(range);
+};
+
+ViewOnlyMarkerHelper.prototype.clearSelect = function() {
+    window.getSelection().removeAllRanges();
+};
+
 module.exports = ViewOnlyMarkerHelper;

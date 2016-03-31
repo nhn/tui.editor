@@ -137,4 +137,18 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.left).toEqual(0);
         expect(marker.text).toEqual('');
     });
+
+    it('select range by given offset', function() {
+        mmh.selectOffsetRange(0, 3);
+
+        expect(cm.getSelection()).toEqual('# T');
+    });
+
+    it('clear select', function() {
+        mmh.selectOffsetRange(0, 3);
+
+        mmh.clearSelect();
+
+        expect(cm.getSelection()).toEqual('');
+    });
 });

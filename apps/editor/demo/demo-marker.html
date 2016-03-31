@@ -69,10 +69,12 @@
                 function setUITop() {
                     markers.forEach(function(marker) {
                         if (!markerUIs[marker.id]) {
-                            markerUIs[marker.id] = $('<div>|</div>').css({
+                            markerUIs[marker.id] = $('<div></div>').css({
+                                width: '1px',
+                                height: '10px',
                                 padding: 0,
                                 position: 'absolute',
-                                color: '#f00',
+                                backgroundColor: '#f00',
                                 zIndex: '99999'
                             });
 
@@ -80,7 +82,7 @@
                         }
 
                         markerUIs[marker.id].css({
-                            'top': marker.top - editor.scrollTop() - 10,
+                            'top': marker.top - editor.scrollTop(),
                             'left': marker.left
                         });
                     });

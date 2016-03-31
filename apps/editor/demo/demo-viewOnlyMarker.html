@@ -21,7 +21,7 @@
       .cm-strong { font-weight:bold; }
     </style>
 </head>
-<body>
+<body style='padding:0;margin:0'>
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
@@ -45,6 +45,11 @@
                         start: 6,
                         end: 31,
                         id: 'myId2'
+                    },
+                    {
+                        start: 6,
+                        end: 7,
+                        id: 'myId3'
                     }
                 ]);
                 var markerUIs = {};
@@ -56,10 +61,12 @@
                 function setUITop() {
                     markers.forEach(function(marker) {
                         if (!markerUIs[marker.id]) {
-                            markerUIs[marker.id] = $('<div>|</div>').css({
+                            markerUIs[marker.id] = $('<div></div>').css({
+                                width: '1px',
+                                height: '10px',
                                 padding: 0,
                                 position: 'absolute',
-                                color: '#f00',
+                                backgroundColor: '#f00',
                                 zIndex: '99999'
                             });
 
@@ -67,7 +74,7 @@
                         }
 
                         markerUIs[marker.id].css({
-                            'top': marker.top - 10,
+                            'top': marker.top,
                             'left': marker.left
                         });
                     });
