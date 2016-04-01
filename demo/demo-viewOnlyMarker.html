@@ -35,7 +35,7 @@
         exts: ['mark', 'colorSyntax'],
         events: {
             load: function(editor) {
-                var markers = editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5', [
+                editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5', [
                     {
                         start: 11,
                         end: 22,
@@ -52,14 +52,25 @@
                         id: 'myId3'
                     }
                 ]);
+
                 var markerUIs = {};
 
                 $('.tui-editor-contents').css({
                     'position': 'relative'
                 });
 
+                editor.on('scroll', function() {
+                    setUITop();
+                });
+
+                editor.on('markerUpdated', function(markers) {
+                    setUITop();
+                });
+
+                setUITop();
+
                 function setUITop() {
-                    markers.forEach(function(marker) {
+                    editor.getMarkersAll().forEach(function(marker) {
                         if (!markerUIs[marker.id]) {
                             markerUIs[marker.id] = $('<div></div>').css({
                                 width: '1px',
@@ -79,17 +90,6 @@
                         });
                     });
                 }
-
-                editor.on('scroll', function() {
-                    setUITop();
-                });
-
-                editor.on('markerUpdated', function(markers) {
-                    console.log(markers);
-                    setUITop();
-                });
-
-                setUITop();
             }
         }
     });

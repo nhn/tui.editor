@@ -318,7 +318,7 @@ SquireExt.prototype.scrollTop = function(top) {
 
     if (util.browser.firefox) {
         $target = $(this._win);
-    } else if (util.browser.msie && util.browser.version === 11) {
+    } else if (util.browser.msie) {
         $target = $(this.getDocument().documentElement);
     } else {
         $target = this.get$Body();
@@ -328,7 +328,7 @@ SquireExt.prototype.scrollTop = function(top) {
         return $target.scrollTop();
     }
 
-    $target.scrollTop(top);
+    return $target.scrollTop(top);
 };
 
 SquireExt.prototype.isIgnoreChange = function() {

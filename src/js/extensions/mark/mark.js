@@ -17,11 +17,13 @@ extManager.defineExtension('mark', function(editor) {
         mm = new MarkerManager(ml),
         wmh, mmh, vmh;
 
-    if (!editor.isViewOnly()) {
+    editor.eventManager.addEventType('markerUpdated');
+
+    if (editor.isViewOnly()) {
+        vmh = new ViewOnlyMarkerHelper(editor.preview);
+    } else {
         wmh = new WysiwygMarkerHelper(editor.getSquire());
         mmh = new MarkdownMarkerHelper(editor.getCodeMirror());
-    } else {
-        vmh = new ViewOnlyMarkerHelper(editor.preview);
     }
 
     function getHelper() {
@@ -37,8 +39,6 @@ extManager.defineExtension('mark', function(editor) {
 
         return helper;
     }
-
-    editor.eventManager.addEventType('markerUpdated');
 
     $(window).resize(function() {
         var helper = getHelper();
@@ -68,7 +68,6 @@ extManager.defineExtension('mark', function(editor) {
 
         mm.resetContent(value.replace(FIND_CRLF_RX, ''));
 
-
         if (editor.isViewOnly() || editor.isWysiwygMode()) {
             helper = getHelper();
             mm.getUpdatedMarkersByContent(helper.getTextContent());
@@ -80,11 +79,17 @@ extManager.defineExtension('mark', function(editor) {
             helper.updateMarkerWithExtraInfo(marker);
         });
 
+        editor.eventManager.emit('markerUpdated', ml.getAll());
+
         return ml.getAll();
     };
 
     editor.getMarker = function(id) {
         return ml.getMarker(id);
+    };
+
+    editor.getMarkersAll = function() {
+        return ml.getAll();
     };
 
     editor.removeMarker = function(id) {
@@ -109,7 +114,9 @@ extManager.defineExtension('mark', function(editor) {
         var helper = getHelper(),
             marker = editor.getMarker(id);
 
-        helper.selectOffsetRange(marker.start, marker.end);
+        if (marker) {
+            helper.selectOffsetRange(marker.start, marker.end);
+        }
     };
 
     editor.clearSelect = function() {

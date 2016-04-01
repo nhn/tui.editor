@@ -133,8 +133,8 @@ describe('MarkdownMarkerHelper', function() {
 
         expect(marker.start).toEqual(2);
         expect(marker.end).toEqual(8);
-        expect(marker.top).toEqual(0);
-        expect(marker.left).toEqual(0);
+        expect(parseInt(marker.top, 10)).toEqual(0);
+        expect(parseInt(marker.left, 10)).toEqual(0);
         expect(marker.text).toEqual('');
     });
 
