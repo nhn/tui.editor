@@ -30,6 +30,12 @@ WysiwygMarkerHelper.prototype.getTextContent = function() {
     return this.sqe.get$Body()[0].textContent.replace(FIND_ZWB_RX, '');
 };
 
+/**
+ * updateMarkerWithExtraInfo
+ * Update marker with extra info of CodeMirror
+ * @param {object} marker marker
+ * @returns {object} marker
+ */
 WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     var foundNode, markerRange, info;
 
@@ -39,7 +45,7 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     markerRange.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
     markerRange.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
 
-    info = this._getAddtionalInfoOfRange(markerRange);
+    info = this._getExtraInfoOfRange(markerRange);
 
     marker.text = info.text;
     marker.top = info.top;
@@ -48,7 +54,13 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     return marker;
 };
 
-WysiwygMarkerHelper.prototype._getAddtionalInfoOfRange = function(range) {
+/**
+ * _getExtraInfoOfRange
+ * Get extra info of range
+ * @param {Range} range range
+ * @returns {object} extra info
+ */
+WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     var text, top, left, rect;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
@@ -72,6 +84,11 @@ WysiwygMarkerHelper.prototype._getAddtionalInfoOfRange = function(range) {
     };
 };
 
+/**
+ * getMarkerInfoOfCurrentSelection
+ * Get marker info of current selection
+ * @returns {object} marker
+ */
 WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     var range, beforeRange, start, end, info;
 
@@ -82,7 +99,7 @@ WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
         beforeRange.setStart(this.sqe.get$Body()[0], 0);
         beforeRange.setEnd(range.startContainer, range.startOffset);
 
-        info = this._getAddtionalInfoOfRange(range);
+        info = this._getExtraInfoOfRange(range);
 
         start = beforeRange.cloneContents().textContent.length;
         end = start + info.text.length;
@@ -99,6 +116,12 @@ WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     return null;
 };
 
+/**
+ * _extendRangeToTextNodeIfHasNone
+ * Extend range to text node if start or end container have none
+ * @param {Range} range range
+ * @returns {boolean} success or fail
+ */
 WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) {
     var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
         textNode;
@@ -120,12 +143,24 @@ WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) 
     return true;
 };
 
-WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetList) {
-    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetList, function(text) {
+/**
+ * _findOffsetNode
+ * Find offset nodes by given offset list
+ * @param {[number]} offsetlist offset list
+ * @returns {[object]} offset node informations
+ */
+WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
+    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, function(text) {
         return text.replace(FIND_ZWB_RX, '');
     });
 };
 
+/**
+ * selectOffsetRange
+ * Make selection with given offset range
+ * @param {number} start start offset
+ * @param {number} end end offset
+ */
 WysiwygMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     var foundNode = this._findOffsetNode([start, end]),
         range = this.sqe.getSelection().cloneRange();
@@ -136,6 +171,10 @@ WysiwygMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     this.sqe.setSelection(range);
 };
 
+/**
+ * clearSelect
+ * Clear selection of squire
+ */
 WysiwygMarkerHelper.prototype.clearSelect = function() {
     var range = this.sqe.getSelection().cloneRange();
     range.collapse(true);
