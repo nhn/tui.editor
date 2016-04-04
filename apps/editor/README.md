@@ -68,6 +68,7 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
 
 ## 옵션 설명
 
+* viewOnly: {boolean}, true가 넘겨지면 렌더링만 가능한 뷰모드로 에디터를 생성합니다. 마크다운을 html로 렌더링합니다.
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자, "auto"), "auto"입력시 컨텐츠에 따라서 에디터가 늘어납니다.
@@ -78,6 +79,7 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
     * `exts: ['scrollFollow']`
     * scrollFollow: 마크다운 에디터에서 프리뷰영역이 에디팅 영역의 스크롤을 따라갑니다..
     * colorSyntax: 컬러를 사용할수 있게합니다.
+    * mark: 텍스트 마커를 삽입합니다.(API목록 하단에 설명)
 * hooks: 이미지서버와의 연동등을 처리하는 훅을 바인드합니다.
     * addImageBlobHook : 파일 blob을 이용해 이미지를 서버에 업로드합니다.
 
@@ -146,7 +148,34 @@ $('#editSection').tuiEditor('off', '.dooray', handler);
 $('#editSection').tuiEditor('off', 'load.dooray', handler);
 ```
 
+## Extension API
+
+### mark
+
+* setValueWithMarkers(마크다운, 마커데이터): 에디터에 텍스트를 셋팅하면서 해당컨텍스트의 마커데이터를 복구합니다. 마커데이터는 exportMarkers로 얻어진 데이터입니다.
+
+``` javascript
+$('#editSection').tuiEditor('setValueWithMarkers', '# TEXT', 마커데이터);
+```
+
+* addMarker(아이디): 에디터의 현재 셀렉션에 마커를 삽입합니다. 마커를 구별할 아이디를 입력합니다
+
+``` javascript
+$('#editSection').tuiEditor('addMarker', 'm1');
+```
+
+* selectMarker(아이디): 마커의 셀렉션을 생성합니다.
+* clearSelect(): 셀렉션을 취소합니다.
+* exportMarkers(): 현 컨텐츠의 마커정보를 저장하기위해 모든 마커의 JSON데이터를 받습니다
+* getMarker(아이디): 특정 아이디의 마커를 얻습니다.
+* getMarkersAll(): 모든 마커정보를 얻습니다.
+* removeMarker(아이디): 마커를 삭제합니다.
+* 이벤트
+    ** markerUpdated: 마커의 위치가 업데이트되거나 추가되면 이벤트가 발생합니다. 인자로 모든 마커정보가 넘어갑니다.
+
 ## 버전별 업데이트 유의점
+*.0.0.20
+    * viewOnly 옵션이 추가되었습니다. true를 넘기면 html 렌더링만 가능한 뷰모드로 에디터를 설정합니다.
 * 0.0.9
     * CSS 클래스명 대거 수정(에디터 디자인 커스터마이징시 유의)
     src/css/tui-editor.css 변경점 참고

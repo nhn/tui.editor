@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements wysiwyg marker helper for additional information
+ * @fileoverview Implements viewOnly marker helper for additional information
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
@@ -30,6 +30,12 @@ ViewOnlyMarkerHelper.prototype.getTextContent = function() {
     return this.preview.$el[0].textContent.replace(FIND_CRLF_RX, '');
 };
 
+/**
+ * updateMarkerWithExtraInfo
+ * Update marker with extra info of preview
+ * @param {object} marker marker
+ * @returns {object} marker
+ */
 ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     var foundNode, markerRange, info;
 
@@ -40,7 +46,7 @@ ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     markerRange.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
     markerRange.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
 
-    info = this._getAddtionalInfoOfRange(markerRange);
+    info = this._getExtraInfoOfRange(markerRange);
 
     marker.text = info.text;
     marker.top = info.top;
@@ -49,7 +55,13 @@ ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     return marker;
 };
 
-ViewOnlyMarkerHelper.prototype._getAddtionalInfoOfRange = function(range) {
+/**
+ * _getExtraInfoOfRange
+ * Get extra info of range
+ * @param {Range} range range
+ * @returns {object} extra info
+ */
+ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     var text, top, left, rect, containerOffset;
 
     text = range.cloneContents().textContent.replace(FIND_CRLF_RX, '');
@@ -75,12 +87,24 @@ ViewOnlyMarkerHelper.prototype._getAddtionalInfoOfRange = function(range) {
     };
 };
 
-ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetList) {
-    return domUtils.findOffsetNode(this.preview.$el[0], offsetList, function(text) {
+/**
+ * _findOffsetNode
+ * Find offset nodes by given offset list
+ * @param {[number]} offsetlist offset list
+ * @returns {[object]} offset node informations
+ */
+ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
+    return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, function(text) {
         return text.replace(FIND_CRLF_RX, '');
     });
 };
 
+/**
+ * selectOffsetRange
+ * Make selection with given offset range
+ * @param {number} start start offset
+ * @param {number} end end offset
+ */
 ViewOnlyMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     var foundNode = this._findOffsetNode([start, end]),
         range = document.createRange(),
@@ -93,6 +117,10 @@ ViewOnlyMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     sel.addRange(range);
 };
 
+/**
+ * clearSelect
+ * Clear selection
+ */
 ViewOnlyMarkerHelper.prototype.clearSelect = function() {
     window.getSelection().removeAllRanges();
 };

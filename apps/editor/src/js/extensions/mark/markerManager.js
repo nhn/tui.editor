@@ -22,15 +22,27 @@ function MarkerManager(markerList) {
     this.oldTextContent = null;
 }
 
+/**
+ * resetContent
+ * Reset content
+ * @param {string} content reset base content
+ */
 MarkerManager.prototype.resetContent = function(content) {
     this.oldTextContent = (typeof content === 'string' ? content : null);
 };
 
+/**
+ * getUpdatedMarkersByContent
+ * Get updated markers by updated content
+ * @param {string} newContent updated content
+ * @returns {object} updated markers
+ */
 MarkerManager.prototype.getUpdatedMarkersByContent = function(newContent) {
     var markerDiffs;
 
     if (this.oldTextContent === null) {
         this.resetContent(newContent);
+
         return [];
     }
 
@@ -41,6 +53,12 @@ MarkerManager.prototype.getUpdatedMarkersByContent = function(newContent) {
     return this._getUpdateMarkersWithDiffs(markerDiffs);
 };
 
+/**
+ * _makeMarkerDiffs
+ * Make diffs of marker by updated content
+ * @param {string} newContent updated content
+ * @returns {object} marker diffs
+ */
 MarkerManager.prototype._makeMarkerDiffs = function(newContent) {
     var markerList = this.markerList,
         self = this,
@@ -69,6 +87,12 @@ MarkerManager.prototype._makeMarkerDiffs = function(newContent) {
     return markerDiffs;
 };
 
+/**
+ * _forEachChanges
+ * Iterate each change of updated content
+ * @param {string} newContent updated content
+ * @param {function} iteratee iteratee
+ */
 MarkerManager.prototype._forEachChanges = function(newContent, iteratee) {
     var changedStart = 0,
         changedEnd = 0,
@@ -87,6 +111,7 @@ MarkerManager.prototype._forEachChanges = function(newContent, iteratee) {
         if (type === CHANGE_NOTHING) {
             changedStart += changedLen;
             changedEnd += changedLen;
+
             return;
         }
 
@@ -101,6 +126,15 @@ MarkerManager.prototype._forEachChanges = function(newContent, iteratee) {
     });
 };
 
+/**
+ * _calculateStartDiff
+ * Calculate start diff
+ * @param {number} start change start offset
+ * @param {number} end change end offset
+ * @param {number} diff diff count of change
+ * @param {object} marker marker to calculate diff
+ * @returns {number} start diff of marker
+ */
 MarkerManager.prototype._calculateStartDiff = function(start, end, diff, marker) {
     var startDiff;
 
@@ -117,6 +151,15 @@ MarkerManager.prototype._calculateStartDiff = function(start, end, diff, marker)
     return startDiff;
 };
 
+/**
+ * _calculateEndDiff
+ * Calculate end diff
+ * @param {number} start change start offset
+ * @param {number} end change end offset
+ * @param {number} diff diff count of change
+ * @param {object} marker marker to calculate diff
+ * @returns {number} end diff of marker
+ */
 MarkerManager.prototype._calculateEndDiff = function(start, end, diff, marker) {
     var endDiff;
 
@@ -133,6 +176,12 @@ MarkerManager.prototype._calculateEndDiff = function(start, end, diff, marker) {
     return endDiff;
 };
 
+/**
+ * _getUpdateMarkersWithDiffs
+ * Get updated markers with diffs
+ * @param {object} markerDiffs marker diff object that contains diff info of specific marker
+ * @returns {[object]} updated markers
+ */
 MarkerManager.prototype._getUpdateMarkersWithDiffs = function(markerDiffs) {
     var updatedMarkers = [],
         markerList = this.markerList;

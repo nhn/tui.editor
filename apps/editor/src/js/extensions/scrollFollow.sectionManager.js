@@ -6,12 +6,12 @@
 'use strict';
 
 var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/,
-    FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
+    FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/,
     FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/,
     FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
     FIND_SPACE = /\s/g;
 
-/*
+/**
  * SectionManager
  * manage logical markdown content sections
  * @exports SectionManager

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
+
 'use strict';
 
 var util = tui.util;
@@ -17,10 +22,21 @@ function MarkdownMarkerHelper(cm) {
     this.cm = cm;
 }
 
+/**
+ * getTextContent
+ * Get CRLF removed text content of CodeMirror
+ * @returns {string} text content
+ */
 MarkdownMarkerHelper.prototype.getTextContent = function() {
     return this.cm.getValue().replace(FIND_CRLF_RX, '');
 };
 
+/**
+ * updateMarkerWithExtraInfo
+ * Update marker with extra info of CodeMirror
+ * @param {object} marker marker
+ * @returns {object} marker
+ */
 MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     var foundCursor, startCh, startLine, endCh, endLine, info;
 
@@ -31,7 +47,7 @@ MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     endLine = foundCursor[1].line;
     endCh = foundCursor[1].ch;
 
-    info = this._getAddtionalInfoOfRange(startLine, startCh, endLine, endCh);
+    info = this._getExtraInfoOfRange(startLine, startCh, endLine, endCh);
 
     marker.text = info.text.replace(FIND_CRLF_RX, ' ');
     marker.top = info.top;
@@ -40,7 +56,16 @@ MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     return marker;
 };
 
-MarkdownMarkerHelper.prototype._getAddtionalInfoOfRange = function(startLine, startCh, endLine, endCh) {
+/**
+ * _getExtraInfoOfRange
+ *  Get additional info of range
+ * @param {number} startLine start line
+ * @param {number} startCh start offset
+ * @param {number} endLine end line
+ * @param {number} endCh end offset
+ * @returns {object} information
+ */
+MarkdownMarkerHelper.prototype._getExtraInfoOfRange = function(startLine, startCh, endLine, endCh) {
     var text, rect,
         doc = this.cm.getDoc();
 
@@ -64,6 +89,11 @@ MarkdownMarkerHelper.prototype._getAddtionalInfoOfRange = function(startLine, st
     };
 };
 
+/**
+ * getMarkerInfoOfCurrentSelection
+ * Get marker info of current selection
+ * @returns {object} marker
+ */
 MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     var doc = this.cm.getDoc(),
         selection, start, end, info, foundCursor;
@@ -79,7 +109,7 @@ MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
 
     foundCursor = this._findOffsetCursor([start, end]);
 
-    info = this._getAddtionalInfoOfRange(foundCursor[0].line,
+    info = this._getExtraInfoOfRange(foundCursor[0].line,
                                          foundCursor[0].ch,
                                          foundCursor[1].line,
                                          foundCursor[1].ch);
@@ -93,6 +123,11 @@ MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     };
 };
 
+/**
+ * _getSelection
+ * Get selection of CodeMirror, if selection is reversed then correct it
+ * @returns {object} selection
+ */
 MarkdownMarkerHelper.prototype._getSelection = function() {
     var selection, head, anchor, isReversedSelection, temp;
 
@@ -114,6 +149,12 @@ MarkdownMarkerHelper.prototype._getSelection = function() {
     };
 };
 
+/**
+ * _findOffsetCursor
+ * Find offset cursor by given offset list
+ * @param {[number]} offsetlist offset list
+ * @returns {[object]} offset cursors
+ */
 MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
     var doc = this.cm.getDoc(),
         currentLength = 0,
@@ -153,6 +194,12 @@ MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
     return result;
 };
 
+/**
+ * selectOffsetRange
+ * Make selection with given offset range
+ * @param {number} start start offset
+ * @param {number} end end offset
+ */
 MarkdownMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     var foundCursor = this._findOffsetCursor([start, end]);
 
@@ -165,6 +212,10 @@ MarkdownMarkerHelper.prototype.selectOffsetRange = function(start, end) {
     });
 };
 
+/**
+ * clearSelect
+ * Clear selection of CodeMirror
+ */
 MarkdownMarkerHelper.prototype.clearSelect = function() {
     var selection = this.cm.getDoc().listSelections()[0];
 

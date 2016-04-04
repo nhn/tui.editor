@@ -43,10 +43,22 @@ Markerlist.prototype.addMarker = function(start, end, id) {
     return marker;
 };
 
+/**
+ * getMarker
+ * Get marker with given id
+ * @param {string} id id of marker
+ * @returns {object} marker
+ */
 Markerlist.prototype.getMarker = function(id) {
     return this._markersWithId[id];
 };
 
+/**
+ * removeMarker
+ * Remove marker with given id
+ * @param {string} id of marker that should be removed
+ * @returns {marker} removed marker
+ */
 Markerlist.prototype.removeMarker = function(id) {
     var removedMarker, index;
 
@@ -59,16 +71,26 @@ Markerlist.prototype.removeMarker = function(id) {
     return removedMarker;
 };
 
+/**
+ * updateMarker
+ * Update marker with extra information
+ * @param {string} id id of marker
+ * @param {object} obj extra information
+ * @returns {object} marker
+ */
 Markerlist.prototype.updateMarker = function(id, obj) {
     var marker = this.getMarker(id);
 
-    util.forEachOwnProperties(obj, function(value, key) {
-        marker[key] = value;
-    });
-
-    return marker;
+    return util.extend(marker, obj);
 };
 
+/**
+ * forEachByRangeAffected
+ * Iterate markers affected by given range
+ * @param {number} start start offset
+ * @param {end} end end offset
+ * @param {function} iteratee iteratee
+ */
 Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
     var rangeMarkers;
 
@@ -77,6 +99,13 @@ Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
     rangeMarkers.forEach(iteratee);
 };
 
+/**
+ * _getMarkersByRangeAffected
+ * Get markers affected by given range
+ * @param {number} start start offset
+ * @param {end} end end offset
+ * @returns {[object]} markers
+ */
 Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
     var len, i, marker, rangeMarkers;
 
@@ -93,15 +122,29 @@ Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
     return rangeMarkers;
 };
 
+/**
+ * getAll
+ * Get markers all
+ * @returns {[object]} markers
+ */
 Markerlist.prototype.getAll = function() {
     return this._sortedMarkers;
 };
 
+/**
+ * resetMarkers
+ * Reset markerlist
+ */
 Markerlist.prototype.resetMarkers = function() {
     this._sortedMarkers = [];
     this._markersWithId = {};
 };
 
+/**
+ * sortWith
+ * Sort markers with given key of marker
+ * @param {string} rangeKey, start or end
+ */
 Markerlist.prototype.sortWith = function(rangeKey) {
     this._sortedMarkers.sort(function(a, b) {
         if (a[rangeKey] > b[rangeKey]) {
@@ -114,6 +157,11 @@ Markerlist.prototype.sortWith = function(rangeKey) {
     });
 };
 
+/**
+ * getMarkersData
+ * Get marker data to export
+ * @returns {object} markers data
+ */
 Markerlist.prototype.getMarkersData = function() {
     return this.getAll().map(function(marker) {
         return {
