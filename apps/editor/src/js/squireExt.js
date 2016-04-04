@@ -34,6 +34,7 @@ SquireExt.prototype = util.extend(
 
 SquireExt.prototype.get$Body = function() {
     this.$body = this.$body || $(this.getDocument().body);
+
     return this.$body;
 };
 
@@ -92,6 +93,7 @@ SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
                     nextBlock = current.childNodes[0];
 
                     //there is no next blocktag
+                    //eslint-disable-next-line max-depth
                     if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
                         nextBlock = self.createDefaultBlock();
 
@@ -100,11 +102,13 @@ SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
                         lastNodeOfNextBlock = nextBlock.lastChild;
 
                         //remove unneccesary br
+                        //eslint-disable-next-line max-depth
                         if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
                             nextBlock.removeChild(lastNodeOfNextBlock);
                         }
                     }
 
+                    //eslint-disable-next-line max-depth
                     if (targetTagName) {
                         newBlock = self.createElement(targetTagName, [nextBlock]);
                     } else {

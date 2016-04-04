@@ -63,12 +63,16 @@ WwHrManager.prototype._initKeyHandler = function() {
         if (range.collapsed) {
             return self._removeHrOnEnter(range, ev);
         }
+
+        return true;
     });
 
     this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
         if (range.collapsed) {
             return self._removeHrOnBackspace(range, ev);
         }
+
+        return true;
     });
 };
 
@@ -90,6 +94,7 @@ WwHrManager.prototype._isInHr = function(range) {
  */
 WwHrManager.prototype._isNearHr = function(range) {
     var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+
     return domUtils.getNodeName(prevNode) === 'HR';
 };
 
@@ -170,6 +175,8 @@ WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev
 
         return false;
     }
+
+    return true;
 };
 
 /**

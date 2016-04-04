@@ -99,15 +99,18 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @returns {string} 확장된 영역의 텍스트
      */
     expendWithBoldSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection();
+        var tmpSelection = doc.getSelection(),
+            result;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
 
         if (tmpSelection === '******' || tmpSelection === '______') {
-            return tmpSelection;
+            result = tmpSelection;
+        } else {
+            doc.setSelection(cursor);
         }
 
-        doc.setSelection(cursor);
+        return result;
     },
     /**
      * expendOnlyBoldSelection
@@ -117,16 +120,17 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @returns {string} 확장된 영역의 텍스트
      */
     expendOnlyBoldSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection();
+        var tmpSelection = doc.getSelection(),
+            result = false;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             doc.setSelection(cursor);
-            return 'only';
+            result = 'only';
         }
 
-        return false;
+        return result;
     },
     /**
      * expendSelection
@@ -136,15 +140,18 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @returns {string} 확장된 영역의 텍스트
      */
     expendSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection();
+        var tmpSelection = doc.getSelection(),
+            result;
 
-        doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
-        if (tmpSelection === '**' || tmpSelection === '__') {
-            return tmpSelection;
+        if (tmpSelection === '****' || tmpSelection === '____') {
+            result = tmpSelection;
+        } else {
+            doc.setSelection(cursor);
         }
 
-        doc.setSelection(cursor);
+        return result;
     },
     /**
      * setCursorToCenter

@@ -32,6 +32,7 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
             sq.focus();
+
             return;
         }
 

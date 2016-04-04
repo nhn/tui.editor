@@ -82,6 +82,8 @@ WwTaskManager.prototype._initKeyHandler = function() {
 
             return false;
         }
+
+        return true;
     });
 
     this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
@@ -89,9 +91,12 @@ WwTaskManager.prototype._initKeyHandler = function() {
             if (self._isInTaskList(range)) {
                 self._unformatTaskIfNeedOnBackspace(range);
                 //and delete list by squire
+
                 return false;
             }
         }
+
+        return true;
     });
 
     this.wwe.addKeyEventHandler('TAB', function(ev, range) {
@@ -99,9 +104,12 @@ WwTaskManager.prototype._initKeyHandler = function() {
             if (self.wwe.getEditor().hasFormat('LI')) {
                 ev.preventDefault();
                 self.eventManager.emit('command', 'IncreaseDepth');
+
                 return false;
             }
         }
+
+        return true;
     });
 
     this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {

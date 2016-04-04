@@ -71,9 +71,9 @@ WwCodeBlockManager.prototype._initEvent = function() {
 };
 
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
-    html = html.replace(/\<\pre( .*?)?\>(.*?)\<\/pre\>/g, function(match, codeAttr, code) {
-        code = code.replace(/\<\/code\>\<br \/>/g, '\n');
-        code = code.replace(/\<code ?(.*?)\>/g, '');
+    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
+        code = code.replace(/<\/code><br \/>/g, '\n');
+        code = code.replace(/<code ?(.*?)>/g, '');
         code = code.replace(/\n$/, '');
 
         return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
@@ -105,16 +105,15 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
 };
 
 WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-    if (!this._isInCodeBlock(range)) {
-        return true;
-    }
-
-    if (domUtils.getTextLength(range.startContainer) === 0) {
+    if (this._isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
         ev.preventDefault();
         this.wwe.getEditor().recordUndoState(range);
         $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
+
         return false;
     }
+
+    return true;
 };
 
 WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
@@ -136,8 +135,11 @@ WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, ran
 
         range.setStart(code.childNodes[0], 0);
         this.wwe.getEditor().setSelection(range);
+
         return false;
     }
+
+    return true;
 };
 
 WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
@@ -153,8 +155,11 @@ WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev
     //코드블럭이 code하나밖에 없을때
     if (range.startOffset === 0 && $(pre).find('code').length <= 1) {
         $(div).find('code').children().unwrap('code');
+
         return false;
     }
+
+    return true;
 };
 
 WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
@@ -173,61 +178,64 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
     ) {
         ev.preventDefault();
         range.startContainer.textContent = '\u200B';
+
         return false;
     }
+
+    return true;
 };
 
 WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
     var pre,
         self = this;
 
-    if (!this.wwe.getEditor().hasFormat('PRE')) {
-        return true;
+    if (this.wwe.getEditor().hasFormat('PRE')) {
+        this.wwe.getEditor().recordUndoState();
+
+        pre = domUtils.getParentUntil(range.startContainer, 'BODY');
+
+        setTimeout(function() {
+            var modified;
+
+            $(pre).find('div').each(function(index, div) {
+                if (!$(div).find('code').length) {
+                    $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
+                    modified = true;
+                }
+            });
+
+            if (modified) {
+                self.wwe.readySilentChange();
+            }
+        }, 0);
     }
 
-    this.wwe.getEditor().recordUndoState();
-
-    pre = domUtils.getParentUntil(range.startContainer, 'BODY');
-
-    setTimeout(function() {
-        var modified;
-
-        $(pre).find('div').each(function(index, div) {
-            if (!$(div).find('code').length) {
-                $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
-                modified = true;
-            }
-        });
-
-        if (modified) {
-            self.wwe.readySilentChange();
-        }
-    }, 0);
+    return true;
 };
 
 WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
     var currentNodeName, div;
 
-    if (!this._isInCodeBlock(range)) {
-        return true;
+    if (this._isInCodeBlock(range)) {
+        currentNodeName = domUtils.getNodeName(range.startContainer);
+        div = domUtils.getParentUntil(range.startContainer, 'PRE');
+
+        if (currentNodeName === 'TEXT'
+            && domUtils.getOffsetLength(range.startContainer) === 0
+            && range.startOffset <= 1
+        ) {
+            $(div).html('<br>');
+
+            range.setStart(div, 0);
+            range.collapse(true);
+
+            this.wwe.getEditor().setSelection(range);
+
+            return false;
+        }
     }
 
-    currentNodeName = domUtils.getNodeName(range.startContainer);
-    div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-    if (currentNodeName === 'TEXT'
-        && domUtils.getOffsetLength(range.startContainer) === 0
-        && range.startOffset <= 1
-    ) {
-        $(div).html('<br>');
-
-        range.setStart(div, 0);
-        range.collapse(true);
-
-        this.wwe.getEditor().setSelection(range);
-
-        return false;
-    }
+    return true;
 };
 
 WwCodeBlockManager.prototype._isInCodeBlock = function(range) {

@@ -38,6 +38,7 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
 
             sq.modifyBlocks(function(frag) {
                 frag.appendChild(sq.createElement('HR'));
+
                 return frag;
             });
 

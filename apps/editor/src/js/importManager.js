@@ -95,8 +95,11 @@ ImportManager.prototype._processBlobItems = function(items, evData) {
                 evData.preventDefault();
                 evData.codemirrorIgnore = true;
                 self._emitAddImageBlobHook(item);
+
                 return false;
             }
+
+            return true;
         });
     }
 };
