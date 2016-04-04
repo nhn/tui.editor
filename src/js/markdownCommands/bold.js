@@ -79,15 +79,18 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * @returns {string} 셀렉션의 텍스트
      */
     expendSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection();
+        var tmpSelection = doc.getSelection(),
+            result;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
         if (tmpSelection === '****' || tmpSelection === '____') {
-            return tmpSelection;
+            result = tmpSelection;
+        } else {
+            doc.setSelection(cursor);
         }
 
-        doc.setSelection(cursor);
+        return result;
     },
     /**
      * 커서를 센터로 이동시킨다

@@ -42,15 +42,21 @@ WwHeadingManager.prototype._initKeyHandler = function() {
     this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
         if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
             self._onEnter(ev, range);
+
             return false;
         }
+
+        return true;
     });
 
     this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
         if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
             self._removePrevTopNodeIfNeed(ev, range);
+
             return false;
         }
+
+        return true;
     });
 };
 

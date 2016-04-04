@@ -86,14 +86,17 @@ var getOffsetLength = function(node) {
  * @returns {number} offset(index)
  */
 var getNodeOffsetOfParent = function(node) {
-    var i, t,
+    var i, t, found,
         childNodesOfParent = node.parentNode.childNodes;
 
     for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
         if (childNodesOfParent[i] === node) {
-            return i;
+            found = i;
+            break;
         }
     }
+
+    return found;
 };
 
 /**

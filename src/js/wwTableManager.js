@@ -50,7 +50,7 @@ WwTableManager.prototype._initEvent = function() {
 
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
         //remove last br in td or th
-        return html.replace(/\<br \/\>(\<\/td\>|\<\/th\>)/g, '$1');
+        return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
     });
 };
 
@@ -143,6 +143,7 @@ WwTableManager.prototype._isBeforeTable = function(range) {
  */
 WwTableManager.prototype._isAfterTable = function(range) {
     var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+
     return domUtils.getNodeName(prevElem) === 'TABLE' && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY';
 };
 

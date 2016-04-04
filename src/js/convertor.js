@@ -17,8 +17,8 @@ var marked = window.marked,
  * @extends {}
  * @constructor
  * @class
+ * @param {EventManager} em EventManager instance
  */
-
 function Convertor(em) {
     this.eventManager = em;
 }
@@ -74,6 +74,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
 Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
     return this._sanitizeScript(html);
 };
 
@@ -87,6 +88,7 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
 Convertor.prototype.toHTML = function(markdown) {
     var html = this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
     return this._sanitizeScript(html);
 };
 
@@ -100,6 +102,7 @@ Convertor.prototype.toHTML = function(markdown) {
 Convertor.prototype.toMarkdown = function(html) {
     var markdown = toMark(html);
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+
     return markdown;
 };
 
@@ -110,8 +113,8 @@ Convertor.prototype.toMarkdown = function(html) {
  * @returns {string}
  */
 Convertor.prototype._sanitizeScript = function(html) {
-    html = html.replace(/\<script.*?\>/g, '&lt;script&gt;');
-    html = html.replace(/\<\/script\>/g, '&lt;/script&gt;');
+    html = html.replace(/<script.*?>/g, '&lt;script&gt;');
+    html = html.replace(/<\/script>/g, '&lt;/script&gt;');
 
     return html;
 };

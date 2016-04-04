@@ -91,7 +91,7 @@ CommandManager.prototype._initEvent = function() {
  * @returns {*} 커맨드를 수행한후 리턴값
  */
 CommandManager.prototype.exec = function(name) {
-    var commandToRun,
+    var commandToRun, result,
         context = this.base,
         args = util.toArray(arguments);
 
@@ -111,8 +111,10 @@ CommandManager.prototype.exec = function(name) {
 
     if (commandToRun) {
         args.unshift(context);
-        return commandToRun.exec.apply(commandToRun, args);
+        result = commandToRun.exec.apply(commandToRun, args);
     }
+
+    return result;
 };
 
 CommandManager.command = function(type, props) {

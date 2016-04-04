@@ -97,20 +97,17 @@ EventManager.prototype.emit = function() {
         results;
 
     if (eventHandlers) {
-        results = [];
-
         util.forEach(eventHandlers, function(handler) {
             result = handler.apply(null, args);
 
             if (!util.isUndefined(result)) {
+                results = results || [];
                 results.push(result);
             }
         });
     }
 
-    if (results && results.length) {
-        return results;
-    }
+    return results;
 };
 
 EventManager.prototype.emitReduce = function() {

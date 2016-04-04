@@ -118,6 +118,7 @@ WysiwygEditor.prototype._initSquire = function() {
  */
 WysiwygEditor.prototype._isIframeReady = function() {
     var iframeWindow = this.$iframe[0].contentWindow;
+
     return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
 };
 
@@ -183,7 +184,7 @@ WysiwygEditor.prototype._initEvent = function() {
     });
 
     this.eventManager.listen('wysiwygSetValueBefore', function(html) {
-        return html.replace(/\<br\>( *)\<img/g, '<br><br>$1<img');
+        return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -229,6 +230,7 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
     if (handlers) {
         util.forEachArray(handlers, function(handler) {
             isNeedNext = handler(event, range, keyMap);
+
             return isNeedNext;
         });
     }
@@ -258,6 +260,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
     this.getEditor().getDocument().addEventListener('dragover', function(ev) {
         ev.preventDefault();
+
         return false;
     });
 
@@ -560,6 +563,7 @@ WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
         if (!frag.textContent) {
             frag = self.getEditor().createDefaultBlock();
         }
+
         return frag;
     });
 };
