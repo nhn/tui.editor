@@ -41,6 +41,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(8);
         expect(marker.top).toBeDefined();
         expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
         expect(marker.text).toEqual('TEXT1 #');
     });
 
@@ -54,6 +55,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(2);
         expect(marker.top).toBeDefined();
         expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
         expect(marker.text).toEqual('');
     });
 
@@ -74,6 +76,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(8);
         expect(marker.top).toBeDefined();
         expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
         expect(marker.text).toEqual('TEXT1 #');
     });
 
@@ -96,6 +99,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(7);
         expect(marker.top).toBeDefined();
         expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
         expect(marker.text).toEqual('TEXT1');
     });
 
@@ -118,6 +122,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(7);
         expect(marker.top).toBeDefined();
         expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
         expect(marker.text).toEqual('TEXT1');
     });
 
@@ -135,6 +140,7 @@ describe('MarkdownMarkerHelper', function() {
         expect(marker.end).toEqual(8);
         expect(parseInt(marker.top, 10)).toEqual(0);
         expect(parseInt(marker.left, 10)).toEqual(0);
+        expect(parseInt(marker.height, 10)).toEqual(0);
         expect(marker.text).toEqual('');
     });
 

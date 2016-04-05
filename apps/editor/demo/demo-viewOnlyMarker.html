@@ -71,6 +71,8 @@
 
                 function setUITop() {
                     editor.getMarkersAll().forEach(function(marker) {
+                        var linePosition;
+
                         if (!markerUIs[marker.id]) {
                             markerUIs[marker.id] = $('<div></div>').css({
                                 width: '1px',
@@ -84,8 +86,10 @@
                             markerUIs[marker.id].appendTo('.tui-editor-contents');
                         }
 
+                        linePosition = Math.max(0, (marker.height - 10) / 2); //10 means marker ui height
+
                         markerUIs[marker.id].css({
-                            'top': marker.top,
+                            'top': marker.top + linePosition,
                             'left': marker.left
                         });
                     });
