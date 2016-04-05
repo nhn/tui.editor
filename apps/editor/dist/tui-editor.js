@@ -64,7 +64,14 @@
 	__webpack_require__(3);
 	__webpack_require__(4);
 
-	ToastUIEditor = __webpack_require__(5);
+	//default extensions
+	__webpack_require__(5);
+	__webpack_require__(7);
+	__webpack_require__(8);
+	__webpack_require__(11);
+	__webpack_require__(12);
+
+	ToastUIEditor = __webpack_require__(20);
 
 	//for jquery
 	$.fn.tuiEditor = function() {
@@ -1183,6 +1190,50 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	var extManager = __webpack_require__(6);
+
+	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
+	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
+
+	extManager.defineExtension('taskCounter', function(editor) {
+	    editor.getTaskCount = function() {
+	        var found, count;
+
+	        if (editor.isViewOnly()) {
+	            count = editor.preview.$el.find('input').length;
+	        } else if (editor.isMarkdownMode()) {
+	            found = editor.mdEditor.getValue().match(FIND_TASK_RX);
+	            count = found ? found.length : 0;
+	        } else {
+	            count = editor.wwEditor.get$Body().find('input').length;
+	        }
+
+	        return count;
+	    };
+
+	    editor.getCheckedTaskCount = function() {
+	        var found, count;
+
+	        if (editor.isViewOnly()) {
+	            count = editor.preview.$el.find('input:checked').length;
+	        } else if (editor.isMarkdownMode()) {
+	            found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
+	            count = found ? found.length : 0;
+	        } else {
+	            count = editor.wwEditor.get$Body().find('input:checked').length;
+	        }
+
+	        return count;
+	    };
+	});
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
 	/**
 	 * @fileoverview
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -1190,62 +1241,4766 @@
 
 	'use strict';
 
-	var MarkdownEditor = __webpack_require__(6),
-	    Preview = __webpack_require__(8),
-	    WysiwygEditor = __webpack_require__(10),
-	    Layout = __webpack_require__(21),
-	    EventManager = __webpack_require__(22),
-	    CommandManager = __webpack_require__(23),
-	    extManager = __webpack_require__(25),
-	    ImportManager = __webpack_require__(26),
-	    Convertor = __webpack_require__(28),
-	    DefaultUI = __webpack_require__(30);
+	var util = tui.util;
+
+	/**
+	 * ExtManager
+	 * @exports ExtManager
+	 * @extends {}
+	 * @constructor
+	 * @class
+	 */
+	function ExtManager() {
+	    this.exts = new util.Map();
+	}
+
+	/**
+	 * Extension Closure callback
+	 * @callback ExtManager~extension
+	 * @param {ToastUIEditor} editor editor instance
+	 */
+
+	/**
+	 * defineExtension
+	 * Defined Extension
+	 * @param {string} name extension name
+	 * @param {ExtManager~extension} ext extension
+	 */
+	ExtManager.prototype.defineExtension = function(name, ext) {
+	    this.exts.set(name, ext);
+	};
+
+	ExtManager.prototype.applyExtension = function(context, extNames) {
+	    var self = this;
+
+	    if (extNames) {
+	        extNames.forEach(function(extName) {
+	            if (self.exts.has(extName)) {
+	                self.exts.get(extName)(context);
+	            }
+	        });
+	    }
+	};
+
+	module.exports = new ExtManager();
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var extManager = __webpack_require__(6);
+
+	extManager.defineExtension('textPalette', function(editor) {
+	    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
+	    var triggers = editor.options.textPalette.triggers,
+	        querySender = editor.options.textPalette.querySender;
+
+	    $(editor.options.el).append($layer);
+
+	    $layer.find('input').on('keyup', function(e) {
+	        var query = $layer.find('input').val();
+
+	        if (e.which === 13) {
+	            e.stopPropagation();
+	            //editor.getCurrentModeEditor().replaceSelection(query);
+	            editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
+	            editor.focus();
+	            hideUI($layer);
+	        } else {
+	            querySender(query, function(list) {
+	                updateUI($layer, list);
+	            });
+	        }
+	    });
+
+	    editor.eventManager.listen('change', function(ev) {
+	        if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
+	            editor.addWidget(ev.selection, $layer[0], 'over');
+	            showUI($layer);
+	        }
+	    });
+	});
+
+	function showUI($layer) {
+	    $layer.show();
+	    $layer.find('input').focus();
+	}
+
+	function hideUI($layer) {
+	    $layer.hide();
+	    $layer.find('input').val('');
+	}
+
+	function updateUI() {
+	}
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements Scroll Follow Extension
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var extManager = __webpack_require__(6),
+	    ScrollSync = __webpack_require__(9),
+	    SectionManager = __webpack_require__(10);
+
+	extManager.defineExtension('scrollFollow', function(editor) {
+	    var scrollable = false,
+	        active = true,
+	        sectionManager, scrollSync,
+	        className = 'tui-scrollfollow',
+	        $button, cm;
+
+	    if (editor.isViewOnly()) {
+	        return;
+	    }
+
+	    cm = editor.getCodeMirror();
+
+	    sectionManager = new SectionManager(cm, editor.preview);
+	    scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+
+	    //UI
+	    if (editor.getUI().name === 'default') {
+	        editor.getUI().toolbar.addButton([{
+	            className: [className, 'active'].join(' '),
+	            command: 'scrollFollowDisable',
+	            tooltip: '자동 스크롤 끄기',
+	            style: 'background-color: #ddedfb'
+	        }, {
+	            className: className,
+	            command: 'scrollFollowEnable',
+	            tooltip: '자동 스크롤 켜기',
+	            style: 'background-color: #fff'
+	        }]);
+	    }
+
+	    $button = editor.getUI().toolbar.$el.find(className);
+
+	    //Commands
+	    editor.addCommand('markdown', {
+	        name: 'scrollFollowDisable',
+	        exec: function() {
+	            active = false;
+	        }
+	    });
+
+	    editor.addCommand('markdown', {
+	        name: 'scrollFollowEnable',
+	        exec: function() {
+	            active = true;
+	        }
+	    });
+
+	    //Events
+	    cm.on('change', function() {
+	        scrollable = false;
+	        sectionManager.makeSectionList();
+	    });
+
+	    editor.on('previewRenderAfter', function() {
+	        sectionManager.sectionMatch();
+	        scrollSync.syncToPreview();
+	        scrollable = true;
+	    });
+
+	    cm.on('scroll', function() {
+	        if (!active || !scrollable) {
+	            return;
+	        }
+
+	        scrollSync.syncToPreview();
+	    });
+
+	    //위지윅에서는 숨김
+	    editor.on('changeModeToWysiwyg', function() {
+	        $button.hide();
+	    });
+
+	    editor.on('changeModeToMarkdown', function() {
+	        $button.show();
+	    });
+	});
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements Scroll Follow Extension ScrollSync Module
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var SCROLL_TOP_PADDING = 20;
+
+	/**
+	 * ScrollSync
+	 * manage scroll sync between markdown editor and preview
+	 * @exports ScrollSync
+	 * @constructor
+	 * @class
+	 * @param {SectionManager} sectionManager sectionManager
+	 * @param {CodeMirror} cm codemirror
+	 * @param {jQuery} $previewContainerEl preview container
+	 */
+	function ScrollSync(sectionManager, cm, $previewContainerEl) {
+	    this.sectionManager = sectionManager;
+	    this.cm = cm;
+	    this.$previewContainerEl = $previewContainerEl;
+	    this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
+
+	    /**
+	     * current timeout id needs animation
+	     * @type {number}
+	     */
+	    this._currentTimeoutId = null;
+	}
+
+	/**
+	 * _getEditorSectionHeight
+	 * get section height of editor
+	 * @param {object} section section be caculated height
+	 * @returns {number} height
+	 */
+	ScrollSync.prototype._getEditorSectionHeight = function(section) {
+	    var height;
+
+	    height = this.cm.heightAtLine(section.end, 'local');
+	    height -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+
+	    return height;
+	};
+
+	/**
+	 * _getLineHeightGapInSection
+	 * get height gap between passed line in passed section
+	 * @param {object} section section be caculated
+	 * @param {number} line line number
+	 * @returns {number} gap
+	 */
+	ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) {
+	    var gap;
+
+	    gap = this.cm.heightAtLine(line, 'local');
+	    gap -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
+
+	    return Math.max(gap, 0);
+	};
+
+	/**
+	 * _getSectionScrollRatio
+	 * get ratio of height between scrollTop line and scrollTop section
+	 * @param {object} section section be caculated
+	 * @param {number} line line number
+	 * @returns {number} ratio
+	 */
+	ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
+	    var ratio,
+	        isOneLine = (section.end === section.start);
+
+	    if (isOneLine) {
+	        ratio = 0;
+	    } else {
+	        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
+	    }
+	    return ratio;
+	};
+
+	/**
+	 * _getScrollFactorsOfEditor
+	 * get Scroll Information of editor for preivew scroll sync
+	 * @returns {object} scroll factors
+	 */
+	ScrollSync.prototype._getScrollFactorsOfEditor = function() {
+	    var topLine, topSection, ratio, isEditorBottom, factors,
+	        cm = this.cm,
+	        scrollInfo = cm.getScrollInfo();
+
+	    isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
+
+	    if (isEditorBottom) {
+	        factors = {
+	            isEditorBottom: isEditorBottom
+	        };
+	    } else {
+	        topLine = cm.coordsChar({
+	            left: scrollInfo.left,
+	            top: scrollInfo.top
+	        }, 'local').line;
+
+	        topSection = this.sectionManager.sectionByLine(topLine);
+
+	        ratio = this._getEditorSectionScrollRatio(topSection, topLine);
+
+	        factors = {
+	            section: topSection,
+	            sectionRatio: ratio
+	        };
+	    }
+
+	    return factors;
+	};
+
+	/**
+	 * _getScrollTopForPreview
+	 * get ScrolTop value for preview
+	 * @returns {number|undefined} scrollTop value, when something wrong then return undefined
+	 */
+	ScrollSync.prototype._getScrollTopForPreview = function() {
+	    var scrollTop, scrollFactors, section, ratio;
+
+	    scrollFactors = this._getScrollFactorsOfEditor();
+	    section = scrollFactors.section;
+	    ratio = scrollFactors.sectionRatio;
+
+	    if (scrollFactors.isEditorBottom) {
+	        scrollTop = this.$contents.height();
+	    } else if (section.$previewSectionEl) {
+	        scrollTop = section.$previewSectionEl[0].offsetTop;
+	        scrollTop += (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
+	    }
+
+	    scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+	    return scrollTop;
+	};
+
+
+	/**
+	 * syncToPreview
+	 * sync preview with markdown scroll
+	 */
+	ScrollSync.prototype.syncToPreview = function() {
+	    var self = this,
+	        targetScrollTop = this._getScrollTopForPreview();
+
+	    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
+	        self.$previewContainerEl.scrollTop(deltaScrollTop);
+	    });
+	};
+
+	/**
+	 * _animateRun
+	 * animate with passed Callback
+	 * @param {number} originValue original value
+	 * @param {number} targetValue target value
+	 * @param {function} stepCB callback function
+	 */
+	ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
+	    var valueDiff = targetValue - originValue,
+	        startTime = Date.now(),
+	        self = this;
+
+	    //if already doing animation
+	    if (this._currentTimeoutId) {
+	        clearTimeout(this._currentTimeoutId);
+	    }
+
+	    function step() {
+	        var deltaValue,
+	            stepTime = Date.now(),
+	            progress = (stepTime - startTime) / 200; //200 is animation time
+
+	        if (progress < 1) {
+	            deltaValue = originValue + valueDiff * Math.cos((1 - progress) * Math.PI / 2);
+	            stepCB(Math.ceil(deltaValue));
+	            self._currentTimeoutId = setTimeout(step, 1);
+	        } else {
+	            stepCB(targetValue);
+	            self._currentTimeoutId = null;
+	        }
+	    }
+
+	    step();
+	};
+
+	module.exports = ScrollSync;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements Scroll Follow Extension SectionManager Module
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/,
+	    FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/,
+	    FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/,
+	    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
+	    FIND_SPACE = /\s/g;
+
+	/**
+	 * SectionManager
+	 * manage logical markdown content sections
+	 * @exports SectionManager
+	 * @constructor
+	 * @class
+	 * @param {CodeMirror} cm codemirror
+	 * @param {Preview} preview preview
+	 */
+	function SectionManager(cm, preview) {
+	    this.cm = cm;
+	    this.preview = preview;
+	    this.$previewContent = preview.$el.find('.tui-editor-contents');
+
+	    /**
+	     *  section list
+	     * @type {object[]}
+	     */
+	    this._sectionList = null;
+
+	    /**
+	     * current working section needs making section list
+	     * @type {object}
+	     */
+	    this._currentSection = null;
+	}
+
+	/**
+	 * _addNewSection
+	 * add new section
+	 * @param {number} start initial start line number
+	 * @param {number} end initial end line number
+	 */
+	SectionManager.prototype._addNewSection = function(start, end) {
+	    var newSection = this._makeSectionData(start, end);
+	    this._sectionList.push(newSection);
+	    this._currentSection = newSection;
+	};
+
+	/**
+	 * getSectionList
+	 * return section list
+	 * @returns {object[]} section object list
+	 */
+	SectionManager.prototype.getSectionList = function() {
+	    return this._sectionList;
+	};
+
+	/**
+	 * _makeSectionData
+	 * make default section object
+	 * @param {number} start initial start line number
+	 * @param {number} end initial end line number
+	 * @returns {object} section object
+	 */
+	SectionManager.prototype._makeSectionData = function(start, end) {
+	    return {
+	        start: start,
+	        end: end,
+	        $previewSectionEl: null
+	    };
+	};
+
+	/**
+	 * _updateCurrentSectionEnd
+	 * update current section's end line number
+	 * @param {number} end end value to update
+	 */
+	SectionManager.prototype._updateCurrentSectionEnd = function(end) {
+	    this._currentSection.end = end;
+	};
+
+	/**
+	 * _eachLineState
+	 * iterate codemiror lines, callback function parameter pass line type and line number
+	 * @param {function} iteratee callback function
+	 */
+	SectionManager.prototype._eachLineState = function(iteratee) {
+	    var isSection, i, lineLength, lineString, nextLineString, prevLineString,
+	        isTrimming = true,
+	        onTable = false,
+	        onCodeBlock = false,
+	        trimCapture = '';
+
+	    lineLength = this.cm.getDoc().lineCount();
+
+	    for (i = 0; i < lineLength; i += 1) {
+	        isSection = false;
+	        lineString = this.cm.getLine(i);
+	        nextLineString = this.cm.getLine(i + 1) || '';
+	        prevLineString = this.cm.getLine(i - 1) || '';
+
+	        if (onTable && (!lineString || !this._isTableCode(lineString))) {
+	            onTable = false;
+	        } else if (!onTable && this._isTable(lineString, nextLineString)) {
+	            onTable = true;
+	        }
+
+	        if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
+	            onCodeBlock = false;
+	        } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
+	            onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+	        }
+
+	        //atx header
+	        if (this._isAtxHeader(lineString)) {
+	            isSection = true;
+	        //setext header
+	        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+	            isSection = true;
+	        }
+
+	        //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
+	        //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
+	        if (isTrimming) {
+	            trimCapture += lineString.trim();
+
+	            if (trimCapture) {
+	                isTrimming = false;
+	            } else {
+	                continue;
+	            }
+	        }
+
+	        iteratee(isSection, i);
+	    }
+	};
+
+	/**
+	 * _doFollowedLinesHaveCodeBlockEnd
+	 * Check if follow lines have codeblock end
+	 * @param {number} lineIndex current index
+	 * @param {number} lineLength line length
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, lineLength) {
+	    var i,
+	        doLineHaveCodeBlockEnd = false;
+
+	    for (i = lineIndex + 1; i < lineLength; i += 1) {
+	        if (this._isCodeBlockEnd(this.cm.getLine(i))) {
+	            doLineHaveCodeBlockEnd = true;
+	            break;
+	        }
+	    }
+
+	    return doLineHaveCodeBlockEnd;
+	};
+
+	/**
+	 * _isCodeBlockStart
+	 * Check if passed string have code block start
+	 * @param {string} string string to check
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isCodeBlockStart = function(string) {
+	    return FIND_CODEBLOCK_START_RX.test(string);
+	};
+
+	/**
+	 * _isCodeBlockEnd
+	 * Check if passed string have code block end
+	 * @param {string} string string to check
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isCodeBlockEnd = function(string) {
+	    return FIND_CODEBLOCK_END_RX.test(string);
+	};
+
+	/**
+	 * _isTable
+	 * Check if passed string have table
+	 * @param {string} lineString current line string
+	 * @param {string} nextLineString next line string
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isTable = function(lineString, nextLineString) {
+	    return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
+	};
+
+	/**
+	 * _isTableCode
+	 * Check if passed string have table code
+	 * @param {string} string string to check
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isTableCode = function(string) {
+	    return /(^\S?.*\|.*)/.test(string);
+	};
+
+	/**
+	 * _isTableAligner
+	 * Check if passed string have table align code
+	 * @param {string} string string to check
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isTableAligner = function(string) {
+	    return /(\s*[-:]+\s*\|)+/.test(string);
+	};
+
+	/**
+	 * _isAtxHeader
+	 * Check if passed string have atx header
+	 * @param {string} string string to check
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isAtxHeader = function(string) {
+	    return FIND_HEADER_RX.test(string);
+	};
+
+	/**
+	 * _isSeTextHeader
+	 * @param {string} lineString current line string
+	 * @param {string} nextLineString next line string
+	 * @returns {boolean} result
+	 */
+	SectionManager.prototype._isSeTextHeader = function(lineString, nextLineString) {
+	    return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
+	};
+
+	/**
+	 * makeSectionList
+	 * make section list
+	 */
+	SectionManager.prototype.makeSectionList = function() {
+	    var self = this;
+
+	    this._sectionList = [];
+
+	    this._eachLineState(function(isSection, lineNumber) {
+	        if (isSection || !self._sectionList.length) {
+	            self._addNewSection(lineNumber, lineNumber);
+	        } else {
+	            self._updateCurrentSectionEnd(lineNumber);
+	        }
+	    });
+	};
+
+
+	/**
+	 * sectionMatch
+	 * make preview sections then match section list with preview section element
+	 */
+	SectionManager.prototype.sectionMatch = function() {
+	    var sections;
+
+	    if (this._sectionList) {
+	        sections = this._getPreviewSections();
+	        this._matchPreviewSectionsWithSectionlist(sections);
+	    }
+	};
+
+	/**
+	 * _matchPreviewSectionsWithSectionlist
+	 * match section list with preview section element
+	 * @param {HTMLNode[]} sections section nodes
+	 */
+	SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
+	    var self = this;
+
+	    sections.forEach(function(childs, index) {
+	        var $sectionDiv;
+
+	        if (self._sectionList[index]) {
+	            $sectionDiv = $('<div class="content-id-' + index + '"></div>');
+	            self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
+	        }
+	    });
+	};
+
+	/**
+	 * findElementNodeFilter
+	 * @this Node
+	 * @returns {boolean} true or not
+	 */
+	function findElementNodeFilter() {
+	    return this.nodeType === Node.ELEMENT_NODE;
+	}
+
+	/**
+	 * _getPreviewSections
+	 * get preview html section group to make section
+	 * @returns {array[]} element node array
+	 */
+	SectionManager.prototype._getPreviewSections = function() {
+	    var lastSection = 0,
+	        sections = [];
+
+	    sections[0] = [];
+
+	    this.$previewContent.contents().filter(findElementNodeFilter).each(function(index, el) {
+	        if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
+	            if (sections[lastSection].length) {
+	                sections.push([]);
+	                lastSection += 1;
+	            }
+	        }
+
+	        sections[lastSection].push(el);
+	    });
+
+	    return sections;
+	};
+
+	/**
+	 * _sectionByLine
+	 * get section by markdown line
+	 * @param {number} line markdown editor line number
+	 * @returns {object} section
+	 */
+	SectionManager.prototype.sectionByLine = function(line) {
+	    var sectionIndex,
+	        sectionList = this._sectionList,
+	        sectionLength = sectionList.length;
+
+	    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex += 1) {
+	        if (line <= sectionList[sectionIndex].end) {
+	            break;
+	        }
+	    }
+
+	    if (sectionIndex === sectionLength) {
+	        sectionIndex = sectionLength - 1;
+	    }
+
+	    return sectionList[sectionIndex];
+	};
+
+	module.exports = SectionManager;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements Color syntax Extension
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var extManager = __webpack_require__(6);
+
+	var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
+	    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,
+	    colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
+	    decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
+
+	var RESET_COLOR = '#181818';
+
+	extManager.defineExtension('colorSyntax', function(editor) {
+	    var useCustomSyntax = false;
+
+	    if (editor.options.colorSyntax) {
+	        useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
+	    }
+
+	    editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
+	        var replacement;
+
+	        if (!useCustomSyntax) {
+	            replacement = html;
+	        } else {
+	            replacement = html.replace(colorSyntaxRx, function(matched, p1, p2) {
+	                return makeHTMLColorSyntax(p2, p1);
+	            });
+	        }
+
+	        return replacement;
+	    });
+
+	    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
+	        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+
+	        return markdown.replace(findRx, function(founded, color, text) {
+	            var replacement;
+
+	            if (color.match(decimalColorRx)) {
+	                color = changeDecColorToHex(color);
+	            }
+
+	            if (!useCustomSyntax) {
+	                replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
+	            } else {
+	                replacement = makeCustomColorSyntax(text, color);
+	            }
+
+	            return replacement;
+	        });
+	    });
+
+	    if (!editor.isViewOnly() && editor.getUI().name === 'default') {
+	        editor.addCommand('markdown', {
+	            name: 'color',
+	            exec: function(mde, color) {
+	                var cm = mde.getEditor();
+
+	                if (!useCustomSyntax) {
+	                    cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
+	                } else {
+	                    cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
+	                }
+
+	                mde.focus();
+	            }
+	        });
+
+	        editor.addCommand('wysiwyg', {
+	            name: 'color',
+	            exec: function(wwe, color) {
+	                var sq = wwe.getEditor();
+
+	                if (!sq.hasFormat('PRE')) {
+	                    if (color === RESET_COLOR) {
+	                        sq.changeFormat(null, {
+	                            class: 'colour',
+	                            tag: 'span'
+	                        });
+	                    } else {
+	                        sq.setTextColour(color);
+	                    }
+	                }
+
+	                sq.focus();
+	            }
+	        });
+
+	        initUI(editor);
+	    }
+	});
+
+	function initUI(editor) {
+	    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className;
+
+	    className = 'tui-color';
+
+	    editor.eventManager.addEventType('colorButtonClicked');
+
+	    editor.getUI().toolbar.addButton({
+	        className: className,
+	        event: 'colorButtonClicked',
+	        tooltip: '글자색상'
+	    }, 2);
+	    $button = editor.getUI().toolbar.$el.find('button.' + className);
+
+	    $colorPickerContainer = $('<div />');
+
+	    $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
+	    $buttonBar.css('margin-top', 10);
+
+	    colorPicker = tui.component.colorpicker.create({
+	        container: $colorPickerContainer[0]
+	    });
+
+	    $colorPickerContainer.append($buttonBar);
+
+	    popup = editor.getUI().createPopup({
+	        title: false,
+	        content: $colorPickerContainer,
+	        $target: editor.getUI().$el,
+	        css: {
+	            'width': 178,
+	            'position': 'absolute'
+	        }
+	    });
+
+	    editor.eventManager.listen('focus', function() {
+	        popup.hide();
+	    });
+
+	    editor.eventManager.listen('colorButtonClicked', function() {
+	        editor.eventManager.emit('closeAllPopup');
+	        if (popup.isShow()) {
+	            popup.hide();
+	        } else {
+	            popup.$el.css({
+	                'top': $button.position().top + $button.height() + 5,
+	                'left': $button.position().left
+	            });
+	            popup.show();
+	        }
+	    });
+
+	    editor.eventManager.listen('closeAllPopup', function() {
+	        popup.hide();
+	    });
+
+	    colorPicker.on('selectColor', function(e) {
+	        selectedColor = e.color;
+
+	        if (e.origin === 'palette') {
+	            editor.exec('color', selectedColor);
+	            popup.hide();
+	        }
+	    });
+
+	    popup.$el.find('.te-apply-button').on('click', function() {
+	        editor.exec('color', selectedColor);
+	    });
+	}
+
+	function makeCustomColorSyntax(text, color) {
+	    return '{color:' + color + '}' + text + '{color}';
+	}
+
+	function makeHTMLColorSyntax(text, color) {
+	    return '<span style="color:' + color + '">' + text + '</span>';
+	}
+
+	function changeDecColorToHex(color) {
+	    return color.replace(decimalColorRx, function(colorValue, r, g, b) {
+	        r = parseInt(r, 10);
+	        g = parseInt(g, 10);
+	        b = parseInt(b, 10);
+
+	        return '#' + get2DigitNumberString(r.toString(16))
+	            + get2DigitNumberString(g.toString(16))
+	            + get2DigitNumberString(b.toString(16));
+	    });
+	}
+
+	function get2DigitNumberString(numberStr) {
+	    return numberStr === '0' ? '00' : numberStr;
+	}
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements mark extension for making text marker
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var extManager = __webpack_require__(6),
+	    MarkerList = __webpack_require__(13),
+	    MarkerManager = __webpack_require__(14),
+	    WysiwygMarkerHelper = __webpack_require__(16),
+	    ViewOnlyMarkerHelper = __webpack_require__(18),
+	    MarkdownMarkerHelper = __webpack_require__(19);
+
+	var util = tui.util;
+
+	var MARKER_UPDATE_DELAY = 100,
+	    FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
+
+	/**
+	 * Mark Extension
+	 * Define marker extension
+	 */
+	extManager.defineExtension('mark', function(editor) {
+	    var ml = new MarkerList(),
+	        mm = new MarkerManager(ml),
+	        wmh, mmh, vmh;
+
+	    editor.eventManager.addEventType('markerUpdated');
+
+	    if (editor.isViewOnly()) {
+	        vmh = new ViewOnlyMarkerHelper(editor.preview);
+	    } else {
+	        wmh = new WysiwygMarkerHelper(editor.getSquire());
+	        mmh = new MarkdownMarkerHelper(editor.getCodeMirror());
+	    }
+
+	    /**
+	     * getHelper
+	     * Get helper for current situation
+	     * @returns {object} helper
+	     */
+	    function getHelper() {
+	        var helper;
+
+	        if (editor.isViewOnly()) {
+	            helper = vmh;
+	        } else if (editor.isWysiwygMode()) {
+	            helper = wmh;
+	        } else {
+	            helper = mmh;
+	        }
+
+	        return helper;
+	    }
+
+	    $(window).resize(function() {
+	        var helper = getHelper();
+
+	        ml.getAll().forEach(function(marker) {
+	            helper.updateMarkerWithExtraInfo(marker);
+	        });
+
+	        editor.eventManager.emit('markerUpdated', ml.getAll());
+	    });
+
+	    editor.on('setValueAfter', function() {
+	        var helper = getHelper();
+	        mm.resetContent(helper.getTextContent());
+	    });
+
+	    /**
+	     * setValueWithMarkers
+	     * Set value with markers
+	     * @param {string} value markdown content
+	     * @param {object} markerDataCollection marker data that obtain with exportMarkers method
+	     * @returns {[object]} markers
+	     */
+	    editor.setValueWithMarkers = function(value, markerDataCollection) {
+	        var helper;
+
+	        ml.resetMarkers();
+
+	        markerDataCollection.forEach(function(markerData) {
+	            ml.addMarker(markerData.start, markerData.end, markerData.id);
+	        });
+
+	        editor.setValue(value);
+
+	        mm.resetContent(value.replace(FIND_CRLF_RX, ''));
+
+	        if (editor.isViewOnly() || editor.isWysiwygMode()) {
+	            helper = getHelper();
+	            mm.getUpdatedMarkersByContent(helper.getTextContent());
+	        } else {
+	            helper = mmh;
+	        }
+
+	        ml.getAll().forEach(function(marker) {
+	            helper.updateMarkerWithExtraInfo(marker);
+	        });
+
+	        editor.eventManager.emit('markerUpdated', ml.getAll());
+
+	        return ml.getAll();
+	    };
+
+	    /**
+	     * getMarker
+	     * Get markers that have given id
+	     * @param {string} id id of marker
+	     * @returns {object}
+	     */
+	    editor.getMarker = function(id) {
+	        return ml.getMarker(id);
+	    };
+
+	    /**
+	     * getMarkersAll
+	     * Get all markers
+	     * @returns {[object]}
+	     */
+	    editor.getMarkersAll = function() {
+	        return ml.getAll();
+	    };
+
+	    /**
+	     * removeMarker
+	     * Remove marker with given id
+	     * @param {string} id of marker that should be removed
+	     * @returns {marker} removed marker
+	     */
+	    editor.removeMarker = function(id) {
+	        return ml.removeMarker(id);
+	    };
+
+	    /**
+	     * getMarkersData
+	     * Get marker data to export so you can restore markers next time
+	     * @returns {object} markers data
+	     */
+	    editor.exportMarkers = function() {
+	        var markersData;
+
+	        if (editor.isViewOnly() || editor.isMarkdownMode()) {
+	            markersData = ml.getMarkersData();
+	        } else if (editor.isWysiwygMode()) {
+	            mm.getUpdatedMarkersByContent(editor.getValue().replace(FIND_CRLF_RX, ''));
+	            markersData = ml.getMarkersData();
+	            mm.getUpdatedMarkersByContent(wmh.getTextContent());
+	        }
+
+	        return markersData;
+	    };
+
+	    /**
+	     * selectMarker
+	     * Make selection with marker that have given id
+	     * @param {string} id id of marker
+	     */
+	    editor.selectMarker = function(id) {
+	        var helper = getHelper(),
+	            marker = editor.getMarker(id);
+
+	        if (marker) {
+	            helper.selectOffsetRange(marker.start, marker.end);
+	        }
+	    };
+
+	    /**
+	     * clearSelect
+	     * Clear selection
+	     */
+	    editor.clearSelect = function() {
+	        getHelper().clearSelect();
+	    };
+
+	    if (!editor.isViewOnly()) {
+	        editor.on('changeMode', function() {
+	            var helper = getHelper();
+
+	            if (!ml.getAll().length) {
+	                return;
+	            }
+
+	            mm.getUpdatedMarkersByContent(helper.getTextContent());
+
+	            ml.getAll().forEach(function(marker) {
+	                helper.updateMarkerWithExtraInfo(marker);
+	            });
+
+	            editor.eventManager.emit('markerUpdated', ml.getAll());
+	        });
+
+	        editor.on('change', util.debounce(function() {
+	            var textContent,
+	                helper = getHelper();
+
+	            textContent = helper.getTextContent();
+
+	            mm.getUpdatedMarkersByContent(textContent);
+
+	            ml.getAll().forEach(function(marker) {
+	                helper.updateMarkerWithExtraInfo(marker);
+	            });
+
+	            editor.eventManager.emit('markerUpdated', ml.getAll());
+	        }, MARKER_UPDATE_DELAY));
+
+	        /**
+	         * addMarker
+	         * Add Marker with given id
+	         * if you pass just id then it uses current selection for marker
+	         * or you can pass start and end offset for marker
+	         * @param {number|string} start start offset or id
+	         * @param {number} end end offset
+	         * @param {string} id id of marker
+	         * @returns {object} marker that have made
+	         */
+	        editor.addMarker = function(start, end, id) {
+	            var marker,
+	                helper = getHelper();
+
+	            if (!id) {
+	                id = start;
+	                marker = helper.getMarkerInfoOfCurrentSelection();
+	            } else {
+	                marker = {
+	                    start: start,
+	                    end: end
+	                };
+
+	                marker = helper.updateMarkerWithExtraInfo(marker);
+	            }
+
+	            if (marker) {
+	                marker.id = id;
+	                marker = ml.addMarker(marker);
+	                ml.sortWith('end');
+	                editor.eventManager.emit('markerUpdated', [marker]);
+	            }
+
+	            return marker;
+	        };
+	    }
+	});
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var util = tui.util;
+
+	/**
+	 * Markerlist
+	 * @exports Markerlist
+	 * @augments
+	 * @constructor
+	 * @class
+	 */
+	function Markerlist() {
+	    this._sortedMarkers = [];
+	    this._markersWithId = {};
+	}
+
+	/**
+	 * addMarker
+	 * Add Marker
+	 * @param {number} start start text offset
+	 * @param {number} end end text offset
+	 * @param {string|number} id id of marker
+	 * @returns {object} marker
+	 */
+	Markerlist.prototype.addMarker = function(start, end, id) {
+	    var marker;
+
+	    if (!id) {
+	        marker = start;
+	    } else {
+	        marker = {
+	            start: start,
+	            end: end,
+	            id: id
+	        };
+	    }
+
+	    if (!this._markersWithId[marker.id]) {
+	        this._sortedMarkers.push(marker);
+	        this._markersWithId[marker.id] = marker;
+	    }
+
+	    return marker;
+	};
+
+	/**
+	 * getMarker
+	 * Get marker with given id
+	 * @param {string} id id of marker
+	 * @returns {object} marker
+	 */
+	Markerlist.prototype.getMarker = function(id) {
+	    return this._markersWithId[id];
+	};
+
+	/**
+	 * removeMarker
+	 * Remove marker with given id
+	 * @param {string} id of marker that should be removed
+	 * @returns {marker} removed marker
+	 */
+	Markerlist.prototype.removeMarker = function(id) {
+	    var removedMarker, index;
+
+	    removedMarker = this._markersWithId[id];
+	    delete this._markersWithId[id];
+
+	    index = this._sortedMarkers.indexOf(removedMarker);
+	    this._sortedMarkers.splice(index, 1);
+
+	    return removedMarker;
+	};
+
+	/**
+	 * updateMarker
+	 * Update marker with extra information
+	 * @param {string} id id of marker
+	 * @param {object} obj extra information
+	 * @returns {object} marker
+	 */
+	Markerlist.prototype.updateMarker = function(id, obj) {
+	    var marker = this.getMarker(id);
+
+	    return util.extend(marker, obj);
+	};
+
+	/**
+	 * forEachByRangeAffected
+	 * Iterate markers affected by given range
+	 * @param {number} start start offset
+	 * @param {end} end end offset
+	 * @param {function} iteratee iteratee
+	 */
+	Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
+	    var rangeMarkers;
+
+	    rangeMarkers = this._getMarkersByRangeAffected(start, end);
+
+	    rangeMarkers.forEach(iteratee);
+	};
+
+	/**
+	 * _getMarkersByRangeAffected
+	 * Get markers affected by given range
+	 * @param {number} start start offset
+	 * @param {end} end end offset
+	 * @returns {[object]} markers
+	 */
+	Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
+	    var len, i, marker, rangeMarkers;
+
+	    rangeMarkers = [];
+
+	    for (i = 0, len = this._sortedMarkers.length; i < len; i += 1) {
+	        marker = this._sortedMarkers[i];
+
+	        if (marker.end > end || marker.end > start) {
+	            rangeMarkers.push(marker);
+	        }
+	    }
+
+	    return rangeMarkers;
+	};
+
+	/**
+	 * getAll
+	 * Get markers all
+	 * @returns {[object]} markers
+	 */
+	Markerlist.prototype.getAll = function() {
+	    return this._sortedMarkers;
+	};
+
+	/**
+	 * resetMarkers
+	 * Reset markerlist
+	 */
+	Markerlist.prototype.resetMarkers = function() {
+	    this._sortedMarkers = [];
+	    this._markersWithId = {};
+	};
+
+	/**
+	 * sortWith
+	 * Sort markers with given key of marker
+	 * @param {string} rangeKey, start or end
+	 */
+	Markerlist.prototype.sortWith = function(rangeKey) {
+	    this._sortedMarkers.sort(function(a, b) {
+	        if (a[rangeKey] > b[rangeKey]) {
+	            return 1;
+	        } else if (a[rangeKey] < b[rangeKey]) {
+	            return -1;
+	        }
+
+	        return 0;
+	    });
+	};
+
+	/**
+	 * getMarkersData
+	 * Get marker data to export
+	 * @returns {object} markers data
+	 */
+	Markerlist.prototype.getMarkersData = function() {
+	    return this.getAll().map(function(marker) {
+	        return {
+	            start: marker.start,
+	            end: marker.end,
+	            id: marker.id
+	        };
+	    });
+	};
+
+	module.exports = Markerlist;
+
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var DiffMatchPatch = __webpack_require__(15);
+
+	var util = tui.util;
+
+	var CHANGE_NOTHING = 0,
+	    CHANGE_ADD = 1,
+	    CHANGE_MINUS = -1;
+
+	/**
+	 * MarkerManager
+	 * @exports MarkerManager
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {MarkerList} markerList MarkerList object
+	 */
+	function MarkerManager(markerList) {
+	    this._dmp = new DiffMatchPatch();
+	    this.markerList = markerList;
+	    this.oldTextContent = null;
+	}
+
+	/**
+	 * resetContent
+	 * Reset content
+	 * @param {string} content reset base content
+	 */
+	MarkerManager.prototype.resetContent = function(content) {
+	    this.oldTextContent = (typeof content === 'string' ? content : null);
+	};
+
+	/**
+	 * getUpdatedMarkersByContent
+	 * Get updated markers by updated content
+	 * @param {string} newContent updated content
+	 * @returns {object} updated markers
+	 */
+	MarkerManager.prototype.getUpdatedMarkersByContent = function(newContent) {
+	    var markerDiffs;
+
+	    if (this.oldTextContent === null) {
+	        this.resetContent(newContent);
+
+	        return [];
+	    }
+
+	    markerDiffs = this._makeMarkerDiffs(newContent);
+
+	    this.oldTextContent = newContent;
+
+	    return this._getUpdateMarkersWithDiffs(markerDiffs);
+	};
+
+	/**
+	 * _makeMarkerDiffs
+	 * Make diffs of marker by updated content
+	 * @param {string} newContent updated content
+	 * @returns {object} marker diffs
+	 */
+	MarkerManager.prototype._makeMarkerDiffs = function(newContent) {
+	    var markerList = this.markerList,
+	        self = this,
+	        markerDiffs = {};
+
+	    this._forEachChanges(newContent, function(changedStart, changedEnd, diffLen) {
+	        markerList.forEachByRangeAffected(changedStart, changedEnd, function(marker) {
+	            var markerDiff = markerDiffs[marker.id],
+	                startDiff, endDiff;
+
+	            startDiff = self._calculateStartDiff(changedStart, changedEnd, diffLen, marker);
+	            endDiff = self._calculateEndDiff(changedStart, changedEnd, diffLen, marker);
+
+	            if (markerDiff) {
+	                markerDiff.start += startDiff;
+	                markerDiff.end += endDiff;
+	            } else {
+	                markerDiffs[marker.id] = {
+	                    start: startDiff,
+	                    end: endDiff
+	                };
+	            }
+	        });
+	    });
+
+	    return markerDiffs;
+	};
+
+	/**
+	 * _forEachChanges
+	 * Iterate each change of updated content
+	 * @param {string} newContent updated content
+	 * @param {function} iteratee iteratee
+	 */
+	MarkerManager.prototype._forEachChanges = function(newContent, iteratee) {
+	    var changedStart = 0,
+	        changedEnd = 0,
+	        changes = this._dmp.diff_main(this.oldTextContent, newContent);
+
+	    changes.forEach(function(change) {
+	        var type = change[0],
+	            text = change[1],
+	            diffLen = 0;
+
+	        var changedLen = text.length;
+
+	        //이전 변경점 end를 이번 변경점 start로 만들어 위치를 조정한다.
+	        changedStart = changedEnd;
+
+	        if (type === CHANGE_NOTHING) {
+	            changedStart += changedLen;
+	            changedEnd += changedLen;
+
+	            return;
+	        }
+
+	        if (type === CHANGE_ADD) {
+	            diffLen += changedLen; //더해진경우는 End값이 변경될 필요가없다 변경전의 위치는 start와 end가 collapse일수밖에 없다.. 일반적인 컨트롤상황에서는
+	        } else if (type === CHANGE_MINUS) {
+	            diffLen -= changedLen;
+	            changedEnd += changedLen; //빠지면 빠지기전까지의 범위가 end가 되어야한다.
+	        }
+
+	        iteratee(changedStart, changedEnd, diffLen);
+	    });
+	};
+
+	/**
+	 * _calculateStartDiff
+	 * Calculate start diff
+	 * @param {number} start change start offset
+	 * @param {number} end change end offset
+	 * @param {number} diff diff count of change
+	 * @param {object} marker marker to calculate diff
+	 * @returns {number} start diff of marker
+	 */
+	MarkerManager.prototype._calculateStartDiff = function(start, end, diff, marker) {
+	    var startDiff;
+
+	    // ~AB~[CDE]F
+	    if (start <= marker.start && end <= marker.start) {
+	        startDiff = diff;
+	    // A~B[C~DE]F
+	    } else if (start <= marker.start && end > marker.start) {
+	        startDiff = start - marker.start;
+	    } else {
+	        startDiff = 0;
+	    }
+
+	    return startDiff;
+	};
+
+	/**
+	 * _calculateEndDiff
+	 * Calculate end diff
+	 * @param {number} start change start offset
+	 * @param {number} end change end offset
+	 * @param {number} diff diff count of change
+	 * @param {object} marker marker to calculate diff
+	 * @returns {number} end diff of marker
+	 */
+	MarkerManager.prototype._calculateEndDiff = function(start, end, diff, marker) {
+	    var endDiff;
+
+	    // ~AB[CDE~]F
+	    if (end <= marker.end) {
+	        endDiff = diff;
+	    // AB[CD~E]~F
+	    } else if (start <= marker.end && end > marker.start) {
+	        endDiff = start - marker.end;
+	    } else {
+	        endDiff = 0;
+	    }
+
+	    return endDiff;
+	};
+
+	/**
+	 * _getUpdateMarkersWithDiffs
+	 * Get updated markers with diffs
+	 * @param {object} markerDiffs marker diff object that contains diff info of specific marker
+	 * @returns {[object]} updated markers
+	 */
+	MarkerManager.prototype._getUpdateMarkersWithDiffs = function(markerDiffs) {
+	    var updatedMarkers = [],
+	        markerList = this.markerList;
+
+	    util.forEachOwnProperties(markerDiffs, function(markerDiff, id) {
+	        var marker = markerList.getMarker(id);
+
+	        markerList.updateMarker(id, {
+	            start: marker.start += markerDiff.start,
+	            end: marker.end += markerDiff.end
+	        });
+
+	        updatedMarkers.push(marker);
+	    });
+
+	    return updatedMarkers;
+	};
+
+	module.exports = MarkerManager;
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	/*eslint-disable */
+	/**
+	 * Diff Match and Patch
+	 *
+	 * Copyright 2006 Google Inc.
+	 * http://code.google.com/p/google-diff-match-patch/
+	 *
+	 * Licensed under the Apache License, Version 2.0 (the "License");
+	 * you may not use this file except in compliance with the License.
+	 * You may obtain a copy of the License at
+	 *
+	 *   http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
+	/**
+	 * @fileoverview Computes the difference between two texts to create a patch.
+	 * Applies the patch onto another text, allowing for errors.
+	 * @author fraser@google.com (Neil Fraser)
+	 */
+
+	/**
+	 * Class containing the diff, match and patch methods.
+	 * @constructor
+	 */
+	function diff_match_patch() {
+
+	  // Defaults.
+	  // Redefine these in your program to override the defaults.
+
+	  // Number of seconds to map a diff before giving up (0 for infinity).
+	  this.Diff_Timeout = 1.0;
+	  // Cost of an empty edit operation in terms of edit characters.
+	  this.Diff_EditCost = 4;
+	  // At what point is no match declared (0.0 = perfection, 1.0 = very loose).
+	  this.Match_Threshold = 0.5;
+	  // How far to search for a match (0 = exact location, 1000+ = broad match).
+	  // A match this many characters away from the expected location will add
+	  // 1.0 to the score (0.0 is a perfect match).
+	  this.Match_Distance = 1000;
+	  // When deleting a large block of text (over ~64 characters), how close do
+	  // the contents have to be to match the expected contents. (0.0 = perfection,
+	  // 1.0 = very loose).  Note that Match_Threshold controls how closely the
+	  // end points of a delete need to match.
+	  this.Patch_DeleteThreshold = 0.5;
+	  // Chunk size for context length.
+	  this.Patch_Margin = 4;
+
+	  // The number of bits in an int.
+	  this.Match_MaxBits = 32;
+	}
+
+
+	//  DIFF FUNCTIONS
+
+
+	/**
+	 * The data structure representing a diff is an array of tuples:
+	 * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
+	 * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+	 */
+	var DIFF_DELETE = -1;
+	var DIFF_INSERT = 1;
+	var DIFF_EQUAL = 0;
+
+	/** @typedef {{0: number, 1: string}} */
+	diff_match_patch.Diff;
+
+
+	/**
+	 * Find the differences between two texts.  Simplifies the problem by stripping
+	 * any common prefix or suffix off the texts before diffing.
+	 * @param {string} text1 Old string to be diffed.
+	 * @param {string} text2 New string to be diffed.
+	 * @param {boolean=} opt_checklines Optional speedup flag. If present and false,
+	 *     then don't run a line-level diff first to identify the changed areas.
+	 *     Defaults to true, which does a faster, slightly less optimal diff.
+	 * @param {number} opt_deadline Optional time when the diff should be complete
+	 *     by.  Used internally for recursive calls.  Users should set DiffTimeout
+	 *     instead.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 */
+	diff_match_patch.prototype.diff_main = function(text1, text2, opt_checklines,
+	    opt_deadline) {
+	  // Set a deadline by which time the diff must be complete.
+	  if (typeof opt_deadline == 'undefined') {
+	    if (this.Diff_Timeout <= 0) {
+	      opt_deadline = Number.MAX_VALUE;
+	    } else {
+	      opt_deadline = (new Date).getTime() + this.Diff_Timeout * 1000;
+	    }
+	  }
+	  var deadline = opt_deadline;
+
+	  // Check for null inputs.
+	  if (text1 == null || text2 == null) {
+	    throw new Error('Null input. (diff_main)');
+	  }
+
+	  // Check for equality (speedup).
+	  if (text1 == text2) {
+	    if (text1) {
+	      return [[DIFF_EQUAL, text1]];
+	    }
+	    return [];
+	  }
+
+	  if (typeof opt_checklines == 'undefined') {
+	    opt_checklines = true;
+	  }
+	  var checklines = opt_checklines;
+
+	  // Trim off common prefix (speedup).
+	  var commonlength = this.diff_commonPrefix(text1, text2);
+	  var commonprefix = text1.substring(0, commonlength);
+	  text1 = text1.substring(commonlength);
+	  text2 = text2.substring(commonlength);
+
+	  // Trim off common suffix (speedup).
+	  commonlength = this.diff_commonSuffix(text1, text2);
+	  var commonsuffix = text1.substring(text1.length - commonlength);
+	  text1 = text1.substring(0, text1.length - commonlength);
+	  text2 = text2.substring(0, text2.length - commonlength);
+
+	  // Compute the diff on the middle block.
+	  var diffs = this.diff_compute_(text1, text2, checklines, deadline);
+
+	  // Restore the prefix and suffix.
+	  if (commonprefix) {
+	    diffs.unshift([DIFF_EQUAL, commonprefix]);
+	  }
+	  if (commonsuffix) {
+	    diffs.push([DIFF_EQUAL, commonsuffix]);
+	  }
+	  this.diff_cleanupMerge(diffs);
+	  return diffs;
+	};
+
+
+	/**
+	 * Find the differences between two texts.  Assumes that the texts do not
+	 * have any common prefix or suffix.
+	 * @param {string} text1 Old string to be diffed.
+	 * @param {string} text2 New string to be diffed.
+	 * @param {boolean} checklines Speedup flag.  If false, then don't run a
+	 *     line-level diff first to identify the changed areas.
+	 *     If true, then run a faster, slightly less optimal diff.
+	 * @param {number} deadline Time when the diff should be complete by.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_compute_ = function(text1, text2, checklines,
+	    deadline) {
+	  var diffs;
+
+	  if (!text1) {
+	    // Just add some text (speedup).
+	    return [[DIFF_INSERT, text2]];
+	  }
+
+	  if (!text2) {
+	    // Just delete some text (speedup).
+	    return [[DIFF_DELETE, text1]];
+	  }
+
+	  var longtext = text1.length > text2.length ? text1 : text2;
+	  var shorttext = text1.length > text2.length ? text2 : text1;
+	  var i = longtext.indexOf(shorttext);
+	  if (i != -1) {
+	    // Shorter text is inside the longer text (speedup).
+	    diffs = [[DIFF_INSERT, longtext.substring(0, i)],
+	             [DIFF_EQUAL, shorttext],
+	             [DIFF_INSERT, longtext.substring(i + shorttext.length)]];
+	    // Swap insertions for deletions if diff is reversed.
+	    if (text1.length > text2.length) {
+	      diffs[0][0] = diffs[2][0] = DIFF_DELETE;
+	    }
+	    return diffs;
+	  }
+
+	  if (shorttext.length == 1) {
+	    // Single character string.
+	    // After the previous speedup, the character can't be an equality.
+	    return [[DIFF_DELETE, text1], [DIFF_INSERT, text2]];
+	  }
+
+	  // Check to see if the problem can be split in two.
+	  var hm = this.diff_halfMatch_(text1, text2);
+	  if (hm) {
+	    // A half-match was found, sort out the return data.
+	    var text1_a = hm[0];
+	    var text1_b = hm[1];
+	    var text2_a = hm[2];
+	    var text2_b = hm[3];
+	    var mid_common = hm[4];
+	    // Send both pairs off for separate processing.
+	    var diffs_a = this.diff_main(text1_a, text2_a, checklines, deadline);
+	    var diffs_b = this.diff_main(text1_b, text2_b, checklines, deadline);
+	    // Merge the results.
+	    return diffs_a.concat([[DIFF_EQUAL, mid_common]], diffs_b);
+	  }
+
+	  if (checklines && text1.length > 100 && text2.length > 100) {
+	    return this.diff_lineMode_(text1, text2, deadline);
+	  }
+
+	  return this.diff_bisect_(text1, text2, deadline);
+	};
+
+
+	/**
+	 * Do a quick line-level diff on both strings, then rediff the parts for
+	 * greater accuracy.
+	 * This speedup can produce non-minimal diffs.
+	 * @param {string} text1 Old string to be diffed.
+	 * @param {string} text2 New string to be diffed.
+	 * @param {number} deadline Time when the diff should be complete by.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_lineMode_ = function(text1, text2, deadline) {
+	  // Scan the text on a line-by-line basis first.
+	  var a = this.diff_linesToChars_(text1, text2);
+	  text1 = a.chars1;
+	  text2 = a.chars2;
+	  var linearray = a.lineArray;
+
+	  var diffs = this.diff_main(text1, text2, false, deadline);
+
+	  // Convert the diff back to original text.
+	  this.diff_charsToLines_(diffs, linearray);
+	  // Eliminate freak matches (e.g. blank lines)
+	  this.diff_cleanupSemantic(diffs);
+
+	  // Rediff any replacement blocks, this time character-by-character.
+	  // Add a dummy entry at the end.
+	  diffs.push([DIFF_EQUAL, '']);
+	  var pointer = 0;
+	  var count_delete = 0;
+	  var count_insert = 0;
+	  var text_delete = '';
+	  var text_insert = '';
+	  while (pointer < diffs.length) {
+	    switch (diffs[pointer][0]) {
+	      case DIFF_INSERT:
+	        count_insert++;
+	        text_insert += diffs[pointer][1];
+	        break;
+	      case DIFF_DELETE:
+	        count_delete++;
+	        text_delete += diffs[pointer][1];
+	        break;
+	      case DIFF_EQUAL:
+	        // Upon reaching an equality, check for prior redundancies.
+	        if (count_delete >= 1 && count_insert >= 1) {
+	          // Delete the offending records and add the merged ones.
+	          diffs.splice(pointer - count_delete - count_insert,
+	                       count_delete + count_insert);
+	          pointer = pointer - count_delete - count_insert;
+	          var a = this.diff_main(text_delete, text_insert, false, deadline);
+	          for (var j = a.length - 1; j >= 0; j--) {
+	            diffs.splice(pointer, 0, a[j]);
+	          }
+	          pointer = pointer + a.length;
+	        }
+	        count_insert = 0;
+	        count_delete = 0;
+	        text_delete = '';
+	        text_insert = '';
+	        break;
+	    }
+	    pointer++;
+	  }
+	  diffs.pop();  // Remove the dummy entry at the end.
+
+	  return diffs;
+	};
+
+
+	/**
+	 * Find the 'middle snake' of a diff, split the problem in two
+	 * and return the recursively constructed diff.
+	 * See Myers 1986 paper: An O(ND) Difference Algorithm and Its Variations.
+	 * @param {string} text1 Old string to be diffed.
+	 * @param {string} text2 New string to be diffed.
+	 * @param {number} deadline Time at which to bail if not yet complete.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_bisect_ = function(text1, text2, deadline) {
+	  // Cache the text lengths to prevent multiple calls.
+	  var text1_length = text1.length;
+	  var text2_length = text2.length;
+	  var max_d = Math.ceil((text1_length + text2_length) / 2);
+	  var v_offset = max_d;
+	  var v_length = 2 * max_d;
+	  var v1 = new Array(v_length);
+	  var v2 = new Array(v_length);
+	  // Setting all elements to -1 is faster in Chrome & Firefox than mixing
+	  // integers and undefined.
+	  for (var x = 0; x < v_length; x++) {
+	    v1[x] = -1;
+	    v2[x] = -1;
+	  }
+	  v1[v_offset + 1] = 0;
+	  v2[v_offset + 1] = 0;
+	  var delta = text1_length - text2_length;
+	  // If the total number of characters is odd, then the front path will collide
+	  // with the reverse path.
+	  var front = (delta % 2 != 0);
+	  // Offsets for start and end of k loop.
+	  // Prevents mapping of space beyond the grid.
+	  var k1start = 0;
+	  var k1end = 0;
+	  var k2start = 0;
+	  var k2end = 0;
+	  for (var d = 0; d < max_d; d++) {
+	    // Bail out if deadline is reached.
+	    if ((new Date()).getTime() > deadline) {
+	      break;
+	    }
+
+	    // Walk the front path one step.
+	    for (var k1 = -d + k1start; k1 <= d - k1end; k1 += 2) {
+	      var k1_offset = v_offset + k1;
+	      var x1;
+	      if (k1 == -d || (k1 != d && v1[k1_offset - 1] < v1[k1_offset + 1])) {
+	        x1 = v1[k1_offset + 1];
+	      } else {
+	        x1 = v1[k1_offset - 1] + 1;
+	      }
+	      var y1 = x1 - k1;
+	      while (x1 < text1_length && y1 < text2_length &&
+	             text1.charAt(x1) == text2.charAt(y1)) {
+	        x1++;
+	        y1++;
+	      }
+	      v1[k1_offset] = x1;
+	      if (x1 > text1_length) {
+	        // Ran off the right of the graph.
+	        k1end += 2;
+	      } else if (y1 > text2_length) {
+	        // Ran off the bottom of the graph.
+	        k1start += 2;
+	      } else if (front) {
+	        var k2_offset = v_offset + delta - k1;
+	        if (k2_offset >= 0 && k2_offset < v_length && v2[k2_offset] != -1) {
+	          // Mirror x2 onto top-left coordinate system.
+	          var x2 = text1_length - v2[k2_offset];
+	          if (x1 >= x2) {
+	            // Overlap detected.
+	            return this.diff_bisectSplit_(text1, text2, x1, y1, deadline);
+	          }
+	        }
+	      }
+	    }
+
+	    // Walk the reverse path one step.
+	    for (var k2 = -d + k2start; k2 <= d - k2end; k2 += 2) {
+	      var k2_offset = v_offset + k2;
+	      var x2;
+	      if (k2 == -d || (k2 != d && v2[k2_offset - 1] < v2[k2_offset + 1])) {
+	        x2 = v2[k2_offset + 1];
+	      } else {
+	        x2 = v2[k2_offset - 1] + 1;
+	      }
+	      var y2 = x2 - k2;
+	      while (x2 < text1_length && y2 < text2_length &&
+	             text1.charAt(text1_length - x2 - 1) ==
+	             text2.charAt(text2_length - y2 - 1)) {
+	        x2++;
+	        y2++;
+	      }
+	      v2[k2_offset] = x2;
+	      if (x2 > text1_length) {
+	        // Ran off the left of the graph.
+	        k2end += 2;
+	      } else if (y2 > text2_length) {
+	        // Ran off the top of the graph.
+	        k2start += 2;
+	      } else if (!front) {
+	        var k1_offset = v_offset + delta - k2;
+	        if (k1_offset >= 0 && k1_offset < v_length && v1[k1_offset] != -1) {
+	          var x1 = v1[k1_offset];
+	          var y1 = v_offset + x1 - k1_offset;
+	          // Mirror x2 onto top-left coordinate system.
+	          x2 = text1_length - x2;
+	          if (x1 >= x2) {
+	            // Overlap detected.
+	            return this.diff_bisectSplit_(text1, text2, x1, y1, deadline);
+	          }
+	        }
+	      }
+	    }
+	  }
+	  // Diff took too long and hit the deadline or
+	  // number of diffs equals number of characters, no commonality at all.
+	  return [[DIFF_DELETE, text1], [DIFF_INSERT, text2]];
+	};
+
+
+	/**
+	 * Given the location of the 'middle snake', split the diff in two parts
+	 * and recurse.
+	 * @param {string} text1 Old string to be diffed.
+	 * @param {string} text2 New string to be diffed.
+	 * @param {number} x Index of split point in text1.
+	 * @param {number} y Index of split point in text2.
+	 * @param {number} deadline Time at which to bail if not yet complete.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_bisectSplit_ = function(text1, text2, x, y,
+	    deadline) {
+	  var text1a = text1.substring(0, x);
+	  var text2a = text2.substring(0, y);
+	  var text1b = text1.substring(x);
+	  var text2b = text2.substring(y);
+
+	  // Compute both diffs serially.
+	  var diffs = this.diff_main(text1a, text2a, false, deadline);
+	  var diffsb = this.diff_main(text1b, text2b, false, deadline);
+
+	  return diffs.concat(diffsb);
+	};
+
+
+	/**
+	 * Split two texts into an array of strings.  Reduce the texts to a string of
+	 * hashes where each Unicode character represents one line.
+	 * @param {string} text1 First string.
+	 * @param {string} text2 Second string.
+	 * @return {{chars1: string, chars2: string, lineArray: !Array.<string>}}
+	 *     An object containing the encoded text1, the encoded text2 and
+	 *     the array of unique strings.
+	 *     The zeroth element of the array of unique strings is intentionally blank.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_linesToChars_ = function(text1, text2) {
+	  var lineArray = [];  // e.g. lineArray[4] == 'Hello\n'
+	  var lineHash = {};   // e.g. lineHash['Hello\n'] == 4
+
+	  // '\x00' is a valid character, but various debuggers don't like it.
+	  // So we'll insert a junk entry to avoid generating a null character.
+	  lineArray[0] = '';
+
+	  /**
+	   * Split a text into an array of strings.  Reduce the texts to a string of
+	   * hashes where each Unicode character represents one line.
+	   * Modifies linearray and linehash through being a closure.
+	   * @param {string} text String to encode.
+	   * @return {string} Encoded string.
+	   * @private
+	   */
+	  function diff_linesToCharsMunge_(text) {
+	    var chars = '';
+	    // Walk the text, pulling out a substring for each line.
+	    // text.split('\n') would would temporarily double our memory footprint.
+	    // Modifying text would create many large strings to garbage collect.
+	    var lineStart = 0;
+	    var lineEnd = -1;
+	    // Keeping our own length variable is faster than looking it up.
+	    var lineArrayLength = lineArray.length;
+	    while (lineEnd < text.length - 1) {
+	      lineEnd = text.indexOf('\n', lineStart);
+	      if (lineEnd == -1) {
+	        lineEnd = text.length - 1;
+	      }
+	      var line = text.substring(lineStart, lineEnd + 1);
+	      lineStart = lineEnd + 1;
+
+	      if (lineHash.hasOwnProperty ? lineHash.hasOwnProperty(line) :
+	          (lineHash[line] !== undefined)) {
+	        chars += String.fromCharCode(lineHash[line]);
+	      } else {
+	        chars += String.fromCharCode(lineArrayLength);
+	        lineHash[line] = lineArrayLength;
+	        lineArray[lineArrayLength++] = line;
+	      }
+	    }
+	    return chars;
+	  }
+
+	  var chars1 = diff_linesToCharsMunge_(text1);
+	  var chars2 = diff_linesToCharsMunge_(text2);
+	  return {chars1: chars1, chars2: chars2, lineArray: lineArray};
+	};
+
+
+	/**
+	 * Rehydrate the text in a diff from a string of line hashes to real lines of
+	 * text.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @param {!Array.<string>} lineArray Array of unique strings.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_charsToLines_ = function(diffs, lineArray) {
+	  for (var x = 0; x < diffs.length; x++) {
+	    var chars = diffs[x][1];
+	    var text = [];
+	    for (var y = 0; y < chars.length; y++) {
+	      text[y] = lineArray[chars.charCodeAt(y)];
+	    }
+	    diffs[x][1] = text.join('');
+	  }
+	};
+
+
+	/**
+	 * Determine the common prefix of two strings.
+	 * @param {string} text1 First string.
+	 * @param {string} text2 Second string.
+	 * @return {number} The number of characters common to the start of each
+	 *     string.
+	 */
+	diff_match_patch.prototype.diff_commonPrefix = function(text1, text2) {
+	  // Quick check for common null cases.
+	  if (!text1 || !text2 || text1.charAt(0) != text2.charAt(0)) {
+	    return 0;
+	  }
+	  // Binary search.
+	  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+	  var pointermin = 0;
+	  var pointermax = Math.min(text1.length, text2.length);
+	  var pointermid = pointermax;
+	  var pointerstart = 0;
+	  while (pointermin < pointermid) {
+	    if (text1.substring(pointerstart, pointermid) ==
+	        text2.substring(pointerstart, pointermid)) {
+	      pointermin = pointermid;
+	      pointerstart = pointermin;
+	    } else {
+	      pointermax = pointermid;
+	    }
+	    pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin);
+	  }
+	  return pointermid;
+	};
+
+
+	/**
+	 * Determine the common suffix of two strings.
+	 * @param {string} text1 First string.
+	 * @param {string} text2 Second string.
+	 * @return {number} The number of characters common to the end of each string.
+	 */
+	diff_match_patch.prototype.diff_commonSuffix = function(text1, text2) {
+	  // Quick check for common null cases.
+	  if (!text1 || !text2 ||
+	      text1.charAt(text1.length - 1) != text2.charAt(text2.length - 1)) {
+	    return 0;
+	  }
+	  // Binary search.
+	  // Performance analysis: http://neil.fraser.name/news/2007/10/09/
+	  var pointermin = 0;
+	  var pointermax = Math.min(text1.length, text2.length);
+	  var pointermid = pointermax;
+	  var pointerend = 0;
+	  while (pointermin < pointermid) {
+	    if (text1.substring(text1.length - pointermid, text1.length - pointerend) ==
+	        text2.substring(text2.length - pointermid, text2.length - pointerend)) {
+	      pointermin = pointermid;
+	      pointerend = pointermin;
+	    } else {
+	      pointermax = pointermid;
+	    }
+	    pointermid = Math.floor((pointermax - pointermin) / 2 + pointermin);
+	  }
+	  return pointermid;
+	};
+
+
+	/**
+	 * Determine if the suffix of one string is the prefix of another.
+	 * @param {string} text1 First string.
+	 * @param {string} text2 Second string.
+	 * @return {number} The number of characters common to the end of the first
+	 *     string and the start of the second string.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_commonOverlap_ = function(text1, text2) {
+	  // Cache the text lengths to prevent multiple calls.
+	  var text1_length = text1.length;
+	  var text2_length = text2.length;
+	  // Eliminate the null case.
+	  if (text1_length == 0 || text2_length == 0) {
+	    return 0;
+	  }
+	  // Truncate the longer string.
+	  if (text1_length > text2_length) {
+	    text1 = text1.substring(text1_length - text2_length);
+	  } else if (text1_length < text2_length) {
+	    text2 = text2.substring(0, text1_length);
+	  }
+	  var text_length = Math.min(text1_length, text2_length);
+	  // Quick check for the worst case.
+	  if (text1 == text2) {
+	    return text_length;
+	  }
+
+	  // Start by looking for a single character match
+	  // and increase length until no match is found.
+	  // Performance analysis: http://neil.fraser.name/news/2010/11/04/
+	  var best = 0;
+	  var length = 1;
+	  while (true) {
+	    var pattern = text1.substring(text_length - length);
+	    var found = text2.indexOf(pattern);
+	    if (found == -1) {
+	      return best;
+	    }
+	    length += found;
+	    if (found == 0 || text1.substring(text_length - length) ==
+	        text2.substring(0, length)) {
+	      best = length;
+	      length++;
+	    }
+	  }
+	};
+
+
+	/**
+	 * Do the two texts share a substring which is at least half the length of the
+	 * longer text?
+	 * This speedup can produce non-minimal diffs.
+	 * @param {string} text1 First string.
+	 * @param {string} text2 Second string.
+	 * @return {Array.<string>} Five element Array, containing the prefix of
+	 *     text1, the suffix of text1, the prefix of text2, the suffix of
+	 *     text2 and the common middle.  Or null if there was no match.
+	 * @private
+	 */
+	diff_match_patch.prototype.diff_halfMatch_ = function(text1, text2) {
+	  if (this.Diff_Timeout <= 0) {
+	    // Don't risk returning a non-optimal diff if we have unlimited time.
+	    return null;
+	  }
+	  var longtext = text1.length > text2.length ? text1 : text2;
+	  var shorttext = text1.length > text2.length ? text2 : text1;
+	  if (longtext.length < 4 || shorttext.length * 2 < longtext.length) {
+	    return null;  // Pointless.
+	  }
+	  var dmp = this;  // 'this' becomes 'window' in a closure.
+
+	  /**
+	   * Does a substring of shorttext exist within longtext such that the substring
+	   * is at least half the length of longtext?
+	   * Closure, but does not reference any external variables.
+	   * @param {string} longtext Longer string.
+	   * @param {string} shorttext Shorter string.
+	   * @param {number} i Start index of quarter length substring within longtext.
+	   * @return {Array.<string>} Five element Array, containing the prefix of
+	   *     longtext, the suffix of longtext, the prefix of shorttext, the suffix
+	   *     of shorttext and the common middle.  Or null if there was no match.
+	   * @private
+	   */
+	  function diff_halfMatchI_(longtext, shorttext, i) {
+	    // Start with a 1/4 length substring at position i as a seed.
+	    var seed = longtext.substring(i, i + Math.floor(longtext.length / 4));
+	    var j = -1;
+	    var best_common = '';
+	    var best_longtext_a, best_longtext_b, best_shorttext_a, best_shorttext_b;
+	    while ((j = shorttext.indexOf(seed, j + 1)) != -1) {
+	      var prefixLength = dmp.diff_commonPrefix(longtext.substring(i),
+	                                               shorttext.substring(j));
+	      var suffixLength = dmp.diff_commonSuffix(longtext.substring(0, i),
+	                                               shorttext.substring(0, j));
+	      if (best_common.length < suffixLength + prefixLength) {
+	        best_common = shorttext.substring(j - suffixLength, j) +
+	            shorttext.substring(j, j + prefixLength);
+	        best_longtext_a = longtext.substring(0, i - suffixLength);
+	        best_longtext_b = longtext.substring(i + prefixLength);
+	        best_shorttext_a = shorttext.substring(0, j - suffixLength);
+	        best_shorttext_b = shorttext.substring(j + prefixLength);
+	      }
+	    }
+	    if (best_common.length * 2 >= longtext.length) {
+	      return [best_longtext_a, best_longtext_b,
+	              best_shorttext_a, best_shorttext_b, best_common];
+	    } else {
+	      return null;
+	    }
+	  }
+
+	  // First check if the second quarter is the seed for a half-match.
+	  var hm1 = diff_halfMatchI_(longtext, shorttext,
+	                             Math.ceil(longtext.length / 4));
+	  // Check again based on the third quarter.
+	  var hm2 = diff_halfMatchI_(longtext, shorttext,
+	                             Math.ceil(longtext.length / 2));
+	  var hm;
+	  if (!hm1 && !hm2) {
+	    return null;
+	  } else if (!hm2) {
+	    hm = hm1;
+	  } else if (!hm1) {
+	    hm = hm2;
+	  } else {
+	    // Both matched.  Select the longest.
+	    hm = hm1[4].length > hm2[4].length ? hm1 : hm2;
+	  }
+
+	  // A half-match was found, sort out the return data.
+	  var text1_a, text1_b, text2_a, text2_b;
+	  if (text1.length > text2.length) {
+	    text1_a = hm[0];
+	    text1_b = hm[1];
+	    text2_a = hm[2];
+	    text2_b = hm[3];
+	  } else {
+	    text2_a = hm[0];
+	    text2_b = hm[1];
+	    text1_a = hm[2];
+	    text1_b = hm[3];
+	  }
+	  var mid_common = hm[4];
+	  return [text1_a, text1_b, text2_a, text2_b, mid_common];
+	};
+
+
+	/**
+	 * Reduce the number of edits by eliminating semantically trivial equalities.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 */
+	diff_match_patch.prototype.diff_cleanupSemantic = function(diffs) {
+	  var changes = false;
+	  var equalities = [];  // Stack of indices where equalities are found.
+	  var equalitiesLength = 0;  // Keeping our own length var is faster in JS.
+	  /** @type {?string} */
+	  var lastequality = null;
+	  // Always equal to diffs[equalities[equalitiesLength - 1]][1]
+	  var pointer = 0;  // Index of current position.
+	  // Number of characters that changed prior to the equality.
+	  var length_insertions1 = 0;
+	  var length_deletions1 = 0;
+	  // Number of characters that changed after the equality.
+	  var length_insertions2 = 0;
+	  var length_deletions2 = 0;
+	  while (pointer < diffs.length) {
+	    if (diffs[pointer][0] == DIFF_EQUAL) {  // Equality found.
+	      equalities[equalitiesLength++] = pointer;
+	      length_insertions1 = length_insertions2;
+	      length_deletions1 = length_deletions2;
+	      length_insertions2 = 0;
+	      length_deletions2 = 0;
+	      lastequality = diffs[pointer][1];
+	    } else {  // An insertion or deletion.
+	      if (diffs[pointer][0] == DIFF_INSERT) {
+	        length_insertions2 += diffs[pointer][1].length;
+	      } else {
+	        length_deletions2 += diffs[pointer][1].length;
+	      }
+	      // Eliminate an equality that is smaller or equal to the edits on both
+	      // sides of it.
+	      if (lastequality && (lastequality.length <=
+	          Math.max(length_insertions1, length_deletions1)) &&
+	          (lastequality.length <= Math.max(length_insertions2,
+	                                           length_deletions2))) {
+	        // Duplicate record.
+	        diffs.splice(equalities[equalitiesLength - 1], 0,
+	                     [DIFF_DELETE, lastequality]);
+	        // Change second copy to insert.
+	        diffs[equalities[equalitiesLength - 1] + 1][0] = DIFF_INSERT;
+	        // Throw away the equality we just deleted.
+	        equalitiesLength--;
+	        // Throw away the previous equality (it needs to be reevaluated).
+	        equalitiesLength--;
+	        pointer = equalitiesLength > 0 ? equalities[equalitiesLength - 1] : -1;
+	        length_insertions1 = 0;  // Reset the counters.
+	        length_deletions1 = 0;
+	        length_insertions2 = 0;
+	        length_deletions2 = 0;
+	        lastequality = null;
+	        changes = true;
+	      }
+	    }
+	    pointer++;
+	  }
+
+	  // Normalize the diff.
+	  if (changes) {
+	    this.diff_cleanupMerge(diffs);
+	  }
+	  this.diff_cleanupSemanticLossless(diffs);
+
+	  // Find any overlaps between deletions and insertions.
+	  // e.g: <del>abcxxx</del><ins>xxxdef</ins>
+	  //   -> <del>abc</del>xxx<ins>def</ins>
+	  // e.g: <del>xxxabc</del><ins>defxxx</ins>
+	  //   -> <ins>def</ins>xxx<del>abc</del>
+	  // Only extract an overlap if it is as big as the edit ahead or behind it.
+	  pointer = 1;
+	  while (pointer < diffs.length) {
+	    if (diffs[pointer - 1][0] == DIFF_DELETE &&
+	        diffs[pointer][0] == DIFF_INSERT) {
+	      var deletion = diffs[pointer - 1][1];
+	      var insertion = diffs[pointer][1];
+	      var overlap_length1 = this.diff_commonOverlap_(deletion, insertion);
+	      var overlap_length2 = this.diff_commonOverlap_(insertion, deletion);
+	      if (overlap_length1 >= overlap_length2) {
+	        if (overlap_length1 >= deletion.length / 2 ||
+	            overlap_length1 >= insertion.length / 2) {
+	          // Overlap found.  Insert an equality and trim the surrounding edits.
+	          diffs.splice(pointer, 0,
+	              [DIFF_EQUAL, insertion.substring(0, overlap_length1)]);
+	          diffs[pointer - 1][1] =
+	              deletion.substring(0, deletion.length - overlap_length1);
+	          diffs[pointer + 1][1] = insertion.substring(overlap_length1);
+	          pointer++;
+	        }
+	      } else {
+	        if (overlap_length2 >= deletion.length / 2 ||
+	            overlap_length2 >= insertion.length / 2) {
+	          // Reverse overlap found.
+	          // Insert an equality and swap and trim the surrounding edits.
+	          diffs.splice(pointer, 0,
+	              [DIFF_EQUAL, deletion.substring(0, overlap_length2)]);
+	          diffs[pointer - 1][0] = DIFF_INSERT;
+	          diffs[pointer - 1][1] =
+	              insertion.substring(0, insertion.length - overlap_length2);
+	          diffs[pointer + 1][0] = DIFF_DELETE;
+	          diffs[pointer + 1][1] =
+	              deletion.substring(overlap_length2);
+	          pointer++;
+	        }
+	      }
+	      pointer++;
+	    }
+	    pointer++;
+	  }
+	};
+
+
+	/**
+	 * Look for single edits surrounded on both sides by equalities
+	 * which can be shifted sideways to align the edit to a word boundary.
+	 * e.g: The c<ins>at c</ins>ame. -> The <ins>cat </ins>came.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 */
+	diff_match_patch.prototype.diff_cleanupSemanticLossless = function(diffs) {
+	  /**
+	   * Given two strings, compute a score representing whether the internal
+	   * boundary falls on logical boundaries.
+	   * Scores range from 6 (best) to 0 (worst).
+	   * Closure, but does not reference any external variables.
+	   * @param {string} one First string.
+	   * @param {string} two Second string.
+	   * @return {number} The score.
+	   * @private
+	   */
+	  function diff_cleanupSemanticScore_(one, two) {
+	    if (!one || !two) {
+	      // Edges are the best.
+	      return 6;
+	    }
+
+	    // Each port of this function behaves slightly differently due to
+	    // subtle differences in each language's definition of things like
+	    // 'whitespace'.  Since this function's purpose is largely cosmetic,
+	    // the choice has been made to use each language's native features
+	    // rather than force total conformity.
+	    var char1 = one.charAt(one.length - 1);
+	    var char2 = two.charAt(0);
+	    var nonAlphaNumeric1 = char1.match(diff_match_patch.nonAlphaNumericRegex_);
+	    var nonAlphaNumeric2 = char2.match(diff_match_patch.nonAlphaNumericRegex_);
+	    var whitespace1 = nonAlphaNumeric1 &&
+	        char1.match(diff_match_patch.whitespaceRegex_);
+	    var whitespace2 = nonAlphaNumeric2 &&
+	        char2.match(diff_match_patch.whitespaceRegex_);
+	    var lineBreak1 = whitespace1 &&
+	        char1.match(diff_match_patch.linebreakRegex_);
+	    var lineBreak2 = whitespace2 &&
+	        char2.match(diff_match_patch.linebreakRegex_);
+	    var blankLine1 = lineBreak1 &&
+	        one.match(diff_match_patch.blanklineEndRegex_);
+	    var blankLine2 = lineBreak2 &&
+	        two.match(diff_match_patch.blanklineStartRegex_);
+
+	    if (blankLine1 || blankLine2) {
+	      // Five points for blank lines.
+	      return 5;
+	    } else if (lineBreak1 || lineBreak2) {
+	      // Four points for line breaks.
+	      return 4;
+	    } else if (nonAlphaNumeric1 && !whitespace1 && whitespace2) {
+	      // Three points for end of sentences.
+	      return 3;
+	    } else if (whitespace1 || whitespace2) {
+	      // Two points for whitespace.
+	      return 2;
+	    } else if (nonAlphaNumeric1 || nonAlphaNumeric2) {
+	      // One point for non-alphanumeric.
+	      return 1;
+	    }
+	    return 0;
+	  }
+
+	  var pointer = 1;
+	  // Intentionally ignore the first and last element (don't need checking).
+	  while (pointer < diffs.length - 1) {
+	    if (diffs[pointer - 1][0] == DIFF_EQUAL &&
+	        diffs[pointer + 1][0] == DIFF_EQUAL) {
+	      // This is a single edit surrounded by equalities.
+	      var equality1 = diffs[pointer - 1][1];
+	      var edit = diffs[pointer][1];
+	      var equality2 = diffs[pointer + 1][1];
+
+	      // First, shift the edit as far left as possible.
+	      var commonOffset = this.diff_commonSuffix(equality1, edit);
+	      if (commonOffset) {
+	        var commonString = edit.substring(edit.length - commonOffset);
+	        equality1 = equality1.substring(0, equality1.length - commonOffset);
+	        edit = commonString + edit.substring(0, edit.length - commonOffset);
+	        equality2 = commonString + equality2;
+	      }
+
+	      // Second, step character by character right, looking for the best fit.
+	      var bestEquality1 = equality1;
+	      var bestEdit = edit;
+	      var bestEquality2 = equality2;
+	      var bestScore = diff_cleanupSemanticScore_(equality1, edit) +
+	          diff_cleanupSemanticScore_(edit, equality2);
+	      while (edit.charAt(0) === equality2.charAt(0)) {
+	        equality1 += edit.charAt(0);
+	        edit = edit.substring(1) + equality2.charAt(0);
+	        equality2 = equality2.substring(1);
+	        var score = diff_cleanupSemanticScore_(equality1, edit) +
+	            diff_cleanupSemanticScore_(edit, equality2);
+	        // The >= encourages trailing rather than leading whitespace on edits.
+	        if (score >= bestScore) {
+	          bestScore = score;
+	          bestEquality1 = equality1;
+	          bestEdit = edit;
+	          bestEquality2 = equality2;
+	        }
+	      }
+
+	      if (diffs[pointer - 1][1] != bestEquality1) {
+	        // We have an improvement, save it back to the diff.
+	        if (bestEquality1) {
+	          diffs[pointer - 1][1] = bestEquality1;
+	        } else {
+	          diffs.splice(pointer - 1, 1);
+	          pointer--;
+	        }
+	        diffs[pointer][1] = bestEdit;
+	        if (bestEquality2) {
+	          diffs[pointer + 1][1] = bestEquality2;
+	        } else {
+	          diffs.splice(pointer + 1, 1);
+	          pointer--;
+	        }
+	      }
+	    }
+	    pointer++;
+	  }
+	};
+
+	// Define some regex patterns for matching boundaries.
+	diff_match_patch.nonAlphaNumericRegex_ = /[^a-zA-Z0-9]/;
+	diff_match_patch.whitespaceRegex_ = /\s/;
+	diff_match_patch.linebreakRegex_ = /[\r\n]/;
+	diff_match_patch.blanklineEndRegex_ = /\n\r?\n$/;
+	diff_match_patch.blanklineStartRegex_ = /^\r?\n\r?\n/;
+
+	/**
+	 * Reduce the number of edits by eliminating operationally trivial equalities.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 */
+	diff_match_patch.prototype.diff_cleanupEfficiency = function(diffs) {
+	  var changes = false;
+	  var equalities = [];  // Stack of indices where equalities are found.
+	  var equalitiesLength = 0;  // Keeping our own length var is faster in JS.
+	  /** @type {?string} */
+	  var lastequality = null;
+	  // Always equal to diffs[equalities[equalitiesLength - 1]][1]
+	  var pointer = 0;  // Index of current position.
+	  // Is there an insertion operation before the last equality.
+	  var pre_ins = false;
+	  // Is there a deletion operation before the last equality.
+	  var pre_del = false;
+	  // Is there an insertion operation after the last equality.
+	  var post_ins = false;
+	  // Is there a deletion operation after the last equality.
+	  var post_del = false;
+	  while (pointer < diffs.length) {
+	    if (diffs[pointer][0] == DIFF_EQUAL) {  // Equality found.
+	      if (diffs[pointer][1].length < this.Diff_EditCost &&
+	          (post_ins || post_del)) {
+	        // Candidate found.
+	        equalities[equalitiesLength++] = pointer;
+	        pre_ins = post_ins;
+	        pre_del = post_del;
+	        lastequality = diffs[pointer][1];
+	      } else {
+	        // Not a candidate, and can never become one.
+	        equalitiesLength = 0;
+	        lastequality = null;
+	      }
+	      post_ins = post_del = false;
+	    } else {  // An insertion or deletion.
+	      if (diffs[pointer][0] == DIFF_DELETE) {
+	        post_del = true;
+	      } else {
+	        post_ins = true;
+	      }
+	      /*
+	       * Five types to be split:
+	       * <ins>A</ins><del>B</del>XY<ins>C</ins><del>D</del>
+	       * <ins>A</ins>X<ins>C</ins><del>D</del>
+	       * <ins>A</ins><del>B</del>X<ins>C</ins>
+	       * <ins>A</del>X<ins>C</ins><del>D</del>
+	       * <ins>A</ins><del>B</del>X<del>C</del>
+	       */
+	      if (lastequality && ((pre_ins && pre_del && post_ins && post_del) ||
+	                           ((lastequality.length < this.Diff_EditCost / 2) &&
+	                            (pre_ins + pre_del + post_ins + post_del) == 3))) {
+	        // Duplicate record.
+	        diffs.splice(equalities[equalitiesLength - 1], 0,
+	                     [DIFF_DELETE, lastequality]);
+	        // Change second copy to insert.
+	        diffs[equalities[equalitiesLength - 1] + 1][0] = DIFF_INSERT;
+	        equalitiesLength--;  // Throw away the equality we just deleted;
+	        lastequality = null;
+	        if (pre_ins && pre_del) {
+	          // No changes made which could affect previous entry, keep going.
+	          post_ins = post_del = true;
+	          equalitiesLength = 0;
+	        } else {
+	          equalitiesLength--;  // Throw away the previous equality.
+	          pointer = equalitiesLength > 0 ?
+	              equalities[equalitiesLength - 1] : -1;
+	          post_ins = post_del = false;
+	        }
+	        changes = true;
+	      }
+	    }
+	    pointer++;
+	  }
+
+	  if (changes) {
+	    this.diff_cleanupMerge(diffs);
+	  }
+	};
+
+
+	/**
+	 * Reorder and merge like edit sections.  Merge equalities.
+	 * Any edit section can move as long as it doesn't cross an equality.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 */
+	diff_match_patch.prototype.diff_cleanupMerge = function(diffs) {
+	  diffs.push([DIFF_EQUAL, '']);  // Add a dummy entry at the end.
+	  var pointer = 0;
+	  var count_delete = 0;
+	  var count_insert = 0;
+	  var text_delete = '';
+	  var text_insert = '';
+	  var commonlength;
+	  while (pointer < diffs.length) {
+	    switch (diffs[pointer][0]) {
+	      case DIFF_INSERT:
+	        count_insert++;
+	        text_insert += diffs[pointer][1];
+	        pointer++;
+	        break;
+	      case DIFF_DELETE:
+	        count_delete++;
+	        text_delete += diffs[pointer][1];
+	        pointer++;
+	        break;
+	      case DIFF_EQUAL:
+	        // Upon reaching an equality, check for prior redundancies.
+	        if (count_delete + count_insert > 1) {
+	          if (count_delete !== 0 && count_insert !== 0) {
+	            // Factor out any common prefixies.
+	            commonlength = this.diff_commonPrefix(text_insert, text_delete);
+	            if (commonlength !== 0) {
+	              if ((pointer - count_delete - count_insert) > 0 &&
+	                  diffs[pointer - count_delete - count_insert - 1][0] ==
+	                  DIFF_EQUAL) {
+	                diffs[pointer - count_delete - count_insert - 1][1] +=
+	                    text_insert.substring(0, commonlength);
+	              } else {
+	                diffs.splice(0, 0, [DIFF_EQUAL,
+	                                    text_insert.substring(0, commonlength)]);
+	                pointer++;
+	              }
+	              text_insert = text_insert.substring(commonlength);
+	              text_delete = text_delete.substring(commonlength);
+	            }
+	            // Factor out any common suffixies.
+	            commonlength = this.diff_commonSuffix(text_insert, text_delete);
+	            if (commonlength !== 0) {
+	              diffs[pointer][1] = text_insert.substring(text_insert.length -
+	                  commonlength) + diffs[pointer][1];
+	              text_insert = text_insert.substring(0, text_insert.length -
+	                  commonlength);
+	              text_delete = text_delete.substring(0, text_delete.length -
+	                  commonlength);
+	            }
+	          }
+	          // Delete the offending records and add the merged ones.
+	          if (count_delete === 0) {
+	            diffs.splice(pointer - count_insert,
+	                count_delete + count_insert, [DIFF_INSERT, text_insert]);
+	          } else if (count_insert === 0) {
+	            diffs.splice(pointer - count_delete,
+	                count_delete + count_insert, [DIFF_DELETE, text_delete]);
+	          } else {
+	            diffs.splice(pointer - count_delete - count_insert,
+	                count_delete + count_insert, [DIFF_DELETE, text_delete],
+	                [DIFF_INSERT, text_insert]);
+	          }
+	          pointer = pointer - count_delete - count_insert +
+	                    (count_delete ? 1 : 0) + (count_insert ? 1 : 0) + 1;
+	        } else if (pointer !== 0 && diffs[pointer - 1][0] == DIFF_EQUAL) {
+	          // Merge this equality with the previous one.
+	          diffs[pointer - 1][1] += diffs[pointer][1];
+	          diffs.splice(pointer, 1);
+	        } else {
+	          pointer++;
+	        }
+	        count_insert = 0;
+	        count_delete = 0;
+	        text_delete = '';
+	        text_insert = '';
+	        break;
+	    }
+	  }
+	  if (diffs[diffs.length - 1][1] === '') {
+	    diffs.pop();  // Remove the dummy entry at the end.
+	  }
+
+	  // Second pass: look for single edits surrounded on both sides by equalities
+	  // which can be shifted sideways to eliminate an equality.
+	  // e.g: A<ins>BA</ins>C -> <ins>AB</ins>AC
+	  var changes = false;
+	  pointer = 1;
+	  // Intentionally ignore the first and last element (don't need checking).
+	  while (pointer < diffs.length - 1) {
+	    if (diffs[pointer - 1][0] == DIFF_EQUAL &&
+	        diffs[pointer + 1][0] == DIFF_EQUAL) {
+	      // This is a single edit surrounded by equalities.
+	      if (diffs[pointer][1].substring(diffs[pointer][1].length -
+	          diffs[pointer - 1][1].length) == diffs[pointer - 1][1]) {
+	        // Shift the edit over the previous equality.
+	        diffs[pointer][1] = diffs[pointer - 1][1] +
+	            diffs[pointer][1].substring(0, diffs[pointer][1].length -
+	                                        diffs[pointer - 1][1].length);
+	        diffs[pointer + 1][1] = diffs[pointer - 1][1] + diffs[pointer + 1][1];
+	        diffs.splice(pointer - 1, 1);
+	        changes = true;
+	      } else if (diffs[pointer][1].substring(0, diffs[pointer + 1][1].length) ==
+	          diffs[pointer + 1][1]) {
+	        // Shift the edit over the next equality.
+	        diffs[pointer - 1][1] += diffs[pointer + 1][1];
+	        diffs[pointer][1] =
+	            diffs[pointer][1].substring(diffs[pointer + 1][1].length) +
+	            diffs[pointer + 1][1];
+	        diffs.splice(pointer + 1, 1);
+	        changes = true;
+	      }
+	    }
+	    pointer++;
+	  }
+	  // If shifts were made, the diff needs reordering and another shift sweep.
+	  if (changes) {
+	    this.diff_cleanupMerge(diffs);
+	  }
+	};
+
+
+	/**
+	 * loc is a location in text1, compute and return the equivalent location in
+	 * text2.
+	 * e.g. 'The cat' vs 'The big cat', 1->1, 5->8
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @param {number} loc Location within text1.
+	 * @return {number} Location within text2.
+	 */
+	diff_match_patch.prototype.diff_xIndex = function(diffs, loc) {
+	  var chars1 = 0;
+	  var chars2 = 0;
+	  var last_chars1 = 0;
+	  var last_chars2 = 0;
+	  var x;
+	  for (x = 0; x < diffs.length; x++) {
+	    if (diffs[x][0] !== DIFF_INSERT) {  // Equality or deletion.
+	      chars1 += diffs[x][1].length;
+	    }
+	    if (diffs[x][0] !== DIFF_DELETE) {  // Equality or insertion.
+	      chars2 += diffs[x][1].length;
+	    }
+	    if (chars1 > loc) {  // Overshot the location.
+	      break;
+	    }
+	    last_chars1 = chars1;
+	    last_chars2 = chars2;
+	  }
+	  // Was the location was deleted?
+	  if (diffs.length != x && diffs[x][0] === DIFF_DELETE) {
+	    return last_chars2;
+	  }
+	  // Add the remaining character length.
+	  return last_chars2 + (loc - last_chars1);
+	};
+
+
+	/**
+	 * Convert a diff array into a pretty HTML report.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @return {string} HTML representation.
+	 */
+	diff_match_patch.prototype.diff_prettyHtml = function(diffs) {
+	  var html = [];
+	  var pattern_amp = /&/g;
+	  var pattern_lt = /</g;
+	  var pattern_gt = />/g;
+	  var pattern_para = /\n/g;
+	  for (var x = 0; x < diffs.length; x++) {
+	    var op = diffs[x][0];    // Operation (insert, delete, equal)
+	    var data = diffs[x][1];  // Text of change.
+	    var text = data.replace(pattern_amp, '&amp;').replace(pattern_lt, '&lt;')
+	        .replace(pattern_gt, '&gt;').replace(pattern_para, '&para;<br>');
+	    switch (op) {
+	      case DIFF_INSERT:
+	        html[x] = '<ins style="background:#e6ffe6;">' + text + '</ins>';
+	        break;
+	      case DIFF_DELETE:
+	        html[x] = '<del style="background:#ffe6e6;">' + text + '</del>';
+	        break;
+	      case DIFF_EQUAL:
+	        html[x] = '<span>' + text + '</span>';
+	        break;
+	    }
+	  }
+	  return html.join('');
+	};
+
+
+	/**
+	 * Compute and return the source text (all equalities and deletions).
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @return {string} Source text.
+	 */
+	diff_match_patch.prototype.diff_text1 = function(diffs) {
+	  var text = [];
+	  for (var x = 0; x < diffs.length; x++) {
+	    if (diffs[x][0] !== DIFF_INSERT) {
+	      text[x] = diffs[x][1];
+	    }
+	  }
+	  return text.join('');
+	};
+
+
+	/**
+	 * Compute and return the destination text (all equalities and insertions).
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @return {string} Destination text.
+	 */
+	diff_match_patch.prototype.diff_text2 = function(diffs) {
+	  var text = [];
+	  for (var x = 0; x < diffs.length; x++) {
+	    if (diffs[x][0] !== DIFF_DELETE) {
+	      text[x] = diffs[x][1];
+	    }
+	  }
+	  return text.join('');
+	};
+
+
+	/**
+	 * Compute the Levenshtein distance; the number of inserted, deleted or
+	 * substituted characters.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @return {number} Number of changes.
+	 */
+	diff_match_patch.prototype.diff_levenshtein = function(diffs) {
+	  var levenshtein = 0;
+	  var insertions = 0;
+	  var deletions = 0;
+	  for (var x = 0; x < diffs.length; x++) {
+	    var op = diffs[x][0];
+	    var data = diffs[x][1];
+	    switch (op) {
+	      case DIFF_INSERT:
+	        insertions += data.length;
+	        break;
+	      case DIFF_DELETE:
+	        deletions += data.length;
+	        break;
+	      case DIFF_EQUAL:
+	        // A deletion and an insertion is one substitution.
+	        levenshtein += Math.max(insertions, deletions);
+	        insertions = 0;
+	        deletions = 0;
+	        break;
+	    }
+	  }
+	  levenshtein += Math.max(insertions, deletions);
+	  return levenshtein;
+	};
+
+
+	/**
+	 * Crush the diff into an encoded string which describes the operations
+	 * required to transform text1 into text2.
+	 * E.g. =3\t-2\t+ing  -> Keep 3 chars, delete 2 chars, insert 'ing'.
+	 * Operations are tab-separated.  Inserted text is escaped using %xx notation.
+	 * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
+	 * @return {string} Delta text.
+	 */
+	diff_match_patch.prototype.diff_toDelta = function(diffs) {
+	  var text = [];
+	  for (var x = 0; x < diffs.length; x++) {
+	    switch (diffs[x][0]) {
+	      case DIFF_INSERT:
+	        text[x] = '+' + encodeURI(diffs[x][1]);
+	        break;
+	      case DIFF_DELETE:
+	        text[x] = '-' + diffs[x][1].length;
+	        break;
+	      case DIFF_EQUAL:
+	        text[x] = '=' + diffs[x][1].length;
+	        break;
+	    }
+	  }
+	  return text.join('\t').replace(/%20/g, ' ');
+	};
+
+
+	/**
+	 * Given the original text1, and an encoded string which describes the
+	 * operations required to transform text1 into text2, compute the full diff.
+	 * @param {string} text1 Source string for the diff.
+	 * @param {string} delta Delta text.
+	 * @return {!Array.<!diff_match_patch.Diff>} Array of diff tuples.
+	 * @throws {!Error} If invalid input.
+	 */
+	diff_match_patch.prototype.diff_fromDelta = function(text1, delta) {
+	  var diffs = [];
+	  var diffsLength = 0;  // Keeping our own length var is faster in JS.
+	  var pointer = 0;  // Cursor in text1
+	  var tokens = delta.split(/\t/g);
+	  for (var x = 0; x < tokens.length; x++) {
+	    // Each token begins with a one character parameter which specifies the
+	    // operation of this token (delete, insert, equality).
+	    var param = tokens[x].substring(1);
+	    switch (tokens[x].charAt(0)) {
+	      case '+':
+	        try {
+	          diffs[diffsLength++] = [DIFF_INSERT, decodeURI(param)];
+	        } catch (ex) {
+	          // Malformed URI sequence.
+	          throw new Error('Illegal escape in diff_fromDelta: ' + param);
+	        }
+	        break;
+	      case '-':
+	        // Fall through.
+	      case '=':
+	        var n = parseInt(param, 10);
+	        if (isNaN(n) || n < 0) {
+	          throw new Error('Invalid number in diff_fromDelta: ' + param);
+	        }
+	        var text = text1.substring(pointer, pointer += n);
+	        if (tokens[x].charAt(0) == '=') {
+	          diffs[diffsLength++] = [DIFF_EQUAL, text];
+	        } else {
+	          diffs[diffsLength++] = [DIFF_DELETE, text];
+	        }
+	        break;
+	      default:
+	        // Blank tokens are ok (from a trailing \t).
+	        // Anything else is an error.
+	        if (tokens[x]) {
+	          throw new Error('Invalid diff operation in diff_fromDelta: ' +
+	                          tokens[x]);
+	        }
+	    }
+	  }
+	  if (pointer != text1.length) {
+	    throw new Error('Delta length (' + pointer +
+	        ') does not equal source text length (' + text1.length + ').');
+	  }
+	  return diffs;
+	};
+
+
+	//  MATCH FUNCTIONS
+
+
+	/**
+	 * Locate the best instance of 'pattern' in 'text' near 'loc'.
+	 * @param {string} text The text to search.
+	 * @param {string} pattern The pattern to search for.
+	 * @param {number} loc The location to search around.
+	 * @return {number} Best match index or -1.
+	 */
+	diff_match_patch.prototype.match_main = function(text, pattern, loc) {
+	  // Check for null inputs.
+	  if (text == null || pattern == null || loc == null) {
+	    throw new Error('Null input. (match_main)');
+	  }
+
+	  loc = Math.max(0, Math.min(loc, text.length));
+	  if (text == pattern) {
+	    // Shortcut (potentially not guaranteed by the algorithm)
+	    return 0;
+	  } else if (!text.length) {
+	    // Nothing to match.
+	    return -1;
+	  } else if (text.substring(loc, loc + pattern.length) == pattern) {
+	    // Perfect match at the perfect spot!  (Includes case of null pattern)
+	    return loc;
+	  } else {
+	    // Do a fuzzy compare.
+	    return this.match_bitap_(text, pattern, loc);
+	  }
+	};
+
+
+	/**
+	 * Locate the best instance of 'pattern' in 'text' near 'loc' using the
+	 * Bitap algorithm.
+	 * @param {string} text The text to search.
+	 * @param {string} pattern The pattern to search for.
+	 * @param {number} loc The location to search around.
+	 * @return {number} Best match index or -1.
+	 * @private
+	 */
+	diff_match_patch.prototype.match_bitap_ = function(text, pattern, loc) {
+	  if (pattern.length > this.Match_MaxBits) {
+	    throw new Error('Pattern too long for this browser.');
+	  }
+
+	  // Initialise the alphabet.
+	  var s = this.match_alphabet_(pattern);
+
+	  var dmp = this;  // 'this' becomes 'window' in a closure.
+
+	  /**
+	   * Compute and return the score for a match with e errors and x location.
+	   * Accesses loc and pattern through being a closure.
+	   * @param {number} e Number of errors in match.
+	   * @param {number} x Location of match.
+	   * @return {number} Overall score for match (0.0 = good, 1.0 = bad).
+	   * @private
+	   */
+	  function match_bitapScore_(e, x) {
+	    var accuracy = e / pattern.length;
+	    var proximity = Math.abs(loc - x);
+	    if (!dmp.Match_Distance) {
+	      // Dodge divide by zero error.
+	      return proximity ? 1.0 : accuracy;
+	    }
+	    return accuracy + (proximity / dmp.Match_Distance);
+	  }
+
+	  // Highest score beyond which we give up.
+	  var score_threshold = this.Match_Threshold;
+	  // Is there a nearby exact match? (speedup)
+	  var best_loc = text.indexOf(pattern, loc);
+	  if (best_loc != -1) {
+	    score_threshold = Math.min(match_bitapScore_(0, best_loc), score_threshold);
+	    // What about in the other direction? (speedup)
+	    best_loc = text.lastIndexOf(pattern, loc + pattern.length);
+	    if (best_loc != -1) {
+	      score_threshold =
+	          Math.min(match_bitapScore_(0, best_loc), score_threshold);
+	    }
+	  }
+
+	  // Initialise the bit arrays.
+	  var matchmask = 1 << (pattern.length - 1);
+	  best_loc = -1;
+
+	  var bin_min, bin_mid;
+	  var bin_max = pattern.length + text.length;
+	  var last_rd;
+	  for (var d = 0; d < pattern.length; d++) {
+	    // Scan for the best match; each iteration allows for one more error.
+	    // Run a binary search to determine how far from 'loc' we can stray at this
+	    // error level.
+	    bin_min = 0;
+	    bin_mid = bin_max;
+	    while (bin_min < bin_mid) {
+	      if (match_bitapScore_(d, loc + bin_mid) <= score_threshold) {
+	        bin_min = bin_mid;
+	      } else {
+	        bin_max = bin_mid;
+	      }
+	      bin_mid = Math.floor((bin_max - bin_min) / 2 + bin_min);
+	    }
+	    // Use the result from this iteration as the maximum for the next.
+	    bin_max = bin_mid;
+	    var start = Math.max(1, loc - bin_mid + 1);
+	    var finish = Math.min(loc + bin_mid, text.length) + pattern.length;
+
+	    var rd = Array(finish + 2);
+	    rd[finish + 1] = (1 << d) - 1;
+	    for (var j = finish; j >= start; j--) {
+	      // The alphabet (s) is a sparse hash, so the following line generates
+	      // warnings.
+	      var charMatch = s[text.charAt(j - 1)];
+	      if (d === 0) {  // First pass: exact match.
+	        rd[j] = ((rd[j + 1] << 1) | 1) & charMatch;
+	      } else {  // Subsequent passes: fuzzy match.
+	        rd[j] = (((rd[j + 1] << 1) | 1) & charMatch) |
+	                (((last_rd[j + 1] | last_rd[j]) << 1) | 1) |
+	                last_rd[j + 1];
+	      }
+	      if (rd[j] & matchmask) {
+	        var score = match_bitapScore_(d, j - 1);
+	        // This match will almost certainly be better than any existing match.
+	        // But check anyway.
+	        if (score <= score_threshold) {
+	          // Told you so.
+	          score_threshold = score;
+	          best_loc = j - 1;
+	          if (best_loc > loc) {
+	            // When passing loc, don't exceed our current distance from loc.
+	            start = Math.max(1, 2 * loc - best_loc);
+	          } else {
+	            // Already passed loc, downhill from here on in.
+	            break;
+	          }
+	        }
+	      }
+	    }
+	    // No hope for a (better) match at greater error levels.
+	    if (match_bitapScore_(d + 1, loc) > score_threshold) {
+	      break;
+	    }
+	    last_rd = rd;
+	  }
+	  return best_loc;
+	};
+
+
+	/**
+	 * Initialise the alphabet for the Bitap algorithm.
+	 * @param {string} pattern The text to encode.
+	 * @return {!Object} Hash of character locations.
+	 * @private
+	 */
+	diff_match_patch.prototype.match_alphabet_ = function(pattern) {
+	  var s = {};
+	  for (var i = 0; i < pattern.length; i++) {
+	    s[pattern.charAt(i)] = 0;
+	  }
+	  for (var i = 0; i < pattern.length; i++) {
+	    s[pattern.charAt(i)] |= 1 << (pattern.length - i - 1);
+	  }
+	  return s;
+	};
+
+
+	//  PATCH FUNCTIONS
+
+
+	/**
+	 * Increase the context until it is unique,
+	 * but don't let the pattern expand beyond Match_MaxBits.
+	 * @param {!diff_match_patch.patch_obj} patch The patch to grow.
+	 * @param {string} text Source text.
+	 * @private
+	 */
+	diff_match_patch.prototype.patch_addContext_ = function(patch, text) {
+	  if (text.length == 0) {
+	    return;
+	  }
+	  var pattern = text.substring(patch.start2, patch.start2 + patch.length1);
+	  var padding = 0;
+
+	  // Look for the first and last matches of pattern in text.  If two different
+	  // matches are found, increase the pattern length.
+	  while (text.indexOf(pattern) != text.lastIndexOf(pattern) &&
+	         pattern.length < this.Match_MaxBits - this.Patch_Margin -
+	         this.Patch_Margin) {
+	    padding += this.Patch_Margin;
+	    pattern = text.substring(patch.start2 - padding,
+	                             patch.start2 + patch.length1 + padding);
+	  }
+	  // Add one chunk for good luck.
+	  padding += this.Patch_Margin;
+
+	  // Add the prefix.
+	  var prefix = text.substring(patch.start2 - padding, patch.start2);
+	  if (prefix) {
+	    patch.diffs.unshift([DIFF_EQUAL, prefix]);
+	  }
+	  // Add the suffix.
+	  var suffix = text.substring(patch.start2 + patch.length1,
+	                              patch.start2 + patch.length1 + padding);
+	  if (suffix) {
+	    patch.diffs.push([DIFF_EQUAL, suffix]);
+	  }
+
+	  // Roll back the start points.
+	  patch.start1 -= prefix.length;
+	  patch.start2 -= prefix.length;
+	  // Extend the lengths.
+	  patch.length1 += prefix.length + suffix.length;
+	  patch.length2 += prefix.length + suffix.length;
+	};
+
+
+	/**
+	 * Compute a list of patches to turn text1 into text2.
+	 * Use diffs if provided, otherwise compute it ourselves.
+	 * There are four ways to call this function, depending on what data is
+	 * available to the caller:
+	 * Method 1:
+	 * a = text1, b = text2
+	 * Method 2:
+	 * a = diffs
+	 * Method 3 (optimal):
+	 * a = text1, b = diffs
+	 * Method 4 (deprecated, use method 3):
+	 * a = text1, b = text2, c = diffs
+	 *
+	 * @param {string|!Array.<!diff_match_patch.Diff>} a text1 (methods 1,3,4) or
+	 * Array of diff tuples for text1 to text2 (method 2).
+	 * @param {string|!Array.<!diff_match_patch.Diff>} opt_b text2 (methods 1,4) or
+	 * Array of diff tuples for text1 to text2 (method 3) or undefined (method 2).
+	 * @param {string|!Array.<!diff_match_patch.Diff>} opt_c Array of diff tuples
+	 * for text1 to text2 (method 4) or undefined (methods 1,2,3).
+	 * @return {!Array.<!diff_match_patch.patch_obj>} Array of Patch objects.
+	 */
+	diff_match_patch.prototype.patch_make = function(a, opt_b, opt_c) {
+	  var text1, diffs;
+	  if (typeof a == 'string' && typeof opt_b == 'string' &&
+	      typeof opt_c == 'undefined') {
+	    // Method 1: text1, text2
+	    // Compute diffs from text1 and text2.
+	    text1 = /** @type {string} */(a);
+	    diffs = this.diff_main(text1, /** @type {string} */(opt_b), true);
+	    if (diffs.length > 2) {
+	      this.diff_cleanupSemantic(diffs);
+	      this.diff_cleanupEfficiency(diffs);
+	    }
+	  } else if (a && typeof a == 'object' && typeof opt_b == 'undefined' &&
+	      typeof opt_c == 'undefined') {
+	    // Method 2: diffs
+	    // Compute text1 from diffs.
+	    diffs = /** @type {!Array.<!diff_match_patch.Diff>} */(a);
+	    text1 = this.diff_text1(diffs);
+	  } else if (typeof a == 'string' && opt_b && typeof opt_b == 'object' &&
+	      typeof opt_c == 'undefined') {
+	    // Method 3: text1, diffs
+	    text1 = /** @type {string} */(a);
+	    diffs = /** @type {!Array.<!diff_match_patch.Diff>} */(opt_b);
+	  } else if (typeof a == 'string' && typeof opt_b == 'string' &&
+	      opt_c && typeof opt_c == 'object') {
+	    // Method 4: text1, text2, diffs
+	    // text2 is not used.
+	    text1 = /** @type {string} */(a);
+	    diffs = /** @type {!Array.<!diff_match_patch.Diff>} */(opt_c);
+	  } else {
+	    throw new Error('Unknown call format to patch_make.');
+	  }
+
+	  if (diffs.length === 0) {
+	    return [];  // Get rid of the null case.
+	  }
+	  var patches = [];
+	  var patch = new diff_match_patch.patch_obj();
+	  var patchDiffLength = 0;  // Keeping our own length var is faster in JS.
+	  var char_count1 = 0;  // Number of characters into the text1 string.
+	  var char_count2 = 0;  // Number of characters into the text2 string.
+	  // Start with text1 (prepatch_text) and apply the diffs until we arrive at
+	  // text2 (postpatch_text).  We recreate the patches one by one to determine
+	  // context info.
+	  var prepatch_text = text1;
+	  var postpatch_text = text1;
+	  for (var x = 0; x < diffs.length; x++) {
+	    var diff_type = diffs[x][0];
+	    var diff_text = diffs[x][1];
+
+	    if (!patchDiffLength && diff_type !== DIFF_EQUAL) {
+	      // A new patch starts here.
+	      patch.start1 = char_count1;
+	      patch.start2 = char_count2;
+	    }
+
+	    switch (diff_type) {
+	      case DIFF_INSERT:
+	        patch.diffs[patchDiffLength++] = diffs[x];
+	        patch.length2 += diff_text.length;
+	        postpatch_text = postpatch_text.substring(0, char_count2) + diff_text +
+	                         postpatch_text.substring(char_count2);
+	        break;
+	      case DIFF_DELETE:
+	        patch.length1 += diff_text.length;
+	        patch.diffs[patchDiffLength++] = diffs[x];
+	        postpatch_text = postpatch_text.substring(0, char_count2) +
+	                         postpatch_text.substring(char_count2 +
+	                             diff_text.length);
+	        break;
+	      case DIFF_EQUAL:
+	        if (diff_text.length <= 2 * this.Patch_Margin &&
+	            patchDiffLength && diffs.length != x + 1) {
+	          // Small equality inside a patch.
+	          patch.diffs[patchDiffLength++] = diffs[x];
+	          patch.length1 += diff_text.length;
+	          patch.length2 += diff_text.length;
+	        } else if (diff_text.length >= 2 * this.Patch_Margin) {
+	          // Time for a new patch.
+	          if (patchDiffLength) {
+	            this.patch_addContext_(patch, prepatch_text);
+	            patches.push(patch);
+	            patch = new diff_match_patch.patch_obj();
+	            patchDiffLength = 0;
+	            // Unlike Unidiff, our patch lists have a rolling context.
+	            // http://code.google.com/p/google-diff-match-patch/wiki/Unidiff
+	            // Update prepatch text & pos to reflect the application of the
+	            // just completed patch.
+	            prepatch_text = postpatch_text;
+	            char_count1 = char_count2;
+	          }
+	        }
+	        break;
+	    }
+
+	    // Update the current character count.
+	    if (diff_type !== DIFF_INSERT) {
+	      char_count1 += diff_text.length;
+	    }
+	    if (diff_type !== DIFF_DELETE) {
+	      char_count2 += diff_text.length;
+	    }
+	  }
+	  // Pick up the leftover patch if not empty.
+	  if (patchDiffLength) {
+	    this.patch_addContext_(patch, prepatch_text);
+	    patches.push(patch);
+	  }
+
+	  return patches;
+	};
+
+
+	/**
+	 * Given an array of patches, return another array that is identical.
+	 * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+	 * @return {!Array.<!diff_match_patch.patch_obj>} Array of Patch objects.
+	 */
+	diff_match_patch.prototype.patch_deepCopy = function(patches) {
+	  // Making deep copies is hard in JavaScript.
+	  var patchesCopy = [];
+	  for (var x = 0; x < patches.length; x++) {
+	    var patch = patches[x];
+	    var patchCopy = new diff_match_patch.patch_obj();
+	    patchCopy.diffs = [];
+	    for (var y = 0; y < patch.diffs.length; y++) {
+	      patchCopy.diffs[y] = patch.diffs[y].slice();
+	    }
+	    patchCopy.start1 = patch.start1;
+	    patchCopy.start2 = patch.start2;
+	    patchCopy.length1 = patch.length1;
+	    patchCopy.length2 = patch.length2;
+	    patchesCopy[x] = patchCopy;
+	  }
+	  return patchesCopy;
+	};
+
+
+	/**
+	 * Merge a set of patches onto the text.  Return a patched text, as well
+	 * as a list of true/false values indicating which patches were applied.
+	 * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+	 * @param {string} text Old text.
+	 * @return {!Array.<string|!Array.<boolean>>} Two element Array, containing the
+	 *      new text and an array of boolean values.
+	 */
+	diff_match_patch.prototype.patch_apply = function(patches, text) {
+	  if (patches.length == 0) {
+	    return [text, []];
+	  }
+
+	  // Deep copy the patches so that no changes are made to originals.
+	  patches = this.patch_deepCopy(patches);
+
+	  var nullPadding = this.patch_addPadding(patches);
+	  text = nullPadding + text + nullPadding;
+
+	  this.patch_splitMax(patches);
+	  // delta keeps track of the offset between the expected and actual location
+	  // of the previous patch.  If there are patches expected at positions 10 and
+	  // 20, but the first patch was found at 12, delta is 2 and the second patch
+	  // has an effective expected position of 22.
+	  var delta = 0;
+	  var results = [];
+	  for (var x = 0; x < patches.length; x++) {
+	    var expected_loc = patches[x].start2 + delta;
+	    var text1 = this.diff_text1(patches[x].diffs);
+	    var start_loc;
+	    var end_loc = -1;
+	    if (text1.length > this.Match_MaxBits) {
+	      // patch_splitMax will only provide an oversized pattern in the case of
+	      // a monster delete.
+	      start_loc = this.match_main(text, text1.substring(0, this.Match_MaxBits),
+	                                  expected_loc);
+	      if (start_loc != -1) {
+	        end_loc = this.match_main(text,
+	            text1.substring(text1.length - this.Match_MaxBits),
+	            expected_loc + text1.length - this.Match_MaxBits);
+	        if (end_loc == -1 || start_loc >= end_loc) {
+	          // Can't find valid trailing context.  Drop this patch.
+	          start_loc = -1;
+	        }
+	      }
+	    } else {
+	      start_loc = this.match_main(text, text1, expected_loc);
+	    }
+	    if (start_loc == -1) {
+	      // No match found.  :(
+	      results[x] = false;
+	      // Subtract the delta for this failed patch from subsequent patches.
+	      delta -= patches[x].length2 - patches[x].length1;
+	    } else {
+	      // Found a match.  :)
+	      results[x] = true;
+	      delta = start_loc - expected_loc;
+	      var text2;
+	      if (end_loc == -1) {
+	        text2 = text.substring(start_loc, start_loc + text1.length);
+	      } else {
+	        text2 = text.substring(start_loc, end_loc + this.Match_MaxBits);
+	      }
+	      if (text1 == text2) {
+	        // Perfect match, just shove the replacement text in.
+	        text = text.substring(0, start_loc) +
+	               this.diff_text2(patches[x].diffs) +
+	               text.substring(start_loc + text1.length);
+	      } else {
+	        // Imperfect match.  Run a diff to get a framework of equivalent
+	        // indices.
+	        var diffs = this.diff_main(text1, text2, false);
+	        if (text1.length > this.Match_MaxBits &&
+	            this.diff_levenshtein(diffs) / text1.length >
+	            this.Patch_DeleteThreshold) {
+	          // The end points match, but the content is unacceptably bad.
+	          results[x] = false;
+	        } else {
+	          this.diff_cleanupSemanticLossless(diffs);
+	          var index1 = 0;
+	          var index2;
+	          for (var y = 0; y < patches[x].diffs.length; y++) {
+	            var mod = patches[x].diffs[y];
+	            if (mod[0] !== DIFF_EQUAL) {
+	              index2 = this.diff_xIndex(diffs, index1);
+	            }
+	            if (mod[0] === DIFF_INSERT) {  // Insertion
+	              text = text.substring(0, start_loc + index2) + mod[1] +
+	                     text.substring(start_loc + index2);
+	            } else if (mod[0] === DIFF_DELETE) {  // Deletion
+	              text = text.substring(0, start_loc + index2) +
+	                     text.substring(start_loc + this.diff_xIndex(diffs,
+	                         index1 + mod[1].length));
+	            }
+	            if (mod[0] !== DIFF_DELETE) {
+	              index1 += mod[1].length;
+	            }
+	          }
+	        }
+	      }
+	    }
+	  }
+	  // Strip the padding off.
+	  text = text.substring(nullPadding.length, text.length - nullPadding.length);
+	  return [text, results];
+	};
+
+
+	/**
+	 * Add some padding on text start and end so that edges can match something.
+	 * Intended to be called only from within patch_apply.
+	 * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+	 * @return {string} The padding string added to each side.
+	 */
+	diff_match_patch.prototype.patch_addPadding = function(patches) {
+	  var paddingLength = this.Patch_Margin;
+	  var nullPadding = '';
+	  for (var x = 1; x <= paddingLength; x++) {
+	    nullPadding += String.fromCharCode(x);
+	  }
+
+	  // Bump all the patches forward.
+	  for (var x = 0; x < patches.length; x++) {
+	    patches[x].start1 += paddingLength;
+	    patches[x].start2 += paddingLength;
+	  }
+
+	  // Add some padding on start of first diff.
+	  var patch = patches[0];
+	  var diffs = patch.diffs;
+	  if (diffs.length == 0 || diffs[0][0] != DIFF_EQUAL) {
+	    // Add nullPadding equality.
+	    diffs.unshift([DIFF_EQUAL, nullPadding]);
+	    patch.start1 -= paddingLength;  // Should be 0.
+	    patch.start2 -= paddingLength;  // Should be 0.
+	    patch.length1 += paddingLength;
+	    patch.length2 += paddingLength;
+	  } else if (paddingLength > diffs[0][1].length) {
+	    // Grow first equality.
+	    var extraLength = paddingLength - diffs[0][1].length;
+	    diffs[0][1] = nullPadding.substring(diffs[0][1].length) + diffs[0][1];
+	    patch.start1 -= extraLength;
+	    patch.start2 -= extraLength;
+	    patch.length1 += extraLength;
+	    patch.length2 += extraLength;
+	  }
+
+	  // Add some padding on end of last diff.
+	  patch = patches[patches.length - 1];
+	  diffs = patch.diffs;
+	  if (diffs.length == 0 || diffs[diffs.length - 1][0] != DIFF_EQUAL) {
+	    // Add nullPadding equality.
+	    diffs.push([DIFF_EQUAL, nullPadding]);
+	    patch.length1 += paddingLength;
+	    patch.length2 += paddingLength;
+	  } else if (paddingLength > diffs[diffs.length - 1][1].length) {
+	    // Grow last equality.
+	    var extraLength = paddingLength - diffs[diffs.length - 1][1].length;
+	    diffs[diffs.length - 1][1] += nullPadding.substring(0, extraLength);
+	    patch.length1 += extraLength;
+	    patch.length2 += extraLength;
+	  }
+
+	  return nullPadding;
+	};
+
+
+	/**
+	 * Look through the patches and break up any which are longer than the maximum
+	 * limit of the match algorithm.
+	 * Intended to be called only from within patch_apply.
+	 * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+	 */
+	diff_match_patch.prototype.patch_splitMax = function(patches) {
+	  var patch_size = this.Match_MaxBits;
+	  for (var x = 0; x < patches.length; x++) {
+	    if (patches[x].length1 <= patch_size) {
+	      continue;
+	    }
+	    var bigpatch = patches[x];
+	    // Remove the big old patch.
+	    patches.splice(x--, 1);
+	    var start1 = bigpatch.start1;
+	    var start2 = bigpatch.start2;
+	    var precontext = '';
+	    while (bigpatch.diffs.length !== 0) {
+	      // Create one of several smaller patches.
+	      var patch = new diff_match_patch.patch_obj();
+	      var empty = true;
+	      patch.start1 = start1 - precontext.length;
+	      patch.start2 = start2 - precontext.length;
+	      if (precontext !== '') {
+	        patch.length1 = patch.length2 = precontext.length;
+	        patch.diffs.push([DIFF_EQUAL, precontext]);
+	      }
+	      while (bigpatch.diffs.length !== 0 &&
+	             patch.length1 < patch_size - this.Patch_Margin) {
+	        var diff_type = bigpatch.diffs[0][0];
+	        var diff_text = bigpatch.diffs[0][1];
+	        if (diff_type === DIFF_INSERT) {
+	          // Insertions are harmless.
+	          patch.length2 += diff_text.length;
+	          start2 += diff_text.length;
+	          patch.diffs.push(bigpatch.diffs.shift());
+	          empty = false;
+	        } else if (diff_type === DIFF_DELETE && patch.diffs.length == 1 &&
+	                   patch.diffs[0][0] == DIFF_EQUAL &&
+	                   diff_text.length > 2 * patch_size) {
+	          // This is a large deletion.  Let it pass in one chunk.
+	          patch.length1 += diff_text.length;
+	          start1 += diff_text.length;
+	          empty = false;
+	          patch.diffs.push([diff_type, diff_text]);
+	          bigpatch.diffs.shift();
+	        } else {
+	          // Deletion or equality.  Only take as much as we can stomach.
+	          diff_text = diff_text.substring(0,
+	              patch_size - patch.length1 - this.Patch_Margin);
+	          patch.length1 += diff_text.length;
+	          start1 += diff_text.length;
+	          if (diff_type === DIFF_EQUAL) {
+	            patch.length2 += diff_text.length;
+	            start2 += diff_text.length;
+	          } else {
+	            empty = false;
+	          }
+	          patch.diffs.push([diff_type, diff_text]);
+	          if (diff_text == bigpatch.diffs[0][1]) {
+	            bigpatch.diffs.shift();
+	          } else {
+	            bigpatch.diffs[0][1] =
+	                bigpatch.diffs[0][1].substring(diff_text.length);
+	          }
+	        }
+	      }
+	      // Compute the head context for the next patch.
+	      precontext = this.diff_text2(patch.diffs);
+	      precontext =
+	          precontext.substring(precontext.length - this.Patch_Margin);
+	      // Append the end context for this patch.
+	      var postcontext = this.diff_text1(bigpatch.diffs)
+	                            .substring(0, this.Patch_Margin);
+	      if (postcontext !== '') {
+	        patch.length1 += postcontext.length;
+	        patch.length2 += postcontext.length;
+	        if (patch.diffs.length !== 0 &&
+	            patch.diffs[patch.diffs.length - 1][0] === DIFF_EQUAL) {
+	          patch.diffs[patch.diffs.length - 1][1] += postcontext;
+	        } else {
+	          patch.diffs.push([DIFF_EQUAL, postcontext]);
+	        }
+	      }
+	      if (!empty) {
+	        patches.splice(++x, 0, patch);
+	      }
+	    }
+	  }
+	};
+
+
+	/**
+	 * Take a list of patches and return a textual representation.
+	 * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
+	 * @return {string} Text representation of patches.
+	 */
+	diff_match_patch.prototype.patch_toText = function(patches) {
+	  var text = [];
+	  for (var x = 0; x < patches.length; x++) {
+	    text[x] = patches[x];
+	  }
+	  return text.join('');
+	};
+
+
+	/**
+	 * Parse a textual representation of patches and return a list of Patch objects.
+	 * @param {string} textline Text representation of patches.
+	 * @return {!Array.<!diff_match_patch.patch_obj>} Array of Patch objects.
+	 * @throws {!Error} If invalid input.
+	 */
+	diff_match_patch.prototype.patch_fromText = function(textline) {
+	  var patches = [];
+	  if (!textline) {
+	    return patches;
+	  }
+	  var text = textline.split('\n');
+	  var textPointer = 0;
+	  var patchHeader = /^@@ -(\d+),?(\d*) \+(\d+),?(\d*) @@$/;
+	  while (textPointer < text.length) {
+	    var m = text[textPointer].match(patchHeader);
+	    if (!m) {
+	      throw new Error('Invalid patch string: ' + text[textPointer]);
+	    }
+	    var patch = new diff_match_patch.patch_obj();
+	    patches.push(patch);
+	    patch.start1 = parseInt(m[1], 10);
+	    if (m[2] === '') {
+	      patch.start1--;
+	      patch.length1 = 1;
+	    } else if (m[2] == '0') {
+	      patch.length1 = 0;
+	    } else {
+	      patch.start1--;
+	      patch.length1 = parseInt(m[2], 10);
+	    }
+
+	    patch.start2 = parseInt(m[3], 10);
+	    if (m[4] === '') {
+	      patch.start2--;
+	      patch.length2 = 1;
+	    } else if (m[4] == '0') {
+	      patch.length2 = 0;
+	    } else {
+	      patch.start2--;
+	      patch.length2 = parseInt(m[4], 10);
+	    }
+	    textPointer++;
+
+	    while (textPointer < text.length) {
+	      var sign = text[textPointer].charAt(0);
+	      try {
+	        var line = decodeURI(text[textPointer].substring(1));
+	      } catch (ex) {
+	        // Malformed URI sequence.
+	        throw new Error('Illegal escape in patch_fromText: ' + line);
+	      }
+	      if (sign == '-') {
+	        // Deletion.
+	        patch.diffs.push([DIFF_DELETE, line]);
+	      } else if (sign == '+') {
+	        // Insertion.
+	        patch.diffs.push([DIFF_INSERT, line]);
+	      } else if (sign == ' ') {
+	        // Minor equality.
+	        patch.diffs.push([DIFF_EQUAL, line]);
+	      } else if (sign == '@') {
+	        // Start of next patch.
+	        break;
+	      } else if (sign === '') {
+	        // Blank line?  Whatever.
+	      } else {
+	        // WTF?
+	        throw new Error('Invalid patch mode "' + sign + '" in: ' + line);
+	      }
+	      textPointer++;
+	    }
+	  }
+	  return patches;
+	};
+
+
+	/**
+	 * Class representing one patch operation.
+	 * @constructor
+	 */
+	diff_match_patch.patch_obj = function() {
+	  /** @type {!Array.<!diff_match_patch.Diff>} */
+	  this.diffs = [];
+	  /** @type {?number} */
+	  this.start1 = null;
+	  /** @type {?number} */
+	  this.start2 = null;
+	  /** @type {number} */
+	  this.length1 = 0;
+	  /** @type {number} */
+	  this.length2 = 0;
+	};
+
+
+	/**
+	 * Emmulate GNU diff's format.
+	 * Header: @@ -382,8 +481,9 @@
+	 * Indicies are printed as 1-based, not 0-based.
+	 * @return {string} The GNU diff string.
+	 */
+	diff_match_patch.patch_obj.prototype.toString = function() {
+	  var coords1, coords2;
+	  if (this.length1 === 0) {
+	    coords1 = this.start1 + ',0';
+	  } else if (this.length1 == 1) {
+	    coords1 = this.start1 + 1;
+	  } else {
+	    coords1 = (this.start1 + 1) + ',' + this.length1;
+	  }
+	  if (this.length2 === 0) {
+	    coords2 = this.start2 + ',0';
+	  } else if (this.length2 == 1) {
+	    coords2 = this.start2 + 1;
+	  } else {
+	    coords2 = (this.start2 + 1) + ',' + this.length2;
+	  }
+	  var text = ['@@ -' + coords1 + ' +' + coords2 + ' @@\n'];
+	  var op;
+	  // Escape the body of the patch with %xx notation.
+	  for (var x = 0; x < this.diffs.length; x++) {
+	    switch (this.diffs[x][0]) {
+	      case DIFF_INSERT:
+	        op = '+';
+	        break;
+	      case DIFF_DELETE:
+	        op = '-';
+	        break;
+	      case DIFF_EQUAL:
+	        op = ' ';
+	        break;
+	    }
+	    text[x + 1] = op + encodeURI(this.diffs[x][1]) + '\n';
+	  }
+	  return text.join('').replace(/%20/g, ' ');
+	};
+
+	module.exports = diff_match_patch;
+
+	// Export these global variables so that they survive Google's JS compiler.
+	// In a browser, 'this' will be 'window'.
+	// Users of node.js should 'require' the uncompressed version since Google's
+	// JS compiler may break the following exports for non-browser environments.
+	//this['diff_match_patch'] = diff_match_patch;
+	//this['DIFF_DELETE'] = DIFF_DELETE;
+	//this['DIFF_INSERT'] = DIFF_INSERT;
+	//this['DIFF_EQUAL'] = DIFF_EQUAL;
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements wysiwyg marker helper for additional information
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var domUtils = __webpack_require__(17);
+
+	var FIND_ZWB_RX = /\u200B/g;
+
+	/**
+	 * WysiwygMarkerHelper
+	 * @exports WysiwygMarkerHelper
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {SquireExt} sqe squire instance
+	 */
+	function WysiwygMarkerHelper(sqe) {
+	    this.sqe = sqe;
+	}
+
+	/**
+	 * getTextContent
+	 * Get text content of wysiwyg
+	 * @returns {string}
+	 */
+	WysiwygMarkerHelper.prototype.getTextContent = function() {
+	    return this.sqe.get$Body()[0].textContent.replace(FIND_ZWB_RX, '');
+	};
+
+	/**
+	 * updateMarkerWithExtraInfo
+	 * Update marker with extra info of CodeMirror
+	 * @param {object} marker marker
+	 * @returns {object} marker
+	 */
+	WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
+	    var foundNode, markerRange, info;
+
+	    foundNode = this._findOffsetNode([marker.start, marker.end]);
+
+	    markerRange = this.sqe.getSelection().cloneRange();
+	    markerRange.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+	    markerRange.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+	    info = this._getExtraInfoOfRange(markerRange);
+
+	    marker.text = info.text;
+	    marker.top = info.top;
+	    marker.left = info.left;
+	    marker.height = info.height;
+
+	    return marker;
+	};
+
+	/**
+	 * _getExtraInfoOfRange
+	 * Get extra info of range
+	 * @param {Range} range range
+	 * @returns {object} extra info
+	 */
+	WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
+	    var text, top, left, rect, height;
+
+	    text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
+
+	    range.setStart(range.endContainer, range.endOffset);
+	    range.collapse(true);
+
+	    rect = range.getClientRects()[0];
+
+	    if (rect) {
+	        top = this.sqe.scrollTop() + rect.top;
+	        left = rect.left;
+	        height = rect.height;
+	    } else {
+	        height = top = left = 0;
+	    }
+
+	    return {
+	        text: text,
+	        top: top,
+	        left: left,
+	        height: height
+	    };
+	};
+
+	/**
+	 * getMarkerInfoOfCurrentSelection
+	 * Get marker info of current selection
+	 * @returns {object} marker
+	 */
+	WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
+	    var range, beforeRange, start, end, info;
+
+	    range = this.sqe.getSelection().cloneRange();
+
+	    if (this._extendRangeToTextNodeIfHasNone(range)) {
+	        beforeRange = range.cloneRange();
+	        beforeRange.setStart(this.sqe.get$Body()[0], 0);
+	        beforeRange.setEnd(range.startContainer, range.startOffset);
+
+	        info = this._getExtraInfoOfRange(range);
+
+	        start = beforeRange.cloneContents().textContent.length;
+	        end = start + info.text.length;
+
+	        return {
+	            start: start,
+	            end: end,
+	            text: info.text,
+	            top: info.top,
+	            left: info.left,
+	            height: info.height
+	        };
+	    }
+
+	    return null;
+	};
+
+	/**
+	 * _extendRangeToTextNodeIfHasNone
+	 * Extend range to text node if start or end container have none
+	 * @param {Range} range range
+	 * @returns {boolean} success or fail
+	 */
+	WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) {
+	    var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
+	        textNode;
+
+	    //getClientRects API로 rect값을 가져올때는 range 컨테이너가 텍스트 노드여야한다.
+	    if (!domUtils.isTextNode(range.endContainer) || !endNode.nodeValue.replace(FIND_ZWB_RX, '').length) {
+	        if (domUtils.isTextNode(endNode)) {
+	            range.setEnd(endNode, 0);
+	        } else {
+	            textNode = domUtils.getPrevTextNode(endNode);
+	            if (textNode) {
+	                range.setEnd(textNode, textNode.length);
+	            } else {
+	                return false;
+	            }
+	        }
+	    }
+
+	    return true;
+	};
+
+	/**
+	 * _findOffsetNode
+	 * Find offset nodes by given offset list
+	 * @param {[number]} offsetlist offset list
+	 * @returns {[object]} offset node informations
+	 */
+	WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
+	    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, function(text) {
+	        return text.replace(FIND_ZWB_RX, '');
+	    });
+	};
+
+	/**
+	 * selectOffsetRange
+	 * Make selection with given offset range
+	 * @param {number} start start offset
+	 * @param {number} end end offset
+	 */
+	WysiwygMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+	    var foundNode = this._findOffsetNode([start, end]),
+	        range = this.sqe.getSelection().cloneRange();
+
+	    range.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+	    range.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+	    this.sqe.setSelection(range);
+	};
+
+	/**
+	 * clearSelect
+	 * Clear selection of squire
+	 */
+	WysiwygMarkerHelper.prototype.clearSelect = function() {
+	    var range = this.sqe.getSelection().cloneRange();
+	    range.collapse(true);
+	    this.sqe.setSelection(range);
+	};
+
+	module.exports = WysiwygMarkerHelper;
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var FIND_ZWB = /\u200B/g;
+
+	var util = tui.util;
+
+	/**
+	 * isTextNode
+	 * Check if node is text node
+	 * @param {Node} node node to check
+	 * @returns {boolean} result
+	 */
+	var isTextNode = function(node) {
+	    return node && node.nodeType === Node.TEXT_NODE;
+	};
+
+	/**
+	 * isElemNode
+	 * Check if node is element node
+	 * @param {Node} node node to check
+	 * @returns {boolean} result
+	 */
+	var isElemNode = function(node) {
+	    return node && node.nodeType === Node.ELEMENT_NODE;
+	};
+
+	/**
+	 * getNodeName
+	 * Get node name of node
+	 * @param {Node} node node
+	 * @returns {string} node name
+	 */
+	var getNodeName = function(node) {
+	    if (isElemNode(node)) {
+	        return node.tagName;
+	    }
+
+	    return 'TEXT';
+	};
+
+	/**
+	 * getTextLength
+	 * Get node offset length of node(for Range API)
+	 * @param {Node} node node
+	 * @returns {number} length
+	 */
+	var getTextLength = function(node) {
+	    var len;
+
+	    if (isElemNode(node)) {
+	        len = node.textContent.replace(FIND_ZWB, '').length;
+	    } else if (isTextNode(node)) {
+	        len = node.nodeValue.replace(FIND_ZWB, '').length;
+	    }
+
+	    return len;
+	};
+
+	/**
+	 * getOffsetLength
+	 * Get node offset length of node(for Range API)
+	 * @param {Node} node node
+	 * @returns {number} length
+	 */
+	var getOffsetLength = function(node) {
+	    var len;
+
+	    if (isElemNode(node)) {
+	        len = node.childNodes.length;
+	    } else if (isTextNode(node)) {
+	        len = node.nodeValue.replace(FIND_ZWB, '').length;
+	    }
+
+	    return len;
+	};
+
+	/**
+	 * getNodeOffsetOfParent
+	 * get node offset between parent's childnodes
+	 * @param {Node} node node
+	 * @returns {number} offset(index)
+	 */
+	var getNodeOffsetOfParent = function(node) {
+	    var i, t, found,
+	        childNodesOfParent = node.parentNode.childNodes;
+
+	    for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
+	        if (childNodesOfParent[i] === node) {
+	            found = i;
+	            break;
+	        }
+	    }
+
+	    return found;
+	};
+
+	/**
+	 * getChildNodeByOffset
+	 * get child node by offset
+	 * @param {Node} node node
+	 * @param {number} index offset index
+	 * @returns {Node} foudned node
+	 */
+	var getChildNodeByOffset = function(node, index) {
+	    var currentNode;
+
+	    if (isTextNode(node)) {
+	        currentNode = node;
+	    } else if (node.childNodes.length && index >= 0) {
+	        currentNode = node.childNodes[index];
+	    }
+
+	    return currentNode;
+	};
+
+	/**
+	 * getNodeWithDirectionUntil
+	 * find next node from passed node
+	 * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
+	 * 부모노드를 따라 올라가며 방향에 맞는 노드를 찾는다.
+	 * @param {strong} direction previous or next
+	 * @param {Node} node node
+	 * @param {string} untilNodeName parent node name to limit
+	 * @returns {Node} founded node
+	 */
+	var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+	    var directionKey = direction + 'Sibling',
+	        nodeName, foundedNode;
+
+
+	    while (node && !node[directionKey]) {
+	        nodeName = getNodeName(node.parentNode);
+
+	        if ((nodeName === untilNodeName)
+	            || nodeName === 'BODY'
+	        ) {
+	            break;
+	        }
+
+	        node = node.parentNode;
+	    }
+
+	    if (node[directionKey]) {
+	        foundedNode = node[directionKey];
+	    }
+
+	    return foundedNode;
+	};
+
+	/**
+	 * getPrevOffsetNodeUntil
+	 * get prev node of childnode pointed with index
+	 * 인덱스에 해당하는 차일드 노드의 이전 노드를 찾는다.
+	 * @param {Node} node node
+	 * @param {number} index offset index
+	 * @param {string} untilNodeName parent node name to limit
+	 * @returns {Node} founded node
+	 */
+	var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
+	    var prevNode;
+
+	    if (index > 0) {
+	        prevNode = getChildNodeByOffset(node, index - 1);
+	    } else {
+	        prevNode = getNodeWithDirectionUntil('previous', node, untilNodeName);
+	    }
+
+	    return prevNode;
+	};
+
+	/**
+	 * getParentUntil
+	 * get parent node until paseed node name
+	 * 특정 노드이전의 부모 노드를 찾는다
+	 * @param {Node} node node
+	 * @param {string} untilNodeName node name to limit
+	 * @returns {Node} founded node
+	 */
+	var getParentUntil = function(node, untilNodeName) {
+	    var parentNodeName = getNodeName(node.parentNode),
+	        foundedNode;
+
+	    while (
+	        parentNodeName !== untilNodeName
+	        && parentNodeName !== 'BODY'
+	        && node.parentNode
+	    ) {
+	        node = node.parentNode;
+	        parentNodeName = getNodeName(node.parentNode);
+	    }
+
+	    if (parentNodeName === untilNodeName) {
+	        foundedNode = node;
+	    }
+
+	    return foundedNode;
+	};
+
+	/**
+	 * getNodeWithDirectionUnderParent
+	 * get node of direction before passed parent
+	 * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
+	 * @param {strong} direction previous or next
+	 * @param {Node} node node
+	 * @param {string} underParentNodeName parent node name to limit
+	 * @returns {Node} founded node
+	 */
+	var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
+	    var directionKey = direction + 'Sibling',
+	        foundedNode;
+
+	    node = getParentUntil(node, underParentNodeName);
+
+	    if (node && node[directionKey]) {
+	        foundedNode = node[directionKey];
+	    }
+
+	    return foundedNode;
+	};
+
+	/**
+	 * getPrevTopBlockNode
+	 * get previous top level block node
+	 * @param {Node} node node
+	 * @returns {Node} founded node
+	 */
+	var getPrevTopBlockNode = function(node) {
+	    return getNodeWithDirectionUnderParent('previous', node, 'BODY');
+	};
+
+	/**
+	 * getNextTopBlockNode
+	 * get next top level block node
+	 * @param {Node} node node
+	 * @returns {Node} founded node
+	 */
+	var getNextTopBlockNode = function(node) {
+	    return getNodeWithDirectionUnderParent('next', node, 'BODY');
+	};
+
+	var getTopBlockNode = function(node) {
+	    return getParentUntil(node, 'BODY');
+	};
+
+
+	var getPrevTextNode = function(node) {
+	    node = node.previousSibling || node.parentNode;
+
+	    while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
+	        if (node.previousSibling) {
+	            node = node.previousSibling;
+
+	            while (node.lastChild) {
+	                node = node.lastChild;
+	            }
+	        } else {
+	            node = node.parentNode;
+	        }
+	    }
+
+	    if (getNodeName(node) === 'BODY') {
+	        node = null;
+	    }
+
+	    return node;
+	};
+
+	function findOffsetNode(root, offsetList, textNodeFilter) {
+	    var result = [],
+	        text = '',
+	        walkerOffset = 0,
+	        offset, walker, newWalkerOffset;
+
+	    if (!offsetList.length) {
+	        return result;
+	    }
+
+	    offset = offsetList.shift();
+	    walker = document.createTreeWalker(root, 4, null, false);
+
+	    while (walker.nextNode()) {
+	        text = walker.currentNode.nodeValue || '';
+
+	        if (textNodeFilter) {
+	            text = textNodeFilter(text);
+	        }
+
+	        newWalkerOffset = walkerOffset + text.length;
+
+	        while (newWalkerOffset >= offset) {
+	            result.push({
+	                container: walker.currentNode,
+	                offsetInContainer: offset - walkerOffset,
+	                offset: offset
+	            });
+
+	            if (!offsetList.length) {
+	                return result;
+	            }
+	            offset = offsetList.shift();
+	        }
+	        walkerOffset = newWalkerOffset;
+	    }
+
+	    //오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
+	    //중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
+	    do {
+	        result.push({
+	            container: walker.currentNode,
+	            offsetInContainer: text.length,
+	            offset: offset
+	        });
+	        offset = offsetList.shift();
+	    } while (!util.isUndefined(offset));
+
+	    return result;
+	}
+
+	module.exports = {
+	    getNodeName: getNodeName,
+	    isTextNode: isTextNode,
+	    isElemNode: isElemNode,
+	    getTextLength: getTextLength,
+	    getOffsetLength: getOffsetLength,
+	    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
+	    getNodeOffsetOfParent: getNodeOffsetOfParent,
+	    getChildNodeByOffset: getChildNodeByOffset,
+	    getPrevTopBlockNode: getPrevTopBlockNode,
+	    getNextTopBlockNode: getNextTopBlockNode,
+	    getParentUntil: getParentUntil,
+	    getTopBlockNode: getTopBlockNode,
+	    getPrevTextNode: getPrevTextNode,
+	    findOffsetNode: findOffsetNode
+	};
+
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements viewOnly marker helper for additional information
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var domUtils = __webpack_require__(17);
+
+	var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
+
+	/**
+	 * ViewOnlyMarkerHelper
+	 * @exports ViewOnlyMarkerHelper
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {Preview} preview preview instance
+	 */
+	function ViewOnlyMarkerHelper(preview) {
+	    this.preview = preview;
+	}
+
+	/**
+	 * getTextContent
+	 * Get text content of wysiwyg
+	 * @returns {string}
+	 */
+	ViewOnlyMarkerHelper.prototype.getTextContent = function() {
+	    return this.preview.$el[0].textContent.replace(FIND_CRLF_RX, '');
+	};
+
+	/**
+	 * updateMarkerWithExtraInfo
+	 * Update marker with extra info of preview
+	 * @param {object} marker marker
+	 * @returns {object} marker
+	 */
+	ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
+	    var foundNode, markerRange, info;
+
+	    foundNode = this._findOffsetNode([marker.start, marker.end]);
+
+	    markerRange = document.createRange();
+
+	    markerRange.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+	    markerRange.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+	    info = this._getExtraInfoOfRange(markerRange);
+
+	    marker.text = info.text;
+	    marker.top = info.top;
+	    marker.left = info.left;
+	    marker.height = info.height;
+
+	    return marker;
+	};
+
+	/**
+	 * _getExtraInfoOfRange
+	 * Get extra info of range
+	 * @param {Range} range range
+	 * @returns {object} extra info
+	 */
+	ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
+	    var text, top, left, rect, containerOffset, height;
+
+	    text = range.cloneContents().textContent.replace(FIND_CRLF_RX, '');
+
+	    range.setStart(range.endContainer, range.endOffset);
+	    range.collapse(true);
+
+	    rect = range.getClientRects()[0];
+
+	    containerOffset = this.preview.$el.offset();
+
+	    if (rect) {
+	        top = rect.top + this.preview.$el.scrollTop() - containerOffset.top;
+	        left = rect.left - containerOffset.left;
+	        height = rect.height;
+	    } else {
+	        height = top = left = 0;
+	    }
+
+	    return {
+	        text: text,
+	        top: top,
+	        left: left,
+	        height: height
+	    };
+	};
+
+	/**
+	 * _findOffsetNode
+	 * Find offset nodes by given offset list
+	 * @param {[number]} offsetlist offset list
+	 * @returns {[object]} offset node informations
+	 */
+	ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
+	    return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, function(text) {
+	        return text.replace(FIND_CRLF_RX, '');
+	    });
+	};
+
+	/**
+	 * selectOffsetRange
+	 * Make selection with given offset range
+	 * @param {number} start start offset
+	 * @param {number} end end offset
+	 */
+	ViewOnlyMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+	    var foundNode = this._findOffsetNode([start, end]),
+	        range = document.createRange(),
+	        sel = window.getSelection();
+
+	    range.setStart(foundNode[0].container, foundNode[0].offsetInContainer);
+	    range.setEnd(foundNode[1].container, foundNode[1].offsetInContainer);
+
+	    sel.removeAllRanges();
+	    sel.addRange(range);
+	};
+
+	/**
+	 * clearSelect
+	 * Clear selection
+	 */
+	ViewOnlyMarkerHelper.prototype.clearSelect = function() {
+	    window.getSelection().removeAllRanges();
+	};
+
+	module.exports = ViewOnlyMarkerHelper;
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements markdown marker helper for additional information
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var util = tui.util;
+
+	var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
+
+	/**
+	 *
+	 * MarkdownMarkerHelper
+	 * @exports MarkdownMarkerHelper
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {CodeMirror} cm codemirror instance
+	 */
+	function MarkdownMarkerHelper(cm) {
+	    this.cm = cm;
+	}
+
+	/**
+	 * getTextContent
+	 * Get CRLF removed text content of CodeMirror
+	 * @returns {string} text content
+	 */
+	MarkdownMarkerHelper.prototype.getTextContent = function() {
+	    return this.cm.getValue().replace(FIND_CRLF_RX, '');
+	};
+
+	/**
+	 * updateMarkerWithExtraInfo
+	 * Update marker with extra info of CodeMirror
+	 * @param {object} marker marker
+	 * @returns {object} marker
+	 */
+	MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
+	    var foundCursor, startCh, startLine, endCh, endLine, info;
+
+	    foundCursor = this._findOffsetCursor([marker.start, marker.end]);
+
+	    startLine = foundCursor[0].line;
+	    startCh = foundCursor[0].ch;
+	    endLine = foundCursor[1].line;
+	    endCh = foundCursor[1].ch;
+
+	    info = this._getExtraInfoOfRange(startLine, startCh, endLine, endCh);
+
+	    marker.text = info.text.replace(FIND_CRLF_RX, ' ');
+	    marker.top = info.top;
+	    marker.left = info.left;
+	    marker.height = info.height;
+
+	    return marker;
+	};
+
+	/**
+	 * _getExtraInfoOfRange
+	 *  Get additional info of range
+	 * @param {number} startLine start line
+	 * @param {number} startCh start offset
+	 * @param {number} endLine end line
+	 * @param {number} endCh end offset
+	 * @returns {object} information
+	 */
+	MarkdownMarkerHelper.prototype._getExtraInfoOfRange = function(startLine, startCh, endLine, endCh) {
+	    var text, rect, top, left, height,
+	        doc = this.cm.getDoc();
+
+	    if (!doc.getValue().length) {
+	        top = left = height = 0;
+	        text = '';
+	    } else {
+	        text = doc.getRange({
+	            line: startLine,
+	            ch: startCh
+	        }, {
+	            line: endLine,
+	            ch: endCh
+	        });
+
+	        rect = this.cm.charCoords({
+	            line: endLine,
+	            ch: endCh
+	        }, 'local');
+
+	        top = rect.top;
+	        left = rect.left;
+	        height = rect.bottom - rect.top;
+	    }
+
+	    return {
+	        text: text,
+	        top: top,
+	        left: left,
+	        height: height
+	    };
+	};
+
+	/**
+	 * getMarkerInfoOfCurrentSelection
+	 * Get marker info of current selection
+	 * @returns {object} marker
+	 */
+	MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
+	    var doc = this.cm.getDoc(),
+	        selection, start, end, info, foundCursor;
+
+	    selection = this._getSelection();
+
+	    start = doc.getRange({
+	        line: 0,
+	        ch: 0
+	    }, selection.anchor).replace(FIND_CRLF_RX, '').length;
+
+	    end = start + doc.getSelection().replace(FIND_CRLF_RX, '').length;
+
+	    foundCursor = this._findOffsetCursor([start, end]);
+
+	    info = this._getExtraInfoOfRange(foundCursor[0].line,
+	                                         foundCursor[0].ch,
+	                                         foundCursor[1].line,
+	                                         foundCursor[1].ch);
+
+	    return {
+	        start: start,
+	        end: end,
+	        text: info.text.replace(FIND_CRLF_RX, ' '),
+	        top: info.top,
+	        left: info.left,
+	        height: info.height
+	    };
+	};
+
+	/**
+	 * _getSelection
+	 * Get selection of CodeMirror, if selection is reversed then correct it
+	 * @returns {object} selection
+	 */
+	MarkdownMarkerHelper.prototype._getSelection = function() {
+	    var selection, head, anchor, isReversedSelection, temp;
+
+	    selection = this.cm.getDoc().listSelections()[0];
+	    anchor = selection.anchor;
+	    head = selection.head;
+
+	    isReversedSelection = (anchor.line > head.line) || (anchor.line === head.line && anchor.ch > head.ch);
+
+	    if (isReversedSelection) {
+	        temp = head;
+	        head = anchor;
+	        anchor = temp;
+	    }
+
+	    return {
+	        anchor: anchor,
+	        head: head
+	    };
+	};
+
+	/**
+	 * _findOffsetCursor
+	 * Find offset cursor by given offset list
+	 * @param {[number]} offsetlist offset list
+	 * @returns {[object]} offset cursors
+	 */
+	MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
+	    var doc = this.cm.getDoc(),
+	        currentLength = 0,
+	        beforeLength = 0,
+	        result = [],
+	        offsetIndex = 0,
+	        line;
+
+	    for (line = 0; line < doc.lineCount(); line += 1) {
+	        currentLength += doc.getLine(line).length;
+
+	        while (currentLength >= offsetlist[offsetIndex]) {
+	            result.push({
+	                line: line,
+	                ch: offsetlist[offsetIndex] - beforeLength
+	            });
+
+	            offsetIndex += 1;
+
+	            if (util.isUndefined(offsetlist[offsetIndex])) {
+	                return result;
+	            }
+	        }
+
+	        beforeLength = currentLength;
+	    }
+
+	    while (!util.isUndefined(offsetlist[offsetIndex])) {
+	        result.push({
+	            line: line,
+	            ch: currentLength - beforeLength
+	        });
+
+	        offsetIndex += 1;
+	    }
+
+	    return result;
+	};
+
+	/**
+	 * selectOffsetRange
+	 * Make selection with given offset range
+	 * @param {number} start start offset
+	 * @param {number} end end offset
+	 */
+	MarkdownMarkerHelper.prototype.selectOffsetRange = function(start, end) {
+	    var foundCursor = this._findOffsetCursor([start, end]);
+
+	    this.cm.setSelection({
+	        line: foundCursor[0].line,
+	        ch: foundCursor[0].ch
+	    }, {
+	        line: foundCursor[1].line,
+	        ch: foundCursor[1].ch
+	    });
+	};
+
+	/**
+	 * clearSelect
+	 * Clear selection of CodeMirror
+	 */
+	MarkdownMarkerHelper.prototype.clearSelect = function() {
+	    var selection = this.cm.getDoc().listSelections()[0];
+
+	    if (selection) {
+	        this.cm.setCursor(selection.to());
+	    }
+	};
+
+	module.exports = MarkdownMarkerHelper;
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var MarkdownEditor = __webpack_require__(21),
+	    Preview = __webpack_require__(23),
+	    WysiwygEditor = __webpack_require__(25),
+	    Layout = __webpack_require__(35),
+	    EventManager = __webpack_require__(36),
+	    CommandManager = __webpack_require__(37),
+	    extManager = __webpack_require__(6),
+	    ImportManager = __webpack_require__(39),
+	    Convertor = __webpack_require__(41),
+	    ViewOnly = __webpack_require__(43),
+	    markedRenderer = __webpack_require__(42),
+	    DefaultUI = __webpack_require__(44);
+
 
 	//markdown commands
-	var mdBold = __webpack_require__(45),
-	    mdItalic = __webpack_require__(46),
-	    mdBlockquote = __webpack_require__(47),
-	    mdHeading = __webpack_require__(48),
-	    mdHR = __webpack_require__(49),
-	    mdAddLink = __webpack_require__(50),
-	    mdAddImage = __webpack_require__(51),
-	    mdUL = __webpack_require__(52),
-	    mdOL = __webpack_require__(53),
-	    mdTable = __webpack_require__(54),
-	    mdTask = __webpack_require__(55),
-	    mdCode = __webpack_require__(56),
-	    mdCodeBlock = __webpack_require__(57);
+	var mdBold = __webpack_require__(59),
+	    mdItalic = __webpack_require__(60),
+	    mdBlockquote = __webpack_require__(61),
+	    mdHeading = __webpack_require__(62),
+	    mdHR = __webpack_require__(63),
+	    mdAddLink = __webpack_require__(64),
+	    mdAddImage = __webpack_require__(65),
+	    mdUL = __webpack_require__(66),
+	    mdOL = __webpack_require__(67),
+	    mdTable = __webpack_require__(68),
+	    mdTask = __webpack_require__(69),
+	    mdCode = __webpack_require__(70),
+	    mdCodeBlock = __webpack_require__(71);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(58),
-	    wwItalic = __webpack_require__(59),
-	    wwBlockquote = __webpack_require__(60),
-	    wwAddImage = __webpack_require__(61),
-	    wwAddLink = __webpack_require__(62),
-	    wwHR = __webpack_require__(63),
-	    wwHeading = __webpack_require__(64),
-	    wwUL = __webpack_require__(65),
-	    wwOL = __webpack_require__(66),
-	    wwTable = __webpack_require__(67),
-	    wwTableAddRow = __webpack_require__(68),
-	    wwTableAddCol = __webpack_require__(69),
-	    wwTableRemoveRow = __webpack_require__(70),
-	    wwTableRemoveCol = __webpack_require__(71),
-	    wwTableRemove = __webpack_require__(72),
-	    wwIncreaseDepth = __webpack_require__(73),
-	    wwTask = __webpack_require__(74),
-	    wwCode = __webpack_require__(75),
-	    wwCodeBlock = __webpack_require__(76);
+	var wwBold = __webpack_require__(72),
+	    wwItalic = __webpack_require__(73),
+	    wwBlockquote = __webpack_require__(74),
+	    wwAddImage = __webpack_require__(75),
+	    wwAddLink = __webpack_require__(76),
+	    wwHR = __webpack_require__(77),
+	    wwHeading = __webpack_require__(78),
+	    wwUL = __webpack_require__(79),
+	    wwOL = __webpack_require__(80),
+	    wwTable = __webpack_require__(81),
+	    wwTableAddRow = __webpack_require__(82),
+	    wwTableAddCol = __webpack_require__(83),
+	    wwTableRemoveRow = __webpack_require__(84),
+	    wwTableRemoveCol = __webpack_require__(85),
+	    wwTableRemove = __webpack_require__(86),
+	    wwIncreaseDepth = __webpack_require__(87),
+	    wwTask = __webpack_require__(88),
+	    wwCode = __webpack_require__(89),
+	    wwCodeBlock = __webpack_require__(90);
 
 	var util = tui.util;
 
 	var __nedInstance = [];
-
-	//default extensions
-	__webpack_require__(77);
-	__webpack_require__(78);
-	__webpack_require__(79);
-	__webpack_require__(82);
 
 	/**
 	 * ToastUI Editor
@@ -1284,15 +6039,6 @@
 	    this.commandManager = new CommandManager(this);
 	    this.convertor = new Convertor(this.eventManager);
 
-	    this.layout = new Layout(options, this.eventManager);
-
-	    this.setUI(this.options.UI || new DefaultUI(this));
-
-	    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
-	    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-	    this.wwEditor = WysiwygEditor.factory(
-	                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
-
 	    if (this.options.hooks) {
 	        util.forEach(this.options.hooks, function(fn, key) {
 	            self.addHook(key, fn);
@@ -1305,6 +6051,14 @@
 	        });
 	    }
 
+	    this.layout = new Layout(options, this.eventManager);
+
+	    this.setUI(this.options.UI || new DefaultUI(this));
+
+	    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
+	    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+	    this.wwEditor = WysiwygEditor.factory(
+	                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
 
 	    this.changePreviewStyle(this.options.previewStyle);
 
@@ -1392,6 +6146,8 @@
 	    } else {
 	        this.wwEditor.setValue(this.convertor.toHTML(markdown));
 	    }
+
+	    this.eventManager.emit('setValueAfter', markdown);
 	};
 
 	ToastUIEditor.prototype.getValue = function() {
@@ -1441,6 +6197,10 @@
 	    return this.currentMode === 'wysiwyg';
 	};
 
+	ToastUIEditor.prototype.isViewOnly = function() {
+	    return false;
+	};
+
 	ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
 	    return this.mdPreviewStyle;
 	};
@@ -1487,6 +6247,10 @@
 	    this.getCodeMirror().refresh();
 	};
 
+	ToastUIEditor.prototype.scrollTop = function(value) {
+	    return this.getCurrentModeEditor().scrollTop(value);
+	};
+
 	ToastUIEditor.prototype.setUI = function(UI) {
 	    this._ui = UI;
 	};
@@ -1509,50 +6273,58 @@
 	};
 
 	ToastUIEditor.factory = function(options) {
-	    var tuiEditor = new ToastUIEditor(options);
+	    var tuiEditor;
 
-	    tuiEditor.addCommand(mdBold);
-	    tuiEditor.addCommand(mdItalic);
-	    tuiEditor.addCommand(mdBlockquote);
-	    tuiEditor.addCommand(mdHeading);
-	    tuiEditor.addCommand(mdHR);
-	    tuiEditor.addCommand(mdAddLink);
-	    tuiEditor.addCommand(mdAddImage);
-	    tuiEditor.addCommand(mdUL);
-	    tuiEditor.addCommand(mdOL);
-	    tuiEditor.addCommand(mdTable);
-	    tuiEditor.addCommand(mdTask);
-	    tuiEditor.addCommand(mdCode);
-	    tuiEditor.addCommand(mdCodeBlock);
+	    if (options.viewOnly) {
+	        tuiEditor = new ViewOnly(options);
+	    } else {
+	        tuiEditor = new ToastUIEditor(options);
 
-	    tuiEditor.addCommand(wwBold);
-	    tuiEditor.addCommand(wwItalic);
-	    tuiEditor.addCommand(wwBlockquote);
-	    tuiEditor.addCommand(wwUL);
-	    tuiEditor.addCommand(wwOL);
-	    tuiEditor.addCommand(wwAddImage);
-	    tuiEditor.addCommand(wwAddLink);
-	    tuiEditor.addCommand(wwHR);
-	    tuiEditor.addCommand(wwHeading);
-	    tuiEditor.addCommand(wwIncreaseDepth);
-	    tuiEditor.addCommand(wwTask);
-	    tuiEditor.addCommand(wwTable);
-	    tuiEditor.addCommand(wwTableAddRow);
-	    tuiEditor.addCommand(wwTableAddCol);
-	    tuiEditor.addCommand(wwTableRemoveRow);
-	    tuiEditor.addCommand(wwTableRemoveCol);
-	    tuiEditor.addCommand(wwTableRemove);
-	    tuiEditor.addCommand(wwCode);
-	    tuiEditor.addCommand(wwCodeBlock);
+	        tuiEditor.addCommand(mdBold);
+	        tuiEditor.addCommand(mdItalic);
+	        tuiEditor.addCommand(mdBlockquote);
+	        tuiEditor.addCommand(mdHeading);
+	        tuiEditor.addCommand(mdHR);
+	        tuiEditor.addCommand(mdAddLink);
+	        tuiEditor.addCommand(mdAddImage);
+	        tuiEditor.addCommand(mdUL);
+	        tuiEditor.addCommand(mdOL);
+	        tuiEditor.addCommand(mdTable);
+	        tuiEditor.addCommand(mdTask);
+	        tuiEditor.addCommand(mdCode);
+	        tuiEditor.addCommand(mdCodeBlock);
+
+	        tuiEditor.addCommand(wwBold);
+	        tuiEditor.addCommand(wwItalic);
+	        tuiEditor.addCommand(wwBlockquote);
+	        tuiEditor.addCommand(wwUL);
+	        tuiEditor.addCommand(wwOL);
+	        tuiEditor.addCommand(wwAddImage);
+	        tuiEditor.addCommand(wwAddLink);
+	        tuiEditor.addCommand(wwHR);
+	        tuiEditor.addCommand(wwHeading);
+	        tuiEditor.addCommand(wwIncreaseDepth);
+	        tuiEditor.addCommand(wwTask);
+	        tuiEditor.addCommand(wwTable);
+	        tuiEditor.addCommand(wwTableAddRow);
+	        tuiEditor.addCommand(wwTableAddCol);
+	        tuiEditor.addCommand(wwTableRemoveRow);
+	        tuiEditor.addCommand(wwTableRemoveCol);
+	        tuiEditor.addCommand(wwTableRemove);
+	        tuiEditor.addCommand(wwCode);
+	        tuiEditor.addCommand(wwCodeBlock);
+	    }
 
 	    return tuiEditor;
 	};
+
+	ToastUIEditor.markedRenderer = markedRenderer;
 
 	module.exports = ToastUIEditor;
 
 
 /***/ },
-/* 6 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -1562,7 +6334,7 @@
 
 	'use strict';
 
-	var keyMapper = __webpack_require__(7).getSharedInstance();
+	var keyMapper = __webpack_require__(22).getSharedInstance();
 
 	var CodeMirror = window.CodeMirror;
 
@@ -1630,6 +6402,13 @@
 	    this.cm.on('blur', function() {
 	        self.eventManager.emit('blur', {
 	            source: 'markdown'
+	        });
+	    });
+
+	    this.cm.on('scroll', function(cm, eventData) {
+	        self.eventManager.emit('scroll', {
+	            source: 'markdown',
+	            data: eventData
 	        });
 	    });
 
@@ -1813,11 +6592,19 @@
 	    doc.setCursor(firstLine, 0);
 	};
 
+	MarkdownEditor.prototype.scrollTop = function(value) {
+	    if (value) {
+	        this.cm.scrollTo(0, value);
+	    }
+
+	    return this.cm.getScrollInfo().top;
+	};
+
 	module.exports = MarkdownEditor;
 
 
 /***/ },
-/* 7 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/**
@@ -1990,7 +6777,7 @@
 	    '', // [159]
 	    '@', // [160]
 	    '!', // [161]
-	    '\"', // [162]
+	    '"', // [162]
 	    '#', // [163]
 	    '$', // [164]
 	    '%', // [165]
@@ -2154,7 +6941,7 @@
 
 
 /***/ },
-/* 8 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2164,7 +6951,7 @@
 
 	'use strict';
 
-	var LazyRunner = __webpack_require__(9);
+	var LazyRunner = __webpack_require__(24);
 
 	/**
 	 * Preview
@@ -2236,7 +7023,7 @@
 
 
 /***/ },
-/* 9 */
+/* 24 */
 /***/ function(module, exports) {
 
 	/**
@@ -2319,7 +7106,7 @@
 
 
 /***/ },
-/* 10 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2329,18 +7116,18 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11),
-	    WwClipboardManager = __webpack_require__(12),
-	    WwSelectionMarker = __webpack_require__(13),
-	    WwTaskManager = __webpack_require__(14),
-	    WwTableManager = __webpack_require__(15),
-	    WwHrManager = __webpack_require__(16),
-	    WwPManager = __webpack_require__(17),
-	    WwHeadingManager = __webpack_require__(18),
-	    WwCodeBlockManager = __webpack_require__(19),
-	    SquireExt = __webpack_require__(20);
+	var domUtils = __webpack_require__(17),
+	    WwClipboardManager = __webpack_require__(26),
+	    WwSelectionMarker = __webpack_require__(27),
+	    WwTaskManager = __webpack_require__(28),
+	    WwTableManager = __webpack_require__(29),
+	    WwHrManager = __webpack_require__(30),
+	    WwPManager = __webpack_require__(31),
+	    WwHeadingManager = __webpack_require__(32),
+	    WwCodeBlockManager = __webpack_require__(33),
+	    SquireExt = __webpack_require__(34);
 
-	var keyMapper = __webpack_require__(7).getSharedInstance();
+	var keyMapper = __webpack_require__(22).getSharedInstance();
 
 	var util = tui.util;
 
@@ -2442,6 +7229,7 @@
 	 */
 	WysiwygEditor.prototype._isIframeReady = function() {
 	    var iframeWindow = this.$iframe[0].contentWindow;
+
 	    return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
 	};
 
@@ -2507,7 +7295,7 @@
 	    });
 
 	    this.eventManager.listen('wysiwygSetValueBefore', function(html) {
-	        return html.replace(/\<br\>( *)\<img/g, '<br><br>$1<img');
+	        return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
 	    });
 
 	    this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -2553,6 +7341,7 @@
 	    if (handlers) {
 	        util.forEachArray(handlers, function(handler) {
 	            isNeedNext = handler(event, range, keyMap);
+
 	            return isNeedNext;
 	        });
 	    }
@@ -2582,6 +7371,7 @@
 
 	    this.getEditor().getDocument().addEventListener('dragover', function(ev) {
 	        ev.preventDefault();
+
 	        return false;
 	    });
 
@@ -2621,6 +7411,13 @@
 
 	    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
 	        self._onKeyDown(keyboardEvent);
+	    });
+
+	    this.getEditor().addEventListener('scroll', function(ev) {
+	        self.eventManager.emit('scroll', {
+	            source: 'wysiwyg',
+	            data: ev
+	        });
 	    });
 
 	    this.getEditor().addEventListener('click', function(ev) {
@@ -2877,6 +7674,7 @@
 	        if (!frag.textContent) {
 	            frag = self.getEditor().createDefaultBlock();
 	        }
+
 	        return frag;
 	    });
 	};
@@ -3209,6 +8007,10 @@
 	    this._correctRangeAfterMoveCursor();
 	};
 
+	WysiwygEditor.prototype.scrollTop = function(value) {
+	    return this.getEditor().scrollTop(value);
+	};
+
 	/**
 	 * _correctRangeAfterMoveCursor
 	 * we need collapse range after moveCursor* api invoke cuz squire bug
@@ -3245,271 +8047,7 @@
 
 
 /***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var FIND_ZWB = /\u200B/g;
-
-	/**
-	 * isTextNode
-	 * Check if node is text node
-	 * @param {Node} node node to check
-	 * @returns {boolean} result
-	 */
-	var isTextNode = function(node) {
-	    return node && node.nodeType === Node.TEXT_NODE;
-	};
-
-	/**
-	 * isElemNode
-	 * Check if node is element node
-	 * @param {Node} node node to check
-	 * @returns {boolean} result
-	 */
-	var isElemNode = function(node) {
-	    return node && node.nodeType === Node.ELEMENT_NODE;
-	};
-
-	/**
-	 * getNodeName
-	 * Get node name of node
-	 * @param {Node} node node
-	 * @returns {string} node name
-	 */
-	var getNodeName = function(node) {
-	    if (isElemNode(node)) {
-	        return node.tagName;
-	    } else if (isTextNode(node)) {
-	        return 'TEXT';
-	    }
-	};
-
-	/**
-	 * getTextLength
-	 * Get node offset length of node(for Range API)
-	 * @param {Node} node node
-	 * @returns {number} length
-	 */
-	var getTextLength = function(node) {
-	    var len;
-
-	    if (isElemNode(node)) {
-	        len = node.textContent.replace(FIND_ZWB, '').length;
-	    } else if (isTextNode(node)) {
-	        len = node.nodeValue.replace(FIND_ZWB, '').length;
-	    }
-
-	    return len;
-	};
-
-	/**
-	 * getOffsetLength
-	 * Get node offset length of node(for Range API)
-	 * @param {Node} node node
-	 * @returns {number} length
-	 */
-	var getOffsetLength = function(node) {
-	    var len;
-
-	    if (isElemNode(node)) {
-	        len = node.childNodes.length;
-	    } else if (isTextNode(node)) {
-	        len = node.nodeValue.replace(FIND_ZWB, '').length;
-	    }
-
-	    return len;
-	};
-
-	/**
-	 * getNodeOffsetOfParent
-	 * get node offset between parent's childnodes
-	 * @param {Node} node node
-	 * @returns {number} offset(index)
-	 */
-	var getNodeOffsetOfParent = function(node) {
-	    var i, t,
-	        childNodesOfParent = node.parentNode.childNodes;
-
-	    for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
-	        if (childNodesOfParent[i] === node) {
-	            return i;
-	        }
-	    }
-	};
-
-	/**
-	 * getChildNodeByOffset
-	 * get child node by offset
-	 * @param {Node} node node
-	 * @param {number} index offset index
-	 * @returns {Node} foudned node
-	 */
-	var getChildNodeByOffset = function(node, index) {
-	    var currentNode;
-
-	    if (isTextNode(node)) {
-	        currentNode = node;
-	    } else if (node.childNodes.length && index >= 0) {
-	        currentNode = node.childNodes[index];
-	    }
-
-	    return currentNode;
-	};
-
-	/**
-	 * getNodeWithDirectionUntil
-	 * find next node from passed node
-	 * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
-	 * 부모노드를 따라 올라가며 방향에 맞는 노드를 찾는다.
-	 * @param {strong} direction previous or next
-	 * @param {Node} node node
-	 * @param {string} untilNodeName parent node name to limit
-	 * @returns {Node} founded node
-	 */
-	var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
-	    var directionKey = direction + 'Sibling',
-	        nodeName, foundedNode;
-
-
-	    while (node && !node[directionKey]) {
-	        nodeName = getNodeName(node.parentNode);
-
-	        if ((nodeName === untilNodeName)
-	            || nodeName === 'BODY'
-	        ) {
-	            break;
-	        }
-
-	        node = node.parentNode;
-	    }
-
-	    if (node[directionKey]) {
-	        foundedNode = node[directionKey];
-	    }
-
-	    return foundedNode;
-	};
-
-	/**
-	 * getPrevOffsetNodeUntil
-	 * get prev node of childnode pointed with index
-	 * 인덱스에 해당하는 차일드 노드의 이전 노드를 찾는다.
-	 * @param {Node} node node
-	 * @param {number} index offset index
-	 * @param {string} untilNodeName parent node name to limit
-	 * @returns {Node} founded node
-	 */
-	var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
-	    var prevNode;
-
-	    if (index > 0) {
-	        prevNode = getChildNodeByOffset(node, index - 1);
-	    } else {
-	        prevNode = getNodeWithDirectionUntil('previous', node, untilNodeName);
-	    }
-
-	    return prevNode;
-	};
-
-	/**
-	 * getParentUntil
-	 * get parent node until paseed node name
-	 * 특정 노드이전의 부모 노드를 찾는다
-	 * @param {Node} node node
-	 * @param {string} untilNodeName node name to limit
-	 * @returns {Node} founded node
-	 */
-	var getParentUntil = function(node, untilNodeName) {
-	    var parentNodeName = getNodeName(node.parentNode),
-	        foundedNode;
-
-	    while (
-	        parentNodeName !== untilNodeName
-	        && parentNodeName !== 'BODY'
-	        && node.parentNode
-	    ) {
-	        node = node.parentNode;
-	        parentNodeName = getNodeName(node.parentNode);
-	    }
-
-	    if (parentNodeName === untilNodeName) {
-	        foundedNode = node;
-	    }
-
-	    return foundedNode;
-	};
-
-	/**
-	 * getNodeWithDirectionUnderParent
-	 * get node of direction before passed parent
-	 * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
-	 * @param {strong} direction previous or next
-	 * @param {Node} node node
-	 * @param {string} underParentNodeName parent node name to limit
-	 * @returns {Node} founded node
-	 */
-	var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
-	    var directionKey = direction + 'Sibling',
-	        foundedNode;
-
-	    node = getParentUntil(node, underParentNodeName);
-
-	    if (node && node[directionKey]) {
-	        foundedNode = node[directionKey];
-	    }
-
-	    return foundedNode;
-	};
-
-	/**
-	 * getPrevTopBlockNode
-	 * get previous top level block node
-	 * @param {Node} node node
-	 * @returns {Node} founded node
-	 */
-	var getPrevTopBlockNode = function(node) {
-	    return getNodeWithDirectionUnderParent('previous', node, 'BODY');
-	};
-
-	/**
-	 * getNextTopBlockNode
-	 * get next top level block node
-	 * @param {Node} node node
-	 * @returns {Node} founded node
-	 */
-	var getNextTopBlockNode = function(node) {
-	    return getNodeWithDirectionUnderParent('next', node, 'BODY');
-	};
-
-	var getTopBlockNode = function(node) {
-	    return getParentUntil(node, 'BODY');
-	};
-
-	module.exports = {
-	    getNodeName: getNodeName,
-	    isTextNode: isTextNode,
-	    isElemNode: isElemNode,
-	    getTextLength: getTextLength,
-	    getOffsetLength: getOffsetLength,
-	    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
-	    getNodeOffsetOfParent: getNodeOffsetOfParent,
-	    getChildNodeByOffset: getChildNodeByOffset,
-	    getPrevTopBlockNode: getPrevTopBlockNode,
-	    getNextTopBlockNode: getNextTopBlockNode,
-	    getParentUntil: getParentUntil,
-	    getTopBlockNode: getTopBlockNode
-	};
-
-
-/***/ },
-/* 12 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3519,7 +8057,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var util = tui.util;
 
@@ -3862,7 +8400,7 @@
 
 
 /***/ },
-/* 13 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3872,7 +8410,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
 
@@ -3945,7 +8483,7 @@
 
 
 /***/ },
-/* 14 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -3955,7 +8493,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 
@@ -4032,6 +8570,8 @@
 
 	            return false;
 	        }
+
+	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
@@ -4039,9 +8579,12 @@
 	            if (self._isInTaskList(range)) {
 	                self._unformatTaskIfNeedOnBackspace(range);
 	                //and delete list by squire
+
 	                return false;
 	            }
 	        }
+
+	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
@@ -4049,9 +8592,12 @@
 	            if (self.wwe.getEditor().hasFormat('LI')) {
 	                ev.preventDefault();
 	                self.eventManager.emit('command', 'IncreaseDepth');
+
 	                return false;
 	            }
 	        }
+
+	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
@@ -4375,7 +8921,7 @@
 
 
 /***/ },
-/* 15 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4385,7 +8931,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	/**
 	 * WwTableManager
@@ -4430,7 +8976,7 @@
 
 	    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
 	        //remove last br in td or th
-	        return html.replace(/\<br \/\>(\<\/td\>|\<\/th\>)/g, '$1');
+	        return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
 	    });
 	};
 
@@ -4523,6 +9069,7 @@
 	 */
 	WwTableManager.prototype._isAfterTable = function(range) {
 	    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+
 	    return domUtils.getNodeName(prevElem) === 'TABLE' && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY';
 	};
 
@@ -4620,7 +9167,7 @@
 
 
 /***/ },
-/* 16 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4630,7 +9177,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	/**
 	 * WwHrManager
@@ -4688,12 +9235,16 @@
 	        if (range.collapsed) {
 	            return self._removeHrOnEnter(range, ev);
 	        }
+
+	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
 	        if (range.collapsed) {
 	            return self._removeHrOnBackspace(range, ev);
 	        }
+
+	        return true;
 	    });
 	};
 
@@ -4715,6 +9266,7 @@
 	 */
 	WwHrManager.prototype._isNearHr = function(range) {
 	    var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+
 	    return domUtils.getNodeName(prevNode) === 'HR';
 	};
 
@@ -4795,6 +9347,8 @@
 
 	        return false;
 	    }
+
+	    return true;
 	};
 
 	/**
@@ -4839,7 +9393,7 @@
 
 
 /***/ },
-/* 17 */
+/* 31 */
 /***/ function(module, exports) {
 
 	/**
@@ -4922,7 +9476,7 @@
 
 
 /***/ },
-/* 18 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -4932,7 +9486,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var FIND_HEADING_RX = /h[\d]/i;
 
@@ -4969,15 +9523,21 @@
 	    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
 	        if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
 	            self._onEnter(ev, range);
+
 	            return false;
 	        }
+
+	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
 	        if (self.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
 	            self._removePrevTopNodeIfNeed(ev, range);
+
 	            return false;
 	        }
+
+	        return true;
 	    });
 	};
 
@@ -5053,7 +9613,7 @@
 
 
 /***/ },
-/* 19 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5063,7 +9623,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var util = tui.util;
 
@@ -5129,9 +9689,9 @@
 	};
 
 	WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
-	    html = html.replace(/\<\pre( .*?)?\>(.*?)\<\/pre\>/g, function(match, codeAttr, code) {
-	        code = code.replace(/\<\/code\>\<br \/>/g, '\n');
-	        code = code.replace(/\<code ?(.*?)\>/g, '');
+	    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
+	        code = code.replace(/<\/code><br \/>/g, '\n');
+	        code = code.replace(/<code ?(.*?)>/g, '');
 	        code = code.replace(/\n$/, '');
 
 	        return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
@@ -5163,16 +9723,15 @@
 	};
 
 	WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-	    if (!this._isInCodeBlock(range)) {
-	        return true;
-	    }
-
-	    if (domUtils.getTextLength(range.startContainer) === 0) {
+	    if (this._isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
 	        ev.preventDefault();
 	        this.wwe.getEditor().recordUndoState(range);
 	        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
+
 	        return false;
 	    }
+
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
@@ -5194,8 +9753,11 @@
 
 	        range.setStart(code.childNodes[0], 0);
 	        this.wwe.getEditor().setSelection(range);
+
 	        return false;
 	    }
+
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
@@ -5211,8 +9773,11 @@
 	    //코드블럭이 code하나밖에 없을때
 	    if (range.startOffset === 0 && $(pre).find('code').length <= 1) {
 	        $(div).find('code').children().unwrap('code');
+
 	        return false;
 	    }
+
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
@@ -5231,61 +9796,64 @@
 	    ) {
 	        ev.preventDefault();
 	        range.startContainer.textContent = '\u200B';
+
 	        return false;
 	    }
+
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
 	    var pre,
 	        self = this;
 
-	    if (!this.wwe.getEditor().hasFormat('PRE')) {
-	        return true;
+	    if (this.wwe.getEditor().hasFormat('PRE')) {
+	        this.wwe.getEditor().recordUndoState();
+
+	        pre = domUtils.getParentUntil(range.startContainer, 'BODY');
+
+	        setTimeout(function() {
+	            var modified;
+
+	            $(pre).find('div').each(function(index, div) {
+	                if (!$(div).find('code').length) {
+	                    $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
+	                    modified = true;
+	                }
+	            });
+
+	            if (modified) {
+	                self.wwe.readySilentChange();
+	            }
+	        }, 0);
 	    }
 
-	    this.wwe.getEditor().recordUndoState();
-
-	    pre = domUtils.getParentUntil(range.startContainer, 'BODY');
-
-	    setTimeout(function() {
-	        var modified;
-
-	        $(pre).find('div').each(function(index, div) {
-	            if (!$(div).find('code').length) {
-	                $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
-	                modified = true;
-	            }
-	        });
-
-	        if (modified) {
-	            self.wwe.readySilentChange();
-	        }
-	    }, 0);
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
 	    var currentNodeName, div;
 
-	    if (!this._isInCodeBlock(range)) {
-	        return true;
+	    if (this._isInCodeBlock(range)) {
+	        currentNodeName = domUtils.getNodeName(range.startContainer);
+	        div = domUtils.getParentUntil(range.startContainer, 'PRE');
+
+	        if (currentNodeName === 'TEXT'
+	            && domUtils.getOffsetLength(range.startContainer) === 0
+	            && range.startOffset <= 1
+	        ) {
+	            $(div).html('<br>');
+
+	            range.setStart(div, 0);
+	            range.collapse(true);
+
+	            this.wwe.getEditor().setSelection(range);
+
+	            return false;
+	        }
 	    }
 
-	    currentNodeName = domUtils.getNodeName(range.startContainer);
-	    div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-	    if (currentNodeName === 'TEXT'
-	        && domUtils.getOffsetLength(range.startContainer) === 0
-	        && range.startOffset <= 1
-	    ) {
-	        $(div).html('<br>');
-
-	        range.setStart(div, 0);
-	        range.collapse(true);
-
-	        this.wwe.getEditor().setSelection(range);
-
-	        return false;
-	    }
+	    return true;
 	};
 
 	WwCodeBlockManager.prototype._isInCodeBlock = function(range) {
@@ -5311,7 +9879,7 @@
 
 
 /***/ },
-/* 20 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5321,7 +9889,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(11);
+	var domUtils = __webpack_require__(17);
 
 	var Squire = window.Squire,
 	    util = tui.util;
@@ -5350,6 +9918,7 @@
 
 	SquireExt.prototype.get$Body = function() {
 	    this.$body = this.$body || $(this.getDocument().body);
+
 	    return this.$body;
 	};
 
@@ -5408,6 +9977,7 @@
 	                    nextBlock = current.childNodes[0];
 
 	                    //there is no next blocktag
+	                    //eslint-disable-next-line max-depth
 	                    if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
 	                        nextBlock = self.createDefaultBlock();
 
@@ -5416,11 +9986,13 @@
 	                        lastNodeOfNextBlock = nextBlock.lastChild;
 
 	                        //remove unneccesary br
+	                        //eslint-disable-next-line max-depth
 	                        if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
 	                            nextBlock.removeChild(lastNodeOfNextBlock);
 	                        }
 	                    }
 
+	                    //eslint-disable-next-line max-depth
 	                    if (targetTagName) {
 	                        newBlock = self.createElement(targetTagName, [nextBlock]);
 	                    } else {
@@ -5634,7 +10206,7 @@
 
 	    if (util.browser.firefox) {
 	        $target = $(this._win);
-	    } else if (util.browser.msie && util.browser.version === 11) {
+	    } else if (util.browser.msie) {
 	        $target = $(this.getDocument().documentElement);
 	    } else {
 	        $target = this.get$Body();
@@ -5644,7 +10216,7 @@
 	        return $target.scrollTop();
 	    }
 
-	    $target.scrollTop(top);
+	    return $target.scrollTop(top);
 	};
 
 	SquireExt.prototype.isIgnoreChange = function() {
@@ -5655,7 +10227,7 @@
 
 
 /***/ },
-/* 21 */
+/* 35 */
 /***/ function(module, exports) {
 
 	/**
@@ -5782,7 +10354,7 @@
 
 
 /***/ },
-/* 22 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -5798,6 +10370,7 @@
 	    'previewBeforeHook',
 	    'previewRenderAfter',
 	    'addImageBlobHook',
+	    'setValueAfter',
 	    'contentChangedFromWysiwyg',
 	    'changeFromWysiwyg',
 	    'contentChangedFromMarkdown',
@@ -5826,6 +10399,7 @@
 	    'wysiwygProcessHTMLText',
 	    'wysiwygRangeChangeAfter',
 	    'wysiwygKeyEvent',
+	    'scroll',
 	    'click',
 	    'mousedown',
 	    'mouseup',
@@ -5882,20 +10456,17 @@
 	        results;
 
 	    if (eventHandlers) {
-	        results = [];
-
 	        util.forEach(eventHandlers, function(handler) {
 	            result = handler.apply(null, args);
 
 	            if (!util.isUndefined(result)) {
+	                results = results || [];
 	                results.push(result);
 	            }
 	        });
 	    }
 
-	    if (results && results.length) {
-	        return results;
-	    }
+	    return results;
 	};
 
 	EventManager.prototype.emitReduce = function() {
@@ -5976,7 +10547,7 @@
 
 
 /***/ },
-/* 23 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5988,7 +10559,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(24);
+	var Command = __webpack_require__(38);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -6072,7 +10643,7 @@
 	 * @returns {*} 커맨드를 수행한후 리턴값
 	 */
 	CommandManager.prototype.exec = function(name) {
-	    var commandToRun,
+	    var commandToRun, result,
 	        context = this.base,
 	        args = util.toArray(arguments);
 
@@ -6092,8 +10663,10 @@
 
 	    if (commandToRun) {
 	        args.unshift(context);
-	        return commandToRun.exec.apply(commandToRun, args);
+	        result = commandToRun.exec.apply(commandToRun, args);
 	    }
+
+	    return result;
 	};
 
 	CommandManager.command = function(type, props) {
@@ -6111,7 +10684,7 @@
 
 
 /***/ },
-/* 24 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -6228,50 +10801,7 @@
 
 
 /***/ },
-/* 25 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var util = tui.util;
-
-	/**
-	 * ExtManager
-	 * @exports ExtManager
-	 * @extends {}
-	 * @constructor
-	 * @class
-	 */
-	function ExtManager() {
-	    this.exts = new util.Map();
-	}
-
-	ExtManager.prototype.defineExtension = function(name, ext) {
-	    this.exts.set(name, ext);
-	};
-
-	ExtManager.prototype.applyExtension = function(context, extNames) {
-	    var self = this;
-
-	    if (extNames) {
-	        extNames.forEach(function(extName) {
-	            if (self.exts.has(extName)) {
-	                self.exts.get(extName)(context);
-	            }
-	        });
-	    }
-	};
-
-	module.exports = new ExtManager();
-
-
-/***/ },
-/* 26 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6281,7 +10811,7 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(27);
+	var excelTableParser = __webpack_require__(40);
 
 	var util = tui.util;
 
@@ -6371,8 +10901,11 @@
 	                evData.preventDefault();
 	                evData.codemirrorIgnore = true;
 	                self._emitAddImageBlobHook(item);
+
 	                return false;
 	            }
+
+	            return true;
 	        });
 	    }
 	};
@@ -6393,7 +10926,7 @@
 
 
 /***/ },
-/* 27 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/**
@@ -6450,7 +10983,7 @@
 
 
 /***/ },
-/* 28 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6460,7 +10993,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(29);
+	var markedCustomRenderer = __webpack_require__(42);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -6472,8 +11005,8 @@
 	 * @extends {}
 	 * @constructor
 	 * @class
+	 * @param {EventManager} em EventManager instance
 	 */
-
 	function Convertor(em) {
 	    this.eventManager = em;
 	}
@@ -6529,6 +11062,7 @@
 	Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
 	    var html = this._markdownToHtmlWithCodeHighlight(markdown);
 	    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
 	    return this._sanitizeScript(html);
 	};
 
@@ -6542,6 +11076,7 @@
 	Convertor.prototype.toHTML = function(markdown) {
 	    var html = this._markdownToHtml(markdown);
 	    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
 	    return this._sanitizeScript(html);
 	};
 
@@ -6555,6 +11090,7 @@
 	Convertor.prototype.toMarkdown = function(html) {
 	    var markdown = toMark(html);
 	    markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+
 	    return markdown;
 	};
 
@@ -6565,8 +11101,8 @@
 	 * @returns {string}
 	 */
 	Convertor.prototype._sanitizeScript = function(html) {
-	    html = html.replace(/\<script.*?\>/g, '&lt;script&gt;');
-	    html = html.replace(/\<\/script\>/g, '&lt;/script&gt;');
+	    html = html.replace(/<script.*?>/g, '&lt;script&gt;');
+	    html = html.replace(/<\/script>/g, '&lt;/script&gt;');
 
 	    return html;
 	};
@@ -6585,7 +11121,7 @@
 
 
 /***/ },
-/* 29 */
+/* 42 */
 /***/ function(module, exports) {
 
 	/**
@@ -6661,7 +11197,7 @@
 
 
 /***/ },
-/* 30 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6671,15 +11207,116 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(31),
-	    Tab = __webpack_require__(36),
-	    Layerpopup = __webpack_require__(38),
-	    ModeSwitch = __webpack_require__(39),
-	    PopupAddLink = __webpack_require__(40),
-	    PopupAddImage = __webpack_require__(41),
-	    PopupTableUtils = __webpack_require__(42),
-	    PopupAddTable = __webpack_require__(43),
-	    PopupAddHeading = __webpack_require__(44);
+	var Preview = __webpack_require__(23),
+	    EventManager = __webpack_require__(36),
+	    CommandManager = __webpack_require__(37),
+	    extManager = __webpack_require__(6),
+	    Convertor = __webpack_require__(41);
+
+	var util = tui.util;
+
+	/**
+	 * ViewOnly
+	 * @exports ViewOnly
+	 * @constructor
+	 * @class
+	 * @param {object} options 옵션
+	 * @param {string} options.initialValue 초기 입력 테스트
+	 * @param {object} options.events eventlist
+	 * @param {function} options.events.load it would be emitted when editor fully load
+	 * @param {function} options.events.change it would be emitted when content changed
+	 * @param {function} options.events.stateChange it would be emitted when format change by cursor position
+	 * @param {function} options.events.focus it would be emitted when editor get focus
+	 * @param {function} options.events.blur it would be emitted when editor loose focus
+	 * @param {object} options.hooks 외부 연결 훅 목록
+	 * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
+	 */
+	function ToastUIEditorViewOnly(options) {
+	    var self = this;
+
+	    this.options = options;
+
+	    this.eventManager = new EventManager();
+
+	    this.commandManager = new CommandManager(this);
+	    this.convertor = new Convertor(this.eventManager);
+
+	    if (this.options.hooks) {
+	        util.forEach(this.options.hooks, function(fn, key) {
+	            self.addHook(key, fn);
+	        });
+	    }
+
+	    if (this.options.events) {
+	        util.forEach(this.options.events, function(fn, key) {
+	            self.on(key, fn);
+	        });
+	    }
+
+	    this.preview = new Preview($(self.options.el), this.eventManager, this.convertor);
+
+	    extManager.applyExtension(self, self.options.exts);
+
+	    self.setValue(self.options.initialValue);
+
+	    self.eventManager.emit('load', self);
+	}
+
+	ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
+	    markdown = markdown || '';
+
+	    this.preview.refresh(markdown);
+	    this.eventManager.emit('setValueAfter', markdown);
+	};
+
+	ToastUIEditorViewOnly.prototype.on = function(type, handler) {
+	    this.eventManager.listen(type, handler);
+	};
+
+	ToastUIEditorViewOnly.prototype.off = function(type) {
+	    this.eventManager.removeEventHandler(type);
+	};
+
+	ToastUIEditorViewOnly.prototype.addHook = function(type, handler) {
+	    this.eventManager.removeEventHandler(type);
+	    this.eventManager.listen(type, handler);
+	};
+
+	ToastUIEditorViewOnly.prototype.isViewOnly = function() {
+	    return true;
+	};
+
+	ToastUIEditorViewOnly.prototype.isMarkdownMode = function() {
+	    return false;
+	};
+
+	ToastUIEditorViewOnly.prototype.isWysiwygMode = function() {
+	    return false;
+	};
+
+	module.exports = ToastUIEditorViewOnly;
+
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var Toolbar = __webpack_require__(45),
+	    Tab = __webpack_require__(50),
+	    Layerpopup = __webpack_require__(52),
+	    ModeSwitch = __webpack_require__(53),
+	    PopupAddLink = __webpack_require__(54),
+	    PopupAddImage = __webpack_require__(55),
+	    PopupTableUtils = __webpack_require__(56),
+	    PopupAddTable = __webpack_require__(57),
+	    PopupAddHeading = __webpack_require__(58);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -6855,7 +11492,7 @@
 
 
 /***/ },
-/* 31 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6865,9 +11502,9 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(32),
-	    Button = __webpack_require__(33),
-	    ToggleButton = __webpack_require__(35);
+	var UIController = __webpack_require__(46),
+	    Button = __webpack_require__(47),
+	    ToggleButton = __webpack_require__(49);
 
 	var util = tui.util;
 
@@ -7027,7 +11664,7 @@
 
 
 /***/ },
-/* 32 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/**
@@ -7273,7 +11910,7 @@
 
 
 /***/ },
-/* 33 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7282,8 +11919,8 @@
 	 */
 	'use strict';
 
-	var UIController = __webpack_require__(32);
-	var Tooltip = __webpack_require__(34);
+	var UIController = __webpack_require__(46);
+	var Tooltip = __webpack_require__(48);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -7374,7 +12011,7 @@
 
 
 /***/ },
-/* 34 */
+/* 48 */
 /***/ function(module, exports) {
 
 	/**
@@ -7417,7 +12054,7 @@
 
 
 /***/ },
-/* 35 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7426,7 +12063,7 @@
 	 */
 	'use strict';
 
-	var Button = __webpack_require__(33);
+	var Button = __webpack_require__(47);
 
 	var util = tui.util;
 
@@ -7480,7 +12117,7 @@
 
 
 /***/ },
-/* 36 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7490,8 +12127,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(32),
-	    templater = __webpack_require__(37);
+	var UIController = __webpack_require__(46),
+	    templater = __webpack_require__(51);
 
 	var util = tui.util;
 
@@ -7682,7 +12319,7 @@
 
 
 /***/ },
-/* 37 */
+/* 51 */
 /***/ function(module, exports) {
 
 	/**
@@ -7725,7 +12362,7 @@
 
 
 /***/ },
-/* 38 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7735,7 +12372,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(32);
+	var UIController = __webpack_require__(46);
 
 	var util = tui.util,
 	    _id = 0,
@@ -7982,7 +12619,7 @@
 
 
 /***/ },
-/* 39 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7992,7 +12629,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(32);
+	var UIController = __webpack_require__(46);
 
 	var util = tui.util;
 
@@ -8070,7 +12707,7 @@
 
 
 /***/ },
-/* 40 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8080,7 +12717,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(38);
+	var LayerPopup = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -8183,7 +12820,7 @@
 
 
 /***/ },
-/* 41 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8193,8 +12830,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(38),
-	    Tab = __webpack_require__(36);
+	var LayerPopup = __webpack_require__(52),
+	    Tab = __webpack_require__(50);
 
 	var util = tui.util;
 
@@ -8380,7 +13017,7 @@
 
 
 /***/ },
-/* 42 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8390,7 +13027,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(38);
+	var LayerPopup = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -8497,7 +13134,7 @@
 
 
 /***/ },
-/* 43 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8507,7 +13144,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(38);
+	var LayerPopup = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -8860,7 +13497,7 @@
 
 
 /***/ },
-/* 44 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8870,7 +13507,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(38);
+	var LayerPopup = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -8948,7 +13585,7 @@
 
 
 /***/ },
-/* 45 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8958,7 +13595,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -9032,15 +13669,18 @@
 	     * @returns {string} 셀렉션의 텍스트
 	     */
 	    expendSelection: function(doc, cursor) {
-	        var tmpSelection = doc.getSelection();
+	        var tmpSelection = doc.getSelection(),
+	            result;
 
 	        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
 	        if (tmpSelection === '****' || tmpSelection === '____') {
-	            return tmpSelection;
+	            result = tmpSelection;
+	        } else {
+	            doc.setSelection(cursor);
 	        }
 
-	        doc.setSelection(cursor);
+	        return result;
 	    },
 	    /**
 	     * 커서를 센터로 이동시킨다
@@ -9056,7 +13696,7 @@
 
 
 /***/ },
-/* 46 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9066,7 +13706,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -9160,15 +13800,18 @@
 	     * @returns {string} 확장된 영역의 텍스트
 	     */
 	    expendWithBoldSelection: function(doc, cursor) {
-	        var tmpSelection = doc.getSelection();
+	        var tmpSelection = doc.getSelection(),
+	            result;
 
 	        doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
 
 	        if (tmpSelection === '******' || tmpSelection === '______') {
-	            return tmpSelection;
+	            result = tmpSelection;
+	        } else {
+	            doc.setSelection(cursor);
 	        }
 
-	        doc.setSelection(cursor);
+	        return result;
 	    },
 	    /**
 	     * expendOnlyBoldSelection
@@ -9178,16 +13821,17 @@
 	     * @returns {string} 확장된 영역의 텍스트
 	     */
 	    expendOnlyBoldSelection: function(doc, cursor) {
-	        var tmpSelection = doc.getSelection();
+	        var tmpSelection = doc.getSelection(),
+	            result = false;
 
 	        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
 	        if (tmpSelection === '****' || tmpSelection === '____') {
 	            doc.setSelection(cursor);
-	            return 'only';
+	            result = 'only';
 	        }
 
-	        return false;
+	        return result;
 	    },
 	    /**
 	     * expendSelection
@@ -9197,15 +13841,18 @@
 	     * @returns {string} 확장된 영역의 텍스트
 	     */
 	    expendSelection: function(doc, cursor) {
-	        var tmpSelection = doc.getSelection();
+	        var tmpSelection = doc.getSelection(),
+	            result;
 
-	        doc.setSelection({line: cursor.line, ch: cursor.ch - 1}, {line: cursor.line, ch: cursor.ch + 1});
+	        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
-	        if (tmpSelection === '**' || tmpSelection === '__') {
-	            return tmpSelection;
+	        if (tmpSelection === '****' || tmpSelection === '____') {
+	            result = tmpSelection;
+	        } else {
+	            doc.setSelection(cursor);
 	        }
 
-	        doc.setSelection(cursor);
+	        return result;
 	    },
 	    /**
 	     * setCursorToCenter
@@ -9224,7 +13871,7 @@
 
 
 /***/ },
-/* 47 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9234,7 +13881,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Blockquote
@@ -9293,7 +13940,7 @@
 
 
 /***/ },
-/* 48 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9303,7 +13950,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var util = tui.util;
 
@@ -9383,7 +14030,7 @@
 
 
 /***/ },
-/* 49 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9393,7 +14040,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * HR
@@ -9448,7 +14095,7 @@
 
 
 /***/ },
-/* 50 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9458,7 +14105,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * AddLink
@@ -9502,7 +14149,7 @@
 
 
 /***/ },
-/* 51 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9512,7 +14159,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * AddImage
@@ -9556,7 +14203,7 @@
 
 
 /***/ },
-/* 52 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9566,7 +14213,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -9620,7 +14267,7 @@
 
 
 /***/ },
-/* 53 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9630,7 +14277,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -9684,7 +14331,7 @@
 
 
 /***/ },
-/* 54 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9694,7 +14341,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Table
@@ -9789,7 +14436,7 @@
 
 
 /***/ },
-/* 55 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9799,7 +14446,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Task
@@ -9843,7 +14490,7 @@
 
 
 /***/ },
-/* 56 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9853,7 +14500,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Code
@@ -9898,7 +14545,7 @@
 
 
 /***/ },
-/* 57 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9908,7 +14555,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * CodeBlock
@@ -9951,7 +14598,7 @@
 
 
 /***/ },
-/* 58 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9961,7 +14608,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Bold
@@ -10000,7 +14647,7 @@
 
 
 /***/ },
-/* 59 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10010,7 +14657,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Italic
@@ -10048,7 +14695,7 @@
 
 
 /***/ },
-/* 60 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10058,7 +14705,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Blockquote
@@ -10090,7 +14737,7 @@
 
 
 /***/ },
-/* 61 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10100,7 +14747,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * AddImage
@@ -10132,7 +14779,7 @@
 
 
 /***/ },
-/* 62 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10142,7 +14789,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * AddLink
@@ -10183,7 +14830,7 @@
 
 
 /***/ },
-/* 63 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10193,8 +14840,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23),
-	    domUtils = __webpack_require__(11);
+	var CommandManager = __webpack_require__(37),
+	    domUtils = __webpack_require__(17);
 
 	/**
 	 * HR
@@ -10226,6 +14873,7 @@
 
 	            sq.modifyBlocks(function(frag) {
 	                frag.appendChild(sq.createElement('HR'));
+
 	                return frag;
 	            });
 
@@ -10244,7 +14892,7 @@
 
 
 /***/ },
-/* 64 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10254,8 +14902,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
-	var domUtils = __webpack_require__(11);
+	var CommandManager = __webpack_require__(37);
+	var domUtils = __webpack_require__(17);
 
 	/**
 	 * Heading
@@ -10292,7 +14940,7 @@
 
 
 /***/ },
-/* 65 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10302,7 +14950,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * UL
@@ -10345,7 +14993,7 @@
 
 
 /***/ },
-/* 66 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10355,7 +15003,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * OL
@@ -10399,7 +15047,7 @@
 
 
 /***/ },
-/* 67 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10409,7 +15057,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -10436,6 +15084,7 @@
 
 	        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
 	            sq.focus();
+
 	            return;
 	        }
 
@@ -10523,7 +15172,7 @@
 
 
 /***/ },
-/* 68 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10533,7 +15182,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * AddRow
@@ -10589,7 +15238,7 @@
 
 
 /***/ },
-/* 69 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10599,8 +15248,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23),
-	    domUtils = __webpack_require__(11);
+	var CommandManager = __webpack_require__(37),
+	    domUtils = __webpack_require__(17);
 
 	/**
 	 * AddCol
@@ -10676,7 +15325,7 @@
 
 
 /***/ },
-/* 70 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10686,7 +15335,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * RemoveRow
@@ -10738,7 +15387,7 @@
 
 
 /***/ },
-/* 71 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10748,8 +15397,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23),
-	    domUtils = __webpack_require__(11);
+	var CommandManager = __webpack_require__(37),
+	    domUtils = __webpack_require__(17);
 
 	/**
 	 * RemoveCol
@@ -10820,7 +15469,7 @@
 
 
 /***/ },
-/* 72 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10830,7 +15479,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * RemoveTable
@@ -10865,7 +15514,7 @@
 
 
 /***/ },
-/* 73 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10875,7 +15524,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 	/**
@@ -10927,7 +15576,7 @@
 
 
 /***/ },
-/* 74 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10937,7 +15586,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	/**
 	 * Task
@@ -10979,7 +15628,7 @@
 
 
 /***/ },
-/* 75 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -10990,8 +15639,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23),
-	    domUtils = __webpack_require__(11);
+	var CommandManager = __webpack_require__(37),
+	    domUtils = __webpack_require__(17);
 
 	/**
 	 * Code
@@ -11043,7 +15692,7 @@
 
 
 /***/ },
-/* 76 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11053,7 +15702,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(23);
+	var CommandManager = __webpack_require__(37);
 
 	var codeBlockID = 0,
 	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
@@ -11110,929 +15759,6 @@
 	}
 
 	module.exports = CodeBlock;
-
-
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var extManager = __webpack_require__(25);
-
-	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
-	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
-
-	extManager.defineExtension('taskCounter', function(editor) {
-	    editor.getTaskCount = function() {
-	        var found, count;
-
-	        if (editor.isMarkdownMode()) {
-	            found = editor.mdEditor.getValue().match(FIND_TASK_RX);
-	            count = found ? found.length : 0;
-	        } else {
-	            count = editor.wwEditor.get$Body().find('input').length;
-	        }
-
-	        return count;
-	    };
-
-	    editor.getCheckedTaskCount = function() {
-	        var found, count;
-
-	        if (editor.isMarkdownMode()) {
-	            found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
-	            count = found ? found.length : 0;
-	        } else {
-	            count = editor.wwEditor.get$Body().find('input:checked').length;
-	        }
-
-	        return count;
-	    };
-	});
-
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var extManager = __webpack_require__(25);
-
-	extManager.defineExtension('textPalette', function(editor) {
-	    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
-	    var triggers = editor.options.textPalette.triggers,
-	        querySender = editor.options.textPalette.querySender;
-
-	    $(editor.options.el).append($layer);
-
-	    $layer.find('input').on('keyup', function(e) {
-	        var query = $layer.find('input').val();
-
-	        if (e.which === 13) {
-	            e.stopPropagation();
-	            //editor.getCurrentModeEditor().replaceSelection(query);
-	            editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
-	            editor.focus();
-	            hideUI($layer);
-	        } else {
-	            querySender(query, function(list) {
-	                updateUI($layer, list);
-	            });
-	        }
-	    });
-
-	    editor.eventManager.listen('change', function(ev) {
-	        if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
-	            editor.addWidget(ev.selection, $layer[0], 'over');
-	            showUI($layer);
-	        }
-	    });
-	});
-
-	function showUI($layer) {
-	    $layer.show();
-	    $layer.find('input').focus();
-	}
-
-	function hideUI($layer) {
-	    $layer.hide();
-	    $layer.find('input').val('');
-	}
-
-	function updateUI() {
-	}
-
-
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Implements Scroll Follow Extension
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var extManager = __webpack_require__(25),
-	    ScrollSync = __webpack_require__(80),
-	    SectionManager = __webpack_require__(81);
-
-	extManager.defineExtension('scrollFollow', function(editor) {
-	    var cm = editor.getCodeMirror(),
-	        scrollable = false,
-	        active = true,
-	        sectionManager, scrollSync,
-	        className = 'tui-scrollfollow',
-	        $button;
-
-	    sectionManager = new SectionManager(cm, editor.preview);
-	    scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
-
-	    //UI
-	    if (editor.getUI().name === 'default') {
-	        editor.getUI().toolbar.addButton([{
-	            className: [className, 'active'].join(' '),
-	            command: 'scrollFollowDisable',
-	            tooltip: '자동 스크롤 끄기',
-	            style: 'background-color: #ddedfb'
-	        }, {
-	            className: className,
-	            command: 'scrollFollowEnable',
-	            tooltip: '자동 스크롤 켜기',
-	            style: 'background-color: #fff'
-	        }]);
-	    }
-
-	    $button = editor.getUI().toolbar.$el.find(className);
-
-	    //Commands
-	    editor.addCommand('markdown', {
-	        name: 'scrollFollowDisable',
-	        exec: function() {
-	            active = false;
-	        }
-	    });
-
-	    editor.addCommand('markdown', {
-	        name: 'scrollFollowEnable',
-	        exec: function() {
-	            active = true;
-	        }
-	    });
-
-	    //Events
-	    cm.on('change', function() {
-	        scrollable = false;
-	        sectionManager.makeSectionList();
-	    });
-
-	    editor.on('previewRenderAfter', function() {
-	        sectionManager.sectionMatch();
-	        scrollSync.syncToPreview();
-	        scrollable = true;
-	    });
-
-	    cm.on('scroll', function() {
-	        if (!active || !scrollable) {
-	            return;
-	        }
-
-	        scrollSync.syncToPreview();
-	    });
-
-	    //위지윅에서는 숨김
-	    editor.on('changeModeToWysiwyg', function() {
-	        $button.hide();
-	    });
-
-	    editor.on('changeModeToMarkdown', function() {
-	        $button.show();
-	    });
-	});
-
-
-/***/ },
-/* 80 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview Implements Scroll Follow Extension ScrollSync Module
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var SCROLL_TOP_PADDING = 20;
-
-	/**
-	 * ScrollSync
-	 * manage scroll sync between markdown editor and preview
-	 * @exports ScrollSync
-	 * @constructor
-	 * @class
-	 * @param {SectionManager} sectionManager sectionManager
-	 * @param {CodeMirror} cm codemirror
-	 * @param {jQuery} $previewContainerEl preview container
-	 */
-	function ScrollSync(sectionManager, cm, $previewContainerEl) {
-	    this.sectionManager = sectionManager;
-	    this.cm = cm;
-	    this.$previewContainerEl = $previewContainerEl;
-	    this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
-
-	    /**
-	     * current timeout id needs animation
-	     * @type {number}
-	     */
-	    this._currentTimeoutId = null;
-	}
-
-	/**
-	 * _getEditorSectionHeight
-	 * get section height of editor
-	 * @param {object} section section be caculated height
-	 * @returns {number} height
-	 */
-	ScrollSync.prototype._getEditorSectionHeight = function(section) {
-	    var height;
-
-	    height = this.cm.heightAtLine(section.end, 'local');
-	    height -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
-
-	    return height;
-	};
-
-	/**
-	 * _getLineHeightGapInSection
-	 * get height gap between passed line in passed section
-	 * @param {object} section section be caculated
-	 * @param {number} line line number
-	 * @returns {number} gap
-	 */
-	ScrollSync.prototype._getEditorLineHeightGapInSection = function(section, line) {
-	    var gap;
-
-	    gap = this.cm.heightAtLine(line, 'local');
-	    gap -= this.cm.heightAtLine(section.start > 0 ? section.start - 1 : 0, 'local');
-
-	    return Math.max(gap, 0);
-	};
-
-	/**
-	 * _getSectionScrollRatio
-	 * get ratio of height between scrollTop line and scrollTop section
-	 * @param {object} section section be caculated
-	 * @param {number} line line number
-	 * @returns {number} ratio
-	 */
-	ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
-	    var ratio,
-	        isOneLine = (section.end === section.start);
-
-	    if (isOneLine) {
-	        ratio = 0;
-	    } else {
-	        ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
-	    }
-	    return ratio;
-	};
-
-	/**
-	 * _getScrollFactorsOfEditor
-	 * get Scroll Information of editor for preivew scroll sync
-	 * @returns {object} scroll factors
-	 */
-	ScrollSync.prototype._getScrollFactorsOfEditor = function() {
-	    var topLine, topSection, ratio, isEditorBottom, factors,
-	        cm = this.cm,
-	        scrollInfo = cm.getScrollInfo();
-
-	    isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
-
-	    if (isEditorBottom) {
-	        factors = {
-	            isEditorBottom: isEditorBottom
-	        };
-	    } else {
-	        topLine = cm.coordsChar({
-	            left: scrollInfo.left,
-	            top: scrollInfo.top
-	        }, 'local').line;
-
-	        topSection = this.sectionManager.sectionByLine(topLine);
-
-	        ratio = this._getEditorSectionScrollRatio(topSection, topLine);
-
-	        factors = {
-	            section: topSection,
-	            sectionRatio: ratio
-	        };
-	    }
-
-	    return factors;
-	};
-
-	/**
-	 * _getScrollTopForPreview
-	 * get ScrolTop value for preview
-	 * @returns {number|undefined} scrollTop value, when something wrong then return undefined
-	 */
-	ScrollSync.prototype._getScrollTopForPreview = function() {
-	    var scrollTop, scrollFactors, section, ratio;
-
-	    scrollFactors = this._getScrollFactorsOfEditor();
-	    section = scrollFactors.section;
-	    ratio = scrollFactors.sectionRatio;
-
-	    if (scrollFactors.isEditorBottom) {
-	        scrollTop = this.$contents.height();
-	    } else if (section.$previewSectionEl) {
-	        scrollTop = section.$previewSectionEl[0].offsetTop;
-	        scrollTop += (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
-	    }
-
-	    scrollTop = scrollTop && Math.max(scrollTop, 0);
-
-	    return scrollTop;
-	};
-
-
-	/**
-	 * syncToPreview
-	 * sync preview with markdown scroll
-	 */
-	ScrollSync.prototype.syncToPreview = function() {
-	    var self = this,
-	        targetScrollTop = this._getScrollTopForPreview();
-
-	    this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function(deltaScrollTop) {
-	        self.$previewContainerEl.scrollTop(deltaScrollTop);
-	    });
-	};
-
-	/**
-	 * _animateRun
-	 * animate with passed Callback
-	 * @param {number} originValue original value
-	 * @param {number} targetValue target value
-	 * @param {function} stepCB callback function
-	 */
-	ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
-	    var valueDiff = targetValue - originValue,
-	        startTime = Date.now(),
-	        self = this;
-
-	    //if already doing animation
-	    if (this._currentTimeoutId) {
-	        clearTimeout(this._currentTimeoutId);
-	    }
-
-	    function step() {
-	        var deltaValue,
-	            stepTime = Date.now(),
-	            progress = (stepTime - startTime) / 200; //200 is animation time
-
-	        if (progress < 1) {
-	            deltaValue = originValue + valueDiff * Math.cos((1 - progress) * Math.PI / 2);
-	            stepCB(Math.ceil(deltaValue));
-	            self._currentTimeoutId = setTimeout(step, 1);
-	        } else {
-	            stepCB(targetValue);
-	            self._currentTimeoutId = null;
-	        }
-	    }
-
-	    step();
-	};
-
-	module.exports = ScrollSync;
-
-
-/***/ },
-/* 81 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview Implements Scroll Follow Extension SectionManager Module
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/,
-	    FIND_SETEXT_HEADER_RX = /^ *(?:\={1,}|-{1,})\s*$/,
-	    FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/,
-	    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
-	    FIND_SPACE = /\s/g;
-
-	/*
-	 * SectionManager
-	 * manage logical markdown content sections
-	 * @exports SectionManager
-	 * @constructor
-	 * @class
-	 * @param {CodeMirror} cm codemirror
-	 * @param {Preview} preview preview
-	 */
-	function SectionManager(cm, preview) {
-	    this.cm = cm;
-	    this.preview = preview;
-	    this.$previewContent = preview.$el.find('.tui-editor-contents');
-
-	    /**
-	     *  section list
-	     * @type {object[]}
-	     */
-	    this._sectionList = null;
-
-	    /**
-	     * current working section needs making section list
-	     * @type {object}
-	     */
-	    this._currentSection = null;
-	}
-
-	/**
-	 * _addNewSection
-	 * add new section
-	 * @param {number} start initial start line number
-	 * @param {number} end initial end line number
-	 */
-	SectionManager.prototype._addNewSection = function(start, end) {
-	    var newSection = this._makeSectionData(start, end);
-	    this._sectionList.push(newSection);
-	    this._currentSection = newSection;
-	};
-
-	/**
-	 * getSectionList
-	 * return section list
-	 * @returns {object[]} section object list
-	 */
-	SectionManager.prototype.getSectionList = function() {
-	    return this._sectionList;
-	};
-
-	/**
-	 * _makeSectionData
-	 * make default section object
-	 * @param {number} start initial start line number
-	 * @param {number} end initial end line number
-	 * @returns {object} section object
-	 */
-	SectionManager.prototype._makeSectionData = function(start, end) {
-	    return {
-	        start: start,
-	        end: end,
-	        $previewSectionEl: null
-	    };
-	};
-
-	/**
-	 * _updateCurrentSectionEnd
-	 * update current section's end line number
-	 * @param {number} end end value to update
-	 */
-	SectionManager.prototype._updateCurrentSectionEnd = function(end) {
-	    this._currentSection.end = end;
-	};
-
-	/**
-	 * _eachLineState
-	 * iterate codemiror lines, callback function parameter pass line type and line number
-	 * @param {function} iteratee callback function
-	 */
-	SectionManager.prototype._eachLineState = function(iteratee) {
-	    var isSection, i, lineLength, lineString, nextLineString, prevLineString,
-	        isTrimming = true,
-	        onTable = false,
-	        onCodeBlock = false,
-	        trimCapture = '';
-
-	    lineLength = this.cm.getDoc().lineCount();
-
-	    for (i = 0; i < lineLength; i += 1) {
-	        isSection = false;
-	        lineString = this.cm.getLine(i);
-	        nextLineString = this.cm.getLine(i + 1) || '';
-	        prevLineString = this.cm.getLine(i - 1) || '';
-
-	        if (onTable && (!lineString || !this._isTableCode(lineString))) {
-	            onTable = false;
-	        } else if (!onTable && this._isTable(lineString, nextLineString)) {
-	            onTable = true;
-	        }
-
-	        if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
-	            onCodeBlock = false;
-	        } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
-	            onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
-	        }
-
-	        //atx header
-	        if (this._isAtxHeader(lineString)) {
-	            isSection = true;
-	        //setext header
-	        } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
-	            isSection = true;
-	        }
-
-	        //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
-	        //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
-	        if (isTrimming) {
-	            trimCapture += lineString.trim();
-
-	            if (trimCapture) {
-	                isTrimming = false;
-	            } else {
-	                continue;
-	            }
-	        }
-
-	        iteratee(isSection, i);
-	    }
-	};
-
-	/**
-	 * _doFollowedLinesHaveCodeBlockEnd
-	 * Check if follow lines have codeblock end
-	 * @param {number} lineIndex current index
-	 * @param {number} lineLength line length
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._doFollowedLinesHaveCodeBlockEnd = function(lineIndex, lineLength) {
-	    var i,
-	        doLineHaveCodeBlockEnd = false;
-
-	    for (i = lineIndex + 1; i < lineLength; i += 1) {
-	        if (this._isCodeBlockEnd(this.cm.getLine(i))) {
-	            doLineHaveCodeBlockEnd = true;
-	            break;
-	        }
-	    }
-
-	    return doLineHaveCodeBlockEnd;
-	};
-
-	/**
-	 * _isCodeBlockStart
-	 * Check if passed string have code block start
-	 * @param {string} string string to check
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isCodeBlockStart = function(string) {
-	    return FIND_CODEBLOCK_START_RX.test(string);
-	};
-
-	/**
-	 * _isCodeBlockEnd
-	 * Check if passed string have code block end
-	 * @param {string} string string to check
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isCodeBlockEnd = function(string) {
-	    return FIND_CODEBLOCK_END_RX.test(string);
-	};
-
-	/**
-	 * _isTable
-	 * Check if passed string have table
-	 * @param {string} lineString current line string
-	 * @param {string} nextLineString next line string
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isTable = function(lineString, nextLineString) {
-	    return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
-	};
-
-	/**
-	 * _isTableCode
-	 * Check if passed string have table code
-	 * @param {string} string string to check
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isTableCode = function(string) {
-	    return /(^\S?.*\|.*)/.test(string);
-	};
-
-	/**
-	 * _isTableAligner
-	 * Check if passed string have table align code
-	 * @param {string} string string to check
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isTableAligner = function(string) {
-	    return /(\s*[-:]+\s*\|)+/.test(string);
-	};
-
-	/**
-	 * _isAtxHeader
-	 * Check if passed string have atx header
-	 * @param {string} string string to check
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isAtxHeader = function(string) {
-	    return FIND_HEADER_RX.test(string);
-	};
-
-	/**
-	 * _isSeTextHeader
-	 * @param {string} lineString current line string
-	 * @param {string} nextLineString next line string
-	 * @returns {boolean} result
-	 */
-	SectionManager.prototype._isSeTextHeader = function(lineString, nextLineString) {
-	    return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
-	};
-
-	/**
-	 * makeSectionList
-	 * make section list
-	 */
-	SectionManager.prototype.makeSectionList = function() {
-	    var self = this;
-
-	    this._sectionList = [];
-
-	    this._eachLineState(function(isSection, lineNumber) {
-	        if (isSection || !self._sectionList.length) {
-	            self._addNewSection(lineNumber, lineNumber);
-	        } else {
-	            self._updateCurrentSectionEnd(lineNumber);
-	        }
-	    });
-	};
-
-
-	/**
-	 * sectionMatch
-	 * make preview sections then match section list with preview section element
-	 */
-	SectionManager.prototype.sectionMatch = function() {
-	    var sections;
-
-	    if (this._sectionList) {
-	        sections = this._getPreviewSections();
-	        this._matchPreviewSectionsWithSectionlist(sections);
-	    }
-	};
-
-	/**
-	 * _matchPreviewSectionsWithSectionlist
-	 * match section list with preview section element
-	 * @param {HTMLNode[]} sections section nodes
-	 */
-	SectionManager.prototype._matchPreviewSectionsWithSectionlist = function(sections) {
-	    var self = this;
-
-	    sections.forEach(function(childs, index) {
-	        var $sectionDiv;
-
-	        if (self._sectionList[index]) {
-	            $sectionDiv = $('<div class="content-id-' + index + '"></div>');
-	            self._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
-	        }
-	    });
-	};
-
-	/**
-	 * findElementNodeFilter
-	 * @this Node
-	 * @returns {boolean} true or not
-	 */
-	function findElementNodeFilter() {
-	    return this.nodeType === Node.ELEMENT_NODE;
-	}
-
-	/**
-	 * _getPreviewSections
-	 * get preview html section group to make section
-	 * @returns {array[]} element node array
-	 */
-	SectionManager.prototype._getPreviewSections = function() {
-	    var lastSection = 0,
-	        sections = [];
-
-	    sections[0] = [];
-
-	    this.$previewContent.contents().filter(findElementNodeFilter).each(function(index, el) {
-	        if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
-	            if (sections[lastSection].length) {
-	                sections.push([]);
-	                lastSection += 1;
-	            }
-	        }
-
-	        sections[lastSection].push(el);
-	    });
-
-	    return sections;
-	};
-
-	/**
-	 * _sectionByLine
-	 * get section by markdown line
-	 * @param {number} line markdown editor line number
-	 * @returns {object} section
-	 */
-	SectionManager.prototype.sectionByLine = function(line) {
-	    var sectionIndex,
-	        sectionList = this._sectionList,
-	        sectionLength = sectionList.length;
-
-	    for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex += 1) {
-	        if (line <= sectionList[sectionIndex].end) {
-	            break;
-	        }
-	    }
-
-	    if (sectionIndex === sectionLength) {
-	        sectionIndex = sectionLength - 1;
-	    }
-
-	    return sectionList[sectionIndex];
-	};
-
-	module.exports = SectionManager;
-
-
-/***/ },
-/* 82 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview Implements Color syntax Extension
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var extManager = __webpack_require__(25);
-
-	var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
-	    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,
-	    colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
-	    decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
-
-	var RESET_COLOR = '#181818';
-
-	extManager.defineExtension('colorSyntax', function(editor) {
-	    var useCustomSyntax = false;
-
-	    if (editor.options.colorSyntax) {
-	        useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
-	    }
-
-	    editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
-	        var replacement;
-
-	        if (!useCustomSyntax) {
-	            replacement = html;
-	        } else {
-	            replacement = html.replace(colorSyntaxRx, function(matched, p1, p2) {
-	                return makeHTMLColorSyntax(p2, p1);
-	            });
-	        }
-
-	        return replacement;
-	    });
-
-	    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-	        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
-
-	        return markdown.replace(findRx, function(founded, color, text) {
-	            var replacement;
-
-	            if (color.match(decimalColorRx)) {
-	                color = changeDecColorToHex(color);
-	            }
-
-	            if (!useCustomSyntax) {
-	                replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
-	            } else {
-	                replacement = makeCustomColorSyntax(text, color);
-	            }
-
-	            return replacement;
-	        });
-	    });
-
-	    editor.addCommand('markdown', {
-	        name: 'color',
-	        exec: function(mde, color) {
-	            var cm = mde.getEditor();
-
-	            if (!useCustomSyntax) {
-	                cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
-	            } else {
-	                cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
-	            }
-
-	            mde.focus();
-	        }
-	    });
-
-	    editor.addCommand('wysiwyg', {
-	        name: 'color',
-	        exec: function(wwe, color) {
-	            var sq = wwe.getEditor();
-
-	            if (!sq.hasFormat('PRE')) {
-	                if (color === RESET_COLOR) {
-	                    sq.changeFormat(null, {
-	                        class: 'colour',
-	                        tag: 'span'
-	                    });
-	                } else {
-	                    sq.setTextColour(color);
-	                }
-	            }
-
-	            sq.focus();
-	        }
-	    });
-
-	    if (editor.getUI().name === 'default') {
-	        initUI(editor);
-	    }
-	});
-
-	function initUI(editor) {
-	    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className;
-
-	    className = 'tui-color';
-
-	    editor.eventManager.addEventType('colorButtonClicked');
-
-	    editor.getUI().toolbar.addButton({
-	        className: className,
-	        event: 'colorButtonClicked',
-	        tooltip: '글자색상'
-	    }, 2);
-	    $button = editor.getUI().toolbar.$el.find('button.' + className);
-
-	    $colorPickerContainer = $('<div />');
-
-	    $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
-	    $buttonBar.css('margin-top', 10);
-
-	    colorPicker = tui.component.colorpicker.create({
-	        container: $colorPickerContainer[0]
-	    });
-
-	    $colorPickerContainer.append($buttonBar);
-
-	    popup = editor.getUI().createPopup({
-	        title: false,
-	        content: $colorPickerContainer,
-	        $target: editor.getUI().$el,
-	        css: {
-	            'width': 178,
-	            'position': 'absolute'
-	        }
-	    });
-
-	    editor.eventManager.listen('focus', function() {
-	        popup.hide();
-	    });
-
-	    editor.eventManager.listen('colorButtonClicked', function() {
-	        editor.eventManager.emit('closeAllPopup');
-	        if (popup.isShow()) {
-	            popup.hide();
-	        } else {
-	            popup.$el.css({
-	                'top': $button.position().top + $button.height() + 5,
-	                'left': $button.position().left
-	            });
-	            popup.show();
-	        }
-	    });
-
-	    editor.eventManager.listen('closeAllPopup', function() {
-	        popup.hide();
-	    });
-
-	    colorPicker.on('selectColor', function(e) {
-	        selectedColor = e.color;
-
-	        if (e.origin === 'palette') {
-	            editor.exec('color', selectedColor);
-	            popup.hide();
-	        }
-	    });
-
-	    popup.$el.find('.te-apply-button').on('click', function() {
-	        editor.exec('color', selectedColor);
-	    });
-	}
-
-	function makeCustomColorSyntax(text, color) {
-	    return '{color:' + color + '}' + text + '{color}';
-	}
-
-	function makeHTMLColorSyntax(text, color) {
-	    return '<span style="color:' + color + '">' + text + '</span>';
-	}
-
-	function changeDecColorToHex(color) {
-	    return color.replace(decimalColorRx, function(colorValue, r, g, b) {
-	        r = parseInt(r, 10);
-	        g = parseInt(g, 10);
-	        b = parseInt(b, 10);
-
-	        return '#' + get2DigitNumberString(r.toString(16))
-	            + get2DigitNumberString(g.toString(16))
-	            + get2DigitNumberString(b.toString(16));
-	    });
-	}
-
-	function get2DigitNumberString(numberStr) {
-	    return numberStr === '0' ? '00' : numberStr;
-	}
 
 
 /***/ }
