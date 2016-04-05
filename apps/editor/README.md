@@ -151,6 +151,8 @@ $('#editSection').tuiEditor('off', 'load.dooray', handler);
 ## Extension API
 
 ### mark
+텍스트 셀렉션 기준의 마커를 추가하거나 관리하여 사용자 UI와 연동할 수 있습니다..
+demo-marker.html과 demo-viewOnlyMarker.html를 참조하세요.
 
 * setValueWithMarkers(마크다운, 마커데이터): 에디터에 텍스트를 셋팅하면서 해당컨텍스트의 마커데이터를 복구합니다. 마커데이터는 exportMarkers로 얻어진 데이터입니다.
 
@@ -171,10 +173,14 @@ var marker = $('#editSection').tuiEditor('addMarker', 'm1');
 * getMarkersAll(): 모든 마커정보를 얻습니다.
 * removeMarker(아이디): 마커를 삭제합니다., 삭제된 마커정보가 리턴됩니다
 * 이벤트
-    * markerUpdated: 마커의 위치가 업데이트되거나 추가되면 이벤트가 발생합니다. 인자로 모든 마커정보가 넘어갑니다.
+    * markerUpdated: 마커의 위치가 업데이트되거나 추가되면 이벤트가 발생합니다. 인자로 모든 마커정보가 넘어갑니다
+
+## 커스텀 렌더러의 적용
+marked를 확장해 추가적인 마크다운을 삽입하고자 한다면 tui.Editor.markedRenderer를 이용해서 확장하세요.
+에디터에서 사용하는 렌더러입니다. 덮어쓰지 말고 확장해서 사용해주세요
 
 ## 버전별 업데이트 유의점
-*.0.0.20
+*.0.4.0
     * viewOnly 옵션이 추가되었습니다. true를 넘기면 html 렌더링만 가능한 뷰모드로 에디터를 생성합니다.
 * 0.0.9
     * CSS 클래스명 대거 수정(에디터 디자인 커스터마이징시 유의)
