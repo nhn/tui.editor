@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "author": "Sungho Kim <shirenbeat@gmail.com>",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "gulp-concat": "^2.6.0",
     "gulp-concat-css": "^2.2.0",
     "gulp-csslint": "^0.2.0",
-    "gulp-eslint": "^1.1.1",
+    "gulp-eslint": "^2.0.0",
     "gulp-livereload": "^3.7.0",
     "gulp-rename": "^1.2.2",
     "gulp-strip-debug": "^1.0.2",
