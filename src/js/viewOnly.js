@@ -84,4 +84,12 @@ ToastUIEditorViewOnly.prototype.isViewOnly = function() {
     return true;
 };
 
+ToastUIEditorViewOnly.prototype.isMarkdownMode = function() {
+    return false;
+};
+
+ToastUIEditorViewOnly.prototype.isWysiwygMode = function() {
+    return false;
+};
+
 module.exports = ToastUIEditorViewOnly;

@@ -158,24 +158,24 @@ $('#editSection').tuiEditor('off', 'load.dooray', handler);
 $('#editSection').tuiEditor('setValueWithMarkers', '# TEXT', 마커데이터);
 ```
 
-* addMarker(아이디): 에디터의 현재 셀렉션에 마커를 삽입합니다. 마커를 구별할 아이디를 입력합니다
+* addMarker(아이디): 에디터의 현재 셀렉션에 마커를 삽입합니다. 마커를 구별할 아이디를 입력합니다, 마커의 정보가 담긴 객체가 리턴됩니다.
 
 ``` javascript
-$('#editSection').tuiEditor('addMarker', 'm1');
+var marker = $('#editSection').tuiEditor('addMarker', 'm1');
 ```
 
 * selectMarker(아이디): 마커의 셀렉션을 생성합니다.
 * clearSelect(): 셀렉션을 취소합니다.
 * exportMarkers(): 현 컨텐츠의 마커정보를 저장하기위해 모든 마커의 JSON데이터를 받습니다
-* getMarker(아이디): 특정 아이디의 마커를 얻습니다.
+* getMarker(아이디): 특정 아이디의 마커 정보를 얻습니다.
 * getMarkersAll(): 모든 마커정보를 얻습니다.
-* removeMarker(아이디): 마커를 삭제합니다.
+* removeMarker(아이디): 마커를 삭제합니다., 삭제된 마커정보가 리턴됩니다
 * 이벤트
-    ** markerUpdated: 마커의 위치가 업데이트되거나 추가되면 이벤트가 발생합니다. 인자로 모든 마커정보가 넘어갑니다.
+    * markerUpdated: 마커의 위치가 업데이트되거나 추가되면 이벤트가 발생합니다. 인자로 모든 마커정보가 넘어갑니다.
 
 ## 버전별 업데이트 유의점
 *.0.0.20
-    * viewOnly 옵션이 추가되었습니다. true를 넘기면 html 렌더링만 가능한 뷰모드로 에디터를 설정합니다.
+    * viewOnly 옵션이 추가되었습니다. true를 넘기면 html 렌더링만 가능한 뷰모드로 에디터를 생성합니다.
 * 0.0.9
     * CSS 클래스명 대거 수정(에디터 디자인 커스터마이징시 유의)
     src/css/tui-editor.css 변경점 참고
