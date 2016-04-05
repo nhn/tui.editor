@@ -52,6 +52,7 @@ MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     marker.text = info.text.replace(FIND_CRLF_RX, ' ');
     marker.top = info.top;
     marker.left = info.left;
+    marker.height = info.height;
 
     return marker;
 };
@@ -66,26 +67,36 @@ MarkdownMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  * @returns {object} information
  */
 MarkdownMarkerHelper.prototype._getExtraInfoOfRange = function(startLine, startCh, endLine, endCh) {
-    var text, rect,
+    var text, rect, top, left, height,
         doc = this.cm.getDoc();
 
-    text = doc.getRange({
-        line: startLine,
-        ch: startCh
-    }, {
-        line: endLine,
-        ch: endCh
-    });
+    if (!doc.getValue().length) {
+        top = left = height = 0;
+        text = '';
+    } else {
+        text = doc.getRange({
+            line: startLine,
+            ch: startCh
+        }, {
+            line: endLine,
+            ch: endCh
+        });
 
-    rect = this.cm.charCoords({
-        line: endLine,
-        ch: endCh
-    }, 'local');
+        rect = this.cm.charCoords({
+            line: endLine,
+            ch: endCh
+        }, 'local');
+
+        top = rect.top;
+        left = rect.left;
+        height = rect.bottom - rect.top;
+    }
 
     return {
         text: text,
-        top: rect.top,
-        left: rect.left
+        top: top,
+        left: left,
+        height: height
     };
 };
 
@@ -119,7 +130,8 @@ MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
         end: end,
         text: info.text.replace(FIND_CRLF_RX, ' '),
         top: info.top,
-        left: info.left
+        left: info.left,
+        height: info.height
     };
 };
 

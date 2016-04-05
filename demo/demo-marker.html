@@ -78,6 +78,8 @@
 
                 function setUITop() {
                     editor.getMarkersAll().forEach(function(marker) {
+                        var linePosition;
+
                         if (!markerUIs[marker.id]) {
                             markerUIs[marker.id] = $('<div></div>').css({
                                 width: '1px',
@@ -91,8 +93,10 @@
                             markerUIs[marker.id].appendTo('.te-editor-section');
                         }
 
+                        linePosition = Math.max(0, (marker.height - 10) / 2); //10 means marker ui height
+
                         markerUIs[marker.id].css({
-                            'top': marker.top - editor.scrollTop(),
+                            'top': marker.top - editor.scrollTop() + linePosition,
                             'left': marker.left
                         });
                     });

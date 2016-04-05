@@ -51,6 +51,7 @@ ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     marker.text = info.text;
     marker.top = info.top;
     marker.left = info.left;
+    marker.height = info.height;
 
     return marker;
 };
@@ -62,7 +63,7 @@ ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  * @returns {object} extra info
  */
 ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-    var text, top, left, rect, containerOffset;
+    var text, top, left, rect, containerOffset, height;
 
     text = range.cloneContents().textContent.replace(FIND_CRLF_RX, '');
 
@@ -76,14 +77,16 @@ ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     if (rect) {
         top = rect.top + this.preview.$el.scrollTop() - containerOffset.top;
         left = rect.left - containerOffset.left;
+        height = rect.height;
     } else {
-        top = left = 0;
+        height = top = left = 0;
     }
 
     return {
         text: text,
         top: top,
-        left: left
+        left: left,
+        height: height
     };
 };
 

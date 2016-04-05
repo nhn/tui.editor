@@ -50,6 +50,7 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
     marker.text = info.text;
     marker.top = info.top;
     marker.left = info.left;
+    marker.height = info.height;
 
     return marker;
 };
@@ -61,7 +62,7 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  * @returns {object} extra info
  */
 WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-    var text, top, left, rect;
+    var text, top, left, rect, height;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
@@ -73,14 +74,16 @@ WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     if (rect) {
         top = this.sqe.scrollTop() + rect.top;
         left = rect.left;
+        height = rect.height;
     } else {
-        top = left = 0;
+        height = top = left = 0;
     }
 
     return {
         text: text,
         top: top,
-        left: left
+        left: left,
+        height: height
     };
 };
 
@@ -109,7 +112,8 @@ WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
             end: end,
             text: info.text,
             top: info.top,
-            left: info.left
+            left: info.left,
+            height: info.height
         };
     }
 
