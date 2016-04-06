@@ -5,6 +5,7 @@
 /*eslint-disable */
 var listRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)/,
     emptyListRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)$/,
+    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
     unorderedListRE = /[*+-]\s/;
 
 CodeMirror.commands.subListIndentTab = function (cm) {
@@ -14,7 +15,7 @@ CodeMirror.commands.subListIndentTab = function (cm) {
         var pos = ranges[i].head;
         var line = cm.getLine(pos.line);
         var cursorBeforeTextInline = line.substr(0, pos.ch);
-        
+
         if (emptyListRE.test(cursorBeforeTextInline)) {
             cm.replaceRange("\t" + line, {
                 line: pos.line, ch: 0
@@ -28,20 +29,35 @@ CodeMirror.commands.subListIndentTab = function (cm) {
     }
 };
 
-CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
+CodeMirror.commands.newlineAndIndentContinue = function(cm) {
     if (cm.getOption("disableInput")) return CodeMirror.Pass;
     var ranges = cm.listSelections(), replacements = [];
+
     for (var i = 0; i < ranges.length; i++) {
         var pos = ranges[i].head;
         var eolState = cm.getStateAfter(pos.line);
-        var inList = eolState.list !== false;
-        var inQuote = eolState.quote !== 0;
+        var inList = eolState.base.list !== false;
+        var inQuote = eolState.base.quote !== 0;
 
-        var line = cm.getLine(pos.line), match = listRE.exec(line);
-        if (!ranges[i].empty() || (!inList && !inQuote) || !match) {
+        var line = cm.getLine(pos.line);
+        var isCodeBlockStart = FIND_CODEBLOCK_START_RX.test(line);
+        var match = listRE.exec(line);
+        var cursor;
+
+        if (!ranges[i].empty() || (!inList && !inQuote && !isCodeBlockStart) || (!match && !isCodeBlockStart)) {
             cm.execCommand("newlineAndIndent");
             return;
         }
+
+        if (isCodeBlockStart) {
+            cursor = cm.getCursor();
+
+            if (cursor.line !== pos.line || cursor.ch !== line.length) {
+                cm.execCommand("newlineAndIndent");
+                return;
+            }
+        }
+
         if (emptyListRE.test(line)) {
             cm.replaceRange("", {
                 line: pos.line, ch: 0
@@ -49,6 +65,8 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
                 line: pos.line, ch: pos.ch + 1
             });
             replacements[i] = "\n";
+        } else if(isCodeBlockStart) {
+            replacements[i] = '\n\n```';
         } else {
             var indent = match[1], after = match[5], bullet;
             if (indent.length === pos.ch) {
@@ -63,5 +81,9 @@ CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
     }
 
     cm.replaceSelections(replacements);
+
+    if (isCodeBlockStart) {
+        cm.setCursor(pos.line + 1, 0);
+    }
 };
 /*eslint-enable */
