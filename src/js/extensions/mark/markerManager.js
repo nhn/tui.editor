@@ -32,12 +32,12 @@ MarkerManager.prototype.resetContent = function(content) {
 };
 
 /**
- * getUpdatedMarkersByContent
+ * uppdateMarkersByContent
  * Get updated markers by updated content
  * @param {string} newContent updated content
  * @returns {object} updated markers
  */
-MarkerManager.prototype.getUpdatedMarkersByContent = function(newContent) {
+MarkerManager.prototype.updateMarkersByContent = function(newContent) {
     var markerDiffs;
 
     if (this.oldTextContent === null) {

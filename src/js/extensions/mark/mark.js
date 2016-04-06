@@ -54,6 +54,7 @@ extManager.defineExtension('mark', function(editor) {
         return helper;
     }
 
+    //We need to update marker after window have been resized
     $(window).resize(function() {
         var helper = getHelper();
 
@@ -64,6 +65,7 @@ extManager.defineExtension('mark', function(editor) {
         editor.eventManager.emit('markerUpdated', ml.getAll());
     });
 
+    //Reset marker content after set value
     editor.on('setValueAfter', function() {
         var helper = getHelper();
         mm.resetContent(helper.getTextContent());
@@ -89,9 +91,9 @@ extManager.defineExtension('mark', function(editor) {
 
         mm.resetContent(value.replace(FIND_CRLF_RX, ''));
 
-        if (editor.isViewOnly() || editor.isWysiwygMode()) {
+        if (this.isViewOnly() || this.isWysiwygMode()) {
             helper = getHelper();
-            mm.getUpdatedMarkersByContent(helper.getTextContent());
+            mm.updateMarkersByContent(helper.getTextContent());
         } else {
             helper = mmh;
         }
@@ -100,7 +102,7 @@ extManager.defineExtension('mark', function(editor) {
             helper.updateMarkerWithExtraInfo(marker);
         });
 
-        editor.eventManager.emit('markerUpdated', ml.getAll());
+        this.eventManager.emit('markerUpdated', ml.getAll());
 
         return ml.getAll();
     };
@@ -142,12 +144,12 @@ extManager.defineExtension('mark', function(editor) {
     editor.exportMarkers = function() {
         var markersData;
 
-        if (editor.isViewOnly() || editor.isMarkdownMode()) {
+        if (this.isViewOnly() || this.isMarkdownMode()) {
             markersData = ml.getMarkersData();
-        } else if (editor.isWysiwygMode()) {
-            mm.getUpdatedMarkersByContent(editor.getValue().replace(FIND_CRLF_RX, ''));
+        } else if (this.isWysiwygMode()) {
+            mm.updateMarkersByContent(this.getValue().replace(FIND_CRLF_RX, ''));
             markersData = ml.getMarkersData();
-            mm.getUpdatedMarkersByContent(wmh.getTextContent());
+            mm.updateMarkersByContent(wmh.getTextContent());
         }
 
         return markersData;
@@ -160,7 +162,7 @@ extManager.defineExtension('mark', function(editor) {
      */
     editor.selectMarker = function(id) {
         var helper = getHelper(),
-            marker = editor.getMarker(id);
+            marker = this.getMarker(id);
 
         if (marker) {
             helper.selectOffsetRange(marker.start, marker.end);
@@ -177,35 +179,32 @@ extManager.defineExtension('mark', function(editor) {
 
     if (!editor.isViewOnly()) {
         editor.on('changeMode', function() {
+            editor._updateMarkers();
+        });
+
+        editor.on('change', util.debounce(function() {
+            editor._updateMarkers();
+        }, MARKER_UPDATE_DELAY));
+
+        /**
+         * _updateMarkers
+         * Update markers with current text content
+         */
+        editor._updateMarkers = function() {
             var helper = getHelper();
 
             if (!ml.getAll().length) {
                 return;
             }
 
-            mm.getUpdatedMarkersByContent(helper.getTextContent());
+            mm.updateMarkersByContent(helper.getTextContent());
 
             ml.getAll().forEach(function(marker) {
                 helper.updateMarkerWithExtraInfo(marker);
             });
 
             editor.eventManager.emit('markerUpdated', ml.getAll());
-        });
-
-        editor.on('change', util.debounce(function() {
-            var textContent,
-                helper = getHelper();
-
-            textContent = helper.getTextContent();
-
-            mm.getUpdatedMarkersByContent(textContent);
-
-            ml.getAll().forEach(function(marker) {
-                helper.updateMarkerWithExtraInfo(marker);
-            });
-
-            editor.eventManager.emit('markerUpdated', ml.getAll());
-        }, MARKER_UPDATE_DELAY));
+        };
 
         /**
          * addMarker
@@ -237,7 +236,7 @@ extManager.defineExtension('mark', function(editor) {
                 marker.id = id;
                 marker = ml.addMarker(marker);
                 ml.sortWith('end');
-                editor.eventManager.emit('markerUpdated', [marker]);
+                this.eventManager.emit('markerUpdated', [marker]);
             }
 
             return marker;

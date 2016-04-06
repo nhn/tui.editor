@@ -17,9 +17,9 @@ function Markerlist() {
 /**
  * addMarker
  * Add Marker
- * @param {number} start start text offset
+ * @param {number|object} start start text offset
  * @param {number} end end text offset
- * @param {string|number} id id of marker
+ * @param {string} id id of marker
  * @returns {object} marker
  */
 Markerlist.prototype.addMarker = function(start, end, id) {
