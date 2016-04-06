@@ -46,7 +46,7 @@ MarkdownEditor.prototype.init = function(initialValue) {
         dragDrop: true,
         allowDropFileTypes: ['image'],
         extraKeys: {
-            'Enter': 'newlineAndIndentContinueMarkdownList',
+            'Enter': 'newlineAndIndentContinue',
             'Tab': 'subListIndentTab',
             'Shift-Tab': 'indentLess'
         },
