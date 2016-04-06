@@ -121,9 +121,9 @@ MarkdownMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
     foundCursor = this._findOffsetCursor([start, end]);
 
     info = this._getExtraInfoOfRange(foundCursor[0].line,
-                                         foundCursor[0].ch,
-                                         foundCursor[1].line,
-                                         foundCursor[1].ch);
+                                     foundCursor[0].ch,
+                                     foundCursor[1].line,
+                                     foundCursor[1].ch);
 
     return {
         start: start,

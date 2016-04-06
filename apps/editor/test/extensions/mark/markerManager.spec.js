@@ -19,7 +19,7 @@ describe('MarkerManager', function() {
         it('update marker range when user have edited content', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('aTEXTADDEDbc[def]g');
+            updatedMarkers = mm.updateMarkersByContent('aTEXTADDEDbc[def]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(12);
@@ -28,7 +28,7 @@ describe('MarkerManager', function() {
         it('update marker when content is removed marker start range area', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abef]g');
+            updatedMarkers = mm.updateMarkersByContent('abef]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(2);
@@ -37,7 +37,7 @@ describe('MarkerManager', function() {
         it('update marker when content is removed marker start range area', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abef]g');
+            updatedMarkers = mm.updateMarkersByContent('abef]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(2);
@@ -46,7 +46,7 @@ describe('MarkerManager', function() {
         it('update marker when content is removed marker end range area', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abc[de');
+            updatedMarkers = mm.updateMarkersByContent('abc[de');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(3);
@@ -56,7 +56,7 @@ describe('MarkerManager', function() {
         it('update marker when content inserted inside marker range', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abc[dhief]g');
+            updatedMarkers = mm.updateMarkersByContent('abc[dhief]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(3);
@@ -66,7 +66,7 @@ describe('MarkerManager', function() {
         it('update marker when content removed inside marker range', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abc[df]g');
+            updatedMarkers = mm.updateMarkersByContent('abc[df]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(3);
@@ -78,7 +78,7 @@ describe('MarkerManager', function() {
 
             ml.addMarker(5, 8, 'myId2');
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('abc[df]g');
+            updatedMarkers = mm.updateMarkersByContent('abc[df]g');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(3);
@@ -92,7 +92,7 @@ describe('MarkerManager', function() {
         it('update markers with multiple changes', function() {
             var updatedMarkers;
 
-            updatedMarkers = mm.getUpdatedMarkersByContent('# ab[*d*f]g 123');
+            updatedMarkers = mm.updateMarkersByContent('# ab[*d*f]g 123');
 
             expect(updatedMarkers[0].id).toEqual('myId');
             expect(updatedMarkers[0].start).toEqual(4);
