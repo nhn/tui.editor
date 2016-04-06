@@ -61,10 +61,14 @@ function ToastUIEditorViewOnly(options) {
 }
 
 ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
-    markdown = markdown || '';
+    this.markdownValue = markdown = markdown || '';
 
-    this.preview.refresh(markdown);
-    this.eventManager.emit('setValueAfter', markdown);
+    this.preview.refresh(this.markdownValue);
+    this.eventManager.emit('setValueAfter', this.markdownValue);
+};
+
+ToastUIEditorViewOnly.prototype.getValue = function() {
+    return this.markdownValue;
 };
 
 ToastUIEditorViewOnly.prototype.on = function(type, handler) {
