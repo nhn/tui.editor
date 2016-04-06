@@ -144,12 +144,12 @@ extManager.defineExtension('mark', function(editor) {
     editor.exportMarkers = function() {
         var markersData;
 
-        if (this.isViewOnly() || this.isMarkdownMode()) {
+        if (this.isMarkdownMode()) {
             markersData = ml.getMarkersData();
-        } else if (this.isWysiwygMode()) {
+        } else if (this.isViewOnly() || this.isWysiwygMode()) {
             mm.updateMarkersByContent(this.getValue().replace(FIND_CRLF_RX, ''));
             markersData = ml.getMarkersData();
-            mm.updateMarkersByContent(wmh.getTextContent());
+            mm.updateMarkersByContent(getHelper().getTextContent());
         }
 
         return markersData;
