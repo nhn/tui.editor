@@ -84,11 +84,16 @@
     box-sizing: border-box;
 }
 
+.te-ww-container .te-editor:focus {
+    outline: none;
+}
+
 /*we cant use display none for ifram because firefox have issue about it*/
 .te-ww-container {
     position: absolute;
     top: 0;
     left: 0;
+    padding: 5px;
     visibility: hidden;
     overflow: hidden;
     z-index: 10;

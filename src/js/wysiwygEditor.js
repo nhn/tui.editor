@@ -61,115 +61,20 @@ function WysiwygEditor($el, contentStyles, eventManager) {
  * @param {function} onInitComplete when editor is ready invoke callback function
  */
 WysiwygEditor.prototype.init = function(onInitComplete) {
-    var self = this;
-
-    this.$iframe = $('<iframe height="100%" />');
-
-    this.$iframe.load(function() {
-        self._initSquire();
-
-        //쿽스모드 방지 코드(makeSureStandardMode)로 인해
-        //load 이벤트가 발생되는 브라우저들이있다(IE)
-        //에디터의 동작을 맞추기해 완료콜백을 프레임지연해서 모든 과정이 완료되도록 동작을 일치 시켜준다.
-        setTimeout(function() {
-            if (onInitComplete) {
-                onInitComplete();
-                onInitComplete = null;
-            }
-        }, 0);
-    });
-
-    this.$editorContainerEl.css('position', 'relative');
-    this.$editorContainerEl.append(this.$iframe);
-};
-
-/**
- * _initSquire
- * Initialize squire
- */
-WysiwygEditor.prototype._initSquire = function() {
-    var self = this,
-        doc = self.$iframe[0].contentDocument;
-
-    self._makeSureStandardMode(doc);
-    if (self.editor && self._isIframeReady()) {
-        return;
-    }
-
-    self._initStyleSheet(doc);
-    self._initEditorContainerStyles(doc);
-
-    self.editor = new SquireExt(doc, {
+    this.editor = new SquireExt(this.$editorContainerEl[0], {
         blockTag: 'DIV'
     });
 
-    self._initSquireEvent();
-    self._clipboardManager.init();
+    this._initSquireEvent();
+    this._clipboardManager.init();
 
-    $(doc).on('click', function() {
-        self.focus();
-    });
-};
+    this.$editorContainerEl.addClass('tui-editor-contents');
+    this.$editorContainerEl.css('position', 'relative');
 
-/**
- * _isIframeReady
- * Check whether iframe ready or not
- * @returns {boolean} result
- */
-WysiwygEditor.prototype._isIframeReady = function() {
-    var iframeWindow = this.$iframe[0].contentWindow;
-
-    return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
-};
-
-/**
- * _makeSureStandardMode
- * Make document standard mode if not
- * @param {Document} doc document
- */
-WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
-    //if Not in quirks mode
-    if (doc.compatMode !== 'CSS1Compat') {
-        //독타입 삽입후 IE는 load 콜백이 다시 호출되는데 같은 프레임에서 재귀호출처럼 실행됨
-        doc.open();
-        doc.write('<!DOCTYPE html><title></title>');
-        doc.close();
-        //load콜백이 끝나면 첫번째 진행이 다시 진행됨(initSquire의 나머지부분이 이어서 재귀호출처럼 실행됨)
+    if (onInitComplete) {
+        onInitComplete();
+        onInitComplete = null;
     }
-};
-
-/**
- * _initStyleSheet
- * Initialize style sheet
- * @param {Document} doc document
- */
-WysiwygEditor.prototype._initStyleSheet = function(doc) {
-    var styleLink;
-
-    util.forEach(this.contentStyles, function(stylePath) {
-        styleLink = doc.createElement('link');
-        styleLink.rel = 'stylesheet';
-        styleLink.href = stylePath;
-
-        doc.querySelector('head').appendChild(styleLink);
-    });
-};
-
-/**
- * _initEditorContainerStyles
- * Initialize editor container style
- * @param {Document} doc document
- */
-WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
-    var bodyStyle, body;
-
-    doc.querySelector('html').style.height = '100%';
-
-    body = doc.querySelector('body');
-    body.className = EDITOR_CONTENT_CSS_CLASSNAME;
-
-    bodyStyle = body.style;
-    bodyStyle.padding = '0 5px';
 };
 
 /**
