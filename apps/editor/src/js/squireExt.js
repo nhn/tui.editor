@@ -196,7 +196,7 @@ SquireExt.prototype.replaceSelection = function(content, selection) {
     }
 
     this._ignoreChange = true;
-    this.insertPlainText(content);
+    this.insertHTML(content);
 };
 
 SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
