@@ -190,6 +190,10 @@ function fixCursor ( node, root ) {
         }
     }
 
+    if ( node.nodeType === TEXT_NODE ) {
+        return originalNode;
+    }
+
     if ( isInline( node ) ) {
         child = node.firstChild;
         while ( cantFocusEmptyTextNodes && child &&

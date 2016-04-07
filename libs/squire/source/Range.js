@@ -153,8 +153,8 @@ var deleteContentsOfRange = function ( range, root ) {
     moveRangeBoundariesDownTree( range );
 
     // If we split into two different blocks, merge the blocks.
+    startBlock = getStartBlockOfRange( range, root );
     if ( needsMerge ) {
-        startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
         if ( startBlock && endBlock && startBlock !== endBlock ) {
             mergeWithBlock( startBlock, endBlock, range );
