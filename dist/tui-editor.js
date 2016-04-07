@@ -1124,6 +1124,7 @@
 	/*eslint-disable */
 	var listRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)/,
 	    emptyListRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)$/,
+	    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
 	    unorderedListRE = /[*+-]\s/;
 
 	CodeMirror.commands.subListIndentTab = function (cm) {
@@ -1133,7 +1134,7 @@
 	        var pos = ranges[i].head;
 	        var line = cm.getLine(pos.line);
 	        var cursorBeforeTextInline = line.substr(0, pos.ch);
-	        
+
 	        if (emptyListRE.test(cursorBeforeTextInline)) {
 	            cm.replaceRange("\t" + line, {
 	                line: pos.line, ch: 0
@@ -1147,20 +1148,35 @@
 	    }
 	};
 
-	CodeMirror.commands.newlineAndIndentContinueMarkdownList = function(cm) {
+	CodeMirror.commands.newlineAndIndentContinue = function(cm) {
 	    if (cm.getOption("disableInput")) return CodeMirror.Pass;
 	    var ranges = cm.listSelections(), replacements = [];
+
 	    for (var i = 0; i < ranges.length; i++) {
 	        var pos = ranges[i].head;
 	        var eolState = cm.getStateAfter(pos.line);
-	        var inList = eolState.list !== false;
-	        var inQuote = eolState.quote !== 0;
+	        var inList = eolState.base.list !== false;
+	        var inQuote = eolState.base.quote !== 0;
 
-	        var line = cm.getLine(pos.line), match = listRE.exec(line);
-	        if (!ranges[i].empty() || (!inList && !inQuote) || !match) {
+	        var line = cm.getLine(pos.line);
+	        var isCodeBlockStart = FIND_CODEBLOCK_START_RX.test(line);
+	        var match = listRE.exec(line);
+	        var cursor;
+
+	        if (!ranges[i].empty() || (!inList && !inQuote && !isCodeBlockStart) || (!match && !isCodeBlockStart)) {
 	            cm.execCommand("newlineAndIndent");
 	            return;
 	        }
+
+	        if (isCodeBlockStart) {
+	            cursor = cm.getCursor();
+
+	            if (cursor.line !== pos.line || cursor.ch !== line.length) {
+	                cm.execCommand("newlineAndIndent");
+	                return;
+	            }
+	        }
+
 	        if (emptyListRE.test(line)) {
 	            cm.replaceRange("", {
 	                line: pos.line, ch: 0
@@ -1168,6 +1184,8 @@
 	                line: pos.line, ch: pos.ch + 1
 	            });
 	            replacements[i] = "\n";
+	        } else if(isCodeBlockStart) {
+	            replacements[i] = '\n\n```';
 	        } else {
 	            var indent = match[1], after = match[5], bullet;
 	            if (indent.length === pos.ch) {
@@ -1182,6 +1200,10 @@
 	    }
 
 	    cm.replaceSelections(replacements);
+
+	    if (isCodeBlockStart) {
+	        cm.setCursor(pos.line + 1, 0);
+	    }
 	};
 	/*eslint-enable */
 
@@ -2233,6 +2255,7 @@
 	        return helper;
 	    }
 
+	    //We need to update marker after window have been resized
 	    $(window).resize(function() {
 	        var helper = getHelper();
 
@@ -2243,6 +2266,7 @@
 	        editor.eventManager.emit('markerUpdated', ml.getAll());
 	    });
 
+	    //Reset marker content after set value
 	    editor.on('setValueAfter', function() {
 	        var helper = getHelper();
 	        mm.resetContent(helper.getTextContent());
@@ -2268,9 +2292,9 @@
 
 	        mm.resetContent(value.replace(FIND_CRLF_RX, ''));
 
-	        if (editor.isViewOnly() || editor.isWysiwygMode()) {
+	        if (this.isViewOnly() || this.isWysiwygMode()) {
 	            helper = getHelper();
-	            mm.getUpdatedMarkersByContent(helper.getTextContent());
+	            mm.updateMarkersByContent(helper.getTextContent());
 	        } else {
 	            helper = mmh;
 	        }
@@ -2279,7 +2303,7 @@
 	            helper.updateMarkerWithExtraInfo(marker);
 	        });
 
-	        editor.eventManager.emit('markerUpdated', ml.getAll());
+	        this.eventManager.emit('markerUpdated', ml.getAll());
 
 	        return ml.getAll();
 	    };
@@ -2321,12 +2345,12 @@
 	    editor.exportMarkers = function() {
 	        var markersData;
 
-	        if (editor.isViewOnly() || editor.isMarkdownMode()) {
+	        if (this.isMarkdownMode()) {
 	            markersData = ml.getMarkersData();
-	        } else if (editor.isWysiwygMode()) {
-	            mm.getUpdatedMarkersByContent(editor.getValue().replace(FIND_CRLF_RX, ''));
+	        } else if (this.isViewOnly() || this.isWysiwygMode()) {
+	            mm.updateMarkersByContent(this.getValue().replace(FIND_CRLF_RX, ''));
 	            markersData = ml.getMarkersData();
-	            mm.getUpdatedMarkersByContent(wmh.getTextContent());
+	            mm.updateMarkersByContent(getHelper().getTextContent());
 	        }
 
 	        return markersData;
@@ -2339,7 +2363,7 @@
 	     */
 	    editor.selectMarker = function(id) {
 	        var helper = getHelper(),
-	            marker = editor.getMarker(id);
+	            marker = this.getMarker(id);
 
 	        if (marker) {
 	            helper.selectOffsetRange(marker.start, marker.end);
@@ -2356,35 +2380,32 @@
 
 	    if (!editor.isViewOnly()) {
 	        editor.on('changeMode', function() {
+	            editor._updateMarkers();
+	        });
+
+	        editor.on('change', util.debounce(function() {
+	            editor._updateMarkers();
+	        }, MARKER_UPDATE_DELAY));
+
+	        /**
+	         * _updateMarkers
+	         * Update markers with current text content
+	         */
+	        editor._updateMarkers = function() {
 	            var helper = getHelper();
 
 	            if (!ml.getAll().length) {
 	                return;
 	            }
 
-	            mm.getUpdatedMarkersByContent(helper.getTextContent());
+	            mm.updateMarkersByContent(helper.getTextContent());
 
 	            ml.getAll().forEach(function(marker) {
 	                helper.updateMarkerWithExtraInfo(marker);
 	            });
 
 	            editor.eventManager.emit('markerUpdated', ml.getAll());
-	        });
-
-	        editor.on('change', util.debounce(function() {
-	            var textContent,
-	                helper = getHelper();
-
-	            textContent = helper.getTextContent();
-
-	            mm.getUpdatedMarkersByContent(textContent);
-
-	            ml.getAll().forEach(function(marker) {
-	                helper.updateMarkerWithExtraInfo(marker);
-	            });
-
-	            editor.eventManager.emit('markerUpdated', ml.getAll());
-	        }, MARKER_UPDATE_DELAY));
+	        };
 
 	        /**
 	         * addMarker
@@ -2416,7 +2437,7 @@
 	                marker.id = id;
 	                marker = ml.addMarker(marker);
 	                ml.sortWith('end');
-	                editor.eventManager.emit('markerUpdated', [marker]);
+	                this.eventManager.emit('markerUpdated', [marker]);
 	            }
 
 	            return marker;
@@ -2448,9 +2469,9 @@
 	/**
 	 * addMarker
 	 * Add Marker
-	 * @param {number} start start text offset
+	 * @param {number|object} start start text offset
 	 * @param {number} end end text offset
-	 * @param {string|number} id id of marker
+	 * @param {string} id id of marker
 	 * @returns {object} marker
 	 */
 	Markerlist.prototype.addMarker = function(start, end, id) {
@@ -2644,12 +2665,12 @@
 	};
 
 	/**
-	 * getUpdatedMarkersByContent
+	 * uppdateMarkersByContent
 	 * Get updated markers by updated content
 	 * @param {string} newContent updated content
 	 * @returns {object} updated markers
 	 */
-	MarkerManager.prototype.getUpdatedMarkersByContent = function(newContent) {
+	MarkerManager.prototype.updateMarkersByContent = function(newContent) {
 	    var markerDiffs;
 
 	    if (this.oldTextContent === null) {
@@ -5819,9 +5840,9 @@
 	    foundCursor = this._findOffsetCursor([start, end]);
 
 	    info = this._getExtraInfoOfRange(foundCursor[0].line,
-	                                         foundCursor[0].ch,
-	                                         foundCursor[1].line,
-	                                         foundCursor[1].ch);
+	                                     foundCursor[0].ch,
+	                                     foundCursor[1].line,
+	                                     foundCursor[1].ch);
 
 	    return {
 	        start: start,
@@ -6375,7 +6396,7 @@
 	        dragDrop: true,
 	        allowDropFileTypes: ['image'],
 	        extraKeys: {
-	            'Enter': 'newlineAndIndentContinueMarkdownList',
+	            'Enter': 'newlineAndIndentContinue',
 	            'Tab': 'subListIndentTab',
 	            'Shift-Tab': 'indentLess'
 	        },
@@ -10080,7 +10101,7 @@
 	    }
 
 	    this._ignoreChange = true;
-	    this.insertPlainText(content);
+	    this.insertHTML(content);
 	};
 
 	SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
@@ -11263,10 +11284,14 @@
 	}
 
 	ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
-	    markdown = markdown || '';
+	    this.markdownValue = markdown = markdown || '';
 
-	    this.preview.refresh(markdown);
-	    this.eventManager.emit('setValueAfter', markdown);
+	    this.preview.refresh(this.markdownValue);
+	    this.eventManager.emit('setValueAfter', this.markdownValue);
+	};
+
+	ToastUIEditorViewOnly.prototype.getValue = function() {
+	    return this.markdownValue;
 	};
 
 	ToastUIEditorViewOnly.prototype.on = function(type, handler) {
