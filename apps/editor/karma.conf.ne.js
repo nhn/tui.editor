@@ -43,7 +43,7 @@ module.exports = function(config) {
             'lib/codemirror/addon/mode/overlay.js',
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
-            'lib/Squire/build/squire-raw.js',
+            'lib/squire-rte/build/squire-raw.js',
             'test/test.bundle.js'
         ],
 
