@@ -176,6 +176,23 @@ describe('SquireExt', function() {
 
             expect(sqe.getDocument().body.textContent).toEqual('te123t');
         });
+
+        it('replace html with current cursor\'s containers offset', function() {
+            var selection;
+
+            sqe.setHTML('test');
+
+            //selection for user cursor mocking
+            selection = sqe.getSelection();
+            selection.setStart(selection.startContainer, 4);
+            selection.collapse(true);
+            sqe.setSelection(selection);
+
+            sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
+
+            expect(sqe.getDocument().body.textContent).toEqual('te123t');
+            expect(sqe.get$Body().find('b').text()).toEqual('123');
+        });
     });
 
     describe('getSelectionInfoByOffset() find next element and next offset by passed element and replative offset of splited text node', function() {
