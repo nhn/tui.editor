@@ -5,7 +5,7 @@ var TuiEditor = require('../../../src/js/editor');
 describe('Mark', function() {
     var editor;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $('body').html('<div id="editSection"></div>');
 
         editor = new TuiEditor({
@@ -16,11 +16,6 @@ describe('Mark', function() {
             exts: ['mark'],
             querySplitter: {
                 queryRx: /@[^@\s]*/
-            },
-            events: {
-                'load': function() {
-                    done();
-                }
             }
         });
     });

@@ -6,36 +6,18 @@ var WysiwygMarkerHelper = require('../../../src/js/extensions/mark/wysiwygMarker
 describe('WysiwygMarkerHelper', function() {
     var sqe, wmh;
 
-    beforeEach(function(done) {
-        var $iframe;
+    beforeEach(function() {
+        var $container = $('<div />');
 
-        $iframe = $('<iframe />');
+        $('body').append($container);
 
-        $iframe.load(function() {
-            var doc = $iframe[0].contentDocument;
-
-            if (doc.compatMode !== 'CSS1Compat') {
-                doc.open();
-                doc.write('<!DOCTYPE html><title></title>');
-                doc.close();
-            }
-
-            if (sqe) {
-                return;
-            }
-
-            sqe = new SquireExt(doc, {
-                blockTag: 'DIV'
-            });
-
-            wmh = new WysiwygMarkerHelper(sqe);
-
-            sqe.setHTML('<h1>TEXT1&#8203</h1><h2>TEXT2</h2>');
-
-            setTimeout(done, 0);
+        sqe = new SquireExt($container[0], {
+            blockTag: 'DIV'
         });
 
-        $('body').append($iframe);
+        wmh = new WysiwygMarkerHelper(sqe);
+
+        sqe.setHTML('<h1>TEXT1&#8203</h1><h2>TEXT2</h2>');
     });
 
     afterEach(function() {

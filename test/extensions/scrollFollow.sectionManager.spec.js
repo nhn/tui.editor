@@ -8,7 +8,7 @@ var loadStyleFixtures = window.loadStyleFixtures;
 describe('scrollFollow.sectionManager', function() {
     var ned, sectionManager;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -24,7 +24,6 @@ describe('scrollFollow.sectionManager', function() {
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
                     sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
-                    done();
                 }
             }
         });

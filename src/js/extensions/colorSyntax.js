@@ -38,6 +38,8 @@ extManager.defineExtension('colorSyntax', function(editor) {
     editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
         var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
 
+        debugger;
+
         return markdown.replace(findRx, function(founded, color, text) {
             var replacement;
 

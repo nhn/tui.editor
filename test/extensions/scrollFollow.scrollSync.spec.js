@@ -9,7 +9,7 @@ var loadStyleFixtures = window.loadStyleFixtures;
 describe('scrollFollow.ScrollSync', function() {
     var ned, sectionManager, scrollSync;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -26,7 +26,6 @@ describe('scrollFollow.ScrollSync', function() {
                     $('.te-preview').css('overflow', 'auto');
                     sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
                     scrollSync = new ScrollSync(sectionManager, editor.getCodeMirror(), editor.preview.$el);
-                    done();
                 }
             }
         });

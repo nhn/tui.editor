@@ -55,7 +55,7 @@ describe('taskCounter', function() {
         });
     });
     describe('wysiwyg', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
@@ -64,11 +64,6 @@ describe('taskCounter', function() {
                 exts: ['taskCounter'],
                 querySplitter: {
                     queryRx: /@[^@\s]*/
-                },
-                events: {
-                    'load': function() {
-                        done();
-                    }
                 }
             });
         });
@@ -103,7 +98,7 @@ describe('taskCounter', function() {
     });
 
     describe('markdown', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
@@ -112,11 +107,6 @@ describe('taskCounter', function() {
                 exts: ['taskCounter'],
                 querySplitter: {
                     queryRx: /@[^@\s]*/
-                },
-                events: {
-                    'load': function() {
-                        done();
-                    }
                 }
             });
         });
