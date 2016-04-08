@@ -5,26 +5,6 @@ var TuiEditor = require('../../src/js/editor');
 describe('colorSyntax', function() {
     var ned;
 
-    beforeEach(function(done) {
-        $('body').html('<div id="editSection"></div>');
-
-        ned = new TuiEditor({
-            el: $('#editSection'),
-            previewStyle: 'vertical',
-            height: 100,
-            initialEditType: 'markdown',
-            exts: ['colorSyntax'],
-            colorSyntax: {
-                useCustomSyntax: true
-            },
-            events: {
-                'load': function() {
-                    done();
-                }
-            }
-        });
-    });
-
     //we need to wait squire input event process
     afterEach(function(done) {
         setTimeout(function() {
@@ -33,10 +13,23 @@ describe('colorSyntax', function() {
         });
     });
 
-    describe('conversion', function() {
+    describe('conversion - useCustomSyntax', function() {
         var actual, expected;
 
         beforeEach(function() {
+            $('body').html('<div id="editSection"></div>');
+
+            ned = new TuiEditor({
+                el: $('#editSection'),
+                previewStyle: 'vertical',
+                height: 100,
+                initialEditType: 'markdown',
+                exts: ['colorSyntax'],
+                colorSyntax: {
+                    useCustomSyntax: true
+                }
+            });
+
             actual = null;
             expected = null;
         });
@@ -47,26 +40,6 @@ describe('colorSyntax', function() {
             expected = '{color:#ff00ff}test{color}';
 
             expect(actual).toEqual(expected);
-        });
-
-        it('convert html to html when dont use custom syntax', function(done) {
-            var src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
-
-            ned = new TuiEditor({
-                el: $('#editSection'),
-                previewStyle: 'vertical',
-                height: 100,
-                initialEditType: 'markdown',
-                exts: ['colorSyntax'],
-                events: {
-                    'load': function() {
-                        actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
-                        expected = '<span style="color:#ff00ff">test</span>';
-                        expect(actual).toEqual(expected);
-                        done();
-                    }
-                }
-            });
         });
 
         it('convert multiple color html to color syntax', function() {
@@ -85,26 +58,6 @@ describe('colorSyntax', function() {
             expect(actual).toEqual(expected);
         });
 
-        it('do not convert color syntax to html when dont use custom syntax', function(done) {
-            var src = '{color:#ff00ff}test{color}';
-
-            ned = new TuiEditor({
-                el: $('#editSection'),
-                previewStyle: 'vertical',
-                height: 100,
-                initialEditType: 'markdown',
-                exts: ['colorSyntax'],
-                events: {
-                    'load': function() {
-                        actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
-                        expected = '{color:#ff00ff}test{color}';
-                        expect(actual).toEqual(expected);
-                        done();
-                    }
-                }
-            });
-        });
-
         it('convert multiple color syntax to html', function() {
             var src = '{color:#ff00ff}test{color}test2{color:#ff00ff}test3{color}';
             actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
@@ -114,7 +67,56 @@ describe('colorSyntax', function() {
         });
     });
 
+    describe('conversion - dont useCustomSyntax', function() {
+        var actual, expected;
+
+        beforeEach(function() {
+            $('body').html('<div id="editSection"></div>');
+
+            ned = new TuiEditor({
+                el: $('#editSection'),
+                previewStyle: 'vertical',
+                height: 100,
+                initialEditType: 'markdown',
+                exts: ['colorSyntax']
+            });
+
+            actual = null;
+            expected = null;
+        });
+
+        it('do not convert color syntax to html when dont use custom syntax', function() {
+            var src = '{color:#ff00ff}test{color}';
+
+            actual = ned.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', src);
+            expected = '{color:#ff00ff}test{color}';
+            expect(actual).toEqual(expected);
+        });
+
+        it('convert html to html when dont use custom syntax', function() {
+            var src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
+
+            actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
+            expected = '<span style="color:#ff00ff">test</span>';
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('commands', function() {
+        beforeEach(function() {
+            $('body').html('<div id="editSection"></div>');
+
+            ned = new TuiEditor({
+                el: $('#editSection'),
+                previewStyle: 'vertical',
+                height: 100,
+                initialEditType: 'markdown',
+                exts: ['colorSyntax'],
+                colorSyntax: {
+                    useCustomSyntax: true
+                }
+            });
+        });
         it('add color in markdown', function() {
             ned.setValue('text');
             ned.getCodeMirror().execCommand('selectAll');

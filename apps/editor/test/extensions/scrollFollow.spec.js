@@ -7,7 +7,7 @@ var loadStyleFixtures = window.loadStyleFixtures;
 xdescribe('scrollFollow', function() {
     var ned;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -23,7 +23,6 @@ xdescribe('scrollFollow', function() {
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
-                    done();
                 }
             }
         });
