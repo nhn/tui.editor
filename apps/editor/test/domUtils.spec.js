@@ -179,7 +179,7 @@ describe('domUtils', function() {
         });
     });
 
-    fdescribe('getParentUntil', function() {
+    describe('getParentUntil', function() {
         it('get parent until specific node that have given tag name', function() {
             $('body').append('<div><p>awef<em>text1</em></p></div>');
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'DIV')).toBe($('p')[0]);

@@ -33,7 +33,7 @@ SquireExt.prototype = util.extend(
 );
 
 SquireExt.prototype.get$Body = function() {
-    this.$body = this.$body || $(this.getDocument().body);
+    this.$body = this.$body || $(this.getRoot());
 
     return this.$body;
 };

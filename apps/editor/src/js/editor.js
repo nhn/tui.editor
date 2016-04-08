@@ -120,18 +120,17 @@ function ToastUIEditor(options) {
     this.changePreviewStyle(this.options.previewStyle);
 
     this.mdEditor.init();
+    this.wwEditor.init();
 
-    this.wwEditor.init(function() {
-        extManager.applyExtension(self, self.options.exts);
+    this.changeMode(self.options.initialEditType);
 
-        self.changeMode(self.options.initialEditType);
+    this.contentHeight(self.options.height);
 
-        self.contentHeight(self.options.height);
+    this.setValue(self.options.initialValue);
 
-        self.setValue(self.options.initialValue);
+    extManager.applyExtension(self, self.options.exts);
 
-        self.eventManager.emit('load', self);
-    });
+    this.eventManager.emit('load', self);
 
     __nedInstance.push(this);
 }
