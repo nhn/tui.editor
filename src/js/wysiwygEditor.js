@@ -60,7 +60,7 @@ function WysiwygEditor($el, contentStyles, eventManager) {
  * init
  * @param {function} onInitComplete when editor is ready invoke callback function
  */
-WysiwygEditor.prototype.init = function(onInitComplete) {
+WysiwygEditor.prototype.init = function() {
     this.editor = new SquireExt(this.$editorContainerEl[0], {
         blockTag: 'DIV'
     });
@@ -68,13 +68,8 @@ WysiwygEditor.prototype.init = function(onInitComplete) {
     this._initSquireEvent();
     this._clipboardManager.init();
 
-    this.$editorContainerEl.addClass('tui-editor-contents');
+    this.$editorContainerEl.addClass(EDITOR_CONTENT_CSS_CLASSNAME);
     this.$editorContainerEl.css('position', 'relative');
-
-    if (onInitComplete) {
-        onInitComplete();
-        onInitComplete = null;
-    }
 };
 
 /**
@@ -83,10 +78,6 @@ WysiwygEditor.prototype.init = function(onInitComplete) {
  */
 WysiwygEditor.prototype._initEvent = function() {
     var self = this;
-
-    this.eventManager.listen('changeModeToWysiwyg', function() {
-        self._autoResizeHeightIfNeed();
-    });
 
     this.eventManager.listen('wysiwygSetValueBefore', function(html) {
         return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
@@ -199,7 +190,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             self._silentChange = false;
         }
 
-        self._autoResizeHeightIfNeed();
         self.getEditor().preserveLastLine();
     });
 
@@ -295,31 +285,14 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 };
 
 /**
- * _autoResizeHeightIfNeed
- * Auto resize height if need
- */
-WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
-    if (this._height === 'auto') {
-        this._heightToFitContents();
-    }
-};
-
-/**
- * _heightToFitContents
- * Resize height to fit contents
- */
-WysiwygEditor.prototype._heightToFitContents = function() {
-    this.$editorContainerEl.height(this.get$Body().height());
-};
-
-/**
  * _isInOrphanText
  * check if range is orphan text
  * @param {Range} range range
  * @returns {boolean} result
  */
 WysiwygEditor.prototype._isInOrphanText = function(range) {
-    return range.startContainer.nodeType === Node.TEXT_NODE && range.startContainer.parentNode.tagName === 'BODY';
+    return range.startContainer.nodeType === Node.TEXT_NODE
+           && range.startContainer.parentNode === this.$editorContainerEl[0];
 };
 
 /**
@@ -439,11 +412,6 @@ WysiwygEditor.prototype._wrapDefaultBlockToListInner = function() {
  * Reset wysiwyg editor
  */
 WysiwygEditor.prototype.reset = function() {
-    if (!this._isIframeReady()) {
-        this.remove();
-        this._initSquire();
-    }
-
     this.setValue('');
 };
 
@@ -504,11 +472,10 @@ WysiwygEditor.prototype.setHeight = function(height) {
     this._height = height;
 
     if (height === 'auto') {
-        this.get$Body().css('overflow', 'hidden');
-        this.get$Body().css('height', 'auto');
-        this._heightToFitContents();
-    } else {
         this.get$Body().css('overflow', 'visible');
+        this.get$Body().css('height', 'auto');
+    } else {
+        this.get$Body().css('overflow', 'auto');
         this.get$Body().css('height', '100%');
         this.$editorContainerEl.height(height);
     }
@@ -528,7 +495,6 @@ WysiwygEditor.prototype.setValue = function(html) {
 
     this.getEditor().preserveLastLine();
     this.moveCursorToEnd();
-    this._autoResizeHeightIfNeed();
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
@@ -696,7 +662,7 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
         || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-    appendBefore = domUtils.getParentUntil(currentNode, 'BODY');
+    appendBefore = domUtils.getParentUntil(currentNode, this.$editorContainerEl[0]);
 
     div = this.editor.createDefaultBlock();
 

@@ -6,7 +6,7 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
 describe('WysiwygEditor', function() {
     var $container, em, wwe;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $container = $('<div />');
 
         $('body').append($container);
@@ -15,9 +15,7 @@ describe('WysiwygEditor', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(function() {
-            done();
-        });
+        wwe.init();
     });
 
     //we need to wait squire input event process
@@ -25,41 +23,6 @@ describe('WysiwygEditor', function() {
         setTimeout(function() {
             $('body').empty();
             done();
-        });
-    });
-
-    describe('Initialize', function() {
-        it('init() invoke callback', function() {
-            expect($('iframe').length).toEqual(1);
-            expect($('iframe').contents().find('body').hasClass('tui-editor-contents')).toBe(true);
-        });
-    });
-
-    describe('Init Squire again if need', function() {
-        it('Init Squire again if need', function(done) {
-            wwe.setValue('<h1>HELLO WORLD</h1>');
-            $container.detach();
-            expect(wwe._isIframeReady()).toBe(false);
-            $container.appendTo('body');
-
-            //아이프레임의 load이벤트 이후를 테스트해야하기때문에 프레임지연
-            //IE,FF 에서는 아이프레임의 load이벤트가 돔조작 이후 다음 프레임에서 발생한다.
-            //크롬은 한프레임에서 돔조작 하자마자 발생함
-            setTimeout(function() {
-                expect(wwe._isIframeReady()).toBe(true);
-                done();
-            }, 100);
-        });
-    });
-
-    describe('_isIframeReady()', function() {
-        it('isPrepared() check iframe has prepared or need re init with squire', function() {
-            expect(wwe._isIframeReady()).toBe(true);
-        });
-
-        it('when editor detached from dom for any reason isPrepared return false', function() {
-            $container.detach();
-            expect(wwe._isIframeReady()).toBe(false);
         });
     });
 
@@ -181,7 +144,6 @@ describe('WysiwygEditor', function() {
             //이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
             setTimeout(function() {
                 wwe.getValue();
-
                 setTimeout(function() {
                     wwe.getEditor().insertHTML('TEST2');
                 }, 1000);
@@ -295,7 +257,8 @@ describe('WysiwygEditor', function() {
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
         expect(wwe.get$Body().length).toEqual(1);
-        expect(wwe.get$Body().prop('tagName')).toEqual('BODY');
+        expect(wwe.get$Body().prop('tagName')).toEqual('DIV');
+        expect(wwe.get$Body().hasClass('tui-editor-contents')).toBe(true);
     });
 
     it('hasFormatWithRx() check hasFormat with RegExp', function() {
@@ -309,7 +272,7 @@ describe('WysiwygEditor', function() {
 
             wwe.get$Body().html('abcdef');
 
-            range.setStart(wwe.getEditor().getDocument().body.firstChild, 4);
+            range.setStart(wwe.get$Body()[0].firstChild, 4);
             range.collapse(true);
             wwe._wrapDefaultBlockTo(range);
 
@@ -326,7 +289,7 @@ describe('WysiwygEditor', function() {
 
             range = wwe.getEditor().getSelection().cloneRange();
 
-            range.setStart(wwe.getEditor().getDocument().body, 0);
+            range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
             wwe.breakToNewDefaultBlock(range);
 
@@ -359,7 +322,7 @@ describe('WysiwygEditor', function() {
 
             wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(wwe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
             wwe.unwrapBlockTag('H1');
@@ -372,7 +335,7 @@ describe('WysiwygEditor', function() {
 
             wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(wwe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
@@ -424,6 +387,9 @@ describe('WysiwygEditor', function() {
     });
 
     describe('move cursor to start, end', function() {
+        beforeEach(function() {
+            wwe.setHeight(30);
+        });
         it('move cursor to end and scroll to end', function() {
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
