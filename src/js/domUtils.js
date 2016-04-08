@@ -173,33 +173,44 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
-/**
- * getParentUntil
- * get parent node until paseed node name
- * 특정 노드이전의 부모 노드를 찾는다
- * @param {Node} node node
- * @param {string} untilNodeName node name to limit
- * @returns {Node} founded node
- */
-var getParentUntil = function(node, untilNodeName) {
-    var parentNodeName = getNodeName(node.parentNode),
-        foundedNode;
+var getParentUntilBy = function(node, condition) {
+    var foundedNode;
 
-    while (
-        parentNodeName !== untilNodeName
-        && parentNodeName !== 'BODY'
-        && node.parentNode
-    ) {
+    while (node.parentNode && !condition(node.parentNode)) {
         node = node.parentNode;
-        parentNodeName = getNodeName(node.parentNode);
     }
 
-    if (parentNodeName === untilNodeName) {
+    if (condition(node.parentNode)) {
         foundedNode = node;
     }
 
     return foundedNode;
 };
+
+/**
+ * getParentUntil
+ * get parent node until paseed node name
+ * 특정 노드이전의 부모 노드를 찾는다
+ * @param {Node} node node
+ * @param {string|HTMLNode} untilNode node name or node to limit
+ * @returns {Node} founded node
+ */
+var getParentUntil = function(node, untilNode) {
+    var foundedNode;
+
+    if (util.isString(untilNode)) {
+        foundedNode = getParentUntilBy(node, function(targetNode) {
+            return untilNode === getNodeName(targetNode);
+        });
+    } else {
+        foundedNode = getParentUntilBy(node, function(targetNode) {
+            return untilNode === targetNode;
+        });
+    }
+
+    return foundedNode;
+};
+
 
 /**
  * getNodeWithDirectionUnderParent
@@ -270,7 +281,7 @@ var getPrevTextNode = function(node) {
     return node;
 };
 
-function findOffsetNode(root, offsetList, textNodeFilter) {
+var findOffsetNode = function(root, offsetList, textNodeFilter) {
     var result = [],
         text = '',
         walkerOffset = 0,
