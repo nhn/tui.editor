@@ -179,15 +179,20 @@ describe('domUtils', function() {
         });
     });
 
-    describe('getParentUntil', function() {
-        it('return parent node of passed node until passed parent', function() {
+    fdescribe('getParentUntil', function() {
+        it('get parent until specific node that have given tag name', function() {
             $('body').append('<div><p>awef<em>text1</em></p></div>');
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'DIV')).toBe($('p')[0]);
         });
 
-        it('return parent node of passed node until passed parent #2', function() {
+        it('get parent until specific node that have given tag name #2', function() {
             $('body').append('<div><p>awef<em>text1</em></p></div>');
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'P')).toBe($('EM')[0]);
+        });
+
+        it('get parent until specific node that same as given node', function() {
+            $('body').append('<div><p>awef<em>text1</em></p></div>');
+            expect(domUtils.getParentUntil($('em')[0].firstChild, $('div')[0])).toBe($('p')[0]);
         });
     });
 
