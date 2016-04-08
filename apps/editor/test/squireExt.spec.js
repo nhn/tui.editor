@@ -5,36 +5,19 @@ var SquireExt = require('../src/js/squireExt');
 describe('SquireExt', function() {
     var sqe;
 
-    beforeEach(function(done) {
-        var $iframe;
+    beforeEach(function() {
+        var $container = $('<div />');
 
-        $iframe = $('<iframe />');
-
-        $iframe.load(function() {
-           var doc = $iframe[0].contentDocument;
-
-           if (doc.compatMode !== 'CSS1Compat') {
-               doc.open();
-               doc.write('<!DOCTYPE html><title></title>');
-               doc.close();
-           }
-
-           if (sqe) {
-               return;
-           }
-
-           sqe = new SquireExt(doc, {
-               blockTag: 'DIV'
-           });
-
-           //IE 스탠다드 모드전환시 load이벤트 발생문제로 done 지연처리
-           //IE의 경우 첫 로드이벤트 진입후 쿼크모드인경우 doctype을 삽입하면서 load이벤트가 동기로 바로 발생된다.
-           //동기로 바로실행되고 그때 바로 done이 실행되버리면 처음 로드이벤트의 진입되었을때의 프로세스가 남은 채로 테스트케이스에 진입하고 테스트가 완료되면
-           //카르마는 다음 TC를 돌리는데 이때 이전에 남은 프로세스와 꼬여서 IE에서 오류가 발생한다. 그래서 남은 프로세스를 진행한후 done실행하기위해 지연처리
-           setTimeout(done, 0);
+        $container.css({
+            'overflow': 'auto',
+            'height': 30
         });
 
-        $('body').append($iframe);
+        $('body').append($container);
+
+        sqe = new SquireExt($container[0], {
+            blockTag: 'DIV'
+        });
     });
 
     afterEach(function() {
@@ -58,7 +41,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -73,7 +56,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -87,7 +70,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<ul><li><div>test<br></div></li></ul>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -102,7 +85,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<div>test<br></div>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -119,7 +102,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<h1><div>test<br></div></h1>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -134,7 +117,7 @@ describe('SquireExt', function() {
 
             sqe.get$Body().html('<ul><li><div><input type="checkbox" />test<br></div></li></ul>');
 
-            range.selectNode(sqe.getDocument().getElementsByTagName('div')[0].firstChild);
+            range.selectNode(sqe.get$Body().find('div')[0].firstChild);
             range.collapse(true);
             sqe.setSelection(range);
 
@@ -167,14 +150,14 @@ describe('SquireExt', function() {
             sqe.setHTML('test');
 
             //selection for user cursor mocking
-            selection = sqe.getSelection();
-            selection.setStart(selection.startContainer, 4);
+            selection = sqe.getSelection().cloneRange();
+            selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
             selection.collapse(true);
             sqe.setSelection(selection);
 
             sqe.replaceRelativeOffset('123', -2, 1);
 
-            expect(sqe.getDocument().body.textContent).toEqual('te123t');
+            expect(sqe.get$Body()[0].textContent).toEqual('te123t');
         });
 
         it('replace html with current cursor\'s containers offset', function() {
@@ -183,14 +166,14 @@ describe('SquireExt', function() {
             sqe.setHTML('test');
 
             //selection for user cursor mocking
-            selection = sqe.getSelection();
-            selection.setStart(selection.startContainer, 4);
+            selection = sqe.getSelection().cloneRange();
+            selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
             selection.collapse(true);
             sqe.setSelection(selection);
 
             sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
-            expect(sqe.getDocument().body.textContent).toEqual('te123t');
+            expect(sqe.get$Body()[0].textContent).toEqual('te123t');
             expect(sqe.get$Body().find('b').text()).toEqual('123');
         });
     });
@@ -207,7 +190,7 @@ describe('SquireExt', function() {
                 return frag;
             });
 
-            firstBlock = sqe.getDocument().body.childNodes[0];
+            firstBlock = sqe.get$Body()[0].childNodes[0];
         });
 
         it('offset is lower than passed element\'s length', function() {
