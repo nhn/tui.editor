@@ -6,16 +6,11 @@ describe('Editor', function() {
     var editor;
 
     describe('Api', function() {
-        beforeEach(function(done) {
+        beforeEach(function() {
             editor = new Editor({
                 el: $('body'),
                 height: 300,
-                initialEditType: 'markdown',
-                events: {
-                    'load': function() {
-                        done();
-                    }
-                }
+                initialEditType: 'markdown'
             });
         });
 
