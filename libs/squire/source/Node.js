@@ -39,7 +39,7 @@ function isContainer ( node ) {
 }
 
 function getBlockWalker ( node, root ) {
-    var walker = new TreeWalker( root, SHOW_ELEMENT, isBlock, false );
+    var walker = new TreeWalker( root, SHOW_ELEMENT, isBlock );
     walker.currentNode = node;
     return walker;
 }

@@ -210,7 +210,7 @@ function isContainer ( node ) {
 }
 
 function getBlockWalker ( node, root ) {
-    var walker = new TreeWalker( root, SHOW_ELEMENT, isBlock, false );
+    var walker = new TreeWalker( root, SHOW_ELEMENT, isBlock );
     walker.currentNode = node;
     return walker;
 }
@@ -914,13 +914,12 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
         // merge containers at the edges.
         next = nodeBeforeSplit.nextSibling;
         node = getPreviousBlock( next, root );
-        if ( !/\S/.test( node.textContent ) ) {
+        if ( node && !/\S/.test( node.textContent ) ) {
             do {
                 parent = node.parentNode;
                 parent.removeChild( node );
                 node = parent;
-            } while ( parent && !parent.lastChild &&
-                parent.nodeName !== 'BODY' );
+            } while ( node && !node.lastChild && node !== root );
         }
         if ( !nodeBeforeSplit.parentNode ) {
             nodeBeforeSplit = next.previousSibling;
@@ -938,13 +937,12 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
         prev = nodeAfterSplit.previousSibling;
         node = isBlock( nodeAfterSplit ) ?
             nodeAfterSplit : getNextBlock( nodeAfterSplit, root );
-        if ( !/\S/.test( node.textContent ) ) {
+        if ( node && !/\S/.test( node.textContent ) ) {
             do {
                 parent = node.parentNode;
                 parent.removeChild( node );
                 node = parent;
-            } while ( parent && !parent.lastChild &&
-                parent.nodeName !== 'BODY' );
+            } while ( node && !node.lastChild && node !== root );
         }
         if ( !nodeAfterSplit.parentNode ) {
             nodeAfterSplit = prev.nextSibling;
