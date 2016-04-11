@@ -131,10 +131,14 @@ var onPaste = function ( event ) {
         event.preventDefault();
         // Abiword on Linux copies a plain text and html version, but the HTML
         // version is the empty string! So always try to get HTML, but if none,
-        // insert plain text instead.
+        // insert plain text instead. On iOS, Facebook (and possibly other
+        // apps?) copy links as type text/uri-list, but also insert a **blank**
+        // text/plain item onto the clipboard. Why? Who knows.
         if (( data = clipboardData.getData( 'text/html' ) )) {
             this.insertHTML( data, true );
-        } else if (( data = clipboardData.getData( 'text/plain' ) )) {
+        } else if (
+                ( data = clipboardData.getData( 'text/plain' ) ) ||
+                ( data = clipboardData.getData( 'text/uri-list' ) ) ) {
             this.insertPlainText( data, true );
         }
         return;
