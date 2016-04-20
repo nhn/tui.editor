@@ -76,6 +76,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
             //if문에 task가 아닌 li인지를 체크하는것은
             //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
             self._unformatTaskIfNeedOnEnter(range);
+
             setTimeout(function() {
                 self._formatTaskIfNeed();
             }, 0);
@@ -213,6 +214,11 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
     if (this._isEmptyTask(range)) {
         this.unformatTask(range.startContainer);
         $li.html('<div><br></div>');
+
+        range = this.wwe.getEditor().getSelection().cloneRange();
+        range.setStart($li.find('div')[0], 0);
+        range.collapse(true);
+        this.wwe.getEditor().setSelection(range);
     }
 };
 
