@@ -7,16 +7,14 @@ var AddRow = require('../../src/js/wysiwygCommands/tableAddRow'),
 describe('Table - AddRow', function() {
     var wwe;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            done();
-        });
+        wwe.init();
     });
 
     //we need to wait squire input event process

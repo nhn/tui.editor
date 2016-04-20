@@ -7,17 +7,14 @@ var AddLink = require('../../src/js/wysiwygCommands/addLink'),
 describe('AddLink', function() {
     var wwe;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            wwe.getEditor()._ignoreChange = true;
-            done();
-        });
+        wwe.init();
     });
 
     //we need to wait squire input event process
