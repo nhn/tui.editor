@@ -116,12 +116,13 @@ describe('WwTaskManager', function() {
 
             wwe.setValue('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;</div></li></ul>');
 
-            range.selectNode(wwe.getEditor().getDocument().getElementsByTagName('INPUT')[0]);
+            range.selectNode(wwe.get$Body().find('input')[0]);
             range.collapse(true);
             mgr._unformatTaskIfNeedOnEnter(range);
 
             expect(wwe.get$Body().find('input').length).toEqual(0);
             expect(wwe.get$Body().find('task-list-item').length).toEqual(0);
+            expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
         });
     });
 
