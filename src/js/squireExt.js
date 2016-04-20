@@ -318,21 +318,11 @@ SquireExt.prototype.preserveLastLine = function() {
 };
 
 SquireExt.prototype.scrollTop = function(top) {
-    var $target;
-
-    if (util.browser.firefox) {
-        $target = $(this._win);
-    } else if (util.browser.msie) {
-        $target = $(this.getDocument().documentElement);
-    } else {
-        $target = this.get$Body();
-    }
-
     if (util.isUndefined(top)) {
-        return $target.scrollTop();
+        return this.get$Body().scrollTop();
     }
 
-    return $target.scrollTop(top);
+    return this.get$Body().scrollTop(top);
 };
 
 SquireExt.prototype.isIgnoreChange = function() {

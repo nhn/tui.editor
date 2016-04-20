@@ -182,14 +182,7 @@ describe('SquireExt', function() {
         var firstBlock;
 
         beforeEach(function() {
-            sqe.modifyBlocks(function(frag) {
-                frag = sqe.getDocument().createDocumentFragment();
-                frag.appendChild(sqe.getDocument().createTextNode('text1'));
-                frag.appendChild(sqe.getDocument().createTextNode('text2'));
-
-                return frag;
-            });
-
+            sqe.setHTML('<div>text1</div><div>text2</div>');
             firstBlock = sqe.get$Body()[0].childNodes[0];
         });
 

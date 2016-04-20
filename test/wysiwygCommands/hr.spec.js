@@ -30,6 +30,12 @@ describe('HR', function() {
     });
 
     it('add HR and if there is no next block then append default block', function() {
+        var range = sq.getSelection().cloneRange();
+
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+        sq.setSelection(range);
+
         HR.exec(wwe);
 
         expect(wwe.get$Body().find('hr').length).toEqual(1);
