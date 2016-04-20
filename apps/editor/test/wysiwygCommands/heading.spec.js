@@ -5,19 +5,16 @@ var Heading = require('../../src/js/wysiwygCommands/heading'),
     EventManager = require('../../src/js/eventManager');
 
 describe('Heading', function() {
-    var wwe, sq;
+    var wwe;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            sq = wwe.getEditor();
-            done();
-        });
+        wwe.init();
     });
 
     //we need to wait squire input event process
@@ -33,7 +30,7 @@ describe('Heading', function() {
 
         wwe.setValue('text');
 
-        range.selectNodeContents(wwe.getEditor().getDocument().body.childNodes[0]);
+        range.selectNodeContents(wwe.get$Body()[0].childNodes[0]);
         range.collapse(true);
 
         wwe.getEditor().setSelection(range);
@@ -49,7 +46,7 @@ describe('Heading', function() {
 
         wwe.setValue('text');
 
-        range.selectNodeContents(wwe.getEditor().getDocument().body.childNodes[0]);
+        range.selectNodeContents(wwe.get$Body()[0].childNodes[0]);
         range.collapse(true);
         wwe.getEditor().setSelection(range);
 
@@ -70,6 +67,5 @@ describe('Heading', function() {
 
         Heading.exec(wwe, 6);
         expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('<h6>text</h6>');
-
     });
 });

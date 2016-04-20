@@ -8,18 +8,17 @@ var UL = require('../../src/js/wysiwygCommands/ul'),
 describe('UL', function() {
     var wwe, sq;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            sq = wwe.getEditor();
-            wwe.addManager('task', WwTaskManager);
-            done();
-        });
+        wwe.init();
+
+        sq = wwe.getEditor();
+        wwe.addManager('task', WwTaskManager);
     });
 
     //we need to wait squire input event process

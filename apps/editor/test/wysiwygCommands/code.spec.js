@@ -7,16 +7,14 @@ var Code = require('../../src/js/wysiwygCommands/code'),
 describe('Code', function() {
     var wwe;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            done();
-        });
+        wwe.init();
     });
 
     afterEach(function() {
