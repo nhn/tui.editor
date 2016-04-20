@@ -7,7 +7,7 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
 describe('WwHrManager', function() {
     var $container, em, wwe, mgr;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $container = $('<div />');
 
         $('body').append($container);
@@ -16,10 +16,9 @@ describe('WwHrManager', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(function() {
-            mgr = new WwHrManager(wwe);
-            done();
-        });
+        wwe.init();
+
+        mgr = new WwHrManager(wwe);
     });
 
     //we need to wait squire input event process
@@ -37,7 +36,7 @@ describe('WwHrManager', function() {
 
             wwe.setValue('<hr><div>abcd<br></div>');
 
-            range.setStart(wwe.getEditor().getDocument().body, 0);
+            range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
@@ -51,7 +50,7 @@ describe('WwHrManager', function() {
 
             wwe.setValue('<hr><div>abcd<br></div>');
 
-            range.setStart(wwe.getEditor().getDocument().body, 1);
+            range.setStart(wwe.get$Body()[0], 1);
             range.collapse(true);
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
@@ -126,13 +125,14 @@ describe('WwHrManager', function() {
         });
 
         //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
-        it('remove hr current selections parentNode previousSibling is hr when offset 0', function() {
+        it('remove hr current selection\'s parentNode previousSibling is hr when offset 0', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.setValue('<hr><div><b>abcd</b><<br></div>');
 
             range.setStart(wwe.get$Body().find('b')[0], 0);
             range.collapse(true);
+
             mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
@@ -145,7 +145,7 @@ describe('WwHrManager', function() {
 
             wwe.setValue('<hr><div>abcd<br></div>');
 
-            range.setStart(wwe.getEditor().getDocument().body, 1);
+            range.setStart(wwe.get$Body()[0], 1);
             range.collapse(true);
             mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 

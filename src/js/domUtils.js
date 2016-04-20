@@ -218,14 +218,14 @@ var getParentUntil = function(node, untilNode) {
  * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
  * @param {strong} direction previous or next
  * @param {Node} node node
- * @param {string} underParentNodeName parent node name to limit
+ * @param {string|Node} underNode parent node name to limit
  * @returns {Node} founded node
  */
-var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
+var getNodeWithDirectionUnderParent = function(direction, node, underNode) {
     var directionKey = direction + 'Sibling',
         foundedNode;
 
-    node = getParentUntil(node, underParentNodeName);
+    node = getParentUntil(node, underNode);
 
     if (node && node[directionKey]) {
         foundedNode = node[directionKey];
@@ -235,23 +235,25 @@ var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeN
 };
 
 /**
- * getPrevTopBlockNode
- * get previous top level block node
+ * getTopPrevNodeUnder
+ * get top previous top level node under given node
  * @param {Node} node node
+ * @param {Node} underNode underNode
  * @returns {Node} founded node
  */
-var getPrevTopBlockNode = function(node) {
-    return getNodeWithDirectionUnderParent('previous', node, 'BODY');
+var getTopPrevNodeUnder = function(node, underNode) {
+    return getNodeWithDirectionUnderParent('previous', node, underNode);
 };
 
 /**
  * getNextTopBlockNode
  * get next top level block node
  * @param {Node} node node
+ * @param {Node} underNode underNode
  * @returns {Node} founded node
  */
-var getNextTopBlockNode = function(node) {
-    return getNodeWithDirectionUnderParent('next', node, 'BODY');
+var getTopNextNodeUnder = function(node, underNode) {
+    return getNodeWithDirectionUnderParent('next', node, underNode);
 };
 
 var getTopBlockNode = function(node) {
@@ -341,8 +343,8 @@ module.exports = {
     getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
     getNodeOffsetOfParent: getNodeOffsetOfParent,
     getChildNodeByOffset: getChildNodeByOffset,
-    getPrevTopBlockNode: getPrevTopBlockNode,
-    getNextTopBlockNode: getNextTopBlockNode,
+    getTopPrevNodeUnder: getTopPrevNodeUnder,
+    getTopNextNodeUnder: getTopNextNodeUnder,
     getParentUntil: getParentUntil,
     getTopBlockNode: getTopBlockNode,
     getPrevTextNode: getPrevTextNode,

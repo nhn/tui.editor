@@ -6,17 +6,16 @@ var EventManager = require('../src/js/eventManager'),
 describe('WwClipboardManager', function() {
     var wwe, cbm;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         var $container = $('<div />');
 
         $('body').append($container);
 
         wwe = new WysiwygEditor($container, null, new EventManager());
 
-        wwe.init(function() {
-            cbm = wwe._clipboardManager;
-            done();
-        });
+        wwe.init();
+
+        cbm = wwe._clipboardManager;
     });
 
     afterEach(function() {

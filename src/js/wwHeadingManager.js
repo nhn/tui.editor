@@ -112,7 +112,7 @@ WwHeadingManager.prototype._removePrevTopNodeIfNeed = function(event, range) {
     var isHandled, prevTopNode;
 
     if (range.collapsed) {
-        prevTopNode = domUtils.getPrevTopBlockNode(range.startContainer);
+        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
 
         if (range.startOffset === 0
             && prevTopNode
