@@ -30,6 +30,11 @@ describe('Task', function() {
     });
 
     it('add Task', function() {
+        var range = sq.getSelection().cloneRange();
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+        sq.setSelection(range);
+
         Task.exec(wwe);
 
         expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"> </div></li></ul><div></div>');
