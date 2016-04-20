@@ -144,7 +144,7 @@ WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
     if (this._isInHr(range)) {
         hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
     } else if (range.startOffset === 0) {
-        hrSuspect = domUtils.getPrevTopBlockNode(range.startContainer);
+        hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
         blockPosition = 'none';
     } else if (this._isNearHr(range)) {
         hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);

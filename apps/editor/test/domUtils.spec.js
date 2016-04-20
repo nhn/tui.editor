@@ -158,17 +158,17 @@ describe('domUtils', function() {
         });
     });
 
-    describe('getPrevTopBlockNode', function() {
+    describe('getTopPrevNodeUnder ', function() {
         it('return previous block element of passed node', function() {
             $('body').append('<div>text1</div><p>text2</p>');
-            expect(domUtils.getPrevTopBlockNode($('p')[0].firstChild)).toBe($('div')[0]);
+            expect(domUtils.getTopPrevNodeUnder($('p')[0].firstChild, $('body')[0])).toBe($('div')[0]);
         });
     });
 
-    describe('getNextTopBlockNode', function() {
+    describe('getTopNextNodeUnder', function() {
         it('return next block element of passed node', function() {
             $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
-            expect(domUtils.getNextTopBlockNode($('em')[0].firstChild)).toBe($('p')[0]);
+            expect(domUtils.getTopNextNodeUnder($('em')[0].firstChild, $('body')[0])).toBe($('p')[0]);
         });
     });
 

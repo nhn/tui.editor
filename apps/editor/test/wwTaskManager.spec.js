@@ -7,7 +7,7 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
 describe('WwTaskManager', function() {
     var $container, em, wwe, mgr;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $container = $('<div />');
 
         $('body').append($container);
@@ -16,10 +16,9 @@ describe('WwTaskManager', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(function() {
-            mgr = new WwTaskManager(wwe);
-            done();
-        });
+        wwe.init();
+
+        mgr = new WwTaskManager(wwe);
     });
 
     //we need to wait squire input event process

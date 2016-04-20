@@ -7,7 +7,7 @@ var WwSelectionMarker = require('../src/js/wwSelectionMarker'),
 describe('WwSelectionMarker', function() {
     var $container, em, wwe, wwsm, range;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $container = $('<div />');
 
         $('body').append($container);
@@ -16,11 +16,10 @@ describe('WwSelectionMarker', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(function() {
-            wwe.setValue('<h1>hello world</h1>');
-            range = wwe.getEditor().getSelection().cloneRange();
-            done();
-        });
+        wwe.init();
+
+        wwe.setValue('<h1>hello world</h1>');
+        range = wwe.getEditor().getSelection().cloneRange();
 
         wwsm = new WwSelectionMarker();
     });

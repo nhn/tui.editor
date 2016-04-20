@@ -7,7 +7,7 @@ var WysiwygEditor = require('../src/js/wysiwygEditor'),
 describe('WwCodeBlockManager', function() {
     var $container, em, wwe, mgr;
 
-    beforeEach(function(done) {
+    beforeEach(function() {
         $container = $('<div />');
 
         $('body').append($container);
@@ -16,10 +16,9 @@ describe('WwCodeBlockManager', function() {
 
         wwe = new WysiwygEditor($container, null, em);
 
-        wwe.init(function() {
-            mgr = new WwCodeBlockManager(wwe);
-            done();
-        });
+        wwe.init();
+
+        mgr = new WwCodeBlockManager(wwe);
     });
 
     //we need to wait squire input event process
