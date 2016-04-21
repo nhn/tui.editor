@@ -301,7 +301,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
  */
 WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
     return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-        && range.commonAncestorContainer.tagName !== 'BODY'
+        && range.commonAncestorContainer !== this.wwe.$editorContainerEl[0]
         && range.startOffset === 0
         && range.endOffset === range.commonAncestorContainer.childNodes.length
         && range.commonAncestorContainer === range.startContainer

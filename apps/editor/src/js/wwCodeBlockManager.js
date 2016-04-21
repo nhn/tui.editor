@@ -192,7 +192,7 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
     if (this.wwe.getEditor().hasFormat('PRE')) {
         this.wwe.getEditor().recordUndoState();
 
-        pre = domUtils.getParentUntil(range.startContainer, 'BODY');
+        pre = domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]);
 
         setTimeout(function() {
             var modified;
