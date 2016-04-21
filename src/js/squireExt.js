@@ -24,7 +24,8 @@ var isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
 function SquireExt() {
     Squire.apply(this, arguments);
 
-    this._decoratePasteHandler();
+    this._decorateHandlerToCancelable('copy');
+    this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 }
 
 SquireExt.prototype = util.extend(
@@ -39,23 +40,24 @@ SquireExt.prototype.get$Body = function() {
 };
 
 /**
- * _decoratePasteHandler
- * Decorate squire paste handler cuz sometimes, we dont need squire paste handler process
+ * _decorateHandlerToCancelable
+ * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+ * @param {string} eventName event name
  */
-SquireExt.prototype._decoratePasteHandler = function() {
-    var handlers, pasteHandler;
+SquireExt.prototype._decorateHandlerToCancelable = function(eventName) {
+    var handlers, handler;
 
-    handlers = this._events[isIElt11 ? 'beforepaste' : 'paste'];
+    handlers = this._events[eventName];
 
     if (handlers.length > 1) {
-        throw new Error('too many paste handlers in squire');
+        throw new Error('too many' + eventName + ' handlers in squire');
     }
 
-    pasteHandler = handlers[0].bind(this);
+    handler = handlers[0].bind(this);
 
-    handlers[0] = function decoratedSquirePastedHandler(event) {
+    handlers[0] = function decoratedSquireHandler(event) {
         if (!event.defaultPrevented) {
-            pasteHandler(event);
+            handler(event);
         }
     };
 };
