@@ -98,7 +98,7 @@ WwHeadingManager.prototype._onEnter = function(event, range) {
  */
 WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
     this.wwe.getEditor().recordUndoState(range);
-    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'BODY'));
+    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.$editorContainerEl[0]));
 };
 
 /**
