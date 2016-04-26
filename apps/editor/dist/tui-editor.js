@@ -10836,7 +10836,8 @@
 
 	var util = tui.util;
 
-	var FIND_EXCEL_DATA = /.+(\t.+?){1,}[\r\n]/;
+	var FIND_EXCEL_DATA = /^([^ ]+(\t.+?){1,}[\r\n]*)+$/;
+
 	/**
 	 * ImportManager
 	 * @exports ImportManager
