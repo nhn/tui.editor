@@ -273,5 +273,21 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
             expect(wwe.get$Body().find('div').text()).toEqual('test');
         });
+	it('dont unformat to sub tasks', function() {
+	    var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor()
+                .setHTML(['<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test1</div>',
+			  '<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test2</div></li></ul></li></ul>'].join(''));
+
+            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.collapse(true);
+
+            mgr.unformatTask(range.startContainer);
+
+            expect(wwe.get$Body().find('input').length).toEqual(1);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+            expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test1');
+	});
     });
 });
