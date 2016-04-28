@@ -361,7 +361,7 @@ WwTaskManager.prototype.unformatTask = function unformatTask(node) {
 
     $li = $(node).closest('li');
 
-    $wrapper = $li.find('div');
+    $wrapper = $li.children('div');
 
     if (!$wrapper.length) {
         $wrapper = $li;
