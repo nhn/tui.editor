@@ -124,6 +124,21 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('task-list-item').length).toEqual(0);
             expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
         });
+	it('dont remove input if current task has sub task', function() {
+	    var range = wwe.getEditor().getSelection().cloneRange();
+
+	    wwe.setValue(['<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;</div>',
+			  '<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;sub</div></li></ul></li></ul>'].join(''));
+
+            range.selectNode(wwe.get$Body().find('input')[0]);
+            range.collapse(true);
+
+            mgr._unformatTaskIfNeedOnEnter(range);
+
+            expect(wwe.get$Body().find('input').length).toEqual(2);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(2);
+            expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
+        });
     });
 
     describe('_removeTaskInputInWrongPlace', function() {
