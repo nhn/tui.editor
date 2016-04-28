@@ -69,7 +69,6 @@ var __nedInstance = [];
  * @param {string} options.initialValue 초기 입력 테스트
  * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
  * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
- * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
  * @param {object} options.events eventlist
  * @param {function} options.events.load it would be emitted when editor fully load
  * @param {function} options.events.change it would be emitted when content changed
@@ -114,8 +113,7 @@ function ToastUIEditor(options) {
 
     this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
     this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-    this.wwEditor = WysiwygEditor.factory(
-                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
+    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
 
     this.changePreviewStyle(this.options.previewStyle);
 

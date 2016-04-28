@@ -13,7 +13,7 @@ describe('WysiwygEditor', function() {
 
         em = new EventManager();
 
-        wwe = new WysiwygEditor($container, null, em);
+        wwe = new WysiwygEditor($container, em);
 
         wwe.init();
     });

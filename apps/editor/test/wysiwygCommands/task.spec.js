@@ -13,7 +13,7 @@ describe('Task', function() {
 
         $('body').append($container);
 
-        wwe = new WysiwygEditor($container, null, new EventManager());
+        wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
 
