@@ -439,3 +439,8 @@ Change the **inline** formatting of the current selection. This is a high-level 
 3. A Range object with the range to apply the formatting changes to (or `null`/omit to apply to current selection).
 4. A boolean (defaults to `false` if omitted). If `true`, any formatting nodes that cover at least part of the selected range will be removed entirely (so will potentially be removed from text outside the selected range as well). If `false`, the formatting nodes will continue to apply to any text outside the selection. This is useful, for example, when removing links. If any of the text in the selection is part of a link, the whole link is removed, rather than the link continuing to apply to bits of text outside the selection.
 
+### modifyDocument
+
+Takes in a function that can modify the document without the modifications being treated as input.
+
+This is useful when the document needs to be changed programmatically, but those changes should not raise input events or modify the undo state.

@@ -2278,6 +2278,7 @@ function Squire ( root, config ) {
     this._undoStackLength = 0;
     this._isInUndoState = false;
     this._ignoreChange = false;
+    this._ignoreAllChanges = false;
 
     if ( canObserveMutations ) {
         mutation = new MutationObserver( this._docWasChanged.bind( this ) );
@@ -2406,6 +2407,25 @@ proto.getDocument = function () {
 };
 proto.getRoot = function () {
     return this._root;
+};
+
+proto.modifyDocument = function ( modificationCallback ) {
+    this._ignoreAllChanges = true;
+    if ( this._mutation ) {
+        this._mutation.disconnect();
+    }
+
+    modificationCallback();
+
+    this._ignoreAllChanges = false;
+    if ( this._mutation ) {
+        this._mutation.observe( this._root, {
+            childList: true,
+            attributes: true,
+            characterData: true,
+            subtree: true
+        });
+    }
 };
 
 // --- Events ---
@@ -2863,6 +2883,10 @@ proto._keyUpDetectChange = function ( event ) {
 };
 
 proto._docWasChanged = function () {
+    if ( this._ignoreAllChanges ) {
+        return;
+    }
+
     if ( canObserveMutations && this._ignoreChange ) {
         this._ignoreChange = false;
         return;
