@@ -34,13 +34,11 @@ var canObserveMutations = (typeof MutationObserver !== 'undefined');
  * @constructor
  * @class
  * @param {jQuery} $el element to insert editor
- * @param {string[]} contentStyles List of CSS style file path for HTML content
  * @param {EventManager} eventManager EventManager instance
  */
-function WysiwygEditor($el, contentStyles, eventManager) {
+function WysiwygEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
-    this.contentStyles = contentStyles;
 
     this._height = 0;
 
@@ -790,8 +788,8 @@ WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
  * @param {EventManager} eventManager EventManager instance
  * @returns {WysiwygEditor} wysiwygEditor
  */
-WysiwygEditor.factory = function($el, contentStyles, eventManager) {
-    var wwe = new WysiwygEditor($el, contentStyles, eventManager);
+WysiwygEditor.factory = function($el, eventManager) {
+    var wwe = new WysiwygEditor($el, eventManager);
 
     wwe.addManager(WwTaskManager);
     wwe.addManager(WwTableManager);
