@@ -211,7 +211,7 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
 
     $li = $(range.startContainer).closest('li');
 
-    if (this._isEmptyTask(range)) {
+    if (this._isEmptyTask(range) && !$li.find('ul').length) {
         this.unformatTask(range.startContainer);
         $li.html('<div><br></div>');
 
