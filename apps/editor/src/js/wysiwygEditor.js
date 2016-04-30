@@ -784,7 +784,6 @@ WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
 /**
  * WysiwygEditor factory
  * @param {jQuery} $el element to insert editor
- * @param {string[]} contentStyles List of CSS style file path for HTML content
  * @param {EventManager} eventManager EventManager instance
  * @returns {WysiwygEditor} wysiwygEditor
  */
