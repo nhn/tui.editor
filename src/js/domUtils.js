@@ -332,7 +332,7 @@ var findOffsetNode = function(root, offsetList, textNodeFilter) {
     } while (!util.isUndefined(offset));
 
     return result;
-}
+};
 
 module.exports = {
     getNodeName: getNodeName,

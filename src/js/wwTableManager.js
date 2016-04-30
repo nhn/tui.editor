@@ -144,7 +144,8 @@ WwTableManager.prototype._isBeforeTable = function(range) {
 WwTableManager.prototype._isAfterTable = function(range) {
     var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
-    return domUtils.getNodeName(prevElem) === 'TABLE' && range.commonAncestorContainer === this.wwe.$editorContainerEl[0];
+    return domUtils.getNodeName(prevElem) === 'TABLE'
+	&& range.commonAncestorContainer === this.wwe.$editorContainerEl[0];
 };
 
 /**
