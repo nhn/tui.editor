@@ -189,6 +189,7 @@ describe('renderer', function() {
         expect(renderer.escapeText('im ` text')).toEqual('im \\` text');
         expect(renderer.escapeText('im + text -')).toEqual('im \\+ text \\-');
         expect(renderer.escapeText('im . text !')).toEqual('im \\. text \\!');
+        expect(renderer.escapeText('> im text')).toEqual('\\> im text');
     });
 
     describe('_isNeedEscape() can check passed text is needed escape or not', function() {
