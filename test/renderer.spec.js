@@ -63,22 +63,22 @@ describe('renderer', function() {
 
     it('should make inline html with subcontent', function() {
         var renderer = Renderer.factory();
-        runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><em>test</em></span>'));
+        runner = new DomRunner(toDom('<span><em>test</em></span>'));
         runner.next();
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span>**test**</span>');
 
-        runner = new DomRunner(toDom('<span class="myClass" id="myId" style="color:#ff0"><span>test</span></span>'));
+        runner = new DomRunner(toDom('<span><span>test</span></span>'));
         runner.next();
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span class="myClass" id="myId" style="color:#ff0">**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span>**test**</span>');
     });
 
     it('inline tag with getSpaceControlled', function() {
         var renderer = Renderer.factory();
-        runner = new DomRunner(toDom('pre <span class="myClass" id="myId" style="color:#ff0"><em>test</em></span> post'));
+        runner = new DomRunner(toDom('pre <span><em>test</em></span> post'));
         runner.next();
         runner.next();
 
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual(' <span class="myClass" id="myId" style="color:#ff0">**test**</span> ');
+        expect(renderer.convert(runner.getNode(), '**test**')).toEqual(' <span>**test**</span> ');
     });
 
     it('rules can be assigned separately with comma', function() {
