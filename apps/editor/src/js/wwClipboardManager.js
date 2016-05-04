@@ -6,6 +6,7 @@
 'use strict';
 
 var domUtils = require('./domUtils');
+var WwRangeContentExtractor = require('./wwRangeContentExtractor');
 
 var util = tui.util;
 
@@ -136,70 +137,9 @@ WwClipboardManager.prototype._processFragment = function(fragment) {
  * @returns {string} processed contents
  */
 WwClipboardManager.prototype._getContentFromRange = function(range) {
-    var resultContents,
-        self = this,
-        cloneContents = range.cloneContents();
+    var extractor = new WwRangeContentExtractor(this.wwe, range);
 
-    if (this._isOneTextNodeFullySelected(range)) {
-        this._eachCurrentPath(function(pathStep) {
-            resultContents = self._makeNodeAndAppend(pathStep, resultContents || cloneContents);
-        });
-    } else if (this._isOrphanListItem(range)) {
-        resultContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
-    } else if (this._isStartWithPartialTextNode(range)) {
-        resultContents = this._makeFirstChildToTextNodeIfNeed(cloneContents);
-    }
-
-    //wrap all result content with div to get HTML data
-    resultContents = this._makeNodeAndAppend('div', resultContents || cloneContents);
-
-    return resultContents.html();
-};
-
-/**
- * _makeNodeAndAppend
- * make node and append childs
- * @param {string} tagName tagName to make
- * @param {Node} content nodes to append
- * @returns {Node} node
- */
-WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
-    var node = $('<' + tagName + '/>');
-    node.append(content);
-
-    return node;
-};
-
-/**
- * _eachCurrentPath
- * iterate path depths
- * @param {function} iteratee callback
- */
-WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
-    var paths = this.wwe.getEditor().getPath().split('>'),
-        i;
-
-    for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i -= 1) {
-        iteratee(paths[i]);
-    }
-};
-
-/**
- * _makeFirstChildToTextNodeIfNeed
- * Make firstchild of fragment into textnode
- * @param {DocumentFragment} frag fragment
- * @returns {DocumentFragment} result fragment
- */
-WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
-    var newFirstChild;
-
-    if (domUtils.isElemNode(frag.firstChild) && frag.firstChild.tagName === 'DIV') {
-        newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
-        $(frag).find('*').first().remove();
-        $(frag).prepend(newFirstChild);
-    }
-
-    return frag;
+    return extractor.getAsString();
 };
 
 /**
@@ -306,42 +246,6 @@ WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(
         && range.endOffset === range.commonAncestorContainer.childNodes.length
         && range.commonAncestorContainer === range.startContainer
         && range.commonAncestorContainer === range.endContainer;
-};
-
-/**
- * _isOneTextNodeFullySelected
- * check if one text node fully selected with range
- * @param {Range} range range of selection
- * @returns {boolean} result
- */
-WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
-    return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-        && range.startContainer === range.endContainer
-        && range.startContainer === range.commonAncestorContainer
-        && range.startOffset === 0
-        && range.endOffset === range.commonAncestorContainer.nodeValue.length);
-};
-
-/**
- * _isStartWithPartialTextNode
- * check if start is partial textnode
- * @param {Range} range range of selection
- * @returns {boolean} result
- */
-WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
-    return (range.startContainer.nodeType === Node.TEXT_NODE
-        && range.startOffset > 0);
-};
-
-/**
- * _isOrphanListItem
- * check if range have orphan list
- * @param {Range} range range of selection
- * @returns {boolean} result
- */
-WwClipboardManager.prototype._isOrphanListItem = function(range) {
-    return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-        && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
 };
 
 module.exports = WwClipboardManager;
