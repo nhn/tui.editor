@@ -154,7 +154,7 @@ var keyHandlers = {
         // Remove any zws so we don't think there's content in an empty
         // block.
         self._recordUndoState( range );
-        addLinks( range.startContainer );
+        addLinks( range.startContainer, root, self );
         self._removeZWS();
         self._getRangeAndRemoveBookmark( range );
 
@@ -420,7 +420,7 @@ var keyHandlers = {
     space: function ( self, _, range ) {
         var node, parent;
         self._recordUndoState( range );
-        addLinks( range.startContainer );
+        addLinks( range.startContainer, self._root, self );
         self._getRangeAndRemoveBookmark( range );
 
         // If the cursor is at the end of a link (<a>foo|</a>) then move it
