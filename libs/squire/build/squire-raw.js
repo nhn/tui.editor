@@ -2435,8 +2435,7 @@ proto.modifyDocument = function ( modificationCallback ) {
 // document node, since these events are fired in a custom manner by the
 // editor code.
 var customEvents = {
-    pathChange: 1, select: 1, input: 1, undoStateChange: 1,
-    dragover: 1, drop: 1
+    pathChange: 1, select: 1, input: 1, undoStateChange: 1
 };
 
 proto.fireEvent = function ( type, event ) {
