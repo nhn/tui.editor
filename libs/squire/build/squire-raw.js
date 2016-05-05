@@ -3732,6 +3732,11 @@ proto.insertElement = function ( el, range ) {
     this.focus();
     this.setSelection( range );
     this._updatePath( range );
+
+    if ( !canObserveMutations ) {
+        this._docWasChanged();
+    }
+    
     return this;
 };
 
