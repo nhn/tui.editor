@@ -34,6 +34,20 @@ describe('Code', function() {
         expect(wwe.getValue()).toEqual('<code>line</code><br />');
     });
 
+    it('collapse range after code added', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.setValue('line');
+
+        range.selectNodeContents(wwe.get$Body().children()[0]);
+        wwe.getEditor().setSelection(range);
+
+        Code.exec(wwe);
+
+        expect(wwe.getEditor().getSelection().collapsed)
+            .toBe(true);
+    });
+
     it('if there have bold remove and add code', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
 

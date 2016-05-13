@@ -24,7 +24,7 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor();
+        var sq = wwe.getEditor(), range;
 
         if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
             sq.changeFormat(null, {tag: 'code'});
@@ -35,7 +35,14 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
             } else if (sq.hasFormat('i')) {
                 sq.removeItalic();
             }
+
             sq.changeFormat({tag: 'code'});
+
+            range = sq.getSelection().cloneRange();
+            range.setStart(range.endContainer, range.endOffset);
+            range.collapse(true);
+
+            sq.setSelection(range);
         }
 
         sq.focus();
