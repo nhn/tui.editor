@@ -76,5 +76,18 @@ describe('WwRangeContentExtractor', function() {
 
             expect(rce.getAsString().replace(/<br>/g, '')).toEqual('de<div>fgh</div>');
         });
+        it('if range is codeblock content then return', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<pre><div><code>abcde</code><br/></div><div><code>fghi</code><br/></div><pre>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 3);
+            range.setEnd(wwe.get$Body().find('code')[1].childNodes[0], 3);
+
+            rce = new WwRangeContentExtractor(wwe, range);
+
+            expect(rce.getAsString().replace(/<br>/g, '')).toEqual('<pre><div><code>de</code></div><div><code>fgh</code></div></pre>');
+        });
     });
 });

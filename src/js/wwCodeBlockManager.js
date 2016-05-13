@@ -70,6 +70,28 @@ WwCodeBlockManager.prototype._initEvent = function() {
     });
 };
 
+WwCodeBlockManager.prototype.prepareToPasteOnCodeblockIfNeed = function(fragment) {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+    if (this._isCodeBlock(fragment.firstChild) && this._isInCodeBlock(range)) {
+        this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
+    }
+};
+
+WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
+    var blockNode, attrs;
+
+    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.$editorContainerEl[0]);
+
+    if (domUtils.getNodeName(blockNode) === 'PRE') {
+        attrs = $(blockNode).prop('attributes');
+
+        util.forEach(attrs, function(attr) {
+            $(element).attr(attr.name, attr.value);
+        });
+    }
+};
+
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
     html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
         code = code.replace(/<\/code><br \/>/g, '\n');
@@ -247,8 +269,12 @@ WwCodeBlockManager.prototype._isInCodeBlock = function(range) {
         target = range.commonAncestorContainer;
     }
 
-    return !!$(target).closest('pre').length
-        && (!!$(target).closest('code').length || !!$(target).find('code').length);
+    return this._isCodeBlock(target);
+};
+
+WwCodeBlockManager.prototype._isCodeBlock = function(element) {
+    return !!$(element).closest('pre').length
+        && (!!$(element).closest('code').length || !!$(element).find('code').length);
 };
 
 function sanitizeHtmlCode(code) {

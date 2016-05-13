@@ -10,6 +10,9 @@ var WwRangeContentExtractor = require('./wwRangeContentExtractor');
 
 var util = tui.util;
 
+var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
+
+
 /**
  * WwClipboardManager
  * @exports WwClipboardManager
@@ -20,10 +23,10 @@ var util = tui.util;
 function WwClipboardManager(wwe) {
     this.wwe = wwe;
 
-    if (util.browser.msie) {
+    if (isMSBrowser) {
         this.$hiddenArea = $('<div style="position:absolute;top:0;'
             + 'left:-9999px;height:1px;width:1px;overflow:hidden;" />');
-        this.wwe.$editorContainerEl.append(this.$hiddenArea);
+        this.wwe.$editorContainerEl.parent().append(this.$hiddenArea);
     }
 }
 
@@ -42,7 +45,7 @@ WwClipboardManager.prototype.init = function() {
 WwClipboardManager.prototype._initSquireEvent = function() {
     var self = this;
 
-    if (util.browser.msie) {
+    if (isMSBrowser) {
         this.wwe.getEditor().addEventListener('keydown', function(event) {
             var range;
 
@@ -71,6 +74,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 
         this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
             pasteData.fragment = self._processFragment(pasteData.fragment);
+            self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
         });
     } else {
         this.wwe.getEditor().addEventListener('copy', function(clipboardEvent) {
@@ -154,8 +158,8 @@ WwClipboardManager.prototype.copyWithTextarea = function(range) {
     this.$hiddenArea.append(textarea);
 
     this._latestTextareaContent = this._getContentFromRange(range);
-    textarea.val(this._latestTextareaContent);
 
+    textarea.val(this._latestTextareaContent);
     textarea.select();
 
     setTimeout(function() {
