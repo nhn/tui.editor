@@ -790,6 +790,8 @@ WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
 WysiwygEditor.factory = function($el, eventManager) {
     var wwe = new WysiwygEditor($el, eventManager);
 
+    wwe.init();
+
     wwe.addManager(WwTaskManager);
     wwe.addManager(WwTableManager);
     wwe.addManager(WwHrManager);

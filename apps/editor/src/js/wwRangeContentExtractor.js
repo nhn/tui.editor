@@ -34,14 +34,14 @@ WwRangeContentExtractor.prototype._extractContents = function() {
     var clonedContents = this.clonedContents;
     var self = this;
 
-    if (this._isOneTextNodeFullySelected(range)) {
+    if (this._isOneTextNodeFullySelected()) {
         this._eachCurrentPath(function(pathStep) {
             self.extractedContents = self._makeNodeAndAppend(pathStep, self.extractedContents || clonedContents);
         });
-    } else if (this._isOrphanListItem(range)) {
+    } else if (this._isOrphanListItem() || this._isCodeBlock()) {
         self.extractedContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, clonedContents);
-    } else if (this._isStartWithPartialTextNode(range)) {
-        self.extractedContents = this._makeFirstChildToTextNodeIfNeed(clonedContents);
+    } else if (this._isStartWithPartialTextNode()) {
+        this.extractedContents = this._makeFirstChildToTextNodeIfNeed(clonedContents);
     }
 
     //wrap all result content with div to get HTML data
@@ -95,6 +95,14 @@ WwRangeContentExtractor.prototype._isOrphanListItem = function() {
 
     return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
         && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
+};
+
+/**
+ * Check current range is within codeblock
+ * @returns {booleat} result
+ */
+WwRangeContentExtractor.prototype._isCodeBlock = function() {
+    return this.range.commonAncestorContainer.tagName === 'PRE';
 };
 
 /**

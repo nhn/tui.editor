@@ -156,7 +156,26 @@ describe('WwCodeBlockManager', function() {
                 expect(wwe.get$Body().find('pre').length).toEqual(1);
             }, 0);
         });
+    });
 
+    describe('_copyCodeblockTypeFromRangeCodeblock', function() {
+        it('copy codeblock\'s type to range codeblock', function() {
+            var codeblock = $('<pre><code>test</code><br></pre'),
+                range;
+
+            wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'mycode</code></pre>');
+
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('code')[0], 1);
+            range.collapse(true);
+
+            mgr._copyCodeblockTypeFromRangeCodeblock(codeblock[0], range);
+
+            expect(codeblock.hasClass('lang-javascript')).toBe(true);
+            expect(codeblock.attr('data-language')).toEqual('javascript');
+        });
     });
 
     describe('Event', function() {

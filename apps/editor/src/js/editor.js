@@ -118,7 +118,6 @@ function ToastUIEditor(options) {
     this.changePreviewStyle(this.options.previewStyle);
 
     this.mdEditor.init();
-    this.wwEditor.init();
 
     this.changeMode(self.options.initialEditType);
 
