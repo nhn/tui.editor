@@ -105,6 +105,10 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 
             self.wwe.postProcessForChange();
         });
+
+        this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
+            self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
+        });
     }
 
     this.wwe.getEditor().addEventListener('paste', function() {
