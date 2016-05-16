@@ -73,9 +73,27 @@ WwCodeBlockManager.prototype._initEvent = function() {
 WwCodeBlockManager.prototype.prepareToPasteOnCodeblockIfNeed = function(fragment) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
 
-    if (this._isCodeBlock(fragment.firstChild) && this._isInCodeBlock(range)) {
-        this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
+    if (this._isInCodeBlock(range)) {
+        if (this._isCodeBlock(fragment.childNodes.length === 1 && fragment.firstChild)) {
+            this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
+        } else {
+            fragment = this._convertToCodeblock(fragment.childNodes);
+            this._copyCodeblockTypeFromRangeCodeblock(fragment, range);
+        }
     }
+
+    return fragment;
+};
+
+WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
+    var $codeblock = $('<pre />');
+    var self = this;
+
+    util.forEachArray(nodes, function(child) {
+        $codeblock.append(self._makeCodeBlockLineHtml(child.textContent));
+    });
+
+    return $codeblock[0];
 };
 
 WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
@@ -105,6 +123,8 @@ WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(htm
 };
 
 WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
+    var self = this;
+
     this.wwe.get$Body().find('pre').each(function(index, pre) {
         var codelines = pre.textContent.replace(/\n+$/, '').split('\n'),
             lang = $(pre).find('code').attr('data-language');
@@ -117,13 +137,17 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
         $(pre).empty();
 
         util.forEach(codelines, function(line) {
-            if (!line) {
-                line = '\u200B';
-            }
-
-            $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code><br></div>');
+            $(pre).append(self._makeCodeBlockLineHtml(line));
         });
     });
+};
+
+WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
+    if (!lineContent) {
+        lineContent = '\u200B';
+    }
+
+    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
 };
 
 WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {

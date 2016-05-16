@@ -61,6 +61,9 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     }
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
+        [].forEach.call(pasteData.fragment.childNodes, function(node) {
+            console.log(node);
+        });
         pasteData.fragment = self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
     });
 

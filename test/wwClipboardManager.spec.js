@@ -71,6 +71,5 @@ describe('WwClipboardManager', function() {
             expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('UL');
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
-
      });
 });
