@@ -22,38 +22,6 @@ describe('WwClipboardManager', function() {
         $('body').empty();
     });
 
-    describe('_getContentFromRange', function() {
-        it('if selected LIs of list, wrap with parent tag', function() {
-            var range;
-
-            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-            range = wwe.getEditor().getSelection().cloneRange();
-
-            range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 0);
-            range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
-
-            expect(cbm._getContentFromRange(range).replace(/<br>/g, '')).toEqual('<ul><li>list1</li><li>lis</li></ul>');
-        });
-    });
-
-
-    describe('_processFragment', function() {
-        it('return new fragment that have parsed html', function() {
-            var textHTML, result;
-
-            textHTML = '<ul><li>hello</li></ul>';
-
-            cbm._latestTextareaContent = textHTML;
-
-            result = cbm._processFragment({
-                textContent: textHTML
-            });
-
-            expect(result.childNodes[0].nodeType).toEqual(Node.ELEMENT_NODE);
-            expect(result.childNodes[0].outerHTML).toEqual(textHTML);
-        });
-    });
-
     describe('_extendRange', function() {
         it('Extend start selection if whole content of startContainer are contained', function() {
             var range;
