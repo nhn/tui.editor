@@ -69,9 +69,6 @@ WwClipboardManager.prototype._initSquireEvent = function() {
         }
 
         self._pch.preparePaste(pasteData);
-    });
-
-    this.wwe.getEditor().addEventListener('paste', function() {
         self.wwe.postProcessForChange();
     });
 };
