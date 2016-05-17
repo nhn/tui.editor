@@ -29,7 +29,7 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('_isInCodeBlock', function() {
+    describe('isInCodeBlock', function() {
         it('check if passed range is in codeblock', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
@@ -38,7 +38,7 @@ describe('WwCodeBlockManager', function() {
             range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
             range.collapse(true);
 
-            expect(mgr._isInCodeBlock(range)).toBe(true);
+            expect(mgr.isInCodeBlock(range)).toBe(true);
         });
     });
 

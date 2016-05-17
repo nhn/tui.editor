@@ -73,13 +73,11 @@ WwCodeBlockManager.prototype._initEvent = function() {
 WwCodeBlockManager.prototype.prepareToPasteOnCodeblockIfNeed = function(fragment) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
 
-    if (this._isInCodeBlock(range)) {
-        if (this._isCodeBlock(fragment.childNodes.length === 1 && fragment.firstChild)) {
-            this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
-        } else {
-            fragment = this._convertToCodeblock(fragment.childNodes);
-            this._copyCodeblockTypeFromRangeCodeblock(fragment, range);
-        }
+    if (this._isCodeBlock(fragment.childNodes.length === 1 && fragment.firstChild)) {
+        this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
+    } else {
+        fragment = this._convertToCodeblock(fragment.childNodes);
+        this._copyCodeblockTypeFromRangeCodeblock(fragment, range);
     }
 
     return fragment;
@@ -151,7 +149,7 @@ WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
 };
 
 WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-    if (this._isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
+    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
         ev.preventDefault();
         this.wwe.getEditor().recordUndoState(range);
         $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
@@ -165,7 +163,7 @@ WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
 WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
     var currentNodeName, code;
 
-    if (!this._isInCodeBlock(range)) {
+    if (!this.isInCodeBlock(range)) {
         return true;
     }
 
@@ -191,7 +189,7 @@ WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, ran
 WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
     var pre, div;
 
-    if (!this._isInCodeBlock(range)) {
+    if (!this.isInCodeBlock(range)) {
         return true;
     }
 
@@ -211,7 +209,7 @@ WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev
 WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
     var currentNodeName;
 
-    if (!this._isInCodeBlock(range)) {
+    if (!this.isInCodeBlock(range)) {
         return true;
     }
 
@@ -262,7 +260,7 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
 WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
     var currentNodeName, div;
 
-    if (this._isInCodeBlock(range)) {
+    if (this.isInCodeBlock(range)) {
         currentNodeName = domUtils.getNodeName(range.startContainer);
         div = domUtils.getParentUntil(range.startContainer, 'PRE');
 
@@ -284,7 +282,7 @@ WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
     return true;
 };
 
-WwCodeBlockManager.prototype._isInCodeBlock = function(range) {
+WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
     var target;
 
     if (range.collapsed) {

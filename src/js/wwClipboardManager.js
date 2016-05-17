@@ -6,7 +6,7 @@
 'use strict';
 
 var domUtils = require('./domUtils');
-
+var WwPasteContentHelper = require('./wwPasteContentHelper');
 var util = tui.util;
 
 var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
@@ -21,6 +21,8 @@ var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
  */
 function WwClipboardManager(wwe) {
     this.wwe = wwe;
+
+    this._pch = new WwPasteContentHelper(this.wwe);
 }
 
 /**
@@ -61,10 +63,12 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     }
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        [].forEach.call(pasteData.fragment.childNodes, function(node) {
-            console.log(node);
-        });
-        pasteData.fragment = self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
+        if (self._latestCopiedRangeInfo
+            && self._latestCopiedRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+            pasteData.rangeInfo = self._latestCopiedRangeInfo;
+        }
+
+        self._pch.preparePaste(pasteData);
     });
 
     this.wwe.getEditor().addEventListener('paste', function() {
@@ -73,8 +77,22 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 };
 
 WwClipboardManager.prototype._extendCurrentSelection = function() {
+    var commonAncestorName;
+
     var range = this._extendRange(this.wwe.getEditor().getSelection().cloneRange());
     this.wwe.getEditor().setSelection(range);
+
+
+    if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
+        commonAncestorName = 'BODY';
+    } else {
+        commonAncestorName = range.commonAncestorContainer.tagName;
+    }
+
+    this._latestCopiedRangeInfo = {
+        contents: range.cloneContents(),
+        commonAncestorName: commonAncestorName
+    };
 };
 
 /**
@@ -84,47 +102,61 @@ WwClipboardManager.prototype._extendCurrentSelection = function() {
  * @returns {Range} range
  */
 WwClipboardManager.prototype._extendRange = function(range) {
-    var newBound, boundNext;
-
-    //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
-    //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
-    if (range.startContainer !== range.endContainer) {
-        if (range.startOffset === 0) {
-            newBound = range.startContainer;
-
-            //레인지 확장
-            while (newBound.parentNode !== range.commonAncestorContainer
-                    && !newBound.previousSibling
-                  ) {
-                newBound = newBound.parentNode;
-            }
-
-            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-            range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-        }
-
-        if (range.endOffset === range.endContainer.length) {
-            newBound = range.endContainer;
-            boundNext = newBound.nextSibling;
-
-            //레인지 확장
-            while (newBound.parentNode !== range.commonAncestorContainer
-                    && (!boundNext || (boundNext.tagName === 'BR' && newBound.parentNode.lastChild === boundNext))
-                  ) {
-                newBound = newBound.parentNode;
-            }
-
-            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-            range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
-        }
+    //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+    if (domUtils.isTextNode(range.commonAncestorContainer)
+        && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
+    ) {
+        return range;
     }
 
-    // commonAncestor를 선택
+    if (range.startOffset === 0) {
+        range = this._extendStartRange(range);
+    }
+
+    if (range.endOffset === range.endContainer.length) {
+        range = this._extendEndRange(range);
+    }
+
+    //commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
     if (this._isWholeCommonAncestorContainerSelected(range)) {
-        newBound = range.commonAncestorContainer;
-        range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-        range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+        range.selectNode(range.commonAncestorContainer);
     }
+
+    return range;
+};
+
+WwClipboardManager.prototype._extendStartRange = function(range) {
+    var newBound = range.startContainer;
+
+    //레인지 확장
+    while (newBound.parentNode !== range.commonAncestorContainer
+            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && !newBound.previousSibling
+          ) {
+        newBound = newBound.parentNode;
+    }
+
+    //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+
+    return range;
+};
+
+WwClipboardManager.prototype._extendEndRange = function(range) {
+    var newBound = range.endContainer;
+    var boundNext = newBound.nextSibling;
+
+    //레인지 확장
+    while (newBound.parentNode !== range.commonAncestorContainer
+            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
+          ) {
+        newBound = newBound.parentNode;
+        boundNext = newBound.nextSibling;
+    }
+
+    //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
 
     return range;
 };

@@ -71,5 +71,38 @@ describe('WwClipboardManager', function() {
             expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('UL');
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
-     });
+
+        it('if selection area is whole text content of one element then extend to commonAncestorContainer', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<h1>hello world<br></h1>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
+            range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.startOffset).toEqual(0);
+            expect(range.endContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.endOffset).toEqual(1);
+        });
+
+        it('if partial text selected of one text node then dont do anything', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<h1>hello world<br></h1>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
+            range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer).toBe(range.endContainer);
+            expect(range.startContainer.nodeType === Node.TEXT_NODE).toBe(true);
+            expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
+        });
+    });
 });
