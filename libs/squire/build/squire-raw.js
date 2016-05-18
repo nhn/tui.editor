@@ -2642,6 +2642,7 @@ proto.getSelection = function () {
 };
 
 function enableRestoreSelection () {
+    this.getSelection();
     this._restoreSelection = true;
 }
 function disableRestoreSelection () {
