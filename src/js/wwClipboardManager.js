@@ -73,6 +73,18 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     });
 };
 
+WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
+    var latestCopiedContents;
+
+    if (!this._latestCopiedRangeInfo) {
+        return false;
+    }
+
+    latestCopiedContents = this._latestCopiedRangeInfo.contents.textContent;
+
+    return latestCopiedContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
+};
+
 WwClipboardManager.prototype._extendCurrentSelection = function() {
     var commonAncestorName;
 

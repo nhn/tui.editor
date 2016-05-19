@@ -334,6 +334,39 @@ var findOffsetNode = function(root, offsetList, textNodeFilter) {
     return result;
 };
 
+var getNodeInfo = function(node) {
+    var path = {};
+    var className;
+
+    path.tagName = node.nodeName;
+
+    if (node.id) {
+        path.id = node.id;
+    }
+
+    className = node.className.trim();
+
+    if (className) {
+        path.className = className;
+    }
+
+    return path;
+};
+
+var getPath = function(node, root) {
+    var paths = [];
+
+    while (node && node !== root) {
+        if (isElemNode(node)) {
+            paths.unshift(getNodeInfo(node));
+        }
+
+        node = node.parentNode;
+    }
+
+    return paths;
+};
+
 module.exports = {
     getNodeName: getNodeName,
     isTextNode: isTextNode,
@@ -348,5 +381,7 @@ module.exports = {
     getParentUntil: getParentUntil,
     getTopBlockNode: getTopBlockNode,
     getPrevTextNode: getPrevTextNode,
-    findOffsetNode: findOffsetNode
+    findOffsetNode: findOffsetNode,
+    getPath: getPath,
+    getNodInfo: getNodeInfo
 };

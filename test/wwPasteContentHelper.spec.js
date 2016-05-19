@@ -27,10 +27,10 @@ describe('WwPasteContentHelper', function() {
     });
 
     describe('get html string of range content', function() {
-        it('if selected LIs of list, wrap with parent tag', function() {
+        it('list be pasted into list with remain list type of selection and first text', function() {
             var range, pasteData;
 
-            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
+            wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
             range = wwe.getEditor().getSelection().cloneRange();
 
@@ -38,7 +38,10 @@ describe('WwPasteContentHelper', function() {
             range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
 
             pasteData = {
-                fragment: range.cloneContents()
+                fragment: range.cloneContents(),
+                rangeInfo: {
+                    commonAncestorName: range.commonAncestorContainer
+                }
             };
 
             range = wwe.getEditor().getSelection().cloneRange();
@@ -52,36 +55,9 @@ describe('WwPasteContentHelper', function() {
 
             pch.preparePaste(pasteData);
 
-            expect(pasteData.fragment.tagName).toEqual('OL');
-            expect(pasteData.fragment.childNodes.length).toEqual(2);
-        });
-        it('if selected LIs of list, wrap with parent tag', function() {
-            var range, pasteData;
-
-            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-
-            range = wwe.getEditor().getSelection().cloneRange();
-
-            range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 0);
-            range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
-
-            pasteData = {
-                fragment: range.cloneContents(),
-                commonAncestorName: 'UL'
-            };
-
-            range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.getEditor().setHTML('<div>test<br></div>');
-            range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 1);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            pch.preparePaste(pasteData);
-
-            expect(pasteData.fragment.tagName).toEqual('UL');
-            expect(pasteData.fragment.childNodes.length).toEqual(2);
+            expect(pasteData.fragment.childNodes[0].nodeType).toEqual(Node.TEXT_NODE);
+            expect(pasteData.fragment.childNodes[0].textContent).toEqual('list1');
+            expect(pasteData.fragment.childNodes[1].tagName).toEqual('OL');
         });
         it('if start is partial text node then make it text node', function() {
             var range, pasteData;
@@ -93,7 +69,10 @@ describe('WwPasteContentHelper', function() {
             range.setEnd(wwe.get$Body().find('div')[1].childNodes[0], 3);
 
             pasteData = {
-                fragment: range.cloneContents()
+                fragment: range.cloneContents(),
+                rangeInfo: {
+                    commonAncestorName: range.commonAncestorContainer
+                }
             };
 
             pch.preparePaste(pasteData);
