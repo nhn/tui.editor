@@ -22,35 +22,20 @@ describe('WwClipboardManager', function() {
         $('body').empty();
     });
 
-    describe('_getContentFromRange', function() {
-        it('if selected LIs of list, wrap with parent tag', function() {
+    describe('_refineCursorWithPasteContents', function() {
+        it('set selection to last element of contents', function(done) {
+            var fragment = wwe.getEditor().getDocument().createDocumentFragment();
             var range;
+            $(fragment).append('<ul><li>ddd<br></li><li>dd2<br></li</ul>');
 
-            wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            cbm._refineCursorWithPasteContents(fragment);
+            wwe.getEditor().insertHTML(fragment);
 
-            range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 0);
-            range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
-
-            expect(cbm._getContentFromRange(range).replace(/<br>/g, '')).toEqual('<ul><li>list1</li><li>lis</li></ul>');
-        });
-    });
-
-
-    describe('_processFragment', function() {
-        it('return new fragment that have parsed html', function() {
-            var textHTML, result;
-
-            textHTML = '<ul><li>hello</li></ul>';
-
-            cbm._latestTextareaContent = textHTML;
-
-            result = cbm._processFragment({
-                textContent: textHTML
-            });
-
-            expect(result.childNodes[0].nodeType).toEqual(Node.ELEMENT_NODE);
-            expect(result.childNodes[0].outerHTML).toEqual(textHTML);
+            setTimeout(function() {
+                range = wwe.getEditor().getSelection();
+                expect(range.startContainer.childNodes[range.endOffset].tagName).toEqual('BR');
+                done();
+            }, 0);
         });
     });
 
@@ -104,5 +89,37 @@ describe('WwClipboardManager', function() {
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
 
-     });
+        it('if selection area is whole text content of one element then extend to commonAncestorContainer', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<h1>hello world<br></h1>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
+            range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.startOffset).toEqual(0);
+            expect(range.endContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.endOffset).toEqual(1);
+        });
+
+        it('if partial text selected of one text node then dont do anything', function() {
+            var range;
+
+            wwe.getEditor().setHTML('<h1>hello world<br></h1>');
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
+            range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+
+            range = cbm._extendRange(range);
+
+            expect(range.startContainer).toBe(range.endContainer);
+            expect(range.startContainer.nodeType === Node.TEXT_NODE).toBe(true);
+            expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
+        });
+    });
 });

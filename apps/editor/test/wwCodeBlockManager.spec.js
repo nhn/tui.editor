@@ -29,7 +29,7 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('_isInCodeBlock', function() {
+    describe('isInCodeBlock', function() {
         it('check if passed range is in codeblock', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
@@ -38,7 +38,7 @@ describe('WwCodeBlockManager', function() {
             range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
             range.collapse(true);
 
-            expect(mgr._isInCodeBlock(range)).toBe(true);
+            expect(mgr.isInCodeBlock(range)).toBe(true);
         });
     });
 
@@ -178,6 +178,48 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
+    describe('prepareToPasteOnCodeblock', function() {
+        beforeEach(function() {
+            var range;
+
+            wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'mycode</code></pre>');
+
+            range = wwe.getEditor().getSelection().cloneRange();
+
+            range.setStart(wwe.get$Body().find('code')[0], 1);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+        });
+        it('if fragment is complete codeblock then copy attribute from current selected codeblock\' to fragment', function() {
+            var codeblock = $('<pre><code>test</code><br></pre>');
+            var fragment, resultFragment;
+
+            fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            $(fragment).append(codeblock);
+
+            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
+
+            expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
+            expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
+        });
+        it('if current selection is within codeblock then make textContent of paste data codeblock', function() {
+            var codeblock = $('<div>test<br></div><div>test2<br></div>');
+            var fragment, resultFragment;
+
+
+            fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            $(fragment).append(codeblock);
+
+            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
+
+            expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
+            expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
+            expect($(resultFragment).find('div code').eq(0).text()).toEqual('test');
+            expect($(resultFragment).find('div code').eq(1).text()).toEqual('test2');
+        });
+    });
     describe('Event', function() {
         it('split to each code tag in code block on line feed on wysiwygSetValueAfter', function() {
             wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
