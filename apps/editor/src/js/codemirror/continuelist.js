@@ -5,7 +5,7 @@
 /*eslint-disable */
 var listRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)/,
     emptyListRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)$/,
-    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
+    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*\S+ */,
     unorderedListRE = /[*+-]\s/;
 
 CodeMirror.commands.subListIndentTab = function (cm) {
