@@ -6,8 +6,7 @@
 'use strict';
 
 var domUtils = require('./domUtils');
-var WwRangeContentExtractor = require('./wwRangeContentExtractor');
-
+var WwPasteContentHelper = require('./wwPasteContentHelper');
 var util = tui.util;
 
 var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
@@ -23,11 +22,7 @@ var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
 function WwClipboardManager(wwe) {
     this.wwe = wwe;
 
-    if (isMSBrowser) {
-        this.$hiddenArea = $('<div style="position:absolute;top:0;'
-            + 'left:-9999px;height:1px;width:1px;overflow:hidden;" />');
-        this.wwe.$editorContainerEl.parent().append(this.$hiddenArea);
-    }
+    this._pch = new WwPasteContentHelper(this.wwe);
 }
 
 /**
@@ -47,146 +42,80 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 
     if (isMSBrowser) {
         this.wwe.getEditor().addEventListener('keydown', function(event) {
-            var range;
-
-            //Ctrl + C
+            //Ctrl+ C
             if (event.ctrlKey && event.keyCode === 67) {
-                range = self.wwe.getEditor().getSelection().cloneRange();
-                range = self._extendRange(range);
-
-                self.copyWithTextarea(range);
+                self._saveLastestClipboardRangeInfo();
             //Ctrl + X
             } else if (event.ctrlKey && event.keyCode === 88) {
-                range = self.wwe.getEditor().getSelection().cloneRange();
-                range = self._extendRange(range);
-
-                self.copyWithTextarea(range);
-
-                range = self.wwe.insertSelectionMarker(range);
-                range.deleteContents();
-
-                setTimeout(function() {
-                    self.wwe.restoreSelectionMarker();
-                    self.wwe.getEditor()._ensureBottomLine();
-                });
+                self._saveLastestClipboardRangeInfo();
+                self.wwe.postProcessForChange();
             }
         });
-
-        this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-            pasteData.fragment = self._processFragment(pasteData.fragment);
-            self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
-        });
     } else {
-        this.wwe.getEditor().addEventListener('copy', function(clipboardEvent) {
-            var range;
-
-            clipboardEvent.preventDefault();
-
-            range = self.wwe.getEditor().getSelection().cloneRange();
-            range = self._extendRange(range);
-
-            self.makeClipboardData(range, clipboardEvent);
+        this.wwe.getEditor().addEventListener('copy', function() {
+            self._saveLastestClipboardRangeInfo();
         });
-
-        this.wwe.getEditor().addEventListener('cut', function(clipboardEvent) {
-            var range;
-
-            clipboardEvent.preventDefault();
-
-            range = self.wwe.getEditor().getSelection().cloneRange();
-            range = self._extendRange(range);
-
-            self.makeClipboardData(range, clipboardEvent);
-
-            range = self.wwe.insertSelectionMarker(range);
-            range.deleteContents();
-            self.wwe.restoreSelectionMarker();
-            self.wwe.getEditor()._ensureBottomLine();
-
+        this.wwe.getEditor().addEventListener('cut', function() {
+            self._saveLastestClipboardRangeInfo();
             self.wwe.postProcessForChange();
-        });
-
-        this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-            self.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
         });
     }
 
-    this.wwe.getEditor().addEventListener('paste', function() {
+    this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
+        if (self._lastestClipboardRangeInfo
+            && self._lastestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+            pasteData.rangeInfo = self._lastestClipboardRangeInfo;
+        }
+
+        self._pch.preparePaste(pasteData);
+        self._refineCursorWithPasteContents(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
 };
 
-/**
- * _processFragment
- * process fragment if it was from textarea
- * @param {DocumentFragment} fragment frament to process
- * @returns {DocumentFragment} new fragment
- */
-WwClipboardManager.prototype._processFragment = function(fragment) {
-    var parsedChilds, processedFragment, i, t;
+WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
+    var self = this;
+    var node = fragment;
+    var range = self.wwe.getEditor().getSelection().cloneRange();
 
-    if (this._latestTextareaContent === fragment.textContent) {
-        parsedChilds = $.parseHTML(fragment.textContent);
-
-        processedFragment = document.createDocumentFragment();
-
-        for (i = 0, t = parsedChilds.length; i < t; i += 1) {
-            processedFragment.appendChild(parsedChilds[i]);
-        }
+    while (node.lastChild) {
+        node = node.lastChild;
     }
 
-    return processedFragment || fragment;
-};
-
-/**
- * _getContentFromRange
- * get processed contents of range
- * @param {Range} range range of selection
- * @returns {string} processed contents
- */
-WwClipboardManager.prototype._getContentFromRange = function(range) {
-    var extractor = new WwRangeContentExtractor(this.wwe, range);
-
-    return extractor.getAsString();
-};
-
-/**
- * copyWithTextarea
- * copy clipboard using textarea for IEs
- * @param {Range} range range of selection
- */
-WwClipboardManager.prototype.copyWithTextarea = function(range) {
-    var self = this,
-        textarea = $('<textarea />');
-
-    this.$hiddenArea.append(textarea);
-
-    this._latestTextareaContent = this._getContentFromRange(range);
-
-    textarea.val(this._latestTextareaContent);
-    textarea.select();
-
     setTimeout(function() {
-        //카피가 끝나면 텍스트 에리어 제거
-        textarea.remove();
-        //여기서 셀렉션도 복구
-        //파폭에선 focus를 다시이동 해줘야함
-        self.wwe.getEditor().focus();
+        range.setStartBefore(node);
+        range.collapse(true);
         self.wwe.getEditor().setSelection(range);
     }, 0);
 };
 
-/**
- * makeClipboardData
- * make clipboard data with range
- * @param {Range} range range of selection
- * @param {ClipboardEvent} clipboardEvent current clipboardEvent
- */
-WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent) {
-    var htmlText = this._getContentFromRange(range);
-    clipboardEvent.clipboardData.setData('text/html', htmlText);
+WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
+    var lastestClipboardContents;
+
+    if (!this._lastestClipboardRangeInfo) {
+        return false;
+    }
+
+    lastestClipboardContents = this._lastestClipboardRangeInfo.contents.textContent;
+
+    return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 };
 
+WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
+    var commonAncestorName;
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+    if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
+        commonAncestorName = 'BODY';
+    } else {
+        commonAncestorName = range.commonAncestorContainer.tagName;
+    }
+
+    this._latestClipboardRangeInfo = {
+        contents: range.cloneContents(),
+        commonAncestorName: commonAncestorName
+    };
+};
 
 /**
  * _extendRange
@@ -195,47 +124,61 @@ WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent)
  * @returns {Range} range
  */
 WwClipboardManager.prototype._extendRange = function(range) {
-    var newBound, boundNext;
-
-    //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
-    //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
-    if (range.startContainer !== range.endContainer) {
-        if (range.startOffset === 0) {
-            newBound = range.startContainer;
-
-            //레인지 확장
-            while (newBound.parentNode !== range.commonAncestorContainer
-                    && !newBound.previousSibling
-                  ) {
-                newBound = newBound.parentNode;
-            }
-
-            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-            range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-        }
-
-        if (range.endOffset === range.endContainer.length) {
-            newBound = range.endContainer;
-            boundNext = newBound.nextSibling;
-
-            //레인지 확장
-            while (newBound.parentNode !== range.commonAncestorContainer
-                    && (!boundNext || (boundNext.tagName === 'BR' && newBound.parentNode.lastChild === boundNext))
-                  ) {
-                newBound = newBound.parentNode;
-            }
-
-            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-            range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
-        }
+    //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+    if (domUtils.isTextNode(range.commonAncestorContainer)
+        && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
+    ) {
+        return range;
     }
 
-    // commonAncestor를 선택
+    if (range.startOffset === 0) {
+        range = this._extendStartRange(range);
+    }
+
+    if (range.endOffset === domUtils.getOffsetLength(range.endContainer)) {
+        range = this._extendEndRange(range);
+    }
+
+    //commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
     if (this._isWholeCommonAncestorContainerSelected(range)) {
-        newBound = range.commonAncestorContainer;
-        range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-        range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+        range.selectNode(range.commonAncestorContainer);
     }
+
+    return range;
+};
+
+WwClipboardManager.prototype._extendStartRange = function(range) {
+    var newBound = range.startContainer;
+
+    //레인지 확장
+    while (newBound.parentNode !== range.commonAncestorContainer
+            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && !newBound.previousSibling
+          ) {
+        newBound = newBound.parentNode;
+    }
+
+    //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+
+    return range;
+};
+
+WwClipboardManager.prototype._extendEndRange = function(range) {
+    var newBound = range.endContainer;
+    var boundNext = newBound.nextSibling;
+
+    //레인지 확장
+    while (newBound.parentNode !== range.commonAncestorContainer
+            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
+          ) {
+        newBound = newBound.parentNode;
+        boundNext = newBound.nextSibling;
+    }
+
+    //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
 
     return range;
 };

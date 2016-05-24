@@ -218,4 +218,49 @@ describe('domUtils', function() {
             expect(domUtils.getPrevTextNode($('.test div')[1].firstChild)).toBe(null);
         });
     });
+
+    describe('getPath', function() {
+        it('get path of passed node', function() {
+            var $dom = $('<div><ul><li><div><span>findme</span></div></li></ul></div>');
+            var expected = [
+                {
+                    tagName: 'UL'
+                },
+                {
+                    tagName: 'LI'
+                },
+                {
+                    tagName: 'DIV'
+                },
+                {
+                    tagName: 'SPAN'
+                }
+            ];
+
+            expect(domUtils.getPath($dom.find('span')[0], $dom[0])).toEqual(expected);
+        });
+
+        it('get path of passed node with id and class information', function() {
+            var $dom = $('<div><ul id="i1" class="c1"><li><div class="c2 c3"><span>findme</span></div></li></ul></div>');
+            var expected = [
+                {
+                    tagName: 'UL',
+                    id: 'i1',
+                    className: 'c1'
+                },
+                {
+                    tagName: 'LI'
+                },
+                {
+                    tagName: 'DIV',
+                    className: 'c2 c3'
+                },
+                {
+                    tagName: 'SPAN'
+                }
+            ];
+
+            expect(domUtils.getPath($dom.find('span')[0], $dom[0])).toEqual(expected);
+        });
+    });
 });
