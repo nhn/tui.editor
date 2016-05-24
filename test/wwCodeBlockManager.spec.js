@@ -178,7 +178,7 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('prepareToPasteOnCodeblockIfNeed', function() {
+    describe('prepareToPasteOnCodeblock', function() {
         beforeEach(function() {
             var range;
 
@@ -199,7 +199,7 @@ describe('WwCodeBlockManager', function() {
             fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            resultFragment = mgr.prepareToPasteOnCodeblockIfNeed(fragment);
+            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
@@ -212,10 +212,10 @@ describe('WwCodeBlockManager', function() {
             fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            resultFragment = mgr.prepareToPasteOnCodeblockIfNeed(fragment);
+            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
 
-            expect($(resultFragment).attr('class')).toEqual('lang-javascript');
-            expect($(resultFragment).attr('data-language')).toEqual('javascript');
+            expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
+            expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
             expect($(resultFragment).find('div code').eq(0).text()).toEqual('test');
             expect($(resultFragment).find('div code').eq(1).text()).toEqual('test2');
         });

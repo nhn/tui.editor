@@ -7,6 +7,8 @@
 
 var domUtils = require('./domUtils');
 
+var util = tui.util;
+
 /**
  * WwPasteContentHelper
  * @exports WwPasteContentHelper
@@ -21,28 +23,116 @@ function WwPasteContentHelper(wwe) {
 
 WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
+    var childNodes = util.toArray(pasteData.fragment.childNodes);
+    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+    var firstBlockIsTaken = false;
+    var nodeName, node;
 
-    if (pasteData.rangeInfo && this._isNotAloneTextNode(pasteData.fragment)) {
-        if (this.wwe.getManager('codeblock').isInCodeBlock(range)) {
-            pasteData.fragment = this.wwe.getManager('codeblock').prepareToPasteOnCodeblockIfNeed(pasteData.fragment);
-        } else if (this._isOrphanListItem(pasteData)) {
-            pasteData.fragment = this._prepareOrphanList(pasteData.fragment, pasteData.rangeInfo);
-        } else if (this._isStartWithDefaultBlock(pasteData.fragment)) {
-            pasteData.fragment = this._makeFirstChildToTextNodeIfNeed(pasteData.fragment);
-        }
-    } else if (!this._isNotAloneTextNode(pasteData.fragment)) {
-        console.log('외부 데이터 처리');
+    //prepare to paste as inline of first node if possible
+    //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
+    if (childNodes[0].tagName === 'DIV') {
+        $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
+        childNodes.shift();
     }
+
+    while (childNodes.length) {
+        node = childNodes[0];
+        nodeName = domUtils.getNodeName(node);
+
+        if (this.wwe.getManager('codeblock').isInCodeBlock(range)) {
+            newFragment.appendChild(this.wwe.getManager('codeblock').prepareToPasteOnCodeblock(childNodes));
+        } else if (nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL') {
+            newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
+            //첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
+            firstBlockIsTaken = true;
+        } else {
+            $(newFragment).append(childNodes.shift());
+        }
+    }
+
+    pasteData.fragment = newFragment;
 };
 
-WwPasteContentHelper.prototype._isOrphanListItem = function(pasteData) {
-    var fragment = pasteData.fragment;
-    var commonAncestorName = pasteData.rangeInfo.commonAncestorName;
+WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, firstBlockIsTaken) {
+    var listGroup;
+    var nodeName = domUtils.getNodeName(nodes[0]);
+    var node = nodes.shift();
+    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 
-    return domUtils.getNodeName(fragment.lastChild) === 'LI'
-        || commonAncestorName === 'LI'
-        || commonAncestorName === 'UL'
-        || commonAncestorName === 'OL';
+    //IE에서는 LI-UL 구조에서 UL이 전체가 선택되었는데 LI를 포함하지 않고 UL만 넘어올때가 있다.
+    if (nodeName !== 'LI' && nodes.length && nodes[0].tagName === 'LI') {
+        nodeName = 'LI';
+
+        node = this._makeNodeAndAppend({
+            tagName: nodeName
+        }, node);
+    }
+
+    //UL과 OL이고 리스트에 paste하는경우 뎊스처리
+    if (nodeName === 'OL' || nodeName === 'UL') {
+        //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+        if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
+            $(newFragment).append(this._wrapCurrentFormat(node));
+        } else {
+            $(newFragment).append(node);
+        }
+    } else if (nodeName === 'LI') {
+        //리스트 그룹처리
+        listGroup = this.wwe.getEditor().getDocument().createDocumentFragment();
+        listGroup.appendChild(node);
+
+        while (nodes.length && nodes[0].tagName === 'LI') {
+            listGroup.appendChild(nodes.shift());
+        }
+
+        //리스트에 붙는경우 뎊스 연결
+        //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+        if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
+            $(newFragment).append(this._wrapCurrentFormat(listGroup));
+        //카피할당시의 정보가 있다면 해당 리스트로 만듬
+        } else if (rangeInfo
+                   && (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')) {
+            $(newFragment).append(this._makeNodeAndAppend({
+                tagName: rangeInfo.commonAncestorName
+            }, listGroup));
+        //외부에서온 리스트
+        } else {
+            $(newFragment).append(this._makeNodeAndAppend({
+                tagName: 'UL'
+            }, listGroup));
+        }
+    }
+
+    return newFragment;
+};
+
+WwPasteContentHelper.prototype._unwrapFragmentFirstChildForPasteAsInline = function(node) {
+    $(node).find('br').remove();
+
+    return node.childNodes;
+};
+
+WwPasteContentHelper.prototype._wrapCurrentFormat = function(nodes) {
+    var self = this;
+    var currentTagName;
+
+    // 붙여질 뎊스에 맞게 확장
+    this._eachCurrentPath(function(path) {
+        if (path.tagName !== 'DIV') {
+            // 프레그먼트 노드인경우와 한번이상 감싸진 노드임
+            if (domUtils.isElemNode(nodes)) {
+                currentTagName = nodes.tagName;
+            } else {
+                currentTagName = nodes.firstChild.tagName;
+            }
+
+            if (path.tagName !== currentTagName) {
+                nodes = self._makeNodeAndAppend(path, nodes);
+            }
+        }
+    });
+
+    return nodes;
 };
 
 WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
@@ -52,93 +142,6 @@ WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
     for (i = paths.length - 1; i > -1; i -= 1) {
         iteratee(paths[i]);
     }
-};
-
-WwPasteContentHelper.prototype._prepareOrphanList = function(fragment, rangeInfo) {
-    var self = this;
-    var newFragment, currentTagName;
-
-    // ie에서는 부분 선택된 첫번째 아이템이 LI가 벗겨진채로 올수 있다.
-    if (domUtils.getNodeName(fragment.firstChild) !== 'LI') {
-        $(fragment.firstChild).wrap('<li />');
-    }
-
-    if (this.wwe.getEditor().hasFormat('LI')) {
-        newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
-
-        this._unwrapFragmentFirstChildForPasteAsInlineIfNotLi(fragment, newFragment);
-
-        // 붙여질 뎊스에 맞게 확장
-        this._eachCurrentPath(function(path) {
-            if (path.tagName !== 'DIV') {
-                // 프레그먼트 노드인경우와 한번이상 감싸진 노드임
-                if (domUtils.isElemNode(fragment)) {
-                    currentTagName = fragment.tagName;
-                } else {
-                    currentTagName = fragment.firstChild.tagName;
-                }
-
-                if (fragment.childNodes.length > 1 || path.tagName !== currentTagName) {
-                    fragment = self._makeNodeAndAppend(path, fragment);
-                }
-            }
-        });
-
-        $(newFragment).append(fragment);
-        fragment = newFragment;
-    } else {
-        fragment = self._makeNodeAndAppend(rangeInfo.commonAncestorName, fragment);
-    }
-
-    return fragment;
-};
-
-WwPasteContentHelper.prototype._unwrapFragmentFirstChildForPasteAsInlineIfNotLi = function(fragment, newFragment) {
-    var contentHolder;
-
-    // 첫번째 li는 paste시 개행 하지 않고 해당 위치에 인라인형식으로 붙을수 있다면 붙인다.
-    if (!$(fragment.firstChild).find('li').length) {
-        $(fragment.firstChild).find('br').remove();
-
-        if ($(fragment.firstChild).find('div').length) {
-            contentHolder = $(fragment.firstChild).find('div')[0];
-        } else {
-            contentHolder = fragment.firstChild;
-        }
-
-        $(newFragment).append(contentHolder.childNodes);
-        fragment.removeChild(fragment.firstChild);
-    }
-};
-
-WwPasteContentHelper.prototype._isNotAloneTextNode = function(fragment) {
-    return fragment.childNodes.length > 1 || !domUtils.isTextNode(fragment.firstChild);
-};
-
-/**
- * _makeFirstChildToTextNodeIfNeed
- * Make firstchild of fragment into textnode
- * @param {DocumentFragment} frag fragment
- * @returns {DocumentFragment} result fragment
- */
-WwPasteContentHelper.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
-    var newFirstChild;
-
-    newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
-    $(frag).find('*').first().remove();
-    $(frag).prepend(newFirstChild);
-
-    return frag;
-};
-
-/**
- * _isStartWithPartialTextNode
- * check if start is partial textnode
- * @param {DocumentFragment} frag fragment to paste
- * @returns {boolean} result
- */
-WwPasteContentHelper.prototype._isStartWithDefaultBlock = function(frag) {
-    return domUtils.isElemNode(frag.firstChild) && domUtils.getNodeName(frag.firstChild) === 'DIV';
 };
 
 /* _makeNodeAndAppend

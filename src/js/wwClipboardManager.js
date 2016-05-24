@@ -42,55 +42,68 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 
     if (isMSBrowser) {
         this.wwe.getEditor().addEventListener('keydown', function(event) {
-            //Ctrl + C
+            //Ctrl+ C
             if (event.ctrlKey && event.keyCode === 67) {
-                self._extendCurrentSelection();
+                self._saveLastestClipboardRangeInfo();
             //Ctrl + X
             } else if (event.ctrlKey && event.keyCode === 88) {
-                self._extendCurrentSelection();
+                self._saveLastestClipboardRangeInfo();
                 self.wwe.postProcessForChange();
             }
         });
     } else {
         this.wwe.getEditor().addEventListener('copy', function() {
-            self._extendCurrentSelection();
+            self._saveLastestClipboardRangeInfo();
         });
-
         this.wwe.getEditor().addEventListener('cut', function() {
-            self._extendCurrentSelection();
+            self._saveLastestClipboardRangeInfo();
             self.wwe.postProcessForChange();
         });
     }
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        if (self._latestCopiedRangeInfo
-            && self._latestCopiedRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-            pasteData.rangeInfo = self._latestCopiedRangeInfo;
+        if (self._lastestClipboardRangeInfo
+            && self._lastestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+            pasteData.rangeInfo = self._lastestClipboardRangeInfo;
         }
 
         self._pch.preparePaste(pasteData);
+        self._refineCursorWithPasteContents(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
 };
 
-WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
-    var latestCopiedContents;
+WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
+    var self = this;
+    var node = fragment;
+    var range = self.wwe.getEditor().getSelection().cloneRange();
 
-    if (!this._latestCopiedRangeInfo) {
+    while (node.lastChild) {
+        node = node.lastChild;
+    }
+
+    setTimeout(function() {
+        range.setStartBefore(node);
+        range.collapse(true);
+        self.wwe.getEditor().setSelection(range);
+    }, 0);
+};
+
+WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
+    var lastestClipboardContents;
+
+    if (!this._lastestClipboardRangeInfo) {
         return false;
     }
 
-    latestCopiedContents = this._latestCopiedRangeInfo.contents.textContent;
+    lastestClipboardContents = this._lastestClipboardRangeInfo.contents.textContent;
 
-    return latestCopiedContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
+    return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 };
 
-WwClipboardManager.prototype._extendCurrentSelection = function() {
+WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
-
-    var range = this._extendRange(this.wwe.getEditor().getSelection().cloneRange());
-    this.wwe.getEditor().setSelection(range);
-
+    var range = this.wwe.getEditor().getSelection().cloneRange();
 
     if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
         commonAncestorName = 'BODY';
@@ -98,7 +111,7 @@ WwClipboardManager.prototype._extendCurrentSelection = function() {
         commonAncestorName = range.commonAncestorContainer.tagName;
     }
 
-    this._latestCopiedRangeInfo = {
+    this._latestClipboardRangeInfo = {
         contents: range.cloneContents(),
         commonAncestorName: commonAncestorName
     };
@@ -122,7 +135,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
         range = this._extendStartRange(range);
     }
 
-    if (range.endOffset === range.endContainer.length) {
+    if (range.endOffset === domUtils.getOffsetLength(range.endContainer)) {
         range = this._extendEndRange(range);
     }
 

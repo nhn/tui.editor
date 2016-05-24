@@ -22,6 +22,23 @@ describe('WwClipboardManager', function() {
         $('body').empty();
     });
 
+    describe('_refineCursorWithPasteContents', function() {
+        it('set selection to last element of contents', function(done) {
+            var fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            var range;
+            $(fragment).append('<ul><li>ddd<br></li><li>dd2<br></li</ul>');
+
+            cbm._refineCursorWithPasteContents(fragment);
+            wwe.getEditor().insertHTML(fragment);
+
+            setTimeout(function() {
+                range = wwe.getEditor().getSelection();
+                expect(range.startContainer.childNodes[range.endOffset].tagName).toEqual('BR');
+                done();
+            }, 0);
+        });
+    });
+
     describe('_extendRange', function() {
         it('Extend start selection if whole content of startContainer are contained', function() {
             var range;

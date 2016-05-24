@@ -70,26 +70,28 @@ WwCodeBlockManager.prototype._initEvent = function() {
     });
 };
 
-WwCodeBlockManager.prototype.prepareToPasteOnCodeblockIfNeed = function(fragment) {
+WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
+    var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
 
-    if (this._isCodeBlock(fragment.childNodes.length === 1 && fragment.firstChild)) {
-        this._copyCodeblockTypeFromRangeCodeblock(fragment.firstChild, range);
+    if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
+        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
     } else {
-        fragment = this._convertToCodeblock(fragment.childNodes);
-        this._copyCodeblockTypeFromRangeCodeblock(fragment, range);
+        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this._convertToCodeblock(nodes), range));
     }
 
-    return fragment;
+    return frag;
 };
 
 WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
     var $codeblock = $('<pre />');
     var self = this;
+    var node = nodes.shift();
 
-    util.forEachArray(nodes, function(child) {
-        $codeblock.append(self._makeCodeBlockLineHtml(child.textContent));
-    });
+    while (node) {
+        $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
+        node = nodes.shift();
+    }
 
     return $codeblock[0];
 };
@@ -106,6 +108,8 @@ WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(ele
             $(element).attr(attr.name, attr.value);
         });
     }
+
+    return element;
 };
 
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {

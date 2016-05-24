@@ -6,7 +6,7 @@ var WwPasteContentHelper = require('../src/js/wwPasteContentHelper');
 var WwCodeBlockManager = require('../src/js/wwCodeBlockManager');
 
 describe('WwPasteContentHelper', function() {
-    var wwe, pch;
+    var wwe, pch, contentFrag, pasteData;
 
     beforeEach(function() {
         var $container = $('<div />');
@@ -20,6 +20,8 @@ describe('WwPasteContentHelper', function() {
         wwe.addManager(WwCodeBlockManager);
 
         pch = new WwPasteContentHelper(wwe);
+
+        contentFrag = wwe.getEditor().getDocument().createDocumentFragment();
     });
 
     afterEach(function() {
@@ -27,58 +29,154 @@ describe('WwPasteContentHelper', function() {
     });
 
     describe('get html string of range content', function() {
-        it('list be pasted into list with remain list type of selection and first text', function() {
-            var range, pasteData;
-
-            wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
-
-            range = wwe.getEditor().getSelection().cloneRange();
-
-            range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 0);
-            range.setEnd(wwe.get$Body().find('li')[1].childNodes[0], 3);
+        it('unrwap first child for paste as inline', function() {
+            $(contentFrag).append($('<div>text<b>text2</b><br></div>'));
 
             pasteData = {
-                fragment: range.cloneContents(),
-                rangeInfo: {
-                    commonAncestorName: range.commonAncestorContainer
-                }
+                fragment: contentFrag
             };
-
-            range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.getEditor().setHTML('<ol><li>list3</li></ol>');
-            range.setStart(wwe.get$Body().find('li')[0].childNodes[0], 1);
-            range.setEnd(wwe.get$Body().find('li')[0].childNodes[0], 1);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
 
             pch.preparePaste(pasteData);
 
+            expect(pasteData.fragment.childNodes.length).toEqual(2);
             expect(pasteData.fragment.childNodes[0].nodeType).toEqual(Node.TEXT_NODE);
-            expect(pasteData.fragment.childNodes[0].textContent).toEqual('list1');
-            expect(pasteData.fragment.childNodes[1].tagName).toEqual('OL');
+            expect(pasteData.fragment.childNodes[1].tagName).toEqual('B');
         });
-        it('if start is partial text node then make it text node', function() {
-            var range, pasteData;
 
-            wwe.getEditor().setHTML('<div>abcde</div><div>fghi</div>');
-            range = wwe.getEditor().getSelection().cloneRange();
+        describe('List', function() {
+            var range;
 
-            range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 3);
-            range.setEnd(wwe.get$Body().find('div')[1].childNodes[0], 3);
+            it('if content have orphan list and has format li then make depth based on current selection', function() {
+                $(contentFrag).append($('<li><div>text<br></div></li><li><div>text2<br></div></li>'));
 
-            pasteData = {
-                fragment: range.cloneContents(),
-                rangeInfo: {
-                    commonAncestorName: range.commonAncestorContainer
-                }
-            };
+                pasteData = {
+                    fragment: contentFrag,
+                    rangeInfo: {
+                        commonAncestorName: 'OL'
+                    }
+                };
 
-            pch.preparePaste(pasteData);
+                wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
 
-            expect(pasteData.fragment.firstChild.nodeType).toEqual(Node.TEXT_NODE);
-            expect(pasteData.fragment.firstChild.textContent).toEqual('de');
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                pch.preparePaste(pasteData);
+
+                expect(pasteData.fragment.childNodes.length).toEqual(1);
+                expect(pasteData.fragment.childNodes[0].tagName).toEqual('UL');
+                expect(pasteData.fragment.childNodes[0].childNodes.length).toEqual(2);
+            });
+
+            it('if content have complete list and has format li then make depth based on current selection', function() {
+                $(contentFrag).append($('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>'));
+
+                pasteData = {
+                    fragment: contentFrag,
+                    rangeInfo: {
+                        commonAncestorName: 'OL'
+                    }
+                };
+
+                wwe.getEditor().setHTML('<ul><li><div>text0<br/></div><ul><li><div>list1</div></li><li>list2</li></ul></li></ul>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.get$Body().find('ul li ul li div')[0].childNodes[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                pch.preparePaste(pasteData);
+
+                expect(pasteData.fragment.childNodes.length).toEqual(1);
+                expect(pasteData.fragment.childNodes[0].tagName).toEqual('UL');
+                expect($(pasteData.fragment.childNodes[0]).find('li > ul > li > ul > li').length).toEqual(2);
+            });
+
+            it('if content have orphan list and hasnt format li then wrap list parent based on rangeInfo', function() {
+                $(contentFrag).append($('<li><div>text<br></div></li><li><div>text2<br></div></li>'));
+
+                pasteData = {
+                    fragment: contentFrag,
+                    rangeInfo: {
+                        commonAncestorName: 'OL'
+                    }
+                };
+
+                wwe.getEditor().setHTML('<div><br></div>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.get$Body().find('div')[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                pch.preparePaste(pasteData);
+
+                expect(pasteData.fragment.childNodes.length).toEqual(1);
+                expect(pasteData.fragment.childNodes[0].tagName).toEqual('OL');
+                expect(pasteData.fragment.childNodes[0].childNodes.length).toEqual(2);
+            });
+
+
+            it('if content have complete list and hasnt format li then do nothing', function() {
+                $(contentFrag).append($('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul>'));
+
+                pasteData = {
+                    fragment: contentFrag,
+                    rangeInfo: {
+                        commonAncestorName: 'OL'
+                    }
+                };
+
+                wwe.getEditor().setHTML('<div><br></div>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.get$Body().find('div')[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                pch.preparePaste(pasteData);
+
+                expect(pasteData.fragment.childNodes.length).toEqual(1);
+                expect(pasteData.fragment.childNodes[0].tagName).toEqual('UL');
+                expect(pasteData.fragment.childNodes[0].childNodes.length).toEqual(2);
+            });
+
+            //리스트의 끝부분의 뎊스가 루츠쪽으로 들어간경우
+            it('paste data have backward depth list then limit list depth level', function() {
+                $(contentFrag).append($('<ul><li><div>text<br></div></li><li><div>text2<br></div></li></ul><li><div>myText<br></div></li>'));
+
+                pasteData = {
+                    fragment: contentFrag,
+                    rangeInfo: {
+                        commonAncestorName: 'OL'
+                    }
+                };
+
+                wwe.getEditor().setHTML('<ul><li><div>list1</div></li><li>list2</li></ul>');
+
+                range = wwe.getEditor().getSelection().cloneRange();
+
+                range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 1);
+                range.collapse(true);
+
+                wwe.getEditor().setSelection(range);
+
+                pch.preparePaste(pasteData);
+
+                expect(pasteData.fragment.childNodes.length).toEqual(1);
+                expect(pasteData.fragment.childNodes[0].tagName).toEqual('UL');
+                expect($(pasteData.fragment.childNodes[0]).find('li > ul > li').length).toEqual(2);
+            });
         });
     });
 });
