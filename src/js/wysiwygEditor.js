@@ -72,6 +72,19 @@ WysiwygEditor.prototype.init = function() {
 };
 
 /**
+ * __setValueBefore
+ * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
+ * @param {string} html Inner html of content editable
+ * @returns {string}
+ */
+WysiwygEditor.prototype._setValueBefore = function(html) {
+    if (FIND_SEQUENTIAL_ANCHORS.test(html)) {
+        html = html.replace(FIND_SEQUENTIAL_ANCHORS, 'a>\u200B<a');
+    }
+
+    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
+};
+/**
  * _initEvent
  * Initialize EventManager event handler
  */
@@ -79,7 +92,7 @@ WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
     this.eventManager.listen('wysiwygSetValueBefore', function(html) {
-        return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
+        return self._setValueBefore(html);
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -488,9 +501,6 @@ WysiwygEditor.prototype.setHeight = function(height) {
 WysiwygEditor.prototype.setValue = function(html) {
     html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
 
-    if (FIND_SEQUENTIAL_ANCHORS.test(html)) {
-        html = html.replace(FIND_SEQUENTIAL_ANCHORS, 'a>\u200B<a');
-    }
     this.editor.setHTML(html);
 
     this.eventManager.emit('wysiwygSetValueAfter', this);

@@ -253,13 +253,6 @@ describe('WysiwygEditor', function() {
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
             expect(range.startOffset).toEqual(2);
         });
-        fit('break sequential anchors with zero-width-space when setValue()', function() {
-            var html = '<a href="/home">go to home</a><a href="/category">go to category</a>' +
-                '<a href="ad">advertisement</a>';
-            wwe.setValue(html);
-
-            expect(wwe.get$Body().find('a').length).toEqual(3);
-        });
     });
 
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
@@ -407,6 +400,19 @@ describe('WysiwygEditor', function() {
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
             expect(wwe.getEditor().scrollTop()).toEqual(0);
+        });
+    });
+    describe('_setValueBefore()', function() {
+        fit('break sequential anchors with zero-width-space.', function() {
+            var html = '<a href="/home">go to home</a><a href="/category">go to category</a>' +
+                '<a href="ad">advertisement</a>';
+            var processedString = '<a href="/home">go to home</a>​<a href="/category">go to category</a>​' +
+                '<a href="ad">advertisement</a>';
+            var result;
+
+            result = wwe._setValueBefore(html);
+
+            expect(result).toEqual(processedString);
         });
     });
 });
