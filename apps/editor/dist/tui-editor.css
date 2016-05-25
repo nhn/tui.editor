@@ -79,50 +79,38 @@
   display: block;
 }
 
-.te-editor iframe {
-  width: 100%;
-  border: none;
-  box-sizing: border-box;
-}
-
-/*we cant use display none for ifram because firefox have issue about it*/
-
 .te-ww-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  visibility: hidden;
+  display: none;
   overflow: hidden;
   z-index: 10;
 }
 
 .te-md-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  visibility: hidden;
+  display: none;
   overflow: hidden;
 }
 
+.te-ww-container .te-editor:focus {
+  outline: none;
+}
+
+.te-ww-container .te-editor {
+  padding: 5px;
+}
+
 .te-md-mode .te-md-container {
-  position: inherit;
-  visibility: visible;
+  display: block;
   z-index: 100;
 }
 
 .te-ww-mode .te-ww-container {
-  position: inherit;
-  visibility: visible;
+  display: block;
   z-index: 100;
 }
 
 .tui-editor.te-hide,
-.tui-editor-defaultUI.te-hide,
-.tui-editor.te-hide .te-ww-container,
-.tui-editor.te-hide .te-md-container,
-.tui-editor.te-hide iframe {
-  position: absolute;
-  visibility: hidden;
+.tui-editor-defaultUI.te-hide {
+  display: none;
 }
 
 /* default UI Styles */
@@ -157,7 +145,7 @@
   background-color: #eee;
 }
 
-.tui-editor-defaultUI-toolbar button:active
+.tui-editor-defaultUI-toolbar button:active,
 .tui-editor-defaultUI-toolbar button.active {
   box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
 }

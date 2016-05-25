@@ -52,9 +52,6 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
         initialEditType: 'markdown',
         previewStyle: 'vertical',
         height: 300,
-        contentCSSStyles: [
-            'bower_components/tui-editor/dist/tui-editor-contents.css'
-        ],
         events: {
             'load': function() {
                 console.log('handler');
@@ -72,7 +69,6 @@ tui-editor-contents.css는 기호에 맞게 수정하실수 있으며 에디터�
 * initialEditType: 'markdown'과 'wysiwyg'둘중 하나를 선택해서 에디터를 시작합니다.
 * previewStyle: 마크다운의 경우 preview pane과 edit pane을 2단으로 보여줄지 tab형식으로 보여줄지를 정하는 옵션입니다.(tab, vertical)
 * height: 에디팅영역의 기본 높이를 결정합니다.(숫자, "auto"), "auto"입력시 컨텐츠에 따라서 에디터가 늘어납니다.
-* contentCSSStyles: 위지윅에서 사용될 스타일파일을 지정합니다. 보통 위 예시 처럼 tui-editor-contents.css의 경로를 다시 지정하면됩니다.
 * events: 내부 이벤트에 대응하는 핸들러를 셋팅합니다.
     * 이벤트 목록은 하단 API파트에 있습니다.
 * exts: 사용할 익스텐션들을 배열로 지정합니다.
@@ -93,9 +89,6 @@ $('#editSection').tuiEditor({
     initialEditType: 'markdown',
     previewStyle: 'tab',
     height: 300,
-    contentCSSStyles: [
-        'bower_components/tui-editor/dist/tui-editor-contents.css'
-    ],
     hooks: {
         'addImageBlobHook': function(blob, callback) {
             //이미지 블롭을 이용해 서버 연동 후 콜백실행
@@ -180,6 +173,9 @@ marked를 확장해 추가적인 마크다운을 삽입하고자 한다면 tui.E
 에디터에서 사용하는 렌더러입니다. 덮어쓰지 말고 확장해서 사용해주세요
 
 ## 버전별 업데이트 유의점
+* 0.5.0
+    * 위지윅에디터에서 iframe이 제거되었습니다.
+    * contentCSSStyles옵션이 더이상 필요없어졌습니다.(deprecated)
 * 0.4.0
     * viewOnly 옵션이 추가되었습니다. true를 넘기면 html 렌더링만 가능한 뷰모드로 에디터를 생성합니다.
 * 0.0.9
