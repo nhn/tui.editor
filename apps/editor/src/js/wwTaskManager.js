@@ -399,7 +399,7 @@ WwTaskManager.prototype.formatTask = function(node) {
     $li.addClass('task-list-item');
 
     if (!hasInput) {
-        $block = $selected.closest('div').eq(0);
+        $block = $li.children('div').eq(0);
 
         if (!$block.length) {
             $block = $li.eq(0);
