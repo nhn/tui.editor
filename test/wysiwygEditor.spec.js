@@ -403,7 +403,7 @@ describe('WysiwygEditor', function() {
         });
     });
     describe('_setValueBefore()', function() {
-        fit('break sequential anchors with zero-width-space.', function() {
+        it('break sequential anchors with zero-width-space.', function() {
             var html = '<a href="/home">go to home</a><a href="/category">go to category</a>' +
                 '<a href="ad">advertisement</a>';
             var processedString = '<a href="/home">go to home</a>​<a href="/category">go to category</a>​' +
