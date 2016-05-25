@@ -28,6 +28,32 @@ describe('WwPasteContentHelper', function() {
         $('body').empty();
     });
 
+    describe('paste data first aid', function() {
+        it('_removeStyles should remove styles of node', function() {
+            var $node = $('<div style="border: 1px solid #f00">TEST</div>');
+            pch._removeStyles($node);
+
+            expect($node.attr('style')).not.toBeDefined();
+        });
+
+        it('_removeStyles should not remove color style of span', function() {
+            var $node = $('<span style="color:#f00;border: 1px solid #f00">TEST</span>');
+            pch._removeStyles($node);
+
+            expect($node.attr('style')).toBeDefined();
+            expect($node.css('border')).toBeFalsy();
+            expect($node.css('color')).toBeTruthy();
+        });
+
+        it('_removeUnnecessaryBlocks should unwrap unnecessary blocks', function() {
+            var $node = $('<div><div><span>TEST</span></div></div>');
+
+            pch._removeUnnecessaryBlocks($node[0]);
+
+            expect($node.find('div').length).toEqual(0);
+        });
+    });
+
     describe('get html string of range content', function() {
         it('unrwap first child for paste as inline', function() {
             $(contentFrag).append($('<div>text<b>text2</b><br></div>'));

@@ -33,7 +33,7 @@ describe('WwClipboardManager', function() {
 
             setTimeout(function() {
                 range = wwe.getEditor().getSelection();
-                expect(range.startContainer.childNodes[range.endOffset].tagName).toEqual('BR');
+                expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
                 done();
             }, 0);
         });

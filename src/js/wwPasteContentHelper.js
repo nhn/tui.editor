@@ -28,9 +28,11 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var firstBlockIsTaken = false;
     var nodeName, node;
 
+    this._pasteFirstAid(childNodes);
+
     //prepare to paste as inline of first node if possible
     //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
-    if (childNodes[0].tagName === 'DIV') {
+    if (childNodes.length && childNodes[0].tagName === 'DIV') {
         $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
         childNodes.shift();
     }
@@ -51,6 +53,53 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     }
 
     pasteData.fragment = newFragment;
+};
+
+WwPasteContentHelper.prototype._pasteFirstAid = function(nodes) {
+    var self = this;
+
+    $(nodes).find('iframe, script, br, select, form, button, .Apple-converted-space').remove();
+
+    this._removeUnnecessaryBlocks(nodes);
+
+    this._removeStyles(nodes);
+
+    $(nodes).find('*').each(function() {
+        self._removeStyles(this);
+    });
+};
+
+WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
+    var blocks;
+    var blockTags = 'div, section, article, aside, nav, menus';
+
+    blocks = $(nodes).find(blockTags);
+
+    while (blocks.length) {
+        $(blocks).replaceWith(function() {
+            return $(this).html();
+        });
+
+        blocks = $(nodes).find(blockTags);
+    }
+};
+
+WwPasteContentHelper.prototype._removeStyles = function(node) {
+    var $node = $(node);
+    var colorValue;
+
+    if (domUtils.getNodeName($node[0]) !== 'SPAN') {
+        $node.removeAttr('style');
+    } else {
+        colorValue = $node.css('color');
+        $node.removeAttr('style');
+
+        if (colorValue) {
+            $node.css('color', colorValue);
+        } else {
+            $node.children().unwrap();
+        }
+    }
 };
 
 WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, firstBlockIsTaken) {
