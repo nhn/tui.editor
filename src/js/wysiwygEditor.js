@@ -22,7 +22,8 @@ var util = tui.util;
 
 var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
-    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/,
+    FIND_SEQUENTIAL_ANCHORS = /a><a/gi;
 
 var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -71,6 +72,19 @@ WysiwygEditor.prototype.init = function() {
 };
 
 /**
+ * _preprocessForInlineElement
+ * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
+ * @param {string} html Inner html of content editable
+ * @returns {string}
+ */
+WysiwygEditor.prototype._preprocessForInlineElement = function(html) {
+    if (FIND_SEQUENTIAL_ANCHORS.test(html)) {
+        html = html.replace(FIND_SEQUENTIAL_ANCHORS, 'a>\u200B<a');
+    }
+
+    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
+};
+/**
  * _initEvent
  * Initialize EventManager event handler
  */
@@ -78,7 +92,7 @@ WysiwygEditor.prototype._initEvent = function() {
     var self = this;
 
     this.eventManager.listen('wysiwygSetValueBefore', function(html) {
-        return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
+        return self._preprocessForInlineElement(html);
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -486,6 +500,7 @@ WysiwygEditor.prototype.setHeight = function(height) {
  */
 WysiwygEditor.prototype.setValue = function(html) {
     html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
+
     this.editor.setHTML(html);
 
     this.eventManager.emit('wysiwygSetValueAfter', this);
