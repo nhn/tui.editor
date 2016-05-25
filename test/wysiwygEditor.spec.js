@@ -402,7 +402,7 @@ describe('WysiwygEditor', function() {
             expect(wwe.getEditor().scrollTop()).toEqual(0);
         });
     });
-    describe('_setValueBefore()', function() {
+    describe('_preprocessForInlineElement()', function() {
         it('break sequential anchors with zero-width-space.', function() {
             var html = '<a href="/home">go to home</a><a href="/category">go to category</a>' +
                 '<a href="ad">advertisement</a>';
@@ -410,7 +410,7 @@ describe('WysiwygEditor', function() {
                 '<a href="ad">advertisement</a>';
             var result;
 
-            result = wwe._setValueBefore(html);
+            result = wwe._preprocessForInlineElement(html);
 
             expect(result).toEqual(processedString);
         });
