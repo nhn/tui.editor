@@ -83,7 +83,7 @@ WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment)
     }
 
     setTimeout(function() {
-        range.setStartBefore(node);
+        range.setStartAfter(node);
         range.collapse(true);
         self.wwe.getEditor().setSelection(range);
     }, 0);
