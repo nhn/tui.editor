@@ -270,6 +270,19 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('input').length).toEqual(1);
             expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
         });
+        it('Format task to passed node that doesnt have any div', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<ul><li><br></li></ul>');
+
+            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.collapse(true);
+
+            mgr.formatTask(range.startContainer);
+
+            expect(wwe.get$Body().find('li input').length).toEqual(1);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+        });
     });
 
     describe('unformatTask()', function() {
