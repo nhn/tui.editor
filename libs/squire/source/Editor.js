@@ -1650,18 +1650,35 @@ proto.insertHTML = function ( html, isPaste ) {
     return this;
 };
 
+var escapeHTMLFragement = function ( text ) {
+    return text.split( '&' ).join( '&amp;' )
+               .split( '<' ).join( '&lt;'  )
+               .split( '>' ).join( '&gt;'  )
+               .split( '"' ).join( '&quot;'  );
+};
+
 proto.insertPlainText = function ( plainText, isPaste ) {
-    var lines = plainText.split( '\n' ),
-        i, l, line;
+    var lines = plainText.split( '\n' );
+    var config = this._config;
+    var tag = config.blockTag;
+    var attributes = config.blockAttributes;
+    var closeBlock  = '</' + tag + '>';
+    var openBlock = '<' + tag;
+    var attr, i, l, line;
+
+    for ( attr in attributes ) {
+        openBlock += ' ' + attr + '="' +
+            escapeHTMLFragement( attributes[ attr ] ) +
+        '"';
+    }
+    openBlock += '>';
+
     for ( i = 0, l = lines.length; i < l; i += 1 ) {
         line = lines[i];
-        line = line.split( '&' ).join( '&amp;' )
-                   .split( '<' ).join( '&lt;'  )
-                   .split( '>' ).join( '&gt;'  )
-                   .replace( / (?= )/g, '&nbsp;' );
+        line = escapeHTMLFragement( line ).replace( / (?= )/g, '&nbsp;' );
         // Wrap all but first/last lines in <div></div>
         if ( i && i + 1 < l ) {
-            line = '<DIV>' + ( line || '<BR>' ) + '</DIV>';
+            line = openBlock + ( line || '<BR>' ) + closeBlock;
         }
         lines[i] = line;
     }
