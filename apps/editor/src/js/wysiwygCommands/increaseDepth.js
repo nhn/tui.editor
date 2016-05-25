@@ -28,7 +28,6 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
 
         if (range.collapsed
             && wwe.getEditor().hasFormat('li')
-            && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === ''
         ) {
             $node = $(range.startContainer).closest('li');
             $prev = $node.prev();
