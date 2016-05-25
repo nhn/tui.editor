@@ -7,7 +7,6 @@
 
 var CommandManager = require('../commandManager');
 
-var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 /**
  * IncreaseDepth
  * increase depth of list or task to wysiwyg Editor

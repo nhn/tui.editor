@@ -1124,7 +1124,7 @@
 	/*eslint-disable */
 	var listRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)/,
 	    emptyListRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)$/,
-	    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */,
+	    FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*\S+ */,
 	    unorderedListRE = /[*+-]\s/;
 
 	CodeMirror.commands.subListIndentTab = function (cm) {
@@ -2042,6 +2042,8 @@
 
 	    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
 	        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+
+	        debugger;
 
 	        return markdown.replace(findRx, function(founded, color, text) {
 	            var replacement;
@@ -5410,28 +5412,14 @@
 	    return prevNode;
 	};
 
-	/**
-	 * getParentUntil
-	 * get parent node until paseed node name
-	 * 특정 노드이전의 부모 노드를 찾는다
-	 * @param {Node} node node
-	 * @param {string} untilNodeName node name to limit
-	 * @returns {Node} founded node
-	 */
-	var getParentUntil = function(node, untilNodeName) {
-	    var parentNodeName = getNodeName(node.parentNode),
-	        foundedNode;
+	var getParentUntilBy = function(node, condition) {
+	    var foundedNode;
 
-	    while (
-	        parentNodeName !== untilNodeName
-	        && parentNodeName !== 'BODY'
-	        && node.parentNode
-	    ) {
+	    while (node.parentNode && !condition(node.parentNode)) {
 	        node = node.parentNode;
-	        parentNodeName = getNodeName(node.parentNode);
 	    }
 
-	    if (parentNodeName === untilNodeName) {
+	    if (condition(node.parentNode)) {
 	        foundedNode = node;
 	    }
 
@@ -5439,19 +5427,44 @@
 	};
 
 	/**
+	 * getParentUntil
+	 * get parent node until paseed node name
+	 * 특정 노드이전의 부모 노드를 찾는다
+	 * @param {Node} node node
+	 * @param {string|HTMLNode} untilNode node name or node to limit
+	 * @returns {Node} founded node
+	 */
+	var getParentUntil = function(node, untilNode) {
+	    var foundedNode;
+
+	    if (util.isString(untilNode)) {
+	        foundedNode = getParentUntilBy(node, function(targetNode) {
+	            return untilNode === getNodeName(targetNode);
+	        });
+	    } else {
+	        foundedNode = getParentUntilBy(node, function(targetNode) {
+	            return untilNode === targetNode;
+	        });
+	    }
+
+	    return foundedNode;
+	};
+
+
+	/**
 	 * getNodeWithDirectionUnderParent
 	 * get node of direction before passed parent
 	 * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
 	 * @param {strong} direction previous or next
 	 * @param {Node} node node
-	 * @param {string} underParentNodeName parent node name to limit
+	 * @param {string|Node} underNode parent node name to limit
 	 * @returns {Node} founded node
 	 */
-	var getNodeWithDirectionUnderParent = function(direction, node, underParentNodeName) {
+	var getNodeWithDirectionUnderParent = function(direction, node, underNode) {
 	    var directionKey = direction + 'Sibling',
 	        foundedNode;
 
-	    node = getParentUntil(node, underParentNodeName);
+	    node = getParentUntil(node, underNode);
 
 	    if (node && node[directionKey]) {
 	        foundedNode = node[directionKey];
@@ -5461,23 +5474,25 @@
 	};
 
 	/**
-	 * getPrevTopBlockNode
-	 * get previous top level block node
+	 * getTopPrevNodeUnder
+	 * get top previous top level node under given node
 	 * @param {Node} node node
+	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
 	 */
-	var getPrevTopBlockNode = function(node) {
-	    return getNodeWithDirectionUnderParent('previous', node, 'BODY');
+	var getTopPrevNodeUnder = function(node, underNode) {
+	    return getNodeWithDirectionUnderParent('previous', node, underNode);
 	};
 
 	/**
 	 * getNextTopBlockNode
 	 * get next top level block node
 	 * @param {Node} node node
+	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
 	 */
-	var getNextTopBlockNode = function(node) {
-	    return getNodeWithDirectionUnderParent('next', node, 'BODY');
+	var getTopNextNodeUnder = function(node, underNode) {
+	    return getNodeWithDirectionUnderParent('next', node, underNode);
 	};
 
 	var getTopBlockNode = function(node) {
@@ -5507,7 +5522,7 @@
 	    return node;
 	};
 
-	function findOffsetNode(root, offsetList, textNodeFilter) {
+	var findOffsetNode = function(root, offsetList, textNodeFilter) {
 	    var result = [],
 	        text = '',
 	        walkerOffset = 0,
@@ -5556,7 +5571,40 @@
 	    } while (!util.isUndefined(offset));
 
 	    return result;
-	}
+	};
+
+	var getNodeInfo = function(node) {
+	    var path = {};
+	    var className;
+
+	    path.tagName = node.nodeName;
+
+	    if (node.id) {
+	        path.id = node.id;
+	    }
+
+	    className = node.className.trim();
+
+	    if (className) {
+	        path.className = className;
+	    }
+
+	    return path;
+	};
+
+	var getPath = function(node, root) {
+	    var paths = [];
+
+	    while (node && node !== root) {
+	        if (isElemNode(node)) {
+	            paths.unshift(getNodeInfo(node));
+	        }
+
+	        node = node.parentNode;
+	    }
+
+	    return paths;
+	};
 
 	module.exports = {
 	    getNodeName: getNodeName,
@@ -5567,12 +5615,14 @@
 	    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
 	    getNodeOffsetOfParent: getNodeOffsetOfParent,
 	    getChildNodeByOffset: getChildNodeByOffset,
-	    getPrevTopBlockNode: getPrevTopBlockNode,
-	    getNextTopBlockNode: getNextTopBlockNode,
+	    getTopPrevNodeUnder: getTopPrevNodeUnder,
+	    getTopNextNodeUnder: getTopNextNodeUnder,
 	    getParentUntil: getParentUntil,
 	    getTopBlockNode: getTopBlockNode,
 	    getPrevTextNode: getPrevTextNode,
-	    findOffsetNode: findOffsetNode
+	    findOffsetNode: findOffsetNode,
+	    getPath: getPath,
+	    getNodInfo: getNodeInfo
 	};
 
 
@@ -5972,52 +6022,52 @@
 	var MarkdownEditor = __webpack_require__(21),
 	    Preview = __webpack_require__(23),
 	    WysiwygEditor = __webpack_require__(25),
-	    Layout = __webpack_require__(35),
-	    EventManager = __webpack_require__(36),
-	    CommandManager = __webpack_require__(37),
+	    Layout = __webpack_require__(36),
+	    EventManager = __webpack_require__(37),
+	    CommandManager = __webpack_require__(38),
 	    extManager = __webpack_require__(6),
-	    ImportManager = __webpack_require__(39),
-	    Convertor = __webpack_require__(41),
-	    ViewOnly = __webpack_require__(43),
-	    markedRenderer = __webpack_require__(42),
-	    DefaultUI = __webpack_require__(44);
+	    ImportManager = __webpack_require__(40),
+	    Convertor = __webpack_require__(42),
+	    ViewOnly = __webpack_require__(44),
+	    markedRenderer = __webpack_require__(43),
+	    DefaultUI = __webpack_require__(45);
 
 
 	//markdown commands
-	var mdBold = __webpack_require__(59),
-	    mdItalic = __webpack_require__(60),
-	    mdBlockquote = __webpack_require__(61),
-	    mdHeading = __webpack_require__(62),
-	    mdHR = __webpack_require__(63),
-	    mdAddLink = __webpack_require__(64),
-	    mdAddImage = __webpack_require__(65),
-	    mdUL = __webpack_require__(66),
-	    mdOL = __webpack_require__(67),
-	    mdTable = __webpack_require__(68),
-	    mdTask = __webpack_require__(69),
-	    mdCode = __webpack_require__(70),
-	    mdCodeBlock = __webpack_require__(71);
+	var mdBold = __webpack_require__(60),
+	    mdItalic = __webpack_require__(61),
+	    mdBlockquote = __webpack_require__(62),
+	    mdHeading = __webpack_require__(63),
+	    mdHR = __webpack_require__(64),
+	    mdAddLink = __webpack_require__(65),
+	    mdAddImage = __webpack_require__(66),
+	    mdUL = __webpack_require__(67),
+	    mdOL = __webpack_require__(68),
+	    mdTable = __webpack_require__(69),
+	    mdTask = __webpack_require__(70),
+	    mdCode = __webpack_require__(71),
+	    mdCodeBlock = __webpack_require__(72);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(72),
-	    wwItalic = __webpack_require__(73),
-	    wwBlockquote = __webpack_require__(74),
-	    wwAddImage = __webpack_require__(75),
-	    wwAddLink = __webpack_require__(76),
-	    wwHR = __webpack_require__(77),
-	    wwHeading = __webpack_require__(78),
-	    wwUL = __webpack_require__(79),
-	    wwOL = __webpack_require__(80),
-	    wwTable = __webpack_require__(81),
-	    wwTableAddRow = __webpack_require__(82),
-	    wwTableAddCol = __webpack_require__(83),
-	    wwTableRemoveRow = __webpack_require__(84),
-	    wwTableRemoveCol = __webpack_require__(85),
-	    wwTableRemove = __webpack_require__(86),
-	    wwIncreaseDepth = __webpack_require__(87),
-	    wwTask = __webpack_require__(88),
-	    wwCode = __webpack_require__(89),
-	    wwCodeBlock = __webpack_require__(90);
+	var wwBold = __webpack_require__(73),
+	    wwItalic = __webpack_require__(74),
+	    wwBlockquote = __webpack_require__(75),
+	    wwAddImage = __webpack_require__(76),
+	    wwAddLink = __webpack_require__(77),
+	    wwHR = __webpack_require__(78),
+	    wwHeading = __webpack_require__(79),
+	    wwUL = __webpack_require__(80),
+	    wwOL = __webpack_require__(81),
+	    wwTable = __webpack_require__(82),
+	    wwTableAddRow = __webpack_require__(83),
+	    wwTableAddCol = __webpack_require__(84),
+	    wwTableRemoveRow = __webpack_require__(85),
+	    wwTableRemoveCol = __webpack_require__(86),
+	    wwTableRemove = __webpack_require__(87),
+	    wwIncreaseDepth = __webpack_require__(88),
+	    wwTask = __webpack_require__(89),
+	    wwCode = __webpack_require__(90),
+	    wwCodeBlock = __webpack_require__(91);
 
 	var util = tui.util;
 
@@ -6033,7 +6083,6 @@
 	 * @param {string} options.initialValue 초기 입력 테스트
 	 * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
 	 * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
-	 * @param {string} options.contentCSSStyles List of CSS style file path for HTML content.
 	 * @param {object} options.events eventlist
 	 * @param {function} options.events.load it would be emitted when editor fully load
 	 * @param {function} options.events.change it would be emitted when content changed
@@ -6078,24 +6127,21 @@
 
 	    this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
 	    this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-	    this.wwEditor = WysiwygEditor.factory(
-	                        this.layout.getWwEditorContainerEl(), this.options.contentCSSStyles, this.eventManager);
+	    this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
 
 	    this.changePreviewStyle(this.options.previewStyle);
 
 	    this.mdEditor.init();
 
-	    this.wwEditor.init(function() {
-	        extManager.applyExtension(self, self.options.exts);
+	    this.changeMode(self.options.initialEditType);
 
-	        self.changeMode(self.options.initialEditType);
+	    this.contentHeight(self.options.height);
 
-	        self.contentHeight(self.options.height);
+	    this.setValue(self.options.initialValue);
 
-	        self.setValue(self.options.initialValue);
+	    extManager.applyExtension(self, self.options.exts);
 
-	        self.eventManager.emit('load', self);
-	    });
+	    this.eventManager.emit('load', self);
 
 	    __nedInstance.push(this);
 	}
@@ -7139,14 +7185,14 @@
 
 	var domUtils = __webpack_require__(17),
 	    WwClipboardManager = __webpack_require__(26),
-	    WwSelectionMarker = __webpack_require__(27),
-	    WwTaskManager = __webpack_require__(28),
-	    WwTableManager = __webpack_require__(29),
-	    WwHrManager = __webpack_require__(30),
-	    WwPManager = __webpack_require__(31),
-	    WwHeadingManager = __webpack_require__(32),
-	    WwCodeBlockManager = __webpack_require__(33),
-	    SquireExt = __webpack_require__(34);
+	    WwSelectionMarker = __webpack_require__(28),
+	    WwTaskManager = __webpack_require__(29),
+	    WwTableManager = __webpack_require__(30),
+	    WwHrManager = __webpack_require__(31),
+	    WwPManager = __webpack_require__(32),
+	    WwHeadingManager = __webpack_require__(33),
+	    WwCodeBlockManager = __webpack_require__(34),
+	    SquireExt = __webpack_require__(35);
 
 	var keyMapper = __webpack_require__(22).getSharedInstance();
 
@@ -7154,7 +7200,8 @@
 
 	var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
 	    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
-	    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
+	    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/,
+	    FIND_SEQUENTIAL_ANCHORS = /a><a/gi;
 
 	var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -7166,13 +7213,11 @@
 	 * @constructor
 	 * @class
 	 * @param {jQuery} $el element to insert editor
-	 * @param {string[]} contentStyles List of CSS style file path for HTML content
 	 * @param {EventManager} eventManager EventManager instance
 	 */
-	function WysiwygEditor($el, contentStyles, eventManager) {
+	function WysiwygEditor($el, eventManager) {
 	    this.eventManager = eventManager;
 	    this.$editorContainerEl = $el;
-	    this.contentStyles = contentStyles;
 
 	    this._height = 0;
 
@@ -7192,118 +7237,31 @@
 	 * init
 	 * @param {function} onInitComplete when editor is ready invoke callback function
 	 */
-	WysiwygEditor.prototype.init = function(onInitComplete) {
-	    var self = this;
-
-	    this.$iframe = $('<iframe height="100%" />');
-
-	    this.$iframe.load(function() {
-	        self._initSquire();
-
-	        //쿽스모드 방지 코드(makeSureStandardMode)로 인해
-	        //load 이벤트가 발생되는 브라우저들이있다(IE)
-	        //에디터의 동작을 맞추기해 완료콜백을 프레임지연해서 모든 과정이 완료되도록 동작을 일치 시켜준다.
-	        setTimeout(function() {
-	            if (onInitComplete) {
-	                onInitComplete();
-	                onInitComplete = null;
-	            }
-	        }, 0);
-	    });
-
-	    this.$editorContainerEl.css('position', 'relative');
-	    this.$editorContainerEl.append(this.$iframe);
-	};
-
-	/**
-	 * _initSquire
-	 * Initialize squire
-	 */
-	WysiwygEditor.prototype._initSquire = function() {
-	    var self = this,
-	        doc = self.$iframe[0].contentDocument;
-
-	    self._makeSureStandardMode(doc);
-	    if (self.editor && self._isIframeReady()) {
-	        return;
-	    }
-
-	    self._initStyleSheet(doc);
-	    self._initEditorContainerStyles(doc);
-
-	    self.editor = new SquireExt(doc, {
+	WysiwygEditor.prototype.init = function() {
+	    this.editor = new SquireExt(this.$editorContainerEl[0], {
 	        blockTag: 'DIV'
 	    });
 
-	    self._initSquireEvent();
-	    self._clipboardManager.init();
+	    this._initSquireEvent();
+	    this._clipboardManager.init();
 
-	    $(doc).on('click', function() {
-	        self.focus();
-	    });
+	    this.$editorContainerEl.addClass(EDITOR_CONTENT_CSS_CLASSNAME);
+	    this.$editorContainerEl.css('position', 'relative');
 	};
 
 	/**
-	 * _isIframeReady
-	 * Check whether iframe ready or not
-	 * @returns {boolean} result
+	 * _preprocessForInlineElement
+	 * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
+	 * @param {string} html Inner html of content editable
+	 * @returns {string}
 	 */
-	WysiwygEditor.prototype._isIframeReady = function() {
-	    var iframeWindow = this.$iframe[0].contentWindow;
-
-	    return (iframeWindow !== null && $(iframeWindow.document.body).hasClass(EDITOR_CONTENT_CSS_CLASSNAME));
-	};
-
-	/**
-	 * _makeSureStandardMode
-	 * Make document standard mode if not
-	 * @param {Document} doc document
-	 */
-	WysiwygEditor.prototype._makeSureStandardMode = function(doc) {
-	    //if Not in quirks mode
-	    if (doc.compatMode !== 'CSS1Compat') {
-	        //독타입 삽입후 IE는 load 콜백이 다시 호출되는데 같은 프레임에서 재귀호출처럼 실행됨
-	        doc.open();
-	        doc.write('<!DOCTYPE html><title></title>');
-	        doc.close();
-	        //load콜백이 끝나면 첫번째 진행이 다시 진행됨(initSquire의 나머지부분이 이어서 재귀호출처럼 실행됨)
+	WysiwygEditor.prototype._preprocessForInlineElement = function(html) {
+	    if (FIND_SEQUENTIAL_ANCHORS.test(html)) {
+	        html = html.replace(FIND_SEQUENTIAL_ANCHORS, 'a>\u200B<a');
 	    }
+
+	    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
 	};
-
-	/**
-	 * _initStyleSheet
-	 * Initialize style sheet
-	 * @param {Document} doc document
-	 */
-	WysiwygEditor.prototype._initStyleSheet = function(doc) {
-	    var styleLink;
-
-	    util.forEach(this.contentStyles, function(stylePath) {
-	        styleLink = doc.createElement('link');
-	        styleLink.rel = 'stylesheet';
-	        styleLink.href = stylePath;
-
-	        doc.querySelector('head').appendChild(styleLink);
-	    });
-	};
-
-	/**
-	 * _initEditorContainerStyles
-	 * Initialize editor container style
-	 * @param {Document} doc document
-	 */
-	WysiwygEditor.prototype._initEditorContainerStyles = function(doc) {
-	    var bodyStyle, body;
-
-	    doc.querySelector('html').style.height = '100%';
-
-	    body = doc.querySelector('body');
-	    body.className = EDITOR_CONTENT_CSS_CLASSNAME;
-
-	    bodyStyle = body.style;
-	    bodyStyle.padding = '0 5px';
-	};
-
 	/**
 	 * _initEvent
 	 * Initialize EventManager event handler
@@ -7311,12 +7269,8 @@
 	WysiwygEditor.prototype._initEvent = function() {
 	    var self = this;
 
-	    this.eventManager.listen('changeModeToWysiwyg', function() {
-	        self._autoResizeHeightIfNeed();
-	    });
-
 	    this.eventManager.listen('wysiwygSetValueBefore', function(html) {
-	        return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
+	        return self._preprocessForInlineElement(html);
 	    });
 
 	    this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -7426,7 +7380,6 @@
 	            self._silentChange = false;
 	        }
 
-	        self._autoResizeHeightIfNeed();
 	        self.getEditor().preserveLastLine();
 	    });
 
@@ -7522,31 +7475,14 @@
 	};
 
 	/**
-	 * _autoResizeHeightIfNeed
-	 * Auto resize height if need
-	 */
-	WysiwygEditor.prototype._autoResizeHeightIfNeed = function() {
-	    if (this._height === 'auto') {
-	        this._heightToFitContents();
-	    }
-	};
-
-	/**
-	 * _heightToFitContents
-	 * Resize height to fit contents
-	 */
-	WysiwygEditor.prototype._heightToFitContents = function() {
-	    this.$editorContainerEl.height(this.get$Body().height());
-	};
-
-	/**
 	 * _isInOrphanText
 	 * check if range is orphan text
 	 * @param {Range} range range
 	 * @returns {boolean} result
 	 */
 	WysiwygEditor.prototype._isInOrphanText = function(range) {
-	    return range.startContainer.nodeType === Node.TEXT_NODE && range.startContainer.parentNode.tagName === 'BODY';
+	    return range.startContainer.nodeType === Node.TEXT_NODE
+	           && range.startContainer.parentNode === this.$editorContainerEl[0];
 	};
 
 	/**
@@ -7666,11 +7602,6 @@
 	 * Reset wysiwyg editor
 	 */
 	WysiwygEditor.prototype.reset = function() {
-	    if (!this._isIframeReady()) {
-	        this.remove();
-	        this._initSquire();
-	    }
-
 	    this.setValue('');
 	};
 
@@ -7731,11 +7662,10 @@
 	    this._height = height;
 
 	    if (height === 'auto') {
-	        this.get$Body().css('overflow', 'hidden');
-	        this.get$Body().css('height', 'auto');
-	        this._heightToFitContents();
-	    } else {
 	        this.get$Body().css('overflow', 'visible');
+	        this.get$Body().css('height', 'auto');
+	    } else {
+	        this.get$Body().css('overflow', 'auto');
 	        this.get$Body().css('height', '100%');
 	        this.$editorContainerEl.height(height);
 	    }
@@ -7748,6 +7678,7 @@
 	 */
 	WysiwygEditor.prototype.setValue = function(html) {
 	    html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
+
 	    this.editor.setHTML(html);
 
 	    this.eventManager.emit('wysiwygSetValueAfter', this);
@@ -7755,7 +7686,6 @@
 
 	    this.getEditor().preserveLastLine();
 	    this.moveCursorToEnd();
-	    this._autoResizeHeightIfNeed();
 
 	    this.getEditor().removeLastUndoStack();
 	    this.getEditor().recordUndoState();
@@ -7923,7 +7853,7 @@
 	    currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
 	        || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-	    appendBefore = domUtils.getParentUntil(currentNode, 'BODY');
+	    appendBefore = domUtils.getParentUntil(currentNode, this.$editorContainerEl[0]);
 
 	    div = this.editor.createDefaultBlock();
 
@@ -8047,12 +7977,13 @@
 	/**
 	 * WysiwygEditor factory
 	 * @param {jQuery} $el element to insert editor
-	 * @param {string[]} contentStyles List of CSS style file path for HTML content
 	 * @param {EventManager} eventManager EventManager instance
 	 * @returns {WysiwygEditor} wysiwygEditor
 	 */
-	WysiwygEditor.factory = function($el, contentStyles, eventManager) {
-	    var wwe = new WysiwygEditor($el, contentStyles, eventManager);
+	WysiwygEditor.factory = function($el, eventManager) {
+	    var wwe = new WysiwygEditor($el, eventManager);
+
+	    wwe.init();
 
 	    wwe.addManager(WwTaskManager);
 	    wwe.addManager(WwTableManager);
@@ -8079,8 +8010,11 @@
 	'use strict';
 
 	var domUtils = __webpack_require__(17);
-
+	var WwPasteContentHelper = __webpack_require__(27);
 	var util = tui.util;
+
+	var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
+
 
 	/**
 	 * WwClipboardManager
@@ -8092,11 +8026,7 @@
 	function WwClipboardManager(wwe) {
 	    this.wwe = wwe;
 
-	    if (util.browser.msie) {
-	        this.$hiddenArea = $('<div style="position:absolute;top:0;'
-	            + 'left:-9999px;height:1px;width:1px;overflow:hidden;" />');
-	        this.wwe.$editorContainerEl.append(this.$hiddenArea);
-	    }
+	    this._pch = new WwPasteContentHelper(this.wwe);
 	}
 
 	/**
@@ -8114,204 +8044,82 @@
 	WwClipboardManager.prototype._initSquireEvent = function() {
 	    var self = this;
 
-	    if (util.browser.msie) {
+	    if (isMSBrowser) {
 	        this.wwe.getEditor().addEventListener('keydown', function(event) {
-	            var range;
-
-	            //Ctrl + C
+	            //Ctrl+ C
 	            if (event.ctrlKey && event.keyCode === 67) {
-	                range = self.wwe.getEditor().getSelection().cloneRange();
-	                range = self._extendRange(range);
-
-	                self.copyWithTextarea(range);
+	                self._saveLastestClipboardRangeInfo();
 	            //Ctrl + X
 	            } else if (event.ctrlKey && event.keyCode === 88) {
-	                range = self.wwe.getEditor().getSelection().cloneRange();
-	                range = self._extendRange(range);
-
-	                self.copyWithTextarea(range);
-
-	                range = self.wwe.insertSelectionMarker(range);
-	                range.deleteContents();
-
-	                setTimeout(function() {
-	                    self.wwe.restoreSelectionMarker();
-	                    self.wwe.getEditor()._ensureBottomLine();
-	                });
+	                self._saveLastestClipboardRangeInfo();
+	                self.wwe.postProcessForChange();
 	            }
 	        });
-
-	        this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-	            pasteData.fragment = self._processFragment(pasteData.fragment);
-	        });
 	    } else {
-	        this.wwe.getEditor().addEventListener('copy', function(clipboardEvent) {
-	            var range;
-
-	            clipboardEvent.preventDefault();
-
-	            range = self.wwe.getEditor().getSelection().cloneRange();
-	            range = self._extendRange(range);
-
-	            self.makeClipboardData(range, clipboardEvent);
+	        this.wwe.getEditor().addEventListener('copy', function() {
+	            self._saveLastestClipboardRangeInfo();
 	        });
-
-	        this.wwe.getEditor().addEventListener('cut', function(clipboardEvent) {
-	            var range;
-
-	            clipboardEvent.preventDefault();
-
-	            range = self.wwe.getEditor().getSelection().cloneRange();
-	            range = self._extendRange(range);
-
-	            self.makeClipboardData(range, clipboardEvent);
-
-	            range = self.wwe.insertSelectionMarker(range);
-	            range.deleteContents();
-	            self.wwe.restoreSelectionMarker();
-	            self.wwe.getEditor()._ensureBottomLine();
-
+	        this.wwe.getEditor().addEventListener('cut', function() {
+	            self._saveLastestClipboardRangeInfo();
 	            self.wwe.postProcessForChange();
 	        });
 	    }
 
-	    this.wwe.getEditor().addEventListener('paste', function() {
+	    this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
+	        if (self._lastestClipboardRangeInfo
+	            && self._lastestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+	            pasteData.rangeInfo = self._lastestClipboardRangeInfo;
+	        }
+
+	        self._pch.preparePaste(pasteData);
+	        self._refineCursorWithPasteContents(pasteData.fragment);
 	        self.wwe.postProcessForChange();
 	    });
 	};
 
-	/**
-	 * _processFragment
-	 * process fragment if it was from textarea
-	 * @param {DocumentFragment} fragment frament to process
-	 * @returns {DocumentFragment} new fragment
-	 */
-	WwClipboardManager.prototype._processFragment = function(fragment) {
-	    var parsedChilds, processedFragment, i, t;
+	WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
+	    var self = this;
+	    var node = fragment;
+	    var range = self.wwe.getEditor().getSelection().cloneRange();
 
-	    if (this._latestTextareaContent === fragment.textContent) {
-	        parsedChilds = $.parseHTML(fragment.textContent);
-
-	        processedFragment = document.createDocumentFragment();
-
-	        for (i = 0, t = parsedChilds.length; i < t; i += 1) {
-	            processedFragment.appendChild(parsedChilds[i]);
-	        }
+	    while (node.lastChild) {
+	        node = node.lastChild;
 	    }
-
-	    return processedFragment || fragment;
-	};
-
-	/**
-	 * _getContentFromRange
-	 * get processed contents of range
-	 * @param {Range} range range of selection
-	 * @returns {string} processed contents
-	 */
-	WwClipboardManager.prototype._getContentFromRange = function(range) {
-	    var resultContents,
-	        self = this,
-	        cloneContents = range.cloneContents();
-
-	    if (this._isOneTextNodeFullySelected(range)) {
-	        this._eachCurrentPath(function(pathStep) {
-	            resultContents = self._makeNodeAndAppend(pathStep, resultContents || cloneContents);
-	        });
-	    } else if (this._isOrphanListItem(range)) {
-	        resultContents = this._makeNodeAndAppend(range.commonAncestorContainer.tagName, cloneContents);
-	    } else if (this._isStartWithPartialTextNode(range)) {
-	        resultContents = this._makeFirstChildToTextNodeIfNeed(cloneContents);
-	    }
-
-	    //wrap all result content with div to get HTML data
-	    resultContents = this._makeNodeAndAppend('div', resultContents || cloneContents);
-
-	    return resultContents.html();
-	};
-
-	/**
-	 * _makeNodeAndAppend
-	 * make node and append childs
-	 * @param {string} tagName tagName to make
-	 * @param {Node} content nodes to append
-	 * @returns {Node} node
-	 */
-	WwClipboardManager.prototype._makeNodeAndAppend = function(tagName, content) {
-	    var node = $('<' + tagName + '/>');
-	    node.append(content);
-
-	    return node;
-	};
-
-	/**
-	 * _eachCurrentPath
-	 * iterate path depths
-	 * @param {function} iteratee callback
-	 */
-	WwClipboardManager.prototype._eachCurrentPath = function(iteratee) {
-	    var paths = this.wwe.getEditor().getPath().split('>'),
-	        i;
-
-	    for (i = paths.length - 1; i > -1 && !paths[i].match(/^body/i); i -= 1) {
-	        iteratee(paths[i]);
-	    }
-	};
-
-	/**
-	 * _makeFirstChildToTextNodeIfNeed
-	 * Make firstchild of fragment into textnode
-	 * @param {DocumentFragment} frag fragment
-	 * @returns {DocumentFragment} result fragment
-	 */
-	WwClipboardManager.prototype._makeFirstChildToTextNodeIfNeed = function(frag) {
-	    var newFirstChild;
-
-	    if (domUtils.isElemNode(frag.firstChild) && frag.firstChild.tagName === 'DIV') {
-	        newFirstChild = this.wwe.getEditor().getDocument().createTextNode(frag.firstChild.textContent);
-	        $(frag).find('*').first().remove();
-	        $(frag).prepend(newFirstChild);
-	    }
-
-	    return frag;
-	};
-
-	/**
-	 * copyWithTextarea
-	 * copy clipboard using textarea for IEs
-	 * @param {Range} range range of selection
-	 */
-	WwClipboardManager.prototype.copyWithTextarea = function(range) {
-	    var self = this,
-	        textarea = $('<textarea />');
-
-	    this.$hiddenArea.append(textarea);
-
-	    this._latestTextareaContent = this._getContentFromRange(range);
-	    textarea.val(this._latestTextareaContent);
-
-	    textarea.select();
 
 	    setTimeout(function() {
-	        //카피가 끝나면 텍스트 에리어 제거
-	        textarea.remove();
-	        //여기서 셀렉션도 복구
-	        //파폭에선 focus를 다시이동 해줘야함
-	        self.wwe.getEditor().focus();
+	        range.setStartAfter(node);
+	        range.collapse(true);
 	        self.wwe.getEditor().setSelection(range);
 	    }, 0);
 	};
 
-	/**
-	 * makeClipboardData
-	 * make clipboard data with range
-	 * @param {Range} range range of selection
-	 * @param {ClipboardEvent} clipboardEvent current clipboardEvent
-	 */
-	WwClipboardManager.prototype.makeClipboardData = function(range, clipboardEvent) {
-	    var htmlText = this._getContentFromRange(range);
-	    clipboardEvent.clipboardData.setData('text/html', htmlText);
+	WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
+	    var lastestClipboardContents;
+
+	    if (!this._lastestClipboardRangeInfo) {
+	        return false;
+	    }
+
+	    lastestClipboardContents = this._lastestClipboardRangeInfo.contents.textContent;
+
+	    return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 	};
 
+	WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
+	    var commonAncestorName;
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+	    if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
+	        commonAncestorName = 'BODY';
+	    } else {
+	        commonAncestorName = range.commonAncestorContainer.tagName;
+	    }
+
+	    this._latestClipboardRangeInfo = {
+	        contents: range.cloneContents(),
+	        commonAncestorName: commonAncestorName
+	    };
+	};
 
 	/**
 	 * _extendRange
@@ -8320,47 +8128,61 @@
 	 * @returns {Range} range
 	 */
 	WwClipboardManager.prototype._extendRange = function(range) {
-	    var newBound, boundNext;
-
-	    //같지 않은경우를 체크해야한다 같은경우 레인지 확장할때 commonAncestorContainer를 넘어가버림
-	    //이경우에 스타트와 엔드가 같은 텍스트노드인경우는 텍스트노드만 지우는게 맞다.
-	    if (range.startContainer !== range.endContainer) {
-	        if (range.startOffset === 0) {
-	            newBound = range.startContainer;
-
-	            //레인지 확장
-	            while (newBound.parentNode !== range.commonAncestorContainer
-	                    && !newBound.previousSibling
-	                  ) {
-	                newBound = newBound.parentNode;
-	            }
-
-	            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-	            range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-	        }
-
-	        if (range.endOffset === range.endContainer.length) {
-	            newBound = range.endContainer;
-	            boundNext = newBound.nextSibling;
-
-	            //레인지 확장
-	            while (newBound.parentNode !== range.commonAncestorContainer
-	                    && (!boundNext || (boundNext.tagName === 'BR' && newBound.parentNode.lastChild === boundNext))
-	                  ) {
-	                newBound = newBound.parentNode;
-	            }
-
-	            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
-	            range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
-	        }
+	    //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+	    if (domUtils.isTextNode(range.commonAncestorContainer)
+	        && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
+	    ) {
+	        return range;
 	    }
 
-	    // commonAncestor를 선택
+	    if (range.startOffset === 0) {
+	        range = this._extendStartRange(range);
+	    }
+
+	    if (range.endOffset === domUtils.getOffsetLength(range.endContainer)) {
+	        range = this._extendEndRange(range);
+	    }
+
+	    //commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
 	    if (this._isWholeCommonAncestorContainerSelected(range)) {
-	        newBound = range.commonAncestorContainer;
-	        range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
-	        range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
+	        range.selectNode(range.commonAncestorContainer);
 	    }
+
+	    return range;
+	};
+
+	WwClipboardManager.prototype._extendStartRange = function(range) {
+	    var newBound = range.startContainer;
+
+	    //레인지 확장
+	    while (newBound.parentNode !== range.commonAncestorContainer
+	            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+	            && !newBound.previousSibling
+	          ) {
+	        newBound = newBound.parentNode;
+	    }
+
+	    //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+	    range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
+
+	    return range;
+	};
+
+	WwClipboardManager.prototype._extendEndRange = function(range) {
+	    var newBound = range.endContainer;
+	    var boundNext = newBound.nextSibling;
+
+	    //레인지 확장
+	    while (newBound.parentNode !== range.commonAncestorContainer
+	            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+	            && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
+	          ) {
+	        newBound = newBound.parentNode;
+	        boundNext = newBound.nextSibling;
+	    }
+
+	    //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+	    range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
 
 	    return range;
 	};
@@ -8374,47 +8196,11 @@
 	 */
 	WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
 	    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-	        && range.commonAncestorContainer.tagName !== 'BODY'
+	        && range.commonAncestorContainer !== this.wwe.$editorContainerEl[0]
 	        && range.startOffset === 0
 	        && range.endOffset === range.commonAncestorContainer.childNodes.length
 	        && range.commonAncestorContainer === range.startContainer
 	        && range.commonAncestorContainer === range.endContainer;
-	};
-
-	/**
-	 * _isOneTextNodeFullySelected
-	 * check if one text node fully selected with range
-	 * @param {Range} range range of selection
-	 * @returns {boolean} result
-	 */
-	WwClipboardManager.prototype._isOneTextNodeFullySelected = function(range) {
-	    return (range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-	        && range.startContainer === range.endContainer
-	        && range.startContainer === range.commonAncestorContainer
-	        && range.startOffset === 0
-	        && range.endOffset === range.commonAncestorContainer.nodeValue.length);
-	};
-
-	/**
-	 * _isStartWithPartialTextNode
-	 * check if start is partial textnode
-	 * @param {Range} range range of selection
-	 * @returns {boolean} result
-	 */
-	WwClipboardManager.prototype._isStartWithPartialTextNode = function(range) {
-	    return (range.startContainer.nodeType === Node.TEXT_NODE
-	        && range.startOffset > 0);
-	};
-
-	/**
-	 * _isOrphanListItem
-	 * check if range have orphan list
-	 * @param {Range} range range of selection
-	 * @returns {boolean} result
-	 */
-	WwClipboardManager.prototype._isOrphanListItem = function(range) {
-	    return (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-	        && (range.commonAncestorContainer.tagName === 'UL' || range.commonAncestorContainer.tagName === 'OL'));
 	};
 
 	module.exports = WwClipboardManager;
@@ -8422,6 +8208,230 @@
 
 /***/ },
 /* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements WwPasteContentHelper
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var domUtils = __webpack_require__(17);
+
+	var util = tui.util;
+
+	/**
+	 * WwPasteContentHelper
+	 * @exports WwPasteContentHelper
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {WysiwygEditor} wwe wysiwygEditor instance
+	 */
+	function WwPasteContentHelper(wwe) {
+	    this.wwe = wwe;
+	}
+
+	WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
+	    var childNodes = util.toArray(pasteData.fragment.childNodes);
+	    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+	    var firstBlockIsTaken = false;
+	    var nodeName, node;
+
+	    this._pasteFirstAid(childNodes);
+
+	    //prepare to paste as inline of first node if possible
+	    //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
+	    if (childNodes.length && childNodes[0].tagName === 'DIV') {
+	        $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
+	        childNodes.shift();
+	    }
+
+	    while (childNodes.length) {
+	        node = childNodes[0];
+	        nodeName = domUtils.getNodeName(node);
+
+	        if (this.wwe.getManager('codeblock').isInCodeBlock(range)) {
+	            newFragment.appendChild(this.wwe.getManager('codeblock').prepareToPasteOnCodeblock(childNodes));
+	        } else if (nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL') {
+	            newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
+	            //첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
+	            firstBlockIsTaken = true;
+	        } else {
+	            $(newFragment).append(childNodes.shift());
+	        }
+	    }
+
+	    pasteData.fragment = newFragment;
+	};
+
+	WwPasteContentHelper.prototype._pasteFirstAid = function(nodes) {
+	    var self = this;
+
+	    $(nodes).find('iframe, script, br, select, form, button, .Apple-converted-space').remove();
+
+	    this._removeUnnecessaryBlocks(nodes);
+
+	    this._removeStyles(nodes);
+
+	    $(nodes).find('*').each(function() {
+	        self._removeStyles(this);
+	    });
+	};
+
+	WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
+	    var blocks;
+	    var blockTags = 'div, section, article, aside, nav, menus';
+
+	    blocks = $(nodes).find(blockTags);
+
+	    while (blocks.length) {
+	        $(blocks).replaceWith(function() {
+	            return $(this).html();
+	        });
+
+	        blocks = $(nodes).find(blockTags);
+	    }
+	};
+
+	WwPasteContentHelper.prototype._removeStyles = function(node) {
+	    var $node = $(node);
+	    var colorValue;
+
+	    if (domUtils.getNodeName($node[0]) !== 'SPAN') {
+	        $node.removeAttr('style');
+	    } else {
+	        colorValue = $node.css('color');
+	        $node.removeAttr('style');
+
+	        if (colorValue) {
+	            $node.css('color', colorValue);
+	        } else {
+	            $node.children().unwrap();
+	        }
+	    }
+	};
+
+	WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, firstBlockIsTaken) {
+	    var listGroup;
+	    var nodeName = domUtils.getNodeName(nodes[0]);
+	    var node = nodes.shift();
+	    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+
+	    //IE에서는 LI-UL 구조에서 UL이 전체가 선택되었는데 LI를 포함하지 않고 UL만 넘어올때가 있다.
+	    if (nodeName !== 'LI' && nodes.length && nodes[0].tagName === 'LI') {
+	        nodeName = 'LI';
+
+	        node = this._makeNodeAndAppend({
+	            tagName: nodeName
+	        }, node);
+	    }
+
+	    //UL과 OL이고 리스트에 paste하는경우 뎊스처리
+	    if (nodeName === 'OL' || nodeName === 'UL') {
+	        //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+	        if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
+	            $(newFragment).append(this._wrapCurrentFormat(node));
+	        } else {
+	            $(newFragment).append(node);
+	        }
+	    } else if (nodeName === 'LI') {
+	        //리스트 그룹처리
+	        listGroup = this.wwe.getEditor().getDocument().createDocumentFragment();
+	        listGroup.appendChild(node);
+
+	        while (nodes.length && nodes[0].tagName === 'LI') {
+	            listGroup.appendChild(nodes.shift());
+	        }
+
+	        //리스트에 붙는경우 뎊스 연결
+	        //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+	        if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
+	            $(newFragment).append(this._wrapCurrentFormat(listGroup));
+	        //카피할당시의 정보가 있다면 해당 리스트로 만듬
+	        } else if (rangeInfo
+	                   && (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')) {
+	            $(newFragment).append(this._makeNodeAndAppend({
+	                tagName: rangeInfo.commonAncestorName
+	            }, listGroup));
+	        //외부에서온 리스트
+	        } else {
+	            $(newFragment).append(this._makeNodeAndAppend({
+	                tagName: 'UL'
+	            }, listGroup));
+	        }
+	    }
+
+	    return newFragment;
+	};
+
+	WwPasteContentHelper.prototype._unwrapFragmentFirstChildForPasteAsInline = function(node) {
+	    $(node).find('br').remove();
+
+	    return node.childNodes;
+	};
+
+	WwPasteContentHelper.prototype._wrapCurrentFormat = function(nodes) {
+	    var self = this;
+	    var currentTagName;
+
+	    // 붙여질 뎊스에 맞게 확장
+	    this._eachCurrentPath(function(path) {
+	        if (path.tagName !== 'DIV') {
+	            // 프레그먼트 노드인경우와 한번이상 감싸진 노드임
+	            if (domUtils.isElemNode(nodes)) {
+	                currentTagName = nodes.tagName;
+	            } else {
+	                currentTagName = nodes.firstChild.tagName;
+	            }
+
+	            if (path.tagName !== currentTagName) {
+	                nodes = self._makeNodeAndAppend(path, nodes);
+	            }
+	        }
+	    });
+
+	    return nodes;
+	};
+
+	WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
+	    var paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.$editorContainerEl[0]);
+	    var i;
+
+	    for (i = paths.length - 1; i > -1; i -= 1) {
+	        iteratee(paths[i]);
+	    }
+	};
+
+	/* _makeNodeAndAppend
+	 * make node and append childs
+	 * @param {string} pathInfo tagName to make
+	 * @param {Node} content nodes to append
+	 * @returns {Node} node
+	 */
+	WwPasteContentHelper.prototype._makeNodeAndAppend = function(pathInfo, content) {
+	    var node = $('<' + pathInfo.tagName + '/>');
+
+	    node.append(content);
+
+	    if (pathInfo.id) {
+	        node.attr('id', pathInfo.id);
+	    }
+
+	    if (pathInfo.className) {
+	        node.addClass(pathInfo.className);
+	    }
+
+	    return node[0];
+	};
+
+	module.exports = WwPasteContentHelper;
+
+
+/***/ },
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8504,7 +8514,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8585,6 +8595,7 @@
 	            //if문에 task가 아닌 li인지를 체크하는것은
 	            //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
 	            self._unformatTaskIfNeedOnEnter(range);
+
 	            setTimeout(function() {
 	                self._formatTaskIfNeed();
 	            }, 0);
@@ -8719,9 +8730,14 @@
 
 	    $li = $(range.startContainer).closest('li');
 
-	    if (this._isEmptyTask(range)) {
+	    if (this._isEmptyTask(range) && !$li.find('ul').length) {
 	        this.unformatTask(range.startContainer);
 	        $li.html('<div><br></div>');
+
+	        range = this.wwe.getEditor().getSelection().cloneRange();
+	        range.setStart($li.find('div')[0], 0);
+	        range.collapse(true);
+	        this.wwe.getEditor().setSelection(range);
 	    }
 	};
 
@@ -8864,7 +8880,7 @@
 
 	    $li = $(node).closest('li');
 
-	    $wrapper = $li.find('div');
+	    $wrapper = $li.children('div');
 
 	    if (!$wrapper.length) {
 	        $wrapper = $li;
@@ -8902,7 +8918,7 @@
 	    $li.addClass('task-list-item');
 
 	    if (!hasInput) {
-	        $block = $selected.closest('div').eq(0);
+	        $block = $li.children('div').eq(0);
 
 	        if (!$block.length) {
 	            $block = $li.eq(0);
@@ -8942,7 +8958,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9091,7 +9107,8 @@
 	WwTableManager.prototype._isAfterTable = function(range) {
 	    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
-	    return domUtils.getNodeName(prevElem) === 'TABLE' && domUtils.getNodeName(range.commonAncestorContainer) === 'BODY';
+	    return domUtils.getNodeName(prevElem) === 'TABLE'
+		&& range.commonAncestorContainer === this.wwe.$editorContainerEl[0];
 	};
 
 	/**
@@ -9188,7 +9205,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9337,7 +9354,7 @@
 	    if (this._isInHr(range)) {
 	        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
 	    } else if (range.startOffset === 0) {
-	        hrSuspect = domUtils.getPrevTopBlockNode(range.startContainer);
+	        hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
 	        blockPosition = 'none';
 	    } else if (this._isNearHr(range)) {
 	        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
@@ -9414,7 +9431,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/**
@@ -9497,7 +9514,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9600,7 +9617,7 @@
 	 */
 	WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
 	    this.wwe.getEditor().recordUndoState(range);
-	    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'BODY'));
+	    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]));
 	};
 
 	/**
@@ -9614,7 +9631,7 @@
 	    var isHandled, prevTopNode;
 
 	    if (range.collapsed) {
-	        prevTopNode = domUtils.getPrevTopBlockNode(range.startContainer);
+	        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
 
 	        if (range.startOffset === 0
 	            && prevTopNode
@@ -9634,7 +9651,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9709,6 +9726,48 @@
 	    });
 	};
 
+	WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
+	    var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
+
+	    if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
+	        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
+	    } else {
+	        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this._convertToCodeblock(nodes), range));
+	    }
+
+	    return frag;
+	};
+
+	WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
+	    var $codeblock = $('<pre />');
+	    var self = this;
+	    var node = nodes.shift();
+
+	    while (node) {
+	        $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
+	        node = nodes.shift();
+	    }
+
+	    return $codeblock[0];
+	};
+
+	WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
+	    var blockNode, attrs;
+
+	    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.$editorContainerEl[0]);
+
+	    if (domUtils.getNodeName(blockNode) === 'PRE') {
+	        attrs = $(blockNode).prop('attributes');
+
+	        util.forEach(attrs, function(attr) {
+	            $(element).attr(attr.name, attr.value);
+	        });
+	    }
+
+	    return element;
+	};
+
 	WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
 	    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
 	        code = code.replace(/<\/code><br \/>/g, '\n');
@@ -9722,6 +9781,8 @@
 	};
 
 	WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
+	    var self = this;
+
 	    this.wwe.get$Body().find('pre').each(function(index, pre) {
 	        var codelines = pre.textContent.replace(/\n+$/, '').split('\n'),
 	            lang = $(pre).find('code').attr('data-language');
@@ -9734,17 +9795,21 @@
 	        $(pre).empty();
 
 	        util.forEach(codelines, function(line) {
-	            if (!line) {
-	                line = '\u200B';
-	            }
-
-	            $(pre).append('<div><code>' + sanitizeHtmlCode(line) + '</code><br></div>');
+	            $(pre).append(self._makeCodeBlockLineHtml(line));
 	        });
 	    });
 	};
 
+	WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
+	    if (!lineContent) {
+	        lineContent = '\u200B';
+	    }
+
+	    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
+	};
+
 	WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-	    if (this._isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
+	    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
 	        ev.preventDefault();
 	        this.wwe.getEditor().recordUndoState(range);
 	        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
@@ -9758,7 +9823,7 @@
 	WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
 	    var currentNodeName, code;
 
-	    if (!this._isInCodeBlock(range)) {
+	    if (!this.isInCodeBlock(range)) {
 	        return true;
 	    }
 
@@ -9784,7 +9849,7 @@
 	WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
 	    var pre, div;
 
-	    if (!this._isInCodeBlock(range)) {
+	    if (!this.isInCodeBlock(range)) {
 	        return true;
 	    }
 
@@ -9804,7 +9869,7 @@
 	WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
 	    var currentNodeName;
 
-	    if (!this._isInCodeBlock(range)) {
+	    if (!this.isInCodeBlock(range)) {
 	        return true;
 	    }
 
@@ -9831,7 +9896,7 @@
 	    if (this.wwe.getEditor().hasFormat('PRE')) {
 	        this.wwe.getEditor().recordUndoState();
 
-	        pre = domUtils.getParentUntil(range.startContainer, 'BODY');
+	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]);
 
 	        setTimeout(function() {
 	            var modified;
@@ -9855,7 +9920,7 @@
 	WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
 	    var currentNodeName, div;
 
-	    if (this._isInCodeBlock(range)) {
+	    if (this.isInCodeBlock(range)) {
 	        currentNodeName = domUtils.getNodeName(range.startContainer);
 	        div = domUtils.getParentUntil(range.startContainer, 'PRE');
 
@@ -9877,7 +9942,7 @@
 	    return true;
 	};
 
-	WwCodeBlockManager.prototype._isInCodeBlock = function(range) {
+	WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
 	    var target;
 
 	    if (range.collapsed) {
@@ -9886,8 +9951,12 @@
 	        target = range.commonAncestorContainer;
 	    }
 
-	    return !!$(target).closest('pre').length
-	        && (!!$(target).closest('code').length || !!$(target).find('code').length);
+	    return this._isCodeBlock(target);
+	};
+
+	WwCodeBlockManager.prototype._isCodeBlock = function(element) {
+	    return !!$(element).closest('pre').length
+	        && (!!$(element).closest('code').length || !!$(element).find('code').length);
 	};
 
 	function sanitizeHtmlCode(code) {
@@ -9900,7 +9969,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9929,7 +9998,8 @@
 	function SquireExt() {
 	    Squire.apply(this, arguments);
 
-	    this._decoratePasteHandler();
+	    this._decorateHandlerToCancelable('copy');
+	    this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 	}
 
 	SquireExt.prototype = util.extend(
@@ -9938,29 +10008,30 @@
 	);
 
 	SquireExt.prototype.get$Body = function() {
-	    this.$body = this.$body || $(this.getDocument().body);
+	    this.$body = this.$body || $(this.getRoot());
 
 	    return this.$body;
 	};
 
 	/**
-	 * _decoratePasteHandler
-	 * Decorate squire paste handler cuz sometimes, we dont need squire paste handler process
+	 * _decorateHandlerToCancelable
+	 * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+	 * @param {string} eventName event name
 	 */
-	SquireExt.prototype._decoratePasteHandler = function() {
-	    var handlers, pasteHandler;
+	SquireExt.prototype._decorateHandlerToCancelable = function(eventName) {
+	    var handlers, handler;
 
-	    handlers = this._events[isIElt11 ? 'beforepaste' : 'paste'];
+	    handlers = this._events[eventName];
 
 	    if (handlers.length > 1) {
-	        throw new Error('too many paste handlers in squire');
+	        throw new Error('too many' + eventName + ' handlers in squire');
 	    }
 
-	    pasteHandler = handlers[0].bind(this);
+	    handler = handlers[0].bind(this);
 
-	    handlers[0] = function decoratedSquirePastedHandler(event) {
+	    handlers[0] = function decoratedSquireHandler(event) {
 	        if (!event.defaultPrevented) {
-	            pasteHandler(event);
+	            handler(event);
 	        }
 	    };
 	};
@@ -10223,21 +10294,11 @@
 	};
 
 	SquireExt.prototype.scrollTop = function(top) {
-	    var $target;
-
-	    if (util.browser.firefox) {
-	        $target = $(this._win);
-	    } else if (util.browser.msie) {
-	        $target = $(this.getDocument().documentElement);
-	    } else {
-	        $target = this.get$Body();
-	    }
-
 	    if (util.isUndefined(top)) {
-	        return $target.scrollTop();
+	        return this.get$Body().scrollTop();
 	    }
 
-	    return $target.scrollTop(top);
+	    return this.get$Body().scrollTop(top);
 	};
 
 	SquireExt.prototype.isIgnoreChange = function() {
@@ -10248,7 +10309,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -10375,7 +10436,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	/**
@@ -10568,7 +10629,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10580,7 +10641,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(38);
+	var Command = __webpack_require__(39);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -10705,7 +10766,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	/**
@@ -10822,7 +10883,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10832,11 +10893,11 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(40);
+	var excelTableParser = __webpack_require__(41);
 
 	var util = tui.util;
 
-	var FIND_EXCEL_DATA = /^([^ ]+(\t.+?){1,}[\r\n]*)+$/;
+	var FIND_EXCEL_DATA = /^([^ \n\r]*(\t[^\n\r]*?){1,}[\r\n]*){1,}$/;
 
 	/**
 	 * ImportManager
@@ -10937,7 +10998,7 @@
 
 	    content = cbData.getData('text');
 
-	    if (FIND_EXCEL_DATA.test(content)) {
+	    if (FIND_EXCEL_DATA.test(content) && confirm('테이블 포맷으로 붙여넣겠습니까?')) {
 	        evData.preventDefault();
 	        evData.codemirrorIgnore = true;
 	        this._addExcelTable(content);
@@ -10948,7 +11009,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -11005,7 +11066,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11015,7 +11076,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(42);
+	var markedCustomRenderer = __webpack_require__(43);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -11143,7 +11204,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/**
@@ -11219,7 +11280,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11230,10 +11291,10 @@
 	'use strict';
 
 	var Preview = __webpack_require__(23),
-	    EventManager = __webpack_require__(36),
-	    CommandManager = __webpack_require__(37),
+	    EventManager = __webpack_require__(37),
+	    CommandManager = __webpack_require__(38),
 	    extManager = __webpack_require__(6),
-	    Convertor = __webpack_require__(41);
+	    Convertor = __webpack_require__(42);
 
 	var util = tui.util;
 
@@ -11324,7 +11385,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11334,15 +11395,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(45),
-	    Tab = __webpack_require__(50),
-	    Layerpopup = __webpack_require__(52),
-	    ModeSwitch = __webpack_require__(53),
-	    PopupAddLink = __webpack_require__(54),
-	    PopupAddImage = __webpack_require__(55),
-	    PopupTableUtils = __webpack_require__(56),
-	    PopupAddTable = __webpack_require__(57),
-	    PopupAddHeading = __webpack_require__(58);
+	var Toolbar = __webpack_require__(46),
+	    Tab = __webpack_require__(51),
+	    Layerpopup = __webpack_require__(53),
+	    ModeSwitch = __webpack_require__(54),
+	    PopupAddLink = __webpack_require__(55),
+	    PopupAddImage = __webpack_require__(56),
+	    PopupTableUtils = __webpack_require__(57),
+	    PopupAddTable = __webpack_require__(58),
+	    PopupAddHeading = __webpack_require__(59);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -11518,7 +11579,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11528,9 +11589,9 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(46),
-	    Button = __webpack_require__(47),
-	    ToggleButton = __webpack_require__(49);
+	var UIController = __webpack_require__(47),
+	    Button = __webpack_require__(48),
+	    ToggleButton = __webpack_require__(50);
 
 	var util = tui.util;
 
@@ -11690,7 +11751,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports) {
 
 	/**
@@ -11936,7 +11997,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11945,8 +12006,8 @@
 	 */
 	'use strict';
 
-	var UIController = __webpack_require__(46);
-	var Tooltip = __webpack_require__(48);
+	var UIController = __webpack_require__(47);
+	var Tooltip = __webpack_require__(49);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12037,7 +12098,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	/**
@@ -12080,7 +12141,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12089,7 +12150,7 @@
 	 */
 	'use strict';
 
-	var Button = __webpack_require__(47);
+	var Button = __webpack_require__(48);
 
 	var util = tui.util;
 
@@ -12143,7 +12204,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12153,8 +12214,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(46),
-	    templater = __webpack_require__(51);
+	var UIController = __webpack_require__(47),
+	    templater = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -12345,7 +12406,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports) {
 
 	/**
@@ -12388,7 +12449,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12398,7 +12459,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(46);
+	var UIController = __webpack_require__(47);
 
 	var util = tui.util,
 	    _id = 0,
@@ -12645,7 +12706,7 @@
 
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12655,7 +12716,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(46);
+	var UIController = __webpack_require__(47);
 
 	var util = tui.util;
 
@@ -12733,7 +12794,7 @@
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12743,7 +12804,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -12846,7 +12907,7 @@
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12856,8 +12917,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(52),
-	    Tab = __webpack_require__(50);
+	var LayerPopup = __webpack_require__(53),
+	    Tab = __webpack_require__(51);
 
 	var util = tui.util;
 
@@ -13043,7 +13104,7 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13053,7 +13114,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -13160,7 +13221,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13170,7 +13231,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -13523,7 +13584,7 @@
 
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13533,7 +13594,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -13611,7 +13672,7 @@
 
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13621,7 +13682,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -13722,7 +13783,7 @@
 
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13732,7 +13793,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -13897,7 +13958,7 @@
 
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13907,7 +13968,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Blockquote
@@ -13966,7 +14027,7 @@
 
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13976,7 +14037,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var util = tui.util;
 
@@ -14056,7 +14117,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14066,7 +14127,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * HR
@@ -14121,7 +14182,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14131,7 +14192,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * AddLink
@@ -14175,7 +14236,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14185,7 +14246,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * AddImage
@@ -14229,7 +14290,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14239,7 +14300,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14293,7 +14354,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14303,7 +14364,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14357,7 +14418,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14367,7 +14428,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Table
@@ -14462,7 +14523,7 @@
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14472,7 +14533,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Task
@@ -14516,7 +14577,7 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14526,7 +14587,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Code
@@ -14571,7 +14632,7 @@
 
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14581,7 +14642,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * CodeBlock
@@ -14624,7 +14685,7 @@
 
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14634,7 +14695,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Bold
@@ -14673,7 +14734,7 @@
 
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14683,7 +14744,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Italic
@@ -14721,7 +14782,7 @@
 
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14731,7 +14792,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Blockquote
@@ -14763,7 +14824,7 @@
 
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14773,7 +14834,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * AddImage
@@ -14805,7 +14866,7 @@
 
 
 /***/ },
-/* 76 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14815,7 +14876,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * AddLink
@@ -14856,7 +14917,7 @@
 
 
 /***/ },
-/* 77 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14866,7 +14927,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37),
+	var CommandManager = __webpack_require__(38),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -14890,7 +14951,7 @@
 
 	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
 	            currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-	            nextBlockNode = domUtils.getNextTopBlockNode(currentNode);
+	            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.$editorContainerEl[0]);
 
 	            if (!nextBlockNode) {
 	                nextBlockNode = sq.createDefaultBlock();
@@ -14918,7 +14979,7 @@
 
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14928,7 +14989,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 	var domUtils = __webpack_require__(17);
 
 	/**
@@ -14966,7 +15027,7 @@
 
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14976,7 +15037,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * UL
@@ -15019,7 +15080,7 @@
 
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15029,7 +15090,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * OL
@@ -15073,7 +15134,7 @@
 
 
 /***/ },
-/* 81 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15083,7 +15144,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -15198,7 +15259,7 @@
 
 
 /***/ },
-/* 82 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15208,7 +15269,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * AddRow
@@ -15264,7 +15325,7 @@
 
 
 /***/ },
-/* 83 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15274,7 +15335,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37),
+	var CommandManager = __webpack_require__(38),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15351,7 +15412,7 @@
 
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15361,7 +15422,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * RemoveRow
@@ -15413,7 +15474,7 @@
 
 
 /***/ },
-/* 85 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15423,7 +15484,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37),
+	var CommandManager = __webpack_require__(38),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15495,7 +15556,7 @@
 
 
 /***/ },
-/* 86 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15505,7 +15566,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * RemoveTable
@@ -15540,7 +15601,7 @@
 
 
 /***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15550,9 +15611,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
-	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 	/**
 	 * IncreaseDepth
 	 * increase depth of list or task to wysiwyg Editor
@@ -15573,7 +15633,6 @@
 
 	        if (range.collapsed
 	            && wwe.getEditor().hasFormat('li')
-	            && range.startContainer.textContent.replace(FIND_TASK_SPACES_RX, '') === ''
 	        ) {
 	            $node = $(range.startContainer).closest('li');
 	            $prev = $node.prev();
@@ -15602,7 +15661,7 @@
 
 
 /***/ },
-/* 88 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15612,7 +15671,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	/**
 	 * Task
@@ -15654,7 +15713,7 @@
 
 
 /***/ },
-/* 89 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -15665,7 +15724,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37),
+	var CommandManager = __webpack_require__(38),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15683,7 +15742,7 @@
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var sq = wwe.getEditor();
+	        var sq = wwe.getEditor(), range;
 
 	        if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
 	            sq.changeFormat(null, {tag: 'code'});
@@ -15694,7 +15753,14 @@
 	            } else if (sq.hasFormat('i')) {
 	                sq.removeItalic();
 	            }
+
 	            sq.changeFormat({tag: 'code'});
+
+	            range = sq.getSelection().cloneRange();
+	            range.setStart(range.endContainer, range.endOffset);
+	            range.collapse(true);
+
+	            sq.setSelection(range);
 	        }
 
 	        sq.focus();
@@ -15718,7 +15784,7 @@
 
 
 /***/ },
-/* 90 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15728,7 +15794,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(37);
+	var CommandManager = __webpack_require__(38);
 
 	var codeBlockID = 0,
 	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';

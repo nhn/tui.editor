@@ -110,7 +110,7 @@ ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
 
     content = cbData.getData('text');
 
-    if (FIND_EXCEL_DATA.test(content) && confirm("테이블 포맷으로 붙여넣겠습니까?")) {
+    if (FIND_EXCEL_DATA.test(content) && confirm('테이블 포맷으로 붙여넣겠습니까?')) {
         evData.preventDefault();
         evData.codemirrorIgnore = true;
         this._addExcelTable(content);
