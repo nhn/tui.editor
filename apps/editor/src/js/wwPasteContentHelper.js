@@ -23,12 +23,13 @@ function WwPasteContentHelper(wwe) {
 
 WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
-    var childNodes = util.toArray(pasteData.fragment.childNodes);
     var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
     var firstBlockIsTaken = false;
-    var nodeName, node;
+    var nodeName, node, childNodes;
 
-    this._pasteFirstAid(childNodes);
+    this._pasteFirstAid(pasteData.fragment);
+
+    childNodes = util.toArray(pasteData.fragment.childNodes);
 
     //prepare to paste as inline of first node if possible
     //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
@@ -55,17 +56,49 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     pasteData.fragment = newFragment;
 };
 
-WwPasteContentHelper.prototype._pasteFirstAid = function(nodes) {
+WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     var self = this;
 
-    $(nodes).find('iframe, script, br, select, form, button, .Apple-converted-space').remove();
+    $(fragment).find('iframe, script, select, form, button, .Apple-converted-space').remove();
 
-    this._removeUnnecessaryBlocks(nodes);
+    this._removeUnnecessaryBlocks(fragment);
+    this._removeStyles(fragment);
 
-    this._removeStyles(nodes);
+    this._preElementAid(fragment);
 
-    $(nodes).find('*').each(function() {
+    //br은 preElemnetAid에서 필요해서 처리후 불필요한 br은 삭제한다.
+    $(fragment).find('br').remove();
+
+    $(fragment).find('*').each(function() {
         self._removeStyles(this);
+    });
+};
+
+WwPasteContentHelper.prototype._preElementAid = function(nodes) {
+    var textLines;
+
+    $(nodes).find('PRE').each(function(index, pre) {
+        //코드태그가 있으면 코드단위로 라인 구분
+        if ($(pre).has('code').length) {
+            textLines = [];
+
+            $(pre).find('code').each(function() {
+                textLines.push($(this).text().replace(/\n/g, ''));
+            });
+            //코드태그가 없으면 개행단위로 라인 구분
+        } else {
+            $(pre).find('br').replaceWith('\n');
+            textLines = $(pre).text().split(/\n/g);
+        }
+
+        $(pre).empty();
+
+        textLines.forEach(function(line) {
+            var lineDom = $('<div><code /><br/></div>');
+
+            lineDom.find('code').text(line);
+            $(pre).append(lineDom);
+        });
     });
 };
 
