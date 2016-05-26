@@ -1,3 +1,4 @@
+
 {
     "env": {
         "browser": true,
@@ -7,6 +8,7 @@
         "jquery": true
     },
     "globals": {
+        "fabric": true,
         "tui": true,
         "loadFixtures": true,
         "ActiveXObject": true
@@ -18,7 +20,7 @@
         "no-console": 1,
         "no-constant-condition": 2,
         "no-control-regex": 2,
-        "no-debugger": 1,
+        "no-debugger": 2,
         "no-dupe-args": 2,
         "no-dupe-keys": 2,
         "no-duplicate-case": 2,
