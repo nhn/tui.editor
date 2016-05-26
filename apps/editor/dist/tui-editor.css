@@ -90,7 +90,7 @@
   overflow: hidden;
 }
 
-.te-ww-container .te-editor:focus {
+.te-ww-container .tui-editor-contents:focus {
   outline: none;
 }
 
