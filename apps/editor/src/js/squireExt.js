@@ -278,8 +278,6 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
     this.setSelection(selection);
 
-    pos.top -= this.get$Body().scrollTop();
-
     return pos;
 };
 
