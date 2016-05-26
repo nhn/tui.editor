@@ -153,7 +153,6 @@ MarkdownEditor.prototype.remove = function() {
 MarkdownEditor.prototype.setValue = function(markdown) {
     this.getEditor().setValue(markdown);
     this._emitMarkdownEditorContentChangedEvent();
-    this.moveCursorToEnd();
     this.getEditor().refresh();
 };
 
