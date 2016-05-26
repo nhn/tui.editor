@@ -80,7 +80,7 @@ describe('Bold', function() {
         expect(wwe.getValue()).toEqual('<b>line</b>a<br />');
     });
 
-    it('if there have italic remove and add bold', function() {
+    it('if there have italic apply bold into italic', function() {
         var range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<i>line</i>');
@@ -90,7 +90,7 @@ describe('Bold', function() {
 
         Bold.exec(wwe);
 
-        expect(wwe.getValue()).toEqual('<b>line</b><br />');
+        expect(wwe.getValue()).toEqual('<i><b>line</b></i><br />');
     });
 
     it('if there have code remove and add bold', function() {
