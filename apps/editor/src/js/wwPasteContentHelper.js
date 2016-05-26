@@ -185,7 +185,7 @@ WwPasteContentHelper.prototype._wrapCurrentFormat = function(nodes) {
 };
 
 WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
-    var paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.$editorContainerEl[0]);
+    var paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.get$Body()[0]);
     var i;
 
     for (i = paths.length - 1; i > -1; i -= 1) {

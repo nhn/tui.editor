@@ -39,7 +39,7 @@ describe('Editor', function() {
                 editor.contentHeight('auto');
                 editor.changeMode('wysiwyg');
                 editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
-                expect($('.te-ww-container .te-editor').height()).not.toEqual(height);
+                expect($('.te-ww-container .tui-editor-contents').height()).not.toEqual(height);
             });
 
             it('set content height "auto" to fit contents height of markdown', function() {

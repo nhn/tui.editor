@@ -99,7 +99,7 @@ WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
 WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
     var blockNode, attrs;
 
-    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.$editorContainerEl[0]);
+    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.get$Body()[0]);
 
     if (domUtils.getNodeName(blockNode) === 'PRE') {
         attrs = $(blockNode).prop('attributes');
@@ -240,7 +240,7 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
     if (this.wwe.getEditor().hasFormat('PRE')) {
         this.wwe.getEditor().recordUndoState();
 
-        pre = domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]);
+        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
 
         setTimeout(function() {
             var modified;

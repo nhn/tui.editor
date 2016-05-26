@@ -100,9 +100,9 @@ describe('WwClipboardManager', function() {
 
             range = cbm._extendRange(range);
 
-            expect(range.startContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.startContainer).toBe(wwe.get$Body()[0]);
             expect(range.startOffset).toEqual(0);
-            expect(range.endContainer).toBe(wwe.$editorContainerEl[0]);
+            expect(range.endContainer).toBe(wwe.get$Body()[0]);
             expect(range.endOffset).toEqual(1);
         });
 

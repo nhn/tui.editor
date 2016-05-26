@@ -98,7 +98,7 @@ WwHeadingManager.prototype._onEnter = function(event, range) {
  */
 WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
     this.wwe.getEditor().recordUndoState(range);
-    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]));
+    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]));
 };
 
 /**
@@ -112,7 +112,7 @@ WwHeadingManager.prototype._removePrevTopNodeIfNeed = function(event, range) {
     var isHandled, prevTopNode;
 
     if (range.collapsed) {
-        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
+        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
 
         if (range.startOffset === 0
             && prevTopNode
