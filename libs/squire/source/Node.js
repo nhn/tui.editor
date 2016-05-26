@@ -58,6 +58,7 @@ function areAlike ( node, node2 ) {
     return !isLeaf( node ) && (
         node.nodeType === node2.nodeType &&
         node.nodeName === node2.nodeName &&
+        node.nodeName !== 'A' &&
         node.className === node2.className &&
         ( ( !node.style && !node2.style ) ||
           node.style.cssText === node2.style.cssText )
