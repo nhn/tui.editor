@@ -7198,8 +7198,7 @@
 
 	var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
 	    FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
-	    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/,
-	    FIND_SEQUENTIAL_ANCHORS = /a><a/gi;
+	    FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD|PRE)\b/;
 
 	var EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 
@@ -7236,14 +7235,18 @@
 	 * @param {function} onInitComplete when editor is ready invoke callback function
 	 */
 	WysiwygEditor.prototype.init = function() {
-	    this.editor = new SquireExt(this.$editorContainerEl[0], {
+	    var $editorBody = $('<div />');
+
+	    this.$editorContainerEl.append($editorBody);
+
+	    this.editor = new SquireExt($editorBody[0], {
 	        blockTag: 'DIV'
 	    });
 
 	    this._initSquireEvent();
 	    this._clipboardManager.init();
 
-	    this.$editorContainerEl.addClass(EDITOR_CONTENT_CSS_CLASSNAME);
+	    this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
 	    this.$editorContainerEl.css('position', 'relative');
 	};
 
@@ -7254,10 +7257,6 @@
 	 * @returns {string}
 	 */
 	WysiwygEditor.prototype._preprocessForInlineElement = function(html) {
-	    if (FIND_SEQUENTIAL_ANCHORS.test(html)) {
-	        html = html.replace(FIND_SEQUENTIAL_ANCHORS, 'a>\u200B<a');
-	    }
-
 	    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
 	};
 	/**
@@ -7359,7 +7358,9 @@
 	        return false;
 	    });
 
-	    this.getEditor().addEventListener('input', function() {
+	    //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
+	    //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
+	    this.getEditor().addEventListener('input', util.debounce(function() {
 	        var sel = self.editor.getSelection(),
 	            eventObj;
 
@@ -7379,7 +7380,7 @@
 	        }
 
 	        self.getEditor().preserveLastLine();
-	    });
+	    }, 0));
 
 	    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
 	        self._onKeyDown(keyboardEvent);
@@ -7470,6 +7471,17 @@
 	            self.postProcessForChange();
 	        }
 	    });
+
+	    this.addKeyEventHandler('ENTER', function() {
+	        setTimeout(function() {
+	            var range = self.getEditor().getSelection().cloneRange();
+	            var cursorTop = self.getEditor().getCursorPosition().top - self.$editorContainerEl.offset().top;
+
+	            if (cursorTop >= self.get$Body().height()) {
+	                range.endContainer.scrollIntoView();
+	            }
+	        }, 0);
+	    });
 	};
 
 	/**
@@ -7480,7 +7492,7 @@
 	 */
 	WysiwygEditor.prototype._isInOrphanText = function(range) {
 	    return range.startContainer.nodeType === Node.TEXT_NODE
-	           && range.startContainer.parentNode === this.$editorContainerEl[0];
+	           && range.startContainer.parentNode === this.get$Body()[0];
 	};
 
 	/**
@@ -7683,6 +7695,7 @@
 	    this.eventManager.emit('contentChangedFromWysiwyg', this);
 
 	    this.getEditor().preserveLastLine();
+
 	    this.moveCursorToEnd();
 
 	    this.getEditor().removeLastUndoStack();
@@ -7808,15 +7821,14 @@
 	 */
 	WysiwygEditor.prototype.addWidget = function(range, node, style, offset) {
 	    var pos = this.getEditor().getSelectionPosition(range, style, offset);
+	    var editorContainerPos = this.$editorContainerEl.offset();
 
-	    if (node.parentNode !== this.$editorContainerEl[0]) {
-	        this.$editorContainerEl.append(node);
-	    }
+	    this.$editorContainerEl.append(node);
 
 	    $(node).css({
 	        position: 'absolute',
-	        top: pos.top,
-	        left: pos.left
+	        top: pos.top - editorContainerPos.top,
+	        left: pos.left - editorContainerPos.left
 	    });
 	};
 
@@ -7851,7 +7863,7 @@
 	    currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
 	        || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-	    appendBefore = domUtils.getParentUntil(currentNode, this.$editorContainerEl[0]);
+	    appendBefore = domUtils.getParentUntil(currentNode, this.get$Body()[0]);
 
 	    div = this.editor.createDefaultBlock();
 
@@ -7967,6 +7979,7 @@
 	WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
 	    var range = this.getEditor().getSelection().cloneRange();
 
+	    range.setStart(this.get$Body()[0].lastChild, domUtils.getOffsetLength(this.get$Body()[0].lastChild) - 1);
 	    range.collapse(true);
 
 	    this.getEditor().setSelection(range);
@@ -8107,7 +8120,7 @@
 	    var commonAncestorName;
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
 
-	    if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
+	    if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
 	        commonAncestorName = 'BODY';
 	    } else {
 	        commonAncestorName = range.commonAncestorContainer.tagName;
@@ -8154,7 +8167,7 @@
 
 	    //레인지 확장
 	    while (newBound.parentNode !== range.commonAncestorContainer
-	            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+	            && newBound.parentNode !== this.wwe.get$Body()[0]
 	            && !newBound.previousSibling
 	          ) {
 	        newBound = newBound.parentNode;
@@ -8172,7 +8185,7 @@
 
 	    //레인지 확장
 	    while (newBound.parentNode !== range.commonAncestorContainer
-	            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+	            && newBound.parentNode !== this.wwe.get$Body()[0]
 	            && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
 	          ) {
 	        newBound = newBound.parentNode;
@@ -8194,7 +8207,7 @@
 	 */
 	WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
 	    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-	        && range.commonAncestorContainer !== this.wwe.$editorContainerEl[0]
+	        && range.commonAncestorContainer !== this.wwe.get$Body()[0]
 	        && range.startOffset === 0
 	        && range.endOffset === range.commonAncestorContainer.childNodes.length
 	        && range.commonAncestorContainer === range.startContainer
@@ -8233,12 +8246,13 @@
 
 	WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
-	    var childNodes = util.toArray(pasteData.fragment.childNodes);
 	    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 	    var firstBlockIsTaken = false;
-	    var nodeName, node;
+	    var nodeName, node, childNodes;
 
-	    this._pasteFirstAid(childNodes);
+	    this._pasteFirstAid(pasteData.fragment);
+
+	    childNodes = util.toArray(pasteData.fragment.childNodes);
 
 	    //prepare to paste as inline of first node if possible
 	    //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
@@ -8265,17 +8279,49 @@
 	    pasteData.fragment = newFragment;
 	};
 
-	WwPasteContentHelper.prototype._pasteFirstAid = function(nodes) {
+	WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 	    var self = this;
 
-	    $(nodes).find('iframe, script, br, select, form, button, .Apple-converted-space').remove();
+	    $(fragment).find('iframe, script, select, form, button, .Apple-converted-space').remove();
 
-	    this._removeUnnecessaryBlocks(nodes);
+	    this._removeUnnecessaryBlocks(fragment);
+	    this._removeStyles(fragment);
 
-	    this._removeStyles(nodes);
+	    this._preElementAid(fragment);
 
-	    $(nodes).find('*').each(function() {
+	    //br은 preElemnetAid에서 필요해서 처리후 불필요한 br은 삭제한다.
+	    $(fragment).find('br').remove();
+
+	    $(fragment).find('*').each(function() {
 	        self._removeStyles(this);
+	    });
+	};
+
+	WwPasteContentHelper.prototype._preElementAid = function(nodes) {
+	    var textLines;
+
+	    $(nodes).find('PRE').each(function(index, pre) {
+	        //코드태그가 있으면 코드단위로 라인 구분
+	        if ($(pre).has('code').length) {
+	            textLines = [];
+
+	            $(pre).find('code').each(function() {
+	                textLines.push($(this).text().replace(/\n/g, ''));
+	            });
+	            //코드태그가 없으면 개행단위로 라인 구분
+	        } else {
+	            $(pre).find('br').replaceWith('\n');
+	            textLines = $(pre).text().split(/\n/g);
+	        }
+
+	        $(pre).empty();
+
+	        textLines.forEach(function(line) {
+	            var lineDom = $('<div><code /><br/></div>');
+
+	            lineDom.find('code').text(line);
+	            $(pre).append(lineDom);
+	        });
 	    });
 	};
 
@@ -8395,7 +8441,7 @@
 	};
 
 	WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
-	    var paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.$editorContainerEl[0]);
+	    var paths = domUtils.getPath(this.wwe.getEditor().getSelection().startContainer, this.wwe.get$Body()[0]);
 	    var i;
 
 	    for (i = paths.length - 1; i > -1; i -= 1) {
@@ -9106,7 +9152,7 @@
 	    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
 	    return domUtils.getNodeName(prevElem) === 'TABLE'
-		&& range.commonAncestorContainer === this.wwe.$editorContainerEl[0];
+		&& range.commonAncestorContainer === this.wwe.get$Body()[0];
 	};
 
 	/**
@@ -9352,7 +9398,7 @@
 	    if (this._isInHr(range)) {
 	        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
 	    } else if (range.startOffset === 0) {
-	        hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
+	        hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
 	        blockPosition = 'none';
 	    } else if (this._isNearHr(range)) {
 	        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
@@ -9615,7 +9661,7 @@
 	 */
 	WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
 	    this.wwe.getEditor().recordUndoState(range);
-	    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]));
+	    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]));
 	};
 
 	/**
@@ -9629,7 +9675,7 @@
 	    var isHandled, prevTopNode;
 
 	    if (range.collapsed) {
-	        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.$editorContainerEl[0]);
+	        prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
 
 	        if (range.startOffset === 0
 	            && prevTopNode
@@ -9753,7 +9799,7 @@
 	WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
 	    var blockNode, attrs;
 
-	    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.$editorContainerEl[0]);
+	    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.get$Body()[0]);
 
 	    if (domUtils.getNodeName(blockNode) === 'PRE') {
 	        attrs = $(blockNode).prop('attributes');
@@ -9894,7 +9940,7 @@
 	    if (this.wwe.getEditor().hasFormat('PRE')) {
 	        this.wwe.getEditor().recordUndoState();
 
-	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.$editorContainerEl[0]);
+	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
 
 	        setTimeout(function() {
 	            var modified;
@@ -10249,8 +10295,6 @@
 	    marker.parentNode.removeChild(marker);
 
 	    this.setSelection(selection);
-
-	    pos.top -= this.get$Body().scrollTop();
 
 	    return pos;
 	};
@@ -14716,9 +14760,7 @@
 	        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
 	            sq.changeFormat(null, {tag: 'b'});
 	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('i')) {
-	                sq.removeItalic();
-	            } else if (sq.hasFormat('code')) {
+	            if (sq.hasFormat('code')) {
 	                sq.changeFormat(null, {tag: 'code'});
 	            }
 	            sq.bold();
@@ -14764,9 +14806,7 @@
 	        if (sq.hasFormat('i') || sq.hasFormat('em')) {
 	            sq.changeFormat(null, {tag: 'i'});
 	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('b')) {
-	                sq.removeBold();
-	            } else if (sq.hasFormat('code')) {
+	            if (sq.hasFormat('code')) {
 	                sq.changeFormat(null, {tag: 'code'});
 	            }
 	            sq.italic();
@@ -14949,7 +14989,7 @@
 
 	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
 	            currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-	            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.$editorContainerEl[0]);
+	            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
 	            if (!nextBlockNode) {
 	                nextBlockNode = sq.createDefaultBlock();
