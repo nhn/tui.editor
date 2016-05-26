@@ -56,8 +56,12 @@ function Squire ( root, config ) {
     this._lastFocusNode = null;
     this._path = '';
 
-    this.addEventListener( 'keyup', this._updatePathOnEvent );
-    this.addEventListener( 'mouseup', this._updatePathOnEvent );
+    if ( 'onselectionchange' in doc ) {
+        this.addEventListener( 'selectionchange', this._updatePathOnEvent );
+    } else {
+        this.addEventListener( 'keyup', this._updatePathOnEvent );
+        this.addEventListener( 'mouseup', this._updatePathOnEvent );
+    }
 
     this._undoIndex = -1;
     this._undoStack = [];
@@ -255,18 +259,15 @@ proto.fireEvent = function ( type, event ) {
 };
 
 proto.destroy = function () {
-    var root = this._root,
-        events = this._events,
-        type;
+    var l = instances.length;
+    var events = this._events;
+    var type;
     for ( type in events ) {
-        if ( !customEvents[ type ] ) {
-            root.removeEventListener( type, this, true );
-        }
+        this.removeEventListener( type );
     }
     if ( this._mutation ) {
         this._mutation.disconnect();
     }
-    var l = instances.length;
     while ( l-- ) {
         if ( instances[l] === this ) {
             instances.splice( l, 1 );
@@ -280,6 +281,7 @@ proto.handleEvent = function ( event ) {
 
 proto.addEventListener = function ( type, fn ) {
     var handlers = this._events[ type ];
+    var target = this._root;
     if ( !fn ) {
         this.didError({
             name: 'Squire: addEventListener with null or undefined fn',
@@ -290,7 +292,10 @@ proto.addEventListener = function ( type, fn ) {
     if ( !handlers ) {
         handlers = this._events[ type ] = [];
         if ( !customEvents[ type ] ) {
-            this._root.addEventListener( type, this, true );
+            if ( type === 'selectionchange' ) {
+                target = this._doc;
+            }
+            target.addEventListener( type, this, true );
         }
     }
     handlers.push( fn );
@@ -298,19 +303,27 @@ proto.addEventListener = function ( type, fn ) {
 };
 
 proto.removeEventListener = function ( type, fn ) {
-    var handlers = this._events[ type ],
-        l;
+    var handlers = this._events[ type ];
+    var target = this._root;
+    var l;
     if ( handlers ) {
-        l = handlers.length;
-        while ( l-- ) {
-            if ( handlers[l] === fn ) {
-                handlers.splice( l, 1 );
+        if ( fn ) {
+            l = handlers.length;
+            while ( l-- ) {
+                if ( handlers[l] === fn ) {
+                    handlers.splice( l, 1 );
+                }
             }
+        } else {
+            handlers.length = 0;
         }
         if ( !handlers.length ) {
             delete this._events[ type ];
             if ( !customEvents[ type ] ) {
-                this._root.removeEventListener( type, this, true );
+                if ( type === 'selectionchange' ) {
+                    target = this._doc;
+                }
+                target.removeEventListener( type, this, true );
             }
         }
     }
@@ -428,7 +441,6 @@ proto.getSelection = function () {
 };
 
 function enableRestoreSelection () {
-    this.getSelection();
     this._restoreSelection = true;
 }
 function disableRestoreSelection () {
