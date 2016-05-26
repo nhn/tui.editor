@@ -96,8 +96,11 @@ describe('WysiwygEditor', function() {
     });
 
     describe('Event', function() {
-        beforeEach(function() {
-            wwe.getEditor()._ignoreChange = false;
+        beforeEach(function(done) {
+            //스콰이어가 셋팅된 프레임에 입력된 데이터들에 대한 이벤트는 발생하지 않아 프레임지연
+            setTimeout(function() {
+                done();
+            }, 0);
         });
 
         it('when something changed in editor Emit contentChangedFromWysiwyg event', function(done) {
@@ -166,9 +169,13 @@ describe('WysiwygEditor', function() {
             wwe.editor.blur();
         });
 
-        it('fire stateChange event when state changed', function() {
+        it('fire stateChange event when state changed', function(done) {
             em.listen('stateChange', function(data) {
                 expect(data.bold).toBe(true);
+                //TODO 여기서 적용된 이벤트가 이후 테스트케이스까지 영향을 준다.
+                //이유를 모르겠음 일단 이벤트 제거
+                em.removeEventHandler('stateChange');
+                done();
             });
 
             wwe.editor.insertPlainText('test');
@@ -400,19 +407,6 @@ describe('WysiwygEditor', function() {
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
             expect(wwe.getEditor().scrollTop()).toEqual(0);
-        });
-    });
-    describe('_preprocessForInlineElement()', function() {
-        it('break sequential anchors with zero-width-space.', function() {
-            var html = '<a href="/home">go to home</a><a href="/category">go to category</a>' +
-                '<a href="ad">advertisement</a>';
-            var processedString = '<a href="/home">go to home</a>​<a href="/category">go to category</a>​' +
-                '<a href="ad">advertisement</a>';
-            var result;
-
-            result = wwe._preprocessForInlineElement(html);
-
-            expect(result).toEqual(processedString);
         });
     });
 });
