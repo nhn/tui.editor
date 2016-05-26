@@ -29,7 +29,7 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
 
         if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.$editorContainerEl[0]);
+            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
             if (!nextBlockNode) {
                 nextBlockNode = sq.createDefaultBlock();

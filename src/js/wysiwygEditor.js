@@ -60,14 +60,18 @@ function WysiwygEditor($el, eventManager) {
  * @param {function} onInitComplete when editor is ready invoke callback function
  */
 WysiwygEditor.prototype.init = function() {
-    this.editor = new SquireExt(this.$editorContainerEl[0], {
+    var $editorBody = $('<div />');
+
+    this.$editorContainerEl.append($editorBody);
+
+    this.editor = new SquireExt($editorBody[0], {
         blockTag: 'DIV'
     });
 
     this._initSquireEvent();
     this._clipboardManager.init();
 
-    this.$editorContainerEl.addClass(EDITOR_CONTENT_CSS_CLASSNAME);
+    this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
     this.$editorContainerEl.css('position', 'relative');
 };
 
@@ -183,7 +187,9 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         return false;
     });
 
-    this.getEditor().addEventListener('input', function() {
+    //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
+    //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
+    this.getEditor().addEventListener('input', util.debounce(function() {
         var sel = self.editor.getSelection(),
             eventObj;
 
@@ -203,7 +209,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         }
 
         self.getEditor().preserveLastLine();
-    });
+    }, 0));
 
     this.getEditor().addEventListener('keydown', function(keyboardEvent) {
         self._onKeyDown(keyboardEvent);
@@ -304,7 +310,7 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
  */
 WysiwygEditor.prototype._isInOrphanText = function(range) {
     return range.startContainer.nodeType === Node.TEXT_NODE
-           && range.startContainer.parentNode === this.$editorContainerEl[0];
+           && range.startContainer.parentNode === this.get$Body()[0];
 };
 
 /**
@@ -632,15 +638,14 @@ WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwr
  */
 WysiwygEditor.prototype.addWidget = function(range, node, style, offset) {
     var pos = this.getEditor().getSelectionPosition(range, style, offset);
+    var editorContainerPos = this.$editorContainerEl.offset();
 
-    if (node.parentNode !== this.$editorContainerEl[0]) {
-        this.$editorContainerEl.append(node);
-    }
+    this.$editorContainerEl.append(node);
 
     $(node).css({
         position: 'absolute',
-        top: pos.top,
-        left: pos.left
+        top: pos.top - editorContainerPos.top,
+        left: pos.left - editorContainerPos.left
     });
 };
 
@@ -675,7 +680,7 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)
         || domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-    appendBefore = domUtils.getParentUntil(currentNode, this.$editorContainerEl[0]);
+    appendBefore = domUtils.getParentUntil(currentNode, this.get$Body()[0]);
 
     div = this.editor.createDefaultBlock();
 

@@ -105,7 +105,7 @@ WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
     var range = this.wwe.getEditor().getSelection().cloneRange();
 
-    if (range.commonAncestorContainer === this.wwe.$editorContainerEl[0]) {
+    if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
         commonAncestorName = 'BODY';
     } else {
         commonAncestorName = range.commonAncestorContainer.tagName;
@@ -152,7 +152,7 @@ WwClipboardManager.prototype._extendStartRange = function(range) {
 
     //레인지 확장
     while (newBound.parentNode !== range.commonAncestorContainer
-            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && newBound.parentNode !== this.wwe.get$Body()[0]
             && !newBound.previousSibling
           ) {
         newBound = newBound.parentNode;
@@ -170,7 +170,7 @@ WwClipboardManager.prototype._extendEndRange = function(range) {
 
     //레인지 확장
     while (newBound.parentNode !== range.commonAncestorContainer
-            && newBound.parentNode !== this.wwe.$editorContainerEl[0]
+            && newBound.parentNode !== this.wwe.get$Body()[0]
             && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
           ) {
         newBound = newBound.parentNode;
@@ -192,7 +192,7 @@ WwClipboardManager.prototype._extendEndRange = function(range) {
  */
 WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
     return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
-        && range.commonAncestorContainer !== this.wwe.$editorContainerEl[0]
+        && range.commonAncestorContainer !== this.wwe.get$Body()[0]
         && range.startOffset === 0
         && range.endOffset === range.commonAncestorContainer.childNodes.length
         && range.commonAncestorContainer === range.startContainer
