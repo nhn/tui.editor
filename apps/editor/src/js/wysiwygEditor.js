@@ -299,7 +299,7 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     this.addKeyEventHandler('ENTER', function() {
         setTimeout(function() {
             var range = self.getEditor().getSelection().cloneRange();
-            var cursorTop = self.getEditor().getCursorPosition().top - self.$editorContainerEl.offset().top;
+            var cursorTop = self.getEditor().getCursorPosition(range).top - self.$editorContainerEl.offset().top;
 
             if (cursorTop >= self.get$Body().height()) {
                 range.endContainer.scrollIntoView();
@@ -519,8 +519,6 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 
     this.getEditor().preserveLastLine();
-
-    this.moveCursorToEnd();
 
     this.getEditor().removeLastUndoStack();
     this.getEditor().recordUndoState();
@@ -803,7 +801,7 @@ WysiwygEditor.prototype.scrollTop = function(value) {
 WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
     var range = this.getEditor().getSelection().cloneRange();
 
-    range.setStart(this.get$Body()[0].lastChild, domUtils.getOffsetLength(this.get$Body()[0].lastChild) - 1);
+    range.setStart(this.get$Body()[0].lastChild, domUtils.getOffsetLength(this.get$Body()[0].lastChild));
     range.collapse(true);
 
     this.getEditor().setSelection(range);
