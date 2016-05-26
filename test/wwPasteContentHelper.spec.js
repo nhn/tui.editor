@@ -52,6 +52,31 @@ describe('WwPasteContentHelper', function() {
 
             expect($node.find('div').length).toEqual(0);
         });
+
+        it('_preElementAid should make pre tag content that has element to useful', function() {
+            var $node = $('<pre><div><span>TEST</span></div></pre>');
+
+            contentFrag.appendChild($node[0]);
+
+            pch._preElementAid(contentFrag);
+
+            expect($node.find('code').length).toEqual(1);
+            expect($node.find('span').length).toEqual(0);
+            expect($node.find('div > code').length).toEqual(1);
+            expect($node.find('code').eq(0).text()).toEqual('TEST');
+        });
+        it('_preElementAid should make pre tag content that has only text to useful', function() {
+            var $node = $('<pre>TEST\nTEST2</pre>');
+
+            contentFrag.appendChild($node[0]);
+
+            pch._preElementAid(contentFrag);
+
+            expect($node.find('code').length).toEqual(2);
+            expect($node.find('div > code').length).toEqual(2);
+            expect($node.find('code').eq(0).text()).toEqual('TEST');
+            expect($node.find('code').eq(1).text()).toEqual('TEST2');
+        });
     });
 
     describe('get html string of range content', function() {
