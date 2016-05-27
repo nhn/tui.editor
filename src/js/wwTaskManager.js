@@ -115,21 +115,17 @@ WwTaskManager.prototype._initKeyHandler = function() {
 
     this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
         var isNeedNext;
+        var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset <= 2);
+        ev.preventDefault();
 
         if (range.collapsed) {
-            if (self._isEmptyTask(range)) {
-                self.wwe.getEditor().recordUndoState(range);
-                self.unformatTask(range.startContainer);
-                setTimeout(function() {
-                    self._formatTaskIfNeed();
-                }, 0);
-
-                isNeedNext = false;
-            } else if (self.wwe.getEditor().hasFormat('LI')) {
-                self.wwe.getEditor().recordUndoState(range);
-                setTimeout(function() {
-                    self._formatTaskIfNeed();
-                }, 0);
+            if (self.wwe.getEditor().hasFormat('LI')) {
+                if (range.startOffset <= 1 || isOffsetEuqals2InDIVForIE10) {
+                    self.eventManager.emit('command', 'DecreaseDepth');
+                    setTimeout(function() {
+                        self._removeTaskInputInWrongPlace(true);
+                    }, 0);
+                }
                 isNeedNext = false;
             }
         }
@@ -179,16 +175,39 @@ WwTaskManager.prototype._unformatIncompleteTask = function() {
 /**
  * _removeTaskInputInWrongPlace
  * Remove task input in wrong place while user editing
+ * @param {boolean} isCurrentRange - Boolean value for start current selection range
  */
-WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
+WwTaskManager.prototype._removeTaskInputInWrongPlace = function(isCurrentRange) {
     var self = this;
+    var range = self.wwe.getEditor().getSelection();
+    var $baseElement = isCurrentRange ? $(range.commonAncestorContainer) : this.wwe.get$Body();
+    var isValidInputRemoveCommand = isCurrentRange && range.startOffset > 1;
+    var isInTextNode = range.startContainer === range.commonAncestorContainer;
+    var isBaseElementTypeEqualsTextNode = $baseElement[0].nodeType === 3;
 
+
+    // IE10에서 text의 첫번째 위치가 아닌 곳에서 시도될때 input의 삭제를 막기위함
+    // IE10에서 text 노드에 커서가 위치한 경우 depth=0일때도 input이 삭제되지 않음을 방지
+    if (isValidInputRemoveCommand && !isInTextNode) {
+        return;
+    }
+    // IE10에서 text노드에 range가 설정되어있으면 input이 삭제되지 않는 이슈를 해결하기 위해 사용
+    if (isBaseElementTypeEqualsTextNode) {
+        $baseElement = $baseElement.closest('div');
+    }
     this._addCheckedAttrToCheckedInput();
 
-    this.wwe.get$Body()
+    $baseElement
         .find('input:checkbox')
         .each(function(index, node) {
             var isInsideTask, isCorrectPlace, parent;
+            var previousSibling = node.previousSibling;
+            if (previousSibling
+                && previousSibling.nodeType === 3
+                && previousSibling.nodeValue.length === 0
+            ) {
+                $(previousSibling).remove();
+            }
 
             isInsideTask = ($(node).parents('li').length > 1 || $(node).parents('li').hasClass('task-list-item'));
             isCorrectPlace = !node.previousSibling;
