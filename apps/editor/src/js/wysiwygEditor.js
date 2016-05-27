@@ -518,6 +518,8 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.eventManager.emit('wysiwygSetValueAfter', this);
     this.eventManager.emit('contentChangedFromWysiwyg', this);
 
+    this.moveCursorToEnd();
+
     this.getEditor().preserveLastLine();
 
     this.getEditor().removeLastUndoStack();
@@ -781,13 +783,12 @@ WysiwygEditor.prototype.getManager = function(name) {
 WysiwygEditor.prototype.moveCursorToEnd = function() {
     this.getEditor().moveCursorToEnd();
     this.getEditor().scrollTop(this.get$Body().height());
-    this._correctRangeAfterMoveCursor();
+    this._correctRangeAfterMoveCursor('end');
 };
 
 WysiwygEditor.prototype.moveCursorToStart = function() {
     this.getEditor().moveCursorToStart();
     this.getEditor().scrollTop(0);
-    this._correctRangeAfterMoveCursor();
 };
 
 WysiwygEditor.prototype.scrollTop = function(value) {
@@ -796,12 +797,28 @@ WysiwygEditor.prototype.scrollTop = function(value) {
 
 /**
  * _correctRangeAfterMoveCursor
- * we need collapse range after moveCursor* api invoke cuz squire bug
+ * we need arrange range after moveCursorToEnd api invoke cuz squire has bug in firefox, IE
+ * @param {string} direction direction of cursormove
  */
-WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
+WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
     var range = this.getEditor().getSelection().cloneRange();
+    var cursorContainer, offset;
 
-    range.setStart(this.get$Body()[0].lastChild, domUtils.getOffsetLength(this.get$Body()[0].lastChild));
+    if (direction === 'start') {
+        cursorContainer = this.get$Body()[0].firstChild;
+        offset = 0;
+    } else {
+        cursorContainer = this.get$Body()[0].lastChild;
+        offset = domUtils.getOffsetLength(cursorContainer);
+
+        // IE have problem with cursor after br
+        if (domUtils.getNodeName(cursorContainer.lastChild) === 'BR') {
+            offset -= 1;
+        }
+    }
+
+    range.setStart(cursorContainer, offset);
+
     range.collapse(true);
 
     this.getEditor().setSelection(range);
