@@ -51,6 +51,7 @@ var wwBold = require('./wysiwygCommands/bold'),
     wwTableRemoveCol = require('./wysiwygCommands/tableRemoveCol'),
     wwTableRemove = require('./wysiwygCommands/tableRemove'),
     wwIncreaseDepth = require('./wysiwygCommands/increaseDepth'),
+    wwDecreaseDepth = require('./wysiwygCommands/decreaseDepth'),
     wwTask = require('./wysiwygCommands/task'),
     wwCode = require('./wysiwygCommands/code'),
     wwCodeBlock = require('./wysiwygCommands/codeBlock');
@@ -357,6 +358,7 @@ ToastUIEditor.factory = function(options) {
         tuiEditor.addCommand(wwHR);
         tuiEditor.addCommand(wwHeading);
         tuiEditor.addCommand(wwIncreaseDepth);
+        tuiEditor.addCommand(wwDecreaseDepth);
         tuiEditor.addCommand(wwTask);
         tuiEditor.addCommand(wwTable);
         tuiEditor.addCommand(wwTableAddRow);
