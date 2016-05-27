@@ -266,12 +266,12 @@ ToastUIEditor.prototype.changeMode = function(mode) {
     this.currentMode = mode;
 
     if (this.isWysiwygMode()) {
-        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
         this.layout.switchToWYSIWYG();
+        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
         this.eventManager.emit('changeModeToWysiwyg');
     } else {
-        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
         this.layout.switchToMarkdown();
+        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
         this.getCodeMirror().refresh();
         this.eventManager.emit('changeModeToMarkdown');
     }
@@ -279,7 +279,6 @@ ToastUIEditor.prototype.changeMode = function(mode) {
     this.eventManager.emit('changeMode', mode);
 
     this.focus();
-    this.getCurrentModeEditor().moveCursorToEnd();
 };
 
 ToastUIEditor.prototype.remove = function() {
