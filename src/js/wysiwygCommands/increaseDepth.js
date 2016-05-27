@@ -27,11 +27,13 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
 
         if (range.collapsed
             && wwe.getEditor().hasFormat('li')
+            && range.startOffset <= 1
         ) {
             $node = $(range.startContainer).closest('li');
             $prev = $node.prev();
-
-            if (!$prev.length) {
+            // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
+            // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
+            if (!$prev.length || (!$node.attr('class') && range.startOffset === 1)) {
                 return;
             }
 
