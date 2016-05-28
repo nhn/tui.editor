@@ -318,4 +318,30 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test1');
 	});
     });
+    describe('_findAndRemoveEmptyList()', function() {
+        it('remove ul that without li element within.', function() {
+            wwe.setValue('<ul>this will deleted</ul><ol>and this too</ol>');
+            expect(wwe.get$Body().find('ul').length).toEqual(1);
+            expect(wwe.get$Body().find('ol').length).toEqual(1);
+            mgr._findAndRemoveEmptyList();
+            expect(wwe.get$Body().find('ul').length).toEqual(0);
+        });
+        it('do not remove when ul have li element within.', function() {
+            wwe.setValue(['<ul>',
+                '<div><li>survived!</li></div>',
+                '</ul>',
+                '<ol>',
+                '<div><li>me too!</li></div>',
+                '</ol>'].join(''));
+
+            expect(wwe.get$Body().find('ul').length).toEqual(1);
+            expect(wwe.get$Body().find('ol').length).toEqual(1);
+
+            mgr._findAndRemoveEmptyList();
+
+            expect(wwe.get$Body().find('ul').length).toEqual(1);
+            expect(wwe.get$Body().find('ul li').text()).toEqual('survived!');
+            expect(wwe.get$Body().find('ol li').text()).toEqual('me too!');
+        });
+    });
 });

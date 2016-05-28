@@ -444,7 +444,7 @@ WwTaskManager.prototype._findAndRemoveEmptyList = function() {
     this.wwe.get$Body()
         .find('ul,ol')
             .each(function(index, node) {
-                if (!/\w*<li>\w*/i.test(node.innerHTML)) {
+                if (!/^.*<li.*/i.test(node.innerHTML)) {
                     $(node).remove();
                 }
             });
