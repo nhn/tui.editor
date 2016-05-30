@@ -181,14 +181,14 @@ WwTaskManager.prototype._removeTaskInputInWrongPlace = function(isCurrentRange) 
     var self = this;
     var range = self.wwe.getEditor().getSelection();
     var $baseElement = isCurrentRange ? $(range.commonAncestorContainer) : this.wwe.get$Body();
-    var isValidInputRemoveCommand = isCurrentRange && range.startOffset > 1;
-    var isInTextNode = range.startContainer === range.commonAncestorContainer;
+    var isValidInputRemoveCommand = isCurrentRange && range.startOffset <= 1;
+    var isInTextNodeForIE10 = range.startContainer === range.commonAncestorContainer;
     var isBaseElementTypeEqualsTextNode = $baseElement[0].nodeType === 3;
 
 
     // IE10에서 text의 첫번째 위치가 아닌 곳에서 시도될때 input의 삭제를 막기위함
-    // IE10에서 text 노드에 커서가 위치한 경우 depth=0일때도 input이 삭제되지 않음을 방지
-    if (isValidInputRemoveCommand && !isInTextNode) {
+    // IE10에서 div요소의 text 노드에 커서가 위치한 경우 startoffset이 2가 되어도 input이 삭제되도록 보장
+    if (!isValidInputRemoveCommand && !isInTextNodeForIE10) {
         return;
     }
     // IE10에서 text노드에 range가 설정되어있으면 input이 삭제되지 않는 이슈를 해결하기 위해 사용
