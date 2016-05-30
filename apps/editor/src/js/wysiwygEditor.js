@@ -52,6 +52,10 @@ function WysiwygEditor($el, eventManager) {
 
     this._initEvent();
     this._initDefaultKeyEventHandler();
+
+    this.postProcessForChange = util.debounce(function() {
+        this._postProcessForChange();
+    }.bind(this), 0);
 }
 
 /**
@@ -157,6 +161,7 @@ WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
  */
 WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
+    var isNeedFirePostProcessForRangeChange = false;
 
     this.getEditor().addEventListener('paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
@@ -207,7 +212,18 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     }, 0));
 
     this.getEditor().addEventListener('keydown', function(keyboardEvent) {
+        var range = self.getEditor().getSelection();
+        if (!range.collapsed) {
+            isNeedFirePostProcessForRangeChange = true;
+        }
         self._onKeyDown(keyboardEvent);
+    });
+
+    this.getEditor().addEventListener('keyup', function() {
+        if (isNeedFirePostProcessForRangeChange) {
+            self.postProcessForChange();
+            isNeedFirePostProcessForRangeChange = false;
+        }
     });
 
     this.getEditor().addEventListener('scroll', function(ev) {
@@ -290,22 +306,20 @@ WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-        if (!range.collapsed) {
-            self.postProcessForChange();
-        }
-    });
-
     this.addKeyEventHandler('ENTER', function() {
         setTimeout(function() {
-            var range = self.getEditor().getSelection().cloneRange();
-            var cursorTop = self.getEditor().getCursorPosition(range).top - self.$editorContainerEl.offset().top;
-
-            if (cursorTop >= self.get$Body().height()) {
-                range.endContainer.scrollIntoView();
-            }
+            self._scrollToRangeIfNeed();
         }, 0);
     });
+};
+
+WysiwygEditor.prototype._scrollToRangeIfNeed = function() {
+    var range = this.getEditor().getSelection().cloneRange();
+    var cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
+
+    if (cursorTop >= this.get$Body().height()) {
+        range.endContainer.scrollIntoView();
+    }
 };
 
 /**
@@ -583,16 +597,13 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
 };
 
 /**
- * postProcessForChange
+ * _postProcessForChange
  * Post process for change
  */
-WysiwygEditor.prototype.postProcessForChange = function() {
+WysiwygEditor.prototype._postProcessForChange = function() {
     var self = this;
-
-    setTimeout(function() {
-        self.readySilentChange();
-        self.eventManager.emit('wysiwygRangeChangeAfter', self);
-    }, 0);
+    self.readySilentChange();
+    self.eventManager.emit('wysiwygRangeChangeAfter', self);
 };
 
 /**

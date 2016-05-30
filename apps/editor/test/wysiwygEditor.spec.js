@@ -258,7 +258,7 @@ describe('WysiwygEditor', function() {
             range = wwe.getEditor().getSelection();
 
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
-            expect(range.startOffset).toEqual(2);
+            expect(range.startOffset).toEqual(1);
         });
     });
 
