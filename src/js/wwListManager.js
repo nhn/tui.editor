@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements wysiwyg task manager
+ * @fileoverview Implements wysiwyg list manager
  * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
  */
 
