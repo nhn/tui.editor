@@ -96,11 +96,6 @@ WwTaskManager.prototype._initKeyHandler = function() {
                 return false;
             }
         }
-        if ($(range.startContainer).parents('ul,ol').length !== 0) {
-            setTimeout(function() {
-                self._findAndRemoveEmptyList();
-            }, 0);
-        }
 
         return true;
     });
@@ -440,14 +435,5 @@ WwTaskManager.prototype._formatTaskIfNeed = function() {
     }
 };
 
-WwTaskManager.prototype._findAndRemoveEmptyList = function() {
-    this.wwe.get$Body()
-        .find('ul,ol')
-            .each(function(index, node) {
-                if (!/.*<li.*/i.test(node.innerHTML)) {
-                    $(node).remove();
-                }
-            });
-};
 
 module.exports = WwTaskManager;
