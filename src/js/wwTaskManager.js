@@ -435,5 +435,4 @@ WwTaskManager.prototype._formatTaskIfNeed = function() {
     }
 };
 
-
 module.exports = WwTaskManager;
