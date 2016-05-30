@@ -210,28 +210,62 @@ SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteL
 };
 
 SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
-    var endSelectionInfo, finalOffset;
+    var startSelectionInfo, endSelectionInfo, finalOffset;
+    var endOffsetNode = selection.endContainer;
+    var endTextOffset = selection.endOffset;
 
-    selection.setStart(selection.endContainer, selection.endOffset + offset);
-    finalOffset = selection.endOffset + (offset + overwriteLength);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, finalOffset);
-    selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+    if (domUtils.getNodeName(endOffsetNode) !== 'TEXT') {
+        endOffsetNode = this._getClosestTextNode(endOffsetNode, endTextOffset);
+        endTextOffset = endOffsetNode.nodeValue.length;
+    }
 
-    this.replaceSelection(content, selection);
+    if (endTextOffset) {
+        startSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, endTextOffset + offset);
+        selection.setStart(startSelectionInfo.element, startSelectionInfo.offset);
+
+        finalOffset = endTextOffset + (offset + overwriteLength);
+        endSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, finalOffset);
+        selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+
+        this.replaceSelection(content, selection);
+    }
+};
+
+SquireExt.prototype._getClosestTextNode = function(node, offset) {
+    var foundNode = domUtils.getChildNodeByOffset(node, offset - 1);
+
+    if (domUtils.getNodeName(foundNode) !== 'TEXT') {
+        foundNode = foundNode.previousSibling;
+    }
+
+    return foundNode;
 };
 
 SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
     var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
+    var direction = offset >= 0 ? 'next' : 'previous';
+    var offsetAbs = Math.abs(offset);
 
-    traceElement = anchorElement;
-    traceOffset = offset;
+    if (direction === 'next') {
+        traceElement = anchorElement;
+    } else {
+        traceElement = anchorElement.previousSibling;
+    }
+
+    traceOffset = offsetAbs;
     stepLength = 0;
+    latestAvailableElement = traceElement;
 
     while (traceElement) {
-        traceElementLength = domUtils.getTextLength(traceElement);
+        if (domUtils.isTextNode(traceElement)) {
+            traceElementLength = traceElement.nodeValue.length;
+        } else {
+            traceElementLength = traceElement.textContent.length;
+        }
+
         stepLength += traceElementLength;
 
-        if (offset <= stepLength) {
+        if (offsetAbs <= stepLength) {
             break;
         }
 
@@ -241,12 +275,16 @@ SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
             latestAvailableElement = traceElement;
         }
 
-        traceElement = traceElement.nextSibling;
+        traceElement = traceElement[direction + 'Sibling'];
     }
 
     if (!traceElement) {
         traceElement = latestAvailableElement;
         traceOffset = domUtils.getTextLength(traceElement);
+    }
+
+    if (direction === 'previous') {
+        traceOffset = domUtils.getTextLength(traceElement) - traceOffset;
     }
 
     return {
