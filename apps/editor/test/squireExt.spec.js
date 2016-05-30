@@ -149,7 +149,6 @@ describe('SquireExt', function() {
 
             sqe.setHTML('test');
 
-            //selection for user cursor mocking
             selection = sqe.getSelection().cloneRange();
             selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
             selection.collapse(true);
@@ -165,9 +164,24 @@ describe('SquireExt', function() {
 
             sqe.setHTML('test');
 
-            //selection for user cursor mocking
             selection = sqe.getSelection().cloneRange();
             selection.setStart(sqe.get$Body().find('div')[0].firstChild, 4);
+            selection.collapse(true);
+            sqe.setSelection(selection);
+
+            sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
+
+            expect(sqe.get$Body()[0].textContent).toEqual('te123t');
+            expect(sqe.get$Body().find('b').text()).toEqual('123');
+        });
+
+        it('if current selection is not text than use previousSibling', function() {
+            var selection;
+
+            sqe.setHTML('<div>test<br></div>');
+
+            selection = sqe.getSelection().cloneRange();
+            selection.selectNode(sqe.get$Body().find('br')[0]);
             selection.collapse(true);
             sqe.setSelection(selection);
 
@@ -179,11 +193,12 @@ describe('SquireExt', function() {
     });
 
     describe('getSelectionInfoByOffset() find next element and next offset by passed element and replative offset of splited text node', function() {
-        var firstBlock;
+        var firstBlock, secBlock;
 
         beforeEach(function() {
             sqe.setHTML('<div>text1</div><div>text2</div>');
             firstBlock = sqe.get$Body()[0].childNodes[0];
+            secBlock = sqe.get$Body()[0].childNodes[1];
         });
 
         it('offset is lower than passed element\'s length', function() {
@@ -204,6 +219,13 @@ describe('SquireExt', function() {
             expect(sqe.getSelectionInfoByOffset(firstBlock, 11)).toEqual({
                 element: firstBlock.nextSibling,
                 offset: 5
+            });
+        });
+
+        it('if offset is minus, find element toward to previous', function() {
+            expect(sqe.getSelectionInfoByOffset(secBlock, -3)).toEqual({
+                element: firstBlock,
+                offset: 2
             });
         });
     });
