@@ -61,9 +61,13 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
  * @param {DocumentFragment} fragment - Fragment of paste data
  */
 WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
-    util.forEachArray(util.toArray(fragment.childNodes), function(node) {
+    var array = util.toArray(fragment.childNodes);
+
+    util.forEachArray(array, function(node) {
         var divElement;
-        if (node.nodeType === 3) {
+        var isTextNode = node.nodeType === 3;
+
+        if (isTextNode) {
             divElement = document.createElement('div');
 
             divElement.innerHTML = node.nodeValue;
