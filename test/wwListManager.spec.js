@@ -29,7 +29,7 @@ describe('WwListManager', function() {
         });
     });
 
-    fdescribe('_findAndRemoveEmptyList()', function() {
+    describe('_findAndRemoveEmptyList()', function() {
         it('remove ul that without li element within.', function() {
             wwe.setValue(['<ul>this will deleted</ul>',
                 '<ol>and this too</ol>'].join(''));
@@ -44,10 +44,10 @@ describe('WwListManager', function() {
         });
         it('do not remove when ul have li element within.', function() {
             wwe.setValue(['<ul>',
-                '<div><li>survived!</li></div>',
+                '<li><div>survived!</div></li>',
                 '</ul>',
                 '<ol>',
-                '<div><li>me too!</li></div>',
+                '<li><div>me too!</div></li>',
                 '</ol>'].join(''));
 
             expect(wwe.get$Body().find('ul').length).toEqual(1);
