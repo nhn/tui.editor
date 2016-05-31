@@ -25,7 +25,7 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
     var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
     var firstBlockIsTaken = false;
-    var nodeName, node, childNodes, divElement;
+    var nodeName, node, childNodes;
 
     this._pasteFirstAid(pasteData.fragment);
 
