@@ -171,11 +171,11 @@ describe('WysiwygEditor', function() {
 
         it('fire stateChange event when state changed', function(done) {
             em.listen('stateChange', function(data) {
-                expect(data.bold).toBe(true);
-                //TODO 여기서 적용된 이벤트가 이후 테스트케이스까지 영향을 준다.
-                //이유를 모르겠음 일단 이벤트 제거
-                em.removeEventHandler('stateChange');
-                done();
+                //첫번째 insertPlaintText로 인한 이벤트는 무시
+                if (data.bold) {
+                    expect(data.bold).toBe(true);
+                    done();
+                }
             });
 
             wwe.editor.insertPlainText('test');
