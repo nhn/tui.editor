@@ -190,6 +190,21 @@ describe('SquireExt', function() {
             expect(sqe.get$Body()[0].textContent).toEqual('te123t');
             expect(sqe.get$Body().find('b').text()).toEqual('123');
         });
+
+        it('if current selection has not address offset with passed relative offset then insert current position', function(){
+            var selection;
+
+            sqe.setHTML('<div><br></div>');
+
+            selection = sqe.getSelection().cloneRange();
+            selection.selectNode(sqe.get$Body().find('br')[0]);
+            selection.collapse(true);
+            sqe.setSelection(selection);
+
+            sqe.replaceRelativeOffset('123', -2, 1);
+
+            expect(sqe.get$Body()[0].textContent).toEqual('123');
+        });
     });
 
     describe('getSelectionInfoByOffset() find next element and next offset by passed element and replative offset of splited text node', function() {

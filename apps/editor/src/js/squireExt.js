@@ -216,10 +216,17 @@ SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset
 
     if (domUtils.getNodeName(endOffsetNode) !== 'TEXT') {
         endOffsetNode = this._getClosestTextNode(endOffsetNode, endTextOffset);
-        endTextOffset = endOffsetNode.nodeValue.length;
+
+        if (endOffsetNode) {
+            if (domUtils.isTextNode(endOffsetNode)) {
+                endTextOffset = endOffsetNode.nodeValue.length;
+            } else {
+                endTextOffset = endOffsetNode.textContent.length;
+            }
+        }
     }
 
-    if (endTextOffset) {
+    if (endOffsetNode) {
         startSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, endTextOffset + offset);
         selection.setStart(startSelectionInfo.element, startSelectionInfo.offset);
 
@@ -228,6 +235,8 @@ SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset
         selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
         this.replaceSelection(content, selection);
+    } else {
+        this.replaceSelection(content);
     }
 };
 
@@ -242,9 +251,10 @@ SquireExt.prototype._getClosestTextNode = function(node, offset) {
 };
 
 SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
-    var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
+    var traceElement, traceElementLength, traceOffset, stepLength;
     var direction = offset >= 0 ? 'next' : 'previous';
     var offsetAbs = Math.abs(offset);
+    var latestAvailableElement = traceElement;
 
     if (direction === 'next') {
         traceElement = anchorElement;
@@ -254,7 +264,6 @@ SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
 
     traceOffset = offsetAbs;
     stepLength = 0;
-    latestAvailableElement = traceElement;
 
     while (traceElement) {
         if (domUtils.isTextNode(traceElement)) {
