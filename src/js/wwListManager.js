@@ -5,7 +5,7 @@
 
 'use strict';
 
-var FIND_LI_ELEMENT = /.*<li.*/i;
+var FIND_LI_ELEMENT = /<li/i;
 
 /**
  * WwListManager
