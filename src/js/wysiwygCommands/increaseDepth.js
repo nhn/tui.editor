@@ -25,6 +25,7 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
         var range = wwe.getEditor().getSelection();
         var isInTaskList = wwe.getManager('task')._isInTaskList(range);
         var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
+        var isFirstPositionAtList = !isInTaskList && range.startOffset === 0;
 
 
         if (range.collapsed
@@ -36,7 +37,7 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
             $prev = $node.prev();
             // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
             // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
-            if (!$prev.length || (!isInTaskList && range.startOffset === 1)) {
+            if (!$prev.length || !isFirstPositionAtList) {
                 return;
             }
 
