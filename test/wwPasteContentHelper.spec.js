@@ -77,6 +77,39 @@ describe('WwPasteContentHelper', function() {
             expect($node.find('code').eq(0).text()).toEqual('TEST');
             expect($node.find('code').eq(1).text()).toEqual('TEST2');
         });
+        it('_wrapTextNodeWithDiv should wrap textNodes with div element', function() {
+            var $documentFragment;
+            var fragment = document.createDocumentFragment();
+
+            fragment.appendChild(document.createTextNode('ip lorem sit amet'));
+            fragment.appendChild(document.createElement('br'));
+            fragment.appendChild(document.createTextNode('and so on'));
+            fragment.appendChild(document.createElement('br'));
+
+            pch._wrapTextNodeWithDiv(fragment);
+
+            $documentFragment = $(fragment);
+            expect($documentFragment.find('div').length).toEqual(2);
+            expect($documentFragment.find('br').length).toEqual(2);
+            expect($documentFragment.find('div')[0].innerHTML).toEqual('ip lorem sit amet');
+            expect($documentFragment.find('div')[1].innerHTML).toEqual('and so on');
+        });
+        it('_wrapTextNodeWithDiv should not wrap element nodes', function() {
+            var $node = $('<p>ip lorem sit amet</p><br><span>and so on</span>');
+
+            contentFrag.appendChild($node[0]);
+            contentFrag.appendChild($node[1]);
+            contentFrag.appendChild($node[2]);
+
+            pch._wrapTextNodeWithDiv(contentFrag);
+
+            expect($(contentFrag).find('div').length).toEqual(0);
+            expect($(contentFrag).find('p').length).toEqual(1);
+            expect($(contentFrag).find('span').length).toEqual(1);
+            expect($(contentFrag).find('br').length).toEqual(1);
+            expect($(contentFrag).find('p').text()).toEqual('ip lorem sit amet');
+            expect($(contentFrag).find('span').text()).toEqual('and so on');
+        });
     });
 
     describe('get html string of range content', function() {

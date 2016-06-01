@@ -56,6 +56,27 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     pasteData.fragment = newFragment;
 };
 
+/**
+ * Wrap textNodes with div element
+ * @param {DocumentFragment} fragment - Fragment of paste data
+ */
+WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
+    var array = util.toArray(fragment.childNodes);
+
+    util.forEachArray(array, function(node) {
+        var divElement;
+        var isTextNode = node.nodeType === 3;
+
+        if (isTextNode) {
+            divElement = document.createElement('div');
+
+            divElement.innerHTML = node.nodeValue + '<br>';
+
+            fragment.replaceChild(divElement, node);
+        }
+    });
+};
+
 WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     var self = this;
 
@@ -63,6 +84,8 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 
     this._removeUnnecessaryBlocks(fragment);
     this._removeStyles(fragment);
+
+    this._wrapTextNodeWithDiv(fragment);
 
     this._preElementAid(fragment);
 
