@@ -21,14 +21,15 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WysiwygEditor instance
      */
     exec: function(wwe) {
-        var $node, nodeClasses, $startContainer;
+        var $node, nodeClasses, $input;
         var range = wwe.getEditor().getSelection();
-        var isInTaskList = wwe.getManager('task')._isInTaskList(range);
+        var isInTaskList = wwe.getManager('task').isInTaskList(range);
         // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
         // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
         var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
 
         $node = $(range.startContainer).closest('li');
+        $input = $($node.find('input:checkbox')[0]);
         if ((isInTaskList && range.startOffset <= 1)
             || isOffsetEuqals2InDIVForIE10
             || range.startOffset === 0
@@ -40,14 +41,11 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 
             wwe.getEditor().decreaseListLevel();
 
-            $startContainer = $(range.startContainer);
-            $node = $startContainer.hasClass('tui-editor-contents') ?
-                $startContainer.children('div') : $startContainer.next('div');
-
-            if ($node.parents('ol,ul').length === 0
-                && nodeClasses.length !== 0
+            if ($input.parents('ol,ul').length === 0
+                || $input.parents('li').length === 0
+                || !$input.parents('li').hasClass('task-list-item')
             ) {
-                $node.find('input').remove();
+                $input.remove();
             } else {
                 $node.attr('class', nodeClasses);
             }
