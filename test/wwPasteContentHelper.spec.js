@@ -90,9 +90,9 @@ describe('WwPasteContentHelper', function() {
 
             $documentFragment = $(fragment);
             expect($documentFragment.find('div').length).toEqual(2);
-            expect($documentFragment.find('br').length).toEqual(2);
-            expect($documentFragment.find('div')[0].innerHTML).toEqual('ip lorem sit amet');
-            expect($documentFragment.find('div')[1].innerHTML).toEqual('and so on');
+            expect($documentFragment.find('br').length).toEqual(4);
+            expect($documentFragment.find('div')[0].innerHTML).toEqual('ip lorem sit amet<br>');
+            expect($documentFragment.find('div')[1].innerHTML).toEqual('and so on<br>');
         });
         it('_wrapTextNodeWithDiv should not wrap element nodes', function() {
             var $node = $('<p>ip lorem sit amet</p><br><span>and so on</span>');
