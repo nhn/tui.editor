@@ -70,7 +70,7 @@ WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
         if (isTextNode) {
             divElement = document.createElement('div');
 
-            divElement.innerHTML = node.nodeValue;
+            divElement.innerHTML = node.nodeValue + '<br>';
 
             fragment.replaceChild(divElement, node);
         }
