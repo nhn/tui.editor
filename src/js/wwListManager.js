@@ -42,7 +42,10 @@ WwListManager.prototype._initEvent = function() {
         self._findAndRemoveEmptyList();
     });
 };
-
+/**
+ * Find empty list for whole container and remove it.
+ * @private
+ */
 WwListManager.prototype._findAndRemoveEmptyList = function() {
     this.wwe.get$Body()
         .find('ul,ol')
