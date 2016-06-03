@@ -89,7 +89,7 @@ WwTaskManager.prototype._initKeyHandler = function() {
 
     this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
         if (range.collapsed) {
-            if (self._isInTaskList(range)) {
+            if (self.isInTaskList(range)) {
                 self._unformatTaskIfNeedOnBackspace(range);
                 //and delete list by squire
 
@@ -117,19 +117,9 @@ WwTaskManager.prototype._initKeyHandler = function() {
         var isNeedNext;
 
         if (range.collapsed) {
-            if (self._isEmptyTask(range)) {
-                self.wwe.getEditor().recordUndoState(range);
-                self.unformatTask(range.startContainer);
-                setTimeout(function() {
-                    self._formatTaskIfNeed();
-                }, 0);
-
-                isNeedNext = false;
-            } else if (self.wwe.getEditor().hasFormat('LI')) {
-                self.wwe.getEditor().recordUndoState(range);
-                setTimeout(function() {
-                    self._formatTaskIfNeed();
-                }, 0);
+            if (self.wwe.getEditor().hasFormat('LI')) {
+                ev.preventDefault();
+                self.eventManager.emit('command', 'DecreaseDepth');
                 isNeedNext = false;
             }
         }
@@ -139,12 +129,12 @@ WwTaskManager.prototype._initKeyHandler = function() {
 };
 
 /**
- * _isInTaskList
+ * isInTaskList
  * Check whether passed range is in task list or not
  * @param {Range} range range
  * @returns {boolean} result
  */
-WwTaskManager.prototype._isInTaskList = function(range) {
+WwTaskManager.prototype.isInTaskList = function(range) {
     var li;
 
     if (!range) {
@@ -223,7 +213,7 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
 };
 
 WwTaskManager.prototype._isEmptyTask = function(range) {
-    return this._isInTaskList(range) && this._isEmptyContainer(range.startContainer);
+    return this.isInTaskList(range) && this._isEmptyContainer(range.startContainer);
 };
 
 WwTaskManager.prototype._isEmptyContainer = function(node) {
@@ -428,7 +418,7 @@ WwTaskManager.prototype.formatTask = function(node) {
 WwTaskManager.prototype._formatTaskIfNeed = function() {
     var range = this.wwe.getEditor().getSelection().cloneRange();
 
-    if (this._isInTaskList(range)) {
+    if (this.isInTaskList(range)) {
         range = this.wwe.insertSelectionMarker(range);
         this.formatTask(range.startContainer);
         this.wwe.restoreSelectionMarker();
