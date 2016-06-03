@@ -156,6 +156,45 @@ describe('WwTaskManager', function() {
 
             expect(wwe.getValue()).toEqual('<ul><li class="task-list-item"><input type="checkbox">text</li></ul>');
         });
+        it('remove input not in li element.', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<div><span></span><input type="checkbox" /> asd</div>');
+
+            range.setStart(wwe.get$Body().find('div')[0], 0);
+            range.collapse(true);
+
+            mgr._removeTaskInputInWrongPlace(true);
+
+            expect(wwe.get$Body().find('input').length).toEqual(0);
+            expect(wwe.get$Body().find('div').text()).toEqual('asd');
+        });
+        it('remove input wrong place.', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<div><span></span><input type="checkbox" /> test</div>');
+
+            range.setStart(wwe.get$Body().find('input')[0], 0);
+            range.collapse(true);
+
+            mgr._removeTaskInputInWrongPlace(true);
+
+            expect(wwe.get$Body().find('div>input').length).toEqual(0);
+            expect(wwe.get$Body().find('div').text()).toEqual('test');
+        });
+        it('do not remove input in li element.', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+
+            wwe.getEditor().setHTML('<li class="task-list-item"><div><input type="checkbox" /> test</div></li>');
+
+            range.setStart(wwe.get$Body().find('li')[0], 0);
+            range.collapse(true);
+
+            mgr._removeTaskInputInWrongPlace();
+
+            expect(wwe.get$Body().find('input').length).toEqual(1);
+            expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
+        });
     });
 
     describe('_unformatIncompleteTask', function() {
