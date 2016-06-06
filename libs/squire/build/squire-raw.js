@@ -3879,26 +3879,34 @@ var addLinks = function ( frag, root, self ) {
 // by the html being inserted.
 proto.insertHTML = function ( html, isPaste ) {
     var range = this.getSelection();
-    var frag = this._doc.createDocumentFragment();
-    var div = this.createElement( 'DIV' );
+    var doc = this._doc;
     var startFragmentIndex, endFragmentIndex;
-    var root, node, event;
+    var div, frag, root, node, event;
 
     // Edge doesn't just copy the fragment, but includes the surrounding guff
-    // including the full <head> of the page. Need to strip this out. In the
-    // future should probably run all pastes through DOMPurify, but this will
-    // do for now
-    if ( isPaste ) {
-        startFragmentIndex = html.indexOf( '<!--StartFragment-->' );
-        endFragmentIndex = html.lastIndexOf( '<!--EndFragment-->' );
-        if ( startFragmentIndex > -1 && endFragmentIndex > -1 ) {
-            html = html.slice( startFragmentIndex + 20, endFragmentIndex );
+    // including the full <head> of the page. Need to strip this out. If
+    // available use DOMPurify to parse and sanitise.
+    if ( typeof DOMPurify !== 'undefined' && DOMPurify.isSupported ) {
+        frag = DOMPurify.sanitize( html, {
+            WHOLE_DOCUMENT: false,
+            RETURN_DOM: true,
+            RETURN_DOM_FRAGMENT: true
+        });
+        frag = doc.importNode( frag, true );
+    } else {
+        if ( isPaste ) {
+            startFragmentIndex = html.indexOf( '<!--StartFragment-->' );
+            endFragmentIndex = html.lastIndexOf( '<!--EndFragment-->' );
+            if ( startFragmentIndex > -1 && endFragmentIndex > -1 ) {
+                html = html.slice( startFragmentIndex + 20, endFragmentIndex );
+            }
         }
+        // Parse HTML into DOM tree
+        div = this.createElement( 'DIV' );
+        div.innerHTML = html;
+        frag = doc.createDocumentFragment();
+        frag.appendChild( empty( div ) );
     }
-
-    // Parse HTML into DOM tree
-    div.innerHTML = html;
-    frag.appendChild( empty( div ) );
 
     // Record undo checkpoint
     this.saveUndoState( range );
