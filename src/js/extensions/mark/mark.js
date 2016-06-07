@@ -182,7 +182,7 @@ extManager.defineExtension('mark', function(editor) {
             editor._updateMarkers();
         });
 
-        editor.on('change', util.debounce(function() {
+        editor.on('contentChangedFromWysiwyg', util.debounce(function() {
             editor._updateMarkers();
         }, MARKER_UPDATE_DELAY));
 
