@@ -184,12 +184,15 @@ describe('WwTaskManager', function() {
         });
         it('do not remove input in li element.', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
+            var listItem;
 
-            wwe.getEditor().setHTML('<li class="task-list-item"><div><input type="checkbox" /> test</div></li>');
+            wwe.getEditor().setHTML('<li><div>test</div></li>');
 
-            range.setStart(wwe.get$Body().find('li')[0], 0);
+            listItem = wwe.get$Body().find('li')[0];
+            range.setStart(listItem, 0);
             range.collapse(true);
 
+            mgr.formatTask(listItem);
             mgr._removeTaskInputInWrongPlace();
 
             expect(wwe.get$Body().find('input').length).toEqual(1);
