@@ -41,13 +41,20 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 
             wwe.getEditor().decreaseListLevel();
 
-            if ($input.parents('ol,ul').length === 0
+            if ($input.length && ($input.parents('ol,ul').length === 0
                 || $input.parents('li').length === 0
-                || !$input.parents('li').hasClass('task-list-item')
+                || !$input.parents('li').hasClass('task-list-item'))
             ) {
                 $input.remove();
             } else {
-                $node.attr('class', nodeClasses);
+                range = wwe.getEditor().getSelection().cloneRange();
+                $node = $(range.startContainer).closest('li');
+
+                if (nodeClasses) {
+                    $node.attr('class', nodeClasses);
+                } else {
+                    $node.removeAttr('class');
+                }
             }
         }
     }
