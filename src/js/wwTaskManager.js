@@ -408,9 +408,6 @@ WwTaskManager.prototype.formatTask = function(node) {
 
         //we need some space for safari
         sq.insertElement(sq.getDocument().createTextNode(' '), range);
-
-        //IE10 have to delete div's first child blank textNode
-        this._removeBlankTextNode();
     }
 };
 
@@ -426,16 +423,6 @@ WwTaskManager.prototype._formatTaskIfNeed = function() {
         this.formatTask(range.startContainer);
         this.wwe.restoreSelectionMarker();
     }
-};
-
-WwTaskManager.prototype._removeBlankTextNode = function() {
-    this.wwe.get$Body().find('li>div').each(function(index, node) {
-        var firstChild = node.firstChild;
-        var isBlankTextNode = firstChild && firstChild.nodeType === 3 && firstChild.nodeValue.length === 0;
-        if (isBlankTextNode) {
-            node.removeChild(firstChild);
-        }
-    });
 };
 
 module.exports = WwTaskManager;
