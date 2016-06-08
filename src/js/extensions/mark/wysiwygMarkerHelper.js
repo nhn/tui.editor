@@ -64,19 +64,16 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
 WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     var text, top, left, rect, height;
     var endContainer = range.endContainer;
-    var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
-    var isBlankTextNode = endContainer.nodeType === 3 && endContainer.nodeValue.length === 0;
+    var endOffset = range.endOffset;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-    if (isBlankTextNode && isIE10) {
-        range.setStart(endContainer.parentNode.parentNode, 0);
-    } else {
-        range.setStart(endContainer, range.endOffset);
-    }
-    range.collapse(true);
+    if (endContainer.childNodes[endOffset]) {
+        range.setStart(endContainer, endOffset);
+        range.collapse(true);
 
-    rect = range.getClientRects()[0];
+        rect = range.getClientRects()[0];
+    }
 
     if (rect) {
         top = this.sqe.scrollTop() + rect.top;
