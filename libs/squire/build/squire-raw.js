@@ -4086,27 +4086,27 @@ proto.removeLink = function () {
 };
 
 proto.setFontFace = function ( name ) {
-    this.changeFormat({
+    this.changeFormat( name ? {
         tag: 'SPAN',
         attributes: {
             'class': 'font',
             style: 'font-family: ' + name + ', sans-serif;'
         }
-    }, {
+    } : null, {
         tag: 'SPAN',
         attributes: { 'class': 'font' }
     });
     return this.focus();
 };
 proto.setFontSize = function ( size ) {
-    this.changeFormat({
+    this.changeFormat( size ? {
         tag: 'SPAN',
         attributes: {
             'class': 'size',
             style: 'font-size: ' +
                 ( typeof size === 'number' ? size + 'px' : size )
         }
-    }, {
+    } : null, {
         tag: 'SPAN',
         attributes: { 'class': 'size' }
     });
@@ -4114,13 +4114,13 @@ proto.setFontSize = function ( size ) {
 };
 
 proto.setTextColour = function ( colour ) {
-    this.changeFormat({
+    this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
             'class': 'colour',
             style: 'color:' + colour
         }
-    }, {
+    } : null, {
         tag: 'SPAN',
         attributes: { 'class': 'colour' }
     });
@@ -4128,13 +4128,13 @@ proto.setTextColour = function ( colour ) {
 };
 
 proto.setHighlightColour = function ( colour ) {
-    this.changeFormat({
+    this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
             'class': 'highlight',
             style: 'background-color:' + colour
         }
-    }, {
+    } : colour, {
         tag: 'SPAN',
         attributes: { 'class': 'highlight' }
     });
