@@ -178,26 +178,26 @@ describe('SquireExt', function() {
         it('if current selection is not text than use previousSibling', function() {
             var selection;
 
-            sqe.setHTML('<div>test<br></div>');
+            sqe.setHTML('<div>test<i>one</i><br></div>');
 
             selection = sqe.getSelection().cloneRange();
-            selection.selectNode(sqe.get$Body().find('br')[0]);
+            selection.selectNode(sqe.get$Body().find('i')[0]);
             selection.collapse(true);
             sqe.setSelection(selection);
 
             sqe.replaceRelativeOffset('<b>123</b>', -2, 1);
 
-            expect(sqe.get$Body()[0].textContent).toEqual('te123t');
+            expect(sqe.get$Body()[0].textContent).toEqual('te123tone');
             expect(sqe.get$Body().find('b').text()).toEqual('123');
         });
 
         it('if current selection has not address offset with passed relative offset then insert current position', function(){
             var selection;
 
-            sqe.setHTML('<div><br></div>');
+            sqe.setHTML('<div><i> </i><br></div>');
 
             selection = sqe.getSelection().cloneRange();
-            selection.selectNode(sqe.get$Body().find('br')[0]);
+            selection.selectNode(sqe.get$Body().find('i')[0]);
             selection.collapse(true);
             sqe.setSelection(selection);
 
