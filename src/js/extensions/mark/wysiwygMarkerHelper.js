@@ -63,10 +63,17 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  */
 WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     var text, top, left, rect, height;
+    var endContainer = range.endContainer;
+    var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
+    var isBlankTextNode = endContainer.nodeType === 3 && endContainer.nodeValue.length === 0;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-    range.setStart(range.endContainer, range.endOffset);
+    if (isBlankTextNode && isIE10) {
+        range.setStart(endContainer.parentNode.parentNode, 0);
+    } else {
+        range.setStart(endContainer, range.endOffset);
+    }
     range.collapse(true);
 
     rect = range.getClientRects()[0];
