@@ -63,13 +63,17 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  */
 WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
     var text, top, left, rect, height;
+    var endContainer = range.endContainer;
+    var endOffset = range.endOffset;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-    range.setStart(range.endContainer, range.endOffset);
-    range.collapse(true);
+    if (endContainer.childNodes[endOffset]) {
+        range.setStart(endContainer, endOffset);
+        range.collapse(true);
 
-    rect = range.getClientRects()[0];
+        rect = range.getClientRects()[0];
+    }
 
     if (rect) {
         top = this.sqe.scrollTop() + rect.top;
