@@ -184,12 +184,15 @@ describe('WwTaskManager', function() {
         });
         it('do not remove input in li element.', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
+            var listItem;
 
-            wwe.getEditor().setHTML('<li class="task-list-item"><div><input type="checkbox" /> test</div></li>');
+            wwe.getEditor().setHTML('<li><div>test</div></li>');
 
-            range.setStart(wwe.get$Body().find('li')[0], 0);
+            listItem = wwe.get$Body().find('li')[0];
+            range.setStart(listItem, 0);
             range.collapse(true);
 
+            mgr.formatTask(listItem);
             mgr._removeTaskInputInWrongPlace();
 
             expect(wwe.get$Body().find('input').length).toEqual(1);
@@ -328,7 +331,7 @@ describe('WwTaskManager', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor()
-                .setHTML('<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test</div></li></ul>');
+                .setHTML('<ul><li class="task-list-item"><div><input type="checkbox" /> test</div></li></ul>');
 
             range.setStart(wwe.get$Body().find('li')[0], 0);
             range.collapse(true);
@@ -343,8 +346,8 @@ describe('WwTaskManager', function() {
 	    var range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor()
-                .setHTML(['<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test1</div>',
-			  '<ul><li class="task-list-item"><div><input type="checkbox" />&nbsp;test2</div></li></ul></li></ul>'].join(''));
+                .setHTML(['<ul><li class="task-list-item"><div><input type="checkbox" /> test1</div>',
+			  '<ul><li class="task-list-item"><div><input type="checkbox" /> test2</div></li></ul></li></ul>'].join(''));
 
             range.setStart(wwe.get$Body().find('li')[0], 0);
             range.collapse(true);
