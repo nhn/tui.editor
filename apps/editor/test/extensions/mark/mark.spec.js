@@ -232,6 +232,10 @@ describe('Mark', function() {
             editor.getSquire()._ignoreChange = false;
             editor.wwEditor._silentChange = false;
 
+            if (tui.util.browser.msie && tui.util.browser.version === 10) {
+                editor.eventManager.emit('change');
+            }
+
             editor.on('markerUpdated', function() {
                 expect(marker.top).toEqual(0);
                 expect(marker.left).toEqual(0);
