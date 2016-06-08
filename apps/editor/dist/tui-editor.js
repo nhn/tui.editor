@@ -5106,13 +5106,17 @@
 	 */
 	WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
 	    var text, top, left, rect, height;
+	    var endContainer = range.endContainer;
+	    var endOffset = range.endOffset;
 
 	    text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-	    range.setStart(range.endContainer, range.endOffset);
-	    range.collapse(true);
+	    if (endContainer.childNodes[endOffset]) {
+	        range.setStart(endContainer, endOffset);
+	        range.collapse(true);
 
-	    rect = range.getClientRects()[0];
+	        rect = range.getClientRects()[0];
+	    }
 
 	    if (rect) {
 	        top = this.sqe.scrollTop() + rect.top;
@@ -6020,52 +6024,53 @@
 	var MarkdownEditor = __webpack_require__(21),
 	    Preview = __webpack_require__(23),
 	    WysiwygEditor = __webpack_require__(25),
-	    Layout = __webpack_require__(36),
-	    EventManager = __webpack_require__(37),
-	    CommandManager = __webpack_require__(38),
+	    Layout = __webpack_require__(37),
+	    EventManager = __webpack_require__(38),
+	    CommandManager = __webpack_require__(39),
 	    extManager = __webpack_require__(6),
-	    ImportManager = __webpack_require__(40),
-	    Convertor = __webpack_require__(42),
-	    ViewOnly = __webpack_require__(44),
-	    markedRenderer = __webpack_require__(43),
-	    DefaultUI = __webpack_require__(45);
+	    ImportManager = __webpack_require__(41),
+	    Convertor = __webpack_require__(43),
+	    ViewOnly = __webpack_require__(45),
+	    markedRenderer = __webpack_require__(44),
+	    DefaultUI = __webpack_require__(46);
 
 
 	//markdown commands
-	var mdBold = __webpack_require__(60),
-	    mdItalic = __webpack_require__(61),
-	    mdBlockquote = __webpack_require__(62),
-	    mdHeading = __webpack_require__(63),
-	    mdHR = __webpack_require__(64),
-	    mdAddLink = __webpack_require__(65),
-	    mdAddImage = __webpack_require__(66),
-	    mdUL = __webpack_require__(67),
-	    mdOL = __webpack_require__(68),
-	    mdTable = __webpack_require__(69),
-	    mdTask = __webpack_require__(70),
-	    mdCode = __webpack_require__(71),
-	    mdCodeBlock = __webpack_require__(72);
+	var mdBold = __webpack_require__(61),
+	    mdItalic = __webpack_require__(62),
+	    mdBlockquote = __webpack_require__(63),
+	    mdHeading = __webpack_require__(64),
+	    mdHR = __webpack_require__(65),
+	    mdAddLink = __webpack_require__(66),
+	    mdAddImage = __webpack_require__(67),
+	    mdUL = __webpack_require__(68),
+	    mdOL = __webpack_require__(69),
+	    mdTable = __webpack_require__(70),
+	    mdTask = __webpack_require__(71),
+	    mdCode = __webpack_require__(72),
+	    mdCodeBlock = __webpack_require__(73);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(73),
-	    wwItalic = __webpack_require__(74),
-	    wwBlockquote = __webpack_require__(75),
-	    wwAddImage = __webpack_require__(76),
-	    wwAddLink = __webpack_require__(77),
-	    wwHR = __webpack_require__(78),
-	    wwHeading = __webpack_require__(79),
-	    wwUL = __webpack_require__(80),
-	    wwOL = __webpack_require__(81),
-	    wwTable = __webpack_require__(82),
-	    wwTableAddRow = __webpack_require__(83),
-	    wwTableAddCol = __webpack_require__(84),
-	    wwTableRemoveRow = __webpack_require__(85),
-	    wwTableRemoveCol = __webpack_require__(86),
-	    wwTableRemove = __webpack_require__(87),
-	    wwIncreaseDepth = __webpack_require__(88),
-	    wwTask = __webpack_require__(89),
-	    wwCode = __webpack_require__(90),
-	    wwCodeBlock = __webpack_require__(91);
+	var wwBold = __webpack_require__(74),
+	    wwItalic = __webpack_require__(75),
+	    wwBlockquote = __webpack_require__(76),
+	    wwAddImage = __webpack_require__(77),
+	    wwAddLink = __webpack_require__(78),
+	    wwHR = __webpack_require__(79),
+	    wwHeading = __webpack_require__(80),
+	    wwUL = __webpack_require__(81),
+	    wwOL = __webpack_require__(82),
+	    wwTable = __webpack_require__(83),
+	    wwTableAddRow = __webpack_require__(84),
+	    wwTableAddCol = __webpack_require__(85),
+	    wwTableRemoveRow = __webpack_require__(86),
+	    wwTableRemoveCol = __webpack_require__(87),
+	    wwTableRemove = __webpack_require__(88),
+	    wwIncreaseDepth = __webpack_require__(89),
+	    wwDecreaseDepth = __webpack_require__(90),
+	    wwTask = __webpack_require__(91),
+	    wwCode = __webpack_require__(92),
+	    wwCodeBlock = __webpack_require__(93);
 
 	var util = tui.util;
 
@@ -6278,12 +6283,12 @@
 	    this.currentMode = mode;
 
 	    if (this.isWysiwygMode()) {
-	        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
 	        this.layout.switchToWYSIWYG();
+	        this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
 	        this.eventManager.emit('changeModeToWysiwyg');
 	    } else {
-	        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
 	        this.layout.switchToMarkdown();
+	        this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
 	        this.getCodeMirror().refresh();
 	        this.eventManager.emit('changeModeToMarkdown');
 	    }
@@ -6369,6 +6374,7 @@
 	        tuiEditor.addCommand(wwHR);
 	        tuiEditor.addCommand(wwHeading);
 	        tuiEditor.addCommand(wwIncreaseDepth);
+	        tuiEditor.addCommand(wwDecreaseDepth);
 	        tuiEditor.addCommand(wwTask);
 	        tuiEditor.addCommand(wwTable);
 	        tuiEditor.addCommand(wwTableAddRow);
@@ -7184,13 +7190,14 @@
 	var domUtils = __webpack_require__(17),
 	    WwClipboardManager = __webpack_require__(26),
 	    WwSelectionMarker = __webpack_require__(28),
-	    WwTaskManager = __webpack_require__(29),
-	    WwTableManager = __webpack_require__(30),
-	    WwHrManager = __webpack_require__(31),
-	    WwPManager = __webpack_require__(32),
-	    WwHeadingManager = __webpack_require__(33),
-	    WwCodeBlockManager = __webpack_require__(34),
-	    SquireExt = __webpack_require__(35);
+	    WwListManager = __webpack_require__(29),
+	    WwTaskManager = __webpack_require__(30),
+	    WwTableManager = __webpack_require__(31),
+	    WwHrManager = __webpack_require__(32),
+	    WwPManager = __webpack_require__(33),
+	    WwHeadingManager = __webpack_require__(34),
+	    WwCodeBlockManager = __webpack_require__(35),
+	    SquireExt = __webpack_require__(36);
 
 	var keyMapper = __webpack_require__(22).getSharedInstance();
 
@@ -7228,6 +7235,10 @@
 
 	    this._initEvent();
 	    this._initDefaultKeyEventHandler();
+
+	    this.postProcessForChange = util.debounce(function() {
+	        this._postProcessForChange();
+	    }.bind(this), 0);
 	}
 
 	/**
@@ -7333,6 +7344,7 @@
 	 */
 	WysiwygEditor.prototype._initSquireEvent = function() {
 	    var self = this;
+	    var isNeedFirePostProcessForRangeChange = false;
 
 	    this.getEditor().addEventListener('paste', function(clipboardEvent) {
 	        self.eventManager.emit('paste', {
@@ -7383,7 +7395,18 @@
 	    }, 0));
 
 	    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
+	        var range = self.getEditor().getSelection();
+	        if (!range.collapsed) {
+	            isNeedFirePostProcessForRangeChange = true;
+	        }
 	        self._onKeyDown(keyboardEvent);
+	    });
+
+	    this.getEditor().addEventListener('keyup', function() {
+	        if (isNeedFirePostProcessForRangeChange) {
+	            self.postProcessForChange();
+	            isNeedFirePostProcessForRangeChange = false;
+	        }
 	    });
 
 	    this.getEditor().addEventListener('scroll', function(ev) {
@@ -7466,22 +7489,20 @@
 	WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 	    var self = this;
 
-	    this.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-	        if (!range.collapsed) {
-	            self.postProcessForChange();
-	        }
-	    });
-
 	    this.addKeyEventHandler('ENTER', function() {
 	        setTimeout(function() {
-	            var range = self.getEditor().getSelection().cloneRange();
-	            var cursorTop = self.getEditor().getCursorPosition().top - self.$editorContainerEl.offset().top;
-
-	            if (cursorTop >= self.get$Body().height()) {
-	                range.endContainer.scrollIntoView();
-	            }
+	            self._scrollToRangeIfNeed();
 	        }, 0);
 	    });
+	};
+
+	WysiwygEditor.prototype._scrollToRangeIfNeed = function() {
+	    var range = this.getEditor().getSelection().cloneRange();
+	    var cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
+
+	    if (cursorTop >= this.get$Body().height()) {
+	        range.endContainer.scrollIntoView();
+	    }
 	};
 
 	/**
@@ -7694,9 +7715,9 @@
 	    this.eventManager.emit('wysiwygSetValueAfter', this);
 	    this.eventManager.emit('contentChangedFromWysiwyg', this);
 
-	    this.getEditor().preserveLastLine();
-
 	    this.moveCursorToEnd();
+
+	    this.getEditor().preserveLastLine();
 
 	    this.getEditor().removeLastUndoStack();
 	    this.getEditor().recordUndoState();
@@ -7759,16 +7780,13 @@
 	};
 
 	/**
-	 * postProcessForChange
+	 * _postProcessForChange
 	 * Post process for change
 	 */
-	WysiwygEditor.prototype.postProcessForChange = function() {
+	WysiwygEditor.prototype._postProcessForChange = function() {
 	    var self = this;
-
-	    setTimeout(function() {
-	        self.readySilentChange();
-	        self.eventManager.emit('wysiwygRangeChangeAfter', self);
-	    }, 0);
+	    self.readySilentChange();
+	    self.eventManager.emit('wysiwygRangeChangeAfter', self);
 	};
 
 	/**
@@ -7959,13 +7977,12 @@
 	WysiwygEditor.prototype.moveCursorToEnd = function() {
 	    this.getEditor().moveCursorToEnd();
 	    this.getEditor().scrollTop(this.get$Body().height());
-	    this._correctRangeAfterMoveCursor();
+	    this._correctRangeAfterMoveCursor('end');
 	};
 
 	WysiwygEditor.prototype.moveCursorToStart = function() {
 	    this.getEditor().moveCursorToStart();
 	    this.getEditor().scrollTop(0);
-	    this._correctRangeAfterMoveCursor();
 	};
 
 	WysiwygEditor.prototype.scrollTop = function(value) {
@@ -7974,12 +7991,28 @@
 
 	/**
 	 * _correctRangeAfterMoveCursor
-	 * we need collapse range after moveCursor* api invoke cuz squire bug
+	 * we need arrange range after moveCursorToEnd api invoke cuz squire has bug in firefox, IE
+	 * @param {string} direction direction of cursormove
 	 */
-	WysiwygEditor.prototype._correctRangeAfterMoveCursor = function() {
+	WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
 	    var range = this.getEditor().getSelection().cloneRange();
+	    var cursorContainer, offset;
 
-	    range.setStart(this.get$Body()[0].lastChild, domUtils.getOffsetLength(this.get$Body()[0].lastChild) - 1);
+	    if (direction === 'start') {
+	        cursorContainer = this.get$Body()[0].firstChild;
+	        offset = 0;
+	    } else {
+	        cursorContainer = this.get$Body()[0].lastChild;
+	        offset = domUtils.getOffsetLength(cursorContainer);
+
+	        // IE have problem with cursor after br
+	        if (domUtils.getNodeName(cursorContainer.lastChild) === 'BR') {
+	            offset -= 1;
+	        }
+	    }
+
+	    range.setStart(cursorContainer, offset);
+
 	    range.collapse(true);
 
 	    this.getEditor().setSelection(range);
@@ -7996,6 +8029,7 @@
 
 	    wwe.init();
 
+	    wwe.addManager(WwListManager);
 	    wwe.addManager(WwTaskManager);
 	    wwe.addManager(WwTableManager);
 	    wwe.addManager(WwHrManager);
@@ -8279,6 +8313,27 @@
 	    pasteData.fragment = newFragment;
 	};
 
+	/**
+	 * Wrap textNodes with div element
+	 * @param {DocumentFragment} fragment - Fragment of paste data
+	 */
+	WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
+	    var array = util.toArray(fragment.childNodes);
+
+	    util.forEachArray(array, function(node) {
+	        var divElement;
+	        var isTextNode = node.nodeType === 3;
+
+	        if (isTextNode) {
+	            divElement = document.createElement('div');
+
+	            divElement.innerHTML = node.nodeValue + '<br>';
+
+	            fragment.replaceChild(divElement, node);
+	        }
+	    });
+	};
+
 	WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 	    var self = this;
 
@@ -8286,6 +8341,8 @@
 
 	    this._removeUnnecessaryBlocks(fragment);
 	    this._removeStyles(fragment);
+
+	    this._wrapTextNodeWithDiv(fragment);
 
 	    this._preElementAid(fragment);
 
@@ -8559,6 +8616,71 @@
 
 /***/ },
 /* 29 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements wysiwyg list manager
+	 * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var FIND_LI_ELEMENT = /<li/i;
+
+	/**
+	 * WwListManager
+	 * @exports WwListManager
+	 * @constructor
+	 * @class
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 */
+	function WwListManager(wwe) {
+	    this.wwe = wwe;
+	    this.eventManager = wwe.eventManager;
+
+	    this._init();
+	}
+
+	WwListManager.prototype.name = 'list';
+
+	/**
+	 * _init
+	 * Init
+	 */
+	WwListManager.prototype._init = function() {
+	    this._initEvent();
+	};
+
+	/**
+	 * _initEvent
+	 * Initialize eventmanager event
+	 */
+	WwListManager.prototype._initEvent = function() {
+	    var self = this;
+
+	    this.eventManager.listen('wysiwygRangeChangeAfter', function() {
+	        self._findAndRemoveEmptyList();
+	    });
+	};
+	/**
+	 * Find empty list for whole container and remove it.
+	 * @private
+	 */
+	WwListManager.prototype._findAndRemoveEmptyList = function() {
+	    this.wwe.get$Body()
+	        .find('ul,ol')
+	        .each(function(index, node) {
+	            if (!(FIND_LI_ELEMENT.test(node.innerHTML))) {
+	                $(node).remove();
+	            }
+	        });
+	};
+
+	module.exports = WwListManager;
+
+
+/***/ },
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8652,7 +8774,7 @@
 
 	    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
 	        if (range.collapsed) {
-	            if (self._isInTaskList(range)) {
+	            if (self.isInTaskList(range)) {
 	                self._unformatTaskIfNeedOnBackspace(range);
 	                //and delete list by squire
 
@@ -8680,19 +8802,9 @@
 	        var isNeedNext;
 
 	        if (range.collapsed) {
-	            if (self._isEmptyTask(range)) {
-	                self.wwe.getEditor().recordUndoState(range);
-	                self.unformatTask(range.startContainer);
-	                setTimeout(function() {
-	                    self._formatTaskIfNeed();
-	                }, 0);
-
-	                isNeedNext = false;
-	            } else if (self.wwe.getEditor().hasFormat('LI')) {
-	                self.wwe.getEditor().recordUndoState(range);
-	                setTimeout(function() {
-	                    self._formatTaskIfNeed();
-	                }, 0);
+	            if (self.wwe.getEditor().hasFormat('LI')) {
+	                ev.preventDefault();
+	                self.eventManager.emit('command', 'DecreaseDepth');
 	                isNeedNext = false;
 	            }
 	        }
@@ -8702,12 +8814,12 @@
 	};
 
 	/**
-	 * _isInTaskList
+	 * isInTaskList
 	 * Check whether passed range is in task list or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
 	 */
-	WwTaskManager.prototype._isInTaskList = function(range) {
+	WwTaskManager.prototype.isInTaskList = function(range) {
 	    var li;
 
 	    if (!range) {
@@ -8786,7 +8898,7 @@
 	};
 
 	WwTaskManager.prototype._isEmptyTask = function(range) {
-	    return this._isInTaskList(range) && this._isEmptyContainer(range.startContainer);
+	    return this.isInTaskList(range) && this._isEmptyContainer(range.startContainer);
 	};
 
 	WwTaskManager.prototype._isEmptyContainer = function(node) {
@@ -8991,7 +9103,7 @@
 	WwTaskManager.prototype._formatTaskIfNeed = function() {
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
 
-	    if (this._isInTaskList(range)) {
+	    if (this.isInTaskList(range)) {
 	        range = this.wwe.insertSelectionMarker(range);
 	        this.formatTask(range.startContainer);
 	        this.wwe.restoreSelectionMarker();
@@ -9002,7 +9114,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9249,7 +9361,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9475,7 +9587,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/**
@@ -9558,7 +9670,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9695,7 +9807,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10013,7 +10125,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10228,28 +10340,71 @@
 	};
 
 	SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
-	    var endSelectionInfo, finalOffset;
+	    var startSelectionInfo, endSelectionInfo, finalOffset;
+	    var endOffsetNode = selection.endContainer;
+	    var endTextOffset = selection.endOffset;
 
-	    selection.setStart(selection.endContainer, selection.endOffset + offset);
-	    finalOffset = selection.endOffset + (offset + overwriteLength);
-	    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, finalOffset);
-	    selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+	    if (domUtils.getNodeName(endOffsetNode) !== 'TEXT') {
+	        endOffsetNode = this._getClosestTextNode(endOffsetNode, endTextOffset);
 
-	    this.replaceSelection(content, selection);
+	        if (endOffsetNode) {
+	            if (domUtils.isTextNode(endOffsetNode)) {
+	                endTextOffset = endOffsetNode.nodeValue.length;
+	            } else {
+	                endTextOffset = endOffsetNode.textContent.length;
+	            }
+	        }
+	    }
+
+	    if (endOffsetNode) {
+	        startSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, endTextOffset + offset);
+	        selection.setStart(startSelectionInfo.element, startSelectionInfo.offset);
+
+	        finalOffset = endTextOffset + (offset + overwriteLength);
+	        endSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, finalOffset);
+	        selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
+
+	        this.replaceSelection(content, selection);
+	    } else {
+	        this.replaceSelection(content);
+	    }
+	};
+
+	SquireExt.prototype._getClosestTextNode = function(node, offset) {
+	    var foundNode = domUtils.getChildNodeByOffset(node, offset - 1);
+
+	    if (domUtils.getNodeName(foundNode) !== 'TEXT') {
+	        foundNode = foundNode.previousSibling;
+	    }
+
+	    return foundNode;
 	};
 
 	SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
-	    var traceElement, traceElementLength, traceOffset, stepLength, latestAvailableElement;
+	    var traceElement, traceElementLength, traceOffset, stepLength;
+	    var direction = offset >= 0 ? 'next' : 'previous';
+	    var offsetAbs = Math.abs(offset);
+	    var latestAvailableElement = traceElement;
 
-	    traceElement = anchorElement;
-	    traceOffset = offset;
+	    if (direction === 'next') {
+	        traceElement = anchorElement;
+	    } else {
+	        traceElement = anchorElement.previousSibling;
+	    }
+
+	    traceOffset = offsetAbs;
 	    stepLength = 0;
 
 	    while (traceElement) {
-	        traceElementLength = domUtils.getTextLength(traceElement);
+	        if (domUtils.isTextNode(traceElement)) {
+	            traceElementLength = traceElement.nodeValue.length;
+	        } else {
+	            traceElementLength = traceElement.textContent.length;
+	        }
+
 	        stepLength += traceElementLength;
 
-	        if (offset <= stepLength) {
+	        if (offsetAbs <= stepLength) {
 	            break;
 	        }
 
@@ -10259,12 +10414,16 @@
 	            latestAvailableElement = traceElement;
 	        }
 
-	        traceElement = traceElement.nextSibling;
+	        traceElement = traceElement[direction + 'Sibling'];
 	    }
 
 	    if (!traceElement) {
 	        traceElement = latestAvailableElement;
 	        traceOffset = domUtils.getTextLength(traceElement);
+	    }
+
+	    if (direction === 'previous') {
+	        traceOffset = domUtils.getTextLength(traceElement) - traceOffset;
 	    }
 
 	    return {
@@ -10351,7 +10510,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	/**
@@ -10478,7 +10637,7 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -10671,7 +10830,7 @@
 
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10683,7 +10842,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(39);
+	var Command = __webpack_require__(40);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -10808,7 +10967,7 @@
 
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/**
@@ -10925,7 +11084,7 @@
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10935,7 +11094,7 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(41);
+	var excelTableParser = __webpack_require__(42);
 
 	var util = tui.util;
 
@@ -11051,7 +11210,7 @@
 
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports) {
 
 	/**
@@ -11108,7 +11267,7 @@
 
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11118,7 +11277,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(43);
+	var markedCustomRenderer = __webpack_require__(44);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -11246,7 +11405,7 @@
 
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -11322,7 +11481,7 @@
 
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11333,10 +11492,10 @@
 	'use strict';
 
 	var Preview = __webpack_require__(23),
-	    EventManager = __webpack_require__(37),
-	    CommandManager = __webpack_require__(38),
+	    EventManager = __webpack_require__(38),
+	    CommandManager = __webpack_require__(39),
 	    extManager = __webpack_require__(6),
-	    Convertor = __webpack_require__(42);
+	    Convertor = __webpack_require__(43);
 
 	var util = tui.util;
 
@@ -11427,7 +11586,7 @@
 
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11437,15 +11596,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(46),
-	    Tab = __webpack_require__(51),
-	    Layerpopup = __webpack_require__(53),
-	    ModeSwitch = __webpack_require__(54),
-	    PopupAddLink = __webpack_require__(55),
-	    PopupAddImage = __webpack_require__(56),
-	    PopupTableUtils = __webpack_require__(57),
-	    PopupAddTable = __webpack_require__(58),
-	    PopupAddHeading = __webpack_require__(59);
+	var Toolbar = __webpack_require__(47),
+	    Tab = __webpack_require__(52),
+	    Layerpopup = __webpack_require__(54),
+	    ModeSwitch = __webpack_require__(55),
+	    PopupAddLink = __webpack_require__(56),
+	    PopupAddImage = __webpack_require__(57),
+	    PopupTableUtils = __webpack_require__(58),
+	    PopupAddTable = __webpack_require__(59),
+	    PopupAddHeading = __webpack_require__(60);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -11621,7 +11780,7 @@
 
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11631,9 +11790,9 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(47),
-	    Button = __webpack_require__(48),
-	    ToggleButton = __webpack_require__(50);
+	var UIController = __webpack_require__(48),
+	    Button = __webpack_require__(49),
+	    ToggleButton = __webpack_require__(51);
 
 	var util = tui.util;
 
@@ -11793,7 +11952,7 @@
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	/**
@@ -12039,7 +12198,7 @@
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12048,8 +12207,8 @@
 	 */
 	'use strict';
 
-	var UIController = __webpack_require__(47);
-	var Tooltip = __webpack_require__(49);
+	var UIController = __webpack_require__(48);
+	var Tooltip = __webpack_require__(50);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12140,7 +12299,7 @@
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports) {
 
 	/**
@@ -12183,7 +12342,7 @@
 
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12192,7 +12351,7 @@
 	 */
 	'use strict';
 
-	var Button = __webpack_require__(48);
+	var Button = __webpack_require__(49);
 
 	var util = tui.util;
 
@@ -12246,7 +12405,7 @@
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12256,8 +12415,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(47),
-	    templater = __webpack_require__(52);
+	var UIController = __webpack_require__(48),
+	    templater = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -12448,7 +12607,7 @@
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	/**
@@ -12491,7 +12650,7 @@
 
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12501,7 +12660,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(47);
+	var UIController = __webpack_require__(48);
 
 	var util = tui.util,
 	    _id = 0,
@@ -12748,7 +12907,7 @@
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12758,7 +12917,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(47);
+	var UIController = __webpack_require__(48);
 
 	var util = tui.util;
 
@@ -12836,7 +12995,7 @@
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12846,7 +13005,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(53);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -12949,7 +13108,7 @@
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12959,8 +13118,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(53),
-	    Tab = __webpack_require__(51);
+	var LayerPopup = __webpack_require__(54),
+	    Tab = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -13146,7 +13305,7 @@
 
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13156,7 +13315,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(53);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13263,7 +13422,7 @@
 
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13273,7 +13432,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(53);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13626,7 +13785,7 @@
 
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13636,7 +13795,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(53);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13714,7 +13873,7 @@
 
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13724,7 +13883,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -13825,7 +13984,7 @@
 
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13835,7 +13994,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -14000,7 +14159,7 @@
 
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14010,7 +14169,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Blockquote
@@ -14069,7 +14228,7 @@
 
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14079,7 +14238,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var util = tui.util;
 
@@ -14159,7 +14318,7 @@
 
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14169,7 +14328,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * HR
@@ -14224,7 +14383,7 @@
 
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14234,7 +14393,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * AddLink
@@ -14278,7 +14437,7 @@
 
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14288,7 +14447,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * AddImage
@@ -14332,7 +14491,7 @@
 
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14342,7 +14501,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14396,7 +14555,7 @@
 
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14406,7 +14565,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14460,7 +14619,7 @@
 
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14470,7 +14629,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Table
@@ -14565,7 +14724,7 @@
 
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14575,7 +14734,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Task
@@ -14619,7 +14778,7 @@
 
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14629,7 +14788,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Code
@@ -14674,7 +14833,7 @@
 
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14684,7 +14843,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * CodeBlock
@@ -14727,7 +14886,7 @@
 
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14737,7 +14896,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Bold
@@ -14774,7 +14933,7 @@
 
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14784,7 +14943,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Italic
@@ -14820,7 +14979,7 @@
 
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14830,7 +14989,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Blockquote
@@ -14862,7 +15021,7 @@
 
 
 /***/ },
-/* 76 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14872,7 +15031,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * AddImage
@@ -14904,7 +15063,7 @@
 
 
 /***/ },
-/* 77 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14914,7 +15073,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * AddLink
@@ -14955,7 +15114,7 @@
 
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14965,7 +15124,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38),
+	var CommandManager = __webpack_require__(39),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15017,7 +15176,7 @@
 
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15027,7 +15186,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 	var domUtils = __webpack_require__(17);
 
 	/**
@@ -15065,7 +15224,7 @@
 
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15075,7 +15234,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * UL
@@ -15100,8 +15259,8 @@
 	        }
 
 	        if (sq.hasFormat('LI')) {
-	            sq.recordUndoState(range);
 	            wwe.saveSelection(range);
+	            sq.recordUndoState(range);
 	            wwe.getManager('task').unformatTask(range.startContainer);
 	            sq.replaceParent(range.startContainer, 'ol', 'ul');
 	            wwe.restoreSavedSelection();
@@ -15118,7 +15277,7 @@
 
 
 /***/ },
-/* 81 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15128,7 +15287,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * OL
@@ -15172,7 +15331,7 @@
 
 
 /***/ },
-/* 82 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15182,7 +15341,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -15297,7 +15456,7 @@
 
 
 /***/ },
-/* 83 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15307,7 +15466,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * AddRow
@@ -15363,7 +15522,7 @@
 
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15373,7 +15532,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38),
+	var CommandManager = __webpack_require__(39),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15450,7 +15609,7 @@
 
 
 /***/ },
-/* 85 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15460,7 +15619,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * RemoveRow
@@ -15512,7 +15671,7 @@
 
 
 /***/ },
-/* 86 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15522,7 +15681,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38),
+	var CommandManager = __webpack_require__(39),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15594,7 +15753,7 @@
 
 
 /***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15604,7 +15763,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * RemoveTable
@@ -15639,7 +15798,7 @@
 
 
 /***/ },
-/* 88 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15649,7 +15808,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * IncreaseDepth
@@ -15665,12 +15824,16 @@
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var range, $prev, prevClasses, $node, nodeClasses;
+	        var $prev, prevClasses, $node, nodeClasses;
+	        var range = wwe.getEditor().getSelection();
+	        var isInTaskList = wwe.getManager('task').isInTaskList(range);
+	            // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
+	            // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
+	        var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
 
-	        range = wwe.getEditor().getSelection();
-
-	        if (range.collapsed
-	            && wwe.getEditor().hasFormat('li')
+	        if ((isInTaskList && range.startOffset <= 1)
+	            || isOffsetEuqals2InDIVForIE10
+	            || range.startOffset === 0
 	        ) {
 	            $node = $(range.startContainer).closest('li');
 	            $prev = $node.prev();
@@ -15699,7 +15862,76 @@
 
 
 /***/ },
-/* 89 */
+/* 90 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements incease depth wysiwyg command
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var CommandManager = __webpack_require__(39);
+
+	/**
+	 * DecreaseDepth
+	 * decrease depth of list or task to wysiwyg Editor
+	 * @exports IncreaseDepth
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
+	    name: 'DecreaseDepth',
+	    /**
+	     *  커맨드 핸들러
+	     *  @param {WysiwygEditor} wwe WysiwygEditor instance
+	     */
+	    exec: function(wwe) {
+	        var $node, nodeClasses, $input;
+	        var range = wwe.getEditor().getSelection();
+	        var isInTaskList = wwe.getManager('task').isInTaskList(range);
+	        // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
+	        // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
+	        var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
+
+	        $node = $(range.startContainer).closest('li');
+	        $input = $($node.find('input:checkbox')[0]);
+	        if ((isInTaskList && range.startOffset <= 1)
+	            || isOffsetEuqals2InDIVForIE10
+	            || range.startOffset === 0
+	        ) {
+	            wwe.getEditor().recordUndoState(range);
+
+	            nodeClasses = $node.attr('class');
+	            $node.removeAttr('class');
+
+	            wwe.getEditor().decreaseListLevel();
+
+	            if ($input.length && ($input.parents('ol,ul').length === 0
+	                || $input.parents('li').length === 0
+	                || !$input.parents('li').hasClass('task-list-item'))
+	            ) {
+	                $input.remove();
+	            } else {
+	                range = wwe.getEditor().getSelection().cloneRange();
+	                $node = $(range.startContainer).closest('li');
+
+	                if (nodeClasses) {
+	                    $node.attr('class', nodeClasses);
+	                } else {
+	                    $node.removeAttr('class');
+	                }
+	            }
+	        }
+	    }
+	});
+
+	module.exports = DecreaseDepth;
+
+
+/***/ },
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15709,7 +15941,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	/**
 	 * Task
@@ -15751,7 +15983,7 @@
 
 
 /***/ },
-/* 90 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -15762,7 +15994,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38),
+	var CommandManager = __webpack_require__(39),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15822,7 +16054,7 @@
 
 
 /***/ },
-/* 91 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15832,7 +16064,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(38);
+	var CommandManager = __webpack_require__(39);
 
 	var codeBlockID = 0,
 	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
