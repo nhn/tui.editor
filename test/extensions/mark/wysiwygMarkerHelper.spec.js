@@ -17,7 +17,7 @@ describe('WysiwygMarkerHelper', function() {
 
         wmh = new WysiwygMarkerHelper(sqe);
 
-        sqe.setHTML('<h1>TEXT1&#8203</h1><h2>TEXT2</h2>');
+        sqe.setHTML('<h1>TEXT1&#8203<b></b></h1><h2>TEXT2<i></i></h2>');
     });
 
     afterEach(function() {
@@ -96,7 +96,7 @@ describe('WysiwygMarkerHelper', function() {
     it('get marker when end range pointed to textNode but end container is not text node', function() {
         var range, marker;
 
-        sqe.setHTML('<ul><li><input type="checkbox" /> text1</li></ul');
+        sqe.setHTML('<ul><li><input type="checkbox" /> text1</li></ul>');
 
         range = sqe.getSelection().cloneRange();
         range.setStart(sqe.get$Body().find('li')[0], 1);
