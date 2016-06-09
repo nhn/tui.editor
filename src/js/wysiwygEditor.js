@@ -312,6 +312,18 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
             self._scrollToRangeIfNeed();
         }, 0);
     });
+
+    this.addKeyEventHandler('TAB', function(ev) {
+        var editor = self.getEditor();
+        var range = editor.getSelection().cloneRange();
+        var isInList = $(range.startContainer).parents('LI').length !== 0;
+
+        ev.preventDefault();
+
+        if (!isInList) {
+            editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
+        }
+    });
 };
 
 WysiwygEditor.prototype._scrollToRangeIfNeed = function() {
