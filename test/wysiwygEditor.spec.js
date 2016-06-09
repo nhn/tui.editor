@@ -93,6 +93,51 @@ describe('WysiwygEditor', function() {
             });
             expect(handler).not.toHaveBeenCalled();
         });
+
+        it('should insert 4 spaces when "TAB" pressed', function() {
+            wwe.getEditor().setHTML('');
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: document.createEvent('KeyboardEvent')
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('\u00a0\u00a0\u00a0\u00a0');
+        });
+
+        it('should not insert 4 spaces when "TAB" pressed in list item', function() {
+            var range = wwe.getEditor().getSelection();
+
+            wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
+
+            range.setStart(wwe.get$Body().find('li>div')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: document.createEvent('KeyboardEvent')
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('');
+        });
+
+        it('should not insert 4 spaces when "TAB" pressed in task list', function() {
+            var range = wwe.getEditor().getSelection();
+
+            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>');
+
+            range.setStartAfter(wwe.get$Body().find('div>input')[0]);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: document.createEvent('KeyboardEvent')
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('');
+        });
     });
 
     describe('Event', function() {
