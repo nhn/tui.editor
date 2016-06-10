@@ -317,10 +317,11 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
         var editor = self.getEditor();
         var isAbleToInsert4Space = !self.getManager('list').isInList();
 
-        ev.preventDefault();
-
         if (isAbleToInsert4Space) {
+            ev.preventDefault();
             editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
+
+            return false;
         }
     });
 };
