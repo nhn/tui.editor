@@ -97,11 +97,10 @@ describe('DecreaseDepth', function() {
 
             expect($Body.find('ul li').length).toEqual(3);
             expect($Body.find('ul li ul').length).toEqual(0);
-            expect($Body.find('ul li ul li').length).toEqual(0);
-            expect($Body.find('ul li input').length).toEqual(2);
-            expect($($Body.find('ul li')[0]).hasClass('task-list-item')).toBe(true);
-            expect($($Body.find('ul li')[1]).hasClass('task-list-item')).toBe(false);
-            expect($($Body.find('ul li')[2]).hasClass('task-list-item')).toBe(true);
+            expect($Body.find('input').length).toEqual(2);
+            expect($Body.find('ul li').eq(0).hasClass('task-list-item')).toBe(true);
+            expect($Body.find('ul li').eq(1).hasClass('task-list-item')).toBe(false);
+            expect($Body.find('ul li').eq(2).hasClass('task-list-item')).toBe(true);
         });
     });
     describe('should decrease depth when cursor', function() {
