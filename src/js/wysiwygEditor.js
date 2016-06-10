@@ -315,12 +315,11 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 
     this.addKeyEventHandler('TAB', function(ev) {
         var editor = self.getEditor();
-        var range = editor.getSelection().cloneRange();
-        var isInList = $(range.startContainer).parents('LI').length !== 0;
+        var isAbleToInsert4Space = !self.getManager('list').isInList();
 
         ev.preventDefault();
 
-        if (!isInList) {
+        if (isAbleToInsert4Space) {
             editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
         }
     });
