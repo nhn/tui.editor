@@ -323,6 +323,8 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 
             return false;
         }
+
+        return true;
     });
 };
 
