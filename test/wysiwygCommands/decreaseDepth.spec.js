@@ -71,6 +71,38 @@ describe('DecreaseDepth', function() {
         expect(sq.get$Body().find('ul li input').length).toEqual(2);
         expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
     });
+    describe('should guarantee to remove non task`s class attribute', function() {
+        it('when super depth is task and child depth is not', function() {
+            var range = wwe.getEditor().getSelection().cloneRange();
+            var $Body;
+
+            wwe.get$Body().html([
+                '<ul>',
+                '<li class="task-list-item"><div><input type="checkbox"> abcdef</div>',
+                '<ul>',
+                '<li><div>abcde</div></li>',
+                '</ul></li>',
+                '<li class="task-list-item"><div><input type="checkbox"> </div></li>',
+                '</ul>'
+            ].join(''));
+
+            range.setStart(wwe.get$Body().find('li>div')[1], 0);
+            range.collapse(true);
+
+            sq.setSelection(range);
+
+            DecreaseDepth.exec(wwe);
+
+            $Body = sq.get$Body();
+
+            expect($Body.find('ul li').length).toEqual(3);
+            expect($Body.find('ul li ul').length).toEqual(0);
+            expect($Body.find('input').length).toEqual(2);
+            expect($Body.find('ul li').eq(0).hasClass('task-list-item')).toBe(true);
+            expect($Body.find('ul li').eq(1).hasClass('task-list-item')).toBe(false);
+            expect($Body.find('ul li').eq(2).hasClass('task-list-item')).toBe(true);
+        });
+    });
     describe('should decrease depth when cursor', function() {
         it('at startOffset 0.', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
