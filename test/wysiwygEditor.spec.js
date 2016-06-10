@@ -1,7 +1,8 @@
 'use strict';
 
 var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager');
+    EventManager = require('../src/js/eventManager'),
+    ListManager = require('../src/js/wwListManager');
 
 describe('WysiwygEditor', function() {
     var $container, em, wwe;
@@ -35,6 +36,10 @@ describe('WysiwygEditor', function() {
     });
 
     describe('managing key event handlers', function() {
+        beforeEach(function() {
+            wwe.addManager('list', ListManager);
+        });
+
         it('add key event handler and run', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler(handler);
@@ -99,7 +104,9 @@ describe('WysiwygEditor', function() {
 
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
-                data: document.createEvent('KeyboardEvent')
+                data: {
+                    preventDefault: function() {}
+                }
             });
 
             expect(wwe.get$Body().find('div').text()).toBe('\u00a0\u00a0\u00a0\u00a0');
@@ -116,7 +123,9 @@ describe('WysiwygEditor', function() {
 
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
-                data: document.createEvent('KeyboardEvent')
+                data: {
+                    preventDefault: function() {}
+                }
             });
 
             expect(wwe.get$Body().find('div').text()).toBe('');
@@ -133,7 +142,9 @@ describe('WysiwygEditor', function() {
 
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
-                data: document.createEvent('KeyboardEvent')
+                data: {
+                    preventDefault: function() {}
+                }
             });
 
             expect(wwe.get$Body().find('div').text()).toBe('');
