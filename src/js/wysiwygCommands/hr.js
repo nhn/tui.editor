@@ -23,9 +23,10 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
+        var TEXT_TYPE_NODE = 3;
         var sq = wwe.getEditor(),
             range = sq.getSelection(),
-            currentNode, nextBlockNode;
+            currentNode, nextBlockNode, hr, previousSibling;
 
         if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
@@ -36,11 +37,21 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
                 wwe.get$Body().append(nextBlockNode);
             }
 
+            hr = sq.createElement('HR');
+
             sq.modifyBlocks(function(frag) {
-                frag.appendChild(sq.createElement('HR'));
+                frag.appendChild(hr);
 
                 return frag;
             });
+
+            previousSibling = hr.previousSibling;
+            if (previousSibling
+                && previousSibling.nodeType === TEXT_TYPE_NODE
+                && previousSibling.nodeValue.length === 0
+            ) {
+                hr.parentNode.removeChild(previousSibling);
+            }
 
             range.selectNodeContents(nextBlockNode);
             range.collapse(true);
