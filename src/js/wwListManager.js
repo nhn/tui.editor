@@ -56,4 +56,14 @@ WwListManager.prototype._findAndRemoveEmptyList = function() {
         });
 };
 
+/**
+ * Return boolean value that current range is in the List or not
+ * @returns {boolean}
+ */
+WwListManager.prototype.isInList = function() {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+    return $(range.startContainer).parents('LI').length !== 0;
+};
+
 module.exports = WwListManager;
