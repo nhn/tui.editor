@@ -24,8 +24,11 @@ describe('WwSelectionMarker', function() {
         wwsm = new WwSelectionMarker();
     });
 
-    afterEach(function() {
-        $('body').empty();
+    afterEach(function(done) {
+        setTimeout(function() {
+            $('body').empty();
+            done();
+        });
     });
 
     describe('insert selection marker', function() {
