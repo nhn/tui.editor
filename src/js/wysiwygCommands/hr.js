@@ -23,7 +23,6 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var TEXT_TYPE_NODE = 3;
         var sq = wwe.getEditor(),
             range = sq.getSelection(),
             currentNode, nextBlockNode, hr, previousSibling;
@@ -47,8 +46,8 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
 
             previousSibling = hr.previousSibling;
             if (previousSibling
-                && previousSibling.nodeType === TEXT_TYPE_NODE
-                && previousSibling.nodeValue.length === 0
+                && domUtils.isTextNode(previousSibling)
+                && domUtils.getTextLength(previousSibling) === 0
             ) {
                 hr.parentNode.removeChild(previousSibling);
             }
