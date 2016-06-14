@@ -1,7 +1,8 @@
 'use strict';
 
 var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager');
+    EventManager = require('../src/js/eventManager'),
+    ListManager = require('../src/js/wwListManager');
 
 describe('WysiwygEditor', function() {
     var $container, em, wwe;
@@ -35,6 +36,10 @@ describe('WysiwygEditor', function() {
     });
 
     describe('managing key event handlers', function() {
+        beforeEach(function() {
+            wwe.addManager('list', ListManager);
+        });
+
         it('add key event handler and run', function() {
             var handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler(handler);
@@ -92,6 +97,57 @@ describe('WysiwygEditor', function() {
                 data: {keyCode:0}
             });
             expect(handler).not.toHaveBeenCalled();
+        });
+
+        it('should insert 4 spaces when "TAB" pressed', function() {
+            wwe.getEditor().setHTML('');
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('\u00a0\u00a0\u00a0\u00a0');
+        });
+
+        it('should not insert 4 spaces when "TAB" pressed in list item', function() {
+            var range = wwe.getEditor().getSelection();
+
+            wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
+
+            range.setStart(wwe.get$Body().find('li>div')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('');
+        });
+
+        it('should not insert 4 spaces when "TAB" pressed in task list', function() {
+            var range = wwe.getEditor().getSelection();
+
+            wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>');
+
+            range.setStartAfter(wwe.get$Body().find('div>input')[0]);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            em.emit('wysiwygKeyEvent', {
+                keyMap: 'TAB',
+                data: {
+                    preventDefault: function() {}
+                }
+            });
+
+            expect(wwe.get$Body().find('div').text()).toBe('');
         });
     });
 

@@ -312,6 +312,20 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
             self._scrollToRangeIfNeed();
         }, 0);
     });
+
+    this.addKeyEventHandler('TAB', function(ev) {
+        var editor = self.getEditor();
+        var isAbleToInsert4Space = !self.getManager('list').isInList();
+
+        if (isAbleToInsert4Space) {
+            ev.preventDefault();
+            editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
+
+            return false;
+        }
+
+        return true;
+    });
 };
 
 WysiwygEditor.prototype._scrollToRangeIfNeed = function() {
