@@ -148,6 +148,24 @@ describe('MarkdownEditor', function() {
         });
     });
 
+    fdescribe('getRange', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+        it('get current selection range', function() {
+            var start = mde.getEditor().getCursor('from');
+            var end = mde.getEditor().getCursor('to');
+            var range = mde.getRange();
+
+            expect(range.start).toBeDefined();
+            expect(range.start.line).toEqual(start.line);
+            expect(range.start.ch).toEqual(start.ch);
+            expect(range.end).toBeDefined();
+            expect(range.end.line).toEqual(end.line);
+            expect(range.end.ch).toEqual(end.ch);
+        });
+    });
+
     //we dont make codemirror scrollTop tc cuz codemirror css file could not be loaded
     xdescribe('get, set scrollTop', function() {
         beforeEach(function() {

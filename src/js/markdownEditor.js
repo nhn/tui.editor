@@ -271,4 +271,20 @@ MarkdownEditor.prototype.scrollTop = function(value) {
     return this.cm.getScrollInfo().top;
 };
 
+MarkdownEditor.prototype.getRange = function() {
+    var start = this.getEditor().getCursor('from');
+    var end = this.getEditor().getCursor('to');
+
+    return {
+        start: {
+            line: start.line,
+            ch: start.ch
+        },
+        end: {
+            line: end.line,
+            ch: end.ch
+        }
+    };
+};
+
 module.exports = MarkdownEditor;
