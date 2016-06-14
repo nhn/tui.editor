@@ -2,7 +2,8 @@
 
 var WysiwygEditor = require('../src/js/wysiwygEditor'),
     EventManager = require('../src/js/eventManager'),
-    WwHrManager = require('../src/js/wwHrManager');
+    WwHrManager = require('../src/js/wwHrManager'),
+    Hr = require('../src/js/wysiwygCommands/hr');
 
 describe('WwHrManager', function() {
     var $container, em, wwe, mgr;
@@ -34,10 +35,13 @@ describe('WwHrManager', function() {
         it('remove hr current selection is hr', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<hr><div>abcd<br></div>');
+            wwe.setValue('<div>abcd<br></div>');
 
             range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+            Hr.exec(wwe);
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
@@ -64,7 +68,7 @@ describe('WwHrManager', function() {
 
             wwe.setValue('<div><b>abcd</b><<br></div><hr>');
 
-            range.setStart(wwe.get$Body()[0], 1);
+            range.setStartAfter(wwe.get$Body().children().eq(1)[0]);
             range.collapse(true);
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
@@ -79,10 +83,14 @@ describe('WwHrManager', function() {
             var range = wwe.getEditor().getSelection().cloneRange(),
                 newRange;
 
-            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
+            wwe.setValue('<div><b>abcd</b><<br></div>');
 
             range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+            Hr.exec(wwe);
+
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
             newRange = wwe.getEditor().getSelection();
@@ -97,10 +105,13 @@ describe('WwHrManager', function() {
         it('if text content is typed in hr then break new block', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<hr><div>abcd<br></div>');
+            wwe.setValue('<div>abcd<br></div>');
 
-            range.selectNode(wwe.get$Body().find('hr')[0]);
+            range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+            Hr.exec(wwe);
 
             mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
@@ -114,7 +125,13 @@ describe('WwHrManager', function() {
         it('remove hr current selection is hr', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<hr><div>abcd<br></div>');
+            wwe.setValue('<div>abcd<br></div>');
+
+            range.setStart(wwe.get$Body()[0], 0);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+            Hr.exec(wwe);
 
             range.selectNode(wwe.get$Body().find('hr')[0]);
             range.collapse(true);
