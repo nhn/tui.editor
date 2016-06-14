@@ -4,7 +4,7 @@ var MdTextObject = require('../src/js/mdTextObject');
 var MarkdownEditor = require('../src/js/markdownEditor');
 var EventManager = require('../src/js/eventManager');
 
-fdescribe('MdTextObject', function() {
+describe('MdTextObject', function() {
     var cm, doc, mde, to;
 
     beforeEach(function() {
@@ -118,7 +118,7 @@ fdescribe('MdTextObject', function() {
         });
     });
 
-    describe('Remove text content within range', function() {
+    describe('Delete text content within range', function() {
         beforeEach(function() {
             to = new MdTextObject(mde, {
                 start: {
@@ -132,8 +132,8 @@ fdescribe('MdTextObject', function() {
             });
         });
 
-        it('remove text', function() {
-            to.removeContent();
+        it('delete text', function() {
+            to.deleteContent();
             expect(doc.getValue()).toEqual('tt textObject');
         });
     });

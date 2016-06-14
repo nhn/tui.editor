@@ -465,4 +465,11 @@ describe('WysiwygEditor', function() {
             expect(wwe.getEditor().scrollTop()).toEqual(0);
         });
     });
+
+    describe('get current range', function() {
+        it('get range', function() {
+            var range = wwe.getEditor().getSelection();
+            expect(wwe.getRange()).toEqual(range);
+        });
+    });
 });

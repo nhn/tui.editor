@@ -148,7 +148,7 @@ describe('MarkdownEditor', function() {
         });
     });
 
-    fdescribe('getRange', function() {
+    describe('getRange', function() {
         beforeEach(function() {
             mde.init();
         });

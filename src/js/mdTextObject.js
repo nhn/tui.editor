@@ -45,7 +45,7 @@ mdTextObject.prototype.replaceContent = function(content) {
     this._mde.getEditor().replaceRange(content, this._start, this._end);
 };
 
-mdTextObject.prototype.removeContent = function() {
+mdTextObject.prototype.deleteContent = function() {
     this._mde.getEditor().replaceRange('', this._start, this._end);
 };
 

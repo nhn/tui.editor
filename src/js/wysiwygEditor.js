@@ -850,6 +850,10 @@ WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
     this.getEditor().setSelection(range);
 };
 
+WysiwygEditor.prototype.getRange = function() {
+    return this.getEditor().getSelection().cloneRange();
+};
+
 /**
  * WysiwygEditor factory
  * @param {jQuery} $el element to insert editor
