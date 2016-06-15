@@ -44,7 +44,6 @@ describe('MarkdownEditor', function() {
 
         it('when something change emit changeFromMarkdown event', function(done) {
             em.listen('changeFromMarkdown', function(ev) {
-                expect(ev.textContent).toEqual('my');
                 done();
             });
 
@@ -53,8 +52,6 @@ describe('MarkdownEditor', function() {
 
         it('when something change emit change event', function(done) {
             em.listen('change', function(ev) {
-                expect(ev.textContent).toEqual('comment');
-                expect(ev.caretOffset).toEqual(7);
                 expect(ev.source).toEqual('markdown');
 
                 done();
@@ -145,6 +142,24 @@ describe('MarkdownEditor', function() {
 
             expect(mde.getEditor().getCursor().line).toEqual(3);
             expect(mde.getEditor().getCursor().ch).toEqual(0);
+        });
+    });
+
+    describe('getRange', function() {
+        beforeEach(function() {
+            mde.init();
+        });
+        it('get current selection range', function() {
+            var start = mde.getEditor().getCursor('from');
+            var end = mde.getEditor().getCursor('to');
+            var range = mde.getRange();
+
+            expect(range.start).toBeDefined();
+            expect(range.start.line).toEqual(start.line);
+            expect(range.start.ch).toEqual(start.ch);
+            expect(range.end).toBeDefined();
+            expect(range.end.line).toEqual(end.line);
+            expect(range.end.ch).toEqual(end.ch);
         });
     });
 

@@ -19,6 +19,8 @@ var domUtils = require('./domUtils'),
 
 var keyMapper = require('./keyMapper').getSharedInstance();
 
+var WwTextObject = require('./wwTextObject');
+
 var util = tui.util;
 
 var FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
@@ -134,7 +136,7 @@ WysiwygEditor.prototype.addKeyEventHandler = function(keyMap, handler) {
  * @param {string} keyMap keyMapString
  */
 WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
-    var range = this.getEditor().getSelection().cloneRange(),
+    var range = this.getRange(),
         handlers, isNeedNext;
 
     handlers = this._keyEventHandlers.DEFAULT;
@@ -191,15 +193,11 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
     //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
     this.getEditor().addEventListener('input', util.debounce(function() {
-        var sel = self.editor.getSelection(),
-            eventObj;
+        var eventObj;
 
         if (!self._silentChange) {
             eventObj = {
-                source: 'wysiwyg',
-                selection: sel,
-                textContent: sel.endContainer.textContent,
-                caretOffset: sel.endOffset
+                source: 'wysiwyg'
             };
 
             self.eventManager.emit('changeFromWysiwyg', eventObj);
@@ -214,17 +212,73 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
     this.getEditor().addEventListener('keydown', function(keyboardEvent) {
         var range = self.getEditor().getSelection();
+
         if (!range.collapsed) {
             isNeedFirePostProcessForRangeChange = true;
         }
+
+        self.eventManager.emit('keydown', {
+            source: 'wysiwyg',
+            data: keyboardEvent
+        });
+
         self._onKeyDown(keyboardEvent);
     });
 
-    this.getEditor().addEventListener('keyup', function() {
+    if (util.browser.firefox) {
+        this.getEditor().addEventListener('keypress', function(keyboardEvent) {
+            var range = self.getEditor().getSelection();
+
+            if (!range.collapsed) {
+                isNeedFirePostProcessForRangeChange = true;
+            }
+
+            self.eventManager.emit('keydown', {
+                source: 'wysiwyg',
+                data: keyboardEvent
+            });
+
+            self._onKeyDown(keyboardEvent);
+        });
+
+        //파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
+        //이렇게 하지 않으면 textObject에 문제가 생긴다.
+        self.getEditor().addEventListener('keyup', function() {
+            var range, prevLen, curEl;
+
+            range = self.getRange();
+
+            if (domUtils.isTextNode(range.commonAncestorContainer)
+                && domUtils.isTextNode(range.commonAncestorContainer.previousSibling)) {
+                prevLen = range.commonAncestorContainer.previousSibling.length;
+                curEl = range.commonAncestorContainer;
+
+                range.commonAncestorContainer.previousSibling.appendData(
+                    range.commonAncestorContainer.data);
+
+                range.setStart(range.commonAncestorContainer.previousSibling, prevLen + range.startOffset);
+                range.collapse(true);
+
+                curEl.parentNode.removeChild(curEl);
+
+                self.getEditor().setSelection(range);
+                range.detach();
+            }
+        });
+    }
+
+    this.getEditor().addEventListener('keyup', function(keyboardEvent) {
+        var range = self.getRange();
+
         if (isNeedFirePostProcessForRangeChange) {
             self.postProcessForChange();
             isNeedFirePostProcessForRangeChange = false;
         }
+
+        self.eventManager.emit('keyup', {
+            source: 'wysiwyg',
+            data: keyboardEvent
+        });
     });
 
     this.getEditor().addEventListener('scroll', function(ev) {
@@ -510,6 +564,7 @@ WysiwygEditor.prototype.remove = function() {
     this.editor.removeEventListener('focus');
     this.editor.removeEventListener('blur');
     this.editor.removeEventListener('keydown');
+    this.editor.removeEventListener('keyup');
     this.editor.removeEventListener('keypress');
     this.editor.removeEventListener('paste');
     this.editor = null;
@@ -848,6 +903,14 @@ WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
     range.collapse(true);
 
     this.getEditor().setSelection(range);
+};
+
+WysiwygEditor.prototype.getRange = function() {
+    return this.getEditor().getSelection().cloneRange();
+};
+
+WysiwygEditor.prototype.getTextObject = function(range) {
+    return new WwTextObject(this, range);
 };
 
 /**

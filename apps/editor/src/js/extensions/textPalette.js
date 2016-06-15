@@ -3,45 +3,77 @@
 var extManager = require('../extManager');
 
 extManager.defineExtension('textPalette', function(editor) {
-    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
-    var triggers = editor.options.textPalette.triggers,
-        querySender = editor.options.textPalette.querySender;
+    var $layer = $('<div style="z-index:9999;border:1px solid #f00;width:200px"></div>');
+    var isTextPaleltteActive = false;
+    var to;
 
     $(editor.options.el).append($layer);
 
-    $layer.find('input').on('keyup', function(e) {
-        var query = $layer.find('input').val();
+    function showUI(list) {
+        $layer.html(list.join('<br>'));
+        $layer.show();
+    }
 
-        if (e.which === 13) {
-            e.stopPropagation();
-            //editor.getCurrentModeEditor().replaceSelection(query);
-            editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
-            editor.focus();
-            hideUI($layer);
+    function hideUI() {
+        $layer.hide();
+    }
+
+    editor.on('change', function() {
+        if (isTextPaleltteActive) {
+            //현제 커서위치까지 텍스트오브젝트의 범위를 확장한다.
+            to.setEndBeforeRange(editor.getRange());
+            showUI(['ac1', 'ac2', 'ac3', to.getTextContent()]);
         } else {
-            querySender(query, function(list) {
-                updateUI($layer, list);
-            });
+            //텍스트오브젝트를 만든다.
+            to = editor.getTextObject();
+            //스타트오프셋을 한칸 확장한다(커서이전의 텍스트로)
+            to.expandStartOffset();
+
+            //@인지 확인
+            if (to.getTextContent()[0] === '@') {
+                isTextPaleltteActive = true;
+                editor.addWidget(editor.getRange(), $layer[0]);
+                showUI(['ac1', 'ac2', 'ac3']);
+            }
         }
     });
 
-    editor.eventManager.listen('change', function(ev) {
-        if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
-            editor.addWidget(ev.selection, $layer[0], 'over');
-            showUI($layer);
+    editor.on('keyMap', function(ev) {
+        if (isTextPaleltteActive) {
+            switch (ev.keyMap) {
+                case 'ENTER': {
+                    ev.data.preventDefault();
+                    isTextPaleltteActive = false;
+
+                    //값을 변경하기전 현제 커서위치까지 텍스트오브젝트를 확장한다.
+                    to.setEndBeforeRange(editor.getRange());
+
+                    //텍스트 오브젝트 범위의 컨텐츠를 바꾼다.
+                    if (editor.isWysiwygMode()) {
+                        to.replaceContent('&nbsp;<b>--newTEXT--</b>&nbsp;');
+                    } else {
+                        to.replaceContent('**--newTEXT--** ');
+                    }
+                    hideUI();
+                    break;
+                }
+                case 'SPACE': {
+                    isTextPaleltteActive = false;
+                    hideUI();
+                    break;
+                }
+                case 'DOWN': {
+                    ev.data.preventDefault();
+                    console.log('셀렉트박스 내리기');
+                    break;
+                }
+                case 'UP': {
+                    ev.data.preventDefault();
+                    console.log('셀렉트박스 올리기');
+                    break;
+                }
+                default:
+            }
         }
     });
 });
-
-function showUI($layer) {
-    $layer.show();
-    $layer.find('input').focus();
-}
-
-function hideUI($layer) {
-    $layer.hide();
-    $layer.find('input').val('');
-}
-
-function updateUI() {
-}
