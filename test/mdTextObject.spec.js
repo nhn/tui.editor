@@ -8,8 +8,7 @@ describe('MdTextObject', function() {
     var cm, doc, mde, to;
 
     beforeEach(function() {
-        var $container = $('<div />'),
-            sourceText;
+        var $container = $('<div />');
 
         $('body').append($container);
 

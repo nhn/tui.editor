@@ -45,7 +45,7 @@ describe('WwTextObject', function() {
             expect(to._range).toEqual(range);
         });
 
-        it('if current selection has no textnode and collapsed then find previousSibling', function() {
+        xit('if current selection has no textnode and collapsed then find previousSibling', function() {
             var range = wwe.getRange();
             range.selectNode(wwe.get$Body().find('br')[0]);
             range.collapse(true);

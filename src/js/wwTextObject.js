@@ -21,7 +21,7 @@ function WwTextObject(wwe, range) {
 }
 
 WwTextObject.prototype.setRange = function(range) {
-    //텍스트를 입력받을 수 없는 상태인경우 처리
+    /*//텍스트를 입력받을 수 없는 상태인경우 처리
     if (range.collapsed && range.commonAncestorContainer.nodeType !== Node.TEXT_NODE) {
         //IE10 회피용
         //마지막노드 +1을 가르킨다 === undefined
@@ -34,8 +34,9 @@ WwTextObject.prototype.setRange = function(range) {
 
         range.setStart(range.endContainer, range.endOffset);
         range.collapse(true);
+        console.log('range change', range.endContainer, range.endOffset);
     }
-
+*/
     this._range = range;
 };
 
@@ -44,6 +45,7 @@ WwTextObject.prototype.setEndBeforeRange = function(range) {
 };
 
 WwTextObject.prototype.getTextContent = function() {
+//    console.log('range change', this._range.startContainer, this._range.startOffset);
     return this._range.cloneContents().textContent;
 };
 
