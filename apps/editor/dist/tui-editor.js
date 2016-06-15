@@ -1316,48 +1316,80 @@
 	var extManager = __webpack_require__(6);
 
 	extManager.defineExtension('textPalette', function(editor) {
-	    var $layer = $('<div style="z-index:9999"><input type="text" style="background:white" /></div>');
-	    var triggers = editor.options.textPalette.triggers,
-	        querySender = editor.options.textPalette.querySender;
+	    var $layer = $('<div style="z-index:9999;border:1px solid #f00;width:200px"></div>');
+	    var isTextPaleltteActive = false;
+	    var to;
 
 	    $(editor.options.el).append($layer);
 
-	    $layer.find('input').on('keyup', function(e) {
-	        var query = $layer.find('input').val();
+	    function showUI(list) {
+	        $layer.html(list.join('<br>'));
+	        $layer.show();
+	    }
 
-	        if (e.which === 13) {
-	            e.stopPropagation();
-	            //editor.getCurrentModeEditor().replaceSelection(query);
-	            editor.getCurrentModeEditor().replaceRelativeOffset(query, -1, 1);
-	            editor.focus();
-	            hideUI($layer);
+	    function hideUI() {
+	        $layer.hide();
+	    }
+
+	    editor.on('change', function() {
+	        if (isTextPaleltteActive) {
+	            //현제 커서위치까지 텍스트오브젝트의 범위를 확장한다.
+	            to.setEndBeforeRange(editor.getRange());
+	            showUI(['ac1', 'ac2', 'ac3', to.getTextContent()]);
 	        } else {
-	            querySender(query, function(list) {
-	                updateUI($layer, list);
-	            });
+	            //텍스트오브젝트를 만든다.
+	            to = editor.getTextObject();
+	            //스타트오프셋을 한칸 확장한다(커서이전의 텍스트로)
+	            to.expandStartOffset();
+
+	            //@인지 확인
+	            if (to.getTextContent()[0] === '@') {
+	                isTextPaleltteActive = true;
+	                editor.addWidget(editor.getRange(), $layer[0]);
+	                showUI(['ac1', 'ac2', 'ac3']);
+	            }
 	        }
 	    });
 
-	    editor.eventManager.listen('change', function(ev) {
-	        if (triggers.indexOf(ev.textContent[ev.caretOffset - 1]) !== -1) {
-	            editor.addWidget(ev.selection, $layer[0], 'over');
-	            showUI($layer);
+	    editor.on('keyMap', function(ev) {
+	        if (isTextPaleltteActive) {
+	            switch (ev.keyMap) {
+	                case 'ENTER': {
+	                    ev.data.preventDefault();
+	                    isTextPaleltteActive = false;
+
+	                    //값을 변경하기전 현제 커서위치까지 텍스트오브젝트를 확장한다.
+	                    to.setEndBeforeRange(editor.getRange());
+
+	                    //텍스트 오브젝트 범위의 컨텐츠를 바꾼다.
+	                    if (editor.isWysiwygMode()) {
+	                        to.replaceContent('&nbsp;<b>--newTEXT--</b>&nbsp;');
+	                    } else {
+	                        to.replaceContent('**--newTEXT--** ');
+	                    }
+	                    hideUI();
+	                    break;
+	                }
+	                case 'SPACE': {
+	                    isTextPaleltteActive = false;
+	                    hideUI();
+	                    break;
+	                }
+	                case 'DOWN': {
+	                    ev.data.preventDefault();
+	                    console.log('셀렉트박스 내리기');
+	                    break;
+	                }
+	                case 'UP': {
+	                    ev.data.preventDefault();
+	                    console.log('셀렉트박스 올리기');
+	                    break;
+	                }
+	                default:
+	            }
 	        }
 	    });
 	});
-
-	function showUI($layer) {
-	    $layer.show();
-	    $layer.find('input').focus();
-	}
-
-	function hideUI($layer) {
-	    $layer.hide();
-	    $layer.find('input').val('');
-	}
-
-	function updateUI() {
-	}
 
 
 /***/ },
@@ -6022,55 +6054,55 @@
 	'use strict';
 
 	var MarkdownEditor = __webpack_require__(21),
-	    Preview = __webpack_require__(23),
-	    WysiwygEditor = __webpack_require__(25),
-	    Layout = __webpack_require__(37),
-	    EventManager = __webpack_require__(38),
-	    CommandManager = __webpack_require__(39),
+	    Preview = __webpack_require__(24),
+	    WysiwygEditor = __webpack_require__(26),
+	    Layout = __webpack_require__(39),
+	    EventManager = __webpack_require__(40),
+	    CommandManager = __webpack_require__(41),
 	    extManager = __webpack_require__(6),
-	    ImportManager = __webpack_require__(41),
-	    Convertor = __webpack_require__(43),
-	    ViewOnly = __webpack_require__(45),
-	    markedRenderer = __webpack_require__(44),
-	    DefaultUI = __webpack_require__(46);
+	    ImportManager = __webpack_require__(43),
+	    Convertor = __webpack_require__(45),
+	    ViewOnly = __webpack_require__(47),
+	    markedRenderer = __webpack_require__(46),
+	    DefaultUI = __webpack_require__(48);
 
 
 	//markdown commands
-	var mdBold = __webpack_require__(61),
-	    mdItalic = __webpack_require__(62),
-	    mdBlockquote = __webpack_require__(63),
-	    mdHeading = __webpack_require__(64),
-	    mdHR = __webpack_require__(65),
-	    mdAddLink = __webpack_require__(66),
-	    mdAddImage = __webpack_require__(67),
-	    mdUL = __webpack_require__(68),
-	    mdOL = __webpack_require__(69),
-	    mdTable = __webpack_require__(70),
-	    mdTask = __webpack_require__(71),
-	    mdCode = __webpack_require__(72),
-	    mdCodeBlock = __webpack_require__(73);
+	var mdBold = __webpack_require__(63),
+	    mdItalic = __webpack_require__(64),
+	    mdBlockquote = __webpack_require__(65),
+	    mdHeading = __webpack_require__(66),
+	    mdHR = __webpack_require__(67),
+	    mdAddLink = __webpack_require__(68),
+	    mdAddImage = __webpack_require__(69),
+	    mdUL = __webpack_require__(70),
+	    mdOL = __webpack_require__(71),
+	    mdTable = __webpack_require__(72),
+	    mdTask = __webpack_require__(73),
+	    mdCode = __webpack_require__(74),
+	    mdCodeBlock = __webpack_require__(75);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(74),
-	    wwItalic = __webpack_require__(75),
-	    wwBlockquote = __webpack_require__(76),
-	    wwAddImage = __webpack_require__(77),
-	    wwAddLink = __webpack_require__(78),
-	    wwHR = __webpack_require__(79),
-	    wwHeading = __webpack_require__(80),
-	    wwUL = __webpack_require__(81),
-	    wwOL = __webpack_require__(82),
-	    wwTable = __webpack_require__(83),
-	    wwTableAddRow = __webpack_require__(84),
-	    wwTableAddCol = __webpack_require__(85),
-	    wwTableRemoveRow = __webpack_require__(86),
-	    wwTableRemoveCol = __webpack_require__(87),
-	    wwTableRemove = __webpack_require__(88),
-	    wwIncreaseDepth = __webpack_require__(89),
-	    wwDecreaseDepth = __webpack_require__(90),
-	    wwTask = __webpack_require__(91),
-	    wwCode = __webpack_require__(92),
-	    wwCodeBlock = __webpack_require__(93);
+	var wwBold = __webpack_require__(76),
+	    wwItalic = __webpack_require__(77),
+	    wwBlockquote = __webpack_require__(78),
+	    wwAddImage = __webpack_require__(79),
+	    wwAddLink = __webpack_require__(80),
+	    wwHR = __webpack_require__(81),
+	    wwHeading = __webpack_require__(82),
+	    wwUL = __webpack_require__(83),
+	    wwOL = __webpack_require__(84),
+	    wwTable = __webpack_require__(85),
+	    wwTableAddRow = __webpack_require__(86),
+	    wwTableAddCol = __webpack_require__(87),
+	    wwTableRemoveRow = __webpack_require__(88),
+	    wwTableRemoveCol = __webpack_require__(89),
+	    wwTableRemove = __webpack_require__(90),
+	    wwIncreaseDepth = __webpack_require__(91),
+	    wwDecreaseDepth = __webpack_require__(92),
+	    wwTask = __webpack_require__(93),
+	    wwCode = __webpack_require__(94),
+	    wwCodeBlock = __webpack_require__(95);
 
 	var util = tui.util;
 
@@ -6334,6 +6366,14 @@
 	    this.mdEditor.reset();
 	};
 
+	ToastUIEditor.prototype.getRange = function() {
+	    return this.getCurrentModeEditor().getRange();
+	};
+
+	ToastUIEditor.prototype.getTextObject = function(range) {
+	    return this.getCurrentModeEditor().getTextObject(range);
+	};
+
 	ToastUIEditor.getInstances = function() {
 	    return __nedInstance;
 	};
@@ -6341,6 +6381,7 @@
 	ToastUIEditor.defineExtension = function(name, ext) {
 	    extManager.defineExtension(name, ext);
 	};
+
 
 	ToastUIEditor.factory = function(options) {
 	    var tuiEditor;
@@ -6406,6 +6447,7 @@
 	'use strict';
 
 	var keyMapper = __webpack_require__(22).getSharedInstance();
+	var MdTextObject = __webpack_require__(23);
 
 	var CodeMirror = window.CodeMirror;
 
@@ -6484,9 +6526,21 @@
 	    });
 
 	    this.cm.on('keydown', function(cm, keyboardEvent) {
+	        self.eventManager.emit('keydown', {
+	            source: 'markdown',
+	            data: keyboardEvent
+	        });
+
 	        self.eventManager.emit('keyMap', {
 	            source: 'markdown',
 	            keyMap: keyMapper.convert(keyboardEvent),
+	            data: keyboardEvent
+	        });
+	    });
+
+	    this.cm.on('keyup', function(cm, keyboardEvent) {
+	        self.eventManager.emit('keyup', {
+	            source: 'markdown',
 	            data: keyboardEvent
 	        });
 	    });
@@ -6587,16 +6641,11 @@
 	};
 
 	MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-	    var eventObj, cursor;
+	    var eventObj;
 
 	    if (e.origin !== 'setValue') {
-	        cursor = this.getEditor().getCursor();
-
 	        eventObj = {
-	            source: 'markdown',
-	            selection: cursor,
-	            textContent: this.cm.getDoc().getLine(cursor.line) || '',
-	            caretOffset: cursor.ch
+	            source: 'markdown'
 	        };
 
 	        this.eventManager.emit('changeFromMarkdown', eventObj);
@@ -6613,7 +6662,7 @@
 	        selection.ch += offset;
 	    }
 
-	    this.cm.addWidget(selection, node, true, style);
+	    this.cm.addWidget(selection.end, node, true, style);
 	};
 
 	MarkdownEditor.prototype.replaceSelection = function(content, selection) {
@@ -6669,6 +6718,26 @@
 	    }
 
 	    return this.cm.getScrollInfo().top;
+	};
+
+	MarkdownEditor.prototype.getRange = function() {
+	    var start = this.getEditor().getCursor('from');
+	    var end = this.getEditor().getCursor('to');
+
+	    return {
+	        start: {
+	            line: start.line,
+	            ch: start.ch
+	        },
+	        end: {
+	            line: end.line,
+	            ch: end.ch
+	        }
+	    };
+	};
+
+	MarkdownEditor.prototype.getTextObject = function(range) {
+	    return new MdTextObject(this, range);
 	};
 
 	module.exports = MarkdownEditor;
@@ -7013,6 +7082,80 @@
 
 /***/ },
 /* 23 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements markdown textObject
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	/**
+	 * Markdown textObject
+	 * @exports mdTextObject
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {MarkdownEditor} mde markdownEditor
+	 * @param {object} range range
+	 */
+	function mdTextObject(mde, range) {
+	    this._mde = mde;
+
+	    this.setRange(range || mde.getRange());
+	}
+
+	mdTextObject.prototype._setStart = function(rangeStart) {
+	    this._start = rangeStart;
+	};
+
+	mdTextObject.prototype._setEnd = function(rangeEnd) {
+	    this._end = rangeEnd;
+	};
+
+	mdTextObject.prototype.setRange = function(range) {
+	    this._setStart(range.start);
+	    this._setEnd(range.end);
+	};
+
+	mdTextObject.prototype.setEndBeforeRange = function(range) {
+	    this._setEnd(range.start);
+	};
+
+	mdTextObject.prototype.expandStartOffset = function() {
+	    var start = this._start;
+
+	    if (start.ch !== 0) {
+	        start.ch -= 1;
+	    }
+	};
+
+	mdTextObject.prototype.expandEndOffset = function() {
+	    var end = this._end;
+
+	    if (end.ch < this._mde.getEditor().getDoc().getLine(end.line).length) {
+	        end.ch += 1;
+	    }
+	};
+
+	mdTextObject.prototype.getTextContent = function() {
+	    return this._mde.getEditor().getRange(this._start, this._end);
+	};
+
+	mdTextObject.prototype.replaceContent = function(content) {
+	    this._mde.getEditor().replaceRange(content, this._start, this._end);
+	};
+
+	mdTextObject.prototype.deleteContent = function() {
+	    this._mde.getEditor().replaceRange('', this._start, this._end);
+	};
+
+	module.exports = mdTextObject;
+
+
+/***/ },
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7022,7 +7165,7 @@
 
 	'use strict';
 
-	var LazyRunner = __webpack_require__(24);
+	var LazyRunner = __webpack_require__(25);
 
 	/**
 	 * Preview
@@ -7094,7 +7237,7 @@
 
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/**
@@ -7177,7 +7320,7 @@
 
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7188,18 +7331,20 @@
 	'use strict';
 
 	var domUtils = __webpack_require__(17),
-	    WwClipboardManager = __webpack_require__(26),
-	    WwSelectionMarker = __webpack_require__(28),
-	    WwListManager = __webpack_require__(29),
-	    WwTaskManager = __webpack_require__(30),
-	    WwTableManager = __webpack_require__(31),
-	    WwHrManager = __webpack_require__(32),
-	    WwPManager = __webpack_require__(33),
-	    WwHeadingManager = __webpack_require__(34),
-	    WwCodeBlockManager = __webpack_require__(35),
-	    SquireExt = __webpack_require__(36);
+	    WwClipboardManager = __webpack_require__(27),
+	    WwSelectionMarker = __webpack_require__(29),
+	    WwListManager = __webpack_require__(30),
+	    WwTaskManager = __webpack_require__(31),
+	    WwTableManager = __webpack_require__(32),
+	    WwHrManager = __webpack_require__(33),
+	    WwPManager = __webpack_require__(34),
+	    WwHeadingManager = __webpack_require__(35),
+	    WwCodeBlockManager = __webpack_require__(36),
+	    SquireExt = __webpack_require__(37);
 
 	var keyMapper = __webpack_require__(22).getSharedInstance();
+
+	var WwTextObject = __webpack_require__(38);
 
 	var util = tui.util;
 
@@ -7316,7 +7461,7 @@
 	 * @param {string} keyMap keyMapString
 	 */
 	WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
-	    var range = this.getEditor().getSelection().cloneRange(),
+	    var range = this.getRange(),
 	        handlers, isNeedNext;
 
 	    handlers = this._keyEventHandlers.DEFAULT;
@@ -7373,15 +7518,11 @@
 	    //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
 	    //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
 	    this.getEditor().addEventListener('input', util.debounce(function() {
-	        var sel = self.editor.getSelection(),
-	            eventObj;
+	        var eventObj;
 
 	        if (!self._silentChange) {
 	            eventObj = {
-	                source: 'wysiwyg',
-	                selection: sel,
-	                textContent: sel.endContainer.textContent,
-	                caretOffset: sel.endOffset
+	                source: 'wysiwyg'
 	            };
 
 	            self.eventManager.emit('changeFromWysiwyg', eventObj);
@@ -7396,17 +7537,71 @@
 
 	    this.getEditor().addEventListener('keydown', function(keyboardEvent) {
 	        var range = self.getEditor().getSelection();
+
 	        if (!range.collapsed) {
 	            isNeedFirePostProcessForRangeChange = true;
 	        }
+
+	        self.eventManager.emit('keydown', {
+	            source: 'wysiwyg',
+	            data: keyboardEvent
+	        });
+
 	        self._onKeyDown(keyboardEvent);
 	    });
 
-	    this.getEditor().addEventListener('keyup', function() {
+	    if (util.browser.firefox) {
+	        this.getEditor().addEventListener('keypress', function(keyboardEvent) {
+	            var range = self.getEditor().getSelection();
+
+	            if (!range.collapsed) {
+	                isNeedFirePostProcessForRangeChange = true;
+	            }
+
+	            self.eventManager.emit('keydown', {
+	                source: 'wysiwyg',
+	                data: keyboardEvent
+	            });
+
+	            self._onKeyDown(keyboardEvent);
+	        });
+
+	        //파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
+	        //이렇게 하지 않으면 textObject에 문제가 생긴다.
+	        self.getEditor().addEventListener('keyup', function() {
+	            var range, prevLen, curEl;
+
+	            range = self.getRange();
+
+	            if (domUtils.isTextNode(range.commonAncestorContainer)
+	                && domUtils.isTextNode(range.commonAncestorContainer.previousSibling)) {
+	                prevLen = range.commonAncestorContainer.previousSibling.length;
+	                curEl = range.commonAncestorContainer;
+
+	                range.commonAncestorContainer.previousSibling.appendData(
+	                    range.commonAncestorContainer.data);
+
+	                range.setStart(range.commonAncestorContainer.previousSibling, prevLen + range.startOffset);
+	                range.collapse(true);
+
+	                curEl.parentNode.removeChild(curEl);
+
+	                self.getEditor().setSelection(range);
+	                range.detach();
+	            }
+	        });
+	    }
+
+	    this.getEditor().addEventListener('keyup', function(keyboardEvent) {
 	        if (isNeedFirePostProcessForRangeChange) {
 	            self.postProcessForChange();
 	            isNeedFirePostProcessForRangeChange = false;
 	        }
+
+	        self.eventManager.emit('keyup', {
+	            source: 'wysiwyg',
+	            data: keyboardEvent
+	        });
 	    });
 
 	    this.getEditor().addEventListener('scroll', function(ev) {
@@ -7493,6 +7688,20 @@
 	        setTimeout(function() {
 	            self._scrollToRangeIfNeed();
 	        }, 0);
+	    });
+
+	    this.addKeyEventHandler('TAB', function(ev) {
+	        var editor = self.getEditor();
+	        var isAbleToInsert4Space = !self.getManager('list').isInList();
+
+	        if (isAbleToInsert4Space) {
+	            ev.preventDefault();
+	            editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
+
+	            return false;
+	        }
+
+	        return true;
 	    });
 	};
 
@@ -7678,6 +7887,7 @@
 	    this.editor.removeEventListener('focus');
 	    this.editor.removeEventListener('blur');
 	    this.editor.removeEventListener('keydown');
+	    this.editor.removeEventListener('keyup');
 	    this.editor.removeEventListener('keypress');
 	    this.editor.removeEventListener('paste');
 	    this.editor = null;
@@ -8018,6 +8228,14 @@
 	    this.getEditor().setSelection(range);
 	};
 
+	WysiwygEditor.prototype.getRange = function() {
+	    return this.getEditor().getSelection().cloneRange();
+	};
+
+	WysiwygEditor.prototype.getTextObject = function(range) {
+	    return new WwTextObject(this, range);
+	};
+
 	/**
 	 * WysiwygEditor factory
 	 * @param {jQuery} $el element to insert editor
@@ -8044,7 +8262,7 @@
 
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8055,7 +8273,7 @@
 	'use strict';
 
 	var domUtils = __webpack_require__(17);
-	var WwPasteContentHelper = __webpack_require__(27);
+	var WwPasteContentHelper = __webpack_require__(28);
 	var util = tui.util;
 
 	var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
@@ -8252,7 +8470,7 @@
 
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8532,7 +8750,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8615,7 +8833,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports) {
 
 	/**
@@ -8676,11 +8894,21 @@
 	        });
 	};
 
+	/**
+	 * Return boolean value that current range is in the List or not
+	 * @returns {boolean}
+	 */
+	WwListManager.prototype.isInList = function() {
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+	    return $(range.startContainer).parents('LI').length !== 0;
+	};
+
 	module.exports = WwListManager;
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9114,7 +9342,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9361,7 +9589,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9587,7 +9815,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports) {
 
 	/**
@@ -9670,7 +9898,7 @@
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9807,7 +10035,7 @@
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10050,8 +10278,6 @@
 	        self = this;
 
 	    if (this.wwe.getEditor().hasFormat('PRE')) {
-	        this.wwe.getEditor().recordUndoState();
-
 	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
 
 	        setTimeout(function() {
@@ -10125,7 +10351,7 @@
 
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10453,6 +10679,9 @@
 
 	    marker.parentNode.removeChild(marker);
 
+	    selection.setStart(selection.endContainer, selection.endOffset);
+	    selection.collapse(true);
+
 	    this.setSelection(selection);
 
 	    return pos;
@@ -10510,7 +10739,108 @@
 
 
 /***/ },
-/* 37 */
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements WwTextObject
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var domUtils = __webpack_require__(17);
+	var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
+
+	/**
+	 * WwTextObject
+	 * @exports WwTextObject
+	 * @augments
+	 * @constructor
+	 * @class
+	 * @param {WysiwygEditor} wwe wysiwygEditor
+	 * @param {Range} range range object
+	 */
+	function WwTextObject(wwe, range) {
+	    this._wwe = wwe;
+
+	    if (isIE11) {
+	        this.isComposition = false;
+	        this._initCompositionEvent();
+	    }
+
+	    this.setRange(range || this._wwe.getRange());
+	}
+
+	WwTextObject.prototype._initCompositionEvent = function() {
+	    var self = this;
+
+	    this._wwe.getEditor().addEventListener('compositionstart', function() {
+	        self.isComposition = true;
+	    });
+
+	    this._wwe.getEditor().addEventListener('compositionend', function() {
+	        self.isComposition = false;
+	    });
+	};
+
+	WwTextObject.prototype.setRange = function(range) {
+	    if (this._range) {
+	        this._range.detach();
+	    }
+
+	    this._range = range;
+	};
+
+	WwTextObject.prototype.expandStartOffset = function() {
+	    var range = this._range;
+
+	    if (domUtils.isTextNode(range.startContainer) && range.startOffset > 0) {
+	        range.setStart(range.startContainer, range.startOffset - 1);
+	    }
+	};
+
+	WwTextObject.prototype.expandEndOffset = function() {
+	    var range = this._range;
+
+	    if (domUtils.isTextNode(range.endContainer) && range.endOffset < range.endContainer.nodeValue.length) {
+	        range.setEnd(range.endContainer, range.endOffset + 1);
+	    }
+	};
+
+	WwTextObject.prototype.setEndBeforeRange = function(range) {
+	    var offset = range.startOffset;
+
+	    //ie11에서는 컴포지션중인 단어는 offset에 포함하지 않는다.
+	    //그래서 포함시킴
+	    if (isIE11 && this.isComposition) {
+	        offset += 1;
+	    }
+
+	    this._range.setEnd(range.startContainer, offset);
+	};
+
+	WwTextObject.prototype.getTextContent = function() {
+	    return this._range.cloneContents().textContent;
+	};
+
+	WwTextObject.prototype.replaceContent = function(content) {
+	    this._wwe.getEditor().setSelection(this._range);
+	    this._wwe.getEditor().insertHTML(content);
+	    this._range = this._wwe.getRange();
+	};
+
+	WwTextObject.prototype.deleteContent = function() {
+	    this._wwe.getEditor().setSelection(this._range);
+	    this._wwe.getEditor().insertHTML('');
+	    this._range = this._wwe.getRange();
+	};
+
+	module.exports = WwTextObject;
+
+
+/***/ },
+/* 39 */
 /***/ function(module, exports) {
 
 	/**
@@ -10637,7 +10967,7 @@
 
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports) {
 
 	/**
@@ -10688,6 +11018,7 @@
 	    'mouseup',
 	    'contextmenu',
 	    'keydown',
+	    'keyup',
 	    'keyMap',
 	    'load',
 	    'focus',
@@ -10830,7 +11161,7 @@
 
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10842,7 +11173,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(40);
+	var Command = __webpack_require__(42);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -10967,7 +11298,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports) {
 
 	/**
@@ -11084,7 +11415,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11094,7 +11425,7 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(42);
+	var excelTableParser = __webpack_require__(44);
 
 	var util = tui.util;
 
@@ -11210,7 +11541,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -11267,7 +11598,7 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11277,7 +11608,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(44);
+	var markedCustomRenderer = __webpack_require__(46);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -11405,7 +11736,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/**
@@ -11481,7 +11812,7 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11491,11 +11822,11 @@
 
 	'use strict';
 
-	var Preview = __webpack_require__(23),
-	    EventManager = __webpack_require__(38),
-	    CommandManager = __webpack_require__(39),
+	var Preview = __webpack_require__(24),
+	    EventManager = __webpack_require__(40),
+	    CommandManager = __webpack_require__(41),
 	    extManager = __webpack_require__(6),
-	    Convertor = __webpack_require__(43);
+	    Convertor = __webpack_require__(45);
 
 	var util = tui.util;
 
@@ -11586,7 +11917,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11596,15 +11927,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(47),
-	    Tab = __webpack_require__(52),
-	    Layerpopup = __webpack_require__(54),
-	    ModeSwitch = __webpack_require__(55),
-	    PopupAddLink = __webpack_require__(56),
-	    PopupAddImage = __webpack_require__(57),
-	    PopupTableUtils = __webpack_require__(58),
-	    PopupAddTable = __webpack_require__(59),
-	    PopupAddHeading = __webpack_require__(60);
+	var Toolbar = __webpack_require__(49),
+	    Tab = __webpack_require__(54),
+	    Layerpopup = __webpack_require__(56),
+	    ModeSwitch = __webpack_require__(57),
+	    PopupAddLink = __webpack_require__(58),
+	    PopupAddImage = __webpack_require__(59),
+	    PopupTableUtils = __webpack_require__(60),
+	    PopupAddTable = __webpack_require__(61),
+	    PopupAddHeading = __webpack_require__(62);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -11780,7 +12111,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11790,9 +12121,9 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(48),
-	    Button = __webpack_require__(49),
-	    ToggleButton = __webpack_require__(51);
+	var UIController = __webpack_require__(50),
+	    Button = __webpack_require__(51),
+	    ToggleButton = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -11952,7 +12283,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports) {
 
 	/**
@@ -12198,7 +12529,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12207,8 +12538,8 @@
 	 */
 	'use strict';
 
-	var UIController = __webpack_require__(48);
-	var Tooltip = __webpack_require__(50);
+	var UIController = __webpack_require__(50);
+	var Tooltip = __webpack_require__(52);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12299,7 +12630,7 @@
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports) {
 
 	/**
@@ -12342,7 +12673,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12351,7 +12682,7 @@
 	 */
 	'use strict';
 
-	var Button = __webpack_require__(49);
+	var Button = __webpack_require__(51);
 
 	var util = tui.util;
 
@@ -12405,7 +12736,7 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12415,8 +12746,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(48),
-	    templater = __webpack_require__(53);
+	var UIController = __webpack_require__(50),
+	    templater = __webpack_require__(55);
 
 	var util = tui.util;
 
@@ -12607,7 +12938,7 @@
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports) {
 
 	/**
@@ -12650,7 +12981,7 @@
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12660,7 +12991,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(48);
+	var UIController = __webpack_require__(50);
 
 	var util = tui.util,
 	    _id = 0,
@@ -12907,7 +13238,7 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12917,7 +13248,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(48);
+	var UIController = __webpack_require__(50);
 
 	var util = tui.util;
 
@@ -12995,7 +13326,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13005,7 +13336,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -13108,7 +13439,7 @@
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13118,8 +13449,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54),
-	    Tab = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(56),
+	    Tab = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13305,7 +13636,7 @@
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13315,7 +13646,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -13422,7 +13753,7 @@
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13432,7 +13763,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -13785,7 +14116,7 @@
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13795,7 +14126,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -13873,7 +14204,7 @@
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13883,7 +14214,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -13984,7 +14315,7 @@
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13994,7 +14325,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -14159,7 +14490,7 @@
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14169,7 +14500,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Blockquote
@@ -14228,7 +14559,7 @@
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14238,7 +14569,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var util = tui.util;
 
@@ -14318,7 +14649,7 @@
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14328,7 +14659,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * HR
@@ -14383,7 +14714,7 @@
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14393,7 +14724,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * AddLink
@@ -14437,7 +14768,7 @@
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14447,7 +14778,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * AddImage
@@ -14491,7 +14822,7 @@
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14501,7 +14832,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14555,7 +14886,7 @@
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14565,7 +14896,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -14619,7 +14950,7 @@
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14629,7 +14960,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Table
@@ -14724,7 +15055,7 @@
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14734,7 +15065,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Task
@@ -14778,7 +15109,7 @@
 
 
 /***/ },
-/* 72 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14788,7 +15119,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Code
@@ -14833,7 +15164,7 @@
 
 
 /***/ },
-/* 73 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14843,7 +15174,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * CodeBlock
@@ -14886,7 +15217,7 @@
 
 
 /***/ },
-/* 74 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14896,7 +15227,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Bold
@@ -14933,7 +15264,7 @@
 
 
 /***/ },
-/* 75 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14943,7 +15274,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Italic
@@ -14979,7 +15310,7 @@
 
 
 /***/ },
-/* 76 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14989,7 +15320,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Blockquote
@@ -15021,7 +15352,7 @@
 
 
 /***/ },
-/* 77 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15031,7 +15362,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * AddImage
@@ -15063,7 +15394,7 @@
 
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15073,7 +15404,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * AddLink
@@ -15114,7 +15445,7 @@
 
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15124,7 +15455,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39),
+	var CommandManager = __webpack_require__(41),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15144,7 +15475,7 @@
 	    exec: function(wwe) {
 	        var sq = wwe.getEditor(),
 	            range = sq.getSelection(),
-	            currentNode, nextBlockNode;
+	            currentNode, nextBlockNode, hr, previousSibling;
 
 	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
 	            currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
@@ -15155,11 +15486,21 @@
 	                wwe.get$Body().append(nextBlockNode);
 	            }
 
+	            hr = sq.createElement('HR');
+
 	            sq.modifyBlocks(function(frag) {
-	                frag.appendChild(sq.createElement('HR'));
+	                frag.appendChild(hr);
 
 	                return frag;
 	            });
+
+	            previousSibling = hr.previousSibling;
+	            if (previousSibling
+	                && domUtils.isTextNode(previousSibling)
+	                && domUtils.getTextLength(previousSibling) === 0
+	            ) {
+	                hr.parentNode.removeChild(previousSibling);
+	            }
 
 	            range.selectNodeContents(nextBlockNode);
 	            range.collapse(true);
@@ -15176,7 +15517,7 @@
 
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15186,7 +15527,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 	var domUtils = __webpack_require__(17);
 
 	/**
@@ -15224,7 +15565,7 @@
 
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15234,7 +15575,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * UL
@@ -15277,7 +15618,7 @@
 
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15287,7 +15628,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * OL
@@ -15331,7 +15672,7 @@
 
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15341,7 +15682,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -15456,7 +15797,7 @@
 
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15466,7 +15807,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * AddRow
@@ -15522,7 +15863,7 @@
 
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15532,7 +15873,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39),
+	var CommandManager = __webpack_require__(41),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15609,7 +15950,7 @@
 
 
 /***/ },
-/* 86 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15619,7 +15960,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * RemoveRow
@@ -15671,7 +16012,7 @@
 
 
 /***/ },
-/* 87 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15681,7 +16022,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39),
+	var CommandManager = __webpack_require__(41),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -15753,7 +16094,7 @@
 
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15763,7 +16104,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * RemoveTable
@@ -15798,7 +16139,7 @@
 
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15808,7 +16149,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * IncreaseDepth
@@ -15862,7 +16203,7 @@
 
 
 /***/ },
-/* 90 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15872,7 +16213,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * DecreaseDepth
@@ -15931,7 +16272,7 @@
 
 
 /***/ },
-/* 91 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15941,7 +16282,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	/**
 	 * Task
@@ -15983,7 +16324,7 @@
 
 
 /***/ },
-/* 92 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -15994,7 +16335,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39),
+	var CommandManager = __webpack_require__(41),
 	    domUtils = __webpack_require__(17);
 
 	/**
@@ -16054,7 +16395,7 @@
 
 
 /***/ },
-/* 93 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16064,7 +16405,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(39);
+	var CommandManager = __webpack_require__(41);
 
 	var codeBlockID = 0,
 	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
