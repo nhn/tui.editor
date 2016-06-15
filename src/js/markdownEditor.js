@@ -6,6 +6,7 @@
 'use strict';
 
 var keyMapper = require('./keyMapper').getSharedInstance();
+var MdTextObject = require('./mdTextObject');
 
 var CodeMirror = window.CodeMirror;
 
@@ -84,9 +85,21 @@ MarkdownEditor.prototype._initEvent = function() {
     });
 
     this.cm.on('keydown', function(cm, keyboardEvent) {
+        self.eventManager.emit('keydown', {
+            source: 'markdown',
+            data: keyboardEvent
+        });
+
         self.eventManager.emit('keyMap', {
             source: 'markdown',
             keyMap: keyMapper.convert(keyboardEvent),
+            data: keyboardEvent
+        });
+    });
+
+    this.cm.on('keyup', function(cm, keyboardEvent) {
+        self.eventManager.emit('keyup', {
+            source: 'markdown',
             data: keyboardEvent
         });
     });
@@ -187,16 +200,11 @@ MarkdownEditor.prototype._cloneCMEventObject = function(e) {
 };
 
 MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
-    var eventObj, cursor;
+    var eventObj;
 
     if (e.origin !== 'setValue') {
-        cursor = this.getEditor().getCursor();
-
         eventObj = {
-            source: 'markdown',
-            selection: cursor,
-            textContent: this.cm.getDoc().getLine(cursor.line) || '',
-            caretOffset: cursor.ch
+            source: 'markdown'
         };
 
         this.eventManager.emit('changeFromMarkdown', eventObj);
@@ -213,7 +221,7 @@ MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
         selection.ch += offset;
     }
 
-    this.cm.addWidget(selection, node, true, style);
+    this.cm.addWidget(selection.end, node, true, style);
 };
 
 MarkdownEditor.prototype.replaceSelection = function(content, selection) {
@@ -269,6 +277,26 @@ MarkdownEditor.prototype.scrollTop = function(value) {
     }
 
     return this.cm.getScrollInfo().top;
+};
+
+MarkdownEditor.prototype.getRange = function() {
+    var start = this.getEditor().getCursor('from');
+    var end = this.getEditor().getCursor('to');
+
+    return {
+        start: {
+            line: start.line,
+            ch: start.ch
+        },
+        end: {
+            line: end.line,
+            ch: end.ch
+        }
+    };
+};
+
+MarkdownEditor.prototype.getTextObject = function(range) {
+    return new MdTextObject(this, range);
 };
 
 module.exports = MarkdownEditor;

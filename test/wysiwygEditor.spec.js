@@ -170,10 +170,7 @@ describe('WysiwygEditor', function() {
 
         it('when something changed in editor Emit change.wysiwygEditor event', function(done) {
             //events of squire are asynchronous
-            em.listen('changeFromWysiwyg', function(ev) {
-                expect(ev.textContent).toEqual('t');
-                //cuz, we cant simulate caret change
-                //expect(ev.caretOffset).toEqual(1);
+            em.listen('changeFromWysiwyg', function() {
                 done();
             });
 
@@ -183,9 +180,7 @@ describe('WysiwygEditor', function() {
         it('when something changed in editor Emit change event', function(done) {
             //squire event fire asynchronous
             em.listen('change', function(ev) {
-                expect(ev.textContent).toEqual('t');
                 expect(ev.source).toEqual('wysiwyg');
-                //expect(ev.caretOffset).toEqual(1);
                 done();
             });
 
@@ -463,6 +458,13 @@ describe('WysiwygEditor', function() {
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
             expect(wwe.getEditor().scrollTop()).toEqual(0);
+        });
+    });
+
+    describe('get current range', function() {
+        it('get range', function() {
+            var range = wwe.getEditor().getSelection();
+            expect(wwe.getRange()).toEqual(range);
         });
     });
 });
