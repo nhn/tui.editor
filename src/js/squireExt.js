@@ -323,6 +323,9 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
 
     marker.parentNode.removeChild(marker);
 
+    selection.setStart(selection.endContainer, selection.endOffset);
+    selection.collapse(true);
+
     this.setSelection(selection);
 
     return pos;

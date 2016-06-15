@@ -44,7 +44,6 @@ describe('MarkdownEditor', function() {
 
         it('when something change emit changeFromMarkdown event', function(done) {
             em.listen('changeFromMarkdown', function(ev) {
-                expect(ev.textContent).toEqual('my');
                 done();
             });
 
@@ -53,8 +52,6 @@ describe('MarkdownEditor', function() {
 
         it('when something change emit change event', function(done) {
             em.listen('change', function(ev) {
-                expect(ev.textContent).toEqual('comment');
-                expect(ev.caretOffset).toEqual(7);
                 expect(ev.source).toEqual('markdown');
 
                 done();

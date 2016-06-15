@@ -97,6 +97,29 @@ describe('MdTextObject', function() {
         });
     });
 
+    describe('Range expand', function() {
+        beforeEach(function() {
+            to = new MdTextObject(mde, {
+                start: {
+                    line: 0,
+                    ch: 1
+                },
+                end: {
+                    line: 0,
+                    ch: 3
+                }
+            });
+        });
+
+        it('Expand start offset', function() {
+            to.expandStartOffset();
+            expect(to.getTextContent()).toEqual('tes');
+        });
+        it('Expand end offset', function() {
+            to.expandEndOffset();
+            expect(to.getTextContent()).toEqual('est');
+        });
+    });
     describe('Replace range with text', function() {
         beforeEach(function() {
             to = new MdTextObject(mde, {

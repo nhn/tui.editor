@@ -37,6 +37,22 @@ mdTextObject.prototype.setEndBeforeRange = function(range) {
     this._setEnd(range.start);
 };
 
+mdTextObject.prototype.expandStartOffset = function() {
+    var start = this._start;
+
+    if (start.ch !== 0) {
+        start.ch -= 1;
+    }
+};
+
+mdTextObject.prototype.expandEndOffset = function() {
+    var end = this._end;
+
+    if (end.ch < this._mde.getEditor().getDoc().getLine(end.line).length) {
+        end.ch += 1;
+    }
+};
+
 mdTextObject.prototype.getTextContent = function() {
     return this._mde.getEditor().getRange(this._start, this._end);
 };

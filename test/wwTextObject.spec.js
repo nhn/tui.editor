@@ -44,29 +44,31 @@ describe('WwTextObject', function() {
             to.setRange(range);
             expect(to._range).toEqual(range);
         });
-
-        xit('if current selection has no textnode and collapsed then find previousSibling', function() {
-            var range = wwe.getRange();
-            range.selectNode(wwe.get$Body().find('br')[0]);
-            range.collapse(true);
-
-            to.setRange(range);
-
-            expect(to._range.startContainer).toBe(wwe.get$Body().find('br')[0].previousSibling);
-            expect(to._range.startOffset).toEqual(15);
-        });
     });
 
     describe('Get text of range', function() {
-        beforeEach(function() {
+        it('get text', function() {
             var range = wwe.getRange();
+
             range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
             range.setStart(range.startContainer, range.startOffset + 1);
 
             to = new WwTextObject(wwe, range);
-        });
-        it('get text', function() {
+
             expect(to.getTextContent()).toEqual('est textObject');
+        });
+
+        it('get korean text', function() {
+            var range = wwe.getRange();
+
+            wwe.getEditor().setHTML('한글입니다.');
+
+            range.selectNodeContents(wwe.get$Body().find('div')[0].firstChild);
+            range.setStart(range.startContainer, range.startOffset + 1);
+
+            to = new WwTextObject(wwe, range);
+
+            expect(to.getTextContent()).toEqual('글입니다.');
         });
     });
 
@@ -90,6 +92,26 @@ describe('WwTextObject', function() {
             to.setEndBeforeRange(rangeChangeTo);
 
             expect(to.getTextContent()).toEqual('est t');
+        });
+    });
+
+    describe('Range expand', function() {
+        beforeEach(function() {
+            var range = wwe.getRange();
+
+            range.setStart(wwe.get$Body().find('div')[0].firstChild, 1);
+            range.setEnd(wwe.get$Body().find('div')[0].firstChild, 3);
+
+            to = new WwTextObject(wwe, range);
+        });
+
+        it('Expand start offset', function() {
+            to.expandStartOffset();
+            expect(to.getTextContent()).toEqual('tes');
+        });
+        it('Expand end offset', function() {
+            to.expandEndOffset();
+            expect(to.getTextContent()).toEqual('est');
         });
     });
 

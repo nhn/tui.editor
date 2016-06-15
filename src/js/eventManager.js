@@ -46,6 +46,7 @@ var eventList = [
     'mouseup',
     'contextmenu',
     'keydown',
+    'keyup',
     'keyMap',
     'load',
     'focus',

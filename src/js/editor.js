@@ -318,6 +318,14 @@ ToastUIEditor.prototype.reset = function() {
     this.mdEditor.reset();
 };
 
+ToastUIEditor.prototype.getRange = function() {
+    return this.getCurrentModeEditor().getRange();
+};
+
+ToastUIEditor.prototype.getTextObject = function(range) {
+    return this.getCurrentModeEditor().getTextObject(range);
+};
+
 ToastUIEditor.getInstances = function() {
     return __nedInstance;
 };
@@ -325,6 +333,7 @@ ToastUIEditor.getInstances = function() {
 ToastUIEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
 };
+
 
 ToastUIEditor.factory = function(options) {
     var tuiEditor;
