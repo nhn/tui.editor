@@ -268,8 +268,6 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     }
 
     this.getEditor().addEventListener('keyup', function(keyboardEvent) {
-        var range = self.getRange();
-
         if (isNeedFirePostProcessForRangeChange) {
             self.postProcessForChange();
             isNeedFirePostProcessForRangeChange = false;
