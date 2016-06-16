@@ -14,8 +14,14 @@ The Toast UI Editor는 마크다운을 기반으로 텍스트 에디팅과 위�
 
 ## Image
 
+### Markdown Mode
+![Markdown Mode](https://cloud.githubusercontent.com/assets/389021/16108210/d55d4576-33dc-11e6-943a-66c29ae1ff4d.png)
+
+### Wysiwyg Mode
+![WYsiwyg Mode](https://cloud.githubusercontent.com/assets/389021/16108214/d7ac03d0-33dc-11e6-9ab6-06e7734a7fb1.png)
+
 ## Documentation
-* **API** : https://nhnent.github.io/tui.editor/wiki/api
+* **API** : https://github.com/nhnent/tui.editor/wiki/api
 * **Getting Started** : https://github.com/nhnent/tui.editor/wiki/Getting-Started
 
 ## Dependency
