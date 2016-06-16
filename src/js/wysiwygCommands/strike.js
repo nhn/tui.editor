@@ -25,7 +25,7 @@ var Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
         var sq = wwe.getEditor();
 
         if (sq.hasFormat('S')) {
-            sq.removeStrikethrough();
+            sq.changeFormat(null, {tag: 'S'});
         } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
             if (sq.hasFormat('code')) {
                 sq.changeFormat(null, {tag: 'code'});
