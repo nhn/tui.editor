@@ -1,8 +1,6 @@
 'use strict';
 
-var extManager = require('../extManager');
-
-extManager.defineExtension('textPalette', function(editor) {
+tui.Editor.defineExtension('textPalette', function(editor) {
     var $layer = $('<div style="z-index:9999;border:1px solid #f00;width:200px"></div>');
     var isTextPaleltteActive = false;
     var to;
