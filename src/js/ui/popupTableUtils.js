@@ -95,8 +95,8 @@ PopupTableUtils.prototype._linkWithEventManager = function() {
 
         self.$el.css({
             'position': 'absolute',
-            'top': event.clientY + 30,
-            'left': event.clientX + 20
+            'top': event.layerY + 30,
+            'left': event.layerX + 20
         });
 
         self.show();
