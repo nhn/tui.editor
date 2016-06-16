@@ -7,7 +7,7 @@
 
 var CommandManager = require('../commandManager');
 
-var strikeRegex = /^[~~].*[~~]$/;
+var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
 
 /**
  * Strike
