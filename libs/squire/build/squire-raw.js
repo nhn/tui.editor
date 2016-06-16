@@ -2691,20 +2691,24 @@ var getWindowSelection = function ( self ) {
 
 proto.setSelection = function ( range ) {
     if ( range ) {
-        // If we're setting selection, that automatically, and synchronously, // triggers a focus event. Don't want a reentrant call to setSelection.
-        this._restoreSelection = false;
         this._lastSelection = range;
-        // iOS bug: if you don't focus the iframe before setting the
-        // selection, you can end up in a state where you type but the input
-        // doesn't get directed into the contenteditable area but is instead
-        // lost in a black hole. Very strange.
-        if ( isIOS ) {
-            this._win.focus();
-        }
-        var sel = getWindowSelection( this );
-        if ( sel ) {
-            sel.removeAllRanges();
-            sel.addRange( range );
+        // If we're setting selection, that automatically, and synchronously, // triggers a focus event. So just store the selection and mark it as
+        // needing restore on focus.
+        if ( !this._isFocused ) {
+            enableRestoreSelection.call( this );
+        } else {
+            // iOS bug: if you don't focus the iframe before setting the
+            // selection, you can end up in a state where you type but the input
+            // doesn't get directed into the contenteditable area but is instead
+            // lost in a black hole. Very strange.
+            if ( isIOS ) {
+                this._win.focus();
+            }
+            var sel = getWindowSelection( this );
+            if ( sel ) {
+                sel.removeAllRanges();
+                sel.addRange( range );
+            }
         }
     }
     return this;
@@ -3831,6 +3835,7 @@ proto.setHTML = function ( html ) {
     // anything calls getSelection before first focus, we have a range
     // to return.
     this._lastSelection = range;
+    enableRestoreSelection.call( this );
     this._updatePath( range, true );
 
     return this;
