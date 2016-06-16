@@ -39,7 +39,7 @@ var Strike = CommandManager.command('markdown', /** @lends Strike */{
         doc.replaceSelection(result, 'around');
 
         isEmptySelection = !selection;
-        if (isEmptySelection) {
+        if (isEmptySelection && !isNeedToRemove) {
             this.setCursorToCenter(doc, cursor, isNeedToRemove);
         }
 
