@@ -10,8 +10,6 @@ The Toast UI Editor는 마크다운을 기반으로 텍스트 에디팅과 위�
 * 스크롤 팔로우 - 마크다운 입력시 프리뷰 자동 스크롤 포커스
 * 컬러 - HTML 인라인 태그로 지원
 
-<br>
-
 ## Image
 
 ### Markdown Mode
