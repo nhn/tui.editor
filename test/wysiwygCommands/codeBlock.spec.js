@@ -40,4 +40,22 @@ describe('CodeBlock', function() {
         expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
         expect($body.find('pre').attr('data-language')).toEqual('javascript');
     });
+    it('add CodeBlock with selection', function() {
+        var range;
+
+        wwe.setValue('<div>hello, my name is code</div>');
+
+        range = wwe.getEditor().getSelection();
+        range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
+        range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
+
+        wwe.getEditor().setSelection(range);
+
+        CodeBlock.exec(wwe);
+
+        expect($body.find('pre').length).toEqual(1);
+        expect($body.find('code').length).toEqual(1);
+        expect($body.find('code').text()).toEqual('hello');
+        expect($body.find('div').eq(1).text()).toEqual(', my name is code');
+    });
 });
