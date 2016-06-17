@@ -121,17 +121,22 @@ MarkdownEditor.prototype._initEvent = function() {
     });
 
     this.cm.on('cursorActivity', function() {
-        var token, state;
+        var token, state, base, overlay;
 
         token = self.cm.getTokenAt(self.cm.getCursor());
 
+        base = token.state.base;
+        overlay = token.state.overlay;
+
         state = {
-            bold: !!token.state.base.strong,
-            italic: !!token.state.base.em,
+            bold: !!base.strong,
+            italic: !!base.em,
+            code: !!overlay.code,
+            codeBlock: !!overlay.codeBlock,
             source: 'markdown'
         };
 
-        if (self._latestState.bold !== state.bold || self._latestState.italic !== state.italic) {
+        if (self._isStateChanged(self._latestState, state)) {
             self.eventManager.emit('stateChange', state);
             self._latestState = state;
         }
@@ -297,6 +302,31 @@ MarkdownEditor.prototype.getRange = function() {
 
 MarkdownEditor.prototype.getTextObject = function(range) {
     return new MdTextObject(this, range);
+};
+
+/**
+ * _isStateChanged
+ * @param {object} previousState previousState state
+ * @param {object} currentState currentState state
+ * @returns {boolean}
+ * @private
+ */
+MarkdownEditor.prototype._isStateChanged = function(previousState, currentState) {
+    var result = false;
+
+    tui.util.forEach(currentState, function(currentStateTypeValue, stateType) {
+        var isNeedToContinue = true;
+        var isStateChanged = previousState[stateType] !== currentStateTypeValue;
+
+        if (isStateChanged) {
+            result = true;
+            isNeedToContinue = false;
+        }
+
+        return isNeedToContinue;
+    });
+
+    return result;
 };
 
 module.exports = MarkdownEditor;
