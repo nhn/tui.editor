@@ -102,6 +102,13 @@ Toolbar.prototype._initButton = function() {
     }));
 
     this.addButton(new Button({
+        className: 'tui-strike',
+        command: 'Strike',
+        text: '~',
+        tooltip: '취소선'
+    }));
+
+    this.addButton(new Button({
         className: 'tui-hrline',
         command: 'HR',
         tooltip: '문단나눔'

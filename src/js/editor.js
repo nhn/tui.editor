@@ -22,6 +22,7 @@ var MarkdownEditor = require('./markdownEditor'),
 //markdown commands
 var mdBold = require('./markdownCommands/bold'),
     mdItalic = require('./markdownCommands/italic'),
+    mdStrike = require('./markdownCommands/strike'),
     mdBlockquote = require('./markdownCommands/blockquote'),
     mdHeading = require('./markdownCommands/heading'),
     mdHR = require('./markdownCommands/hr'),
@@ -37,6 +38,7 @@ var mdBold = require('./markdownCommands/bold'),
 //wysiwyg Commands
 var wwBold = require('./wysiwygCommands/bold'),
     wwItalic = require('./wysiwygCommands/italic'),
+    wwStrike = require('./wysiwygCommands/strike'),
     wwBlockquote = require('./wysiwygCommands/blockquote'),
     wwAddImage = require('./wysiwygCommands/addImage'),
     wwAddLink = require('./wysiwygCommands/addLink'),
@@ -356,6 +358,7 @@ ToastUIEditor.factory = function(options) {
         tuiEditor.addCommand(mdTask);
         tuiEditor.addCommand(mdCode);
         tuiEditor.addCommand(mdCodeBlock);
+        tuiEditor.addCommand(mdStrike);
 
         tuiEditor.addCommand(wwBold);
         tuiEditor.addCommand(wwItalic);
@@ -377,6 +380,7 @@ ToastUIEditor.factory = function(options) {
         tuiEditor.addCommand(wwTableRemove);
         tuiEditor.addCommand(wwCode);
         tuiEditor.addCommand(wwCodeBlock);
+        tuiEditor.addCommand(wwStrike);
     }
 
     return tuiEditor;
