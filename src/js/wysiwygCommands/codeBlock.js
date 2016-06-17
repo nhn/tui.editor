@@ -25,9 +25,9 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
      * @param {string} type of language
      */
     exec: function(wwe, type) {
-        var sq = wwe.getEditor(),
-            attr;
-
+        var attr, codeBlockBody;
+        var sq = wwe.getEditor();
+        var range = sq.getSelection().cloneRange();
         if (!sq.hasFormat('PRE')) {
             attr = ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
 
@@ -35,7 +35,10 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
                 attr += ' data-language="' + type + '"';
             }
 
-            sq.insertHTML('<pre' + attr + '><div><code>&#8203</code><br></div></pre>');
+            removeTextDecorations(sq);
+
+            codeBlockBody = getCodeBlockBody(range);
+            sq.insertHTML('<pre' + attr + '>' + codeBlockBody + '</pre>');
 
             focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
 
@@ -59,6 +62,48 @@ function focusToFirstCode($pre, wwe) {
     range.collapse(true);
 
     wwe.getEditor().setSelection(range);
+}
+/**
+ * getCodeBlockBody
+ * get text wrapped by code
+ * @param {object} range range object
+ * @returns {string}
+ */
+function getCodeBlockBody(range) {
+    var text, nodes;
+    var line = '';
+
+    if (range.collapsed) {
+        text = '&#8203';
+        line += '<div><code>' + text + '</code><br></div>';
+    } else if (range.startContainer === range.endContainer) {
+        text = $(range.startContainer).text().substring(range.startOffset, range.endOffset);
+        line += '<div><code>' + text + '</code><br></div>';
+    } else {
+        nodes = [].slice.call(range.commonAncestorContainer.childNodes);
+
+        tui.util.forEachArray(nodes, function(node) {
+            text = $(node).text();
+            line += '<div><code>' + text + '</code><br></div>';
+        });
+    }
+
+    return line;
+}
+
+/**
+ * removeTextDecorations
+ * remove bold, italic, strikeThrough styles
+ * @param {object} sq squire instance
+ */
+function removeTextDecorations(sq) {
+    if (sq.hasFormat('b')) {
+        sq.removeBold(sq.getSelection());
+    } else if (sq.hasFormat('i')) {
+        sq.removeItalic(sq.getSelection());
+    } else if (sq.hasFormat('s')) {
+        sq.removeStrikethrough(sq.getSelection());
+    }
 }
 
 module.exports = CodeBlock;
