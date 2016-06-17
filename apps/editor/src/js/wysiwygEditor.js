@@ -227,18 +227,23 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 
     if (util.browser.firefox) {
         this.getEditor().addEventListener('keypress', function(keyboardEvent) {
-            var range = self.getEditor().getSelection();
+            var keyCode = keyboardEvent.keyCode;
+            var range;
 
-            if (!range.collapsed) {
-                isNeedFirePostProcessForRangeChange = true;
+            if (keyCode === 13 || keyCode === 9) {
+                range = self.getEditor().getSelection();
+
+                if (!range.collapsed) {
+                    isNeedFirePostProcessForRangeChange = true;
+                }
+
+                self.eventManager.emit('keydown', {
+                    source: 'wysiwyg',
+                    data: keyboardEvent
+                });
+
+                self._onKeyDown(keyboardEvent);
             }
-
-            self.eventManager.emit('keydown', {
-                source: 'wysiwyg',
-                data: keyboardEvent
-            });
-
-            self._onKeyDown(keyboardEvent);
         });
 
         //파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
