@@ -335,6 +335,8 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         var state = {
             bold: /(>B$)|(>B>)|(>STRONG$)|(>STRONG>)/.test(data.path),
             italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path),
+            code: /(>CODE$)|(>CODE>)/.test(data.path),
+            codeBlock: /(>PRE$)|(>PRE>)/.test(data.path),
             source: 'wysiwyg'
         };
 
