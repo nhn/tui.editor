@@ -340,16 +340,19 @@ WysiwygEditor.prototype._initSquireEvent = function() {
 WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
     var keyMap = keyMapper.convert(keyboardEvent);
 
-    this.eventManager.emit('keyMap', {
-        source: 'wysiwyg',
-        keyMap: keyMap,
-        data: keyboardEvent
-    });
+    //to avoid duplicate event firing in firefox
+    if (keyboardEvent.keyCode) {
+        this.eventManager.emit('keyMap', {
+            source: 'wysiwyg',
+            keyMap: keyMap,
+            data: keyboardEvent
+        });
 
-    this.eventManager.emit('wysiwygKeyEvent', {
-        keyMap: keyMap,
-        data: keyboardEvent
-    });
+        this.eventManager.emit('wysiwygKeyEvent', {
+            keyMap: keyMap,
+            data: keyboardEvent
+        });
+    }
 };
 
 /**
