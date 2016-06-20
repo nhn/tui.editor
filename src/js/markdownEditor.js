@@ -69,6 +69,7 @@ MarkdownEditor.prototype._initEvent = function() {
         self.eventManager.emit('focus', {
             source: 'markdown'
         });
+        self.getEditor().refresh();
     });
 
     this.cm.on('blur', function() {
