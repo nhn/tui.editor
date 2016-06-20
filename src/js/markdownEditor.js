@@ -60,6 +60,12 @@ MarkdownEditor.prototype.init = function(initialValue) {
 MarkdownEditor.prototype._initEvent = function() {
     var self = this;
 
+    this.cm.getWrapperElement().addEventListener('click', function() {
+        self.eventManager.emit('click', {
+            source: 'markdown'
+        });
+    });
+
     this.cm.on('change', function(cm, cmEvent) {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
