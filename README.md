@@ -39,8 +39,8 @@ The Toast UI Editor는 마크다운을 기반으로 텍스트 에디팅과 위�
 
 ## Download/Install
 * Bower
-   * Latest version: `bower install git@github.com:shiren/tui-editor.git`
-   * Specific version: `bower install git@github.com:shiren/tui-editor.git#[tagName]`
+   * Latest version: `bower install git@github.com:nhnent/tui-editor.git`
+   * Specific version: `bower install git@github.com:nhnent/tui-editor.git#[tagName]`
 * Download
    * https://github.com/nhnent/tui.editor/tree/master/dist
 
