@@ -58,11 +58,11 @@ mdTextObject.prototype.getTextContent = function() {
 };
 
 mdTextObject.prototype.replaceContent = function(content) {
-    this._mde.getEditor().replaceRange(content, this._start, this._end);
+    this._mde.getEditor().replaceRange(content, this._start, this._end, '+input');
 };
 
 mdTextObject.prototype.deleteContent = function() {
-    this._mde.getEditor().replaceRange('', this._start, this._end);
+    this._mde.getEditor().replaceRange('', this._start, this._end, '+delete');
 };
 
 module.exports = mdTextObject;
