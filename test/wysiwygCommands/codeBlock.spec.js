@@ -2,6 +2,7 @@
 
 var WysiwygEditor = require('../../src/js/wysiwygEditor'),
     CodeBlock = require('../../src/js/wysiwygCommands/codeBlock'),
+    CodeBlockManager = require('../../src/js/wwCodeBlockManager'),
     EventManager = require('../../src/js/eventManager');
 
 describe('CodeBlock', function() {
@@ -15,6 +16,7 @@ describe('CodeBlock', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager('codeblock', CodeBlockManager);
 
         sq = wwe.getEditor();
         $body = wwe.get$Body();
@@ -49,7 +51,7 @@ describe('CodeBlock', function() {
         range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
         range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
 
-        wwe.getEditor().setSelection(range);
+        sq.setSelection(range);
 
         CodeBlock.exec(wwe);
 
