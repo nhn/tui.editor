@@ -332,11 +332,13 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     });
 
     this.getEditor().addEventListener('pathChange', function(data) {
+        var isInPreTag = /PRE/.test(data.path);
+        var isInCodeTag = />CODE$/.test(data.path);
         var state = {
-            bold: /(>B$)|(>B>)|(>STRONG$)|(>STRONG>)/.test(data.path),
-            italic: /(>I$)|(>I>)|(>EM$)|(>EM>)/.test(data.path),
-            code: /(>CODE$)|(>CODE>)/.test(data.path),
-            codeBlock: /(>PRE$)|(>PRE>)/.test(data.path),
+            bold: /(>B)|(>STRONG)/.test(data.path),
+            italic: /(>I)|(>EM)/.test(data.path),
+            code: !isInPreTag && isInCodeTag,
+            codeBlock: isInPreTag && isInCodeTag,
             source: 'wysiwyg'
         };
 
