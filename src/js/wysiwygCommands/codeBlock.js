@@ -35,9 +35,7 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
                 attr += ' data-language="' + type + '"';
             }
 
-            removeTextDecorations(sq);
-
-            codeBlockBody = getCodeBlockBody(range);
+            codeBlockBody = getCodeBlockBody(range, wwe);
             sq.insertHTML('<pre' + attr + '>' + codeBlockBody + '</pre>');
 
             focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
@@ -67,43 +65,18 @@ function focusToFirstCode($pre, wwe) {
  * getCodeBlockBody
  * get text wrapped by code
  * @param {object} range range object
+ * @param {object} wwe wysiwyg editor
  * @returns {string}
  */
-function getCodeBlockBody(range) {
-    var text, nodes;
-    var line = '';
+function getCodeBlockBody(range, wwe) {
+    var line;
+    var mgr = wwe.getManager('codeblock');
+    var contents = range.extractContents();
+    var nodes = [].slice.call(contents.childNodes);
 
-    if (range.collapsed) {
-        text = '&#8203';
-        line += '<div><code>' + text + '</code><br></div>';
-    } else if (range.startContainer === range.endContainer) {
-        text = $(range.startContainer).text().substring(range.startOffset, range.endOffset);
-        line += '<div><code>' + text + '</code><br></div>';
-    } else {
-        nodes = [].slice.call(range.commonAncestorContainer.childNodes);
-
-        tui.util.forEachArray(nodes, function(node) {
-            text = $(node).text();
-            line += '<div><code>' + text + '</code><br></div>';
-        });
-    }
+    line = mgr._convertToCodeblock(nodes).innerHTML;
 
     return line;
-}
-
-/**
- * removeTextDecorations
- * remove bold, italic, strikeThrough styles
- * @param {object} sq squire instance
- */
-function removeTextDecorations(sq) {
-    if (sq.hasFormat('b')) {
-        sq.removeBold(sq.getSelection());
-    } else if (sq.hasFormat('i')) {
-        sq.removeItalic(sq.getSelection());
-    } else if (sq.hasFormat('s')) {
-        sq.removeStrikethrough(sq.getSelection());
-    }
 }
 
 module.exports = CodeBlock;
