@@ -11,7 +11,6 @@ var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
 /**
  * WwTextObject
  * @exports WwTextObject
- * @augments
  * @constructor
  * @class
  * @param {WysiwygEditor} wwe wysiwygEditor

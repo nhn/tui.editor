@@ -63,7 +63,6 @@ function WysiwygEditor($el, eventManager) {
 
 /**
  * init
- * @param {function} onInitComplete when editor is ready invoke callback function
  */
 WysiwygEditor.prototype.init = function() {
     var $editorBody = $('<div />');
