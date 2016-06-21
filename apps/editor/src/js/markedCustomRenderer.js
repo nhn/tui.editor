@@ -79,8 +79,28 @@ markedCustomRenderer.table = function(header, body) {
         + '</table>\n';
 };
 
+/**
+ * Replace <del> to <s>
+ * @override
+ * @param {string} text Text content
+ * @returns {string}
+ */
+markedCustomRenderer.del = function(text) {
+    var textContent = '';
 
-//escape code from marekd
+    if (text) {
+        textContent = '<s>' + text + '</s>';
+    }
+
+    return textContent;
+};
+
+/**
+ * escape code from marekd
+ * @param {string} html HTML string
+ * @param {string} encode Boolean value of whether encode or not
+ * @returns {string}
+ */
 function escape(html, encode) {
     return html
         .replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')
