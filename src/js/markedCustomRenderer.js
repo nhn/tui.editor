@@ -58,9 +58,14 @@ markedCustomRenderer.code = function(code, lang, escaped) {
 
 markedCustomRenderer.table = function(header, body) {
     var cellLen = header.match(/\/th/g).length;
-    var lastTr = body.match(/\n<tr>[\s\S]*?<\/tr>\n$/g)[0];
+    var foundLastTr = body.match(/\n?<tr>[\s\S]*?<\/tr>\n$/g);
+    var lastTr;
 
-    if (lastTr.match(/\/td/g).length < cellLen) {
+    if (foundLastTr && foundLastTr.length) {
+        lastTr = foundLastTr[0]
+    }
+
+    if (lastTr && lastTr.match(/\/td/g).length < cellLen) {
         body = body.replace(/<\/td>\n<\/tr>\n$/g, '</td>\n<td></td>\n</tr>\n');
     }
 

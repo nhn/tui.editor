@@ -25,6 +25,11 @@ describe('Convertor', function() {
             expect(convertor.toHTML('<script>alert("test");</script>')).toEqual('&lt;script&gt;alert("test");&lt;/script&gt;');
             expect(convertor.toHTMLWithCodeHightlight('<script>alert("test");</script>')).toEqual('&lt;script&gt;alert("test");&lt;/script&gt;');
         });
+
+        it('escape vertical bar', function() {
+            expect(convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length).toEqual(2);
+            expect(convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g).length).toEqual(2);
+        });
     });
 
     describe('html to markdown', function() {
