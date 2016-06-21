@@ -41,8 +41,8 @@ And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) w
 
 ## Download/Install
 * Bower
-   * Latest version: `bower install git@github.com:shiren/tui-editor.git`
-   * Specific version: `bower install git@github.com:shiren/tui-editor.git#[tagName]`
+   * Latest version: `bower install git@github.com:nhnent/tui-editor.git`
+   * Specific version: `bower install git@github.com:nhnent/tui-editor.git#[tagName]`
 * Download
    * https://github.com/nhnent/tui.editor/tree/master/dist
 
