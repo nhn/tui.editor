@@ -1,14 +1,22 @@
 ## ![toast ui editor](https://cloud.githubusercontent.com/assets/389021/16107646/9729e556-33d8-11e6-933f-5b09fa3a53bb.png)
 <br>
-The Toast UI Editor는 마크다운을 기반으로 텍스트 에디팅과 위지윅 에디팅을 지원하는 에디터입니다.
+The ToastUI Editor is a two-way editor based on Markdown.
+You can choose and use WYSIWYG and Markdown as needed.
+And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) while you are writing it without any spoiling.
 
 ## Features
-* Github Flavored Markdown 문법으로 입력 & 출력
-* 위지윅과 마크다운 텍스트 에디팅 모드 상호 변환
-* 마크다운 에디터 모드시 프리뷰 제공
-* 통합 API와 Extension으로 기능 확장
-* 스크롤 팔로우 - 마크다운 입력시 프리뷰 자동 스크롤 포커스
-* 컬러 - HTML 인라인 태그로 지원
+### Input & output with GFM
+   All documents are exported by "Github Flavored Markdown" format even if it has written on WYSIWYG mode.
+### Quick & Easy mode switching
+   Switch editing mode WYSIWYG and Markdown anytime you need.
+### Live preview
+   Always display current Markdown document's HTML preview.
+### Extensible
+   You can extends feature by integrated API & Extension.
+### Scroll Follow
+   Auto-Scrolling to current editing cursor position for Markdown Live preview.
+### Text color
+   You can set the text color using inline html tag.
 
 ## Image
 
