@@ -5,18 +5,12 @@ You can choose and use WYSIWYG and Markdown as needed.
 And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) while you are writing it without any spoiling.
 
 ## Features
-### Input & output with GFM
-   All documents are exported by "Github Flavored Markdown" format even if it has written on WYSIWYG mode.
-### Quick & Easy mode switching
-   Switch editing mode WYSIWYG and Markdown anytime you need.
-### Live preview
-   Always display current Markdown document's HTML preview.
-### Extensible
-   You can extends feature by integrated API & Extension.
-### Scroll Follow
-   Auto-Scrolling to current editing cursor position for Markdown Live preview.
-### Text color
-   You can set the text color using inline html tag.
+* Input & output with GFM : All documents are exported by "Github Flavored Markdown" format even if it has written on WYSIWYG mode.
+* Quick & Easy mode switching : Switch editing mode WYSIWYG and Markdown anytime you need.
+* Live preview : Always display current Markdown document's HTML preview.
+* Extensible : You can extends feature by integrated API & Extension.
+* Scroll Follow : Auto-Scrolling to current editing cursor position for Markdown Live preview.
+* Text color : You can set the text color using inline html tag.
 
 ## Image
 
