@@ -25,16 +25,10 @@
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
-    if (!window.console || !console.log) {
-        window.console = {};
-        window.console.log = function(){};
-    }
-
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: 400,
-        initialEditType: 'wysiwyg',
-        exts: ['textPalette']
+        initialEditType: 'wysiwyg'
     });
 </script>
 </body>
