@@ -86,19 +86,20 @@ WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
 WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
     var $codeblock = $('<pre />');
     var self = this;
-    var node;
+    var node, tableRows;
 
     if (nodes.length === 0) {
         $codeblock.append(self._makeCodeBlockLineHtml());
     } else {
         node = nodes.shift();
 
-        if (node.nodeName && node.nodeName === 'TABLE') {
-            nodes = nodes.concat([].slice.call($(node.childNodes[1]).children()));
-            node = node.firstElementChild;
-        }
-
         while (node) {
+            if (node.nodeName && node.nodeName === 'TABLE') {
+                tableRows = [].slice.call(node.getElementsByTagName('TR'));
+                nodes = tableRows.concat(nodes);
+                node = node.firstElementChild;
+            }
+
             $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
             node = nodes.shift();
         }
