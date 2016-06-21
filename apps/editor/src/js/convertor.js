@@ -30,6 +30,8 @@ function Convertor(em) {
  * @returns {string} html text
  */
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
+    markdown = markdown.replace(/\\\|/g, ':ESCAPE_VERTICAL_BAR:');
+
     return marked(markdown, {
         renderer: markedCustomRenderer,
         gfm: true,
@@ -42,7 +44,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
         highlight: function(code, type) {
             return hljs.getLanguage(type) ? hljs.highlight(type, code).value : code;
         }
-    });
+    }).replace(/:ESCAPE_VERTICAL_BAR:/g, '|');
 };
 
 /**
@@ -52,6 +54,8 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
  * @returns {string} html text
  */
 Convertor.prototype._markdownToHtml = function(markdown) {
+    markdown = markdown.replace(/\\\|/g, ':ESCAPE_VERTICAL_BAR:');
+
     return marked(markdown, {
         renderer: markedCustomRenderer,
         gfm: true,
@@ -61,7 +65,7 @@ Convertor.prototype._markdownToHtml = function(markdown) {
         sanitize: false,
         smartLists: true,
         smartypants: false
-    });
+    }).replace(/:ESCAPE_VERTICAL_BAR:/g, '|');
 };
 
 /**
