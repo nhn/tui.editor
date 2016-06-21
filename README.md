@@ -9,7 +9,7 @@ And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) w
 * Quick & Easy mode switching : Switch editing mode WYSIWYG and Markdown anytime you need.
 * Live preview : Always display current Markdown document's HTML preview.
 * Extensible : You can extends feature by integrated API & Extension.
-* Scroll Follow : Auto-Scrolling to current editing cursor position for Markdown Live preview.
+* Auto-Scroll : A scroll automatically follows cursor position during editing so that you can see a Markdown preview in real time.
 * Text color : You can set the text color using inline html tag.
 
 ## Image
