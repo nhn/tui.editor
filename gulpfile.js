@@ -91,7 +91,7 @@ gulp.task('lint', function lint() {
     return gulp.src(['src/js/**/*.js'])
         .pipe(eslint())
         .pipe(eslint.format())
-        .pipe(eslint.failOnError());
+        .pipe(eslint.failAfterError());
 });
 
 gulp.task('csslint', function() {
