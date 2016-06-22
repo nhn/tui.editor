@@ -16,7 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     name: 'Strike',
-    keyMap: ['CTRL+S', 'CTRL+S'],
+    keyMap: ['CTRL+S', 'META+S'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WysiwygEditor instance

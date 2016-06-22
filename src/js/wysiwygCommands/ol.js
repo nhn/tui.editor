@@ -16,7 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var OL = CommandManager.command('wysiwyg', /** @lends OL */{
     name: 'OL',
-    keyMap: ['CTRL+O', 'CTRL+O'],
+    keyMap: ['CTRL+O', 'META+O'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance

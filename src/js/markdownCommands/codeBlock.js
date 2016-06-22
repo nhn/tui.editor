@@ -15,7 +15,7 @@ var CommandManager = require('../commandManager');
  */
 var CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
     name: 'CodeBlock',
-    keyMap: ['SHIFT+CTRL+P', 'SHIFT+CTRL+P'],
+    keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

@@ -15,7 +15,7 @@ var CommandManager = require('../commandManager');
  */
 var Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     name: 'Blockquote',
-    keyMap: ['CTRL+Q', 'CTRL+Q'],
+    keyMap: ['CTRL+Q', 'META+Q'],
     /**
      *  커맨드 핸들러
      *  @param {MarkdownEditor} mde MarkdownEditor instance

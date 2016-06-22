@@ -18,7 +18,7 @@ var italicRegex = /^[\*_][^\*_]*[\*_]$/;
  */
 var Italic = CommandManager.command('markdown', /** @lends Italic */{
     name: 'Italic',
-    keyMap: ['CTRL+I', 'CTRL+I'],
+    keyMap: ['CTRL+I', 'META+I'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
