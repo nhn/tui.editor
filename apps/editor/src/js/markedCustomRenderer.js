@@ -62,7 +62,7 @@ markedCustomRenderer.table = function(header, body) {
     var lastTr;
 
     if (foundLastTr && foundLastTr.length) {
-        lastTr = foundLastTr[0]
+        lastTr = foundLastTr[0];
     }
 
     if (lastTr && lastTr.match(/\/td/g).length < cellLen) {

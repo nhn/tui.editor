@@ -31,6 +31,7 @@ var eventList = [
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
+    'removeEditor',
     'convertorAfterMarkdownToHtmlConverted',
     'convertorAfterHtmlToMarkdownConverted',
     'stateChange',
