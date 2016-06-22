@@ -25,9 +25,9 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
      * @param {string} type of language
      */
     exec: function(wwe, type) {
-        var sq = wwe.getEditor(),
-            attr;
-
+        var attr, codeBlockBody;
+        var sq = wwe.getEditor();
+        var range = sq.getSelection().cloneRange();
         if (!sq.hasFormat('PRE')) {
             attr = ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
 
@@ -35,7 +35,8 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
                 attr += ' data-language="' + type + '"';
             }
 
-            sq.insertHTML('<pre' + attr + '><div><code>&#8203</code><br></div></pre>');
+            codeBlockBody = getCodeBlockBody(range, wwe);
+            sq.insertHTML('<pre' + attr + '>' + codeBlockBody + '</pre>');
 
             focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
 
@@ -59,6 +60,29 @@ function focusToFirstCode($pre, wwe) {
     range.collapse(true);
 
     wwe.getEditor().setSelection(range);
+}
+/**
+ * getCodeBlockBody
+ * get text wrapped by code
+ * @param {object} range range object
+ * @param {object} wwe wysiwyg editor
+ * @returns {string}
+ */
+function getCodeBlockBody(range, wwe) {
+    var codeBlock;
+    var mgr = wwe.getManager('codeblock');
+    var contents, nodes;
+
+    if (range.collapsed) {
+        nodes = [$('<div>&#8203<br></div>')[0]];
+    } else {
+        contents = range.extractContents();
+        nodes = [].slice.call(contents.childNodes);
+    }
+
+    codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
+
+    return codeBlock;
 }
 
 module.exports = CodeBlock;

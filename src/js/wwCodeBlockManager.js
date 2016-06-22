@@ -77,13 +77,13 @@ WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
     if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
         frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
     } else {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this._convertToCodeblock(nodes), range));
+        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this.convertToCodeblock(nodes), range));
     }
 
     return frag;
 };
 
-WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
+WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
     var $codeblock = $('<pre />');
     var self = this;
     var node = nodes.shift();
