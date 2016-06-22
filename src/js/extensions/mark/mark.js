@@ -54,8 +54,7 @@ extManager.defineExtension('mark', function(editor) {
         return helper;
     }
 
-    //We need to update marker after window have been resized
-    $(window).resize(function() {
+    function updateMarkWhenResizing() {
         var helper = getHelper();
 
         ml.getAll().forEach(function(marker) {
@@ -63,6 +62,13 @@ extManager.defineExtension('mark', function(editor) {
         });
 
         editor.eventManager.emit('markerUpdated', ml.getAll());
+    }
+
+    //We need to update marker after window have been resized
+    $(window).on('resize', updateMarkWhenResizing);
+
+    editor.on('removeEditor', function() {
+        $(window).off('resize', updateMarkWhenResizing);
     });
 
     //Reset marker content after set value
