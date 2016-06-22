@@ -285,12 +285,25 @@ ToastUIEditor.prototype.changeMode = function(mode) {
 };
 
 ToastUIEditor.prototype.remove = function() {
+    var self = this, i = __nedInstance.length - 1;
     this.wwEditor.remove();
     this.mdEditor.remove();
     this.layout.remove();
 
     if (this.getUI()) {
         this.getUI().remove();
+    }
+
+    this.eventManager.emit('removeEditor');
+    this.eventManager.events.forEach(function (value, key) {
+        self.off(key);
+    });
+    this.eventManager = null;
+
+    for(; i >= 0; i--) {
+        if (__nedInstance[i] === this) {
+            __nedInstance.splice(i, 1);
+        }
     }
 };
 
