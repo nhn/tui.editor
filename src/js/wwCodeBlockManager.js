@@ -94,10 +94,10 @@ WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
         node = nodes.shift();
 
         while (node) {
-            if (node.nodeName && node.nodeName === 'TABLE') {
+            if (node.nodeName && node.nodeName === 'TABLE' || self.wwe.getEditor().hasFormat('TABLE')) {
                 tableRows = [].slice.call(node.getElementsByTagName('TR'));
                 nodes = tableRows.concat(nodes);
-                node = node.firstElementChild;
+                node = nodes.shift();
             }
 
             $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
