@@ -22,8 +22,6 @@ describe('MdTextObject', function() {
         doc = cm.getDoc();
     });
 
-    //mde를 몰르고 getSelection API를 만들어서 change이벤트에서 업데이트 하는방식으로 가자
-    //즉 커런트셀렉션이고 뭐고를 textObject는 모르도록
     describe('set range', function() {
         beforeEach(function() {
             to = new MdTextObject(mde);
@@ -157,6 +155,25 @@ describe('MdTextObject', function() {
         it('delete text', function() {
             to.deleteContent();
             expect(doc.getValue()).toEqual('tt textObject');
+        });
+    });
+
+    describe('peek text content with given offset number', function() {
+        beforeEach(function() {
+            to = new MdTextObject(mde, {
+                start: {
+                    line: 0,
+                    ch: 7
+                },
+                end: {
+                    line: 0,
+                    ch: 10
+                }
+            });
+        });
+
+        it('peekStartBeforeOffset() returns text content from start with given offset to start offset', function() {
+            expect(to.peekStartBeforeOffset(3)).toEqual(' te');
         });
     });
 });

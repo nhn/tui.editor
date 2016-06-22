@@ -91,4 +91,13 @@ WwTextObject.prototype.deleteContent = function() {
     this._range = this._wwe.getRange();
 };
 
+WwTextObject.prototype.peekStartBeforeOffset = function(offset) {
+    var range = this._range.cloneRange();
+
+    range.setStart(range.startContainer, Math.max(range.startOffset - offset, 0));
+    range.setEnd(this._range.startContainer, this._range.startOffset);
+
+    return range.cloneContents().textContent;
+};
+
 module.exports = WwTextObject;

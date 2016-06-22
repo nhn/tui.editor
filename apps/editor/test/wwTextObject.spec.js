@@ -144,4 +144,19 @@ describe('WwTextObject', function() {
             expect(wwe.get$Body().find('div').text()).toEqual('tt textObject');
         });
     });
+
+    describe('peek text content with given offset number', function() {
+        beforeEach(function() {
+            var range = wwe.getRange();
+
+            range.setStart(wwe.get$Body().find('div')[0].firstChild, 7);
+            range.setEnd(wwe.get$Body().find('div')[0].firstChild, 10);
+
+            to = new WwTextObject(wwe, range);
+        });
+
+        it('peekStartBeforeOffset() returns text content from start with given offset to start offset', function() {
+            expect(to.peekStartBeforeOffset(3)).toEqual(' te');
+        });
+    });
 });

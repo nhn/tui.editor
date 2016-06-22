@@ -65,4 +65,15 @@ mdTextObject.prototype.deleteContent = function() {
     this._mde.getEditor().replaceRange('', this._start, this._end, '+delete');
 };
 
+mdTextObject.prototype.peekStartBeforeOffset = function(offset) {
+    var peekStart;
+
+    peekStart = {
+        line: this._start.line,
+        ch: Math.max(this._start.ch - offset, 0)
+    };
+
+    return this._mde.getEditor().getRange(peekStart, this._start);
+};
+
 module.exports = mdTextObject;
