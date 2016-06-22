@@ -18,7 +18,7 @@ var CommandManager = require('../commandManager'),
  */
 var Code = CommandManager.command('wysiwyg', /** @lends Code */{
     name: 'Code',
-    keyMap: ['SHIFT+CTRL+C', 'SHIFT+CTRL+C'],
+    keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance

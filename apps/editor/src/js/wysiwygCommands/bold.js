@@ -16,7 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
     name: 'Bold',
-    keyMap: ['CTRL+B', 'CTRL+B'],
+    keyMap: ['CTRL+B', 'META+B'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance

@@ -17,7 +17,7 @@ var CommandManager = require('../commandManager'),
  */
 var HR = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'HR',
-    keyMap: ['CTRL+L', 'CTRL+L'],
+    keyMap: ['CTRL+L', 'META+L'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
