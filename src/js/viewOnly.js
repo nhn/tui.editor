@@ -79,7 +79,7 @@ ToastUIEditorViewOnly.prototype.off = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
-ToastUIEditorViewOnly.prototype.remove = function () {
+ToastUIEditorViewOnly.prototype.remove = function() {
     this.eventManager.emit('removeEditor');
     this.options = null;
     this.eventManager = null;

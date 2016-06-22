@@ -67,7 +67,7 @@ extManager.defineExtension('mark', function(editor) {
     //We need to update marker after window have been resized
     $(window).on('resize', updateMarkWhenResizing);
 
-    editor.on('removeEditor', function () {
+    editor.on('removeEditor', function() {
         $(window).off('resize', updateMarkWhenResizing);
     });
 
