@@ -60,37 +60,4 @@ describe('CodeBlock', function() {
         expect($body.find('code').text()).toEqual('hello');
         expect($body.find('div').eq(1).text()).toEqual(', my name is code');
     });
-    it('add CodeBlock with table selection', function() {
-        var range;
-
-        wwe.setValue(['<div>default block</div>',
-            '<table>',
-            '<thead>',
-            '<tr><td>000</td><td>000</td></tr>',
-            '</thead>',
-            '<tbody>',
-            '<tr><td>111</td><td>111</td></tr>',
-            '<tr><td>222</td><td>222</td></tr>',
-            '<tr><td>333</td><td>333</td></tr>',
-            '<tr><td>444</td><td>444</td></tr>',
-            '</tbody>',
-            '</table>'].join(''));
-
-        range = wwe.getEditor().getSelection();
-        range.setStartBefore(wwe.get$Body().children().eq(0)[0]);
-        range.setEndAfter(wwe.get$Body().children().eq(1)[0]);
-
-        sq.setSelection(range);
-
-        CodeBlock.exec(wwe);
-
-        expect($body.find('pre').length).toEqual(1);
-        expect($body.find('code').length).toEqual(6);
-        expect($body.find('code').eq(0).text()).toEqual('default block');
-        expect($body.find('code').eq(1).text()).toEqual('000000');
-        expect($body.find('code').eq(2).text()).toEqual('111111');
-        expect($body.find('code').eq(3).text()).toEqual('222222');
-        expect($body.find('code').eq(4).text()).toEqual('333333');
-        expect($body.find('code').eq(5).text()).toEqual('444444');
-    });
 });

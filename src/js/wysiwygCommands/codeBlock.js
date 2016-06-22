@@ -69,14 +69,18 @@ function focusToFirstCode($pre, wwe) {
  * @returns {string}
  */
 function getCodeBlockBody(range, wwe) {
-    var line;
+    var codeBlock;
     var mgr = wwe.getManager('codeblock');
     var contents = range.extractContents();
     var nodes = [].slice.call(contents.childNodes);
 
-    line = mgr._convertToCodeblock(nodes).innerHTML;
+    if (nodes.length === 0) {
+        nodes.push($('<div>&#8203<br></div>'));
+    }
 
-    return line;
+    codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
+
+    return codeBlock;
 }
 
 module.exports = CodeBlock;

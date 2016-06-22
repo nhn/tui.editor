@@ -77,32 +77,20 @@ WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
     if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
         frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
     } else {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this._convertToCodeblock(nodes), range));
+        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this.convertToCodeblock(nodes), range));
     }
 
     return frag;
 };
 
-WwCodeBlockManager.prototype._convertToCodeblock = function(nodes) {
+WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
     var $codeblock = $('<pre />');
     var self = this;
-    var node, tableRows;
+    var node = nodes.shift();
 
-    if (nodes.length === 0) {
-        $codeblock.append(self._makeCodeBlockLineHtml());
-    } else {
+    while (node) {
+        $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
         node = nodes.shift();
-
-        while (node) {
-            if (node.nodeName && node.nodeName === 'TABLE' || self.wwe.getEditor().hasFormat('TABLE')) {
-                tableRows = [].slice.call(node.getElementsByTagName('TR'));
-                nodes = tableRows.concat(nodes);
-                node = nodes.shift();
-            }
-
-            $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
-            node = nodes.shift();
-        }
     }
 
     return $codeblock[0];
