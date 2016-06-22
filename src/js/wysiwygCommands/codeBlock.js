@@ -75,7 +75,7 @@ function getCodeBlockBody(range, wwe) {
     var nodes = [].slice.call(contents.childNodes);
 
     if (nodes.length === 0) {
-        nodes.push($('<div>&#8203<br></div>'));
+        nodes.push($('<div>&#8203<br></div>')[0]);
     }
 
     codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
