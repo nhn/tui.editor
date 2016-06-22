@@ -17,7 +17,7 @@ var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
  */
 var Strike = CommandManager.command('markdown', /** @lends Strike */{
     name: 'Strike',
-    keyMap: ['CTRL+S', 'CTRL+S'],
+    keyMap: ['CTRL+S', 'META+S'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

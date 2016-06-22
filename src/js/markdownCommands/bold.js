@@ -17,7 +17,7 @@ var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
  */
 var Bold = CommandManager.command('markdown', /** @lends Bold */{
     name: 'Bold',
-    keyMap: ['CTRL+B', 'CTRL+B'],
+    keyMap: ['CTRL+B', 'META+B'],
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance

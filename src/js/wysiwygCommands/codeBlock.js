@@ -18,7 +18,7 @@ var codeBlockID = 0,
  */
 var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
     name: 'CodeBlock',
-    keyMap: ['SHIFT+CTRL+P', 'SHIFT+CTRL+P'],
+    keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
     /**
      * Command handler
      * @param {WysiwygEditor} wwe WYsiwygEditor instance

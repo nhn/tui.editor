@@ -16,7 +16,7 @@ var CommandManager = require('../commandManager');
  */
 var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     name: 'Blockquote',
-    keyMap: ['CTRL+Q', 'CTRL+Q'],
+    keyMap: ['CTRL+Q', 'META+Q'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
