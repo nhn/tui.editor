@@ -151,6 +151,10 @@ function initUI(editor) {
         popup.hide();
     });
 
+    editor.eventManager.listen('removeEditor', function() {
+        colorPicker.off('selectColor');
+    });
+
     colorPicker.on('selectColor', function(e) {
         selectedColor = e.color;
 
