@@ -71,11 +71,13 @@ function focusToFirstCode($pre, wwe) {
 function getCodeBlockBody(range, wwe) {
     var codeBlock;
     var mgr = wwe.getManager('codeblock');
-    var contents = range.extractContents();
-    var nodes = [].slice.call(contents.childNodes);
+    var contents, nodes;
 
-    if (nodes.length === 0) {
-        nodes.push($('<div>&#8203<br></div>')[0]);
+    if (range.collapsed) {
+        nodes = [$('<div>&#8203<br></div>')[0]];
+    } else {
+        contents = range.extractContents();
+        nodes = [].slice.call(contents.childNodes);
     }
 
     codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
