@@ -31,7 +31,7 @@ var UL = CommandManager.command('wysiwyg', /** @lends UL */{
 
         if (sq.hasFormat('LI')) {
             wwe.saveSelection(range);
-            sq.recordUndoState(range);
+            sq.saveUndoState(range);
             wwe.getManager('task').unformatTask(range.startContainer);
             sq.replaceParent(range.startContainer, 'ol', 'ul');
             wwe.restoreSavedSelection();

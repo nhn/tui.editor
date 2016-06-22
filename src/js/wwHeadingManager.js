@@ -97,7 +97,7 @@ WwHeadingManager.prototype._onEnter = function(event, range) {
  * @param {Range} range range
  */
 WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
-    this.wwe.getEditor().recordUndoState(range);
+    this.wwe.getEditor().saveUndoState(range);
     $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]));
 };
 
@@ -119,7 +119,7 @@ WwHeadingManager.prototype._removePrevTopNodeIfNeed = function(event, range) {
             && !prevTopNode.textContent.length
            ) {
             event.preventDefault();
-            this.wwe.getEditor().recordUndoState(range);
+            this.wwe.getEditor().saveUndoState(range);
             $(prevTopNode).remove();
             isHandled = true;
         }

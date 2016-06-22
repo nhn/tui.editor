@@ -207,7 +207,7 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
 WwTableManager.prototype._removeTableOnBackspace = function(range) {
     var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
-    this.wwe.getEditor().recordUndoState(range);
+    this.wwe.getEditor().saveUndoState(range);
 
     this.wwe.insertSelectionMarker(range);
     $(table).remove();
@@ -223,7 +223,7 @@ WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
     var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
 
     if (range.collapsed && this._lastCellNode !== currentCellNode) {
-        this.wwe.getEditor().recordUndoState(range);
+        this.wwe.getEditor().saveUndoState(range);
         this._lastCellNode = currentCellNode;
     }
 };
@@ -234,7 +234,7 @@ WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
  * @param {Range} range range
  */
 WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
-    this.wwe.getEditor().recordUndoState(range);
+    this.wwe.getEditor().saveUndoState(range);
     this._lastCellNode = null;
 };
 

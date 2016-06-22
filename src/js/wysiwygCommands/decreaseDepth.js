@@ -34,7 +34,7 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
             || isOffsetEuqals2InDIVForIE10
             || range.startOffset === 0
         ) {
-            wwe.getEditor().recordUndoState(range);
+            wwe.getEditor().saveUndoState(range);
 
             nodeClasses = $node.attr('class');
             $node.removeAttr('class');

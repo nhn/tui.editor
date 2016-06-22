@@ -331,14 +331,6 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
     return pos;
 };
 
-SquireExt.prototype.recordUndoState = function(range) {
-    if (!range) {
-        range = this.getSelection();
-    }
-    this._recordUndoState(range);
-    this._getRangeAndRemoveBookmark();
-};
-
 SquireExt.prototype.removeLastUndoStack = function() {
     if (this._undoStack.length) {
         this._undoStackLength -= 1;

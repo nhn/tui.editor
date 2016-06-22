@@ -616,7 +616,7 @@ WysiwygEditor.prototype.setValue = function(html) {
     this.getEditor().preserveLastLine();
 
     this.getEditor().removeLastUndoStack();
-    this.getEditor().recordUndoState();
+    this.getEditor().saveUndoState();
 };
 
 /**
