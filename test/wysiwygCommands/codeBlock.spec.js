@@ -60,7 +60,7 @@ describe('CodeBlock', function() {
         expect($body.find('code').text()).toEqual('hello');
         expect($body.find('div').eq(1).text()).toEqual(', my name is code');
     });
-    fit('add CodeBlock with table selection', function() {
+    it('add CodeBlock with table selection', function() {
         var range;
 
         wwe.setValue(['<div>default block</div>',
