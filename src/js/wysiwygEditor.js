@@ -570,18 +570,10 @@ WysiwygEditor.prototype.focus = function() {
  * Remove wysiwyg editor
  */
 WysiwygEditor.prototype.remove = function() {
-    this.editor.removeEventListener('focus');
-    this.editor.removeEventListener('blur');
-    this.editor.removeEventListener('keydown');
-    this.editor.removeEventListener('keyup');
-    this.editor.removeEventListener('keypress');
-    this.editor.removeEventListener('paste');
-    this.editor.removeEventListener('input');
-    this.editor.removeEventListener('scroll');
-    this.editor.removeEventListener('mousedown');
-    this.editor.removeEventListener('mouseup');
-    this.editor.removeEventListener('contextmenu');
-    this.editor.removeEventListener('pathChange');
+    this.getEditor().getDocument().removeEventListener('dragover', false);
+    this.getEditor().getDocument().removeEventListener('drop', false);
+    this.getEditor().destroy();
+
     this.editor = null;
     this.$body = null;
 };
