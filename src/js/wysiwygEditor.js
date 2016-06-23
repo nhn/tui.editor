@@ -688,7 +688,7 @@ WysiwygEditor.prototype._postProcessForChange = function() {
  * Ready to silent change
  */
 WysiwygEditor.prototype.readySilentChange = function() {
-    if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
+    if (canObserveMutations && this.getEditor() && !this.getEditor().isIgnoreChange()) {
         this._silentChange = true;
     }
 };
