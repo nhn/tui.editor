@@ -7885,12 +7885,10 @@
 	 * Remove wysiwyg editor
 	 */
 	WysiwygEditor.prototype.remove = function() {
-	    this.editor.removeEventListener('focus');
-	    this.editor.removeEventListener('blur');
-	    this.editor.removeEventListener('keydown');
-	    this.editor.removeEventListener('keyup');
-	    this.editor.removeEventListener('keypress');
-	    this.editor.removeEventListener('paste');
+	    this.getEditor().getDocument().removeEventListener('dragover', false);
+	    this.getEditor().getDocument().removeEventListener('drop', false);
+	    this.getEditor().destroy();
+
 	    this.editor = null;
 	    this.$body = null;
 	};
