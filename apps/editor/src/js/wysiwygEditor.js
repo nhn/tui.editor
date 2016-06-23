@@ -576,6 +576,12 @@ WysiwygEditor.prototype.remove = function() {
     this.editor.removeEventListener('keyup');
     this.editor.removeEventListener('keypress');
     this.editor.removeEventListener('paste');
+    this.editor.removeEventListener('input');
+    this.editor.removeEventListener('scroll');
+    this.editor.removeEventListener('mousedown');
+    this.editor.removeEventListener('mouseup');
+    this.editor.removeEventListener('contextmenu');
+    this.editor.removeEventListener('pathChange');
     this.editor = null;
     this.$body = null;
 };
