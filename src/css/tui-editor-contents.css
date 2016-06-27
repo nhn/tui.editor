@@ -350,7 +350,6 @@
 }
 
 .tui-editor-contents p {
-    font-size: 13px;
     margin: 10px 0;
     color: #555;
 }
@@ -368,7 +367,7 @@
 }
 
 .tui-editor-contents h1 {
-    font-size: 24px;
+    font-size: 1.6rem;
     line-height: 28px;
     border-bottom: 3px double #999;
     margin: 52px 0 15px 0;
@@ -377,7 +376,7 @@
 }
 
 .tui-editor-contents h2 {
-    font-size: 19px;
+    font-size: 1.3rem;
     line-height: 23px;
     border-bottom: 1px solid #dbdbdb;
     margin: 30px 0 13px 0;
@@ -387,7 +386,7 @@
 
 .tui-editor-contents h3,
 .tui-editor-contents h4 {
-    font-size: 15px;
+    font-size: 1.2rem;
     line-height: 18px;
     margin: 20px 0 2px;
     color: #333;
@@ -395,7 +394,7 @@
 
 .tui-editor-contents h5,
 .tui-editor-contents h6 {
-    font-size: 14px;
+    font-size: 1rem;
     line-height: 17px;
     margin: 10px 0 -4px;
     color: #333;
@@ -455,7 +454,6 @@
 
 .tui-editor-contents pre code {
     padding: 0;
-    font-size: 12px;
     color: inherit;
     white-space: pre-wrap;
     background-color: transparent;
@@ -468,14 +466,12 @@
 
 .tui-editor-contents img {
     margin: 4px 0 10px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     vertical-align: top;
     max-width: 100%;
 }
 
 .tui-editor-contents table {
-    font-size: 13px;
     margin: 2px 0 14px;
     width: 100%;
     color: #555;

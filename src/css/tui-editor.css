@@ -146,6 +146,7 @@
     background-color: #fff;
     border: 1px solid #ebebeb;
     border-radius: 3px;
+    font-size: 13px;
 }
 
 .tui-editor-defaultUI-toolbar button:hover {
@@ -277,6 +278,7 @@
 
 .tui-popup-body {
     padding: 15px;
+    font-size: 12px;
 }
 
 .tui-editor-popup {
@@ -287,7 +289,6 @@
 }
 
 .tui-editor-popup .tui-popup-body label {
-    font-size: 12px;
     font-weight: bold;
     color: #666;
     display: block;
@@ -303,7 +304,6 @@
     background-color: #fff;
     border: 1px solid #bfbfbf;
     color: #666;
-    font-size: 12px;
     border-radius: 3px;
     padding: 3px 8px;
 }
