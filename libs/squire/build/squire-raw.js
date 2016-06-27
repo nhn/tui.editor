@@ -2352,13 +2352,11 @@ function Squire ( root, config ) {
         this.addEventListener( 'keyup', this._keyUpDetectChange );
     }
 
-    // On blur, restore focus except if there is any change to the content, or
-    // the user taps or clicks to focus a specific point. Can't actually use
-    // click event because focus happens before click, so use
-    // mousedown/touchstart
+    // On blur, restore focus except if the user taps or clicks to focus a
+    // specific point. Can't actually use click event because focus happens
+    // before click, so use mousedown/touchstart
     this._restoreSelection = false;
     this.addEventListener( 'blur', enableRestoreSelection );
-    this.addEventListener( 'input', disableRestoreSelection );
     this.addEventListener( 'mousedown', disableRestoreSelection );
     this.addEventListener( 'touchstart', disableRestoreSelection );
     this.addEventListener( 'focus', restoreSelection );
