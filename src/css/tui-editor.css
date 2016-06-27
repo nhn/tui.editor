@@ -12,6 +12,7 @@
     position: relative;
     line-height: 1;
     border: 1px solid #ebebeb;
+    border-bottom: 0;
     color: #181818;
 }
 
@@ -170,28 +171,34 @@
     font-style: italic;
 }
 
-.tui-editor-defaultUI .te-switch-button {
-    background: none;
-    text-decoration: underline;
-    border: 0;
-}
-
 .tui-editor-defaultUI .te-mode-switch-section {
+    background-color: #fafafa;
+    border: 1px solid #ebebeb;
+    border-top: 0;
+    height: 20px;
+    font-size: 12px;
+}
+
+.tui-editor-defaultUI .te-mode-switch {
     float: right;
-    margin-top: -23px;
-    margin-right: 5px;
+    height: 100%;
 }
 
-/*
-.tui-editor-defaultUI .te-ww-container {
-    border-top: 1px solid #ccc;
+.tui-editor-defaultUI .te-switch-button {
+    width: 92px;
+    height: inherit;
+    background: #e5e5e5;
+    border: 0;
+    outline: 0;
+    color: #a0aabf;
+    cursor: pointer;
 }
 
-
-.tui-editor-defaultUI.te-preview-style-vetical .toolbar {
-    border-bottom: 1px solid #ccc;
+.tui-editor-defaultUI .te-switch-button.active {
+    background-color: #fff;
+    color: #000;
 }
-*/
+
 
 .tui-editor-defaultUI .te-markdown-tab-section {
     border-style: solid;
