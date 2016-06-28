@@ -64,7 +64,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
         if (self._latestClipboardRangeInfo
             && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-            pasteData.fragment = self._latestClipboardRangeInfo.contents;
+            pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
         }
 
         self._pch.preparePaste(pasteData);
