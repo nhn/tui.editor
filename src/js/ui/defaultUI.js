@@ -18,10 +18,10 @@ var Toolbar = require('./toolbar'),
 /* eslint-disable indent */
 var containerTmpl = [
     '<div class="tui-editor-defaultUI">',
-        '<div class="te-toolbar-section" />',
-        '<div class="te-mode-switch-section" />',
-        '<div class="te-markdown-tab-section" />',
-        '<div class="te-editor-section"  />',
+        '<div class="te-toolbar-section"></div>',
+        '<div class="te-markdown-tab-section"></div>',
+        '<div class="te-editor-section"></div>',
+        '<div class="te-mode-switch-section"></div>',
     '</div>'
 ].join('');
 /* eslint-enable indent */
@@ -94,8 +94,8 @@ DefaultUI.prototype._initModeSwitch = function() {
     this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
     this.$el.find('.te-mode-switch-section').append(this.modeSwitch.$el);
 
-    this.modeSwitch.on('modeSwitched', function(ev, info) {
-        self.editor.changeMode(info.text);
+    this.modeSwitch.on('modeSwitched', function(ev, type) {
+        self.editor.changeMode(type);
     });
 };
 
