@@ -383,11 +383,18 @@
 }
 
 .te-popup-table-utils {
-    width: 80px;
+    width: 100px;
+}
+
+.te-popup-table-utils .tui-popup-body {
+    padding: 5px;
 }
 
 .te-popup-table-utils button {
     width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    outline: 0;
 }
 
 .te-heading-add {
