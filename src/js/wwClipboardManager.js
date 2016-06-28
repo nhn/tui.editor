@@ -65,6 +65,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
         if (self._latestClipboardRangeInfo
             && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
             pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
+            pasteData.rangeInfo = self._latestClipboardRangeInfo.contents;
         }
 
         self._pch.preparePaste(pasteData);
