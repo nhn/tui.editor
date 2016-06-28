@@ -9,11 +9,11 @@ var UIController = require('./uicontroller');
 
 var util = tui.util;
 
-var nextTypeString = ['WYSIWYG', 'Markdown'],
-    TYPE = {
-        'MARKDOWN': 0,
-        'WYSIWYG': 1
-    };
+var TYPE = {
+    MARKDOWN: 'markdown',
+    WYSIWYG: 'wysiwyg'
+};
+
 
 /**
  * ModeSwitch
@@ -30,8 +30,8 @@ function ModeSwitch(initialType) {
         className: 'te-mode-switch'
     });
 
-    this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
     this._render();
+    this._switchType(util.isExisty(initialType) ? initialType : TYPE.MARKDOWN);
 }
 
 ModeSwitch.prototype = util.extend(
@@ -40,41 +40,42 @@ ModeSwitch.prototype = util.extend(
 );
 
 ModeSwitch.prototype._render = function() {
-    this.$button = $('<button class="te-switch-button" type="button" />');
-    this._setButtonTitle();
-    this.$el.append(this.$button);
+    this.$buttons = {};
+    this.$buttons.markdown = $('<button class="te-switch-button markdown" type="button">Markdown</button>');
+    this.$buttons.wysiwyg = $('<button class="te-switch-button wysiwyg" type="button">WYSIWYG</button>');
+    this.$el.append(this.$buttons.markdown);
+    this.$el.append(this.$buttons.wysiwyg);
 
     this.attachEvents({
-        'click button': '_buttonClicked'
+        'click .markdown': '_changeMarkdown',
+        'click .wysiwyg': '_changeWysiwyg'
     });
 };
 
-ModeSwitch.prototype._setButtonTitle = function() {
-    this.$button.text('to' + this._getNextTypeString());
+ModeSwitch.prototype._changeMarkdown = function(e) {
+    this._switchType(TYPE.MARKDOWN);
 };
 
-ModeSwitch.prototype._buttonClicked = function() {
-    this._switchType();
+ModeSwitch.prototype._changeWysiwyg = function() {
+    this._switchType(TYPE.WYSIWYG);
 };
 
-ModeSwitch.prototype._switchType = function() {
-    var typeToSwitch = this._getNextTypeString();
-
-    this._toggleType();
-    this._setButtonTitle();
-
-    this.trigger('modeSwitched', {
-        type: this.type,
-        text: typeToSwitch.toLowerCase()
+ModeSwitch.prototype._setActiveButton = function(type) {
+    util.forEach(this.$buttons, function($button) {
+        $button.removeClass('active');
     });
+    this.$buttons[type].addClass('active');
 };
 
-ModeSwitch.prototype._getNextTypeString = function() {
-    return nextTypeString[this.type];
-};
 
-ModeSwitch.prototype._toggleType = function() {
-    this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
+ModeSwitch.prototype._switchType = function(type) {
+    if(this.type === type) {
+        return;
+    }
+
+    this.type = type;
+    this._setActiveButton(type);
+    this.trigger('modeSwitched', this.type);
 };
 
 ModeSwitch.TYPE = TYPE;
