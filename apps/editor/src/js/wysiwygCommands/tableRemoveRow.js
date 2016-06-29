@@ -26,7 +26,7 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
             $tr, $nextFocus;
 
         if (sq.hasFormat('TD') && $(range.startContainer).closest('table').find('tbody tr').length > 1) {
-            sq.recordUndoState(range);
+            sq.saveUndoState(range);
             $tr = $(range.startContainer).closest('tr');
 
             $nextFocus = $tr.next().length ? $tr.next() : $tr.prev();

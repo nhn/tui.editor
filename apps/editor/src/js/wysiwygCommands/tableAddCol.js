@@ -27,7 +27,7 @@ var AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
             $cell;
 
         if (sq.hasFormat('TR')) {
-            sq.recordUndoState(range);
+            sq.saveUndoState(range);
 
             $cell = getCellByRange(range);
             addColToCellAfter($cell);
