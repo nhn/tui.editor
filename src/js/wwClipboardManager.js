@@ -62,9 +62,10 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     }
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        if (self._lastestClipboardRangeInfo
-            && self._lastestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-            pasteData.rangeInfo = self._lastestClipboardRangeInfo;
+        if (self._latestClipboardRangeInfo
+            && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+            pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
+            pasteData.rangeInfo = self._latestClipboardRangeInfo;
         }
 
         self._pch.preparePaste(pasteData);
@@ -92,11 +93,11 @@ WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment)
 WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
     var lastestClipboardContents;
 
-    if (!this._lastestClipboardRangeInfo) {
+    if (!this._latestClipboardRangeInfo) {
         return false;
     }
 
-    lastestClipboardContents = this._lastestClipboardRangeInfo.contents.textContent;
+    lastestClipboardContents = this._latestClipboardRangeInfo.contents.textContent;
 
     return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 };
@@ -104,6 +105,7 @@ WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
     var range = this.wwe.getEditor().getSelection().cloneRange();
+    range = this._extendRange(range);
 
     if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
         commonAncestorName = 'BODY';
