@@ -26,7 +26,7 @@ var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
             $tr, $newRow;
 
         if (sq.hasFormat('TD')) {
-            sq.recordUndoState(range);
+            sq.saveUndoState(range);
             $tr = $(range.startContainer).closest('tr');
             $newRow = getNewRow($tr);
             $newRow.insertAfter($tr);

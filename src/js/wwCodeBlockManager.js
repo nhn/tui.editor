@@ -155,7 +155,7 @@ WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
 WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
     if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
         ev.preventDefault();
-        this.wwe.getEditor().recordUndoState(range);
+        this.wwe.getEditor().saveUndoState(range);
         $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
 
         return false;

@@ -30,7 +30,7 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
         }
 
         if (sq.hasFormat('LI')) {
-            sq.recordUndoState(range);
+            sq.saveUndoState(range);
 
             wwe.saveSelection(range);
             wwe.getManager('task').unformatTask(range.startContainer);

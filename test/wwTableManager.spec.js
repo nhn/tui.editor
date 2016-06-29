@@ -76,7 +76,7 @@ describe('WwTableManager', function() {
         it('_recordUndoStateIfNeed record undo state if range is in different cell', function() {
             var range;
 
-            wwe.getEditor().recordUndoState = jasmine.createSpy('recordUndoState');
+            wwe.getEditor().saveUndoState = jasmine.createSpy('saveUndoState');
 
             range = wwe.getEditor().getSelection().cloneRange();
 
@@ -86,13 +86,13 @@ describe('WwTableManager', function() {
             mgr._recordUndoStateIfNeed(range);
             mgr._recordUndoStateIfNeed(range);
 
-            expect(wwe.getEditor().recordUndoState.calls.count()).toEqual(1);
+            expect(wwe.getEditor().saveUndoState.calls.count()).toEqual(1);
         });
 
         it('_recordUndoStateAndResetCellNode record undo state and reset laste cell node info', function() {
             var range;
 
-            wwe.getEditor().recordUndoState = jasmine.createSpy('recordUndoState');
+            wwe.getEditor().saveUndoState = jasmine.createSpy('saveUndoState');
 
             range = wwe.getEditor().getSelection().cloneRange();
 
@@ -101,7 +101,7 @@ describe('WwTableManager', function() {
 
             mgr._recordUndoStateAndResetCellNode(range);
 
-            expect(wwe.getEditor().recordUndoState).toHaveBeenCalled();
+            expect(wwe.getEditor().saveUndoState).toHaveBeenCalled();
             expect(mgr._lastCellNode).toEqual(null);
         });
     });

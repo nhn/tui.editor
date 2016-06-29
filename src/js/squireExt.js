@@ -148,48 +148,8 @@ SquireExt.prototype.changeBlockFormatTo = function(targetTagName) {
     }, targetTagName);
 };
 
-//from http://jsfiddle.net/9ThVr/24/
 SquireExt.prototype.getCaretPosition = function() {
-    var range, sel, rect, range2, rect2,
-        offsetx = 0,
-        offsety = 0;
-
-    var $node = this.getDocument().body,
-        nodeLeft = $node.offsetLeft,
-        nodeTop = $node.offsetTop;
-
-    var pos = {left: 0, top: 0};
-
-    sel = this.getSelection();
-    range = sel.cloneRange();
-
-    range.setStart(range.startContainer, range.startOffset - 1);
-    rect = range.getBoundingClientRect();
-
-    if (range.endOffset === 0 || range.toString() === '') {
-        // first char of line
-        if (range.startContainer === $node) {
-            // empty div
-            if (range.endOffset === 0) {
-                pos.top = '0';
-                pos.left = '0';
-            } else {
-                // firefox need this
-                range2 = range.cloneRange();
-                range2.setStart(range2.startContainer, 0);
-                rect2 = range2.getBoundingClientRect();
-                pos.left = rect2.left + offsetx - nodeLeft;
-                pos.top = rect2.top + rect2.height + offsety - nodeTop;
-            }
-        } else {
-            pos.top = range.startContainer.offsetTop;
-            pos.left = range.startContainer.offsetLeft;
-        }
-    } else {
-        pos.left = rect.left + rect.width + offsetx - nodeLeft;
-        pos.top = rect.top + offsety - nodeTop;
-    }
-    return pos;
+    return this.getCursorPosition();
 };
 
 SquireExt.prototype.replaceSelection = function(content, selection) {
@@ -329,14 +289,6 @@ SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
     this.setSelection(selection);
 
     return pos;
-};
-
-SquireExt.prototype.recordUndoState = function(range) {
-    if (!range) {
-        range = this.getSelection();
-    }
-    this._recordUndoState(range);
-    this._getRangeAndRemoveBookmark();
 };
 
 SquireExt.prototype.removeLastUndoStack = function() {
