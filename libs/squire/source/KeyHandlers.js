@@ -390,12 +390,9 @@ var keyHandlers = {
             while ( parent = node.parentNode ) {
                 // If we find a UL or OL (so are in a list, node must be an LI)
                 if ( parent.nodeName === 'UL' || parent.nodeName === 'OL' ) {
-                    // AND the LI is not the first in the list
-                    if ( node.previousSibling ) {
-                        // Then increase the list level
-                        event.preventDefault();
-                        self.modifyBlocks( increaseListLevel, range );
-                    }
+                    // Then increase the list level
+                    event.preventDefault();
+                    self.modifyBlocks( increaseListLevel, range );
                     break;
                 }
                 node = parent;

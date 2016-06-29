@@ -272,6 +272,85 @@ describe('Squire RTE', function () {
         });
     });
 
+    describe('multi-level lists', function () {
+      it('increases list indentation', function() {
+        var startHTML = '<ul><li><div>a</div></li><li><div>b</div></li><li><div>c</div></li></ul>';
+        editor.setHTML(startHTML);
+        expect(editor, 'to contain HTML', startHTML);
+
+        var range = doc.createRange();
+        var textNode = doc.getElementsByTagName('li').item(1).childNodes[0].childNodes[0]
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 0);
+        editor.setSelection(range);
+
+        editor.increaseListLevel()
+        expect(editor, 'to contain HTML', '<ul><li><div>a</div></li><ul><li><div>b</div></li></ul><li><div>c</div></li></ul>');
+      });
+
+      it('increases list indentation 2', function() {
+        var startHTML = '<ul><li><div>a</div></li><li><div>b</div></li><li><div>c</div></li></ul>';
+        editor.setHTML(startHTML);
+        expect(editor, 'to contain HTML', startHTML);
+
+        var range = doc.createRange();
+        var textNode = doc.getElementsByTagName('li').item(1).childNodes[0].childNodes[0]
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 0);
+        editor.setSelection(range);
+
+        editor.increaseListLevel()
+        editor.increaseListLevel()
+        expect(editor, 'to contain HTML', '<ul><li><div>a</div></li><ul><ul><li><div>b</div></li></ul></ul><li><div>c</div></li></ul>');
+      });
+
+      it('decreases list indentation', function() {
+        var startHTML = '<ul><li><div>a</div></li><ul><li><div>b</div></li></ul><li><div>c</div></li></ul>';
+        editor.setHTML(startHTML);
+        expect(editor, 'to contain HTML', startHTML);
+
+        var range = doc.createRange();
+        var textNode = doc.getElementsByTagName('li').item(1).childNodes[0].childNodes[0]
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 0);
+        editor.setSelection(range);
+
+        editor.decreaseListLevel()
+        expect(editor, 'to contain HTML', '<ul><li><div>a</div></li><li><div>b</div></li><li><div>c</div></li></ul>');
+      });
+
+      it('decreases list indentation 2', function() {
+        var startHTML = '<ul><li><div>a</div></li><ul><ul><li><div>b</div></li></ul></ul><li><div>c</div></li></ul>';
+        editor.setHTML(startHTML);
+        expect(editor, 'to contain HTML', startHTML);
+
+        var range = doc.createRange();
+        var textNode = doc.getElementsByTagName('li').item(1).childNodes[0].childNodes[0]
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 0);
+        editor.setSelection(range);
+
+        editor.decreaseListLevel()
+        editor.decreaseListLevel()
+        expect(editor, 'to contain HTML', '<ul><li><div>a</div></li><li><div>b</div></li><li><div>c</div></li></ul>');
+      });
+
+      it('removes lists', function() {
+        var startHTML = '<ul><li><div>foo</div></li><ul><li><div>bar</div></li></ul></ul>';
+        editor.setHTML(startHTML);
+        expect(editor, 'to contain HTML', startHTML);
+
+        var range = doc.createRange();
+        var textNode = doc.getElementsByTagName('li').item(1).childNodes[0].childNodes[0]
+        range.setStart(textNode, 0);
+        range.setEnd(textNode, 0);
+        editor.setSelection(range);
+
+        editor.removeList()
+        expect(editor, 'to contain HTML', '<ul><li><div>foo</div></li></ul><div>bar</div>');
+      })
+    });
+
     afterEach(function () {
         editor = null;
         var iframe = document.getElementById('testFrame');
