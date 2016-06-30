@@ -171,13 +171,16 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             data: clipboardEvent
         });
     });
+
     this.getEditor().addEventListener('dragover', function(ev) {
         ev.preventDefault();
+
         return false;
     });
 
     this.getEditor().addEventListener('drop', function(ev) {
         ev.preventDefault();
+
         self.eventManager.emit('drop', {
             source: 'wysiwyg',
             data: ev
