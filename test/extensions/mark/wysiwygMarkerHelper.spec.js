@@ -144,7 +144,7 @@ describe('WysiwygMarkerHelper', function() {
         expect(marker.end).toEqual(2);
         expect(marker.top).toEqual(0);
         expect(marker.left).toEqual(0);
-        expect(marker.height).toEqual(0);
+        expect(marker.height).toBeDefined();
     });
 
     it('select range by given offset', function() {
