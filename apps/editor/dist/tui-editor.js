@@ -7487,13 +7487,13 @@
 	        });
 	    });
 
-	    this.getEditor().getDocument().addEventListener('dragover', function(ev) {
+	    this.getEditor().addEventListener('dragover', function(ev) {
 	        ev.preventDefault();
 
 	        return false;
 	    });
 
-	    this.getEditor().getDocument().addEventListener('drop', function(ev) {
+	    this.getEditor().addEventListener('drop', function(ev) {
 	        ev.preventDefault();
 
 	        self.eventManager.emit('drop', {
@@ -7885,8 +7885,6 @@
 	 * Remove wysiwyg editor
 	 */
 	WysiwygEditor.prototype.remove = function() {
-	    this.getEditor().getDocument().removeEventListener('dragover', false);
-	    this.getEditor().getDocument().removeEventListener('drop', false);
 	    this.getEditor().destroy();
 
 	    this.editor = null;
@@ -7929,7 +7927,7 @@
 	    this.getEditor().preserveLastLine();
 
 	    this.getEditor().removeLastUndoStack();
-	    this.getEditor().recordUndoState();
+	    this.getEditor().saveUndoState();
 	};
 
 	/**
@@ -8328,9 +8326,10 @@
 	    }
 
 	    this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-	        if (self._lastestClipboardRangeInfo
-	            && self._lastestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-	            pasteData.rangeInfo = self._lastestClipboardRangeInfo;
+	        if (self._latestClipboardRangeInfo
+	            && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
+	            pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
+	            pasteData.rangeInfo = self._latestClipboardRangeInfo;
 	        }
 
 	        self._pch.preparePaste(pasteData);
@@ -8358,11 +8357,11 @@
 	WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 	    var lastestClipboardContents;
 
-	    if (!this._lastestClipboardRangeInfo) {
+	    if (!this._latestClipboardRangeInfo) {
 	        return false;
 	    }
 
-	    lastestClipboardContents = this._lastestClipboardRangeInfo.contents.textContent;
+	    lastestClipboardContents = this._latestClipboardRangeInfo.contents.textContent;
 
 	    return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 	};
@@ -8370,6 +8369,7 @@
 	WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
 	    var commonAncestorName;
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
+	    range = this._extendRange(range);
 
 	    if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
 	        commonAncestorName = 'BODY';
@@ -9553,7 +9553,7 @@
 	WwTableManager.prototype._removeTableOnBackspace = function(range) {
 	    var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
 
-	    this.wwe.getEditor().recordUndoState(range);
+	    this.wwe.getEditor().saveUndoState(range);
 
 	    this.wwe.insertSelectionMarker(range);
 	    $(table).remove();
@@ -9569,7 +9569,7 @@
 	    var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
 
 	    if (range.collapsed && this._lastCellNode !== currentCellNode) {
-	        this.wwe.getEditor().recordUndoState(range);
+	        this.wwe.getEditor().saveUndoState(range);
 	        this._lastCellNode = currentCellNode;
 	    }
 	};
@@ -9580,7 +9580,7 @@
 	 * @param {Range} range range
 	 */
 	WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
-	    this.wwe.getEditor().recordUndoState(range);
+	    this.wwe.getEditor().saveUndoState(range);
 	    this._lastCellNode = null;
 	};
 
@@ -9999,7 +9999,7 @@
 	 * @param {Range} range range
 	 */
 	WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
-	    this.wwe.getEditor().recordUndoState(range);
+	    this.wwe.getEditor().saveUndoState(range);
 	    $('<div><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]));
 	};
 
@@ -10021,7 +10021,7 @@
 	            && !prevTopNode.textContent.length
 	           ) {
 	            event.preventDefault();
-	            this.wwe.getEditor().recordUndoState(range);
+	            this.wwe.getEditor().saveUndoState(range);
 	            $(prevTopNode).remove();
 	            isHandled = true;
 	        }
@@ -10194,7 +10194,7 @@
 	WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
 	    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
 	        ev.preventDefault();
-	        this.wwe.getEditor().recordUndoState(range);
+	        this.wwe.getEditor().saveUndoState(range);
 	        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
 
 	        return false;
@@ -10503,48 +10503,8 @@
 	    }, targetTagName);
 	};
 
-	//from http://jsfiddle.net/9ThVr/24/
 	SquireExt.prototype.getCaretPosition = function() {
-	    var range, sel, rect, range2, rect2,
-	        offsetx = 0,
-	        offsety = 0;
-
-	    var $node = this.getDocument().body,
-	        nodeLeft = $node.offsetLeft,
-	        nodeTop = $node.offsetTop;
-
-	    var pos = {left: 0, top: 0};
-
-	    sel = this.getSelection();
-	    range = sel.cloneRange();
-
-	    range.setStart(range.startContainer, range.startOffset - 1);
-	    rect = range.getBoundingClientRect();
-
-	    if (range.endOffset === 0 || range.toString() === '') {
-	        // first char of line
-	        if (range.startContainer === $node) {
-	            // empty div
-	            if (range.endOffset === 0) {
-	                pos.top = '0';
-	                pos.left = '0';
-	            } else {
-	                // firefox need this
-	                range2 = range.cloneRange();
-	                range2.setStart(range2.startContainer, 0);
-	                rect2 = range2.getBoundingClientRect();
-	                pos.left = rect2.left + offsetx - nodeLeft;
-	                pos.top = rect2.top + rect2.height + offsety - nodeTop;
-	            }
-	        } else {
-	            pos.top = range.startContainer.offsetTop;
-	            pos.left = range.startContainer.offsetLeft;
-	        }
-	    } else {
-	        pos.left = rect.left + rect.width + offsetx - nodeLeft;
-	        pos.top = rect.top + offsety - nodeTop;
-	    }
-	    return pos;
+	    return this.getCursorPosition();
 	};
 
 	SquireExt.prototype.replaceSelection = function(content, selection) {
@@ -10684,14 +10644,6 @@
 	    this.setSelection(selection);
 
 	    return pos;
-	};
-
-	SquireExt.prototype.recordUndoState = function(range) {
-	    if (!range) {
-	        range = this.getSelection();
-	    }
-	    this._recordUndoState(range);
-	    this._getRangeAndRemoveBookmark();
 	};
 
 	SquireExt.prototype.removeLastUndoStack = function() {
@@ -12004,10 +11956,10 @@
 	/* eslint-disable indent */
 	var containerTmpl = [
 	    '<div class="tui-editor-defaultUI">',
-	        '<div class="te-toolbar-section" />',
-	        '<div class="te-mode-switch-section" />',
-	        '<div class="te-markdown-tab-section" />',
-	        '<div class="te-editor-section"  />',
+	        '<div class="te-toolbar-section"></div>',
+	        '<div class="te-markdown-tab-section"></div>',
+	        '<div class="te-editor-section"></div>',
+	        '<div class="te-mode-switch-section"></div>',
 	    '</div>'
 	].join('');
 	/* eslint-enable indent */
@@ -12080,8 +12032,8 @@
 	    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
 	    this.$el.find('.te-mode-switch-section').append(this.modeSwitch.$el);
 
-	    this.modeSwitch.on('modeSwitched', function(ev, info) {
-	        self.editor.changeMode(info.text);
+	    this.modeSwitch.on('modeSwitched', function(ev, type) {
+	        self.editor.changeMode(type);
 	    });
 	};
 
@@ -13323,11 +13275,11 @@
 
 	var util = tui.util;
 
-	var nextTypeString = ['WYSIWYG', 'Markdown'],
-	    TYPE = {
-	        'MARKDOWN': 0,
-	        'WYSIWYG': 1
-	    };
+	var TYPE = {
+	    MARKDOWN: 'markdown',
+	    WYSIWYG: 'wysiwyg'
+	};
+
 
 	/**
 	 * ModeSwitch
@@ -13344,8 +13296,8 @@
 	        className: 'te-mode-switch'
 	    });
 
-	    this.type = util.isExisty(initialType) ? initialType : TYPE.MARKDOWN;
 	    this._render();
+	    this._switchType(util.isExisty(initialType) ? initialType : TYPE.MARKDOWN);
 	}
 
 	ModeSwitch.prototype = util.extend(
@@ -13354,41 +13306,42 @@
 	);
 
 	ModeSwitch.prototype._render = function() {
-	    this.$button = $('<button class="te-switch-button" type="button" />');
-	    this._setButtonTitle();
-	    this.$el.append(this.$button);
+	    this.$buttons = {};
+	    this.$buttons.markdown = $('<button class="te-switch-button markdown" type="button">Markdown</button>');
+	    this.$buttons.wysiwyg = $('<button class="te-switch-button wysiwyg" type="button">WYSIWYG</button>');
+	    this.$el.append(this.$buttons.markdown);
+	    this.$el.append(this.$buttons.wysiwyg);
 
 	    this.attachEvents({
-	        'click button': '_buttonClicked'
+	        'click .markdown': '_changeMarkdown',
+	        'click .wysiwyg': '_changeWysiwyg'
 	    });
 	};
 
-	ModeSwitch.prototype._setButtonTitle = function() {
-	    this.$button.text('to' + this._getNextTypeString());
+	ModeSwitch.prototype._changeMarkdown = function() {
+	    this._switchType(TYPE.MARKDOWN);
 	};
 
-	ModeSwitch.prototype._buttonClicked = function() {
-	    this._switchType();
+	ModeSwitch.prototype._changeWysiwyg = function() {
+	    this._switchType(TYPE.WYSIWYG);
 	};
 
-	ModeSwitch.prototype._switchType = function() {
-	    var typeToSwitch = this._getNextTypeString();
-
-	    this._toggleType();
-	    this._setButtonTitle();
-
-	    this.trigger('modeSwitched', {
-	        type: this.type,
-	        text: typeToSwitch.toLowerCase()
+	ModeSwitch.prototype._setActiveButton = function(type) {
+	    util.forEach(this.$buttons, function($button) {
+	        $button.removeClass('active');
 	    });
+	    this.$buttons[type].addClass('active');
 	};
 
-	ModeSwitch.prototype._getNextTypeString = function() {
-	    return nextTypeString[this.type];
-	};
 
-	ModeSwitch.prototype._toggleType = function() {
-	    this.type = this.type === TYPE.MARKDOWN ? TYPE.WYSIWYG : TYPE.MARKDOWN;
+	ModeSwitch.prototype._switchType = function(type) {
+	    if (this.type === type) {
+	        return;
+	    }
+
+	    this.type = type;
+	    this._setActiveButton(type);
+	    this.trigger('modeSwitched', this.type);
 	};
 
 	ModeSwitch.TYPE = TYPE;
@@ -15809,7 +15762,7 @@
 
 	        if (sq.hasFormat('LI')) {
 	            wwe.saveSelection(range);
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 	            wwe.getManager('task').unformatTask(range.startContainer);
 	            sq.replaceParent(range.startContainer, 'ol', 'ul');
 	            wwe.restoreSavedSelection();
@@ -15861,7 +15814,7 @@
 	        }
 
 	        if (sq.hasFormat('LI')) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 
 	            wwe.saveSelection(range);
 	            wwe.getManager('task').unformatTask(range.startContainer);
@@ -16036,7 +15989,7 @@
 	            $tr, $newRow;
 
 	        if (sq.hasFormat('TD')) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 	            $tr = $(range.startContainer).closest('tr');
 	            $newRow = getNewRow($tr);
 	            $newRow.insertAfter($tr);
@@ -16103,7 +16056,7 @@
 	            $cell;
 
 	        if (sq.hasFormat('TR')) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 
 	            $cell = getCellByRange(range);
 	            addColToCellAfter($cell);
@@ -16189,7 +16142,7 @@
 	            $tr, $nextFocus;
 
 	        if (sq.hasFormat('TD') && $(range.startContainer).closest('table').find('tbody tr').length > 1) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 	            $tr = $(range.startContainer).closest('tr');
 
 	            $nextFocus = $tr.next().length ? $tr.next() : $tr.prev();
@@ -16252,7 +16205,7 @@
 	            $cell, $nextFocus;
 
 	        if (sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 	            $cell = getCellByRange(range);
 	            $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
 
@@ -16333,7 +16286,7 @@
 	            $table;
 
 	        if (sq.hasFormat('TABLE')) {
-	            sq.recordUndoState(range);
+	            sq.saveUndoState(range);
 	            $table = $(range.startContainer).closest('table');
 
 	            $table.remove();
@@ -16391,7 +16344,7 @@
 	                return;
 	            }
 
-	            wwe.getEditor().recordUndoState(range);
+	            wwe.getEditor().saveUndoState(range);
 
 	            nodeClasses = $node.attr('class');
 	            prevClasses = $prev.attr('class');
@@ -16450,7 +16403,7 @@
 	            || isOffsetEuqals2InDIVForIE10
 	            || range.startOffset === 0
 	        ) {
-	            wwe.getEditor().recordUndoState(range);
+	            wwe.getEditor().saveUndoState(range);
 
 	            nodeClasses = $node.attr('class');
 	            $node.removeAttr('class');
