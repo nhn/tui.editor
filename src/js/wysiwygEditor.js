@@ -663,14 +663,15 @@ WysiwygEditor.prototype.getValue = function() {
  * Prepare before get html
  */
 WysiwygEditor.prototype._prepareGetHTML = function() {
-    this.readySilentChange();
-
+    var self = this;
     //for ensure to fire change event
-    this.get$Body().attr('lastGetValue', Date.now());
+    self.get$Body().attr('lastGetValue', Date.now());
 
-    this._joinSplitedTextNodes();
+    self._joinSplitedTextNodes();
 
-    this.eventManager.emit('wysiwygGetValueBefore', this);
+    self.getEditor().modifyDocument(function() {
+        self.eventManager.emit('wysiwygGetValueBefore', self);
+    });
 };
 
 /**
@@ -679,8 +680,9 @@ WysiwygEditor.prototype._prepareGetHTML = function() {
  */
 WysiwygEditor.prototype._postProcessForChange = function() {
     var self = this;
-    self.readySilentChange();
-    self.eventManager.emit('wysiwygRangeChangeAfter', self);
+    self.getEditor().modifyDocument(function() {
+        self.eventManager.emit('wysiwygRangeChangeAfter', self);
+    });
 };
 
 /**
