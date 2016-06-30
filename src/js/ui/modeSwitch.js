@@ -52,7 +52,7 @@ ModeSwitch.prototype._render = function() {
     });
 };
 
-ModeSwitch.prototype._changeMarkdown = function(e) {
+ModeSwitch.prototype._changeMarkdown = function() {
     this._switchType(TYPE.MARKDOWN);
 };
 
@@ -69,7 +69,7 @@ ModeSwitch.prototype._setActiveButton = function(type) {
 
 
 ModeSwitch.prototype._switchType = function(type) {
-    if(this.type === type) {
+    if (this.type === type) {
         return;
     }
 
