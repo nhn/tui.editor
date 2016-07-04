@@ -15,7 +15,12 @@ extManager.defineExtension('scrollFollow', function(editor) {
         active = true,
         sectionManager, scrollSync,
         className = 'tui-scrollfollow',
-        button, cm;
+        TOOL_TIP = {
+            active: '자동 스크롤 끄기',
+            inActive: '자동 스크롤 켜기'
+        },
+        button,
+        cm;
 
     if (editor.isViewOnly()) {
         return;
@@ -28,17 +33,17 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     //UI
     if (editor.getUI().name === 'default') {
-
+        //init button
         button = new Button({
             className: className,
             command: 'scrollFollowToggle',
-            tooltip: '자동 스크롤 끄기',
+            tooltip: TOOL_TIP.active,
             $el: $('<button class="active ' + className + ' tui-toolbar-icons" type="button"></button>')
         });
 
         editor.getUI().toolbar.addButton(button);
 
-        if(editor.currentMode === 'wysiwyg') {
+        if (editor.currentMode === 'wysiwyg') {
             button.$el.hide();
         }
 
@@ -57,12 +62,12 @@ extManager.defineExtension('scrollFollow', function(editor) {
             exec: function() {
                 active = !active;
 
-                if(active) {
+                if (active) {
                     button.$el.addClass('active');
-                    button.tooltip = '자동 스크롤 끄기'
+                    button.tooltip = TOOL_TIP.active;
                 } else {
                     button.$el.removeClass('active');
-                    button.tooltip = '자동 스크롤 켜기'
+                    button.tooltip = TOOL_TIP.inActive;
                 }
             }
         });
