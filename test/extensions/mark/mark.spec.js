@@ -79,8 +79,6 @@ describe('Mark', function() {
 
             expect(marker.start).toEqual(2);
             expect(marker.end).toEqual(4);
-            expect(marker.top).toEqual(0);
-            expect(marker.left).toEqual(0);
             expect(marker.text).toEqual('');
         });
 
@@ -237,8 +235,8 @@ describe('Mark', function() {
             }
 
             editor.on('markerUpdated', function() {
-                expect(marker.top).toEqual(0);
-                expect(marker.left).toEqual(0);
+                expect(marker.top).toBeDefined();
+                expect(marker.left).toBeDefined();
                 done();
             });
         });

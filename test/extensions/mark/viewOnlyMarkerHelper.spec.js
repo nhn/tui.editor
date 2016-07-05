@@ -122,7 +122,7 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(vmh.getMarkerInfoOfCurrentSelection()).toBeNull();
     });
 
-    it('get zero top and left when there is no content', function() {
+    it('No preblem with no text content', function() {
         var marker;
 
         preview.refresh('');
@@ -135,9 +135,6 @@ describe('ViewOnlyMarkerHelper', function() {
 
         expect(marker.start).toEqual(1);
         expect(marker.end).toEqual(2);
-        expect(marker.top).toEqual(0);
-        expect(marker.left).toEqual(0);
-        expect(marker.height).toBeDefined();
     });
 
 

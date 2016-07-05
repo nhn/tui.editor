@@ -128,7 +128,7 @@ ViewOnlyMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
 
     range = getRange();
 
-    isRangeInContent = this.preview.$el[0].contains(range.commonAncestorContainer);
+    isRangeInContent = $.contains(this.preview.$el[0], range.commonAncestorContainer);
 
     if (isRangeInContent && this._extendRangeToTextNodeIfHasNone(range)) {
         beforeRange = range.cloneRange();
