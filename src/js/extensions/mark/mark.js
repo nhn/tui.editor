@@ -204,7 +204,7 @@ extManager.defineExtension('mark', function(editor) {
         if (marker) {
             marker.id = id;
             marker = ml.addMarker(marker);
-            ml.sortWith('end');
+            ml.sortBy('end');
             this.eventManager.emit('markerUpdated', [marker]);
         }
 

@@ -87,7 +87,7 @@ describe('Mark', function() {
         it('get marker', function() {
             var marker;
 
-            marker = editor.addMarker(6, 9, 'myId');
+            editor.addMarker(6, 9, 'myId');
             marker = editor.getMarker('myId');
 
             expect(marker).toBeDefined();
