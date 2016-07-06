@@ -63,13 +63,13 @@ describe('Table', function() {
         });
 
         it('add initial data', function() {
-            Table.exec(mde, 2, 3, ['a', 'b', 'c', 'd']);
+            Table.exec(mde, 2, 3, ['a', 'b', 'c', 'd', 'e', 'f']);
 
             expect(doc.getValue()).toEqual([
-                '\n|  |  |',
+                '\n| a | b |',
                 '| --- | --- |',
-                '| a | b |',
-                '| c | d |'
+                '| c | d |',
+                '| e | f |'
             ].join('\n'));
         });
     });
