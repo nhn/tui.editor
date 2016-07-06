@@ -9,7 +9,7 @@ var excelTableParser = require('./excelTableParser');
 
 var util = tui.util;
 
-var FIND_EXCEL_DATA = /^([^ \n\r]*(\t[^\n\r]*?){1,}[\r\n]*){1,}$/;
+var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
 
 /**
  * ImportManager
