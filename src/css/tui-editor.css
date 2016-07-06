@@ -101,7 +101,7 @@
     outline: none;
 }
 
-.te-ww-container .te-editor {
+.te-ww-container .tui-editor-contents {
     padding: 10px;
 }
 
@@ -119,6 +119,16 @@
 .tui-editor.te-hide,
 .tui-editor-defaultUI.te-hide {
     display: none
+}
+
+.tui-editor .CodeMirror-lines {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.tui-editor .CodeMirror-line {
+    padding-left: 10px;
+    padding-right: 10px
 }
 
 /* default UI Styles */
