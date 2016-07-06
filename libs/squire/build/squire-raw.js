@@ -17,6 +17,11 @@ var START_TO_END = 1;   // Range.START_TO_END
 var END_TO_END = 2;     // Range.END_TO_END
 var END_TO_START = 3;   // Range.END_TO_START
 
+var HIGHLIGHT_CLASS = 'highlight';
+var COLOUR_CLASS = 'colour';
+var FONT_FAMILY_CLASS = 'font';
+var FONT_SIZE_CLASS = 'size';
+
 var ZWS = '\u200B';
 
 var win = doc.defaultView;
@@ -283,6 +288,20 @@ function getPath ( node, root ) {
             }
             if ( dir = node.dir ) {
                 path += '[dir=' + dir + ']';
+            }
+            if( classNames ) {
+                if ( indexOf.call( classNames, HIGHLIGHT_CLASS ) > -1 ) {
+                    path += '[backgroundColor=' + node.style.backgroundColor.replace(/ /g,'') + ']';
+                }
+                if ( indexOf.call( classNames, COLOUR_CLASS ) > -1 ) {
+                    path += '[color=' + node.style.color.replace(/ /g,'') + ']';
+                }
+                if ( indexOf.call( classNames, FONT_FAMILY_CLASS ) > -1 ) {
+                    path += '[fontFamily=' + node.style.fontFamily.replace(/ /g,'') + ']';
+                }
+                if ( indexOf.call( classNames, FONT_SIZE_CLASS ) > -1 ) {
+                    path += '[fontSize=' + node.style.fontSize + ']';
+                }
             }
         }
     }
@@ -1695,7 +1714,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': 'highlight',
+                'class': HIGHLIGHT_CLASS,
                 style: 'background-color:' + colour
             });
         }
@@ -1704,7 +1723,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': 'colour',
+                'class': COLOUR_CLASS,
                 style: 'color:' + colour
             });
         }
@@ -1725,7 +1744,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, family ) {
             return createElement( doc, 'SPAN', {
-                'class': 'font',
+                'class': FONT_FAMILY_CLASS,
                 style: 'font-family:' + family
             });
         }
@@ -1734,7 +1753,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, size ) {
             return createElement( doc, 'SPAN', {
-                'class': 'size',
+                'class': FONT_SIZE_CLASS,
                 style: 'font-size:' + size
             });
         }

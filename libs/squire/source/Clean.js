@@ -15,7 +15,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': 'highlight',
+                'class': HIGHLIGHT_CLASS,
                 style: 'background-color:' + colour
             });
         }
@@ -24,7 +24,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, colour ) {
             return createElement( doc, 'SPAN', {
-                'class': 'colour',
+                'class': COLOUR_CLASS,
                 style: 'color:' + colour
             });
         }
@@ -45,7 +45,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, family ) {
             return createElement( doc, 'SPAN', {
-                'class': 'font',
+                'class': FONT_FAMILY_CLASS,
                 style: 'font-family:' + family
             });
         }
@@ -54,7 +54,7 @@ var styleToSemantic = {
         regexp: notWS,
         replace: function ( doc, size ) {
             return createElement( doc, 'SPAN', {
-                'class': 'size',
+                'class': FONT_SIZE_CLASS,
                 style: 'font-size:' + size
             });
         }

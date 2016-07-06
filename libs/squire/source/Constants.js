@@ -13,6 +13,11 @@ var START_TO_END = 1;   // Range.START_TO_END
 var END_TO_END = 2;     // Range.END_TO_END
 var END_TO_START = 3;   // Range.END_TO_START
 
+var HIGHLIGHT_CLASS = 'highlight';
+var COLOUR_CLASS = 'colour';
+var FONT_FAMILY_CLASS = 'font';
+var FONT_SIZE_CLASS = 'size';
+
 var ZWS = '\u200B';
 
 var win = doc.defaultView;
