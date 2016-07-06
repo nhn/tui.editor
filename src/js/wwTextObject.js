@@ -7,6 +7,8 @@
 
 var domUtils = require('./domUtils');
 var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
+var isWindowChrome = (navigator.appVersion.indexOf('Win') !== -1) && tui.util.browser.chrome;
+var isNeedOffsetFix = isIE11 || isWindowChrome;
 
 /**
  * WwTextObject
@@ -19,7 +21,9 @@ var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
 function WwTextObject(wwe, range) {
     this._wwe = wwe;
 
-    if (isIE11) {
+    //msie11 and window chrome can't make start offset of range api correctly when compositing korean.
+    //so we need fix this when compositing korean.(and maybe other languages that needs composition.)
+    if (isNeedOffsetFix) {
         this.isComposition = false;
         this._initCompositionEvent();
     }
@@ -66,9 +70,7 @@ WwTextObject.prototype.expandEndOffset = function() {
 WwTextObject.prototype.setEndBeforeRange = function(range) {
     var offset = range.startOffset;
 
-    //ie11에서는 컴포지션중인 단어는 offset에 포함하지 않는다.
-    //그래서 포함시킴
-    if (isIE11 && this.isComposition) {
+    if (this.isComposition) {
         offset += 1;
     }
 
