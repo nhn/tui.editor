@@ -256,11 +256,20 @@ var getTopNextNodeUnder = function(node, underNode) {
     return getNodeWithDirectionUnderParent('next', node, underNode);
 };
 
+/**
+ * Get parent element the body element
+ * @param {Node} node Node for start searching
+ * @returns {Node}
+ */
 var getTopBlockNode = function(node) {
     return getParentUntil(node, 'BODY');
 };
 
-
+/**
+ * Get previous text node
+ * @param {Node} node Node for start searching
+ * @returns {Node}
+ */
 var getPrevTextNode = function(node) {
     node = node.previousSibling || node.parentNode;
 
@@ -283,6 +292,13 @@ var getPrevTextNode = function(node) {
     return node;
 };
 
+/**
+ * 
+ * @param root
+ * @param offsetList
+ * @param textNodeFilter
+ * @returns {Array}
+ */
 var findOffsetNode = function(root, offsetList, textNodeFilter) {
     var result = [],
         text = '',

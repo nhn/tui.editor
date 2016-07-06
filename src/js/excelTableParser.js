@@ -8,6 +8,7 @@
 /**
  * excelTableParser
  * Parse excel paste data
+ * @public
  * @exports excelTableParser
  * @param {string} content excel table content
  * @returns {object} result
@@ -38,7 +39,12 @@ function excelTableParser(content) {
         data: data
     };
 }
-
+/**
+ * Get row data from raw text with Regexp
+ * @public
+ * @param {string} content Raw copied text data
+ * @returns {Array}
+ */
 function getRows(content) {
     //remove last LF or CR
     content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');

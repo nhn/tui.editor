@@ -14,9 +14,8 @@ var marked = window.marked,
 /**
  * Convertor
  * @exports Convertor
- * @extends {}
  * @constructor
- * @class
+ * @class Convertor
  * @param {EventManager} em EventManager instance
  */
 function Convertor(em) {
@@ -26,6 +25,8 @@ function Convertor(em) {
 /**
  * _markdownToHtmlWithCodeHighlight
  * Convert markdown to html with Codehighlight
+ * @private
+ * @memberOf Convertor
  * @param {string} markdown markdown text
  * @returns {string} html text
  */
@@ -50,6 +51,8 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
 /**
  * _markdownToHtml
  * Convert markdown to html
+ * @private
+ * @memberOf Convertor
  * @param {string} markdown markdown text
  * @returns {string} html text
  */
@@ -72,6 +75,8 @@ Convertor.prototype._markdownToHtml = function(markdown) {
  * toHTMLWithCodeHightlight
  * Convert markdown to html with Codehighlight
  * emit convertorAfterMarkdownToHtmlConverted
+ * @api
+ * @memberOf Convertor
  * @param {string} markdown markdown text
  * @returns {string} html text
  */
@@ -86,6 +91,8 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
  * toHTML
  * Convert markdown to html
  * emit convertorAfterMarkdownToHtmlConverted
+ * @api
+ * @memberOf Convertor
  * @param {string} markdown markdown text
  * @returns {string} html text
  */
@@ -100,6 +107,8 @@ Convertor.prototype.toHTML = function(markdown) {
  * toMarkdown
  * Convert html to markdown
  * emit convertorAfterHtmlToMarkdownConverted
+ * @api
+ * @memberOf Convertor
  * @param {string} html html text
  * @returns {string} markdown text
  */
@@ -113,6 +122,8 @@ Convertor.prototype.toMarkdown = function(html) {
 /**
  * _sanitizeScript
  * Sanitize script tag
+ * @private
+ * @memberOf Convertor
  * @param {string} html html text
  * @returns {string}
  */
@@ -126,6 +137,8 @@ Convertor.prototype._sanitizeScript = function(html) {
 /**
  * factory
  * Convertor factory
+ * @api
+ * @memberOf Convertor
  * @param {EventManager} eventManager eventmanager
  * @returns {Convertor}
  */

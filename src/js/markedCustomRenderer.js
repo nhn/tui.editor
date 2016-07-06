@@ -9,11 +9,25 @@
  * markedCustomRenderer
  * @exports markedCustomRenderer
  * @augments marked.Renderer
+ * @class markedCustomRenderer
  */
 var markedCustomRenderer = new window.marked.Renderer();
 
+/**
+ * Task list Regexp
+ * @api
+ * @memberOf markedCustomRenderer
+ * @type {RegExp}
+ */
 var regexTaskList = /^((?:<p>|))(\[(?:x| )\]) /i;
 
+/**
+ * Render listItem by given text.
+ * @api
+ * @memberOf markedCustomRenderer
+ * @param {string} text Source text
+ * @returns {string}
+ */
 markedCustomRenderer.listitem = function(text) {
     var cap,
         checked,
@@ -32,6 +46,15 @@ markedCustomRenderer.listitem = function(text) {
     return '<li' + className + '>' + output + text + '</li>\n';
 };
 
+/**
+ * Render code
+ * @api
+ * @memberOf markedCustomRenderer
+ * @param {string} code Source text of code content
+ * @param {string} lang Type of language
+ * @param {boolean} escaped Whether text is escaped or not
+ * @returns {string}
+ */
 markedCustomRenderer.code = function(code, lang, escaped) {
     var out;
     if (this.options.highlight) {
@@ -56,6 +79,14 @@ markedCustomRenderer.code = function(code, lang, escaped) {
     + '\n</code></pre>\n';
 };
 
+/**
+ * Render table
+ * @api
+ * @memberOf markedCustomRenderer
+ * @param {string} header Text for table header
+ * @param {string} body Text for table body
+ * @returns {string}
+ */
 markedCustomRenderer.table = function(header, body) {
     var cellLen = header.match(/\/th/g).length;
     var foundLastTr = body.match(/\n?<tr>[\s\S]*?<\/tr>\n$/g);
@@ -80,7 +111,9 @@ markedCustomRenderer.table = function(header, body) {
 };
 
 /**
- * Replace <del> to <s>
+ * Replace 'del' to 's' tag
+ * @api
+ * @memberOf markedCustomRenderer
  * @override
  * @param {string} text Text content
  * @returns {string}
@@ -96,7 +129,7 @@ markedCustomRenderer.del = function(text) {
 };
 
 /**
- * escape code from marekd
+ * escape code from marked
  * @param {string} html HTML string
  * @param {string} encode Boolean value of whether encode or not
  * @returns {string}

@@ -12,15 +12,20 @@ var util = tui.util;
 /**
  * WwPasteContentHelper
  * @exports WwPasteContentHelper
- * @augments
+ * @class WwPasteContentHelper
  * @constructor
- * @class
  * @param {WysiwygEditor} wwe wysiwygEditor instance
  */
 function WwPasteContentHelper(wwe) {
     this.wwe = wwe;
 }
 
+/**
+ * Process paste data before paste
+ * @api
+ * @memberOf WwPasteContentHelper
+ * @param {object} pasteData Pasting data
+ */
 WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
     var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
@@ -59,6 +64,8 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
 /**
  * Wrap textNodes with div element
  * @param {DocumentFragment} fragment - Fragment of paste data
+ * @memberOf WwPasteContentHelper
+ * @private
  */
 WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
     var array = util.toArray(fragment.childNodes);
@@ -77,6 +84,12 @@ WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
     });
 };
 
+/**
+ * Processing paste data after paste
+ * @param {DocumentFragment} fragment Pasting data
+ * @memberOf WwPasteContentHelper
+ * @private
+ */
 WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     var self = this;
 
@@ -97,6 +110,12 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     });
 };
 
+/**
+ * PRE tag formatting
+ * @memberOf WwPasteContentHelper
+ * @private
+ * @param {DocumentFragment} nodes Pasting DocumentFragment
+ */
 WwPasteContentHelper.prototype._preElementAid = function(nodes) {
     var textLines;
 
@@ -125,6 +144,12 @@ WwPasteContentHelper.prototype._preElementAid = function(nodes) {
     });
 };
 
+/**
+ * Remove unnecessary block element in pasting data
+ * @param {DocumentFragment} nodes Pasting DocumentFragment
+ * @memberOf WwPasteContentHelper
+ * @private
+ */
 WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
     var blocks;
     var blockTags = 'div, section, article, aside, nav, menus';
@@ -140,6 +165,12 @@ WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
     }
 };
 
+/**
+ * Remove inline style
+ * @param {Node} node Node for remove style attribute
+ * @memberOf WwPasteContentHelper
+ * @private
+ */
 WwPasteContentHelper.prototype._removeStyles = function(node) {
     var $node = $(node);
     var colorValue;
@@ -158,6 +189,15 @@ WwPasteContentHelper.prototype._removeStyles = function(node) {
     }
 };
 
+/**
+ * Processing before paste list
+ * @param {Array.<HTMLElement>} nodes Pasting data
+ * @param {object} rangeInfo Range information
+ * @param {boolean} firstBlockIsTaken Whether first block element taken or not
+ * @returns {DocumentFragment}
+ * @memberOf WwPasteContentHelper
+ * @private
+ */
 WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, firstBlockIsTaken) {
     var listGroup;
     var nodeName = domUtils.getNodeName(nodes[0]);
@@ -211,12 +251,25 @@ WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, 
     return newFragment;
 };
 
+/**
+ * Unwrap fragment first child for pasting node inline
+ * @memberOf WwPasteContentHelper
+ * @private
+ * @param {Node} node Pasting DocumentFragment
+ * @returns {NodeList}
+ */
 WwPasteContentHelper.prototype._unwrapFragmentFirstChildForPasteAsInline = function(node) {
     $(node).find('br').remove();
 
     return node.childNodes;
 };
 
+/**
+ * Wrap nodes with current format
+ * @param {DocumentFragment} nodes P
+ * @returns {HTMLElement}
+ * @private
+ */
 WwPasteContentHelper.prototype._wrapCurrentFormat = function(nodes) {
     var self = this;
     var currentTagName;
@@ -249,11 +302,13 @@ WwPasteContentHelper.prototype._eachCurrentPath = function(iteratee) {
     }
 };
 
-/* _makeNodeAndAppend
- * make node and append childs
- * @param {string} pathInfo tagName to make
- * @param {Node} content nodes to append
- * @returns {Node} node
+/** _makeNodeAndAppend
+ * make node and append their own children
+ * @param {HTMLElement} pathInfo HTMLElement to make
+ * @param {HTMLElement} content Nodes to append
+ * @returns {HTMLElement} node
+ * @memberOf WwPasteContentHelper
+ * @private
  */
 WwPasteContentHelper.prototype._makeNodeAndAppend = function(pathInfo, content) {
     var node = $('<' + pathInfo.tagName + '/>');

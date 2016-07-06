@@ -11,11 +11,10 @@ var util = tui.util;
  * Command
  * It implements command to editors
  * @exports Command
- * @constructor
- * @class
+ * @class Command
  * @param {string} name Command name
  * @param {number} type Command type (Command.TYPE)
- * @param {Array<string>} keyMap keyMap
+ * @param {Array.<string>} [keyMap] keyMap
  */
 function Command(name, type, keyMap) {
     this.name = name;
@@ -29,6 +28,8 @@ function Command(name, type, keyMap) {
 /**
  * getName
  * returns Name of command
+ * @api
+ * @memberOf Command
  * @returns {string} Command Name
  */
 Command.prototype.getName = function() {
@@ -38,7 +39,9 @@ Command.prototype.getName = function() {
 /**
  * getType
  * returns Type of command
- * @returns {number} Command Type
+ * @api
+ * @memberOf Command
+ * @returns {number} Command Command type number
  */
 Command.prototype.getType = function() {
     return this.type;
@@ -47,6 +50,8 @@ Command.prototype.getType = function() {
 /**
  * isMDType
  * returns whether Command Type is Markdown or not
+ * @api
+ * @memberOf Command
  * @returns {boolean} result
  */
 Command.prototype.isMDType = function() {
@@ -56,6 +61,8 @@ Command.prototype.isMDType = function() {
 /**
  * isWWType
  * returns whether Command Type is Wysiwyg or not
+ * @api
+ * @memberOf Command
  * @returns {boolean} result
  */
 Command.prototype.isWWType = function() {
@@ -65,6 +72,8 @@ Command.prototype.isWWType = function() {
 /**
  * isGlobalType
  * returns whether Command Type is Global or not
+ * @api
+ * @memberOf Command
  * @returns {boolean} result
  */
 Command.prototype.isGlobalType = function() {
@@ -74,13 +83,25 @@ Command.prototype.isGlobalType = function() {
 /**
  * setKeyMap
  * Set keymap value for each os
- * @param {string} win window Key(and etc)
- * @param {string} mac mac osx key
+ * @api
+ * @memberOf Command
+ * @param {string} win Windows Key(and etc)
+ * @param {string} mac Mac osx key
  */
 Command.prototype.setKeyMap = function(win, mac) {
     this.keyMap = [win, mac];
 };
 
+/**
+ * Command factory method
+ * @api
+ * @memberOf Command
+ * @param {string} typeStr Editor type name
+ * @param {object} props Property
+ *     @param {string} props.name Command name
+ *     @param {number} props.type Command type number
+ * @returns {Command}
+ */
 Command.factory = function(typeStr, props) {
     var command, type;
 
@@ -101,6 +122,12 @@ Command.factory = function(typeStr, props) {
 
 /**
  * Command Type Constant
+ * markdown : 0
+ * wysiwyg : 1
+ * global : 2
+ * @api
+ * @memberOf Command
+ * @type {object}
  */
 Command.TYPE = {
     MD: 0,

@@ -15,19 +15,19 @@ var util = tui.util;
 
 /**
  * ViewOnly
- * @exports ViewOnly
+ * @exports ToastUIEditorViewOnly
  * @constructor
- * @class
- * @param {object} options 옵션
- * @param {string} options.initialValue 초기 입력 테스트
- * @param {object} options.events eventlist
- * @param {function} options.events.load it would be emitted when editor fully load
- * @param {function} options.events.change it would be emitted when content changed
- * @param {function} options.events.stateChange it would be emitted when format change by cursor position
- * @param {function} options.events.focus it would be emitted when editor get focus
- * @param {function} options.events.blur it would be emitted when editor loose focus
- * @param {object} options.hooks 외부 연결 훅 목록
- * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
+ * @class ToastUIEditorViewOnly
+ * @param {object} options Option object
+    * @param {string} options.initialValue Editor's initial value
+    * @param {object} options.events eventlist Event list
+         * @param {function} options.events.load It would be emitted when editor fully load
+         * @param {function} options.events.change It would be emitted when content changed
+         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+         * @param {function} options.events.focus It would be emitted when editor get focus
+         * @param {function} options.events.blur It would be emitted when editor loose focus
+     * @param {object} options.hooks Hook list
+         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
  */
 function ToastUIEditorViewOnly(options) {
     var self = this;
@@ -60,6 +60,12 @@ function ToastUIEditorViewOnly(options) {
     self.eventManager.emit('load', self);
 }
 
+/**
+ * Set content for preview
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @param {string} markdown Markdown text
+ */
 ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
     this.markdownValue = markdown = markdown || '';
 
@@ -67,18 +73,42 @@ ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
     this.eventManager.emit('setValueAfter', this.markdownValue);
 };
 
+/**
+ * Get content of preview
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @returns {string}
+ */
 ToastUIEditorViewOnly.prototype.getValue = function() {
     return this.markdownValue;
 };
 
+/**
+ * Bind eventHandler to event type
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @param {string} type Event type
+ * @param {function} handler Event handler
+ */
 ToastUIEditorViewOnly.prototype.on = function(type, handler) {
     this.eventManager.listen(type, handler);
 };
 
+/**
+ * Unbind eventHandler from event type
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @param {string} type Event type
+ */
 ToastUIEditorViewOnly.prototype.off = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
+/**
+ * Remove ViewOnly preview from document
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ */
 ToastUIEditorViewOnly.prototype.remove = function() {
     this.eventManager.emit('removeEditor');
     this.options = null;
@@ -88,19 +118,44 @@ ToastUIEditorViewOnly.prototype.remove = function() {
     this.preview = null;
 };
 
+/**
+ * Add hook to ViewOnly preview's event
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @param {string} type Event type
+ * @param {function} handler Event handler
+ */
 ToastUIEditorViewOnly.prototype.addHook = function(type, handler) {
     this.eventManager.removeEventHandler(type);
     this.eventManager.listen(type, handler);
 };
 
+/**
+ * Return true
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @returns {boolean}
+ */
 ToastUIEditorViewOnly.prototype.isViewOnly = function() {
     return true;
 };
 
+/**
+ * Return false
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @returns {boolean}
+ */
 ToastUIEditorViewOnly.prototype.isMarkdownMode = function() {
     return false;
 };
 
+/**
+ * Return false
+ * @api
+ * @memberOf ToastUIEditorViewOnly
+ * @returns {boolean}
+ */
 ToastUIEditorViewOnly.prototype.isWysiwygMode = function() {
     return false;
 };
