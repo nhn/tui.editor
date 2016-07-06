@@ -62,22 +62,34 @@ WysiwygMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  * @returns {object} extra info
  */
 WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-    var text, top, left, rect, height;
+    var text, top, left, rect, height, node, parentNode, containerOffset;
     var endContainer = range.endContainer;
     var endOffset = range.endOffset;
 
     text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-    if (endContainer.childNodes[endOffset]) {
+    if (domUtils.getChildNodeByOffset(endContainer, endOffset)) {
         range.setStart(endContainer, endOffset);
         range.collapse(true);
 
-        rect = range.getClientRects()[0];
+        rect = range.getBoundingClientRect();
+    }
+
+    if (rect && !rect.top) {
+        this.sqe.modifyDocument(function() {
+            node = document.createElement('SPAN');
+            node.textContent = '\u200B';
+            range.endContainer.parentNode.insertBefore(node, range.endContainer);
+            rect = node.getBoundingClientRect();
+            parentNode = node.parentNode;
+            parentNode.removeChild(node);
+        });
     }
 
     if (rect) {
-        top = this.sqe.scrollTop() + rect.top;
-        left = rect.left;
+        containerOffset = this.sqe.get$Body().parent().offset();
+        top = this.sqe.scrollTop() + rect.top - containerOffset.top + $('body').scrollTop();
+        left = rect.left - containerOffset.left;
         height = rect.height;
     } else {
         height = top = left = 0;
@@ -127,6 +139,7 @@ WysiwygMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
 /**
  * _extendRangeToTextNodeIfHasNone
  * Extend range to text node if start or end container have none
+ * Containers of range should be text node
  * @param {Range} range range
  * @returns {boolean} success or fail
  */
@@ -134,7 +147,6 @@ WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) 
     var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
         textNode;
 
-    //getClientRects API로 rect값을 가져올때는 range 컨테이너가 텍스트 노드여야한다.
     if (!domUtils.isTextNode(range.endContainer) || !endNode.nodeValue.replace(FIND_ZWB_RX, '').length) {
         if (domUtils.isTextNode(endNode)) {
             range.setEnd(endNode, 0);

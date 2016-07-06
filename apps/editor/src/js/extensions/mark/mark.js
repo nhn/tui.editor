@@ -176,6 +176,42 @@ extManager.defineExtension('mark', function(editor) {
     };
 
     /**
+     * addMarker
+     * Add Marker with given id
+     * if you pass just id then it uses current selection for marker
+     * or you can pass start and end offset for marker
+     * @param {number|string} start start offset or id
+     * @param {number} end end offset
+     * @param {string} id id of marker
+     * @returns {object} marker that have made
+     */
+    editor.addMarker = function(start, end, id) {
+        var marker,
+            helper = getHelper();
+
+        if (!id) {
+            id = start;
+            marker = helper.getMarkerInfoOfCurrentSelection();
+        } else {
+            marker = {
+                start: start,
+                end: end
+            };
+
+            marker = helper.updateMarkerWithExtraInfo(marker);
+        }
+
+        if (marker) {
+            marker.id = id;
+            marker = ml.addMarker(marker);
+            ml.sortBy('end');
+            this.eventManager.emit('markerUpdated', [marker]);
+        }
+
+        return marker;
+    };
+
+    /**
      * clearSelect
      * Clear selection
      */
@@ -210,42 +246,6 @@ extManager.defineExtension('mark', function(editor) {
             });
 
             editor.eventManager.emit('markerUpdated', ml.getAll());
-        };
-
-        /**
-         * addMarker
-         * Add Marker with given id
-         * if you pass just id then it uses current selection for marker
-         * or you can pass start and end offset for marker
-         * @param {number|string} start start offset or id
-         * @param {number} end end offset
-         * @param {string} id id of marker
-         * @returns {object} marker that have made
-         */
-        editor.addMarker = function(start, end, id) {
-            var marker,
-                helper = getHelper();
-
-            if (!id) {
-                id = start;
-                marker = helper.getMarkerInfoOfCurrentSelection();
-            } else {
-                marker = {
-                    start: start,
-                    end: end
-                };
-
-                marker = helper.updateMarkerWithExtraInfo(marker);
-            }
-
-            if (marker) {
-                marker.id = id;
-                marker = ml.addMarker(marker);
-                ml.sortWith('end');
-                this.eventManager.emit('markerUpdated', [marker]);
-            }
-
-            return marker;
         };
     }
 });

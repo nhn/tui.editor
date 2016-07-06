@@ -28,7 +28,7 @@ function MarkerManager(markerList) {
  * @param {string} content reset base content
  */
 MarkerManager.prototype.resetContent = function(content) {
-    this.oldTextContent = (typeof content === 'string' ? content : null);
+    this.oldTextContent = (util.isString(content) ? content : null);
 };
 
 /**
@@ -40,7 +40,7 @@ MarkerManager.prototype.resetContent = function(content) {
 MarkerManager.prototype.updateMarkersByContent = function(newContent) {
     var markerDiffs;
 
-    if (this.oldTextContent === null) {
+    if (util.isNull(this.oldTextContent)) {
         this.resetContent(newContent);
 
         return [];
