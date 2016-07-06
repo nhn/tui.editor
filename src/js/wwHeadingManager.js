@@ -81,10 +81,10 @@ WwHeadingManager.prototype._onEnter = function(event, range) {
 
     if (range.startOffset > 0) {
         //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-        setTimeout(function() {
+        this.wwe.defer(function(wwe) {
             self._unwrapHeading();
-            self.wwe.getEditor().removeLastUndoStack();
-        }, 0);
+            wwe.getEditor().removeLastUndoStack();
+        });
     } else {
         event.preventDefault();
         this._insertEmptyBlockToPrevious(range);

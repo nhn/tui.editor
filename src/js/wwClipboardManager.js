@@ -75,19 +75,18 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 };
 
 WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
-    var self = this;
     var node = fragment;
-    var range = self.wwe.getEditor().getSelection().cloneRange();
+    var range = this.wwe.getEditor().getSelection().cloneRange();
 
     while (node.lastChild) {
         node = node.lastChild;
     }
 
-    setTimeout(function() {
+    this.wwe.defer(function(wwe) {
         range.setStartAfter(node);
         range.collapse(true);
-        self.wwe.getEditor().setSelection(range);
-    }, 0);
+        wwe.getEditor().setSelection(range);
+    });
 };
 
 WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {

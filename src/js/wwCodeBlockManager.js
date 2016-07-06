@@ -234,13 +234,12 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
 };
 
 WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
-    var pre,
-        self = this;
+    var pre;
 
     if (this.wwe.getEditor().hasFormat('PRE')) {
         pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
 
-        setTimeout(function() {
+        this.wwe.defer(function(wwe) {
             var modified;
 
             $(pre).find('div').each(function(index, div) {
@@ -251,9 +250,9 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
             });
 
             if (modified) {
-                self.wwe.readySilentChange();
+                wwe.readySilentChange();
             }
-        }, 0);
+        });
     }
 
     return true;

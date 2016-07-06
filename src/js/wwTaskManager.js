@@ -77,9 +77,9 @@ WwTaskManager.prototype._initKeyHandler = function() {
             //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
             self._unformatTaskIfNeedOnEnter(range);
 
-            setTimeout(function() {
+            self.wwe.defer(function() {
                 self._formatTaskIfNeed();
-            }, 0);
+            });
 
             return false;
         }
