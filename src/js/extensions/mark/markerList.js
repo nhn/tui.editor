@@ -107,17 +107,15 @@ Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
  * @returns {[object]} markers
  */
 Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
-    var len, i, marker, rangeMarkers;
+    var rangeMarkers;
 
-    rangeMarkers = [];
-
-    for (i = 0, len = this._sortedMarkers.length; i < len; i += 1) {
-        marker = this._sortedMarkers[i];
-
+    rangeMarkers = this._sortedMarkers.filter(function(marker) {
         if (marker.end > end || marker.end > start) {
-            rangeMarkers.push(marker);
+            return true;
         }
-    }
+
+        return false;
+    });
 
     return rangeMarkers;
 };
@@ -141,19 +139,13 @@ Markerlist.prototype.resetMarkers = function() {
 };
 
 /**
- * sortWith
+ * sortBy
  * Sort markers with given key of marker
  * @param {string} rangeKey, start or end
  */
-Markerlist.prototype.sortWith = function(rangeKey) {
+Markerlist.prototype.sortBy = function(rangeKey) {
     this._sortedMarkers.sort(function(a, b) {
-        if (a[rangeKey] > b[rangeKey]) {
-            return 1;
-        } else if (a[rangeKey] < b[rangeKey]) {
-            return -1;
-        }
-
-        return 0;
+        return a[rangeKey] - b[rangeKey];
     });
 };
 

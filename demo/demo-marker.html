@@ -19,9 +19,11 @@
     <style type="text/css">
       .cm-header { color:blue; }
       .cm-strong { font-weight:bold; }
+      #editSection .CodeMirror-line {padding-left: 10px;}
     </style>
 </head>
 <body>
+<button id="addMarker">ADD MARKER</button>
 <div id="editSection"></div>
 <script src="/build/bundle.js"></script>
 <script>
@@ -56,6 +58,11 @@
                         start: 6,
                         end: 31,
                         id: 'myId2'
+                    },
+                    {
+                        start: 31,
+                        end:33,
+                        id: 'myId3'
                     }
                 ]);
 
@@ -103,6 +110,10 @@
                 }
             }
         }
+    });
+
+    $('#addMarker').on('click', function() {
+        $('#editSection').tuiEditor('addMarker', 't' + Math.random() * 10);
     });
 </script>
 </body>

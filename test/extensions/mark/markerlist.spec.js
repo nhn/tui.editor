@@ -111,7 +111,7 @@ describe('MarkerList', function() {
 
             ml.addMarker(2, 10, 'myId1');
             ml.addMarker(1, 10, 'myId2');
-            ml.sortWith('start');
+            ml.sortBy('start');
 
             markers = ml.getAll();
 
@@ -125,7 +125,7 @@ describe('MarkerList', function() {
             ml.addMarker(2, 15, 'myId1');
             ml.addMarker(1, 20, 'myId2');
             ml.addMarker(1, 10, 'myId3');
-            ml.sortWith('end');
+            ml.sortBy('end');
 
             markers = ml.getAll();
 

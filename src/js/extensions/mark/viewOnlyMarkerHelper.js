@@ -63,19 +63,27 @@ ViewOnlyMarkerHelper.prototype.updateMarkerWithExtraInfo = function(marker) {
  * @returns {object} extra info
  */
 ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-    var text, top, left, rect, containerOffset, height;
+    var text, top, left, rect, containerOffset, height, node, parentNode;
 
     text = range.cloneContents().textContent.replace(FIND_CRLF_RX, '');
 
     range.setStart(range.endContainer, range.endOffset);
     range.collapse(true);
 
-    rect = range.getClientRects()[0];
+    rect = range.getBoundingClientRect();
 
-    containerOffset = this.preview.$el.offset();
+    if (rect && !rect.top) {
+        node = document.createElement('SPAN');
+        node.textContent = '\u200B';
+        range.endContainer.parentNode.insertBefore(node, range.endContainer);
+        rect = node.getBoundingClientRect();
+        parentNode = node.parentNode;
+        parentNode.removeChild(node);
+    }
 
     if (rect) {
-        top = rect.top + this.preview.$el.scrollTop() - containerOffset.top;
+        containerOffset = this.preview.$el.offset();
+        top = rect.top + this.preview.$el.scrollTop() - containerOffset.top + $('body').scrollTop();
         left = rect.left - containerOffset.left;
         height = rect.height;
     } else {
@@ -88,6 +96,88 @@ ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
         left: left,
         height: height
     };
+};
+
+/**
+ * getRange
+ * get current range
+ * @returns {Range}
+ */
+function getRange() {
+    var selection = window.getSelection();
+    var range;
+
+    if (selection && selection.rangeCount) {
+        range = selection.getRangeAt(0).cloneRange();
+    } else {
+        range = document.createRange();
+        range.selectNodeContents(this.preview.$el[0]);
+        range.collapse(true);
+    }
+
+    return range;
+}
+
+/**
+ * getMarkerInfoOfCurrentSelection
+ * Get marker info of current selection
+ * @returns {object} marker
+ */
+ViewOnlyMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
+    var range, beforeRange, start, end, info, isRangeInContent;
+
+    range = getRange();
+
+    isRangeInContent = $.contains(this.preview.$el[0], range.commonAncestorContainer);
+
+    if (isRangeInContent && this._extendRangeToTextNodeIfHasNone(range)) {
+        beforeRange = range.cloneRange();
+        beforeRange.setStart(this.preview.$el[0], 0);
+        beforeRange.setEnd(range.startContainer, range.startOffset);
+
+        info = this._getExtraInfoOfRange(range);
+
+        start = beforeRange.cloneContents().textContent.length;
+        end = start + info.text.length;
+
+        return {
+            start: start,
+            end: end,
+            text: info.text,
+            top: info.top,
+            left: info.left,
+            height: info.height
+        };
+    }
+
+    return null;
+};
+
+/**
+ * _extendRangeToTextNodeIfHasNone
+ * Extend range to text node if start or end container have none
+ * Containers of range should be text node
+ * @param {Range} range range
+ * @returns {boolean} success or fail
+ */
+ViewOnlyMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) {
+    var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
+        textNode;
+
+    if (!domUtils.isTextNode(range.endContainer)) {
+        if (domUtils.isTextNode(endNode)) {
+            range.setEnd(endNode, 0);
+        } else {
+            textNode = domUtils.getPrevTextNode(endNode);
+            if (textNode) {
+                range.setEnd(textNode, textNode.length);
+            } else {
+                return false;
+            }
+        }
+    }
+
+    return true;
 };
 
 /**

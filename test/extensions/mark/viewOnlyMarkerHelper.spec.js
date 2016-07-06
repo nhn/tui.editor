@@ -22,6 +22,7 @@ describe('ViewOnlyMarkerHelper', function() {
     });
 
     afterEach(function() {
+        window.getSelection().removeAllRanges();
         $('body').empty();
     });
 
@@ -57,7 +58,71 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.text).toEqual('');
     });
 
-    it('get zero top and left when there is no content', function() {
+    it('get marker info of current selection', function() {
+        var marker;
+
+        vmh.selectOffsetRange(0, 3);
+
+        marker = vmh.getMarkerInfoOfCurrentSelection();
+
+        expect(marker.start).toEqual(0);
+        expect(marker.end).toEqual(3);
+        expect(marker.top).toBeDefined();
+        expect(marker.left).toBeDefined();
+        expect(marker.height).toBeDefined();
+        expect(marker.text).toEqual('TEX');
+    });
+
+    it('get marker of current selection that has start or end container pointed to non textNode', function() {
+        var range, marker;
+
+        preview.refresh('# TEXT1\n- - -\n## TEXT2');
+
+        range = document.createRange();
+        range.selectNode(preview.$el.find('hr')[0]);
+        range.setStart(preview.$el.find('h1')[0].firstChild, 2);
+
+        window.getSelection().addRange(range);
+
+        marker = vmh.getMarkerInfoOfCurrentSelection();
+
+        expect(marker.start).toEqual(2);
+        expect(marker.end).toEqual(5);
+        expect(marker.text).toEqual('XT1');
+    });
+
+    it('get marker when end range pointed to textNode but end container is not text node', function() {
+        var range, marker;
+
+        preview.$el.html('<ul><li><input type="checkbox" /> text1</li></ul>');
+
+        range = document.createRange();
+        range.setStart(preview.$el.find('li')[0], 1);
+        range.setEnd(preview.$el.find('li')[0], 1);
+
+        window.getSelection().addRange(range);
+
+        marker = vmh.getMarkerInfoOfCurrentSelection();
+
+        expect(marker.start).toEqual(0);
+        expect(marker.end).toEqual(0);
+        expect(marker.text).toEqual('');
+    });
+
+    it('getMarkerInfoOfCurrentSelection() return null if contents not contains range', function() {
+        var range;
+
+        $('body').append('<div id="outsider">TEXT</div>');
+
+        range = document.createRange();
+        range.selectNodeContents($('#outsider')[0]);
+
+        window.getSelection().addRange(range);
+
+        expect(vmh.getMarkerInfoOfCurrentSelection()).toBeNull();
+    });
+
+    it('No preblem with no text content', function() {
         var marker;
 
         preview.refresh('');
@@ -70,10 +135,8 @@ describe('ViewOnlyMarkerHelper', function() {
 
         expect(marker.start).toEqual(1);
         expect(marker.end).toEqual(2);
-        expect(marker.top).toEqual(0);
-        expect(marker.left).toEqual(0);
-        expect(marker.height).toEqual(0);
     });
+
 
     it('select range by given offset', function() {
         var range;

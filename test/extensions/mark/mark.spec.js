@@ -79,15 +79,13 @@ describe('Mark', function() {
 
             expect(marker.start).toEqual(2);
             expect(marker.end).toEqual(4);
-            expect(marker.top).toEqual(0);
-            expect(marker.left).toEqual(0);
             expect(marker.text).toEqual('');
         });
 
         it('get marker', function() {
             var marker;
 
-            marker = editor.addMarker(6, 9, 'myId');
+            editor.addMarker(6, 9, 'myId');
             marker = editor.getMarker('myId');
 
             expect(marker).toBeDefined();
@@ -237,8 +235,8 @@ describe('Mark', function() {
             }
 
             editor.on('markerUpdated', function() {
-                expect(marker.top).toEqual(0);
-                expect(marker.left).toEqual(0);
+                expect(marker.top).toBeDefined();
+                expect(marker.left).toBeDefined();
                 done();
             });
         });

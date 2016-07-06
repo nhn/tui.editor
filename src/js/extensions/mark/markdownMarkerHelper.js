@@ -168,19 +168,20 @@ MarkdownMarkerHelper.prototype._getSelection = function() {
  * @returns {[object]} offset cursors
  */
 MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
-    var doc = this.cm.getDoc(),
-        currentLength = 0,
-        beforeLength = 0,
-        result = [],
-        offsetIndex = 0,
-        line;
+    var doc = this.cm.getDoc();
+    var currentLength = 0;
+    var beforeLength = 0;
+    var result = [];
+    var offsetIndex = 0;
+    var lineLength = doc.lineCount();
+    var lineIndex;
 
-    for (line = 0; line < doc.lineCount(); line += 1) {
-        currentLength += doc.getLine(line).length;
+    for (lineIndex = 0; lineIndex < lineLength; lineIndex += 1) {
+        currentLength += doc.getLine(lineIndex).length;
 
         while (currentLength >= offsetlist[offsetIndex]) {
             result.push({
-                line: line,
+                line: lineIndex,
                 ch: offsetlist[offsetIndex] - beforeLength
             });
 
@@ -196,7 +197,7 @@ MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
 
     while (!util.isUndefined(offsetlist[offsetIndex])) {
         result.push({
-            line: line,
+            line: lineIndex,
             ch: currentLength - beforeLength
         });
 

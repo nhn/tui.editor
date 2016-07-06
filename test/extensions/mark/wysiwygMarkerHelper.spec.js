@@ -129,7 +129,7 @@ describe('WysiwygMarkerHelper', function() {
         expect(marker.text).toEqual('');
     });
 
-    it('get zero top and left when there is no content', function() {
+    it('No preblem with no text content', function() {
         var marker;
 
         sqe.setHTML('');
@@ -142,9 +142,6 @@ describe('WysiwygMarkerHelper', function() {
 
         expect(marker.start).toEqual(1);
         expect(marker.end).toEqual(2);
-        expect(marker.top).toEqual(0);
-        expect(marker.left).toEqual(0);
-        expect(marker.height).toEqual(0);
     });
 
     it('select range by given offset', function() {
