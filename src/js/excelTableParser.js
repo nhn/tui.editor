@@ -46,7 +46,7 @@ function getRows(content) {
     content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
     //CR or CR-LF to LF
     content = content.replace(/(\r\n)|(\r)/g, '\n');
-    
+
     return content.split('\n');
 }
 
