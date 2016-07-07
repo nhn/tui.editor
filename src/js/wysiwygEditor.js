@@ -194,7 +194,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     this.getEditor().addEventListener('input', util.debounce(function() {
         var eventObj;
 
-        if (!self._silentChange) {
+        if (!self._silentChange && self.isEditorValid()) {
             eventObj = {
                 source: 'wysiwyg'
             };
@@ -371,9 +371,9 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
     this.addKeyEventHandler('ENTER', function() {
-        setTimeout(function() {
+        self.defer(function() {
             self._scrollToRangeIfNeed();
-        }, 0);
+        });
     });
 
     this.addKeyEventHandler('TAB', function(ev) {
@@ -688,7 +688,7 @@ WysiwygEditor.prototype._postProcessForChange = function() {
  * Ready to silent change
  */
 WysiwygEditor.prototype.readySilentChange = function() {
-    if (canObserveMutations && this.getEditor() && !this.getEditor().isIgnoreChange()) {
+    if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
         this._silentChange = true;
     }
 };
@@ -918,6 +918,20 @@ WysiwygEditor.prototype.getRange = function() {
 
 WysiwygEditor.prototype.getTextObject = function(range) {
     return new WwTextObject(this, range);
+};
+
+WysiwygEditor.prototype.defer = function(callback) {
+    var self = this;
+
+    setTimeout(function() {
+        if (self.isEditorValid()) {
+            callback(self);
+        }
+    }, 0);
+};
+
+WysiwygEditor.prototype.isEditorValid = function() {
+    return this.getEditor() && $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0]);
 };
 
 /**
