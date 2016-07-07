@@ -6,8 +6,7 @@
 'use strict';
 
 var UIController = require('./uicontroller'),
-    Button = require('./button'),
-    ToggleButton = require('./toggleButton');
+    Button = require('./button');
 
 var util = tui.util;
 
@@ -55,11 +54,7 @@ Toolbar.prototype.addButton = function(button, index) {
     var ev = this.eventManager;
 
     if (!button.render) {
-        if (!util.isArray(button)) {
-            button = new Button(button);
-        } else {
-            button = new ToggleButton(button);
-        }
+        button = new Button(button);
     }
 
     button.on('command', function emitCommandEvent($, commandName) {

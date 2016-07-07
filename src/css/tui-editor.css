@@ -543,6 +543,10 @@
     background-position: -292px -26px;
 }
 
+.tui-toolbar-icons.tui-scrollfollow.active {
+    background-color: #ddedfb;
+}
+
 .tui-toolbar-icons.tui-link {
     background-position: -321px -27px;
 }
