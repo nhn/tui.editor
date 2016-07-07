@@ -32,7 +32,6 @@
 
 .te-md-container .CodeMirror {
   font-size: 13px;
-  padding: 0 10px;
   height: 100%;
 }
 
@@ -102,7 +101,7 @@
   outline: none;
 }
 
-.te-ww-container .te-editor {
+.te-ww-container .tui-editor-contents {
   padding: 10px;
 }
 
@@ -120,6 +119,16 @@
 .tui-editor.te-hide,
 .tui-editor-defaultUI.te-hide {
   display: none;
+}
+
+.tui-editor .CodeMirror-lines {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.tui-editor .CodeMirror-line {
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* default UI Styles */
@@ -532,6 +541,10 @@
 
 .tui-toolbar-icons.tui-scrollfollow {
   background-position: -292px -26px;
+}
+
+.tui-toolbar-icons.tui-scrollfollow.active {
+  background-color: #ddedfb;
 }
 
 .tui-toolbar-icons.tui-link {
