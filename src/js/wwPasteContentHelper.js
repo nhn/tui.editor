@@ -131,12 +131,15 @@ WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
 
     util.forEachArray(blocks, function(node) {
         var $node = $(node);
+        var isDivInListItem = $node.parent('li').length !== 0 && node.tagName === 'DIV';
 
-        if ($node.parent('li').length === 0) {
-            $node.replaceWith(function() {
-                return $(this).html();
-            });
+        if (isDivInListItem) {
+            return;
         }
+
+        $node.replaceWith(function() {
+            return $(this).html();
+        });
     });
 };
 
