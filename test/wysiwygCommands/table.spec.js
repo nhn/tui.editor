@@ -53,12 +53,13 @@ describe('Table', function() {
     });
 
     it('add initial data', function() {
-        Table.exec(wwe, 2, 3, ['a', 'b', 'c', 'd']);
-
-        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(0).text()).toEqual('a');
-        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(1).text()).toEqual('b');
-        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(0).text()).toEqual('c');
-        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(1).text()).toEqual('d');
+        Table.exec(wwe, 2, 3, ['a', 'b', 'c', 'd', 'e', 'f']);
+        expect(wwe.get$Body().find('thead tr').eq(0).find('th').eq(0).text()).toEqual('a');
+        expect(wwe.get$Body().find('thead tr').eq(0).find('th').eq(1).text()).toEqual('b');
+        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(0).text()).toEqual('c');
+        expect(wwe.get$Body().find('tbody tr').eq(0).find('td').eq(1).text()).toEqual('d');
+        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(0).text()).toEqual('e');
+        expect(wwe.get$Body().find('tbody tr').eq(1).find('td').eq(1).text()).toEqual('f');
         expect(wwe.getEditor().getSelection().startContainer).not.toBe(wwe.get$Body().find('th')[0]);
     });
 });

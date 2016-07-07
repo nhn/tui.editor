@@ -15,10 +15,8 @@
 function excelTableParser(content) {
     var rows = getRows(content),
         data = [],
-        rowLength = 0,
+        rowLength = rows.length,
         colLength = 0;
-
-    rowLength = rows.length;
 
     rows.forEach(function(row) {
         var cols = row.split('\t');
@@ -40,11 +38,15 @@ function excelTableParser(content) {
 }
 
 function getRows(content) {
+    content = content.replace(/"([^"]+)"/g, function(match, cell) {
+        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
+    });
+
     //remove last LF or CR
     content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
     //CR or CR-LF to LF
     content = content.replace(/(\r\n)|(\r)/g, '\n');
-
+    
     return content.split('\n');
 }
 

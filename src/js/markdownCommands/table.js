@@ -31,7 +31,7 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
             table += '\n';
         }
 
-        table += makeHeader(col);
+        table += makeHeader(col, data);
         table += makeBody(col, row - 1, data);
 
         doc.replaceSelection(table);
@@ -50,17 +50,23 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
  * @param {number} col column count
  * @returns {string} markdown string
  */
-function makeHeader(col) {
+function makeHeader(col, data) {
     var header = '|',
-        border = '|';
+        border = '|',
+        index = 0;
 
     while (col) {
-        header += '  |';
+        if (data) {
+            header += ' ' + data[index] + ' |';
+            index += 1;
+        } else {
+            header += '  |';
+        }
+
         border += ' --- |';
 
         col -= 1;
     }
-
     return header + '\n' + border + '\n';
 }
 
@@ -74,7 +80,7 @@ function makeHeader(col) {
  */
 function makeBody(col, row, data) {
     var body = '',
-        index = 0,
+        index = col,
         irow, icol;
 
     for (irow = 0; irow < row; irow += 1) {
