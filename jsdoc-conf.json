@@ -40,7 +40,6 @@
   "opts": {
     "recurse": true,
     "name": "Editor",
-    "destination": "doc",
-    "tutorials": "samples"
+    "destination": "doc"
   }
 }

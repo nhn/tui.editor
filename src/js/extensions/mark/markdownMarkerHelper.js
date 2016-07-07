@@ -13,7 +13,6 @@ var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
  *
  * MarkdownMarkerHelper
  * @exports MarkdownMarkerHelper
- * @augments
  * @constructor
  * @class
  * @param {CodeMirror} cm codemirror instance
@@ -164,8 +163,8 @@ MarkdownMarkerHelper.prototype._getSelection = function() {
 /**
  * _findOffsetCursor
  * Find offset cursor by given offset list
- * @param {[number]} offsetlist offset list
- * @returns {[object]} offset cursors
+ * @param {Array.<number>} offsetlist offset list
+ * @returns {Array.<object>} offset cursors
  */
 MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
     var doc = this.cm.getDoc();

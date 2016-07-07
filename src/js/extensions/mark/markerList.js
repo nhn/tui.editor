@@ -5,7 +5,6 @@ var util = tui.util;
 /**
  * Markerlist
  * @exports Markerlist
- * @augments
  * @constructor
  * @class
  */
@@ -104,7 +103,7 @@ Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
  * Get markers affected by given range
  * @param {number} start start offset
  * @param {end} end end offset
- * @returns {[object]} markers
+ * @returns {Array.<object>} markers
  */
 Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
     var rangeMarkers;
@@ -123,7 +122,7 @@ Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
 /**
  * getAll
  * Get markers all
- * @returns {[object]} markers
+ * @returns {Array.<object>} markers
  */
 Markerlist.prototype.getAll = function() {
     return this._sortedMarkers;

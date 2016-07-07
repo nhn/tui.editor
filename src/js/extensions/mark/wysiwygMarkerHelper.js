@@ -12,7 +12,6 @@ var FIND_ZWB_RX = /\u200B/g;
 /**
  * WysiwygMarkerHelper
  * @exports WysiwygMarkerHelper
- * @augments
  * @constructor
  * @class
  * @param {SquireExt} sqe squire instance
@@ -166,8 +165,8 @@ WysiwygMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) 
 /**
  * _findOffsetNode
  * Find offset nodes by given offset list
- * @param {[number]} offsetlist offset list
- * @returns {[object]} offset node informations
+ * @param {Array.<number>} offsetlist offset list
+ * @returns {Array.<object>} offset node informations
  */
 WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
     return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, function(text) {
