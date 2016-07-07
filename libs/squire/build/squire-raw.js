@@ -289,15 +289,18 @@ function getPath ( node, root ) {
             if ( dir = node.dir ) {
                 path += '[dir=' + dir + ']';
             }
-            if( classNames ) {
+            if ( classNames ) {
                 if ( indexOf.call( classNames, HIGHLIGHT_CLASS ) > -1 ) {
-                    path += '[backgroundColor=' + node.style.backgroundColor.replace(/ /g,'') + ']';
+                    path += '[backgroundColor=' +
+                        node.style.backgroundColor.replace( / /g,'' ) + ']';
                 }
                 if ( indexOf.call( classNames, COLOUR_CLASS ) > -1 ) {
-                    path += '[color=' + node.style.color.replace(/ /g,'') + ']';
+                    path += '[color=' +
+                        node.style.color.replace( / /g,'' ) + ']';
                 }
                 if ( indexOf.call( classNames, FONT_FAMILY_CLASS ) > -1 ) {
-                    path += '[fontFamily=' + node.style.fontFamily.replace(/ /g,'') + ']';
+                    path += '[fontFamily=' +
+                        node.style.fontFamily.replace( / /g,'' ) + ']';
                 }
                 if ( indexOf.call( classNames, FONT_SIZE_CLASS ) > -1 ) {
                     path += '[fontSize=' + node.style.fontSize + ']';
