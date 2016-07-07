@@ -156,7 +156,6 @@ UIController.prototype.setRootElement = function($el) {
 
     if (!$el) {
         className = className || ('uic' + this.id);
-        tagName = tagName;
         $el = $('<' + tagName + ' class="' + className + '"/>');
     }
     this.$el = $el;

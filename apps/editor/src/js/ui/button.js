@@ -26,7 +26,8 @@ var tooltip = new Tooltip();
 function Button(options) {
     UIController.call(this, {
         tagName: 'button',
-        className: options.className + ' tui-toolbar-icons'
+        className: options.className + ' tui-toolbar-icons',
+        rootElement: options.$el
     });
 
     this._setOptions(options);

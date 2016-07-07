@@ -7,14 +7,20 @@
 
 var extManager = require('../extManager'),
     ScrollSync = require('./scrollFollow.scrollSync'),
-    SectionManager = require('./scrollFollow.sectionManager');
+    SectionManager = require('./scrollFollow.sectionManager'),
+    Button = require('../ui/button');
 
 extManager.defineExtension('scrollFollow', function(editor) {
     var scrollable = false,
         active = true,
         sectionManager, scrollSync,
         className = 'tui-scrollfollow',
-        $button, cm;
+        TOOL_TIP = {
+            active: '자동 스크롤 끄기',
+            inActive: '자동 스크롤 켜기'
+        },
+        button,
+        cm;
 
     if (editor.isViewOnly()) {
         return;
@@ -27,35 +33,45 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     //UI
     if (editor.getUI().name === 'default') {
-        editor.getUI().toolbar.addButton([{
-            className: [className, 'active'].join(' '),
-            command: 'scrollFollowDisable',
-            tooltip: '자동 스크롤 끄기',
-            style: 'background-color: #ddedfb'
-        }, {
+        //init button
+        button = new Button({
             className: className,
-            command: 'scrollFollowEnable',
-            tooltip: '자동 스크롤 켜기',
-            style: 'background-color: #fff'
-        }]);
+            command: 'scrollFollowToggle',
+            tooltip: TOOL_TIP.active,
+            $el: $('<button class="active ' + className + ' tui-toolbar-icons" type="button"></button>')
+        });
+
+        editor.getUI().toolbar.addButton(button);
+
+        if (editor.currentMode === 'wysiwyg') {
+            button.$el.hide();
+        }
+
+        //hide scroll follow button in wysiwyg
+        editor.on('changeModeToWysiwyg', function() {
+            button.$el.hide();
+        });
+
+        editor.on('changeModeToMarkdown', function() {
+            button.$el.show();
+        });
+
+        //Commands
+        editor.addCommand('markdown', {
+            name: 'scrollFollowToggle',
+            exec: function() {
+                active = !active;
+
+                if (active) {
+                    button.$el.addClass('active');
+                    button.tooltip = TOOL_TIP.active;
+                } else {
+                    button.$el.removeClass('active');
+                    button.tooltip = TOOL_TIP.inActive;
+                }
+            }
+        });
     }
-
-    $button = editor.getUI().toolbar.$el.find(className);
-
-    //Commands
-    editor.addCommand('markdown', {
-        name: 'scrollFollowDisable',
-        exec: function() {
-            active = false;
-        }
-    });
-
-    editor.addCommand('markdown', {
-        name: 'scrollFollowEnable',
-        exec: function() {
-            active = true;
-        }
-    });
 
     //Events
     cm.on('change', function() {
@@ -75,14 +91,5 @@ extManager.defineExtension('scrollFollow', function(editor) {
         }
 
         scrollSync.syncToPreview();
-    });
-
-    //위지윅에서는 숨김
-    editor.on('changeModeToWysiwyg', function() {
-        $button.hide();
-    });
-
-    editor.on('changeModeToMarkdown', function() {
-        $button.show();
     });
 });
