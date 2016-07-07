@@ -9,7 +9,7 @@ var excelTableParser = require('./excelTableParser');
 
 var util = tui.util;
 
-var FIND_EXCEL_DATA = /^([^ \n\r]*(\t[^\n\r]*?){1,}[\r\n]*){1,}$/;
+var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
 
 /**
  * ImportManager
@@ -65,10 +65,8 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
 };
 
 ImportManager.prototype._addExcelTable = function(content) {
-    var tableInfo = excelTableParser(content),
-        headRowLength = 1;
-
-    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row + headRowLength, tableInfo.data);
+    var tableInfo = excelTableParser(content);
+    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 };
 
 ImportManager.prototype._processClipboard = function(evData) {

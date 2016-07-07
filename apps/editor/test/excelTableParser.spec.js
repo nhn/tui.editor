@@ -45,6 +45,26 @@ describe('excelTableParser', function() {
                 data: ['a', 'b', 'c', 'd', 'e', '']
             });
         });
+
+        it('3 x 2 has cell contains a space', function() {
+            content = 'a\sb\tc\td\ne\sf\tg\ti';
+
+            expect(excelTableParser(content)).toEqual({
+                col: 3,
+                row: 2,
+                data: ['a\sb', 'c', 'd', 'e\sf', 'g', 'i']
+            });
+        });
+
+        it('3 x 2 has cell contains a blocking content', function() {
+            content = 'a\tb\t"this is \r\nblocking content"\na\sb\te\tf';
+
+            expect(excelTableParser(content)).toEqual({
+                col: 3,
+                row: 2,
+                data: ['a', 'b', 'this is <br/>blocking content', 'a\sb', 'e', 'f']
+            });
+        });
     });
     describe('refine line feed difference of os', function() {
         it('CR-LF', function() {

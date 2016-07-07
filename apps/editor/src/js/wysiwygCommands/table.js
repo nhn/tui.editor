@@ -37,7 +37,7 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
         }
 
         table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
-        table += makeHeader(col);
+        table += makeHeader(col, data);
         table += makeBody(col, row - 1, data);
         table += '</table>';
 
@@ -66,13 +66,22 @@ function focusToFirstTh(sq, $table) {
  * makeHeader
  * make table header html string
  * @param {number} col column count
+ * @param {string} data cell data
  * @returns {string} html string
  */
-function makeHeader(col) {
-    var header = '<thead><tr>';
+function makeHeader(col, data) {
+    var header = '<thead><tr>',
+        index = 0;
 
     while (col) {
-        header += '<th></th>';
+        header += '<th>';
+
+        if (data) {
+            header += data[index];
+            index += 1;
+        }
+
+        header += '</th>';
         col -= 1;
     }
 
@@ -91,7 +100,7 @@ function makeHeader(col) {
  */
 function makeBody(col, row, data) {
     var body = '<tbody>',
-        index = 0,
+        index = col,
         irow, icol;
 
     for (irow = 0; irow < row; irow += 1) {
