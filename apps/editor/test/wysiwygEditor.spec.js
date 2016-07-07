@@ -467,4 +467,33 @@ describe('WysiwygEditor', function() {
             expect(wwe.getRange()).toEqual(range);
         });
     });
+
+    describe('defer()', function() {
+        it('should run passed callback on next frame', function(done) {
+            var count = 0;
+
+            wwe.defer(function() {
+                expect(count).toEqual(1);
+                done();
+            });
+
+            count += 1;
+        });
+
+        it('should not run passed callback on next frame if editor is not valid #1', function() {
+            wwe.defer(function() {
+                fail('defer() callback has been called');
+            });
+
+            wwe.remove();
+        });
+
+        it('should not run passed callback on next frame if editor is not valid #2', function() {
+            wwe.defer(function() {
+                fail('defer() callback has been called');
+            });
+
+            wwe.$editorContainerEl.remove();
+        });
+    });
 });
