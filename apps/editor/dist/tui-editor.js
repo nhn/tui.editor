@@ -67,10 +67,10 @@
 	//default extensions
 	__webpack_require__(5);
 	__webpack_require__(7);
-	__webpack_require__(10);
-	__webpack_require__(11);
+	__webpack_require__(13);
+	__webpack_require__(14);
 
-	ToastUIEditor = __webpack_require__(19);
+	ToastUIEditor = __webpack_require__(22);
 
 	//for jquery
 	$.fn.tuiEditor = function() {
@@ -1319,14 +1319,20 @@
 
 	var extManager = __webpack_require__(6),
 	    ScrollSync = __webpack_require__(8),
-	    SectionManager = __webpack_require__(9);
+	    SectionManager = __webpack_require__(9),
+	    Button = __webpack_require__(10);
 
 	extManager.defineExtension('scrollFollow', function(editor) {
 	    var scrollable = false,
 	        active = true,
 	        sectionManager, scrollSync,
 	        className = 'tui-scrollfollow',
-	        $button, cm;
+	        TOOL_TIP = {
+	            active: '자동 스크롤 끄기',
+	            inActive: '자동 스크롤 켜기'
+	        },
+	        button,
+	        cm;
 
 	    if (editor.isViewOnly()) {
 	        return;
@@ -1339,35 +1345,45 @@
 
 	    //UI
 	    if (editor.getUI().name === 'default') {
-	        editor.getUI().toolbar.addButton([{
-	            className: [className, 'active'].join(' '),
-	            command: 'scrollFollowDisable',
-	            tooltip: '자동 스크롤 끄기',
-	            style: 'background-color: #ddedfb'
-	        }, {
+	        //init button
+	        button = new Button({
 	            className: className,
-	            command: 'scrollFollowEnable',
-	            tooltip: '자동 스크롤 켜기',
-	            style: 'background-color: #fff'
-	        }]);
+	            command: 'scrollFollowToggle',
+	            tooltip: TOOL_TIP.active,
+	            $el: $('<button class="active ' + className + ' tui-toolbar-icons" type="button"></button>')
+	        });
+
+	        editor.getUI().toolbar.addButton(button);
+
+	        if (editor.currentMode === 'wysiwyg') {
+	            button.$el.hide();
+	        }
+
+	        //hide scroll follow button in wysiwyg
+	        editor.on('changeModeToWysiwyg', function() {
+	            button.$el.hide();
+	        });
+
+	        editor.on('changeModeToMarkdown', function() {
+	            button.$el.show();
+	        });
+
+	        //Commands
+	        editor.addCommand('markdown', {
+	            name: 'scrollFollowToggle',
+	            exec: function() {
+	                active = !active;
+
+	                if (active) {
+	                    button.$el.addClass('active');
+	                    button.tooltip = TOOL_TIP.active;
+	                } else {
+	                    button.$el.removeClass('active');
+	                    button.tooltip = TOOL_TIP.inActive;
+	                }
+	            }
+	        });
 	    }
-
-	    $button = editor.getUI().toolbar.$el.find(className);
-
-	    //Commands
-	    editor.addCommand('markdown', {
-	        name: 'scrollFollowDisable',
-	        exec: function() {
-	            active = false;
-	        }
-	    });
-
-	    editor.addCommand('markdown', {
-	        name: 'scrollFollowEnable',
-	        exec: function() {
-	            active = true;
-	        }
-	    });
 
 	    //Events
 	    cm.on('change', function() {
@@ -1387,15 +1403,6 @@
 	        }
 
 	        scrollSync.syncToPreview();
-	    });
-
-	    //위지윅에서는 숨김
-	    editor.on('changeModeToWysiwyg', function() {
-	        $button.hide();
-	    });
-
-	    editor.on('changeModeToMarkdown', function() {
-	        $button.show();
 	    });
 	});
 
@@ -1950,6 +1957,396 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
+	 * @fileoverview
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+	'use strict';
+
+	var UIController = __webpack_require__(11);
+	var Tooltip = __webpack_require__(12);
+
+	var util = tui.util;
+	var tooltip = new Tooltip();
+
+	/**
+	 * Button
+	 * initialize button
+	 * @exports Button
+	 * @augments UIController
+	 * @constructor
+	 * @class
+	 * @param {object} options 옵션
+	 * @param {string} options.className 만들어진 RootElement에 추가할 클래스
+	 * @param {string} options.command 클릭되면 실행될 커맨드명
+	 * @param {string} options.text 버튼안에 들어갈 텍스트
+	 * @param {string} options.style 추가적으로 적용될 CSS스타일
+	 */
+	function Button(options) {
+	    UIController.call(this, {
+	        tagName: 'button',
+	        className: options.className + ' tui-toolbar-icons',
+	        rootElement: options.$el
+	    });
+
+	    this._setOptions(options);
+
+	    this.render();
+
+	    this.attachEvents({
+	        'click': '_onClick'
+	    });
+
+	    if (options.tooltip) {
+	        this.attachEvents({
+	            'mouseover': '_onOver',
+	            'mouseout': '_onOut'
+	        });
+	    }
+	}
+
+	Button.prototype = util.extend(
+	    {},
+	    UIController.prototype
+	);
+
+	Button.prototype._setOptions = function(options) {
+	    this.command = options.command;
+	    this.event = options.event;
+	    this.text = options.text;
+	    this.tooltip = options.tooltip;
+	    this.style = options.style;
+	};
+
+	/**
+	 * Button의 모습을 그린다
+	 */
+	Button.prototype.render = function() {
+	    this.$el.text(this.text);
+	    this.$el.attr('type', 'button');
+
+	    if (this.style) {
+	        this.$el.attr('style', this.style);
+	    }
+	};
+
+	/**
+	 * _onClick
+	 * Click event handler
+	 */
+	Button.prototype._onClick = function() {
+	    if (this.command) {
+	        this.trigger('command', this.command);
+	    } else {
+	        this.trigger('event', this.event);
+	    }
+
+	    this.trigger('clicked');
+	};
+
+	Button.prototype._onOver = function() {
+	    tooltip.show(this.$el, this.tooltip);
+	};
+
+	Button.prototype._onOut = function() {
+	    tooltip.hide();
+	};
+
+	module.exports = Button;
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview HTML UI를 관리하는 컨트롤러
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var util = tui.util,
+	    _id = 0;
+	/**
+	 * UIController 클래스
+	 * @exports UIController
+	 * @constructor
+	 * @class
+	 * @param {Object} options 옵션
+	 * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
+	 */
+	function UIController(options) {
+	    options = util.extend({
+	        tagName: 'div'
+	    }, options || {});
+
+	    this.tagName = options.tagName;
+	    this.className = options.className;
+
+	    /**
+	     * rootElement
+	     * @type {jQuery}
+	     */
+	    this.$el = null;
+
+	    this._initID();
+
+	    this.setRootElement(options.rootElement);
+	}
+
+
+	/**********
+	 * method
+	 **********/
+
+	/**
+	 * UIC에 custom event을 걸거나 jQuery를 이용해 dom에 이벤트를 건다.
+	 * @param {string} aType 이벤트명과 셀렉터 스트링
+	 * @param {function} aFn 이벤트 핸들러
+	 */
+	UIController.prototype.on = function(aType, aFn) {
+	    var self = this;
+
+	    if (util.isObject(aType)) {
+	        util.forEach(aType, function(fn, type) {
+	            self._addEvent(type, fn);
+	        });
+	    } else {
+	        this._addEvent(aType, aFn);
+	    }
+	};
+
+	/**
+	 * 이벤트를 바인드한다.
+	 * DOM이벤트가 전달되면 jQuery이벤트 처리기를 이용하고
+	 * DOM이벤트가 아니면 CustomEvent를 이용한다.
+	 * @param {string} type 이벤트명과 셀렉터 스트링
+	 * @param {function} fn 이벤트 핸들러
+	 * @private
+	 */
+	UIController.prototype._addEvent = function(type, fn) {
+	    var parsedType = this._parseEventType(type),
+	        event = parsedType[0],
+	        selector = parsedType[1];
+
+	    if (selector) {
+	        this.$el.on(event, selector, fn);
+	    } else {
+	        this.$el.on(event, fn);
+	    }
+	};
+
+	/**
+	 * 이벤트를 지운다.
+	 * DOM이벤트가 전달되면 jQuery이벤트 처리기를 이용하고
+	 * DOM이벤트가 아니면 CustomEvent를 이용한다.
+	 * @param {string} type 이벤트명과 셀렉터 스트링
+	 * @param {function} fn 이벤트 핸들러
+	 */
+	UIController.prototype.off = function(type, fn) {
+	    var parsedType,
+	        event,
+	        selector;
+
+	    if (type) {
+	        parsedType = this._parseEventType(type);
+	        event = parsedType[0];
+	        selector = parsedType[1];
+
+	        if (selector) {
+	            this.$el.off(event, selector, fn);
+	        } else {
+	            this.$el.off(event, fn);
+	        }
+	    } else {
+	        this.$el.off();
+	    }
+	};
+
+	/**
+	 * 이벤트 바안딩 텍스트를 전달받아 이벤트 명과 셀렉터로 분리해준다.
+	 * 'click td' => ['click', 'td]
+	 * @param {string} type 이벤트쿼리 스트링
+	 * @returns {array} Event, Selector
+	 */
+	UIController.prototype._parseEventType = function(type) {
+	    var splitType = type.split(' '),
+	        event = splitType.shift(),
+	        selector = splitType.join(' ');
+
+	    return [event, selector];
+	};
+
+	/**
+	 * 파라메터로 넘어오는 이벤트 리스트 혹은 this.events를 토대로 dom 이벤트를 한꺼번에 바인드한다.
+	 * @param {object} events 이벤트 목록
+	 */
+	UIController.prototype.attachEvents = function(events) {
+	    var self = this,
+	        handler,
+	        eventlist = events || this.events;
+
+	    if (eventlist) {
+	        util.forEach(eventlist, function(handlerName, type) {
+	            if (self[handlerName]) {
+	                type = self.getEventNameWithNamespace(type);
+	                handler = util.bind(self[handlerName], self);
+	                self.on(type, handler);
+	            } else {
+	                throw new Error('UIController#attachEvents: ' + handlerName + '란 메서드가 없습니다.');
+	            }
+	        });
+	    }
+	};
+
+	/**
+	 * attachEvents로 걸린 이벤트핸들러를 한꺼번에 해제한다.
+	 */
+	UIController.prototype.detachEvents = function() {
+	    this.$el.off('.uicEvent' + this.id);
+	};
+
+	/**
+	 * UIC의 rootElement인 this.$el을 설정한다 인자가 없으면 생성한다.
+	 * @param {jQuery} $el 설정할 엘리먼트
+	 */
+	UIController.prototype.setRootElement = function($el) {
+	    var className = this.className,
+	        tagName = this.tagName;
+
+	    if (!$el) {
+	        className = className || ('uic' + this.id);
+	        $el = $('<' + tagName + ' class="' + className + '"/>');
+	    }
+	    this.$el = $el;
+	};
+
+	/**
+	 * 커스텀 이벤트를 발생시킨다.
+	 */
+	UIController.prototype.trigger = function() {
+	    this.$el.trigger.apply(this.$el, arguments);
+	};
+
+	/**
+	 * id를 생성한다.
+	 * @private
+	 */
+	UIController.prototype._initID = function() {
+	    this.id = _id;
+	    _id += 1;
+	};
+
+	/**
+	 * 이벤트종류에 네임스페이스를 더한다.
+	 * "click" -> "click.uicEvent23"
+	 * @param {string} event 이벤트 핸들러, 셀릭터 스트링
+	 * @returns {string} 네임스페이스가 포함된 이벤트스트링
+	 */
+	UIController.prototype.getEventNameWithNamespace = function(event) {
+	    var eventSplited = event.split(' ');
+	    eventSplited[0] += ('.uicEvent' + this.id);
+	    return eventSplited.join(' ');
+	};
+
+	/**
+	 * uic안에 서브uic를 삽입한다.
+	 * 두번째 인자로 셀렉터를 넘기면 this.$el이 아닌 셀렉터에 해당하는 엘리먼트를 찾아서 그엘리먼트에 서브 UIC의 엘리먼트를 붙인다.
+	 * @param {UIController} uic UIController instance
+	 * @param {string} [targetSEL] 셀렉터
+	 */
+	UIController.prototype.addUIC = function(uic, targetSEL) {
+	    if (targetSEL) {
+	        this.$el.find(targetSEL).append(uic.$el);
+	    } else {
+	        this.$el.append(uic.$el);
+	    }
+	};
+
+	/**
+	 * 엘리먼트의 이벤트를 해제 후 제거한다.
+	 */
+	UIController.prototype.remove = function() {
+	    this.detachEvents();
+	    this.$el.remove();
+	};
+
+	/**
+	 * 소멸자
+	 */
+	UIController.prototype.destroy = function() {
+	    var self = this;
+
+	    this.remove();
+	    this.detachEvents();
+
+	    util.forEachOwnProperties(this, function(value, key) {
+	        self[key] = null;
+	    });
+	};
+
+	/**
+	 * UIController를 확장해 새 생성자를 만든다.
+	 * @param {Object} props properties to extend
+	 * @returns {UIController} 생성자
+	 */
+	UIController.extend = function(props) {
+	    var newUIC = util.defineClass(this, props);
+	    newUIC.extend = UIController.extend;
+	    return newUIC;
+	};
+
+	module.exports = UIController;
+
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview
+	 * @author Minho Choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
+
+	/**
+	 * Tooltip
+	 * @exports Tooltip
+	 * @constructor
+	 */
+	function Tooltip() {
+	    this.$el = $(TOOLTIP_CONTENT);
+	    this.$el.appendTo('body');
+	    this.$el.hide();
+	}
+
+	/**
+	 * 툴팁을 보여줌
+	 * @param {jQuery} target 툴팁을 보여줄 대상
+	 * @param {String} text 툴팁내용
+	 */
+	Tooltip.prototype.show = function(target, text) {
+	    this.$el.css({
+	        'top': target.offset().top + target.height() + 13,
+	        'left': target.offset().left + 3
+	    }).find('.text').html(text).end().show();
+	};
+
+	Tooltip.prototype.hide = function() {
+	    this.$el.hide();
+	};
+
+	module.exports = Tooltip;
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
 	 * @fileoverview Implements Color syntax Extension
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
@@ -2146,7 +2543,7 @@
 
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -2157,11 +2554,11 @@
 	'use strict';
 
 	var extManager = __webpack_require__(6),
-	    MarkerList = __webpack_require__(12),
-	    MarkerManager = __webpack_require__(13),
-	    WysiwygMarkerHelper = __webpack_require__(15),
-	    ViewOnlyMarkerHelper = __webpack_require__(17),
-	    MarkdownMarkerHelper = __webpack_require__(18);
+	    MarkerList = __webpack_require__(15),
+	    MarkerManager = __webpack_require__(16),
+	    WysiwygMarkerHelper = __webpack_require__(18),
+	    ViewOnlyMarkerHelper = __webpack_require__(20),
+	    MarkdownMarkerHelper = __webpack_require__(21);
 
 	var util = tui.util;
 
@@ -2327,6 +2724,42 @@
 	    };
 
 	    /**
+	     * addMarker
+	     * Add Marker with given id
+	     * if you pass just id then it uses current selection for marker
+	     * or you can pass start and end offset for marker
+	     * @param {number|string} start start offset or id
+	     * @param {number} end end offset
+	     * @param {string} id id of marker
+	     * @returns {object} marker that have made
+	     */
+	    editor.addMarker = function(start, end, id) {
+	        var marker,
+	            helper = getHelper();
+
+	        if (!id) {
+	            id = start;
+	            marker = helper.getMarkerInfoOfCurrentSelection();
+	        } else {
+	            marker = {
+	                start: start,
+	                end: end
+	            };
+
+	            marker = helper.updateMarkerWithExtraInfo(marker);
+	        }
+
+	        if (marker) {
+	            marker.id = id;
+	            marker = ml.addMarker(marker);
+	            ml.sortBy('end');
+	            this.eventManager.emit('markerUpdated', [marker]);
+	        }
+
+	        return marker;
+	    };
+
+	    /**
 	     * clearSelect
 	     * Clear selection
 	     */
@@ -2362,48 +2795,12 @@
 
 	            editor.eventManager.emit('markerUpdated', ml.getAll());
 	        };
-
-	        /**
-	         * addMarker
-	         * Add Marker with given id
-	         * if you pass just id then it uses current selection for marker
-	         * or you can pass start and end offset for marker
-	         * @param {number|string} start start offset or id
-	         * @param {number} end end offset
-	         * @param {string} id id of marker
-	         * @returns {object} marker that have made
-	         */
-	        editor.addMarker = function(start, end, id) {
-	            var marker,
-	                helper = getHelper();
-
-	            if (!id) {
-	                id = start;
-	                marker = helper.getMarkerInfoOfCurrentSelection();
-	            } else {
-	                marker = {
-	                    start: start,
-	                    end: end
-	                };
-
-	                marker = helper.updateMarkerWithExtraInfo(marker);
-	            }
-
-	            if (marker) {
-	                marker.id = id;
-	                marker = ml.addMarker(marker);
-	                ml.sortWith('end');
-	                this.eventManager.emit('markerUpdated', [marker]);
-	            }
-
-	            return marker;
-	        };
 	    }
 	});
 
 
 /***/ },
-/* 12 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2515,17 +2912,15 @@
 	 * @returns {[object]} markers
 	 */
 	Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
-	    var len, i, marker, rangeMarkers;
+	    var rangeMarkers;
 
-	    rangeMarkers = [];
-
-	    for (i = 0, len = this._sortedMarkers.length; i < len; i += 1) {
-	        marker = this._sortedMarkers[i];
-
+	    rangeMarkers = this._sortedMarkers.filter(function(marker) {
 	        if (marker.end > end || marker.end > start) {
-	            rangeMarkers.push(marker);
+	            return true;
 	        }
-	    }
+
+	        return false;
+	    });
 
 	    return rangeMarkers;
 	};
@@ -2549,19 +2944,13 @@
 	};
 
 	/**
-	 * sortWith
+	 * sortBy
 	 * Sort markers with given key of marker
 	 * @param {string} rangeKey, start or end
 	 */
-	Markerlist.prototype.sortWith = function(rangeKey) {
+	Markerlist.prototype.sortBy = function(rangeKey) {
 	    this._sortedMarkers.sort(function(a, b) {
-	        if (a[rangeKey] > b[rangeKey]) {
-	            return 1;
-	        } else if (a[rangeKey] < b[rangeKey]) {
-	            return -1;
-	        }
-
-	        return 0;
+	        return a[rangeKey] - b[rangeKey];
 	    });
 	};
 
@@ -2584,12 +2973,12 @@
 
 
 /***/ },
-/* 13 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var DiffMatchPatch = __webpack_require__(14);
+	var DiffMatchPatch = __webpack_require__(17);
 
 	var util = tui.util;
 
@@ -2617,7 +3006,7 @@
 	 * @param {string} content reset base content
 	 */
 	MarkerManager.prototype.resetContent = function(content) {
-	    this.oldTextContent = (typeof content === 'string' ? content : null);
+	    this.oldTextContent = (util.isString(content) ? content : null);
 	};
 
 	/**
@@ -2629,7 +3018,7 @@
 	MarkerManager.prototype.updateMarkersByContent = function(newContent) {
 	    var markerDiffs;
 
-	    if (this.oldTextContent === null) {
+	    if (util.isNull(this.oldTextContent)) {
 	        this.resetContent(newContent);
 
 	        return [];
@@ -2793,7 +3182,7 @@
 
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/*eslint-disable */
@@ -4994,7 +5383,7 @@
 
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5004,7 +5393,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var FIND_ZWB_RX = /\u200B/g;
 
@@ -5061,22 +5450,34 @@
 	 * @returns {object} extra info
 	 */
 	WysiwygMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-	    var text, top, left, rect, height;
+	    var text, top, left, rect, height, node, parentNode, containerOffset;
 	    var endContainer = range.endContainer;
 	    var endOffset = range.endOffset;
 
 	    text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
-	    if (endContainer.childNodes[endOffset]) {
+	    if (domUtils.getChildNodeByOffset(endContainer, endOffset)) {
 	        range.setStart(endContainer, endOffset);
 	        range.collapse(true);
 
-	        rect = range.getClientRects()[0];
+	        rect = range.getBoundingClientRect();
+	    }
+
+	    if (rect && !rect.top) {
+	        this.sqe.modifyDocument(function() {
+	            node = document.createElement('SPAN');
+	            node.textContent = '\u200B';
+	            range.endContainer.parentNode.insertBefore(node, range.endContainer);
+	            rect = node.getBoundingClientRect();
+	            parentNode = node.parentNode;
+	            parentNode.removeChild(node);
+	        });
 	    }
 
 	    if (rect) {
-	        top = this.sqe.scrollTop() + rect.top;
-	        left = rect.left;
+	        containerOffset = this.sqe.get$Body().parent().offset();
+	        top = this.sqe.scrollTop() + rect.top - containerOffset.top + $('body').scrollTop();
+	        left = rect.left - containerOffset.left;
 	        height = rect.height;
 	    } else {
 	        height = top = left = 0;
@@ -5126,6 +5527,7 @@
 	/**
 	 * _extendRangeToTextNodeIfHasNone
 	 * Extend range to text node if start or end container have none
+	 * Containers of range should be text node
 	 * @param {Range} range range
 	 * @returns {boolean} success or fail
 	 */
@@ -5133,7 +5535,6 @@
 	    var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
 	        textNode;
 
-	    //getClientRects API로 rect값을 가져올때는 range 컨테이너가 텍스트 노드여야한다.
 	    if (!domUtils.isTextNode(range.endContainer) || !endNode.nodeValue.replace(FIND_ZWB_RX, '').length) {
 	        if (domUtils.isTextNode(endNode)) {
 	            range.setEnd(endNode, 0);
@@ -5192,7 +5593,7 @@
 
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports) {
 
 	/**
@@ -5585,7 +5986,7 @@
 
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5595,7 +5996,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
@@ -5653,19 +6054,27 @@
 	 * @returns {object} extra info
 	 */
 	ViewOnlyMarkerHelper.prototype._getExtraInfoOfRange = function(range) {
-	    var text, top, left, rect, containerOffset, height;
+	    var text, top, left, rect, containerOffset, height, node, parentNode;
 
 	    text = range.cloneContents().textContent.replace(FIND_CRLF_RX, '');
 
 	    range.setStart(range.endContainer, range.endOffset);
 	    range.collapse(true);
 
-	    rect = range.getClientRects()[0];
+	    rect = range.getBoundingClientRect();
 
-	    containerOffset = this.preview.$el.offset();
+	    if (rect && !rect.top) {
+	        node = document.createElement('SPAN');
+	        node.textContent = '\u200B';
+	        range.endContainer.parentNode.insertBefore(node, range.endContainer);
+	        rect = node.getBoundingClientRect();
+	        parentNode = node.parentNode;
+	        parentNode.removeChild(node);
+	    }
 
 	    if (rect) {
-	        top = rect.top + this.preview.$el.scrollTop() - containerOffset.top;
+	        containerOffset = this.preview.$el.offset();
+	        top = rect.top + this.preview.$el.scrollTop() - containerOffset.top + $('body').scrollTop();
 	        left = rect.left - containerOffset.left;
 	        height = rect.height;
 	    } else {
@@ -5678,6 +6087,88 @@
 	        left: left,
 	        height: height
 	    };
+	};
+
+	/**
+	 * getRange
+	 * get current range
+	 * @returns {Range}
+	 */
+	function getRange() {
+	    var selection = window.getSelection();
+	    var range;
+
+	    if (selection && selection.rangeCount) {
+	        range = selection.getRangeAt(0).cloneRange();
+	    } else {
+	        range = document.createRange();
+	        range.selectNodeContents(this.preview.$el[0]);
+	        range.collapse(true);
+	    }
+
+	    return range;
+	}
+
+	/**
+	 * getMarkerInfoOfCurrentSelection
+	 * Get marker info of current selection
+	 * @returns {object} marker
+	 */
+	ViewOnlyMarkerHelper.prototype.getMarkerInfoOfCurrentSelection = function() {
+	    var range, beforeRange, start, end, info, isRangeInContent;
+
+	    range = getRange();
+
+	    isRangeInContent = $.contains(this.preview.$el[0], range.commonAncestorContainer);
+
+	    if (isRangeInContent && this._extendRangeToTextNodeIfHasNone(range)) {
+	        beforeRange = range.cloneRange();
+	        beforeRange.setStart(this.preview.$el[0], 0);
+	        beforeRange.setEnd(range.startContainer, range.startOffset);
+
+	        info = this._getExtraInfoOfRange(range);
+
+	        start = beforeRange.cloneContents().textContent.length;
+	        end = start + info.text.length;
+
+	        return {
+	            start: start,
+	            end: end,
+	            text: info.text,
+	            top: info.top,
+	            left: info.left,
+	            height: info.height
+	        };
+	    }
+
+	    return null;
+	};
+
+	/**
+	 * _extendRangeToTextNodeIfHasNone
+	 * Extend range to text node if start or end container have none
+	 * Containers of range should be text node
+	 * @param {Range} range range
+	 * @returns {boolean} success or fail
+	 */
+	ViewOnlyMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range) {
+	    var endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset),
+	        textNode;
+
+	    if (!domUtils.isTextNode(range.endContainer)) {
+	        if (domUtils.isTextNode(endNode)) {
+	            range.setEnd(endNode, 0);
+	        } else {
+	            textNode = domUtils.getPrevTextNode(endNode);
+	            if (textNode) {
+	                range.setEnd(textNode, textNode.length);
+	            } else {
+	                return false;
+	            }
+	        }
+	    }
+
+	    return true;
 	};
 
 	/**
@@ -5722,7 +6213,7 @@
 
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports) {
 
 	/**
@@ -5895,19 +6386,20 @@
 	 * @returns {[object]} offset cursors
 	 */
 	MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
-	    var doc = this.cm.getDoc(),
-	        currentLength = 0,
-	        beforeLength = 0,
-	        result = [],
-	        offsetIndex = 0,
-	        line;
+	    var doc = this.cm.getDoc();
+	    var currentLength = 0;
+	    var beforeLength = 0;
+	    var result = [];
+	    var offsetIndex = 0;
+	    var lineLength = doc.lineCount();
+	    var lineIndex;
 
-	    for (line = 0; line < doc.lineCount(); line += 1) {
-	        currentLength += doc.getLine(line).length;
+	    for (lineIndex = 0; lineIndex < lineLength; lineIndex += 1) {
+	        currentLength += doc.getLine(lineIndex).length;
 
 	        while (currentLength >= offsetlist[offsetIndex]) {
 	            result.push({
-	                line: line,
+	                line: lineIndex,
 	                ch: offsetlist[offsetIndex] - beforeLength
 	            });
 
@@ -5923,7 +6415,7 @@
 
 	    while (!util.isUndefined(offsetlist[offsetIndex])) {
 	        result.push({
-	            line: line,
+	            line: lineIndex,
 	            ch: currentLength - beforeLength
 	        });
 
@@ -5967,7 +6459,7 @@
 
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -5977,58 +6469,58 @@
 
 	'use strict';
 
-	var MarkdownEditor = __webpack_require__(20),
-	    Preview = __webpack_require__(23),
-	    WysiwygEditor = __webpack_require__(25),
-	    Layout = __webpack_require__(38),
-	    EventManager = __webpack_require__(39),
-	    CommandManager = __webpack_require__(40),
+	var MarkdownEditor = __webpack_require__(23),
+	    Preview = __webpack_require__(26),
+	    WysiwygEditor = __webpack_require__(28),
+	    Layout = __webpack_require__(41),
+	    EventManager = __webpack_require__(42),
+	    CommandManager = __webpack_require__(43),
 	    extManager = __webpack_require__(6),
-	    ImportManager = __webpack_require__(42),
-	    Convertor = __webpack_require__(44),
-	    ViewOnly = __webpack_require__(46),
-	    markedRenderer = __webpack_require__(45),
-	    DefaultUI = __webpack_require__(47);
+	    ImportManager = __webpack_require__(45),
+	    Convertor = __webpack_require__(47),
+	    ViewOnly = __webpack_require__(49),
+	    markedRenderer = __webpack_require__(48),
+	    DefaultUI = __webpack_require__(50);
 
 
 	//markdown commands
-	var mdBold = __webpack_require__(62),
-	    mdItalic = __webpack_require__(63),
-	    mdStrike = __webpack_require__(64),
-	    mdBlockquote = __webpack_require__(65),
-	    mdHeading = __webpack_require__(66),
-	    mdHR = __webpack_require__(67),
-	    mdAddLink = __webpack_require__(68),
-	    mdAddImage = __webpack_require__(69),
-	    mdUL = __webpack_require__(70),
-	    mdOL = __webpack_require__(71),
-	    mdTable = __webpack_require__(72),
-	    mdTask = __webpack_require__(73),
-	    mdCode = __webpack_require__(74),
-	    mdCodeBlock = __webpack_require__(75);
+	var mdBold = __webpack_require__(61),
+	    mdItalic = __webpack_require__(62),
+	    mdStrike = __webpack_require__(63),
+	    mdBlockquote = __webpack_require__(64),
+	    mdHeading = __webpack_require__(65),
+	    mdHR = __webpack_require__(66),
+	    mdAddLink = __webpack_require__(67),
+	    mdAddImage = __webpack_require__(68),
+	    mdUL = __webpack_require__(69),
+	    mdOL = __webpack_require__(70),
+	    mdTable = __webpack_require__(71),
+	    mdTask = __webpack_require__(72),
+	    mdCode = __webpack_require__(73),
+	    mdCodeBlock = __webpack_require__(74);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(76),
-	    wwItalic = __webpack_require__(77),
-	    wwStrike = __webpack_require__(78),
-	    wwBlockquote = __webpack_require__(79),
-	    wwAddImage = __webpack_require__(80),
-	    wwAddLink = __webpack_require__(81),
-	    wwHR = __webpack_require__(82),
-	    wwHeading = __webpack_require__(83),
-	    wwUL = __webpack_require__(84),
-	    wwOL = __webpack_require__(85),
-	    wwTable = __webpack_require__(86),
-	    wwTableAddRow = __webpack_require__(87),
-	    wwTableAddCol = __webpack_require__(88),
-	    wwTableRemoveRow = __webpack_require__(89),
-	    wwTableRemoveCol = __webpack_require__(90),
-	    wwTableRemove = __webpack_require__(91),
-	    wwIncreaseDepth = __webpack_require__(92),
-	    wwDecreaseDepth = __webpack_require__(93),
-	    wwTask = __webpack_require__(94),
-	    wwCode = __webpack_require__(95),
-	    wwCodeBlock = __webpack_require__(96);
+	var wwBold = __webpack_require__(75),
+	    wwItalic = __webpack_require__(76),
+	    wwStrike = __webpack_require__(77),
+	    wwBlockquote = __webpack_require__(78),
+	    wwAddImage = __webpack_require__(79),
+	    wwAddLink = __webpack_require__(80),
+	    wwHR = __webpack_require__(81),
+	    wwHeading = __webpack_require__(82),
+	    wwUL = __webpack_require__(83),
+	    wwOL = __webpack_require__(84),
+	    wwTable = __webpack_require__(85),
+	    wwTableAddRow = __webpack_require__(86),
+	    wwTableAddCol = __webpack_require__(87),
+	    wwTableRemoveRow = __webpack_require__(88),
+	    wwTableRemoveCol = __webpack_require__(89),
+	    wwTableRemove = __webpack_require__(90),
+	    wwIncreaseDepth = __webpack_require__(91),
+	    wwDecreaseDepth = __webpack_require__(92),
+	    wwTask = __webpack_require__(93),
+	    wwCode = __webpack_require__(94),
+	    wwCodeBlock = __webpack_require__(95);
 
 	var util = tui.util;
 
@@ -6378,7 +6870,7 @@
 
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -6388,8 +6880,8 @@
 
 	'use strict';
 
-	var keyMapper = __webpack_require__(21).getSharedInstance();
-	var MdTextObject = __webpack_require__(22);
+	var keyMapper = __webpack_require__(24).getSharedInstance();
+	var MdTextObject = __webpack_require__(25);
 
 	var CodeMirror = window.CodeMirror;
 
@@ -6723,7 +7215,7 @@
 
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports) {
 
 	/**
@@ -7060,7 +7552,7 @@
 
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports) {
 
 	/**
@@ -7145,7 +7637,7 @@
 
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7155,7 +7647,7 @@
 
 	'use strict';
 
-	var LazyRunner = __webpack_require__(24);
+	var LazyRunner = __webpack_require__(27);
 
 	/**
 	 * Preview
@@ -7227,7 +7719,7 @@
 
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports) {
 
 	/**
@@ -7310,7 +7802,7 @@
 
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -7320,21 +7812,21 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16),
-	    WwClipboardManager = __webpack_require__(26),
-	    WwSelectionMarker = __webpack_require__(28),
-	    WwListManager = __webpack_require__(29),
-	    WwTaskManager = __webpack_require__(30),
-	    WwTableManager = __webpack_require__(31),
-	    WwHrManager = __webpack_require__(32),
-	    WwPManager = __webpack_require__(33),
-	    WwHeadingManager = __webpack_require__(34),
-	    WwCodeBlockManager = __webpack_require__(35),
-	    SquireExt = __webpack_require__(36);
+	var domUtils = __webpack_require__(19),
+	    WwClipboardManager = __webpack_require__(29),
+	    WwSelectionMarker = __webpack_require__(31),
+	    WwListManager = __webpack_require__(32),
+	    WwTaskManager = __webpack_require__(33),
+	    WwTableManager = __webpack_require__(34),
+	    WwHrManager = __webpack_require__(35),
+	    WwPManager = __webpack_require__(36),
+	    WwHeadingManager = __webpack_require__(37),
+	    WwCodeBlockManager = __webpack_require__(38),
+	    SquireExt = __webpack_require__(39);
 
-	var keyMapper = __webpack_require__(21).getSharedInstance();
+	var keyMapper = __webpack_require__(24).getSharedInstance();
 
-	var WwTextObject = __webpack_require__(37);
+	var WwTextObject = __webpack_require__(40);
 
 	var util = tui.util;
 
@@ -7509,7 +8001,7 @@
 	    this.getEditor().addEventListener('input', util.debounce(function() {
 	        var eventObj;
 
-	        if (!self._silentChange) {
+	        if (!self._silentChange && self.isEditorValid()) {
 	            eventObj = {
 	                source: 'wysiwyg'
 	            };
@@ -7686,9 +8178,9 @@
 	    var self = this;
 
 	    this.addKeyEventHandler('ENTER', function() {
-	        setTimeout(function() {
+	        self.defer(function() {
 	            self._scrollToRangeIfNeed();
-	        }, 0);
+	        });
 	    });
 
 	    this.addKeyEventHandler('TAB', function(ev) {
@@ -7976,14 +8468,15 @@
 	 * Prepare before get html
 	 */
 	WysiwygEditor.prototype._prepareGetHTML = function() {
-	    this.readySilentChange();
-
+	    var self = this;
 	    //for ensure to fire change event
-	    this.get$Body().attr('lastGetValue', Date.now());
+	    self.get$Body().attr('lastGetValue', Date.now());
 
-	    this._joinSplitedTextNodes();
+	    self._joinSplitedTextNodes();
 
-	    this.eventManager.emit('wysiwygGetValueBefore', this);
+	    self.getEditor().modifyDocument(function() {
+	        self.eventManager.emit('wysiwygGetValueBefore', self);
+	    });
 	};
 
 	/**
@@ -7992,8 +8485,9 @@
 	 */
 	WysiwygEditor.prototype._postProcessForChange = function() {
 	    var self = this;
-	    self.readySilentChange();
-	    self.eventManager.emit('wysiwygRangeChangeAfter', self);
+	    self.getEditor().modifyDocument(function() {
+	        self.eventManager.emit('wysiwygRangeChangeAfter', self);
+	    });
 	};
 
 	/**
@@ -8001,7 +8495,7 @@
 	 * Ready to silent change
 	 */
 	WysiwygEditor.prototype.readySilentChange = function() {
-	    if (canObserveMutations && this.getEditor() && !this.getEditor().isIgnoreChange()) {
+	    if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
 	        this._silentChange = true;
 	    }
 	};
@@ -8233,6 +8727,20 @@
 	    return new WwTextObject(this, range);
 	};
 
+	WysiwygEditor.prototype.defer = function(callback) {
+	    var self = this;
+
+	    setTimeout(function() {
+	        if (self.isEditorValid()) {
+	            callback(self);
+	        }
+	    }, 0);
+	};
+
+	WysiwygEditor.prototype.isEditorValid = function() {
+	    return this.getEditor() && $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0]);
+	};
+
 	/**
 	 * WysiwygEditor factory
 	 * @param {jQuery} $el element to insert editor
@@ -8259,7 +8767,7 @@
 
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8269,8 +8777,8 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
-	var WwPasteContentHelper = __webpack_require__(27);
+	var domUtils = __webpack_require__(19);
+	var WwPasteContentHelper = __webpack_require__(30);
 	var util = tui.util;
 
 	var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
@@ -8339,19 +8847,18 @@
 	};
 
 	WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
-	    var self = this;
 	    var node = fragment;
-	    var range = self.wwe.getEditor().getSelection().cloneRange();
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
 
 	    while (node.lastChild) {
 	        node = node.lastChild;
 	    }
 
-	    setTimeout(function() {
+	    this.wwe.defer(function(wwe) {
 	        range.setStartAfter(node);
 	        range.collapse(true);
-	        self.wwe.getEditor().setSelection(range);
-	    }, 0);
+	        wwe.getEditor().setSelection(range);
+	    });
 	};
 
 	WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
@@ -8469,7 +8976,7 @@
 
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8479,7 +8986,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var util = tui.util;
 
@@ -8749,7 +9256,7 @@
 
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8759,7 +9266,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
 
@@ -8832,7 +9339,7 @@
 
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports) {
 
 	/**
@@ -8907,7 +9414,7 @@
 
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -8917,7 +9424,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 
@@ -8989,9 +9496,9 @@
 	            //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
 	            self._unformatTaskIfNeedOnEnter(range);
 
-	            setTimeout(function() {
+	            self.wwe.defer(function() {
 	                self._formatTaskIfNeed();
-	            }, 0);
+	            });
 
 	            return false;
 	        }
@@ -9341,7 +9848,7 @@
 
 
 /***/ },
-/* 31 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9351,7 +9858,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	/**
 	 * WwTableManager
@@ -9588,7 +10095,7 @@
 
 
 /***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9598,7 +10105,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	/**
 	 * WwHrManager
@@ -9696,11 +10203,11 @@
 
 	    //HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
 	    if (this._isInHr(range) || this._isNearHr(range)) {
-	        setTimeout(function() {
-	            self.wwe.saveSelection();
+	        this.wwe.defer(function(wwe) {
+	            wwe.saveSelection();
 	            self._wrapDefaultBlockToOrphanTexts();
-	            self.wwe.restoreSavedSelection();
-	        }, 0);
+	            wwe.restoreSavedSelection();
+	        });
 	    }
 	};
 
@@ -9814,7 +10321,7 @@
 
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports) {
 
 	/**
@@ -9897,7 +10404,7 @@
 
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9907,7 +10414,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var FIND_HEADING_RX = /h[\d]/i;
 
@@ -9983,10 +10490,10 @@
 
 	    if (range.startOffset > 0) {
 	        //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
-	        setTimeout(function() {
+	        this.wwe.defer(function(wwe) {
 	            self._unwrapHeading();
-	            self.wwe.getEditor().removeLastUndoStack();
-	        }, 0);
+	            wwe.getEditor().removeLastUndoStack();
+	        });
 	    } else {
 	        event.preventDefault();
 	        this._insertEmptyBlockToPrevious(range);
@@ -10034,7 +10541,7 @@
 
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10044,7 +10551,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var util = tui.util;
 
@@ -10273,13 +10780,12 @@
 	};
 
 	WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
-	    var pre,
-	        self = this;
+	    var pre;
 
 	    if (this.wwe.getEditor().hasFormat('PRE')) {
 	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
 
-	        setTimeout(function() {
+	        this.wwe.defer(function(wwe) {
 	            var modified;
 
 	            $(pre).find('div').each(function(index, div) {
@@ -10290,9 +10796,9 @@
 	            });
 
 	            if (modified) {
-	                self.wwe.readySilentChange();
+	                wwe.readySilentChange();
 	            }
-	        }, 0);
+	        });
 	    }
 
 	    return true;
@@ -10350,7 +10856,7 @@
 
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10360,7 +10866,7 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 
 	var Squire = window.Squire,
 	    util = tui.util;
@@ -10690,7 +11196,7 @@
 
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10700,8 +11206,10 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(16);
+	var domUtils = __webpack_require__(19);
 	var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
+	var isWindowChrome = (navigator.appVersion.indexOf('Win') !== -1) && tui.util.browser.chrome;
+	var isNeedOffsetFix = isIE11 || isWindowChrome;
 
 	/**
 	 * WwTextObject
@@ -10714,7 +11222,9 @@
 	function WwTextObject(wwe, range) {
 	    this._wwe = wwe;
 
-	    if (isIE11) {
+	    //msie11 and window chrome can't make start offset of range api correctly when compositing korean.
+	    //so we need fix this when compositing korean.(and maybe other languages that needs composition.)
+	    if (isNeedOffsetFix) {
 	        this.isComposition = false;
 	        this._initCompositionEvent();
 	    }
@@ -10761,9 +11271,7 @@
 	WwTextObject.prototype.setEndBeforeRange = function(range) {
 	    var offset = range.startOffset;
 
-	    //ie11에서는 컴포지션중인 단어는 offset에 포함하지 않는다.
-	    //그래서 포함시킴
-	    if (isIE11 && this.isComposition) {
+	    if (this.isComposition) {
 	        offset += 1;
 	    }
 
@@ -10799,7 +11307,7 @@
 
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports) {
 
 	/**
@@ -10926,7 +11434,7 @@
 
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports) {
 
 	/**
@@ -11121,7 +11629,7 @@
 
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11133,7 +11641,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(41);
+	var Command = __webpack_require__(44);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -11258,7 +11766,7 @@
 
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -11375,7 +11883,7 @@
 
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11385,11 +11893,11 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(43);
+	var excelTableParser = __webpack_require__(46);
 
 	var util = tui.util;
 
-	var FIND_EXCEL_DATA = /^([^ \n\r]*(\t[^\n\r]*?){1,}[\r\n]*){1,}$/;
+	var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
 
 	/**
 	 * ImportManager
@@ -11445,10 +11953,8 @@
 	};
 
 	ImportManager.prototype._addExcelTable = function(content) {
-	    var tableInfo = excelTableParser(content),
-	        headRowLength = 1;
-
-	    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row + headRowLength, tableInfo.data);
+	    var tableInfo = excelTableParser(content);
+	    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 	};
 
 	ImportManager.prototype._processClipboard = function(evData) {
@@ -11501,7 +12007,7 @@
 
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/**
@@ -11521,10 +12027,8 @@
 	function excelTableParser(content) {
 	    var rows = getRows(content),
 	        data = [],
-	        rowLength = 0,
+	        rowLength = rows.length,
 	        colLength = 0;
-
-	    rowLength = rows.length;
 
 	    rows.forEach(function(row) {
 	        var cols = row.split('\t');
@@ -11546,6 +12050,10 @@
 	}
 
 	function getRows(content) {
+	    content = content.replace(/"([^"]+)"/g, function(match, cell) {
+	        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
+	    });
+
 	    //remove last LF or CR
 	    content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
 	    //CR or CR-LF to LF
@@ -11558,7 +12066,7 @@
 
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11568,7 +12076,7 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(45);
+	var markedCustomRenderer = __webpack_require__(48);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -11700,7 +12208,7 @@
 
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports) {
 
 	/**
@@ -11819,7 +12327,7 @@
 
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11829,11 +12337,11 @@
 
 	'use strict';
 
-	var Preview = __webpack_require__(23),
-	    EventManager = __webpack_require__(39),
-	    CommandManager = __webpack_require__(40),
+	var Preview = __webpack_require__(26),
+	    EventManager = __webpack_require__(42),
+	    CommandManager = __webpack_require__(43),
 	    extManager = __webpack_require__(6),
-	    Convertor = __webpack_require__(44);
+	    Convertor = __webpack_require__(47);
 
 	var util = tui.util;
 
@@ -11933,7 +12441,7 @@
 
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11943,15 +12451,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(48),
-	    Tab = __webpack_require__(53),
-	    Layerpopup = __webpack_require__(55),
-	    ModeSwitch = __webpack_require__(56),
-	    PopupAddLink = __webpack_require__(57),
-	    PopupAddImage = __webpack_require__(58),
-	    PopupTableUtils = __webpack_require__(59),
-	    PopupAddTable = __webpack_require__(60),
-	    PopupAddHeading = __webpack_require__(61);
+	var Toolbar = __webpack_require__(51),
+	    Tab = __webpack_require__(52),
+	    Layerpopup = __webpack_require__(54),
+	    ModeSwitch = __webpack_require__(55),
+	    PopupAddLink = __webpack_require__(56),
+	    PopupAddImage = __webpack_require__(57),
+	    PopupTableUtils = __webpack_require__(58),
+	    PopupAddTable = __webpack_require__(59),
+	    PopupAddHeading = __webpack_require__(60);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -12127,7 +12635,7 @@
 
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12137,9 +12645,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(49),
-	    Button = __webpack_require__(50),
-	    ToggleButton = __webpack_require__(52);
+	var UIController = __webpack_require__(11),
+	    Button = __webpack_require__(10);
 
 	var util = tui.util;
 
@@ -12187,11 +12694,7 @@
 	    var ev = this.eventManager;
 
 	    if (!button.render) {
-	        if (!util.isArray(button)) {
-	            button = new Button(button);
-	        } else {
-	            button = new ToggleButton(button);
-	        }
+	        button = new Button(button);
 	    }
 
 	    button.on('command', function emitCommandEvent($, commandName) {
@@ -12306,460 +12809,7 @@
 
 
 /***/ },
-/* 49 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview HTML UI를 관리하는 컨트롤러
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var util = tui.util,
-	    _id = 0;
-	/**
-	 * UIController 클래스
-	 * @exports UIController
-	 * @constructor
-	 * @class
-	 * @param {Object} options 옵션
-	 * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
-	 */
-	function UIController(options) {
-	    options = util.extend({
-	        tagName: 'div'
-	    }, options || {});
-
-	    this.tagName = options.tagName;
-	    this.className = options.className;
-
-	    /**
-	     * rootElement
-	     * @type {jQuery}
-	     */
-	    this.$el = null;
-
-	    this._initID();
-
-	    this.setRootElement(options.rootElement);
-	}
-
-
-	/**********
-	 * method
-	 **********/
-
-	/**
-	 * UIC에 custom event을 걸거나 jQuery를 이용해 dom에 이벤트를 건다.
-	 * @param {string} aType 이벤트명과 셀렉터 스트링
-	 * @param {function} aFn 이벤트 핸들러
-	 */
-	UIController.prototype.on = function(aType, aFn) {
-	    var self = this;
-
-	    if (util.isObject(aType)) {
-	        util.forEach(aType, function(fn, type) {
-	            self._addEvent(type, fn);
-	        });
-	    } else {
-	        this._addEvent(aType, aFn);
-	    }
-	};
-
-	/**
-	 * 이벤트를 바인드한다.
-	 * DOM이벤트가 전달되면 jQuery이벤트 처리기를 이용하고
-	 * DOM이벤트가 아니면 CustomEvent를 이용한다.
-	 * @param {string} type 이벤트명과 셀렉터 스트링
-	 * @param {function} fn 이벤트 핸들러
-	 * @private
-	 */
-	UIController.prototype._addEvent = function(type, fn) {
-	    var parsedType = this._parseEventType(type),
-	        event = parsedType[0],
-	        selector = parsedType[1];
-
-	    if (selector) {
-	        this.$el.on(event, selector, fn);
-	    } else {
-	        this.$el.on(event, fn);
-	    }
-	};
-
-	/**
-	 * 이벤트를 지운다.
-	 * DOM이벤트가 전달되면 jQuery이벤트 처리기를 이용하고
-	 * DOM이벤트가 아니면 CustomEvent를 이용한다.
-	 * @param {string} type 이벤트명과 셀렉터 스트링
-	 * @param {function} fn 이벤트 핸들러
-	 */
-	UIController.prototype.off = function(type, fn) {
-	    var parsedType,
-	        event,
-	        selector;
-
-	    if (type) {
-	        parsedType = this._parseEventType(type);
-	        event = parsedType[0];
-	        selector = parsedType[1];
-
-	        if (selector) {
-	            this.$el.off(event, selector, fn);
-	        } else {
-	            this.$el.off(event, fn);
-	        }
-	    } else {
-	        this.$el.off();
-	    }
-	};
-
-	/**
-	 * 이벤트 바안딩 텍스트를 전달받아 이벤트 명과 셀렉터로 분리해준다.
-	 * 'click td' => ['click', 'td]
-	 * @param {string} type 이벤트쿼리 스트링
-	 * @returns {array} Event, Selector
-	 */
-	UIController.prototype._parseEventType = function(type) {
-	    var splitType = type.split(' '),
-	        event = splitType.shift(),
-	        selector = splitType.join(' ');
-
-	    return [event, selector];
-	};
-
-	/**
-	 * 파라메터로 넘어오는 이벤트 리스트 혹은 this.events를 토대로 dom 이벤트를 한꺼번에 바인드한다.
-	 * @param {object} events 이벤트 목록
-	 */
-	UIController.prototype.attachEvents = function(events) {
-	    var self = this,
-	        handler,
-	        eventlist = events || this.events;
-
-	    if (eventlist) {
-	        util.forEach(eventlist, function(handlerName, type) {
-	            if (self[handlerName]) {
-	                type = self.getEventNameWithNamespace(type);
-	                handler = util.bind(self[handlerName], self);
-	                self.on(type, handler);
-	            } else {
-	                throw new Error('UIController#attachEvents: ' + handlerName + '란 메서드가 없습니다.');
-	            }
-	        });
-	    }
-	};
-
-	/**
-	 * attachEvents로 걸린 이벤트핸들러를 한꺼번에 해제한다.
-	 */
-	UIController.prototype.detachEvents = function() {
-	    this.$el.off('.uicEvent' + this.id);
-	};
-
-	/**
-	 * UIC의 rootElement인 this.$el을 설정한다 인자가 없으면 생성한다.
-	 * @param {jQuery} $el 설정할 엘리먼트
-	 */
-	UIController.prototype.setRootElement = function($el) {
-	    var className = this.className,
-	        tagName = this.tagName;
-
-	    if (!$el) {
-	        className = className || ('uic' + this.id);
-	        tagName = tagName;
-	        $el = $('<' + tagName + ' class="' + className + '"/>');
-	    }
-	    this.$el = $el;
-	};
-
-	/**
-	 * 커스텀 이벤트를 발생시킨다.
-	 */
-	UIController.prototype.trigger = function() {
-	    this.$el.trigger.apply(this.$el, arguments);
-	};
-
-	/**
-	 * id를 생성한다.
-	 * @private
-	 */
-	UIController.prototype._initID = function() {
-	    this.id = _id;
-	    _id += 1;
-	};
-
-	/**
-	 * 이벤트종류에 네임스페이스를 더한다.
-	 * "click" -> "click.uicEvent23"
-	 * @param {string} event 이벤트 핸들러, 셀릭터 스트링
-	 * @returns {string} 네임스페이스가 포함된 이벤트스트링
-	 */
-	UIController.prototype.getEventNameWithNamespace = function(event) {
-	    var eventSplited = event.split(' ');
-	    eventSplited[0] += ('.uicEvent' + this.id);
-	    return eventSplited.join(' ');
-	};
-
-	/**
-	 * uic안에 서브uic를 삽입한다.
-	 * 두번째 인자로 셀렉터를 넘기면 this.$el이 아닌 셀렉터에 해당하는 엘리먼트를 찾아서 그엘리먼트에 서브 UIC의 엘리먼트를 붙인다.
-	 * @param {UIController} uic UIController instance
-	 * @param {string} [targetSEL] 셀렉터
-	 */
-	UIController.prototype.addUIC = function(uic, targetSEL) {
-	    if (targetSEL) {
-	        this.$el.find(targetSEL).append(uic.$el);
-	    } else {
-	        this.$el.append(uic.$el);
-	    }
-	};
-
-	/**
-	 * 엘리먼트의 이벤트를 해제 후 제거한다.
-	 */
-	UIController.prototype.remove = function() {
-	    this.detachEvents();
-	    this.$el.remove();
-	};
-
-	/**
-	 * 소멸자
-	 */
-	UIController.prototype.destroy = function() {
-	    var self = this;
-
-	    this.remove();
-	    this.detachEvents();
-
-	    util.forEachOwnProperties(this, function(value, key) {
-	        self[key] = null;
-	    });
-	};
-
-	/**
-	 * UIController를 확장해 새 생성자를 만든다.
-	 * @param {Object} props properties to extend
-	 * @returns {UIController} 생성자
-	 */
-	UIController.extend = function(props) {
-	    var newUIC = util.defineClass(this, props);
-	    newUIC.extend = UIController.extend;
-	    return newUIC;
-	};
-
-	module.exports = UIController;
-
-
-/***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-	'use strict';
-
-	var UIController = __webpack_require__(49);
-	var Tooltip = __webpack_require__(51);
-
-	var util = tui.util;
-	var tooltip = new Tooltip();
-
-	/**
-	 * Button
-	 * initialize button
-	 * @exports Button
-	 * @augments UIController
-	 * @constructor
-	 * @class
-	 * @param {object} options 옵션
-	 * @param {string} options.className 만들어진 RootElement에 추가할 클래스
-	 * @param {string} options.command 클릭되면 실행될 커맨드명
-	 * @param {string} options.text 버튼안에 들어갈 텍스트
-	 * @param {string} options.style 추가적으로 적용될 CSS스타일
-	 */
-	function Button(options) {
-	    UIController.call(this, {
-	        tagName: 'button',
-	        className: options.className + ' tui-toolbar-icons'
-	    });
-
-	    this._setOptions(options);
-
-	    this.render();
-
-	    this.attachEvents({
-	        'click': '_onClick'
-	    });
-
-	    if (options.tooltip) {
-	        this.attachEvents({
-	            'mouseover': '_onOver',
-	            'mouseout': '_onOut'
-	        });
-	    }
-	}
-
-	Button.prototype = util.extend(
-	    {},
-	    UIController.prototype
-	);
-
-	Button.prototype._setOptions = function(options) {
-	    this.command = options.command;
-	    this.event = options.event;
-	    this.text = options.text;
-	    this.tooltip = options.tooltip;
-	    this.style = options.style;
-	};
-
-	/**
-	 * Button의 모습을 그린다
-	 */
-	Button.prototype.render = function() {
-	    this.$el.text(this.text);
-	    this.$el.attr('type', 'button');
-
-	    if (this.style) {
-	        this.$el.attr('style', this.style);
-	    }
-	};
-
-	/**
-	 * _onClick
-	 * Click event handler
-	 */
-	Button.prototype._onClick = function() {
-	    if (this.command) {
-	        this.trigger('command', this.command);
-	    } else {
-	        this.trigger('event', this.event);
-	    }
-
-	    this.trigger('clicked');
-	};
-
-	Button.prototype._onOver = function() {
-	    tooltip.show(this.$el, this.tooltip);
-	};
-
-	Button.prototype._onOut = function() {
-	    tooltip.hide();
-	};
-
-	module.exports = Button;
-
-
-/***/ },
-/* 51 */
-/***/ function(module, exports) {
-
-	/**
-	 * @fileoverview
-	 * @author Minho Choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	'use strict';
-
-	var TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
-
-	/**
-	 * Tooltip
-	 * @exports Tooltip
-	 * @constructor
-	 */
-	function Tooltip() {
-	    this.$el = $(TOOLTIP_CONTENT);
-	    this.$el.appendTo('body');
-	    this.$el.hide();
-	}
-
-	/**
-	 * 툴팁을 보여줌
-	 * @param {jQuery} target 툴팁을 보여줄 대상
-	 * @param {String} text 툴팁내용
-	 */
-	Tooltip.prototype.show = function(target, text) {
-	    this.$el.css({
-	        'top': target.offset().top + target.height() + 13,
-	        'left': target.offset().left + 3
-	    }).find('.text').html(text).end().show();
-	};
-
-	Tooltip.prototype.hide = function() {
-	    this.$el.hide();
-	};
-
-	module.exports = Tooltip;
-
-
-/***/ },
 /* 52 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-	'use strict';
-
-	var Button = __webpack_require__(50);
-
-	var util = tui.util;
-
-	/**
-	 * ToggleButton
-	 * initialize toggle button
-	 * @exports ToggleButton
-	 * @augments Button
-	 * @constructor
-	 * @class
-	 * @param {object[]} options 옵션
-	 * @param {string} options.className 만들어진 RootElement에 추가할 클래스
-	 * @param {string} options.command 클릭되면 실행될 커맨드명
-	 * @param {string} options.text 버튼안에 들어갈 텍스트
-	 * @param {string} options.style 추가적으로 적용될 CSS스타일
-	 */
-	function ToggleButton(options) {
-	    this.options = options;
-	    this.current = this.options[0];
-
-	    Button.call(this, this.current);
-
-	    this._initEvent();
-	}
-
-	ToggleButton.prototype = util.extend(
-	    {},
-	    Button.prototype
-	);
-
-	ToggleButton.prototype._initEvent = function() {
-	    var self = this;
-
-	    this.on('clicked', function() {
-	        self._toggle();
-	    });
-	};
-
-	ToggleButton.prototype._toggle = function() {
-	    if (this.current === this.options[0]) {
-	        this.current = this.options[1];
-	    } else {
-	        this.current = this.options[0];
-	    }
-
-	    this._setOptions(this.current);
-	    this.render();
-	};
-
-	module.exports = ToggleButton;
-
-
-/***/ },
-/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12769,8 +12819,8 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(49),
-	    templater = __webpack_require__(54);
+	var UIController = __webpack_require__(11),
+	    templater = __webpack_require__(53);
 
 	var util = tui.util;
 
@@ -12961,7 +13011,7 @@
 
 
 /***/ },
-/* 54 */
+/* 53 */
 /***/ function(module, exports) {
 
 	/**
@@ -13004,7 +13054,7 @@
 
 
 /***/ },
-/* 55 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13014,7 +13064,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(49);
+	var UIController = __webpack_require__(11);
 
 	var util = tui.util,
 	    _id = 0,
@@ -13261,7 +13311,7 @@
 
 
 /***/ },
-/* 56 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13271,7 +13321,7 @@
 
 	'use strict';
 
-	var UIController = __webpack_require__(49);
+	var UIController = __webpack_require__(11);
 
 	var util = tui.util;
 
@@ -13350,7 +13400,7 @@
 
 
 /***/ },
-/* 57 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13360,7 +13410,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(55);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13463,7 +13513,7 @@
 
 
 /***/ },
-/* 58 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13473,8 +13523,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(55),
-	    Tab = __webpack_require__(53);
+	var LayerPopup = __webpack_require__(54),
+	    Tab = __webpack_require__(52);
 
 	var util = tui.util;
 
@@ -13660,7 +13710,7 @@
 
 
 /***/ },
-/* 59 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13670,7 +13720,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(55);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -13777,7 +13827,7 @@
 
 
 /***/ },
-/* 60 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13787,7 +13837,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(55);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -14140,7 +14190,7 @@
 
 
 /***/ },
-/* 61 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14150,7 +14200,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(55);
+	var LayerPopup = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -14228,7 +14278,7 @@
 
 
 /***/ },
-/* 62 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14238,7 +14288,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -14339,7 +14389,7 @@
 
 
 /***/ },
-/* 63 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14349,7 +14399,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -14514,7 +14564,7 @@
 
 
 /***/ },
-/* 64 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14524,7 +14574,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
 
@@ -14605,7 +14655,7 @@
 
 
 /***/ },
-/* 65 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14615,7 +14665,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Blockquote
@@ -14674,7 +14724,7 @@
 
 
 /***/ },
-/* 66 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14684,7 +14734,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var util = tui.util;
 
@@ -14764,7 +14814,7 @@
 
 
 /***/ },
-/* 67 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14774,7 +14824,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * HR
@@ -14829,7 +14879,7 @@
 
 
 /***/ },
-/* 68 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14839,7 +14889,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * AddLink
@@ -14883,7 +14933,7 @@
 
 
 /***/ },
-/* 69 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14893,7 +14943,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * AddImage
@@ -14937,7 +14987,7 @@
 
 
 /***/ },
-/* 70 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14947,7 +14997,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -15001,7 +15051,7 @@
 
 
 /***/ },
-/* 71 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15011,7 +15061,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -15065,7 +15115,7 @@
 
 
 /***/ },
-/* 72 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15075,7 +15125,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Table
@@ -15101,7 +15151,7 @@
 	            table += '\n';
 	        }
 
-	        table += makeHeader(col);
+	        table += makeHeader(col, data);
 	        table += makeBody(col, row - 1, data);
 
 	        doc.replaceSelection(table);
@@ -15120,17 +15170,23 @@
 	 * @param {number} col column count
 	 * @returns {string} markdown string
 	 */
-	function makeHeader(col) {
+	function makeHeader(col, data) {
 	    var header = '|',
-	        border = '|';
+	        border = '|',
+	        index = 0;
 
 	    while (col) {
-	        header += '  |';
+	        if (data) {
+	            header += ' ' + data[index] + ' |';
+	            index += 1;
+	        } else {
+	            header += '  |';
+	        }
+
 	        border += ' --- |';
 
 	        col -= 1;
 	    }
-
 	    return header + '\n' + border + '\n';
 	}
 
@@ -15144,7 +15200,7 @@
 	 */
 	function makeBody(col, row, data) {
 	    var body = '',
-	        index = 0,
+	        index = col,
 	        irow, icol;
 
 	    for (irow = 0; irow < row; irow += 1) {
@@ -15170,7 +15226,7 @@
 
 
 /***/ },
-/* 73 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15180,7 +15236,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Task
@@ -15224,7 +15280,7 @@
 
 
 /***/ },
-/* 74 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15234,7 +15290,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Code
@@ -15279,7 +15335,7 @@
 
 
 /***/ },
-/* 75 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15289,7 +15345,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * CodeBlock
@@ -15332,7 +15388,7 @@
 
 
 /***/ },
-/* 76 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15342,7 +15398,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Bold
@@ -15379,7 +15435,7 @@
 
 
 /***/ },
-/* 77 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15389,7 +15445,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Italic
@@ -15425,7 +15481,7 @@
 
 
 /***/ },
-/* 78 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15435,7 +15491,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Strike
@@ -15471,7 +15527,7 @@
 
 
 /***/ },
-/* 79 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15481,7 +15537,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Blockquote
@@ -15513,7 +15569,7 @@
 
 
 /***/ },
-/* 80 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15523,7 +15579,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * AddImage
@@ -15555,7 +15611,7 @@
 
 
 /***/ },
-/* 81 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15565,7 +15621,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * AddLink
@@ -15606,7 +15662,7 @@
 
 
 /***/ },
-/* 82 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15616,8 +15672,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40),
-	    domUtils = __webpack_require__(16);
+	var CommandManager = __webpack_require__(43),
+	    domUtils = __webpack_require__(19);
 
 	/**
 	 * HR
@@ -15678,7 +15734,7 @@
 
 
 /***/ },
-/* 83 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15688,8 +15744,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
-	var domUtils = __webpack_require__(16);
+	var CommandManager = __webpack_require__(43);
+	var domUtils = __webpack_require__(19);
 
 	/**
 	 * Heading
@@ -15726,7 +15782,7 @@
 
 
 /***/ },
-/* 84 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15736,7 +15792,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * UL
@@ -15779,7 +15835,7 @@
 
 
 /***/ },
-/* 85 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15789,7 +15845,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * OL
@@ -15833,7 +15889,7 @@
 
 
 /***/ },
-/* 86 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15843,7 +15899,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -15875,7 +15931,7 @@
 	        }
 
 	        table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
-	        table += makeHeader(col);
+	        table += makeHeader(col, data);
 	        table += makeBody(col, row - 1, data);
 	        table += '</table>';
 
@@ -15904,13 +15960,22 @@
 	 * makeHeader
 	 * make table header html string
 	 * @param {number} col column count
+	 * @param {string} data cell data
 	 * @returns {string} html string
 	 */
-	function makeHeader(col) {
-	    var header = '<thead><tr>';
+	function makeHeader(col, data) {
+	    var header = '<thead><tr>',
+	        index = 0;
 
 	    while (col) {
-	        header += '<th></th>';
+	        header += '<th>';
+
+	        if (data) {
+	            header += data[index];
+	            index += 1;
+	        }
+
+	        header += '</th>';
 	        col -= 1;
 	    }
 
@@ -15929,7 +15994,7 @@
 	 */
 	function makeBody(col, row, data) {
 	    var body = '<tbody>',
-	        index = 0,
+	        index = col,
 	        irow, icol;
 
 	    for (irow = 0; irow < row; irow += 1) {
@@ -15958,7 +16023,7 @@
 
 
 /***/ },
-/* 87 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15968,7 +16033,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * AddRow
@@ -16024,7 +16089,7 @@
 
 
 /***/ },
-/* 88 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16034,8 +16099,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40),
-	    domUtils = __webpack_require__(16);
+	var CommandManager = __webpack_require__(43),
+	    domUtils = __webpack_require__(19);
 
 	/**
 	 * AddCol
@@ -16111,7 +16176,7 @@
 
 
 /***/ },
-/* 89 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16121,7 +16186,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * RemoveRow
@@ -16173,7 +16238,7 @@
 
 
 /***/ },
-/* 90 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16183,8 +16248,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40),
-	    domUtils = __webpack_require__(16);
+	var CommandManager = __webpack_require__(43),
+	    domUtils = __webpack_require__(19);
 
 	/**
 	 * RemoveCol
@@ -16255,7 +16320,7 @@
 
 
 /***/ },
-/* 91 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16265,7 +16330,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * RemoveTable
@@ -16300,7 +16365,7 @@
 
 
 /***/ },
-/* 92 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16310,7 +16375,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * IncreaseDepth
@@ -16364,7 +16429,7 @@
 
 
 /***/ },
-/* 93 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16374,7 +16439,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * DecreaseDepth
@@ -16433,7 +16498,7 @@
 
 
 /***/ },
-/* 94 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16443,7 +16508,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	/**
 	 * Task
@@ -16485,7 +16550,7 @@
 
 
 /***/ },
-/* 95 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -16496,8 +16561,8 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40),
-	    domUtils = __webpack_require__(16);
+	var CommandManager = __webpack_require__(43),
+	    domUtils = __webpack_require__(19);
 
 	/**
 	 * Code
@@ -16556,7 +16621,7 @@
 
 
 /***/ },
-/* 96 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16566,7 +16631,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(40);
+	var CommandManager = __webpack_require__(43);
 
 	var codeBlockID = 0,
 	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
