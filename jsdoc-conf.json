@@ -40,6 +40,6 @@
   "opts": {
     "recurse": true,
     "name": "Editor",
-    "destination": "doc"
+    "destination": "api/latest"
   }
 }
