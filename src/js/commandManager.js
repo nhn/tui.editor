@@ -16,8 +16,8 @@ var isMac = /Mac/.test(navigator.platform),
  * CommandManager
  * @exports CommandManager
  * @constructor
- * @class
- * @param {NEditor} base ned인스턴스
+ * @class CommandManager
+ * @param {ToastUIEditor} base nedInstance
  */
 function CommandManager(base) {
     this._command = new util.Map();
@@ -31,10 +31,11 @@ function CommandManager(base) {
 }
 
 /**
- * addCommand
- * 커맨드를 추가한다.
- * @param {Command} command 커맨드객체
- * @returns {Command} 커맨드
+ * Add command
+ * @api
+ * @memberOf CommandManager
+ * @param {Command} command Command instance
+ * @returns {Command} Command
  */
 CommandManager.prototype.addCommand = function(command) {
     var name,
@@ -67,6 +68,8 @@ CommandManager.prototype.addCommand = function(command) {
 /**
  * _initEvent
  * Bind event handler to eventManager
+ * @private
+ * @memberOf CommandManager
  */
 CommandManager.prototype._initEvent = function() {
     var self = this;
@@ -86,9 +89,11 @@ CommandManager.prototype._initEvent = function() {
 };
 
 /**
- * 커맨드를 실행한다
- * @param {String} name 커맨드명
- * @returns {*} 커맨드를 수행한후 리턴값
+ * Execute command
+ * @api
+ * @memberOf CommandManager
+ * @param {String} name Command name
+ * @returns {*}
  */
 CommandManager.prototype.exec = function(name) {
     var commandToRun, result,
@@ -116,7 +121,14 @@ CommandManager.prototype.exec = function(name) {
 
     return result;
 };
-
+/**
+ * Create command by given editor type and property object
+ * @api
+ * @memberOf CommandManager
+ * @param {string} type Command type
+ * @param {{name: string, keyMap: object}} props Property
+ * @returns {*}
+ */
 CommandManager.command = function(type, props) {
     var command;
 

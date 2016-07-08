@@ -13,10 +13,10 @@ var isNeedOffsetFix = isIE11 || isWindowChrome;
 /**
  * WwTextObject
  * @exports WwTextObject
+ * @class WwTextObject
  * @constructor
- * @class
  * @param {WysiwygEditor} wwe wysiwygEditor
- * @param {Range} range range object
+ * @param {Range} range Range object
  */
 function WwTextObject(wwe, range) {
     this._wwe = wwe;
@@ -31,6 +31,11 @@ function WwTextObject(wwe, range) {
     this.setRange(range || this._wwe.getRange());
 }
 
+/**
+ * Initialize composition event
+ * @memberOf WwTextObject
+ * @private
+ */
 WwTextObject.prototype._initCompositionEvent = function() {
     var self = this;
 
@@ -43,6 +48,12 @@ WwTextObject.prototype._initCompositionEvent = function() {
     });
 };
 
+/**
+ * Set _range object to given range object
+ * @param {Range} range Range object
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.setRange = function(range) {
     if (this._range) {
         this._range.detach();
@@ -51,6 +62,11 @@ WwTextObject.prototype.setRange = function(range) {
     this._range = range;
 };
 
+/**
+ * Expand start offset by one
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.expandStartOffset = function() {
     var range = this._range;
 
@@ -59,6 +75,11 @@ WwTextObject.prototype.expandStartOffset = function() {
     }
 };
 
+/**
+ * Expand end offset by one
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.expandEndOffset = function() {
     var range = this._range;
 
@@ -67,6 +88,12 @@ WwTextObject.prototype.expandEndOffset = function() {
     }
 };
 
+/**
+ * setEnd range on start
+ * @param {Range} range Range object
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.setEndBeforeRange = function(range) {
     var offset = range.startOffset;
 
@@ -77,22 +104,46 @@ WwTextObject.prototype.setEndBeforeRange = function(range) {
     this._range.setEnd(range.startContainer, offset);
 };
 
+/**
+ * Get text content
+ * @returns {string}
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.getTextContent = function() {
     return this._range.cloneContents().textContent;
 };
 
+/**
+ * Replace current selection content to given text
+ * @param {string} content Text content
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.replaceContent = function(content) {
     this._wwe.getEditor().setSelection(this._range);
     this._wwe.getEditor().insertHTML(content);
     this._range = this._wwe.getRange();
 };
 
+/**
+ * Delete current selection content
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.deleteContent = function() {
     this._wwe.getEditor().setSelection(this._range);
     this._wwe.getEditor().insertHTML('');
     this._range = this._wwe.getRange();
 };
 
+/**
+ * Peek previous element's content
+ * @param {number} offset Offset to peek
+ * @returns {string}
+ * @memberOf WwTextObject
+ * @api
+ */
 WwTextObject.prototype.peekStartBeforeOffset = function(offset) {
     var range = this._range.cloneRange();
 

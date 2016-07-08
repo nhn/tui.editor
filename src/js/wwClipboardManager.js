@@ -16,7 +16,7 @@ var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
  * WwClipboardManager
  * @exports WwClipboardManager
  * @constructor
- * @class
+ * @class WwClipboardManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwClipboardManager(wwe) {
@@ -28,6 +28,8 @@ function WwClipboardManager(wwe) {
 /**
  * init
  * initialize
+ * @api
+ * @memberOf WwClipboardManager
  */
 WwClipboardManager.prototype.init = function() {
     this._initSquireEvent();
@@ -36,6 +38,8 @@ WwClipboardManager.prototype.init = function() {
 /**
  * _initSquireEvent
  * initialize squire events
+ * @private
+ * @memberOf WwClipboardManager
  */
 WwClipboardManager.prototype._initSquireEvent = function() {
     var self = this;
@@ -73,7 +77,12 @@ WwClipboardManager.prototype._initSquireEvent = function() {
         self.wwe.postProcessForChange();
     });
 };
-
+/**
+ * Refine cursor position with paste contents
+ * @memberOf WwClipboardManager
+ * @param {DocumentFragment} fragment Copied contents
+ * @private
+ */
 WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
     var node = fragment;
     var range = this.wwe.getEditor().getSelection().cloneRange();
@@ -89,6 +98,13 @@ WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment)
     });
 };
 
+/**
+ * Check whether copied content from editor or not
+ * @memberOf WwClipboardManager
+ * @param {DocumentFragment} pasteData Copied contents
+ * @returns {boolean}
+ * @private
+ */
 WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
     var lastestClipboardContents;
 
@@ -100,7 +116,11 @@ WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 
     return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 };
-
+/**
+ * Save latest clipboard range information to _latestClipboardRangeInfo
+ * @memberOf WwClipboardManager
+ * @private
+ */
 WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
     var range = this.wwe.getEditor().getSelection().cloneRange();
@@ -121,8 +141,10 @@ WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
 /**
  * _extendRange
  * extend range if need
+ * @memberOf WwClipboardManager
  * @param {Range} range to extend
  * @returns {Range} range
+ * @private
  */
 WwClipboardManager.prototype._extendRange = function(range) {
     //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
@@ -148,6 +170,13 @@ WwClipboardManager.prototype._extendRange = function(range) {
     return range;
 };
 
+/**
+ * Extends current range's startContainer
+ * @memberOf WwClipboardManager
+ * @param {Range} range Range object
+ * @returns {Range}
+ * @private
+ */
 WwClipboardManager.prototype._extendStartRange = function(range) {
     var newBound = range.startContainer;
 
@@ -165,6 +194,13 @@ WwClipboardManager.prototype._extendStartRange = function(range) {
     return range;
 };
 
+/**
+ * Extends current range's endContainer
+ * @memberOf WwClipboardManager
+ * @param {Range} range Range object
+ * @returns {Range}
+ * @private
+ */
 WwClipboardManager.prototype._extendEndRange = function(range) {
     var newBound = range.endContainer;
     var boundNext = newBound.nextSibling;
@@ -186,10 +222,12 @@ WwClipboardManager.prototype._extendEndRange = function(range) {
 
 /**
  * _isWholeCommonAncestorContainerSelected
- * check if selection has whole commonAncestorContainter
+ * Check whether whole commonAncestorContainter textContent selected or not
  * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
- * @param {Range} range range of selection
+ * @memberOf WwClipboardManager
+ * @param {Range} range Range object
  * @returns {boolean} result
+ * @private
  */
 WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
     return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE

@@ -8,9 +8,8 @@
 /**
  * WwPManager
  * @exports WwPManager
- * @augments
+ * @class WwPManager
  * @constructor
- * @class
  * @param {WysiwygEditor} wwe wysiwygEditor instance
  */
 function WwPManager(wwe) {
@@ -20,11 +19,19 @@ function WwPManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwPManager
+ * @type {string}
+ */
 WwPManager.prototype.name = 'p';
 
 /**
  * _init
  * Init
+ * @memberOf WwPManager
+ * @private
  */
 WwPManager.prototype._init = function() {
     this._initEvent();
@@ -32,7 +39,9 @@ WwPManager.prototype._init = function() {
 
 /**
  * _initEvent
- * Initialize eventmanager event
+ * Initialize event
+ * @memberOf WwPManager
+ * @private
  */
 WwPManager.prototype._initEvent = function() {
     var self = this;
@@ -45,9 +54,9 @@ WwPManager.prototype._initEvent = function() {
 
 /**
  * _ensurePtagContentWrappedWithDiv
- * this because we need new line inside ptag, and additional empty line added
- * p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
- * p태그를 없애기위한 사전작업
+ * Wrap new line inside P tag to DIV, and additional empty line added within too
+ * @memberOf WwPManager
+ * @private
  */
 WwPManager.prototype._ensurePtagContentWrappedWithDiv = function() {
     this.wwe.get$Body().find('p').each(function(index, node) {
@@ -63,8 +72,9 @@ WwPManager.prototype._ensurePtagContentWrappedWithDiv = function() {
 
 /**
  * _unwrapPtags
- * Unwrap ptag
- * we use divs for paragraph so we dont need any p tags
+ * Unwrap P tag
+ * @memberOf WwPManager
+ * @private
  */
 WwPManager.prototype._unwrapPtags = function() {
     this.wwe.get$Body().find('div').each(function(index, node) {

@@ -10,12 +10,11 @@ var LazyRunner = require('./lazyRunner');
 /**
  * Preview
  * @exports Preview
- * @extends {}
+ * @class Preview
  * @constructor
- * @class
- * @param {jQuery} $el 프리뷰가 들어갈 엘리먼트
- * @param {EventManager} eventManager 이벤트 매니저
- * @param {Converter} converter 컨버터
+ * @param {jQuery} $el Container element for preview
+ * @param {EventManager} eventManager Event manager instance
+ * @param {Convertor} converter Convertor instance
  **/
 function Preview($el, eventManager, converter) {
     this.eventManager = eventManager;
@@ -36,6 +35,10 @@ function Preview($el, eventManager, converter) {
     this._initEvent();
 }
 
+/**
+ * Initialize event
+ * @private
+ */
 Preview.prototype._initEvent = function() {
     var self = this;
 
@@ -44,15 +47,31 @@ Preview.prototype._initEvent = function() {
     });
 };
 
+/**
+ * Initialize content selection
+ * @private
+ */
 Preview.prototype._initContentSection = function() {
     this.$previewContent = $('<div class="tui-editor-contents" />');
     this.$el.append(this.$previewContent);
 };
 
+/**
+ * Refresh rendering
+ * @api
+ * @memberOf Preview
+ * @param {string} markdown Markdown text
+ */
 Preview.prototype.refresh = function(markdown) {
     this.render(this.converter.toHTMLWithCodeHightlight(markdown));
 };
 
+/**
+ * Render HTML on preview
+ * @api
+ * @memberOf Preview
+ * @param {string} html HTML string
+ */
 Preview.prototype.render = function(html) {
     var processedDataByHook,
         finalHtml = html;
@@ -69,6 +88,12 @@ Preview.prototype.render = function(html) {
     this.eventManager.emit('previewRenderAfter', this);
 };
 
+/**
+ * Set preview height
+ * @api
+ * @memberOf Preview
+ * @param {number} height Height for preview container
+ */
 Preview.prototype.setHeight = function(height) {
     this.$el.height(height);
 };

@@ -66,21 +66,21 @@ var __nedInstance = [];
  * ToastUI Editor
  * @exports ToastUIEditor
  * @constructor
- * @class
- * @param {object} options 옵션
- * @param {number} options.height 에디터 height 픽셀
- * @param {string} options.initialValue 초기 입력 테스트
- * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
- * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
- * @param {object} options.events eventlist
- * @param {function} options.events.load it would be emitted when editor fully load
- * @param {function} options.events.change it would be emitted when content changed
- * @param {function} options.events.stateChange it would be emitted when format change by cursor position
- * @param {function} options.events.focus it would be emitted when editor get focus
- * @param {function} options.events.blur it would be emitted when editor loose focus
- * @param {object} options.hooks 외부 연결 훅 목록
- * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
- * @param {function} options.hooks.addImageBlobHook hook for image upload.
+ * @class ToastUIEditor
+ * @param {object} options Option object
+     * @param {number} options.height Editor's height (px)
+     * @param {string} options.initialValue Editor's initial value
+     * @param {string} options.previewStyle Markdown editor's preview style (tab, vertical)
+     * @param {string} options.initialEditType Initial editor type (markdown, wysiwyg)
+     * @param {object} options.events eventlist Event list
+         * @param {function} options.events.load It would be emitted when editor fully load
+         * @param {function} options.events.change It would be emitted when content changed
+         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+         * @param {function} options.events.focus It would be emitted when editor get focus
+         * @param {function} options.events.blur It would be emitted when editor loose focus
+     * @param {object} options.hooks Hook list
+         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+         * @param {function} options.hooks.addImageBlobHook hook for image upload.
  */
 function ToastUIEditor(options) {
     var self = this;
@@ -137,6 +137,8 @@ function ToastUIEditor(options) {
 
 /**
  * 프리뷰가 보여지는 방식을 변경한다
+ * @api
+ * @memberOf ToastUIEditor
  * @param {string} style 스타일 이름 tab, vertical
  */
 ToastUIEditor.prototype.changePreviewStyle = function(style) {
@@ -145,6 +147,11 @@ ToastUIEditor.prototype.changePreviewStyle = function(style) {
     this.eventManager.emit('changePreviewStyle', style);
 };
 
+/**
+ * call commandManager's exec method
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.exec = function() {
     this.commandManager.exec.apply(this.commandManager, arguments);
 };
@@ -157,43 +164,102 @@ ToastUIEditor.prototype.addCommand = function(type, props) {
     }
 };
 
+/**
+ * Bind eventHandler to event type
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} type Event type
+ * @param {function} handler Event handler
+ */
 ToastUIEditor.prototype.on = function(type, handler) {
     this.eventManager.listen(type, handler);
 };
 
+/**
+ * Unbind eventHandler from event type
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} type Event type
+ */
 ToastUIEditor.prototype.off = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
+/**
+ * Add hook to TUIEditor event
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} type Event type
+ * @param {function} handler Event handler
+ */
 ToastUIEditor.prototype.addHook = function(type, handler) {
     this.eventManager.removeEventHandler(type);
     this.eventManager.listen(type, handler);
 };
 
+/**
+ * Remove hook from TUIEditor event
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} type Event type
+ */
 ToastUIEditor.prototype.removeHook = function(type) {
     this.eventManager.removeEventHandler(type);
 };
 
+/**
+ * Get CodeMirror instance
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {CodeMirror}
+ */
 ToastUIEditor.prototype.getCodeMirror = function() {
     return this.mdEditor.getEditor();
 };
 
+/**
+ * Get SquireExt instance
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {SquireExt}
+ */
 ToastUIEditor.prototype.getSquire = function() {
     return this.wwEditor.getEditor();
 };
 
+/**
+ * Set focus to current Editor
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.focus = function() {
     this.getCurrentModeEditor().focus();
 };
 
+/**
+ * Set cursor position to end
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.moveCursorToEnd = function() {
     this.getCurrentModeEditor().moveCursorToEnd();
 };
 
+/**
+ * Set cursor position to start
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.moveCursorToStart = function() {
     this.getCurrentModeEditor().moveCursorToStart();
 };
 
+/**
+ * Set Editor value
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} markdown Markdown syntax text
+ */
 ToastUIEditor.prototype.setValue = function(markdown) {
     markdown = markdown || '';
 
@@ -206,6 +272,12 @@ ToastUIEditor.prototype.setValue = function(markdown) {
     this.eventManager.emit('setValueAfter', markdown);
 };
 
+/**
+ * Get editor value
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {string}
+ */
 ToastUIEditor.prototype.getValue = function() {
     var markdown;
 
@@ -218,10 +290,26 @@ ToastUIEditor.prototype.getValue = function() {
     return markdown;
 };
 
+/**
+ * Add widget to selection
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {Range} selection Current selection
+ * @param {Node} node widget node
+ * @param {string} style Adding style "over" or "bottom"
+ * @param {number} [offset] Offset for adjust position
+ */
 ToastUIEditor.prototype.addWidget = function(selection, node, style, offset) {
     this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 };
 
+/**
+ * Set and return content area height
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {number} height Content area height
+ * @returns {number}
+ */
 ToastUIEditor.prototype.contentHeight = function(height) {
     if (height) {
         this._contentHeight = height;
@@ -233,6 +321,12 @@ ToastUIEditor.prototype.contentHeight = function(height) {
     return this._contentHeight;
 };
 
+/**
+ * Get current editor mode name
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {string}
+ */
 ToastUIEditor.prototype.getCurrentModeEditor = function() {
     var editor;
 
@@ -245,22 +339,52 @@ ToastUIEditor.prototype.getCurrentModeEditor = function() {
     return editor;
 };
 
+/**
+ * Return true if current editor mode is Markdown
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {boolean}
+ */
 ToastUIEditor.prototype.isMarkdownMode = function() {
     return this.currentMode === 'markdown';
 };
 
+/**
+ * Return true if current editor mode is WYSIWYG
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {boolean}
+ */
 ToastUIEditor.prototype.isWysiwygMode = function() {
     return this.currentMode === 'wysiwyg';
 };
 
+/**
+ * Return false
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {boolean}
+ */
 ToastUIEditor.prototype.isViewOnly = function() {
     return false;
 };
 
+/**
+ * Get current Markdown editor's preview style
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {string}
+ */
 ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
     return this.mdPreviewStyle;
 };
 
+/**
+ * Change editor's mode to given mode string
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} mode Editor mode name of want to change
+ */
 ToastUIEditor.prototype.changeMode = function(mode) {
     if (this.currentMode === mode) {
         return;
@@ -284,6 +408,11 @@ ToastUIEditor.prototype.changeMode = function(mode) {
     this.focus();
 };
 
+/**
+ * Remove TUIEditor from document
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.remove = function() {
     var self = this;
     var i = __nedInstance.length - 1;
@@ -308,49 +437,115 @@ ToastUIEditor.prototype.remove = function() {
     }
 };
 
+/**
+ * Hide TUIEditor
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.hide = function() {
     this.eventManager.emit('hide', this);
 };
 
+/**
+ * Show TUIEditor
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.show = function() {
     this.eventManager.emit('show', this);
     this.getCodeMirror().refresh();
 };
 
+/**
+ * Scroll Editor content to Top
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {number} value Scroll amount
+ * @returns {number}
+ */
 ToastUIEditor.prototype.scrollTop = function(value) {
     return this.getCurrentModeEditor().scrollTop(value);
 };
 
+/**
+ * Set UI to private UI property
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {UI} UI UI instance
+ */
 ToastUIEditor.prototype.setUI = function(UI) {
     this._ui = UI;
 };
 
+/**
+ * Get _ui property
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {UI}
+ */
 ToastUIEditor.prototype.getUI = function() {
     return this._ui;
 };
 
+/**
+ * Reset TUIEditor
+ * @api
+ * @memberOf ToastUIEditor
+ */
 ToastUIEditor.prototype.reset = function() {
     this.wwEditor.reset();
     this.mdEditor.reset();
 };
 
+/**
+ * Get current range
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {{start, end}|Range}
+ */
 ToastUIEditor.prototype.getRange = function() {
     return this.getCurrentModeEditor().getRange();
 };
 
+/**
+ * Get text object of current range
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {{start, end}|Range} range Range object of each editor
+ * @returns {object} TextObject class
+ */
 ToastUIEditor.prototype.getTextObject = function(range) {
     return this.getCurrentModeEditor().getTextObject(range);
 };
 
+/**
+ * Get instance of TUIEditor
+ * @api
+ * @memberOf ToastUIEditor
+ * @returns {Array}
+ */
 ToastUIEditor.getInstances = function() {
     return __nedInstance;
 };
 
+/**
+ * Define extension
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {string} name Extension name
+ * @param {ExtManager~extension} ext extension
+ */
 ToastUIEditor.defineExtension = function(name, ext) {
     extManager.defineExtension(name, ext);
 };
 
-
+/**
+ * Factory method for Editor
+ * @api
+ * @memberOf ToastUIEditor
+ * @param {object} options Option for initialize TUIEditor
+ * @returns {ToastUIEditor}
+ */
 ToastUIEditor.factory = function(options) {
     var tuiEditor;
 
@@ -400,6 +595,12 @@ ToastUIEditor.factory = function(options) {
     return tuiEditor;
 };
 
+/**
+ * Marked renderer
+ * @api
+ * @memberOf ToastUIEditor
+ * @type {marked.renderer}
+ */
 ToastUIEditor.markedRenderer = markedRenderer;
 
 module.exports = ToastUIEditor;

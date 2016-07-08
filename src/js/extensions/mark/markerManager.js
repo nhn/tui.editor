@@ -11,7 +11,6 @@ var CHANGE_NOTHING = 0,
 /**
  * MarkerManager
  * @exports MarkerManager
- * @augments
  * @constructor
  * @class
  * @param {MarkerList} markerList MarkerList object
@@ -180,7 +179,7 @@ MarkerManager.prototype._calculateEndDiff = function(start, end, diff, marker) {
  * _getUpdateMarkersWithDiffs
  * Get updated markers with diffs
  * @param {object} markerDiffs marker diff object that contains diff info of specific marker
- * @returns {[object]} updated markers
+ * @returns {Array.<object>} updated markers
  */
 MarkerManager.prototype._getUpdateMarkersWithDiffs = function(markerDiffs) {
     var updatedMarkers = [],

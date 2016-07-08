@@ -62,15 +62,21 @@ var eventList = [
 /**
  * EventManager
  * @exports EventManager
- * @extends {}
  * @constructor
- * @class
+ * @class EventManager
  */
 function EventManager() {
     this.events = new util.Map();
     this.TYPE = new util.Enum(eventList);
 }
 
+/**
+ * Listen event and bind event handler
+ * @api
+ * @memberOf EventManager
+ * @param {string} typeStr Event type string
+ * @param {function} handler Event handler
+ */
 EventManager.prototype.listen = function(typeStr, handler) {
     var eventHandlers,
         typeInfo = this._getTypeInfo(typeStr);
@@ -90,6 +96,13 @@ EventManager.prototype.listen = function(typeStr, handler) {
     this.events.set(typeInfo.type, eventHandlers);
 };
 
+/**
+ * Emit event
+ * @api
+ * @memberOf EventManager
+ * @param {string} eventName Event name to emit
+ * @returns {Array}
+ */
 EventManager.prototype.emit = function() {
     var args = util.toArray(arguments),
         typeStr = args.shift(),
@@ -112,6 +125,14 @@ EventManager.prototype.emit = function() {
     return results;
 };
 
+/**
+ * Emit given event and return result
+ * @api
+ * @memberOf EventManager
+ * @param {string} eventName Event name to emit
+ * @param {string} sourceText Source text to change
+ * @returns {string}
+ */
 EventManager.prototype.emitReduce = function() {
     var args = util.toArray(arguments),
         type = args.shift(),
@@ -130,6 +151,13 @@ EventManager.prototype.emitReduce = function() {
     return args[0];
 };
 
+/**
+ * Get event type and namespace
+ * @memberOf EventManager
+ * @param {string} typeStr Event type name
+ * @returns {{type: string, namespace: string}}
+ * @private
+ */
 EventManager.prototype._getTypeInfo = function(typeStr) {
     var splited = typeStr.split('.');
 
@@ -139,10 +167,22 @@ EventManager.prototype._getTypeInfo = function(typeStr) {
     };
 };
 
+/**
+ * Check whether event type exists or not
+ * @param {string} type Event type name
+ * @returns {boolean}
+ * @private
+ */
 EventManager.prototype._hasEventType = function(type) {
     return !util.isUndefined(this.TYPE[type.split('.')[0]]);
 };
 
+/**
+ * Add event type when given event not exists
+ * @api
+ * @memberOf EventManager
+ * @param {string} type Event type name
+ */
 EventManager.prototype.addEventType = function(type) {
     if (this._hasEventType(type)) {
         throw new Error('There is already have event type ' + type);
@@ -151,6 +191,12 @@ EventManager.prototype.addEventType = function(type) {
     this.TYPE.set(type);
 };
 
+/**
+ * Remove event handler from given event type
+ * @api
+ * @memberOf EventManager
+ * @param {string} type Event type name
+ */
 EventManager.prototype.removeEventHandler = function(type) {
     var self = this,
         typeInfo = this._getTypeInfo(type),
@@ -170,6 +216,13 @@ EventManager.prototype.removeEventHandler = function(type) {
     }
 };
 
+/**
+ * Remove event handler with event type information
+ * @memberOf EventManager
+ * @param {string} type Event type name
+ * @param {string} namespace Event namespace
+ * @private
+ */
 EventManager.prototype._removeEventHandlerWithTypeInfo = function(type, namespace) {
     var handlersToSurvive = [],
         eventHandlers;

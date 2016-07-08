@@ -12,8 +12,8 @@ var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
 /**
  * WwTaskManager
  * @exports WwTaskManager
+ * @class WwTaskManager
  * @constructor
- * @class
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwTaskManager(wwe) {
@@ -23,11 +23,19 @@ function WwTaskManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwTaskManager
+ * @type {string}
+ */
 WwTaskManager.prototype.name = 'task';
 
 /**
  * _init
  * Init
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._init = function() {
     this._initKeyHandler();
@@ -36,7 +44,9 @@ WwTaskManager.prototype._init = function() {
 
 /**
  * _initEvent
- * Initialize eventmanager event
+ * Initialize event
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._initEvent = function() {
     var self = this;
@@ -65,6 +75,8 @@ WwTaskManager.prototype._initEvent = function() {
 /**
  * _initKeyHandler
  * Initialize key event handler
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._initKeyHandler = function() {
     var self = this;
@@ -133,6 +145,8 @@ WwTaskManager.prototype._initKeyHandler = function() {
  * Check whether passed range is in task list or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwTaskManager
+ * @api
  */
 WwTaskManager.prototype.isInTaskList = function(range) {
     var li;
@@ -155,6 +169,8 @@ WwTaskManager.prototype.isInTaskList = function(range) {
 /**
  * _unformatIncompleteTask
  * Unformat incomplete task
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._unformatIncompleteTask = function() {
     this.wwe.get$Body().find('.task-list-item').each(function(index, task) {
@@ -169,6 +185,8 @@ WwTaskManager.prototype._unformatIncompleteTask = function() {
 /**
  * _removeTaskInputInWrongPlace
  * Remove task input in wrong place while user editing
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
     var self = this;
@@ -195,6 +213,8 @@ WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
  * _unformatTaskIfNeedOnEnter
  * Unformat task if need on enter
  * @param {Range} range range
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
     var $li;
@@ -212,10 +232,24 @@ WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
     }
 };
 
+/**
+ * Return whether task is empty or not
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @memberOf WwTaskManager
+ * @private
+ */
 WwTaskManager.prototype._isEmptyTask = function(range) {
     return this.isInTaskList(range) && this._isEmptyContainer(range.startContainer);
 };
 
+/**
+ * Return whether textContent is empty or not
+ * @param {Node} node Node
+ * @returns {boolean}
+ * @memberOf WwTaskManager
+ * @private
+ */
 WwTaskManager.prototype._isEmptyContainer = function(node) {
     return node.textContent.replace(FIND_TASK_SPACES_RX, '') === '';
 };
@@ -224,6 +258,8 @@ WwTaskManager.prototype._isEmptyContainer = function(node) {
  * _unformatTaskIfNeedOnBackspace
  * Unformat task if need on backspace
  * @param {Range} range range
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
     var startContainer, startOffset,
@@ -282,6 +318,8 @@ WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
 /**
  * _addCheckedAttrToCheckedInput
  * Add checked attr to checked input
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
     var doc = this.wwe.getEditor().getDocument();
@@ -299,6 +337,8 @@ WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
 /**
  * _removeTaskListClass
  * Remove tasklist class
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._removeTaskListClass = function() {
     //because task-list class is block merge normal list and task list
@@ -321,6 +361,8 @@ function findTextNodeFilter() {
  * _ensureSpaceNextToTaskInput
  * Ensure space next to task input
  * this because we need some space after input for safari cursor issue
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
     var firstTextNode, $wrapper,
@@ -345,6 +387,8 @@ WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
  * unformatTask
  * Unforamt task
  * @param {Node} node target
+ * @memberOf WwTaskManager
+ * @api
  */
 WwTaskManager.prototype.unformatTask = function unformatTask(node) {
     var $li, firstTextNode, $wrapper;
@@ -376,6 +420,8 @@ WwTaskManager.prototype.unformatTask = function unformatTask(node) {
  * formatTask
  * Format task
  * @param {Node} node target
+ * @memberOf WwTaskManager
+ * @api
  */
 WwTaskManager.prototype.formatTask = function(node) {
     var range, $selected, $li, hasInput, $block, sq;
@@ -414,6 +460,8 @@ WwTaskManager.prototype.formatTask = function(node) {
 /**
  * _formatTaskIfNeed
  * Format task if current range has task class name
+ * @memberOf WwTaskManager
+ * @private
  */
 WwTaskManager.prototype._formatTaskIfNeed = function() {
     var range = this.wwe.getEditor().getSelection().cloneRange();

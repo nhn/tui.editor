@@ -82,7 +82,7 @@ extManager.defineExtension('mark', function(editor) {
      * Set value with markers
      * @param {string} value markdown content
      * @param {object} markerDataCollection marker data that obtain with exportMarkers method
-     * @returns {[object]} markers
+     * @returns {Array.<object>} markers
      */
     editor.setValueWithMarkers = function(value, markerDataCollection) {
         var helper;
@@ -126,7 +126,7 @@ extManager.defineExtension('mark', function(editor) {
     /**
      * getMarkersAll
      * Get all markers
-     * @returns {[object]}
+     * @returns {Array.<object>}
      */
     editor.getMarkersAll = function() {
         return ml.getAll();

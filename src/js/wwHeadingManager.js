@@ -13,7 +13,7 @@ var FIND_HEADING_RX = /h[\d]/i;
  * WwHeadingManager
  * @exports WwHeadingManager
  * @constructor
- * @class
+ * @class WwHeadingManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwHeadingManager(wwe) {
@@ -23,10 +23,19 @@ function WwHeadingManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwHeadingManager
+ * @type {string}
+ */
 WwHeadingManager.prototype.name = 'heading';
 
 /**
  * _init
+ * Initialize
+ * @memberOf WwHeadingManager
+ * @private
  */
 WwHeadingManager.prototype._init = function() {
     this._initKeyHandler();
@@ -35,6 +44,8 @@ WwHeadingManager.prototype._init = function() {
 /**
  * _initKeyHandler
  * Initialize key event handler
+ * @memberOf WwHeadingManager
+ * @private
  */
 WwHeadingManager.prototype._initKeyHandler = function() {
     var self = this;
@@ -63,6 +74,8 @@ WwHeadingManager.prototype._initKeyHandler = function() {
 /**
  * _unwrapHeading
  * Unwrap heading
+ * @memberOf WwHeadingManager
+ * @private
  */
 WwHeadingManager.prototype._unwrapHeading = function() {
     this.wwe.unwrapBlockTag(function(node) {
@@ -73,8 +86,10 @@ WwHeadingManager.prototype._unwrapHeading = function() {
 /**
  * _onEnter
  * Enter key handler
+ * @memberOf WwHeadingManager
  * @param {Event} event event object
  * @param {Range} range range
+ * @private
  */
 WwHeadingManager.prototype._onEnter = function(event, range) {
     var self = this;
@@ -94,7 +109,10 @@ WwHeadingManager.prototype._onEnter = function(event, range) {
 /**
  * _insertEmptyBlockToPrevious
  * Insert empty block to previous of passed range
+ * @api
+ * @memberOf WwHeadingManager
  * @param {Range} range range
+ * @private
  */
 WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
     this.wwe.getEditor().saveUndoState(range);
@@ -104,9 +122,11 @@ WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
 /**
  * _removePrevTopNodeIfNeed
  * Remove previous top node if need
+ * @memberOf WwHeadingManager
  * @param {Event} event event object
  * @param {Range} range range
- * @returns {Boolean}  wether needed or not
+ * @returns {Boolean} whether needed or not
+ * @private
  */
 WwHeadingManager.prototype._removePrevTopNodeIfNeed = function(event, range) {
     var isHandled, prevTopNode;

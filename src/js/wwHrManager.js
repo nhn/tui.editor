@@ -11,7 +11,7 @@ var domUtils = require('./domUtils');
  * WwHrManager
  * @exports WwHrManager
  * @constructor
- * @class
+ * @class WwHrManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwHrManager(wwe) {
@@ -20,12 +20,19 @@ function WwHrManager(wwe) {
 
     this._init();
 }
-
+/**
+ * Name property
+ * @api
+ * @memberOf WwHrManager
+ * @type {string}
+ */
 WwHrManager.prototype.name = 'hr';
 
 /**
  * _init
- * Init
+ * Initialize
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._init = function() {
     this._initKeyHandler();
@@ -35,6 +42,8 @@ WwHrManager.prototype._init = function() {
 /**
  * _initEvent
  * Initialize eventmanager event
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._initEvent = function() {
     var self = this;
@@ -51,6 +60,8 @@ WwHrManager.prototype._initEvent = function() {
 /**
  * _initKeyHandler
  * Initialize key event handler
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._initKeyHandler = function() {
     var self = this;
@@ -81,6 +92,8 @@ WwHrManager.prototype._initKeyHandler = function() {
  * Check whether passed range is in hr or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._isInHr = function(range) {
     return domUtils.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
@@ -91,6 +104,8 @@ WwHrManager.prototype._isInHr = function(range) {
  * Check whether passed range is near hr or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._isNearHr = function(range) {
     var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
@@ -98,6 +113,12 @@ WwHrManager.prototype._isNearHr = function(range) {
     return domUtils.getNodeName(prevNode) === 'HR';
 };
 
+/**
+ * Handler for delete HR when user typing within
+ * @param {Range} range Range object
+ * @memberOf WwHrManager
+ * @private
+ */
 WwHrManager.prototype._onTypedInHr = function(range) {
     var self = this;
 
@@ -117,6 +138,8 @@ WwHrManager.prototype._onTypedInHr = function(range) {
  * @param {Range} range range
  * @param {Event} ev event
  * @returns {boolean} return true if hr was removed
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
     var hrSuspect, blockPosition;
@@ -137,6 +160,8 @@ WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
  * @param {Range} range range
  * @param {Event} ev event
  * @returns {boolean} return true if hr was removed
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
     var hrSuspect, blockPosition;
@@ -162,6 +187,8 @@ WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
  * @param {Event} ev event
  * @param {strong} newBlockPosition new default block add position
  * @returns {boolean} return true if hr was removed
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev, newBlockPosition) {
     if (hrSuspect && domUtils.getNodeName(hrSuspect) === 'HR') {
@@ -182,6 +209,8 @@ WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev
 /**
  * _unwrapDivOnHr
  * Unwrap default block on hr
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._unwrapDivOnHr = function() {
     this.wwe.get$Body().find('hr').each(function(index, node) {
@@ -195,8 +224,9 @@ WwHrManager.prototype._unwrapDivOnHr = function() {
 
 /**
  * findTextNodeFilter
+ * @function
  * @this Node
- * @returns {boolean} true or not
+ * @returns {boolean}
  */
 function findTextNodeFilter() {
     return this.nodeType === Node.TEXT_NODE;
@@ -205,7 +235,9 @@ function findTextNodeFilter() {
 /**
  * _wrapDefaultBlockToOrphanTexts
  * Wrap default block to orphan texts
- * mainly, this is used for orhan text that made by controlling hr
+ * mainly, this is used for orphan text that made by controlling hr
+ * @memberOf WwHrManager
+ * @private
  */
 WwHrManager.prototype._wrapDefaultBlockToOrphanTexts = function() {
     var textNodes;

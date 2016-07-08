@@ -11,7 +11,7 @@ var domUtils = require('./domUtils');
  * WwTableManager
  * @exports WwTableManager
  * @constructor
- * @class
+ * @class WwTableManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwTableManager(wwe) {
@@ -22,11 +22,19 @@ function WwTableManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwTableManager
+ * @type {string}
+ */
 WwTableManager.prototype.name = 'table';
 
 /**
  * _init
- * Init
+ * Initialize
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._init = function() {
     this._initKeyHandler();
@@ -35,7 +43,9 @@ WwTableManager.prototype._init = function() {
 
 /**
  * _initEvent
- * Initialize eventmanager event
+ * Initialize event
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._initEvent = function() {
     var self = this;
@@ -57,6 +67,8 @@ WwTableManager.prototype._initEvent = function() {
 /**
  * _initKeyHandler
  * Initialize key event handler
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._initKeyHandler = function() {
     var self = this;
@@ -112,6 +124,8 @@ WwTableManager.prototype._initKeyHandler = function() {
  * Check whether passed range is in table or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._isInTable = function(range) {
     var target;
@@ -130,6 +144,8 @@ WwTableManager.prototype._isInTable = function(range) {
  * Check whether passed range is right before table or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._isBeforeTable = function(range) {
     return domUtils.getNodeName(domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)) === 'TABLE';
@@ -140,6 +156,8 @@ WwTableManager.prototype._isBeforeTable = function(range) {
  * Check whether passed range is right after table or not
  * @param {Range} range range
  * @returns {boolean} result
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._isAfterTable = function(range) {
     var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
@@ -153,6 +171,8 @@ WwTableManager.prototype._isAfterTable = function(range) {
  * Backspace handler in table
  * @param {Range} range range
  * @param {Event} event event
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._tableHandlerOnBackspace = function(range, event) {
     var prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
@@ -170,6 +190,8 @@ WwTableManager.prototype._tableHandlerOnBackspace = function(range, event) {
  * _appendBrIfTdOrThNotHaveAsLastChild
  * Append br if td or th doesn't have br as last child
  * @param {Range} range range
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
     var paths, tdOrTh, startContainerNodeName;
@@ -191,7 +213,9 @@ WwTableManager.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
 /**
  * _unwrapBlockInTable
  * Unwrap default block tag in table
- * 스콰이어의 기본 액션으로 인해 비정상적인 동작을 하게되어 setValue이후 테이블 안에 디폴트 블럭은 제거한다.
+ * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._unwrapBlockInTable = function() {
     this.wwe.get$Body().find('td div, th div').each(function(index, node) {
@@ -203,6 +227,8 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
  * _removeTableOnBackspace
  * Remove table on backspace
  * @param {Range} range range
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._removeTableOnBackspace = function(range) {
     var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
@@ -218,6 +244,8 @@ WwTableManager.prototype._removeTableOnBackspace = function(range) {
  * _recordUndoStateIfNeed
  * record undo state if need
  * @param {Range} range range
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
     var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
@@ -232,6 +260,8 @@ WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
  * _recordUndoStateAndResetCellNode
  * record undo state and reset last cell node
  * @param {Range} range range
+ * @memberOf WwTableManager
+ * @private
  */
 WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
     this.wwe.getEditor().saveUndoState(range);
