@@ -151,18 +151,21 @@ WwPasteContentHelper.prototype._preElementAid = function(nodes) {
  * @private
  */
 WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
-    var blocks;
     var blockTags = 'div, section, article, aside, nav, menus';
+    var blocks = $(nodes).find(blockTags);
 
-    blocks = $(nodes).find(blockTags);
+    blocks.each(function(index, blockElement) {
+        var $blockElement = $(blockElement);
+        var isDivInListItem = $blockElement.parent('li').length !== 0 && blockElement.tagName === 'DIV';
 
-    while (blocks.length) {
-        $(blocks).replaceWith(function() {
+        if (isDivInListItem) {
+            return;
+        }
+
+        $blockElement.replaceWith(function() {
             return $(this).html();
         });
-
-        blocks = $(nodes).find(blockTags);
-    }
+    });
 };
 
 /**

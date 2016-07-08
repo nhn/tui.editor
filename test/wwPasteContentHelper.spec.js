@@ -53,6 +53,35 @@ describe('WwPasteContentHelper', function() {
             expect($node.find('div').length).toEqual(0);
         });
 
+        it('_removeUnnecessaryBlocks should not unwrap block in LI', function() {
+            var $node = $('<ul><li><div>TEST</div></li></ul>');
+
+            pch._removeUnnecessaryBlocks($node[0]);
+
+            expect($node.find('li').length).toEqual(1);
+            expect($node.find('div').length).toEqual(1);
+        });
+
+        it('_removeUnnecessaryBlocks should not unwrap block in Task', function() {
+            var $node = $('<ul><li class="task-list-item"><div><input type="checkbox">&nbsp;TEST</div></li></ul>');
+
+            pch._removeUnnecessaryBlocks($node[0]);
+
+            expect($node.find('li').length).toEqual(1);
+            expect($node.find('div').length).toEqual(1);
+            expect($node.find('input').length).toEqual(1);
+        });
+
+        it('_removeUnnecessaryBlocks should unwrap block in Task', function() {
+            var $node = $('<ul><li><section><input type="checkbox">&nbsp;TEST</section></li></ul>');
+
+            pch._removeUnnecessaryBlocks($node[0]);
+
+            expect($node.find('li').length).toEqual(1);
+            expect($node.find('input').length).toEqual(1);
+            expect($node.find('section').length).toEqual(0);
+        });
+
         it('_preElementAid should make pre tag content that has element to useful', function() {
             var $node = $('<pre><div><span>TEST</span></div></pre>');
 
