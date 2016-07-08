@@ -127,17 +127,17 @@ WwPasteContentHelper.prototype._preElementAid = function(nodes) {
 
 WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
     var blockTags = 'div, section, article, aside, nav, menus';
-    var blocks = [].slice.call($(nodes).find(blockTags));
+    var blocks = $(nodes).find(blockTags);
 
-    util.forEachArray(blocks, function(node) {
-        var $node = $(node);
-        var isDivInListItem = $node.parent('li').length !== 0 && node.tagName === 'DIV';
+    blocks.each(function(index, blockElement) {
+        var $blockElement = $(blockElement);
+        var isDivInListItem = $blockElement.parent('li').length !== 0 && blockElement.tagName === 'DIV';
 
         if (isDivInListItem) {
             return;
         }
 
-        $node.replaceWith(function() {
+        $blockElement.replaceWith(function() {
             return $(this).html();
         });
     });
