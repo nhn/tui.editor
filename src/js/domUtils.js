@@ -293,10 +293,10 @@ var getPrevTextNode = function(node) {
 };
 
 /**
- * 
- * @param root
- * @param offsetList
- * @param textNodeFilter
+ * find node by offset
+ * @param {HTMLElement} root Root element
+ * @param {Array.<number>} offsetList offset list
+ * @param {function} textNodeFilter Text node filter
  * @returns {Array}
  */
 var findOffsetNode = function(root, offsetList, textNodeFilter) {
