@@ -12,9 +12,8 @@ var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
 /**
  * WwSelectionMarker
  * @exports WwSelectionMarker
- * @augments
+ * @class WwSelectionMarker
  * @constructor
- * @class
  */
 function WwSelectionMarker() {
     this._markerNode = null;
@@ -25,6 +24,8 @@ function WwSelectionMarker() {
  * @param {Range} range range
  * @param {SquireExt} sq SquireExt instance
  * @returns {Range} range range
+ * @memberOf WwSelectionMarker
+ * @api
  */
 WwSelectionMarker.prototype.insertMarker = function(range, sq) {
     this._markerNode = this._makeMarker(sq);
@@ -40,6 +41,8 @@ WwSelectionMarker.prototype.insertMarker = function(range, sq) {
  * Make marker element
  * @param {SquireExt} sq SquireExt instance
  * @returns {Node} marker
+ * @memberOf WwSelectionMarker
+ * @private
  */
 WwSelectionMarker.prototype._makeMarker = function(sq) {
     return sq.createElement('INPUT', {type: 'hidden', class: MARKER_CSS_CLASS});
@@ -50,6 +53,8 @@ WwSelectionMarker.prototype._makeMarker = function(sq) {
  * Restore marker to selection
  * @param {SquireExt} sq SquireExt instance
  * @returns {Range} range
+ * @memberOf WwSelectionMarker
+ * @api
  */
 WwSelectionMarker.prototype.restore = function(sq) {
     var newRange = sq.getSelection().cloneRange();

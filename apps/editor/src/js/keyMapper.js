@@ -5,6 +5,10 @@
 
 'use strict';
 
+/**
+ * Constant of key mapping
+ * @type {string[]}
+ */
 var KEYBOARD_MAP = [
     '', // [0]
     '', // [1]
@@ -269,21 +273,32 @@ var sharedInstance;
 /**
  * KeyMapper
  * @exports KeyMapper
- * @augments
  * @constructor
- * @class
- * @param {object} options options
- * @param {string} options.splitter splitter string default is +
+ * @class KeyMapper
+ * @param {object} [options] options
+ *    @param {string} options.splitter splitter string default is +
  */
 function KeyMapper(options) {
     this._setSplitter(options);
 }
 
+/**
+ * Set key splitter
+ * @param {object} options Option object
+ * @memberOf KeyMapper
+ * @private
+ */
 KeyMapper.prototype._setSplitter = function(options) {
     var splitter = options ? options.splitter : '+';
     this._splitter = splitter;
 };
-
+/**
+ * Convert event to keyMap
+ * @api
+ * @memberOf KeyMapper
+ * @param {event} event Event object
+ * @returns {string}
+ */
 KeyMapper.prototype.convert = function(event) {
     var keyMap = [], keyChar;
 
@@ -312,6 +327,13 @@ KeyMapper.prototype.convert = function(event) {
     return keyMap.join(this._splitter);
 };
 
+/**
+ * Get character from key code
+ * @memberOf KeyMapper
+ * @param {number} keyCode Key code
+ * @returns {string}
+ * @private
+ */
 KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
     var keyCodeChar;
 
@@ -320,6 +342,12 @@ KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
     return keyCodeChar;
 };
 
+/**
+ * Get sharedInstance
+ * @api
+ * @memberOf KeyMapper
+ * @returns {KeyMapper}
+ */
 KeyMapper.getSharedInstance = function() {
     if (!sharedInstance) {
         sharedInstance = new KeyMapper();

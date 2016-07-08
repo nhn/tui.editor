@@ -10,7 +10,6 @@ var util = tui.util;
 /**
  * LazyRunner
  * @exports LazyRunner
- * @augments
  * @constructor
  * @class
  */

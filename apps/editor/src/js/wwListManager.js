@@ -11,7 +11,7 @@ var FIND_LI_ELEMENT = /<li/i;
  * WwListManager
  * @exports WwListManager
  * @constructor
- * @class
+ * @class WwListManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 function WwListManager(wwe) {
@@ -21,11 +21,19 @@ function WwListManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwListManager
+ * @type {string}
+ */
 WwListManager.prototype.name = 'list';
 
 /**
  * _init
- * Init
+ * Initialize
+ * @memberOf WwListManager
+ * @private
  */
 WwListManager.prototype._init = function() {
     this._initEvent();
@@ -33,7 +41,9 @@ WwListManager.prototype._init = function() {
 
 /**
  * _initEvent
- * Initialize eventmanager event
+ * Initialize event
+ * @memberOf WwListManager
+ * @private
  */
 WwListManager.prototype._initEvent = function() {
     var self = this;
@@ -44,6 +54,7 @@ WwListManager.prototype._initEvent = function() {
 };
 /**
  * Find empty list for whole container and remove it.
+ * @memberOf WwListManager
  * @private
  */
 WwListManager.prototype._findAndRemoveEmptyList = function() {
@@ -58,6 +69,8 @@ WwListManager.prototype._findAndRemoveEmptyList = function() {
 
 /**
  * Return boolean value that current range is in the List or not
+ * @api
+ * @memberOf WwListManager
  * @returns {boolean}
  */
 WwListManager.prototype.isInList = function() {

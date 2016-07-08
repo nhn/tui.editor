@@ -1,6 +1,6 @@
 /**
- * @fileoverview Implements %filltext:name=Name%
- * @author
+ * @fileoverview Implements
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
 'use strict';

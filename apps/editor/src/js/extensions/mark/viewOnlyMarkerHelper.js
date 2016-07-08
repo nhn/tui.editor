@@ -12,7 +12,6 @@ var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 /**
  * ViewOnlyMarkerHelper
  * @exports ViewOnlyMarkerHelper
- * @augments
  * @constructor
  * @class
  * @param {Preview} preview preview instance
@@ -183,8 +182,8 @@ ViewOnlyMarkerHelper.prototype._extendRangeToTextNodeIfHasNone = function(range)
 /**
  * _findOffsetNode
  * Find offset nodes by given offset list
- * @param {[number]} offsetlist offset list
- * @returns {[object]} offset node informations
+ * @param {Array.<number>} offsetlist offset list
+ * @returns {Array.<object>} offset node informations
  */
 ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
     return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, function(text) {

@@ -15,7 +15,7 @@ var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1
  * ImportManager
  * @exports ImportManager
  * @constructor
- * @class
+ * @class ImportManager
  * @param {EventManager} eventManager eventManager
  */
 function ImportManager(eventManager) {
@@ -26,6 +26,11 @@ function ImportManager(eventManager) {
     this._initDefaultImageImporter();
 }
 
+/**
+ * Initialize drop event
+ * @memberOf ImportManager
+ * @private
+ */
 ImportManager.prototype._initDropEvent = function() {
     var self = this;
 
@@ -35,6 +40,11 @@ ImportManager.prototype._initDropEvent = function() {
     });
 };
 
+/**
+ * Initialize paste event
+ * @memberOf ImportManager
+ * @private
+ */
 ImportManager.prototype._initPasteEvent = function() {
     var self = this;
 
@@ -43,6 +53,11 @@ ImportManager.prototype._initPasteEvent = function() {
     });
 };
 
+/**
+ * Initialize default image importer
+ * @memberOf ImportManager
+ * @private
+ */
 ImportManager.prototype._initDefaultImageImporter = function() {
     this.eventManager.listen('addImageBlobHook', function(blob, callback) {
         var reader = new FileReader();
@@ -55,6 +70,12 @@ ImportManager.prototype._initDefaultImageImporter = function() {
     });
 };
 
+/**
+ * Emit add image blob hook
+ * @memberOf ImportManager
+ * @param {object} item item
+ * @private
+ */
 ImportManager.prototype._emitAddImageBlobHook = function(item) {
     var self = this,
         blob = item.name ? item : item.getAsFile(); //Blob or File
@@ -64,11 +85,23 @@ ImportManager.prototype._emitAddImageBlobHook = function(item) {
     });
 };
 
+/**
+ * Add table with excel style data
+ * @memberOf ImportManager
+ * @param {string} content Table data
+ * @private
+ */
 ImportManager.prototype._addExcelTable = function(content) {
     var tableInfo = excelTableParser(content);
     this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 };
 
+/**
+ * Get blob or excel data from clipboard
+ * @memberOf ImportManager
+ * @param {object} evData Clipboard data
+ * @private
+ */
 ImportManager.prototype._processClipboard = function(evData) {
     var blobItems,
         cbData, types;
@@ -85,6 +118,13 @@ ImportManager.prototype._processClipboard = function(evData) {
     }
 };
 
+/**
+ * Process for blob item
+ * @memberOf ImportManager
+ * @param {Array.<string>} items Item array
+ * @param {object} evData Event data
+ * @private
+ */
 ImportManager.prototype._processBlobItems = function(items, evData) {
     var self = this;
 
@@ -103,6 +143,13 @@ ImportManager.prototype._processBlobItems = function(items, evData) {
     }
 };
 
+/**
+ * Process for excel style data
+ * @memberOf ImportManager
+ * @param {HTMLElement} cbData Clipboard data
+ * @param {object} evData Event data
+ * @private
+ */
 ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
     var content;
 

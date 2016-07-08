@@ -18,9 +18,8 @@ var tagEntities = {
 /**
  * WwCodeBlockManager
  * @exports WwCodeBlockManager
- * @augments
+ * @class WwCodeBlockManager
  * @constructor
- * @class
  * @param {WysiwygEditor} wwe wysiwygEditor instance
  */
 function WwCodeBlockManager(wwe) {
@@ -30,11 +29,19 @@ function WwCodeBlockManager(wwe) {
     this._init();
 }
 
+/**
+ * Name property
+ * @api
+ * @memberOf WwCodeBlockManager
+ * @type {string}
+ */
 WwCodeBlockManager.prototype.name = 'codeblock';
 
 /**
  * _init
- * Init
+ * Initialize
+ * @memberOf WwCodeBlockManager
+ * @private
  */
 WwCodeBlockManager.prototype._init = function() {
     this._initKeyHandler();
@@ -44,6 +51,8 @@ WwCodeBlockManager.prototype._init = function() {
 /**
  * _initKeyHandler
  * Initialize key event handler
+ * @memberOf WwCodeBlockManager
+ * @private
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
     this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
@@ -57,6 +66,8 @@ WwCodeBlockManager.prototype._initKeyHandler = function() {
 /**
  * _initEvent
  * Initialize eventmanager event
+ * @memberOf WwCodeBlockManager
+ * @private
  */
 WwCodeBlockManager.prototype._initEvent = function() {
     var self = this;
@@ -70,6 +81,13 @@ WwCodeBlockManager.prototype._initEvent = function() {
     });
 };
 
+/**
+ * Convert copied nodes to code block if need
+ * @api
+ * @memberOf WwCodeBlockManager
+ * @param {Array.<Node>} nodes Node array
+ * @returns {DocumentFragment}
+ */
 WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
     var range = this.wwe.getEditor().getSelection().cloneRange();
     var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
@@ -83,6 +101,13 @@ WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
     return frag;
 };
 
+/**
+ * Wrap nodes into code block
+ * @api
+ * @memberOf WwCodeBlockManager
+ * @param {Array.<Node>} nodes Node array
+ * @returns {HTMLElement} Code block element
+ */
 WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
     var $codeblock = $('<pre />');
     var self = this;
@@ -96,6 +121,14 @@ WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
     return $codeblock[0];
 };
 
+/**
+ * Copy content with code block style from code block selection
+ * @memberOf WwCodeBlockManager
+ * @param {HTMLElement} element Copied element
+ * @param {Range} range Range object
+ * @returns {HTMLElement}
+ * @private
+ */
 WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
     var blockNode, attrs;
 
@@ -112,6 +145,13 @@ WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(ele
     return element;
 };
 
+/**
+ * Merge code block lines
+ * @memberOf WwCodeBlockManager
+ * @param {string} html HTML string
+ * @returns {string}
+ * @private
+ */
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
     html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
         code = code.replace(/<\/code><br \/>/g, '\n');
@@ -124,6 +164,11 @@ WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(htm
     return html;
 };
 
+/**
+ * Split code block to lines
+ * @memberOf WwCodeBlockManager
+ * @private
+ */
 WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
     var self = this;
 
@@ -144,6 +189,13 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
     });
 };
 
+/**
+ * Make code HTML text
+ * @memberOf WwCodeBlockManager
+ * @param {string} lineContent Content text
+ * @returns {string}
+ * @private
+ */
 WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
     if (!lineContent) {
         lineContent = '\u200B';
@@ -152,6 +204,14 @@ WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
     return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
 };
 
+/**
+ * Insert ZWB code block if in empty code
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
     if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
         ev.preventDefault();
@@ -164,6 +224,14 @@ WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
     return true;
 };
 
+/**
+ * Unformat code at top line and offset equals 0
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
     var currentNodeName, code;
 
@@ -190,6 +258,14 @@ WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, ran
     return true;
 };
 
+/**
+ * Unformat code when one CODE tag in PRE tag
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
     var pre, div;
 
@@ -210,6 +286,14 @@ WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev
     return true;
 };
 
+/**
+ * Remove last character in CODE tag when CODE has one character
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
     var currentNodeName;
 
@@ -233,6 +317,14 @@ WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = funct
     return true;
 };
 
+/**
+ * Recover incomplete line in PRE tag
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
     var pre;
 
@@ -258,6 +350,14 @@ WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range
     return true;
 };
 
+/**
+ * Remove blank CODE tag
+ * @memberOf WwCodeBlockManager
+ * @param {Event} ev Event object
+ * @param {Range} range Range object
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
     var currentNodeName, div;
 
@@ -283,6 +383,12 @@ WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
     return true;
 };
 
+/**
+ * Return boolean value of whether current range is in the code block
+ * @memberOf WwCodeBlockManager
+ * @param {Range} range Range object
+ * @returns {boolean}
+ */
 WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
     var target;
 
@@ -295,6 +401,13 @@ WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
     return this._isCodeBlock(target);
 };
 
+/**
+ * Verify given element is code block
+ * @memberOf WwCodeBlockManager
+ * @param {HTMLElement} element Element
+ * @returns {boolean}
+ * @private
+ */
 WwCodeBlockManager.prototype._isCodeBlock = function(element) {
     return !!$(element).closest('pre').length
         && (!!$(element).closest('code').length || !!$(element).find('code').length);

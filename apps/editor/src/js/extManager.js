@@ -10,23 +10,18 @@ var util = tui.util;
 /**
  * ExtManager
  * @exports ExtManager
- * @extends {}
  * @constructor
- * @class
+ * @class ExtManager
  */
 function ExtManager() {
     this.exts = new util.Map();
 }
 
 /**
- * Extension Closure callback
- * @callback ExtManager~extension
- * @param {ToastUIEditor} editor editor instance
- */
-
-/**
  * defineExtension
  * Defined Extension
+ * @api
+ * @memberOf ExtManager
  * @param {string} name extension name
  * @param {ExtManager~extension} ext extension
  */
@@ -34,6 +29,13 @@ ExtManager.prototype.defineExtension = function(name, ext) {
     this.exts.set(name, ext);
 };
 
+/**
+ * Apply extensions
+ * @api
+ * @memberOf ExtManager
+ * @param {object} context Context
+ * @param {Array.<string>} extNames Extension names
+ */
 ExtManager.prototype.applyExtension = function(context, extNames) {
     var self = this;
 
