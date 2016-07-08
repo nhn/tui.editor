@@ -2,10 +2,10 @@
 <br>
 The ToastUI Editor is a two-way editor based on Markdown.
 You can choose and use WYSIWYG and Markdown as needed.
-And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) while you are writing it without any spoiling.
+And if you are in need, you can switch the editing mode (WYSIWYG ↔ Markdown) while you are writing it fluidly.
 
 ## Features
-* Input & output with GFM : All documents are exported by "Github Flavored Markdown" format even if it has written on WYSIWYG mode.
+* Input & output with GFM : All documents are exported by "Github Flavored Markdown" format even if it has written in WYSIWYG mode.
 * Quick & Easy mode switching : Switch editing mode WYSIWYG and Markdown anytime you need.
 * Live preview : Always display current Markdown document's HTML preview.
 * Extensible : You can extend features by integrated API & Extension.
