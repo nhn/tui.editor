@@ -111,7 +111,7 @@ mdTextObject.prototype.deleteContent = function() {
  * peek StartBeforeOffset
  * @private
  * @memberOf mdTextObject
- * @param offset
+ * @param {number} offset Offset
  * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
  */
 mdTextObject.prototype.peekStartBeforeOffset = function(offset) {
