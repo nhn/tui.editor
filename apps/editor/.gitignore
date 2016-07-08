@@ -48,7 +48,7 @@ build
 *.swp
 etc
 temp
-doc
+api
 report
 karma.conf.local.js
 .tern-project
