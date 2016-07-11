@@ -61,6 +61,10 @@ extManager.defineExtension('colorSyntax', function(editor) {
             exec: function(mde, color) {
                 var cm = mde.getEditor();
 
+                if (!color) {
+                    return;
+                }
+
                 if (!useCustomSyntax) {
                     cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
                 } else {
@@ -75,6 +79,10 @@ extManager.defineExtension('colorSyntax', function(editor) {
             name: 'color',
             exec: function(wwe, color) {
                 var sq = wwe.getEditor();
+
+                if (!color) {
+                    return;
+                }
 
                 if (!sq.hasFormat('PRE')) {
                     if (color === RESET_COLOR) {
@@ -117,6 +125,8 @@ function initUI(editor) {
     colorPicker = tui.component.colorpicker.create({
         container: $colorPickerContainer[0]
     });
+
+    selectedColor = colorPicker.getColor();
 
     $colorPickerContainer.append($buttonBar);
 
