@@ -1267,23 +1267,18 @@
 	/**
 	 * ExtManager
 	 * @exports ExtManager
-	 * @extends {}
 	 * @constructor
-	 * @class
+	 * @class ExtManager
 	 */
 	function ExtManager() {
 	    this.exts = new util.Map();
 	}
 
 	/**
-	 * Extension Closure callback
-	 * @callback ExtManager~extension
-	 * @param {ToastUIEditor} editor editor instance
-	 */
-
-	/**
 	 * defineExtension
 	 * Defined Extension
+	 * @api
+	 * @memberOf ExtManager
 	 * @param {string} name extension name
 	 * @param {ExtManager~extension} ext extension
 	 */
@@ -1291,6 +1286,13 @@
 	    this.exts.set(name, ext);
 	};
 
+	/**
+	 * Apply extensions
+	 * @api
+	 * @memberOf ExtManager
+	 * @param {object} context Context
+	 * @param {Array.<string>} extNames Extension names
+	 */
 	ExtManager.prototype.applyExtension = function(context, extNames) {
 	    var self = this;
 
@@ -2630,7 +2632,7 @@
 	     * Set value with markers
 	     * @param {string} value markdown content
 	     * @param {object} markerDataCollection marker data that obtain with exportMarkers method
-	     * @returns {[object]} markers
+	     * @returns {Array.<object>} markers
 	     */
 	    editor.setValueWithMarkers = function(value, markerDataCollection) {
 	        var helper;
@@ -2674,7 +2676,7 @@
 	    /**
 	     * getMarkersAll
 	     * Get all markers
-	     * @returns {[object]}
+	     * @returns {Array.<object>}
 	     */
 	    editor.getMarkersAll = function() {
 	        return ml.getAll();
@@ -2810,7 +2812,6 @@
 	/**
 	 * Markerlist
 	 * @exports Markerlist
-	 * @augments
 	 * @constructor
 	 * @class
 	 */
@@ -2909,7 +2910,7 @@
 	 * Get markers affected by given range
 	 * @param {number} start start offset
 	 * @param {end} end end offset
-	 * @returns {[object]} markers
+	 * @returns {Array.<object>} markers
 	 */
 	Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
 	    var rangeMarkers;
@@ -2928,7 +2929,7 @@
 	/**
 	 * getAll
 	 * Get markers all
-	 * @returns {[object]} markers
+	 * @returns {Array.<object>} markers
 	 */
 	Markerlist.prototype.getAll = function() {
 	    return this._sortedMarkers;
@@ -2989,7 +2990,6 @@
 	/**
 	 * MarkerManager
 	 * @exports MarkerManager
-	 * @augments
 	 * @constructor
 	 * @class
 	 * @param {MarkerList} markerList MarkerList object
@@ -3158,7 +3158,7 @@
 	 * _getUpdateMarkersWithDiffs
 	 * Get updated markers with diffs
 	 * @param {object} markerDiffs marker diff object that contains diff info of specific marker
-	 * @returns {[object]} updated markers
+	 * @returns {Array.<object>} updated markers
 	 */
 	MarkerManager.prototype._getUpdateMarkersWithDiffs = function(markerDiffs) {
 	    var updatedMarkers = [],
@@ -5400,7 +5400,6 @@
 	/**
 	 * WysiwygMarkerHelper
 	 * @exports WysiwygMarkerHelper
-	 * @augments
 	 * @constructor
 	 * @class
 	 * @param {SquireExt} sqe squire instance
@@ -5554,8 +5553,8 @@
 	/**
 	 * _findOffsetNode
 	 * Find offset nodes by given offset list
-	 * @param {[number]} offsetlist offset list
-	 * @returns {[object]} offset node informations
+	 * @param {Array.<number>} offsetlist offset list
+	 * @returns {Array.<object>} offset node informations
 	 */
 	WysiwygMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
 	    return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, function(text) {
@@ -5854,11 +5853,20 @@
 	    return getNodeWithDirectionUnderParent('next', node, underNode);
 	};
 
+	/**
+	 * Get parent element the body element
+	 * @param {Node} node Node for start searching
+	 * @returns {Node}
+	 */
 	var getTopBlockNode = function(node) {
 	    return getParentUntil(node, 'BODY');
 	};
 
-
+	/**
+	 * Get previous text node
+	 * @param {Node} node Node for start searching
+	 * @returns {Node}
+	 */
 	var getPrevTextNode = function(node) {
 	    node = node.previousSibling || node.parentNode;
 
@@ -5881,6 +5889,13 @@
 	    return node;
 	};
 
+	/**
+	 * find node by offset
+	 * @param {HTMLElement} root Root element
+	 * @param {Array.<number>} offsetList offset list
+	 * @param {function} textNodeFilter Text node filter
+	 * @returns {Array}
+	 */
 	var findOffsetNode = function(root, offsetList, textNodeFilter) {
 	    var result = [],
 	        text = '',
@@ -6003,7 +6018,6 @@
 	/**
 	 * ViewOnlyMarkerHelper
 	 * @exports ViewOnlyMarkerHelper
-	 * @augments
 	 * @constructor
 	 * @class
 	 * @param {Preview} preview preview instance
@@ -6174,8 +6188,8 @@
 	/**
 	 * _findOffsetNode
 	 * Find offset nodes by given offset list
-	 * @param {[number]} offsetlist offset list
-	 * @returns {[object]} offset node informations
+	 * @param {Array.<number>} offsetlist offset list
+	 * @returns {Array.<object>} offset node informations
 	 */
 	ViewOnlyMarkerHelper.prototype._findOffsetNode = function(offsetlist) {
 	    return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, function(text) {
@@ -6231,7 +6245,6 @@
 	 *
 	 * MarkdownMarkerHelper
 	 * @exports MarkdownMarkerHelper
-	 * @augments
 	 * @constructor
 	 * @class
 	 * @param {CodeMirror} cm codemirror instance
@@ -6382,8 +6395,8 @@
 	/**
 	 * _findOffsetCursor
 	 * Find offset cursor by given offset list
-	 * @param {[number]} offsetlist offset list
-	 * @returns {[object]} offset cursors
+	 * @param {Array.<number>} offsetlist offset list
+	 * @returns {Array.<object>} offset cursors
 	 */
 	MarkdownMarkerHelper.prototype._findOffsetCursor = function(offsetlist) {
 	    var doc = this.cm.getDoc();
@@ -6530,21 +6543,21 @@
 	 * ToastUI Editor
 	 * @exports ToastUIEditor
 	 * @constructor
-	 * @class
-	 * @param {object} options 옵션
-	 * @param {number} options.height 에디터 height 픽셀
-	 * @param {string} options.initialValue 초기 입력 테스트
-	 * @param {string} options.previewStyle 프리뷰가 출력되는 방식을 정한다(tab, vertical)
-	 * @param {string} options.initialEditType 시작시 표시될 에디터 타입(markdown, wysiwyg)
-	 * @param {object} options.events eventlist
-	 * @param {function} options.events.load it would be emitted when editor fully load
-	 * @param {function} options.events.change it would be emitted when content changed
-	 * @param {function} options.events.stateChange it would be emitted when format change by cursor position
-	 * @param {function} options.events.focus it would be emitted when editor get focus
-	 * @param {function} options.events.blur it would be emitted when editor loose focus
-	 * @param {object} options.hooks 외부 연결 훅 목록
-	 * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
-	 * @param {function} options.hooks.addImageBlobHook hook for image upload.
+	 * @class ToastUIEditor
+	 * @param {object} options Option object
+	     * @param {number} options.height Editor's height (px)
+	     * @param {string} options.initialValue Editor's initial value
+	     * @param {string} options.previewStyle Markdown editor's preview style (tab, vertical)
+	     * @param {string} options.initialEditType Initial editor type (markdown, wysiwyg)
+	     * @param {object} options.events eventlist Event list
+	         * @param {function} options.events.load It would be emitted when editor fully load
+	         * @param {function} options.events.change It would be emitted when content changed
+	         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+	         * @param {function} options.events.focus It would be emitted when editor get focus
+	         * @param {function} options.events.blur It would be emitted when editor loose focus
+	     * @param {object} options.hooks Hook list
+	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+	         * @param {function} options.hooks.addImageBlobHook hook for image upload.
 	 */
 	function ToastUIEditor(options) {
 	    var self = this;
@@ -6601,6 +6614,8 @@
 
 	/**
 	 * 프리뷰가 보여지는 방식을 변경한다
+	 * @api
+	 * @memberOf ToastUIEditor
 	 * @param {string} style 스타일 이름 tab, vertical
 	 */
 	ToastUIEditor.prototype.changePreviewStyle = function(style) {
@@ -6609,6 +6624,11 @@
 	    this.eventManager.emit('changePreviewStyle', style);
 	};
 
+	/**
+	 * call commandManager's exec method
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.exec = function() {
 	    this.commandManager.exec.apply(this.commandManager, arguments);
 	};
@@ -6621,43 +6641,102 @@
 	    }
 	};
 
+	/**
+	 * Bind eventHandler to event type
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} type Event type
+	 * @param {function} handler Event handler
+	 */
 	ToastUIEditor.prototype.on = function(type, handler) {
 	    this.eventManager.listen(type, handler);
 	};
 
+	/**
+	 * Unbind eventHandler from event type
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} type Event type
+	 */
 	ToastUIEditor.prototype.off = function(type) {
 	    this.eventManager.removeEventHandler(type);
 	};
 
+	/**
+	 * Add hook to TUIEditor event
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} type Event type
+	 * @param {function} handler Event handler
+	 */
 	ToastUIEditor.prototype.addHook = function(type, handler) {
 	    this.eventManager.removeEventHandler(type);
 	    this.eventManager.listen(type, handler);
 	};
 
+	/**
+	 * Remove hook from TUIEditor event
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} type Event type
+	 */
 	ToastUIEditor.prototype.removeHook = function(type) {
 	    this.eventManager.removeEventHandler(type);
 	};
 
+	/**
+	 * Get CodeMirror instance
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {CodeMirror}
+	 */
 	ToastUIEditor.prototype.getCodeMirror = function() {
 	    return this.mdEditor.getEditor();
 	};
 
+	/**
+	 * Get SquireExt instance
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {SquireExt}
+	 */
 	ToastUIEditor.prototype.getSquire = function() {
 	    return this.wwEditor.getEditor();
 	};
 
+	/**
+	 * Set focus to current Editor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.focus = function() {
 	    this.getCurrentModeEditor().focus();
 	};
 
+	/**
+	 * Set cursor position to end
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.moveCursorToEnd = function() {
 	    this.getCurrentModeEditor().moveCursorToEnd();
 	};
 
+	/**
+	 * Set cursor position to start
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.moveCursorToStart = function() {
 	    this.getCurrentModeEditor().moveCursorToStart();
 	};
 
+	/**
+	 * Set Editor value
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} markdown Markdown syntax text
+	 */
 	ToastUIEditor.prototype.setValue = function(markdown) {
 	    markdown = markdown || '';
 
@@ -6670,6 +6749,12 @@
 	    this.eventManager.emit('setValueAfter', markdown);
 	};
 
+	/**
+	 * Get editor value
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {string}
+	 */
 	ToastUIEditor.prototype.getValue = function() {
 	    var markdown;
 
@@ -6682,10 +6767,26 @@
 	    return markdown;
 	};
 
+	/**
+	 * Add widget to selection
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {Range} selection Current selection
+	 * @param {Node} node widget node
+	 * @param {string} style Adding style "over" or "bottom"
+	 * @param {number} [offset] Offset for adjust position
+	 */
 	ToastUIEditor.prototype.addWidget = function(selection, node, style, offset) {
 	    this.getCurrentModeEditor().addWidget(selection, node, style, offset);
 	};
 
+	/**
+	 * Set and return content area height
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {number} height Content area height
+	 * @returns {number}
+	 */
 	ToastUIEditor.prototype.contentHeight = function(height) {
 	    if (height) {
 	        this._contentHeight = height;
@@ -6697,6 +6798,12 @@
 	    return this._contentHeight;
 	};
 
+	/**
+	 * Get current editor mode name
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {string}
+	 */
 	ToastUIEditor.prototype.getCurrentModeEditor = function() {
 	    var editor;
 
@@ -6709,22 +6816,52 @@
 	    return editor;
 	};
 
+	/**
+	 * Return true if current editor mode is Markdown
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {boolean}
+	 */
 	ToastUIEditor.prototype.isMarkdownMode = function() {
 	    return this.currentMode === 'markdown';
 	};
 
+	/**
+	 * Return true if current editor mode is WYSIWYG
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {boolean}
+	 */
 	ToastUIEditor.prototype.isWysiwygMode = function() {
 	    return this.currentMode === 'wysiwyg';
 	};
 
+	/**
+	 * Return false
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {boolean}
+	 */
 	ToastUIEditor.prototype.isViewOnly = function() {
 	    return false;
 	};
 
+	/**
+	 * Get current Markdown editor's preview style
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {string}
+	 */
 	ToastUIEditor.prototype.getCurrentPreviewStyle = function() {
 	    return this.mdPreviewStyle;
 	};
 
+	/**
+	 * Change editor's mode to given mode string
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} mode Editor mode name of want to change
+	 */
 	ToastUIEditor.prototype.changeMode = function(mode) {
 	    if (this.currentMode === mode) {
 	        return;
@@ -6748,6 +6885,11 @@
 	    this.focus();
 	};
 
+	/**
+	 * Remove TUIEditor from document
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.remove = function() {
 	    var self = this;
 	    var i = __nedInstance.length - 1;
@@ -6772,49 +6914,115 @@
 	    }
 	};
 
+	/**
+	 * Hide TUIEditor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.hide = function() {
 	    this.eventManager.emit('hide', this);
 	};
 
+	/**
+	 * Show TUIEditor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.show = function() {
 	    this.eventManager.emit('show', this);
 	    this.getCodeMirror().refresh();
 	};
 
+	/**
+	 * Scroll Editor content to Top
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {number} value Scroll amount
+	 * @returns {number}
+	 */
 	ToastUIEditor.prototype.scrollTop = function(value) {
 	    return this.getCurrentModeEditor().scrollTop(value);
 	};
 
+	/**
+	 * Set UI to private UI property
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {UI} UI UI instance
+	 */
 	ToastUIEditor.prototype.setUI = function(UI) {
 	    this._ui = UI;
 	};
 
+	/**
+	 * Get _ui property
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {UI}
+	 */
 	ToastUIEditor.prototype.getUI = function() {
 	    return this._ui;
 	};
 
+	/**
+	 * Reset TUIEditor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 */
 	ToastUIEditor.prototype.reset = function() {
 	    this.wwEditor.reset();
 	    this.mdEditor.reset();
 	};
 
+	/**
+	 * Get current range
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {{start, end}|Range}
+	 */
 	ToastUIEditor.prototype.getRange = function() {
 	    return this.getCurrentModeEditor().getRange();
 	};
 
+	/**
+	 * Get text object of current range
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {{start, end}|Range} range Range object of each editor
+	 * @returns {object} TextObject class
+	 */
 	ToastUIEditor.prototype.getTextObject = function(range) {
 	    return this.getCurrentModeEditor().getTextObject(range);
 	};
 
+	/**
+	 * Get instance of TUIEditor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @returns {Array}
+	 */
 	ToastUIEditor.getInstances = function() {
 	    return __nedInstance;
 	};
 
+	/**
+	 * Define extension
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {string} name Extension name
+	 * @param {ExtManager~extension} ext extension
+	 */
 	ToastUIEditor.defineExtension = function(name, ext) {
 	    extManager.defineExtension(name, ext);
 	};
 
-
+	/**
+	 * Factory method for Editor
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @param {object} options Option for initialize TUIEditor
+	 * @returns {ToastUIEditor}
+	 */
 	ToastUIEditor.factory = function(options) {
 	    var tuiEditor;
 
@@ -6864,6 +7072,12 @@
 	    return tuiEditor;
 	};
 
+	/**
+	 * Marked renderer
+	 * @api
+	 * @memberOf ToastUIEditor
+	 * @type {marked.renderer}
+	 */
 	ToastUIEditor.markedRenderer = markedRenderer;
 
 	module.exports = ToastUIEditor;
@@ -6888,12 +7102,10 @@
 	/**
 	 * MarkdownEditor
 	 * @exports MarkdownEditor
-	 * @extends {}
 	 * @constructor
-	 * @class
-	 * @param {jQuery} $el 에디터가 들어갈 엘리먼트
-	 * @param {EventManager} eventManager 이벤트 매니저
-	 * @param {commandManager} commandManager 커맨드 매니저
+	 * @class MarkdownEditor
+	 * @param {jQuery} $el element to insert editor
+	 * @param {EventManager} eventManager EventManager instance
 	 */
 	function MarkdownEditor($el, eventManager) {
 	    this.eventManager = eventManager;
@@ -6905,6 +7117,12 @@
 	    };
 	}
 
+	/**
+	 * init
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} initialValue Editor's initial content
+	 */
 	MarkdownEditor.prototype.init = function(initialValue) {
 	    var cmTextarea = $('<textarea />');
 
@@ -6932,6 +7150,12 @@
 	    this._initEvent();
 	};
 
+	/**
+	 * _initEvent
+	 * Initialize EventManager event handler
+	 * @memberOf MarkdownEditor
+	 * @private
+	 */
 	MarkdownEditor.prototype._initEvent = function() {
 	    var self = this;
 
@@ -6939,6 +7163,12 @@
 	        self.eventManager.emit('click', {
 	            source: 'markdown'
 	        });
+	    });
+
+	    this.cm.on('beforeChange', function(cm, ev) {
+	        if (ev.origin === 'paste') {
+	            self.eventManager.emit('pasteBefore', {source: 'markdown', data: ev});
+	        }
 	    });
 
 	    this.cm.on('change', function(cm, cmEvent) {
@@ -7028,7 +7258,8 @@
 	/**
 	 * getCurrentRange
 	 * returns current selection's range
-	 * @param {CodeMirror} cm codemirror instance
+	 * @api
+	 * @memberOf MarkdownEditor
 	 * @returns {object} selection range
 	 */
 	MarkdownEditor.prototype.getCurrentRange = function() {
@@ -7042,14 +7273,30 @@
 	    };
 	};
 
+	/**
+	 * Set focus to current Editor
+	 * @api
+	 * @memberOf MarkdownEditor
+	 */
 	MarkdownEditor.prototype.focus = function() {
 	    this.cm.focus();
 	};
 
+	/**
+	 * Remove Editor from document
+	 * @api
+	 * @memberOf MarkdownEditor
+	 */
 	MarkdownEditor.prototype.remove = function() {
 	    this.cm.toTextArea();
 	};
 
+	/**
+	 * Set Editor value
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {string} markdown Markdown syntax text
+	 */
 	MarkdownEditor.prototype.setValue = function(markdown) {
 	    this.getEditor().setValue(markdown);
 	    this._emitMarkdownEditorContentChangedEvent();
@@ -7057,22 +7304,51 @@
 	    this.getEditor().refresh();
 	};
 
+	/**
+	 * Get editor value
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @returns {string}
+	 */
 	MarkdownEditor.prototype.getValue = function() {
 	    return this.cm.getValue('\n');
 	};
 
+	/**
+	 * Get CodeMirror instance
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @returns {CodeMirror}
+	 */
 	MarkdownEditor.prototype.getEditor = function() {
 	    return this.cm;
 	};
 
+	/**
+	 * Reset Editor
+	 * @api
+	 * @memberOf MarkdownEditor
+	 */
 	MarkdownEditor.prototype.reset = function() {
 	    this.setValue('');
 	};
 
+	/**
+	 * Emit contentChangedFromMarkdown event
+	 * @memberOf MarkdownEditor
+	 * @private
+	 */
 	MarkdownEditor.prototype._emitMarkdownEditorContentChangedEvent = function() {
 	    this.eventManager.emit('contentChangedFromMarkdown', this);
 	};
 
+	/**
+	 * Clone CodeMirror event object
+	 * @memberOf MarkdownEditor
+	 * @param {event} e Event object
+	 * @returns {{from: {line: number, ch: number}, to: {line: number, ch: number}}}
+	 * @private
+	 */
 	MarkdownEditor.prototype._cloneCMEventObject = function(e) {
 	    return {
 	        from: {
@@ -7086,6 +7362,12 @@
 	    };
 	};
 
+	/**
+	 * Emit changeEvent
+	 * @memberOf MarkdownEditor
+	 * @param {event} e Event object
+	 * @private
+	 */
 	MarkdownEditor.prototype._emitMarkdownEditorChangeEvent = function(e) {
 	    var eventObj;
 
@@ -7099,10 +7381,25 @@
 	    }
 	};
 
+	/**
+	 * Get current caret position
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @returns {{from: {line: number, ch: number}, to: {line: number, ch: number}}}
+	 */
 	MarkdownEditor.prototype.getCaretPosition = function() {
 	    return this.cm.cursorCoords();
 	};
 
+	/**
+	 * Add widget
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {object} selection Selection object
+	 * @param {HTMLElement} node Widget node
+	 * @param {string} style Adding style "over" or "bottom"
+	 * @param {number} offset Adding offset
+	 */
 	MarkdownEditor.prototype.addWidget = function(selection, node, style, offset) {
 	    if (offset) {
 	        selection.ch += offset;
@@ -7111,6 +7408,13 @@
 	    this.cm.addWidget(selection.end, node, true, style);
 	};
 
+	/**
+	 * Replace selection with given replacement content
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {string} content Replacement content text
+	 * @param {object} selection Selection object
+	 */
 	MarkdownEditor.prototype.replaceSelection = function(content, selection) {
 	    if (selection) {
 	        this.cm.setSelection(selection.from, selection.to);
@@ -7120,6 +7424,14 @@
 	    this.focus();
 	};
 
+	/**
+	 * Replace selection with replacement content and offset
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {string} content Replacement content text
+	 * @param {number} offset Offset
+	 * @param {number} overwriteLength Length to overwrite
+	 */
 	MarkdownEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
 	    var cursor = this.cm.getCursor(),
 	        selection = {
@@ -7136,6 +7448,12 @@
 	    this.replaceSelection(content, selection);
 	};
 
+	/**
+	 * Set Editor height
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {number} height Editor height
+	 */
 	MarkdownEditor.prototype.setHeight = function(height) {
 	    this.$editorContainerEl.height(height);
 
@@ -7144,6 +7462,11 @@
 	    }
 	};
 
+	/**
+	 * Set cursor position to end
+	 * @api
+	 * @memberOf MarkdownEditor
+	 */
 	MarkdownEditor.prototype.moveCursorToEnd = function() {
 	    var doc = this.getEditor().getDoc(),
 	        lastLine = doc.lastLine();
@@ -7151,6 +7474,11 @@
 	    doc.setCursor(lastLine, doc.getLine(lastLine).length);
 	};
 
+	/**
+	 * Set cursor position to start
+	 * @api
+	 * @memberOf MarkdownEditor
+	 */
 	MarkdownEditor.prototype.moveCursorToStart = function() {
 	    var doc = this.getEditor().getDoc(),
 	        firstLine = doc.firstLine();
@@ -7158,6 +7486,13 @@
 	    doc.setCursor(firstLine, 0);
 	};
 
+	/**
+	 * Scroll Editor content to Top
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {number} value Scroll amount
+	 * @returns {number}
+	 */
 	MarkdownEditor.prototype.scrollTop = function(value) {
 	    if (value) {
 	        this.cm.scrollTo(0, value);
@@ -7166,6 +7501,12 @@
 	    return this.cm.getScrollInfo().top;
 	};
 
+	/**
+	 * Get start, end position of current selection
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @returns {{start: {line: *, ch: *}, end: {line: *, ch: *}}}
+	 */
 	MarkdownEditor.prototype.getRange = function() {
 	    var start = this.getEditor().getCursor('from');
 	    var end = this.getEditor().getCursor('to');
@@ -7182,14 +7523,22 @@
 	    };
 	};
 
+	/**
+	 * Get text object of current range
+	 * @api
+	 * @memberOf MarkdownEditor
+	 * @param {{start, end}} range Range object of each editor
+	 * @returns {object}
+	 */
 	MarkdownEditor.prototype.getTextObject = function(range) {
 	    return new MdTextObject(this, range);
 	};
 
 	/**
-	 * _isStateChanged
-	 * @param {object} previousState previousState state
-	 * @param {object} currentState currentState state
+	 * Return whether state changed or not
+	 * @memberOf MarkdownEditor
+	 * @param {object} previousState Previous state
+	 * @param {object} currentState Current state
 	 * @returns {boolean}
 	 * @private
 	 */
@@ -7225,6 +7574,10 @@
 
 	'use strict';
 
+	/**
+	 * Constant of key mapping
+	 * @type {string[]}
+	 */
 	var KEYBOARD_MAP = [
 	    '', // [0]
 	    '', // [1]
@@ -7489,21 +7842,32 @@
 	/**
 	 * KeyMapper
 	 * @exports KeyMapper
-	 * @augments
 	 * @constructor
-	 * @class
-	 * @param {object} options options
-	 * @param {string} options.splitter splitter string default is +
+	 * @class KeyMapper
+	 * @param {object} [options] options
+	 *    @param {string} options.splitter splitter string default is +
 	 */
 	function KeyMapper(options) {
 	    this._setSplitter(options);
 	}
 
+	/**
+	 * Set key splitter
+	 * @param {object} options Option object
+	 * @memberOf KeyMapper
+	 * @private
+	 */
 	KeyMapper.prototype._setSplitter = function(options) {
 	    var splitter = options ? options.splitter : '+';
 	    this._splitter = splitter;
 	};
-
+	/**
+	 * Convert event to keyMap
+	 * @api
+	 * @memberOf KeyMapper
+	 * @param {event} event Event object
+	 * @returns {string}
+	 */
 	KeyMapper.prototype.convert = function(event) {
 	    var keyMap = [], keyChar;
 
@@ -7532,6 +7896,13 @@
 	    return keyMap.join(this._splitter);
 	};
 
+	/**
+	 * Get character from key code
+	 * @memberOf KeyMapper
+	 * @param {number} keyCode Key code
+	 * @returns {string}
+	 * @private
+	 */
 	KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
 	    var keyCodeChar;
 
@@ -7540,6 +7911,12 @@
 	    return keyCodeChar;
 	};
 
+	/**
+	 * Get sharedInstance
+	 * @api
+	 * @memberOf KeyMapper
+	 * @returns {KeyMapper}
+	 */
 	KeyMapper.getSharedInstance = function() {
 	    if (!sharedInstance) {
 	        sharedInstance = new KeyMapper();
@@ -7565,10 +7942,9 @@
 	/**
 	 * Markdown textObject
 	 * @exports mdTextObject
-	 * @augments
 	 * @constructor
-	 * @class
-	 * @param {MarkdownEditor} mde markdownEditor
+	 * @class mdTextObject
+	 * @param {MarkdownEditor} mde MarkdownEditor instance
 	 * @param {object} range range
 	 */
 	function mdTextObject(mde, range) {
@@ -7577,23 +7953,49 @@
 	    this.setRange(range || mde.getRange());
 	}
 
+	/**
+	 * Set start
+	 * @memberOf mdTextObject
+	 * @param {object} rangeStart Start of range
+	 * @private
+	 */
 	mdTextObject.prototype._setStart = function(rangeStart) {
 	    this._start = rangeStart;
 	};
-
+	/**
+	 * Set end
+	 * @private
+	 * @memberOf mdTextObject
+	 * @param {object} rangeEnd End of range
+	 * @private
+	 */
 	mdTextObject.prototype._setEnd = function(rangeEnd) {
 	    this._end = rangeEnd;
 	};
-
+	/**
+	 * Set range to given range
+	 * @private
+	 * @memberOf mdTextObject
+	 * @param {object} range Range object
+	 */
 	mdTextObject.prototype.setRange = function(range) {
 	    this._setStart(range.start);
 	    this._setEnd(range.end);
 	};
-
+	/**
+	 * Set start to end
+	 * @private
+	 * @memberOf mdTextObject
+	 * @param {object} range Range object
+	 */
 	mdTextObject.prototype.setEndBeforeRange = function(range) {
 	    this._setEnd(range.start);
 	};
-
+	/**
+	 * Expand startOffset by 1
+	 * @private
+	 * @memberOf mdTextObject
+	 */
 	mdTextObject.prototype.expandStartOffset = function() {
 	    var start = this._start;
 
@@ -7601,7 +8003,11 @@
 	        start.ch -= 1;
 	    }
 	};
-
+	/**
+	 * Expand endOffset by 1
+	 * @private
+	 * @memberOf mdTextObject
+	 */
 	mdTextObject.prototype.expandEndOffset = function() {
 	    var end = this._end;
 
@@ -7609,19 +8015,39 @@
 	        end.ch += 1;
 	    }
 	};
-
+	/**
+	 * Get current selection's text content
+	 * @private
+	 * @memberOf mdTextObject
+	 * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
+	 */
 	mdTextObject.prototype.getTextContent = function() {
 	    return this._mde.getEditor().getRange(this._start, this._end);
 	};
-
+	/**
+	 * Replace current selection's content with given text content
+	 * @private
+	 * @memberOf mdTextObject
+	 * @param {string} content Replacement content
+	 */
 	mdTextObject.prototype.replaceContent = function(content) {
 	    this._mde.getEditor().replaceRange(content, this._start, this._end, '+input');
 	};
-
+	/**
+	 * Delete current selection's content
+	 * @private
+	 * @memberOf mdTextObject
+	 */
 	mdTextObject.prototype.deleteContent = function() {
 	    this._mde.getEditor().replaceRange('', this._start, this._end, '+delete');
 	};
-
+	/**
+	 * peek StartBeforeOffset
+	 * @private
+	 * @memberOf mdTextObject
+	 * @param {number} offset Offset
+	 * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
+	 */
 	mdTextObject.prototype.peekStartBeforeOffset = function(offset) {
 	    var peekStart;
 
@@ -7652,12 +8078,11 @@
 	/**
 	 * Preview
 	 * @exports Preview
-	 * @extends {}
+	 * @class Preview
 	 * @constructor
-	 * @class
-	 * @param {jQuery} $el 프리뷰가 들어갈 엘리먼트
-	 * @param {EventManager} eventManager 이벤트 매니저
-	 * @param {Converter} converter 컨버터
+	 * @param {jQuery} $el Container element for preview
+	 * @param {EventManager} eventManager Event manager instance
+	 * @param {Convertor} converter Convertor instance
 	 **/
 	function Preview($el, eventManager, converter) {
 	    this.eventManager = eventManager;
@@ -7678,6 +8103,10 @@
 	    this._initEvent();
 	}
 
+	/**
+	 * Initialize event
+	 * @private
+	 */
 	Preview.prototype._initEvent = function() {
 	    var self = this;
 
@@ -7686,15 +8115,31 @@
 	    });
 	};
 
+	/**
+	 * Initialize content selection
+	 * @private
+	 */
 	Preview.prototype._initContentSection = function() {
 	    this.$previewContent = $('<div class="tui-editor-contents" />');
 	    this.$el.append(this.$previewContent);
 	};
 
+	/**
+	 * Refresh rendering
+	 * @api
+	 * @memberOf Preview
+	 * @param {string} markdown Markdown text
+	 */
 	Preview.prototype.refresh = function(markdown) {
 	    this.render(this.converter.toHTMLWithCodeHightlight(markdown));
 	};
 
+	/**
+	 * Render HTML on preview
+	 * @api
+	 * @memberOf Preview
+	 * @param {string} html HTML string
+	 */
 	Preview.prototype.render = function(html) {
 	    var processedDataByHook,
 	        finalHtml = html;
@@ -7711,6 +8156,12 @@
 	    this.eventManager.emit('previewRenderAfter', this);
 	};
 
+	/**
+	 * Set preview height
+	 * @api
+	 * @memberOf Preview
+	 * @param {number} height Height for preview container
+	 */
 	Preview.prototype.setHeight = function(height) {
 	    this.$el.height(height);
 	};
@@ -7734,7 +8185,6 @@
 	/**
 	 * LazyRunner
 	 * @exports LazyRunner
-	 * @augments
 	 * @constructor
 	 * @class
 	 */
@@ -7842,7 +8292,7 @@
 	 * WysiwygEditor
 	 * @exports WysiwygEditor
 	 * @constructor
-	 * @class
+	 * @class WysiwygEditor
 	 * @param {jQuery} $el element to insert editor
 	 * @param {EventManager} eventManager EventManager instance
 	 */
@@ -7870,6 +8320,8 @@
 
 	/**
 	 * init
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.init = function() {
 	    var $editorBody = $('<div />');
@@ -7892,6 +8344,8 @@
 	 * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
 	 * @param {string} html Inner html of content editable
 	 * @returns {string}
+	 * @memberOf WysiwygEditor
+	 * @private
 	 */
 	WysiwygEditor.prototype._preprocessForInlineElement = function(html) {
 	    return html.replace(/<br>( *)<img/g, '<br><br>$1<img');
@@ -7899,6 +8353,8 @@
 	/**
 	 * _initEvent
 	 * Initialize EventManager event handler
+	 * @memberOf WysiwygEditor
+	 * @private
 	 */
 	WysiwygEditor.prototype._initEvent = function() {
 	    var self = this;
@@ -7919,6 +8375,8 @@
 	/**
 	 * addKeyEventHandler
 	 * Add key event handler
+	 * @api
+	 * @memberOf WysiwygEditor
 	 * @param {string} keyMap keyMap string
 	 * @param {function} handler handler
 	 */
@@ -7940,6 +8398,7 @@
 	 * Run key event handler
 	 * @param {Event} event event object
 	 * @param {string} keyMap keyMapString
+	 * @private
 	 */
 	WysiwygEditor.prototype._runKeyEventHandlers = function(event, keyMap) {
 	    var range = this.getRange(),
@@ -7967,6 +8426,7 @@
 	/**
 	 * _initSquireEvent
 	 * Initialize squire event
+	 * @private
 	 */
 	WysiwygEditor.prototype._initSquireEvent = function() {
 	    var self = this;
@@ -8152,6 +8612,11 @@
 	    });
 	};
 
+	/**
+	 * Handler of keydown event
+	 * @param {object} keyboardEvent Event object
+	 * @private
+	 */
 	WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
 	    var keyMap = keyMapper.convert(keyboardEvent);
 
@@ -8173,6 +8638,7 @@
 	/**
 	 * _initDefaultKeyEventHandler
 	 * Initialize default event handler
+	 * @private
 	 */
 	WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 	    var self = this;
@@ -8198,6 +8664,10 @@
 	    });
 	};
 
+	/**
+	 * Scroll editor area to current cursor position if need
+	 * @private
+	 */
 	WysiwygEditor.prototype._scrollToRangeIfNeed = function() {
 	    var range = this.getEditor().getSelection().cloneRange();
 	    var cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
@@ -8212,6 +8682,7 @@
 	 * check if range is orphan text
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @private
 	 */
 	WysiwygEditor.prototype._isInOrphanText = function(range) {
 	    return range.startContainer.nodeType === Node.TEXT_NODE
@@ -8222,6 +8693,7 @@
 	 * _wrapDefaultBlockTo
 	 * Wrap default block to passed range
 	 * @param {Range} range range
+	 * @private
 	 */
 	WysiwygEditor.prototype._wrapDefaultBlockTo = function(range) {
 	    var block, textElem, cursorOffset, insertTargetNode;
@@ -8271,6 +8743,7 @@
 	/**
 	 * _joinSplitedTextNodes
 	 * Join spliated text nodes
+	 * @private
 	 */
 	WysiwygEditor.prototype._joinSplitedTextNodes = function() {
 	    var textNodes, prevNode,
@@ -8297,7 +8770,9 @@
 	/**
 	 * saveSelection
 	 * Save current selection before modification
-	 * @param {Range} range range
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Range} range Range object
 	 */
 	WysiwygEditor.prototype.saveSelection = function(range) {
 	    var sq = this.getEditor();
@@ -8312,6 +8787,8 @@
 	/**
 	 * restoreSavedSelection
 	 * Restore saved selection
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.restoreSavedSelection = function() {
 	    var sq = this.getEditor();
@@ -8321,6 +8798,7 @@
 	/**
 	 * _wrapDefaultBlockToListInner
 	 * Wrap default block to list inner contents
+	 * @private
 	 */
 	WysiwygEditor.prototype._wrapDefaultBlockToListInner = function() {
 	    this.get$Body().find('li').each(function(index, node) {
@@ -8333,6 +8811,8 @@
 	/**
 	 * reset
 	 * Reset wysiwyg editor
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.reset = function() {
 	    this.setValue('');
@@ -8341,7 +8821,9 @@
 	/**
 	 * changeBlockFormatTo
 	 * Change current range block format to passed tag
-	 * @param {string} targetTagName tag name
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} targetTagName Target element tag name
 	 */
 	WysiwygEditor.prototype.changeBlockFormatTo = function(targetTagName) {
 	    this.getEditor().changeBlockFormatTo(targetTagName);
@@ -8350,7 +8832,9 @@
 
 	/**
 	 * makeEmptyBlockCurrentSelection
-	 * Make current selection to empy block
+	 * Make empty block to current selection
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.makeEmptyBlockCurrentSelection = function() {
 	    var self = this;
@@ -8367,6 +8851,8 @@
 	/**
 	 * focus
 	 * Focus to editor
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.focus = function() {
 	    this.editor.focus();
@@ -8375,6 +8861,8 @@
 	/**
 	 * remove
 	 * Remove wysiwyg editor
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.remove = function() {
 	    this.getEditor().destroy();
@@ -8386,7 +8874,9 @@
 	/**
 	 * setHeight
 	 * Set editor height
-	 * @param {number|string} height pixel or "auto"
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {number|string} height pixel of height or "auto"
 	 */
 	WysiwygEditor.prototype.setHeight = function(height) {
 	    this._height = height;
@@ -8404,7 +8894,9 @@
 	/**
 	 * setValue
 	 * Set value to wysiwyg editor
-	 * @param {string} html html text
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} html HTML text
 	 */
 	WysiwygEditor.prototype.setValue = function(html) {
 	    html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
@@ -8425,7 +8917,9 @@
 	/**
 	 * getValue
 	 * Get value of wysiwyg editor
-	 * @returns {string} html text
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @returns {string} html
 	 */
 	WysiwygEditor.prototype.getValue = function() {
 	    var html;
@@ -8466,6 +8960,8 @@
 	/**
 	 * _prepareGetHTML
 	 * Prepare before get html
+	 * @memberOf WysiwygEditor
+	 * @private
 	 */
 	WysiwygEditor.prototype._prepareGetHTML = function() {
 	    var self = this;
@@ -8482,6 +8978,8 @@
 	/**
 	 * _postProcessForChange
 	 * Post process for change
+	 * @private
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype._postProcessForChange = function() {
 	    var self = this;
@@ -8493,6 +8991,8 @@
 	/**
 	 * readySilentChange
 	 * Ready to silent change
+	 * @api
+	 * @memberOf WysiwygEditor
 	 */
 	WysiwygEditor.prototype.readySilentChange = function() {
 	    if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
@@ -8503,6 +9003,8 @@
 	/**
 	 * getEditor
 	 * Get squire
+	 * @api
+	 * @memberOf WysiwygEditor
 	 * @returns {SquireExt} squire
 	 */
 	WysiwygEditor.prototype.getEditor = function() {
@@ -8512,7 +9014,9 @@
 	/**
 	 * replaceSelection
 	 * Replace text of passed range
-	 * @param {string} content content to change
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} content Content for change current selection
 	 * @param {Range} range range
 	 */
 	WysiwygEditor.prototype.replaceSelection = function(content, range) {
@@ -8522,9 +9026,11 @@
 	/**
 	 * replaceRelativeOffset
 	 * Replace content by relative offset
-	 * @param {string} content content to change
-	 * @param {number} offset offset by current range
-	 * @param {number} overwriteLength count to overwrite
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} content Content for change current selection
+	 * @param {number} offset Offset of current range
+	 * @param {number} overwriteLength Length to overwrite content
 	 */
 	WysiwygEditor.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
 	    this.getEditor().replaceRelativeOffset(content, offset, overwriteLength);
@@ -8533,10 +9039,12 @@
 	/**
 	 * addWidget
 	 * Add widget to selection
-	 * @param {Range} range range
-	 * @param {Node} node widget node
-	 * @param {string} style adding style "over" or "bottom"
-	 * @param {number} [offset] offset to adjust
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Range} range Range object
+	 * @param {Node} node Widget node
+	 * @param {string} style Adding style "over" or "bottom"
+	 * @param {number} [offset] Offset to adjust position
 	 */
 	WysiwygEditor.prototype.addWidget = function(range, node, style, offset) {
 	    var pos = this.getEditor().getSelectionPosition(range, style, offset);
@@ -8553,7 +9061,9 @@
 
 	/**
 	 * get$Body
-	 * get jquery wraped body content of squire
+	 * Get jQuery wrapped body container of Squire
+	 * @api
+	 * @memberOf WysiwygEditor
 	 * @returns {JQuery} jquery body
 	 */
 	WysiwygEditor.prototype.get$Body = function() {
@@ -8562,9 +9072,11 @@
 
 	/**
 	 * hasFormatWithRx
-	 * check has format with current path with passed regexp
-	 * @param {RegExp} rx regexp
-	 * @returns {boolean} result
+	 * Check with given regexp whether current path has some format or not
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {RegExp} rx Regexp
+	 * @returns {boolean} Match result
 	 */
 	WysiwygEditor.prototype.hasFormatWithRx = function(rx) {
 	    return this.getEditor().getPath().match(rx);
@@ -8572,8 +9084,10 @@
 
 	/**
 	 * breakToNewDefaultBlock
-	 * Break to new default block from passed range
-	 * @param {Range} range range
+	 * Break line to new default block from passed range
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Range} range Range object
 	 * @param {string} [where] "before" or not
 	 */
 	WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
@@ -8601,9 +9115,11 @@
 	/**
 	 * replaceContentText
 	 * Replace textContet of node
-	 * @param {Node} container node
-	 * @param {string} from target text to change
-	 * @param {string} to text that replacement
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Node} container Container node
+	 * @param {string} from Target text to change
+	 * @param {string} to Replacement text
 	 */
 	WysiwygEditor.prototype.replaceContentText = function(container, from, to) {
 	    var before;
@@ -8615,7 +9131,9 @@
 	/**
 	 * unwrapBlockTag
 	 * Unwrap Block tag of current range
-	 * @param {function} condition interate with tagName
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {function} [condition] iterate with tagName
 	 */
 	WysiwygEditor.prototype.unwrapBlockTag = function(condition) {
 	    if (!condition) {
@@ -8631,7 +9149,9 @@
 	/**
 	 * insertSelectionMarker
 	 * Insert selection marker
-	 * @param {Range} range range to save selection
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Range} range Range to save selection
 	 * @returns {Range} range
 	 */
 	WysiwygEditor.prototype.insertSelectionMarker = function(range) {
@@ -8641,6 +9161,8 @@
 	/**
 	 * restoreSelectionMarker
 	 * Restore marker to selection
+	 * @api
+	 * @memberOf WysiwygEditor
 	 * @returns {Range} range
 	 */
 	WysiwygEditor.prototype.restoreSelectionMarker = function() {
@@ -8649,9 +9171,11 @@
 
 	/**
 	 * addManager
-	 * Add manger
-	 * @param {string} name manager name
-	 * @param {function} Manager constructor
+	 * Add manager
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} name Manager name
+	 * @param {function} Manager Constructor
 	 */
 	WysiwygEditor.prototype.addManager = function(name, Manager) {
 	    var instance;
@@ -8667,33 +9191,54 @@
 
 	/**
 	 * getManager
-	 * Get manager by name
-	 * @param {string} name manager name
+	 * Get manager by manager name
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {string} name Manager name
 	 * @returns {object} manager
 	 */
 	WysiwygEditor.prototype.getManager = function(name) {
 	    return this._managers[name];
 	};
 
+	/**
+	 * Set cursor position to end
+	 * @api
+	 * @memberOf WysiwygEditor
+	 */
 	WysiwygEditor.prototype.moveCursorToEnd = function() {
 	    this.getEditor().moveCursorToEnd();
 	    this.getEditor().scrollTop(this.get$Body().height());
 	    this._correctRangeAfterMoveCursor('end');
 	};
 
+	/**
+	 * Set cursor position to start
+	 * @api
+	 * @memberOf WysiwygEditor
+	 */
 	WysiwygEditor.prototype.moveCursorToStart = function() {
 	    this.getEditor().moveCursorToStart();
 	    this.getEditor().scrollTop(0);
 	};
 
+	/**
+	 * Set cursor position to start
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {number} value Scroll amount
+	 * @returns {boolean}
+	 */
 	WysiwygEditor.prototype.scrollTop = function(value) {
 	    return this.getEditor().scrollTop(value);
 	};
 
 	/**
 	 * _correctRangeAfterMoveCursor
-	 * we need arrange range after moveCursorToEnd api invoke cuz squire has bug in firefox, IE
-	 * @param {string} direction direction of cursormove
+	 * For arrange Range after moveCursorToEnd api invocation. Squire has bug in Firefox, IE.
+	 * @memberOf WysiwygEditor
+	 * @param {string} direction Direction of cursor move
+	 * @private
 	 */
 	WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
 	    var range = this.getEditor().getSelection().cloneRange();
@@ -8719,10 +9264,23 @@
 	    this.getEditor().setSelection(range);
 	};
 
+	/**
+	 * Get current Range object
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @returns {Range}
+	 */
 	WysiwygEditor.prototype.getRange = function() {
 	    return this.getEditor().getSelection().cloneRange();
 	};
 
+	/**
+	 * Get text object of current range
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {Range} range Range object
+	 * @returns {WwTextObject}
+	 */
 	WysiwygEditor.prototype.getTextObject = function(range) {
 	    return new WwTextObject(this, range);
 	};
@@ -8742,8 +9300,10 @@
 	};
 
 	/**
-	 * WysiwygEditor factory
-	 * @param {jQuery} $el element to insert editor
+	 * WysiwygEditor factory method
+	 * @api
+	 * @memberOf WysiwygEditor
+	 * @param {jQuery} $el Container element for editor
 	 * @param {EventManager} eventManager EventManager instance
 	 * @returns {WysiwygEditor} wysiwygEditor
 	 */
@@ -8788,7 +9348,7 @@
 	 * WwClipboardManager
 	 * @exports WwClipboardManager
 	 * @constructor
-	 * @class
+	 * @class WwClipboardManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwClipboardManager(wwe) {
@@ -8800,6 +9360,8 @@
 	/**
 	 * init
 	 * initialize
+	 * @api
+	 * @memberOf WwClipboardManager
 	 */
 	WwClipboardManager.prototype.init = function() {
 	    this._initSquireEvent();
@@ -8808,6 +9370,8 @@
 	/**
 	 * _initSquireEvent
 	 * initialize squire events
+	 * @private
+	 * @memberOf WwClipboardManager
 	 */
 	WwClipboardManager.prototype._initSquireEvent = function() {
 	    var self = this;
@@ -8841,11 +9405,17 @@
 	        }
 
 	        self._pch.preparePaste(pasteData);
+	        self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
 	        self._refineCursorWithPasteContents(pasteData.fragment);
 	        self.wwe.postProcessForChange();
 	    });
 	};
-
+	/**
+	 * Refine cursor position with paste contents
+	 * @memberOf WwClipboardManager
+	 * @param {DocumentFragment} fragment Copied contents
+	 * @private
+	 */
 	WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
 	    var node = fragment;
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
@@ -8861,6 +9431,13 @@
 	    });
 	};
 
+	/**
+	 * Check whether copied content from editor or not
+	 * @memberOf WwClipboardManager
+	 * @param {DocumentFragment} pasteData Copied contents
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 	    var lastestClipboardContents;
 
@@ -8872,7 +9449,11 @@
 
 	    return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
 	};
-
+	/**
+	 * Save latest clipboard range information to _latestClipboardRangeInfo
+	 * @memberOf WwClipboardManager
+	 * @private
+	 */
 	WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
 	    var commonAncestorName;
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
@@ -8893,8 +9474,10 @@
 	/**
 	 * _extendRange
 	 * extend range if need
+	 * @memberOf WwClipboardManager
 	 * @param {Range} range to extend
 	 * @returns {Range} range
+	 * @private
 	 */
 	WwClipboardManager.prototype._extendRange = function(range) {
 	    //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
@@ -8920,6 +9503,13 @@
 	    return range;
 	};
 
+	/**
+	 * Extends current range's startContainer
+	 * @memberOf WwClipboardManager
+	 * @param {Range} range Range object
+	 * @returns {Range}
+	 * @private
+	 */
 	WwClipboardManager.prototype._extendStartRange = function(range) {
 	    var newBound = range.startContainer;
 
@@ -8937,6 +9527,13 @@
 	    return range;
 	};
 
+	/**
+	 * Extends current range's endContainer
+	 * @memberOf WwClipboardManager
+	 * @param {Range} range Range object
+	 * @returns {Range}
+	 * @private
+	 */
 	WwClipboardManager.prototype._extendEndRange = function(range) {
 	    var newBound = range.endContainer;
 	    var boundNext = newBound.nextSibling;
@@ -8958,10 +9555,12 @@
 
 	/**
 	 * _isWholeCommonAncestorContainerSelected
-	 * check if selection has whole commonAncestorContainter
+	 * Check whether whole commonAncestorContainter textContent selected or not
 	 * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
-	 * @param {Range} range range of selection
+	 * @memberOf WwClipboardManager
+	 * @param {Range} range Range object
 	 * @returns {boolean} result
+	 * @private
 	 */
 	WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(range) {
 	    return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE
@@ -8993,15 +9592,20 @@
 	/**
 	 * WwPasteContentHelper
 	 * @exports WwPasteContentHelper
-	 * @augments
+	 * @class WwPasteContentHelper
 	 * @constructor
-	 * @class
 	 * @param {WysiwygEditor} wwe wysiwygEditor instance
 	 */
 	function WwPasteContentHelper(wwe) {
 	    this.wwe = wwe;
 	}
 
+	/**
+	 * Process paste data before paste
+	 * @api
+	 * @memberOf WwPasteContentHelper
+	 * @param {object} pasteData Pasting data
+	 */
 	WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
 	    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
@@ -9040,6 +9644,8 @@
 	/**
 	 * Wrap textNodes with div element
 	 * @param {DocumentFragment} fragment - Fragment of paste data
+	 * @memberOf WwPasteContentHelper
+	 * @private
 	 */
 	WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
 	    var array = util.toArray(fragment.childNodes);
@@ -9058,6 +9664,12 @@
 	    });
 	};
 
+	/**
+	 * Processing paste data after paste
+	 * @param {DocumentFragment} fragment Pasting data
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 */
 	WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 	    var self = this;
 
@@ -9078,6 +9690,12 @@
 	    });
 	};
 
+	/**
+	 * PRE tag formatting
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 * @param {DocumentFragment} nodes Pasting DocumentFragment
+	 */
 	WwPasteContentHelper.prototype._preElementAid = function(nodes) {
 	    var textLines;
 
@@ -9106,21 +9724,36 @@
 	    });
 	};
 
+	/**
+	 * Remove unnecessary block element in pasting data
+	 * @param {DocumentFragment} nodes Pasting DocumentFragment
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 */
 	WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
-	    var blocks;
 	    var blockTags = 'div, section, article, aside, nav, menus';
+	    var blocks = $(nodes).find(blockTags);
 
-	    blocks = $(nodes).find(blockTags);
+	    blocks.each(function(index, blockElement) {
+	        var $blockElement = $(blockElement);
+	        var isDivInListItem = $blockElement.parent('li').length !== 0 && blockElement.tagName === 'DIV';
 
-	    while (blocks.length) {
-	        $(blocks).replaceWith(function() {
+	        if (isDivInListItem) {
+	            return;
+	        }
+
+	        $blockElement.replaceWith(function() {
 	            return $(this).html();
 	        });
-
-	        blocks = $(nodes).find(blockTags);
-	    }
+	    });
 	};
 
+	/**
+	 * Remove inline style
+	 * @param {Node} node Node for remove style attribute
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 */
 	WwPasteContentHelper.prototype._removeStyles = function(node) {
 	    var $node = $(node);
 	    var colorValue;
@@ -9139,6 +9772,15 @@
 	    }
 	};
 
+	/**
+	 * Processing before paste list
+	 * @param {Array.<HTMLElement>} nodes Pasting data
+	 * @param {object} rangeInfo Range information
+	 * @param {boolean} firstBlockIsTaken Whether first block element taken or not
+	 * @returns {DocumentFragment}
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 */
 	WwPasteContentHelper.prototype._prepareToPasteList = function(nodes, rangeInfo, firstBlockIsTaken) {
 	    var listGroup;
 	    var nodeName = domUtils.getNodeName(nodes[0]);
@@ -9192,12 +9834,25 @@
 	    return newFragment;
 	};
 
+	/**
+	 * Unwrap fragment first child for pasting node inline
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 * @param {Node} node Pasting DocumentFragment
+	 * @returns {NodeList}
+	 */
 	WwPasteContentHelper.prototype._unwrapFragmentFirstChildForPasteAsInline = function(node) {
 	    $(node).find('br').remove();
 
 	    return node.childNodes;
 	};
 
+	/**
+	 * Wrap nodes with current format
+	 * @param {DocumentFragment} nodes P
+	 * @returns {HTMLElement}
+	 * @private
+	 */
 	WwPasteContentHelper.prototype._wrapCurrentFormat = function(nodes) {
 	    var self = this;
 	    var currentTagName;
@@ -9230,11 +9885,13 @@
 	    }
 	};
 
-	/* _makeNodeAndAppend
-	 * make node and append childs
-	 * @param {string} pathInfo tagName to make
-	 * @param {Node} content nodes to append
-	 * @returns {Node} node
+	/** _makeNodeAndAppend
+	 * make node and append their own children
+	 * @param {HTMLElement} pathInfo HTMLElement to make
+	 * @param {HTMLElement} content Nodes to append
+	 * @returns {HTMLElement} node
+	 * @memberOf WwPasteContentHelper
+	 * @private
 	 */
 	WwPasteContentHelper.prototype._makeNodeAndAppend = function(pathInfo, content) {
 	    var node = $('<' + pathInfo.tagName + '/>');
@@ -9273,9 +9930,8 @@
 	/**
 	 * WwSelectionMarker
 	 * @exports WwSelectionMarker
-	 * @augments
+	 * @class WwSelectionMarker
 	 * @constructor
-	 * @class
 	 */
 	function WwSelectionMarker() {
 	    this._markerNode = null;
@@ -9286,6 +9942,8 @@
 	 * @param {Range} range range
 	 * @param {SquireExt} sq SquireExt instance
 	 * @returns {Range} range range
+	 * @memberOf WwSelectionMarker
+	 * @api
 	 */
 	WwSelectionMarker.prototype.insertMarker = function(range, sq) {
 	    this._markerNode = this._makeMarker(sq);
@@ -9301,6 +9959,8 @@
 	 * Make marker element
 	 * @param {SquireExt} sq SquireExt instance
 	 * @returns {Node} marker
+	 * @memberOf WwSelectionMarker
+	 * @private
 	 */
 	WwSelectionMarker.prototype._makeMarker = function(sq) {
 	    return sq.createElement('INPUT', {type: 'hidden', class: MARKER_CSS_CLASS});
@@ -9311,6 +9971,8 @@
 	 * Restore marker to selection
 	 * @param {SquireExt} sq SquireExt instance
 	 * @returns {Range} range
+	 * @memberOf WwSelectionMarker
+	 * @api
 	 */
 	WwSelectionMarker.prototype.restore = function(sq) {
 	    var newRange = sq.getSelection().cloneRange();
@@ -9355,7 +10017,7 @@
 	 * WwListManager
 	 * @exports WwListManager
 	 * @constructor
-	 * @class
+	 * @class WwListManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwListManager(wwe) {
@@ -9365,11 +10027,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwListManager
+	 * @type {string}
+	 */
 	WwListManager.prototype.name = 'list';
 
 	/**
 	 * _init
-	 * Init
+	 * Initialize
+	 * @memberOf WwListManager
+	 * @private
 	 */
 	WwListManager.prototype._init = function() {
 	    this._initEvent();
@@ -9377,7 +10047,9 @@
 
 	/**
 	 * _initEvent
-	 * Initialize eventmanager event
+	 * Initialize event
+	 * @memberOf WwListManager
+	 * @private
 	 */
 	WwListManager.prototype._initEvent = function() {
 	    var self = this;
@@ -9388,6 +10060,7 @@
 	};
 	/**
 	 * Find empty list for whole container and remove it.
+	 * @memberOf WwListManager
 	 * @private
 	 */
 	WwListManager.prototype._findAndRemoveEmptyList = function() {
@@ -9402,6 +10075,8 @@
 
 	/**
 	 * Return boolean value that current range is in the List or not
+	 * @api
+	 * @memberOf WwListManager
 	 * @returns {boolean}
 	 */
 	WwListManager.prototype.isInList = function() {
@@ -9431,8 +10106,8 @@
 	/**
 	 * WwTaskManager
 	 * @exports WwTaskManager
+	 * @class WwTaskManager
 	 * @constructor
-	 * @class
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwTaskManager(wwe) {
@@ -9442,11 +10117,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwTaskManager
+	 * @type {string}
+	 */
 	WwTaskManager.prototype.name = 'task';
 
 	/**
 	 * _init
 	 * Init
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._init = function() {
 	    this._initKeyHandler();
@@ -9455,7 +10138,9 @@
 
 	/**
 	 * _initEvent
-	 * Initialize eventmanager event
+	 * Initialize event
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._initEvent = function() {
 	    var self = this;
@@ -9484,6 +10169,8 @@
 	/**
 	 * _initKeyHandler
 	 * Initialize key event handler
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._initKeyHandler = function() {
 	    var self = this;
@@ -9552,6 +10239,8 @@
 	 * Check whether passed range is in task list or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwTaskManager
+	 * @api
 	 */
 	WwTaskManager.prototype.isInTaskList = function(range) {
 	    var li;
@@ -9574,6 +10263,8 @@
 	/**
 	 * _unformatIncompleteTask
 	 * Unformat incomplete task
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._unformatIncompleteTask = function() {
 	    this.wwe.get$Body().find('.task-list-item').each(function(index, task) {
@@ -9588,6 +10279,8 @@
 	/**
 	 * _removeTaskInputInWrongPlace
 	 * Remove task input in wrong place while user editing
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
 	    var self = this;
@@ -9614,6 +10307,8 @@
 	 * _unformatTaskIfNeedOnEnter
 	 * Unformat task if need on enter
 	 * @param {Range} range range
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
 	    var $li;
@@ -9631,10 +10326,24 @@
 	    }
 	};
 
+	/**
+	 * Return whether task is empty or not
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @memberOf WwTaskManager
+	 * @private
+	 */
 	WwTaskManager.prototype._isEmptyTask = function(range) {
 	    return this.isInTaskList(range) && this._isEmptyContainer(range.startContainer);
 	};
 
+	/**
+	 * Return whether textContent is empty or not
+	 * @param {Node} node Node
+	 * @returns {boolean}
+	 * @memberOf WwTaskManager
+	 * @private
+	 */
 	WwTaskManager.prototype._isEmptyContainer = function(node) {
 	    return node.textContent.replace(FIND_TASK_SPACES_RX, '') === '';
 	};
@@ -9643,6 +10352,8 @@
 	 * _unformatTaskIfNeedOnBackspace
 	 * Unformat task if need on backspace
 	 * @param {Range} range range
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
 	    var startContainer, startOffset,
@@ -9701,6 +10412,8 @@
 	/**
 	 * _addCheckedAttrToCheckedInput
 	 * Add checked attr to checked input
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
 	    var doc = this.wwe.getEditor().getDocument();
@@ -9718,6 +10431,8 @@
 	/**
 	 * _removeTaskListClass
 	 * Remove tasklist class
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._removeTaskListClass = function() {
 	    //because task-list class is block merge normal list and task list
@@ -9740,6 +10455,8 @@
 	 * _ensureSpaceNextToTaskInput
 	 * Ensure space next to task input
 	 * this because we need some space after input for safari cursor issue
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
 	    var firstTextNode, $wrapper,
@@ -9764,6 +10481,8 @@
 	 * unformatTask
 	 * Unforamt task
 	 * @param {Node} node target
+	 * @memberOf WwTaskManager
+	 * @api
 	 */
 	WwTaskManager.prototype.unformatTask = function unformatTask(node) {
 	    var $li, firstTextNode, $wrapper;
@@ -9795,6 +10514,8 @@
 	 * formatTask
 	 * Format task
 	 * @param {Node} node target
+	 * @memberOf WwTaskManager
+	 * @api
 	 */
 	WwTaskManager.prototype.formatTask = function(node) {
 	    var range, $selected, $li, hasInput, $block, sq;
@@ -9833,6 +10554,8 @@
 	/**
 	 * _formatTaskIfNeed
 	 * Format task if current range has task class name
+	 * @memberOf WwTaskManager
+	 * @private
 	 */
 	WwTaskManager.prototype._formatTaskIfNeed = function() {
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
@@ -9864,7 +10587,7 @@
 	 * WwTableManager
 	 * @exports WwTableManager
 	 * @constructor
-	 * @class
+	 * @class WwTableManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwTableManager(wwe) {
@@ -9875,11 +10598,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwTableManager
+	 * @type {string}
+	 */
 	WwTableManager.prototype.name = 'table';
 
 	/**
 	 * _init
-	 * Init
+	 * Initialize
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._init = function() {
 	    this._initKeyHandler();
@@ -9888,7 +10619,9 @@
 
 	/**
 	 * _initEvent
-	 * Initialize eventmanager event
+	 * Initialize event
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._initEvent = function() {
 	    var self = this;
@@ -9910,6 +10643,8 @@
 	/**
 	 * _initKeyHandler
 	 * Initialize key event handler
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._initKeyHandler = function() {
 	    var self = this;
@@ -9965,6 +10700,8 @@
 	 * Check whether passed range is in table or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._isInTable = function(range) {
 	    var target;
@@ -9983,6 +10720,8 @@
 	 * Check whether passed range is right before table or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._isBeforeTable = function(range) {
 	    return domUtils.getNodeName(domUtils.getChildNodeByOffset(range.startContainer, range.startOffset)) === 'TABLE';
@@ -9993,6 +10732,8 @@
 	 * Check whether passed range is right after table or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._isAfterTable = function(range) {
 	    var prevElem = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
@@ -10006,6 +10747,8 @@
 	 * Backspace handler in table
 	 * @param {Range} range range
 	 * @param {Event} event event
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._tableHandlerOnBackspace = function(range, event) {
 	    var prevNode = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset, 'TR'),
@@ -10023,6 +10766,8 @@
 	 * _appendBrIfTdOrThNotHaveAsLastChild
 	 * Append br if td or th doesn't have br as last child
 	 * @param {Range} range range
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
 	    var paths, tdOrTh, startContainerNodeName;
@@ -10044,7 +10789,9 @@
 	/**
 	 * _unwrapBlockInTable
 	 * Unwrap default block tag in table
-	 * 스콰이어의 기본 액션으로 인해 비정상적인 동작을 하게되어 setValue이후 테이블 안에 디폴트 블럭은 제거한다.
+	 * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._unwrapBlockInTable = function() {
 	    this.wwe.get$Body().find('td div, th div').each(function(index, node) {
@@ -10056,6 +10803,8 @@
 	 * _removeTableOnBackspace
 	 * Remove table on backspace
 	 * @param {Range} range range
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._removeTableOnBackspace = function(range) {
 	    var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
@@ -10071,6 +10820,8 @@
 	 * _recordUndoStateIfNeed
 	 * record undo state if need
 	 * @param {Range} range range
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
 	    var currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
@@ -10085,6 +10836,8 @@
 	 * _recordUndoStateAndResetCellNode
 	 * record undo state and reset last cell node
 	 * @param {Range} range range
+	 * @memberOf WwTableManager
+	 * @private
 	 */
 	WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
 	    this.wwe.getEditor().saveUndoState(range);
@@ -10111,7 +10864,7 @@
 	 * WwHrManager
 	 * @exports WwHrManager
 	 * @constructor
-	 * @class
+	 * @class WwHrManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwHrManager(wwe) {
@@ -10120,12 +10873,19 @@
 
 	    this._init();
 	}
-
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwHrManager
+	 * @type {string}
+	 */
 	WwHrManager.prototype.name = 'hr';
 
 	/**
 	 * _init
-	 * Init
+	 * Initialize
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._init = function() {
 	    this._initKeyHandler();
@@ -10135,6 +10895,8 @@
 	/**
 	 * _initEvent
 	 * Initialize eventmanager event
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._initEvent = function() {
 	    var self = this;
@@ -10151,6 +10913,8 @@
 	/**
 	 * _initKeyHandler
 	 * Initialize key event handler
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._initKeyHandler = function() {
 	    var self = this;
@@ -10181,6 +10945,8 @@
 	 * Check whether passed range is in hr or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._isInHr = function(range) {
 	    return domUtils.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
@@ -10191,6 +10957,8 @@
 	 * Check whether passed range is near hr or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._isNearHr = function(range) {
 	    var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
@@ -10198,6 +10966,12 @@
 	    return domUtils.getNodeName(prevNode) === 'HR';
 	};
 
+	/**
+	 * Handler for delete HR when user typing within
+	 * @param {Range} range Range object
+	 * @memberOf WwHrManager
+	 * @private
+	 */
 	WwHrManager.prototype._onTypedInHr = function(range) {
 	    var self = this;
 
@@ -10217,6 +10991,8 @@
 	 * @param {Range} range range
 	 * @param {Event} ev event
 	 * @returns {boolean} return true if hr was removed
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
 	    var hrSuspect, blockPosition;
@@ -10237,6 +11013,8 @@
 	 * @param {Range} range range
 	 * @param {Event} ev event
 	 * @returns {boolean} return true if hr was removed
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
 	    var hrSuspect, blockPosition;
@@ -10262,6 +11040,8 @@
 	 * @param {Event} ev event
 	 * @param {strong} newBlockPosition new default block add position
 	 * @returns {boolean} return true if hr was removed
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev, newBlockPosition) {
 	    if (hrSuspect && domUtils.getNodeName(hrSuspect) === 'HR') {
@@ -10282,6 +11062,8 @@
 	/**
 	 * _unwrapDivOnHr
 	 * Unwrap default block on hr
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._unwrapDivOnHr = function() {
 	    this.wwe.get$Body().find('hr').each(function(index, node) {
@@ -10295,8 +11077,9 @@
 
 	/**
 	 * findTextNodeFilter
+	 * @function
 	 * @this Node
-	 * @returns {boolean} true or not
+	 * @returns {boolean}
 	 */
 	function findTextNodeFilter() {
 	    return this.nodeType === Node.TEXT_NODE;
@@ -10305,7 +11088,9 @@
 	/**
 	 * _wrapDefaultBlockToOrphanTexts
 	 * Wrap default block to orphan texts
-	 * mainly, this is used for orhan text that made by controlling hr
+	 * mainly, this is used for orphan text that made by controlling hr
+	 * @memberOf WwHrManager
+	 * @private
 	 */
 	WwHrManager.prototype._wrapDefaultBlockToOrphanTexts = function() {
 	    var textNodes;
@@ -10334,9 +11119,8 @@
 	/**
 	 * WwPManager
 	 * @exports WwPManager
-	 * @augments
+	 * @class WwPManager
 	 * @constructor
-	 * @class
 	 * @param {WysiwygEditor} wwe wysiwygEditor instance
 	 */
 	function WwPManager(wwe) {
@@ -10346,11 +11130,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwPManager
+	 * @type {string}
+	 */
 	WwPManager.prototype.name = 'p';
 
 	/**
 	 * _init
 	 * Init
+	 * @memberOf WwPManager
+	 * @private
 	 */
 	WwPManager.prototype._init = function() {
 	    this._initEvent();
@@ -10358,7 +11150,9 @@
 
 	/**
 	 * _initEvent
-	 * Initialize eventmanager event
+	 * Initialize event
+	 * @memberOf WwPManager
+	 * @private
 	 */
 	WwPManager.prototype._initEvent = function() {
 	    var self = this;
@@ -10371,9 +11165,9 @@
 
 	/**
 	 * _ensurePtagContentWrappedWithDiv
-	 * this because we need new line inside ptag, and additional empty line added
-	 * p태그 안에서의 개행을 위해서는 내부에 div로 감쌀필요가 있다.
-	 * p태그를 없애기위한 사전작업
+	 * Wrap new line inside P tag to DIV, and additional empty line added within too
+	 * @memberOf WwPManager
+	 * @private
 	 */
 	WwPManager.prototype._ensurePtagContentWrappedWithDiv = function() {
 	    this.wwe.get$Body().find('p').each(function(index, node) {
@@ -10389,8 +11183,9 @@
 
 	/**
 	 * _unwrapPtags
-	 * Unwrap ptag
-	 * we use divs for paragraph so we dont need any p tags
+	 * Unwrap P tag
+	 * @memberOf WwPManager
+	 * @private
 	 */
 	WwPManager.prototype._unwrapPtags = function() {
 	    this.wwe.get$Body().find('div').each(function(index, node) {
@@ -10422,7 +11217,7 @@
 	 * WwHeadingManager
 	 * @exports WwHeadingManager
 	 * @constructor
-	 * @class
+	 * @class WwHeadingManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
 	 */
 	function WwHeadingManager(wwe) {
@@ -10432,10 +11227,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwHeadingManager
+	 * @type {string}
+	 */
 	WwHeadingManager.prototype.name = 'heading';
 
 	/**
 	 * _init
+	 * Initialize
+	 * @memberOf WwHeadingManager
+	 * @private
 	 */
 	WwHeadingManager.prototype._init = function() {
 	    this._initKeyHandler();
@@ -10444,6 +11248,8 @@
 	/**
 	 * _initKeyHandler
 	 * Initialize key event handler
+	 * @memberOf WwHeadingManager
+	 * @private
 	 */
 	WwHeadingManager.prototype._initKeyHandler = function() {
 	    var self = this;
@@ -10472,6 +11278,8 @@
 	/**
 	 * _unwrapHeading
 	 * Unwrap heading
+	 * @memberOf WwHeadingManager
+	 * @private
 	 */
 	WwHeadingManager.prototype._unwrapHeading = function() {
 	    this.wwe.unwrapBlockTag(function(node) {
@@ -10482,8 +11290,10 @@
 	/**
 	 * _onEnter
 	 * Enter key handler
+	 * @memberOf WwHeadingManager
 	 * @param {Event} event event object
 	 * @param {Range} range range
+	 * @private
 	 */
 	WwHeadingManager.prototype._onEnter = function(event, range) {
 	    var self = this;
@@ -10503,7 +11313,10 @@
 	/**
 	 * _insertEmptyBlockToPrevious
 	 * Insert empty block to previous of passed range
+	 * @api
+	 * @memberOf WwHeadingManager
 	 * @param {Range} range range
+	 * @private
 	 */
 	WwHeadingManager.prototype._insertEmptyBlockToPrevious = function(range) {
 	    this.wwe.getEditor().saveUndoState(range);
@@ -10513,9 +11326,11 @@
 	/**
 	 * _removePrevTopNodeIfNeed
 	 * Remove previous top node if need
+	 * @memberOf WwHeadingManager
 	 * @param {Event} event event object
 	 * @param {Range} range range
-	 * @returns {Boolean}  wether needed or not
+	 * @returns {Boolean} whether needed or not
+	 * @private
 	 */
 	WwHeadingManager.prototype._removePrevTopNodeIfNeed = function(event, range) {
 	    var isHandled, prevTopNode;
@@ -10564,9 +11379,8 @@
 	/**
 	 * WwCodeBlockManager
 	 * @exports WwCodeBlockManager
-	 * @augments
+	 * @class WwCodeBlockManager
 	 * @constructor
-	 * @class
 	 * @param {WysiwygEditor} wwe wysiwygEditor instance
 	 */
 	function WwCodeBlockManager(wwe) {
@@ -10576,11 +11390,19 @@
 	    this._init();
 	}
 
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwCodeBlockManager
+	 * @type {string}
+	 */
 	WwCodeBlockManager.prototype.name = 'codeblock';
 
 	/**
 	 * _init
-	 * Init
+	 * Initialize
+	 * @memberOf WwCodeBlockManager
+	 * @private
 	 */
 	WwCodeBlockManager.prototype._init = function() {
 	    this._initKeyHandler();
@@ -10590,6 +11412,8 @@
 	/**
 	 * _initKeyHandler
 	 * Initialize key event handler
+	 * @memberOf WwCodeBlockManager
+	 * @private
 	 */
 	WwCodeBlockManager.prototype._initKeyHandler = function() {
 	    this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
@@ -10603,6 +11427,8 @@
 	/**
 	 * _initEvent
 	 * Initialize eventmanager event
+	 * @memberOf WwCodeBlockManager
+	 * @private
 	 */
 	WwCodeBlockManager.prototype._initEvent = function() {
 	    var self = this;
@@ -10616,6 +11442,13 @@
 	    });
 	};
 
+	/**
+	 * Convert copied nodes to code block if need
+	 * @api
+	 * @memberOf WwCodeBlockManager
+	 * @param {Array.<Node>} nodes Node array
+	 * @returns {DocumentFragment}
+	 */
 	WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
 	    var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
@@ -10629,6 +11462,13 @@
 	    return frag;
 	};
 
+	/**
+	 * Wrap nodes into code block
+	 * @api
+	 * @memberOf WwCodeBlockManager
+	 * @param {Array.<Node>} nodes Node array
+	 * @returns {HTMLElement} Code block element
+	 */
 	WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
 	    var $codeblock = $('<pre />');
 	    var self = this;
@@ -10642,6 +11482,14 @@
 	    return $codeblock[0];
 	};
 
+	/**
+	 * Copy content with code block style from code block selection
+	 * @memberOf WwCodeBlockManager
+	 * @param {HTMLElement} element Copied element
+	 * @param {Range} range Range object
+	 * @returns {HTMLElement}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
 	    var blockNode, attrs;
 
@@ -10658,6 +11506,13 @@
 	    return element;
 	};
 
+	/**
+	 * Merge code block lines
+	 * @memberOf WwCodeBlockManager
+	 * @param {string} html HTML string
+	 * @returns {string}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
 	    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
 	        code = code.replace(/<\/code><br \/>/g, '\n');
@@ -10670,6 +11525,11 @@
 	    return html;
 	};
 
+	/**
+	 * Split code block to lines
+	 * @memberOf WwCodeBlockManager
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
 	    var self = this;
 
@@ -10690,6 +11550,13 @@
 	    });
 	};
 
+	/**
+	 * Make code HTML text
+	 * @memberOf WwCodeBlockManager
+	 * @param {string} lineContent Content text
+	 * @returns {string}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
 	    if (!lineContent) {
 	        lineContent = '\u200B';
@@ -10698,6 +11565,14 @@
 	    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
 	};
 
+	/**
+	 * Insert ZWB code block if in empty code
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
 	    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
 	        ev.preventDefault();
@@ -10710,6 +11585,14 @@
 	    return true;
 	};
 
+	/**
+	 * Unformat code at top line and offset equals 0
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
 	    var currentNodeName, code;
 
@@ -10736,6 +11619,14 @@
 	    return true;
 	};
 
+	/**
+	 * Unformat code when one CODE tag in PRE tag
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
 	    var pre, div;
 
@@ -10756,6 +11647,14 @@
 	    return true;
 	};
 
+	/**
+	 * Remove last character in CODE tag when CODE has one character
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
 	    var currentNodeName;
 
@@ -10779,6 +11678,14 @@
 	    return true;
 	};
 
+	/**
+	 * Recover incomplete line in PRE tag
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
 	    var pre;
 
@@ -10804,6 +11711,14 @@
 	    return true;
 	};
 
+	/**
+	 * Remove blank CODE tag
+	 * @memberOf WwCodeBlockManager
+	 * @param {Event} ev Event object
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
 	    var currentNodeName, div;
 
@@ -10829,6 +11744,12 @@
 	    return true;
 	};
 
+	/**
+	 * Return boolean value of whether current range is in the code block
+	 * @memberOf WwCodeBlockManager
+	 * @param {Range} range Range object
+	 * @returns {boolean}
+	 */
 	WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
 	    var target;
 
@@ -10841,6 +11762,13 @@
 	    return this._isCodeBlock(target);
 	};
 
+	/**
+	 * Verify given element is code block
+	 * @memberOf WwCodeBlockManager
+	 * @param {HTMLElement} element Element
+	 * @returns {boolean}
+	 * @private
+	 */
 	WwCodeBlockManager.prototype._isCodeBlock = function(element) {
 	    return !!$(element).closest('pre').length
 	        && (!!$(element).closest('code').length || !!$(element).find('code').length);
@@ -10860,8 +11788,8 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * @fileoverview Implements %filltext:name=Name%
-	 * @author
+	 * @fileoverview Implements
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
 	'use strict';
@@ -11214,10 +12142,10 @@
 	/**
 	 * WwTextObject
 	 * @exports WwTextObject
+	 * @class WwTextObject
 	 * @constructor
-	 * @class
 	 * @param {WysiwygEditor} wwe wysiwygEditor
-	 * @param {Range} range range object
+	 * @param {Range} range Range object
 	 */
 	function WwTextObject(wwe, range) {
 	    this._wwe = wwe;
@@ -11232,6 +12160,11 @@
 	    this.setRange(range || this._wwe.getRange());
 	}
 
+	/**
+	 * Initialize composition event
+	 * @memberOf WwTextObject
+	 * @private
+	 */
 	WwTextObject.prototype._initCompositionEvent = function() {
 	    var self = this;
 
@@ -11244,6 +12177,12 @@
 	    });
 	};
 
+	/**
+	 * Set _range object to given range object
+	 * @param {Range} range Range object
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.setRange = function(range) {
 	    if (this._range) {
 	        this._range.detach();
@@ -11252,6 +12191,11 @@
 	    this._range = range;
 	};
 
+	/**
+	 * Expand start offset by one
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.expandStartOffset = function() {
 	    var range = this._range;
 
@@ -11260,6 +12204,11 @@
 	    }
 	};
 
+	/**
+	 * Expand end offset by one
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.expandEndOffset = function() {
 	    var range = this._range;
 
@@ -11268,6 +12217,12 @@
 	    }
 	};
 
+	/**
+	 * setEnd range on start
+	 * @param {Range} range Range object
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.setEndBeforeRange = function(range) {
 	    var offset = range.startOffset;
 
@@ -11278,22 +12233,46 @@
 	    this._range.setEnd(range.startContainer, offset);
 	};
 
+	/**
+	 * Get text content
+	 * @returns {string}
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.getTextContent = function() {
 	    return this._range.cloneContents().textContent;
 	};
 
+	/**
+	 * Replace current selection content to given text
+	 * @param {string} content Text content
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.replaceContent = function(content) {
 	    this._wwe.getEditor().setSelection(this._range);
 	    this._wwe.getEditor().insertHTML(content);
 	    this._range = this._wwe.getRange();
 	};
 
+	/**
+	 * Delete current selection content
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.deleteContent = function() {
 	    this._wwe.getEditor().setSelection(this._range);
 	    this._wwe.getEditor().insertHTML('');
 	    this._range = this._wwe.getRange();
 	};
 
+	/**
+	 * Peek previous element's content
+	 * @param {number} offset Offset to peek
+	 * @returns {string}
+	 * @memberOf WwTextObject
+	 * @api
+	 */
 	WwTextObject.prototype.peekStartBeforeOffset = function(offset) {
 	    var range = this._range.cloneRange();
 
@@ -11316,7 +12295,10 @@
 	 */
 
 	'use strict';
-
+	/**
+	 * Editor container template
+	 * @type {string}
+	 */
 	var containerTmpl = [
 	    '<div class="tui-editor">',
 	    '<div class="te-md-container">',
@@ -11333,11 +12315,10 @@
 	/**
 	 * Layout
 	 * @exports Layout
-	 * @extends {}
 	 * @constructor
-	 * @class
-	 * @param {object} options 옵션
-	 * @param {EventManager} eventManager 이벤트 매니저
+	 * @class Layout
+	 * @param {object} options Option object
+	 * @param {EventManager} eventManager Event manager instance
 	 */
 	function Layout(options, eventManager) {
 	    this.$el = $(options.el);
@@ -11349,6 +12330,11 @@
 	    this._initEvent();
 	}
 
+	/**
+	 * Initializer
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.init = function() {
 	    this._renderLayout();
 
@@ -11356,44 +12342,90 @@
 	    this._initWysiwygSection();
 	};
 
+	/**
+	 * Initialize show and hide event
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._initEvent = function() {
 	    this.eventManager.listen('hide', this.hide.bind(this));
 	    this.eventManager.listen('show', this.show.bind(this));
 	};
 
+	/**
+	 * Create editor container with template
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._renderLayout = function() {
 	    this.$containerEl = $(containerTmpl).appendTo(this.$el);
 	};
 
+	/**
+	 * Switch editor mode to WYSIWYG
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.switchToWYSIWYG = function() {
 	    this.$containerEl.removeClass('te-md-mode');
 	    this.$containerEl.addClass('te-ww-mode');
 	};
 
+	/**
+	 * Switch editor mode to Markdown
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.switchToMarkdown = function() {
 	    this.$containerEl.removeClass('te-ww-mode');
 	    this.$containerEl.addClass('te-md-mode');
 	};
 
+	/**
+	 * Initialize editor to Markdown and set preview section
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._initMarkdownAndPreviewSection = function() {
 	    this.$mdEditorContainerEl = this.$containerEl.find('.te-md-container .te-editor');
 	    this.$previewEl = this.$containerEl.find('.te-md-container .te-preview');
 	};
 
+	/**
+	 * Initialize editor to WYSIWYG
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._initWysiwygSection = function() {
 	    this.$wwEditorContainerEl = this.$containerEl.find('.te-ww-container .te-editor');
 	};
 
+	/**
+	 * Set preview to vertical split style
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._verticalSplitStyle = function() {
 	    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-tab');
 	    this.$containerEl.find('.te-md-container').addClass('te-preview-style-vertical');
 	};
 
+	/**
+	 * Set tab style preview mode
+	 * @memberOf Layout
+	 * @private
+	 */
 	Layout.prototype._tabStyle = function() {
 	    this.$containerEl.find('.te-md-container').removeClass('te-preview-style-vertical');
 	    this.$containerEl.find('.te-md-container').addClass('te-preview-style-tab');
 	};
 
+	/**
+	 * Toggle preview style between tab and vertical split
+	 * @api
+	 * @memberOf Layout
+	 * @param {string} style Preview style ('tab' or 'vertical')
+	 */
 	Layout.prototype.changePreviewStyle = function(style) {
 	    if (style === 'tab') {
 	        this._tabStyle();
@@ -11402,30 +12434,69 @@
 	    }
 	};
 
+	/**
+	 * Hide Editor
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.hide = function() {
 	    this.$el.find('.tui-editor').addClass('te-hide');
 	};
 
+	/**
+	 * Show Editor
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.show = function() {
 	    this.$el.find('.tui-editor').removeClass('te-hide');
 	};
 
+	/**
+	 * Remove Editor
+	 * @api
+	 * @memberOf Layout
+	 */
 	Layout.prototype.remove = function() {
 	    this.$el.find('.tui-editor').remove();
 	};
 
+	/**
+	 * Get jQuery wrapped editor container element
+	 * @api
+	 * @memberOf Layout
+	 * @returns {jQuery}
+	 */
 	Layout.prototype.getEditorEl = function() {
 	    return this.$containerEl;
 	};
 
+	/**
+	 * Get jQuery wrapped preview element
+	 * @api
+	 * @memberOf Layout
+	 * @returns {jQuery}
+	 */
 	Layout.prototype.getPreviewEl = function() {
 	    return this.$previewEl;
 	};
 
+	/**
+	 * Get jQuery wrapped Markdown editor element
+	 * @api
+	 * @memberOf Layout
+	 * @returns {jQuery}
+	 */
 	Layout.prototype.getMdEditorContainerEl = function() {
 	    return this.$mdEditorContainerEl;
 	};
 
+	/**
+	 * Get jQuery wrapped WYSIWYG editor element
+	 * @api
+	 * @memberOf Layout
+	 * @returns {jQuery}
+	 */
 	Layout.prototype.getWwEditorContainerEl = function() {
 	    return this.$wwEditorContainerEl;
 	};
@@ -11480,6 +12551,7 @@
 	    'wysiwygProcessHTMLText',
 	    'wysiwygRangeChangeAfter',
 	    'wysiwygKeyEvent',
+	    'pasteBefore',
 	    'scroll',
 	    'click',
 	    'mousedown',
@@ -11501,15 +12573,21 @@
 	/**
 	 * EventManager
 	 * @exports EventManager
-	 * @extends {}
 	 * @constructor
-	 * @class
+	 * @class EventManager
 	 */
 	function EventManager() {
 	    this.events = new util.Map();
 	    this.TYPE = new util.Enum(eventList);
 	}
 
+	/**
+	 * Listen event and bind event handler
+	 * @api
+	 * @memberOf EventManager
+	 * @param {string} typeStr Event type string
+	 * @param {function} handler Event handler
+	 */
 	EventManager.prototype.listen = function(typeStr, handler) {
 	    var eventHandlers,
 	        typeInfo = this._getTypeInfo(typeStr);
@@ -11529,6 +12607,13 @@
 	    this.events.set(typeInfo.type, eventHandlers);
 	};
 
+	/**
+	 * Emit event
+	 * @api
+	 * @memberOf EventManager
+	 * @param {string} eventName Event name to emit
+	 * @returns {Array}
+	 */
 	EventManager.prototype.emit = function() {
 	    var args = util.toArray(arguments),
 	        typeStr = args.shift(),
@@ -11551,6 +12636,14 @@
 	    return results;
 	};
 
+	/**
+	 * Emit given event and return result
+	 * @api
+	 * @memberOf EventManager
+	 * @param {string} eventName Event name to emit
+	 * @param {string} sourceText Source text to change
+	 * @returns {string}
+	 */
 	EventManager.prototype.emitReduce = function() {
 	    var args = util.toArray(arguments),
 	        type = args.shift(),
@@ -11569,6 +12662,13 @@
 	    return args[0];
 	};
 
+	/**
+	 * Get event type and namespace
+	 * @memberOf EventManager
+	 * @param {string} typeStr Event type name
+	 * @returns {{type: string, namespace: string}}
+	 * @private
+	 */
 	EventManager.prototype._getTypeInfo = function(typeStr) {
 	    var splited = typeStr.split('.');
 
@@ -11578,10 +12678,22 @@
 	    };
 	};
 
+	/**
+	 * Check whether event type exists or not
+	 * @param {string} type Event type name
+	 * @returns {boolean}
+	 * @private
+	 */
 	EventManager.prototype._hasEventType = function(type) {
 	    return !util.isUndefined(this.TYPE[type.split('.')[0]]);
 	};
 
+	/**
+	 * Add event type when given event not exists
+	 * @api
+	 * @memberOf EventManager
+	 * @param {string} type Event type name
+	 */
 	EventManager.prototype.addEventType = function(type) {
 	    if (this._hasEventType(type)) {
 	        throw new Error('There is already have event type ' + type);
@@ -11590,6 +12702,12 @@
 	    this.TYPE.set(type);
 	};
 
+	/**
+	 * Remove event handler from given event type
+	 * @api
+	 * @memberOf EventManager
+	 * @param {string} type Event type name
+	 */
 	EventManager.prototype.removeEventHandler = function(type) {
 	    var self = this,
 	        typeInfo = this._getTypeInfo(type),
@@ -11609,6 +12727,13 @@
 	    }
 	};
 
+	/**
+	 * Remove event handler with event type information
+	 * @memberOf EventManager
+	 * @param {string} type Event type name
+	 * @param {string} namespace Event namespace
+	 * @private
+	 */
 	EventManager.prototype._removeEventHandlerWithTypeInfo = function(type, namespace) {
 	    var handlersToSurvive = [],
 	        eventHandlers;
@@ -11650,8 +12775,8 @@
 	 * CommandManager
 	 * @exports CommandManager
 	 * @constructor
-	 * @class
-	 * @param {NEditor} base ned인스턴스
+	 * @class CommandManager
+	 * @param {ToastUIEditor} base nedInstance
 	 */
 	function CommandManager(base) {
 	    this._command = new util.Map();
@@ -11665,10 +12790,11 @@
 	}
 
 	/**
-	 * addCommand
-	 * 커맨드를 추가한다.
-	 * @param {Command} command 커맨드객체
-	 * @returns {Command} 커맨드
+	 * Add command
+	 * @api
+	 * @memberOf CommandManager
+	 * @param {Command} command Command instance
+	 * @returns {Command} Command
 	 */
 	CommandManager.prototype.addCommand = function(command) {
 	    var name,
@@ -11701,6 +12827,8 @@
 	/**
 	 * _initEvent
 	 * Bind event handler to eventManager
+	 * @private
+	 * @memberOf CommandManager
 	 */
 	CommandManager.prototype._initEvent = function() {
 	    var self = this;
@@ -11720,9 +12848,11 @@
 	};
 
 	/**
-	 * 커맨드를 실행한다
-	 * @param {String} name 커맨드명
-	 * @returns {*} 커맨드를 수행한후 리턴값
+	 * Execute command
+	 * @api
+	 * @memberOf CommandManager
+	 * @param {String} name Command name
+	 * @returns {*}
 	 */
 	CommandManager.prototype.exec = function(name) {
 	    var commandToRun, result,
@@ -11750,7 +12880,14 @@
 
 	    return result;
 	};
-
+	/**
+	 * Create command by given editor type and property object
+	 * @api
+	 * @memberOf CommandManager
+	 * @param {string} type Command type
+	 * @param {{name: string, keyMap: object}} props Property
+	 * @returns {*}
+	 */
 	CommandManager.command = function(type, props) {
 	    var command;
 
@@ -11782,11 +12919,10 @@
 	 * Command
 	 * It implements command to editors
 	 * @exports Command
-	 * @constructor
-	 * @class
+	 * @class Command
 	 * @param {string} name Command name
 	 * @param {number} type Command type (Command.TYPE)
-	 * @param {Array<string>} keyMap keyMap
+	 * @param {Array.<string>} [keyMap] keyMap
 	 */
 	function Command(name, type, keyMap) {
 	    this.name = name;
@@ -11800,6 +12936,8 @@
 	/**
 	 * getName
 	 * returns Name of command
+	 * @api
+	 * @memberOf Command
 	 * @returns {string} Command Name
 	 */
 	Command.prototype.getName = function() {
@@ -11809,7 +12947,9 @@
 	/**
 	 * getType
 	 * returns Type of command
-	 * @returns {number} Command Type
+	 * @api
+	 * @memberOf Command
+	 * @returns {number} Command Command type number
 	 */
 	Command.prototype.getType = function() {
 	    return this.type;
@@ -11818,6 +12958,8 @@
 	/**
 	 * isMDType
 	 * returns whether Command Type is Markdown or not
+	 * @api
+	 * @memberOf Command
 	 * @returns {boolean} result
 	 */
 	Command.prototype.isMDType = function() {
@@ -11827,6 +12969,8 @@
 	/**
 	 * isWWType
 	 * returns whether Command Type is Wysiwyg or not
+	 * @api
+	 * @memberOf Command
 	 * @returns {boolean} result
 	 */
 	Command.prototype.isWWType = function() {
@@ -11836,6 +12980,8 @@
 	/**
 	 * isGlobalType
 	 * returns whether Command Type is Global or not
+	 * @api
+	 * @memberOf Command
 	 * @returns {boolean} result
 	 */
 	Command.prototype.isGlobalType = function() {
@@ -11845,13 +12991,25 @@
 	/**
 	 * setKeyMap
 	 * Set keymap value for each os
-	 * @param {string} win window Key(and etc)
-	 * @param {string} mac mac osx key
+	 * @api
+	 * @memberOf Command
+	 * @param {string} win Windows Key(and etc)
+	 * @param {string} mac Mac osx key
 	 */
 	Command.prototype.setKeyMap = function(win, mac) {
 	    this.keyMap = [win, mac];
 	};
 
+	/**
+	 * Command factory method
+	 * @api
+	 * @memberOf Command
+	 * @param {string} typeStr Editor type name
+	 * @param {object} props Property
+	 *     @param {string} props.name Command name
+	 *     @param {number} props.type Command type number
+	 * @returns {Command}
+	 */
 	Command.factory = function(typeStr, props) {
 	    var command, type;
 
@@ -11872,6 +13030,12 @@
 
 	/**
 	 * Command Type Constant
+	 * markdown : 0
+	 * wysiwyg : 1
+	 * global : 2
+	 * @api
+	 * @memberOf Command
+	 * @type {object}
 	 */
 	Command.TYPE = {
 	    MD: 0,
@@ -11903,7 +13067,7 @@
 	 * ImportManager
 	 * @exports ImportManager
 	 * @constructor
-	 * @class
+	 * @class ImportManager
 	 * @param {EventManager} eventManager eventManager
 	 */
 	function ImportManager(eventManager) {
@@ -11914,6 +13078,11 @@
 	    this._initDefaultImageImporter();
 	}
 
+	/**
+	 * Initialize drop event
+	 * @memberOf ImportManager
+	 * @private
+	 */
 	ImportManager.prototype._initDropEvent = function() {
 	    var self = this;
 
@@ -11923,6 +13092,11 @@
 	    });
 	};
 
+	/**
+	 * Initialize paste event
+	 * @memberOf ImportManager
+	 * @private
+	 */
 	ImportManager.prototype._initPasteEvent = function() {
 	    var self = this;
 
@@ -11931,6 +13105,11 @@
 	    });
 	};
 
+	/**
+	 * Initialize default image importer
+	 * @memberOf ImportManager
+	 * @private
+	 */
 	ImportManager.prototype._initDefaultImageImporter = function() {
 	    this.eventManager.listen('addImageBlobHook', function(blob, callback) {
 	        var reader = new FileReader();
@@ -11943,6 +13122,12 @@
 	    });
 	};
 
+	/**
+	 * Emit add image blob hook
+	 * @memberOf ImportManager
+	 * @param {object} item item
+	 * @private
+	 */
 	ImportManager.prototype._emitAddImageBlobHook = function(item) {
 	    var self = this,
 	        blob = item.name ? item : item.getAsFile(); //Blob or File
@@ -11952,11 +13137,23 @@
 	    });
 	};
 
+	/**
+	 * Add table with excel style data
+	 * @memberOf ImportManager
+	 * @param {string} content Table data
+	 * @private
+	 */
 	ImportManager.prototype._addExcelTable = function(content) {
 	    var tableInfo = excelTableParser(content);
 	    this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 	};
 
+	/**
+	 * Get blob or excel data from clipboard
+	 * @memberOf ImportManager
+	 * @param {object} evData Clipboard data
+	 * @private
+	 */
 	ImportManager.prototype._processClipboard = function(evData) {
 	    var blobItems,
 	        cbData, types;
@@ -11973,6 +13170,13 @@
 	    }
 	};
 
+	/**
+	 * Process for blob item
+	 * @memberOf ImportManager
+	 * @param {Array.<string>} items Item array
+	 * @param {object} evData Event data
+	 * @private
+	 */
 	ImportManager.prototype._processBlobItems = function(items, evData) {
 	    var self = this;
 
@@ -11991,6 +13195,13 @@
 	    }
 	};
 
+	/**
+	 * Process for excel style data
+	 * @memberOf ImportManager
+	 * @param {HTMLElement} cbData Clipboard data
+	 * @param {object} evData Event data
+	 * @private
+	 */
 	ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
 	    var content;
 
@@ -12020,6 +13231,7 @@
 	/**
 	 * excelTableParser
 	 * Parse excel paste data
+	 * @public
 	 * @exports excelTableParser
 	 * @param {string} content excel table content
 	 * @returns {object} result
@@ -12048,7 +13260,12 @@
 	        data: data
 	    };
 	}
-
+	/**
+	 * Get row data from raw text with Regexp
+	 * @public
+	 * @param {string} content Raw copied text data
+	 * @returns {Array}
+	 */
 	function getRows(content) {
 	    content = content.replace(/"([^"]+)"/g, function(match, cell) {
 	        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
@@ -12085,9 +13302,8 @@
 	/**
 	 * Convertor
 	 * @exports Convertor
-	 * @extends {}
 	 * @constructor
-	 * @class
+	 * @class Convertor
 	 * @param {EventManager} em EventManager instance
 	 */
 	function Convertor(em) {
@@ -12097,6 +13313,8 @@
 	/**
 	 * _markdownToHtmlWithCodeHighlight
 	 * Convert markdown to html with Codehighlight
+	 * @private
+	 * @memberOf Convertor
 	 * @param {string} markdown markdown text
 	 * @returns {string} html text
 	 */
@@ -12121,6 +13339,8 @@
 	/**
 	 * _markdownToHtml
 	 * Convert markdown to html
+	 * @private
+	 * @memberOf Convertor
 	 * @param {string} markdown markdown text
 	 * @returns {string} html text
 	 */
@@ -12143,6 +13363,8 @@
 	 * toHTMLWithCodeHightlight
 	 * Convert markdown to html with Codehighlight
 	 * emit convertorAfterMarkdownToHtmlConverted
+	 * @api
+	 * @memberOf Convertor
 	 * @param {string} markdown markdown text
 	 * @returns {string} html text
 	 */
@@ -12157,6 +13379,8 @@
 	 * toHTML
 	 * Convert markdown to html
 	 * emit convertorAfterMarkdownToHtmlConverted
+	 * @api
+	 * @memberOf Convertor
 	 * @param {string} markdown markdown text
 	 * @returns {string} html text
 	 */
@@ -12171,6 +13395,8 @@
 	 * toMarkdown
 	 * Convert html to markdown
 	 * emit convertorAfterHtmlToMarkdownConverted
+	 * @api
+	 * @memberOf Convertor
 	 * @param {string} html html text
 	 * @returns {string} markdown text
 	 */
@@ -12184,6 +13410,8 @@
 	/**
 	 * _sanitizeScript
 	 * Sanitize script tag
+	 * @private
+	 * @memberOf Convertor
 	 * @param {string} html html text
 	 * @returns {string}
 	 */
@@ -12197,6 +13425,8 @@
 	/**
 	 * factory
 	 * Convertor factory
+	 * @api
+	 * @memberOf Convertor
 	 * @param {EventManager} eventManager eventmanager
 	 * @returns {Convertor}
 	 */
@@ -12222,11 +13452,25 @@
 	 * markedCustomRenderer
 	 * @exports markedCustomRenderer
 	 * @augments marked.Renderer
+	 * @class markedCustomRenderer
 	 */
 	var markedCustomRenderer = new window.marked.Renderer();
 
+	/**
+	 * Task list Regexp
+	 * @api
+	 * @memberOf markedCustomRenderer
+	 * @type {RegExp}
+	 */
 	var regexTaskList = /^((?:<p>|))(\[(?:x| )\]) /i;
 
+	/**
+	 * Render listItem by given text.
+	 * @api
+	 * @memberOf markedCustomRenderer
+	 * @param {string} text Source text
+	 * @returns {string}
+	 */
 	markedCustomRenderer.listitem = function(text) {
 	    var cap,
 	        checked,
@@ -12245,6 +13489,15 @@
 	    return '<li' + className + '>' + output + text + '</li>\n';
 	};
 
+	/**
+	 * Render code
+	 * @api
+	 * @memberOf markedCustomRenderer
+	 * @param {string} code Source text of code content
+	 * @param {string} lang Type of language
+	 * @param {boolean} escaped Whether text is escaped or not
+	 * @returns {string}
+	 */
 	markedCustomRenderer.code = function(code, lang, escaped) {
 	    var out;
 	    if (this.options.highlight) {
@@ -12269,6 +13522,14 @@
 	    + '\n</code></pre>\n';
 	};
 
+	/**
+	 * Render table
+	 * @api
+	 * @memberOf markedCustomRenderer
+	 * @param {string} header Text for table header
+	 * @param {string} body Text for table body
+	 * @returns {string}
+	 */
 	markedCustomRenderer.table = function(header, body) {
 	    var cellLen = header.match(/\/th/g).length;
 	    var foundLastTr = body.match(/\n?<tr>[\s\S]*?<\/tr>\n$/g);
@@ -12293,7 +13554,9 @@
 	};
 
 	/**
-	 * Replace <del> to <s>
+	 * Replace 'del' to 's' tag
+	 * @api
+	 * @memberOf markedCustomRenderer
 	 * @override
 	 * @param {string} text Text content
 	 * @returns {string}
@@ -12309,7 +13572,7 @@
 	};
 
 	/**
-	 * escape code from marekd
+	 * escape code from marked
 	 * @param {string} html HTML string
 	 * @param {string} encode Boolean value of whether encode or not
 	 * @returns {string}
@@ -12347,19 +13610,19 @@
 
 	/**
 	 * ViewOnly
-	 * @exports ViewOnly
+	 * @exports ToastUIEditorViewOnly
 	 * @constructor
-	 * @class
-	 * @param {object} options 옵션
-	 * @param {string} options.initialValue 초기 입력 테스트
-	 * @param {object} options.events eventlist
-	 * @param {function} options.events.load it would be emitted when editor fully load
-	 * @param {function} options.events.change it would be emitted when content changed
-	 * @param {function} options.events.stateChange it would be emitted when format change by cursor position
-	 * @param {function} options.events.focus it would be emitted when editor get focus
-	 * @param {function} options.events.blur it would be emitted when editor loose focus
-	 * @param {object} options.hooks 외부 연결 훅 목록
-	 * @param {function} options.hooks.previewBeforeHook 프리뷰 되기 직전 실행되는 훅, 프리뷰에 그려질 DOM객체들이 인자로 전달된다.
+	 * @class ToastUIEditorViewOnly
+	 * @param {object} options Option object
+	    * @param {string} options.initialValue Editor's initial value
+	    * @param {object} options.events eventlist Event list
+	         * @param {function} options.events.load It would be emitted when editor fully load
+	         * @param {function} options.events.change It would be emitted when content changed
+	         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+	         * @param {function} options.events.focus It would be emitted when editor get focus
+	         * @param {function} options.events.blur It would be emitted when editor loose focus
+	     * @param {object} options.hooks Hook list
+	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
 	 */
 	function ToastUIEditorViewOnly(options) {
 	    var self = this;
@@ -12392,6 +13655,12 @@
 	    self.eventManager.emit('load', self);
 	}
 
+	/**
+	 * Set content for preview
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @param {string} markdown Markdown text
+	 */
 	ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
 	    this.markdownValue = markdown = markdown || '';
 
@@ -12399,18 +13668,42 @@
 	    this.eventManager.emit('setValueAfter', this.markdownValue);
 	};
 
+	/**
+	 * Get content of preview
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @returns {string}
+	 */
 	ToastUIEditorViewOnly.prototype.getValue = function() {
 	    return this.markdownValue;
 	};
 
+	/**
+	 * Bind eventHandler to event type
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @param {string} type Event type
+	 * @param {function} handler Event handler
+	 */
 	ToastUIEditorViewOnly.prototype.on = function(type, handler) {
 	    this.eventManager.listen(type, handler);
 	};
 
+	/**
+	 * Unbind eventHandler from event type
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @param {string} type Event type
+	 */
 	ToastUIEditorViewOnly.prototype.off = function(type) {
 	    this.eventManager.removeEventHandler(type);
 	};
 
+	/**
+	 * Remove ViewOnly preview from document
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 */
 	ToastUIEditorViewOnly.prototype.remove = function() {
 	    this.eventManager.emit('removeEditor');
 	    this.options = null;
@@ -12420,19 +13713,44 @@
 	    this.preview = null;
 	};
 
+	/**
+	 * Add hook to ViewOnly preview's event
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @param {string} type Event type
+	 * @param {function} handler Event handler
+	 */
 	ToastUIEditorViewOnly.prototype.addHook = function(type, handler) {
 	    this.eventManager.removeEventHandler(type);
 	    this.eventManager.listen(type, handler);
 	};
 
+	/**
+	 * Return true
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @returns {boolean}
+	 */
 	ToastUIEditorViewOnly.prototype.isViewOnly = function() {
 	    return true;
 	};
 
+	/**
+	 * Return false
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @returns {boolean}
+	 */
 	ToastUIEditorViewOnly.prototype.isMarkdownMode = function() {
 	    return false;
 	};
 
+	/**
+	 * Return false
+	 * @api
+	 * @memberOf ToastUIEditorViewOnly
+	 * @returns {boolean}
+	 */
 	ToastUIEditorViewOnly.prototype.isWysiwygMode = function() {
 	    return false;
 	};
