@@ -41,6 +41,7 @@ var eventList = [
     'wysiwygProcessHTMLText',
     'wysiwygRangeChangeAfter',
     'wysiwygKeyEvent',
+    'pasteBefore',
     'scroll',
     'click',
     'mousedown',

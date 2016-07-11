@@ -76,6 +76,12 @@ MarkdownEditor.prototype._initEvent = function() {
         });
     });
 
+    this.cm.on('beforeChange', function(cm, ev) {
+        if (ev.origin === 'paste') {
+            self.eventManager.emit('pasteBefore', {source: 'markdown', data: ev});
+        }
+    });
+
     this.cm.on('change', function(cm, cmEvent) {
         self._emitMarkdownEditorContentChangedEvent();
         self._emitMarkdownEditorChangeEvent(cmEvent);
