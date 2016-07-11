@@ -73,6 +73,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
         }
 
         self._pch.preparePaste(pasteData);
+        self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
         self._refineCursorWithPasteContents(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
