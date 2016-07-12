@@ -34,6 +34,15 @@ var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
             sq.focus();
 
             focusToFirstTd(sq, $newRow);
+        } else if (sq.hasFormat('TH')) {
+            sq.saveUndoState(range);
+            $tr = $(range.startContainer).parents('thead').next('tbody').children('tr').eq(0);
+            $newRow = getNewRow($tr);
+            $newRow.insertBefore($tr);
+
+            sq.focus();
+
+            focusToFirstTd(sq, $newRow);
         } else {
             sq.focus();
         }

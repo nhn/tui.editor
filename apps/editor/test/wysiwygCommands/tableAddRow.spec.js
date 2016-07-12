@@ -52,6 +52,35 @@ describe('Table - AddRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(4);
     });
 
+    it('add row to tbody`s first index', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+        range.collapse(true);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        AddRow.exec(wwe);
+
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(2);
+        expect(wwe.get$Body().find('tbody tr').eq(0).text()).toEqual('');
+        expect(wwe.get$Body().find('tbody tr').eq(1).text()).toEqual('34');
+        expect(wwe.get$Body().find('tbody td').length).toEqual(4);
+    });
+
     it('focus to new row\'s first td', function() {
         var sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
