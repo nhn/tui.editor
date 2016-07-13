@@ -6,6 +6,7 @@
 'use strict';
 
 var domUtils = require('./domUtils');
+var htmlSanitizer = require('./htmlSanitizer');
 
 var util = tui.util;
 
@@ -32,7 +33,7 @@ WwPasteContentHelper.prototype.preparePaste = function(pasteData) {
     var firstBlockIsTaken = false;
     var nodeName, node, childNodes;
 
-    this._pasteFirstAid(pasteData.fragment);
+    pasteData.fragment = this._pasteFirstAid(pasteData.fragment);
 
     childNodes = util.toArray(pasteData.fragment.childNodes);
 
@@ -88,12 +89,13 @@ WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
  * Processing paste data after paste
  * @param {DocumentFragment} fragment Pasting data
  * @memberOf WwPasteContentHelper
+ * @returns {DocumentFragment}
  * @private
  */
 WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     var self = this;
 
-    $(fragment).find('iframe, script, select, form, button, .Apple-converted-space').remove();
+    fragment = htmlSanitizer(fragment);
 
     this._removeUnnecessaryBlocks(fragment);
     this._removeStyles(fragment);
@@ -108,6 +110,8 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
     $(fragment).find('*').each(function() {
         self._removeStyles(this);
     });
+
+    return fragment;
 };
 
 /**
