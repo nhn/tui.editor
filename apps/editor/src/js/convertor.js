@@ -5,6 +5,8 @@
 
 'use strict';
 
+var htmlSanitizer = require('./htmlSanitizer');
+
 var markedCustomRenderer = require('./markedCustomRenderer');
 
 var marked = window.marked,
@@ -84,7 +86,7 @@ Convertor.prototype.toHTMLWithCodeHightlight = function(markdown) {
     var html = this._markdownToHtmlWithCodeHighlight(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-    return this._sanitizeScript(html);
+    return htmlSanitizer(html, true);
 };
 
 /**
@@ -100,7 +102,7 @@ Convertor.prototype.toHTML = function(markdown) {
     var html = this._markdownToHtml(markdown);
     html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-    return this._sanitizeScript(html);
+    return htmlSanitizer(html, true);
 };
 
 /**
@@ -117,21 +119,6 @@ Convertor.prototype.toMarkdown = function(html) {
     markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
     return markdown;
-};
-
-/**
- * _sanitizeScript
- * Sanitize script tag
- * @private
- * @memberOf Convertor
- * @param {string} html html text
- * @returns {string}
- */
-Convertor.prototype._sanitizeScript = function(html) {
-    html = html.replace(/<script.*?>/g, '&lt;script&gt;');
-    html = html.replace(/<\/script>/g, '&lt;/script&gt;');
-
-    return html;
 };
 
 /**
