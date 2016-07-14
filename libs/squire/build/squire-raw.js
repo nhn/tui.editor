@@ -4030,6 +4030,10 @@ proto.insertHTML = function ( html, isPaste ) {
 
         this.setSelection( range );
         this._updatePath( range, true );
+        // Safari sometimes loses focus after paste. Weird.
+        if ( isPaste ) {
+            this.focus();
+        }
     } catch ( error ) {
         this.didError( error );
     }
