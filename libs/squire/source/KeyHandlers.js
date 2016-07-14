@@ -432,6 +432,13 @@ var keyHandlers = {
                 !node.nextSibling && range.endOffset === getLength( node ) ) {
             range.setStartAfter( parent );
         }
+        // Delete the selection if not collapsed
+        else if ( !range.collapsed ) {
+            deleteContentsOfRange( range, self._root );
+            self._ensureBottomLine();
+            self.setSelection( range );
+            self._updatePath( range, true );
+        }
 
         self.setSelection( range );
     },
