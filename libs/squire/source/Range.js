@@ -202,6 +202,10 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     if ( allInline ) {
         // If inline, just insert at the current position.
         insertNodeInRange( range, frag );
+        if ( range.startContainer !== range.endContainer ) {
+            mergeInlines( range.endContainer, range );
+        }
+        mergeInlines( range.startContainer, range );
         range.collapse( false );
     } else {
         // Otherwise...
