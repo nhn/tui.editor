@@ -22,18 +22,34 @@ describe('WwClipboardManager', function() {
         $('body').empty();
     });
 
-    describe('_refineCursorWithPasteContents', function() {
+    describe('_refineCursorWithPasteContentsIfNeed', function() {
         it('set selection to last element of contents', function(done) {
             var fragment = wwe.getEditor().getDocument().createDocumentFragment();
             var range;
             $(fragment).append('<ul><li>ddd<br></li><li>dd2<br></li</ul>');
 
-            cbm._refineCursorWithPasteContents(fragment);
+            cbm._refineCursorWithPasteContentsIfNeed(fragment);
             wwe.getEditor().insertHTML(fragment);
 
             setTimeout(function() {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
+                done();
+            }, 0);
+        });
+        it('do nothing when pasting content is empty', function(done) {
+            var fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            var range, cursorPositionElement;
+
+            range = wwe.getEditor().getSelection();
+            cursorPositionElement = range.startContainer;
+
+            cbm._refineCursorWithPasteContentsIfNeed(fragment);
+            wwe.getEditor().insertHTML(fragment);
+
+            setTimeout(function() {
+                range = wwe.getEditor().getSelection();
+                expect(range.startContainer).toBe(cursorPositionElement);
                 done();
             }, 0);
         });

@@ -4,6 +4,7 @@ var EventManager = require('../src/js/eventManager');
 var WysiwygEditor = require('../src/js/wysiwygEditor');
 var WwPasteContentHelper = require('../src/js/wwPasteContentHelper');
 var WwCodeBlockManager = require('../src/js/wwCodeBlockManager');
+var WwTableManager = require('../src/js/wwTableManager');
 
 describe('WwPasteContentHelper', function() {
     var wwe, pch, contentFrag, pasteData;
@@ -18,6 +19,7 @@ describe('WwPasteContentHelper', function() {
         wwe.init();
 
         wwe.addManager(WwCodeBlockManager);
+        wwe.addManager(WwTableManager);
 
         pch = new WwPasteContentHelper(wwe);
 
@@ -138,6 +140,43 @@ describe('WwPasteContentHelper', function() {
             expect($(contentFrag).find('br').length).toEqual(1);
             expect($(contentFrag).find('p').text()).toEqual('ip lorem sit amet');
             expect($(contentFrag).find('span').text()).toEqual('and so on');
+        });
+        it('_tableElementAid should wrap TRs with TBODY', function() {
+            var fragment = document.createDocumentFragment();
+
+            fragment.appendChild($('<tr><td>1</td><td>2</td></tr>')[0]);
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('tbody').length).toEqual(1);
+            expect($(fragment).find('tbody').text()).toEqual('12');
+        });
+        it('_tableElementAid should wrap TDs with TR', function() {
+            var fragment = document.createDocumentFragment();
+
+            fragment.appendChild($('<td>1</td>')[0]);
+            fragment.appendChild($('<td>2</td>')[0]);
+            fragment.appendChild($('<td>3</td>')[0]);
+            fragment.appendChild($('<td>4</td>')[0]);
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('tr').length).toEqual(1);
+            expect($(fragment).find('tr').text()).toEqual('1234');
+        });
+        it('_tableElementAid should wrap THEAD and TBODY with TABLE', function() {
+            var fragment = document.createDocumentFragment();
+
+            fragment.appendChild($('<thead><tr><th>1</th><th>2</th></tr></thead>')[0]);
+            fragment.appendChild($('<tbody><tr><td>a</td><td>b</td></tr></tbody>')[0]);
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('table').length).toEqual(1);
+            expect($(fragment).find('thead').length).toEqual(1);
+            expect($(fragment).find('tbody').length).toEqual(1);
+            expect($(fragment).find('thead').text()).toEqual('12');
+            expect($(fragment).find('tbody').text()).toEqual('ab');
         });
     });
 
