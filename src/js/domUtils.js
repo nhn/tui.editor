@@ -383,6 +383,58 @@ var getPath = function(node, root) {
     return paths;
 };
 
+/**
+ * Find next TR's TD element by given TD and it's offset
+ * @param {HTMLElement} node TD element
+ * @param {boolean} [needFirstTd] Boolean value for find first TD in next line
+ * @returns {HTMLElement|null}
+ */
+var nextLineTableCell = function(node, needFirstTd) {
+    var index = 0;
+    var nextLineTrElement, nextLineTdElement, theadElement;
+
+    if (node) {
+        if (!needFirstTd) {
+            while (node.previousElementSibling) {
+                node = node.previousElementSibling;
+                index += 1;
+            }
+        }
+
+        nextLineTrElement = node.parentNode.nextSibling;
+        theadElement = $(node).parents('thead')[0];
+
+        if (nextLineTrElement) {
+            nextLineTdElement = nextLineTrElement.childNodes[index];
+        } else if (theadElement && theadElement.nextElementSibling.tagName === 'TBODY') {
+            nextLineTdElement = $(theadElement.nextElementSibling).find('td')[index];
+        }
+
+        if (nextLineTdElement && nextLineTdElement.tagName === 'TD') {
+            return nextLineTdElement;
+        }
+    }
+
+    return null;
+};
+
+/**
+ * Find next TD or TH element by given TE element
+ * @param {HTMLElement} node TD element
+ * @returns {HTMLElement|null}
+ */
+var nextTableCell = function(node) {
+    var nextElement;
+
+    nextElement = node.nextElementSibling;
+
+    if (nextElement && (nextElement.nodeName === 'TD' || nextElement.nodeName === 'TH')) {
+        return nextElement;
+    }
+
+    return null;
+};
+
 module.exports = {
     getNodeName: getNodeName,
     isTextNode: isTextNode,
@@ -399,5 +451,7 @@ module.exports = {
     getPrevTextNode: getPrevTextNode,
     findOffsetNode: findOffsetNode,
     getPath: getPath,
-    getNodInfo: getNodeInfo
+    getNodInfo: getNodeInfo,
+    nextLineTableCell: nextLineTableCell,
+    nextTableCell: nextTableCell
 };

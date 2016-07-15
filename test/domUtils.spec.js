@@ -263,4 +263,53 @@ describe('domUtils', function() {
             expect(domUtils.getPath($dom.find('span')[0], $dom[0])).toEqual(expected);
         });
     });
+    describe('table traversal', function() {
+        it('nextTableCell should get next TH if exist', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.nextTableCell($dom.find('th')[0]);
+            var result2 = domUtils.nextTableCell($dom.find('th')[1]);
+            expect(result.textContent).toBe('2');
+            expect(result2).toBeNull();
+        });
+
+        it('nextTableCell should get next TD if exist', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.nextTableCell($dom.find('td')[0]);
+            var result2 = domUtils.nextTableCell($dom.find('td')[3]);
+            expect(result.textContent).toBe('4');
+            expect(result2).toBeNull();
+        });
+
+        it('nextLineTableCell should get next TD if exist at thead', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.nextLineTableCell($dom.find('th')[0]);
+            var result2 = domUtils.nextLineTableCell($dom.find('th')[1]);
+            var result3 = domUtils.nextLineTableCell($dom.find('th')[3]);
+            expect(result.textContent).toBe('3');
+            expect(result2.textContent).toBe('4');
+            expect(result3).toBeNull();
+        });
+
+        it('nextLineTableCell should get next TD if exist at tbody', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.nextLineTableCell($dom.find('td')[0]);
+            var result2 = domUtils.nextLineTableCell($dom.find('td')[1]);
+            var result3 = domUtils.nextLineTableCell($dom.find('td')[3]);
+            expect(result.textContent).toBe('5');
+            expect(result2.textContent).toBe('6');
+            expect(result3).toBeNull();
+        });
+    })
 });

@@ -74,7 +74,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
 
         self._pch.preparePaste(pasteData);
         self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
-        self._refineCursorWithPasteContents(pasteData.fragment);
+        self._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
 };
@@ -84,9 +84,13 @@ WwClipboardManager.prototype._initSquireEvent = function() {
  * @param {DocumentFragment} fragment Copied contents
  * @private
  */
-WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
+WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fragment) {
     var node = fragment;
     var range = this.wwe.getEditor().getSelection().cloneRange();
+
+    if (fragment.childNodes.length === 0) {
+        return;
+    }
 
     while (node.lastChild) {
         node = node.lastChild;
