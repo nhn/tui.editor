@@ -80,6 +80,24 @@ markedCustomRenderer.code = function(code, lang, escaped) {
 };
 
 /**
+ * Render table cell
+ * @param {string} content Text content
+ * @param {{align: string, header: boolean}} flags Flag object
+ * @returns {string}
+ */
+markedCustomRenderer.tablecell = function(content, flags) {
+    var type = flags.header ? 'th' : 'td';
+    var $element = $('<' + type + '></' + type + '>');
+
+    if (flags.align) {
+        $element.attr('align', flags.align);
+    }
+    $element.text(content);
+
+    return $element[0].outerHTML + '\n';
+};
+
+/**
  * Render table
  * @api
  * @memberOf markedCustomRenderer

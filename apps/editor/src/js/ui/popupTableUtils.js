@@ -14,6 +14,9 @@ var POPUP_CONTENT = [
     '<button type="button" class="te-table-add-col">열 삽입</button>',
     '<button type="button" class="te-table-remove-row">행 삭제</button>',
     '<button type="button" class="te-table-remove-col">열 삭제</button>',
+    '<button type="button" class="te-table-col-align-left">열 왼쪽 정렬</button>',
+    '<button type="button" class="te-table-col-align-center">열 가운데 정렬</button>',
+    '<button type="button" class="te-table-col-align-right">열 오른쪽 정렬</button>',
     '<button type="button" class="te-table-remove">표 삭제</button>'
 ].join('');
 
@@ -64,6 +67,18 @@ PopupTableUtils.prototype._bindContentEvent = function() {
 
     this.on('click .te-table-remove-row', function() {
         self.eventManager.emit('command', 'RemoveRow');
+    });
+
+    this.on('click .te-table-col-align-left', function() {
+        self.eventManager.emit('command', 'AlignCol', 'left');
+    });
+
+    this.on('click .te-table-col-align-center', function() {
+        self.eventManager.emit('command', 'AlignCol', 'center');
+    });
+
+    this.on('click .te-table-col-align-right', function() {
+        self.eventManager.emit('command', 'AlignCol', 'right');
     });
 
     this.on('click .te-table-remove-col', function() {
