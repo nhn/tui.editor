@@ -2324,16 +2324,20 @@ function getSquireInstance ( doc ) {
     return null;
 }
 
-function mergeObjects ( base, extras ) {
+function mergeObjects ( base, extras, mayOverride ) {
     var prop, value;
     if ( !base ) {
         base = {};
     }
-    for ( prop in extras ) {
-        value = extras[ prop ];
-        base[ prop ] = ( value && value.constructor === Object ) ?
-            mergeObjects( base[ prop ], value ) :
-            value;
+    if ( extras ) {
+        for ( prop in extras ) {
+            if ( mayOverride || !( prop in base ) ) {
+                value = extras[ prop ];
+                base[ prop ] = ( value && value.constructor === Object ) ?
+                    mergeObjects( base[ prop ], value, mayOverride ) :
+                    value;
+            }
+        }
     }
     return base;
 }
@@ -2482,7 +2486,7 @@ proto.setConfig = function ( config ) {
             documentSizeThreshold: -1, // -1 means no threshold
             undoLimit: -1 // -1 means no limit
         }
-    }, config );
+    }, config, true );
 
     // Users may specify block tag in lower case
     config.blockTag = config.blockTag.toUpperCase();
@@ -3928,7 +3932,7 @@ proto.insertElement = function ( el, range ) {
 proto.insertImage = function ( src, attributes ) {
     var img = this.createElement( 'IMG', mergeObjects({
         src: src
-    }, attributes ));
+    }, attributes, true ));
     this.insertElement( img );
     return img;
 };
@@ -3959,7 +3963,7 @@ var addLinks = function ( frag, root, self ) {
                         match[1] :
                         'http://' + match[1] :
                     'mailto:' + match[2]
-            }, defaultAttributes ));
+            }, defaultAttributes, false ));
             child.textContent = data.slice( index, endIndex );
             parent.insertBefore( child, node );
             node.data = data = data.slice( endIndex );
@@ -4132,12 +4136,13 @@ proto.makeLink = function ( url, attributes ) {
             this._doc.createTextNode( url.slice( protocolEnd ) )
         );
     }
-
-    if ( !attributes ) {
-        attributes = {};
-    }
-    mergeObjects( attributes, this._config.tagAttributes.a );
-    attributes.href = url;
+    attributes = mergeObjects(
+        mergeObjects({
+            href: url
+        }, attributes, true ),
+        this._config.tagAttributes.a,
+        false
+    );
 
     this.changeFormat({
         tag: 'A',
