@@ -54,17 +54,25 @@ var basicRenderer = Renderer.factory({
         return res;
     },
     'A': function(node, subContent) {
-        var res = subContent,
-            foundedHref, url;
+        var res = subContent;
+        var title = '';
+        var foundedHref, url;
 
+
+        //상황에따라 href속성은 상황에 따라 값을 예측하기 힘듬
+        //그래서 html에 적용된 그대로를 사용
         foundedHref = FIND_LINK_HREF.exec(node.outerHTML);
 
         if (foundedHref) {
             url = foundedHref[1];
         }
 
+        if (node.title) {
+            title = ' "' + node.title + '"';
+        }
+
         if (!this.isEmptyText(subContent) && url) {
-            res = '[' + subContent + '](' + url + ')';
+            res = '[' + subContent + '](' + url + title + ')';
         }
 
         return res;

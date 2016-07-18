@@ -61,6 +61,7 @@ describe('basicRenderer', function() {
         it('link', function() {
             expect(getMarkdownText('<a href="http://www.nhnent.com"></a>', 'NHNENT')).toEqual('[NHNENT](http://www.nhnent.com)');
             expect(getMarkdownText('<a href="#head"></a>', 'NHNENT')).toEqual('[NHNENT](#head)');
+            expect(getMarkdownText('<a href="#head" title="myTitle"></a>', 'NHNENT')).toEqual('[NHNENT](#head "myTitle")');
         });
 
         it('link that has no text node return empty string', function() {
