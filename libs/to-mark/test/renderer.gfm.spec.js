@@ -42,13 +42,13 @@ describe('gfmRenderer', function() {
         });
     });
 
-    describe('li input', function() {
-        it('unchecked input box', function() {
-            expect(getMarkdownText('<li><input type="checkbox" /></li>', null, 2)).toEqual('[ ] ');
+    describe('li', function() {
+        it('unchecked task', function() {
+            expect(getMarkdownText('<ul><li class="task-list-item"></li></ul>', 'test', 2)).toEqual('* [ ] test\n');
         });
 
-        it('checked input box', function() {
-            expect(getMarkdownText('<li><input type="checkbox" checked="checked" /></li>', null, 2)).toEqual('[x] ');
+        it('checked task', function() {
+            expect(getMarkdownText('<ul><li class="checked task-list-item"></li></ul>', 'test', 2)).toEqual('* [x] test\n');
         });
     });
 

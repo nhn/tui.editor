@@ -186,4 +186,35 @@ describe('toMark', function() {
             expect(toMark(htmlStr)).toEqual(expectText);
        });
     });
+
+    describe('task', function() {
+        it('Nested task can be converted', function() {
+            var htmlStr = [
+                '<ol>',
+                    '<li data-te-task class="task-list-item">DEPTH1',
+                        '<ul>',
+                            '<li data-te-task class="task-list-item">DEPTH2-1</li>',
+                            '<li data-te-task class="task-list-item checked">DEPTH2-2</li>',
+                        '</ul>',
+                    '</li>',
+                '</ol>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('1. [ ] DEPTH1\n    * [ ] DEPTH2-1\n    * [x] DEPTH2-2');
+        });
+        it('Multiple nested list can be converted', function() {
+            var htmlStr = [
+                '<ul>',
+                    '<li data-te-task class="task-list-item checked">DEPTH1',
+                        '<ol>',
+                            '<li data-te-task class="task-list-item">DEPTH2-1</li>',
+                            '<li>DEPTH2-2</li>',
+                        '</ol>',
+                    '</li>',
+                '</ul>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('* [x] DEPTH1\n    1. [ ] DEPTH2-1\n    2. DEPTH2-2');
+        });
+    });
 });
