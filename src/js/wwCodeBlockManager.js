@@ -201,7 +201,7 @@ WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
         lineContent = '\u200B';
     }
 
-    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
+    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code></div>';
 };
 
 /**
