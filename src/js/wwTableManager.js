@@ -1,6 +1,7 @@
 /**
  * @fileoverview Implements wysiwyg table manager
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 'use strict';
