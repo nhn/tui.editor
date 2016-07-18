@@ -35,16 +35,11 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
     'PRE': function(node, subContent) {
         return subContent;
     },
-    'LI INPUT': function(node) {
-        var condition;
-
-        if (node.type !== 'checkbox') {
-            return;
-        }
-
-        condition = node.checked ? 'x' : ' ';
-
-        return '[' + condition + '] ';
+    'UL LI': function(node, subContent) {
+        return basicRenderer.convert(node, makeTaskIfNeed(node, subContent));
+    },
+    'OL LI': function(node, subContent) {
+        return basicRenderer.convert(node, makeTaskIfNeed(node, subContent));
     },
 
     //Table
@@ -77,6 +72,17 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent ? (subContent + '|' + result + '\n') : '';
     }
 });
+
+function makeTaskIfNeed(node, subContent) {
+    var condition;
+
+    if (subContent && node.classList.contains('task-list-item')) {
+        condition = node.classList.contains('checked') ? 'x' : ' ';
+        subContent = '[' + condition + '] ' + subContent;
+    }
+
+    return subContent;
+}
 
 function makeTableHeadAlignText(th) {
     var align, leftAlignValue, rightAlignValue, textLength;
