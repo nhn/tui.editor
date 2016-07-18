@@ -186,17 +186,25 @@ var basicRenderer = Renderer.factory({
         return res;
     },
     'A': function(node, subContent) {
-        var res = subContent,
-            foundedHref, url;
+        var res = subContent;
+        var title = '';
+        var foundedHref, url;
 
+
+        //상황에따라 href속성은 상황에 따라 값을 예측하기 힘듬
+        //그래서 html에 적용된 그대로를 사용
         foundedHref = FIND_LINK_HREF.exec(node.outerHTML);
 
         if (foundedHref) {
             url = foundedHref[1];
         }
 
+        if (node.title) {
+            title = ' "' + node.title + '"';
+        }
+
         if (!this.isEmptyText(subContent) && url) {
-            res = '[' + subContent + '](' + url + ')';
+            res = '[' + subContent + '](' + url + title + ')';
         }
 
         return res;
@@ -379,23 +387,18 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
             language = ' ' + node.getAttribute('data-language');
         }
 
-        subContent = subContent.replace(/\n/g, this.lineFeedReplacement);
+        subContent = subContent.replace(/(\r\n)|(\r)|(\n)/g, this.lineFeedReplacement);
 
         return '\n\n```' + language + '\n' + subContent + '\n```\n\n';
     },
     'PRE': function(node, subContent) {
         return subContent;
     },
-    'LI INPUT': function(node) {
-        var condition;
-
-        if (node.type !== 'checkbox') {
-            return;
-        }
-
-        condition = node.checked ? 'x' : ' ';
-
-        return '[' + condition + '] ';
+    'UL LI': function(node, subContent) {
+        return basicRenderer.convert(node, makeTaskIfNeed(node, subContent));
+    },
+    'OL LI': function(node, subContent) {
+        return basicRenderer.convert(node, makeTaskIfNeed(node, subContent));
     },
 
     //Table
@@ -428,6 +431,17 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent ? (subContent + '|' + result + '\n') : '';
     }
 });
+
+function makeTaskIfNeed(node, subContent) {
+    var condition;
+
+    if (subContent && node.className.indexOf('task-list-item') !== -1) {
+        condition = node.className.indexOf('checked') !== -1 ? 'x' : ' ';
+        subContent = '[' + condition + '] ' + subContent;
+    }
+
+    return subContent;
+}
 
 function makeTableHeadAlignText(th) {
     var align, leftAlignValue, rightAlignValue, textLength;
@@ -488,7 +502,6 @@ module.exports = gfmRenderer;
  * @fileoverview Implements Renderer
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
 'use strict';
 
 var FIND_LEAD_SPACE_RX = /^\u0020/,
@@ -499,7 +512,9 @@ var FIND_LEAD_SPACE_RX = /^\u0020/,
     //find space more than one
     FIND_SPACE_MORE_THAN_ONE_RX = /[\u0020]+/g,
     //find characters that need escape
-    FIND_CHAR_TO_ESCAPE_RX = /[\>\(\)\*\{\}\[\]\_\`\+\-\.\!#]/g;
+    FIND_CHAR_TO_ESCAPE_RX = /[\>\(\)\*\{\}\[\]\_\`\+\-\.\`\!#|]/g;
+
+var TEXT_NODE = 3;
 
 /**
  * forEachOwnProperties
@@ -590,7 +605,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         trail = '',
         text;
 
-    if (node.previousSibling && (node.previousSibling.nodeType === Node.TEXT_NODE || isInlineNode(node.previousSibling))) {
+    if (node.previousSibling && (node.previousSibling.nodeType === TEXT_NODE || isInlineNode(node.previousSibling))) {
         text = node.previousSibling.innerHTML || node.previousSibling.nodeValue;
 
         if (FIND_TRAIL_SPACE_RX.test(text) || FIND_LEAD_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
@@ -598,7 +613,7 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
         }
     }
 
-    if (node.nextSibling && (node.nextSibling.nodeType === Node.TEXT_NODE || isInlineNode(node.nextSibling))) {
+    if (node.nextSibling && (node.nextSibling.nodeType === TEXT_NODE || isInlineNode(node.nextSibling))) {
         text = node.nextSibling.innerHTML || node.nextSibling.nodeValue;
         if (FIND_LEAD_SPACE_RX.test(text) || FIND_TRAIL_SPACE_RX.test(node.innerHTML || node.nodeValue)) {
             trail = ' ';
@@ -630,9 +645,9 @@ Renderer.prototype.convert = function(node, subContent) {
 
 Renderer.prototype._getInlineHtml = function(node, subContent) {
     var html = node.outerHTML,
-        tagName = node.tagName.toLowerCase();
+        tagName = node.tagName;
 
-    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(<\/' + tagName + '>)'), '$1' + subContent + '$2');
+    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(<\/' + tagName + '>)', 'i'), '$1' + subContent + '$2');
 };
 
 /**
