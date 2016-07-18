@@ -46,9 +46,9 @@ describe('renderer', function() {
         runner = new DomRunner(toDom('<h1><em>test</em></h1>'));
         runner.next();
 
-        convertedText = renderer.convert(runner.getNode(), 'subContents');
+        convertedText = renderer.convert(runner.getNode(), 'subcontents');
 
-        expect(convertedText.replace(/[\n\s\t]/g, '')).toEqual('<h1>subContents</h1>');
+        expect(convertedText.replace(/[\n\s\t]/g, '').toLowerCase()).toEqual('<h1>subcontents</h1>');
     });
 
     it('if rule converter returns falsy renderer.converter returns empty string', function() {
@@ -65,11 +65,11 @@ describe('renderer', function() {
         var renderer = Renderer.factory();
         runner = new DomRunner(toDom('<span><em>test</em></span>'));
         runner.next();
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span>**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**').toLowerCase()).toEqual('<span>**test**</span>');
 
         runner = new DomRunner(toDom('<span><span>test</span></span>'));
         runner.next();
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual('<span>**test**</span>');
+        expect(renderer.convert(runner.getNode(), '**test**').toLowerCase()).toEqual('<span>**test**</span>');
     });
 
     it('inline tag with getSpaceControlled', function() {
@@ -78,7 +78,7 @@ describe('renderer', function() {
         runner.next();
         runner.next();
 
-        expect(renderer.convert(runner.getNode(), '**test**')).toEqual(' <span>**test**</span> ');
+        expect(renderer.convert(runner.getNode(), '**test**').toLowerCase()).toEqual(' <span>**test**</span> ');
     });
 
     it('rules can be assigned separately with comma', function() {
