@@ -66,7 +66,9 @@ WwTableManager.prototype._initEvent = function() {
 
     this.wwe.getEditor().addEventListener('paste', function(ev) {
         var range = self.wwe.getEditor().getSelection();
-        if (self.isInTable(range) && !range.collapsed) {
+        var isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
+
+        if (self.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
             ev.preventDefault();
         }
     });
