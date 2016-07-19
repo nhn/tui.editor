@@ -34,9 +34,8 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
                 range = sq.getSelection().cloneRange();
             }
 
-            range = wwe.insertSelectionMarker(range);
+            sq.saveUndoState(range);
             wwe.getManager('task').formatTask(range.startContainer);
-            wwe.restoreSelectionMarker();
         }
 
         sq.focus();

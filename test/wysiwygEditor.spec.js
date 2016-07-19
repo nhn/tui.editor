@@ -449,15 +449,29 @@ describe('WysiwygEditor', function() {
             wwe.setHeight(30);
         });
         it('move cursor to end and scroll to end', function() {
+            var range;
+
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
+
+            range = wwe.getRange();
+
             expect(wwe.getEditor().scrollTop()).not.toEqual(0);
+            expect(range.startContainer).toEqual(wwe.get$Body()[0].lastChild);
+            expect(range.startOffset).toEqual(1);
         });
         it('move cursor to start and scroll to top', function() {
+            var range;
+
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
+
+            range = wwe.getRange();
+
             expect(wwe.getEditor().scrollTop()).toEqual(0);
+            expect(range.startContainer).toEqual(wwe.get$Body().find('div')[0].firstChild);
+            expect(range.startOffset).toEqual(0);
         });
     });
 

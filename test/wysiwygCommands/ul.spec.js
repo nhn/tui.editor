@@ -39,7 +39,7 @@ describe('UL', function() {
     it('if have task in range then remove task and change to ul', function() {
         var range = sq.getSelection().cloneRange();
 
-        sq.setHTML('<ul><li class="task-list-item"><div><input type="checkbox"> test</div></li></ul>');
+        sq.setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
 
         range.setStart(wwe.get$Body().find('li')[0], 1);
         range.collapse(true);
@@ -48,9 +48,8 @@ describe('UL', function() {
 
         UL.exec(wwe);
 
-        expect(wwe.get$Body().find('.task-list-item').length).toEqual(0);
+        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(0);
         expect(wwe.get$Body().find('li').length).toEqual(1);
         expect(wwe.get$Body().find('li').text()).toEqual('test');
-        expect(wwe.get$Body().find('input').length).toEqual(0);
     });
 });
