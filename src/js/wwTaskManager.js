@@ -5,10 +5,6 @@
 
 'use strict';
 
-var domUtils = require('./domUtils');
-
-var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
-
 var TASK_CLASS_NAME = 'task-list-item';
 var TASK_ATTR_NAME = 'data-te-task';
 var TASK_CHECKED_CLASS_NAME = 'checked';
