@@ -37,7 +37,7 @@ describe('Task', function() {
 
         Task.exec(wwe);
 
-        expect(sq.getHTML().replace(/<br>/g, '')).toEqual('<ul><li class="task-list-item"><div><input type="checkbox"> </div></li></ul><div></div>');
+        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(1);
     });
 
     it('if already in empty task, dont do anything', function() {
@@ -51,20 +51,17 @@ describe('Task', function() {
 
         Task.exec(wwe);
 
-        expect(wwe.get$Body().find('li').length).toEqual(1);
-        expect(wwe.get$Body().find('ul input').length).toEqual(1);
+        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(1);
 
         Task.exec(wwe);
 
-        expect(wwe.get$Body().find('li').length).toEqual(1);
-        expect(wwe.get$Body().find('ul input').length).toEqual(1);
-        expect(wwe.get$Body().find('li').hasClass('task-list-item')).toEqual(true);
+        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(1);
     });
 
     it('add input too if there is nested task list', function() {
         var range = sq.getSelection().cloneRange();
 
-        sq.setHTML('<ul><li><div><br></div><ul><li><input type="checkbox"></li></ul>');
+        sq.setHTML('<ul><li><div><br></div><ul><li data-te-task class="task-list-item"></li></ul>');
 
         range.setStart(wwe.get$Body().find('ul div')[0], 0);
         range.collapse(true);
@@ -73,7 +70,6 @@ describe('Task', function() {
 
         Task.exec(wwe);
 
-        expect(wwe.get$Body().find('ul input').length).toEqual(2);
-        expect(wwe.get$Body().find('ul div').eq(0).find('input').length).toEqual(1);
+        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(2);
     });
 });

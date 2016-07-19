@@ -985,22 +985,24 @@ WysiwygEditor.prototype.scrollTop = function(value) {
  */
 WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
     var range = this.getEditor().getSelection().cloneRange();
-    var cursorContainer, offset;
+    var cursorContainer = this.get$Body()[0];
 
     if (direction === 'start') {
-        cursorContainer = this.get$Body()[0].firstChild;
-        offset = 0;
+        while (cursorContainer.firstChild) {
+            cursorContainer = cursorContainer.firstChild;
+        }
     } else {
-        cursorContainer = this.get$Body()[0].lastChild;
-        offset = domUtils.getOffsetLength(cursorContainer);
-
-        // IE have problem with cursor after br
-        if (domUtils.getNodeName(cursorContainer.lastChild) === 'BR') {
-            offset -= 1;
+        while (cursorContainer.lastChild) {
+            cursorContainer = cursorContainer.lastChild;
         }
     }
 
-    range.setStart(cursorContainer, offset);
+    // IE have problem with cursor after br
+    if (cursorContainer.tagName === 'BR') {
+        range.setStartBefore(cursorContainer);
+    } else {
+        range.setStartAfter(cursorContainer);
+    }
 
     range.collapse(true);
 

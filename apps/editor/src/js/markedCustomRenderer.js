@@ -31,19 +31,17 @@ var regexTaskList = /^((?:<p>|))(\[(?:x| )\]) /i;
 markedCustomRenderer.listitem = function(text) {
     var cap,
         checked,
-        className = '',
-        output = '';
+        className = '';
 
     cap = regexTaskList.exec(text);
 
     if (cap) {
         text = text.substring(cap[0].length);
-        className = ' class="task-list-item"';
         checked = cap[2].toLowerCase() === '[x]' ? ' checked' : '';
-        output += cap[1] + '<input type="checkbox" class="task-list-item-checkbox"' + checked + '> ';
+        className = ' class="task-list-item' + checked + '"';
     }
 
-    return '<li' + className + '>' + output + text + '</li>\n';
+    return '<li data-te-task' + className + '>' + text + '</li>\n';
 };
 
 /**

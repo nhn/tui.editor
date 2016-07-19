@@ -13,6 +13,9 @@ var Preview = require('./preview'),
 
 var util = tui.util;
 
+var TASK_ATTR_NAME = 'data-te-task';
+var TASK_CHECKED_CLASS_NAME = 'checked';
+
 /**
  * ViewOnly
  * @exports ToastUIEditorViewOnly
@@ -53,6 +56,15 @@ function ToastUIEditorViewOnly(options) {
 
     this.preview = new Preview($(self.options.el), this.eventManager, this.convertor);
 
+    this.preview.$el.on('click', function(ev) {
+        if (ev.target.hasAttribute(TASK_ATTR_NAME)) {
+            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+            self.eventManager.emit('change', {
+                source: 'viewOnly'
+            });
+        }
+    });
+
     extManager.applyExtension(self, self.options.exts);
 
     self.setValue(self.options.initialValue);
@@ -80,7 +92,7 @@ ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
  * @returns {string}
  */
 ToastUIEditorViewOnly.prototype.getValue = function() {
-    return this.markdownValue;
+    return this.convertor.toMarkdown(this.preview.$el.html());
 };
 
 /**
