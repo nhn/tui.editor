@@ -25,6 +25,7 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
         var $node = $(range.startContainer).closest('li');
 
         if ($node.length) {
+            wwe.getEditor().saveUndoState();
             wwe.getEditor().decreaseListLevel();
         }
     }
