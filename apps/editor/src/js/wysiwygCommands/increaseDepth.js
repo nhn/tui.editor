@@ -32,6 +32,8 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
                 return;
             }
 
+            wwe.getEditor().saveUndoState();
+
             nodeClasses = $node.attr('class');
             prevClasses = $prev.attr('class');
 
