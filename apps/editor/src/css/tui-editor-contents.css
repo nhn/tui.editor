@@ -134,10 +134,8 @@
 
 .tui-editor-contents table {
     margin: 2px 0 14px;
-    width: 100%;
     color: #555;
     border-collapse: collapse;
-    display: block;
     box-sizing: border-box;
 }
 
@@ -145,6 +143,14 @@
 .tui-editor-contents table td {
     height: 32px;
     padding: 5px 14px 5px 12px;
+}
+
+.tui-editor-contents td.te-cell-selected {
+    background-color: #d8dfec;
+}
+
+.tui-editor-contents th.te-cell-selected {
+    background-color: #908f8f;
 }
 
 .tui-editor-contents table td {
