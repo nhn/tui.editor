@@ -30,6 +30,10 @@ describe('Convertor', function() {
             expect(convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length).toEqual(2);
             expect(convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g).length).toEqual(2);
         });
+
+        it('Avoid hidden last cell in table', function() {
+            expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
+        });
     });
 
     describe('html to markdown', function() {
