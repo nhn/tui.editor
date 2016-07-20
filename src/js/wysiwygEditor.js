@@ -11,6 +11,7 @@ var domUtils = require('./domUtils'),
     WwListManager = require('./wwListManager'),
     WwTaskManager = require('./wwTaskManager'),
     WwTableManager = require('./wwTableManager'),
+    WwTableSelectionManager = require('./wwTableSelectionManager'),
     WwHrManager = require('./wwHrManager'),
     WwPManager = require('./wwPManager'),
     WwHeadingManager = require('./wwHeadingManager'),
@@ -1060,6 +1061,7 @@ WysiwygEditor.factory = function($el, eventManager) {
     wwe.addManager(WwListManager);
     wwe.addManager(WwTaskManager);
     wwe.addManager(WwTableManager);
+    wwe.addManager(WwTableSelectionManager);
     wwe.addManager(WwHrManager);
     wwe.addManager(WwPManager);
     wwe.addManager(WwHeadingManager);
