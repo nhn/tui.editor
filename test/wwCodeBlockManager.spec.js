@@ -33,9 +33,9 @@ describe('WwCodeBlockManager', function() {
         it('check if passed range is in codeblock', function() {
             var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.getEditor().setHTML('<pre><code>test</code></pre>');
+            wwe.getEditor().setHTML('<pre><div>test</div></pre>');
 
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
+            range.setStart(wwe.get$Body().find('div')[0], 0);
             range.collapse(true);
 
             expect(mgr.isInCodeBlock(range)).toBe(true);
@@ -43,118 +43,49 @@ describe('WwCodeBlockManager', function() {
     });
 
     describe('key handlers', function() {
-        it('backspace: when top line of codeblock and 0 offset', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        describe('BACKSPACE', function() {
+            it('_revmoeCodeblockIfNeed() remove codeblock if codeblock has one code tag when offset is 0', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<pre><code>test\ntest2\ntest3</code></pre>');
+                wwe.setValue('<pre><div>test</div></pre>');
 
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 0);
-            range.collapse(true);
+                range.setStart(wwe.get$Body().find('div')[0].childNodes[0], 0);
+                range.collapse(true);
 
-            wwe.getEditor().setSelection(range);
+                wwe.getEditor().setSelection(range);
 
-            em.emit('wysiwygKeyEvent', {
-                keyMap: 'BACK_SPACE',
-                data: {
-                    preventDefault: function() {}
-                }
+                em.emit('wysiwygKeyEvent', {
+                    keyMap: 'BACK_SPACE',
+                    data: {
+                        preventDefault: function() {}
+                    }
+                });
+
+                expect(wwe.get$Body().find('div').length).toEqual(2);
+                expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');
+                expect(wwe.get$Body().find('pre').length).toEqual(0);
             });
 
-            expect(wwe.get$Body().find('code').length).toEqual(2);
-        });
-        it('backspace: unformat code if codeblock has one code tag when offset is 0', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+            it('_revmoeCodeblockIfNeed() remove codeblock and make one br if there is no content', function() {
+                var range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<pre><code>test</code></pre>');
+                wwe.setValue('<pre><div><br></div></pre>');
 
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 0);
-            range.collapse(true);
+                range.setStart(wwe.get$Body().find('div')[0], 0);
+                range.collapse(true);
 
-            wwe.getEditor().setSelection(range);
+                wwe.getEditor().setSelection(range);
 
-            em.emit('wysiwygKeyEvent', {
-                keyMap: 'BACK_SPACE',
-                data: {
-                    preventDefault: function() {}
-                }
+                em.emit('wysiwygKeyEvent', {
+                    keyMap: 'BACK_SPACE',
+                    data: {
+                        preventDefault: function() {}
+                    }
+                });
+
+                expect(wwe.get$Body().find('div').length).toEqual(2);
+                expect(wwe.get$Body().find('pre').length).toEqual(0);
             });
-
-            expect(wwe.get$Body().find('code').length).toEqual(0);
-            expect(wwe.get$Body().find('pre').length).toEqual(1);
-        });
-        it('backspace: replace last character in code tag to ZWB if code has one char', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<pre><code>t</code></pre>');
-
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            em.emit('wysiwygKeyEvent', {
-                keyMap: 'BACK_SPACE',
-                data: {
-                    preventDefault: function() {}
-                }
-            });
-
-            expect(wwe.get$Body().find('code').length).toEqual(1);
-            expect(wwe.get$Body().find('code').text()).toEqual('\u200B');
-            expect(wwe.get$Body().find('pre').length).toEqual(1);
-        });
-
-        it('backspace: format incomplete line to code', function(done) {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.getEditor().setHTML('<pre><div><br></div><code>test&#8203</code></pre>');
-
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 3);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            em.emit('wysiwygKeyEvent', {
-                keyMap: 'BACK_SPACE',
-                data: {
-                    preventDefault: function() {}
-                }
-            });
-
-            setTimeout(function() {
-                done();
-
-                expect(wwe.get$Body().find('code').length).toEqual(2);
-                expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
-                expect(wwe.get$Body().find('pre').length).toEqual(1);
-            }, 0);
-        });
-
-        it('enter: format incomplete line to code', function(done) {
-            var range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.getEditor().setHTML('<pre><div><br></div><code>&#8203</code></pre>');
-
-            range.setStart(wwe.get$Body().find('code')[0].childNodes[0], 1);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            em.emit('wysiwygKeyEvent', {
-                keyMap: 'ENTER',
-                data: {
-                    preventDefault: function() {}
-                }
-            });
-
-            setTimeout(function() {
-                done();
-
-                expect(wwe.get$Body().find('code').length).toEqual(2);
-                expect(wwe.get$Body().find('code').eq(0).text()).toEqual('\u200B');
-                expect(wwe.get$Body().find('code').eq(1).text()).toEqual('\u200B');
-                expect(wwe.get$Body().find('pre').length).toEqual(1);
-            }, 0);
         });
     });
 
@@ -168,13 +99,14 @@ describe('WwCodeBlockManager', function() {
 
             range = wwe.getEditor().getSelection().cloneRange();
 
-            range.setStart(wwe.get$Body().find('code')[0], 1);
+            range.setStart(wwe.get$Body().find('div')[0], 1);
             range.collapse(true);
 
             mgr._copyCodeblockTypeFromRangeCodeblock(codeblock[0], range);
 
             expect(codeblock.hasClass('lang-javascript')).toBe(true);
             expect(codeblock.attr('data-language')).toEqual('javascript');
+            expect(codeblock.attr('data-te-codeblock')).toBeDefined();
         });
     });
 
@@ -187,7 +119,7 @@ describe('WwCodeBlockManager', function() {
 
             range = wwe.getEditor().getSelection().cloneRange();
 
-            range.setStart(wwe.get$Body().find('code')[0], 1);
+            range.setStart(wwe.get$Body().find('div')[0], 1);
             range.collapse(true);
 
             wwe.getEditor().setSelection(range);
@@ -216,27 +148,31 @@ describe('WwCodeBlockManager', function() {
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
-            expect($(resultFragment).find('div code').eq(0).text()).toEqual('test');
-            expect($(resultFragment).find('div code').eq(1).text()).toEqual('test2');
+            expect($(resultFragment).find('div').eq(0).text()).toEqual('test');
+            expect($(resultFragment).find('div').eq(1).text()).toEqual('test2');
         });
     });
     describe('Event', function() {
         it('split to each code tag in code block on line feed on wysiwygSetValueAfter', function() {
+            var codeblock;
+
             wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'test\ntest2\n\ntest3\n</code></pre>');
 
-            expect(wwe.get$Body().find('pre').length).toEqual(1);
-            expect(wwe.get$Body().find('pre div').length).toEqual(4);
-            expect(wwe.get$Body().find('pre code').length).toEqual(4);
-            expect(wwe.get$Body().find('pre').hasClass('lang-javascript')).toBe(true);
-            expect(wwe.get$Body().find('pre').attr('data-language')).toEqual('javascript');
+            codeblock = wwe.get$Body().find('pre');
+
+            expect(codeblock.length).toEqual(1);
+            expect(codeblock.find('div').length).toEqual(4);
+            expect(codeblock.hasClass('lang-javascript')).toBe(true);
+            expect(codeblock.attr('data-language')).toEqual('javascript');
+            expect(codeblock.attr('data-te-codeblock')).toBeDefined();
         });
 
         it('join each line of code block to one codeblock on wysiwygProcessHTMLText', function() {
             wwe.getEditor().setHTML([
                 '<pre>',
-                '<div><code>test1</code><br></div>',
-                '<div><code>test2</code><br></div>',
+                '<div>test1</div>',
+                '<div>test2</div>',
                 '</pre>'
             ].join(''));
 
@@ -250,8 +186,8 @@ describe('WwCodeBlockManager', function() {
         it('join each line of code block to one codeblock on wysiwygProcessHTMLText with code attr', function() {
             wwe.getEditor().setHTML([
                 '<pre class="lang-javascript" data-language="javascript">',
-                '<div><code>test1</code><br></div>',
-                '<div><code>test2</code><br></div>',
+                '<div>test1</div>',
+                '<div>test2</div>',
                 '</pre>'
             ].join(''));
 
@@ -265,12 +201,12 @@ describe('WwCodeBlockManager', function() {
         it('join each line of multiple code block to one codeblock on wysiwygProcessHTMLText', function() {
             wwe.getEditor().setHTML([
                 '<pre class="lang-javascript" data-language="javascript">',
-                '<div><code>test1</code><br></div>',
-                '<div><code>test2</code><br></div>',
+                '<div>test1</div>',
+                '<div>test2</div>',
                 '</pre>',
                 '<pre class="lang-javascript" data-language="javascript">',
-                '<div><code>test3</code><br></div>',
-                '<div><code>test4</code><br></div>',
+                '<div>test3</div>',
+                '<div>test4</div>',
                 '</pre>'
             ].join(''));
 

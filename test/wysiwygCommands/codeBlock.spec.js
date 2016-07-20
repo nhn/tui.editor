@@ -34,7 +34,8 @@ describe('CodeBlock', function() {
         CodeBlock.exec(wwe);
 
         expect($body.find('pre').length).toEqual(1);
-        expect($body.find('code').length).toEqual(1);
+        expect($body.find('pre div').length).toEqual(1);
+        expect($body.find('pre').attr('data-te-codeblock')).toBeDefined();
     });
     it('add CodeBlock with language', function() {
         CodeBlock.exec(wwe, 'javascript');
@@ -56,8 +57,8 @@ describe('CodeBlock', function() {
         CodeBlock.exec(wwe);
 
         expect($body.find('pre').length).toEqual(1);
-        expect($body.find('code').length).toEqual(1);
-        expect($body.find('code').text()).toEqual('hello');
+        expect($body.find('pre div').length).toEqual(1);
+        expect($body.find('div').eq(0).text()).toEqual('hello');
         expect($body.find('div').eq(1).text()).toEqual(', my name is code');
     });
 });
