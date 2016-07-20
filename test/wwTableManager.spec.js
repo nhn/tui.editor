@@ -428,7 +428,7 @@ describe('WwTableManager', function() {
             });
         });
 
-        it('do nothing when current node is TABLE', function(done) {
+        it('do nothing when current node is complete TABLE', function(done) {
             var $body;
             var html = '<table>' +
                 '<thead>' +
@@ -447,6 +447,80 @@ describe('WwTableManager', function() {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('tbody td').length).toEqual(2);
                 expect($body.find('tbody').text()).toEqual('ab');
+                done();
+            });
+        });
+
+        it('prepend table cells into first TR in TABLE', function(done) {
+            var $body;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>head</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>b</td></tr>' +
+                '<tr><td>c</td><td>d</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            mgr._completeTableIfNeed();
+
+            setTimeout(function() {
+                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead th').length).toEqual(2);
+                expect($body.find('tbody td').length).toEqual(4);
+                expect($body.find('tbody').text()).toEqual('  bcd');
+                done();
+            });
+        });
+        it('append table cells into last TR in TABLE', function(done) {
+            var $body;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>head</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>a</td><td>b</td></tr>' +
+                '<tr><td>c</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            mgr._completeTableIfNeed();
+
+            setTimeout(function() {
+                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead th').length).toEqual(2);
+                expect($body.find('tbody td').length).toEqual(4);
+                expect($body.find('tbody').text()).toEqual('abc  ');
+                done();
+            });
+        });
+        it('do nothing and return inner loop when not table or sub table element', function(done) {
+            var $body;
+            var html = '<div>123</div>' +
+                '<table>' +
+                '<thead>' +
+                '<tr><th>head</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>a</td><td>b</td></tr>' +
+                '<tr><td>c</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            mgr._completeTableIfNeed();
+
+            setTimeout(function() {
+                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead th').length).toEqual(2);
+                expect($body.find('tbody td').length).toEqual(4);
+                expect($body.find('tbody').text()).toEqual('abc  ');
                 done();
             });
         });
