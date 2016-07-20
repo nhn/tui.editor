@@ -15,6 +15,9 @@ var tagEntities = {
     '>': '&gt;'
 };
 
+var FIND_ZWS_RX = /\u200B/g;
+var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
+
 /**
  * WwCodeBlockManager
  * @exports WwCodeBlockManager
@@ -55,12 +58,7 @@ WwCodeBlockManager.prototype._init = function() {
  * @private
  */
 WwCodeBlockManager.prototype._initKeyHandler = function() {
-    this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeLastCharInCodeTagIfCodeTagHasOneChar.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeIfCodeIsEmpty.bind(this));
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._recoverIncompleteLineInPreTag.bind(this));
+    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
 };
 
 /**
@@ -118,6 +116,8 @@ WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
         node = nodes.shift();
     }
 
+    $codeblock.attr(CODEBLOCK_ATTR_NAME, '');
+
     return $codeblock[0];
 };
 
@@ -154,8 +154,8 @@ WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(ele
  */
 WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
     html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
-        code = code.replace(/<\/code><br \/>/g, '\n');
-        code = code.replace(/<code ?(.*?)>/g, '');
+        code = code.replace(/<br \/>/g, '\n');
+        code = code.replace(/<div ?(.*?)>/g, '');
         code = code.replace(/\n$/, '');
 
         return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
@@ -186,6 +186,8 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
         util.forEach(codelines, function(line) {
             $(pre).append(self._makeCodeBlockLineHtml(line));
         });
+
+        $(pre).attr(CODEBLOCK_ATTR_NAME, '');
     });
 };
 
@@ -198,186 +200,54 @@ WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
  */
 WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
     if (!lineContent) {
-        lineContent = '\u200B';
+        lineContent = '<br>';
+    } else {
+        lineContent = sanitizeHtmlCode(lineContent);
     }
 
-    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code></div>';
+    return '<div>' + lineContent + '</div>';
 };
 
 /**
- * Insert ZWB code block if in empty code
+ * Remove codeblock if need
  * @memberOf WwCodeBlockManager
  * @param {Event} ev Event object
  * @param {Range} range Range object
  * @returns {boolean}
  * @private
  */
-WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
-        ev.preventDefault();
-        this.wwe.getEditor().saveUndoState(range);
-        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
-
-        return false;
-    }
-
-    return true;
-};
-
-/**
- * Unformat code at top line and offset equals 0
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
-    var currentNodeName, code;
+WwCodeBlockManager.prototype._removeCodeblockIfNeed = function(ev, range) {
+    var pre, $div, codeContent;
+    var self = this;
 
     if (!this.isInCodeBlock(range)) {
         return true;
     }
 
-    currentNodeName = domUtils.getNodeName(range.startContainer);
-    code = domUtils.getParentUntil(range.startContainer, 'PRE');
+    pre = $(range.startContainer).closest('pre');
+    $div = $(pre).find('div').eq(0);
+    codeContent = $div.text().replace(FIND_ZWS_RX, '');
 
-    //최상단의 라인의 0오프셋 일때
-    if (currentNodeName === 'TEXT'
-        && range.startOffset === 0
-        && !code.previousSibling
+    //코드블럭이 code한줄 밖에 없을때
+    if ((range.startOffset === 0 || codeContent.length === 0)
+        && $(pre).find('div').length <= 1
     ) {
-        $(code).text(range.startContainer.textContent);
+        this.wwe.getEditor().modifyBlocks(function() {
+            var newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
+            var content;
 
-        range.setStart(code.childNodes[0], 0);
-        this.wwe.getEditor().setSelection(range);
-
-        return false;
-    }
-
-    return true;
-};
-
-/**
- * Unformat code when one CODE tag in PRE tag
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
-    var pre, div;
-
-    if (!this.isInCodeBlock(range)) {
-        return true;
-    }
-
-    pre = domUtils.getParentUntil(range.startContainer);
-    div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-    //코드블럭이 code하나밖에 없을때
-    if (range.startOffset === 0 && $(pre).find('code').length <= 1) {
-        $(div).find('code').children().unwrap('code');
-
-        return false;
-    }
-
-    return true;
-};
-
-/**
- * Remove last character in CODE tag when CODE has one character
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
-    var currentNodeName;
-
-    if (!this.isInCodeBlock(range)) {
-        return true;
-    }
-
-    currentNodeName = domUtils.getNodeName(range.startContainer);
-
-    //텍스트 노드인경우 마지막 케릭터와 code블럭이 함께 삭제되는것을 방지(squire가 삭제하면 다시만든다)
-    if (currentNodeName === 'TEXT'
-        && domUtils.getOffsetLength(range.startContainer) === 1
-        && range.startOffset <= 2
-    ) {
-        ev.preventDefault();
-        range.startContainer.textContent = '\u200B';
-
-        return false;
-    }
-
-    return true;
-};
-
-/**
- * Recover incomplete line in PRE tag
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
-    var pre;
-
-    if (this.wwe.getEditor().hasFormat('PRE')) {
-        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
-
-        this.wwe.defer(function(wwe) {
-            var modified;
-
-            $(pre).find('div').each(function(index, div) {
-                if (!$(div).find('code').length) {
-                    $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
-                    modified = true;
-                }
-            });
-
-            if (modified) {
-                wwe.readySilentChange();
+            if (codeContent.length === 0) {
+                content = '<br>';
+            } else {
+                content = $div.html().replace(FIND_ZWS_RX, '');
             }
+
+            $(newFrag).append($('<div>' + content + '</div>'));
+
+            return newFrag;
         });
-    }
 
-    return true;
-};
-
-/**
- * Remove blank CODE tag
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
-    var currentNodeName, div;
-
-    if (this.isInCodeBlock(range)) {
-        currentNodeName = domUtils.getNodeName(range.startContainer);
-        div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-        if (currentNodeName === 'TEXT'
-            && domUtils.getOffsetLength(range.startContainer) === 0
-            && range.startOffset <= 1
-        ) {
-            $(div).html('<br>');
-
-            range.setStart(div, 0);
-            range.collapse(true);
-
-            this.wwe.getEditor().setSelection(range);
-
-            return false;
-        }
+        return false;
     }
 
     return true;
@@ -409,8 +279,7 @@ WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
  * @private
  */
 WwCodeBlockManager.prototype._isCodeBlock = function(element) {
-    return !!$(element).closest('pre').length
-        && (!!$(element).closest('code').length || !!$(element).find('code').length);
+    return !!$(element).closest('pre').length;
 };
 
 function sanitizeHtmlCode(code) {

@@ -7,8 +7,10 @@
 
 var CommandManager = require('../commandManager');
 
-var codeBlockID = 0,
-    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
+var codeBlockID = 0;
+var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
+var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
+
 /**
  * CodeBlock
  * Add CodeBlock to wysiwygEditor
@@ -29,14 +31,14 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
         var sq = wwe.getEditor();
         var range = sq.getSelection().cloneRange();
         if (!sq.hasFormat('PRE')) {
-            attr = ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
+            attr = CODEBLOCK_ATTR_NAME + ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
 
             if (type) {
                 attr += ' data-language="' + type + '"';
             }
 
             codeBlockBody = getCodeBlockBody(range, wwe);
-            sq.insertHTML('<pre' + attr + '>' + codeBlockBody + '</pre>');
+            sq.insertHTML('<pre ' + attr + '>' + codeBlockBody + '</pre>');
 
             focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
 
@@ -56,7 +58,7 @@ var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
 function focusToFirstCode($pre, wwe) {
     var range = wwe.getEditor().getSelection().cloneRange();
 
-    range.setStart($pre.find('code')[0].firstChild, 0);
+    range.setStartBefore($pre.find('div')[0].firstChild);
     range.collapse(true);
 
     wwe.getEditor().setSelection(range);
@@ -74,7 +76,7 @@ function getCodeBlockBody(range, wwe) {
     var contents, nodes;
 
     if (range.collapsed) {
-        nodes = [$('<div>&#8203<br></div>')[0]];
+        nodes = [$('<div><br></div>')[0]];
     } else {
         contents = range.extractContents();
         nodes = [].slice.call(contents.childNodes);
