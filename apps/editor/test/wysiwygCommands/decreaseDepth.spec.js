@@ -24,7 +24,7 @@ describe('DecreaseDepth', function() {
             '<ul>',
             '<li data-te-task class="task-list-item"><div>abcdef</div>',
             '<ul>',
-            '<li data-te-task class="task-list-item"><div>abcde</div></li>',
+            '<li data-te-task class="task-list-item checked"><div>abcde</div></li>',
             '</ul></li>',
             '<li data-te-task class="task-list-item"><div> </div></li>',
             '</ul>'
@@ -53,6 +53,7 @@ describe('DecreaseDepth', function() {
         expect(sq.get$Body().find('ul li ul').length).toEqual(0);
         expect(sq.get$Body().find('ul li ul li').length).toEqual(0);
         expect(sq.get$Body().find('ul li').hasClass('task-list-item')).toBe(true);
+        expect(sq.get$Body().find('ul li').hasClass('checked')).toBe(true);
     });
     it('should break out list element and delete input.', function() {
         var range = wwe.getEditor().getSelection().cloneRange();

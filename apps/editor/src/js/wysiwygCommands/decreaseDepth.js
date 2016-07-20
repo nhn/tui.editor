@@ -21,14 +21,24 @@ var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WysiwygEditor instance
      */
     exec: function(wwe) {
-        var range = wwe.getEditor().getSelection();
-        var $node = $(range.startContainer).closest('li');
+        var $node = getCurrent$Li(wwe);
+        var nodeClasses;
 
         if ($node.length) {
             wwe.getEditor().saveUndoState();
+
+            nodeClasses = $node.attr('class');
             wwe.getEditor().decreaseListLevel();
+
+            $node = getCurrent$Li(wwe);
+            $node.attr('class', nodeClasses);
         }
     }
 });
+
+function getCurrent$Li(wwe) {
+    var range = wwe.getEditor().getSelection();
+    return $(range.startContainer).closest('li');
+}
 
 module.exports = DecreaseDepth;
