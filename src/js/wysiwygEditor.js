@@ -387,7 +387,15 @@ WysiwygEditor.prototype._onKeyDown = function(keyboardEvent) {
 WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     var self = this;
 
-    this.addKeyEventHandler('ENTER', function() {
+    this.addKeyEventHandler('ENTER', function(ev, range) {
+        if (self._isInOrphanText(range)) {
+            //We need this cuz input text right after table make orphan text in webkit
+            self.defer(function() {
+                self._wrapDefaultBlockToOrphanTexts();
+                self.breakToNewDefaultBlock(range, 'before');
+            });
+        }
+
         self.defer(function() {
             self._scrollToRangeIfNeed();
         });
@@ -405,6 +413,20 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
         }
 
         return true;
+    });
+};
+
+WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
+    var textNodes;
+
+    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+    textNodes.each(function(i, node) {
+        if (node.nextSibling && node.nextSibling.tagName === 'BR') {
+            $(node.nextSibling).remove();
+        }
+
+        $(node).wrap('<div />');
     });
 };
 

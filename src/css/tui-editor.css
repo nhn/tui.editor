@@ -102,7 +102,15 @@
 }
 
 .te-ww-container .tui-editor-contents {
-    padding: 10px;
+    padding: 0 10px;
+}
+
+.te-ww-container .tui-editor-contents:first-child {
+    margin-top:10px;
+}
+
+.te-ww-container .tui-editor-contents:last-child {
+    margin-bottom:10px;
 }
 
 .te-md-mode .te-md-container {
