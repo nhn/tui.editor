@@ -95,4 +95,33 @@ describe('IncreaseDepth', function() {
             expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(true);
         });
     });
+    it('should increase ordinary list', function() {
+        var range = wwe.getEditor().getSelection().cloneRange();
+
+        wwe.get$Body().html([
+            '<ul>',
+            '<li data-te-task class="task-list-item"><div>abcdef</div></li>',
+            '<li data-te-task class="task-list-item"><div>abcde</div>',
+            '<ul>',
+            '<li data-te-task class="task-list-item">',
+            '<ul>',
+            '<li data-te-task class="task-list-item"><div>abcdef</div></li>',
+            '</ul>',
+            '</ul>',
+            '</li>',
+            '</li>',
+            '</ul>'
+        ].join(''));
+
+        range.setStart(wwe.get$Body().find('div')[1].firstChild, 1);
+        range.collapse(true);
+
+        sq.setSelection(range);
+
+        IncreaseDepth.exec(wwe);
+
+        expect(sq.get$Body().find('ul').length).toEqual(3);
+        expect(sq.get$Body().find('ul > li > ul > li > ul > li').length).toEqual(1);
+        expect(sq.get$Body().find('ul > li > ul > li > ul > li').hasClass('task-list-item')).toBe(true);
+    });
 });

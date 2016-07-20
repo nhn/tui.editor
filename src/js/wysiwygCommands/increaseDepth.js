@@ -21,29 +21,33 @@ var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var $prev, prevClasses, nodeClasses;
+        var $next, $prev, prevClasses, nodeClasses, nextClasses;
         var range = wwe.getEditor().getSelection();
         var $node = $(range.startContainer).closest('li');
 
-        if ($node.length) {
-            $prev = $node.prev();
+        $prev = $node.prev();
 
-            if (!$prev.length) {
-                return;
-            }
+        if ($prev.length && $node.length) {
+            $next = $node.find('li').eq(0);
 
             wwe.getEditor().saveUndoState();
 
             nodeClasses = $node.attr('class');
             prevClasses = $prev.attr('class');
+            nextClasses = $next.attr('class');
 
             $node.removeAttr('class');
             $prev.removeAttr('class');
+
+            if ($next.length && !$next.children('div').length) {
+                $next.removeAttr('class');
+            }
 
             wwe.getEditor().increaseListLevel();
 
             $node.attr('class', nodeClasses);
             $prev.attr('class', prevClasses);
+            $next.attr('class', nextClasses);
         }
     }
 });
