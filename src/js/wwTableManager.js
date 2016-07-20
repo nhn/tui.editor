@@ -1,6 +1,7 @@
 /**
  * @fileoverview Implements wysiwyg table manager
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 'use strict';
@@ -71,6 +72,7 @@ WwTableManager.prototype._initEvent = function() {
         if (self.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
             ev.preventDefault();
         }
+        self.wwe.defer(self._completeTableIfNeed.bind(self));
     });
 };
 
@@ -468,7 +470,7 @@ WwTableManager.prototype.wrapTheadAndTbodyIntoTableIfNeed = function(fragment) {
  */
 WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
     var newFragment = document.createDocumentFragment();
-    if (this.isTablePaste(node.nodeName)) {
+    if (this.isTableOrSubTableElement(node.nodeName)) {
         this.pasteDataIntoTable(pasteData.fragment);
         pasteData.fragment = newFragment;
     } else {
@@ -485,7 +487,7 @@ WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
  * @memberOf WwTableManager
  * @api
  */
-WwTableManager.prototype.isTablePaste = function(pastingNodeName) {
+WwTableManager.prototype.isTableOrSubTableElement = function(pastingNodeName) {
     return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
         || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
 };
@@ -506,45 +508,160 @@ function tableCellGenerator(amount, tagName) {
 
     return tdString;
 }
+
+WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maximumCellLength) {
+    $trs.each(function(rowIndex, row) {
+        var $row = $(row);
+        var tableCells = $row.find('th,td');
+        var cellLength = tableCells.length;
+        var parentNodeName = domUtils.getNodeName($row.parent()[0]);
+        var cellTagName = parentNodeName === 'THEAD' ? 'th' : 'td';
+        var isFirstRowInTbody = rowIndex === 1 && parentNodeName === 'TBODY';
+        var isNotLastRow = rowIndex !== $trs.length;
+
+        for (; cellLength < maximumCellLength; cellLength += 1) {
+            if (parentNodeName === 'THEAD'
+                || (isFirstRowInTbody && isNotLastRow)
+            ) {
+                $row.prepend($(tableCellGenerator(1, cellTagName))[0]);
+            } else {
+                $row.append($(tableCellGenerator(1, cellTagName))[0]);
+            }
+        }
+    });
+};
+
+WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
+    var maximumCellLength = $trs.eq(0).find('th,td').length;
+    var needTableCellStuffingAid = false;
+
+    $trs.each(function(i, row) {
+        var cellCount = $(row).find('th,td').length;
+
+        if (maximumCellLength !== cellCount) {
+            needTableCellStuffingAid = true;
+
+            if (maximumCellLength < cellCount) {
+                maximumCellLength = cellCount;
+            }
+        }
+    });
+
+    return {
+        maximumCellLength: maximumCellLength,
+        needTableCellStuffingAid: needTableCellStuffingAid
+    };
+};
+
+WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
+    var absentNode, cellTagName;
+
+    var isTheadNotExists = !table.find('thead').length;
+    var isTbodyNotExists = !table.find('tbody').length;
+
+    if (isTheadNotExists) {
+        cellTagName = 'th';
+    } else if (isTbodyNotExists) {
+        cellTagName = 'td';
+    }
+
+    absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>');
+    table.prepend(absentNode);
+};
+
+WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
+    var table = $(node);
+    var needTableCellStuffingAid = false;
+    var tableAidInformation = null;
+    var trs, maximumCellLength;
+
+    this._addTbodyOrTheadIfNeed(table);
+
+    trs = table.find('tr');
+    tableAidInformation = this._prepareToTableCellStuffing(trs);
+    maximumCellLength = tableAidInformation.maximumCellLength;
+    needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+
+    if (needTableCellStuffingAid) {
+        this._stuffTableCellsIntoIncompleteRow(trs, maximumCellLength);
+    }
+};
+
+WwTableManager.prototype._generateTheadAndTbodyFromTbody = function(node) {
+    var tr = $('<tr></tr>');
+    var thead = $('<thead></thead>');
+
+    tr.append(tableCellGenerator($(node).find('tr').eq(0).find('td').length, 'th'));
+    thead.append(tr);
+
+    return {
+        thead: thead[0],
+        tbody: node
+    };
+};
+
+WwTableManager.prototype._generateTheadAndTbodyFromThead = function(node) {
+    var tr = $('<tr></tr>');
+    var tbody = $('<tbody></tbody>');
+
+    tr.append(tableCellGenerator($(node).find('th').length, 'td'));
+    tbody.append(tr);
+
+    return {
+        thead: node,
+        tbody: tbody[0]
+    };
+};
+
+WwTableManager.prototype._generateTheadAndTbodyFromTr = function(node) {
+    var $node = $(node);
+    var thead = $('<thead></thead>');
+    var tbody = $('<tbody></tbody>');
+    var theadRow, tbodyRow;
+
+    if ($node.children()[0].tagName === 'TH') {
+        theadRow = node;
+        tbodyRow = tableCellGenerator($node.find('th').length, 'td');
+    } else {
+        theadRow = tableCellGenerator($node.find('td').length, 'th');
+        tbodyRow = node;
+    }
+
+    thead.append(theadRow);
+    tbody.append(tbodyRow);
+
+    return {
+        thead: thead[0],
+        tbody: tbody[0]
+    };
+};
+
 /**
  * Complete passed table
  * @param {HTMLElement} node Table inner element
  * @private
  */
-WwTableManager.prototype._compleIncompleteTable = function(node) {
-    var table = $('<table></table>');
-    var thead = $('<thead></thead>');
-    var tbody = $('<tbody></tbody>');
-    var tr = $('<tr></tr>');
-    var $node = $(node);
+WwTableManager.prototype._completeIncompleteTable = function(node) {
     var nodeName = node.tagName;
-    var theadContents, tbodyContents;
+    var table, completedTableContents;
 
-    table.insertAfter(node);
+    if (nodeName === 'TABLE') {
+        this._tableCellAppendAidForTableElement(node);
+    } else {
+        table = $('<table></table>');
+        table.insertAfter(node);
 
-    if (nodeName === 'TBODY') {
-        tr.append(tableCellGenerator($node.find('tr').eq(0).find('td').length, 'th'));
-        thead.append(tr);
-
-        tbody = node;
-    } else if (nodeName === 'THEAD') {
-        thead = node;
-
-        tr.append(tableCellGenerator($node.find('th').length, 'td'));
-        tbody.append(tr);
-    } else if (nodeName === 'TR') {
-        if ($node.children()[0].tagName === 'TH') {
-            theadContents = node;
-            tbodyContents = tableCellGenerator($node.find('th').length, 'td');
-        } else {
-            theadContents = tableCellGenerator($node.find('td').length, 'th');
-            tbodyContents = node;
+        if (nodeName === 'TBODY') {
+            completedTableContents = this._generateTheadAndTbodyFromTbody(node);
+        } else if (nodeName === 'THEAD') {
+            completedTableContents = this._generateTheadAndTbodyFromThead(node);
+        } else if (nodeName === 'TR') {
+            completedTableContents = this._generateTheadAndTbodyFromTr(node);
         }
-        thead.append(theadContents);
-        tbody.append(tbodyContents);
+
+        table.append(completedTableContents.thead);
+        table.append(completedTableContents.tbody);
     }
-    table.append(thead);
-    table.append(tbody);
 };
 
 /**
@@ -556,10 +673,10 @@ WwTableManager.prototype._completeTableIfNeed = function() {
     var self = this;
 
     $body.children().each(function(index, node) {
-        if (!self.isTablePaste(node.nodeName) || node.nodeName === 'TABLE') {
+        if (!self.isTableOrSubTableElement(node.nodeName)) {
             return;
         }
-        self._compleIncompleteTable(node);
+        self._completeIncompleteTable(node);
     });
 };
 module.exports = WwTableManager;
