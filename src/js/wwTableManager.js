@@ -126,9 +126,13 @@ WwTableManager.prototype._initKeyHandler = function() {
                 isNeedNext = false;
             }
         } else if (self.isInTable(range)) {
-            if (range.commonAncestorContainer.nodeType !== 3) {
+            if (range.commonAncestorContainer.nodeType !== 3
+                && range.commonAncestorContainer !== self.wwe.get$Body()[0]
+            ) {
                 ev.preventDefault();
                 self._removeTableContents(range);
+                range.collapse(true);
+                self.wwe.getEditor().setSelection(range);
                 isNeedNext = false;
             }
         }
