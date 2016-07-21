@@ -468,10 +468,10 @@ describe('WwTableManager', function() {
             mgr._completeTableIfNeed();
 
             setTimeout(function() {
-                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
-                expect($body.find('tbody').text()).toEqual('  bcd');
+                expect($body.find('tbody').text()).toEqual('bcd');
                 done();
             });
         });
@@ -492,10 +492,10 @@ describe('WwTableManager', function() {
             mgr._completeTableIfNeed();
 
             setTimeout(function() {
-                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
-                expect($body.find('tbody').text()).toEqual('abc  ');
+                expect($body.find('tbody').text()).toEqual('abc');
                 done();
             });
         });
@@ -517,10 +517,10 @@ describe('WwTableManager', function() {
             mgr._completeTableIfNeed();
 
             setTimeout(function() {
-                expect($body.find('thead').text()).toEqual('  head');
+                expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
-                expect($body.find('tbody').text()).toEqual('abc  ');
+                expect($body.find('tbody').text()).toEqual('abc');
                 done();
             });
         });

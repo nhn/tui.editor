@@ -503,7 +503,7 @@ function tableCellGenerator(amount, tagName) {
     var i;
     var tdString = '';
     for (i = 0; i < amount; i += 1) {
-        tdString = tdString + '<' + tagName + '> <br /> </' + tagName + '>';
+        tdString = tdString + '<' + tagName + '><br></' + tagName + '>';
     }
 
     return tdString;
