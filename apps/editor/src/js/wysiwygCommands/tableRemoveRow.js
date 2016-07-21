@@ -21,15 +21,34 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection().cloneRange(),
-            $tr, $nextFocus;
+        var sq = wwe.getEditor();
+        var range = sq.getSelection().cloneRange();
+        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+        var $table = $(range.startContainer).parents('table');
+        var trsInTbody = $table.find('tbody tr');
+        var isStartContainerInThead = $(range.startContainer).parents('thead').length;
+        var startRowIndex, endRowIndex, $nextFocus, $tr, isWholeTbodySelected;
 
-        if (sq.hasFormat('TD') && $(range.startContainer).closest('table').find('tbody tr').length > 1) {
+        if (isStartContainerInThead) {
+            startRowIndex = rangeInformation.from.row + 1;
+        } else {
+            startRowIndex = rangeInformation.from.row;
+        }
+        endRowIndex = rangeInformation.to.row;
+
+        isWholeTbodySelected = !(startRowIndex === 1 && endRowIndex === trsInTbody.length)
+            || (isStartContainerInThead && endRowIndex === trsInTbody);
+        if (!isWholeTbodySelected) {
+            endRowIndex -= 1;
+        }
+
+        $tr = $table.find('tr').slice(startRowIndex, endRowIndex + 1);
+
+        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE'))
+            && trsInTbody.length > 1
+        ) {
             sq.saveUndoState(range);
-            $tr = $(range.startContainer).closest('tr');
-
-            $nextFocus = $tr.next().length ? $tr.next() : $tr.prev();
+            $nextFocus = $tr.last().next().length ? $tr.last().next() : $tr.first().prev();
 
             $tr.remove();
 

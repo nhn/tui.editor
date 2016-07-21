@@ -2,7 +2,8 @@
 
 var RemoveRow = require('../../src/js/wysiwygCommands/tableRemoveRow'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+    EventManager = require('../../src/js/eventManager'),
+    WwTableSelectionManager = require('../../src/js/wwTableSelectionManager');
 
 describe('Table - RemoveRow', function() {
     var wwe;
@@ -15,6 +16,7 @@ describe('Table - RemoveRow', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager('tableSelection', WwTableSelectionManager);
     });
 
     //we need to wait squire input event process
