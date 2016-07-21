@@ -215,7 +215,7 @@ describe('WwTableSelectionManager', function() {
             expect(result.nodeName).toBe('TD');
         });
     });
-    describe('_getSelectionRangeFromTable', function() {
+    describe('getSelectionRangeFromTable', function() {
         it('should increase endRowOffset by 1 when thead and tbody selected', function() {
             var sq = wwe.getEditor();
             var range = sq.getSelection();
@@ -234,7 +234,7 @@ describe('WwTableSelectionManager', function() {
             range.setStart($('th')[0], 0);
             range.setEnd($('td')[3], 0);
 
-            selectionInformation = mgr._getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable(range);
 
             expect(selectionInformation.to.row).toBe(2);
         });
@@ -257,7 +257,7 @@ describe('WwTableSelectionManager', function() {
             range.setStart($tds[0], 0);
             range.setEnd($tds[3], 0);
 
-            selectionInformation = mgr._getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable(range);
 
             expect(selectionInformation.from.row).toBe(1);
             expect(selectionInformation.to.row).toBe(2);
@@ -281,7 +281,7 @@ describe('WwTableSelectionManager', function() {
             range.setStart($ths[0], 0);
             range.setEnd($ths[1], 0);
 
-            selectionInformation = mgr._getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable(range);
 
             expect(selectionInformation.from.row).toBe(0);
             expect(selectionInformation.to.row).toBe(0);
