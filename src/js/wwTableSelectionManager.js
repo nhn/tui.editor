@@ -39,7 +39,6 @@ WwTableSelectionManager.prototype.name = 'tableSelection';
  */
 WwTableSelectionManager.prototype._init = function() {
     this._initEvent();
-    this._initKeyHandler();
 
     // For disable firefox's table tool UI and table resize handler
     if (tui.util.browser.firefox) {
@@ -58,14 +57,14 @@ WwTableSelectionManager.prototype._initEvent = function() {
     var self = this;
     var selectionStart, selectionEnd;
 
-    this.selectionTimer = null;
-    this.removeSelectionTimer = null;
-    this.isSelectionStarted = false;
-    this.isCellsSelected = false;
+    this._selectionTimer = null;
+    this._removeSelectionTimer = null;
+    this._isSelectionStarted = false;
+    this._isCellsSelected = false;
 
     this.eventManager.listen('mousedown', function(ev) {
         selectionStart = ev.data.target;
-        self._removeCellSelectedClassFromAllCellsIfNeed();
+        self.removeClassAttrbuteFromAllCellsIfNeed();
 
         self._setTableSelectionTimerIfNeed(selectionStart);
     });
@@ -76,26 +75,12 @@ WwTableSelectionManager.prototype._initEvent = function() {
 
         self._clearTableSelectionTimerIfNeed();
 
-        if (self.isSelectionStarted && !isTextSelect) {
+        if (self._isSelectionStarted && !isTextSelect) {
             self._highlightSelectionIfNeed(selectionStart, selectionEnd);
             self.wwe.getManager('table').resetLastCellNode();
         }
 
-        self.isSelectionStarted = false;
-    });
-};
-
-/**
- * _initKeyHandler
- * Initialize key event handler
- * @memberOf WwTableSelectionManager
- * @private
- */
-WwTableSelectionManager.prototype._initKeyHandler = function() {
-    var self = this;
-
-    this.wwe.addKeyEventHandler(function() {
-        self.wwe.getEditor().modifyDocument(self._removeCellSelectedClassFromAllCellsIfNeed.bind(self));
+        self._isSelectionStarted = false;
     });
 };
 
@@ -111,13 +96,13 @@ WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selec
     if (isTableSelecting) {
         // For disable firefox's native table cell selection
         if (tui.util.browser.firefox) {
-            this.removeSelectionTimer = setInterval(function() {
+            this._removeSelectionTimer = setInterval(function() {
                 window.getSelection().removeAllRanges();
             }, 250);
         }
-        this.selectionTimer = setTimeout(function() {
-            self.isSelectionStarted = true;
-            self.isCellsSelected = true;
+        this._selectionTimer = setTimeout(function() {
+            self._isSelectionStarted = true;
+            self._isCellsSelected = true;
         }, 300);
     }
 };
@@ -127,10 +112,10 @@ WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selec
  * @private
  */
 WwTableSelectionManager.prototype._clearTableSelectionTimerIfNeed = function() {
-    clearTimeout(this.selectionTimer);
+    clearTimeout(this._selectionTimer);
     // For disable firefox's native table selection
     if (tui.util.browser.firefox) {
-        clearTimeout(this.removeSelectionTimer);
+        clearTimeout(this._removeSelectionTimer);
     }
 };
 
@@ -305,13 +290,22 @@ WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
 
 /**
  * Remove '.te-cell-selected' class from all of table Cell
- * @private
+ * @memberOf WwTableSelectionManager
+ * @api
  */
-WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCellsIfNeed = function() {
-    if (this.isCellsSelected) {
-        $('table').find('td,th').each(function(i, node) {
-            $(node).removeAttr('class');
-        });
+WwTableSelectionManager.prototype.removeClassAttrbuteFromAllCellsIfNeed = function() {
+    if (this._isCellsSelected) {
+        $('table')
+            .find('td.' + TABLE_CELL_SELECTED_CLASS_NAME + ',th.' + TABLE_CELL_SELECTED_CLASS_NAME)
+            .each(function(i, node) {
+                var $node = $(node);
+
+                $node.removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+
+                if (!$node.attr('class').length) {
+                    $node.removeAttr('class');
+                }
+            });
     }
 };
 
