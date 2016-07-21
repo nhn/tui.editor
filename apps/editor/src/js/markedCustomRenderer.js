@@ -90,7 +90,7 @@ markedCustomRenderer.tablecell = function(content, flags) {
     if (flags.align) {
         $element.attr('align', flags.align);
     }
-    $element.text(content);
+    $element.html(content);
 
     return $element[0].outerHTML + '\n';
 };
