@@ -2,7 +2,8 @@
 
 var AlignCol = require('../../src/js/wysiwygCommands/tableAlignCol'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+    EventManager = require('../../src/js/eventManager'),
+    WwTableSelectionManager = require('../../src/js/wwTableSelectionManager');
 
 describe('Table - AlignCol', function() {
     var wwe;
@@ -15,6 +16,7 @@ describe('Table - AlignCol', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager(WwTableSelectionManager);
     });
 
     //we need to wait squire input event process

@@ -220,9 +220,9 @@ WwTableSelectionManager.prototype._getTableCell = function(node) {
  * Get selection coordinate by current selection
  * @param {Range} range Range object
  * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
- * @private
+ * @memberOf WwTableSelectionManager
  */
-WwTableSelectionManager.prototype._getSelectionRangeFromTable = function(range) {
+WwTableSelectionManager.prototype.getSelectionRangeFromTable = function(range) {
     var nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
     var commonAncestor = range.commonAncestorContainer;
     var commonAncestorName = commonAncestor.nodeName;
@@ -260,7 +260,7 @@ WwTableSelectionManager.prototype._getSelectionRangeFromTable = function(range) 
  */
 WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
     var trs = $(range.startContainer).parents('table').find('tr');
-    var selection = this._getSelectionRangeFromTable(range);
+    var selection = this.getSelectionRangeFromTable(range);
     var rowFrom = selection.from.row;
     var cellFrom = selection.from.cell;
     var rowTo = selection.to.row;
