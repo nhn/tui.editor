@@ -302,7 +302,7 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            mgr._removeCellSelectedClassFromAllCells();
+            mgr._removeCellSelectedClassFromAllCellsIfNeed();
 
             expect($('.te-cell-selected').length).toBe(0);
             expect($('td,th').length).toBe(6);
