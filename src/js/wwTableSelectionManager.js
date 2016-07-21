@@ -39,6 +39,8 @@ WwTableSelectionManager.prototype.name = 'tableSelection';
  */
 WwTableSelectionManager.prototype._init = function() {
     this._initEvent();
+    this._initKeyHandler();
+
     // For disable firefox's table tool UI and table resize handler
     if (tui.util.browser.firefox) {
         document.execCommand('enableObjectResizing', false, 'false');
@@ -59,11 +61,11 @@ WwTableSelectionManager.prototype._initEvent = function() {
     this.selectionTimer = null;
     this.removeSelectionTimer = null;
     this.isSelectionStarted = false;
+    this.isCellsSelected = false;
 
     this.eventManager.listen('mousedown', function(ev) {
         selectionStart = ev.data.target;
-
-        self._removeCellSelectedClassFromAllCells();
+        self._removeCellSelectedClassFromAllCellsIfNeed();
 
         self._setTableSelectionTimerIfNeed(selectionStart);
     });
@@ -78,6 +80,22 @@ WwTableSelectionManager.prototype._initEvent = function() {
         }
 
         self.isSelectionStarted = false;
+    });
+};
+
+/**
+ * _initKeyHandler
+ * Initialize key event handler
+ * @memberOf WwTableSelectionManager
+ * @private
+ */
+WwTableSelectionManager.prototype._initKeyHandler = function() {
+    var self = this;
+
+    this.wwe.addKeyEventHandler(function() {
+        self._removeCellSelectedClassFromAllCellsIfNeed();
+
+        return true;
     });
 };
 
@@ -97,9 +115,9 @@ WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selec
                 window.getSelection().removeAllRanges();
             }, 250);
         }
-
         this.selectionTimer = setTimeout(function() {
             self.isSelectionStarted = true;
+            self.isCellsSelected = true;
         }, 300);
     }
 };
@@ -289,10 +307,12 @@ WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
  * Remove '.te-cell-selected' class from all of table Cell
  * @private
  */
-WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCells = function() {
-    $('table').find('td,th').each(function(i, node) {
-        $(node).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
-    });
+WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCellsIfNeed = function() {
+    if (this.isCellsSelected) {
+        $('table').find('td,th').each(function(i, node) {
+            $(node).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+        });
+    }
 };
 
 module.exports = WwTableSelectionManager;
