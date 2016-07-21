@@ -1223,12 +1223,12 @@
 	        var found, count;
 
 	        if (editor.isViewOnly()) {
-	            count = editor.preview.$el.find('input').length;
+	            count = editor.preview.$el.find('.task-list-item').length;
 	        } else if (editor.isMarkdownMode()) {
 	            found = editor.mdEditor.getValue().match(FIND_TASK_RX);
 	            count = found ? found.length : 0;
 	        } else {
-	            count = editor.wwEditor.get$Body().find('input').length;
+	            count = editor.wwEditor.get$Body().find('.task-list-item').length;
 	        }
 
 	        return count;
@@ -1238,12 +1238,12 @@
 	        var found, count;
 
 	        if (editor.isViewOnly()) {
-	            count = editor.preview.$el.find('input:checked').length;
+	            count = editor.preview.$el.find('.task-list-item.checked').length;
 	        } else if (editor.isMarkdownMode()) {
 	            found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);
 	            count = found ? found.length : 0;
 	        } else {
-	            count = editor.wwEditor.get$Body().find('input:checked').length;
+	            count = editor.wwEditor.get$Body().find('.task-list-item.checked').length;
 	        }
 
 	        return count;
@@ -2411,6 +2411,10 @@
 	            exec: function(mde, color) {
 	                var cm = mde.getEditor();
 
+	                if (!color) {
+	                    return;
+	                }
+
 	                if (!useCustomSyntax) {
 	                    cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
 	                } else {
@@ -2425,6 +2429,10 @@
 	            name: 'color',
 	            exec: function(wwe, color) {
 	                var sq = wwe.getEditor();
+
+	                if (!color) {
+	                    return;
+	                }
 
 	                if (!sq.hasFormat('PRE')) {
 	                    if (color === RESET_COLOR) {
@@ -2467,6 +2475,8 @@
 	    colorPicker = tui.component.colorpicker.create({
 	        container: $colorPickerContainer[0]
 	    });
+
+	    selectedColor = colorPicker.getColor();
 
 	    $colorPickerContainer.append($buttonBar);
 
@@ -5980,6 +5990,58 @@
 	    return paths;
 	};
 
+	/**
+	 * Find next TR's TD element by given TD and it's offset
+	 * @param {HTMLElement} node TD element
+	 * @param {boolean} [needFirstTd] Boolean value for find first TD in next line
+	 * @returns {HTMLElement|null}
+	 */
+	var nextLineTableCell = function(node, needFirstTd) {
+	    var index = 0;
+	    var nextLineTrElement, nextLineTdElement, theadElement;
+
+	    if (node) {
+	        if (!needFirstTd) {
+	            while (node.previousElementSibling) {
+	                node = node.previousElementSibling;
+	                index += 1;
+	            }
+	        }
+
+	        nextLineTrElement = node.parentNode.nextSibling;
+	        theadElement = $(node).parents('thead')[0];
+
+	        if (nextLineTrElement) {
+	            nextLineTdElement = nextLineTrElement.childNodes[index];
+	        } else if (theadElement && theadElement.nextElementSibling.tagName === 'TBODY') {
+	            nextLineTdElement = $(theadElement.nextElementSibling).find('td')[index];
+	        }
+
+	        if (nextLineTdElement && nextLineTdElement.tagName === 'TD') {
+	            return nextLineTdElement;
+	        }
+	    }
+
+	    return null;
+	};
+
+	/**
+	 * Find next TD or TH element by given TE element
+	 * @param {HTMLElement} node TD element
+	 * @returns {HTMLElement|null}
+	 */
+	var nextTableCell = function(node) {
+	    var nextElement;
+
+	    nextElement = node.nextElementSibling;
+
+	    if (nextElement && (nextElement.nodeName === 'TD' || nextElement.nodeName === 'TH')) {
+	        return nextElement;
+	    }
+
+	    return null;
+	};
+
 	module.exports = {
 	    getNodeName: getNodeName,
 	    isTextNode: isTextNode,
@@ -5996,7 +6058,9 @@
 	    getPrevTextNode: getPrevTextNode,
 	    findOffsetNode: findOffsetNode,
 	    getPath: getPath,
-	    getNodInfo: getNodeInfo
+	    getNodInfo: getNodeInfo,
+	    nextLineTableCell: nextLineTableCell,
+	    nextTableCell: nextTableCell
 	};
 
 
@@ -6485,55 +6549,56 @@
 	var MarkdownEditor = __webpack_require__(23),
 	    Preview = __webpack_require__(26),
 	    WysiwygEditor = __webpack_require__(28),
-	    Layout = __webpack_require__(41),
-	    EventManager = __webpack_require__(42),
-	    CommandManager = __webpack_require__(43),
+	    Layout = __webpack_require__(43),
+	    EventManager = __webpack_require__(44),
+	    CommandManager = __webpack_require__(45),
 	    extManager = __webpack_require__(6),
-	    ImportManager = __webpack_require__(45),
-	    Convertor = __webpack_require__(47),
-	    ViewOnly = __webpack_require__(49),
-	    markedRenderer = __webpack_require__(48),
-	    DefaultUI = __webpack_require__(50);
+	    ImportManager = __webpack_require__(47),
+	    Convertor = __webpack_require__(49),
+	    ViewOnly = __webpack_require__(51),
+	    markedRenderer = __webpack_require__(50),
+	    DefaultUI = __webpack_require__(52);
 
 
 	//markdown commands
-	var mdBold = __webpack_require__(61),
-	    mdItalic = __webpack_require__(62),
-	    mdStrike = __webpack_require__(63),
-	    mdBlockquote = __webpack_require__(64),
-	    mdHeading = __webpack_require__(65),
-	    mdHR = __webpack_require__(66),
-	    mdAddLink = __webpack_require__(67),
-	    mdAddImage = __webpack_require__(68),
-	    mdUL = __webpack_require__(69),
-	    mdOL = __webpack_require__(70),
-	    mdTable = __webpack_require__(71),
-	    mdTask = __webpack_require__(72),
-	    mdCode = __webpack_require__(73),
-	    mdCodeBlock = __webpack_require__(74);
+	var mdBold = __webpack_require__(63),
+	    mdItalic = __webpack_require__(64),
+	    mdStrike = __webpack_require__(65),
+	    mdBlockquote = __webpack_require__(66),
+	    mdHeading = __webpack_require__(67),
+	    mdHR = __webpack_require__(68),
+	    mdAddLink = __webpack_require__(69),
+	    mdAddImage = __webpack_require__(70),
+	    mdUL = __webpack_require__(71),
+	    mdOL = __webpack_require__(72),
+	    mdTable = __webpack_require__(73),
+	    mdTask = __webpack_require__(74),
+	    mdCode = __webpack_require__(75),
+	    mdCodeBlock = __webpack_require__(76);
 
 	//wysiwyg Commands
-	var wwBold = __webpack_require__(75),
-	    wwItalic = __webpack_require__(76),
-	    wwStrike = __webpack_require__(77),
-	    wwBlockquote = __webpack_require__(78),
-	    wwAddImage = __webpack_require__(79),
-	    wwAddLink = __webpack_require__(80),
-	    wwHR = __webpack_require__(81),
-	    wwHeading = __webpack_require__(82),
-	    wwUL = __webpack_require__(83),
-	    wwOL = __webpack_require__(84),
-	    wwTable = __webpack_require__(85),
-	    wwTableAddRow = __webpack_require__(86),
-	    wwTableAddCol = __webpack_require__(87),
-	    wwTableRemoveRow = __webpack_require__(88),
-	    wwTableRemoveCol = __webpack_require__(89),
-	    wwTableRemove = __webpack_require__(90),
-	    wwIncreaseDepth = __webpack_require__(91),
-	    wwDecreaseDepth = __webpack_require__(92),
-	    wwTask = __webpack_require__(93),
-	    wwCode = __webpack_require__(94),
-	    wwCodeBlock = __webpack_require__(95);
+	var wwBold = __webpack_require__(77),
+	    wwItalic = __webpack_require__(78),
+	    wwStrike = __webpack_require__(79),
+	    wwBlockquote = __webpack_require__(80),
+	    wwAddImage = __webpack_require__(81),
+	    wwAddLink = __webpack_require__(82),
+	    wwHR = __webpack_require__(83),
+	    wwHeading = __webpack_require__(84),
+	    wwUL = __webpack_require__(85),
+	    wwOL = __webpack_require__(86),
+	    wwTable = __webpack_require__(87),
+	    wwTableAddRow = __webpack_require__(88),
+	    wwTableAddCol = __webpack_require__(89),
+	    wwTableRemoveRow = __webpack_require__(90),
+	    wwTableRemoveCol = __webpack_require__(91),
+	    wwTableAlignCol = __webpack_require__(92),
+	    wwTableRemove = __webpack_require__(93),
+	    wwIncreaseDepth = __webpack_require__(94),
+	    wwDecreaseDepth = __webpack_require__(95),
+	    wwTask = __webpack_require__(96),
+	    wwCode = __webpack_require__(97),
+	    wwCodeBlock = __webpack_require__(98);
 
 	var util = tui.util;
 
@@ -7063,6 +7128,7 @@
 	        tuiEditor.addCommand(wwTableAddCol);
 	        tuiEditor.addCommand(wwTableRemoveRow);
 	        tuiEditor.addCommand(wwTableRemoveCol);
+	        tuiEditor.addCommand(wwTableAlignCol);
 	        tuiEditor.addCommand(wwTableRemove);
 	        tuiEditor.addCommand(wwCode);
 	        tuiEditor.addCommand(wwCodeBlock);
@@ -8264,19 +8330,20 @@
 
 	var domUtils = __webpack_require__(19),
 	    WwClipboardManager = __webpack_require__(29),
-	    WwSelectionMarker = __webpack_require__(31),
-	    WwListManager = __webpack_require__(32),
-	    WwTaskManager = __webpack_require__(33),
-	    WwTableManager = __webpack_require__(34),
-	    WwHrManager = __webpack_require__(35),
-	    WwPManager = __webpack_require__(36),
-	    WwHeadingManager = __webpack_require__(37),
-	    WwCodeBlockManager = __webpack_require__(38),
-	    SquireExt = __webpack_require__(39);
+	    WwSelectionMarker = __webpack_require__(32),
+	    WwListManager = __webpack_require__(33),
+	    WwTaskManager = __webpack_require__(34),
+	    WwTableManager = __webpack_require__(35),
+	    WwTableSelectionManager = __webpack_require__(36),
+	    WwHrManager = __webpack_require__(37),
+	    WwPManager = __webpack_require__(38),
+	    WwHeadingManager = __webpack_require__(39),
+	    WwCodeBlockManager = __webpack_require__(40),
+	    SquireExt = __webpack_require__(41);
 
 	var keyMapper = __webpack_require__(24).getSharedInstance();
 
-	var WwTextObject = __webpack_require__(40);
+	var WwTextObject = __webpack_require__(42);
 
 	var util = tui.util;
 
@@ -8643,7 +8710,15 @@
 	WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
 	    var self = this;
 
-	    this.addKeyEventHandler('ENTER', function() {
+	    this.addKeyEventHandler('ENTER', function(ev, range) {
+	        if (self._isInOrphanText(range)) {
+	            //We need this cuz input text right after table make orphan text in webkit
+	            self.defer(function() {
+	                self._wrapDefaultBlockToOrphanTexts();
+	                self.breakToNewDefaultBlock(range, 'before');
+	            });
+	        }
+
 	        self.defer(function() {
 	            self._scrollToRangeIfNeed();
 	        });
@@ -8661,6 +8736,20 @@
 	        }
 
 	        return true;
+	    });
+	};
+
+	WysiwygEditor.prototype._wrapDefaultBlockToOrphanTexts = function() {
+	    var textNodes;
+
+	    textNodes = this.get$Body().contents().filter(findTextNodeFilter);
+
+	    textNodes.each(function(i, node) {
+	        if (node.nextSibling && node.nextSibling.tagName === 'BR') {
+	            $(node.nextSibling).remove();
+	        }
+
+	        $(node).wrap('<div />');
 	    });
 	};
 
@@ -9242,22 +9331,24 @@
 	 */
 	WysiwygEditor.prototype._correctRangeAfterMoveCursor = function(direction) {
 	    var range = this.getEditor().getSelection().cloneRange();
-	    var cursorContainer, offset;
+	    var cursorContainer = this.get$Body()[0];
 
 	    if (direction === 'start') {
-	        cursorContainer = this.get$Body()[0].firstChild;
-	        offset = 0;
+	        while (cursorContainer.firstChild) {
+	            cursorContainer = cursorContainer.firstChild;
+	        }
 	    } else {
-	        cursorContainer = this.get$Body()[0].lastChild;
-	        offset = domUtils.getOffsetLength(cursorContainer);
-
-	        // IE have problem with cursor after br
-	        if (domUtils.getNodeName(cursorContainer.lastChild) === 'BR') {
-	            offset -= 1;
+	        while (cursorContainer.lastChild) {
+	            cursorContainer = cursorContainer.lastChild;
 	        }
 	    }
 
-	    range.setStart(cursorContainer, offset);
+	    // IE have problem with cursor after br
+	    if (cursorContainer.tagName === 'BR') {
+	        range.setStartBefore(cursorContainer);
+	    } else {
+	        range.setStartAfter(cursorContainer);
+	    }
 
 	    range.collapse(true);
 
@@ -9315,6 +9406,7 @@
 	    wwe.addManager(WwListManager);
 	    wwe.addManager(WwTaskManager);
 	    wwe.addManager(WwTableManager);
+	    wwe.addManager(WwTableSelectionManager);
 	    wwe.addManager(WwHrManager);
 	    wwe.addManager(WwPManager);
 	    wwe.addManager(WwHeadingManager);
@@ -9406,7 +9498,7 @@
 
 	        self._pch.preparePaste(pasteData);
 	        self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
-	        self._refineCursorWithPasteContents(pasteData.fragment);
+	        self._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
 	        self.wwe.postProcessForChange();
 	    });
 	};
@@ -9416,9 +9508,13 @@
 	 * @param {DocumentFragment} fragment Copied contents
 	 * @private
 	 */
-	WwClipboardManager.prototype._refineCursorWithPasteContents = function(fragment) {
+	WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fragment) {
 	    var node = fragment;
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
+
+	    if (fragment.childNodes.length === 0) {
+	        return;
+	    }
 
 	    while (node.lastChild) {
 	        node = node.lastChild;
@@ -9586,6 +9682,7 @@
 	'use strict';
 
 	var domUtils = __webpack_require__(19);
+	var htmlSanitizer = __webpack_require__(31);
 
 	var util = tui.util;
 
@@ -9610,9 +9707,11 @@
 	    var range = this.wwe.getEditor().getSelection().cloneRange();
 	    var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 	    var firstBlockIsTaken = false;
-	    var nodeName, node, childNodes;
+	    var codeblockManager = this.wwe.getManager('codeblock');
+	    var tableManager = this.wwe.getManager('table');
+	    var nodeName, node, childNodes, isPastingList;
 
-	    this._pasteFirstAid(pasteData.fragment);
+	    pasteData.fragment = this._pasteFirstAid(pasteData.fragment);
 
 	    childNodes = util.toArray(pasteData.fragment.childNodes);
 
@@ -9626,10 +9725,14 @@
 	    while (childNodes.length) {
 	        node = childNodes[0];
 	        nodeName = domUtils.getNodeName(node);
+	        isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
-	        if (this.wwe.getManager('codeblock').isInCodeBlock(range)) {
-	            newFragment.appendChild(this.wwe.getManager('codeblock').prepareToPasteOnCodeblock(childNodes));
-	        } else if (nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL') {
+	        if (codeblockManager.isInCodeBlock(range)) {
+	            newFragment.appendChild(codeblockManager.prepareToPasteOnCodeblock(childNodes));
+	        } else if (tableManager.isInTable(range)) {
+	            newFragment = tableManager.prepareToPasteOnTable(pasteData, node);
+	            childNodes.shift();
+	        } else if (isPastingList) {
 	            newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
 	            //첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
 	            firstBlockIsTaken = true;
@@ -9668,12 +9771,13 @@
 	 * Processing paste data after paste
 	 * @param {DocumentFragment} fragment Pasting data
 	 * @memberOf WwPasteContentHelper
+	 * @returns {DocumentFragment}
 	 * @private
 	 */
 	WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 	    var self = this;
 
-	    $(fragment).find('iframe, script, select, form, button, .Apple-converted-space').remove();
+	    fragment = htmlSanitizer(fragment);
 
 	    this._removeUnnecessaryBlocks(fragment);
 	    this._removeStyles(fragment);
@@ -9682,12 +9786,16 @@
 
 	    this._preElementAid(fragment);
 
+	    this._tableElementAid(fragment);
+
 	    //br은 preElemnetAid에서 필요해서 처리후 불필요한 br은 삭제한다.
 	    $(fragment).find('br').remove();
 
 	    $(fragment).find('*').each(function() {
 	        self._removeStyles(this);
 	    });
+
+	    return fragment;
 	};
 
 	/**
@@ -9909,11 +10017,116 @@
 	    return node[0];
 	};
 
+	/**
+	 * Pasting table element pre-process
+	 * @param {DocumentFragment} fragment pasteData's fragment
+	 * @memberOf WwPasteContentHelper
+	 * @private
+	 */
+	WwPasteContentHelper.prototype._tableElementAid = function(fragment) {
+	    var tableManager = this.wwe.getManager('table');
+	    var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+	    var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+	    var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+
+	    if (wrapperTr) {
+	        $(fragment).append(wrapperTr);
+	    } else if (wrapperTbody) {
+	        $(fragment).append(wrapperTbody);
+	    } else if (wrapperTable) {
+	        $(fragment).append(wrapperTable);
+	    }
+	};
+
 	module.exports = WwPasteContentHelper;
 
 
 /***/ },
 /* 31 */
+/***/ function(module, exports) {
+
+	/**
+	 * @fileoverview Implements htmlSanitizer
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var util = tui.util;
+
+	var ATTR_WHITE_LIST_RX = /^(src|href|title|data\-+|class|alt|align|style|type|checked)/g;
+
+	/**
+	 * htmlSanitizer
+	 * @api
+	 * @exports htmlSanitizer
+	 * @param {string|Node} html html or Node
+	 * @param {boolean} [needHtmlText] pass true if need html text
+	 * @returns {string|DocumentFragment} result
+	 */
+	function htmlSanitizer(html, needHtmlText) {
+	    var $html = $('<div />');
+
+	    $html.append(html);
+
+	    removeUnnecessaryTags($html);
+	    leaveOnlyWhitelistAttribute($html);
+
+	    return finalizeHtml($html, needHtmlText);
+	}
+
+	/**
+	 * Remove unnecessary tags
+	 * @private
+	 * @param {jQuery} $html jQuery instance
+	 */
+	function removeUnnecessaryTags($html) {
+	    $html.find('script, iframe, textarea, form, button, select, .Apple-converted-space').remove();
+	}
+
+	/**
+	 * Leave only white list attributes
+	 * @private
+	 * @param {jQuery} $html jQuery instance
+	 */
+	function leaveOnlyWhitelistAttribute($html) {
+	    $html.find('*').each(function(index, node) {
+	        var blacklist = util.toArray(node.attributes).filter(function(attr) {
+	            return !attr.name.match(ATTR_WHITE_LIST_RX);
+	        });
+
+	        util.forEachArray(blacklist, function(attr) {
+	            node.attributes.removeNamedItem(attr.name);
+	        });
+	    });
+	}
+
+	/**
+	 * Finalize html result
+	 * @private
+	 * @param {jQuery} $html jQuery instance
+	 * @param {boolean} needHtmlText pass true if need html text
+	 * @returns {string|DocumentFragment} result
+	 */
+	function finalizeHtml($html, needHtmlText) {
+	    var returnValue, frag;
+
+	    if (needHtmlText) {
+	        returnValue = $html[0].innerHTML;
+	    } else {
+	        frag = document.createDocumentFragment();
+	        $(frag).append($html[0].innerHTML);
+	        returnValue = frag;
+	    }
+
+	    return returnValue;
+	}
+
+	module.exports = htmlSanitizer;
+
+
+/***/ },
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -10001,7 +10214,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports) {
 
 	/**
@@ -10089,8 +10302,8 @@
 
 
 /***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
+/* 34 */
+/***/ function(module, exports) {
 
 	/**
 	 * @fileoverview Implements wysiwyg task manager
@@ -10099,9 +10312,9 @@
 
 	'use strict';
 
-	var domUtils = __webpack_require__(19);
-
-	var FIND_TASK_SPACES_RX = /^[\s\u200B]+/;
+	var TASK_CLASS_NAME = 'task-list-item';
+	var TASK_ATTR_NAME = 'data-te-task';
+	var TASK_CHECKED_CLASS_NAME = 'checked';
 
 	/**
 	 * WwTaskManager
@@ -10134,6 +10347,12 @@
 	WwTaskManager.prototype._init = function() {
 	    this._initKeyHandler();
 	    this._initEvent();
+
+	    this.wwe.getEditor().addEventListener('click', function(ev) {
+	        if (ev.target.hasAttribute(TASK_ATTR_NAME)) {
+	            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+	        }
+	    });
 	};
 
 	/**
@@ -10145,24 +10364,8 @@
 	WwTaskManager.prototype._initEvent = function() {
 	    var self = this;
 
-	    this.eventManager.listen('wysiwygRangeChangeAfter', function() {
-	        self._removeTaskInputInWrongPlace();
-	        self._unformatIncompleteTask();
-	        self._ensureSpaceNextToTaskInput();
-	    });
-
 	    this.eventManager.listen('wysiwygSetValueAfter', function() {
-	        self._ensureSpaceNextToTaskInput();
 	        self._removeTaskListClass();
-	    });
-
-	    this.eventManager.listen('wysiwygGetValueBefore', function() {
-	        self._addCheckedAttrToCheckedInput();
-	    });
-
-	    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
-	        //we need remove task input space that made for safari
-	        return html.replace(/<input type="checkbox">(\s|&nbsp;)/g, '<input type="checkbox">');
 	    });
 	};
 
@@ -10176,34 +10379,13 @@
 	    var self = this;
 
 	    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
-	        if (self.wwe.getEditor().hasFormat('LI')) {
-	            //we need unformat task then let Squire control list and make task again
-	            //빈 태스크의 경우 input과 태스크상태를 지우고 리스트만 남기고 스콰이어가 리스트를 컨트롤한다
-	            //if문에 task가 아닌 li인지를 체크하는것은
-	            //현 뎊스가 일반리스트이고 이전뎊스가 태스크인 경우 엔터시 비정상 태스크로 남는것을 방지하기 위함
-	            self._unformatTaskIfNeedOnEnter(range);
-
+	        if (self.isInTaskList(range)) {
 	            self.wwe.defer(function() {
-	                self._formatTaskIfNeed();
+	                var newRange = self.wwe.getRange();
+	                var $li = $(newRange.startContainer).closest('li');
+	                $li.removeClass(TASK_CHECKED_CLASS_NAME);
 	            });
-
-	            return false;
 	        }
-
-	        return true;
-	    });
-
-	    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-	        if (range.collapsed) {
-	            if (self.isInTaskList(range)) {
-	                self._unformatTaskIfNeedOnBackspace(range);
-	                //and delete list by squire
-
-	                return false;
-	            }
-	        }
-
-	        return true;
 	    });
 
 	    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
@@ -10257,175 +10439,59 @@
 	        li = $(range.startContainer).parents('li')[0];
 	    }
 
-	    return $(li).hasClass('task-list-item');
+	    return $(li).hasClass(TASK_CLASS_NAME);
 	};
 
 	/**
-	 * _unformatIncompleteTask
-	 * Unformat incomplete task
+	 * unformatTask
+	 * Unforamt task
+	 * @param {Node} node target
 	 * @memberOf WwTaskManager
-	 * @private
+	 * @api
 	 */
-	WwTaskManager.prototype._unformatIncompleteTask = function() {
-	    this.wwe.get$Body().find('.task-list-item').each(function(index, task) {
-	        if ((!domUtils.isElemNode(task.firstChild) || task.firstChild.tagName !== 'INPUT')
-	            && (!domUtils.isElemNode(task.firstChild.firstChild) || task.firstChild.firstChild.tagName !== 'INPUT')
-	        ) {
-	            $(task).removeClass('task-list-item');
-	        }
-	    });
-	};
-
-	/**
-	 * _removeTaskInputInWrongPlace
-	 * Remove task input in wrong place while user editing
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._removeTaskInputInWrongPlace = function() {
-	    var self = this;
-
-	    this._addCheckedAttrToCheckedInput();
-
-	    this.wwe.get$Body()
-	        .find('input:checkbox')
-	        .each(function(index, node) {
-	            var isInsideTask, isCorrectPlace, parent;
-
-	            isInsideTask = ($(node).parents('li').length > 1 || $(node).parents('li').hasClass('task-list-item'));
-	            isCorrectPlace = !node.previousSibling;
-
-	            if (!isInsideTask || !isCorrectPlace) {
-	                parent = $(node).parent();
-	                $(node).remove();
-	                self.wwe.replaceContentText(parent, FIND_TASK_SPACES_RX, '');
-	            }
-	        });
-	};
-
-	/**
-	 * _unformatTaskIfNeedOnEnter
-	 * Unformat task if need on enter
-	 * @param {Range} range range
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._unformatTaskIfNeedOnEnter = function(range) {
+	WwTaskManager.prototype.unformatTask = function unformatTask(node) {
 	    var $li;
 
-	    $li = $(range.startContainer).closest('li');
+	    $li = $(node).closest('li');
 
-	    if (this._isEmptyTask(range) && !$li.find('ul').length) {
-	        this.unformatTask(range.startContainer);
-	        $li.html('<div><br></div>');
+	    $li.removeClass(TASK_CLASS_NAME);
+	    $li.removeClass(TASK_CHECKED_CLASS_NAME);
 
-	        range = this.wwe.getEditor().getSelection().cloneRange();
-	        range.setStart($li.find('div')[0], 0);
-	        range.collapse(true);
-	        this.wwe.getEditor().setSelection(range);
+	    $li.removeAttr(TASK_ATTR_NAME);
+
+	    if (!$li.attr('class')) {
+	        $li.removeAttr('class');
 	    }
 	};
 
 	/**
-	 * Return whether task is empty or not
-	 * @param {Range} range Range object
-	 * @returns {boolean}
+	 * formatTask
+	 * Format task
+	 * @param {Node} node target
 	 * @memberOf WwTaskManager
-	 * @private
+	 * @api
 	 */
-	WwTaskManager.prototype._isEmptyTask = function(range) {
-	    return this.isInTaskList(range) && this._isEmptyContainer(range.startContainer);
+	WwTaskManager.prototype.formatTask = function(node) {
+	    var $selected, $li;
+
+	    $selected = $(node);
+	    $li = $selected.closest('li');
+	    $li.addClass(TASK_CLASS_NAME);
+	    $li.attr(TASK_ATTR_NAME, '');
 	};
 
 	/**
-	 * Return whether textContent is empty or not
-	 * @param {Node} node Node
-	 * @returns {boolean}
+	 * _formatTaskIfNeed
+	 * Format task if current range has task class name
 	 * @memberOf WwTaskManager
 	 * @private
 	 */
-	WwTaskManager.prototype._isEmptyContainer = function(node) {
-	    return node.textContent.replace(FIND_TASK_SPACES_RX, '') === '';
-	};
+	WwTaskManager.prototype._formatTaskIfNeed = function() {
+	    var range = this.wwe.getEditor().getSelection().cloneRange();
 
-	/**
-	 * _unformatTaskIfNeedOnBackspace
-	 * Unformat task if need on backspace
-	 * @param {Range} range range
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._unformatTaskIfNeedOnBackspace = function(range) {
-	    var startContainer, startOffset,
-	        prevEl, needRemove;
-
-	    startContainer = range.startContainer;
-	    startOffset = range.startOffset;
-
-	    //스타트 컨테이너가 엘리먼트인경우 엘리먼트 offset을 기준으로 다음 지워질것이 input인지 판단한다
-	    //유저가 임의로 Task빈칸에 수정을 가했을경우
-	    if (domUtils.isElemNode(startContainer)) {
-	        //태스크리스트의 제일 첫 오프셋인경우(인풋박스 바로 위)
-	        if (startOffset === 0) {
-	            prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset);
-	        //inputbox 오른편 어딘가에서 지워지는경우
-	        } else {
-	            prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 1);
-
-	            //지워질위치가 인풋스페이스 텍스트 영역으로 의심되는경우 그다음 엘리먼드로 prevEl을 지정해준다.(그다음이 input이면 지워지도록)
-	            if (domUtils.isTextNode(prevEl) && prevEl.nodeValue.length === 1
-	                && FIND_TASK_SPACES_RX.test(prevEl.nodeValue)) {
-	                prevEl = domUtils.getChildNodeByOffset(startContainer, startOffset - 2);
-	            }
-	        }
-
-	        needRemove = (domUtils.getNodeName(prevEl) === 'INPUT');
-	    //텍스트 노드인경우
-	    } else if (domUtils.isTextNode(startContainer)) {
-	        //previousSibling이 있다면 그건 div바로 아래의 텍스트 노드임 아닌경우가생기면 버그
-	        //있고 그게 input이라면 offset체크
-	        if (startContainer.previousSibling) {
-	            prevEl = startContainer.previousSibling;
-	        //previsousSibling이 없는 경우, 인라인태그로 감싸져있는경우다
-	        } else {
-	            prevEl = startContainer.parentNode.previousSibling;
-	        }
-
-	        //inputbox 이후의 텍스트노드에서 빈칸한개가 지워지는경우 같이 지운다
-	        //(input과 빈칸한개는 같이 지워지는게 옳다고판단)
-	        if (prevEl.tagName === 'INPUT' && startOffset === 1 && FIND_TASK_SPACES_RX.test(startContainer.nodeValue)) {
-	            startContainer.nodeValue = startContainer.nodeValue.replace(FIND_TASK_SPACES_RX, '');
-	            needRemove = true;
-	        }
+	    if (this.isInTaskList(range)) {
+	        this.formatTask(range.startContainer);
 	    }
-
-	    if (needRemove) {
-	        this.wwe.saveSelection(range);
-
-	        $(prevEl).closest('li').removeClass('task-list-item');
-	        $(prevEl).remove();
-
-	        this.wwe.restoreSavedSelection();
-	    }
-	};
-
-	/**
-	 * _addCheckedAttrToCheckedInput
-	 * Add checked attr to checked input
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._addCheckedAttrToCheckedInput = function() {
-	    var doc = this.wwe.getEditor().getDocument();
-
-	    //save input checked state to tag
-	    $(doc.body).find('input').each(function(index, input) {
-	        if (input.checked) {
-	            $(input).attr('checked', 'checked');
-	        } else {
-	            $(input).removeAttr('checked');
-	        }
-	    });
 	};
 
 	/**
@@ -10441,142 +10507,17 @@
 	    });
 	};
 
-
-	/**
-	 * findTextNodeFilter
-	 * @this Node
-	 * @returns {boolean} true or not
-	 */
-	function findTextNodeFilter() {
-	    return this.nodeType === Node.TEXT_NODE;
-	}
-
-	/**
-	 * _ensureSpaceNextToTaskInput
-	 * Ensure space next to task input
-	 * this because we need some space after input for safari cursor issue
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._ensureSpaceNextToTaskInput = function() {
-	    var firstTextNode, $wrapper,
-	        self = this;
-
-	    this.wwe.get$Body().find('.task-list-item').each(function(i, node) {
-	        $wrapper = $(node).find('div');
-
-	        if (!$wrapper.length) {
-	            $wrapper = $(node);
-	        }
-
-	        firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
-
-	        if (!firstTextNode || !(firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX))) {
-	            $(self.wwe.getEditor().getDocument().createTextNode(' ')).insertAfter($wrapper.find('input'));
-	        }
-	    });
-	};
-
-	/**
-	 * unformatTask
-	 * Unforamt task
-	 * @param {Node} node target
-	 * @memberOf WwTaskManager
-	 * @api
-	 */
-	WwTaskManager.prototype.unformatTask = function unformatTask(node) {
-	    var $li, firstTextNode, $wrapper;
-
-	    $li = $(node).closest('li');
-
-	    $wrapper = $li.children('div');
-
-	    if (!$wrapper.length) {
-	        $wrapper = $li;
-	    }
-
-	    $wrapper.find('input:checkbox').remove();
-
-	    $li.removeClass('task-list-item');
-
-	    if (!$li.attr('class')) {
-	        $li.removeAttr('class');
-	    }
-
-	    firstTextNode = $wrapper.contents().filter(findTextNodeFilter)[0];
-
-	    if (firstTextNode && firstTextNode.nodeValue.match(FIND_TASK_SPACES_RX)) {
-	        firstTextNode.nodeValue = firstTextNode.nodeValue.replace(FIND_TASK_SPACES_RX, '');
-	    }
-	};
-
-	/**
-	 * formatTask
-	 * Format task
-	 * @param {Node} node target
-	 * @memberOf WwTaskManager
-	 * @api
-	 */
-	WwTaskManager.prototype.formatTask = function(node) {
-	    var range, $selected, $li, hasInput, $block, sq;
-
-	    sq = this.wwe.getEditor();
-	    $selected = $(node);
-	    $li = $selected.closest('li');
-
-	    hasInput = $li.children('input:checkbox').length || $li.children('div').eq(0).children('input:checkbox').length;
-
-	    $li.addClass('task-list-item');
-
-	    if (!hasInput) {
-	        $block = $li.children('div').eq(0);
-
-	        if (!$block.length) {
-	            $block = $li.eq(0);
-	        }
-
-	        range = sq.getSelection().cloneRange();
-
-	        range.setStart($block[0], 0);
-	        range.collapse(true);
-
-	        sq.insertElement(sq.createElement('INPUT', {
-	            type: 'checkbox'
-	        }), range);
-
-	        range.setStart($block[0], 1);
-
-	        //we need some space for safari
-	        sq.insertElement(sq.getDocument().createTextNode(' '), range);
-	    }
-	};
-
-	/**
-	 * _formatTaskIfNeed
-	 * Format task if current range has task class name
-	 * @memberOf WwTaskManager
-	 * @private
-	 */
-	WwTaskManager.prototype._formatTaskIfNeed = function() {
-	    var range = this.wwe.getEditor().getSelection().cloneRange();
-
-	    if (this.isInTaskList(range)) {
-	        range = this.wwe.insertSelectionMarker(range);
-	        this.formatTask(range.startContainer);
-	        this.wwe.restoreSelectionMarker();
-	    }
-	};
-
 	module.exports = WwTaskManager;
 
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * @fileoverview Implements wysiwyg table manager
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
 	'use strict';
@@ -10628,6 +10569,7 @@
 
 	    this.eventManager.listen('wysiwygRangeChangeAfter', function() {
 	        self._unwrapBlockInTable();
+	        self.wwe.defer(self._completeTableIfNeed.bind(self));
 	    });
 
 	    this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -10637,6 +10579,16 @@
 	    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
 	        //remove last br in td or th
 	        return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
+	    });
+
+	    this.wwe.getEditor().addEventListener('paste', function(ev) {
+	        var range = self.wwe.getEditor().getSelection();
+	        var isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
+
+	        if (self.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
+	            ev.preventDefault();
+	        }
+	        self.wwe.defer(self._completeTableIfNeed.bind(self));
 	    });
 	};
 
@@ -10650,7 +10602,7 @@
 	    var self = this;
 
 	    this.wwe.addKeyEventHandler(function(ev, range) {
-	        if (self._isInTable(range)) {
+	        if (self.isInTable(range)) {
 	            self._recordUndoStateIfNeed(range);
 	        } else if (self._lastCellNode) {
 	            self._recordUndoStateAndResetCellNode(range);
@@ -10669,7 +10621,7 @@
 	            ev.preventDefault();
 	            self.wwe.breakToNewDefaultBlock(range, 'before');
 	            isNeedNext = false;
-	        } else if (self._isInTable(range)) {
+	        } else if (self.isInTable(range)) {
 	            self._appendBrIfTdOrThNotHaveAsLastChild(range);
 	            isNeedNext = false;
 	        }
@@ -10681,12 +10633,22 @@
 	        var isNeedNext;
 
 	        if (range.collapsed) {
-	            if (self._isInTable(range)) {
+	            if (self.isInTable(range)) {
 	                self._tableHandlerOnBackspace(range, ev);
 	                isNeedNext = false;
 	            } else if (self._isAfterTable(range)) {
 	                ev.preventDefault();
 	                self._removeTableOnBackspace(range);
+	                isNeedNext = false;
+	            }
+	        } else if (self.isInTable(range)) {
+	            if (range.commonAncestorContainer.nodeType !== 3
+	                && range.commonAncestorContainer !== self.wwe.get$Body()[0]
+	            ) {
+	                ev.preventDefault();
+	                self._removeTableContents(range);
+	                range.collapse(true);
+	                self.wwe.getEditor().setSelection(range);
 	                isNeedNext = false;
 	            }
 	        }
@@ -10696,23 +10658,25 @@
 	};
 
 	/**
-	 * _isInTable
+	 * isInTable
 	 * Check whether passed range is in table or not
 	 * @param {Range} range range
 	 * @returns {boolean} result
 	 * @memberOf WwTableManager
-	 * @private
+	 * @api
 	 */
-	WwTableManager.prototype._isInTable = function(range) {
-	    var target;
+	WwTableManager.prototype.isInTable = function(range) {
+	    var target, result;
 
 	    if (range.collapsed) {
 	        target = range.startContainer;
+	        result = !!$(target).closest('table').length;
 	    } else {
 	        target = range.commonAncestorContainer;
+	        result = !!$(target).closest('table').length || !!$(range.cloneContents()).find('table').length;
 	    }
 
-	    return !!$(target).closest('table').length;
+	    return result;
 	};
 
 	/**
@@ -10844,11 +10808,719 @@
 	    this._lastCellNode = null;
 	};
 
+	/**
+	 * Paste table data into table element
+	 * @param {DocumentFragment} fragment Fragment of table element within
+	 * @memberOf WwTableManager
+	 * @api
+	 */
+	WwTableManager.prototype.pasteDataIntoTable = function(fragment) {
+	    var range = this.wwe.getEditor().getSelection();
+	    var tableData = this._getTableDataFromTable(fragment);
+	    var startContainer = range.startContainer;
+	    var parentNode = startContainer.parentNode;
+	    var isTextInTableCell = parentNode.tagName === 'TD' || parentNode.tagName === 'TH';
+	    var isTableCell = startContainer.tagName === 'TD' || startContainer.tagName === 'TH';
+	    var isTextNode = startContainer.nodeType === 3;
+	    var anchorElement, td, tr;
+
+	    if (isTextNode && isTextInTableCell) {
+	        anchorElement = parentNode;
+	    } else if (isTableCell) {
+	        anchorElement = startContainer;
+	    } else {
+	        anchorElement = $(startContainer).find('th,td')[0];
+	    }
+
+	    td = anchorElement;
+
+	    while (tableData.length) {
+	        tr = tableData.shift();
+
+	        while (td && tr.length) {
+	            td.textContent = tr.shift();
+
+	            td = domUtils.nextTableCell(td);
+	        }
+
+	        td = domUtils.nextLineTableCell(anchorElement);
+	        anchorElement = td;
+	    }
+	};
+
+	/**
+	 * Get array data from table element
+	 * @param {DocumentFragment} fragment table element
+	 * @returns {Array}
+	 * @private
+	 */
+	WwTableManager.prototype._getTableDataFromTable = function(fragment) {
+	    var $fragment = $(fragment);
+	    var tableData = [];
+	    var trs = $fragment.find('tr');
+
+	    trs.each(function(i, tr) {
+	        var trData = [];
+	        var tds = $(tr).children();
+
+	        tds.each(function(index, cell) {
+	            trData.push(cell.textContent);
+	        });
+
+	        tableData.push(trData);
+	    });
+
+	    return tableData;
+	};
+	/**
+	 * Remove selected table contents
+	 * @param {Range} range Range object
+	 * @private
+	 */
+	WwTableManager.prototype._removeTableContents = function(range) {
+	    var anchorCell = range.startContainer;
+	    var cellLength = $(range.cloneContents()).find('th,td').length;
+	    var index = 0;
+	    var cell, nextCell, nextLineFirstCell;
+	    if (domUtils.isTextNode(anchorCell)) {
+	        anchorCell = anchorCell.parentNode;
+	    }
+	    cell = anchorCell;
+
+	    this.wwe.getEditor().saveUndoState();
+	    for (;index < cellLength; index += 1) {
+	        cell.innerHTML = '<br>';
+
+	        nextCell = domUtils.nextTableCell(cell);
+	        nextLineFirstCell = domUtils.nextLineTableCell(cell, true);
+
+	        if (nextCell) {
+	            cell = nextCell;
+	        } else if (nextLineFirstCell) {
+	            cell = nextLineFirstCell;
+	        } else {
+	            cell = null;
+	        }
+	    }
+	};
+
+	/**
+	 * Wrap dangling table cells with new TR
+	 * @param {DocumentFragment} fragment Pasting data
+	 * @returns {HTMLElement|null}
+	 */
+	WwTableManager.prototype.wrapDanglingTableCellsIntoTrIfNeed = function(fragment) {
+	    var danglingTableCells = $(fragment).children('td,th');
+	    var $wrapperTr, tr;
+
+	    if (danglingTableCells.length) {
+	        $wrapperTr = $('<tr></tr>');
+
+	        danglingTableCells.each(function(i, cell) {
+	            $wrapperTr.append(cell);
+	        });
+
+	        tr = $wrapperTr[0];
+	    }
+
+	    return tr;
+	};
+
+	/**
+	 * Wrap TRs with new TBODY
+	 * @param {DocumentFragment} fragment Pasting data
+	 * @returns {HTMLElement|null}
+	 */
+	WwTableManager.prototype.wrapTrsIntoTbodyIfNeed = function(fragment) {
+	    var danglingTrs = $(fragment).children('tr');
+	    var ths = danglingTrs.find('th');
+	    var $wrapperTableBody, tbody;
+
+	    if (ths.length) {
+	        ths.each(function(i, node) {
+	            var $node = $(node);
+	            var td = $('<td></td>');
+
+	            td.html($node.html());
+	            td.insertBefore(node);
+
+	            $node.detach();
+	        });
+	    }
+
+	    if (danglingTrs.length) {
+	        $wrapperTableBody = $('<tbody></tbody>');
+
+	        danglingTrs.each(function(i, tr) {
+	            $wrapperTableBody.append(tr);
+	        });
+
+	        tbody = $wrapperTableBody[0];
+	    }
+
+	    return tbody;
+	};
+
+	/**
+	 * Wrap THEAD followed by TBODY both into Table
+	 * @param {DocumentFragment} fragment Pasting data
+	 * @returns {HTMLElement|null}
+	 */
+	WwTableManager.prototype.wrapTheadAndTbodyIntoTableIfNeed = function(fragment) {
+	    var danglingThead = $(fragment).children('thead');
+	    var danglingTbody = $(fragment).children('tbody');
+	    var $wrapperTable, table;
+
+	    if (danglingTbody.length && danglingThead.length) {
+	        $wrapperTable = $('<table></table>');
+	        $wrapperTable.append(danglingThead);
+	        $wrapperTable.append(danglingTbody);
+	        table = $wrapperTable[0];
+	    }
+
+	    return table;
+	};
+	/**
+	 * Prepare to paste data on table
+	 * @param {object} pasteData Pasting data
+	 * @param {HTMLElement} node Current pasting element
+	 * @returns {DocumentFragment}
+	 * @memberOf WwTableManager
+	 * @api
+	 */
+	WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
+	    var newFragment = document.createDocumentFragment();
+	    if (this.isTableOrSubTableElement(node.nodeName)) {
+	        this.pasteDataIntoTable(pasteData.fragment);
+	        pasteData.fragment = newFragment;
+	    } else {
+	        newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
+	    }
+
+	    return newFragment;
+	};
+
+	/**
+	 * Whether pasting element is table element
+	 * @param {string} pastingNodeName Pasting node name
+	 * @returns {boolean}
+	 * @memberOf WwTableManager
+	 * @api
+	 */
+	WwTableManager.prototype.isTableOrSubTableElement = function(pastingNodeName) {
+	    return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
+	        || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
+	};
+
+	/**
+	 * Generate table cell HTML text
+	 * @param {number} amount Amount of cells
+	 * @param {string} tagName Tag name of cell 'td' or 'th'
+	 * @private
+	 * @returns {string}
+	 */
+	function tableCellGenerator(amount, tagName) {
+	    var i;
+	    var tdString = '';
+	    for (i = 0; i < amount; i += 1) {
+	        tdString = tdString + '<' + tagName + '><br></' + tagName + '>';
+	    }
+
+	    return tdString;
+	}
+
+	WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maximumCellLength) {
+	    $trs.each(function(rowIndex, row) {
+	        var $row = $(row);
+	        var tableCells = $row.find('th,td');
+	        var cellLength = tableCells.length;
+	        var parentNodeName = domUtils.getNodeName($row.parent()[0]);
+	        var cellTagName = parentNodeName === 'THEAD' ? 'th' : 'td';
+
+	        for (; cellLength < maximumCellLength; cellLength += 1) {
+	            $row.append($(tableCellGenerator(1, cellTagName))[0]);
+	        }
+	    });
+	};
+
+	WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
+	    var maximumCellLength = $trs.eq(0).find('th,td').length;
+	    var needTableCellStuffingAid = false;
+
+	    $trs.each(function(i, row) {
+	        var cellCount = $(row).find('th,td').length;
+
+	        if (maximumCellLength !== cellCount) {
+	            needTableCellStuffingAid = true;
+
+	            if (maximumCellLength < cellCount) {
+	                maximumCellLength = cellCount;
+	            }
+	        }
+	    });
+
+	    return {
+	        maximumCellLength: maximumCellLength,
+	        needTableCellStuffingAid: needTableCellStuffingAid
+	    };
+	};
+
+	WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
+	    var isTheadNotExists = !table.find('thead').length;
+	    var isTbodyNotExists = !table.find('tbody').length;
+	    var absentNode, cellTagName;
+
+	    if (isTheadNotExists) {
+	        cellTagName = 'th';
+	    } else if (isTbodyNotExists) {
+	        cellTagName = 'td';
+	    }
+
+	    if (cellTagName) {
+	        absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>')[0];
+	        table.prepend(absentNode);
+	    }
+	};
+
+	WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
+	    var table = $(node);
+	    var needTableCellStuffingAid = false;
+	    var tableAidInformation = null;
+	    var trs, maximumCellLength;
+
+	    this._addTbodyOrTheadIfNeed(table);
+
+	    trs = table.find('tr');
+	    tableAidInformation = this._prepareToTableCellStuffing(trs);
+	    maximumCellLength = tableAidInformation.maximumCellLength;
+	    needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+
+	    if (needTableCellStuffingAid) {
+	        this._stuffTableCellsIntoIncompleteRow(trs, maximumCellLength);
+	    }
+	};
+
+	WwTableManager.prototype._generateTheadAndTbodyFromTbody = function(node) {
+	    var tr = $('<tr></tr>');
+	    var thead = $('<thead></thead>');
+
+	    tr.append(tableCellGenerator($(node).find('tr').eq(0).find('td').length, 'th'));
+	    thead.append(tr);
+
+	    return {
+	        thead: thead[0],
+	        tbody: node
+	    };
+	};
+
+	WwTableManager.prototype._generateTheadAndTbodyFromThead = function(node) {
+	    var tr = $('<tr></tr>');
+	    var tbody = $('<tbody></tbody>');
+
+	    tr.append(tableCellGenerator($(node).find('th').length, 'td'));
+	    tbody.append(tr);
+
+	    return {
+	        thead: node,
+	        tbody: tbody[0]
+	    };
+	};
+
+	WwTableManager.prototype._generateTheadAndTbodyFromTr = function(node) {
+	    var $node = $(node);
+	    var thead = $('<thead></thead>');
+	    var tbody = $('<tbody></tbody>');
+	    var theadRow, tbodyRow;
+
+	    if ($node.children()[0].tagName === 'TH') {
+	        theadRow = node;
+	        tbodyRow = tableCellGenerator($node.find('th').length, 'td');
+	    } else {
+	        theadRow = tableCellGenerator($node.find('td').length, 'th');
+	        tbodyRow = node;
+	    }
+
+	    thead.append(theadRow);
+	    tbody.append(tbodyRow);
+
+	    return {
+	        thead: thead[0],
+	        tbody: tbody[0]
+	    };
+	};
+
+	/**
+	 * Complete passed table
+	 * @param {HTMLElement} node Table inner element
+	 * @private
+	 */
+	WwTableManager.prototype._completeIncompleteTable = function(node) {
+	    var nodeName = node.tagName;
+	    var table, completedTableContents;
+
+	    if (nodeName === 'TABLE') {
+	        this._tableCellAppendAidForTableElement(node);
+	    } else {
+	        table = $('<table></table>');
+	        table.insertAfter(node);
+
+	        if (nodeName === 'TBODY') {
+	            completedTableContents = this._generateTheadAndTbodyFromTbody(node);
+	        } else if (nodeName === 'THEAD') {
+	            completedTableContents = this._generateTheadAndTbodyFromThead(node);
+	        } else if (nodeName === 'TR') {
+	            completedTableContents = this._generateTheadAndTbodyFromTr(node);
+	        }
+
+	        table.append(completedTableContents.thead);
+	        table.append(completedTableContents.tbody);
+	    }
+	};
+
+	/**
+	 * Whole editor body searching incomplete table completion
+	 * @private
+	 */
+	WwTableManager.prototype._completeTableIfNeed = function() {
+	    var $body = this.wwe.getEditor().get$Body();
+	    var self = this;
+
+	    $body.children().each(function(index, node) {
+	        if (!self.isTableOrSubTableElement(node.nodeName)) {
+	            return;
+	        }
+	        self._completeIncompleteTable(node);
+	    });
+	};
 	module.exports = WwTableManager;
 
 
 /***/ },
-/* 35 */
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements wysiwyg table selection manager
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	'use strict';
+
+	var domUtils = __webpack_require__(19);
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
+
+	/**
+	 * WwTableSelectionManager
+	 * @exports WwTableSelectionManager
+	 * @constructor
+	 * @class WwTableSelectionManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 */
+	function WwTableSelectionManager(wwe) {
+	    this.wwe = wwe;
+	    this.eventManager = wwe.eventManager;
+
+	    this._init();
+	}
+
+	/**
+	 * Name property
+	 * @api
+	 * @memberOf WwTableSelectionManager
+	 * @type {string}
+	 */
+	WwTableSelectionManager.prototype.name = 'tableSelection';
+
+	/**
+	 * _init
+	 * Initialize
+	 * @memberOf WwTableSelectionManager
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._init = function() {
+	    this._initEvent();
+	    this._initKeyHandler();
+
+	    // For disable firefox's table tool UI and table resize handler
+	    if (tui.util.browser.firefox) {
+	        document.execCommand('enableObjectResizing', false, 'false');
+	        document.execCommand('enableInlineTableEditing', false, 'false');
+	    }
+	};
+
+	/**
+	 * _initEvent
+	 * Initialize event
+	 * @memberOf WwTableSelectionManager
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._initEvent = function() {
+	    var self = this;
+	    var selectionStart, selectionEnd;
+
+	    this.selectionTimer = null;
+	    this.removeSelectionTimer = null;
+	    this.isSelectionStarted = false;
+	    this.isCellsSelected = false;
+
+	    this.eventManager.listen('mousedown', function(ev) {
+	        selectionStart = ev.data.target;
+	        self._removeCellSelectedClassFromAllCellsIfNeed();
+
+	        self._setTableSelectionTimerIfNeed(selectionStart);
+	    });
+
+	    this.eventManager.listen('mouseup', function(ev) {
+	        selectionEnd = ev.data.target;
+
+	        self._clearTableSelectionTimerIfNeed();
+
+	        if (self.isSelectionStarted) {
+	            self._highlightSelectionIfNeed(selectionStart, selectionEnd);
+	        }
+
+	        self.isSelectionStarted = false;
+	    });
+	};
+
+	/**
+	 * _initKeyHandler
+	 * Initialize key event handler
+	 * @memberOf WwTableSelectionManager
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._initKeyHandler = function() {
+	    var self = this;
+
+	    this.wwe.addKeyEventHandler(function() {
+	        self._removeCellSelectedClassFromAllCellsIfNeed();
+
+	        return true;
+	    });
+	};
+
+	/**
+	 * Set setTimeout and setInterval timer execution if table selecting situation
+	 * @param {HTMLElement} selectionStart Start element
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selectionStart) {
+	    var self = this;
+	    var isTableSelecting = $(selectionStart).parents('table').length;
+
+	    if (isTableSelecting) {
+	        // For disable firefox's native table cell selection
+	        if (tui.util.browser.firefox) {
+	            this.removeSelectionTimer = setInterval(function() {
+	                window.getSelection().removeAllRanges();
+	            }, 250);
+	        }
+	        this.selectionTimer = setTimeout(function() {
+	            self.isSelectionStarted = true;
+	            self.isCellsSelected = true;
+	        }, 300);
+	    }
+	};
+
+	/**
+	 * Clear setTimeout and setInterval timer execution
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._clearTableSelectionTimerIfNeed = function() {
+	    clearTimeout(this.selectionTimer);
+	    // For disable firefox's native table selection
+	    if (tui.util.browser.firefox) {
+	        clearTimeout(this.removeSelectionTimer);
+	    }
+	};
+
+	/**
+	 * HighLighting current selection by start, end element of selection
+	 * @param {HTMLElement} selectionStart Start element
+	 * @param {HTMLElement} selectionEnd End element
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._highlightSelectionIfNeed = function(selectionStart, selectionEnd) {
+	    var range = this.wwe.getEditor().getSelection();
+
+	    this._prepareSelection(range, selectionStart, selectionEnd);
+	    this._highlightTableCellsBy(range);
+	};
+
+	/**
+	 * Re arrange selection when table does not include both start and end selection element
+	 * @param {HTMLElement} selectionStart Start element of selection
+	 * @param {HTMLElement} selectionEnd End element of selection
+	 * @returns {{startContainer: HTMLElement, endContainer: HTMLElement}}
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._reArrangeSelectionIfneed = function(selectionStart, selectionEnd) {
+	    var isRangeStartInTable = $(selectionStart).parents('table').length;
+	    var isRangeEndInTable = $(selectionEnd).parents('table').length;
+	    var isStartRangeOut = isRangeEndInTable && !isRangeStartInTable;
+	    var isEndRangeOut = !isRangeEndInTable && isRangeStartInTable;
+
+	    if (isStartRangeOut) {
+	        selectionStart = $(selectionEnd).parents('table').find('th').first()[0];
+	    } else if (isEndRangeOut) {
+	        selectionEnd = $(selectionStart).parents('table').find('td').last()[0];
+	    }
+
+	    return {
+	        startContainer: selectionStart,
+	        endContainer: selectionEnd
+	    };
+	};
+
+	/**
+	 * Apply select direction to editor
+	 * @param {{startContainer: HTMLElement, endContainer: HTMLElement}} selectionInformation
+	 *     Selection start and end element
+	 * @param {Range} range Range object
+	 * @returns {Range}
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._applySelectionDirection = function(selectionInformation, range) {
+	    var nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
+	    var selectionStart = selectionInformation.startContainer;
+	    var selectionEnd = selectionInformation.endContainer;
+	    var rowDirection = nodeOffsetOfParent($(selectionStart).closest('tr')[0])
+	        - nodeOffsetOfParent($(selectionEnd).closest('tr')[0]);
+	    var cellDirection = nodeOffsetOfParent(selectionStart) - nodeOffsetOfParent(selectionEnd);
+	    var isSameRow = (rowDirection === 0);
+	    var isRowIncreases = (rowDirection < 0);
+	    var isColumnIncreases = (cellDirection > 0);
+
+	    if (isSameRow) {
+	        if (isColumnIncreases) {
+	            range.setStart(selectionEnd, 0);
+	            range.setEnd(selectionStart, 1);
+	        } else {
+	            range.setStart(selectionStart, 0);
+	            range.setEnd(selectionEnd, 1);
+	        }
+	    } else if (isRowIncreases) {
+	        range.setStart(selectionStart, 0);
+	        range.setEnd(selectionEnd, 1);
+	    } else {
+	        range.setStart(selectionEnd, 0);
+	        range.setEnd(selectionStart, 1);
+	    }
+
+	    return range;
+	};
+
+	/**
+	 * Prepare selection for highlight selected cells
+	 * @param {Range} range Range object
+	 * @param {HTMLElement} selectionStart Start element of selection
+	 * @param {HTMLElement} selectionEnd End element of selection
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._prepareSelection = function(range, selectionStart, selectionEnd) {
+	    var selectionInformation = this._reArrangeSelectionIfneed(selectionStart, selectionEnd);
+	    var newRange = this._applySelectionDirection(selectionInformation, range);
+
+	    this.wwe.getEditor().setSelection(newRange);
+	};
+
+	/**
+	 * Get table cell element
+	 * @param {Node | HTMLElement} node textNode or table cell element
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._getTableCell = function(node) {
+	    return node.nodeType === 3 ? $(node).parent('td,th')[0] : node;
+	};
+
+	/**
+	 * Get selection coordinate by current selection
+	 * @param {Range} range Range object
+	 * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
+	 * @memberOf WwTableSelectionManager
+	 */
+	WwTableSelectionManager.prototype.getSelectionRangeFromTable = function(range) {
+	    var nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
+	    var commonAncestor = range.commonAncestorContainer;
+	    var commonAncestorName = commonAncestor.nodeName;
+	    var startRowOffset = nodeOffsetOfParent(this._getTableCell(range.startContainer).parentNode);
+	    var endRowOffset = nodeOffsetOfParent(this._getTableCell(range.endContainer).parentNode);
+	    var startCellOffset = nodeOffsetOfParent(this._getTableCell(range.startContainer));
+	    var endCellOffset = nodeOffsetOfParent(this._getTableCell(range.endContainer));
+	    var isTheadAndTbodySelected = commonAncestorName === 'TABLE';
+	    var isInTbody = !!$(commonAncestor).parents('tbody').length;
+	    var isBothCellsInTbody = commonAncestorName === 'TBODY' || isInTbody;
+
+	    if (isTheadAndTbodySelected) {
+	        endRowOffset += 1;
+	    } else if (isBothCellsInTbody) {
+	        startRowOffset += 1;
+	        endRowOffset += 1;
+	    }
+
+	    return {
+	        from: {
+	            row: startRowOffset,
+	            cell: startCellOffset
+	        },
+	        to: {
+	            row: endRowOffset,
+	            cell: endCellOffset
+	        }
+	    };
+	};
+
+	/**
+	 * Highlight selected table cells
+	 * @param {Range} range Range object
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
+	    var trs = $(range.startContainer).parents('table').find('tr');
+	    var selection = this.getSelectionRangeFromTable(range);
+	    var rowFrom = selection.from.row;
+	    var cellFrom = selection.from.cell;
+	    var rowTo = selection.to.row;
+	    var cellTo = selection.to.cell;
+
+	    trs.each(function(rowIndex, row) {
+	        $(row).find('td,th').each(function(cellIndex, cell) {
+	            var $cell = $(cell);
+	            var isFromRow = (rowIndex === rowFrom);
+	            var isToRow = (rowIndex === rowTo);
+
+	            if ((isFromRow && cellIndex < cellFrom)
+	                || (isToRow && cellIndex > cellTo)
+	                || rowIndex < rowFrom
+	                || rowIndex > rowTo
+	            ) {
+	                $cell.removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	            } else {
+	                $cell.addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	            }
+	        });
+	    });
+	};
+
+	/**
+	 * Remove '.te-cell-selected' class from all of table Cell
+	 * @private
+	 */
+	WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCellsIfNeed = function() {
+	    if (this.isCellsSelected) {
+	        $('table').find('td,th').each(function(i, node) {
+	            $(node).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	        });
+	    }
+	};
+
+	module.exports = WwTableSelectionManager;
+
+
+/***/ },
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11106,7 +11778,7 @@
 
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports) {
 
 	/**
@@ -11199,7 +11871,7 @@
 
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11356,7 +12028,7 @@
 
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11375,6 +12047,9 @@
 	    '<': '&lt;',
 	    '>': '&gt;'
 	};
+
+	var FIND_ZWS_RX = /\u200B/g;
+	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
 
 	/**
 	 * WwCodeBlockManager
@@ -11416,12 +12091,7 @@
 	 * @private
 	 */
 	WwCodeBlockManager.prototype._initKeyHandler = function() {
-	    this.wwe.addKeyEventHandler('ENTER', this._recoverIncompleteLineInPreTag.bind(this));
-	    this.wwe.addKeyEventHandler('BACK_SPACE', this._unforamtCodeIfToplineZeroOffset.bind(this));
-	    this.wwe.addKeyEventHandler('BACK_SPACE', this._unformatCodeIfCodeBlockHasOneCodeTag.bind(this));
-	    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeLastCharInCodeTagIfCodeTagHasOneChar.bind(this));
-	    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeIfCodeIsEmpty.bind(this));
-	    this.wwe.addKeyEventHandler('BACK_SPACE', this._recoverIncompleteLineInPreTag.bind(this));
+	    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
 	};
 
 	/**
@@ -11479,6 +12149,8 @@
 	        node = nodes.shift();
 	    }
 
+	    $codeblock.attr(CODEBLOCK_ATTR_NAME, '');
+
 	    return $codeblock[0];
 	};
 
@@ -11515,8 +12187,8 @@
 	 */
 	WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
 	    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
-	        code = code.replace(/<\/code><br \/>/g, '\n');
-	        code = code.replace(/<code ?(.*?)>/g, '');
+	        code = code.replace(/<br \/>/g, '\n');
+	        code = code.replace(/<div ?(.*?)>/g, '');
 	        code = code.replace(/\n$/, '');
 
 	        return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
@@ -11547,6 +12219,8 @@
 	        util.forEach(codelines, function(line) {
 	            $(pre).append(self._makeCodeBlockLineHtml(line));
 	        });
+
+	        $(pre).attr(CODEBLOCK_ATTR_NAME, '');
 	    });
 	};
 
@@ -11559,186 +12233,54 @@
 	 */
 	WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
 	    if (!lineContent) {
-	        lineContent = '\u200B';
+	        lineContent = '<br>';
+	    } else {
+	        lineContent = sanitizeHtmlCode(lineContent);
 	    }
 
-	    return '<div><code>' + sanitizeHtmlCode(lineContent) + '</code><br></div>';
+	    return '<div>' + lineContent + '</div>';
 	};
 
 	/**
-	 * Insert ZWB code block if in empty code
+	 * Remove codeblock if need
 	 * @memberOf WwCodeBlockManager
 	 * @param {Event} ev Event object
 	 * @param {Range} range Range object
 	 * @returns {boolean}
 	 * @private
 	 */
-	WwCodeBlockManager.prototype._inserNewCodeIfInEmptyCode = function(ev, range) {
-	    if (this.isInCodeBlock(range) && domUtils.getTextLength(range.startContainer) === 0) {
-	        ev.preventDefault();
-	        this.wwe.getEditor().saveUndoState(range);
-	        $('<div><code>&#8203</code><br></div>').insertBefore(domUtils.getParentUntil(range.startContainer, 'PRE'));
-
-	        return false;
-	    }
-
-	    return true;
-	};
-
-	/**
-	 * Unformat code at top line and offset equals 0
-	 * @memberOf WwCodeBlockManager
-	 * @param {Event} ev Event object
-	 * @param {Range} range Range object
-	 * @returns {boolean}
-	 * @private
-	 */
-	WwCodeBlockManager.prototype._unforamtCodeIfToplineZeroOffset = function(ev, range) {
-	    var currentNodeName, code;
+	WwCodeBlockManager.prototype._removeCodeblockIfNeed = function(ev, range) {
+	    var pre, $div, codeContent;
+	    var self = this;
 
 	    if (!this.isInCodeBlock(range)) {
 	        return true;
 	    }
 
-	    currentNodeName = domUtils.getNodeName(range.startContainer);
-	    code = domUtils.getParentUntil(range.startContainer, 'PRE');
+	    pre = $(range.startContainer).closest('pre');
+	    $div = $(pre).find('div').eq(0);
+	    codeContent = $div.text().replace(FIND_ZWS_RX, '');
 
-	    //최상단의 라인의 0오프셋 일때
-	    if (currentNodeName === 'TEXT'
-	        && range.startOffset === 0
-	        && !code.previousSibling
+	    //코드블럭이 code한줄 밖에 없을때
+	    if ((range.startOffset === 0 || codeContent.length === 0)
+	        && $(pre).find('div').length <= 1
 	    ) {
-	        $(code).text(range.startContainer.textContent);
+	        this.wwe.getEditor().modifyBlocks(function() {
+	            var newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
+	            var content;
 
-	        range.setStart(code.childNodes[0], 0);
-	        this.wwe.getEditor().setSelection(range);
-
-	        return false;
-	    }
-
-	    return true;
-	};
-
-	/**
-	 * Unformat code when one CODE tag in PRE tag
-	 * @memberOf WwCodeBlockManager
-	 * @param {Event} ev Event object
-	 * @param {Range} range Range object
-	 * @returns {boolean}
-	 * @private
-	 */
-	WwCodeBlockManager.prototype._unformatCodeIfCodeBlockHasOneCodeTag = function(ev, range) {
-	    var pre, div;
-
-	    if (!this.isInCodeBlock(range)) {
-	        return true;
-	    }
-
-	    pre = domUtils.getParentUntil(range.startContainer);
-	    div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-	    //코드블럭이 code하나밖에 없을때
-	    if (range.startOffset === 0 && $(pre).find('code').length <= 1) {
-	        $(div).find('code').children().unwrap('code');
-
-	        return false;
-	    }
-
-	    return true;
-	};
-
-	/**
-	 * Remove last character in CODE tag when CODE has one character
-	 * @memberOf WwCodeBlockManager
-	 * @param {Event} ev Event object
-	 * @param {Range} range Range object
-	 * @returns {boolean}
-	 * @private
-	 */
-	WwCodeBlockManager.prototype._removeLastCharInCodeTagIfCodeTagHasOneChar = function(ev, range) {
-	    var currentNodeName;
-
-	    if (!this.isInCodeBlock(range)) {
-	        return true;
-	    }
-
-	    currentNodeName = domUtils.getNodeName(range.startContainer);
-
-	    //텍스트 노드인경우 마지막 케릭터와 code블럭이 함께 삭제되는것을 방지(squire가 삭제하면 다시만든다)
-	    if (currentNodeName === 'TEXT'
-	        && domUtils.getOffsetLength(range.startContainer) === 1
-	        && range.startOffset <= 2
-	    ) {
-	        ev.preventDefault();
-	        range.startContainer.textContent = '\u200B';
-
-	        return false;
-	    }
-
-	    return true;
-	};
-
-	/**
-	 * Recover incomplete line in PRE tag
-	 * @memberOf WwCodeBlockManager
-	 * @param {Event} ev Event object
-	 * @param {Range} range Range object
-	 * @returns {boolean}
-	 * @private
-	 */
-	WwCodeBlockManager.prototype._recoverIncompleteLineInPreTag = function(ev, range) {
-	    var pre;
-
-	    if (this.wwe.getEditor().hasFormat('PRE')) {
-	        pre = domUtils.getParentUntil(range.startContainer, this.wwe.get$Body()[0]);
-
-	        this.wwe.defer(function(wwe) {
-	            var modified;
-
-	            $(pre).find('div').each(function(index, div) {
-	                if (!$(div).find('code').length) {
-	                    $(div).html('<code>' + ($(div).text() || '&#8203') + '</code><br>');
-	                    modified = true;
-	                }
-	            });
-
-	            if (modified) {
-	                wwe.readySilentChange();
+	            if (codeContent.length === 0) {
+	                content = '<br>';
+	            } else {
+	                content = $div.html().replace(FIND_ZWS_RX, '');
 	            }
+
+	            $(newFrag).append($('<div>' + content + '</div>'));
+
+	            return newFrag;
 	        });
-	    }
 
-	    return true;
-	};
-
-	/**
-	 * Remove blank CODE tag
-	 * @memberOf WwCodeBlockManager
-	 * @param {Event} ev Event object
-	 * @param {Range} range Range object
-	 * @returns {boolean}
-	 * @private
-	 */
-	WwCodeBlockManager.prototype._removeCodeIfCodeIsEmpty = function(ev, range) {
-	    var currentNodeName, div;
-
-	    if (this.isInCodeBlock(range)) {
-	        currentNodeName = domUtils.getNodeName(range.startContainer);
-	        div = domUtils.getParentUntil(range.startContainer, 'PRE');
-
-	        if (currentNodeName === 'TEXT'
-	            && domUtils.getOffsetLength(range.startContainer) === 0
-	            && range.startOffset <= 1
-	        ) {
-	            $(div).html('<br>');
-
-	            range.setStart(div, 0);
-	            range.collapse(true);
-
-	            this.wwe.getEditor().setSelection(range);
-
-	            return false;
-	        }
+	        return false;
 	    }
 
 	    return true;
@@ -11770,8 +12312,7 @@
 	 * @private
 	 */
 	WwCodeBlockManager.prototype._isCodeBlock = function(element) {
-	    return !!$(element).closest('pre').length
-	        && (!!$(element).closest('code').length || !!$(element).find('code').length);
+	    return !!$(element).closest('pre').length;
 	};
 
 	function sanitizeHtmlCode(code) {
@@ -11784,7 +12325,7 @@
 
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12124,7 +12665,7 @@
 
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12286,7 +12827,7 @@
 
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports) {
 
 	/**
@@ -12505,7 +13046,7 @@
 
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports) {
 
 	/**
@@ -12754,7 +13295,7 @@
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -12766,7 +13307,7 @@
 
 	var util = tui.util;
 
-	var Command = __webpack_require__(44);
+	var Command = __webpack_require__(46);
 
 	var isMac = /Mac/.test(navigator.platform),
 	    KEYMAP_OS_INDEX = isMac ? 1 : 0;
@@ -12903,7 +13444,7 @@
 
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports) {
 
 	/**
@@ -13047,7 +13588,7 @@
 
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13057,7 +13598,7 @@
 
 	'use strict';
 
-	var excelTableParser = __webpack_require__(46);
+	var excelTableParser = __webpack_require__(48);
 
 	var util = tui.util;
 
@@ -13218,7 +13759,7 @@
 
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports) {
 
 	/**
@@ -13283,7 +13824,7 @@
 
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13293,7 +13834,9 @@
 
 	'use strict';
 
-	var markedCustomRenderer = __webpack_require__(48);
+	var htmlSanitizer = __webpack_require__(31);
+
+	var markedCustomRenderer = __webpack_require__(50);
 
 	var marked = window.marked,
 	    toMark = window.toMark,
@@ -13372,7 +13915,7 @@
 	    var html = this._markdownToHtmlWithCodeHighlight(markdown);
 	    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-	    return this._sanitizeScript(html);
+	    return htmlSanitizer(html, true);
 	};
 
 	/**
@@ -13388,7 +13931,7 @@
 	    var html = this._markdownToHtml(markdown);
 	    html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-	    return this._sanitizeScript(html);
+	    return htmlSanitizer(html, true);
 	};
 
 	/**
@@ -13408,21 +13951,6 @@
 	};
 
 	/**
-	 * _sanitizeScript
-	 * Sanitize script tag
-	 * @private
-	 * @memberOf Convertor
-	 * @param {string} html html text
-	 * @returns {string}
-	 */
-	Convertor.prototype._sanitizeScript = function(html) {
-	    html = html.replace(/<script.*?>/g, '&lt;script&gt;');
-	    html = html.replace(/<\/script>/g, '&lt;/script&gt;');
-
-	    return html;
-	};
-
-	/**
 	 * factory
 	 * Convertor factory
 	 * @api
@@ -13438,7 +13966,7 @@
 
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports) {
 
 	/**
@@ -13474,19 +14002,17 @@
 	markedCustomRenderer.listitem = function(text) {
 	    var cap,
 	        checked,
-	        className = '',
-	        output = '';
+	        className = '';
 
 	    cap = regexTaskList.exec(text);
 
 	    if (cap) {
 	        text = text.substring(cap[0].length);
-	        className = ' class="task-list-item"';
 	        checked = cap[2].toLowerCase() === '[x]' ? ' checked' : '';
-	        output += cap[1] + '<input type="checkbox" class="task-list-item-checkbox"' + checked + '> ';
+	        className = ' class="task-list-item' + checked + '"';
 	    }
 
-	    return '<li' + className + '>' + output + text + '</li>\n';
+	    return '<li data-te-task' + className + '>' + text + '</li>\n';
 	};
 
 	/**
@@ -13523,6 +14049,24 @@
 	};
 
 	/**
+	 * Render table cell
+	 * @param {string} content Text content
+	 * @param {{align: string, header: boolean}} flags Flag object
+	 * @returns {string}
+	 */
+	markedCustomRenderer.tablecell = function(content, flags) {
+	    var type = flags.header ? 'th' : 'td';
+	    var $element = $('<' + type + '></' + type + '>');
+
+	    if (flags.align) {
+	        $element.attr('align', flags.align);
+	    }
+	    $element.html(content);
+
+	    return $element[0].outerHTML + '\n';
+	};
+
+	/**
 	 * Render table
 	 * @api
 	 * @memberOf markedCustomRenderer
@@ -13532,12 +14076,8 @@
 	 */
 	markedCustomRenderer.table = function(header, body) {
 	    var cellLen = header.match(/\/th/g).length;
-	    var foundLastTr = body.match(/\n?<tr>[\s\S]*?<\/tr>\n$/g);
-	    var lastTr;
-
-	    if (foundLastTr && foundLastTr.length) {
-	        lastTr = foundLastTr[0];
-	    }
+	    var trs = body.match(/<tr>[\s\S]*?<\/tr>/g);
+	    var lastTr = trs[trs.length - 1];
 
 	    if (lastTr && lastTr.match(/\/td/g).length < cellLen) {
 	        body = body.replace(/<\/td>\n<\/tr>\n$/g, '</td>\n<td></td>\n</tr>\n');
@@ -13590,7 +14130,7 @@
 
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13601,12 +14141,15 @@
 	'use strict';
 
 	var Preview = __webpack_require__(26),
-	    EventManager = __webpack_require__(42),
-	    CommandManager = __webpack_require__(43),
+	    EventManager = __webpack_require__(44),
+	    CommandManager = __webpack_require__(45),
 	    extManager = __webpack_require__(6),
-	    Convertor = __webpack_require__(47);
+	    Convertor = __webpack_require__(49);
 
 	var util = tui.util;
+
+	var TASK_ATTR_NAME = 'data-te-task';
+	var TASK_CHECKED_CLASS_NAME = 'checked';
 
 	/**
 	 * ViewOnly
@@ -13648,6 +14191,15 @@
 
 	    this.preview = new Preview($(self.options.el), this.eventManager, this.convertor);
 
+	    this.preview.$el.on('click', function(ev) {
+	        if (ev.target.hasAttribute(TASK_ATTR_NAME)) {
+	            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+	            self.eventManager.emit('change', {
+	                source: 'viewOnly'
+	            });
+	        }
+	    });
+
 	    extManager.applyExtension(self, self.options.exts);
 
 	    self.setValue(self.options.initialValue);
@@ -13675,7 +14227,7 @@
 	 * @returns {string}
 	 */
 	ToastUIEditorViewOnly.prototype.getValue = function() {
-	    return this.markdownValue;
+	    return this.convertor.toMarkdown(this.preview.$el.html());
 	};
 
 	/**
@@ -13759,7 +14311,7 @@
 
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13769,15 +14321,15 @@
 
 	'use strict';
 
-	var Toolbar = __webpack_require__(51),
-	    Tab = __webpack_require__(52),
-	    Layerpopup = __webpack_require__(54),
-	    ModeSwitch = __webpack_require__(55),
-	    PopupAddLink = __webpack_require__(56),
-	    PopupAddImage = __webpack_require__(57),
-	    PopupTableUtils = __webpack_require__(58),
-	    PopupAddTable = __webpack_require__(59),
-	    PopupAddHeading = __webpack_require__(60);
+	var Toolbar = __webpack_require__(53),
+	    Tab = __webpack_require__(54),
+	    Layerpopup = __webpack_require__(56),
+	    ModeSwitch = __webpack_require__(57),
+	    PopupAddLink = __webpack_require__(58),
+	    PopupAddImage = __webpack_require__(59),
+	    PopupTableUtils = __webpack_require__(60),
+	    PopupAddTable = __webpack_require__(61),
+	    PopupAddHeading = __webpack_require__(62);
 
 	/* eslint-disable indent */
 	var containerTmpl = [
@@ -13953,7 +14505,7 @@
 
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14127,7 +14679,7 @@
 
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14138,7 +14690,7 @@
 	'use strict';
 
 	var UIController = __webpack_require__(11),
-	    templater = __webpack_require__(53);
+	    templater = __webpack_require__(55);
 
 	var util = tui.util;
 
@@ -14329,7 +14881,7 @@
 
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports) {
 
 	/**
@@ -14372,7 +14924,7 @@
 
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14629,7 +15181,7 @@
 
 
 /***/ },
-/* 55 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14718,7 +15270,7 @@
 
 
 /***/ },
-/* 56 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14728,7 +15280,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -14831,7 +15383,7 @@
 
 
 /***/ },
-/* 57 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -14841,8 +15393,8 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54),
-	    Tab = __webpack_require__(52);
+	var LayerPopup = __webpack_require__(56),
+	    Tab = __webpack_require__(54);
 
 	var util = tui.util;
 
@@ -15028,7 +15580,7 @@
 
 
 /***/ },
-/* 58 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15038,7 +15590,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -15047,6 +15599,9 @@
 	    '<button type="button" class="te-table-add-col">열 삽입</button>',
 	    '<button type="button" class="te-table-remove-row">행 삭제</button>',
 	    '<button type="button" class="te-table-remove-col">열 삭제</button>',
+	    '<button type="button" class="te-table-col-align-left">열 왼쪽 정렬</button>',
+	    '<button type="button" class="te-table-col-align-center">열 가운데 정렬</button>',
+	    '<button type="button" class="te-table-col-align-right">열 오른쪽 정렬</button>',
 	    '<button type="button" class="te-table-remove">표 삭제</button>'
 	].join('');
 
@@ -15099,6 +15654,18 @@
 	        self.eventManager.emit('command', 'RemoveRow');
 	    });
 
+	    this.on('click .te-table-col-align-left', function() {
+	        self.eventManager.emit('command', 'AlignCol', 'left');
+	    });
+
+	    this.on('click .te-table-col-align-center', function() {
+	        self.eventManager.emit('command', 'AlignCol', 'center');
+	    });
+
+	    this.on('click .te-table-col-align-right', function() {
+	        self.eventManager.emit('command', 'AlignCol', 'right');
+	    });
+
 	    this.on('click .te-table-remove-col', function() {
 	        self.eventManager.emit('command', 'RemoveCol');
 	    });
@@ -15145,7 +15712,7 @@
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15155,7 +15722,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -15508,7 +16075,7 @@
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15518,7 +16085,7 @@
 
 	'use strict';
 
-	var LayerPopup = __webpack_require__(54);
+	var LayerPopup = __webpack_require__(56);
 
 	var util = tui.util;
 
@@ -15596,7 +16163,7 @@
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15606,7 +16173,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
@@ -15707,7 +16274,7 @@
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15717,7 +16284,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
 	var italicRegex = /^[\*_][^\*_]*[\*_]$/;
@@ -15882,7 +16449,7 @@
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15892,7 +16459,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
 
@@ -15973,7 +16540,7 @@
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -15983,7 +16550,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Blockquote
@@ -16042,7 +16609,7 @@
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16052,7 +16619,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var util = tui.util;
 
@@ -16132,7 +16699,7 @@
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16142,7 +16709,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * HR
@@ -16197,7 +16764,7 @@
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16207,7 +16774,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AddLink
@@ -16251,7 +16818,7 @@
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16261,7 +16828,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AddImage
@@ -16305,7 +16872,7 @@
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16315,7 +16882,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -16369,7 +16936,7 @@
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16379,7 +16946,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
 	    FIND_MD_UL_RX = /^[ \t]*\* .*/;
@@ -16433,7 +17000,7 @@
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16443,7 +17010,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Table
@@ -16544,7 +17111,7 @@
 
 
 /***/ },
-/* 72 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16554,7 +17121,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Task
@@ -16598,7 +17165,7 @@
 
 
 /***/ },
-/* 73 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16608,7 +17175,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Code
@@ -16653,7 +17220,7 @@
 
 
 /***/ },
-/* 74 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16663,7 +17230,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * CodeBlock
@@ -16706,7 +17273,7 @@
 
 
 /***/ },
-/* 75 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16716,7 +17283,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Bold
@@ -16753,7 +17320,7 @@
 
 
 /***/ },
-/* 76 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16763,7 +17330,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Italic
@@ -16799,7 +17366,7 @@
 
 
 /***/ },
-/* 77 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16809,7 +17376,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Strike
@@ -16845,7 +17412,7 @@
 
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16855,7 +17422,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Blockquote
@@ -16887,7 +17454,7 @@
 
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16897,7 +17464,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AddImage
@@ -16929,7 +17496,7 @@
 
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16939,7 +17506,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AddLink
@@ -16980,7 +17547,7 @@
 
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -16990,7 +17557,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43),
+	var CommandManager = __webpack_require__(45),
 	    domUtils = __webpack_require__(19);
 
 	/**
@@ -17052,7 +17619,7 @@
 
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17062,7 +17629,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 	var domUtils = __webpack_require__(19);
 
 	/**
@@ -17100,7 +17667,7 @@
 
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17110,7 +17677,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * UL
@@ -17153,7 +17720,7 @@
 
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17163,7 +17730,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * OL
@@ -17207,7 +17774,7 @@
 
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17217,7 +17784,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	var tableID = 0,
 	    TABLE_CLASS_PREFIX = 'te-content-table-';
@@ -17341,7 +17908,7 @@
 
 
 /***/ },
-/* 86 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17351,7 +17918,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AddRow
@@ -17376,6 +17943,15 @@
 	            $tr = $(range.startContainer).closest('tr');
 	            $newRow = getNewRow($tr);
 	            $newRow.insertAfter($tr);
+
+	            sq.focus();
+
+	            focusToFirstTd(sq, $newRow);
+	        } else if (sq.hasFormat('TH')) {
+	            sq.saveUndoState(range);
+	            $tr = $(range.startContainer).parents('thead').next('tbody').children('tr').eq(0);
+	            $newRow = getNewRow($tr);
+	            $newRow.insertBefore($tr);
 
 	            sq.focus();
 
@@ -17407,7 +17983,7 @@
 
 
 /***/ },
-/* 87 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17417,7 +17993,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43),
+	var CommandManager = __webpack_require__(45),
 	    domUtils = __webpack_require__(19);
 
 	/**
@@ -17494,7 +18070,7 @@
 
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17504,7 +18080,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * RemoveRow
@@ -17520,15 +18096,34 @@
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var sq = wwe.getEditor(),
-	            range = sq.getSelection().cloneRange(),
-	            $tr, $nextFocus;
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+	        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+	        var $table = $(range.startContainer).parents('table');
+	        var trsInTbody = $table.find('tbody tr');
+	        var isStartContainerInThead = $(range.startContainer).parents('thead').length;
+	        var startRowIndex, endRowIndex, $nextFocus, $tr, isWholeTbodySelected;
 
-	        if (sq.hasFormat('TD') && $(range.startContainer).closest('table').find('tbody tr').length > 1) {
+	        if (isStartContainerInThead) {
+	            startRowIndex = rangeInformation.from.row + 1;
+	        } else {
+	            startRowIndex = rangeInformation.from.row;
+	        }
+	        endRowIndex = rangeInformation.to.row;
+
+	        isWholeTbodySelected = !(startRowIndex === 1 && endRowIndex === trsInTbody.length)
+	            || (isStartContainerInThead && endRowIndex === trsInTbody);
+	        if (!isWholeTbodySelected) {
+	            endRowIndex -= 1;
+	        }
+
+	        $tr = $table.find('tr').slice(startRowIndex, endRowIndex + 1);
+
+	        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE'))
+	            && trsInTbody.length > 1
+	        ) {
 	            sq.saveUndoState(range);
-	            $tr = $(range.startContainer).closest('tr');
-
-	            $nextFocus = $tr.next().length ? $tr.next() : $tr.prev();
+	            $nextFocus = $tr.last().next().length ? $tr.last().next() : $tr.first().prev();
 
 	            $tr.remove();
 
@@ -17556,7 +18151,7 @@
 
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17566,7 +18161,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43),
+	var CommandManager = __webpack_require__(45),
 	    domUtils = __webpack_require__(19);
 
 	/**
@@ -17638,7 +18233,104 @@
 
 
 /***/ },
-/* 90 */
+/* 92 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @fileoverview Implements WysiwygCommand
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	'use strict';
+
+	var CommandManager = __webpack_require__(45),
+	    domUtils = __webpack_require__(19);
+
+	/**
+	 * AlignCol
+	 * Align selected column's text content to given direction
+	 * @exports AlignCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
+	    name: 'AlignCol',
+	    /**
+	     * 커맨드 핸들러
+	     * @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     * @param {string} alignDirection Align direction
+	     */
+	    exec: function(wwe, alignDirection) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+	        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+	        var isDivided = false;
+	        var columnLength, $table, $cell, startColumnIndex, endColumnIndex;
+
+	        if (sq.hasFormat('TR')) {
+	            sq.saveUndoState(range);
+
+	            $cell = getCellByRange(range);
+	            $table = $cell.parents('table');
+	            columnLength = $table.find('tr').eq(0).find('td,th').length;
+
+	            if (rangeInformation.from.row === rangeInformation.to.row) {
+	                startColumnIndex = rangeInformation.from.cell;
+	                endColumnIndex = rangeInformation.to.cell;
+	            } else if (rangeInformation.from.row < rangeInformation.to.row) {
+	                if (rangeInformation.from.cell <= rangeInformation.to.cell) {
+	                    startColumnIndex = 0;
+	                    endColumnIndex = columnLength - 1;
+	                } else {
+	                    startColumnIndex = rangeInformation.from.cell;
+	                    endColumnIndex = rangeInformation.to.cell;
+	                    isDivided = true;
+	                }
+	            }
+	            setAlignAttributeToTableCells($table, startColumnIndex, endColumnIndex,
+	                alignDirection, {
+	                    isDivided: isDivided,
+	                    columnLength: columnLength
+	                });
+	        }
+	        sq.focus();
+	    }
+	});
+
+	function getCellByRange(range) {
+	    var cell = range.startContainer;
+
+	    if (domUtils.getNodeName(cell) === 'TH' || domUtils.getNodeName(cell) === 'TD') {
+	        cell = $(cell);
+	    } else {
+	        cell = $(cell).parentsUntil('tr');
+	    }
+
+	    return cell;
+	}
+
+	function setAlignAttributeToTableCells($table, start, end, alignDirection, option) {
+	    var isDivided = option.isDivided;
+	    var columnLength = option.columnLength;
+	    $table.find('tr').each(function(n, tr) {
+	        $(tr).children('td,th').each(function(index, cell) {
+	            if (isDivided &&
+	                ((start <= index && index <= columnLength) || (index <= end))
+	            ) {
+	                $(cell).attr('align', alignDirection);
+	            } else if ((start <= index && index <= end)) {
+	                $(cell).attr('align', alignDirection);
+	            }
+	        });
+	    });
+	}
+
+	module.exports = AlignCol;
+
+
+/***/ },
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17648,7 +18340,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * RemoveTable
@@ -17683,7 +18375,7 @@
 
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17693,7 +18385,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * IncreaseDepth
@@ -17709,36 +18401,33 @@
 	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var $prev, prevClasses, $node, nodeClasses;
+	        var $next, $prev, prevClasses, nodeClasses, nextClasses;
 	        var range = wwe.getEditor().getSelection();
-	        var isInTaskList = wwe.getManager('task').isInTaskList(range);
-	            // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
-	            // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
-	        var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
+	        var $node = $(range.startContainer).closest('li');
 
-	        if ((isInTaskList && range.startOffset <= 1)
-	            || isOffsetEuqals2InDIVForIE10
-	            || range.startOffset === 0
-	        ) {
-	            $node = $(range.startContainer).closest('li');
-	            $prev = $node.prev();
+	        $prev = $node.prev();
 
-	            if (!$prev.length) {
-	                return;
-	            }
+	        if ($prev.length && $node.length) {
+	            $next = $node.find('li').eq(0);
 
-	            wwe.getEditor().saveUndoState(range);
+	            wwe.getEditor().saveUndoState();
 
 	            nodeClasses = $node.attr('class');
 	            prevClasses = $prev.attr('class');
+	            nextClasses = $next.attr('class');
 
 	            $node.removeAttr('class');
 	            $prev.removeAttr('class');
+
+	            if ($next.length && !$next.children('div').length) {
+	                $next.removeAttr('class');
+	            }
 
 	            wwe.getEditor().increaseListLevel();
 
 	            $node.attr('class', nodeClasses);
 	            $prev.attr('class', prevClasses);
+	            $next.attr('class', nextClasses);
 	        }
 	    }
 	});
@@ -17747,7 +18436,7 @@
 
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17757,7 +18446,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * DecreaseDepth
@@ -17773,50 +18462,31 @@
 	     *  @param {WysiwygEditor} wwe WysiwygEditor instance
 	     */
 	    exec: function(wwe) {
-	        var $node, nodeClasses, $input;
-	        var range = wwe.getEditor().getSelection();
-	        var isInTaskList = wwe.getManager('task').isInTaskList(range);
-	        // IE10 에서 task의 startOffset에 ZWB를 가산하는 문제때문에,
-	        // list 일때 depth 커서위치 1에서의 depth 이동을 제한하기 위해 사용
-	        var isOffsetEuqals2InDIVForIE10 = (range.startContainer.tagName === 'DIV' && range.startOffset === 2);
+	        var $node = getCurrent$Li(wwe);
+	        var nodeClasses;
 
-	        $node = $(range.startContainer).closest('li');
-	        $input = $($node.find('input:checkbox')[0]);
-	        if ((isInTaskList && range.startOffset <= 1)
-	            || isOffsetEuqals2InDIVForIE10
-	            || range.startOffset === 0
-	        ) {
-	            wwe.getEditor().saveUndoState(range);
+	        if ($node.length) {
+	            wwe.getEditor().saveUndoState();
 
 	            nodeClasses = $node.attr('class');
-	            $node.removeAttr('class');
-
 	            wwe.getEditor().decreaseListLevel();
 
-	            if ($input.length && ($input.parents('ol,ul').length === 0
-	                || $input.parents('li').length === 0
-	                || !$input.parents('li').hasClass('task-list-item'))
-	            ) {
-	                $input.remove();
-	            } else {
-	                range = wwe.getEditor().getSelection().cloneRange();
-	                $node = $(range.startContainer).closest('li');
-
-	                if (nodeClasses) {
-	                    $node.attr('class', nodeClasses);
-	                } else {
-	                    $node.removeAttr('class');
-	                }
-	            }
+	            $node = getCurrent$Li(wwe);
+	            $node.attr('class', nodeClasses);
 	        }
 	    }
 	});
+
+	function getCurrent$Li(wwe) {
+	    var range = wwe.getEditor().getSelection();
+	    return $(range.startContainer).closest('li');
+	}
 
 	module.exports = DecreaseDepth;
 
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17826,7 +18496,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * Task
@@ -17855,9 +18525,8 @@
 	                range = sq.getSelection().cloneRange();
 	            }
 
-	            range = wwe.insertSelectionMarker(range);
+	            sq.saveUndoState(range);
 	            wwe.getManager('task').formatTask(range.startContainer);
-	            wwe.restoreSelectionMarker();
 	        }
 
 	        sq.focus();
@@ -17868,7 +18537,7 @@
 
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -17879,7 +18548,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43),
+	var CommandManager = __webpack_require__(45),
 	    domUtils = __webpack_require__(19);
 
 	/**
@@ -17939,7 +18608,7 @@
 
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -17949,10 +18618,12 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(43);
+	var CommandManager = __webpack_require__(45);
 
-	var codeBlockID = 0,
-	    CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
+	var codeBlockID = 0;
+	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
+	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
+
 	/**
 	 * CodeBlock
 	 * Add CodeBlock to wysiwygEditor
@@ -17973,14 +18644,14 @@
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
 	        if (!sq.hasFormat('PRE')) {
-	            attr = ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
+	            attr = CODEBLOCK_ATTR_NAME + ' class = "' + CODEBLOCK_CLASS_PREFIX + codeBlockID + '"';
 
 	            if (type) {
 	                attr += ' data-language="' + type + '"';
 	            }
 
 	            codeBlockBody = getCodeBlockBody(range, wwe);
-	            sq.insertHTML('<pre' + attr + '>' + codeBlockBody + '</pre>');
+	            sq.insertHTML('<pre ' + attr + '>' + codeBlockBody + '</pre>');
 
 	            focusToFirstCode(wwe.get$Body().find('.' + CODEBLOCK_CLASS_PREFIX + codeBlockID), wwe);
 
@@ -18000,7 +18671,7 @@
 	function focusToFirstCode($pre, wwe) {
 	    var range = wwe.getEditor().getSelection().cloneRange();
 
-	    range.setStart($pre.find('code')[0].firstChild, 0);
+	    range.setStartBefore($pre.find('div')[0].firstChild);
 	    range.collapse(true);
 
 	    wwe.getEditor().setSelection(range);
@@ -18018,7 +18689,7 @@
 	    var contents, nodes;
 
 	    if (range.collapsed) {
-	        nodes = [$('<div>&#8203<br></div>')[0]];
+	        nodes = [$('<div><br></div>')[0]];
 	    } else {
 	        contents = range.extractContents();
 	        nodes = [].slice.call(contents.childNodes);
