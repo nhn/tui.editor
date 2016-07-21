@@ -516,17 +516,9 @@ WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maxi
         var cellLength = tableCells.length;
         var parentNodeName = domUtils.getNodeName($row.parent()[0]);
         var cellTagName = parentNodeName === 'THEAD' ? 'th' : 'td';
-        var isFirstRowInTbody = rowIndex === 1 && parentNodeName === 'TBODY';
-        var isNotLastRow = rowIndex !== $trs.length;
 
         for (; cellLength < maximumCellLength; cellLength += 1) {
-            if (parentNodeName === 'THEAD'
-                || (isFirstRowInTbody && isNotLastRow)
-            ) {
-                $row.prepend($(tableCellGenerator(1, cellTagName))[0]);
-            } else {
-                $row.append($(tableCellGenerator(1, cellTagName))[0]);
-            }
+            $row.append($(tableCellGenerator(1, cellTagName))[0]);
         }
     });
 };
