@@ -550,10 +550,9 @@ WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
 };
 
 WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
-    var absentNode, cellTagName;
-
     var isTheadNotExists = !table.find('thead').length;
     var isTbodyNotExists = !table.find('tbody').length;
+    var absentNode, cellTagName;
 
     if (isTheadNotExists) {
         cellTagName = 'th';
@@ -561,8 +560,10 @@ WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
         cellTagName = 'td';
     }
 
-    absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>');
-    table.prepend(absentNode);
+    if (cellTagName) {
+        absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>')[0];
+        table.prepend(absentNode);
+    }
 };
 
 WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
