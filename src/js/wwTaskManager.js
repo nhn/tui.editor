@@ -80,33 +80,6 @@ WwTaskManager.prototype._initKeyHandler = function() {
             });
         }
     });
-
-    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
-        if (range.collapsed) {
-            if (self.wwe.getEditor().hasFormat('LI')) {
-                ev.preventDefault();
-                self.eventManager.emit('command', 'IncreaseDepth');
-
-                return false;
-            }
-        }
-
-        return true;
-    });
-
-    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
-        var isNeedNext;
-
-        if (range.collapsed) {
-            if (self.wwe.getEditor().hasFormat('LI')) {
-                ev.preventDefault();
-                self.eventManager.emit('command', 'DecreaseDepth');
-                isNeedNext = false;
-            }
-        }
-
-        return isNeedNext;
-    });
 };
 
 /**

@@ -37,6 +37,7 @@ WwListManager.prototype.name = 'list';
  */
 WwListManager.prototype._init = function() {
     this._initEvent();
+    this._initKeyHandler();
 };
 
 /**
@@ -50,8 +51,54 @@ WwListManager.prototype._initEvent = function() {
 
     this.eventManager.listen('wysiwygRangeChangeAfter', function() {
         self._findAndRemoveEmptyList();
+        self._removeBranchListAll();
+    });
+
+    this.eventManager.listen('wysiwygSetValueAfter', function() {
+        self._removeBranchListAll();
     });
 };
+
+
+WwListManager.prototype._initKeyHandler = function() {
+    var self = this;
+
+    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
+        if (range.collapsed) {
+            if (self.wwe.getEditor().hasFormat('LI')) {
+                ev.preventDefault();
+                self.eventManager.emit('command', 'IncreaseDepth');
+
+                return false;
+            }
+        }
+
+        return true;
+    });
+
+    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
+        var isNeedNext;
+        var $ul;
+
+        if (range.collapsed) {
+            if (self.wwe.getEditor().hasFormat('LI')) {
+                ev.preventDefault();
+                $ul = $(range.startContainer).closest('li').children('ul');
+
+                self.eventManager.emit('command', 'DecreaseDepth');
+
+                if ($ul.length && !$ul.prev().length) {
+                    self._removeBranchList($ul);
+                }
+
+                isNeedNext = false;
+            }
+        }
+
+        return isNeedNext;
+    });
+};
+
 /**
  * Find empty list for whole container and remove it.
  * @memberOf WwListManager
@@ -65,6 +112,40 @@ WwListManager.prototype._findAndRemoveEmptyList = function() {
                 $(node).remove();
             }
         });
+};
+
+/**
+ * Remove branch lists all from body
+ */
+WwListManager.prototype._removeBranchListAll = function() {
+    var self = this;
+
+    self.wwe.get$Body().find('li ul, li ol').each(function() {
+        if (!this || $(this).prev().length) {
+            return;
+        }
+        self._removeBranchList(this);
+    });
+};
+
+/**
+ * Remove branch list of passed list(ul, ol)
+ * @param {HTMLElement} list list
+ */
+WwListManager.prototype._removeBranchList = function(list) {
+    var $list = $(list);
+    var $branchRoot = $list;
+    var $firstLi;
+
+    while (!$branchRoot.prev().length) {
+        $branchRoot = $branchRoot.parent();
+    }
+
+    $firstLi = $branchRoot.children('li').eq(0);
+
+    $branchRoot.prepend($list.children().unwrap());
+
+    $firstLi.remove();
 };
 
 /**
