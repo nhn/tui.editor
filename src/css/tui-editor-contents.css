@@ -194,13 +194,6 @@
     content: "";
 }
 
-.tui-editor-contents > ul > li > ul,
-.tui-editor-contents > ul > li > ol,
-.tui-editor-contents > ol > li > ul,
-.tui-editor-contents > ol > li > ol {
-      margin-bottom: 6px !important;
-}
-
 .tui-editor-contents hr {
     border-top: 1px solid #eee;
     margin: 16px 0;
