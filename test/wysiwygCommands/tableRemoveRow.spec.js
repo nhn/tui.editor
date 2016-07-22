@@ -135,4 +135,95 @@ describe('Table - RemoveRow', function() {
 
         expect(sq.getSelection().startContainer.textContent).toEqual(wwe.get$Body().find('tbody td')[0].textContent);
     });
+
+    it('remove rows that have selected', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '<tr><td>7</td><td>8</td></tr>',
+            '<tr><td>9</td><td>10</td></tr>',
+            '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+        range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        RemoveRow.exec(wwe);
+
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+    });
+
+    it('do not remove table header', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '<tr><td>7</td><td>8</td></tr>',
+            '<tr><td>9</td><td>10</td></tr>',
+            '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+        range.setEndAfter(wwe.get$Body().find('thead th')[1].firstChild);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        RemoveRow.exec(wwe);
+
+        expect(wwe.get$Body().find('thead tr').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(4);
+    });
+
+    it('do not remove last row', function() {
+        var sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '<tr><td>7</td><td>8</td></tr>',
+            '<tr><td>9</td><td>10</td></tr>',
+            '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+        range.setEndAfter(wwe.get$Body().find('tbody td')[7].firstChild);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        RemoveRow.exec(wwe);
+
+        expect(wwe.get$Body().find('thead tr').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody tr').last().text()).toEqual('910');
+    });
 });
