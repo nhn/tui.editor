@@ -83,7 +83,7 @@ WwListManager.prototype._initKeyHandler = function() {
         if (range.collapsed) {
             if (self.wwe.getEditor().hasFormat('LI')) {
                 ev.preventDefault();
-                $ul = $(range.startContainer).closest('li').children('ul');
+                $ul = $(range.startContainer).closest('li').children('ul, ol');
 
                 self.eventManager.emit('command', 'DecreaseDepth');
 
