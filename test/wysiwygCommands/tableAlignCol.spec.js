@@ -87,6 +87,111 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('center');
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'center');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'center');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi line selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'center');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).toEqual('center');
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('center');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).toEqual('center');
+        });
     });
 
     describe('set align left to current column', function() {
@@ -149,6 +254,141 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('left');
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
+
+        it('on multiline selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('thead th')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'left');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('left');
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('left');
+        });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'left');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'left');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi line selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'left');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).toEqual('left');
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('left');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).toEqual('left');
+        });
     });
 
     describe('set align right to current column', function() {
@@ -210,6 +450,111 @@ describe('Table - AlignCol', function() {
 
             expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('right');
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'right');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi cell selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[1].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'right');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).not.toBeDefined();
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
+        });
+
+        it('on multi line selection', function() {
+            var sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[3].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
+
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            AlignCol.exec(wwe, 'right');
+
+            expect(wwe.get$Body().find('thead th').eq(0).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('thead th').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('thead th').eq(3).attr('align')).toEqual('right');
+
+            expect(wwe.get$Body().find('tbody td').eq(0).attr('align')).toEqual('right');
+            expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(2).attr('align')).not.toBeDefined();
+            expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).toEqual('right');
         });
     });
 });

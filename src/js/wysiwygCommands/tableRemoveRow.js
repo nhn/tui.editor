@@ -23,30 +23,13 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
         var range = sq.getSelection().cloneRange();
-        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
         var $table = $(range.startContainer).parents('table');
-        var trsInTbody = $table.find('tbody tr');
-        var isStartContainerInThead = $(range.startContainer).parents('thead').length;
-        var startRowIndex, endRowIndex, $nextFocus, $tr, isWholeTbodySelected;
+        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+        var $tr = getSelectedRows(range, rangeInformation, $table);
+        var tbodyRowLength = $table.find('tbody tr').length;
+        var $nextFocus;
 
-        if (isStartContainerInThead) {
-            startRowIndex = rangeInformation.from.row + 1;
-        } else {
-            startRowIndex = rangeInformation.from.row;
-        }
-        endRowIndex = rangeInformation.to.row;
-
-        isWholeTbodySelected = !(startRowIndex === 1 && endRowIndex === trsInTbody.length)
-            || (isStartContainerInThead && endRowIndex === trsInTbody);
-        if (!isWholeTbodySelected) {
-            endRowIndex -= 1;
-        }
-
-        $tr = $table.find('tr').slice(startRowIndex, endRowIndex + 1);
-
-        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE'))
-            && trsInTbody.length > 1
-        ) {
+        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
             sq.saveUndoState(range);
             $nextFocus = $tr.last().next().length ? $tr.last().next() : $tr.first().prev();
 
@@ -63,6 +46,11 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     }
 });
 
+/**
+ * Focus to first TD in given TR
+ * @param {Squire} sq Squire instance
+ * @param {jQuery} $tr jQuery wrapped TR
+ */
 function focusToFirstTd(sq, $tr) {
     var range;
 
@@ -70,6 +58,33 @@ function focusToFirstTd(sq, $tr) {
     range.selectNodeContents($tr.find('td')[0]);
     range.collapse(true);
     sq.setSelection(range);
+}
+
+/**
+ * Get start, end row index from current range
+ * @param {Range} range Range object
+ * @param {object} rangeInformation Range information object
+ * @param {jQuery} $table jquery wrapped TABLE
+ * @returns {jQuery}
+ */
+function getSelectedRows(range, rangeInformation, $table) {
+    var startRowIndex = rangeInformation.from.row;
+    var endRowIndex = rangeInformation.to.row;
+    var tbodyRowLength = $table.find('tbody tr').length;
+    var isStartContainerInThead = $(range.startContainer).parents('thead').length;
+    var isWholeTbodySelected;
+
+    if (isStartContainerInThead) {
+        startRowIndex += 1;
+    }
+
+    isWholeTbodySelected = (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
+
+    if (isWholeTbodySelected) {
+        endRowIndex -= 1;
+    }
+
+    return $table.find('tr').slice(startRowIndex, endRowIndex + 1);
 }
 
 module.exports = RemoveRow;
