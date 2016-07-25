@@ -547,13 +547,18 @@ proto.getPath = function () {
 
 // WebKit bug: https://bugs.webkit.org/show_bug.cgi?id=15256
 
-var removeZWS = function ( root ) {
+// Walk down the tree starting at the root and remove any ZWS. If the node only contained
+// ZWS space then remove it too.
+//
+// We may want to keep one ZWS node at the bottom of the tree so the block can be selected. Define that
+// node as the keepNode.
+var removeZWS = function ( root, keepNode ) {
     var walker = new TreeWalker( root, SHOW_TEXT, function () {
             return true;
         }, false ),
         parent, node, index;
     while ( node = walker.nextNode() ) {
-        while ( ( index = node.data.indexOf( ZWS ) ) > -1 ) {
+        while ( ( index = node.data.indexOf( ZWS ) ) > -1  && node.parentNode !== keepNode ) {
             if ( node.length === 1 ) {
                 do {
                     parent = node.parentNode;
@@ -968,6 +973,15 @@ proto._addFormat = function ( tag, attributes, range ) {
         insertNodeInRange( range, el );
         range.setStart( el.firstChild, el.firstChild.length );
         range.collapse( true );
+
+        // Clean up any previous formats that may have been set on this block
+        // that are unused.
+        var block = el;
+        while ( isInline( block ) ) {
+            block = block.parentNode;
+        }
+
+        removeZWS( block, el );
     }
     // Otherwise we find all the textnodes in the range (splitting
     // partially selected nodes) and if they're not already formatted
