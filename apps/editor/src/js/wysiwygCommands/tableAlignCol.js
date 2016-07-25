@@ -6,8 +6,7 @@
 
 'use strict';
 
-var CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+var CommandManager = require('../commandManager');
 
 /**
  * AlignCol
@@ -27,54 +26,37 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         var sq = wwe.getEditor();
         var range = sq.getSelection().cloneRange();
         var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
-        var isDivided = false;
-        var columnLength, $table, $cell, startColumnIndex, endColumnIndex;
+        var selectionInformation, $table;
 
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);
 
-            $cell = getCellByRange(range);
-            $table = $cell.parents('table');
-            columnLength = $table.find('tr').eq(0).find('td,th').length;
+            $table = $(range.startContainer).parents('table');
 
-            if (rangeInformation.from.row === rangeInformation.to.row) {
-                startColumnIndex = rangeInformation.from.cell;
-                endColumnIndex = rangeInformation.to.cell;
-            } else if (rangeInformation.from.row < rangeInformation.to.row) {
-                if (rangeInformation.from.cell <= rangeInformation.to.cell) {
-                    startColumnIndex = 0;
-                    endColumnIndex = columnLength - 1;
-                } else {
-                    startColumnIndex = rangeInformation.from.cell;
-                    endColumnIndex = rangeInformation.to.cell;
-                    isDivided = true;
-                }
-            }
-            setAlignAttributeToTableCells($table, startColumnIndex, endColumnIndex,
-                alignDirection, {
-                    isDivided: isDivided,
-                    columnLength: columnLength
-                });
+            selectionInformation = getSelectionInformation($table, rangeInformation);
+
+            setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
         }
         sq.focus();
     }
 });
 
-function getCellByRange(range) {
-    var cell = range.startContainer;
+/**
+ * Set Column align
+ * @param {jQuery} $table jQuery wrapped TABLE
+ * @param {string} alignDirection 'left' or 'center' or 'right'
+ * @param {{
+ *     startColumnIndex: number,
+ *     endColumnIndex: number,
+ *     isDivided: boolean
+ *     }} selectionInformation start, end column index and boolean value for whether range divided or not
+ */
+function setAlignAttributeToTableCells($table, alignDirection, selectionInformation) {
+    var isDivided = selectionInformation.isDivided || false;
+    var start = selectionInformation.startColumnIndex;
+    var end = selectionInformation.endColumnIndex;
+    var columnLength = $table.find('tr').eq(0).find('td,th').length;
 
-    if (domUtils.getNodeName(cell) === 'TH' || domUtils.getNodeName(cell) === 'TD') {
-        cell = $(cell);
-    } else {
-        cell = $(cell).parentsUntil('tr');
-    }
-
-    return cell;
-}
-
-function setAlignAttributeToTableCells($table, start, end, alignDirection, option) {
-    var isDivided = option.isDivided;
-    var columnLength = option.columnLength;
     $table.find('tr').each(function(n, tr) {
         $(tr).children('td,th').each(function(index, cell) {
             if (isDivided &&
@@ -86,6 +68,39 @@ function setAlignAttributeToTableCells($table, start, end, alignDirection, optio
             }
         });
     });
+}
+
+/**
+ * Return start, end column index and boolean value for whether range divided or not
+ * @param {jQuery} $table jQuery wrapped TABLE
+ * @param {{startColumnIndex: number, endColumnIndex: number}} rangeInformation Range information
+ * @returns {{startColumnIndex: number, endColumnIndex: number, isDivided: boolean}}
+ */
+function getSelectionInformation($table, rangeInformation) {
+    var columnLength = $table.find('tr').eq(0).find('td,th').length;
+    var startColumnIndex, endColumnIndex, isDivided;
+    var from = rangeInformation.from;
+    var to = rangeInformation.to;
+
+    if (from.row === to.row) {
+        startColumnIndex = from.cell;
+        endColumnIndex = to.cell;
+    } else if (from.row < to.row) {
+        if (from.cell <= to.cell) {
+            startColumnIndex = 0;
+            endColumnIndex = columnLength - 1;
+        } else {
+            startColumnIndex = from.cell;
+            endColumnIndex = to.cell;
+            isDivided = true;
+        }
+    }
+
+    return {
+        startColumnIndex: startColumnIndex,
+        endColumnIndex: endColumnIndex,
+        isDivided: isDivided
+    };
 }
 
 module.exports = AlignCol;
