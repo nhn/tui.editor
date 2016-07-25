@@ -77,6 +77,7 @@ WwTableSelectionManager.prototype._initEvent = function() {
 
         if (self.isSelectionStarted) {
             self._highlightSelectionIfNeed(selectionStart, selectionEnd);
+            self.wwe.getManager('table').resetLastCellNode();
         }
 
         self.isSelectionStarted = false;
@@ -93,9 +94,7 @@ WwTableSelectionManager.prototype._initKeyHandler = function() {
     var self = this;
 
     this.wwe.addKeyEventHandler(function() {
-        self._removeCellSelectedClassFromAllCellsIfNeed();
-
-        return true;
+        self.wwe.getEditor().modifyDocument(self._removeCellSelectedClassFromAllCellsIfNeed.bind(self));
     });
 };
 
@@ -310,7 +309,7 @@ WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
 WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCellsIfNeed = function() {
     if (this.isCellsSelected) {
         $('table').find('td,th').each(function(i, node) {
-            $(node).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+            $(node).removeAttr('class');
         });
     }
 };

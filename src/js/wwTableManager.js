@@ -85,10 +85,12 @@ WwTableManager.prototype._initEvent = function() {
 WwTableManager.prototype._initKeyHandler = function() {
     var self = this;
 
-    this.wwe.addKeyEventHandler(function(ev, range) {
-        if (self.isInTable(range)) {
+    this.wwe.addKeyEventHandler(function(ev, range, keymap) {
+        var isRangeInTable = self.isInTable(range);
+
+        if (isRangeInTable && !self._isModifierKey(keymap)) {
             self._recordUndoStateIfNeed(range);
-        } else if (self._lastCellNode) {
+        } else if (!isRangeInTable && self._lastCellNode) {
             self._recordUndoStateAndResetCellNode(range);
         }
     });
@@ -289,7 +291,7 @@ WwTableManager.prototype._recordUndoStateIfNeed = function(range) {
  */
 WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
     this.wwe.getEditor().saveUndoState(range);
-    this._lastCellNode = null;
+    this.resetLastCellNode();
 };
 
 /**
@@ -675,5 +677,24 @@ WwTableManager.prototype._completeTableIfNeed = function() {
         }
         self._completeIncompleteTable(node);
     });
+};
+
+/**
+ * Reset _lastCellNode to null
+ * @memberOf WwTableManager
+ */
+WwTableManager.prototype.resetLastCellNode = function() {
+    this._lastCellNode = null;
+};
+
+/**
+ * Return whether modifier key pressd or not
+ * @param {string} keymap Pressed keymap string
+ * @returns {boolean}
+ * @private
+ */
+WwTableManager.prototype._isModifierKey = function(keymap) {
+    return (keymap === 'META') && (keymap === 'SHIFT')
+        && (keymap === 'ALT') && (keymap === 'CONTROL');
 };
 module.exports = WwTableManager;
