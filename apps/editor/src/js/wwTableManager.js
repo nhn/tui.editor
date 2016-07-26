@@ -89,7 +89,7 @@ WwTableManager.prototype._initKeyHandler = function() {
     this.wwe.addKeyEventHandler(function(ev, range, keymap) {
         var isRangeInTable = self.isInTable(range);
         var isNonTableContainSelection = range.commonAncestorContainer !== self.wwe.get$Body()[0];
-        var isTextInput = ev.key.length === 1;
+        var isTextInput = keymap.length === 1;
 
         if (!self._isModifierKeyPushed(ev)) {
             self.wwe.getEditor().modifyDocument(

@@ -8726,10 +8726,12 @@
 
 	    this.addKeyEventHandler('TAB', function(ev) {
 	        var editor = self.getEditor();
-	        var isAbleToInsert4Space = !self.getManager('list').isInList();
+	        var range = editor.getSelection();
+	        var isNotListOrBlockquote = range.collapsed && !editor.hasFormat('li') && !editor.hasFormat('blockquote');
+	        var isTextSelection = !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
 
-	        if (isAbleToInsert4Space) {
-	            ev.preventDefault();
+	        ev.preventDefault();
+	        if (isNotListOrBlockquote || isTextSelection) {
 	            editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
 
 	            return false;
@@ -9405,8 +9407,8 @@
 
 	    wwe.addManager(WwListManager);
 	    wwe.addManager(WwTaskManager);
-	    wwe.addManager(WwTableManager);
 	    wwe.addManager(WwTableSelectionManager);
+	    wwe.addManager(WwTableManager);
 	    wwe.addManager(WwHrManager);
 	    wwe.addManager(WwPManager);
 	    wwe.addManager(WwHeadingManager);
@@ -10256,6 +10258,7 @@
 	 */
 	WwListManager.prototype._init = function() {
 	    this._initEvent();
+	    this._initKeyHandler();
 	};
 
 	/**
@@ -10269,8 +10272,54 @@
 
 	    this.eventManager.listen('wysiwygRangeChangeAfter', function() {
 	        self._findAndRemoveEmptyList();
+	        self._removeBranchListAll();
+	    });
+
+	    this.eventManager.listen('wysiwygSetValueAfter', function() {
+	        self._removeBranchListAll();
 	    });
 	};
+
+
+	WwListManager.prototype._initKeyHandler = function() {
+	    var self = this;
+
+	    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
+	        if (range.collapsed) {
+	            if (self.wwe.getEditor().hasFormat('LI')) {
+	                ev.preventDefault();
+	                self.eventManager.emit('command', 'IncreaseDepth');
+
+	                return false;
+	            }
+	        }
+
+	        return true;
+	    });
+
+	    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
+	        var isNeedNext;
+	        var $ul;
+
+	        if (range.collapsed) {
+	            if (self.wwe.getEditor().hasFormat('LI')) {
+	                ev.preventDefault();
+	                $ul = $(range.startContainer).closest('li').children('ul, ol');
+
+	                self.eventManager.emit('command', 'DecreaseDepth');
+
+	                if ($ul.length && !$ul.prev().length) {
+	                    self._removeBranchList($ul);
+	                }
+
+	                isNeedNext = false;
+	            }
+	        }
+
+	        return isNeedNext;
+	    });
+	};
+
 	/**
 	 * Find empty list for whole container and remove it.
 	 * @memberOf WwListManager
@@ -10287,15 +10336,37 @@
 	};
 
 	/**
-	 * Return boolean value that current range is in the List or not
-	 * @api
-	 * @memberOf WwListManager
-	 * @returns {boolean}
+	 * Remove branch lists all from body
 	 */
-	WwListManager.prototype.isInList = function() {
-	    var range = this.wwe.getEditor().getSelection().cloneRange();
+	WwListManager.prototype._removeBranchListAll = function() {
+	    var self = this;
 
-	    return $(range.startContainer).parents('LI').length !== 0;
+	    self.wwe.get$Body().find('li ul, li ol').each(function() {
+	        if (!this || $(this).prev().length) {
+	            return;
+	        }
+	        self._removeBranchList(this);
+	    });
+	};
+
+	/**
+	 * Remove branch list of passed list(ul, ol)
+	 * @param {HTMLElement} list list
+	 */
+	WwListManager.prototype._removeBranchList = function(list) {
+	    var $list = $(list);
+	    var $branchRoot = $list;
+	    var $firstLi;
+
+	    while (!$branchRoot.prev().length) {
+	        $branchRoot = $branchRoot.parent();
+	    }
+
+	    $firstLi = $branchRoot.children('li').eq(0);
+
+	    $branchRoot.prepend($list.children().unwrap());
+
+	    $firstLi.remove();
 	};
 
 	module.exports = WwListManager;
@@ -10386,33 +10457,6 @@
 	                $li.removeClass(TASK_CHECKED_CLASS_NAME);
 	            });
 	        }
-	    });
-
-	    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
-	        if (range.collapsed) {
-	            if (self.wwe.getEditor().hasFormat('LI')) {
-	                ev.preventDefault();
-	                self.eventManager.emit('command', 'IncreaseDepth');
-
-	                return false;
-	            }
-	        }
-
-	        return true;
-	    });
-
-	    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
-	        var isNeedNext;
-
-	        if (range.collapsed) {
-	            if (self.wwe.getEditor().hasFormat('LI')) {
-	                ev.preventDefault();
-	                self.eventManager.emit('command', 'DecreaseDepth');
-	                isNeedNext = false;
-	            }
-	        }
-
-	        return isNeedNext;
 	    });
 	};
 
@@ -10600,11 +10644,34 @@
 	 */
 	WwTableManager.prototype._initKeyHandler = function() {
 	    var self = this;
+	    var selectionManager = this.wwe.getManager('tableSelection');
 
-	    this.wwe.addKeyEventHandler(function(ev, range) {
-	        if (self.isInTable(range)) {
+	    this.wwe.addKeyEventHandler(function(ev, range, keymap) {
+	        var isRangeInTable = self.isInTable(range);
+	        var isNonTableContainSelection = range.commonAncestorContainer !== self.wwe.get$Body()[0];
+	        var isTextInput = keymap.length === 1;
+
+	        if (!self._isModifierKeyPushed(ev)) {
+	            self.wwe.getEditor().modifyDocument(
+	                selectionManager.removeClassAttrbuteFromAllCellsIfNeed.bind(selectionManager)
+	            );
+	        }
+
+	        if (isRangeInTable && !self._isSingleModifierKey(keymap)) {
 	            self._recordUndoStateIfNeed(range);
-	        } else if (self._lastCellNode) {
+	            if (!range.collapsed) {
+	                if (!domUtils.isTextNode(range.commonAncestorContainer)
+	                    && isNonTableContainSelection
+	                    && isTextInput
+	                    && !self._isModifierKeyPushed(ev)
+	                ) {
+	                    self._removeTableContents(range);
+
+	                    range.collapse(true);
+	                    self.wwe.getEditor().setSelection(range);
+	                }
+	            }
+	        } else if (!isRangeInTable && self._lastCellNode) {
 	            self._recordUndoStateAndResetCellNode(range);
 	        }
 	    });
@@ -10805,16 +10872,15 @@
 	 */
 	WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
 	    this.wwe.getEditor().saveUndoState(range);
-	    this._lastCellNode = null;
+	    this.resetLastCellNode();
 	};
 
 	/**
 	 * Paste table data into table element
 	 * @param {DocumentFragment} fragment Fragment of table element within
-	 * @memberOf WwTableManager
-	 * @api
+	 * @private
 	 */
-	WwTableManager.prototype.pasteDataIntoTable = function(fragment) {
+	WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
 	    var range = this.wwe.getEditor().getSelection();
 	    var tableData = this._getTableDataFromTable(fragment);
 	    var startContainer = range.startContainer;
@@ -10990,8 +11056,8 @@
 	 */
 	WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
 	    var newFragment = document.createDocumentFragment();
-	    if (this.isTableOrSubTableElement(node.nodeName)) {
-	        this.pasteDataIntoTable(pasteData.fragment);
+	    if (this._isTableOrSubTableElement(node.nodeName)) {
+	        this._pasteDataIntoTable(pasteData.fragment);
 	        pasteData.fragment = newFragment;
 	    } else {
 	        newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
@@ -11004,10 +11070,9 @@
 	 * Whether pasting element is table element
 	 * @param {string} pastingNodeName Pasting node name
 	 * @returns {boolean}
-	 * @memberOf WwTableManager
-	 * @api
+	 * @private
 	 */
-	WwTableManager.prototype.isTableOrSubTableElement = function(pastingNodeName) {
+	WwTableManager.prototype._isTableOrSubTableElement = function(pastingNodeName) {
 	    return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
 	        || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
 	};
@@ -11029,6 +11094,12 @@
 	    return tdString;
 	}
 
+	/**
+	 * Stuff table cells into incomplete rows
+	 * @param {jQuery} $trs jQuery wrapped TRs
+	 * @param {number} maximumCellLength maximum cell length of table
+	 * @private
+	 */
 	WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maximumCellLength) {
 	    $trs.each(function(rowIndex, row) {
 	        var $row = $(row);
@@ -11043,6 +11114,12 @@
 	    });
 	};
 
+	/**
+	 * Prepare to table cell stuffing
+	 * @param {jQuery} $trs jQuery wrapped TRs
+	 * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
+	 * @private
+	 */
 	WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
 	    var maximumCellLength = $trs.eq(0).find('th,td').length;
 	    var needTableCellStuffingAid = false;
@@ -11065,30 +11142,36 @@
 	    };
 	};
 
+	/**
+	 * Add TBODY or THEAD if need
+	 * @param {jQuery} table Table element
+	 * @private
+	 */
 	WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
 	    var isTheadNotExists = !table.find('thead').length;
 	    var isTbodyNotExists = !table.find('tbody').length;
-	    var absentNode, cellTagName;
+	    var absentNode;
 
 	    if (isTheadNotExists) {
-	        cellTagName = 'th';
-	    } else if (isTbodyNotExists) {
-	        cellTagName = 'td';
-	    }
-
-	    if (cellTagName) {
-	        absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>')[0];
+	        absentNode = $('<thead><tr></tr></thead>')[0];
 	        table.prepend(absentNode);
+	    } else if (isTbodyNotExists) {
+	        absentNode = $('<tbody><tr></tr></tbody>')[0];
+	        table.append(absentNode);
 	    }
 	};
 
+	/**
+	 * Append table cells
+	 * @param {HTMLElement} node Table element
+	 * @private
+	 */
 	WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
 	    var table = $(node);
-	    var needTableCellStuffingAid = false;
-	    var tableAidInformation = null;
-	    var trs, maximumCellLength;
+	    var needTableCellStuffingAid, tableAidInformation, trs, maximumCellLength;
 
 	    this._addTbodyOrTheadIfNeed(table);
+	    this._addTrIntoContainerIfNeed(table);
 
 	    trs = table.find('tr');
 	    tableAidInformation = this._prepareToTableCellStuffing(trs);
@@ -11100,6 +11183,12 @@
 	    }
 	};
 
+	/**
+	 * Generate THEAD and append TDs with same amount of given TBODY
+	 * @param {HTMLElement} node TR element
+	 * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+	 * @private
+	 */
 	WwTableManager.prototype._generateTheadAndTbodyFromTbody = function(node) {
 	    var tr = $('<tr></tr>');
 	    var thead = $('<thead></thead>');
@@ -11113,6 +11202,12 @@
 	    };
 	};
 
+	/**
+	 * Generate TBODY and append TDs with same amount of given THEAD
+	 * @param {HTMLElement} node TR element
+	 * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+	 * @private
+	 */
 	WwTableManager.prototype._generateTheadAndTbodyFromThead = function(node) {
 	    var tr = $('<tr></tr>');
 	    var tbody = $('<tbody></tbody>');
@@ -11126,6 +11221,12 @@
 	    };
 	};
 
+	/**
+	 * Generate THEAD and TBODY and append given TR within
+	 * @param {HTMLElement} node TR element
+	 * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+	 * @private
+	 */
 	WwTableManager.prototype._generateTheadAndTbodyFromTr = function(node) {
 	    var $node = $(node);
 	    var thead = $('<thead></thead>');
@@ -11186,12 +11287,67 @@
 	    var self = this;
 
 	    $body.children().each(function(index, node) {
-	        if (!self.isTableOrSubTableElement(node.nodeName)) {
+	        var $node = $(node);
+
+	        if (!self._isTableOrSubTableElement(node.nodeName)) {
 	            return;
+	        } else if (node.nodeName === 'TABLE'
+	            && $node.find('thead').length === 0
+	            && $node.find('tbody').length === 0
+	        ) {
+	            $node.remove();
 	        }
+
 	        self._completeIncompleteTable(node);
 	    });
 	};
+
+	/**
+	 * Reset _lastCellNode to null
+	 * @memberOf WwTableManager
+	 */
+	WwTableManager.prototype.resetLastCellNode = function() {
+	    this._lastCellNode = null;
+	};
+
+	/**
+	 * Return whether only modifier key pressed or not
+	 * @param {string} keymap Pressed keymap string
+	 * @returns {boolean}
+	 * @private
+	 */
+	WwTableManager.prototype._isSingleModifierKey = function(keymap) {
+	    return (keymap === 'META') && (keymap === 'SHIFT')
+	        && (keymap === 'ALT') && (keymap === 'CONTROL');
+	};
+
+	/**
+	 * Return whether modifier keys pressed or not
+	 * @param {object} ev keyboard event object
+	 * @returns {boolean}
+	 * @private
+	 */
+	WwTableManager.prototype._isModifierKeyPushed = function(ev) {
+	    return ev.metaKey || ev.ctrlKey || ev.altKey || ev.shiftKey;
+	};
+
+	/**
+	 * Add one row into empty TBODY
+	 * @param {jQuery} $table Currently processing table
+	 * @private
+	 */
+	WwTableManager.prototype._addTrIntoContainerIfNeed = function($table) {
+	    var $trContainers = $table.children();
+
+	    $trContainers.each(function(i, container) {
+	        var hasNoRows = $(container).find('tr').length === 0;
+
+	        if (hasNoRows) {
+	            $(container).append($('<tr></tr>')[0]);
+	        }
+	    });
+	};
+
 	module.exports = WwTableManager;
 
 
@@ -11240,7 +11396,6 @@
 	 */
 	WwTableSelectionManager.prototype._init = function() {
 	    this._initEvent();
-	    this._initKeyHandler();
 
 	    // For disable firefox's table tool UI and table resize handler
 	    if (tui.util.browser.firefox) {
@@ -11259,44 +11414,30 @@
 	    var self = this;
 	    var selectionStart, selectionEnd;
 
-	    this.selectionTimer = null;
-	    this.removeSelectionTimer = null;
-	    this.isSelectionStarted = false;
-	    this.isCellsSelected = false;
+	    this._selectionTimer = null;
+	    this._removeSelectionTimer = null;
+	    this._isSelectionStarted = false;
+	    this._isCellsSelected = false;
 
 	    this.eventManager.listen('mousedown', function(ev) {
 	        selectionStart = ev.data.target;
-	        self._removeCellSelectedClassFromAllCellsIfNeed();
+	        self.removeClassAttrbuteFromAllCellsIfNeed();
 
 	        self._setTableSelectionTimerIfNeed(selectionStart);
 	    });
 
 	    this.eventManager.listen('mouseup', function(ev) {
+	        var isTextSelect = self.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
 	        selectionEnd = ev.data.target;
 
 	        self._clearTableSelectionTimerIfNeed();
 
-	        if (self.isSelectionStarted) {
+	        if (self._isSelectionStarted && !isTextSelect) {
 	            self._highlightSelectionIfNeed(selectionStart, selectionEnd);
+	            self.wwe.getManager('table').resetLastCellNode();
 	        }
 
-	        self.isSelectionStarted = false;
-	    });
-	};
-
-	/**
-	 * _initKeyHandler
-	 * Initialize key event handler
-	 * @memberOf WwTableSelectionManager
-	 * @private
-	 */
-	WwTableSelectionManager.prototype._initKeyHandler = function() {
-	    var self = this;
-
-	    this.wwe.addKeyEventHandler(function() {
-	        self._removeCellSelectedClassFromAllCellsIfNeed();
-
-	        return true;
+	        self._isSelectionStarted = false;
 	    });
 	};
 
@@ -11312,13 +11453,13 @@
 	    if (isTableSelecting) {
 	        // For disable firefox's native table cell selection
 	        if (tui.util.browser.firefox) {
-	            this.removeSelectionTimer = setInterval(function() {
+	            this._removeSelectionTimer = setInterval(function() {
 	                window.getSelection().removeAllRanges();
 	            }, 250);
 	        }
-	        this.selectionTimer = setTimeout(function() {
-	            self.isSelectionStarted = true;
-	            self.isCellsSelected = true;
+	        this._selectionTimer = setTimeout(function() {
+	            self._isSelectionStarted = true;
+	            self._isCellsSelected = true;
 	        }, 300);
 	    }
 	};
@@ -11328,10 +11469,10 @@
 	 * @private
 	 */
 	WwTableSelectionManager.prototype._clearTableSelectionTimerIfNeed = function() {
-	    clearTimeout(this.selectionTimer);
+	    clearTimeout(this._selectionTimer);
 	    // For disable firefox's native table selection
 	    if (tui.util.browser.firefox) {
-	        clearTimeout(this.removeSelectionTimer);
+	        clearTimeout(this._removeSelectionTimer);
 	    }
 	};
 
@@ -11506,13 +11647,22 @@
 
 	/**
 	 * Remove '.te-cell-selected' class from all of table Cell
-	 * @private
+	 * @memberOf WwTableSelectionManager
+	 * @api
 	 */
-	WwTableSelectionManager.prototype._removeCellSelectedClassFromAllCellsIfNeed = function() {
-	    if (this.isCellsSelected) {
-	        $('table').find('td,th').each(function(i, node) {
-	            $(node).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
-	        });
+	WwTableSelectionManager.prototype.removeClassAttrbuteFromAllCellsIfNeed = function() {
+	    if (this._isCellsSelected) {
+	        $('table')
+	            .find('td.' + TABLE_CELL_SELECTED_CLASS_NAME + ',th.' + TABLE_CELL_SELECTED_CLASS_NAME)
+	            .each(function(i, node) {
+	                var $node = $(node);
+
+	                $node.removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+
+	                if (!$node.attr('class').length) {
+	                    $node.removeAttr('class');
+	                }
+	            });
 	    }
 	};
 
@@ -14002,17 +14152,17 @@
 	markedCustomRenderer.listitem = function(text) {
 	    var cap,
 	        checked,
-	        className = '';
+	        attrs;
 
 	    cap = regexTaskList.exec(text);
 
 	    if (cap) {
 	        text = text.substring(cap[0].length);
 	        checked = cap[2].toLowerCase() === '[x]' ? ' checked' : '';
-	        className = ' class="task-list-item' + checked + '"';
+	        attrs = ' data-te-task class="task-list-item' + checked + '"';
 	    }
 
-	    return '<li data-te-task' + className + '>' + text + '</li>\n';
+	    return '<li ' + attrs + '>' + text + '</li>\n';
 	};
 
 	/**
@@ -18098,30 +18248,13 @@
 	    exec: function(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
-	        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
 	        var $table = $(range.startContainer).parents('table');
-	        var trsInTbody = $table.find('tbody tr');
-	        var isStartContainerInThead = $(range.startContainer).parents('thead').length;
-	        var startRowIndex, endRowIndex, $nextFocus, $tr, isWholeTbodySelected;
+	        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+	        var $tr = getSelectedRows(range, rangeInformation, $table);
+	        var tbodyRowLength = $table.find('tbody tr').length;
+	        var $nextFocus;
 
-	        if (isStartContainerInThead) {
-	            startRowIndex = rangeInformation.from.row + 1;
-	        } else {
-	            startRowIndex = rangeInformation.from.row;
-	        }
-	        endRowIndex = rangeInformation.to.row;
-
-	        isWholeTbodySelected = !(startRowIndex === 1 && endRowIndex === trsInTbody.length)
-	            || (isStartContainerInThead && endRowIndex === trsInTbody);
-	        if (!isWholeTbodySelected) {
-	            endRowIndex -= 1;
-	        }
-
-	        $tr = $table.find('tr').slice(startRowIndex, endRowIndex + 1);
-
-	        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE'))
-	            && trsInTbody.length > 1
-	        ) {
+	        if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
 	            sq.saveUndoState(range);
 	            $nextFocus = $tr.last().next().length ? $tr.last().next() : $tr.first().prev();
 
@@ -18138,6 +18271,11 @@
 	    }
 	});
 
+	/**
+	 * Focus to first TD in given TR
+	 * @param {Squire} sq Squire instance
+	 * @param {jQuery} $tr jQuery wrapped TR
+	 */
 	function focusToFirstTd(sq, $tr) {
 	    var range;
 
@@ -18145,6 +18283,33 @@
 	    range.selectNodeContents($tr.find('td')[0]);
 	    range.collapse(true);
 	    sq.setSelection(range);
+	}
+
+	/**
+	 * Get start, end row index from current range
+	 * @param {Range} range Range object
+	 * @param {object} rangeInformation Range information object
+	 * @param {jQuery} $table jquery wrapped TABLE
+	 * @returns {jQuery}
+	 */
+	function getSelectedRows(range, rangeInformation, $table) {
+	    var startRowIndex = rangeInformation.from.row;
+	    var endRowIndex = rangeInformation.to.row;
+	    var tbodyRowLength = $table.find('tbody tr').length;
+	    var isStartContainerInThead = $(range.startContainer).parents('thead').length;
+	    var isWholeTbodySelected;
+
+	    if (isStartContainerInThead) {
+	        startRowIndex += 1;
+	    }
+
+	    isWholeTbodySelected = (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
+
+	    if (isWholeTbodySelected) {
+	        endRowIndex -= 1;
+	    }
+
+	    return $table.find('tr').slice(startRowIndex, endRowIndex + 1);
 	}
 
 	module.exports = RemoveRow;
@@ -18244,8 +18409,7 @@
 
 	'use strict';
 
-	var CommandManager = __webpack_require__(45),
-	    domUtils = __webpack_require__(19);
+	var CommandManager = __webpack_require__(45);
 
 	/**
 	 * AlignCol
@@ -18265,54 +18429,37 @@
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
 	        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
-	        var isDivided = false;
-	        var columnLength, $table, $cell, startColumnIndex, endColumnIndex;
+	        var selectionInformation, $table;
 
 	        if (sq.hasFormat('TR')) {
 	            sq.saveUndoState(range);
 
-	            $cell = getCellByRange(range);
-	            $table = $cell.parents('table');
-	            columnLength = $table.find('tr').eq(0).find('td,th').length;
+	            $table = $(range.startContainer).parents('table');
 
-	            if (rangeInformation.from.row === rangeInformation.to.row) {
-	                startColumnIndex = rangeInformation.from.cell;
-	                endColumnIndex = rangeInformation.to.cell;
-	            } else if (rangeInformation.from.row < rangeInformation.to.row) {
-	                if (rangeInformation.from.cell <= rangeInformation.to.cell) {
-	                    startColumnIndex = 0;
-	                    endColumnIndex = columnLength - 1;
-	                } else {
-	                    startColumnIndex = rangeInformation.from.cell;
-	                    endColumnIndex = rangeInformation.to.cell;
-	                    isDivided = true;
-	                }
-	            }
-	            setAlignAttributeToTableCells($table, startColumnIndex, endColumnIndex,
-	                alignDirection, {
-	                    isDivided: isDivided,
-	                    columnLength: columnLength
-	                });
+	            selectionInformation = getSelectionInformation($table, rangeInformation);
+
+	            setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
 	        }
 	        sq.focus();
 	    }
 	});
 
-	function getCellByRange(range) {
-	    var cell = range.startContainer;
+	/**
+	 * Set Column align
+	 * @param {jQuery} $table jQuery wrapped TABLE
+	 * @param {string} alignDirection 'left' or 'center' or 'right'
+	 * @param {{
+	 *     startColumnIndex: number,
+	 *     endColumnIndex: number,
+	 *     isDivided: boolean
+	 *     }} selectionInformation start, end column index and boolean value for whether range divided or not
+	 */
+	function setAlignAttributeToTableCells($table, alignDirection, selectionInformation) {
+	    var isDivided = selectionInformation.isDivided || false;
+	    var start = selectionInformation.startColumnIndex;
+	    var end = selectionInformation.endColumnIndex;
+	    var columnLength = $table.find('tr').eq(0).find('td,th').length;
 
-	    if (domUtils.getNodeName(cell) === 'TH' || domUtils.getNodeName(cell) === 'TD') {
-	        cell = $(cell);
-	    } else {
-	        cell = $(cell).parentsUntil('tr');
-	    }
-
-	    return cell;
-	}
-
-	function setAlignAttributeToTableCells($table, start, end, alignDirection, option) {
-	    var isDivided = option.isDivided;
-	    var columnLength = option.columnLength;
 	    $table.find('tr').each(function(n, tr) {
 	        $(tr).children('td,th').each(function(index, cell) {
 	            if (isDivided &&
@@ -18324,6 +18471,39 @@
 	            }
 	        });
 	    });
+	}
+
+	/**
+	 * Return start, end column index and boolean value for whether range divided or not
+	 * @param {jQuery} $table jQuery wrapped TABLE
+	 * @param {{startColumnIndex: number, endColumnIndex: number}} rangeInformation Range information
+	 * @returns {{startColumnIndex: number, endColumnIndex: number, isDivided: boolean}}
+	 */
+	function getSelectionInformation($table, rangeInformation) {
+	    var columnLength = $table.find('tr').eq(0).find('td,th').length;
+	    var startColumnIndex, endColumnIndex, isDivided;
+	    var from = rangeInformation.from;
+	    var to = rangeInformation.to;
+
+	    if (from.row === to.row) {
+	        startColumnIndex = from.cell;
+	        endColumnIndex = to.cell;
+	    } else if (from.row < to.row) {
+	        if (from.cell <= to.cell) {
+	            startColumnIndex = 0;
+	            endColumnIndex = columnLength - 1;
+	        } else {
+	            startColumnIndex = from.cell;
+	            endColumnIndex = to.cell;
+	            isDivided = true;
+	        }
+	    }
+
+	    return {
+	        startColumnIndex: startColumnIndex,
+	        endColumnIndex: endColumnIndex,
+	        isDivided: isDivided
+	    };
 	}
 
 	module.exports = AlignCol;

@@ -139,6 +139,38 @@
   padding-right: 10px;
 }
 
+/* Essential element style */
+
+.tui-editor-contents .task-list-item {
+  border: 0;
+  list-style: none;
+  padding-left: 22px;
+  margin-left: -22px;
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  background-position: 0 2px;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABFklEQVQ4Ea2STa6CMBDHi3wlho1eAA7BjWTn/m1cv1vojbgDO5a6ISRgAm9+TaZpeERitImd6fw/Zio15sMVoK/rOp7n+TcIgpMcjxued+HehHspy/IZQUacZdm5KIp9mqacjRBWfcZxPDZNc+66Dvxnxx6GYYU4SRIrpoYJv2maXCSPosjkeb5HA89OIMAhjmMnBvAXRv6iERpq1oAEdxajv7rCEnMGVi2bdtOodT/6mDPwiz55K/++wfI/YDKtrU3zbwK9ikZEfr40cQYKbHVUnkb7kGTExzAM7lPqJ4Wk3Ymay2sEurNZAxFc27btARBDJPq5GsCBK+cbBvYKMsGl73sjb7wSwL4wwLXFtDREs4a/XfsDbdzII1bSkUsAAAAASUVORK5CYII=");
+}
+
+.tui-editor-contents .task-list-item.checked {
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABw0lEQVQ4EaVSTS9DURA9/UpaYaFUmoawYIlNN2yV4A8QHystku5tuvYvKiKRWKBpI/0BrLtHrQgrVPI0r61+mTPxXl6bxoJJ7rszc+ecOfPuBf5pLuILhYKv3W4fytpxu93B3zhbrVbJ5XIdyUpFo9G6l8UESyLp8Xj6hIAxJO7JI2fBZrOZZI3YgZtfKY77fL4+r9cLEgiR7vS7F89YSwyxqkD2QYJ7maXmp6Mqo1+v1wdZrwroUDIXO1q7U41pmshkLvDy8qwKiaHZbS0F3R1Z9Pb2imw2g3K5jLu7W4yPTzCtZhOwG61UekcwOKQ+P09Pj8jlsvj6qmFubh6xhUWYlYp93jHCzc01Tk6OtQvHYLfLy3MFryyvIhZbQqVa1REtBlsBE+FwWPP5/BUeHoooFu913vW1DUxOTqHi6NyTYGZ6VuWfnZ0q2O8PYGtzG6GREVRrVQvTsdsjMFuTOSORCBLxPYyNjmE3sYfhUIhX1gFyBkog837IE9U8i/sHBpBI7MMfCKDRaDjr1Wet3FaJgRJIIi1XZFok8lRhfBqwYicDc6yV3BHz+hNFQYqdDMOIC7O+MCfI6f+oTRPjzP/Z/wYlksK/5b/8XQAAAABJRU5ErkJggg==");
+}
+
+.tui-editor-contents .task-list-item input[type='checkbox'],
+.tui-editor-contents .task-list-item .task-list-item-checkbox {
+  margin-left: -17px;
+  margin-right: 3.8px;
+  margin-top: 3px;
+}
+
+.tui-editor-contents td.te-cell-selected {
+  background-color: #d8dfec;
+}
+
+.tui-editor-contents th.te-cell-selected {
+  background-color: #908f8f;
+}
+
 /* default UI Styles */
 
 .tui-editor-defaultUI {
