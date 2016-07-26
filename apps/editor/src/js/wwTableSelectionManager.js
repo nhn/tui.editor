@@ -71,11 +71,12 @@ WwTableSelectionManager.prototype._initEvent = function() {
     });
 
     this.eventManager.listen('mouseup', function(ev) {
+        var isTextSelect = self.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
         selectionEnd = ev.data.target;
 
         self._clearTableSelectionTimerIfNeed();
 
-        if (self.isSelectionStarted) {
+        if (self.isSelectionStarted && !isTextSelect) {
             self._highlightSelectionIfNeed(selectionStart, selectionEnd);
             self.wwe.getManager('table').resetLastCellNode();
         }
