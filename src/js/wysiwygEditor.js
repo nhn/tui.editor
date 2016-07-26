@@ -1082,8 +1082,8 @@ WysiwygEditor.factory = function($el, eventManager) {
 
     wwe.addManager(WwListManager);
     wwe.addManager(WwTaskManager);
-    wwe.addManager(WwTableManager);
     wwe.addManager(WwTableSelectionManager);
+    wwe.addManager(WwTableManager);
     wwe.addManager(WwHrManager);
     wwe.addManager(WwPManager);
     wwe.addManager(WwHeadingManager);

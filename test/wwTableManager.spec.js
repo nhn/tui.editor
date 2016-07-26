@@ -137,7 +137,7 @@ describe('WwTableManager', function() {
             expect(data[2][1]).toEqual('6');
         });
 
-        it('pasteDataIntoTable should paste data with right position', function() {
+        it('_pasteDataIntoTable should paste data with right position', function() {
             var range, $body;
             var table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
@@ -154,12 +154,12 @@ describe('WwTableManager', function() {
             range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
             wwe.getEditor().setSelection(range);
 
-            mgr.pasteDataIntoTable(pastingTable);
+            mgr._pasteDataIntoTable(pastingTable);
 
             expect($body.find('table').text()).toEqual('abcdef');
         });
 
-        it('pasteDataIntoTable should paste data with right position', function() {
+        it('_pasteDataIntoTable should paste data with right position', function() {
             var range, $body;
             var table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
@@ -176,7 +176,7 @@ describe('WwTableManager', function() {
             range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
             wwe.getEditor().setSelection(range);
 
-            mgr.pasteDataIntoTable(pastingTable);
+            mgr._pasteDataIntoTable(pastingTable);
 
             expect($body.find('table').text()).toEqual('abcdef');
         });
@@ -499,6 +499,56 @@ describe('WwTableManager', function() {
                 done();
             });
         });
+        it('remove textNode and BR in TR', function(done) {
+            var $body;
+            var html = '<div>123</div>' +
+                '<table>' +
+                '<thead>' +
+                '<tr>a<br></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>a</td><td>b</td></tr>' +
+                '<tr><td>c</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            mgr._completeTableIfNeed();
+
+            setTimeout(function() {
+                expect($body.find('thead').text()).toEqual('');
+                expect($body.find('thead th').length).toEqual(2);
+                expect($body.find('tbody td').length).toEqual(4);
+                expect($body.find('tbody').text()).toEqual('abc');
+                done();
+            });
+        });
+
+        it('remove textNode and BR in TR', function(done) {
+            var $body;
+            var html = '<div>123</div>' +
+                '<table>' +
+                '<thead>' +
+                '<tr><th>he</th><th>ad</th></tr>' +
+                '</thead>' +
+                '<tbody>a<br></tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            mgr._completeTableIfNeed();
+
+            setTimeout(function() {
+                expect($body.find('thead').text()).toEqual('head');
+                expect($body.find('thead th').length).toEqual(2);
+                expect($body.find('tbody tr').length).toEqual(1);
+                expect($body.find('tbody td').length).toEqual(2);
+                expect($body.find('tbody').text()).toEqual('');
+                done();
+            });
+        });
+
         it('do nothing and return inner loop when not table or sub table element', function(done) {
             var $body;
             var html = '<div>123</div>' +
