@@ -148,16 +148,4 @@ WwListManager.prototype._removeBranchList = function(list) {
     $firstLi.remove();
 };
 
-/**
- * Return boolean value that current range is in the List or not
- * @api
- * @memberOf WwListManager
- * @returns {boolean}
- */
-WwListManager.prototype.isInList = function() {
-    var range = this.wwe.getEditor().getSelection().cloneRange();
-
-    return $(range.startContainer).parents('LI').length !== 0;
-};
-
 module.exports = WwListManager;
