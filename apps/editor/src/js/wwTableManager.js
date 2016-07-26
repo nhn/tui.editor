@@ -84,11 +84,18 @@ WwTableManager.prototype._initEvent = function() {
  */
 WwTableManager.prototype._initKeyHandler = function() {
     var self = this;
+    var selectionManager = this.wwe.getManager('tableSelection');
 
     this.wwe.addKeyEventHandler(function(ev, range, keymap) {
         var isRangeInTable = self.isInTable(range);
         var isNonTableContainSelection = range.commonAncestorContainer !== self.wwe.get$Body()[0];
         var isTextInput = ev.key.length === 1;
+
+        if (!self._isModifierKeyPushed(ev)) {
+            self.wwe.getEditor().modifyDocument(
+                selectionManager.removeClassAttrbuteFromAllCellsIfNeed.bind(selectionManager)
+            );
+        }
 
         if (isRangeInTable && !self._isSingleModifierKey(keymap)) {
             self._recordUndoStateIfNeed(range);
@@ -311,10 +318,9 @@ WwTableManager.prototype._recordUndoStateAndResetCellNode = function(range) {
 /**
  * Paste table data into table element
  * @param {DocumentFragment} fragment Fragment of table element within
- * @memberOf WwTableManager
- * @api
+ * @private
  */
-WwTableManager.prototype.pasteDataIntoTable = function(fragment) {
+WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
     var range = this.wwe.getEditor().getSelection();
     var tableData = this._getTableDataFromTable(fragment);
     var startContainer = range.startContainer;
@@ -490,8 +496,8 @@ WwTableManager.prototype.wrapTheadAndTbodyIntoTableIfNeed = function(fragment) {
  */
 WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
     var newFragment = document.createDocumentFragment();
-    if (this.isTableOrSubTableElement(node.nodeName)) {
-        this.pasteDataIntoTable(pasteData.fragment);
+    if (this._isTableOrSubTableElement(node.nodeName)) {
+        this._pasteDataIntoTable(pasteData.fragment);
         pasteData.fragment = newFragment;
     } else {
         newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
@@ -504,10 +510,9 @@ WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
  * Whether pasting element is table element
  * @param {string} pastingNodeName Pasting node name
  * @returns {boolean}
- * @memberOf WwTableManager
- * @api
+ * @private
  */
-WwTableManager.prototype.isTableOrSubTableElement = function(pastingNodeName) {
+WwTableManager.prototype._isTableOrSubTableElement = function(pastingNodeName) {
     return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
         || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
 };
@@ -579,23 +584,20 @@ WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
 
 /**
  * Add TBODY or THEAD if need
- * @param {HTMLElement} table Table element
+ * @param {jQuery} table Table element
  * @private
  */
 WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
     var isTheadNotExists = !table.find('thead').length;
     var isTbodyNotExists = !table.find('tbody').length;
-    var absentNode, cellTagName;
+    var absentNode;
 
     if (isTheadNotExists) {
-        cellTagName = 'th';
-    } else if (isTbodyNotExists) {
-        cellTagName = 'td';
-    }
-
-    if (cellTagName) {
-        absentNode = $('<' + cellTagName + '><tr></tr></' + cellTagName + '>')[0];
+        absentNode = $('<thead><tr></tr></thead>')[0];
         table.prepend(absentNode);
+    } else if (isTbodyNotExists) {
+        absentNode = $('<tbody><tr></tr></tbody>')[0];
+        table.append(absentNode);
     }
 };
 
@@ -609,6 +611,7 @@ WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
     var needTableCellStuffingAid, tableAidInformation, trs, maximumCellLength;
 
     this._addTbodyOrTheadIfNeed(table);
+    this._addTrIntoContainerIfNeed(table);
 
     trs = table.find('tr');
     tableAidInformation = this._prepareToTableCellStuffing(trs);
@@ -724,9 +727,17 @@ WwTableManager.prototype._completeTableIfNeed = function() {
     var self = this;
 
     $body.children().each(function(index, node) {
-        if (!self.isTableOrSubTableElement(node.nodeName)) {
+        var $node = $(node);
+
+        if (!self._isTableOrSubTableElement(node.nodeName)) {
             return;
+        } else if (node.nodeName === 'TABLE'
+            && $node.find('thead').length === 0
+            && $node.find('tbody').length === 0
+        ) {
+            $node.remove();
         }
+
         self._completeIncompleteTable(node);
     });
 };
@@ -758,6 +769,23 @@ WwTableManager.prototype._isSingleModifierKey = function(keymap) {
  */
 WwTableManager.prototype._isModifierKeyPushed = function(ev) {
     return ev.metaKey || ev.ctrlKey || ev.altKey || ev.shiftKey;
+};
+
+/**
+ * Add one row into empty TBODY
+ * @param {jQuery} $table Currently processing table
+ * @private
+ */
+WwTableManager.prototype._addTrIntoContainerIfNeed = function($table) {
+    var $trContainers = $table.children();
+
+    $trContainers.each(function(i, container) {
+        var hasNoRows = $(container).find('tr').length === 0;
+
+        if (hasNoRows) {
+            $(container).append($('<tr></tr>')[0]);
+        }
+    });
 };
 
 module.exports = WwTableManager;
