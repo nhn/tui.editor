@@ -87,9 +87,23 @@ WwTableManager.prototype._initKeyHandler = function() {
 
     this.wwe.addKeyEventHandler(function(ev, range, keymap) {
         var isRangeInTable = self.isInTable(range);
+        var isNonTableContainSelection = range.commonAncestorContainer !== self.wwe.get$Body()[0];
+        var isTextInput = ev.key.length === 1;
 
-        if (isRangeInTable && !self._isModifierKey(keymap)) {
+        if (isRangeInTable && !self._isSingleModifierKey(keymap)) {
             self._recordUndoStateIfNeed(range);
+            if (!range.collapsed) {
+                if (!domUtils.isTextNode(range.commonAncestorContainer)
+                    && isNonTableContainSelection
+                    && isTextInput
+                    && !self._isModifierKeyPushed(ev)
+                ) {
+                    self._removeTableContents(range);
+
+                    range.collapse(true);
+                    self.wwe.getEditor().setSelection(range);
+                }
+            }
         } else if (!isRangeInTable && self._lastCellNode) {
             self._recordUndoStateAndResetCellNode(range);
         }
@@ -515,6 +529,12 @@ function tableCellGenerator(amount, tagName) {
     return tdString;
 }
 
+/**
+ * Stuff table cells into incomplete rows
+ * @param {jQuery} $trs jQuery wrapped TRs
+ * @param {number} maximumCellLength maximum cell length of table
+ * @private
+ */
 WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maximumCellLength) {
     $trs.each(function(rowIndex, row) {
         var $row = $(row);
@@ -529,6 +549,12 @@ WwTableManager.prototype._stuffTableCellsIntoIncompleteRow = function($trs, maxi
     });
 };
 
+/**
+ * Prepare to table cell stuffing
+ * @param {jQuery} $trs jQuery wrapped TRs
+ * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
+ * @private
+ */
 WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
     var maximumCellLength = $trs.eq(0).find('th,td').length;
     var needTableCellStuffingAid = false;
@@ -551,6 +577,11 @@ WwTableManager.prototype._prepareToTableCellStuffing = function($trs) {
     };
 };
 
+/**
+ * Add TBODY or THEAD if need
+ * @param {HTMLElement} table Table element
+ * @private
+ */
 WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
     var isTheadNotExists = !table.find('thead').length;
     var isTbodyNotExists = !table.find('tbody').length;
@@ -568,11 +599,14 @@ WwTableManager.prototype._addTbodyOrTheadIfNeed = function(table) {
     }
 };
 
+/**
+ * Append table cells
+ * @param {HTMLElement} node Table element
+ * @private
+ */
 WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
     var table = $(node);
-    var needTableCellStuffingAid = false;
-    var tableAidInformation = null;
-    var trs, maximumCellLength;
+    var needTableCellStuffingAid, tableAidInformation, trs, maximumCellLength;
 
     this._addTbodyOrTheadIfNeed(table);
 
@@ -586,6 +620,12 @@ WwTableManager.prototype._tableCellAppendAidForTableElement = function(node) {
     }
 };
 
+/**
+ * Generate THEAD and append TDs with same amount of given TBODY
+ * @param {HTMLElement} node TR element
+ * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+ * @private
+ */
 WwTableManager.prototype._generateTheadAndTbodyFromTbody = function(node) {
     var tr = $('<tr></tr>');
     var thead = $('<thead></thead>');
@@ -599,6 +639,12 @@ WwTableManager.prototype._generateTheadAndTbodyFromTbody = function(node) {
     };
 };
 
+/**
+ * Generate TBODY and append TDs with same amount of given THEAD
+ * @param {HTMLElement} node TR element
+ * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+ * @private
+ */
 WwTableManager.prototype._generateTheadAndTbodyFromThead = function(node) {
     var tr = $('<tr></tr>');
     var tbody = $('<tbody></tbody>');
@@ -612,6 +658,12 @@ WwTableManager.prototype._generateTheadAndTbodyFromThead = function(node) {
     };
 };
 
+/**
+ * Generate THEAD and TBODY and append given TR within
+ * @param {HTMLElement} node TR element
+ * @returns {{thead: HTMLElement, tbody: HTMLElement}}
+ * @private
+ */
 WwTableManager.prototype._generateTheadAndTbodyFromTr = function(node) {
     var $node = $(node);
     var thead = $('<thead></thead>');
@@ -688,13 +740,24 @@ WwTableManager.prototype.resetLastCellNode = function() {
 };
 
 /**
- * Return whether modifier key pressd or not
+ * Return whether only modifier key pressed or not
  * @param {string} keymap Pressed keymap string
  * @returns {boolean}
  * @private
  */
-WwTableManager.prototype._isModifierKey = function(keymap) {
+WwTableManager.prototype._isSingleModifierKey = function(keymap) {
     return (keymap === 'META') && (keymap === 'SHIFT')
         && (keymap === 'ALT') && (keymap === 'CONTROL');
 };
+
+/**
+ * Return whether modifier keys pressed or not
+ * @param {object} ev keyboard event object
+ * @returns {boolean}
+ * @private
+ */
+WwTableManager.prototype._isModifierKeyPushed = function(ev) {
+    return ev.metaKey || ev.ctrlKey || ev.altKey || ev.shiftKey;
+};
+
 module.exports = WwTableManager;
