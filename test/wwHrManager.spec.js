@@ -42,6 +42,12 @@ describe('WwHrManager', function() {
 
             wwe.getEditor().setSelection(range);
             Hr.exec(wwe);
+
+            range.setStart(wwe.get$Body()[0], 0);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
             expect(wwe.get$Body().find('hr').length).toEqual(0);
@@ -91,6 +97,11 @@ describe('WwHrManager', function() {
             wwe.getEditor().setSelection(range);
             Hr.exec(wwe);
 
+            range.setStart(wwe.get$Body()[0], 0);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
+
             mgr._removeHrOnEnter(range, {preventDefault: function() {}});
 
             newRange = wwe.getEditor().getSelection();
@@ -112,6 +123,11 @@ describe('WwHrManager', function() {
 
             wwe.getEditor().setSelection(range);
             Hr.exec(wwe);
+
+            range.setStart(wwe.get$Body()[0], 0);
+            range.collapse(true);
+
+            wwe.getEditor().setSelection(range);
 
             mgr._removeHrOnBackspace(range, {preventDefault: function() {}});
 
