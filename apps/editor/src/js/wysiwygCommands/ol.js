@@ -42,7 +42,6 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
             wwe.unwrapBlockTag();
             sq.makeOrderedList();
         }
-
     }
 });
 
