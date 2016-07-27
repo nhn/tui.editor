@@ -73,7 +73,10 @@ WysiwygEditor.prototype.init = function() {
     this.$editorContainerEl.append($editorBody);
 
     this.editor = new SquireExt($editorBody[0], {
-        blockTag: 'DIV'
+        blockTag: 'DIV',
+        leafNodeNames: {
+            'HR': false
+        }
     });
 
     this._initSquireEvent();
