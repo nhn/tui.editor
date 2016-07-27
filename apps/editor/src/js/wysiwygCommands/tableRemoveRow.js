@@ -29,19 +29,18 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         var tbodyRowLength = $table.find('tbody tr').length;
         var $nextFocus;
 
+        sq.focus();
+
         if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
             sq.saveUndoState(range);
             $nextFocus = $tr.last().next().length ? $tr.last().next() : $tr.first().prev();
 
             $tr.remove();
 
-            sq.focus();
 
             if ($nextFocus.length) {
                 focusToFirstTd(sq, $nextFocus);
             }
-        } else {
-            sq.focus();
         }
     }
 });

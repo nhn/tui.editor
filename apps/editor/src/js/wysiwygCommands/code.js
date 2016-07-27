@@ -26,6 +26,8 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
     exec: function(wwe) {
         var sq = wwe.getEditor(), range;
 
+        sq.focus();
+
         if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
             sq.changeFormat(null, {tag: 'code'});
             removeUnnecessaryCodeInNextToRange(wwe.getEditor().getSelection().cloneRange());
@@ -44,8 +46,6 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
 
             sq.setSelection(range);
         }
-
-        sq.focus();
     }
 });
 

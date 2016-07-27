@@ -24,6 +24,7 @@ var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
     exec: function(wwe) {
         var sq = wwe.getEditor();
 
+        sq.focus();
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
             sq.changeFormat(null, {tag: 'b'});
@@ -33,8 +34,6 @@ var Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
             }
             sq.bold();
         }
-
-        sq.focus();
     }
 });
 

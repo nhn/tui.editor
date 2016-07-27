@@ -24,11 +24,11 @@ var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
     exec: function(wwe, data) {
         var sq = wwe.getEditor();
 
+        sq.focus();
+
         if (!sq.hasFormat('PRE')) {
             sq.insertImage(data.imageUrl);
         }
-
-        sq.focus();
     }
 });
 

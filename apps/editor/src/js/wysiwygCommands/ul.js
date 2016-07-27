@@ -25,6 +25,8 @@ var UL = CommandManager.command('wysiwyg', /** @lends UL */{
         var sq = wwe.getEditor(),
             range = sq.getSelection();
 
+        sq.focus();
+
         if (!range.collapsed) {
             return;
         }
@@ -39,8 +41,6 @@ var UL = CommandManager.command('wysiwyg', /** @lends UL */{
             wwe.unwrapBlockTag();
             sq.makeUnorderedList();
         }
-
-        sq.focus();
     }
 });
 

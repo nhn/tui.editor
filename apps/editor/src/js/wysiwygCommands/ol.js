@@ -25,6 +25,8 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
         var sq = wwe.getEditor(),
             range = sq.getSelection();
 
+        sq.focus();
+
         if (!range.collapsed) {
             return;
         }
@@ -41,7 +43,6 @@ var OL = CommandManager.command('wysiwyg', /** @lends OL */{
             sq.makeOrderedList();
         }
 
-        sq.focus();
     }
 });
 

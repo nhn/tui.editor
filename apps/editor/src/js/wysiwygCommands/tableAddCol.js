@@ -26,17 +26,15 @@ var AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
             range = sq.getSelection().cloneRange(),
             $cell;
 
+        sq.focus();
+
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);
 
             $cell = getCellByRange(range);
             addColToCellAfter($cell);
 
-            sq.focus();
-
             focusToNextCell(sq, $cell);
-        } else {
-            sq.focus();
         }
     }
 });
