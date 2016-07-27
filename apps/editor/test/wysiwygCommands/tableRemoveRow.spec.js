@@ -17,6 +17,7 @@ describe('Table - RemoveRow', function() {
 
         wwe.init();
         wwe.addManager('tableSelection', WwTableSelectionManager);
+        wwe.getEditor().focus();
     });
 
     //we need to wait squire input event process

@@ -19,6 +19,7 @@ describe('DecreaseDepth', function() {
 
         sq = wwe.getEditor();
         wwe.addManager(WwTaskManager);
+        sq.focus();
 
         wwe.get$Body().html([
             '<ul>',

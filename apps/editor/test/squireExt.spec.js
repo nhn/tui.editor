@@ -18,6 +18,7 @@ describe('SquireExt', function() {
         sqe = new SquireExt($container[0], {
             blockTag: 'DIV'
         });
+        sqe.focus();
     });
 
     afterEach(function() {

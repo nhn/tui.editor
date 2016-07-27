@@ -20,6 +20,7 @@ describe('WwHrManager', function() {
         wwe.init();
 
         mgr = new WwHrManager(wwe);
+        wwe.getEditor().focus();
     });
 
     //we need to wait squire input event process

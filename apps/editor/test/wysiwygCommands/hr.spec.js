@@ -19,6 +19,7 @@ describe('HR', function() {
 
         sq = wwe.getEditor();
         wwe.addManager('task', WwTaskManager);
+        sq.focus();
     });
 
     //we need to wait squire input event process

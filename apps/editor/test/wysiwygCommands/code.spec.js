@@ -15,6 +15,7 @@ describe('Code', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.getEditor().focus();
     });
 
     afterEach(function() {

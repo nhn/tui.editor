@@ -15,6 +15,7 @@ describe('Table', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.getEditor().focus();
     });
 
     //we need to wait squire input event process

@@ -20,6 +20,7 @@ describe('CodeBlock', function() {
 
         sq = wwe.getEditor();
         $body = wwe.get$Body();
+        sq.focus();
     });
 
     //we need to wait squire input event process

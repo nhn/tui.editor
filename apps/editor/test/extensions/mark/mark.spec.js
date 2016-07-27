@@ -18,6 +18,7 @@ describe('Mark', function() {
                 queryRx: /@[^@\s]*/
             }
         });
+        editor.focus();
     });
 
     afterEach(function(done) {
