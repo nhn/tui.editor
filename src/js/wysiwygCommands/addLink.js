@@ -25,6 +25,8 @@ var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
         var sq = wwe.getEditor(),
             link;
 
+        sq.focus();
+
         if (!sq.hasFormat('PRE')) {
             sq.removeAllFormatting();
 
@@ -36,8 +38,6 @@ var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
                 sq.insertElement(link);
             }
         }
-
-        sq.focus();
     }
 });
 

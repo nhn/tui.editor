@@ -26,6 +26,8 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
             range = sq.getSelection().cloneRange(),
             $cell, $nextFocus;
 
+        sq.focus();
+
         if (sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
             sq.saveUndoState(range);
             $cell = getCellByRange(range);
@@ -33,11 +35,8 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
 
             removeColByCell($cell);
 
-            sq.focus();
 
             focusToCell(sq, $nextFocus);
-        } else {
-            sq.focus();
         }
     }
 });

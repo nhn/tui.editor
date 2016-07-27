@@ -28,6 +28,8 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
         var selectionInformation, $table;
 
+        sq.focus();
+
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);
 
@@ -37,7 +39,6 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
 
             setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
         }
-        sq.focus();
     }
 });
 

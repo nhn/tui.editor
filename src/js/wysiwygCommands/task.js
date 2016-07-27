@@ -25,6 +25,8 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
         var range,
             sq = wwe.getEditor();
 
+        sq.focus();
+
         range = sq.getSelection().cloneRange();
 
         if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
@@ -37,8 +39,6 @@ var Task = CommandManager.command('wysiwyg', /** @lends Task */{
             sq.saveUndoState(range);
             wwe.getManager('task').formatTask(range.startContainer);
         }
-
-        sq.focus();
     }
 });
 
