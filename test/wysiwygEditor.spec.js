@@ -17,6 +17,7 @@ describe('WysiwygEditor', function() {
         wwe = new WysiwygEditor($container, em);
 
         wwe.init();
+        wwe.editor.focus();
     });
 
     //we need to wait squire input event process

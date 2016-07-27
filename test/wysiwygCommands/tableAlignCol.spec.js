@@ -17,6 +17,7 @@ describe('Table - AlignCol', function() {
 
         wwe.init();
         wwe.addManager(WwTableSelectionManager);
+        wwe.getEditor().focus();
     });
 
     //we need to wait squire input event process
