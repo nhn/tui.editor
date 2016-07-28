@@ -104,4 +104,57 @@ describe('WwListManager', function() {
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t5');
         });
     });
+
+    describe('Control list blank line', function() {
+        it('ul - br - ul', function() {
+            var html = [
+                '<ul>',
+                    '<li><div>1</div></li>',
+                '</ul>',
+                '<br />',
+                '<ul>',
+                    '<li><div>2</div></li>',
+                '</ul>'
+            ].join('');
+
+            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+
+            expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
+            expect(result.indexOf('<br />')).toBe(-1);
+        });
+
+        it('ul - br - br - ul', function() {
+            var html = [
+                '<ul>',
+                    '<li><div>1</div></li>',
+                '</ul>',
+                '<br />',
+                '<br />',
+                '<ul>',
+                    '<li><div>2</div></li>',
+                '</ul>'
+            ].join('');
+
+            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+
+            expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
+            expect(result.indexOf('<br />')).toBe(-1);
+        });
+
+        it('ul - ul', function() {
+            var html = [
+                '<ul>',
+                    '<li><div>1</div></li>',
+                '</ul>',
+                '<ul>',
+                    '<li><div>2</div></li>',
+                '</ul>'
+            ].join('');
+
+            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+
+            expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
+            expect(result.indexOf('<br />')).toBe(-1);
+        });
+    });
 });

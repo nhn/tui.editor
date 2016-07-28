@@ -18,6 +18,8 @@ describe('WwPasteContentHelper', function() {
 
         wwe.init();
 
+        wwe.getEditor().focus();
+
         wwe.addManager(WwCodeBlockManager);
         wwe.addManager(WwTableManager);
 
