@@ -110,10 +110,6 @@ WysiwygEditor.prototype._initEvent = function() {
         return self._preprocessForInlineElement(html);
     });
 
-    this.eventManager.listen('wysiwygSetValueAfter', function() {
-        self._wrapDefaultBlockToListInner();
-    });
-
     this.eventManager.listen('wysiwygKeyEvent', function(ev) {
         self._runKeyEventHandlers(ev.data, ev.keyMap);
     });
@@ -564,19 +560,6 @@ WysiwygEditor.prototype.saveSelection = function(range) {
 WysiwygEditor.prototype.restoreSavedSelection = function() {
     var sq = this.getEditor();
     sq.setSelection(sq._getRangeAndRemoveBookmark());
-};
-
-/**
- * _wrapDefaultBlockToListInner
- * Wrap default block to list inner contents
- * @private
- */
-WysiwygEditor.prototype._wrapDefaultBlockToListInner = function() {
-    this.get$Body().find('li').each(function(index, node) {
-        if ($(node).children('div, p').length <= 0) {
-            $(node).wrapInner('<div />');
-        }
-    });
 };
 
 /**
