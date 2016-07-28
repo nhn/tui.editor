@@ -573,7 +573,7 @@ WysiwygEditor.prototype.restoreSavedSelection = function() {
  */
 WysiwygEditor.prototype._wrapDefaultBlockToListInner = function() {
     this.get$Body().find('li').each(function(index, node) {
-        if ($(node).find('div').length <= 0) {
+        if ($(node).children('div, p').length <= 0) {
             $(node).wrapInner('<div />');
         }
     });
