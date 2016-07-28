@@ -29,6 +29,16 @@ describe('WwListManager', function() {
         });
     });
 
+    describe('Event', function() {
+        it('wysiwygSetValueAfter: wrap list inner to div after setValue', function() {
+            var html = '<ul><li>test</li></ul>';
+            wwe.setValue(html);
+
+            expect(wwe.get$Body().find('li div').length).toEqual(1);
+            expect(wwe.get$Body().find('li div').text()).toEqual('test');
+        });
+    });
+
     describe('_findAndRemoveEmptyList()', function() {
         it('remove ul that without li element within.', function() {
             wwe.setValue(['<ul>this will deleted</ul>',

@@ -57,6 +57,10 @@ WwListManager.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygSetValueAfter', function() {
         self._removeBranchListAll();
     });
+
+    this.eventManager.listen('wysiwygSetValueAfter', function() {
+        self._wrapDefaultBlockToListInner();
+    });
 };
 
 
@@ -146,6 +150,19 @@ WwListManager.prototype._removeBranchList = function(list) {
     $branchRoot.prepend($list.children().unwrap());
 
     $firstLi.remove();
+};
+
+/**
+ * _wrapDefaultBlockToListInner
+ * Wrap default block to list inner contents
+ * @private
+ */
+WwListManager.prototype._wrapDefaultBlockToListInner = function() {
+    this.wwe.get$Body().find('li').each(function(index, node) {
+        if ($(node).children('div, p').length <= 0) {
+            $(node).wrapInner('<div />');
+        }
+    });
 };
 
 module.exports = WwListManager;
