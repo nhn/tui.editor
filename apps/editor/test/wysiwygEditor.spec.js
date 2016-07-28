@@ -276,14 +276,6 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
         });
 
-        it('wrap list inner to div after setValue', function() {
-            var html = '<ul><li>test</li></ul>';
-            wwe.setValue(html);
-
-            expect(wwe.get$Body().find('li div').length).toEqual(1);
-            expect(wwe.get$Body().find('li div').text()).toEqual('test');
-        });
-
         it('record undo state after all setValue process not setHTML', function(done) {
             var html = '<ul><li>test</li></ul>';
 
@@ -306,7 +298,7 @@ describe('WysiwygEditor', function() {
 
         it('move cursor to end after setValue() cuz we need new range after whole conntent changed', function() {
             var range;
-            wwe.setValue('<ul><li>test</li></ul><div>test2<br></div>');
+            wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>');
             range = wwe.getEditor().getSelection();
 
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
