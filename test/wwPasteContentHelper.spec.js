@@ -200,6 +200,10 @@ describe('WwPasteContentHelper', function() {
         describe('List', function() {
             var range;
 
+            beforeEach(function() {
+                wwe.getEditor().focus();
+            });
+
             it('if content have orphan list and has format li then make depth based on current selection', function() {
                 $(contentFrag).append($('<li><div>text<br></div></li><li><div>text2<br></div></li>'));
 

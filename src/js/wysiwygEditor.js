@@ -401,14 +401,14 @@ WysiwygEditor.prototype._initDefaultKeyEventHandler = function() {
     });
 
     this.addKeyEventHandler('TAB', function(ev) {
-        var editor = self.getEditor();
-        var range = editor.getSelection();
-        var isNotListOrBlockquote = range.collapsed && !editor.hasFormat('li') && !editor.hasFormat('blockquote');
+        var sq = self.getEditor();
+        var range = sq.getSelection();
+        var isAbleToInput4Spaces = range.collapsed && self._isCursorNotInRestrictedAreaOfTabAction(sq);
         var isTextSelection = !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
 
         ev.preventDefault();
-        if (isNotListOrBlockquote || isTextSelection) {
-            editor.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
+        if (isAbleToInput4Spaces || isTextSelection) {
+            sq.insertPlainText('\u00a0\u00a0\u00a0\u00a0');
 
             return false;
         }
@@ -1053,6 +1053,11 @@ WysiwygEditor.prototype.defer = function(callback) {
 
 WysiwygEditor.prototype.isEditorValid = function() {
     return this.getEditor() && $.contains(this.$editorContainerEl[0].ownerDocument, this.$editorContainerEl[0]);
+};
+
+WysiwygEditor.prototype._isCursorNotInRestrictedAreaOfTabAction = function(editor) {
+    return !editor.hasFormat('li')
+        && !editor.hasFormat('blockquote') && !editor.hasFormat('table');
 };
 
 /**

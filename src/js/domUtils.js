@@ -384,52 +384,78 @@ var getPath = function(node, root) {
 };
 
 /**
- * Find next TR's TD element by given TD and it's offset
+ * Find next, previous TD or TH element by given TE element
  * @param {HTMLElement} node TD element
- * @param {boolean} [needFirstTd] Boolean value for find first TD in next line
+ * @param {string} direction Boolean value for direction true is find next cell
  * @returns {HTMLElement|null}
  */
-var nextLineTableCell = function(node, needFirstTd) {
-    var index = 0;
-    var nextLineTrElement, nextLineTdElement, theadElement;
+var getTableCellByDirection = function(node, direction) {
+    var isForward = true;
+    var targetElement = null;
 
-    if (node) {
-        if (!needFirstTd) {
-            while (node.previousElementSibling) {
-                node = node.previousElementSibling;
-                index += 1;
-            }
-        }
-
-        nextLineTrElement = node.parentNode.nextSibling;
-        theadElement = $(node).parents('thead')[0];
-
-        if (nextLineTrElement) {
-            nextLineTdElement = nextLineTrElement.childNodes[index];
-        } else if (theadElement && theadElement.nextElementSibling.tagName === 'TBODY') {
-            nextLineTdElement = $(theadElement.nextElementSibling).find('td')[index];
-        }
-
-        if (nextLineTdElement && nextLineTdElement.tagName === 'TD') {
-            return nextLineTdElement;
-        }
+    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
+        return null;
+    } else if (direction === 'previous') {
+        isForward = false;
     }
 
-    return null;
+    if (isForward) {
+        targetElement = node.nextElementSibling;
+    } else {
+        targetElement = node.previousElementSibling;
+    }
+
+    return targetElement;
 };
 
 /**
- * Find next TD or TH element by given TE element
+ * Find sibling TR's TD element by given TD and direction
  * @param {HTMLElement} node TD element
+ * @param {string} direction Boolean value for find first TD in next line
+ * @param {boolean} [needEdgeCell=false] Boolean value for find first TD in next line
  * @returns {HTMLElement|null}
  */
-var nextTableCell = function(node) {
-    var nextElement;
+var getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
+    var isForward = true;
+    var tableCellElement = null;
+    var $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
 
-    nextElement = node.nextElementSibling;
+    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
+        return null;
+    } else if (direction === 'previous') {
+        isForward = false;
+    }
 
-    if (nextElement && (nextElement.nodeName === 'TD' || nextElement.nodeName === 'TH')) {
-        return nextElement;
+    if (node) {
+        $node = $(node);
+
+        if (isForward) {
+            $targetRowElement = $node.parent().next();
+            $currentContainer = $node.parents('thead');
+            $siblingContainer = $currentContainer[0] && $currentContainer.next();
+            isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'TBODY';
+
+            index = 0;
+        } else {
+            $targetRowElement = $node.parent().prev();
+            $currentContainer = $node.parents('tbody');
+            $siblingContainer = $currentContainer[0] && $currentContainer.prev();
+            isSiblingContainerExists = $siblingContainer && getNodeName($siblingContainer[0]) === 'THEAD';
+
+            index = node.parentNode.childNodes.length - 1;
+        }
+
+        if (tui.util.isUndefined(needEdgeCell) || !needEdgeCell) {
+            index = getNodeOffsetOfParent(node);
+        }
+
+        if ($targetRowElement[0]) {
+            tableCellElement = $targetRowElement.children('td,th')[index];
+        } else if ($currentContainer[0] && isSiblingContainerExists) {
+            tableCellElement = $siblingContainer.find('td,th')[index];
+        }
+
+        return tableCellElement;
     }
 
     return null;
@@ -452,6 +478,6 @@ module.exports = {
     findOffsetNode: findOffsetNode,
     getPath: getPath,
     getNodInfo: getNodeInfo,
-    nextLineTableCell: nextLineTableCell,
-    nextTableCell: nextTableCell
+    getTableCellByDirection: getTableCellByDirection,
+    getSiblingRowCellByDirection: getSiblingRowCellByDirection
 };
