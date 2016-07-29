@@ -19,6 +19,8 @@ describe('WwTextObject', function() {
         sq = wwe.getEditor();
 
         sq.setHTML('test textObject');
+
+        sq.focus();
     });
 
     //we need to wait squire input event process
