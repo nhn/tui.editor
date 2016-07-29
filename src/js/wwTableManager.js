@@ -497,6 +497,7 @@ WwTableManager.prototype.wrapTheadAndTbodyIntoTableIfNeed = function(fragment) {
 WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
     var newFragment = document.createDocumentFragment();
     if (this._isTableOrSubTableElement(node.nodeName)) {
+        this._expandTableIfNeed(pasteData.fragment);
         this._pasteDataIntoTable(pasteData.fragment);
         pasteData.fragment = newFragment;
     } else {
@@ -786,6 +787,70 @@ WwTableManager.prototype._addTrIntoContainerIfNeed = function($table) {
             $(container).append($('<tr></tr>')[0]);
         }
     });
+};
+
+WwTableManager.prototype._expandTableIfNeed = function(fragment) {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var $table = $(range.startContainer).parents('table');
+    var difference = this._getColumnAndRowDifference(fragment, range);
+
+    if (difference.column < 0) {
+        this._appendCellForAllRow($table, difference.column);
+    }
+
+    if (difference.row < 0) {
+        this._appendRow($table, difference.row);
+    }
+};
+
+WwTableManager.prototype._getColumnAndRowDifference = function(fragment, range) {
+    var tableData = this._getTableDataFromTable(fragment);
+    var rowLength = tableData.length;
+    var columnLength = tableData[0].length;
+    var $currentCell = $(range.startContainer).closest('th,td');
+    var $currentRow = $currentCell.parent();
+    var currentColumnIndex = domUtils.getNodeOffsetOfParent($currentCell[0]);
+    var currentRowIndex = domUtils.getNodeOffsetOfParent($currentCell[0].parentNode);
+    var $table = $currentRow.parents('table');
+    var tableColumnLength = $table.find('tr').eq(0).children().length;
+    var tableRowLength = $table.find('tr').length;
+    var isInTbody = $currentRow.parents('tbody').length;
+
+
+    if (isInTbody) {
+        currentRowIndex += 1;
+    }
+
+    return {
+        row: tableRowLength - (currentRowIndex + rowLength),
+        column: tableColumnLength - (currentColumnIndex + columnLength)
+    };
+};
+
+WwTableManager.prototype._appendCellForAllRow = function($table, columnDifference) {
+    $table.find('tr').each(function(i, row) {
+        var index = columnDifference;
+        var tagName;
+
+        for (; index < 0; index += 1) {
+            if (i === 0) {
+                tagName = 'th';
+            } else {
+                tagName = 'td';
+            }
+            $(row).append($('<' + tagName + '>')[0]);
+        }
+    });
+};
+
+WwTableManager.prototype._appendRow = function($table, rowDifference) {
+    var newRow = $table.find('tr').last().clone();
+
+    newRow.find('td').html('<br>');
+
+    for (; rowDifference < 0; rowDifference += 1) {
+        $table.find('tbody').append(newRow.clone()[0]);
+    }
 };
 
 module.exports = WwTableManager;
