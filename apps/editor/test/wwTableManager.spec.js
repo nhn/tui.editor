@@ -19,6 +19,7 @@ describe('WwTableManager', function() {
         wwe.init();
 
         mgr = new WwTableManager(wwe);
+        wwe.focus();
     });
 
     //we need to wait squire input event process
@@ -179,6 +180,125 @@ describe('WwTableManager', function() {
             mgr._pasteDataIntoTable(pastingTable);
 
             expect($body.find('table').text()).toEqual('abcdef');
+        });
+
+        it('_pasteDataIntoTable should extends column length and paste data with right position', function() {
+            var range, $body, rows;
+            var table = '<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>';
+            var pastingTable = $('<table>' +
+                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
+                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
+                '</table>')[0];
+            var fragment = document.createDocumentFragment();
+
+            wwe.getEditor().setHTML(table);
+            $body = wwe.get$Body();
+
+            range = wwe.getEditor().getSelection();
+            range.selectNode($body.find('th')[1].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            $(fragment).append(pastingTable);
+
+            mgr.prepareToPasteOnTable({
+                fragment: fragment
+            }, $body.find('table')[0]);
+
+            rows = $body.find('table').find('tr');
+            expect(rows.eq(0).text()).toEqual('1ab');
+            expect(rows.eq(1).text()).toEqual('3cd');
+            expect(rows.eq(2).text()).toEqual('5ef');
+            expect(rows.eq(0).children().length).toEqual(3);
+            expect(rows.eq(1).children().length).toEqual(3);
+            expect(rows.eq(2).children().length).toEqual(3);
+            expect(rows.length).toEqual(3);
+        });
+
+
+        it('_pasteDataIntoTable should extends row length and paste data with right position', function() {
+            var range, $body, rows;
+            var table = '<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>';
+            var pastingTable = $('<table>' +
+                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
+                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
+                '</table>')[0];
+            var fragment = document.createDocumentFragment();
+
+            wwe.getEditor().setHTML(table);
+            $body = wwe.get$Body();
+
+            range = wwe.getEditor().getSelection();
+            range.selectNode($body.find('td')[2].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            $(fragment).append(pastingTable);
+
+            mgr.prepareToPasteOnTable({
+                fragment: fragment
+            }, $body.find('table')[0]);
+
+
+            rows = $body.find('table').find('tr');
+            expect(rows.eq(0).text()).toEqual('12');
+            expect(rows.eq(1).text()).toEqual('34');
+            expect(rows.eq(2).text()).toEqual('ab');
+            expect(rows.eq(3).text()).toEqual('cd');
+            expect(rows.eq(4).text()).toEqual('ef');
+            expect(rows.eq(0).children().length).toEqual(2);
+            expect(rows.eq(1).children().length).toEqual(2);
+            expect(rows.eq(2).children().length).toEqual(2);
+            expect(rows.eq(3).children().length).toEqual(2);
+            expect(rows.eq(4).children().length).toEqual(2);
+            expect(rows.length).toEqual(5);
+        });
+
+        it('_pasteDataIntoTable should extends column and row length and paste data with right position', function() {
+            var range, $body, rows;
+            var table = '<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>';
+            var pastingTable = $('<table>' +
+                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
+                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
+                '</table>')[0];
+            var fragment = document.createDocumentFragment();
+
+            wwe.getEditor().setHTML(table);
+            $body = wwe.get$Body();
+
+            range = wwe.getEditor().getSelection();
+            range.selectNode($body.find('td')[3].firstChild);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            $(fragment).append(pastingTable);
+
+            mgr.prepareToPasteOnTable({
+                fragment: fragment
+            }, $body.find('table')[0]);
+
+
+            rows = $body.find('table').find('tr');
+            expect(rows.eq(0).text()).toEqual('12');
+            expect(rows.eq(1).text()).toEqual('34');
+            expect(rows.eq(2).text()).toEqual('5ab');
+            expect(rows.eq(3).text()).toEqual('cd');
+            expect(rows.eq(4).text()).toEqual('ef');
+            expect(rows.eq(0).children().length).toEqual(3);
+            expect(rows.eq(1).children().length).toEqual(3);
+            expect(rows.eq(2).children().length).toEqual(3);
+            expect(rows.eq(3).children().length).toEqual(3);
+            expect(rows.eq(4).children().length).toEqual(3);
+            expect(rows.length).toEqual(5);
         });
 
         it('prepareToPasteOnTable should paste table data into table', function() {
