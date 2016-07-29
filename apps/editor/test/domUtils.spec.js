@@ -264,52 +264,99 @@ describe('domUtils', function() {
         });
     });
     describe('table traversal', function() {
-        it('nextTableCell should get next TH if exist', function() {
+        it('getTableCellByDirection should get next TH if exist', function() {
             var $dom = $('<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>');
-            var result = domUtils.nextTableCell($dom.find('th')[0]);
-            var result2 = domUtils.nextTableCell($dom.find('th')[1]);
+            var result = domUtils.getTableCellByDirection($dom.find('th')[0], 'next');
+            var result2 = domUtils.getTableCellByDirection($dom.find('th')[1], 'next');
             expect(result.textContent).toBe('2');
             expect(result2).toBeNull();
         });
 
-        it('nextTableCell should get next TD if exist', function() {
+        it('getTableCellByDirection should get next TD if exist', function() {
             var $dom = $('<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>');
-            var result = domUtils.nextTableCell($dom.find('td')[0]);
-            var result2 = domUtils.nextTableCell($dom.find('td')[3]);
+            var result = domUtils.getTableCellByDirection($dom.find('td')[0], 'next');
+            var result2 = domUtils.getTableCellByDirection($dom.find('td')[3], 'next');
             expect(result.textContent).toBe('4');
             expect(result2).toBeNull();
         });
 
-        it('nextLineTableCell should get next TD if exist at thead', function() {
+        it('getSiblingRowCellByDirection should get next TD if exist at thead', function() {
             var $dom = $('<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>');
-            var result = domUtils.nextLineTableCell($dom.find('th')[0]);
-            var result2 = domUtils.nextLineTableCell($dom.find('th')[1]);
-            var result3 = domUtils.nextLineTableCell($dom.find('th')[3]);
+            var result = domUtils.getSiblingRowCellByDirection($dom.find('th')[0], 'next');
+            var result2 = domUtils.getSiblingRowCellByDirection($dom.find('th')[1], 'next');
+            var result3 = domUtils.getSiblingRowCellByDirection($dom.find('th')[3], 'next');
             expect(result.textContent).toBe('3');
             expect(result2.textContent).toBe('4');
             expect(result3).toBeNull();
         });
 
-        it('nextLineTableCell should get next TD if exist at tbody', function() {
+        it('getSiblingRowCellByDirection should get next TD if exist at tbody', function() {
             var $dom = $('<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>');
-            var result = domUtils.nextLineTableCell($dom.find('td')[0]);
-            var result2 = domUtils.nextLineTableCell($dom.find('td')[1]);
-            var result3 = domUtils.nextLineTableCell($dom.find('td')[3]);
+            var result = domUtils.getSiblingRowCellByDirection($dom.find('td')[0], 'next');
+            var result2 = domUtils.getSiblingRowCellByDirection($dom.find('td')[1], 'next');
+            var result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'next');
             expect(result.textContent).toBe('5');
             expect(result2.textContent).toBe('6');
             expect(result3).toBeNull();
         });
-    })
+        it('getTableCellByDirection should get previous TH if exist', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.getTableCellByDirection($dom.find('th')[0], 'previous');
+            var result2 = domUtils.getTableCellByDirection($dom.find('th')[1], 'previous');
+            expect(result).toBeNull();
+            expect(result2.textContent).toBe('1');
+        });
+
+        it('getTableCellByDirection should get previous TD if exist', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.getTableCellByDirection($dom.find('td')[0], 'previous');
+            var result2 = domUtils.getTableCellByDirection($dom.find('td')[3], 'previous');
+            expect(result).toBeNull();
+            expect(result2.textContent).toBe('5');
+        });
+
+        it('getSiblingRowCellByDirection should get previous TD if exist at thead', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.getSiblingRowCellByDirection($dom.find('th')[0], 'previous');
+            var result2 = domUtils.getSiblingRowCellByDirection($dom.find('th')[1], 'previous');
+            var result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'previous');
+            expect(result).toBeNull();
+            expect(result2).toBeNull();
+            expect(result3.textContent).toBe('4');
+        });
+
+        it('getSiblingRowCellByDirection should get previous TD if exist at tbody', function() {
+            var $dom = $('<table>' +
+                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
+                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '</table>');
+            var result = domUtils.getSiblingRowCellByDirection($dom.find('td')[0], 'previous');
+            var result2 = domUtils.getSiblingRowCellByDirection($dom.find('td')[1], 'previous');
+            var result3 = domUtils.getSiblingRowCellByDirection($dom.find('td')[3], 'previous');
+            expect(result.textContent).toBe('1');
+            expect(result2.textContent).toBe('2');
+            expect(result3.textContent).toBe('4');
+        });
+    });
 });

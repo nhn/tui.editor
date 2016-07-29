@@ -76,6 +76,26 @@ WwTableManager.prototype._initEvent = function() {
     });
 };
 
+WwTableManager.prototype._moveCursorTo = function(direction, ev) {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var currentCell = $(range.startContainer).closest('td,th')[0];
+    var isNeedNext;
+
+    if (range.collapsed) {
+        if (this.isInTable(range)) {
+            if (direction === 'previous' && !tui.util.isUndefined(ev)) {
+                ev.preventDefault();
+            }
+
+            changeSelectionToTargetCell(currentCell, range, direction);
+            this.wwe.getEditor().setSelection(range);
+
+            isNeedNext = false;
+        }
+    }
+
+    return isNeedNext;
+};
 /**
  * _initKeyHandler
  * Initialize key event handler
@@ -161,6 +181,13 @@ WwTableManager.prototype._initKeyHandler = function() {
         }
 
         return isNeedNext;
+    });
+    this.wwe.addKeyEventHandler('TAB', function() {
+        return self._moveCursorTo('next');
+    });
+
+    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev) {
+        return self._moveCursorTo('previous', ev);
     });
 };
 
@@ -346,10 +373,10 @@ WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
         while (td && tr.length) {
             td.textContent = tr.shift();
 
-            td = domUtils.nextTableCell(td);
+            td = domUtils.getTableCellByDirection(td, 'next');
         }
 
-        td = domUtils.nextLineTableCell(anchorElement);
+        td = domUtils.getSiblingRowCellByDirection(anchorElement, 'next', false);
         anchorElement = td;
     }
 };
@@ -397,8 +424,8 @@ WwTableManager.prototype._removeTableContents = function(range) {
     for (;index < cellLength; index += 1) {
         cell.innerHTML = '<br>';
 
-        nextCell = domUtils.nextTableCell(cell);
-        nextLineFirstCell = domUtils.nextLineTableCell(cell, true);
+        nextCell = domUtils.getTableCellByDirection(cell, 'next');
+        nextLineFirstCell = domUtils.getSiblingRowCellByDirection(cell, 'next', true);
 
         if (nextCell) {
             cell = nextCell;
@@ -852,5 +879,32 @@ WwTableManager.prototype._appendRow = function($table, rowDifference) {
         $table.find('tbody').append(newRow.clone()[0]);
     }
 };
+
+/**
+ * Change selection to next or previous cell
+ * @param {HTMLElement} currentCell current TD or TH
+ * @param {Range} range Range object
+ * @param {string} direction Boolean value for whether move cursor to next cell or not
+ */
+function changeSelectionToTargetCell(currentCell, range, direction) {
+    var siblingCell = domUtils.getTableCellByDirection(currentCell, direction);
+    var isNext = direction === 'next';
+    var targetCell;
+
+    if (siblingCell) {
+        targetCell = siblingCell;
+    } else {
+        targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, true);
+    }
+
+    if (targetCell) {
+        if (isNext) {
+            range.setStartBefore(targetCell.firstChild);
+        } else {
+            range.setStartAfter(targetCell.firstChild);
+        }
+        range.collapse(true);
+    }
+}
 
 module.exports = WwTableManager;
