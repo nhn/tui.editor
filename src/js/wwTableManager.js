@@ -129,6 +129,7 @@ WwTableManager.prototype._initKeyHandler = function() {
 
                     range.collapse(true);
                     self.wwe.getEditor().setSelection(range);
+                    self._lastCellNode = range.startContainer;
                 }
             }
         } else if (!isRangeInTable && self._lastCellNode) {
