@@ -175,6 +175,10 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<ul><li></li></ul>', 'abdef  \n  \n  \nghi', 2)).toEqual('* abdef  \nghi\n');
             expect(getMarkdownText('<ol><li></li></ol>', 'abdef  \n  \n  \nghi', 2)).toEqual('1. abdef  \nghi\n');
         });
+
+        it('p in li', function() {
+            expect(getMarkdownText('<ul><li><p></p></li></ul>', 'abdef', 2)).toEqual('\n* abdef\n');
+        });
     });
 
     describe('HR', function() {
@@ -227,10 +231,6 @@ describe('basicRenderer', function() {
 
         it('convert multiple brs to one br', function() {
             expect(getMarkdownText('<p></p>', 'a  \n  \n  \nb')).toEqual('\n\na  \nb\n\n');
-        });
-
-        it('add empty line in li', function() {
-            expect(getMarkdownText('<li><p></p></li>', 'paragraph', 2)).toEqual('paragraph\n  \n');
         });
 
         it('pass content in blockquote', function() {

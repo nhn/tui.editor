@@ -121,7 +121,7 @@ var basicRenderer = Renderer.factory({
         var res = '';
 
         if (!this.isEmptyText(subContent)) {
-            res = subContent + '\n  \n';
+            res = subContent;
         }
 
         return res;
@@ -169,6 +169,10 @@ var basicRenderer = Renderer.factory({
         //convert multiple brs to one br
         subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
 
+        if (node.firstChild && node.firstChild.tagName === 'P') {
+            res += '\n';
+        }
+
         res += '* ' + subContent + '\n';
 
         return res;
@@ -187,6 +191,10 @@ var basicRenderer = Renderer.factory({
 
         //convert multiple brs to one br
         subContent = subContent.replace(FIND_MULTIPLE_EMPTYLINE_BETWEEN_TEXT_RX, '  \n');
+
+        if (node.firstChild && node.firstChild.tagName === 'P') {
+            res += '\n';
+        }
 
         res += liCounter + '. ' + subContent + '\n';
 
