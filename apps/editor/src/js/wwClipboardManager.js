@@ -96,11 +96,13 @@ WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fra
         node = node.lastChild;
     }
 
-    this.wwe.defer(function(wwe) {
-        range.setStartAfter(node);
-        range.collapse(true);
-        wwe.getEditor().setSelection(range);
-    });
+    if (!domUtils.isTextNode(node)) {
+        this.wwe.defer(function(wwe) {
+            range.setStartAfter(node);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+        });
+    }
 };
 
 /**
