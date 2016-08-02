@@ -106,12 +106,16 @@ PopupTableUtils.prototype._linkWithEventManager = function() {
     });
 
     this.eventManager.listen('openPopupTableUtils', function(event) {
+        var offset = self.$el.parent().offset();
+        var x = event.clientX - offset.left;
+        var y = event.clientY - offset.top + $(window).scrollTop();
+
         self.eventManager.emit('closeAllPopup');
 
         self.$el.css({
             'position': 'absolute',
-            'top': event.layerY + 30,
-            'left': event.layerX + 20
+            'top': y + 30,
+            'left': x + 20
         });
 
         self.show();
