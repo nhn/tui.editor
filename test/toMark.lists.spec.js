@@ -83,5 +83,19 @@ describe('toMark', function() {
 
             expect(toMark(htmlStr)).toEqual('* \n* 2');
         });
+
+        it('list have p', function() {
+            var htmlStr = [
+                '<p>p</p>',
+                '<ul>',
+                    '<li><p>1</p></li>',
+                    '<li><p>2</p></li>',
+                    '<li>3</li>',
+                '</ul>',
+                '<p>p2</p>'
+            ].join('');
+
+            expect(toMark(htmlStr)).toEqual('p\n\n* 1\n\n* 2\n* 3\n\np2');
+        });
     });
 });
