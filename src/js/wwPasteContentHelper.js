@@ -193,7 +193,11 @@ WwPasteContentHelper.prototype._removeStyles = function(node) {
     if (domUtils.getNodeName($node[0]) !== 'SPAN') {
         $node.removeAttr('style');
     } else {
-        colorValue = $node.css('color');
+        //Most browser return computed color value even if without style attribute
+        if ($node.attr('style')) {
+            colorValue = $node.css('color');
+        }
+
         $node.removeAttr('style');
 
         if (colorValue) {
