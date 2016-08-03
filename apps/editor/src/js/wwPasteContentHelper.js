@@ -199,7 +199,7 @@ WwPasteContentHelper.prototype._removeStyles = function(node) {
         if (colorValue) {
             $node.css('color', colorValue);
         } else {
-            $node.children().unwrap();
+            $node.contents().unwrap();
         }
     }
 };
