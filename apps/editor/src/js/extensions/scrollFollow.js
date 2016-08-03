@@ -11,8 +11,8 @@ var extManager = require('../extManager'),
     Button = require('../ui/button');
 
 extManager.defineExtension('scrollFollow', function(editor) {
-    var scrollable = false,
-        active = true,
+    var isScrollable = false,
+        isActive = true,
         sectionManager, scrollSync,
         className = 'tui-scrollfollow',
         TOOL_TIP = {
@@ -60,9 +60,9 @@ extManager.defineExtension('scrollFollow', function(editor) {
         editor.addCommand('markdown', {
             name: 'scrollFollowToggle',
             exec: function() {
-                active = !active;
+                isActive = !isActive;
 
-                if (active) {
+                if (isActive) {
                     button.$el.addClass('active');
                     button.tooltip = TOOL_TIP.active;
                 } else {
@@ -75,21 +75,25 @@ extManager.defineExtension('scrollFollow', function(editor) {
 
     //Events
     cm.on('change', function() {
-        scrollable = false;
+        isScrollable = false;
         sectionManager.makeSectionList();
     });
 
     editor.on('previewRenderAfter', function() {
         sectionManager.sectionMatch();
         scrollSync.syncToPreview();
-        scrollable = true;
+        isScrollable = true;
     });
 
     cm.on('scroll', function() {
-        if (!active || !scrollable) {
+        if (!isActive) {
             return;
         }
 
-        scrollSync.syncToPreview();
+        if (isScrollable && editor.preview.isVisible()) {
+            scrollSync.syncToPreview();
+        } else {
+            scrollSync.saveScrollInfo();
+        }
     });
 });

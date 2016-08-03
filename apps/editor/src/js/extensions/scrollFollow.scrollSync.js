@@ -28,6 +28,12 @@ function ScrollSync(sectionManager, cm, $previewContainerEl) {
      * @type {number}
      */
     this._currentTimeoutId = null;
+
+    /**
+     * Saved scrollInfo object of codemirror
+     * @type {object}
+     */
+    this._savedScrollInfo = null;
 }
 
 /**
@@ -77,6 +83,7 @@ ScrollSync.prototype._getEditorSectionScrollRatio = function(section, line) {
     } else {
         ratio = this._getEditorLineHeightGapInSection(section, line) / this._getEditorSectionHeight(section);
     }
+
     return ratio;
 };
 
@@ -89,6 +96,10 @@ ScrollSync.prototype._getScrollFactorsOfEditor = function() {
     var topLine, topSection, ratio, isEditorBottom, factors,
         cm = this.cm,
         scrollInfo = cm.getScrollInfo();
+
+    //if codemirror has not visible scrollInfo have incorrect value
+    //so we use saved scroll info for alternative
+    scrollInfo = this._fallbackScrollInfoIfIncorrect(scrollInfo);
 
     isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
 
@@ -186,6 +197,23 @@ ScrollSync.prototype._animateRun = function(originValue, targetValue, stepCB) {
     }
 
     step();
+};
+
+/**
+ * Fallback to saved scrolInfo if incorrect scrollInfo passed
+ * this because incorrect codemirror returns scrollInfo if codemirror is invisible
+ * @param {object} scrollInfo scrollInfo
+ * @returns {object} scrollInfo
+ */
+ScrollSync.prototype._fallbackScrollInfoIfIncorrect = function(scrollInfo) {
+    return scrollInfo.height < 0 && this._savedScrollInfo ? this._savedScrollInfo : scrollInfo;
+};
+
+/**
+ * Save Codemirror's scrollInfo for alternative use
+ */
+ScrollSync.prototype.saveScrollInfo = function() {
+    this._savedScrollInfo = this.cm.getScrollInfo();
 };
 
 module.exports = ScrollSync;

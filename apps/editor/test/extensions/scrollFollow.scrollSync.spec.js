@@ -141,12 +141,12 @@ describe('scrollFollow.ScrollSync', function() {
                 previewScrollTop;
 
             ned.setValue([
-                    'paragraph',
-                    '# header1',
-                    'paragraph',
-                    'paragraph',
-                    '## header2',
-                    'paragraph'
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph'
             ].join('\n'));
 
             sectionManager.makeSectionList();
@@ -168,6 +168,34 @@ describe('scrollFollow.ScrollSync', function() {
 
                 done();
             });
+        });
+    });
+
+    describe('Hidden codemirror', function() {
+        it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', function() {
+            var cm = ned.getCodeMirror();
+            var scrollInfo;
+
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+
+            scrollSync.saveScrollInfo();
+
+            cm.scrollTo(0, cm.heightAtLine(6, 'local'));
+
+            cm.getWrapperElement().style.display = 'none';
+
+            scrollInfo = cm.getScrollInfo();
+
+            expect(scrollSync._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollSync._savedScrollInfo);
         });
     });
 });
