@@ -314,6 +314,13 @@ WysiwygEditor.prototype._initSquireEvent = function() {
         });
     });
 
+    this.getEditor().addEventListener('mouseover', function(ev) {
+        self.eventManager.emit('mouseover', {
+            source: 'wysiwyg',
+            data: ev
+        });
+    });
+
     this.getEditor().addEventListener('mouseup', function(ev) {
         self.eventManager.emit('mouseup', {
             source: 'wysiwyg',

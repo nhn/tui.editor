@@ -64,20 +64,40 @@ WwTableSelectionManager.prototype._initEvent = function() {
 
     this.eventManager.listen('mousedown', function(ev) {
         selectionStart = ev.data.target;
+        selectionEnd = null;
         self.removeClassAttrbuteFromAllCellsIfNeed();
 
         self._setTableSelectionTimerIfNeed(selectionStart);
     });
 
-    this.eventManager.listen('mouseup', function(ev) {
+    this.eventManager.listen('mouseover', function(ev) {
         var isTextSelect = self.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
+        var isTableCell;
+
         selectionEnd = ev.data.target;
+        isTableCell = $(selectionEnd).parents('table');
+
+        if (self._isSelectionStarted && !isTextSelect && isTableCell) {
+            // For disable firefox's native table cell selection
+            if (tui.util.browser.firefox && !self._removeSelectionTimer) {
+                self._removeSelectionTimer = setInterval(function() {
+                    window.getSelection().removeAllRanges();
+                }, 10);
+            }
+            self._highlightTableCellsBy(selectionStart, selectionEnd);
+        }
+    });
+    this.eventManager.listen('mouseup', function() {
+        var isTextSelect = self.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
+        var range;
 
         self._clearTableSelectionTimerIfNeed();
 
         if (self._isSelectionStarted && !isTextSelect) {
-            self._highlightSelectionIfNeed(selectionStart, selectionEnd);
             self.wwe.getManager('table').resetLastCellNode();
+            range = self.wwe.getEditor().getSelection();
+            range.collapse(true);
+            self.wwe.getEditor().setSelection(range);
         }
 
         self._isSelectionStarted = false;
@@ -94,12 +114,6 @@ WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selec
     var isTableSelecting = $(selectionStart).parents('table').length;
 
     if (isTableSelecting) {
-        // For disable firefox's native table cell selection
-        if (tui.util.browser.firefox) {
-            this._removeSelectionTimer = setInterval(function() {
-                window.getSelection().removeAllRanges();
-            }, 250);
-        }
         this._selectionTimer = setTimeout(function() {
             self._isSelectionStarted = true;
             self._isCellsSelected = true;
@@ -114,22 +128,10 @@ WwTableSelectionManager.prototype._setTableSelectionTimerIfNeed = function(selec
 WwTableSelectionManager.prototype._clearTableSelectionTimerIfNeed = function() {
     clearTimeout(this._selectionTimer);
     // For disable firefox's native table selection
-    if (tui.util.browser.firefox) {
+    if (tui.util.browser.firefox && this._removeSelectionTimer) {
         clearTimeout(this._removeSelectionTimer);
+        this._removeSelectionTimer = null;
     }
-};
-
-/**
- * HighLighting current selection by start, end element of selection
- * @param {HTMLElement} selectionStart Start element
- * @param {HTMLElement} selectionEnd End element
- * @private
- */
-WwTableSelectionManager.prototype._highlightSelectionIfNeed = function(selectionStart, selectionEnd) {
-    var range = this.wwe.getEditor().getSelection();
-
-    this._prepareSelection(range, selectionStart, selectionEnd);
-    this._highlightTableCellsBy(range);
 };
 
 /**
@@ -221,49 +223,69 @@ WwTableSelectionManager.prototype._getTableCell = function(node) {
 
 /**
  * Get selection coordinate by current selection
- * @param {Range} range Range object
+ * @param {HTMLElement} selectionStart start element
+ * @param {HTMLElement} selectionEnd end element
  * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
  * @memberOf WwTableSelectionManager
+ * @api
  */
-WwTableSelectionManager.prototype.getSelectionRangeFromTable = function(range) {
+WwTableSelectionManager.prototype.getSelectionRangeFromTable = function(selectionStart, selectionEnd) {
     var nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
-    var commonAncestor = range.commonAncestorContainer;
-    var commonAncestorName = commonAncestor.nodeName;
-    var startRowOffset = nodeOffsetOfParent(this._getTableCell(range.startContainer).parentNode);
-    var endRowOffset = nodeOffsetOfParent(this._getTableCell(range.endContainer).parentNode);
-    var startCellOffset = nodeOffsetOfParent(this._getTableCell(range.startContainer));
-    var endCellOffset = nodeOffsetOfParent(this._getTableCell(range.endContainer));
-    var isTheadAndTbodySelected = commonAncestorName === 'TABLE';
-    var isInTbody = !!$(commonAncestor).parents('tbody').length;
-    var isBothCellsInTbody = commonAncestorName === 'TBODY' || isInTbody;
+    var startRowOffset = nodeOffsetOfParent(selectionStart.parentNode);
+    var endRowOffset = nodeOffsetOfParent(selectionEnd.parentNode);
+    var startCellOffset = nodeOffsetOfParent(selectionStart);
+    var endCellOffset = nodeOffsetOfParent(selectionEnd);
+    var startCellContainer = domUtils.getParentUntil(selectionStart, 'TABLE');
+    var endCellContainer = domUtils.getParentUntil(selectionEnd, 'TABLE');
+    var isReversedTheadAndTbodySelect = startCellContainer.nodeName === 'TBODY'
+        && endCellContainer.nodeName === 'THEAD';
+    var isTheadAndTbodySelect = startCellContainer !== endCellContainer;
+    var isBothInTbody = !!$(selectionStart).parents('tbody').length && !!$(selectionEnd).parents('tbody').length;
+    var start = {
+        row: startRowOffset,
+        cell: startCellOffset
+    };
+    var end = {
+        row: endRowOffset,
+        cell: endCellOffset
+    };
+    var from, to;
 
-    if (isTheadAndTbodySelected) {
-        endRowOffset += 1;
-    } else if (isBothCellsInTbody) {
-        startRowOffset += 1;
-        endRowOffset += 1;
+    if (isReversedTheadAndTbodySelect) {
+        start.row += 1;
+    } else if (isTheadAndTbodySelect) {
+        end.row += 1;
+    } else if (isBothInTbody) {
+        start.row += 1;
+        end.row += 1;
+    }
+
+
+    if (startRowOffset > endRowOffset
+        || (startRowOffset === endRowOffset && startCellOffset > endCellOffset)
+    ) {
+        from = end;
+        to = start;
+    } else {
+        from = start;
+        to = end;
     }
 
     return {
-        from: {
-            row: startRowOffset,
-            cell: startCellOffset
-        },
-        to: {
-            row: endRowOffset,
-            cell: endCellOffset
-        }
+        from: from,
+        to: to
     };
 };
 
 /**
  * Highlight selected table cells
- * @param {Range} range Range object
+ * @param {HTMLElement} selectionStart start element
+ * @param {HTMLElement} selectionEnd end element
  * @private
  */
-WwTableSelectionManager.prototype._highlightTableCellsBy = function(range) {
-    var trs = $(range.startContainer).parents('table').find('tr');
-    var selection = this.getSelectionRangeFromTable(range);
+WwTableSelectionManager.prototype._highlightTableCellsBy = function(selectionStart, selectionEnd) {
+    var trs = $(selectionStart).parents('table').find('tr');
+    var selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
     var rowFrom = selection.from.row;
     var cellFrom = selection.from.cell;
     var rowTo = selection.to.row;

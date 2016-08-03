@@ -25,7 +25,8 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     exec: function(wwe, alignDirection) {
         var sq = wwe.getEditor();
         var range = sq.getSelection().cloneRange();
-        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+        var selectionMgr = wwe.getManager('tableSelection');
+        var rangeInformation = selectionMgr.getSelectionRangeFromTable(range.startContainer, range.endContainer);
         var selectionInformation, $table;
 
         sq.focus();
