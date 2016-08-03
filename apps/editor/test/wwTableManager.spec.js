@@ -695,4 +695,113 @@ describe('WwTableManager', function() {
             });
         });
     });
+    describe('_moveCursorTo', function() {
+        it('should move previous cell', function() {
+            var $body, range;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>1</th><th>2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>3</td><td>4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            range = wwe.getEditor().getSelection();
+            range.setStart($body.find('th')[1], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr._moveCursorTo('previous', 'cell', {
+                preventDefault: function() {
+                }
+            });
+
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('1');
+        });
+
+        it('should move next cell', function() {
+            var $body, range;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>1</th><th>2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>3</td><td>4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            range = wwe.getEditor().getSelection();
+            range.setStart($body.find('th')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr._moveCursorTo('next', 'cell', {
+                preventDefault: function() {
+                }
+            });
+
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('2');
+        });
+
+        it('should move next row', function() {
+            var $body, range;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>1</th><th>2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>3</td><td>4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            range = wwe.getEditor().getSelection();
+            range.setStart($body.find('th')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr._moveCursorTo('next', 'row', {
+                preventDefault: function() {
+                }
+            });
+
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('3');
+        });
+
+        it('should move previous row', function() {
+            var $body, range;
+            var html = '<table>' +
+                '<thead>' +
+                '<tr><th>1</th><th>2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td>3</td><td>4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            $body = wwe.get$Body().html(html);
+
+            range = wwe.getEditor().getSelection();
+            range.setStart($body.find('td')[3], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr._moveCursorTo('previous', 'row', {
+                preventDefault: function() {
+                }
+            });
+
+            expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('4');
+        });
+    });
 });

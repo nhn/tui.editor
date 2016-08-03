@@ -76,26 +76,6 @@ WwTableManager.prototype._initEvent = function() {
     });
 };
 
-WwTableManager.prototype._moveCursorTo = function(direction, ev) {
-    var range = this.wwe.getEditor().getSelection().cloneRange();
-    var currentCell = $(range.startContainer).closest('td,th')[0];
-    var isNeedNext;
-
-    if (range.collapsed) {
-        if (this.isInTable(range)) {
-            if (direction === 'previous' && !tui.util.isUndefined(ev)) {
-                ev.preventDefault();
-            }
-
-            changeSelectionToTargetCell(currentCell, range, direction);
-            this.wwe.getEditor().setSelection(range);
-
-            isNeedNext = false;
-        }
-    }
-
-    return isNeedNext;
-};
 /**
  * _initKeyHandler
  * Initialize key event handler
@@ -184,11 +164,19 @@ WwTableManager.prototype._initKeyHandler = function() {
         return isNeedNext;
     });
     this.wwe.addKeyEventHandler('TAB', function() {
-        return self._moveCursorTo('next');
+        return self._moveCursorTo('next', 'cell');
     });
 
     this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev) {
-        return self._moveCursorTo('previous', ev);
+        return self._moveCursorTo('previous', 'cell', ev);
+    });
+
+    this.wwe.addKeyEventHandler('DOWN', function(ev) {
+        return self._moveCursorTo('next', 'row', ev);
+    });
+
+    this.wwe.addKeyEventHandler('UP', function(ev) {
+        return self._moveCursorTo('previous', 'row', ev);
     });
 };
 
@@ -882,20 +870,24 @@ WwTableManager.prototype._appendRow = function($table, rowDifference) {
 };
 
 /**
- * Change selection to next or previous cell
+ * Change selection to sibling cell
  * @param {HTMLElement} currentCell current TD or TH
  * @param {Range} range Range object
- * @param {string} direction Boolean value for whether move cursor to next cell or not
+ * @param {string} direction 'next' or 'previous'
+ * @param {string} scale 'row' or 'cell'
  */
-function changeSelectionToTargetCell(currentCell, range, direction) {
-    var siblingCell = domUtils.getTableCellByDirection(currentCell, direction);
+function changeSelectionToTargetCell(currentCell, range, direction, scale) {
     var isNext = direction === 'next';
+    var isRow = scale === 'row';
     var targetCell;
 
-    if (siblingCell) {
-        targetCell = siblingCell;
+    if (isRow) {
+        targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, false);
     } else {
-        targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, true);
+        targetCell = domUtils.getTableCellByDirection(currentCell, direction);
+        if (!targetCell) {
+            targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, true);
+        }
     }
 
     if (targetCell) {
@@ -907,5 +899,34 @@ function changeSelectionToTargetCell(currentCell, range, direction) {
         range.collapse(true);
     }
 }
+
+/**
+ * Move cursor to given direction by interval formatter
+ * @param {string} direction 'next' or 'previous'
+ * @param {string} interval 'row' or 'cell'
+ * @param {object} [ev] Event object
+ * @returns {boolean | null}
+ * @private
+ */
+WwTableManager.prototype._moveCursorTo = function(direction, interval, ev) {
+    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var currentCell = $(range.startContainer).closest('td,th')[0];
+    var isNeedNext;
+
+    if (range.collapsed) {
+        if (this.isInTable(range)) {
+            if (direction === 'previous' || interval === 'row' && !tui.util.isUndefined(ev)) {
+                ev.preventDefault();
+            }
+
+            changeSelectionToTargetCell(currentCell, range, direction, interval);
+            this.wwe.getEditor().setSelection(range);
+
+            isNeedNext = false;
+        }
+    }
+
+    return isNeedNext;
+};
 
 module.exports = WwTableManager;
