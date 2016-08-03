@@ -12,8 +12,8 @@ var FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX = /^[\s\r\n\t]+|[\s\r\n\t]+$/g,
 /**
  * toDom
  * @exports toDom
- * @param {DOMElement|string} html DOM Node root or HTML string
- * @return {DOMElement[]} dom element
+ * @param {HTMLElement|string} html DOM Node root or HTML string
+ * @returns {HTMLElement[]} dom element
  */
 function toDom(html) {
     var wrapper;
@@ -30,6 +30,11 @@ function toDom(html) {
     return wrapper;
 }
 
+/**
+ * Pre process for html string
+ * @param {string} html Source HTML string
+ * @returns {string}
+ */
 function preProcess(html) {
     //trim text
     html = html.replace(FIND_FIRST_LAST_SPACE_OR_RETURN_OR_TAB_RX, '');

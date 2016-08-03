@@ -23,7 +23,7 @@ var FIND_UNUSED_BRS_RX = /[ \xA0]+(\n\n)/g,
  * @param {object} options option
  * @param {boolean} options.gfm if this property is false turn off it cant parse gfm
  * @param {Renderer} options.renderer pass renderer to use
- * @return {string} converted markdown text
+ * @returns {string} converted markdown text
  * @example
  * toMark('<h1>hello world</h1>'); // "# hello world"
  * toMark('<del>strike</del>'); // "~~strike~~"
@@ -60,7 +60,7 @@ function toMark(htmlStr, options) {
  * Parse dom to markdown
  * @param {DomRunner} runner runner
  * @param {Renderer} renderer renderer
- * @return {string} markdown text
+ * @returns {string} markdown text
  */
 function parse(runner, renderer) {
     var markdownContent = '';
@@ -78,7 +78,7 @@ function parse(runner, renderer) {
  * @param {string} text text to finalize
  * @param {boolean} isGfm isGfm flag
  * @param {string} lineFeedReplacement Line feed replacement text
- * @return {string} result
+ * @returns {string} result
  */
 function finalize(text, isGfm, lineFeedReplacement) {
     //collapse return and <br>
@@ -126,7 +126,7 @@ function finalize(text, isGfm, lineFeedReplacement) {
  * Iterate childNodes and process conversion using recursive call
  * @param {DomRunner} runner dom runner
  * @param {Renderer} renderer renderer to use
- * @return {string} processed text
+ * @returns {string} processed text
  */
 function tracker(runner, renderer) {
     var i,

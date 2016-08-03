@@ -1,4 +1,3 @@
-
 /**
  * @fileoverview Implements DomRunner
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
@@ -20,7 +19,7 @@ var NODE = {
  * @exports DomRunner
  * @constructor
  * @class
- * @param {DOMElement} node A root node that it has nodes to iterate(not iterate itself and its any siblings)
+ * @param {HTMLElement} node A root node that it has nodes to iterate(not iterate itself and its any siblings)
  */
 function DomRunner(node) {
     this._root = node;
@@ -31,7 +30,7 @@ function DomRunner(node) {
 /**
  * next
  * Iterate next node
- * @return {DOMElement} next node
+ * @returns {HTMLElement} next node
  */
 DomRunner.prototype.next = function() {
     var current = this._current,
@@ -54,7 +53,7 @@ DomRunner.prototype.next = function() {
 /**
  * getNode
  * Return current node
- * @return {DOMElement} current node
+ * @returns {HTMLElement} current node
  */
 DomRunner.prototype.getNode = function() {
     return this._current;
@@ -63,7 +62,7 @@ DomRunner.prototype.getNode = function() {
 /**
  * getNodeText
  * Get current node's text content
- * @return {string} text
+ * @returns {string} text
  */
 DomRunner.prototype.getNodeText = function() {
     var node = this.getNode(),
@@ -82,9 +81,9 @@ DomRunner.prototype.getNodeText = function() {
  * _isNeedNextSearch
  * Check if there is next node to iterate
  * @private
- * @param {DOMElement} node next node
- * @param {DOMElement} current next node
- * @return {boolean} result
+ * @param {HTMLElement} node next node
+ * @param {HTMLElement} current next node
+ * @returns {boolean} result
  */
 DomRunner.prototype._isNeedNextSearch = function(node, current) {
     return !node && current !== this._root && current.parentNode !== this._root;
@@ -94,8 +93,8 @@ DomRunner.prototype._isNeedNextSearch = function(node, current) {
  * _getNextNode
  * Return available next node
  * @private
- * @param {DOMElement} current current node
- * @return {DOMElement} next node
+ * @param {HTMLElement} current current node
+ * @returns {node} next node
  */
 DomRunner.prototype._getNextNode = function(current) {
     return current.firstChild || current.nextSibling;
