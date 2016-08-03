@@ -3,100 +3,100 @@
 var gulp = require('gulp'),
     gutil = require('gulp-util'),
 
-    sourcemaps = require('gulp-sourcemaps'),
-    source = require('vinyl-source-stream'),
-    buffer = require('vinyl-buffer'),
-    watchify = require('watchify'),
-    browserify = require('browserify'),
+    webpack = require('webpack'),
+    WebpackDevServer = require('webpack-dev-server'),
 
     eslint = require('gulp-eslint'),
-
-    connect = require('gulp-connect'),
-
     rename = require('gulp-rename'),
-
     ugilfy = require('gulp-uglify'),
-
     stripDebug = require('gulp-strip-debug'),
 
     livereload = require('gulp-livereload');
 
 var gulpSync = require('gulp-sync')(gulp);
-/*
- * Browserif
- */
-var bundler = watchify(browserify('./src/index.js', {
-    //debug: true
-}));
 
-//bundler.transform('brfs');
-function bundle(changedFiles) {
-    gutil.log('changed', changedFiles);
-    return bundler.bundle()
-        // log errors if they happen
-        .on('error', gutil.log.bind(gutil, 'browserify error'))
-        .pipe(source('bundle.js'))
-        // optional, remove if you dont want sourcemaps
-        .pipe(buffer())
-        .pipe(sourcemaps.init({loadmaps: true})) // loads map from browserify file
-        .pipe(sourcemaps.write('./')) // writes .map file
-        //
-        .pipe(gulp.dest('./build'));
-}
+//Webpack
+var WEBPACK_MAIN_ENTRY = './src/index.js',
+    WEBPACK_DEV_PATH = __dirname + '/build/',
+    WEBPACK_DEV_FILE = 'bundle.js',
+    WEBPACK_DIST_PATH = __dirname + '/dist/',
+    WEBPACK_DIST_FILE = 'toMark.js';
 
-bundler.on('update', bundle); // on any dep update, runs the bundler
-gulp.task('develop', bundle); // so you can run `gulp js` to build the file
-
-gulp.task('bundle', function() {
-    return browserify('./src/index.js')
-        .bundle()
-        .pipe(source('toMark.js'))
-        .pipe(buffer())
-        .pipe(gulp.dest('./dist'));
-});
-
-/*
- * eslint
- */
+//Production Build
 gulp.task('lint', function lint() {
     return gulp.src(['src/**/*.js'])
-        .pipe(eslint())
-        .pipe(eslint.format())
-        .pipe(eslint.failOnError());
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('lintw', function lint() {
-    gulp.watch(['src/**/*.js'], ['lint']);
-});
-
-
-/*
- * gulp-connect
- */
-gulp.task('connect', function() {
-    connect.server({
-        root: '',
-        port: 8081
+gulp.task('bundle', function(callback) {
+    // run webpack
+    webpack({
+        cache: false,
+        entry: WEBPACK_MAIN_ENTRY,
+        output: {
+            path: WEBPACK_DIST_PATH,
+            pathinfo: false,
+            filename: WEBPACK_DIST_FILE
+        }
+    }, function(err, stats) {
+        if (err) {
+            throw new gutil.PluginError('webpack', err);
+        }
+        gutil.log('[webpack]', stats.toString({
+            colors: true
+        }));
+        callback();
     });
 });
 
-gulp.task('watch', function () {
+gulp.task('uglify', function() {
+    return gulp.src('./dist/toMark.js')
+    .pipe(ugilfy())
+    .pipe(rename('toMark.min.js'))
+    .pipe(gulp.dest('./dist'));
+});
+
+//For Development
+gulp.task('watch', function() {
     livereload.listen();
-    gulp.watch(['./build/*.js'], livereload.changed);
-    //gulp.watch(['./src/css/*.css'], livereload.changed);
+    gulp.watch(['./src/*'], livereload.changed);
     gulp.watch(['./demo/*'], livereload.changed);
 });
 
+gulp.task('develop', function() {
+    // Start a webpack-dev-server
+    new WebpackDevServer(webpack({
+        entry: WEBPACK_MAIN_ENTRY,
+        output: {
+            path: WEBPACK_DEV_PATH,
+            publicPath: '/build/',
+            pathinfo: true,
+            filename: WEBPACK_DEV_FILE
+        },
+        devtool: 'eval'
+    }), {
+        publicPath: '/build/',
+        hot: true,
+        stats: {
+            colors: true
+        }
+    }).listen(8081, '0.0.0.0', function(err) {
+        if (err) {
+            throw new gutil.PluginError('webpack-dev-server', err);
+        }
 
-/*
- * Uglify
- */
-gulp.task('uglify', function() {
-    return gulp.src('./dist/toMark.js')
-        .pipe(stripDebug())
-        .pipe(ugilfy())
-        .pipe(rename('toMark.min.js'))
-        .pipe(gulp.dest('./dist'));
+        gutil.log('[webpack-dev-server]', 'http://localhost:8080/webpack-dev-server/index.html');
+    });
+});
+
+gulp.task('lintwatch', function lint() {
+    gulp.watch(['src/*.js'], ['lint']);
+});
+
+gulp.task('stripDebug', function() {
+    return gulp.src('dist/toMark.js').pipe(stripDebug()).pipe(gulp.dest('./dist'));
 });
 
 gulp.task('build', gulpSync.sync(['lint', 'bundle', 'uglify']));

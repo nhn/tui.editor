@@ -72,7 +72,12 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
         return subContent ? (subContent + '|' + result + '\n') : '';
     }
 });
-
+/**
+ * Make task Markdown string if need
+ * @param {HTMLElement} node Passed HTML Element
+ * @param {string} subContent node's content
+ * @returns {string}
+ */
 function makeTaskIfNeed(node, subContent) {
     var condition;
 
@@ -83,7 +88,11 @@ function makeTaskIfNeed(node, subContent) {
 
     return subContent;
 }
-
+/**
+ * Make table head align text
+ * @param {HTMLElement} th Table head cell element
+ * @returns {string}
+ */
 function makeTableHeadAlignText(th) {
     var align, leftAlignValue, rightAlignValue, textLength;
 
@@ -108,7 +117,12 @@ function makeTableHeadAlignText(th) {
 
     return leftAlignValue + repeatString('-', textLength) + rightAlignValue;
 }
-
+/**
+ * Find child element of given tag name
+ * @param {HTMLElement} node starting element
+ * @param {string} tagName Tag name for search
+ * @returns {Array.<HTMLElement>}
+ */
 function findChildTag(node, tagName) {
     var i,
         childNodes = node.childNodes,
@@ -123,7 +137,12 @@ function findChildTag(node, tagName) {
 
     return result;
 }
-
+/**
+ * Repeat given string
+ * @param {string} pattern String for repeat
+ * @param {number} count Amount of repeat
+ * @returns {string}
+ */
 function repeatString(pattern, count) {
     var result = pattern;
 

@@ -42,7 +42,7 @@ function forEachOwnProperties(obj, iteratee, context) {
  * Renderer
  * @exports Renderer
  * @constructor
- * @param {object} rules rules to add
+ * @param {object} [rules] rules to add
  * @class
  */
 function Renderer(rules) {
@@ -88,17 +88,24 @@ Renderer.prototype.addRules = function(rules) {
     }, this);
 };
 
+/**
+ * Whether if inline node or not
+ * @param {Node} node Element
+ * @returns {boolean}
+ */
 function isInlineNode(node) {
     var tag = node.tagName;
-    return tag === 'S' || tag === 'B' || tag === 'I' || tag === 'EM' || tag === 'STRONG' || tag === 'A' || tag === 'IMG' || tag === 'CODE';
+
+    return tag === 'S' || tag === 'B' || tag === 'I' || tag === 'EM'
+        || tag === 'STRONG' || tag === 'A' || tag === 'IMG' || tag === 'CODE';
 }
 
 /**
  * getSpaceControlled
  * Remove flanked space of dom node
  * @param {string} content text content
- * @param {DOMElement} node current node
- * @return {string} result
+ * @param {HTMLElement} node current node
+ * @returns {string} result
  */
 Renderer.prototype.getSpaceControlled = function(content, node) {
     var lead = '',
@@ -126,9 +133,9 @@ Renderer.prototype.getSpaceControlled = function(content, node) {
 /**
  * convert
  * Convert dom node to markdown using dom node and subContent
- * @param {DOMElement} node node to convert
- * @param {stirng} subContent child nodes converted text
- * @return {string} converted text
+ * @param {HTMLElement} node node to convert
+ * @param {string} subContent child nodes converted text
+ * @returns {string} converted text
  */
 Renderer.prototype.convert = function(node, subContent) {
     var result,
@@ -147,15 +154,15 @@ Renderer.prototype._getInlineHtml = function(node, subContent) {
     var html = node.outerHTML,
         tagName = node.tagName;
 
-    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(<\/' + tagName + '>)', 'i'), '$1' + subContent + '$2');
+    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(</' + tagName + '>)', 'i'), '$1' + subContent + '$2');
 };
 
 /**
  * _getConverter
  * Get converter function for node
  * @private
- * @param {DOMElement} node node
- * @return {function} converter function
+ * @param {HTMLElement} node node
+ * @returns {function} converter function
  */
 Renderer.prototype._getConverter = function(node) {
     var rulePointer = this.rules,
@@ -179,7 +186,7 @@ Renderer.prototype._getConverter = function(node) {
  * @private
  * @param {object} ruleObj rule object
  * @param {string} ruleName rule tag name to find
- * @return {object} rule Object
+ * @returns {object} rule Object
  */
 Renderer.prototype._getNextRule = function(ruleObj, ruleName) {
     return ruleObj[ruleName];
@@ -189,8 +196,8 @@ Renderer.prototype._getNextRule = function(ruleObj, ruleName) {
  * _getRuleNameFromNode
  * Get proper rule tag name from node
  * @private
- * @param {DOMElement} node node
- * @return {string} rule tag name
+ * @param {HTMLElement} node node
+ * @returns {string} rule tag name
  */
 Renderer.prototype._getRuleNameFromNode = function(node) {
     return node.tagName || 'TEXT_NODE';
@@ -200,15 +207,18 @@ Renderer.prototype._getRuleNameFromNode = function(node) {
  * _getPrevNode
  * Get node's available parent node
  * @private
- * @param {DOMElement} node node
- * @return {DOMElement|undefined} result
+ * @param {HTMLElement} node node
+ * @returns {HTMLElement | undefined} result
  */
 Renderer.prototype._getPrevNode = function(node) {
     var parentNode = node.parentNode;
+    var previousNode;
 
     if (parentNode && !parentNode.__htmlRootByToMark) {
-        return parentNode;
+        previousNode = parentNode;
     }
+
+    return previousNode;
 };
 
 /**
@@ -240,13 +250,13 @@ Renderer.prototype._setConverterWithSelector = function(selectors, converter) {
  * @param {function} iteratee callback
  */
 Renderer.prototype._eachSelector = function(selectors, iteratee) {
-    var selectorIndex;
+    var selectorArray, selectorIndex;
 
-    selectors = selectors.split(' ');
-    selectorIndex = selectors.length - 1;
+    selectorArray = selectors.split(' ');
+    selectorIndex = selectorArray.length - 1;
 
     while (selectorIndex >= 0) {
-        iteratee(selectors[selectorIndex]);
+        iteratee(selectorArray[selectorIndex]);
         selectorIndex -= 1;
     }
 };
@@ -255,7 +265,7 @@ Renderer.prototype._eachSelector = function(selectors, iteratee) {
  * trim
  * Trim text
  * @param {string} text text be trimed
- * @return {string} trimed text
+ * @returns {string} trimed text
  */
 Renderer.prototype.trim = function(text) {
     return text.replace(FIND_CHAR_TO_TRIM_RX, '');
@@ -265,7 +275,7 @@ Renderer.prototype.trim = function(text) {
  * isEmptyText
  * Returns whether text empty or not
  * @param {string} text text be checked
- * @return {boolean} result
+ * @returns {boolean} result
  */
 Renderer.prototype.isEmptyText = function(text) {
     return text.replace(FIND_SPACE_RETURN_TAB_RX, '') === '';
@@ -275,7 +285,7 @@ Renderer.prototype.isEmptyText = function(text) {
  * getSpaceCollapsedText
  * Collape space more than 2
  * @param {string} text text be collapsed
- * @return {string} result
+ * @returns {string} result
  */
 Renderer.prototype.getSpaceCollapsedText = function(text) {
     return text.replace(FIND_SPACE_MORE_THAN_ONE_RX, ' ');
@@ -285,7 +295,7 @@ Renderer.prototype.getSpaceCollapsedText = function(text) {
  * Backslash escape to text
  * Apply backslash escape to text
  * @param {string} text text be processed
- * @return {string} processed text
+ * @returns {string} processed text
  */
 Renderer.prototype.escapeText = function(text) {
     text = text.replace(FIND_CHAR_TO_ESCAPE_RX, function(matched) {
@@ -314,29 +324,34 @@ Renderer.markdownTextToEscapeRx = {
 };
 
 Renderer.prototype._isNeedEscape = function(text) {
-    var res = false,
-        type,
-        markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
+    var res = false;
+    var markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
+    var type;
 
     for (type in markdownTextToEscapeRx) {
-        if (markdownTextToEscapeRx[type].test(text)) {
+        if (markdownTextToEscapeRx.hasOwnProperty(type) && markdownTextToEscapeRx[type].test(text)) {
             res = true;
             break;
-       }
+        }
     }
 
     return res;
 };
 
-function cloneRules(dest, src) {
-    forEachOwnProperties(src, function(value, key) {
+/**
+ * Clone rules
+ * @param {object} destination object for apply rules
+ * @param {object} source source object for clone rules
+ */
+function cloneRules(destination, source) {
+    forEachOwnProperties(source, function(value, key) {
         if (key !== 'converter') {
-            if (!dest[key]) {
-                dest[key] = {};
+            if (!destination[key]) {
+                destination[key] = {};
             }
-            cloneRules(dest[key], value);
+            cloneRules(destination[key], value);
         } else {
-            dest[key] = value;
+            destination[key] = value;
         }
     });
 }
@@ -350,7 +365,7 @@ Renderer.prototype.mix = function(renderer) {
  * Return new renderer
  * @param {Renderer} srcRenderer renderer to extend
  * @param {object} rules rule object, key(rule selector), value(converter function)
- * @return {Renderer} renderer
+ * @returns {Renderer} renderer
  */
 Renderer.factory = function(srcRenderer, rules) {
     var renderer = new Renderer();
