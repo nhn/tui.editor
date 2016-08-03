@@ -41,9 +41,18 @@ function Preview($el, eventManager, converter) {
  */
 Preview.prototype._initEvent = function() {
     var self = this;
+    var latestMarkdownValue;
 
     this.eventManager.listen('contentChangedFromMarkdown', function(markdownEditor) {
-        self.lazyRunner.run('refresh', markdownEditor.getValue());
+        latestMarkdownValue = markdownEditor.getValue();
+
+        if (self.isVisible()) {
+            self.lazyRunner.run('refresh', markdownEditor.getValue());
+        }
+    });
+
+    this.eventManager.listen('previewNeedsRefresh', function(value) {
+        self.refresh(value || latestMarkdownValue);
     });
 };
 
@@ -96,6 +105,14 @@ Preview.prototype.render = function(html) {
  */
 Preview.prototype.setHeight = function(height) {
     this.$el.height(height);
+};
+
+/**
+ * Is Preview visible
+ * @returns {boolean} result
+ */
+Preview.prototype.isVisible = function() {
+    return this.$el.css('display') !== 'none';
 };
 
 module.exports = Preview;

@@ -109,12 +109,22 @@ DefaultUI.prototype.markdownTabControl = function() {
 };
 
 DefaultUI.prototype._initMarkdownTab = function() {
+    var editor = this.editor;
+
     this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],
-        sections: [this.editor.layout.getMdEditorContainerEl(), this.editor.layout.getPreviewEl()]
+        sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
     });
 
     this.$el.find('.te-markdown-tab-section').append(this.markdownTab.$el);
+
+    this.markdownTab.on('itemClick', function(ev, itemText) {
+        if (itemText === 'Preview') {
+            editor.eventManager.emit('previewNeedsRefresh');
+        } else {
+            editor.getCodeMirror().focus();
+        }
+    });
 };
 
 DefaultUI.prototype._initPopupAddLink = function() {
