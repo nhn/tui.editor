@@ -221,16 +221,15 @@ describe('WysiwygEditor', function() {
             wwe.editor.blur();
         });
 
-        it('fire stateChange event when state changed', function(done) {
+        it('fire stateChange event when state changed', function() {
             em.listen('stateChange', function(data) {
-                //첫번째 insertPlaintText로 인한 이벤트는 무시
-                if (data.bold) {
-                    expect(data.bold).toBe(true);
-                    done();
-                }
+                expect(data.bold).toBe(true);
             });
 
-            wwe.editor.insertPlainText('test');
+            wwe.editor.modifyDocument(function() {
+                wwe.editor.insertPlainText('test');
+            });
+
             wwe.editor.bold();
         });
     });
