@@ -31,7 +31,7 @@ module.exports = function(config) {
             'lib/tui-component-colorpicker/dist/colorpicker.js',
             'lib/toMark/dist/toMark.js',
             'lib/highlightjs/highlight.pack.js',
-            'lib/marked/marked.min.js',
+            'lib/marked/lib/marked.js',
             'lib/codemirror/lib/codemirror.js',
             'lib/codemirror/lib/codemirror.css',
             'lib/codemirror/addon/mode/overlay.js',
