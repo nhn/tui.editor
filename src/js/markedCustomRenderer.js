@@ -96,33 +96,6 @@ markedCustomRenderer.tablecell = function(content, flags) {
 };
 
 /**
- * Render table
- * @api
- * @memberOf markedCustomRenderer
- * @param {string} header Text for table header
- * @param {string} body Text for table body
- * @returns {string}
- */
-markedCustomRenderer.table = function(header, body) {
-    var cellLen = header.match(/\/th/g).length;
-    var trs = body.match(/<tr>[\s\S]*?<\/tr>/g);
-    var lastTr = trs[trs.length - 1];
-
-    if (lastTr && lastTr.match(/\/td/g).length < cellLen) {
-        body = body.replace(/<\/td>\n<\/tr>\n$/g, '</td>\n<td></td>\n</tr>\n');
-    }
-
-    return '<table>\n'
-        + '<thead>\n'
-        + header
-        + '</thead>\n'
-        + '<tbody>\n'
-        + body
-        + '</tbody>\n'
-        + '</table>\n';
-};
-
-/**
  * Replace 'del' to 's' tag
  * @api
  * @memberOf markedCustomRenderer
