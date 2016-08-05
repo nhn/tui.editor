@@ -36,6 +36,16 @@ Installation and usage
 5. Use the API below with the `editor` object to set and get data and integrate
    with your application or framework.
 
+### Using Squire without an iframe.
+
+Squire can also be used without an iframe for the document. To use it this way:
+
+1. Add a `<script>` tag to load in `build/squire.js` (or `squire-raw.js` for the debuggable unminified version).
+2. Get a reference to the DOM node in the document that you want to make into the rich textarea, e.g. `node = document.getElementById( 'editor-div' )`.
+3. Call `editor = new Squire( node )`. This will instantiate a new Squire instance. Please note, this will remove any current children of the node; you must use the `setHTML` command after initialising to set any content.
+
+You can have multiple squire instances in a single page without issue. If you are using the editor as part of a long lived single-page app, be sure to call `editor.destroy()` once you have finished using an instance to ensure it doesn't leak resources.
+
 Advanced usage
 --------------
 
