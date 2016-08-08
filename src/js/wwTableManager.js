@@ -7,6 +7,7 @@
 'use strict';
 
 var domUtils = require('./domUtils');
+var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
 
 /**
  * WwTableManager
@@ -53,7 +54,10 @@ WwTableManager.prototype._initEvent = function() {
 
     this.eventManager.listen('wysiwygRangeChangeAfter', function() {
         self._unwrapBlockInTable();
-        self.wwe.defer(self._completeTableIfNeed.bind(self));
+        self.wwe.defer(function() {
+            self._completeTableIfNeed();
+        });
+        self.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -72,7 +76,9 @@ WwTableManager.prototype._initEvent = function() {
         if (self.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
             ev.preventDefault();
         }
-        self.wwe.defer(self._completeTableIfNeed.bind(self));
+        self.wwe.defer(function() {
+            self._completeTableIfNeed();
+        });
     });
 };
 
@@ -88,32 +94,18 @@ WwTableManager.prototype._initKeyHandler = function() {
 
     this.wwe.addKeyEventHandler(function(ev, range, keymap) {
         var isRangeInTable = self.isInTable(range);
-        var isNonTableContainSelection = range.commonAncestorContainer !== self.wwe.get$Body()[0];
-        var isTextInput = keymap.length === 1;
-
-        if (!self._isModifierKeyPushed(ev)) {
-            self.wwe.getEditor().modifyDocument(
-                selectionManager.removeClassAttrbuteFromAllCellsIfNeed.bind(selectionManager)
-            );
-        }
 
         if (isRangeInTable && !self._isSingleModifierKey(keymap)) {
             self._recordUndoStateIfNeed(range);
-            if (!range.collapsed) {
-                if (!domUtils.isTextNode(range.commonAncestorContainer)
-                    && isNonTableContainSelection
-                    && isTextInput
-                    && !self._isModifierKeyPushed(ev)
-                ) {
-                    self._removeTableContents(range);
-
-                    range.collapse(true);
-                    self.wwe.getEditor().setSelection(range);
-                    self._lastCellNode = range.startContainer;
-                }
-            }
+            self._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
         } else if (!isRangeInTable && self._lastCellNode) {
             self._recordUndoStateAndResetCellNode(range);
+        }
+
+        if (!self._isModifierKeyPushed(ev)) {
+            self.wwe.defer(function() {
+                selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+            });
         }
     });
 
@@ -137,31 +129,11 @@ WwTableManager.prototype._initKeyHandler = function() {
         return isNeedNext;
     });
 
-    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-        var isNeedNext;
-
-        if (range.collapsed) {
-            if (self.isInTable(range)) {
-                self._tableHandlerOnBackspace(range, ev);
-                isNeedNext = false;
-            } else if (self._isAfterTable(range)) {
-                ev.preventDefault();
-                self._removeTableOnBackspace(range);
-                isNeedNext = false;
-            }
-        } else if (self.isInTable(range)) {
-            if (range.commonAncestorContainer.nodeType !== 3
-                && range.commonAncestorContainer !== self.wwe.get$Body()[0]
-            ) {
-                ev.preventDefault();
-                self._removeTableContents(range);
-                range.collapse(true);
-                self.wwe.getEditor().setSelection(range);
-                isNeedNext = false;
-            }
-        }
-
-        return isNeedNext;
+    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range, keymap) {
+        return self._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
+    });
+    this.wwe.addKeyEventHandler('DELETE', function(ev, range, keymap) {
+        return self._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
     });
     this.wwe.addKeyEventHandler('TAB', function() {
         return self._moveCursorTo('next', 'cell');
@@ -178,6 +150,8 @@ WwTableManager.prototype._initKeyHandler = function() {
     this.wwe.addKeyEventHandler('UP', function(ev) {
         return self._moveCursorTo('previous', 'row', ev);
     });
+
+    this._bindKeyEventForTableCopyAndCut();
 };
 
 /**
@@ -230,6 +204,48 @@ WwTableManager.prototype._isAfterTable = function(range) {
 };
 
 /**
+ * Handle backspace and delete key event
+ * @param {object} ev Event object
+ * @param {Range} range Range Object
+ * @param {string} keymap keymap
+ * @returns {boolean|null}
+ * @private
+ */
+WwTableManager.prototype._handleBackspaceAndDeleteKeyEvent = function(ev, range, keymap) {
+    var isBackspace = keymap === 'BACK_SPACE';
+    var isTextOrElementDelete = range.commonAncestorContainer.nodeType !== 3
+        && range.commonAncestorContainer !== this.wwe.get$Body()[0];
+    var isNeedNext;
+
+    if (range.collapsed) {
+        if (this.isInTable(range)) {
+            if (isBackspace) {
+                this._tableHandlerOnBackspace(range, ev);
+            } else {
+                this._tableHandlerOnDelete(range, ev);
+            }
+
+            this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+            isNeedNext = false;
+        } else if ((isBackspace && this._isBeforeTable(range))
+            || (!isBackspace && this._isAfterTable(range))
+        ) {
+            ev.preventDefault();
+            this._removeTableOnBackspace(range);
+            isNeedNext = false;
+        }
+    } else if (this.isInTable(range)) {
+        if (isTextOrElementDelete) {
+            ev.preventDefault();
+            this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+            isNeedNext = false;
+        }
+    }
+
+    return isNeedNext;
+};
+
+/**
  * _tableHandlerOnBackspace
  * Backspace handler in table
  * @param {Range} range range
@@ -246,6 +262,42 @@ WwTableManager.prototype._tableHandlerOnBackspace = function(range, event) {
     } else if (prevNodeName === 'BR' && prevNode.parentNode.childNodes.length !== 1) {
         event.preventDefault();
         $(prevNode).remove();
+    }
+};
+/**
+ * Return whether delete non text or not
+ * @param {Range} range Range object
+ * @returns {boolean}
+ */
+WwTableManager.prototype.isNonTextDeleting = function(range) {
+    var currentElement = range.startContainer;
+    var nextNode = currentElement.nextSibling;
+    var nextNodeName = domUtils.getNodeName(nextNode);
+    var currentNodeName = domUtils.getNodeName(currentElement);
+
+    var isCellDeleting = currentNodeName === nextNodeName && currentNodeName !== 'TEXT';
+    var isEndOfText = (!nextNode || (nextNodeName === 'BR' && nextNode.parentNode.lastChild === nextNode))
+        && (domUtils.isTextNode(currentElement) && range.startOffset === currentElement.nodeValue.length);
+    var isLastCellOfRow = !isEndOfText
+        && $(currentElement).parents('tr').children().last()[0] === currentElement
+        && (currentNodeName === 'TD' || currentNodeName === 'TH');
+
+    return isCellDeleting || isEndOfText || isLastCellOfRow;
+};
+/**
+ * _tableHandlerOnDelete
+ * Delete handler in table
+ * @param {Range} range range
+ * @param {Event} event event
+ * @memberOf WwTableManager
+ * @private
+ */
+WwTableManager.prototype._tableHandlerOnDelete = function(range, event) {
+    var needPreventDefault = this.isNonTextDeleting(range);
+
+    if (needPreventDefault) {
+        event.preventDefault();
+        range.startContainer.normalize();
     }
 };
 
@@ -268,8 +320,10 @@ WwTableManager.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
         tdOrTh = paths[paths.length - 1];
     }
 
-    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR' && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV') {
-        $(tdOrTh).append('<br>');
+    if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR'
+        && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV'
+    ) {
+        $(tdOrTh).append($('<br />')[0]);
     }
 };
 
@@ -294,7 +348,7 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
  * @private
  */
 WwTableManager.prototype._removeTableOnBackspace = function(range) {
-    var table = domUtils.getPrevOffsetNodeUntil(range.startContainer, range.startOffset);
+    var table = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
 
     this.wwe.getEditor().saveUndoState(range);
 
@@ -341,8 +395,8 @@ WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
     var tableData = this._getTableDataFromTable(fragment);
     var startContainer = range.startContainer;
     var parentNode = startContainer.parentNode;
-    var isTextInTableCell = parentNode.tagName === 'TD' || parentNode.tagName === 'TH';
-    var isTableCell = startContainer.tagName === 'TD' || startContainer.tagName === 'TH';
+    var isTextInTableCell = (parentNode.tagName === 'TD' || parentNode.tagName === 'TH');
+    var isTableCell = (startContainer.tagName === 'TD' || startContainer.tagName === 'TH');
     var isTextNode = startContainer.nodeType === 3;
     var anchorElement, td, tr;
 
@@ -394,36 +448,19 @@ WwTableManager.prototype._getTableDataFromTable = function(fragment) {
 
     return tableData;
 };
+
 /**
  * Remove selected table contents
- * @param {Range} range Range object
+ * @param {jQuery} selectedCells Selected cells wrapped by jQuery
  * @private
  */
-WwTableManager.prototype._removeTableContents = function(range) {
-    var anchorCell = range.startContainer;
-    var cellLength = $(range.cloneContents()).find('th,td').length;
-    var index = 0;
-    var cell, nextCell, nextLineFirstCell;
-    if (domUtils.isTextNode(anchorCell)) {
-        anchorCell = anchorCell.parentNode;
-    }
-    cell = anchorCell;
-
+WwTableManager.prototype._removeTableContents = function(selectedCells) {
     this.wwe.getEditor().saveUndoState();
-    for (;index < cellLength; index += 1) {
-        cell.innerHTML = '<br>';
 
-        nextCell = domUtils.getTableCellByDirection(cell, 'next');
-        nextLineFirstCell = domUtils.getSiblingRowCellByDirection(cell, 'next', true);
-
-        if (nextCell) {
-            cell = nextCell;
-        } else if (nextLineFirstCell) {
-            cell = nextLineFirstCell;
-        } else {
-            cell = null;
-        }
-    }
+    selectedCells.each(function(i, cell) {
+        var brHTMLString = isIE10 ? '' : '<br />';
+        $(cell).html(brHTMLString);
+    });
 };
 
 /**
@@ -530,8 +567,8 @@ WwTableManager.prototype.prepareToPasteOnTable = function(pasteData, node) {
  * @private
  */
 WwTableManager.prototype._isTableOrSubTableElement = function(pastingNodeName) {
-    return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
-        || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
+    return (pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
+        || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD');
 };
 
 /**
@@ -544,8 +581,10 @@ WwTableManager.prototype._isTableOrSubTableElement = function(pastingNodeName) {
 function tableCellGenerator(amount, tagName) {
     var i;
     var tdString = '';
+    var brHTMLString = '<br />';
+    var cellString = '<' + tagName + '>' + brHTMLString + '</' + tagName + '>';
     for (i = 0; i < amount; i += 1) {
-        tdString = tdString + '<' + tagName + '><br></' + tagName + '>';
+        tdString = tdString + cellString;
     }
 
     return tdString;
@@ -692,9 +731,9 @@ WwTableManager.prototype._generateTheadAndTbodyFromTr = function(node) {
 
     if ($node.children()[0].tagName === 'TH') {
         theadRow = node;
-        tbodyRow = tableCellGenerator($node.find('th').length, 'td');
+        tbodyRow = $('<tr>' + tableCellGenerator($node.find('th').length, 'td') + '</tr>')[0];
     } else {
-        theadRow = tableCellGenerator($node.find('td').length, 'th');
+        theadRow = $('<tr>' + tableCellGenerator($node.find('td').length, 'th') + '</tr>')[0];
         tbodyRow = node;
     }
 
@@ -717,7 +756,7 @@ WwTableManager.prototype._completeIncompleteTable = function(node) {
     var table, completedTableContents;
 
     if (nodeName === 'TABLE') {
-        this._tableCellAppendAidForTableElement(node);
+        table = node;
     } else {
         table = $('<table></table>');
         table.insertAfter(node);
@@ -729,10 +768,10 @@ WwTableManager.prototype._completeIncompleteTable = function(node) {
         } else if (nodeName === 'TR') {
             completedTableContents = this._generateTheadAndTbodyFromTr(node);
         }
-
         table.append(completedTableContents.thead);
         table.append(completedTableContents.tbody);
     }
+    this._tableCellAppendAidForTableElement(table);
 };
 
 /**
@@ -766,6 +805,14 @@ WwTableManager.prototype._completeTableIfNeed = function() {
 WwTableManager.prototype.resetLastCellNode = function() {
     this._lastCellNode = null;
 };
+/**
+ * Set _lastCellNode to given node
+ * @param {HTMLElement} node Table cell
+ * @memberOf WwTableManager
+ */
+WwTableManager.prototype.setLastCellNode = function(node) {
+    this._lastCellNode = node;
+};
 
 /**
  * Return whether only modifier key pressed or not
@@ -774,8 +821,7 @@ WwTableManager.prototype.resetLastCellNode = function() {
  * @private
  */
 WwTableManager.prototype._isSingleModifierKey = function(keymap) {
-    return (keymap === 'META') && (keymap === 'SHIFT')
-        && (keymap === 'ALT') && (keymap === 'CONTROL');
+    return ((keymap === 'META') && (keymap === 'SHIFT') && (keymap === 'ALT') && (keymap === 'CONTROL'));
 };
 
 /**
@@ -785,7 +831,7 @@ WwTableManager.prototype._isSingleModifierKey = function(keymap) {
  * @private
  */
 WwTableManager.prototype._isModifierKeyPushed = function(ev) {
-    return ev.metaKey || ev.ctrlKey || ev.altKey || ev.shiftKey;
+    return (ev.metaKey || ev.ctrlKey || ev.altKey || ev.shiftKey);
 };
 
 /**
@@ -861,12 +907,40 @@ WwTableManager.prototype._appendCellForAllRow = function($table, columnDifferenc
 
 WwTableManager.prototype._appendRow = function($table, rowDifference) {
     var newRow = $table.find('tr').last().clone();
+    var brHTMLSting = isIE10 ? '' : '<br />';
 
-    newRow.find('td').html('<br>');
+    newRow.find('td').html(brHTMLSting);
 
     for (; rowDifference < 0; rowDifference += 1) {
         $table.find('tbody').append(newRow.clone()[0]);
     }
+};
+
+/**
+ * Get sibling textNode by given direction
+ * @param {HTMLElement} currentTextNode Current text node
+ * @param {boolean} isNext
+ * @returns {boolean|null}
+ * @private
+ */
+WwTableManager.prototype._getSiblingTextNodeByDirection = function(currentTextNode, isNext) {
+    var isPreviousLineExist = currentTextNode.previousSibling
+        && currentTextNode.previousSibling.nodeName === 'BR'
+        && currentTextNode.previousSibling.previousSibling
+        && currentTextNode.previousSibling.previousSibling.nodeType === 3;
+    var isNextLineExist = currentTextNode.nextSibling
+        && currentTextNode.nextSibling.nodeName === 'BR'
+        && currentTextNode.nextSibling.nextSibling
+        && currentTextNode.nextSibling.nextSibling.nodeType === 3;
+    var target;
+
+    if (isNext && isNextLineExist) {
+        target = currentTextNode.nextSibling.nextSibling;
+    } else if (!isNext && isPreviousLineExist) {
+        target = currentTextNode.previousSibling.previousSibling;
+    }
+
+    return target;
 };
 
 /**
@@ -876,29 +950,81 @@ WwTableManager.prototype._appendRow = function($table, rowDifference) {
  * @param {string} direction 'next' or 'previous'
  * @param {string} scale 'row' or 'cell'
  */
-function changeSelectionToTargetCell(currentCell, range, direction, scale) {
+WwTableManager.prototype._changeSelectionToTargetCell = function(currentCell, range, direction, scale) {
+    var startContainer = range.startContainer;
     var isNext = direction === 'next';
     var isRow = scale === 'row';
-    var targetCell;
+    var target, textOffset;
 
     if (isRow) {
-        targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, false);
+        if (domUtils.isTextNode(startContainer)) {
+            target = this._getSiblingTextNodeByDirection(startContainer, isNext);
+            if (target) {
+                textOffset = target.length < range.startOffset ? target.length : range.startOffset;
+
+                range.setStart(target, textOffset);
+                range.collapse(true);
+
+                return;
+            }
+        }
+
+        target = domUtils.getSiblingRowCellByDirection(currentCell, direction, false);
     } else {
-        targetCell = domUtils.getTableCellByDirection(currentCell, direction);
-        if (!targetCell) {
-            targetCell = domUtils.getSiblingRowCellByDirection(currentCell, direction, true);
+        target = domUtils.getTableCellByDirection(currentCell, direction);
+        if (!target) {
+            target = domUtils.getSiblingRowCellByDirection(currentCell, direction, true);
         }
     }
 
-    if (targetCell) {
+    if (target) {
+        range.setStart(target, 0);
+        range.collapse(true);
+    } else {
+        target = $(currentCell).parents('table')[0];
         if (isNext) {
-            range.setStartBefore(targetCell.firstChild);
+            range.setStartAfter(target);
+        } else if (target.previousElementSibling) {
+            range.setStart(target.previousElementSibling, 1);
         } else {
-            range.setStartAfter(targetCell.firstChild);
+            range.setStartBefore(target);
         }
         range.collapse(true);
     }
-}
+};
+
+/**
+ * Create selection by selected cells and collapse that selection to end
+ * @private
+ */
+WwTableManager.prototype._createRangeBySelectedCells = function() {
+    var sq = this.wwe.getEditor();
+    var range = sq.getSelection().cloneRange();
+    var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+
+    if (selectedCells.length && this.isInTable(range)) {
+        range.setStart(selectedCells.first()[0], 0);
+        range.setEnd(selectedCells.last()[0], 1);
+        sq.setSelection(range);
+    }
+};
+
+/**
+ * Create selection by selected cells and collapse that selection to end
+ * @private
+ */
+WwTableManager.prototype._collapseRangeToStart = function() {
+    var sq = this.wwe.getEditor();
+    var range = sq.getSelection().cloneRange();
+    var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+
+    if (selectedCells.length && this.isInTable(range)) {
+        this.wwe.defer(function() {
+            range.collapse(false);
+            sq.setSelection(range);
+        }, 50);
+    }
+};
 
 /**
  * Move cursor to given direction by interval formatter
@@ -909,24 +1035,78 @@ function changeSelectionToTargetCell(currentCell, range, direction, scale) {
  * @private
  */
 WwTableManager.prototype._moveCursorTo = function(direction, interval, ev) {
-    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var sq = this.wwe.getEditor();
+    var range = sq.getSelection().cloneRange();
     var currentCell = $(range.startContainer).closest('td,th')[0];
     var isNeedNext;
 
     if (range.collapsed) {
-        if (this.isInTable(range)) {
+        if (this.isInTable(range) && currentCell) {
             if (direction === 'previous' || interval === 'row' && !tui.util.isUndefined(ev)) {
                 ev.preventDefault();
             }
 
-            changeSelectionToTargetCell(currentCell, range, direction, interval);
-            this.wwe.getEditor().setSelection(range);
+            this._changeSelectionToTargetCell(currentCell, range, direction, interval);
+            sq.setSelection(range);
 
             isNeedNext = false;
         }
     }
 
     return isNeedNext;
+};
+
+/**
+ * Bind pre process for table copy and cut key event
+ * @private
+ */
+WwTableManager.prototype._bindKeyEventForTableCopyAndCut = function() {
+    var self = this;
+    var isMac = /Mac OS X/.test(navigator.userAgent);
+
+    if (isMac) {
+        this.wwe.getEditor().addEventListener('keydown', function(event) {
+            if (event.metaKey) {
+                self._createRangeBySelectedCells();
+            }
+        });
+    } else {
+        this.wwe.getEditor().addEventListener('keydown', function(event) {
+            if (event.ctrlKey) {
+                self._createRangeBySelectedCells();
+            }
+        });
+    }
+    this.wwe.getEditor().addEventListener('keyup', function() {
+        self._collapseRangeToStart();
+    });
+};
+
+/**
+ * Remove contents and change selection if need
+ * @param {Range} range Range object
+ * @param {string} keymap keymap
+ * @param {object} ev Event object
+ * @private
+ */
+WwTableManager.prototype._removeContentsAndChangeSelectionIfNeed = function(range, keymap, ev) {
+    var isTextInput = keymap.length <= 1;
+    var isDeleteOperation = (keymap === 'BACK_SPACE' || keymap === 'DELETE');
+    var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+    var firstSelectedCell = selectedCells.first()[0];
+
+    if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && selectedCells.length) {
+        if (isDeleteOperation) {
+            this._recordUndoStateIfNeed(range);
+        }
+        this._removeTableContents(selectedCells);
+
+        this._lastCellNode = firstSelectedCell;
+
+        range.setStart(firstSelectedCell, 0);
+        range.collapse(true);
+        this.wwe.getEditor().setSelection(range);
+    }
 };
 
 module.exports = WwTableManager;

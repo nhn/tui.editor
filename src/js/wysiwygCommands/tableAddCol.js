@@ -40,7 +40,7 @@ var AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
 });
 
 function getCellByRange(range) {
-    var cell = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+    var cell = range.startContainer;
 
     if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
         cell = $(cell);
@@ -52,14 +52,17 @@ function getCellByRange(range) {
 }
 
 function addColToCellAfter($cell) {
-    var index = $cell.index(),
-        cellToAdd;
+    var index = $cell.index();
+    var cellToAdd;
 
     $cell.parents('table').find('tr').each(function(n, tr) {
         if (domUtils.getNodeName(tr.parentNode) === 'TBODY') {
-            cellToAdd = $('<td><br></td>');
+            cellToAdd = $('<td></td>');
         } else {
-            cellToAdd = $('<th><br></th>');
+            cellToAdd = $('<th></th>');
+        }
+        if (!tui.util.browser.msie) {
+            cellToAdd.append($('<br />')[0]);
         }
 
         $(cellToAdd).insertAfter($(tr).children().eq(index));

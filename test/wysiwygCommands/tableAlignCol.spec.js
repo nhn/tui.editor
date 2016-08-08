@@ -39,7 +39,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -66,7 +66,7 @@ describe('Table - AlignCol', function() {
             sq.setHTML([
                 '<table>',
                 '<thead>',
-                '<tr><th>1</th><th>2</th></tr>',
+                '<tr><th class="te-cell-selected">1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
                 '<tr><td>3</td><td>4</td></tr>',
@@ -96,7 +96,7 @@ describe('Table - AlignCol', function() {
             sq.setHTML([
                 '<table>',
                 '<thead>',
-                '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
+                '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th><th class="te-cell-selected">3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
@@ -134,7 +134,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td class="te-cell-selected">4</td><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
@@ -169,8 +169,8 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td class="te-cell-selected">4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -206,7 +206,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -233,7 +233,7 @@ describe('Table - AlignCol', function() {
             sq.setHTML([
                 '<table>',
                 '<thead>',
-                '<tr><th>1</th><th>2</th></tr>',
+                '<tr><th class="te-cell-selected">1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
                 '<tr><td>3</td><td>4</td></tr>',
@@ -263,10 +263,10 @@ describe('Table - AlignCol', function() {
             sq.setHTML([
                 '<table>',
                 '<thead>',
-                '<tr><th>1</th><th>2</th></tr>',
+                '<tr><th class="te-cell-selected">1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td class="te-cell-selected">4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -296,7 +296,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
@@ -331,7 +331,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td class="te-cell-selected">4</td><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
@@ -366,8 +366,8 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td class="te-cell-selected">4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -403,7 +403,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));
@@ -430,7 +430,7 @@ describe('Table - AlignCol', function() {
             sq.setHTML([
                 '<table>',
                 '<thead>',
-                '<tr><th>1</th><th>2</th></tr>',
+                '<tr><th class="te-cell-selected">1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
                 '<tr><td>3</td><td>4</td></tr>',
@@ -463,7 +463,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
@@ -498,7 +498,7 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td class="te-cell-selected">4</td><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
@@ -533,8 +533,8 @@ describe('Table - AlignCol', function() {
                 '<tr><th>1</th><th>2</th><th>3</th><th>4</th></tr>',
                 '</thead>',
                 '<tbody>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
-                '<tr><td>3</td><td>4</td><td>3</td><td>4</td></tr>',
+                '<tr><td>3</td><td>4</td><td>3</td><td class="te-cell-selected">4</td></tr>',
+                '<tr><td class="te-cell-selected">3</td><td>4</td><td>3</td><td>4</td></tr>',
                 '</tbody>',
                 '</table>'
             ].join('\n'));

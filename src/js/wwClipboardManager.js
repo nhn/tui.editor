@@ -46,7 +46,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             data: ev
         });
 
-        self._saveLastestClipboardRangeInfo();
+        self._executeActionFor('copy');
     });
 
     this.wwe.getEditor().addEventListener('cut', function(ev) {
@@ -55,19 +55,19 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             data: ev
         });
 
-        self._saveLastestClipboardRangeInfo();
-        self.wwe.postProcessForChange();
+        self._executeActionFor('cut');
     });
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        if (self._latestClipboardRangeInfo
-            && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-            pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
-            pasteData.rangeInfo = self._latestClipboardRangeInfo;
-        }
+        self._replacePasteDataIfNeed(pasteData);
 
         self._pch.preparePaste(pasteData);
-        self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
+
+        self.wwe.eventManager.emit('pasteBefore', {
+            source: 'wysiwyg',
+            data: pasteData
+        });
+
         self._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
@@ -80,22 +80,21 @@ WwClipboardManager.prototype._initSquireEvent = function() {
  */
 WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fragment) {
     var node = fragment;
-    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var sq = this.wwe.getEditor();
+    var range = sq.getSelection().cloneRange();
 
-    if (fragment.childNodes.length === 0) {
-        return;
-    }
+    if (fragment.childNodes.length !== 0 && !domUtils.isTextNode(node.firstChild)) {
+        while (node.lastChild) {
+            node = node.lastChild;
+        }
 
-    while (node.lastChild) {
-        node = node.lastChild;
-    }
+        setTimeout(function() {
+            sq.focus();
 
-    if (!domUtils.isTextNode(node)) {
-        this.wwe.defer(function(wwe) {
             range.setStartAfter(node);
             range.collapse(true);
-            wwe.getEditor().setSelection(range);
-        });
+            sq.setSelection(range);
+        }, 50);
     }
 };
 
@@ -151,6 +150,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
     //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
     if (domUtils.isTextNode(range.commonAncestorContainer)
         && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
+        && range.commonAncestorContainer.nodeName !== 'TD'
     ) {
         return range;
     }
@@ -239,4 +239,59 @@ WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(
         && range.commonAncestorContainer === range.endContainer;
 };
 
+/**
+ * Returns whether table data copied or not
+ * @returns {boolean}
+ * @private
+ */
+WwClipboardManager.prototype._isTableDataCopied = function() {
+    var copiedElementName = this._latestClipboardRangeInfo.commonAncestorName;
+
+    return copiedElementName === 'TABLE' || copiedElementName === 'THEAD' || copiedElementName === 'TBODY';
+};
+
+/**
+ * Bind copy and cut keyEventHandler for Safari browser's table custom selection
+ * @private
+ */
+WwClipboardManager.prototype._bindIECopyEvent = function() {
+    var self = this;
+
+    if (isMSBrowser) {
+        this.wwe.getEditor().addEventListener('keydown', function(event) {
+            if (event.ctrlKey && event.keyCode === 67) {
+                self._executeActionFor('copy');
+            } else if (event.ctrlKey && event.keyCode === 88) {
+                self._executeActionFor('cut');
+            }
+        });
+    }
+};
+
+/**
+ * Table cut and copy action helper for safari and IE's
+ * @param {string} [action] Boolean value for cut action
+ * @private
+ */
+WwClipboardManager.prototype._executeActionFor = function(action) {
+    this._saveLastestClipboardRangeInfo();
+    if (action === 'cut') {
+        this.wwe.postProcessForChange();
+    }
+};
+
+/**
+ * Replace pasteData to lastClipboardRangeInfo's data
+ * @param {object} pasteData Clipboard data
+ * @private
+ */
+WwClipboardManager.prototype._replacePasteDataIfNeed = function(pasteData) {
+    var hasSameContents = this._latestClipboardRangeInfo
+        && this._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent;
+
+    if (hasSameContents) {
+        pasteData.fragment = $(this._latestClipboardRangeInfo.contents).clone()[0];
+        pasteData.rangeInfo = this._latestClipboardRangeInfo;
+    }
+};
 module.exports = WwClipboardManager;

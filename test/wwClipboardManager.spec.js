@@ -35,7 +35,7 @@ describe('WwClipboardManager', function() {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
                 done();
-            }, 0);
+            }, 50);
         });
         it('do nothing when pasting content is empty', function(done) {
             var fragment = wwe.getEditor().getDocument().createDocumentFragment();

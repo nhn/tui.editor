@@ -356,8 +356,9 @@ describe('WwTableManager', function() {
         it('_removeTableContents should remove current selected table text contents', function() {
             var $body, range;
             var table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
+                '<tbody><tr class="te-cell-selected"><td class="te-cell-selected">3</td><td>4</td></tr>' +
+                '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
                 '</table>';
 
             wwe.getEditor().setHTML(table);
@@ -367,7 +368,7 @@ describe('WwTableManager', function() {
             range.setEnd($body.find('td')[3], 0);
             wwe.getEditor().setSelection(range);
 
-            mgr._removeTableContents(range);
+            mgr._removeTableContents($('.te-cell-selected'));
 
             expect($body.find('table').text()).toEqual('');
         });
@@ -376,8 +377,9 @@ describe('WwTableManager', function() {
             ' at textNode in table cell', function() {
             var $body, range;
             var table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
+                '<tbody><tr class="te-cell-selected"><td class="te-cell-selected">3</td><td>4</td></tr>' +
+                '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
                 '</table>';
 
             wwe.getEditor().setHTML(table);
@@ -387,7 +389,7 @@ describe('WwTableManager', function() {
             range.setEnd($body.find('td')[3], 0);
             wwe.getEditor().setSelection(range);
 
-            mgr._removeTableContents(range);
+            mgr._removeTableContents($('.te-cell-selected'));
 
             expect($body.find('table').text()).toEqual('');
         });
@@ -395,8 +397,9 @@ describe('WwTableManager', function() {
         it('_removeTableContents ignore non table elements that selected with table', function() {
             var $body, range;
             var html = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
+                '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
+                '<tbody><tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>' +
+                '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
                 '</table>' +
                 '<div>hi<br></div>';
 
@@ -409,7 +412,7 @@ describe('WwTableManager', function() {
 
             wwe.getEditor().setSelection(range);
 
-            mgr._removeTableContents(range);
+            mgr._removeTableContents($('.te-cell-selected'));
 
             expect($body.find('table').text()).toEqual('');
             expect($body.find('div').text()).toEqual('hi');

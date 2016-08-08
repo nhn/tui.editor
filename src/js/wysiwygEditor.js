@@ -1046,14 +1046,15 @@ WysiwygEditor.prototype.getTextObject = function(range) {
     return new WwTextObject(this, range);
 };
 
-WysiwygEditor.prototype.defer = function(callback) {
+WysiwygEditor.prototype.defer = function(callback, delayOffset) {
     var self = this;
+    var delay = delayOffset ? delayOffset : 0;
 
     setTimeout(function() {
         if (self.isEditorValid()) {
             callback(self);
         }
-    }, 0);
+    }, delay);
 };
 
 WysiwygEditor.prototype.isEditorValid = function() {
