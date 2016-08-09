@@ -171,7 +171,9 @@ describe('WwPasteContentHelper', function() {
 
             pch._tableElementAid(fragment);
 
-            expect($(fragment).find('tr').length).toEqual(1);
+            expect($(fragment).find('thead').length).toEqual(1);
+            expect($(fragment).find('tbody').length).toEqual(1);
+            expect($(fragment).find('tr').length).toEqual(2);
             expect($(fragment).find('tr').text()).toEqual('1234');
         });
         it('_tableElementAid should wrap THEAD and TBODY with TABLE', function() {

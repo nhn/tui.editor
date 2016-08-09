@@ -227,20 +227,6 @@ WwTableSelectionManager.prototype._applySelectionDirection = function(selectionI
 };
 
 /**
- * Prepare selection for highlight selected cells
- * @param {Range} range Range object
- * @param {HTMLElement} selectionStart Start element of selection
- * @param {HTMLElement} selectionEnd End element of selection
- * @private
- */
-WwTableSelectionManager.prototype._prepareSelection = function(range, selectionStart, selectionEnd) {
-    var selectionInformation = this._reArrangeSelectionIfneed(selectionStart, selectionEnd);
-    var newRange = this._applySelectionDirection(selectionInformation, range);
-
-    this.wwe.getEditor().setSelection(newRange);
-};
-
-/**
  * Get table cell element
  * @param {Node | HTMLElement} node textNode or table cell element
  * @returns {HTMLElement}

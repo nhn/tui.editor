@@ -7,6 +7,8 @@
 
 var domUtils = require('./domUtils');
 var WwPasteContentHelper = require('./wwPasteContentHelper');
+var SET_SELECTION_DELAY = 50;
+
 
 /**
  * WwClipboardManager
@@ -59,7 +61,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
     });
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        self._replacePasteDataIfNeed(pasteData);
+        self._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
 
         self._pch.preparePaste(pasteData);
 
@@ -88,13 +90,13 @@ WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fra
             node = node.lastChild;
         }
 
-        setTimeout(function() {
+        this.wwe.defer(function() {
             sq.focus();
 
             range.setStartAfter(node);
             range.collapse(true);
             sq.setSelection(range);
-        }, 50);
+        }, SET_SELECTION_DELAY);
     }
 };
 
@@ -124,7 +126,7 @@ WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
     var range = this.wwe.getEditor().getSelection().cloneRange();
-    range = this._extendRange(range);
+    this._extendRange(range);
 
     if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
         commonAncestorName = 'BODY';
@@ -143,7 +145,6 @@ WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
  * extend range if need
  * @memberOf WwClipboardManager
  * @param {Range} range to extend
- * @returns {Range} range
  * @private
  */
 WwClipboardManager.prototype._extendRange = function(range) {
@@ -152,7 +153,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
         && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
         && range.commonAncestorContainer.nodeName !== 'TD'
     ) {
-        return range;
+        return;
     }
 
     if (range.startOffset === 0) {
@@ -167,8 +168,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
     if (this._isWholeCommonAncestorContainerSelected(range)) {
         range.selectNode(range.commonAncestorContainer);
     }
-
-    return range;
+    this.wwe.getEditor().setSelection(range);
 };
 
 /**
@@ -240,35 +240,6 @@ WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(
 };
 
 /**
- * Returns whether table data copied or not
- * @returns {boolean}
- * @private
- */
-WwClipboardManager.prototype._isTableDataCopied = function() {
-    var copiedElementName = this._latestClipboardRangeInfo.commonAncestorName;
-
-    return copiedElementName === 'TABLE' || copiedElementName === 'THEAD' || copiedElementName === 'TBODY';
-};
-
-/**
- * Bind copy and cut keyEventHandler for Safari browser's table custom selection
- * @private
- */
-WwClipboardManager.prototype._bindIECopyEvent = function() {
-    var self = this;
-
-    if (isMSBrowser) {
-        this.wwe.getEditor().addEventListener('keydown', function(event) {
-            if (event.ctrlKey && event.keyCode === 67) {
-                self._executeActionFor('copy');
-            } else if (event.ctrlKey && event.keyCode === 88) {
-                self._executeActionFor('cut');
-            }
-        });
-    }
-};
-
-/**
  * Table cut and copy action helper for safari and IE's
  * @param {string} [action] Boolean value for cut action
  * @private
@@ -285,13 +256,17 @@ WwClipboardManager.prototype._executeActionFor = function(action) {
  * @param {object} pasteData Clipboard data
  * @private
  */
-WwClipboardManager.prototype._replacePasteDataIfNeed = function(pasteData) {
-    var hasSameContents = this._latestClipboardRangeInfo
-        && this._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent;
+WwClipboardManager.prototype._addRangeInfoAndReplaceFragmentIfNeed = function(pasteData) {
+    var hasRangeInfo = !!this._latestClipboardRangeInfo;
+    var savedContents = (hasRangeInfo && this._latestClipboardRangeInfo.contents);
+    var isSameContents = savedContents.textContent === pasteData.fragment.textContent;
 
-    if (hasSameContents) {
-        pasteData.fragment = $(this._latestClipboardRangeInfo.contents).clone()[0];
+    if (hasRangeInfo) {
         pasteData.rangeInfo = this._latestClipboardRangeInfo;
+
+        if (isSameContents) {
+            pasteData.fragment = $(savedContents).clone()[0];
+        }
     }
 };
 module.exports = WwClipboardManager;

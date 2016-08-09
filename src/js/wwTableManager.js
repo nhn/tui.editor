@@ -8,6 +8,8 @@
 
 var domUtils = require('./domUtils');
 var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
+var TABLE_COMPLETION_DELAY = 10;
+var SET_SELECTION_DELAY = 50;
 
 /**
  * WwTableManager
@@ -56,7 +58,7 @@ WwTableManager.prototype._initEvent = function() {
         self._unwrapBlockInTable();
         self.wwe.defer(function() {
             self._completeTableIfNeed();
-        });
+        }, TABLE_COMPLETION_DELAY);
         self.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
     });
 
@@ -78,7 +80,7 @@ WwTableManager.prototype._initEvent = function() {
         }
         self.wwe.defer(function() {
             self._completeTableIfNeed();
-        });
+        }, TABLE_COMPLETION_DELAY);
     });
 };
 
@@ -335,8 +337,12 @@ WwTableManager.prototype._appendBrIfTdOrThNotHaveAsLastChild = function(range) {
  * @private
  */
 WwTableManager.prototype._unwrapBlockInTable = function() {
-    this.wwe.get$Body().find('td div, th div').each(function(index, node) {
-        $(node).children().unwrap();
+    this.wwe.get$Body().find('td div,th div,tr>br').each(function(index, node) {
+        if (node.nodeName === 'BR') {
+            $(node).remove();
+        } else {
+            $(node).children().unwrap();
+        }
     });
 };
 
@@ -443,7 +449,9 @@ WwTableManager.prototype._getTableDataFromTable = function(fragment) {
             trData.push(cell.textContent);
         });
 
-        tableData.push(trData);
+        if (trData.length) {
+            tableData.push(trData);
+        }
     });
 
     return tableData;
@@ -528,12 +536,20 @@ WwTableManager.prototype.wrapTrsIntoTbodyIfNeed = function(fragment) {
 WwTableManager.prototype.wrapTheadAndTbodyIntoTableIfNeed = function(fragment) {
     var danglingThead = $(fragment).children('thead');
     var danglingTbody = $(fragment).children('tbody');
-    var $wrapperTable, table;
+    var $wrapperTable = $('<table></table>');
+    var table;
 
-    if (danglingTbody.length && danglingThead.length) {
-        $wrapperTable = $('<table></table>');
-        $wrapperTable.append(danglingThead);
-        $wrapperTable.append(danglingTbody);
+    if (!danglingTbody.length && danglingThead.length) {
+        $wrapperTable.append(danglingThead[0]);
+        $wrapperTable.append('<tbody><tr></tr></tbody>');
+        table = $wrapperTable[0];
+    } else if (danglingTbody.length && !danglingThead.length) {
+        $wrapperTable.append('<thead><tr></tr></thead>');
+        $wrapperTable.append(danglingTbody[0]);
+        table = $wrapperTable[0];
+    } else if (danglingTbody.length && danglingThead.length) {
+        $wrapperTable.append(danglingThead[0]);
+        $wrapperTable.append(danglingTbody[0]);
         table = $wrapperTable[0];
     }
 
@@ -919,7 +935,7 @@ WwTableManager.prototype._appendRow = function($table, rowDifference) {
 /**
  * Get sibling textNode by given direction
  * @param {HTMLElement} currentTextNode Current text node
- * @param {boolean} isNext
+ * @param {boolean} isNext Boolean value whether direction equals 'next'
  * @returns {boolean|null}
  * @private
  */
@@ -983,12 +999,13 @@ WwTableManager.prototype._changeSelectionToTargetCell = function(currentCell, ra
     } else {
         target = $(currentCell).parents('table')[0];
         if (isNext) {
-            range.setStartAfter(target);
+            range.setStart(target.nextElementSibling, 0);
         } else if (target.previousElementSibling) {
             range.setStart(target.previousElementSibling, 1);
         } else {
             range.setStartBefore(target);
         }
+
         range.collapse(true);
     }
 };
@@ -1013,7 +1030,7 @@ WwTableManager.prototype._createRangeBySelectedCells = function() {
  * Create selection by selected cells and collapse that selection to end
  * @private
  */
-WwTableManager.prototype._collapseRangeToStart = function() {
+WwTableManager.prototype._collapseRangeToEndContainer = function() {
     var sq = this.wwe.getEditor();
     var range = sq.getSelection().cloneRange();
     var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
@@ -1022,7 +1039,7 @@ WwTableManager.prototype._collapseRangeToStart = function() {
         this.wwe.defer(function() {
             range.collapse(false);
             sq.setSelection(range);
-        }, 50);
+        }, SET_SELECTION_DELAY);
     }
 };
 
@@ -1063,22 +1080,16 @@ WwTableManager.prototype._moveCursorTo = function(direction, interval, ev) {
 WwTableManager.prototype._bindKeyEventForTableCopyAndCut = function() {
     var self = this;
     var isMac = /Mac OS X/.test(navigator.userAgent);
+    var commandKey = isMac ? 'metaKey' : 'ctrlKey';
 
-    if (isMac) {
-        this.wwe.getEditor().addEventListener('keydown', function(event) {
-            if (event.metaKey) {
-                self._createRangeBySelectedCells();
-            }
-        });
-    } else {
-        this.wwe.getEditor().addEventListener('keydown', function(event) {
-            if (event.ctrlKey) {
-                self._createRangeBySelectedCells();
-            }
-        });
-    }
+    this.wwe.getEditor().addEventListener('keydown', function(event) {
+        if (event[commandKey]) {
+            self._createRangeBySelectedCells();
+        }
+    });
+
     this.wwe.getEditor().addEventListener('keyup', function() {
-        self._collapseRangeToStart();
+        self._collapseRangeToEndContainer();
     });
 };
 
