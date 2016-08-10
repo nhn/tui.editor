@@ -2117,12 +2117,30 @@ var onCopy = function ( event ) {
     var clipboardData = event.clipboardData;
     var range = this.getSelection();
     var node = this.createElement( 'div' );
+    var root = this._root;
+    var contents, parent, newContents;
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     // Mobile Safari flat out doesn't work:
     // https://bugs.webkit.org/show_bug.cgi?id=143776
     if ( !isEdge && !isIOS && clipboardData ) {
-        node.appendChild( range.cloneContents() );
+        range = range.cloneRange();
+        if ( getStartBlockOfRange( range, root ) ===
+                getEndBlockOfRange( range, root ) ) {
+            moveRangeBoundariesDownTree( range );
+            contents = range.cloneContents();
+        } else {
+            moveRangeBoundariesUpTree( range, root );
+            contents = range.cloneContents();
+            parent = range.commonAncestorContainer;
+            while ( parent && parent !== root ) {
+                newContents = parent.cloneNode( false );
+                newContents.appendChild( contents );
+                contents = newContents;
+                parent = parent.parentNode;
+            }
+        }
+        node.appendChild( contents );
         clipboardData.setData( 'text/html', node.innerHTML );
         clipboardData.setData( 'text/plain',
             node.innerText || node.textContent );
