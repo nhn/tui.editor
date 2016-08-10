@@ -60,7 +60,8 @@ function ToastUIEditorViewOnly(options) {
         if (ev.target.hasAttribute(TASK_ATTR_NAME)) {
             $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
             self.eventManager.emit('change', {
-                source: 'viewOnly'
+                source: 'viewOnly',
+                data: ev
             });
         }
     });
