@@ -17,14 +17,14 @@ CodeMirror.commands.subListIndentTab = function (cm) {
         var cursorBeforeTextInline = line.substr(0, pos.ch);
 
         if (emptyListRE.test(cursorBeforeTextInline)) {
-            cm.replaceRange("\t" + line, {
+            cm.replaceRange(Array(cm.getOption("indentUnit") + 1).join(" ") + line, {
                 line: pos.line, ch: 0
             }, {
                 line: pos.line, ch: line.length
             });
         } else {
             if (cm.somethingSelected()) cm.indentSelection("add");
-            else cm.execCommand("insertTab");
+            else cm.execCommand("insertSoftTab");
         }
     }
 };

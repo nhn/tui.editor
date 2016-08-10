@@ -175,7 +175,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
     var self = this;
     var isNeedFirePostProcessForRangeChange = false;
 
-    this.getEditor().addEventListener('paste', function(clipboardEvent) {
+    this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', function(clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'wysiwyg',
             data: clipboardEvent
