@@ -10,6 +10,7 @@ var domUtils = require('./domUtils');
 var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
 var TABLE_COMPLETION_DELAY = 10;
 var SET_SELECTION_DELAY = 50;
+var TABLE_CLASS_PREFIX = 'te-content-table-';
 
 /**
  * WwTableManager
@@ -43,6 +44,7 @@ WwTableManager.prototype.name = 'table';
 WwTableManager.prototype._init = function() {
     this._initKeyHandler();
     this._initEvent();
+    this.tableID = 0;
 };
 
 /**
@@ -60,10 +62,12 @@ WwTableManager.prototype._initEvent = function() {
             self._completeTableIfNeed();
         }, TABLE_COMPLETION_DELAY);
         self.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+        self._insertDefaultBlockBetweenTable();
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
         self._unwrapBlockInTable();
+        self._insertDefaultBlockBetweenTable();
     });
 
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
@@ -342,6 +346,20 @@ WwTableManager.prototype._unwrapBlockInTable = function() {
             $(node).remove();
         } else {
             $(node).children().unwrap();
+        }
+    });
+};
+
+/**
+ * Insert default block between table element
+ * @private
+ */
+WwTableManager.prototype._insertDefaultBlockBetweenTable = function() {
+    this.wwe.get$Body().find('table').each(function(index, node) {
+        if (node.nextElementSibling
+            && node.nextElementSibling.nodeName === 'TABLE'
+        ) {
+            $('<div><br /></div>').insertAfter(node);
         }
     });
 };
@@ -1000,7 +1018,7 @@ WwTableManager.prototype._changeSelectionToTargetCell = function(currentCell, ra
         target = $(currentCell).parents('table')[0];
         if (isNext) {
             range.setStart(target.nextElementSibling, 0);
-        } else if (target.previousElementSibling) {
+        } else if (target.previousElementSibling && target.previousElementSibling.nodeName !== 'TABLE') {
             range.setStart(target.previousElementSibling, 1);
         } else {
             range.setStartBefore(target);
@@ -1118,6 +1136,19 @@ WwTableManager.prototype._removeContentsAndChangeSelectionIfNeed = function(rang
         range.collapse(true);
         this.wwe.getEditor().setSelection(range);
     }
+};
+
+/**
+ * Return new table ID class name string
+ * @returns {string}
+ * @memberOf WwTableManager
+ * @api
+ */
+WwTableManager.prototype.getTableIDClassName = function() {
+    var tableClassName = TABLE_CLASS_PREFIX + this.tableID;
+    this.tableID += 1;
+
+    return tableClassName;
 };
 
 module.exports = WwTableManager;

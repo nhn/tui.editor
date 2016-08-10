@@ -365,6 +365,7 @@ WwPasteContentHelper.prototype._tableElementAid = function(fragment) {
     }
     wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
     if (wrapperTable) {
+        $(wrapperTable).addClass(tableManager.getTableIDClassName());
         $(fragment).append(wrapperTable);
     }
 };

@@ -2,6 +2,7 @@
 
 var Table = require('../../src/js/wysiwygCommands/table'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
+    tableManager = require('../../src/js/wwTableManager'),
     EventManager = require('../../src/js/eventManager');
 
 describe('Table', function() {
@@ -15,6 +16,7 @@ describe('Table', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager('table', tableManager);
         wwe.getEditor().focus();
     });
 
