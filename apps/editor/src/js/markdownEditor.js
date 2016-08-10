@@ -22,10 +22,11 @@ function MarkdownEditor($el, eventManager) {
     this.eventManager = eventManager;
     this.$editorContainerEl = $el;
 
-    this._latestState = {
-        bold: false,
-        italic: false
-    };
+    /**
+     * latest state info
+     * @type {object}
+     */
+    this._latestState = null;
 }
 
 /**
@@ -159,7 +160,7 @@ MarkdownEditor.prototype._initEvent = function() {
             source: 'markdown'
         };
 
-        if (self._isStateChanged(self._latestState, state)) {
+        if (!self._latestState || self._isStateChanged(self._latestState, state)) {
             self.eventManager.emit('stateChange', state);
             self._latestState = state;
         }
@@ -457,15 +458,9 @@ MarkdownEditor.prototype._isStateChanged = function(previousState, currentState)
     var result = false;
 
     tui.util.forEach(currentState, function(currentStateTypeValue, stateType) {
-        var isNeedToContinue = true;
-        var isStateChanged = previousState[stateType] !== currentStateTypeValue;
+        result = previousState[stateType] !== currentStateTypeValue;
 
-        if (isStateChanged) {
-            result = true;
-            isNeedToContinue = false;
-        }
-
-        return isNeedToContinue;
+        return !result;
     });
 
     return result;
