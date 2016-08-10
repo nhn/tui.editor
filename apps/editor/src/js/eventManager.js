@@ -56,6 +56,7 @@ var eventList = [
     'blur',
     'paste',
     'copy',
+    'cut',
     'drop',
     'show',
     'hide'

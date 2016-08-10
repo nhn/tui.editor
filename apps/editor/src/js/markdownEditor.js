@@ -128,6 +128,20 @@ MarkdownEditor.prototype._initEvent = function() {
         });
     });
 
+    this.cm.on('copy', function(cm, ev) {
+        self.eventManager.emit('copy', {
+            source: 'markdown',
+            data: ev
+        });
+    });
+
+    this.cm.on('cut', function(cm, ev) {
+        self.eventManager.emit('cut', {
+            source: 'markdown',
+            data: ev
+        });
+    });
+
     this.cm.on('paste', function(cm, clipboardEvent) {
         self.eventManager.emit('paste', {
             source: 'markdown',

@@ -7,10 +7,6 @@
 
 var domUtils = require('./domUtils');
 var WwPasteContentHelper = require('./wwPasteContentHelper');
-var util = tui.util;
-
-var isMSBrowser = util.browser.msie || /Edge\//.test(navigator.userAgent);
-
 
 /**
  * WwClipboardManager
@@ -44,26 +40,24 @@ WwClipboardManager.prototype.init = function() {
 WwClipboardManager.prototype._initSquireEvent = function() {
     var self = this;
 
-    if (isMSBrowser) {
-        this.wwe.getEditor().addEventListener('keydown', function(event) {
-            //Ctrl+ C
-            if (event.ctrlKey && event.keyCode === 67) {
-                self._saveLastestClipboardRangeInfo();
-            //Ctrl + X
-            } else if (event.ctrlKey && event.keyCode === 88) {
-                self._saveLastestClipboardRangeInfo();
-                self.wwe.postProcessForChange();
-            }
+    this.wwe.getEditor().addEventListener('copy', function(ev) {
+        self.wwe.eventManager.emit('copy', {
+            source: 'wysiwyg',
+            data: ev
         });
-    } else {
-        this.wwe.getEditor().addEventListener('copy', function() {
-            self._saveLastestClipboardRangeInfo();
+
+        self._saveLastestClipboardRangeInfo();
+    });
+
+    this.wwe.getEditor().addEventListener('cut', function(ev) {
+        self.wwe.eventManager.emit('cut', {
+            source: 'wysiwyg',
+            data: ev
         });
-        this.wwe.getEditor().addEventListener('cut', function() {
-            self._saveLastestClipboardRangeInfo();
-            self.wwe.postProcessForChange();
-        });
-    }
+
+        self._saveLastestClipboardRangeInfo();
+        self.wwe.postProcessForChange();
+    });
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
         if (self._latestClipboardRangeInfo
