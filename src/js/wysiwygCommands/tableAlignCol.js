@@ -7,6 +7,7 @@
 'use strict';
 
 var CommandManager = require('../commandManager');
+var domUtil = require('../domUtils');
 
 /**
  * AlignCol
@@ -25,7 +26,8 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     exec: function(wwe, alignDirection) {
         var sq = wwe.getEditor();
         var range = sq.getSelection().cloneRange();
-        var rangeInformation = wwe.getManager('tableSelection').getSelectionRangeFromTable(range);
+        var selectionMgr = wwe.getManager('tableSelection');
+        var rangeInformation = getRangeInformation(range, selectionMgr);
         var selectionInformation, $table;
 
         sq.focus();
@@ -39,6 +41,7 @@ var AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
 
             setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
         }
+        selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
     }
 });
 
@@ -102,6 +105,27 @@ function getSelectionInformation($table, rangeInformation) {
         endColumnIndex: endColumnIndex,
         isDivided: isDivided
     };
+}
+/**
+ * Get range information
+ * @param {Range} range Range object
+ * @param {object} selectionMgr Table selection manager
+ * @returns {object}
+ */
+function getRangeInformation(range, selectionMgr) {
+    var selectedCells = selectionMgr.getSelectedCells();
+    var rangeInformation, startCell;
+
+    if (selectedCells.length) {
+        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],
+            selectedCells.last()[0]);
+    } else {
+        startCell = domUtil.isTextNode(range.startContainer) ?
+            $(range.startContainer).parent('td,th')[0] : range.startContainer;
+        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
+    }
+
+    return rangeInformation;
 }
 
 module.exports = AlignCol;

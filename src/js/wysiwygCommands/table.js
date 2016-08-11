@@ -7,9 +7,6 @@
 
 var CommandManager = require('../commandManager');
 
-var tableID = 0,
-    TABLE_CLASS_PREFIX = 'te-content-table-';
-
 /**
  * Table
  * Add table to selected wysiwyg editor content
@@ -27,8 +24,9 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
      * @param {Array} data initial table data
      */
     exec: function(wwe, col, row, data) {
-        var sq = wwe.getEditor(),
-            table;
+        var sq = wwe.getEditor();
+        var tableIDClassName = wwe.getManager('table').getTableIDClassName();
+        var table;
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
             sq.focus();
@@ -36,7 +34,7 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
             return;
         }
 
-        table = '<table class="' + TABLE_CLASS_PREFIX + tableID + '">';
+        table = '<table class="' + tableIDClassName + '">';
         table += makeHeader(col, data);
         table += makeBody(col, row - 1, data);
         table += '</table>';
@@ -46,10 +44,8 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
         sq.focus();
 
         if (!data) {
-            focusToFirstTh(sq, wwe.get$Body().find('.' + TABLE_CLASS_PREFIX + tableID));
+            focusToFirstTh(sq, wwe.get$Body().find('.' + tableIDClassName));
         }
-
-        tableID += 1;
     }
 });
 

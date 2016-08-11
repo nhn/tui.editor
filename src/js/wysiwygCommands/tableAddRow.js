@@ -47,8 +47,9 @@ var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
 
 function getNewRow($tr) {
     var cloned = $tr.clone();
+    var htmlString = tui.util.browser.msie ? '' : '<br />';
 
-    cloned.find('td').html('<br>');
+    cloned.find('td').html(htmlString);
 
     return cloned;
 }

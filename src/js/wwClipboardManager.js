@@ -7,6 +7,8 @@
 
 var domUtils = require('./domUtils');
 var WwPasteContentHelper = require('./wwPasteContentHelper');
+var SET_SELECTION_DELAY = 50;
+
 
 /**
  * WwClipboardManager
@@ -46,7 +48,7 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             data: ev
         });
 
-        self._saveLastestClipboardRangeInfo();
+        self._executeActionFor('copy');
     });
 
     this.wwe.getEditor().addEventListener('cut', function(ev) {
@@ -55,19 +57,19 @@ WwClipboardManager.prototype._initSquireEvent = function() {
             data: ev
         });
 
-        self._saveLastestClipboardRangeInfo();
-        self.wwe.postProcessForChange();
+        self._executeActionFor('cut');
     });
 
     this.wwe.getEditor().addEventListener('willPaste', function(pasteData) {
-        if (self._latestClipboardRangeInfo
-            && self._latestClipboardRangeInfo.contents.textContent === pasteData.fragment.textContent) {
-            pasteData.fragment = $(self._latestClipboardRangeInfo.contents).clone()[0];
-            pasteData.rangeInfo = self._latestClipboardRangeInfo;
-        }
+        self._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
 
         self._pch.preparePaste(pasteData);
-        self.wwe.eventManager.emit('pasteBefore', {source: 'wysiwyg', data: pasteData});
+
+        self.wwe.eventManager.emit('pasteBefore', {
+            source: 'wysiwyg',
+            data: pasteData
+        });
+
         self._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
         self.wwe.postProcessForChange();
     });
@@ -80,22 +82,21 @@ WwClipboardManager.prototype._initSquireEvent = function() {
  */
 WwClipboardManager.prototype._refineCursorWithPasteContentsIfNeed = function(fragment) {
     var node = fragment;
-    var range = this.wwe.getEditor().getSelection().cloneRange();
+    var sq = this.wwe.getEditor();
+    var range = sq.getSelection().cloneRange();
 
-    if (fragment.childNodes.length === 0) {
-        return;
-    }
+    if (fragment.childNodes.length !== 0 && !domUtils.isTextNode(node.firstChild)) {
+        while (node.lastChild) {
+            node = node.lastChild;
+        }
 
-    while (node.lastChild) {
-        node = node.lastChild;
-    }
+        this.wwe.defer(function() {
+            sq.focus();
 
-    if (!domUtils.isTextNode(node)) {
-        this.wwe.defer(function(wwe) {
             range.setStartAfter(node);
             range.collapse(true);
-            wwe.getEditor().setSelection(range);
-        });
+            sq.setSelection(range);
+        }, SET_SELECTION_DELAY);
     }
 };
 
@@ -125,7 +126,7 @@ WwClipboardManager.prototype._isCopyFromEditor = function(pasteData) {
 WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
     var commonAncestorName;
     var range = this.wwe.getEditor().getSelection().cloneRange();
-    range = this._extendRange(range);
+    this._extendRange(range);
 
     if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
         commonAncestorName = 'BODY';
@@ -144,15 +145,15 @@ WwClipboardManager.prototype._saveLastestClipboardRangeInfo = function() {
  * extend range if need
  * @memberOf WwClipboardManager
  * @param {Range} range to extend
- * @returns {Range} range
  * @private
  */
 WwClipboardManager.prototype._extendRange = function(range) {
     //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
     if (domUtils.isTextNode(range.commonAncestorContainer)
         && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
+        && range.commonAncestorContainer.nodeName !== 'TD'
     ) {
-        return range;
+        return;
     }
 
     if (range.startOffset === 0) {
@@ -167,8 +168,7 @@ WwClipboardManager.prototype._extendRange = function(range) {
     if (this._isWholeCommonAncestorContainerSelected(range)) {
         range.selectNode(range.commonAncestorContainer);
     }
-
-    return range;
+    this.wwe.getEditor().setSelection(range);
 };
 
 /**
@@ -239,4 +239,34 @@ WwClipboardManager.prototype._isWholeCommonAncestorContainerSelected = function(
         && range.commonAncestorContainer === range.endContainer;
 };
 
+/**
+ * Table cut and copy action helper for safari and IE's
+ * @param {string} [action] Boolean value for cut action
+ * @private
+ */
+WwClipboardManager.prototype._executeActionFor = function(action) {
+    this._saveLastestClipboardRangeInfo();
+    if (action === 'cut') {
+        this.wwe.postProcessForChange();
+    }
+};
+
+/**
+ * Replace pasteData to lastClipboardRangeInfo's data
+ * @param {object} pasteData Clipboard data
+ * @private
+ */
+WwClipboardManager.prototype._addRangeInfoAndReplaceFragmentIfNeed = function(pasteData) {
+    var hasRangeInfo = !!this._latestClipboardRangeInfo;
+    var savedContents = (hasRangeInfo && this._latestClipboardRangeInfo.contents);
+    var isSameContents = savedContents.textContent === pasteData.fragment.textContent;
+
+    if (hasRangeInfo) {
+        pasteData.rangeInfo = this._latestClipboardRangeInfo;
+
+        if (isSameContents) {
+            pasteData.fragment = $(savedContents).clone()[0];
+        }
+    }
+};
 module.exports = WwClipboardManager;

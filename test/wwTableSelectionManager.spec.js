@@ -19,6 +19,7 @@ describe('WwTableSelectionManager', function() {
         wwe.init();
 
         mgr = new WwTableSelectionManager(wwe);
+        wwe.focus();
     });
 
     //we need to wait squire input event process
@@ -29,38 +30,6 @@ describe('WwTableSelectionManager', function() {
         });
     });
 
-    describe('_highlightSelectionIfNeed', function() {
-        it('should add \'.te-cell-selected\' class to selected cells', function() {
-            var sq = wwe.getEditor();
-            var range = sq.getSelection();
-            var selectedCells, $tds, $ths;
-
-            sq.setHTML('<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table>');
-            $tds = $('td');
-            $ths = $('th');
-            range.setStart($ths[0], 0);
-            range.setEnd($tds[3], 0);
-
-            mgr._highlightSelectionIfNeed($ths[0], $tds[3]);
-
-            selectedCells = $('.te-cell-selected');
-            expect(selectedCells.length).toBe(6);
-            expect(selectedCells.eq(0).text()).toBe('1');
-            expect(selectedCells.eq(1).text()).toBe('2');
-            expect(selectedCells.eq(2).text()).toBe('3');
-            expect(selectedCells.eq(3).text()).toBe('4');
-            expect(selectedCells.eq(4).text()).toBe('5');
-            expect(selectedCells.eq(5).text()).toBe('6');
-        });
-    });
     describe('_reArrangeSelectionIfneed', function() {
         it('should return range that startContainer is first th when startContainer is out of table', function() {
             var sq = wwe.getEditor();
@@ -218,7 +187,6 @@ describe('WwTableSelectionManager', function() {
     describe('getSelectionRangeFromTable', function() {
         it('should increase endRowOffset by 1 when thead and tbody selected', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var selectionInformation;
 
             sq.setHTML('<table>' +
@@ -231,16 +199,12 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            range.setStart($('th')[0], 0);
-            range.setEnd($('td')[3], 0);
-
-            selectionInformation = mgr.getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable($('th')[0], $('td')[3]);
 
             expect(selectionInformation.to.row).toBe(2);
         });
         it('should increase both startRowOffset and endRowOffset by 1 when only tbody selected', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var $tds, selectionInformation;
 
             sq.setHTML('<table>' +
@@ -254,17 +218,14 @@ describe('WwTableSelectionManager', function() {
                 '</table>');
 
             $tds = $('td');
-            range.setStart($tds[0], 0);
-            range.setEnd($tds[3], 0);
 
-            selectionInformation = mgr.getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable($tds[0], $tds[3]);
 
             expect(selectionInformation.from.row).toBe(1);
             expect(selectionInformation.to.row).toBe(2);
         });
         it('should return startRowOffset and endRowOffset zero when only thead selected', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var $ths, selectionInformation;
 
             sq.setHTML('<table>' +
@@ -278,10 +239,8 @@ describe('WwTableSelectionManager', function() {
                 '</table>');
 
             $ths = $('th');
-            range.setStart($ths[0], 0);
-            range.setEnd($ths[1], 0);
 
-            selectionInformation = mgr.getSelectionRangeFromTable(range);
+            selectionInformation = mgr.getSelectionRangeFromTable($ths[0], $ths[1]);
 
             expect(selectionInformation.from.row).toBe(0);
             expect(selectionInformation.to.row).toBe(0);
@@ -312,7 +271,6 @@ describe('WwTableSelectionManager', function() {
     describe('__highlightTableCellsBy', function() {
         it('should add \'.te-cell-selected\' class to selected cells', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var selectedCells;
 
             sq.setHTML('<table>' +
@@ -324,10 +282,8 @@ describe('WwTableSelectionManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>');
-            range.setStart($('th')[0], 0);
-            range.setEnd($('td')[3], 0);
 
-            mgr._highlightTableCellsBy(range);
+            mgr._highlightTableCellsBy($('th')[0], $('td')[3]);
 
             selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(6);
@@ -341,7 +297,6 @@ describe('WwTableSelectionManager', function() {
 
         it('should add \'.te-cell-selected\' class to selected TDs', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var selectedCells, $tds;
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -353,10 +308,8 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
             $tds = $('td');
-            range.setStart($tds[0], 0);
-            range.setEnd($tds[3], 0);
 
-            mgr._highlightTableCellsBy(range);
+            mgr._highlightTableCellsBy($tds[0], $tds[3]);
 
             selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);
@@ -368,7 +321,6 @@ describe('WwTableSelectionManager', function() {
 
         it('should add \'.te-cell-selected\' class to selected TDs abnormally', function() {
             var sq = wwe.getEditor();
-            var range = sq.getSelection();
             var selectedCells;
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -379,10 +331,8 @@ describe('WwTableSelectionManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>');
-            range.setStart($('th')[1], 0);
-            range.setEnd($('td')[2], 0);
 
-            mgr._highlightTableCellsBy(range);
+            mgr._highlightTableCellsBy($('th')[1], $('td')[2]);
 
             selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);

@@ -46,6 +46,7 @@ var eventList = [
     'scroll',
     'click',
     'mousedown',
+    'mouseover',
     'mouseup',
     'contextmenu',
     'keydown',
