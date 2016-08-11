@@ -22,13 +22,15 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection().cloneRange(),
-            $cell, $nextFocus;
+        var sq = wwe.getEditor();
+        var range = sq.getSelection().cloneRange();
+        var tableMgr = wwe.getManager('table');
+        var isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
+        var $cell, $nextFocus;
 
         sq.focus();
 
-        if (sq.hasFormat('TR') && $(range.startContainer).closest('table').find('thead tr th').length > 1) {
+        if (sq.hasFormat('TR') && isAbleToRemoveColumn) {
             sq.saveUndoState(range);
             $cell = getCellByRange(range);
             $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
@@ -36,13 +38,13 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
             removeColByCell($cell);
 
 
-            focusToCell(sq, $nextFocus);
+            focusToCell(sq, $nextFocus, tableMgr);
         }
     }
 });
 
 function getCellByRange(range) {
-    var cell = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+    var cell = range.startContainer;
 
     if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
         cell = $(cell);
@@ -61,7 +63,8 @@ function removeColByCell($cell) {
     });
 }
 
-function focusToCell(sq, $cell) {
+function focusToCell(sq, $cell, tableMgr) {
+    var nextFocusCell = $cell[0];
     var range;
 
     if ($cell.length) {
@@ -69,6 +72,8 @@ function focusToCell(sq, $cell) {
         range.selectNodeContents($cell[0]);
         range.collapse(true);
         sq.setSelection(range);
+
+        tableMgr.setLastCellNode(nextFocusCell);
     }
 }
 

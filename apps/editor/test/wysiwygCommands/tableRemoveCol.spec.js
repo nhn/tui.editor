@@ -2,6 +2,7 @@
 
 var RemoveCol = require('../../src/js/wysiwygCommands/tableRemoveCol'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
+    WwTableManager = require('../../src/js/wwTableManager'),
     EventManager = require('../../src/js/eventManager');
 
 describe('Table - RemoveCol', function() {
@@ -15,6 +16,8 @@ describe('Table - RemoveCol', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager('table', WwTableManager);
+
         wwe.getEditor().focus();
     });
 

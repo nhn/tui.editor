@@ -3,6 +3,7 @@
 var RemoveRow = require('../../src/js/wysiwygCommands/tableRemoveRow'),
     WysiwygEditor = require('../../src/js/wysiwygEditor'),
     EventManager = require('../../src/js/eventManager'),
+    WwTableManager = require('../../src/js/wwTableManager'),
     WwTableSelectionManager = require('../../src/js/wwTableSelectionManager');
 
 describe('Table - RemoveRow', function() {
@@ -16,6 +17,7 @@ describe('Table - RemoveRow', function() {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+        wwe.addManager('table', WwTableManager);
         wwe.addManager('tableSelection', WwTableSelectionManager);
         wwe.getEditor().focus();
     });
@@ -38,7 +40,7 @@ describe('Table - RemoveRow', function() {
                     '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                    '<tr><td>3</td><td>4</td></tr>',
+                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                     '<tr><td>5</td><td>6</td></tr>',
                 '</tbody>',
             '</table>'
@@ -66,7 +68,7 @@ describe('Table - RemoveRow', function() {
                     '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                    '<tr><td>3</td><td>4</td></tr>',
+                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                 '</tbody>',
             '</table>'
         ].join('\n'));
@@ -93,7 +95,7 @@ describe('Table - RemoveRow', function() {
                     '<tr><th>1</th><th>2</th></tr>',
                 '</thead>',
                 '<tbody>',
-                    '<tr><td>3</td><td>4</td></tr>',
+                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
                     '<tr><td>5</td><td>6</td></tr>',
                 '</tbody>',
             '</table>'
@@ -121,7 +123,7 @@ describe('Table - RemoveRow', function() {
                 '</thead>',
                 '<tbody>',
                     '<tr><td>3</td><td>4</td></tr>',
-                    '<tr><td>5</td><td>6</td></tr>',
+                    '<tr><td class="te-cell-selected">5</td><td>6</td></tr>',
                 '</tbody>',
             '</table>'
         ].join('\n'));
@@ -147,9 +149,9 @@ describe('Table - RemoveRow', function() {
             '<tr><th>1</th><th>2</th></tr>',
             '</thead>',
             '<tbody>',
-            '<tr><td>3</td><td>4</td></tr>',
-            '<tr><td>5</td><td>6</td></tr>',
-            '<tr><td>7</td><td>8</td></tr>',
+            '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
+            '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
+            '<tr><td class="te-cell-selected">7</td><td>8</td></tr>',
             '<tr><td>9</td><td>10</td></tr>',
             '</tbody>',
             '</table>'
@@ -174,7 +176,7 @@ describe('Table - RemoveRow', function() {
         sq.setHTML([
             '<table>',
             '<thead>',
-            '<tr><th>1</th><th>2</th></tr>',
+            '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
             '</thead>',
             '<tbody>',
             '<tr><td>3</td><td>4</td></tr>',
@@ -204,13 +206,13 @@ describe('Table - RemoveRow', function() {
         sq.setHTML([
             '<table>',
             '<thead>',
-            '<tr><th>1</th><th>2</th></tr>',
+            '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>',
             '</thead>',
             '<tbody>',
-            '<tr><td>3</td><td>4</td></tr>',
-            '<tr><td>5</td><td>6</td></tr>',
-            '<tr><td>7</td><td>8</td></tr>',
-            '<tr><td>9</td><td>10</td></tr>',
+            '<tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>',
+            '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr>',
+            '<tr><td class="te-cell-selected">7</td><td class="te-cell-selected">8</td></tr>',
+            '<tr><td class="te-cell-selected">9</td><td class="te-cell-selected">10</td></tr>',
             '</tbody>',
             '</table>'
         ].join('\n'));

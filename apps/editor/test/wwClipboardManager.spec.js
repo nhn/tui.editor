@@ -35,7 +35,7 @@ describe('WwClipboardManager', function() {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
                 done();
-            }, 0);
+            }, 50);
         });
         it('do nothing when pasting content is empty', function(done) {
             var fragment = wwe.getEditor().getDocument().createDocumentFragment();
@@ -56,6 +56,9 @@ describe('WwClipboardManager', function() {
     });
 
     describe('_extendRange', function() {
+        beforeEach(function() {
+            wwe.focus();
+        });
         it('Extend start selection if whole content of startContainer are contained', function() {
             var range;
 
@@ -65,7 +68,8 @@ describe('WwClipboardManager', function() {
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 3);
 
-            range = cbm._extendRange(range);
+            cbm._extendRange(range);
+            range = wwe.getEditor().getSelection();
 
             expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('LI');
             expect(range.startContainer.childNodes[range.startOffset].textContent).toEqual('list1');
@@ -82,7 +86,8 @@ describe('WwClipboardManager', function() {
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 3);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
 
-            range = cbm._extendRange(range);
+            cbm._extendRange(range);
+            range = wwe.getEditor().getSelection();
 
             expect(range.startContainer.nodeType).toEqual(Node.TEXT_NODE);
             expect(range.startContainer.nodeValue[range.startOffset]).toEqual('t');
@@ -99,7 +104,8 @@ describe('WwClipboardManager', function() {
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
 
-            range = cbm._extendRange(range);
+            cbm._extendRange(range);
+            range = wwe.getEditor().getSelection();
 
             expect(range.startContainer.childNodes[range.startOffset].tagName).toEqual('UL');
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
@@ -114,7 +120,8 @@ describe('WwClipboardManager', function() {
             range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
             range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
 
-            range = cbm._extendRange(range);
+            cbm._extendRange(range);
+            range = wwe.getEditor().getSelection();
 
             expect(range.startContainer).toBe(wwe.get$Body()[0]);
             expect(range.startOffset).toEqual(0);
@@ -130,12 +137,73 @@ describe('WwClipboardManager', function() {
 
             range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
             range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
+            wwe.getEditor().setSelection(range);
 
-            range = cbm._extendRange(range);
+            cbm._extendRange(range);
+            range = wwe.getEditor().getSelection();
 
             expect(range.startContainer).toBe(range.endContainer);
+            expect(range.startContainer.className).toBe();
             expect(range.startContainer.nodeType === Node.TEXT_NODE).toBe(true);
             expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
+        });
+    });
+    describe('_addRangeInfoAndReplaceFragmentIfNeed', function() {
+        it('add rangeInfo when exist', function() {
+            var pasteData = {
+                fragment: $('<div>bye</div>')[0]
+            };
+
+            cbm._latestClipboardRangeInfo = {
+                commonAncestorName: 'DIV',
+                contents: $('<div>hello</div>')[0]
+            };
+
+            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
+
+            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
+            expect(pasteData.fragment.textContent).toBe('bye');
+        });
+        it('add rangeInfo and do not replace fragment when textContents are same', function() {
+            var pasteData = {
+                fragment: $('<div>bye</div>')[0]
+            };
+
+            cbm._latestClipboardRangeInfo = {
+                commonAncestorName: 'DIV',
+                contents: $('<div>hello</div>')[0]
+            };
+
+            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
+
+            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
+            expect(pasteData.fragment.textContent).toBe('bye');
+        });
+
+        it('add rangeInfo and do not replace fragment when textContents are same', function() {
+            var pasteData = {
+                fragment: $('<div>hello</div>')[0]
+            };
+
+            cbm._latestClipboardRangeInfo = {
+                commonAncestorName: 'DIV',
+                contents: $('<div class="hello">hello</div>')[0]
+            };
+
+            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
+
+            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
+            expect(pasteData.fragment.textContent).toBe('hello');
+            expect(pasteData.fragment.className).toBe('hello');
+        });
+        it('do nothing when _latestClipboardRangeInfo not exists', function() {
+            var pasteData = {
+                fragment: $('<div>hello</div>')[0]
+            };
+
+            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
+
+            expect(pasteData.rangeInfo).toBeUndefined();
         });
     });
 });
