@@ -75,25 +75,20 @@ WwTableSelectionManager.prototype._initEvent = function() {
      * @private
      */
     this._isSelectionStarted = false;
-    /**
-     * Delay delete selection range on third mousedown event for usability
-     * @type {boolean}
-     * @private
-     */
-    this._isSecondMouseDown = false;
 
     this.eventManager.listen('mousedown', function(ev) {
+        var MOUSE_RIGHT_BUTTON = 2;
         var isSelectedCell;
         selectionStart = ev.data.target;
         isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
         selectionEnd = null;
 
-        if (!isSelectedCell || self._isSecondMouseDown) {
+        if (!isSelectedCell
+            || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
+        ) {
             self.removeClassAttrbuteFromAllCellsIfNeed();
 
             self._setTableSelectionTimerIfNeed(selectionStart);
-        } else {
-            self._isSecondMouseDown = true;
         }
     });
 

@@ -422,7 +422,8 @@ WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
     var isTextInTableCell = (parentNode.tagName === 'TD' || parentNode.tagName === 'TH');
     var isTableCell = (startContainer.tagName === 'TD' || startContainer.tagName === 'TH');
     var isTextNode = startContainer.nodeType === 3;
-    var anchorElement, td, tr;
+    var brString = isIE10 ? '' : '<br />';
+    var anchorElement, td, tr, tdContent;
 
     if (isTextNode && isTextInTableCell) {
         anchorElement = parentNode;
@@ -438,7 +439,13 @@ WwTableManager.prototype._pasteDataIntoTable = function(fragment) {
         tr = tableData.shift();
 
         while (td && tr.length) {
-            td.textContent = tr.shift();
+            tdContent = tr.shift();
+
+            if (tdContent.length) {
+                td.textContent = tdContent;
+            } else {
+                td.innerHTML = brString;
+            }
 
             td = domUtils.getTableCellByDirection(td, 'next');
         }
@@ -924,6 +931,8 @@ WwTableManager.prototype._getColumnAndRowDifference = function(fragment, range) 
 };
 
 WwTableManager.prototype._appendCellForAllRow = function($table, columnDifference) {
+    var brString = isIE10 ? '' : '<br />';
+
     $table.find('tr').each(function(i, row) {
         var index = columnDifference;
         var tagName;
@@ -934,7 +943,7 @@ WwTableManager.prototype._appendCellForAllRow = function($table, columnDifferenc
             } else {
                 tagName = 'td';
             }
-            $(row).append($('<' + tagName + '>')[0]);
+            $(row).append($('<' + tagName + '>' + brString + '</' + tagName + '>')[0]);
         }
     });
 };
