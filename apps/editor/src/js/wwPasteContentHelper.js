@@ -168,9 +168,14 @@ WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
 
     blocks.each(function(index, blockElement) {
         var $blockElement = $(blockElement);
-        var isDivInListItem = $blockElement.parent('li').length !== 0 && blockElement.tagName === 'DIV';
+        var tagName = blockElement.tagName;
+        var isDivElement = tagName === 'DIV';
+        var isInListItem = $blockElement.parent('li').length !== 0;
+        var isInBlockquote = $blockElement.parent('blockquote').length !== 0;
 
-        if (isDivInListItem) {
+        if (isDivElement
+            && (isInListItem || isInBlockquote)
+        ) {
             return;
         }
 

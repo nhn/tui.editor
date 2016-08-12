@@ -93,7 +93,18 @@ describe('WwPasteContentHelper', function() {
             expect($node.find('input').length).toEqual(1);
             expect($node.find('section').length).toEqual(0);
         });
+        it('_removeUnnecessaryBlocks should not unwrap div in blockquote', function() {
+            var $node = $('<blockquote><div>hello<br></div><div>-simon<br></div></li></blockquote>');
+            var divs;
 
+            pch._removeUnnecessaryBlocks($node[0]);
+
+            divs = $node.find('div');
+
+            expect(divs.length).toEqual(2);
+            expect(divs.eq(0).text()).toEqual('hello');
+            expect(divs.eq(1).text()).toEqual('-simon');
+        });
         it('_preElementAid should make pre tag content that has element to useful', function() {
             var $node = $('<pre><div><span>TEST</span></div></pre>');
 
