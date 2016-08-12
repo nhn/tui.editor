@@ -154,6 +154,9 @@ function initUI(editor) {
                 'left': $button.position().left
             });
             popup.show();
+            //컬러피커가 이미선택된 컬러를 선택했을때 이벤트가 발생하지 않는 문제가 있어서 추가한 코드
+            //수정되면 삭제되야할 코드
+            colorPicker.options.color = null;
         }
     });
 
