@@ -109,7 +109,7 @@ WwTableManager.prototype._initKeyHandler = function() {
         }
 
         if (!self._isModifierKeyPushed(ev)) {
-            self.wwe.defer(function() {
+            self.wwe.getEditor().modifyDocument(function() {
                 selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
             });
         }
