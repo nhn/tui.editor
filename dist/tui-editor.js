@@ -2536,6 +2536,9 @@
 	                'left': $button.position().left
 	            });
 	            popup.show();
+	            //컬러피커가 이미선택된 컬러를 선택했을때 이벤트가 발생하지 않는 문제가 있어서 추가한 코드
+	            //수정되면 삭제되야할 코드
+	            colorPicker.options.color = null;
 	        }
 	    });
 
@@ -9953,9 +9956,14 @@
 
 	    blocks.each(function(index, blockElement) {
 	        var $blockElement = $(blockElement);
-	        var isDivInListItem = $blockElement.parent('li').length !== 0 && blockElement.tagName === 'DIV';
+	        var tagName = blockElement.tagName;
+	        var isDivElement = tagName === 'DIV';
+	        var isInListItem = $blockElement.parent('li').length !== 0;
+	        var isInBlockquote = $blockElement.parent('blockquote').length !== 0;
 
-	        if (isDivInListItem) {
+	        if (isDivElement
+	            && (isInListItem || isInBlockquote)
+	        ) {
 	            return;
 	        }
 
@@ -10810,7 +10818,7 @@
 	        }
 
 	        if (!self._isModifierKeyPushed(ev)) {
-	            self.wwe.defer(function() {
+	            self.wwe.getEditor().modifyDocument(function() {
 	                selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
 	            });
 	        }
