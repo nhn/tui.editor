@@ -32,7 +32,7 @@
     "codemirror": "~5.17.0",
     "highlightjs": "~9.5.0",
     "jquery": "~2.1.4",
-    "marked": "https://github.com/nhnent/marked.git#949307524ab4dab71ebd4b840b6b41fd06741deb",
+    "marked": "https://github.com/nhnent/marked.git#97f0365cba039e1821cb139d870f498fb6b80650",
     "toMark": "https://github.com/shiren/toMark.git#0.0.6",
     "squire-rte": "https://github.com/nhnent/Squire.git#f8764e1"
   },
