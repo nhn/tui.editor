@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "private",
   "authors": [
     {
@@ -28,7 +28,7 @@
   ],
   "keywords": [],
   "dependencies": {
-    "tui-code-snippet": "1.2.0",
+    "tui-code-snippet": "1.2.1",
     "codemirror": "~5.17.0",
     "highlightjs": "~9.5.0",
     "jquery": "~2.1.4",
@@ -40,7 +40,6 @@
     "tui-component-colorpicker": "~1.0.1"
   },
   "resolutions": {
-    "jquery": "~2.1.4",
-    "tui-code-snippet": "1.2.0"
+    "jquery": "~2.1.4"
   }
 }
