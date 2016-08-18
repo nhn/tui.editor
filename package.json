@@ -31,10 +31,25 @@
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "karma-webpack": "^1.7.0",
+    "uglify-js": "^2.7.1",
     "webpack": "^1.12.10",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "concat-cli": "^4.0.0",
+    "cpy-cli": "^1.0.1",
+    "csslint": "^1.0.2",
+    "del-cli": "^0.2.0",
+    "eslint": "^3.3.1"
   },
   "scripts": {
-    "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/"
+    "doc": "jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/",
+    "dev": "node develop",
+    "jslint": "eslint src/js",
+    "csslint": "csslint src/css --quiet --ignore=adjoining-classes,important,box-sizing,box-model,overqualified-elements,qualified-headings,unique-headings,display-property-grouping,order-alphabetical,universal-selector,outline-none,font-sizes",
+    "clean": "rm -rf dist",
+    "build:uglifyjs": "uglifyjs dist/tui-editor.js -o dist/tui-editor.min.js",
+    "build:concatJs": "concat-cli -f lib/tui-component-colorpicker/dist/colorpicker.min.js dist/tui-editor-core.js -o dist/tui-editor.js && del dist/tui-editor-core.js",
+    "build:copyCss": "cpy src/css/tui-editor-contents.css dist",
+    "build:concatCss": "concat-cli -f src/css/tui-editor.css lib/tui-component-colorpicker/dist/colorpicker.css -o dist/tui-editor.css",
+    "build": "npm run clean && npm run jslint && npm run csslint && webpack && npm run build:concatJs && npm run build:uglifyjs && npm run build:copyCss && npm run build:concatCss"
   }
 }
