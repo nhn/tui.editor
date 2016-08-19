@@ -2,7 +2,7 @@
 
 import EventManager from '../src/js/eventManager';
 
-fdescribe('eventManager', function() {
+describe('eventManager', function() {
     var em;
 
     beforeEach(function() {
