@@ -4,7 +4,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager'),
     domUtils = require('../domUtils');

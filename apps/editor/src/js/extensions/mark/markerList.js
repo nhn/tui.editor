@@ -1,4 +1,4 @@
-'use strict';
+
 
 var util = tui.util;
 

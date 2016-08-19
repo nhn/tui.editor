@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/,
     FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/,
@@ -248,7 +247,6 @@ SectionManager.prototype.makeSectionList = function() {
         }
     });
 };
-
 
 /**
  * sectionMatch

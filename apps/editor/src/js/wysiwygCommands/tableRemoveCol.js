@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager'),
     domUtils = require('../domUtils');
@@ -36,7 +35,6 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
             $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
 
             removeColByCell($cell);
-
 
             focusToCell(sq, $nextFocus, tableMgr);
         }

@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils');
 var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
@@ -910,7 +909,6 @@ WwTableManager.prototype._getColumnAndRowDifference = function(fragment, range) 
     var tableColumnLength = $table.find('tr').eq(0).children().length;
     var tableRowLength = $table.find('tr').length;
     var isInTbody = $currentRow.parents('tbody').length;
-
 
     if (isInTbody) {
         currentRowIndex += 1;

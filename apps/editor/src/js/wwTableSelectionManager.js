@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils');
 var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
@@ -269,7 +268,6 @@ WwTableSelectionManager.prototype.getSelectionRangeFromTable = function(selectio
         start.row += 1;
         end.row += 1;
     }
-
 
     if (startRowOffset > endRowOffset
         || (startRowOffset === endRowOffset && startCellOffset > endCellOffset)

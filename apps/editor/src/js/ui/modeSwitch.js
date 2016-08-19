@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var UIController = require('./uicontroller');
 
@@ -13,7 +12,6 @@ var TYPE = {
     MARKDOWN: 'markdown',
     WYSIWYG: 'wysiwyg'
 };
-
 
 /**
  * ModeSwitch
@@ -66,7 +64,6 @@ ModeSwitch.prototype._setActiveButton = function(type) {
     });
     this.$buttons[type].addClass('active');
 };
-
 
 ModeSwitch.prototype._switchType = function(type) {
     if (this.type === type) {

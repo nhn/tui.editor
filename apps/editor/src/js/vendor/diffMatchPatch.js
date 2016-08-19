@@ -55,9 +55,7 @@ function diff_match_patch() {
   this.Match_MaxBits = 32;
 }
 
-
 //  DIFF FUNCTIONS
-
 
 /**
  * The data structure representing a diff is an array of tuples:
@@ -70,7 +68,6 @@ var DIFF_EQUAL = 0;
 
 /** @typedef {{0: number, 1: string}} */
 diff_match_patch.Diff;
-
 
 /**
  * Find the differences between two texts.  Simplifies the problem by stripping
@@ -140,7 +137,6 @@ diff_match_patch.prototype.diff_main = function(text1, text2, opt_checklines,
   this.diff_cleanupMerge(diffs);
   return diffs;
 };
-
 
 /**
  * Find the differences between two texts.  Assumes that the texts do not
@@ -212,7 +208,6 @@ diff_match_patch.prototype.diff_compute_ = function(text1, text2, checklines,
   return this.diff_bisect_(text1, text2, deadline);
 };
 
-
 /**
  * Do a quick line-level diff on both strings, then rediff the parts for
  * greater accuracy.
@@ -280,7 +275,6 @@ diff_match_patch.prototype.diff_lineMode_ = function(text1, text2, deadline) {
 
   return diffs;
 };
-
 
 /**
  * Find the 'middle snake' of a diff, split the problem in two
@@ -403,7 +397,6 @@ diff_match_patch.prototype.diff_bisect_ = function(text1, text2, deadline) {
   return [[DIFF_DELETE, text1], [DIFF_INSERT, text2]];
 };
 
-
 /**
  * Given the location of the 'middle snake', split the diff in two parts
  * and recurse.
@@ -428,7 +421,6 @@ diff_match_patch.prototype.diff_bisectSplit_ = function(text1, text2, x, y,
 
   return diffs.concat(diffsb);
 };
-
 
 /**
  * Split two texts into an array of strings.  Reduce the texts to a string of
@@ -491,7 +483,6 @@ diff_match_patch.prototype.diff_linesToChars_ = function(text1, text2) {
   return {chars1: chars1, chars2: chars2, lineArray: lineArray};
 };
 
-
 /**
  * Rehydrate the text in a diff from a string of line hashes to real lines of
  * text.
@@ -509,7 +500,6 @@ diff_match_patch.prototype.diff_charsToLines_ = function(diffs, lineArray) {
     diffs[x][1] = text.join('');
   }
 };
-
 
 /**
  * Determine the common prefix of two strings.
@@ -542,7 +532,6 @@ diff_match_patch.prototype.diff_commonPrefix = function(text1, text2) {
   return pointermid;
 };
 
-
 /**
  * Determine the common suffix of two strings.
  * @param {string} text1 First string.
@@ -573,7 +562,6 @@ diff_match_patch.prototype.diff_commonSuffix = function(text1, text2) {
   }
   return pointermid;
 };
-
 
 /**
  * Determine if the suffix of one string is the prefix of another.
@@ -622,7 +610,6 @@ diff_match_patch.prototype.diff_commonOverlap_ = function(text1, text2) {
     }
   }
 };
-
 
 /**
  * Do the two texts share a substring which is at least half the length of the
@@ -721,7 +708,6 @@ diff_match_patch.prototype.diff_halfMatch_ = function(text1, text2) {
   var mid_common = hm[4];
   return [text1_a, text1_b, text2_a, text2_b, mid_common];
 };
-
 
 /**
  * Reduce the number of edits by eliminating semantically trivial equalities.
@@ -834,7 +820,6 @@ diff_match_patch.prototype.diff_cleanupSemantic = function(diffs) {
     pointer++;
   }
 };
-
 
 /**
  * Look for single edits surrounded on both sides by equalities
@@ -1048,7 +1033,6 @@ diff_match_patch.prototype.diff_cleanupEfficiency = function(diffs) {
   }
 };
 
-
 /**
  * Reorder and merge like edit sections.  Merge equalities.
  * Any edit section can move as long as it doesn't cross an equality.
@@ -1175,7 +1159,6 @@ diff_match_patch.prototype.diff_cleanupMerge = function(diffs) {
   }
 };
 
-
 /**
  * loc is a location in text1, compute and return the equivalent location in
  * text2.
@@ -1211,7 +1194,6 @@ diff_match_patch.prototype.diff_xIndex = function(diffs, loc) {
   return last_chars2 + (loc - last_chars1);
 };
 
-
 /**
  * Convert a diff array into a pretty HTML report.
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
@@ -1243,7 +1225,6 @@ diff_match_patch.prototype.diff_prettyHtml = function(diffs) {
   return html.join('');
 };
 
-
 /**
  * Compute and return the source text (all equalities and deletions).
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
@@ -1259,7 +1240,6 @@ diff_match_patch.prototype.diff_text1 = function(diffs) {
   return text.join('');
 };
 
-
 /**
  * Compute and return the destination text (all equalities and insertions).
  * @param {!Array.<!diff_match_patch.Diff>} diffs Array of diff tuples.
@@ -1274,7 +1254,6 @@ diff_match_patch.prototype.diff_text2 = function(diffs) {
   }
   return text.join('');
 };
-
 
 /**
  * Compute the Levenshtein distance; the number of inserted, deleted or
@@ -1308,7 +1287,6 @@ diff_match_patch.prototype.diff_levenshtein = function(diffs) {
   return levenshtein;
 };
 
-
 /**
  * Crush the diff into an encoded string which describes the operations
  * required to transform text1 into text2.
@@ -1334,7 +1312,6 @@ diff_match_patch.prototype.diff_toDelta = function(diffs) {
   }
   return text.join('\t').replace(/%20/g, ' ');
 };
-
 
 /**
  * Given the original text1, and an encoded string which describes the
@@ -1392,9 +1369,7 @@ diff_match_patch.prototype.diff_fromDelta = function(text1, delta) {
   return diffs;
 };
 
-
 //  MATCH FUNCTIONS
-
 
 /**
  * Locate the best instance of 'pattern' in 'text' near 'loc'.
@@ -1424,7 +1399,6 @@ diff_match_patch.prototype.match_main = function(text, pattern, loc) {
     return this.match_bitap_(text, pattern, loc);
   }
 };
-
 
 /**
  * Locate the best instance of 'pattern' in 'text' near 'loc' using the
@@ -1543,7 +1517,6 @@ diff_match_patch.prototype.match_bitap_ = function(text, pattern, loc) {
   return best_loc;
 };
 
-
 /**
  * Initialise the alphabet for the Bitap algorithm.
  * @param {string} pattern The text to encode.
@@ -1561,9 +1534,7 @@ diff_match_patch.prototype.match_alphabet_ = function(pattern) {
   return s;
 };
 
-
 //  PATCH FUNCTIONS
-
 
 /**
  * Increase the context until it is unique,
@@ -1610,7 +1581,6 @@ diff_match_patch.prototype.patch_addContext_ = function(patch, text) {
   patch.length1 += prefix.length + suffix.length;
   patch.length2 += prefix.length + suffix.length;
 };
-
 
 /**
  * Compute a list of patches to turn text1 into text2.
@@ -1746,7 +1716,6 @@ diff_match_patch.prototype.patch_make = function(a, opt_b, opt_c) {
   return patches;
 };
 
-
 /**
  * Given an array of patches, return another array that is identical.
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
@@ -1770,7 +1739,6 @@ diff_match_patch.prototype.patch_deepCopy = function(patches) {
   }
   return patchesCopy;
 };
-
 
 /**
  * Merge a set of patches onto the text.  Return a patched text, as well
@@ -1879,7 +1847,6 @@ diff_match_patch.prototype.patch_apply = function(patches, text) {
   return [text, results];
 };
 
-
 /**
  * Add some padding on text start and end so that edges can match something.
  * Intended to be called only from within patch_apply.
@@ -1937,7 +1904,6 @@ diff_match_patch.prototype.patch_addPadding = function(patches) {
 
   return nullPadding;
 };
-
 
 /**
  * Look through the patches and break up any which are longer than the maximum
@@ -2031,7 +1997,6 @@ diff_match_patch.prototype.patch_splitMax = function(patches) {
   }
 };
 
-
 /**
  * Take a list of patches and return a textual representation.
  * @param {!Array.<!diff_match_patch.patch_obj>} patches Array of Patch objects.
@@ -2044,7 +2009,6 @@ diff_match_patch.prototype.patch_toText = function(patches) {
   }
   return text.join('');
 };
-
 
 /**
  * Parse a textual representation of patches and return a list of Patch objects.
@@ -2122,7 +2086,6 @@ diff_match_patch.prototype.patch_fromText = function(textline) {
   return patches;
 };
 
-
 /**
  * Class representing one patch operation.
  * @constructor
@@ -2139,7 +2102,6 @@ diff_match_patch.patch_obj = function() {
   /** @type {number} */
   this.length2 = 0;
 };
-
 
 /**
  * Emmulate GNU diff's format.

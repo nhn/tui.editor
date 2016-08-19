@@ -2,7 +2,6 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-'use strict';
 
 var UIController = require('./uicontroller');
 var Tooltip = require('./tooltip');

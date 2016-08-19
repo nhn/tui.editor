@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager');
 var domUtil = require('../domUtils');

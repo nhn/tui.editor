@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils');
 var isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;

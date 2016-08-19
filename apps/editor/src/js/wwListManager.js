@@ -3,7 +3,6 @@
  * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var FIND_LI_ELEMENT = /<li/i;
 
@@ -68,7 +67,6 @@ WwListManager.prototype._initEvent = function() {
         return markdown.replace(/:BLANK_LINE:\n/g, '');
     });
 };
-
 
 WwListManager.prototype._initKeyHandler = function() {
     var self = this;

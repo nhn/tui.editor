@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var util = tui.util;
 
@@ -63,7 +62,6 @@ CommandManager.prototype.addCommand = function(command) {
 
     return command;
 };
-
 
 /**
  * _initEvent
@@ -138,6 +136,5 @@ CommandManager.command = function(type, props) {
 
     return command;
 };
-
 
 module.exports = CommandManager;

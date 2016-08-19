@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var MarkdownEditor = require('./markdownEditor'),
     Preview = require('./preview'),
@@ -17,7 +16,6 @@ var MarkdownEditor = require('./markdownEditor'),
     ViewOnly = require('./viewOnly'),
     markedRenderer = require('./markedCustomRenderer'),
     DefaultUI = require('./ui/defaultUI');
-
 
 //markdown commands
 var mdBold = require('./markdownCommands/bold'),
