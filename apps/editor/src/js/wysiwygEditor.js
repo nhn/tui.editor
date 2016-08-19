@@ -354,7 +354,7 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             codeBlock: /PRE/.test(data.path),
             quote: /BLOCKQUOTE/.test(data.path),
             list: /LI/.test(data.path),
-            task: self.getManager('task').isInTaskList(self.getEditor().getSelection()),
+            task: /LI.task-list-item/.test(data.path),
             source: 'wysiwyg'
         };
 
