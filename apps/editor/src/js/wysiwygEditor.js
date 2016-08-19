@@ -352,6 +352,9 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
             code: /CODE/.test(data.path),
             codeBlock: /PRE/.test(data.path),
+            quote: /BLOCKQUOTE/.test(data.path),
+            list: /LI/.test(data.path),
+            task: self.getManager('task').isInTaskList(self.getEditor().getSelection()),
             source: 'wysiwyg'
         };
 

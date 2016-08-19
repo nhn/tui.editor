@@ -186,6 +186,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.listDepth++;
       if (modeCfg.taskLists && stream.match(taskListRE, false)) {
         state.taskList = true;
+        state.task = true; // task state 관리를 위해 추가
       }
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
@@ -683,6 +684,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         strong: false,
         header: 0,
         hr: false,
+        task: false,
         taskList: false,
         list: false,
         listDepth: 0,
@@ -719,6 +721,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         header: s.header,
         hr: s.hr,
         taskList: s.taskList,
+        task: s.task, // task state 관리를 위해 추가
         list: s.list,
         listDepth: s.listDepth,
         quote: s.quote,
@@ -753,6 +756,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
         // Reset state.taskList
         state.taskList = false;
+        state.task = false; // task state 관리를 위해 추가
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;
