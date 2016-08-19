@@ -1,6 +1,16 @@
-module.exports = function(config) {
-    'use strict';
+'use strict';
 
+var webpackConfig = require('./webpack.config');
+
+Object.assign(webpackConfig.module, {
+    postLoaders: [{
+        test: /\.js/,
+        exclude: /\.(spec|bundle)\.js/,
+        loader: 'istanbul-instrumenter'
+    }]
+});
+
+module.exports = function(config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -18,6 +28,8 @@ module.exports = function(config) {
             'karma-jasmine-jquery',
             'karma-sourcemap-loader',
             'karma-webpack',
+            'istanbul-instrumenter-loader',
+            'karma-coverage',
 
             //this config only
             'karma-chrome-launcher',
@@ -49,7 +61,8 @@ module.exports = function(config) {
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: [
-            'narrow'
+            'narrow',
+            'coverage'
         ],
 
         // preprocess matching files before serving them to the browser
@@ -60,7 +73,8 @@ module.exports = function(config) {
         },
 
         webpack: {
-            devtool: 'inline-source-map'
+            devtool: 'inline-source-map',
+            module: webpackConfig.module
         },
 
         webpackMiddleware: {
@@ -70,6 +84,18 @@ module.exports = function(config) {
             stats: {
                 colors: true
             }
+        },
+
+        coverageReporter: {
+            dir: 'report/coverage/',
+            reporters: [
+                {
+                    type: 'html',
+                    subdir: function(browser) {
+                        return 'report-html/' + browser;
+                    }
+                }
+            ]
         },
 
         // web server port

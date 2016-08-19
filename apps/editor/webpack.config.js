@@ -14,5 +14,12 @@ module.exports = {
         path: WEBPACK_DIST_PATH,
         pathinfo: false,
         filename: WEBPACK_DIST_FILE
+    },
+    module: {
+        loaders: [{
+            test: /\.js$/,
+            exclude: /node_modules|bower_components/,
+            loader: 'babel'
+        }]
     }
 };
