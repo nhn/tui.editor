@@ -1,5 +1,15 @@
 'use strict';
 
+var webpackConfig = require('./webpack.config');
+
+Object.assign(webpackConfig.module, {
+    postLoaders: [{
+        test: /\.js/,
+        exclude: /\.(spec|bundle)\.js/,
+        loader: 'istanbul-instrumenter'
+    }]
+});
+
 module.exports = function(config) {
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
@@ -22,11 +32,11 @@ module.exports = function(config) {
             'karma-jasmine-jquery',
             'karma-sourcemap-loader',
             'karma-webpack',
+            'istanbul-instrumenter-loader',
+            'karma-coverage',
 
             //this config only
             'karma-webdriver-launcher',
-            'istanbul-instrumenter-loader',
-            'karma-coverage',
             'karma-junit-reporter'
         ],
 
@@ -66,13 +76,8 @@ module.exports = function(config) {
         },
 
         webpack: {
-            module: {
-                postLoaders: [{
-                    test: /\.js/,
-                    exclude: /\.(spec|bundle)\.js/,
-                    loader: 'istanbul-instrumenter'
-                }]
-            }
+            devtool: 'inline-source-map',
+            module: webpackConfig.module
         },
 
         webpackMiddleware: {
