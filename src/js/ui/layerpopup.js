@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var UIController = require('./uicontroller');
 
@@ -20,7 +19,6 @@ var LAYOUT_TEMPLATE = [
     '<div class="' + CLASS_PREFIX + 'body"></div>'
 ].join('');
 /* eslint-enable indent */
-
 
 /**
  * LayerPopup

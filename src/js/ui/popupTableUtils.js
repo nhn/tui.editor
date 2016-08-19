@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var LayerPopup = require('./layerpopup');
 
@@ -125,6 +124,5 @@ PopupTableUtils.prototype._linkWithEventManager = function() {
         self.hide();
     });
 };
-
 
 module.exports = PopupTableUtils;

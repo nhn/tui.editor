@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var TASK_CLASS_NAME = 'task-list-item';
 var TASK_ATTR_NAME = 'data-te-task';

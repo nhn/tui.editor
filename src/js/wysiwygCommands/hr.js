@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager'),
     domUtils = require('../domUtils');
@@ -61,6 +60,5 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
         sq.focus();
     }
 });
-
 
 module.exports = HR;

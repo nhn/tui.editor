@@ -1,4 +1,4 @@
-'use strict';
+
 
 var DiffMatchPatch = require('../../vendor/diffMatchPatch');
 

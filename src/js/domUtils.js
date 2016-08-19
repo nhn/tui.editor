@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var FIND_ZWB = /\u200B/g;
 
@@ -132,7 +131,6 @@ var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
     var directionKey = direction + 'Sibling',
         nodeName, foundedNode;
 
-
     while (node && !node[directionKey]) {
         nodeName = getNodeName(node.parentNode);
 
@@ -210,7 +208,6 @@ var getParentUntil = function(node, untilNode) {
 
     return foundedNode;
 };
-
 
 /**
  * getNodeWithDirectionUnderParent

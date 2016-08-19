@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager');
 
@@ -31,6 +30,5 @@ var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
         }
     }
 });
-
 
 module.exports = AddImage;

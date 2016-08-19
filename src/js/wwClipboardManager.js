@@ -3,12 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils');
 var WwPasteContentHelper = require('./wwPasteContentHelper');
 var SET_SELECTION_DELAY = 50;
-
 
 /**
  * WwClipboardManager

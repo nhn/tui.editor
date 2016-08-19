@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var CommandManager = require('../commandManager');
 
@@ -34,7 +33,6 @@ var UL = CommandManager.command('markdown', /** @lends UL */{
             line: range.from.line,
             ch: 0
         };
-
 
         line = doc.getLine(from.line);
 

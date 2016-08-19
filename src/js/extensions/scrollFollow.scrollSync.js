@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var SCROLL_TOP_PADDING = 20;
 
@@ -149,7 +148,6 @@ ScrollSync.prototype._getScrollTopForPreview = function() {
 
     return scrollTop;
 };
-
 
 /**
  * syncToPreview

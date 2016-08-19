@@ -3,7 +3,6 @@
  * @author Minho choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var LayerPopup = require('./layerpopup');
 

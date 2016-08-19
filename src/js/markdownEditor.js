@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var keyMapper = require('./keyMapper').getSharedInstance();
 var MdTextObject = require('./mdTextObject');

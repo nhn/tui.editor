@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils'),
     WwClipboardManager = require('./wwClipboardManager'),
@@ -538,7 +537,6 @@ WysiwygEditor.prototype._joinSplitedTextNodes = function() {
     $(nodesToRemove).remove();
 };
 
-
 /**
  * saveSelection
  * Save current selection before modification
@@ -869,7 +867,6 @@ WysiwygEditor.prototype.breakToNewDefaultBlock = function(range, where) {
     range.collapse(true);
     this.editor.setSelection(range);
 };
-
 
 /**
  * replaceContentText

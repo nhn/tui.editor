@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-'use strict';
 
 var domUtils = require('./domUtils');
 
@@ -220,7 +219,6 @@ WwHrManager.prototype._unwrapDivOnHr = function() {
         }
     });
 };
-
 
 /**
  * findTextNodeFilter
