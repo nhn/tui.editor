@@ -19,33 +19,28 @@ var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1
  */
 function ImportManager(eventManager) {
     this.eventManager = eventManager;
+    this._lastState = null;
 
-    this._initDropEvent();
-    this._initPasteEvent();
+    this._initEvent();
     this._initDefaultImageImporter();
 }
 
 /**
- * Initialize drop event
+ * Initialize event handler
  * @memberOf ImportManager
  * @private
  */
-ImportManager.prototype._initDropEvent = function() {
+ImportManager.prototype._initEvent = function() {
     var self = this;
+
+    this.eventManager.listen('stateChange', function(ev) {
+        self._lastState = ev;
+    });
 
     this.eventManager.listen('drop', function(ev) {
         var items = ev.data.dataTransfer && ev.data.dataTransfer.files;
         self._processBlobItems(items, ev.data);
     });
-};
-
-/**
- * Initialize paste event
- * @memberOf ImportManager
- * @private
- */
-ImportManager.prototype._initPasteEvent = function() {
-    var self = this;
 
     this.eventManager.listen('paste', function(ev) {
         self._processClipboard(ev.data);
@@ -112,7 +107,7 @@ ImportManager.prototype._processClipboard = function(evData) {
 
     if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
         this._processBlobItems(blobItems, evData);
-    } else {
+    } else if (!this._isInBlockFormat()) {
         this._precessDataTransfer(cbData, evData);
     }
 };
@@ -160,5 +155,17 @@ ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
         this._addExcelTable(textContent);
     }
 };
+
+/**
+ * Returns if current cursor state is in block format ex) blockquote, list, task, codeblock
+ * @returns {boolean}
+ * @private
+ */
+ImportManager.prototype._isInBlockFormat = function() {
+    var state = this._lastState;
+
+    return state && (state.codeBlock || state.quote || state.list || state.task || state.code);
+};
+
 
 module.exports = ImportManager;
