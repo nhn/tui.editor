@@ -1,8 +1,8 @@
 'use strict';
 
-var EventManager = require('../src/js/eventManager');
+import EventManager from '../src/js/eventManager';
 
-describe('eventManager', function() {
+fdescribe('eventManager', function() {
     var em;
 
     beforeEach(function() {
@@ -13,14 +13,14 @@ describe('eventManager', function() {
         $('body').empty();
     });
 
-    describe('사용하는 이벤트를 등록 관리', function() {
-        it('등록되지 않은 이벤트를 사용하는 경우 에러', function() {
+    describe('Event registration', function() {
+        it('should throw exception when it use not registered event type', function() {
             expect(function() {
                 em.listen('testNoEvent', function() {});
             }).toThrow(new Error('There is no event type testNoEvent'));
         });
 
-        it('등록된 이벤트명으로 다시 이벤트를 등록하는 경우 에러', function() {
+        it('should throw exception when it register event type that already have', function() {
             em.addEventType('testAlreadyHaveEvent');
 
             expect(function() {
@@ -29,13 +29,13 @@ describe('eventManager', function() {
         });
     });
 
-    describe('이벤트 처리', function() {
+    describe('Event', function() {
         beforeEach(function() {
             em.addEventType('testEvent');
             em.addEventType('testEventHook');
         });
 
-        it('listen으로 이벤트핸들러를 등록하고 emit으로 실행할수 있다', function() {
+        it('should emit and listen event', function() {
             var handler = jasmine.createSpy('handler');
 
             em.listen('testEvent', handler);
@@ -44,7 +44,7 @@ describe('eventManager', function() {
             expect(handler).toHaveBeenCalled();
         });
 
-        it('핸들러가 특정값들을 리턴하면 emit시 배열로 리턴된다', function() {
+        it('emit should return value that returned by listener', function() {
             var result,
             count = 0;
 
@@ -62,7 +62,7 @@ describe('eventManager', function() {
             expect(result).toEqual([0, 1]);
         });
 
-        it('핸들러가 특정값을 리턴하지 않으면 emit은 undefined 리턴', function() {
+        it('emit should return undefined if listener have not return value', function() {
             var handler = jasmine.createSpy('handler'),
             result;
 
