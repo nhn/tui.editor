@@ -165,12 +165,9 @@ WwListManager.prototype._removeBranchList = function(list) {
  */
 WwListManager.prototype._wrapDefaultBlockToListInner = function() {
     this.wwe.get$Body().find('li').each(function(index, node) {
-        if ($(node).children('div, p').length <= 0
-            && this.firstChild
-            && this.firstChild.nodeType === Node.TEXT_NODE
-           ) {
-            $(this.firstChild).wrap('<div />');
-            $(node).children('br').remove();
+        if ($(node).children('div, p').length <= 0) {
+            $(this).wrapInner('<div />');
+            $(this).find('div').children('ul, ol').appendTo(this);
         }
     });
 };
