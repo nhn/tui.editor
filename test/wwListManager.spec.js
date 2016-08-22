@@ -174,4 +174,18 @@ describe('WwListManager', function() {
             expect(result.indexOf('<br />')).toBe(-1);
         });
     });
+    describe('_wrapDefaultBlockToListInner', function() {
+        it('Wrap default blocks to list firstChild text node then remove unnecessray brs', function() {
+            wwe.getEditor().setHTML([
+                '<ul>',
+                    '<li>',
+                        't1<br>',
+                    '</li>',
+                '</ul>'].join(''));
+            mgr._wrapDefaultBlockToListInner();
+
+            expect(wwe.get$Body().find('br').length).toEqual(0);
+            expect(wwe.get$Body().find('div').text()).toEqual('t1');
+        });
+    });
 });
