@@ -149,14 +149,6 @@ WwTableManager.prototype._initKeyHandler = function() {
         return self._moveCursorTo('previous', 'cell', ev);
     });
 
-    this.wwe.addKeyEventHandler('DOWN', function(ev) {
-        return self._moveCursorTo('next', 'row', ev);
-    });
-
-    this.wwe.addKeyEventHandler('UP', function(ev) {
-        return self._moveCursorTo('previous', 'row', ev);
-    });
-
     this._bindKeyEventForTableCopyAndCut();
 };
 
