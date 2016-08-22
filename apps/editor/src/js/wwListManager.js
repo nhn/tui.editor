@@ -52,6 +52,7 @@ WwListManager.prototype._initEvent = function() {
     this.eventManager.listen('wysiwygRangeChangeAfter', function() {
         self._findAndRemoveEmptyList();
         self._removeBranchListAll();
+        self._wrapDefaultBlockToListInner();
     });
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
@@ -164,8 +165,12 @@ WwListManager.prototype._removeBranchList = function(list) {
  */
 WwListManager.prototype._wrapDefaultBlockToListInner = function() {
     this.wwe.get$Body().find('li').each(function(index, node) {
-        if ($(node).children('div, p').length <= 0) {
-            $(node).wrapInner('<div />');
+        if ($(node).children('div, p').length <= 0
+            && this.firstChild
+            && this.firstChild.nodeType === Node.TEXT_NODE
+           ) {
+            $(this.firstChild).wrap('<div />');
+            $(node).children('br').remove();
         }
     });
 };
