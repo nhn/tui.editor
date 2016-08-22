@@ -130,7 +130,7 @@ WwListManager.prototype._removeBranchListAll = function() {
     var self = this;
 
     self.wwe.get$Body().find('li ul, li ol').each(function() {
-        if (!this || $(this).prev().length) {
+        if (!this || this.previousSibling) {
             return;
         }
         self._removeBranchList(this);
@@ -146,7 +146,7 @@ WwListManager.prototype._removeBranchList = function(list) {
     var $branchRoot = $list;
     var $firstLi;
 
-    while (!$branchRoot.prev().length) {
+    while (!$branchRoot[0].previousSibling) {
         $branchRoot = $branchRoot.parent();
     }
 
