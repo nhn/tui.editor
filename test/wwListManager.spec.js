@@ -175,17 +175,20 @@ describe('WwListManager', function() {
         });
     });
     describe('_wrapDefaultBlockToListInner', function() {
-        it('Wrap default blocks to list firstChild text node then remove unnecessray brs', function() {
+        it('Wrap default blocks to list top inline nodes', function() {
             wwe.getEditor().setHTML([
                 '<ul>',
                     '<li>',
                         't1<br>',
+                        '<ul><li>t2<br></li></ul>',
                     '</li>',
-                '</ul>'].join(''));
+                '</ul>'].join(''))
+
             mgr._wrapDefaultBlockToListInner();
 
-            expect(wwe.get$Body().find('br').length).toEqual(0);
-            expect(wwe.get$Body().find('div').text()).toEqual('t1');
+            expect(wwe.get$Body().find('div').length).toEqual(2);
+            expect(wwe.get$Body().find('div').eq(0).text()).toEqual('t1');
+            expect(wwe.get$Body().find('div').eq(1).text()).toEqual('t2');
         });
     });
 });
