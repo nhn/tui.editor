@@ -73,7 +73,7 @@ describe('WwListManager', function() {
     });
 
     describe('_removeBranchListAll', function() {
-        beforeEach(function() {
+        it('Remove all branch list', function() {
             wwe.getEditor().setHTML([
                 '<ul>',
                     '<li>',
@@ -94,14 +94,31 @@ describe('WwListManager', function() {
                         '</ul>',
                     '</li>',
                 '</ul>'].join(''));
-        });
-        it('Remove all branch list', function() {
             mgr._removeBranchListAll();
 
             expect(wwe.get$Body().find('ul').length).toEqual(3);
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(2);
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(0).children('div').text()).toEqual('t2');
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t5');
+        });
+
+        it('Dont remove correct list with text node', function() {
+            wwe.getEditor().setHTML([
+                '<ul>',
+                    '<li>',
+                        't1',
+                        '<ul>',
+                            '<li><div>t3<br></div></li>',
+                            '<li><div>t4<br></div></li>',
+                        '</ul>',
+                    '</li>',
+                '</ul>'].join(''));
+            mgr._removeBranchListAll();
+
+            expect(wwe.get$Body().find('ul').length).toEqual(2);
+            expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(2);
+            expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(0).children('div').text()).toEqual('t3');
+            expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t4');
         });
     });
 
