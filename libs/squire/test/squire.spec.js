@@ -26,6 +26,7 @@ describe('Squire RTE', function () {
     });
 
     function selectAll(editor) {
+        doc.getSelection().removeAllRanges()
         var range = doc.createRange();
         range.setStart(doc.body.childNodes.item(0), 0);
         range.setEnd(doc.body.childNodes.item(0), doc.body.childNodes.item(0).childNodes.length);
