@@ -502,4 +502,15 @@ describe('WysiwygEditor', function() {
             wwe.$editorContainerEl.remove();
         });
     });
+
+    describe('_getLastListString ', function() {
+        it('should get last list string', function() {
+            expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI>DIV')).toEqual('LI>DIV');
+            expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI.te-task-list>DIV')).toEqual('LI.te-task-list>DIV');
+        });
+        it('should return empty string when Last LI not exists', function() {
+            expect(wwe._getLastLiString('DIV')).toEqual('');
+            expect(wwe._getLastLiString('BLOCKQUOTE>DIV')).toEqual('');
+        });
+    });
 });

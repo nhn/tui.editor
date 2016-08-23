@@ -164,7 +164,7 @@ ImportManager.prototype._precessDataTransfer = function(cbData, evData) {
 ImportManager.prototype._isInBlockFormat = function() {
     var state = this._lastState;
 
-    return state && (state.codeBlock || state.quote || state.list || state.task || state.code);
+    return state && (state.codeBlock || state.list || state.task || state.code);
 };
 
 
