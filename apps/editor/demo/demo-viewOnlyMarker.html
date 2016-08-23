@@ -17,8 +17,10 @@
     <link rel="stylesheet" href="../src/css/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
     <style type="text/css">
-      .cm-header { color:blue; }
-      .cm-strong { font-weight:bold; }
+        #editSection {
+            margin-top: 20px;
+            padding: 15px;
+        }
     </style>
 </head>
 <body style='padding:0;margin:0'>
@@ -36,7 +38,7 @@
         exts: ['mark', 'colorSyntax'],
         events: {
             load: function(editor) {
-                editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5\n* [ ] test\n* [x] test2', [
+                editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5\n* [ ] test\n    * [ ] test\n    * [ ] test\n    * [ ] test\n    * [ ] test\n* [x] test2', [
                     {
                         start: 11,
                         end: 22,

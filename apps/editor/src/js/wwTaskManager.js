@@ -40,8 +40,9 @@ WwTaskManager.prototype._init = function() {
     this._initKeyHandler();
     this._initEvent();
 
-    this.wwe.getEditor().addEventListener('click', function(ev) {
-        if (ev.target.hasAttribute(TASK_ATTR_NAME)) {
+    this.wwe.getEditor().addEventListener('mousedown', function(ev) {
+        var isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
+        if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
             $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
         }
     });
