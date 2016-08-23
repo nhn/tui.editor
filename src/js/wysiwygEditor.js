@@ -353,13 +353,32 @@ WysiwygEditor.prototype._initSquireEvent = function() {
             code: /CODE/.test(data.path),
             codeBlock: /PRE/.test(data.path),
             quote: /BLOCKQUOTE/.test(data.path),
-            list: /LI/.test(data.path),
-            task: /LI.task-list-item/.test(data.path),
+            list: /LI(?!.task-list-item)/.test(self._getLastLiString(data.path)),
+            task: /LI.task-list-item/.test(self._getLastLiString(data.path)),
             source: 'wysiwyg'
         };
 
         self.eventManager.emit('stateChange', state);
     });
+};
+
+/**
+ * Return last matched list item path string matched index to end
+ * @param {string} path Full path string of current selection
+ * @returns {string}
+ * @private
+ */
+WysiwygEditor.prototype._getLastLiString = function(path) {
+    var foundedListItem = /LI[^UO]*$/.exec(path);
+    var result;
+
+    if (foundedListItem) {
+        result = foundedListItem[0];
+    } else {
+        result = '';
+    }
+
+    return result;
 };
 
 /**
