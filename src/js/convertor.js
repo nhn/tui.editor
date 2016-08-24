@@ -5,12 +5,37 @@
 
 
 var htmlSanitizer = require('./htmlSanitizer');
+var taskList = require('./markdownItPlugins/markdownitTaskPlugin');
+var codeBlock = require('./markdownItPlugins/markdownitCodeBlockPlugin');
+var tableRenderer = require('./markdownItPlugins/markdownitTableRenderer');
 
-var markedCustomRenderer = require('./markedCustomRenderer');
-
-var marked = window.marked,
+var markdownIt = window.markdownit,
     toMark = window.toMark,
     hljs = window.hljs;
+
+var markdownitHighlight = markdownIt({
+    html: true,
+    breaks: true,
+    quotes: '“”‘’',
+    langPrefix: 'lang-',
+    highlight: function(code, type) {
+        return hljs.getLanguage(type) ? hljs.highlight(type, code).value : code;
+    }
+});
+var markdownit = markdownIt({
+    html: true,
+    breaks: true,
+    quotes: '“”‘’',
+    langPrefix: 'lang-'
+});
+
+markdownitHighlight.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownitHighlight.use(taskList);
+markdownitHighlight.use(codeBlock);
+
+markdownit.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownit.use(taskList);
+markdownit.use(codeBlock);
 
 /**
  * Convertor
@@ -32,21 +57,7 @@ function Convertor(em) {
  * @returns {string} html text
  */
 Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
-    markdown = markdown.replace(/\\\|/g, ':ESCAPE_VERTICAL_BAR:');
-
-    return marked(markdown, {
-        renderer: markedCustomRenderer,
-        gfm: true,
-        tables: true,
-        breaks: true,
-        pedantic: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false,
-        highlight: function(code, type) {
-            return hljs.getLanguage(type) ? hljs.highlight(type, code).value : code;
-        }
-    }).replace(/:ESCAPE_VERTICAL_BAR:/g, '|');
+    return markdownitHighlight.render(markdown);
 };
 
 /**
@@ -58,18 +69,7 @@ Convertor.prototype._markdownToHtmlWithCodeHighlight = function(markdown) {
  * @returns {string} html text
  */
 Convertor.prototype._markdownToHtml = function(markdown) {
-    markdown = markdown.replace(/\\\|/g, ':ESCAPE_VERTICAL_BAR:');
-
-    return marked(markdown, {
-        renderer: markedCustomRenderer,
-        gfm: true,
-        tables: true,
-        breaks: true,
-        pedantic: false,
-        sanitize: false,
-        smartLists: true,
-        smartypants: false
-    }).replace(/:ESCAPE_VERTICAL_BAR:/g, '|');
+    return markdownit.render(markdown);
 };
 
 /**
@@ -132,4 +132,11 @@ Convertor.factory = function(eventManager) {
     return new Convertor(eventManager);
 };
 
+/**
+ * Return markdown-it highlight renderer
+ * @returns {markdownIt}
+ */
+Convertor.getMarkdownHighlightRenderer = function() {
+    return markdownitHighlight;
+};
 module.exports = Convertor;

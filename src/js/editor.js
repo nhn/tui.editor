@@ -14,7 +14,6 @@ var MarkdownEditor = require('./markdownEditor'),
     ImportManager = require('./importManager'),
     Convertor = require('./convertor'),
     ViewOnly = require('./viewOnly'),
-    markedRenderer = require('./markedCustomRenderer'),
     DefaultUI = require('./ui/defaultUI');
 
 //markdown commands
@@ -599,11 +598,8 @@ ToastUIEditor.factory = function(options) {
 };
 
 /**
- * Marked renderer
- * @api
- * @memberOf ToastUIEditor
- * @type {marked.renderer}
+ * MarkdownIt custom renderer with code highlighting
  */
-ToastUIEditor.markedRenderer = markedRenderer;
+ToastUIEditor.markdownItRenderer = Convertor.getMarkdownHighlightRenderer();
 
 module.exports = ToastUIEditor;
