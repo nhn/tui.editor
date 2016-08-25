@@ -390,6 +390,8 @@ ToastUIEditor.prototype.changeMode = function(mode) {
         return;
     }
 
+    this.eventManager.emit('changeModeBefore', this.currentMode);
+
     this.currentMode = mode;
 
     if (this.isWysiwygMode()) {
