@@ -55,6 +55,14 @@ describe('Editor', function() {
                 editor.setValue('dd');
             });
         });
+        describe('changePreviewStyle()', function() {
+            it('Preview should refreash after preview style is changed', function() {
+                editor.changePreviewStyle('tab');
+                editor.setValue('1\n2');
+                editor.changePreviewStyle('vertical');
+                expect(editor.preview.$el.text()).toEqual('12\n');
+            });
+        });
     });
 });
 

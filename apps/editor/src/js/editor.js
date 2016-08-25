@@ -144,6 +144,7 @@ ToastUIEditor.prototype.changePreviewStyle = function(style) {
     this.layout.changePreviewStyle(style);
     this.mdPreviewStyle = style;
     this.eventManager.emit('changePreviewStyle', style);
+    this.eventManager.emit('previewNeedsRefresh');
 };
 
 /**
