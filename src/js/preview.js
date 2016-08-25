@@ -40,7 +40,7 @@ function Preview($el, eventManager, converter) {
  */
 Preview.prototype._initEvent = function() {
     var self = this;
-    var latestMarkdownValue;
+    var latestMarkdownValue = '';
 
     this.eventManager.listen('contentChangedFromMarkdown', function(markdownEditor) {
         latestMarkdownValue = markdownEditor.getValue();
