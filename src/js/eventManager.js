@@ -17,6 +17,7 @@ var eventList = [
     'change',
     'changeModeToWysiwyg',
     'changeModeToMarkdown',
+    'changeModeBefore',
     'changeMode',
     'changePreviewStyle',
     'openPopupAddLink',
