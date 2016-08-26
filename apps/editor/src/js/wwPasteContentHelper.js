@@ -98,11 +98,19 @@ WwPasteContentHelper.prototype._wrapTextNodeWithDiv = function(fragment) {
  * @private
  */
 WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
+    var blockTags = 'div, section, article, aside, nav, menus, p';
     var self = this;
 
     fragment = htmlSanitizer(fragment);
 
-    this._removeUnnecessaryBlocks(fragment);
+    $(fragment).find('*').each(function() {
+        self._removeStyles(this);
+    });
+
+    this._unwrapIfNonBlockElementHasBr(fragment);
+    this._unwrapNestedBlocks(fragment, blockTags);
+
+    this._removeUnnecessaryBlocks(fragment, blockTags);
     this._removeStyles(fragment);
 
     this._wrapTextNodeWithDiv(fragment);
@@ -111,12 +119,7 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
 
     this._tableElementAid(fragment);
 
-    //br은 preElemnetAid에서 필요해서 처리후 불필요한 br은 삭제한다.
-    $(fragment).find('br').remove();
-
-    $(fragment).find('*').each(function() {
-        self._removeStyles(this);
-    });
+    $(fragment).children('br').remove();
 
     return fragment;
 };
@@ -156,24 +159,66 @@ WwPasteContentHelper.prototype._preElementAid = function(nodes) {
 };
 
 /**
- * Remove unnecessary block element in pasting data
- * @param {DocumentFragment} nodes Pasting DocumentFragment
+ * Unwrap span children of document fragment with div element
+ * @param {DocumentFragment} fragment - Fragment of paste data
  * @memberOf WwPasteContentHelper
  * @private
  */
-WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(nodes) {
-    var blockTags = 'div, section, article, aside, nav, menus';
-    var blocks = $(nodes).find(blockTags);
+WwPasteContentHelper.prototype._unwrapIfNonBlockElementHasBr = function(fragment) {
+    var nonBlockElements = $(fragment).find('span, a, b, em, i, s');
 
-    blocks.each(function(index, blockElement) {
+    nonBlockElements.each(function(i, node) {
+        var brChildren = $(node).children('br');
+
+        if (brChildren.length && node.nodeName !== 'LI' && node.nodeName !== 'UL') {
+            brChildren.eq(0).unwrap();
+        }
+    });
+};
+
+/**
+ * Unwrap nested block elements
+ * @param {DocumentFragment} fragment - Fragment of paste data
+ * @param {string} blockTags - Tag names of block tag
+ * @private
+ */
+WwPasteContentHelper.prototype._unwrapNestedBlocks = function(fragment, blockTags) {
+    var leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code');
+
+    leafElements.each(function(i, node) {
+        var leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(this);
+        var parent;
+
+        while (leafElement.parents(blockTags).length) {
+            parent = leafElement.parent(blockTags);
+
+            if (parent.length) {
+                leafElement.unwrap();
+            } else {
+                leafElement = leafElement.parent();
+            }
+        }
+    });
+};
+
+/**
+ * Remove unnecessary block element in pasting data
+ * @param {DocumentFragment} fragment Pasting DocumentFragment
+ * @param {string} blockTags - Tag names of block tag
+ * @memberOf WwPasteContentHelper
+ * @private
+ */
+WwPasteContentHelper.prototype._removeUnnecessaryBlocks = function(fragment, blockTags) {
+    $(fragment).find(blockTags).each(function(index, blockElement) {
         var $blockElement = $(blockElement);
         var tagName = blockElement.tagName;
         var isDivElement = tagName === 'DIV';
         var isInListItem = $blockElement.parent('li').length !== 0;
         var isInBlockquote = $blockElement.parent('blockquote').length !== 0;
+        var hasBlockChildElement = $blockElement.children(blockTags).length;
 
         if (isDivElement
-            && (isInListItem || isInBlockquote)
+            && (isInListItem || isInBlockquote || !hasBlockChildElement)
         ) {
             return;
         }
