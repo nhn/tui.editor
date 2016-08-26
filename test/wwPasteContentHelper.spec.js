@@ -33,6 +33,8 @@ describe('WwPasteContentHelper', function() {
     });
 
     describe('paste data first aid', function() {
+        var blockTags = 'div, section, article, aside, nav, menus, p';
+
         it('_removeStyles should remove styles of node', function() {
             var $node = $('<div style="border: 1px solid #f00">TEST</div>');
             pch._removeStyles($node);
@@ -60,50 +62,93 @@ describe('WwPasteContentHelper', function() {
         it('_removeUnnecessaryBlocks should unwrap unnecessary blocks', function() {
             var $node = $('<div><div><span>TEST</span></div></div>');
 
-            pch._removeUnnecessaryBlocks($node[0]);
+            pch._removeUnnecessaryBlocks($node[0], blockTags);
 
-            expect($node.find('div').length).toEqual(0);
+            expect($node.find('div').length).toEqual(1);
         });
 
         it('_removeUnnecessaryBlocks should not unwrap block in LI', function() {
             var $node = $('<ul><li><div>TEST</div></li></ul>');
 
-            pch._removeUnnecessaryBlocks($node[0]);
+            pch._removeUnnecessaryBlocks($node[0], blockTags);
 
             expect($node.find('li').length).toEqual(1);
             expect($node.find('div').length).toEqual(1);
         });
 
         it('_removeUnnecessaryBlocks should not unwrap block in Task', function() {
-            var $node = $('<ul><li class="task-list-item"><div><input type="checkbox">&nbsp;TEST</div></li></ul>');
+            var $node = $('<ul><li class="task-list-item"><div>TEST</div></li></ul>');
 
-            pch._removeUnnecessaryBlocks($node[0]);
+            pch._removeUnnecessaryBlocks($node[0], blockTags);
 
             expect($node.find('li').length).toEqual(1);
             expect($node.find('div').length).toEqual(1);
-            expect($node.find('input').length).toEqual(1);
         });
 
         it('_removeUnnecessaryBlocks should unwrap block in Task', function() {
-            var $node = $('<ul><li><section><input type="checkbox">&nbsp;TEST</section></li></ul>');
+            var $node = $('<ul><li><section>TEST</section></li></ul>');
 
-            pch._removeUnnecessaryBlocks($node[0]);
+            pch._removeUnnecessaryBlocks($node[0], blockTags);
 
             expect($node.find('li').length).toEqual(1);
-            expect($node.find('input').length).toEqual(1);
             expect($node.find('section').length).toEqual(0);
         });
         it('_removeUnnecessaryBlocks should not unwrap div in blockquote', function() {
             var $node = $('<blockquote><div>hello<br></div><div>-simon<br></div></li></blockquote>');
             var divs;
 
-            pch._removeUnnecessaryBlocks($node[0]);
+            pch._removeUnnecessaryBlocks($node[0], blockTags);
 
             divs = $node.find('div');
 
             expect(divs.length).toEqual(2);
             expect(divs.eq(0).text()).toEqual('hello');
             expect(divs.eq(1).text()).toEqual('-simon');
+        });
+        it('_removeUnnecessaryBlocks should unwrap p', function() {
+            var fragment = document.createDocumentFragment();
+            var $node = $('<p><span>hello</span><span>-simon</span></p>');
+            var spans;
+
+            fragment.appendChild($node[0]);
+
+            pch._removeUnnecessaryBlocks(fragment, blockTags);
+
+            spans = $(fragment).find('span');
+            expect(spans.length).toEqual(2);
+            expect($node.find('p').length).toEqual(0);
+            expect(spans.eq(0).text()).toEqual('hello');
+            expect(spans.eq(1).text()).toEqual('-simon');
+        });
+        it('_removeUnnecessaryBlocks should not unwrap div without block element child', function() {
+            var fragment = document.createDocumentFragment();
+            var $node = $('<div>asdasd<br /></div><div><nav>asd</nav></div>');
+
+            fragment.appendChild($node[0]);
+
+            pch._removeUnnecessaryBlocks(fragment, blockTags);
+
+            expect($(fragment).children().length).toEqual(1);
+            expect($(fragment).find('div').length).toEqual(1);
+            expect($(fragment).find('div').text()).toEqual('asdasd');
+        });
+        it('_unwrapNestedBlocks should unwrap nested blockTags', function() {
+            var fragment = document.createDocumentFragment();
+            var $node = $('<article></article>');
+            var $fragment = $(fragment);
+
+            $node.append('<div>hello<br /></div>');
+            $node.append('<nav>simon</nav>');
+
+            $fragment.append($node[0]);
+
+            pch._unwrapNestedBlocks(fragment, blockTags);
+
+            expect($fragment.find('article').length).toEqual(0);
+            expect($fragment.find('div').length).toEqual(1);
+            expect($fragment.find('div').text()).toEqual('hello');
+            expect($fragment.find('nav').length).toEqual(1);
+            expect($fragment.find('nav').text()).toEqual('simon');
         });
         it('_preElementAid should make pre tag content that has element to useful', function() {
             var $node = $('<pre><div><span>TEST</span></div></pre>');
@@ -161,6 +206,36 @@ describe('WwPasteContentHelper', function() {
             expect($(contentFrag).find('br').length).toEqual(1);
             expect($(contentFrag).find('p').text()).toEqual('ip lorem sit amet');
             expect($(contentFrag).find('span').text()).toEqual('and so on');
+        });
+        it('_unwrapIfNonBlockElementHasBr should unwrap span element with br', function() {
+            var $node = $('<span>ip lorem sit amet<br /></span><span>and so on</span>');
+
+            contentFrag.appendChild($node[0]);
+            contentFrag.appendChild($node[1]);
+
+            pch._unwrapIfNonBlockElementHasBr(contentFrag);
+
+            expect($(contentFrag).find('span').length).toEqual(1);
+            expect($(contentFrag).find('br').length).toEqual(1);
+            expect($(contentFrag).text()).toEqual('ip lorem sit ametand so on');
+            expect($(contentFrag).find('span').eq(0).text()).toEqual('and so on');
+        });
+        it('_unwrapIfNonBlockElementHasBr should unwrap b, i, em, s element with br', function() {
+            var $node = $('<b>ip lorem sit amet<br /></b><i>and so on<br /></i><s>la vita dolce<br /></s><em>carpe diem<br /></em>');
+
+            contentFrag.appendChild($node[0]);
+            contentFrag.appendChild($node[1]);
+            contentFrag.appendChild($node[2]);
+            contentFrag.appendChild($node[3]);
+
+            pch._unwrapIfNonBlockElementHasBr(contentFrag);
+
+            expect($(contentFrag).find('i').length).toEqual(0);
+            expect($(contentFrag).find('b').length).toEqual(0);
+            expect($(contentFrag).find('s').length).toEqual(0);
+            expect($(contentFrag).find('em').length).toEqual(0);
+            expect($(contentFrag).find('br').length).toEqual(4);
+            expect($(contentFrag).text()).toEqual('ip lorem sit ametand so onla vita dolcecarpe diem');
         });
         it('_tableElementAid should wrap TRs with TBODY', function() {
             var fragment = document.createDocumentFragment();

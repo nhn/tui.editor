@@ -67,7 +67,9 @@ function finalizeHtml($html, needHtmlText) {
         returnValue = $html[0].innerHTML;
     } else {
         frag = document.createDocumentFragment();
-        $(frag).append($html[0].innerHTML);
+        $html.children().each(function() {
+            frag.appendChild(this);
+        });
         returnValue = frag;
     }
 
