@@ -212,9 +212,11 @@ WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev
  * @private
  */
 WwHrManager.prototype._unwrapDivOnHr = function() {
+    var editorContentBody = this.wwe.get$Body()[0];
     this.wwe.get$Body().find('hr').each(function(index, node) {
-        if ($(node).parent().is('div')) {
-            $(node).parent().find('br').remove();
+        var parentDiv = $(node).parent('div');
+        if (parentDiv[0] !== editorContentBody) {
+            parentDiv.find('br').remove();
             $(node).unwrap();
         }
     });
