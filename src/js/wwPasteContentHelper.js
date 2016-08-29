@@ -132,30 +132,9 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
  */
 WwPasteContentHelper.prototype._preElementAid = function(nodes) {
     var textLines;
+    var codeblockManager = this.wwe.getManager('codeblock');
 
-    $(nodes).find('PRE').each(function(index, pre) {
-        //코드태그가 있으면 코드단위로 라인 구분
-        if ($(pre).has('code').length > 1) {
-            textLines = [];
-
-            $(pre).find('code').each(function() {
-                textLines.push($(this).text().replace(/\n/g, ''));
-            });
-            //코드태그가 없으면 개행단위로 라인 구분
-        } else {
-            $(pre).find('br').replaceWith('\n');
-            textLines = $(pre).text().split(/\n/g);
-        }
-
-        $(pre).empty();
-
-        textLines.forEach(function(line) {
-            var lineDom = $('<div><code /><br/></div>');
-
-            lineDom.find('code').text(line);
-            $(pre).append(lineDom);
-        });
-    });
+    codeblockManager.splitCodeblockToEachLine(nodes);
 };
 
 /**

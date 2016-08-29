@@ -157,10 +157,10 @@ describe('WwPasteContentHelper', function() {
 
             pch._preElementAid(contentFrag);
 
-            expect($node.find('code').length).toEqual(1);
+            expect($node.find('code').length).toEqual(0);
             expect($node.find('span').length).toEqual(0);
-            expect($node.find('div > code').length).toEqual(1);
-            expect($node.find('code').eq(0).text()).toEqual('TEST');
+            expect($node.find('div').length).toEqual(1);
+            expect($node.find('div').eq(0).text()).toEqual('TEST');
         });
         it('_preElementAid should make pre tag content that has only text to useful', function() {
             var $node = $('<pre>TEST\nTEST2</pre>');
@@ -169,10 +169,9 @@ describe('WwPasteContentHelper', function() {
 
             pch._preElementAid(contentFrag);
 
-            expect($node.find('code').length).toEqual(2);
-            expect($node.find('div > code').length).toEqual(2);
-            expect($node.find('code').eq(0).text()).toEqual('TEST');
-            expect($node.find('code').eq(1).text()).toEqual('TEST2');
+            expect($node.find('div').length).toEqual(2);
+            expect($node.find('div').eq(0).text()).toEqual('TEST');
+            expect($node.find('div').eq(1).text()).toEqual('TEST2');
         });
         it('_wrapTextNodeWithDiv should wrap textNodes with div element', function() {
             var $documentFragment;
