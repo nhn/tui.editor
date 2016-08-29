@@ -135,7 +135,7 @@ WwPasteContentHelper.prototype._preElementAid = function(nodes) {
 
     $(nodes).find('PRE').each(function(index, pre) {
         //코드태그가 있으면 코드단위로 라인 구분
-        if ($(pre).has('code').length) {
+        if ($(pre).has('code').length > 1) {
             textLines = [];
 
             $(pre).find('code').each(function() {
