@@ -186,7 +186,7 @@ WwCodeBlockManager.prototype.splitCodeblockToEachLine = function(node) {
             textLines = [];
 
             $pre.children().each(function() {
-                if((this.nodeName === 'DIV' || this.nodeName === 'P')
+                if ((this.nodeName === 'DIV' || this.nodeName === 'P')
                    && !$(this).find('br').length) {
                     $(this).append('<br>');
                 }
