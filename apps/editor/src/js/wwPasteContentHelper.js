@@ -131,7 +131,6 @@ WwPasteContentHelper.prototype._pasteFirstAid = function(fragment) {
  * @param {DocumentFragment} nodes Pasting DocumentFragment
  */
 WwPasteContentHelper.prototype._preElementAid = function(nodes) {
-    var textLines;
     var codeblockManager = this.wwe.getManager('codeblock');
 
     codeblockManager.splitCodeblockToEachLine(nodes);
