@@ -216,4 +216,70 @@ describe('WwCodeBlockManager', function() {
             ].join(''));
         });
     });
+    describe('splitCodeblockToEachLine', function() {
+        it('update pre tag with language attributes and add data-te-codeblock attribute', function() {
+            var frag = document.createDocumentFragment();
+            var codeblock;
+
+            $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'test</code></pre>');
+
+
+            mgr.splitCodeblockToEachLine(frag);
+
+            codeblock = $($(frag).find('pre'));
+
+            expect(codeblock.length).toEqual(1);
+            expect(codeblock.hasClass('lang-javascript')).toBe(true);
+            expect(codeblock.attr('data-language')).toEqual('javascript');
+            expect(codeblock.attr('data-te-codeblock')).toBeDefined();
+        });
+        it('trim last linefeeds', function() {
+            var frag = document.createDocumentFragment();
+            var codeblock;
+
+            $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'test\n\ntest\n\n\n</code></pre>');
+
+
+            mgr.splitCodeblockToEachLine(frag);
+
+            codeblock = $($(frag).find('pre'));
+
+            expect(codeblock.find('div').length).toEqual(3);
+        });
+
+        it('makes normal codeblock with pre > code > textlines', function() {
+            var frag = document.createDocumentFragment();
+            var codeblock;
+
+            $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
+                         + 'test\ntest2\n\ntest3\n</code></pre>');
+
+
+            mgr.splitCodeblockToEachLine(frag);
+
+            codeblock = $($(frag).find('pre'));
+
+            expect(codeblock.find('div').length).toEqual(4);
+        });
+
+        it('Makes normal codeblock with pre > divs', function() {
+            var frag = document.createDocumentFragment();
+            var codeblock;
+
+            $(frag).append('<pre>'
+                         + '<div>test</div>'
+                         + '<div>test2</div>'
+                         + '<div>test3</div>'
+                         + '</pre>');
+
+
+            mgr.splitCodeblockToEachLine(frag);
+
+            codeblock = $($(frag).find('pre'));
+
+            expect(codeblock.find('div').length).toEqual(3);
+        });
+    });
 });

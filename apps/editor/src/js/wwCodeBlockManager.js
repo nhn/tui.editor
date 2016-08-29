@@ -70,7 +70,7 @@ WwCodeBlockManager.prototype._initEvent = function() {
     var self = this;
 
     this.eventManager.listen('wysiwygSetValueAfter', function() {
-        self._splitCodeblockToEachLine();
+        self.splitCodeblockToEachLine();
     });
 
     this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
@@ -110,8 +110,8 @@ WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
     var self = this;
     var node = nodes.shift();
 
-    while (node) {
-        $codeblock.append(self._makeCodeBlockLineHtml(node.textContent));
+    while (util.isTruthy(node)) {
+        $codeblock.append(self._makeCodeBlockLineHtml(util.isString(node) ? node : node.textContent));
         node = nodes.shift();
     }
 
@@ -166,27 +166,48 @@ WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(htm
 /**
  * Split code block to lines
  * @memberOf WwCodeBlockManager
+ * @param {HTMLElement} node root node to find pre
  * @private
  */
-WwCodeBlockManager.prototype._splitCodeblockToEachLine = function() {
+WwCodeBlockManager.prototype.splitCodeblockToEachLine = function(node) {
     var self = this;
 
-    this.wwe.get$Body().find('pre').each(function(index, pre) {
-        var codelines = pre.textContent.replace(/\n+$/, '').split('\n'),
-            lang = $(pre).find('code').attr('data-language');
+    if (!node) {
+        node = this.wwe.get$Body();
+    }
 
-        if (lang) {
-            $(pre).attr('data-language', lang);
-            $(pre).addClass('lang-' + lang);
+    $(node).find('pre').each(function(index, pre) {
+        var textLines;
+        var $pre = $(pre);
+        var lang = $pre.find('code').attr('data-language');
+
+        //pre태그 밑에 라인으로 의심되는 요소들이 있다면
+        if ($pre.children().length > 1) {
+            textLines = [];
+
+            $pre.children().each(function() {
+                if((this.nodeName === 'DIV' || this.nodeName === 'P')
+                   && !$(this).find('br').length) {
+                    $(this).append('<br>');
+                }
+            });
         }
 
-        $(pre).empty();
+        $pre.find('br').replaceWith('\n');
+        textLines = $pre.text().replace(/\s+$/, '').split(/\n/g);
 
-        util.forEach(codelines, function(line) {
-            $(pre).append(self._makeCodeBlockLineHtml(line));
+        if (lang) {
+            $pre.attr('data-language', lang);
+            $pre.addClass('lang-' + lang);
+        }
+
+        $pre.empty();
+
+        util.forEach(textLines, function(line) {
+            $pre.append(self._makeCodeBlockLineHtml(line));
         });
 
-        $(pre).attr(CODEBLOCK_ATTR_NAME, '');
+        $pre.attr(CODEBLOCK_ATTR_NAME, '');
     });
 };
 
