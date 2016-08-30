@@ -37,7 +37,7 @@
     "squire-rte": "https://github.com/nhnent/Squire.git#61c3df3dfc509487a9247e944c8373198d216882"
   },
   "devDependencies": {
-    "tui-component-colorpicker": "~1.0.1"
+    "tui-component-colorpicker": "~1.0.2"
   },
   "resolutions": {
     "jquery": "~2.1.4",
