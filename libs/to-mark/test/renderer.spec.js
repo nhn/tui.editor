@@ -208,6 +208,22 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('#heading')).toEqual(false);
         });
 
+        it('hr', function() {
+            expect(renderer._isNeedEscape('___')).toEqual(true);
+            expect(renderer._isNeedEscape('____')).toEqual(true);
+            expect(renderer._isNeedEscape('_____')).toEqual(true);
+            expect(renderer._isNeedEscape('_ _ _')).toEqual(true);
+            expect(renderer._isNeedEscape('_ ___ _')).toEqual(true);
+            expect(renderer._isNeedEscape('_ _       _ _ _ ')).toEqual(true);
+            expect(renderer._isNeedEscape('***')).toEqual(true);
+            expect(renderer._isNeedEscape('*****')).toEqual(true);
+            expect(renderer._isNeedEscape('* * ** * *')).toEqual(true);
+
+            expect(renderer._isNeedEscape('__')).toEqual(false);
+            expect(renderer._isNeedEscape('--')).toEqual(false);
+            expect(renderer._isNeedEscape('**')).toEqual(false);
+        });
+
         it('list', function() {
             expect(renderer._isNeedEscape(' * list')).toEqual(true);
             expect(renderer._isNeedEscape(' - list')).toEqual(true);
@@ -239,6 +255,16 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('__strong__')).toEqual(true);
 
             expect(renderer._isNeedEscape('_ em_')).toEqual(false);
+        });
+
+        it('strikeThrough', function() {
+            expect(renderer._isNeedEscape('~~true~~')).toEqual(true);
+            expect(renderer._isNeedEscape('~~strike through~~')).toEqual(true);
+
+            expect(renderer._isNeedEscape('~~~~')).toEqual(false);
+            expect(renderer._isNeedEscape('~~strike~')).toEqual(false);
+            expect(renderer._isNeedEscape('~~strike~through~')).toEqual(false);
+            expect(renderer._isNeedEscape('~strike~')).toEqual(false);
         });
 
         it('link,img', function() {
