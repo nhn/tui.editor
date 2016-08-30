@@ -958,6 +958,8 @@
 	    strikeThrough: /~~(\S[\s\S]*\S)~~/,
 	    code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
+	    verticalBar: /\u007C/,
+
 	    codeblockGfm: /^(`{3,})/
 	};
 
