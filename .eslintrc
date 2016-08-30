@@ -1,10 +1,11 @@
 {
     "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaVersion": 7,
+        "ecmaVersion": 6,
         "sourceType": "module",
         "ecmaFeatures": {
-            "classes": true
+            "classes": true,
+            "experimentalObjectRestSpread": true
         }
     },
     "env": {
@@ -209,7 +210,33 @@
         "max-statements-per-line": [2, {"max": 1}],
 
         //ES6
+        "arrow-body-style": [2, "as-needed"],
+        "arrow-parens": [2, "as-needed"],
+        "arrow-spacing": [2, {"before": true, "after": true}],
+        "constructor-super": 2,
+        "generator-star-spacing": [2, "after"],
+        "no-class-assign": 2,
+        "no-const-assign": 2,
         "no-confusing-arrow": [2, {"allowParens": true}],
-        "no-duplicate-imports": 2
+        "no-dupe-class-members": 2,
+        "no-duplicate-imports": 2,
+        "no-new-symbol": 2,
+        "no-this-before-super": 2,
+        "no-useless-constructor": 2,
+        "no-useless-computed-key": 2,
+        "no-useless-rename": 2,
+        "no-var": 1, // ES6 적용과 함께 error로 변경
+        "object-shorthand": [1, "always", {"avoidQuotes": true}], // ES6 적용과 함께 error로 변경
+        "prefer-arrow-callback": [1, {"allowUnboundThis": false, "allowNamedFunctions": true}], // ES6 적용과 함께 error로 변경
+        "prefer-const": [2, {"destructuring": "any"}],
+        "prefer-reflect": 1, // ES6 적용과 함께 error로 변경
+        "prefer-rest-params": 1, // ES6 적용과 함께 error로 변경
+        "prefer-spread": 1, // ES6 적용과 함께 error로 변경
+        "prefer-template": 1, // ES6 적용과 함께 error로 변경
+        "require-yield": 2,
+        "rest-spread-spacing": [2, "never"],
+        "sort-imports": 0,
+        "template-curly-spacing": [2, "never"],
+        "yield-star-spacing": [2, "after"]
     }
 }
