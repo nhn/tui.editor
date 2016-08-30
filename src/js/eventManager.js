@@ -4,7 +4,7 @@
  */
 const util = tui.util;
 
-var eventList = [
+const eventList = [
     'previewBeforeHook',
     'previewRenderAfter',
     'previewNeedsRefresh',
@@ -81,14 +81,12 @@ class EventManager {
      * @param {function} handler Event handler
      */
     listen(typeStr, handler) {
-        let eventHandlers;
-        let typeInfo = this._getTypeInfo(typeStr);
+        const typeInfo = this._getTypeInfo(typeStr);
+        const eventHandlers = this.events.get(typeInfo.type) || [];
 
         if (!this._hasEventType(typeInfo.type)) {
-            throw new Error('There is no event type ' + typeInfo.type);
+            throw new Error(`There is no event type ${typeInfo.type}`);
         }
-
-        eventHandlers = this.events.get(typeInfo.type) || [];
 
         if (typeInfo.namespace) {
             handler.namespace = typeInfo.namespace;
@@ -107,14 +105,14 @@ class EventManager {
      * @returns {Array}
      */
     emit(...args) {
-        let typeStr = args.shift();
-        let typeInfo = this._getTypeInfo(typeStr);
-        let eventHandlers = this.events.get(typeInfo.type);
+        const typeStr = args.shift();
+        const typeInfo = this._getTypeInfo(typeStr);
+        const eventHandlers = this.events.get(typeInfo.type);
         let results;
 
         if (eventHandlers) {
-            util.forEach(eventHandlers, (handler) => {
-                let result = handler.apply(null, args);
+            util.forEach(eventHandlers, handler => {
+                const result = handler(...args);
 
                 if (!util.isUndefined(result)) {
                     results = results || [];
@@ -135,12 +133,12 @@ class EventManager {
      * @returns {string}
      */
     emitReduce(...args) {
-        let type = args.shift();
-        let eventHandlers = this.events.get(type);
+        const type = args.shift();
+        const eventHandlers = this.events.get(type);
 
         if (eventHandlers) {
-            util.forEach(eventHandlers, (handler) => {
-                let result = handler.apply(null, args);
+            util.forEach(eventHandlers, handler => {
+                const result = handler(...args);
 
                 if (!util.isFalsy(result)) {
                     args[0] = result;
@@ -159,7 +157,7 @@ class EventManager {
      * @private
      */
     _getTypeInfo(typeStr) {
-        let splited = typeStr.split('.');
+        const splited = typeStr.split('.');
 
         return {
             type: splited[0],
@@ -185,7 +183,7 @@ class EventManager {
      */
     addEventType(type) {
         if (this._hasEventType(type)) {
-            throw new Error('There is already have event type ' + type);
+            throw new Error(`There is already have event type ${type}`);
         }
 
         this.TYPE.set(type);
@@ -198,7 +196,7 @@ class EventManager {
      * @param {string} typeStr Event type name
      */
     removeEventHandler(typeStr) {
-        let {type, namespace} = this._getTypeInfo(typeStr);
+        const {type, namespace} = this._getTypeInfo(typeStr);
 
         if (type && !namespace) {
             //dont use dot notation cuz eslint
@@ -220,12 +218,10 @@ class EventManager {
      * @private
      */
     _removeEventHandlerWithTypeInfo(type, namespace) {
-        let handlersToSurvive = [];
-        var eventHandlers;
+        const handlersToSurvive = [];
+        const eventHandlers = this.events.get(type);
 
-        eventHandlers = this.events.get(type);
-
-        eventHandlers.map((handler) => {
+        eventHandlers.map(handler => {
             if (handler.namespace !== namespace) {
                 handlersToSurvive.push(handler);
             }
