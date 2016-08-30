@@ -14,10 +14,12 @@ var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
 var RESET_COLOR = '#181818';
 
 extManager.defineExtension('colorSyntax', function(editor) {
-    var useCustomSyntax = false;
+    var useCustomSyntax = false,
+        preset;
 
     if (editor.options.colorSyntax) {
         useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
+        preset = editor.options.colorSyntax.preset;
     }
 
     editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
@@ -98,12 +100,12 @@ extManager.defineExtension('colorSyntax', function(editor) {
             }
         });
 
-        initUI(editor);
+        initUI(editor, preset);
     }
 });
 
-function initUI(editor) {
-    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className;
+function initUI(editor, preset) {
+    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className, cpOptions;
 
     className = 'tui-color';
 
@@ -121,9 +123,15 @@ function initUI(editor) {
     $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
     $buttonBar.css('margin-top', 10);
 
-    colorPicker = tui.component.colorpicker.create({
+    cpOptions = {
         container: $colorPickerContainer[0]
-    });
+    };
+
+    if (preset) {
+        cpOptions.preset = preset;
+    }
+
+    colorPicker = tui.component.colorpicker.create(cpOptions);
 
     selectedColor = colorPicker.getColor();
 
@@ -153,9 +161,6 @@ function initUI(editor) {
                 'left': $button.position().left
             });
             popup.show();
-            //컬러피커가 이미선택된 컬러를 선택했을때 이벤트가 발생하지 않는 문제가 있어서 추가한 코드
-            //수정되면 삭제되야할 코드
-            colorPicker.options.color = null;
         }
     });
 
