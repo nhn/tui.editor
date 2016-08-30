@@ -16,7 +16,7 @@
     "karma-jasmine-ajax": "^0.1.13",
     "karma-jasmine-jquery": "^0.1.1",
     "karma-junit-reporter": "^1.1.0",
-    "karma-narrow-reporter": "^2.0.0",
+    "karma-narrow-reporter": "^2.0.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "karma-webpack": "^1.8.0",
