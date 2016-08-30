@@ -12,7 +12,7 @@ var FIND_LEAD_SPACE_RX = /^\u0020/,
     //find space more than one
     FIND_SPACE_MORE_THAN_ONE_RX = /[\u0020]+/g,
     //find characters that need escape
-    FIND_CHAR_TO_ESCAPE_RX = /[\>\(\)\*\{\}\[\]\_\`\+\-\.\`\!#|]/g;
+    FIND_CHAR_TO_ESCAPE_RX = /[~>()*{}\[\]_`+-.!#|]/g;
 
 var TEXT_NODE = 3;
 
@@ -307,7 +307,7 @@ Renderer.prototype.escapeText = function(text) {
 
 Renderer.markdownTextToEscapeRx = {
     codeblock: /(^ {4}[^\n]+\n*)+/,
-    hr: /(^ *[-*_]){3,} */,
+    hr: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
     heading: /^(#{1,6}) +[\s\S]+/,
     lheading: /^([^\n]+)\n *(=|-){2,} */,
     blockquote: /^( *>[^\n]+.*)+/,
@@ -318,6 +318,7 @@ Renderer.markdownTextToEscapeRx = {
     reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
     strong: /__(\S[\s\S]*\h)__|\*\*(\S[\s\S]*\S)\*\*/,
     em: /_(\S[\s\S]*\S)_|\*(\S[\s\S]*\S)\*/,
+    strikeThrough: /~~(\S[\s\S]*\S)~~/,
     code: /(`+)\s*([\s\S]*?[^`])\s*\1(?!`)/,
 
     codeblockGfm: /^(`{3,})/
