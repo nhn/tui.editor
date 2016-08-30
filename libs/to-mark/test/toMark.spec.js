@@ -9,6 +9,11 @@ describe('toMark', function() {
         expect(toMark()).toEqual('');
         expect(toMark(null)).toEqual('');
     });
+    it('should escape vertical bars', function() {
+        expect(toMark('<div>1 | Introduction</div>')).toEqual('<div>1 \\| Introduction</div>');
+        expect(toMark('<p>|||, Exercise</p>')).toEqual('\\|\\|\\|, Exercise');
+        expect(toMark('<b>|go ro Work|</b>')).toEqual('**\\|go ro Work\\|**');
+    });
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
         expect(toMark('<h1>Hello World</h1>')).toEqual('# Hello World');
         expect(toMark('<h1>Hello World</h1><br />')).toEqual('# Hello World');
