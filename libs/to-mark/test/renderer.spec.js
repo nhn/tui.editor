@@ -210,10 +210,13 @@ describe('renderer', function() {
 
         it('list', function() {
             expect(renderer._isNeedEscape(' * list')).toEqual(true);
+            expect(renderer._isNeedEscape(' - list')).toEqual(true);
             expect(renderer._isNeedEscape('* list')).toEqual(true);
+            expect(renderer._isNeedEscape('- list')).toEqual(true);
             expect(renderer._isNeedEscape('1. list')).toEqual(true);
 
             expect(renderer._isNeedEscape('*list')).toEqual(false);
+            expect(renderer._isNeedEscape('-list')).toEqual(false);
             expect(renderer._isNeedEscape('1.awefawef')).toEqual(false);
             expect(renderer._isNeedEscape('awef1. awef')).toEqual(false);
         });
