@@ -60,7 +60,7 @@ describe('Editor', function() {
                 editor.changePreviewStyle('tab');
                 editor.setValue('1\n2');
                 editor.changePreviewStyle('vertical');
-                expect(editor.preview.$el.text()).toEqual('12\n');
+                expect(editor.preview.$el.text()).toEqual('1\n2\n');
             });
         });
     });

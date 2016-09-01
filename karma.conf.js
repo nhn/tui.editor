@@ -43,13 +43,14 @@ module.exports = function(config) {
             'lib/tui-component-colorpicker/dist/colorpicker.js',
             'lib/toMark/dist/toMark.js',
             'lib/highlightjs/highlight.pack.js',
-            'lib/marked/lib/marked.js',
+            'lib/markdown-it/dist/markdown-it.min.js',
             'lib/codemirror/lib/codemirror.js',
             'lib/codemirror/lib/codemirror.css',
             'lib/codemirror/addon/mode/overlay.js',
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/squire-rte/build/squire-raw.js',
+            'test/fixtures/*',
             'test/test.bundle.js'
         ],
 

@@ -20,6 +20,7 @@
         "fabric": true,
         "tui": true,
         "loadFixtures": true,
+        "readFixtures": true,
         "ActiveXObject": true
     },
     "rules": {

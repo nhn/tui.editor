@@ -28,11 +28,13 @@ describe('Convertor', function() {
 
         it('escape vertical bar', function() {
             expect(convertor.toHTML('| 1 | 2 |\n| -- | -- |\n| 4\\|5 | 6 |\n').match(/\/td/g).length).toEqual(2);
-            expect(convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g).length).toEqual(2);
+            expect(convertor.toHTMLWithCodeHightlight('| 1 | 2 |\n| -- | -- |\n| 3 | 4\\|4 |\n').match(/\/td/g).length)
+                .toEqual(2);
         });
 
         it('Avoid hidden last cell in table', function() {
-            expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
+            expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length)
+                .toEqual(6);
         });
     });
 
@@ -52,7 +54,7 @@ describe('Convertor', function() {
 
             convertor.toHTML('# HELLO WORLD');
 
-            expect(param).toEqual('<h1 id="hello-world">HELLO WORLD</h1>\n');
+            expect(param).toEqual('<h1>HELLO WORLD</h1>\n');
         });
 
         it('convertorAfterHtmlToMarkdownConverted event fired after markdown convert', function() {
