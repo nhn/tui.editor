@@ -19,6 +19,7 @@ describe('WwCodeBlockManager', function() {
         wwe.init();
 
         mgr = new WwCodeBlockManager(wwe);
+        wwe.focus();
     });
 
     //we need to wait squire input event process
