@@ -140,7 +140,6 @@ module.exports = function(config) {
         browsers: [
             'IE10',
             'IE11',
-            'Edge',
             'Chrome-WebDriver',
             'Firefox-WebDriver'
         ],
