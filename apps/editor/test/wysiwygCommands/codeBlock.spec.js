@@ -1,15 +1,13 @@
-'use strict';
+import CodeBlock from '../../src/js/wysiwygCommands/codeBlock';
+import CodeBlockManager from '../../src/js/wwCodeBlockManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    CodeBlock = require('../../src/js/wysiwygCommands/codeBlock'),
-    CodeBlockManager = require('../../src/js/wwCodeBlockManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('CodeBlock', () => {
+    let wwe, sq, $body;
 
-describe('CodeBlock', function() {
-    var wwe, sq, $body;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -24,32 +22,30 @@ describe('CodeBlock', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add CodeBlock', function() {
+    it('add CodeBlock', () => {
         CodeBlock.exec(wwe);
 
         expect($body.find('pre').length).toEqual(1);
         expect($body.find('pre div').length).toEqual(1);
         expect($body.find('pre').attr('data-te-codeblock')).toBeDefined();
     });
-    it('add CodeBlock with language', function() {
+    it('add CodeBlock with language', () => {
         CodeBlock.exec(wwe, 'javascript');
 
         expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
         expect($body.find('pre').attr('data-language')).toEqual('javascript');
     });
-    it('add CodeBlock with selection', function() {
-        var range;
-
+    it('add CodeBlock with selection', () => {
         wwe.setValue('<div>hello, my name is code</div>');
 
-        range = wwe.getEditor().getSelection();
+        const range = wwe.getEditor().getSelection();
         range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
         range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
 

@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * AddRow
@@ -13,16 +14,16 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
+const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     name: 'AddRow',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection().cloneRange(),
-            $tr, $newRow;
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        let $tr, $newRow;
 
         sq.focus();
 
@@ -44,19 +45,27 @@ var AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     }
 });
 
+/**
+ * Get new row of given row
+ * @param {jQuery} $tr jQuery wrapped table row
+ * @returns {HTMLElement}
+ */
 function getNewRow($tr) {
-    var cloned = $tr.clone();
-    var htmlString = tui.util.browser.msie ? '' : '<br />';
+    const cloned = $tr.clone();
+    const htmlString = tui.util.browser.msie ? '' : '<br />';
 
     cloned.find('td').html(htmlString);
 
     return cloned;
 }
-
+/**
+ * Focus to first table cell
+ * @param {Squire} sq Squire instance
+ * @param {jQuery} $tr jQuery wrapped table row
+ */
 function focusToFirstTd(sq, $tr) {
-    var range;
+    const range = sq.getSelection();
 
-    range = sq.getSelection();
     range.selectNodeContents($tr.find('td')[0]);
     range.collapse(true);
     sq.setSelection(range);

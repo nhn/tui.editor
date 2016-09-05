@@ -4,9 +4,9 @@
  */
 
 
-var FIND_ZWB = /\u200B/g;
+const FIND_ZWB = /\u200B/g;
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * isTextNode
@@ -14,7 +14,7 @@ var util = tui.util;
  * @param {Node} node node to check
  * @returns {boolean} result
  */
-var isTextNode = function(node) {
+const isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
 };
 
@@ -24,7 +24,7 @@ var isTextNode = function(node) {
  * @param {Node} node node to check
  * @returns {boolean} result
  */
-var isElemNode = function(node) {
+const isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
 };
 
@@ -34,7 +34,7 @@ var isElemNode = function(node) {
  * @param {Node} node node
  * @returns {string} node name
  */
-var getNodeName = function(node) {
+const getNodeName = function(node) {
     if (isElemNode(node)) {
         return node.tagName;
     }
@@ -48,8 +48,8 @@ var getNodeName = function(node) {
  * @param {Node} node node
  * @returns {number} length
  */
-var getTextLength = function(node) {
-    var len;
+const getTextLength = function(node) {
+    let len;
 
     if (isElemNode(node)) {
         len = node.textContent.replace(FIND_ZWB, '').length;
@@ -66,8 +66,8 @@ var getTextLength = function(node) {
  * @param {Node} node node
  * @returns {number} length
  */
-var getOffsetLength = function(node) {
-    var len;
+const getOffsetLength = function(node) {
+    let len;
 
     if (isElemNode(node)) {
         len = node.childNodes.length;
@@ -84,9 +84,9 @@ var getOffsetLength = function(node) {
  * @param {Node} node node
  * @returns {number} offset(index)
  */
-var getNodeOffsetOfParent = function(node) {
-    var i, t, found,
-        childNodesOfParent = node.parentNode.childNodes;
+const getNodeOffsetOfParent = function(node) {
+    const childNodesOfParent = node.parentNode.childNodes;
+    let i, t, found;
 
     for (i = 0, t = childNodesOfParent.length; i < t; i += 1) {
         if (childNodesOfParent[i] === node) {
@@ -105,8 +105,8 @@ var getNodeOffsetOfParent = function(node) {
  * @param {number} index offset index
  * @returns {Node} foudned node
  */
-var getChildNodeByOffset = function(node, index) {
-    var currentNode;
+const getChildNodeByOffset = function(node, index) {
+    let currentNode;
 
     if (isTextNode(node)) {
         currentNode = node;
@@ -127,9 +127,9 @@ var getChildNodeByOffset = function(node, index) {
  * @param {string} untilNodeName parent node name to limit
  * @returns {Node} founded node
  */
-var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
-    var directionKey = direction + 'Sibling',
-        nodeName, foundedNode;
+const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
+    const directionKey = `${direction}Sibling`;
+    let nodeName, foundedNode;
 
     while (node && !node[directionKey]) {
         nodeName = getNodeName(node.parentNode);
@@ -159,8 +159,8 @@ var getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
  * @param {string} untilNodeName parent node name to limit
  * @returns {Node} founded node
  */
-var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
-    var prevNode;
+const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
+    let prevNode;
 
     if (index > 0) {
         prevNode = getChildNodeByOffset(node, index - 1);
@@ -171,8 +171,8 @@ var getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     return prevNode;
 };
 
-var getParentUntilBy = function(node, condition) {
-    var foundedNode;
+const getParentUntilBy = function(node, condition) {
+    let foundedNode;
 
     while (node.parentNode && !condition(node.parentNode)) {
         node = node.parentNode;
@@ -193,17 +193,13 @@ var getParentUntilBy = function(node, condition) {
  * @param {string|HTMLNode} untilNode node name or node to limit
  * @returns {Node} founded node
  */
-var getParentUntil = function(node, untilNode) {
-    var foundedNode;
+const getParentUntil = function(node, untilNode) {
+    let foundedNode;
 
     if (util.isString(untilNode)) {
-        foundedNode = getParentUntilBy(node, function(targetNode) {
-            return untilNode === getNodeName(targetNode);
-        });
+        foundedNode = getParentUntilBy(node, targetNode => untilNode === getNodeName(targetNode));
     } else {
-        foundedNode = getParentUntilBy(node, function(targetNode) {
-            return untilNode === targetNode;
-        });
+        foundedNode = getParentUntilBy(node, targetNode => untilNode === targetNode);
     }
 
     return foundedNode;
@@ -218,9 +214,9 @@ var getParentUntil = function(node, untilNode) {
  * @param {string|Node} underNode parent node name to limit
  * @returns {Node} founded node
  */
-var getNodeWithDirectionUnderParent = function(direction, node, underNode) {
-    var directionKey = direction + 'Sibling',
-        foundedNode;
+const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
+    const directionKey = `${direction}Sibling`;
+    let foundedNode;
 
     node = getParentUntil(node, underNode);
 
@@ -238,7 +234,7 @@ var getNodeWithDirectionUnderParent = function(direction, node, underNode) {
  * @param {Node} underNode underNode
  * @returns {Node} founded node
  */
-var getTopPrevNodeUnder = function(node, underNode) {
+const getTopPrevNodeUnder = function(node, underNode) {
     return getNodeWithDirectionUnderParent('previous', node, underNode);
 };
 
@@ -249,7 +245,7 @@ var getTopPrevNodeUnder = function(node, underNode) {
  * @param {Node} underNode underNode
  * @returns {Node} founded node
  */
-var getTopNextNodeUnder = function(node, underNode) {
+const getTopNextNodeUnder = function(node, underNode) {
     return getNodeWithDirectionUnderParent('next', node, underNode);
 };
 
@@ -258,7 +254,7 @@ var getTopNextNodeUnder = function(node, underNode) {
  * @param {Node} node Node for start searching
  * @returns {Node}
  */
-var getTopBlockNode = function(node) {
+const getTopBlockNode = function(node) {
     return getParentUntil(node, 'BODY');
 };
 
@@ -267,7 +263,7 @@ var getTopBlockNode = function(node) {
  * @param {Node} node Node for start searching
  * @returns {Node}
  */
-var getPrevTextNode = function(node) {
+const getPrevTextNode = function(node) {
     node = node.previousSibling || node.parentNode;
 
     while (!isTextNode(node) && getNodeName(node) !== 'BODY') {
@@ -296,18 +292,18 @@ var getPrevTextNode = function(node) {
  * @param {function} textNodeFilter Text node filter
  * @returns {Array}
  */
-var findOffsetNode = function(root, offsetList, textNodeFilter) {
-    var result = [],
-        text = '',
-        walkerOffset = 0,
-        offset, walker, newWalkerOffset;
+const findOffsetNode = function(root, offsetList, textNodeFilter) {
+    const result = [];
+    let text = '';
+    let walkerOffset = 0;
+    let newWalkerOffset;
 
     if (!offsetList.length) {
         return result;
     }
 
-    offset = offsetList.shift();
-    walker = document.createTreeWalker(root, 4, null, false);
+    let offset = offsetList.shift();
+    const walker = document.createTreeWalker(root, 4, null, false);
 
     while (walker.nextNode()) {
         text = walker.currentNode.nodeValue || '';
@@ -322,7 +318,7 @@ var findOffsetNode = function(root, offsetList, textNodeFilter) {
             result.push({
                 container: walker.currentNode,
                 offsetInContainer: offset - walkerOffset,
-                offset: offset
+                offset
             });
 
             if (!offsetList.length) {
@@ -339,7 +335,7 @@ var findOffsetNode = function(root, offsetList, textNodeFilter) {
         result.push({
             container: walker.currentNode,
             offsetInContainer: text.length,
-            offset: offset
+            offset
         });
         offset = offsetList.shift();
     } while (!util.isUndefined(offset));
@@ -347,9 +343,8 @@ var findOffsetNode = function(root, offsetList, textNodeFilter) {
     return result;
 };
 
-var getNodeInfo = function(node) {
-    var path = {};
-    var className;
+const getNodeInfo = function(node) {
+    const path = {};
 
     path.tagName = node.nodeName;
 
@@ -357,7 +352,7 @@ var getNodeInfo = function(node) {
         path.id = node.id;
     }
 
-    className = node.className.trim();
+    const className = node.className.trim();
 
     if (className) {
         path.className = className;
@@ -366,8 +361,8 @@ var getNodeInfo = function(node) {
     return path;
 };
 
-var getPath = function(node, root) {
-    var paths = [];
+const getPath = function(node, root) {
+    const paths = [];
 
     while (node && node !== root) {
         if (isElemNode(node)) {
@@ -386,9 +381,9 @@ var getPath = function(node, root) {
  * @param {string} direction Boolean value for direction true is find next cell
  * @returns {HTMLElement|null}
  */
-var getTableCellByDirection = function(node, direction) {
-    var isForward = true;
-    var targetElement = null;
+const getTableCellByDirection = function(node, direction) {
+    let isForward = true;
+    let targetElement = null;
 
     if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
         return null;
@@ -412,10 +407,10 @@ var getTableCellByDirection = function(node, direction) {
  * @param {boolean} [needEdgeCell=false] Boolean value for find first TD in next line
  * @returns {HTMLElement|null}
  */
-var getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
-    var isForward = true;
-    var tableCellElement = null;
-    var $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
+const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
+    let isForward = true;
+    let tableCellElement = null;
+    let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
 
     if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
         return null;
@@ -459,22 +454,22 @@ var getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
 };
 
 module.exports = {
-    getNodeName: getNodeName,
-    isTextNode: isTextNode,
-    isElemNode: isElemNode,
-    getTextLength: getTextLength,
-    getOffsetLength: getOffsetLength,
-    getPrevOffsetNodeUntil: getPrevOffsetNodeUntil,
-    getNodeOffsetOfParent: getNodeOffsetOfParent,
-    getChildNodeByOffset: getChildNodeByOffset,
-    getTopPrevNodeUnder: getTopPrevNodeUnder,
-    getTopNextNodeUnder: getTopNextNodeUnder,
-    getParentUntil: getParentUntil,
-    getTopBlockNode: getTopBlockNode,
-    getPrevTextNode: getPrevTextNode,
-    findOffsetNode: findOffsetNode,
-    getPath: getPath,
-    getNodInfo: getNodeInfo,
-    getTableCellByDirection: getTableCellByDirection,
-    getSiblingRowCellByDirection: getSiblingRowCellByDirection
+    getNodeName,
+    isTextNode,
+    isElemNode,
+    getTextLength,
+    getOffsetLength,
+    getPrevOffsetNodeUntil,
+    getNodeOffsetOfParent,
+    getChildNodeByOffset,
+    getTopPrevNodeUnder,
+    getTopNextNodeUnder,
+    getParentUntil,
+    getTopBlockNode,
+    getPrevTextNode,
+    findOffsetNode,
+    getPath,
+    getNodeInfo,
+    getTableCellByDirection,
+    getSiblingRowCellByDirection
 };

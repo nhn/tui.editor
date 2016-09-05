@@ -4,12 +4,12 @@
  */
 
 
-var LayerPopup = require('./layerpopup');
+const LayerPopup = require('./layerpopup');
 
-var util = tui.util;
+const util = tui.util;
 
 /* eslint-disable indent */
-var POPUP_CONTENT = [
+const POPUP_CONTENT = [
     '<div class="te-table-selection">',
         '<div class="te-table-header"></div>',
         '<div class="te-table-body"></div>',
@@ -19,7 +19,7 @@ var POPUP_CONTENT = [
 ].join('');
 /* eslint-enable indent */
 
-var CELL_WIDTH = 25,
+const CELL_WIDTH = 25,
     CELL_HEIGHT = 17,
     MIN_ROW_INDEX = 7,
     MAX_ROW_INDEX = 14,
@@ -82,14 +82,12 @@ PopupAddTable.prototype._cacheElements = function() {
  * Bind element events
  */
 PopupAddTable.prototype._bindContentEvent = function() {
-    var self = this;
+    const self = this;
 
-    this.on('mousemove .te-table-selection', function(ev) {
-        var x = ev.pageX - self._selectionOffset.left,
-            y = ev.pageY - self._selectionOffset.top,
-            bound;
-
-        bound = self._getSelectionBoundByOffset(x, y);
+    this.on('mousemove .te-table-selection', ev => {
+        const x = ev.pageX - self._selectionOffset.left;
+        const y = ev.pageY - self._selectionOffset.top;
+        const bound = self._getSelectionBoundByOffset(x, y);
 
         self._resizeTableBySelectionIfNeed(bound.col, bound.row);
 
@@ -98,8 +96,8 @@ PopupAddTable.prototype._bindContentEvent = function() {
         self._setSelectedBound(bound.col, bound.row);
     });
 
-    this.on('click .te-table-selection', function() {
-        var tableSize = self._getSelectedTableSize();
+    this.on('click .te-table-selection', () => {
+        const tableSize = self._getSelectedTableSize();
         self.eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
     });
 };
@@ -109,13 +107,13 @@ PopupAddTable.prototype._bindContentEvent = function() {
  * Bind event manager event
  */
 PopupAddTable.prototype._linkWithEventManager = function() {
-    var self = this;
+    const self = this;
 
-    this.eventManager.listen('focus', function() {
+    this.eventManager.listen('focus', () => {
         self.hide();
     });
 
-    this.eventManager.listen('openPopupAddTable', function() {
+    this.eventManager.listen('openPopupAddTable', () => {
         self.eventManager.emit('closeAllPopup');
         self.$el.css({
             'top': self.$button.position().top + self.$button.height() + 5,
@@ -125,7 +123,7 @@ PopupAddTable.prototype._linkWithEventManager = function() {
         self._selectionOffset = self.$el.find('.te-table-selection').offset();
     });
 
-    this.eventManager.listen('closeAllPopup', function() {
+    this.eventManager.listen('closeAllPopup', () => {
         self.hide();
     });
 };
@@ -137,7 +135,7 @@ PopupAddTable.prototype._linkWithEventManager = function() {
  * @param {number} row row index
  */
 PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row) {
-    var resizedBound = this._getResizedTableBound(col, row);
+    const resizedBound = this._getResizedTableBound(col, row);
 
     if (resizedBound) {
         this._setTableSizeByBound(resizedBound.col, resizedBound.row);
@@ -152,7 +150,7 @@ PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row) {
  * @returns {object} bound
  */
 PopupAddTable.prototype._getResizedTableBound = function(col, row) {
-    var resizedCol, resizedRow, resizedBound;
+    let resizedCol, resizedRow, resizedBound;
 
     if (col >= MIN_COL_INDEX && col < MAX_COL_INDEX) {
         resizedCol = col + 1;
@@ -196,7 +194,7 @@ PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
  * @returns {object} bound
  */
 PopupAddTable.prototype._getBoundByOffset = function(x, y) {
-    var rowBound = parseInt(y / CELL_HEIGHT, 10),
+    const rowBound = parseInt(y / CELL_HEIGHT, 10),
         colBound = parseInt(x / CELL_WIDTH, 10);
 
     return {
@@ -213,12 +211,12 @@ PopupAddTable.prototype._getBoundByOffset = function(x, y) {
  * @returns {object} offset
  */
 PopupAddTable.prototype._getOffsetByBound = function(col, row) {
-    var x = (col * CELL_WIDTH) + CELL_WIDTH,
+    const x = (col * CELL_WIDTH) + CELL_WIDTH,
         y = (row * CELL_HEIGHT) + CELL_HEIGHT;
 
     return {
-        x: x,
-        y: y
+        x,
+        y
     };
 };
 
@@ -229,7 +227,7 @@ PopupAddTable.prototype._getOffsetByBound = function(col, row) {
  * @param {number} row row index
  */
 PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
-    var boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
+    const boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
     this._setTableSize(boundOffset.x, boundOffset.y);
     this._tableBound.row = row;
     this._tableBound.col = col;
@@ -243,7 +241,7 @@ PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
  * @returns {object} bound
  */
 PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
-    var bound = this._getBoundByOffset(x, y);
+    const bound = this._getBoundByOffset(x, y);
 
     if (bound.row < MIN_ROW_SELECTION_INDEX) {
         bound.row = MIN_ROW_SELECTION_INDEX;
@@ -267,9 +265,7 @@ PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
  * @param {number} row row index
  */
 PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
-    var boundOffset;
-
-    boundOffset = this._getOffsetByBound(col, row);
+    const boundOffset = this._getOffsetByBound(col, row);
     this._setSelectionArea(boundOffset.x, boundOffset.y);
 };
 
@@ -303,7 +299,7 @@ PopupAddTable.prototype._getSelectedTableSize = function() {
  * @param {number} row row index
  */
 PopupAddTable.prototype._setDisplayText = function(col, row) {
-    this.$desc.html((col + 1) + ' x ' + (row + 1));
+    this.$desc.html(`${(col + 1)} x ${(row + 1)}`);
 };
 
 /**

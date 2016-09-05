@@ -1,14 +1,12 @@
-'use strict';
+import RemoveTable from '../../src/js/wysiwygCommands/tableRemove';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var RemoveTable = require('../../src/js/wysiwygCommands/tableRemove'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Table - Remove', () => {
+    let wwe;
 
-describe('Table - Remove', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -19,15 +17,15 @@ describe('Table - Remove', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('remove table that have selected', function() {
-        var sq = wwe.getEditor(),
+    it('remove table that have selected', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([

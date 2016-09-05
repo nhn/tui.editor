@@ -1,4 +1,4 @@
-var mdInput = ['# HELLO\n\n',
+const mdInput = ['# HELLO\n\n',
     '## HELLO\n\n',
     '### HELLO\n\n',
     '#### HELLO\n\n',
@@ -55,7 +55,7 @@ var mdInput = ['# HELLO\n\n',
     'var a = 10;\n',
     '\\`\\`\\`'].join('');
 
-var mdOutput = ['# HELLO\n\n',
+const mdOutput = ['# HELLO\n\n',
     '## HELLO\n\n',
     '### HELLO\n\n',
     '#### HELLO\n\n',
@@ -115,13 +115,13 @@ var mdOutput = ['# HELLO\n\n',
     ' var a = 10;\n',
     '\\`\\`\\`'].join('');
 
-var Editor = require('../src/js/editor');
+import Editor from '../src/js/editor';
 
-describe('converting', function() {
-    var editor;
+describe('converting', () => {
+    let editor;
     jasmine.getFixtures().fixturesPath = 'base/test/fixtures/';
 
-    beforeEach(function() {
+    beforeEach(() => {
         editor = new Editor({
             el: $('body'),
             height: 300,
@@ -129,22 +129,22 @@ describe('converting', function() {
         });
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('markdown to html', function() {
-        it('converting markdown to html', function() {
-            var htmlOutput = readFixtures('HTMLOutput.html');
+    describe('markdown to html', () => {
+        it('converting markdown to html', () => {
+            const htmlOutput = readFixtures('HTMLOutput.html');
 
             editor.setValue(mdInput);
             expect(compare(editor.wwEditor.getValue(), htmlOutput)).toEqual(true);
         });
     });
 
-    describe('html to markdown', function() {
-        it('converting html to markdown', function() {
-            var htmlInput = readFixtures('HTMLInput.html');
+    describe('html to markdown', () => {
+        it('converting html to markdown', () => {
+            const htmlInput = readFixtures('HTMLInput.html');
 
             editor.wwEditor.setValue(htmlInput);
             expect(compare(editor.getValue(), mdOutput)).toEqual(true);
@@ -153,24 +153,22 @@ describe('converting', function() {
 });
 
 function compare(resultString, expectedString) {
-    var length = expectedString.length;
-    var i = 0;
-    var row = 0;
-    var col = 0;
-    var result = true;
-    var flag;
+    const length = expectedString.length;
+    let i = 0;
+    let row = 0;
+    let col = 0;
+    let result = true;
+    let flag;
 
     if (resultString.length === length) {
         for (; i < length; i += 1) {
             flag = resultString.charAt(i) !== expectedString.charAt(i);
             if (flag) {
                 console.log(
-                    '"' + expectedString.substring(i - 4, i) + '^' + expectedString.charAt(i) + '^'
-                    + expectedString.substring(i + 1, i + 5)
-                    + '" expected but "'
-                    + resultString.substring(i - 4, i) + '^' + resultString.charAt(i) + '^'
-                    + resultString.substring(i + 1, i + 5) + '"');
-                console.log('at -> ' + row + ':' + col);
+                    `"${expectedString.substring(i - 4, i)}^${expectedString.charAt(i)}^${expectedString.substring(i + 1, i + 5)}"`
+                    + ' expected but '
+                    + `"${resultString.substring(i - 4, i)}^${resultString.charAt(i)}^${resultString.substring(i + 1, i + 5)}"`);
+                console.log(`at -> ${row}:${col}`);
                 result = false;
                 break;
             }

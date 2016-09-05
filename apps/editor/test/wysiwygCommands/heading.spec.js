@@ -1,14 +1,12 @@
-'use strict';
+import Heading from '../../src/js/wysiwygCommands/heading';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Heading = require('../../src/js/wysiwygCommands/heading'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Heading', () => {
+    let wwe;
 
-describe('Heading', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -19,15 +17,15 @@ describe('Heading', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add heading to current selection or cursor', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('add heading to current selection or cursor', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('text');
 
@@ -42,8 +40,8 @@ describe('Heading', function() {
     });
 
 
-    it('set heading tag 1~6 rotation', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('set heading tag 1~6 rotation', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('text');
 

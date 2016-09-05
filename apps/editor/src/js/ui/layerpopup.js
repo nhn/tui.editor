@@ -4,19 +4,19 @@
  */
 
 
-var UIController = require('./uicontroller');
+import UIController from './uicontroller';
 
-var util = tui.util,
-    _id = 0,
-    CLASS_PREFIX = 'tui-popup-';
+const util = tui.util;
+const CLASS_PREFIX = 'tui-popup-';
+let _id = 0;
 
 /* eslint-disable indent */
-var LAYOUT_TEMPLATE = [
-    '<div class="' + CLASS_PREFIX + 'header">',
-        '<span class="' + CLASS_PREFIX + 'title"></span>',
-        '<button class="' + CLASS_PREFIX + 'close-button">x</button>',
+const LAYOUT_TEMPLATE = [
+    `<div class="${CLASS_PREFIX}header">`,
+        `<span class="${CLASS_PREFIX}title"></span>`,
+        `<button class="${CLASS_PREFIX}close-button">x</button>`,
     '</div>',
-    '<div class="' + CLASS_PREFIX + 'body"></div>'
+    `<div class="${CLASS_PREFIX}body"></div>`
 ].join('');
 /* eslint-enable indent */
 
@@ -40,7 +40,7 @@ function LayerPopup(options) {
 
     UIController.call(this, {
         tagName: 'div',
-        className: CLASS_PREFIX + 'wrapper',
+        className: `${CLASS_PREFIX}wrapper`,
         rootElement: options.$el
     });
 
@@ -136,20 +136,20 @@ LayerPopup.prototype._renderTitle = function() {
 };
 
 LayerPopup.prototype._getFullClassName = function(lastName) {
-    return '.' + CLASS_PREFIX + lastName;
+    return `.${CLASS_PREFIX}${lastName}`;
 };
 
 LayerPopup.prototype._attachOpenerCloserEvent = function() {
-    var self = this;
+    const self = this;
 
     if (this.openerCssQuery) {
-        $(this.openerCssQuery).on('click.' + this._getId(), function() {
+        $(this.openerCssQuery).on(`click.${this._getId()}`, () => {
             self.show();
         });
     }
 
     if (this.closerCssQuery) {
-        $(this.closerCssQuery).on('click.' + this._getId(), function() {
+        $(this.closerCssQuery).on(`click.${this._getId()}`, () => {
             self.hide();
         });
     }
@@ -157,18 +157,18 @@ LayerPopup.prototype._attachOpenerCloserEvent = function() {
 
 LayerPopup.prototype._detachOpenerCloserEvent = function() {
     if (this.openerCssQuery) {
-        $(this.openerCssQuery).off('.' + this._getId());
+        $(this.openerCssQuery).off(`.${this._getId()}`);
     }
 
     if (this.closerCssQuery) {
-        $(this.closerCssQuery).off('.' + this._getId());
+        $(this.closerCssQuery).off(`.${this._getId()}`);
     }
 };
 
 LayerPopup.prototype._attachPopupControlEvent = function() {
-    var self = this;
+    const self = this;
 
-    this.on('click ' + this._getFullClassName('close-button'), function() {
+    this.on(`click ${this._getFullClassName('close-button')}`, () => {
         self.hide();
     });
 };
@@ -198,7 +198,7 @@ LayerPopup.prototype.setContent = function($content) {
 };
 
 LayerPopup.prototype.setTitle = function(title) {
-    var $title = this.$el.find(this._getFullClassName('title'));
+    const $title = this.$el.find(this._getFullClassName('title'));
 
     $title.empty();
     $title.append(title);
@@ -228,8 +228,8 @@ LayerPopup.prototype.remove = function() {
     this.$el.remove();
 };
 
-LayerPopup.prototype.css = function() {
-    this.$el.css.apply(this.$el, arguments);
+LayerPopup.prototype.css = function(...args) {
+    this.$el.css(...args);
 };
 
 LayerPopup.prototype._initCssStyles = function(options) {
@@ -239,8 +239,9 @@ LayerPopup.prototype._initCssStyles = function(options) {
 };
 
 LayerPopup.factory = function(options) {
-    var popup = new LayerPopup(options);
+    const popup = new LayerPopup(options);
     popup.render();
+
     return popup;
 };
 

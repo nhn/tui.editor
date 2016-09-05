@@ -1,14 +1,12 @@
-'use strict';
+import Code from '../../src/js/wysiwygCommands/code';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Code = require('../../src/js/wysiwygCommands/code'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Code', () => {
+    let wwe;
 
-describe('Code', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -18,12 +16,12 @@ describe('Code', function() {
         wwe.getEditor().focus();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    it('add code', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('add code', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line');
 
@@ -35,8 +33,8 @@ describe('Code', function() {
         expect(wwe.getValue()).toEqual('<code>line</code><br />');
     });
 
-    it('collapse range after code added', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('collapse range after code added', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line');
 
@@ -49,8 +47,8 @@ describe('Code', function() {
             .toBe(true);
     });
 
-    it('if there have bold remove and add code', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have bold remove and add code', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<b>line</b>');
 
@@ -62,8 +60,8 @@ describe('Code', function() {
         expect(wwe.getValue()).toEqual('<code>line</code><br />');
     });
 
-    it('if there have italic remove and add code', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have italic remove and add code', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<i>line</i>');
 
@@ -75,8 +73,8 @@ describe('Code', function() {
         expect(wwe.getValue()).toEqual('<code>line</code><br />');
     });
 
-    it('if there have code already stop code tag', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have code already stop code tag', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<code>line&#8203;</code>');
 

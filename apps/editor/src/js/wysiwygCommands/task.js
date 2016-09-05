@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements Task WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Task
@@ -13,20 +14,19 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Task = CommandManager.command('wysiwyg', /** @lends Task */{
+const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     name: 'Task',
     keyMap: ['CTRL+T', 'META+T'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var range,
-            sq = wwe.getEditor();
+    exec(wwe) {
+        const sq = wwe.getEditor();
 
         sq.focus();
 
-        range = sq.getSelection().cloneRange();
+        let range = sq.getSelection().cloneRange();
 
         if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             if (!sq.hasFormat('li')) {

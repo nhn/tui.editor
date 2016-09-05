@@ -1,14 +1,12 @@
-'use strict';
+import AddLink from '../../src/js/wysiwygCommands/addLink';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var AddLink = require('../../src/js/wysiwygCommands/addLink'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('AddLink', () => {
+    let wwe;
 
-describe('AddLink', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -19,15 +17,15 @@ describe('AddLink', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add link to current selection', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('add link to current selection', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line');
 
@@ -41,7 +39,7 @@ describe('AddLink', function() {
         expect(wwe.get$Body().find('a').text()).toEqual('line');
     });
 
-    it('add link with no selection text', function() {
+    it('add link with no selection text', () => {
         AddLink.exec(wwe, {url: '#url', linkText: 'inputText'});
 
         expect(wwe.get$Body().find('a').length).toEqual(1);

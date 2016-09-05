@@ -4,7 +4,7 @@
  */
 
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.
@@ -14,17 +14,16 @@ var util = tui.util;
  * @returns {array} rendered text
  */
 function templater(template, mapper) {
-    var totalReplaced = [],
-        replaced;
+    const totalReplaced = [];
+    let replaced;
 
     if (!util.isArray(mapper)) {
         mapper = [mapper];
     }
 
-    util.forEach(mapper, function(mapdata) {
-        replaced = template.replace(/\${([\w]+)}/g, function(matchedString, name) {
-            return util.isExisty(mapdata, name) ? mapdata[name].toString() : '';
-        });
+    util.forEach(mapper, mapdata => {
+        replaced = template.replace(/\${([\w]+)}/g,
+            (matchedString, name) => (util.isExisty(mapdata, name) ? mapdata[name].toString() : ''));
 
         totalReplaced.push(replaced);
     });

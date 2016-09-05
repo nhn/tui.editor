@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwTaskManager from '../src/js/wwTaskManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    WwTaskManager = require('../src/js/wwTaskManager');
+describe('WwTaskManager', () => {
+    let $container, em, wwe, mgr;
 
-describe('WwTaskManager', function() {
-    var $container, em, wwe, mgr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -22,15 +20,16 @@ describe('WwTaskManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('Events', function() {
-        it('remove task-list class of element, it may block to merge normal list and task list when wysiwygSetValueAfter fire', function() {
+    describe('Events', () => {
+        it('remove task-list class of element, it may block to merge normal list and task list' +
+            ' when wysiwygSetValueAfter fire', () => {
             wwe.getEditor().setHTML('<ul><li class="task-list-item"><input type="checkbox">TASK</li></ul>');
 
             em.emit('wysiwygSetValueAfter');
@@ -39,9 +38,9 @@ describe('WwTaskManager', function() {
         });
     });
 
-    describe('formatTask()', function() {
-        it('Format task to passed node', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('formatTask()', () => {
+        it('Format task to passed node', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
@@ -53,8 +52,8 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('.task-list-item').length).toEqual(1);
             expect(wwe.get$Body().find('li').attr('data-te-task')).toBeDefined();
         });
-        it('Format task to passed node that doesnt have any div', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('Format task to passed node that doesnt have any div', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor().setHTML('<ul><li><br></li></ul>');
 
@@ -68,9 +67,9 @@ describe('WwTaskManager', function() {
         });
     });
 
-    describe('unformatTask()', function() {
-        it('unformat task to passed node', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('unformatTask()', () => {
+        it('unformat task to passed node', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor()
                 .setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
@@ -84,8 +83,8 @@ describe('WwTaskManager', function() {
             expect(wwe.get$Body().find('div').text()).toEqual('test');
             expect(wwe.get$Body().find('li').attr('data-te-task')).not.toBeDefined();
         });
-        it('dont unformat to sub tasks', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('dont unformat to sub tasks', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor()
             .setHTML(['<ul><li data-te-task class="task-list-item"><div>test1</div>',

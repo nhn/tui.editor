@@ -4,10 +4,10 @@
  */
 
 
-var UIController = require('./uicontroller'),
-    Button = require('./button');
+import UIController from './uicontroller';
+import Button from './button';
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * Toolbar
@@ -50,7 +50,7 @@ Toolbar.prototype.render = function() {
  * @param {Number} index 버튼위치 (optional)
  */
 Toolbar.prototype.addButton = function(button, index) {
-    var ev = this.eventManager;
+    const ev = this.eventManager;
 
     if (!button.render) {
         button = new Button(button);

@@ -1,15 +1,13 @@
-'use strict';
+import IncreaseDepth from '../../src/js/wysiwygCommands/increaseDepth';
+import WwTaskManager from '../../src/js/wwTaskManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var IncreaseDepth = require('../../src/js/wysiwygCommands/increaseDepth'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    WwTaskManager = require('../../src/js/wwTaskManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('IncreaseDepth', () => {
+    let wwe, sq;
 
-describe('IncreaseDepth', function() {
-    var wwe, sq;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -31,15 +29,15 @@ describe('IncreaseDepth', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('success when it not first li.', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('success when it not first li.', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[1].firstChild, 0);
         range.collapse(true);
@@ -52,8 +50,8 @@ describe('IncreaseDepth', function() {
         expect(sq.get$Body().find('ul li ul li').length).toEqual(1);
         expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(true);
     });
-    it('fail when it does not have previous li.', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('fail when it does not have previous li.', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0].firstChild, 0);
         range.collapse(true);
@@ -66,9 +64,9 @@ describe('IncreaseDepth', function() {
         expect(sq.get$Body().find('ul li ul li').length).toEqual(0);
         expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(false);
     });
-    describe('should increase depth when cursor', function() {
-        it('at startOffset 0.', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('should increase depth when cursor', () => {
+        it('at startOffset 0.', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('div')[1].firstChild, 0);
             range.collapse(true);
@@ -81,8 +79,8 @@ describe('IncreaseDepth', function() {
             expect(sq.get$Body().find('ul li ul li').length).toEqual(1);
             expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(true);
         });
-        it('at startOffset 1.', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('at startOffset 1.', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('div')[1].firstChild, 1);
             range.collapse(true);
@@ -96,8 +94,8 @@ describe('IncreaseDepth', function() {
             expect(sq.get$Body().find('ul li ul li').hasClass('task-list-item')).toBe(true);
         });
     });
-    it('should increase ordinary list', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('should increase ordinary list', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.get$Body().html([
             '<ul>',

@@ -4,9 +4,9 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
-var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
+const boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
 
 /**
  * Bold
@@ -14,30 +14,29 @@ var boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
  * @exports Bold
  * @augments Command
  */
-var Bold = CommandManager.command('markdown', /** @lends Bold */{
+const Bold = CommandManager.command('markdown', /** @lends Bold */{
     name: 'Bold',
     keyMap: ['CTRL+B', 'META+B'],
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var cursor, selection, tmpSelection, isRemoved, result, isEmpty,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
-        cursor = doc.getCursor();
-        selection = doc.getSelection();
-        isEmpty = !selection;
+        const cursor = doc.getCursor();
+        let selection = doc.getSelection();
+        const isEmpty = !selection;
 
         // if selection is empty, expend selection to detect a syntax
         if (isEmpty && cursor.ch > 1) {
-            tmpSelection = this.expendSelection(doc, cursor);
+            const tmpSelection = this.expendSelection(doc, cursor);
             selection = tmpSelection || selection;
         }
 
-        isRemoved = this.isNeedRemove(selection);
-        result = isRemoved ? this.remove(selection) : this.append(selection);
+        const isRemoved = this.isNeedRemove(selection);
+        const result = isRemoved ? this.remove(selection) : this.append(selection);
 
         doc.replaceSelection(result, 'around');
 
@@ -52,7 +51,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * @param {string} text 셀렉션텍스트
      * @returns {boolean} 볼드 적용 여부
      */
-    isNeedRemove: function(text) {
+    isNeedRemove(text) {
         return boldRegex.test(text);
     },
     /**
@@ -60,15 +59,15 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * @param {string} text 셀렉션텍스트
      * @returns {string} 볼드가 적용된 텍스트
      */
-    append: function(text) {
-        return '**' + text + '**';
+    append(text) {
+        return `**${text}**`;
     },
     /**
      * Bold를 제거한다
      * @param {string} text 셀렉션텍스트
      * @returns {string} 볼드가 제거된 텍스트
      */
-    remove: function(text) {
+    remove(text) {
         return text.substr(2, text.length - 4);
     },
     /**
@@ -77,9 +76,9 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * @param {object} cursor 코드미러 커서 객체
      * @returns {string} 셀렉션의 텍스트
      */
-    expendSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection(),
-            result;
+    expendSelection(doc, cursor) {
+        const tmpSelection = doc.getSelection();
+        let result;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
@@ -96,7 +95,7 @@ var Bold = CommandManager.command('markdown', /** @lends Bold */{
      * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
      * @param {object} cursor 코드미러 커서 객체
      */
-    setCursorToCenter: function(doc, cursor) {
+    setCursorToCenter(doc, cursor) {
         doc.setCursor(cursor.line, cursor.ch + 2);
     }
 });

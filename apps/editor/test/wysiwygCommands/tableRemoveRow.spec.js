@@ -1,16 +1,14 @@
-'use strict';
+import RemoveRow from '../../src/js/wysiwygCommands/tableRemoveRow';
+import WwTableManager from '../../src/js/wwTableManager';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var RemoveRow = require('../../src/js/wysiwygCommands/tableRemoveRow'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager'),
-    WwTableManager = require('../../src/js/wwTableManager'),
-    WwTableSelectionManager = require('../../src/js/wwTableSelectionManager');
+describe('Table - RemoveRow', () => {
+    let wwe;
 
-describe('Table - RemoveRow', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -23,15 +21,15 @@ describe('Table - RemoveRow', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('remove row that have selected cell', function() {
-        var sq = wwe.getEditor(),
+    it('remove row that have selected cell', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -58,8 +56,8 @@ describe('Table - RemoveRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
-    it('dont remove row if there have only one row', function() {
-        var sq = wwe.getEditor(),
+    it('dont remove row if there have only one row', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -85,8 +83,8 @@ describe('Table - RemoveRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
-    it('focus to next row\'s first td', function() {
-        var sq = wwe.getEditor(),
+    it('focus to next row\'s first td', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -112,8 +110,8 @@ describe('Table - RemoveRow', function() {
         expect(sq.getSelection().startContainer.textContent).toBe(wwe.get$Body().find('tbody td')[0].textContent);
     });
 
-    it('focus to prev row\'s first td if it doesn\'t have next row', function() {
-        var sq = wwe.getEditor(),
+    it('focus to prev row\'s first td if it doesn\'t have next row', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -139,8 +137,8 @@ describe('Table - RemoveRow', function() {
         expect(sq.getSelection().startContainer.textContent).toEqual(wwe.get$Body().find('tbody td')[0].textContent);
     });
 
-    it('remove rows that have selected', function() {
-        var sq = wwe.getEditor(),
+    it('remove rows that have selected', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -169,8 +167,8 @@ describe('Table - RemoveRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
-    it('do not remove table header', function() {
-        var sq = wwe.getEditor(),
+    it('do not remove table header', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -199,8 +197,8 @@ describe('Table - RemoveRow', function() {
         expect(wwe.get$Body().find('tbody tr').length).toEqual(4);
     });
 
-    it('do not remove last row', function() {
-        var sq = wwe.getEditor(),
+    it('do not remove last row', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([

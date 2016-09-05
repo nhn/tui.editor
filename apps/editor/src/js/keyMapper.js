@@ -8,7 +8,7 @@
  * Constant of key mapping
  * @type {string[]}
  */
-var KEYBOARD_MAP = [
+const KEYBOARD_MAP = [
     '', // [0]
     '', // [1]
     '', // [2]
@@ -267,7 +267,7 @@ var KEYBOARD_MAP = [
     '' // [255]
 ];
 
-var sharedInstance;
+let sharedInstance;
 
 /**
  * KeyMapper
@@ -277,82 +277,83 @@ var sharedInstance;
  * @param {object} [options] options
  *    @param {string} options.splitter splitter string default is +
  */
-function KeyMapper(options) {
-    this._setSplitter(options);
+class KeyMapper {
+    constructor(options) {
+        this._setSplitter(options);
+    }
+
+    /**
+     * Set key splitter
+     * @param {object} options Option object
+     * @memberOf KeyMapper
+     * @private
+     */
+    _setSplitter(options) {
+        const splitter = options ? options.splitter : '+';
+        this._splitter = splitter;
+    }
+
+    /**
+     * Convert event to keyMap
+     * @api
+     * @memberOf KeyMapper
+     * @param {event} event Event object
+     * @returns {string}
+     */
+    convert(event) {
+        const keyMap = [];
+
+        if (event.shiftKey) {
+            keyMap.push('SHIFT');
+        }
+
+        if (event.ctrlKey) {
+            keyMap.push('CTRL');
+        }
+
+        if (event.metaKey) {
+            keyMap.push('META');
+        }
+
+        if (event.altKey) {
+            keyMap.push('ALT');
+        }
+
+        const keyChar = this._getKeyCodeChar(event.keyCode);
+
+        if (keyChar) {
+            keyMap.push(keyChar);
+        }
+
+        return keyMap.join(this._splitter);
+    }
+
+    /**
+     * Get character from key code
+     * @memberOf KeyMapper
+     * @param {number} keyCode Key code
+     * @returns {string}
+     * @private
+     */
+    _getKeyCodeChar(keyCode) {
+        const keyCodeCharacter = KEYBOARD_MAP[keyCode];
+
+        return keyCodeCharacter;
+    }
+
+    /**
+     * Get sharedInstance
+     * @api
+     * @memberOf KeyMapper
+     * @returns {KeyMapper}
+     */
+    static getSharedInstance() {
+        if (!sharedInstance) {
+            sharedInstance = new KeyMapper();
+        }
+
+        return sharedInstance;
+    }
 }
-
-/**
- * Set key splitter
- * @param {object} options Option object
- * @memberOf KeyMapper
- * @private
- */
-KeyMapper.prototype._setSplitter = function(options) {
-    var splitter = options ? options.splitter : '+';
-    this._splitter = splitter;
-};
-/**
- * Convert event to keyMap
- * @api
- * @memberOf KeyMapper
- * @param {event} event Event object
- * @returns {string}
- */
-KeyMapper.prototype.convert = function(event) {
-    var keyMap = [], keyChar;
-
-    if (event.shiftKey) {
-        keyMap.push('SHIFT');
-    }
-
-    if (event.ctrlKey) {
-        keyMap.push('CTRL');
-    }
-
-    if (event.metaKey) {
-        keyMap.push('META');
-    }
-
-    if (event.altKey) {
-        keyMap.push('ALT');
-    }
-
-    keyChar = this._getKeyCodeChar(event.keyCode);
-
-    if (keyChar) {
-        keyMap.push(keyChar);
-    }
-
-    return keyMap.join(this._splitter);
-};
-
-/**
- * Get character from key code
- * @memberOf KeyMapper
- * @param {number} keyCode Key code
- * @returns {string}
- * @private
- */
-KeyMapper.prototype._getKeyCodeChar = function(keyCode) {
-    var keyCodeChar;
-
-    keyCodeChar = KEYBOARD_MAP[keyCode];
-
-    return keyCodeChar;
-};
-
-/**
- * Get sharedInstance
- * @api
- * @memberOf KeyMapper
- * @returns {KeyMapper}
- */
-KeyMapper.getSharedInstance = function() {
-    if (!sharedInstance) {
-        sharedInstance = new KeyMapper();
-    }
-
-    return sharedInstance;
-};
 
 module.exports = KeyMapper;

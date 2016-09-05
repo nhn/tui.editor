@@ -1,14 +1,12 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwTableManager from '../src/js/wwTableManager';
+import WwTableSelectionManager from '../src/js/wwTableSelectionManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    WwTableManager = require('../src/js/wwTableManager'),
-    WwTableSelectionManager = require('../src/js/wwTableSelectionManager');
+describe('WwTableManager', () => {
+    let $container, em, wwe, mgr;
 
-describe('WwTableManager', function() {
-    var $container, em, wwe, mgr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -25,30 +23,32 @@ describe('WwTableManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('isInTable() check if passed range is in table', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
-        wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead><tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
+    it('isInTable() check if passed range is in table', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
+        wwe.getEditor().setHTML('<table><thead><tr><th><br></th><th><br></th></tr></thead>' +
+            '<tbody><tr><td><br></td><td><br></td></tr></tbody></table>');
         range.setStart(wwe.get$Body().find('td')[0], 0);
         range.collapse(true);
 
         expect(mgr.isInTable(range)).toEqual(true);
     });
 
-    describe('_appendBrIfTdOrThNotHaveAsLastChild()', function() {
-        beforeEach(function() {
-            wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead><tbody><tr><td>1123</td></tr></tbody></table>');
+    describe('_appendBrIfTdOrThNotHaveAsLastChild()', () => {
+        beforeEach(() => {
+            wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
+                '<tbody><tr><td>1123</td></tr></tbody></table>');
             wwe.get$Body().find('br').remove();
         });
 
-        it('append br if td or th does not have br as lastchild, td case', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('append br if td or th does not have br as lastchild, td case', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
             range.setStart(wwe.get$Body().find('td')[0].childNodes[0], 2);
             range.collapse(true);
 
@@ -57,8 +57,8 @@ describe('WwTableManager', function() {
             expect(wwe.get$Body().find('td').eq(0).find('br').length).toEqual(1);
         });
 
-        it('append br if td or th does not have br as lastchild, th case', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('append br if td or th does not have br as lastchild, th case', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
             range.setStart(wwe.get$Body().find('th')[0].childNodes[0], 2);
             range.collapse(true);
 
@@ -68,20 +68,19 @@ describe('WwTableManager', function() {
         });
     });
 
-    describe('undo', function() {
+    describe('undo', () => {
         //스콰이어에서 컨텐츠를 변화를 인지해서 컨텐츠에 변화가 일어나면 다음프레임에서  undo와 관련된 프로세스를 통해야하는데
         //이를 지원하지않는(mutationObserver)에서는 keydown이벤트로 처리한다 억지로 keydown이벤트를 발생시키는것보다는
         //그냥 단순하게 스파이콜로 테스트함
-        beforeEach(function() {
-            wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead><tbody><tr><td>1123</td></tr></tbody></table>');
+        beforeEach(() => {
+            wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
+                '<tbody><tr><td>1123</td></tr></tbody></table>');
         });
 
-        it('_recordUndoStateIfNeed record undo state if range is in different cell', function() {
-            var range;
-
+        it('_recordUndoStateIfNeed record undo state if range is in different cell', () => {
             wwe.getEditor().saveUndoState = jasmine.createSpy('saveUndoState');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.collapse(true);
@@ -92,12 +91,10 @@ describe('WwTableManager', function() {
             expect(wwe.getEditor().saveUndoState.calls.count()).toEqual(1);
         });
 
-        it('_recordUndoStateAndResetCellNode record undo state and reset laste cell node info', function() {
-            var range;
-
+        it('_recordUndoStateAndResetCellNode record undo state and reset laste cell node info', () => {
             wwe.getEditor().saveUndoState = jasmine.createSpy('saveUndoState');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.collapse(true);
@@ -109,25 +106,28 @@ describe('WwTableManager', function() {
         });
     });
 
-    describe('Events', function() {
-        it('remove last br in td or th when getValue', function() {
-            wwe.setValue('<table><thead><tr><th>wef<br>wef<br></th></tr></thead><tbody><tr><td>waf<br>waef<br></td></tr></tbody></table>');
-            expect(wwe.getValue().replace(/\<br \/>/g, '<br>')).toEqual('<table><thead><tr><th>wef<br>wef</th></tr></thead><tbody><tr><td>waf<br>waef</td></tr></tbody></table><br>');
+    describe('Events', () => {
+        it('remove last br in td or th when getValue', () => {
+            wwe.setValue('<table><thead><tr><th>wef<br>wef<br></th></tr></thead>' +
+                '<tbody><tr><td>waf<br>waef<br></td></tr></tbody></table>');
+            expect(wwe.getValue().replace(/<br \/>/g, '<br>')).toEqual('<table>' +
+                '<thead><tr><th>wef<br>wef</th></tr></thead><tbody><tr><td>waf<br>waef</td></tr></tbody></table><br>');
         });
 
-        it('empty td or th won\'t be deleted by getValue', function() {
+        it('empty td or th won\'t be deleted by getValue', () => {
             wwe.setValue('<table><thead><tr><th><br></th></tr></thead><tbody><tr><td><br></td></tr></tbody></table>');
-            expect(wwe.getValue()).toEqual('<table><thead><tr><th></th></tr></thead><tbody><tr><td></td></tr></tbody></table><br />');
+            expect(wwe.getValue()).toEqual('<table><thead><tr><th></th></tr></thead>' +
+                '<tbody><tr><td></td></tr></tbody></table><br />');
         });
     });
 
-    describe('paste', function() {
-        it('_getTableDataFromTable should extract each TD text contents from TABLE', function() {
-            var table = $('<document-fragment><table>' +
+    describe('paste', () => {
+        it('_getTableDataFromTable should extract each TD text contents from TABLE', () => {
+            const table = $('<document-fragment><table>' +
                 '<thead><tr><td>1</td><td>2</td></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table></document-fragment>')[0];
-            var data = mgr._getTableDataFromTable(table);
+            const data = mgr._getTableDataFromTable(table);
             expect(data.length).toEqual(3);
             expect(data[0].length).toEqual(2);
             expect(data[1].length).toEqual(2);
@@ -140,21 +140,20 @@ describe('WwTableManager', function() {
             expect(data[2][1]).toEqual('6');
         });
 
-        it('_pasteDataIntoTable should paste data with right position', function() {
-            var range, $body;
-            var table = '<table>' +
+        it('_pasteDataIntoTable should paste data with right position', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
+            const range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
             wwe.getEditor().setSelection(range);
 
             mgr._pasteDataIntoTable(pastingTable);
@@ -162,21 +161,20 @@ describe('WwTableManager', function() {
             expect($body.find('table').text()).toEqual('abcdef');
         });
 
-        it('_pasteDataIntoTable should paste data with right position', function() {
-            var range, $body;
-            var table = '<table>' +
+        it('_pasteDataIntoTable should paste data with right position', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
+            const range = wwe.getEditor().getSelection().selectNode($body.find('th')[1]);
             wwe.getEditor().setSelection(range);
 
             mgr._pasteDataIntoTable(pastingTable);
@@ -184,22 +182,21 @@ describe('WwTableManager', function() {
             expect($body.find('table').text()).toEqual('abcdef');
         });
 
-        it('_pasteDataIntoTable should extends column length and paste data with right position', function() {
-            var range, $body, rows;
-            var table = '<table>' +
+        it('_pasteDataIntoTable should extends column length and paste data with right position', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
-            var fragment = document.createDocumentFragment();
+            const fragment = document.createDocumentFragment();
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.selectNode($body.find('th')[1].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
@@ -207,10 +204,10 @@ describe('WwTableManager', function() {
             $(fragment).append(pastingTable);
 
             mgr.prepareToPasteOnTable({
-                fragment: fragment
+                fragment
             }, $body.find('table')[0]);
 
-            rows = $body.find('table').find('tr');
+            const rows = $body.find('table').find('tr');
             expect(rows.eq(0).text()).toEqual('1ab');
             expect(rows.eq(1).text()).toEqual('3cd');
             expect(rows.eq(2).text()).toEqual('5ef');
@@ -221,22 +218,21 @@ describe('WwTableManager', function() {
         });
 
 
-        it('_pasteDataIntoTable should extends row length and paste data with right position', function() {
-            var range, $body, rows;
-            var table = '<table>' +
+        it('_pasteDataIntoTable should extends row length and paste data with right position', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
-            var fragment = document.createDocumentFragment();
+            const fragment = document.createDocumentFragment();
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.selectNode($body.find('td')[2].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
@@ -244,11 +240,11 @@ describe('WwTableManager', function() {
             $(fragment).append(pastingTable);
 
             mgr.prepareToPasteOnTable({
-                fragment: fragment
+                fragment
             }, $body.find('table')[0]);
 
 
-            rows = $body.find('table').find('tr');
+            const rows = $body.find('table').find('tr');
             expect(rows.eq(0).text()).toEqual('12');
             expect(rows.eq(1).text()).toEqual('34');
             expect(rows.eq(2).text()).toEqual('ab');
@@ -262,22 +258,21 @@ describe('WwTableManager', function() {
             expect(rows.length).toEqual(5);
         });
 
-        it('_pasteDataIntoTable should extends column and row length and paste data with right position', function() {
-            var range, $body, rows;
-            var table = '<table>' +
+        it('_pasteDataIntoTable should extends column and row length and paste data with right position', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
-            var fragment = document.createDocumentFragment();
+            const fragment = document.createDocumentFragment();
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.selectNode($body.find('td')[3].firstChild);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
@@ -285,11 +280,11 @@ describe('WwTableManager', function() {
             $(fragment).append(pastingTable);
 
             mgr.prepareToPasteOnTable({
-                fragment: fragment
+                fragment
             }, $body.find('table')[0]);
 
 
-            rows = $body.find('table').find('tr');
+            const rows = $body.find('table').find('tr');
             expect(rows.eq(0).text()).toEqual('12');
             expect(rows.eq(1).text()).toEqual('34');
             expect(rows.eq(2).text()).toEqual('5ab');
@@ -303,69 +298,66 @@ describe('WwTableManager', function() {
             expect(rows.length).toEqual(5);
         });
 
-        it('prepareToPasteOnTable should paste table data into table', function() {
-            var range, $body;
-            var table = '<table>' +
+        it('prepareToPasteOnTable should paste table data into table', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingTable = $('<table>' +
+            const pastingTable = $('<table>' +
                 '<thead><tr><th>a</th><th>b</th></tr></thead>' +
                 '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
                 '</table>')[0];
-            var fragment = document.createDocumentFragment();
+            const fragment = document.createDocumentFragment();
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             wwe.getEditor().setSelection(range);
 
             $(fragment).append(pastingTable);
 
             mgr.prepareToPasteOnTable({
-                fragment: fragment
+                fragment
             }, $('<table></table>')[0]);
 
             expect($body.find('table').text()).toEqual('abcdef');
         });
 
-        it('prepareToPasteOnTable should paste non table data`s textContent into table cell', function() {
-            var range, $body, result;
-            var table = '<table>' +
+        it('prepareToPasteOnTable should paste non table data`s textContent into table cell', () => {
+            const table = '<table>' +
                 '<thead><tr><th>1</th><th>2</th></tr></thead>' +
                 '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
                 '</table>';
-            var pastingDiv = $('<div>hello</div>')[0];
-            var fragment = document.createDocumentFragment();
+            const pastingDiv = $('<div>hello</div>')[0];
+            const fragment = document.createDocumentFragment();
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
+            const $body = wwe.get$Body();
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             wwe.getEditor().setSelection(range);
 
             $(fragment).append(pastingDiv);
 
-            result = mgr.prepareToPasteOnTable({
-                fragment: fragment
+            const result = mgr.prepareToPasteOnTable({
+                fragment
             }, pastingDiv);
 
             expect(result.textContent).toEqual('hello');
         });
     });
-    describe('remove', function() {
-        it('_removeTableContents should remove current selected table text contents', function() {
-            var $body, range;
-            var table = '<table>' +
+    describe('remove', () => {
+        it('_removeTableContents should remove current selected table text contents', () => {
+            const table = '<table>' +
                 '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
                 '<tbody><tr class="te-cell-selected"><td class="te-cell-selected">3</td><td>4</td></tr>' +
                 '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
                 '</table>';
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
-            range = wwe.getEditor().getSelection();
+            const $body = wwe.get$Body();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             range.setEnd($body.find('td')[3], 0);
             wwe.getEditor().setSelection(range);
@@ -376,17 +368,16 @@ describe('WwTableManager', function() {
         });
 
         it('_removeTableContents should remove current selected table text contents start' +
-            ' at textNode in table cell', function() {
-            var $body, range;
-            var table = '<table>' +
+            ' at textNode in table cell', () => {
+            const table = '<table>' +
                 '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
                 '<tbody><tr class="te-cell-selected"><td class="te-cell-selected">3</td><td>4</td></tr>' +
                 '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
                 '</table>';
 
             wwe.getEditor().setHTML(table);
-            $body = wwe.get$Body();
-            range = wwe.getEditor().getSelection();
+            const $body = wwe.get$Body();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0].firstChild, 0);
             range.setEnd($body.find('td')[3], 0);
             wwe.getEditor().setSelection(range);
@@ -396,9 +387,8 @@ describe('WwTableManager', function() {
             expect($body.find('table').text()).toEqual('');
         });
 
-        it('_removeTableContents ignore non table elements that selected with table', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('_removeTableContents ignore non table elements that selected with table', () => {
+            const html = '<table>' +
                 '<thead><tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr></thead>' +
                 '<tbody><tr><td class="te-cell-selected">3</td><td class="te-cell-selected">4</td></tr>' +
                 '<tr><td class="te-cell-selected">5</td><td class="te-cell-selected">6</td></tr></tbody>' +
@@ -407,8 +397,8 @@ describe('WwTableManager', function() {
 
             wwe.getEditor().setHTML(html);
 
-            $body = wwe.get$Body();
-            range = wwe.getEditor().getSelection();
+            const $body = wwe.get$Body();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             range.setEnd($body.find('div')[0], 0);
 
@@ -420,55 +410,51 @@ describe('WwTableManager', function() {
             expect($body.find('div').text()).toEqual('hi');
         });
     });
-    describe('wrap table', function() {
-        it('wrapTrsIntoTbodyIfNeed', function() {
-            var result, $result;
-            var fragment = document.createDocumentFragment();
-            var html = '<tr><td>3</td><td>4</td></tr>' +
+    describe('wrap table', () => {
+        it('wrapTrsIntoTbodyIfNeed', () => {
+            const fragment = document.createDocumentFragment();
+            const html = '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '<tr><td>7</td><td>8</td></tr>' +
                 '<tr><td>9</td><td>10</td></tr>';
             $(fragment).append(html);
 
-            result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
-            $result = $(result);
+            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
             expect($result.find('tr').length).toBe(4);
             expect($result.text()).toBe('345678910');
         });
 
-        it('wrapTrsIntoTbodyIfNeed', function() {
-            var result, $result;
-            var fragment = document.createDocumentFragment();
-            var html = '<tr><th>3</th><th>4</th></tr>';
+        it('wrapTrsIntoTbodyIfNeed', () => {
+            const fragment = document.createDocumentFragment();
+            const html = '<tr><th>3</th><th>4</th></tr>';
             $(fragment).append(html);
 
-            result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
-            $result = $(result);
+            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
             expect($result.find('tr').length).toBe(1);
             expect($result.text()).toBe('34');
         });
 
-        it('wrapDanglingTableCellsIntoTrIfNeed', function() {
-            var result, $result;
-            var fragment = document.createDocumentFragment();
-            var html = '<td>3</td><td>4</td><td>5</td><td>6</td>';
+        it('wrapDanglingTableCellsIntoTrIfNeed', () => {
+            const fragment = document.createDocumentFragment();
+            const html = '<td>3</td><td>4</td><td>5</td><td>6</td>';
             $(fragment).append(html);
 
-            result = mgr.wrapDanglingTableCellsIntoTrIfNeed(fragment);
-            $result = $(result);
+            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+            const $result = $(result);
 
             expect(result.nodeName).toBe('TR');
             expect($result.text()).toBe('3456');
         });
 
-        it('wrapTheadAndTbodyIntoTableIfNeed', function() {
-            var result, $result;
-            var fragment = document.createDocumentFragment();
-            var html = '<thead>' +
+        it('wrapTheadAndTbodyIntoTableIfNeed', () => {
+            const fragment = document.createDocumentFragment();
+            const html = '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
                 '<tbody>' +
@@ -477,8 +463,8 @@ describe('WwTableManager', function() {
                 '</tbody>';
             $(fragment).append(html);
 
-            result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
-            $result = $(result);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
             expect($result.find('tbody').length).toBe(1);
@@ -486,17 +472,16 @@ describe('WwTableManager', function() {
             expect($result.find('thead').length).toBe(1);
             expect($result.find('thead').text()).toBe('12');
         });
-        it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', function() {
-            var result, $result;
-            var fragment = document.createDocumentFragment();
-            var html = '<tbody>' +
+        it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', () => {
+            const fragment = document.createDocumentFragment();
+            const html = '<tbody>' +
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
             $(fragment).append(html);
 
-            result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
-            $result = $(result);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
             expect($result.find('tbody').length).toBe(1);
@@ -505,17 +490,16 @@ describe('WwTableManager', function() {
             expect($result.find('thead').text()).toBe('');
         });
     });
-    describe('_completeTableIfNeed', function() {
-        it('shuold complete TR to TABLE', function(done) {
-            var $body;
-            var html = '<tr><td>3</td><td>4</td></tr>' +
+    describe('_completeTableIfNeed', () => {
+        it('shuold complete TR to TABLE', done => {
+            const html = '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('tbody').text()).toEqual('3456');
                 expect($body.find('table')[0]).toBeDefined();
                 expect($body.find('tbody').text()).toEqual('3456');
@@ -523,57 +507,53 @@ describe('WwTableManager', function() {
             });
         });
 
-        it('shuold complete TBODY to TABLE', function(done) {
-            var $body;
-            var html = '<tbody>' +
+        it('shuold complete TBODY to TABLE', done => {
+            const html = '<tbody>' +
                 '<tr><td>b</td><td>o</td></tr>' +
                 '<tr><td>d</td><td>y</td></tr>' +
                 '</tbody>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('th').length).toEqual(2);
                 expect($body.find('tbody').text()).toEqual('body');
                 done();
             });
         });
 
-        it('shuold complete THEAD to TABLE', function(done) {
-            var $body;
-            var html = '<thead><tr><th>he</th><th>ad</th></tr></thead>';
+        it('shuold complete THEAD to TABLE', done => {
+            const html = '<thead><tr><th>he</th><th>ad</th></tr></thead>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('tbody td').length).toEqual(2);
                 done();
             });
         });
 
-        it('shuold complete TR>TH to TABLE', function(done) {
-            var $body;
-            var html = '<tr><th>he</th><th>ad</th></tr>';
+        it('shuold complete TR>TH to TABLE', done => {
+            const html = '<tr><th>he</th><th>ad</th></tr>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('tbody td').length).toEqual(2);
                 done();
             });
         });
 
-        it('do nothing when current node is complete TABLE', function(done) {
-            var $body;
-            var html = '<table>' +
+        it('do nothing when current node is complete TABLE', done => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>he</th><th>ad</th></tr>' +
                 '</thead>' +
@@ -582,11 +562,11 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('tbody td').length).toEqual(2);
                 expect($body.find('tbody').text()).toEqual('ab');
@@ -594,9 +574,8 @@ describe('WwTableManager', function() {
             });
         });
 
-        it('prepend table cells into first TR in TABLE', function(done) {
-            var $body;
-            var html = '<table>' +
+        it('prepend table cells into first TR in TABLE', done => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>head</th></tr>' +
                 '</thead>' +
@@ -606,11 +585,11 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
@@ -618,9 +597,8 @@ describe('WwTableManager', function() {
                 done();
             });
         });
-        it('append table cells into last TR in TABLE', function(done) {
-            var $body;
-            var html = '<table>' +
+        it('append table cells into last TR in TABLE', done => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>head</th></tr>' +
                 '</thead>' +
@@ -630,11 +608,11 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
@@ -642,9 +620,8 @@ describe('WwTableManager', function() {
                 done();
             });
         });
-        it('remove textNode and BR in TR', function(done) {
-            var $body;
-            var html = '<div>123</div>' +
+        it('remove textNode and BR in TR', done => {
+            const html = '<div>123</div>' +
                 '<table>' +
                 '<thead>' +
                 '<tr>a<br></tr>' +
@@ -655,11 +632,11 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
@@ -668,9 +645,8 @@ describe('WwTableManager', function() {
             });
         });
 
-        it('remove textNode and BR in TR', function(done) {
-            var $body;
-            var html = '<div>123</div>' +
+        it('remove textNode and BR in TR', done => {
+            const html = '<div>123</div>' +
                 '<table>' +
                 '<thead>' +
                 '<tr><th>he</th><th>ad</th></tr>' +
@@ -678,11 +654,11 @@ describe('WwTableManager', function() {
                 '<tbody>a<br></tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody tr').length).toEqual(1);
@@ -692,9 +668,8 @@ describe('WwTableManager', function() {
             });
         });
 
-        it('do nothing and return inner loop when not table or sub table element', function(done) {
-            var $body;
-            var html = '<div>123</div>' +
+        it('do nothing and return inner loop when not table or sub table element', done => {
+            const html = '<div>123</div>' +
                 '<table>' +
                 '<thead>' +
                 '<tr><th>head</th></tr>' +
@@ -705,11 +680,11 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('thead').text()).toEqual('head');
                 expect($body.find('thead th').length).toEqual(2);
                 expect($body.find('tbody td').length).toEqual(4);
@@ -717,24 +692,22 @@ describe('WwTableManager', function() {
                 done();
             });
         });
-        it('remove blank table element', function(done) {
-            var $body;
-            var html = '<table></table>';
+        it('remove blank table element', done => {
+            const html = '<table></table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
             mgr._completeTableIfNeed();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 expect($body.find('table').length).toBe(0);
                 done();
             });
         });
     });
-    describe('_moveCursorTo', function() {
-        it('should move to previous cell', function() {
-            var $body, range;
-            var html = '<table>' +
+    describe('_moveCursorTo', () => {
+        it('should move to previous cell', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -744,24 +717,23 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[1], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'cell', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('1');
         });
 
-        it('should move to next cell', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to next cell', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -771,23 +743,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('next', 'cell', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('2');
         });
-        it('should move to next row first cell when next row not exist', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to next row first cell when next row not exist', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -797,24 +768,23 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[1], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('next', 'cell', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('5');
         });
 
-        it('should move to next row', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to next row', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -824,24 +794,23 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('next', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('3');
         });
 
-        it('should move to previous row', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to previous row', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -851,24 +820,23 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[3], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('4');
         });
 
-        it('should move to previous row on textNode', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to previous row on textNode', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -878,23 +846,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[3].firstChild, 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('4');
         });
-        it('should move to previous row on textNode', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to previous row on textNode', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -904,23 +871,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[3].childNodes[2], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('6');
         });
-        it('should move to next row on textNode', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to next row on textNode', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -930,23 +896,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[3].childNodes[2], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('next', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.nodeValue).toEqual('8');
         });
-        it('should move to previous element of table when cursor in first th', function() {
-            var $body, range;
-            var html = '<table>' +
+        it('should move to previous element of table when cursor in first th', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -956,23 +921,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0].childNodes[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer).toEqual(wwe.get$Body()[0]);
         });
-        it('should move to previous element of table when cursor in first th', function() {
-            var $body, range;
-            var html = '<div>12</div><table>' +
+        it('should move to previous element of table when cursor in first th', () => {
+            const html = '<div>12</div><table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -982,23 +946,22 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('th')[0].childNodes[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('previous', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('12');
         });
-        it('should move to next element of table when cursor in last td', function() {
-            var $body, range;
-            var html = '<div>12</div><table>' +
+        it('should move to next element of table when cursor in last td', () => {
+            const html = '<div>12</div><table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1008,24 +971,24 @@ describe('WwTableManager', function() {
                 '</tbody>' +
                 '</table><div>34</div>';
 
-            $body = wwe.get$Body().html(html);
+            const $body = wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
             range.setStart($body.find('td')[3].childNodes[6], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
             mgr._moveCursorTo('next', 'row', {
-                preventDefault: function() {
+                preventDefault: () => {
                 }
             });
 
             expect(wwe.getEditor().getSelection().startContainer.textContent).toEqual('34');
         });
     });
-    describe('_getSiblingTextNodeByDirection', function() {
-        it('should get next sibling text node', function() {
-            var html = '<table>' +
+    describe('_getSiblingTextNodeByDirection', () => {
+        it('should get next sibling text node', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1034,15 +997,14 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>';
-            var $body = wwe.get$Body().html(html);
-            var target;
+            const $body = wwe.get$Body().html(html);
 
-            target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, true);
+            const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, true);
 
             expect(target.nodeValue).toEqual('2');
         });
-        it('should return undefined when previous sibling text node not exists', function() {
-            var html = '<table>' +
+        it('should return undefined when previous sibling text node not exists', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1051,15 +1013,14 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>';
-            var $body = wwe.get$Body().html(html);
-            var target;
+            const $body = wwe.get$Body().html(html);
 
-            target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, false);
+            const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].firstChild, false);
 
             expect(target).toBeUndefined();
         });
-        it('should get previous sibling text node', function() {
-            var html = '<table>' +
+        it('should get previous sibling text node', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1068,15 +1029,14 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>';
-            var $body = wwe.get$Body().html(html);
-            var target;
+            const $body = wwe.get$Body().html(html);
 
-            target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[2], false);
+            const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[2], false);
 
             expect(target.nodeValue).toEqual('3');
         });
-        it('should return undefined when next sibling text node not exists', function() {
-            var html = '<table>' +
+        it('should return undefined when next sibling text node not exists', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1085,17 +1045,16 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>';
-            var $body = wwe.get$Body().html(html);
-            var target;
+            const $body = wwe.get$Body().html(html);
 
-            target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[4], true);
+            const target = mgr._getSiblingTextNodeByDirection($body.find('td')[0].childNodes[4], true);
 
             expect(target).toBeUndefined();
         });
     });
-    describe('_createRangeBySelectedCells', function() {
-        it('should create selection by selected cells and current selection is in table', function() {
-            var html = '<table>' +
+    describe('_createRangeBySelectedCells', () => {
+        it('should create selection by selected cells and current selection is in table', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1104,11 +1063,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
@@ -1119,8 +1078,8 @@ describe('WwTableManager', function() {
             expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
             expect(range.endContainer).toBe(wwe.get$Body().find('td')[1]);
         });
-        it('do not selection on table when current selection is not in table', function() {
-            var html = '<table>' +
+        it('do not selection on table when current selection is not in table', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1129,11 +1088,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('div')[0], 0);
             range.collapse(true);
             wwe.getEditor().setSelection(range);
@@ -1144,9 +1103,9 @@ describe('WwTableManager', function() {
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[0]);
         });
     });
-    describe('_collapseRangeToEndContainer', function() {
-        it('collapse selection to endContainer', function(done) {
-            var html = '<table>' +
+    describe('_collapseRangeToEndContainer', () => {
+        it('collapse selection to endContainer', done => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1155,26 +1114,26 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);
 
             mgr._collapseRangeToEndContainer();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer.textContent).toBe('4');
                 expect(range.collapsed).toBe(true);
                 done();
             }, 50);
         });
-        it('do not collapse selection to endContainer when selected cell not exist', function(done) {
-            var html = '<table>' +
+        it('do not collapse selection to endContainer when selected cell not exist', done => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -1183,18 +1142,18 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);
 
             mgr._collapseRangeToEndContainer();
 
-            setTimeout(function() {
+            setTimeout(() => {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer.textContent).toBe('1');
                 expect(range.endContainer.textContent).toBe('4');
@@ -1203,9 +1162,9 @@ describe('WwTableManager', function() {
             }, 50);
         });
     });
-    describe('_removeContentsAndChangeSelectionIfNeed', function() {
-        it('delete contents and collapse selection to startContainer', function() {
-            var html = '<table>' +
+    describe('_removeContentsAndChangeSelectionIfNeed', () => {
+        it('delete contents and collapse selection to startContainer', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1214,11 +1173,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);
@@ -1238,8 +1197,8 @@ describe('WwTableManager', function() {
             expect(wwe.get$Body().find('td').eq(1).text()).toBe('');
             expect(range.collapsed).toBe(true);
         });
-        it('delete contents and collapse selection to startContainer', function() {
-            var html = '<table>' +
+        it('delete contents and collapse selection to startContainer', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1248,11 +1207,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);
@@ -1272,8 +1231,8 @@ describe('WwTableManager', function() {
             expect(wwe.get$Body().find('td').eq(1).text()).toBe('');
             expect(range.collapsed).toBe(true);
         });
-        it('delete contents and collapse selection to startContainer', function() {
-            var html = '<table>' +
+        it('delete contents and collapse selection to startContainer', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1282,11 +1241,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);
@@ -1307,8 +1266,8 @@ describe('WwTableManager', function() {
             expect(range.collapsed).toBe(true);
         });
 
-        it('delete contents and collapse selection to startContainer', function() {
-            var html = '<table>' +
+        it('delete contents and collapse selection to startContainer', () => {
+            const html = '<table>' +
                 '<thead>' +
                 '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
                 '</thead>' +
@@ -1317,11 +1276,11 @@ describe('WwTableManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table><div>2</div>';
-            var range;
+
             wwe.focus();
             wwe.get$Body().html(html);
 
-            range = wwe.getEditor().getSelection();
+            let range = wwe.getEditor().getSelection();
             range.setStart(wwe.get$Body().find('th')[0], 0);
             range.setEnd(wwe.get$Body().find('td')[1], 1);
             wwe.getEditor().setSelection(range);

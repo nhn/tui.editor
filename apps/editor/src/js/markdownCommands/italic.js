@@ -3,11 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
+import CommandManager from '../commandManager';
 
-var CommandManager = require('../commandManager');
-
-var boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
-var italicRegex = /^[\*_][^\*_]*[\*_]$/;
+const boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
+const italicRegex = /^[\*_][^\*_]*[\*_]$/;
 
 /**
  * Italic
@@ -15,22 +14,22 @@ var italicRegex = /^[\*_][^\*_]*[\*_]$/;
  * @exports Italic
  * @augments Command
  */
-var Italic = CommandManager.command('markdown', /** @lends Italic */{
+const Italic = CommandManager.command('markdown', /** @lends Italic */{
     name: 'Italic',
     keyMap: ['CTRL+I', 'META+I'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var cursor, selection, tmpSelection, isRemoved, result, isEmpty, isWithBold,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
-        cursor = doc.getCursor();
-        selection = doc.getSelection();
-        isEmpty = !selection;
-        isWithBold = false;
+        const cursor = doc.getCursor();
+        let selection = doc.getSelection();
+        const isEmpty = !selection;
+        let isWithBold = false;
+        let tmpSelection;
 
         // if selection is empty, expend selection to detect a syntax
         if (isEmpty) {
@@ -52,8 +51,8 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
             }
         }
 
-        isRemoved = this.isNeedRemove(selection);
-        result = isRemoved ? this.remove(selection) : this.append(selection);
+        const isRemoved = this.isNeedRemove(selection);
+        const result = isRemoved ? this.remove(selection) : this.append(selection);
 
         doc.replaceSelection(result, 'around');
 
@@ -69,7 +68,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {string} text 텍스트
      * @returns {boolean} 적용 여부
      */
-    isNeedRemove: function(text) {
+    isNeedRemove(text) {
         return italicRegex.test(text) || boldItalicRegex.test(text);
     },
     /**
@@ -78,8 +77,8 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {string} text 적용할 텍스트
      * @returns {string} 이탤릭이 적용된 텍스트
      */
-    append: function(text) {
-        return '_' + text + '_';
+    append(text) {
+        return `_${text}_`;
     },
     /**
      * remove
@@ -87,7 +86,7 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {string} text 제거할 텍스트
      * @returns {string} 제거된 텍스트
      */
-    remove: function(text) {
+    remove(text) {
         return text.substr(1, text.length - 2);
     },
     /**
@@ -97,9 +96,9 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {object} cursor 커서객체
      * @returns {string} 확장된 영역의 텍스트
      */
-    expendWithBoldSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection(),
-            result;
+    expendWithBoldSelection(doc, cursor) {
+        const tmpSelection = doc.getSelection();
+        let result;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
 
@@ -118,9 +117,9 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {object} cursor 커서객체
      * @returns {string} 확장된 영역의 텍스트
      */
-    expendOnlyBoldSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection(),
-            result = false;
+    expendOnlyBoldSelection(doc, cursor) {
+        const tmpSelection = doc.getSelection();
+        let result = false;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
@@ -138,9 +137,9 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {object} cursor 커서객체
      * @returns {string} 확장된 영역의 텍스트
      */
-    expendSelection: function(doc, cursor) {
-        var tmpSelection = doc.getSelection(),
-            result;
+    expendSelection(doc, cursor) {
+        const tmpSelection = doc.getSelection();
+        let result;
 
         doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
 
@@ -159,8 +158,8 @@ var Italic = CommandManager.command('markdown', /** @lends Italic */{
      * @param {object} cursor 커서객체
      * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
      */
-    setCursorToCenter: function(doc, cursor, isRemoved) {
-        var pos = isRemoved ? -1 : 1;
+    setCursorToCenter(doc, cursor, isRemoved) {
+        const pos = isRemoved ? -1 : 1;
         doc.setCursor(cursor.line, cursor.ch + pos);
     }
 });

@@ -4,40 +4,38 @@
  */
 
 
-var extManager = require('../extManager'),
-    ScrollSync = require('./scrollFollow.scrollSync'),
-    SectionManager = require('./scrollFollow.sectionManager'),
-    Button = require('../ui/button');
+import extManager from '../extManager';
+import ScrollSync from './scrollFollow.scrollSync';
+import SectionManager from './scrollFollow.sectionManager';
+import Button from '../ui/button';
 
-extManager.defineExtension('scrollFollow', function(editor) {
-    var isScrollable = false,
-        isActive = true,
-        sectionManager, scrollSync,
-        className = 'tui-scrollfollow',
-        TOOL_TIP = {
-            active: '자동 스크롤 끄기',
-            inActive: '자동 스크롤 켜기'
-        },
-        button,
-        cm;
+extManager.defineExtension('scrollFollow', editor => {
+    const className = 'tui-scrollfollow';
+    const TOOL_TIP = {
+        active: '자동 스크롤 끄기',
+        inActive: '자동 스크롤 켜기'
+    };
 
     if (editor.isViewOnly()) {
         return;
     }
 
-    cm = editor.getCodeMirror();
+    const cm = editor.getCodeMirror();
+    const sectionManager = new SectionManager(cm, editor.preview);
+    const scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
 
-    sectionManager = new SectionManager(cm, editor.preview);
-    scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+    let isScrollable = false;
+    let isActive = true;
+    let button;
 
     //UI
     if (editor.getUI().name === 'default') {
         //init button
         button = new Button({
-            className: className,
+            className,
             command: 'scrollFollowToggle',
             tooltip: TOOL_TIP.active,
-            $el: $('<button class="active ' + className + ' tui-toolbar-icons" type="button"></button>')
+            $el: $(`<button class="active ${className} tui-toolbar-icons" type="button"></button>`)
         });
 
         editor.getUI().toolbar.addButton(button);
@@ -47,18 +45,18 @@ extManager.defineExtension('scrollFollow', function(editor) {
         }
 
         //hide scroll follow button in wysiwyg
-        editor.on('changeModeToWysiwyg', function() {
+        editor.on('changeModeToWysiwyg', () => {
             button.$el.hide();
         });
 
-        editor.on('changeModeToMarkdown', function() {
+        editor.on('changeModeToMarkdown', () => {
             button.$el.show();
         });
 
         //Commands
         editor.addCommand('markdown', {
             name: 'scrollFollowToggle',
-            exec: function() {
+            exec() {
                 isActive = !isActive;
 
                 if (isActive) {
@@ -73,18 +71,18 @@ extManager.defineExtension('scrollFollow', function(editor) {
     }
 
     //Events
-    cm.on('change', function() {
+    cm.on('change', () => {
         isScrollable = false;
         sectionManager.makeSectionList();
     });
 
-    editor.on('previewRenderAfter', function() {
+    editor.on('previewRenderAfter', () => {
         sectionManager.sectionMatch();
         scrollSync.syncToPreview();
         isScrollable = true;
     });
 
-    cm.on('scroll', function() {
+    cm.on('scroll', () => {
         if (!isActive) {
             return;
         }

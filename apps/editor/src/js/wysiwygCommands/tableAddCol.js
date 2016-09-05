@@ -1,11 +1,12 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * AddCol
@@ -14,16 +15,16 @@ var CommandManager = require('../commandManager'),
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
+const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
     name: 'AddCol',
     /**
      * 커맨드 핸들러
      * @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection().cloneRange(),
-            $cell;
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        let $cell;
 
         sq.focus();
 
@@ -38,8 +39,13 @@ var AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
     }
 });
 
+/**
+ * Get cell by range object
+ * @param {Range} range range
+ * @returns {HTMLElement}
+ */
 function getCellByRange(range) {
-    var cell = range.startContainer;
+    let cell = range.startContainer;
 
     if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
         cell = $(cell);
@@ -50,11 +56,15 @@ function getCellByRange(range) {
     return cell;
 }
 
+/**
+ * Add column to after the current cell
+ * @param {jQuery} $cell jQuery wrapped table cell
+ */
 function addColToCellAfter($cell) {
-    var index = $cell.index();
-    var cellToAdd;
+    const index = $cell.index();
+    let cellToAdd;
 
-    $cell.parents('table').find('tr').each(function(n, tr) {
+    $cell.parents('table').find('tr').each((n, tr) => {
         if (domUtils.getNodeName(tr.parentNode) === 'TBODY') {
             cellToAdd = $('<td></td>');
         } else {
@@ -68,10 +78,14 @@ function addColToCellAfter($cell) {
     });
 }
 
+/**
+ * Focus to next cell
+ * @param {Squire} sq Squire instance
+ * @param {jQuery} $cell jQuery wrapped table cell
+ */
 function focusToNextCell(sq, $cell) {
-    var range;
+    const range = sq.getSelection();
 
-    range = sq.getSelection();
     range.selectNodeContents($cell.next()[0]);
     range.collapse(true);
 

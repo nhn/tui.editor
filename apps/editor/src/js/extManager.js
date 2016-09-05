@@ -4,7 +4,7 @@
  */
 
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * ExtManager
@@ -12,39 +12,38 @@ var util = tui.util;
  * @constructor
  * @class ExtManager
  */
-function ExtManager() {
-    this.exts = new util.Map();
-}
-
-/**
- * defineExtension
- * Defined Extension
- * @api
- * @memberOf ExtManager
- * @param {string} name extension name
- * @param {ExtManager~extension} ext extension
- */
-ExtManager.prototype.defineExtension = function(name, ext) {
-    this.exts.set(name, ext);
-};
-
-/**
- * Apply extensions
- * @api
- * @memberOf ExtManager
- * @param {object} context Context
- * @param {Array.<string>} extNames Extension names
- */
-ExtManager.prototype.applyExtension = function(context, extNames) {
-    var self = this;
-
-    if (extNames) {
-        extNames.forEach(function(extName) {
-            if (self.exts.has(extName)) {
-                self.exts.get(extName)(context);
-            }
-        });
+class ExtManager {
+    constructor() {
+        this.exts = new util.Map();
     }
-};
 
+    /**
+     * defineExtension
+     * Defined Extension
+     * @api
+     * @memberOf ExtManager
+     * @param {string} name extension name
+     * @param {ExtManager~extension} ext extension
+     */
+    defineExtension(name, ext) {
+        this.exts.set(name, ext);
+    }
+
+    /**
+     * Apply extensions
+     * @api
+     * @memberOf ExtManager
+     * @param {object} context Context
+     * @param {Array.<string>} extNames Extension names
+     */
+    applyExtension(context, extNames) {
+        if (extNames) {
+            extNames.forEach(extName => {
+                if (this.exts.has(extName)) {
+                    this.exts.get(extName)(context);
+                }
+            });
+        }
+    }
+}
 module.exports = new ExtManager();

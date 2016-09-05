@@ -1,11 +1,11 @@
-
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager'),
+const CommandManager = require('../commandManager'),
     domUtils = require('../domUtils');
 
 /**
@@ -15,15 +15,15 @@ var CommandManager = require('../commandManager'),
  * @augments Command
  * @augments WysiwygCommand
  */
-var Code = CommandManager.command('wysiwyg', /** @lends Code */{
+const Code = CommandManager.command('wysiwyg', /** @lends Code */{
     name: 'Code',
     keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(), range;
+    exec(wwe) {
+        const sq = wwe.getEditor();
 
         sq.focus();
 
@@ -39,7 +39,7 @@ var Code = CommandManager.command('wysiwyg', /** @lends Code */{
 
             sq.changeFormat({tag: 'code'});
 
-            range = sq.getSelection().cloneRange();
+            const range = sq.getSelection().cloneRange();
             range.setStart(range.endContainer, range.endOffset);
             range.collapse(true);
 

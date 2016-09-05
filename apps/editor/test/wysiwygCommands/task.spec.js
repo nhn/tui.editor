@@ -1,15 +1,13 @@
-'use strict';
+import Task from '../../src/js/wysiwygCommands/task';
+import WwTaskManager from '../../src/js/wwTaskManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Task = require('../../src/js/wysiwygCommands/task'),
-    WwTaskManager = require('../../src/js/wwTaskManager'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Task', () => {
+    let wwe, sq;
 
-describe('Task', function() {
-    var wwe, sq;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -23,15 +21,15 @@ describe('Task', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add Task', function() {
-        var range = sq.getSelection().cloneRange();
+    it('add Task', () => {
+        const range = sq.getSelection().cloneRange();
         range.setStart(wwe.get$Body().find('div')[0], 0);
         range.collapse(true);
         sq.setSelection(range);
@@ -41,8 +39,8 @@ describe('Task', function() {
         expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(1);
     });
 
-    it('if already in empty task, dont do anything', function() {
-        var range = sq.getSelection().cloneRange();
+    it('if already in empty task, dont do anything', () => {
+        const range = sq.getSelection().cloneRange();
 
         sq.setHTML('<div>text</div>');
 
@@ -59,8 +57,8 @@ describe('Task', function() {
         expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(1);
     });
 
-    it('add input too if there is nested task list', function() {
-        var range = sq.getSelection().cloneRange();
+    it('add input too if there is nested task list', () => {
+        const range = sq.getSelection().cloneRange();
 
         sq.setHTML('<ul><li><div><br></div><ul><li data-te-task class="task-list-item"></li></ul>');
 

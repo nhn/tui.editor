@@ -4,14 +4,13 @@
  */
 
 
-var domUtils = require('./domUtils');
+import domUtils from './domUtils';
 
-var Squire = window.Squire,
-    util = tui.util;
+const Squire = window.Squire;
+const util = tui.util;
 
-var FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
-
-var isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
+const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
+const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
 
 /**
  * SquireExt
@@ -20,314 +19,301 @@ var isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
  * @constructor
  * @class
  */
-function SquireExt() {
-    Squire.apply(this, arguments);
+class SquireExt extends Squire {
+    constructor(...args) {
+        super(...args);
 
-    this._decorateHandlerToCancelable('copy');
-    this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
-}
+        this._decorateHandlerToCancelable('copy');
+        this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 
-SquireExt.prototype = util.extend(
-    {},
-    Squire.prototype
-);
+        this.get$Body = () => {
+            this.$body = this.$body || $(this.getRoot());
 
-SquireExt.prototype.get$Body = function() {
-    this.$body = this.$body || $(this.getRoot());
-
-    return this.$body;
-};
-
-/**
- * _decorateHandlerToCancelable
- * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
- * @param {string} eventName event name
- */
-SquireExt.prototype._decorateHandlerToCancelable = function(eventName) {
-    var handlers, handler;
-
-    handlers = this._events[eventName];
-
-    if (handlers.length > 1) {
-        throw new Error('too many' + eventName + ' handlers in squire');
+            return this.$body;
+        };
     }
 
-    handler = handlers[0].bind(this);
+    /**
+     * _decorateHandlerToCancelable
+     * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+     * @param {string} eventName event name
+     */
+    _decorateHandlerToCancelable(eventName) {
+        const handlers = this._events[eventName];
 
-    handlers[0] = function decoratedSquireHandler(event) {
-        if (!event.defaultPrevented) {
-            handler(event);
-        }
-    };
-};
-
-SquireExt.prototype.changeBlockFormat = function(srcCondition, targetTagName) {
-    var self = this;
-
-    this.modifyBlocks(function(frag) {
-        var current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
-
-        //HR은 Block으로 치지 않아서 frag에나타나지 않는다
-        //디폴트 블럭을 만들어준다.
-        if (frag.childNodes.length) {
-            current = frag.childNodes[0];
-        } else {
-            current = self.createDefaultBlock();
-            frag.appendChild(current);
+        if (handlers.length > 1) {
+            throw new Error(`too many${eventName}handlers in squire`);
         }
 
-        if (srcCondition) {
-            //find last depth
-            while (current.firstChild) {
-                current = current.firstChild;
+        const handler = handlers[0].bind(this);
+
+        handlers[0] = event => {
+            if (!event.defaultPrevented) {
+                handler(event);
+            }
+        };
+    }
+
+    changeBlockFormat(srcCondition, targetTagName) {
+        this.modifyBlocks(frag => {
+            let current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
+
+            //HR은 Block으로 치지 않아서 frag에나타나지 않는다
+            //디폴트 블럭을 만들어준다.
+            if (frag.childNodes.length) {
+                current = frag.childNodes[0];
+            } else {
+                current = this.createDefaultBlock();
+                frag.appendChild(current);
             }
 
-            appendChidToNextBlock = function(node) {
-                nextBlock.appendChild(node);
-            };
-
-            //find tag
-            while (current !== frag) {
-                tagName = current.tagName;
-
-                if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
-                    nextBlock = current.childNodes[0];
-
-                    //there is no next blocktag
-                    //eslint-disable-next-line max-depth
-                    if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
-                        nextBlock = self.createDefaultBlock();
-
-                        util.forEachArray(util.toArray(current.childNodes), appendChidToNextBlock);
-
-                        lastNodeOfNextBlock = nextBlock.lastChild;
-
-                        //remove unneccesary br
-                        //eslint-disable-next-line max-depth
-                        if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
-                            nextBlock.removeChild(lastNodeOfNextBlock);
-                        }
-                    }
-
-                    //eslint-disable-next-line max-depth
-                    if (targetTagName) {
-                        newBlock = self.createElement(targetTagName, [nextBlock]);
-                    } else {
-                        newBlock = nextBlock;
-                    }
-
-                    newFrag = self.getDocument().createDocumentFragment();
-                    newFrag.appendChild(newBlock);
-
-                    frag = newFrag;
-
-                    break;
+            if (srcCondition) {
+                //find last depth
+                while (current.firstChild) {
+                    current = current.firstChild;
                 }
 
-                current = current.parentNode;
+                appendChidToNextBlock = node => {
+                    nextBlock.appendChild(node);
+                };
+
+                //find tag
+                while (current !== frag) {
+                    tagName = current.tagName;
+
+                    if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
+                        nextBlock = current.childNodes[0];
+
+                        //there is no next blocktag
+                        //eslint-disable-next-line max-depth
+                        if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
+                            nextBlock = this.createDefaultBlock();
+
+                            util.forEachArray(util.toArray(current.childNodes), appendChidToNextBlock);
+
+                            lastNodeOfNextBlock = nextBlock.lastChild;
+
+                            //remove unneccesary br
+                            //eslint-disable-next-line max-depth
+                            if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
+                                nextBlock.removeChild(lastNodeOfNextBlock);
+                            }
+                        }
+
+                        //eslint-disable-next-line max-depth
+                        if (targetTagName) {
+                            newBlock = this.createElement(targetTagName, [nextBlock]);
+                        } else {
+                            newBlock = nextBlock;
+                        }
+
+                        newFrag = this.getDocument().createDocumentFragment();
+                        newFrag.appendChild(newBlock);
+
+                        frag = newFrag;
+
+                        break;
+                    }
+
+                    current = current.parentNode;
+                }
             }
-        }
 
-        //if source condition node is not founded, we wrap current div node with node named targetTagName
-        if (
-            (!newFrag || !srcCondition)
-            && targetTagName
-            && domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
-        ) {
-            frag = self.createElement(targetTagName, [frag.childNodes[0]]);
-        }
+            //if source condition node is not founded, we wrap current div node with node named targetTagName
+            if (
+                (!newFrag || !srcCondition)
+                && targetTagName
+                && domUtils.getNodeName(frag.childNodes[0]) === 'DIV'
+            ) {
+                frag = this.createElement(targetTagName, [frag.childNodes[0]]);
+            }
 
-        return frag;
-    });
-};
-
-SquireExt.prototype.changeBlockFormatTo = function(targetTagName) {
-    this.changeBlockFormat(function(tagName) {
-        return FIND_BLOCK_TAGNAME_RX.test(tagName);
-    }, targetTagName);
-};
-
-SquireExt.prototype.getCaretPosition = function() {
-    return this.getCursorPosition();
-};
-
-SquireExt.prototype.replaceSelection = function(content, selection) {
-    if (selection) {
-        this.setSelection(selection);
+            return frag;
+        });
     }
 
-    this._ignoreChange = true;
-    this.insertHTML(content);
-};
+    changeBlockFormatTo(targetTagName) {
+        this.changeBlockFormat(tagName => FIND_BLOCK_TAGNAME_RX.test(tagName), targetTagName);
+    }
 
-SquireExt.prototype.replaceRelativeOffset = function(content, offset, overwriteLength) {
-    var selection;
+    getCaretPosition() {
+        return this.getCursorPosition();
+    }
 
-    selection = this.getSelection().cloneRange();
+    replaceSelection(content, selection) {
+        if (selection) {
+            this.setSelection(selection);
+        }
 
-    this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
-};
+        this._ignoreChange = true;
+        this.insertHTML(content);
+    }
 
-SquireExt.prototype._replaceRelativeOffsetOfSelection = function(content, offset, overwriteLength, selection) {
-    var startSelectionInfo, endSelectionInfo, finalOffset;
-    var endOffsetNode = selection.endContainer;
-    var endTextOffset = selection.endOffset;
+    replaceRelativeOffset(content, offset, overwriteLength) {
+        const selection = this.getSelection().cloneRange();
 
-    if (domUtils.getNodeName(endOffsetNode) !== 'TEXT') {
-        endOffsetNode = this._getClosestTextNode(endOffsetNode, endTextOffset);
+        this._replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection);
+    }
+
+    _replaceRelativeOffsetOfSelection(content, offset, overwriteLength, selection) {
+        let startSelectionInfo, endSelectionInfo, finalOffset;
+        let endOffsetNode = selection.endContainer;
+        let endTextOffset = selection.endOffset;
+
+        if (domUtils.getNodeName(endOffsetNode) !== 'TEXT') {
+            endOffsetNode = this._getClosestTextNode(endOffsetNode, endTextOffset);
+
+            if (endOffsetNode) {
+                if (domUtils.isTextNode(endOffsetNode)) {
+                    endTextOffset = endOffsetNode.nodeValue.length;
+                } else {
+                    endTextOffset = endOffsetNode.textContent.length;
+                }
+            }
+        }
 
         if (endOffsetNode) {
-            if (domUtils.isTextNode(endOffsetNode)) {
-                endTextOffset = endOffsetNode.nodeValue.length;
-            } else {
-                endTextOffset = endOffsetNode.textContent.length;
-            }
-        }
-    }
+            startSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, endTextOffset + offset);
+            selection.setStart(startSelectionInfo.element, startSelectionInfo.offset);
 
-    if (endOffsetNode) {
-        startSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, endTextOffset + offset);
-        selection.setStart(startSelectionInfo.element, startSelectionInfo.offset);
+            finalOffset = endTextOffset + (offset + overwriteLength);
+            endSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, finalOffset);
+            selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
-        finalOffset = endTextOffset + (offset + overwriteLength);
-        endSelectionInfo = this.getSelectionInfoByOffset(endOffsetNode, finalOffset);
-        selection.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
-
-        this.replaceSelection(content, selection);
-    } else {
-        this.replaceSelection(content);
-    }
-};
-
-SquireExt.prototype._getClosestTextNode = function(node, offset) {
-    var foundNode = domUtils.getChildNodeByOffset(node, offset - 1);
-
-    if (domUtils.getNodeName(foundNode) !== 'TEXT') {
-        foundNode = foundNode.previousSibling;
-    }
-
-    return foundNode;
-};
-
-SquireExt.prototype.getSelectionInfoByOffset = function(anchorElement, offset) {
-    var traceElement, traceElementLength, traceOffset, stepLength;
-    var direction = offset >= 0 ? 'next' : 'previous';
-    var offsetAbs = Math.abs(offset);
-    var latestAvailableElement = traceElement;
-
-    if (direction === 'next') {
-        traceElement = anchorElement;
-    } else {
-        traceElement = anchorElement.previousSibling;
-    }
-
-    traceOffset = offsetAbs;
-    stepLength = 0;
-
-    while (traceElement) {
-        if (domUtils.isTextNode(traceElement)) {
-            traceElementLength = traceElement.nodeValue.length;
+            this.replaceSelection(content, selection);
         } else {
-            traceElementLength = traceElement.textContent.length;
+            this.replaceSelection(content);
+        }
+    }
+
+    _getClosestTextNode(node, offset) {
+        let foundNode = domUtils.getChildNodeByOffset(node, offset - 1);
+
+        if (domUtils.getNodeName(foundNode) !== 'TEXT') {
+            foundNode = foundNode.previousSibling;
         }
 
-        stepLength += traceElementLength;
+        return foundNode;
+    }
 
-        if (offsetAbs <= stepLength) {
-            break;
+    getSelectionInfoByOffset(anchorElement, offset) {
+        let traceElement, traceElementLength, traceOffset, stepLength;
+        const direction = offset >= 0 ? 'next' : 'previous';
+        const offsetAbs = Math.abs(offset);
+        let latestAvailableElement = traceElement;
+
+        if (direction === 'next') {
+            traceElement = anchorElement;
+        } else {
+            traceElement = anchorElement.previousSibling;
         }
 
-        traceOffset -= traceElementLength;
+        traceOffset = offsetAbs;
+        stepLength = 0;
 
-        if (domUtils.getTextLength(traceElement) > 0) {
-            latestAvailableElement = traceElement;
+        while (traceElement) {
+            if (domUtils.isTextNode(traceElement)) {
+                traceElementLength = traceElement.nodeValue.length;
+            } else {
+                traceElementLength = traceElement.textContent.length;
+            }
+
+            stepLength += traceElementLength;
+
+            if (offsetAbs <= stepLength) {
+                break;
+            }
+
+            traceOffset -= traceElementLength;
+
+            if (domUtils.getTextLength(traceElement) > 0) {
+                latestAvailableElement = traceElement;
+            }
+
+            traceElement = traceElement[`${direction}Sibling`];
         }
 
-        traceElement = traceElement[direction + 'Sibling'];
+        if (!traceElement) {
+            traceElement = latestAvailableElement;
+            traceOffset = domUtils.getTextLength(traceElement);
+        }
+
+        if (direction === 'previous') {
+            traceOffset = domUtils.getTextLength(traceElement) - traceOffset;
+        }
+
+        return {
+            element: traceElement,
+            offset: traceOffset
+        };
     }
 
-    if (!traceElement) {
-        traceElement = latestAvailableElement;
-        traceOffset = domUtils.getTextLength(traceElement);
-    }
+    getSelectionPosition(selection, style, offset) {
+        const marker = this.createElement('INPUT');
+        const range = selection.cloneRange();
+        const endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer,
+            selection.endOffset + (offset || 0));
+        range.setStart(range.startContainer, range.startOffset);
+        range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
-    if (direction === 'previous') {
-        traceOffset = domUtils.getTextLength(traceElement) - traceOffset;
-    }
-
-    return {
-        element: traceElement,
-        offset: traceOffset
-    };
-};
-
-SquireExt.prototype.getSelectionPosition = function(selection, style, offset) {
-    var pos, range, endSelectionInfo,
-        marker = this.createElement('INPUT');
-
-    range = selection.cloneRange();
-
-    range.setStart(range.startContainer, range.startOffset);
-    endSelectionInfo = this.getSelectionInfoByOffset(selection.endContainer, selection.endOffset + (offset || 0));
-    range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
-
-    //to prevent squire input event fire
-    this._ignoreChange = true;
-    this.insertElement(marker, range);
-    pos = $(marker).offset();
-
-    if (style !== 'over') {
-        pos.top += $(marker).outerHeight();
-    }
-
-    marker.parentNode.removeChild(marker);
-
-    selection.setStart(selection.endContainer, selection.endOffset);
-    selection.collapse(true);
-
-    this.setSelection(selection);
-
-    return pos;
-};
-
-SquireExt.prototype.removeLastUndoStack = function() {
-    if (this._undoStack.length) {
-        this._undoStackLength -= 1;
-        this._undoIndex -= 1;
-        this._undoStack.pop();
-        this._isInUndoState = false;
-    }
-};
-
-SquireExt.prototype.replaceParent = function(node, from, to) {
-    var target;
-    target = $(node).closest(from);
-
-    if (target.length) {
-        target.wrapInner('<' + to + '/>');
-        target.children().unwrap();
-    }
-};
-
-SquireExt.prototype.preserveLastLine = function() {
-    var lastBlock = this.get$Body().children().last();
-
-    if (domUtils.getNodeName(lastBlock[0]) !== 'DIV') {
+        //to prevent squire input event fire
         this._ignoreChange = true;
-        $(this.createDefaultBlock()).insertAfter(lastBlock);
+        this.insertElement(marker, range);
+
+        const pos = $(marker).offset();
+
+        if (style !== 'over') {
+            pos.top += $(marker).outerHeight();
+        }
+
+        marker.parentNode.removeChild(marker);
+
+        selection.setStart(selection.endContainer, selection.endOffset);
+        selection.collapse(true);
+
+        this.setSelection(selection);
+
+        return pos;
     }
-};
 
-SquireExt.prototype.scrollTop = function(top) {
-    if (util.isUndefined(top)) {
-        return this.get$Body().scrollTop();
+    removeLastUndoStack() {
+        if (this._undoStack.length) {
+            this._undoStackLength -= 1;
+            this._undoIndex -= 1;
+            this._undoStack.pop();
+            this._isInUndoState = false;
+        }
     }
 
-    return this.get$Body().scrollTop(top);
-};
+    replaceParent(node, from, to) {
+        const target = $(node).closest(from);
 
-SquireExt.prototype.isIgnoreChange = function() {
-    return this._ignoreChange;
-};
+        if (target.length) {
+            target.wrapInner(`<${to}/>`);
+            target.children().unwrap();
+        }
+    }
+
+    preserveLastLine() {
+        const lastBlock = this.get$Body().children().last();
+
+        if (domUtils.getNodeName(lastBlock[0]) !== 'DIV') {
+            this._ignoreChange = true;
+            $(this.createDefaultBlock()).insertAfter(lastBlock);
+        }
+    }
+
+    scrollTop(top) {
+        if (util.isUndefined(top)) {
+            return this.get$Body().scrollTop();
+        }
+
+        return this.get$Body().scrollTop(top);
+    }
+
+    isIgnoreChange() {
+        return this._ignoreChange;
+    }
+}
 
 module.exports = SquireExt;

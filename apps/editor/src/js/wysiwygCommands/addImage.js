@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements AddImage wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+const CommandManager = require('../commandManager');
 
 /**
  * AddImage
@@ -13,15 +14,15 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
+const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
     name: 'AddImage',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      *  @param {object} data data for image
      */
-    exec: function(wwe, data) {
-        var sq = wwe.getEditor();
+    exec(wwe, data) {
+        const sq = wwe.getEditor();
 
         sq.focus();
 

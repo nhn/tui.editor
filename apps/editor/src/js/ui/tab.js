@@ -4,12 +4,12 @@
  */
 
 
-var UIController = require('./uicontroller'),
-    templater = require('./templater');
+import UIController from './uicontroller';
+import templater from './templater';
 
-var util = tui.util;
+const util = tui.util;
 
-var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
+const buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
 
 /**
  * Tab
@@ -22,7 +22,7 @@ var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
  * @param {DOMElement[]} options.sections Dom elements for tab
  * @param {function} options.onItemClick when button is clicked pass button name to function
  * @example
- * var tab = new Tab({
+ * const tab = new Tab({
  *     items: ['Editor', 'Preview'],
  *     sections: [this.$mdEditorContainerEl, this.$previewEl]
  * });
@@ -56,9 +56,7 @@ Tab.prototype = util.extend(
  * render UI
  */
 Tab.prototype.render = function() {
-    var buttonHtml;
-
-    buttonHtml = templater(buttonTmpl, this._getButtonData());
+    const buttonHtml = templater(buttonTmpl, this._getButtonData());
 
     this.$el.html(buttonHtml);
 
@@ -84,11 +82,9 @@ Tab.prototype._applyInitName = function(initName) {
  * @returns {object[]} Button data
  */
 Tab.prototype._getButtonData = function() {
-    var buttonData = [],
-        i,
-        len;
+    const buttonData = [];
 
-    for (i = 0, len = this.items.length; i < len; i += 1) {
+    for (let i = 0, len = this.items.length; i < len; i += 1) {
         buttonData.push({
             name: this.items[i],
             index: i
@@ -104,7 +100,7 @@ Tab.prototype._getButtonData = function() {
  * @param {event} ev Event object
  */
 Tab.prototype._onButtonClick = function(ev) {
-    var $button = $(ev.target);
+    const $button = $(ev.target);
     this._activateTabByButton($button);
 };
 
@@ -149,7 +145,7 @@ Tab.prototype._activateSection = function(index) {
  * @param {string} name button name to activate
  */
 Tab.prototype.activate = function(name) {
-    var $button = this.$el.find('button:contains("' + name + '")');
+    const $button = this.$el.find(`button:contains("${name}")`);
     this._activateTabByButton($button);
 };
 

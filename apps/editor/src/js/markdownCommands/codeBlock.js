@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * CodeBlock
@@ -12,20 +12,20 @@ var CommandManager = require('../commandManager');
  * @exports CodeBlock
  * @augments Command
  */
-var CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
+const CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
     name: 'CodeBlock',
     keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var range, rowFix,
-            cm = mde.getEditor(),
-            replaceText = '',
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
+        let replaceText = '';
+        let rowFix;
 
-        range = cm.getCursor();
+        const range = cm.getCursor();
 
         if (doc.getLine(range.line).length) {
             replaceText += '\n``` \n\n```\n\n';

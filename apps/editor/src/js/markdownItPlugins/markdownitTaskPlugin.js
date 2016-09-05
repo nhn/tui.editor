@@ -6,6 +6,7 @@
  * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
  * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
+/* eslint-disable */
 
 /**
  * Task list renderer for Markdown-it
@@ -94,5 +95,7 @@ function isTaskListItemToken(tokens, index) {
             || tokens[index].content.indexOf('[x]') === 0
             || tokens[index].content.indexOf('[X]') === 0);
 }
+/* eslint-enable */
+
 
 module.exports = MarkdownitTaskRenderer;

@@ -1,5 +1,3 @@
-'use strict';
-
 import EventManager from '../src/js/eventManager';
 
 describe('eventManager', function() {

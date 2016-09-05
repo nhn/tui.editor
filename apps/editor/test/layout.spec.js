@@ -1,13 +1,10 @@
-'use strict';
+import Layout from '../src/js/layout';
+import EventManager from '../src/js/eventManager';
 
-var Layout = require('../src/js/layout'),
-    EventManager = require('../src/js/eventManager');
+describe('Layout', () => {
+    let layout, em;
 
-describe('Layout', function() {
-    var layout,
-        em;
-
-    beforeEach(function() {
+    beforeEach(() => {
         em = new EventManager();
 
         layout = new Layout({
@@ -16,11 +13,11 @@ describe('Layout', function() {
         }, em);
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    it('All layout elements are exist', function() {
+    it('All layout elements are exist', () => {
         expect($('.tui-editor').length).toEqual(1);
         expect($('.te-md-container').length).toEqual(1);
         expect($('.te-md-container .te-editor').length).toEqual(1);
@@ -29,15 +26,15 @@ describe('Layout', function() {
         expect($('.te-ww-container .te-editor').length).toEqual(1);
     });
 
-    describe('Markdown editor/preview layout switch', function() {
-        it('vertical', function() {
+    describe('Markdown editor/preview layout switch', () => {
+        it('vertical', () => {
             layout.changePreviewStyle('vertical');
 
             expect($('.te-md-container').hasClass('te-preview-style-vertical')).toBe(true);
             expect($('.te-md-container').hasClass('te-preview-style-tab')).toBe(false);
         });
 
-        it('tab', function() {
+        it('tab', () => {
             layout.changePreviewStyle('tab');
 
             expect($('.te-md-container').hasClass('te-preview-style-tab')).toBe(true);
@@ -45,15 +42,15 @@ describe('Layout', function() {
         });
     });
 
-    describe('Markdown and WYSIWYG type switching by eventManager', function() {
-        it('to Markdown', function() {
+    describe('Markdown and WYSIWYG type switching by eventManager', () => {
+        it('to Markdown', () => {
             layout.switchToMarkdown();
 
             expect($('.tui-editor').hasClass('te-md-mode')).toEqual(true);
             expect($('.tui-editor').hasClass('te-ww-mode')).toEqual(false);
         });
 
-        it('to WYSIWYG', function() {
+        it('to WYSIWYG', () => {
             layout.switchToWYSIWYG();
 
             expect($('.tui-editor').hasClass('te-md-mode')).toEqual(false);
@@ -61,8 +58,8 @@ describe('Layout', function() {
         });
     });
 
-    describe('show/hide', function() {
-        it('te-hide and show editor', function() {
+    describe('show/hide', () => {
+        it('te-hide and show editor', () => {
             layout.hide();
             expect($('.tui-editor').hasClass('te-hide')).toEqual(true);
             layout.show();

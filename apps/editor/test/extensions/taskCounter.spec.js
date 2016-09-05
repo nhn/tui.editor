@@ -1,24 +1,22 @@
-'use strict';
+import TuiEditor from '../../src/js/editor';
 
-var TuiEditor = require('../../src/js/editor');
+describe('taskCounter', () => {
+    let ned;
 
-describe('taskCounter', function() {
-    var ned;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $('body').html('<div id="editSection"></div>');
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('viewOnly', function() {
-        beforeEach(function() {
+    describe('viewOnly', () => {
+        beforeEach(() => {
             ned = TuiEditor.factory({
                 el: $('#editSection'),
                 viewOnly: true,
@@ -26,7 +24,7 @@ describe('taskCounter', function() {
             });
         });
 
-        it('get task count of content', function() {
+        it('get task count of content', () => {
             ned.setValue('* [ ] task1\n* [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -40,7 +38,7 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function() {
+        it('get checked task count of content', () => {
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 
@@ -54,8 +52,8 @@ describe('taskCounter', function() {
             expect(ned.getCheckedTaskCount()).toEqual(0);
         });
     });
-    describe('wysiwyg', function() {
-        beforeEach(function() {
+    describe('wysiwyg', () => {
+        beforeEach(() => {
             ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
@@ -68,7 +66,7 @@ describe('taskCounter', function() {
             });
         });
 
-        it('get task count of content', function() {
+        it('get task count of content', () => {
             ned.setValue('* [ ] task1\n* [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -82,7 +80,7 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function() {
+        it('get checked task count of content', () => {
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 
@@ -97,8 +95,8 @@ describe('taskCounter', function() {
         });
     });
 
-    describe('markdown', function() {
-        beforeEach(function() {
+    describe('markdown', () => {
+        beforeEach(() => {
             ned = new TuiEditor({
                 el: $('#editSection'),
                 previewStyle: 'tab',
@@ -111,7 +109,7 @@ describe('taskCounter', function() {
             });
         });
 
-        it('get task count of content', function() {
+        it('get task count of content', () => {
             ned.setValue('* [ ] task1\n    * [ ] task2');
             expect(ned.getTaskCount()).toEqual(2);
 
@@ -125,7 +123,7 @@ describe('taskCounter', function() {
             expect(ned.getTaskCount()).toEqual(0);
         });
 
-        it('get checked task count of content', function() {
+        it('get checked task count of content', () => {
             ned.setValue('* [ ] task1\n* [x] task2');
             expect(ned.getCheckedTaskCount()).toEqual(1);
 

@@ -1,15 +1,11 @@
-'use strict';
+import MarkdownEditor from '../src/js/markdownEditor';
+import EventManager from '../src/js/eventManager';
 
-var MarkdownEditor = require('../src/js/markdownEditor'),
-    EventManager = require('../src/js/eventManager');
+describe('MarkdownEditor', () => {
+    let mde, em;
 
-describe('MarkdownEditor', function() {
-    var mde, em;
-
-    beforeEach(function() {
-        var $container;
-
-        $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -17,24 +13,24 @@ describe('MarkdownEditor', function() {
         mde = new MarkdownEditor($container, em);
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('Initialize', function() {
-       it('make codemirror context', function() {
-           mde.init();
-           expect($('.CodeMirror').length).toEqual(1);
-       });
+    describe('Initialize', () => {
+        it('make codemirror context', () => {
+            mde.init();
+            expect($('.CodeMirror').length).toEqual(1);
+        });
     });
 
-    describe('Events', function() {
-        beforeEach(function() {
+    describe('Events', () => {
+        beforeEach(() => {
             mde.init();
         });
 
-        it('when something change emit contentChangedFromMarkdown event', function(done) {
-            em.listen('contentChangedFromMarkdown', function(editor) {
+        it('when something change emit contentChangedFromMarkdown event', done => {
+            em.listen('contentChangedFromMarkdown', editor => {
                 expect(editor).toEqual(mde);
                 done();
             });
@@ -42,16 +38,16 @@ describe('MarkdownEditor', function() {
             mde.getEditor().replaceSelection('myText');
         });
 
-        it('when something change emit changeFromMarkdown event', function(done) {
-            em.listen('changeFromMarkdown', function(ev) {
+        it('when something change emit changeFromMarkdown event', done => {
+            em.listen('changeFromMarkdown', ev => {
                 done();
             });
 
             mde.getEditor().replaceSelection('my');
         });
 
-        it('when something change emit change event', function(done) {
-            em.listen('change', function(ev) {
+        it('when something change emit change event', done => {
+            em.listen('change', ev => {
                 expect(ev.source).toEqual('markdown');
 
                 done();
@@ -60,16 +56,16 @@ describe('MarkdownEditor', function() {
             mde.getEditor().replaceSelection('comment');
         });
 
-        it('when editor gain focus, emit focus event', function() {
-            em.listen('focus', function(ev) {
+        it('when editor gain focus, emit focus event', () => {
+            em.listen('focus', ev => {
                 expect(ev.source).toEqual('markdown');
             });
 
             mde.getEditor().focus();
         });
 
-        it('when editor lost focus, emit blur event', function() {
-            em.listen('blur', function(ev) {
+        it('when editor lost focus, emit blur event', () => {
+            em.listen('blur', ev => {
                 expect(ev.source).toEqual('markdown');
             });
 
@@ -77,13 +73,13 @@ describe('MarkdownEditor', function() {
         });
     });
 
-    describe('replaceSelection', function() {
-        beforeEach(function() {
+    describe('replaceSelection', () => {
+        beforeEach(() => {
             mde.init();
         });
 
-        it('replace selection content with passed content', function() {
-            var selection = {
+        it('replace selection content with passed content', () => {
+            const selection = {
                 from: {line: 0, ch: 0},
                 to: {line: 0, ch: 0}
             };
@@ -93,12 +89,12 @@ describe('MarkdownEditor', function() {
             expect(mde.getValue()).toEqual('test');
         });
 
-        it('if replace selection without selection, use current selection', function() {
+        it('if replace selection without selection, use current selection', () => {
             mde.replaceSelection('test');
             expect(mde.getValue()).toEqual('test');
         });
 
-        it('replace with current cursor\'s containers offset', function() {
+        it('replace with current cursor\'s containers offset', () => {
             mde.replaceSelection('t');
             mde.replaceSelection('e');
             mde.replaceSelection('s');
@@ -109,12 +105,12 @@ describe('MarkdownEditor', function() {
         });
     });
 
-    describe('move cursor to end or start', function() {
-        beforeEach(function() {
+    describe('move cursor to end or start', () => {
+        beforeEach(() => {
             mde.init();
         });
 
-        it('move cursor to end', function() {
+        it('move cursor to end', () => {
             mde.setValue('test\ntest\ntest\n');
 
             mde.moveCursorToEnd();
@@ -123,7 +119,7 @@ describe('MarkdownEditor', function() {
             expect(mde.getEditor().getCursor().ch).toEqual(0);
         });
 
-        it('move cursor to start', function() {
+        it('move cursor to start', () => {
             mde.setValue('test\ntest\ntest\n');
 
             mde.moveCursorToStart();
@@ -133,11 +129,11 @@ describe('MarkdownEditor', function() {
         });
     });
 
-    describe('setValue', function() {
-        beforeEach(function() {
+    describe('setValue', () => {
+        beforeEach(() => {
             mde.init();
         });
-        it('move cursor to end after setValue', function() {
+        it('move cursor to end after setValue', () => {
             mde.setValue('test\ntest\ntest\n');
 
             expect(mde.getEditor().getCursor().line).toEqual(3);
@@ -145,14 +141,14 @@ describe('MarkdownEditor', function() {
         });
     });
 
-    describe('getRange', function() {
-        beforeEach(function() {
+    describe('getRange', () => {
+        beforeEach(() => {
             mde.init();
         });
-        it('get current selection range', function() {
-            var start = mde.getEditor().getCursor('from');
-            var end = mde.getEditor().getCursor('to');
-            var range = mde.getRange();
+        it('get current selection range', () => {
+            const start = mde.getEditor().getCursor('from');
+            const end = mde.getEditor().getCursor('to');
+            const range = mde.getRange();
 
             expect(range.start).toBeDefined();
             expect(range.start.line).toEqual(start.line);
@@ -164,11 +160,11 @@ describe('MarkdownEditor', function() {
     });
 
     //we dont make codemirror scrollTop tc cuz codemirror css file could not be loaded
-    xdescribe('get, set scrollTop', function() {
-        beforeEach(function() {
+    xdescribe('get, set scrollTop', () => {
+        beforeEach(() => {
             mde.init();
         });
-        it('get scrollTop', function() {
+        it('get scrollTop', () => {
             mde.setHeight(50);
 
             mde.setValue('1\n2\n3\n4\n5\n1\n2\n3\n4\n5\n');

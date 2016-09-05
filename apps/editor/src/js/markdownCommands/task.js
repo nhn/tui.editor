@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Task
@@ -12,31 +12,30 @@ var CommandManager = require('../commandManager');
  * @augments Command
  */
 
-var Task = CommandManager.command('markdown', /** @lends Task */{
+const Task = CommandManager.command('markdown', /** @lends Task */{
     name: 'Task',
     keyMap: ['CTRL+T', 'META+T'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var replaceText, range, from, to,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
-        range = mde.getCurrentRange();
+        const range = mde.getCurrentRange();
 
-        from = {
+        const from = {
             line: range.from.line,
             ch: range.from.ch
         };
 
-        to = {
+        const to = {
             line: range.to.line,
             ch: range.to.ch
         };
 
-        replaceText = '* [ ] ';
+        const replaceText = '* [ ] ';
 
         doc.replaceRange(replaceText, from, to);
 

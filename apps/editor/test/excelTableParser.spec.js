@@ -1,12 +1,10 @@
-'use strict';
+import excelTableParser from '../src/js/excelTableParser';
 
-var excelTableParser = require('../src/js/excelTableParser');
+describe('excelTableParser', () => {
+    let content;
 
-describe('excelTableParser', function() {
-    var content;
-
-    describe('parse excel paste data to object', function() {
-        it('2 x 2', function() {
+    describe('parse excel paste data to object', () => {
+        it('2 x 2', () => {
             content = 'a\tb\nc\td';
 
             expect(excelTableParser(content)).toEqual({
@@ -16,7 +14,7 @@ describe('excelTableParser', function() {
             });
         });
 
-        it('2 x 3', function() {
+        it('2 x 3', () => {
             content = 'a\tb\nc\td\ne\tf';
 
             expect(excelTableParser(content)).toEqual({
@@ -26,7 +24,7 @@ describe('excelTableParser', function() {
             });
         });
 
-        it('3 x 2 has empty cell in middle of first row', function() {
+        it('3 x 2 has empty cell in middle of first row', () => {
             content = 'a\t\tc\nd\te\tf';
 
             expect(excelTableParser(content)).toEqual({
@@ -36,7 +34,7 @@ describe('excelTableParser', function() {
             });
         });
 
-        it('3 x 2 has empty cell last', function() {
+        it('3 x 2 has empty cell last', () => {
             content = 'a\tb\tc\nd\te\t';
 
             expect(excelTableParser(content)).toEqual({
@@ -46,7 +44,7 @@ describe('excelTableParser', function() {
             });
         });
 
-        it('3 x 2 has cell contains a space', function() {
+        it('3 x 2 has cell contains a space', () => {
             content = 'a\sb\tc\td\ne\sf\tg\ti';
 
             expect(excelTableParser(content)).toEqual({
@@ -56,7 +54,7 @@ describe('excelTableParser', function() {
             });
         });
 
-        it('3 x 2 has cell contains a blocking content', function() {
+        it('3 x 2 has cell contains a blocking content', () => {
             content = 'a\tb\t"this is \r\nblocking content"\na\sb\te\tf';
 
             expect(excelTableParser(content)).toEqual({
@@ -66,8 +64,8 @@ describe('excelTableParser', function() {
             });
         });
     });
-    describe('refine line feed difference of os', function() {
-        it('CR-LF', function() {
+    describe('refine line feed difference of os', () => {
+        it('CR-LF', () => {
             content = 'a\tb\tc\r\nd\te\t';
 
             expect(excelTableParser(content)).toEqual({
@@ -76,7 +74,7 @@ describe('excelTableParser', function() {
                 data: ['a', 'b', 'c', 'd', 'e', '']
             });
         });
-        it('CR', function() {
+        it('CR', () => {
             content = 'a\tb\tc\rd\te\t';
 
             expect(excelTableParser(content)).toEqual({

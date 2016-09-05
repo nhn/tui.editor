@@ -1,11 +1,13 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
-var domUtil = require('../domUtils');
+import CommandManager from '../commandManager';
+import domUtil from '../domUtils';
+
 /**
  * RemoveRow
  * remove Row to selected table
@@ -13,27 +15,26 @@ var domUtil = require('../domUtils');
  * @augments Command
  * @augments WysiwygCommand
  */
-var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
+const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     name: 'RemoveRow',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor();
-        var range = sq.getSelection().cloneRange();
-        var $table = $(range.startContainer).parents('table');
-        var selectionMgr = wwe.getManager('tableSelection');
-        var tableMgr = wwe.getManager('table');
-        var $tr = getTrs(range, selectionMgr, $table);
-        var tbodyRowLength = $table.find('tbody tr').length;
-        var $nextFocus;
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        const $table = $(range.startContainer).parents('table');
+        const selectionMgr = wwe.getManager('tableSelection');
+        const tableMgr = wwe.getManager('table');
+        const $tr = getTrs(range, selectionMgr, $table);
+        const tbodyRowLength = $table.find('tbody tr').length;
 
         sq.focus();
 
         if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
             sq.saveUndoState(range);
-            $nextFocus = $tr.last().next()[0] ? $tr.last().next() : $tr.first().prev();
+            const $nextFocus = $tr.last().next()[0] ? $tr.last().next() : $tr.first().prev();
 
             if ($nextFocus.length) {
                 focusToFirstTd(sq, range, $nextFocus, tableMgr);
@@ -52,7 +53,7 @@ var RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
  * @param {object} tableMgr Table manager
  */
 function focusToFirstTd(sq, range, $tr, tableMgr) {
-    var nextFocusCell = $tr.find('td')[0];
+    const nextFocusCell = $tr.find('td')[0];
     range.setStart(nextFocusCell, 0);
     range.collapse(true);
 
@@ -68,17 +69,16 @@ function focusToFirstTd(sq, range, $tr, tableMgr) {
  * @returns {jQuery}
  */
 function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
-    var startRowIndex = rangeInformation.from.row;
-    var endRowIndex = rangeInformation.to.row;
-    var tbodyRowLength = $table.find('tbody tr').length;
-    var isStartContainerInThead = $(firstSelectedCell).parents('thead').length;
-    var isWholeTbodySelected;
+    const tbodyRowLength = $table.find('tbody tr').length;
+    const isStartContainerInThead = $(firstSelectedCell).parents('thead').length;
+    let startRowIndex = rangeInformation.from.row;
+    let endRowIndex = rangeInformation.to.row;
 
     if (isStartContainerInThead) {
         startRowIndex += 1;
     }
 
-    isWholeTbodySelected = (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
+    const isWholeTbodySelected = (startRowIndex === 1 || isStartContainerInThead) && endRowIndex === tbodyRowLength;
 
     if (isWholeTbodySelected) {
         endRowIndex -= 1;
@@ -86,6 +86,7 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
 
     return $table.find('tr').slice(startRowIndex, endRowIndex + 1);
 }
+
 /**
  * Get TRs
  * @param {Range} range Range object
@@ -94,8 +95,8 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
  * @returns {jQuery}
  */
 function getTrs(range, selectionMgr, $table) {
-    var selectedCells = selectionMgr.getSelectedCells();
-    var rangeInformation, trs, startCell, endCell;
+    const selectedCells = selectionMgr.getSelectedCells();
+    let rangeInformation, trs, startCell, endCell;
 
     if (selectedCells.length) {
         rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],

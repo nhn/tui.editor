@@ -1,13 +1,16 @@
+/**
+ * @fileoverview Implements Task counter
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
 
+const extManager = require('../extManager');
 
-var extManager = require('../extManager');
+const FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
+const FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
 
-var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
-var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
-
-extManager.defineExtension('taskCounter', function(editor) {
-    editor.getTaskCount = function() {
-        var found, count;
+extManager.defineExtension('taskCounter', editor => {
+    editor.getTaskCount = () => {
+        let found, count;
 
         if (editor.isViewOnly()) {
             count = editor.preview.$el.find('.task-list-item').length;
@@ -21,8 +24,8 @@ extManager.defineExtension('taskCounter', function(editor) {
         return count;
     };
 
-    editor.getCheckedTaskCount = function() {
-        var found, count;
+    editor.getCheckedTaskCount = () => {
+        let found, count;
 
         if (editor.isViewOnly()) {
             count = editor.preview.$el.find('.task-list-item.checked').length;

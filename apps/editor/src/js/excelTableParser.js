@@ -13,13 +13,13 @@
  * @returns {object} result
  */
 function excelTableParser(content) {
-    var rows = getRows(content),
-        data = [],
-        rowLength = rows.length,
-        colLength = 0;
+    const rows = getRows(content);
+    const rowLength = rows.length;
+    let data = [];
+    let colLength = 0;
 
-    rows.forEach(function(row) {
-        var cols = row.split('\t');
+    rows.forEach(row => {
+        const cols = row.split('\t');
 
         if (!cols) {
             return;
@@ -33,7 +33,7 @@ function excelTableParser(content) {
     return {
         col: colLength,
         row: rowLength,
-        data: data
+        data
     };
 }
 /**
@@ -43,9 +43,7 @@ function excelTableParser(content) {
  * @returns {Array}
  */
 function getRows(content) {
-    content = content.replace(/"([^"]+)"/g, function(match, cell) {
-        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
-    });
+    content = content.replace(/"([^"]+)"/g, (match, cell) => cell.replace(/(\r\n)|(\r)/g, '<br/>'));
 
     //remove last LF or CR
     content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');

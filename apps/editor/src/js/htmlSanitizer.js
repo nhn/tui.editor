@@ -3,17 +3,16 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
+const util = tui.util;
 
-var util = tui.util;
-
-var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
+const HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|colspan|compact|coords|dir|face|headers|height|hreflang|hspace|' +
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rowspan|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
     'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
-var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
+const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
     'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' +
@@ -38,7 +37,7 @@ var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabeti
  * @returns {string|DocumentFragment} result
  */
 function htmlSanitizer(html, needHtmlText) {
-    var $html = $('<div />');
+    const $html = $('<div />');
 
     $html.append(html);
 
@@ -63,12 +62,15 @@ function removeUnnecessaryTags($html) {
  * @param {jQuery} $html jQuery instance
  */
 function leaveOnlyWhitelistAttribute($html) {
-    $html.find('*').each(function(index, node) {
-        var blacklist = util.toArray(node.attributes).filter(function(attr) {
-            return !attr.name.match(HTML_ATTR_LIST_RX) && !attr.name.match(SVG_ATTR_LIST_RX);
+    $html.find('*').each((index, node) => {
+        const blacklist = util.toArray(node.attributes).filter(attr => {
+            const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
+            const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
+
+            return !isHTMLAttr && !isSVGAttr;
         });
 
-        util.forEachArray(blacklist, function(attr) {
+        util.forEachArray(blacklist, attr => {
             node.attributes.removeNamedItem(attr.name);
         });
     });
@@ -82,14 +84,14 @@ function leaveOnlyWhitelistAttribute($html) {
  * @returns {string|DocumentFragment} result
  */
 function finalizeHtml($html, needHtmlText) {
-    var returnValue, frag;
+    let returnValue, frag;
 
     if (needHtmlText) {
         returnValue = $html[0].innerHTML;
     } else {
         frag = document.createDocumentFragment();
-        $html.children().each(function() {
-            frag.appendChild(this);
+        $html.children().each((i, node) => {
+            frag.appendChild(node);
         });
         returnValue = frag;
     }

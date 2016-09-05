@@ -1,15 +1,13 @@
-'use strict';
+import Table from '../../src/js/wysiwygCommands/table';
+import tableManager from '../../src/js/wwTableManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Table = require('../../src/js/wysiwygCommands/table'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    tableManager = require('../../src/js/wwTableManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('Table', () => {
+    let wwe;
 
-describe('Table', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -21,21 +19,21 @@ describe('Table', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add Table 2x2', function() {
+    it('add Table 2x2', () => {
         Table.exec(wwe, 2, 2);
 
         expect(wwe.get$Body().find('thead tr th').length).toEqual(2);
         expect(wwe.get$Body().find('tbody tr').eq(0).find('td').length).toEqual(2);
     });
 
-    it('add Table 4x3', function() {
+    it('add Table 4x3', () => {
         Table.exec(wwe, 4, 3);
 
         expect(wwe.get$Body().find('thead tr th').length).toEqual(4);
@@ -43,19 +41,19 @@ describe('Table', function() {
         expect(wwe.get$Body().find('tbody tr').eq(1).find('td').length).toEqual(4);
     });
 
-    it('table have class', function() {
+    it('table have class', () => {
         Table.exec(wwe, 4, 3);
 
         expect(wwe.get$Body().find('table').attr('class')).toBeDefined();
     });
 
-    it('first th in table have focus', function() {
+    it('first th in table have focus', () => {
         Table.exec(wwe, 4, 3);
 
         expect(wwe.getEditor().getSelection().startContainer).toBe(wwe.get$Body().find('th')[0]);
     });
 
-    it('add initial data', function() {
+    it('add initial data', () => {
         Table.exec(wwe, 2, 3, ['a', 'b', 'c', 'd', 'e', 'f']);
         expect(wwe.get$Body().find('thead tr').eq(0).find('th').eq(0).text()).toEqual('a');
         expect(wwe.get$Body().find('thead tr').eq(0).find('th').eq(1).text()).toEqual('b');

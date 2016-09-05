@@ -1,36 +1,35 @@
-var Convertor = require('../src/js/convertor'),
-    EventManager = require('../src/js/eventManager');
+import Convertor from '../src/js/convertor';
+import EventManager from '../src/js/eventManager';
 
-describe('Markdown-it', function() {
-    var convertor, em;
+describe('Markdown-it', () => {
+    let convertor, em;
 
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
         em = new EventManager();
         convertor = new Convertor(em);
 
         $('body').append($container);
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('tableRendererRule', function() {
-        var tableText = '\n| | | |'
+    describe('tableRendererRule', () => {
+        const tableText = '\n| | | |'
             + '\n| --- | :---: | ---: |'
             + '\n| | | |'
             + '\n| | | |'
             + '\n| | | |';
 
-        it('sholud render table element accurately', function() {
-            var tableHTML = convertor.toHTML(tableText);
-            var $tableElement = $(tableHTML);
-            var tds, ths;
+        it('sholud render table element accurately', () => {
+            const tableHTML = convertor.toHTML(tableText);
+            const $tableElement = $(tableHTML);
 
             expect($tableElement.find('td,th').length).toBe(12);
-            tds = $tableElement.find('td');
-            ths = $tableElement.find('th');
+            const tds = $tableElement.find('td');
+            const ths = $tableElement.find('th');
             expect(tds.eq(0).attr('align')).toBeUndefined();
             expect(tds.eq(1).attr('align')).toBe('center');
             expect(tds.eq(2).attr('align')).toBe('right');
@@ -40,22 +39,21 @@ describe('Markdown-it', function() {
         });
     });
 
-    describe('taskPlugin', function() {
-        var taskText = '\n* [ ] study'
+    describe('taskPlugin', () => {
+        const taskText = '\n* [ ] study'
             + '\n* [x] workout'
             + '\n* [X] eat breakfast';
 
-        it('should render task list accurately', function() {
-            var taskHTML = convertor.toHTML(taskText);
-            var $container = $('<div></div>');
-            var li0, li1, li2, lis;
+        it('should render task list accurately', () => {
+            const taskHTML = convertor.toHTML(taskText);
+            const $container = $('<div></div>');
 
             $container.html(taskHTML);
 
-            lis = $container.find('li');
-            li0 = lis.eq(0);
-            li1 = lis.eq(1);
-            li2 = lis.eq(2);
+            const lis = $container.find('li');
+            const li0 = lis.eq(0);
+            const li1 = lis.eq(1);
+            const li2 = lis.eq(2);
 
             expect($container.children('ul').length).toBe(1);
             expect(lis.length).toBe(3);
@@ -76,14 +74,14 @@ describe('Markdown-it', function() {
         });
     });
 
-    describe('codeblock', function() {
-        var codeblockText = '\n```javascript'
-            + '\nvar a = 100;'
+    describe('codeblock', () => {
+        const codeblockText = '\n```javascript'
+            + '\nconst a = 100;'
             + '\n```';
 
-        it('rendering Codeblock element accurately', function() {
-            var codeblockHTML = convertor._markdownToHtml(codeblockText);
-            var $container = $('<div></div>');
+        it('rendering Codeblock element accurately', () => {
+            const codeblockHTML = convertor._markdownToHtml(codeblockText);
+            const $container = $('<div></div>');
 
             $container.html(codeblockHTML);
 
@@ -92,9 +90,9 @@ describe('Markdown-it', function() {
             expect($container.children('pre').children('code').attr('data-language')).toBe('javascript');
             expect($container.children('pre').children('code').hasClass('lang-javascript')).toBe(true);
         });
-        it('rendering Codeblock element accurately with highlight', function() {
-            var codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(codeblockText);
-            var $container = $('<div></div>');
+        it('rendering Codeblock element accurately with highlight', () => {
+            const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(codeblockText);
+            const $container = $('<div></div>');
 
             $container.html(codeblockHTML);
 

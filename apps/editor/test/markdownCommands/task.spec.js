@@ -1,17 +1,12 @@
-'use strict';
+import task from '../../src/js/markdownCommands/task';
+import MarkdownEditor from '../../src/js/markdownEditor';
+import EventManager from '../../src/js/eventManager';
 
-var task = require('../../src/js/markdownCommands/task'),
-    MarkdownEditor = require('../../src/js/markdownEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('task', () => {
+    let cm, doc, mde;
 
-describe('task', function() {
-    var cm,
-        doc,
-        mde;
-
-    beforeEach(function() {
-        var $container = $('<div />'),
-            sourceText;
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -21,18 +16,18 @@ describe('task', function() {
 
         cm = mde.getEditor();
 
-        sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
+        const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('add task', function() {
-        it('added task', function() {
+    describe('add task', () => {
+        it('added task', () => {
             doc.setCursor(0, 0);
 
             task.exec(mde);

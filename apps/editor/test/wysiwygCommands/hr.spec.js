@@ -1,15 +1,13 @@
-'use strict';
+import HR from '../../src/js/wysiwygCommands/hr';
+import WwTaskManager from '../../src/js/wwTaskManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var HR = require('../../src/js/wysiwygCommands/hr'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    WwTaskManager = require('../../src/js/wwTaskManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('HR', () => {
+    let wwe, sq;
 
-describe('HR', function() {
-    var wwe, sq;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -23,15 +21,15 @@ describe('HR', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add HR and if there is no next block then append default block', function() {
-        var range = sq.getSelection().cloneRange();
+    it('add HR and if there is no next block then append default block', () => {
+        const range = sq.getSelection().cloneRange();
 
         range.setStart(wwe.get$Body().find('div')[0], 0);
         range.collapse(true);
@@ -43,8 +41,8 @@ describe('HR', function() {
         expect(wwe.get$Body().find('div').length).toEqual(2);
     });
 
-    it('add HR and if there is next block then dont make default block', function() {
-        var range = sq.getSelection().cloneRange();
+    it('add HR and if there is next block then dont make default block', () => {
+        const range = sq.getSelection().cloneRange();
 
         sq.setHTML('<div>test</div><div><br/></div>');
 
@@ -59,8 +57,8 @@ describe('HR', function() {
         expect(wwe.get$Body().find('div').length).toEqual(2);
     });
 
-    it('append hr then cursor to next block', function() {
-        var range = sq.getSelection().cloneRange();
+    it('append hr then cursor to next block', () => {
+        const range = sq.getSelection().cloneRange();
 
         sq.setHTML('<div>test</div><div><br/></div>');
 

@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements AddLink wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+const CommandManager = require('../commandManager');
 
 /**
  * AddLink
@@ -13,16 +14,15 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
+const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
     name: 'AddLink',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      *  @param {object} data data for image
      */
-    exec: function(wwe, data) {
-        var sq = wwe.getEditor(),
-            link;
+    exec(wwe, data) {
+        const sq = wwe.getEditor();
 
         sq.focus();
 
@@ -32,7 +32,7 @@ var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
             if (sq.getSelectedText()) {
                 sq.makeLink(data.url);
             } else {
-                link = sq.createElement('A', {href: data.url});
+                const link = sq.createElement('A', {href: data.url});
                 $(link).text(data.linkText);
                 sq.insertElement(link);
             }

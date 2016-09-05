@@ -4,9 +4,9 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
-var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
+const strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
 
 /**
  * Strike
@@ -14,21 +14,22 @@ var strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
  * @exports Strike
  * @augments Command
  */
-var Strike = CommandManager.command('markdown', /** @lends Strike */{
+const Strike = CommandManager.command('markdown', /** @lends Strike */{
     name: 'Strike',
     keyMap: ['CTRL+S', 'META+S'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var cm = mde.getEditor();
-        var doc = cm.getDoc();
-        var cursor = doc.getCursor();
-        var selection = doc.getSelection();
-        var isNeedToRemove, isEmptySelection, result;
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
+        const cursor = doc.getCursor();
+        const selection = doc.getSelection();
+        const isNeedToRemove = this.hasStrikeSyntax(selection);
 
-        isNeedToRemove = this.hasStrikeSyntax(selection);
+        let result;
+
         if (isNeedToRemove) {
             result = this.remove(selection);
         } else {
@@ -37,7 +38,8 @@ var Strike = CommandManager.command('markdown', /** @lends Strike */{
 
         doc.replaceSelection(result, 'around');
 
-        isEmptySelection = !selection;
+        const isEmptySelection = !selection;
+
         if (isEmptySelection && !isNeedToRemove) {
             this.setCursorToCenter(doc, cursor, isNeedToRemove);
         }
@@ -49,7 +51,7 @@ var Strike = CommandManager.command('markdown', /** @lends Strike */{
      * @param {string} text Source text
      * @returns {boolean} Boolean value of strike syntax removal
      */
-    hasStrikeSyntax: function(text) {
+    hasStrikeSyntax(text) {
         return strikeRegex.test(text);
     },
     /**
@@ -57,15 +59,15 @@ var Strike = CommandManager.command('markdown', /** @lends Strike */{
      * @param {string} text 적용할 텍스트
      * @returns {string} strikeThrough text
      */
-    append: function(text) {
-        return '~~' + text + '~~';
+    append(text) {
+        return `~~${text}~~`;
     },
     /**
      * remove
      * @param {string} text 제거할 텍스트
      * @returns {string} 제거된 텍스트
      */
-    remove: function(text) {
+    remove(text) {
         return text.substr(2, text.length - 4);
     },
     /**
@@ -75,8 +77,8 @@ var Strike = CommandManager.command('markdown', /** @lends Strike */{
      * @param {object} cursor 커서객체
      * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
      */
-    setCursorToCenter: function(doc, cursor, isRemoved) {
-        var pos = isRemoved ? -2 : 2;
+    setCursorToCenter(doc, cursor, isRemoved) {
+        const pos = isRemoved ? -2 : 2;
         doc.setCursor(cursor.line, cursor.ch + pos);
     }
 });

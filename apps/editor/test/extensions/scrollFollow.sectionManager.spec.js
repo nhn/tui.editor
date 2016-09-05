@@ -1,14 +1,12 @@
-'use strict';
+import TuiEditor from '../../src/js/editor';
+import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager';
 
-var TuiEditor = require('../../src/js/editor'),
-    SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
+const loadStyleFixtures = window.loadStyleFixtures;
 
-var loadStyleFixtures = window.loadStyleFixtures;
+describe('scrollFollow.sectionManager', () => {
+    let ned, sectionManager;
 
-describe('scrollFollow.sectionManager', function() {
-    var ned, sectionManager;
-
-    beforeEach(function() {
+    beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -30,29 +28,27 @@ describe('scrollFollow.sectionManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('sectionManager', function() {
-        it('make new section', function() {
-            var sectionList;
-
+    describe('sectionManager', () => {
+        it('make new section', () => {
             sectionManager._sectionList = [];
 
             sectionManager._addNewSection(0, 1);
 
-            sectionList = sectionManager.getSectionList();
+            const sectionList = sectionManager.getSectionList();
 
             expect(sectionList.length).toEqual(1);
             expect(sectionList[0].start).toEqual(0);
             expect(sectionList[0].end).toEqual(1);
         });
 
-        it('update current section', function() {
+        it('update current section', () => {
             sectionManager._sectionList = [];
             sectionManager._addNewSection(0, 1);
             sectionManager._updateCurrentSectionEnd(3);
@@ -60,8 +56,8 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList()[0].end).toEqual(3);
         });
 
-        it('iterate each line with info', function() {
-            var lineType = [];
+        it('iterate each line with info', () => {
+            const lineType = [];
 
             ned.setValue([
                 'paragraph',
@@ -72,7 +68,7 @@ describe('scrollFollow.sectionManager', function() {
                 'paragraph'
             ].join('\n'));
 
-            sectionManager._eachLineState(function(isSection, lineNumber) {
+            sectionManager._eachLineState((isSection, lineNumber) => {
                 lineType[lineNumber] = isSection;
             });
 
@@ -80,8 +76,8 @@ describe('scrollFollow.sectionManager', function() {
             expect(lineType[1]).toEqual(true);
         });
 
-        it('trimming top lines while _eachLineState', function() {
-            var lineType = [];
+        it('trimming top lines while _eachLineState', () => {
+            const lineType = [];
 
             ned.setValue([
                 ' ',
@@ -94,7 +90,7 @@ describe('scrollFollow.sectionManager', function() {
                 'paragraph'
             ].join('\n'));
 
-            sectionManager._eachLineState(function(isSection, lineNumber) {
+            sectionManager._eachLineState((isSection, lineNumber) => {
                 lineType[lineNumber] = isSection;
             });
 
@@ -105,7 +101,7 @@ describe('scrollFollow.sectionManager', function() {
         });
 
 
-        it('make section list', function() {
+        it('make section list', () => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -120,7 +116,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(3);
         });
 
-        it('dont make section with only #', function() {
+        it('dont make section with only #', () => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -135,7 +131,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('make section list with default section ', function() {
+        it('make section list with default section ', () => {
             ned.setValue([
                 ' ',
                 '***',
@@ -148,7 +144,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(1);
         });
 
-        it('make section list use default section if first contents is header ', function() {
+        it('make section list use default section if first contents is header ', () => {
             ned.setValue([
                 '# header',
                 '***',
@@ -162,7 +158,7 @@ describe('scrollFollow.sectionManager', function() {
         });
 
 
-        it('make section list with setext type header ', function() {
+        it('make section list with setext type header ', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -179,7 +175,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(3);
         });
 
-        it('dont make section with line', function() {
+        it('dont make section with line', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -196,7 +192,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('dont make section with line followed by table', function() {
+        it('dont make section with line followed by table', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -215,7 +211,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('any problem with table in bottom', function() {
+        it('any problem with table in bottom', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -231,7 +227,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('any problem with table with space', function() {
+        it('any problem with table with space', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -247,13 +243,13 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('dont make section with line followed by codeBlock', function() {
+        it('dont make section with line followed by codeBlock', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
                 '=======',
                 '``` javascript',
-                'var mm = 1;',
+                'const mm = 1;',
                 '```',
                 '------',
                 'paragraph'
@@ -265,9 +261,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionManager.getSectionList().length).toEqual(2);
         });
 
-        it('section list have line info', function() {
-            var sectionList;
-
+        it('section list have line info', () => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -279,7 +273,7 @@ describe('scrollFollow.sectionManager', function() {
 
             sectionManager.makeSectionList();
 
-            sectionList = sectionManager.getSectionList();
+            const sectionList = sectionManager.getSectionList();
 
             expect(sectionList[0].start).toEqual(0);
             expect(sectionList[0].end).toEqual(0);
@@ -289,7 +283,7 @@ describe('scrollFollow.sectionManager', function() {
             expect(sectionList[2].end).toEqual(5);
         });
 
-         it('section match with preview', function(done) {
+        it('section match with preview', done => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -301,10 +295,9 @@ describe('scrollFollow.sectionManager', function() {
 
             sectionManager.makeSectionList();
 
-            ned.on('previewRenderAfter', function() {
-                var sectionList;
+            ned.on('previewRenderAfter', () => {
                 sectionManager.sectionMatch();
-                sectionList = sectionManager.getSectionList();
+                const sectionList = sectionManager.getSectionList();
 
                 expect(sectionList.length).toEqual(3);
                 expect(sectionList[0].$previewSectionEl.hasClass('content-id-0')).toBe(true);
@@ -314,9 +307,7 @@ describe('scrollFollow.sectionManager', function() {
             });
         });
 
-        it('find section with markdown line', function() {
-            var sectionList;
-
+        it('find section with markdown line', () => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -327,7 +318,7 @@ describe('scrollFollow.sectionManager', function() {
             ].join('\n'));
 
             sectionManager.makeSectionList();
-            sectionList = sectionManager.getSectionList();
+            const sectionList = sectionManager.getSectionList();
 
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);

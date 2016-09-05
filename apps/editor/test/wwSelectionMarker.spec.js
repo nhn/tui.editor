@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwSelectionMarker from '../src/js/wwSelectionMarker';
 
-var WwSelectionMarker = require('../src/js/wwSelectionMarker'),
-    WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager');
+describe('WwSelectionMarker', () => {
+    let $container, em, wwe, wwsm, range;
 
-describe('WwSelectionMarker', function() {
-    var $container, em, wwe, wwsm, range;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -24,15 +22,15 @@ describe('WwSelectionMarker', function() {
         wwsm = new WwSelectionMarker();
     });
 
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('insert selection marker', function() {
-        it('mark non callapsed range', function() {
+    describe('insert selection marker', () => {
+        it('mark non callapsed range', () => {
             range.selectNodeContents(wwe.get$Body().find('h1')[0].childNodes[0]);
 
             wwsm.insertMarker(range, wwe.getEditor());
@@ -41,7 +39,7 @@ describe('WwSelectionMarker', function() {
             expect(range.startContainer.childNodes[range.startOffset].previousSibling.tagName).toEqual('INPUT');
         });
 
-        it('mark callapsed range', function() {
+        it('mark callapsed range', () => {
             range.setStart(wwe.get$Body().find('h1')[0].childNodes[0], 1);
             range.collapse(true);
 
@@ -52,8 +50,8 @@ describe('WwSelectionMarker', function() {
         });
     });
 
-    describe('restore saved selection marker', function() {
-        it('restore saved marker', function() {
+    describe('restore saved selection marker', () => {
+        it('restore saved marker', () => {
             range.setStart(wwe.get$Body().find('h1')[0].childNodes[0], 1);
             range.collapse(true);
 

@@ -4,16 +4,16 @@
  */
 
 
-var Preview = require('./preview'),
-    EventManager = require('./eventManager'),
-    CommandManager = require('./commandManager'),
-    extManager = require('./extManager'),
-    Convertor = require('./convertor');
+import Preview from './preview';
+import EventManager from './eventManager';
+import CommandManager from './commandManager';
+import extManager from './extManager';
+import Convertor from './convertor';
 
-var util = tui.util;
+const util = tui.util;
 
-var TASK_ATTR_NAME = 'data-te-task';
-var TASK_CHECKED_CLASS_NAME = 'checked';
+const TASK_ATTR_NAME = 'data-te-task';
+const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * ViewOnly
@@ -31,146 +31,145 @@ var TASK_CHECKED_CLASS_NAME = 'checked';
      * @param {object} options.hooks Hook list
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
  */
-function ToastUIEditorViewOnly(options) {
-    var self = this;
+class ToastUIEditorViewOnly {
+    constructor(options) {
+        this.options = options;
 
-    this.options = options;
+        this.eventManager = new EventManager();
 
-    this.eventManager = new EventManager();
+        this.commandManager = new CommandManager(this);
+        this.convertor = new Convertor(this.eventManager);
 
-    this.commandManager = new CommandManager(this);
-    this.convertor = new Convertor(this.eventManager);
-
-    if (this.options.hooks) {
-        util.forEach(this.options.hooks, function(fn, key) {
-            self.addHook(key, fn);
-        });
-    }
-
-    if (this.options.events) {
-        util.forEach(this.options.events, function(fn, key) {
-            self.on(key, fn);
-        });
-    }
-
-    this.preview = new Preview($(self.options.el), this.eventManager, this.convertor);
-
-    this.preview.$el.on('mousedown', function(ev) {
-        var isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
-        if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
-            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-            self.eventManager.emit('change', {
-                source: 'viewOnly',
-                data: ev
+        if (this.options.hooks) {
+            util.forEach(this.options.hooks, (fn, key) => {
+                this.addHook(key, fn);
             });
         }
-    });
 
-    extManager.applyExtension(self, self.options.exts);
+        if (this.options.events) {
+            util.forEach(this.options.events, (fn, key) => {
+                this.on(key, fn);
+            });
+        }
 
-    self.setValue(self.options.initialValue);
+        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor);
 
-    self.eventManager.emit('load', self);
+        this.preview.$el.on('mousedown', ev => {
+            const isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
+            if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+                this.eventManager.emit('change', {
+                    source: 'viewOnly',
+                    data: ev
+                });
+            }
+        });
+
+        extManager.applyExtension(this, this.options.exts);
+
+        this.setValue(this.options.initialValue);
+
+        this.eventManager.emit('load', this);
+    }
+
+    /**
+     * Set content for preview
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} markdown Markdown text
+     */
+    setValue(markdown) {
+        this.markdownValue = markdown = markdown || '';
+
+        this.preview.refresh(this.markdownValue);
+        this.eventManager.emit('setValueAfter', this.markdownValue);
+    }
+
+    /**
+     * Get content of preview
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @returns {string}
+     */
+    getValue() {
+        return this.convertor.toMarkdown(this.preview.$el.html());
+    }
+
+    /**
+     * Bind eventHandler to event type
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} type Event type
+     * @param {function} handler Event handler
+     */
+    on(type, handler) {
+        this.eventManager.listen(type, handler);
+    }
+
+    /**
+     * Unbind eventHandler from event type
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} type Event type
+     */
+    off(type) {
+        this.eventManager.removeEventHandler(type);
+    }
+
+    /**
+     * Remove ViewOnly preview from document
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     */
+    remove() {
+        this.eventManager.emit('removeEditor');
+        this.options = null;
+        this.eventManager = null;
+        this.commandManager = null;
+        this.convertor = null;
+        this.preview = null;
+    }
+
+    /**
+     * Add hook to ViewOnly preview's event
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} type Event type
+     * @param {function} handler Event handler
+     */
+    addHook(type, handler) {
+        this.eventManager.removeEventHandler(type);
+        this.eventManager.listen(type, handler);
+    }
+
+    /**
+     * Return true
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @returns {boolean}
+     */
+    isViewOnly() {
+        return true;
+    }
+
+    /**
+     * Return false
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @returns {boolean}
+     */
+    isMarkdownMode() {
+        return false;
+    }
+
+    /**
+     * Return false
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @returns {boolean}
+     */
+    isWysiwygMode() {
+        return false;
+    }
 }
-
-/**
- * Set content for preview
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @param {string} markdown Markdown text
- */
-ToastUIEditorViewOnly.prototype.setValue = function(markdown) {
-    this.markdownValue = markdown = markdown || '';
-
-    this.preview.refresh(this.markdownValue);
-    this.eventManager.emit('setValueAfter', this.markdownValue);
-};
-
-/**
- * Get content of preview
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @returns {string}
- */
-ToastUIEditorViewOnly.prototype.getValue = function() {
-    return this.convertor.toMarkdown(this.preview.$el.html());
-};
-
-/**
- * Bind eventHandler to event type
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @param {string} type Event type
- * @param {function} handler Event handler
- */
-ToastUIEditorViewOnly.prototype.on = function(type, handler) {
-    this.eventManager.listen(type, handler);
-};
-
-/**
- * Unbind eventHandler from event type
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @param {string} type Event type
- */
-ToastUIEditorViewOnly.prototype.off = function(type) {
-    this.eventManager.removeEventHandler(type);
-};
-
-/**
- * Remove ViewOnly preview from document
- * @api
- * @memberOf ToastUIEditorViewOnly
- */
-ToastUIEditorViewOnly.prototype.remove = function() {
-    this.eventManager.emit('removeEditor');
-    this.options = null;
-    this.eventManager = null;
-    this.commandManager = null;
-    this.convertor = null;
-    this.preview = null;
-};
-
-/**
- * Add hook to ViewOnly preview's event
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @param {string} type Event type
- * @param {function} handler Event handler
- */
-ToastUIEditorViewOnly.prototype.addHook = function(type, handler) {
-    this.eventManager.removeEventHandler(type);
-    this.eventManager.listen(type, handler);
-};
-
-/**
- * Return true
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @returns {boolean}
- */
-ToastUIEditorViewOnly.prototype.isViewOnly = function() {
-    return true;
-};
-
-/**
- * Return false
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @returns {boolean}
- */
-ToastUIEditorViewOnly.prototype.isMarkdownMode = function() {
-    return false;
-};
-
-/**
- * Return false
- * @api
- * @memberOf ToastUIEditorViewOnly
- * @returns {boolean}
- */
-ToastUIEditorViewOnly.prototype.isWysiwygMode = function() {
-    return false;
-};
-
 module.exports = ToastUIEditorViewOnly;

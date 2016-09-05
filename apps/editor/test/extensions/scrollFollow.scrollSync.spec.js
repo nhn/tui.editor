@@ -1,15 +1,13 @@
-'use strict';
+import TuiEditor from '../../src/js/editor';
+import ScrollSync from '../../src/js/extensions/scrollFollow.scrollSync';
+import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager';
 
-var TuiEditor = require('../../src/js/editor'),
-    ScrollSync = require('../../src/js/extensions/scrollFollow.scrollSync'),
-    SectionManager = require('../../src/js/extensions/scrollFollow.sectionManager');
+const loadStyleFixtures = window.loadStyleFixtures;
 
-var loadStyleFixtures = window.loadStyleFixtures;
+describe('scrollFollow.ScrollSync', () => {
+    let ned, sectionManager, scrollSync;
 
-describe('scrollFollow.ScrollSync', function() {
-    var ned, sectionManager, scrollSync;
-
-    beforeEach(function() {
+    beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -32,70 +30,66 @@ describe('scrollFollow.ScrollSync', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('get scroll data for preview from markdown', function() {
-        beforeEach(function() {
+    describe('get scroll data for preview from markdown', () => {
+        beforeEach(() => {
             ned.setValue([
-                    'paragraph',
-                    '# header1',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph',
-                    '## header2',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph',
-                    'paragraph'
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph',
+                'paragraph',
+                'paragraph',
+                'paragraph',
+                'paragraph',
+                'paragraph',
+                'paragraph'
             ].join('\n'));
 
             sectionManager.makeSectionList();
         });
 
-        it('get section by markdown scroll top', function() {
-            var cm = ned.getCodeMirror(),
-            scrollFactors;
-
+        it('get section by markdown scroll top', () => {
+            const cm = ned.getCodeMirror();
             cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
 
-            scrollFactors = scrollSync._getScrollFactorsOfEditor();
+            const scrollFactors = scrollSync._getScrollFactorsOfEditor();
 
             expect(scrollFactors.section.end).toEqual(4);
             expect(scrollFactors.sectionRatio).not.toEqual(0);
         });
 
-        it('if editor scroll to bottom then return isEditorBottom === true ', function() {
-            var cm = ned.getCodeMirror(),
-            scrollFactors;
-
+        it('if editor scroll to bottom then return isEditorBottom === true ', () => {
+            const cm = ned.getCodeMirror();
             cm.scrollTo(0, cm.heightAtLine(12, 'local'));
 
-            scrollFactors = scrollSync._getScrollFactorsOfEditor();
+            const scrollFactors = scrollSync._getScrollFactorsOfEditor();
 
             expect(scrollFactors.isEditorBottom).toBe(true);
         });
     });
 
-    describe('running animation', function() {
-        it('call step callback function', function() {
-            var stepCallback = jasmine.createSpy('stepCallback');
+    describe('running animation', () => {
+        it('call step callback function', () => {
+            const stepCallback = jasmine.createSpy('stepCallback');
             scrollSync._animateRun(0, 10, stepCallback);
 
             expect(stepCallback).toHaveBeenCalled();
         });
 
-        it('value', function(done) {
-            var values = [];
+        it('value', done => {
+            const values = [];
 
-            scrollSync._animateRun(0, 100, function(value) {
+            scrollSync._animateRun(0, 100, value => {
                 values.push(value);
 
                 if (value === 100) {
@@ -106,39 +100,9 @@ describe('scrollFollow.ScrollSync', function() {
         });
     });
 
-    describe('sync preview scroll by markdown scroll top', function() {
-        it('get preview scrollTop that synced with markdown scroll top', function(done) {
-            var cm = ned.getCodeMirror(),
-                previewScrollTop;
-
-            ned.setValue([
-                    'paragraph',
-                    '# header1',
-                    'paragraph',
-                    'paragraph',
-                    '## header2',
-                    'paragraph'
-            ].join('\n'));
-
-            sectionManager.makeSectionList();
-
-            previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
-
-            ned.on('previewRenderAfter', function() {
-                sectionManager.sectionMatch();
-                cm.scrollTo(0, cm.heightAtLine(3, 'local'));
-
-                scrollSync.syncToPreview();
-
-                expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
-
-                done();
-            });
-        });
-
-        it('if scroll factors have something wrong, dont scroll control', function(done) {
-            var cm = ned.getCodeMirror(),
-                previewScrollTop;
+    describe('sync preview scroll by markdown scroll top', () => {
+        it('get preview scrollTop that synced with markdown scroll top', done => {
+            const cm = ned.getCodeMirror();
 
             ned.setValue([
                 'paragraph',
@@ -151,12 +115,40 @@ describe('scrollFollow.ScrollSync', function() {
 
             sectionManager.makeSectionList();
 
-            previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+            const previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
 
-            ned.on('previewRenderAfter', function() {
+            ned.on('previewRenderAfter', () => {
+                sectionManager.sectionMatch();
+                cm.scrollTo(0, cm.heightAtLine(3, 'local'));
+
+                scrollSync.syncToPreview();
+
+                expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+
+                done();
+            });
+        });
+
+        it('if scroll factors have something wrong, dont scroll control', done => {
+            const cm = ned.getCodeMirror();
+
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+
+            const previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+
+            ned.on('previewRenderAfter', () => {
                 sectionManager.sectionMatch();
 
-                sectionManager.getSectionList().forEach(function(section) {
+                sectionManager.getSectionList().forEach(section => {
                     section.$previewSectionEl = null;
                 });
 
@@ -171,10 +163,9 @@ describe('scrollFollow.ScrollSync', function() {
         });
     });
 
-    describe('Hidden codemirror', function() {
-        it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', function() {
-            var cm = ned.getCodeMirror();
-            var scrollInfo;
+    describe('Hidden codemirror', () => {
+        it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', () => {
+            const cm = ned.getCodeMirror();
 
             ned.setValue([
                 'paragraph',
@@ -193,7 +184,7 @@ describe('scrollFollow.ScrollSync', function() {
 
             cm.getWrapperElement().style.display = 'none';
 
-            scrollInfo = cm.getScrollInfo();
+            const scrollInfo = cm.getScrollInfo();
 
             expect(scrollSync._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollSync._savedScrollInfo);
         });

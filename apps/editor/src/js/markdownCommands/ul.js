@@ -4,10 +4,10 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
-var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
-    FIND_MD_UL_RX = /^[ \t]*\* .*/;
+const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
+const FIND_MD_UL_RX = /^[ \t]*\* .*/;
 
 /**
  * UL
@@ -15,26 +15,26 @@ var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/,
  * @exports UL
  * @augments Command
  */
-var UL = CommandManager.command('markdown', /** @lends UL */{
+const UL = CommandManager.command('markdown', /** @lends UL */{
     name: 'UL',
     keyMap: ['CTRL+U', 'META+U'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var range, from, line, to,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
+        const range = mde.getCurrentRange();
 
-        range = mde.getCurrentRange();
-
-        from = {
+        const from = {
             line: range.from.line,
             ch: 0
         };
 
-        line = doc.getLine(from.line);
+        let line = doc.getLine(from.line);
+
+        let to;
 
         if (line.match(FIND_MD_OL_RX)) {
             line = line.replace(/[\d]+\. /, '* ');

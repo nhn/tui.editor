@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import ListManager from '../src/js/wwListManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    ListManager = require('../src/js/wwListManager');
+describe('WysiwygEditor', () => {
+    let $container, em, wwe;
 
-describe('WysiwygEditor', function() {
-    var $container, em, wwe;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -21,100 +19,96 @@ describe('WysiwygEditor', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('reset()', function() {
-        it('set content blank', function() {
+    describe('reset()', () => {
+        it('set content blank', () => {
             wwe.setValue('<h1>HELLO WORLD</h1>');
             wwe.reset();
             expect(wwe.getValue()).toEqual('<br />');
         });
     });
 
-    describe('managing key event handlers', function() {
-        beforeEach(function() {
+    describe('managing key event handlers', () => {
+        beforeEach(() => {
             wwe.addManager('list', ListManager);
         });
 
-        it('add key event handler and run', function() {
-            var handler = jasmine.createSpy('keyEventHandler');
+        it('add key event handler and run', () => {
+            const handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler(handler);
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'HOME',
-                data: {keyCode:0}
+                data: {keyCode: 0}
             });
             expect(handler).toHaveBeenCalled();
         });
 
-        it('add key event with particular keymap and run', function() {
-            var handler = jasmine.createSpy('keyEventHandler');
+        it('add key event with particular keymap and run', () => {
+            const handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler('HOME', handler);
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'HOME',
-                data: {keyCode:0}
+                data: {keyCode: 0}
             });
             expect(handler).toHaveBeenCalled();
         });
 
-        it('run particular keymap and default', function() {
-            var handler = jasmine.createSpy('keyEventHandler');
+        it('run particular keymap and default', () => {
+            const handler = jasmine.createSpy('keyEventHandler');
             wwe.addKeyEventHandler('HOME', handler);
             wwe.addKeyEventHandler(handler);
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'HOME',
-                data: {keyCode:0}
+                data: {keyCode: 0}
             });
             expect(handler.calls.count()).toEqual(2);
         });
 
-        it('if handler returns false stop invoke next handler', function() {
-            var handler = jasmine.createSpy('keyEventHandler');
-            wwe.addKeyEventHandler('HOME', function() {
-                return false;
-            });
+        it('if handler returns false stop invoke next handler', () => {
+            const handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler('HOME', () => false);
             wwe.addKeyEventHandler('HOME', handler);
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'HOME',
-                data: {keyCode:0}
+                data: {keyCode: 0}
             });
             expect(handler).not.toHaveBeenCalled();
         });
 
-        it('if defalut handler returns false dont invoke keymap handler', function() {
-            var handler = jasmine.createSpy('keyEventHandler');
-            wwe.addKeyEventHandler(function() {
-                return false;
-            });
+        it('if defalut handler returns false dont invoke keymap handler', () => {
+            const handler = jasmine.createSpy('keyEventHandler');
+            wwe.addKeyEventHandler(() => false);
 
             wwe.addKeyEventHandler('HOME', handler);
 
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'HOME',
-                data: {keyCode:0}
+                data: {keyCode: 0}
             });
             expect(handler).not.toHaveBeenCalled();
         });
 
-        it('should insert 4 spaces when "TAB" pressed', function() {
+        it('should insert 4 spaces when "TAB" pressed', () => {
             wwe.getEditor().setHTML('');
 
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
                 data: {
-                    preventDefault: function() {}
+                    preventDefault: () => {}
                 }
             });
 
             expect(wwe.get$Body().find('div').text()).toBe('\u00a0\u00a0\u00a0\u00a0');
         });
 
-        it('should not insert 4 spaces when "TAB" pressed in list item', function() {
-            var range = wwe.getEditor().getSelection();
+        it('should not insert 4 spaces when "TAB" pressed in list item', () => {
+            const range = wwe.getEditor().getSelection();
 
             wwe.getEditor().setHTML('<ul><li><div><br></div></li></ul>');
 
@@ -125,15 +119,15 @@ describe('WysiwygEditor', function() {
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
                 data: {
-                    preventDefault: function() {}
+                    preventDefault: () => {}
                 }
             });
 
             expect(wwe.get$Body().find('div').text()).toBe('');
         });
 
-        it('should not insert 4 spaces when "TAB" pressed in task list', function() {
-            var range = wwe.getEditor().getSelection();
+        it('should not insert 4 spaces when "TAB" pressed in task list', () => {
+            const range = wwe.getEditor().getSelection();
 
             wwe.getEditor().setHTML('<ul><li class="task-list-item"><div><input type="checkbox"/><br></div></li></ul>');
 
@@ -144,7 +138,7 @@ describe('WysiwygEditor', function() {
             em.emit('wysiwygKeyEvent', {
                 keyMap: 'TAB',
                 data: {
-                    preventDefault: function() {}
+                    preventDefault: () => {}
                 }
             });
 
@@ -152,16 +146,16 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('Event', function() {
-        beforeEach(function(done) {
+    describe('Event', () => {
+        beforeEach(done => {
             //스콰이어가 셋팅된 프레임에 입력된 데이터들에 대한 이벤트는 발생하지 않아 프레임지연
-            setTimeout(function() {
+            setTimeout(() => {
                 done();
             }, 0);
         });
 
-        it('when something changed in editor Emit contentChangedFromWysiwyg event', function(done) {
-            em.listen('contentChangedFromWysiwyg', function(editor) {
+        it('when something changed in editor Emit contentChangedFromWysiwyg event', done => {
+            em.listen('contentChangedFromWysiwyg', editor => {
                 expect(editor).toBe(wwe);
                 done();
             });
@@ -169,18 +163,18 @@ describe('WysiwygEditor', function() {
             wwe.editor.insertHTML('<p>test</p>');
         });
 
-        it('when something changed in editor Emit change.wysiwygEditor event', function(done) {
+        it('when something changed in editor Emit change.wysiwygEditor event', done => {
             //events of squire are asynchronous
-            em.listen('changeFromWysiwyg', function() {
+            em.listen('changeFromWysiwyg', () => {
                 done();
             });
 
             wwe.editor.insertPlainText('t');
         });
 
-        it('when something changed in editor Emit change event', function(done) {
+        it('when something changed in editor Emit change event', done => {
             //squire event fire asynchronous
-            em.listen('change', function(ev) {
+            em.listen('change', ev => {
                 expect(ev.source).toEqual('wysiwyg');
                 done();
             });
@@ -188,8 +182,8 @@ describe('WysiwygEditor', function() {
             wwe.editor.insertHTML('t');
         });
 
-        it('fire change event when getValue after', function(done) {
-            em.listen('change', function(ev) {
+        it('fire change event when getValue after', done => {
+            em.listen('change', ev => {
                 expect(ev.source).toEqual('wysiwyg');
                 done();
             });
@@ -197,36 +191,36 @@ describe('WysiwygEditor', function() {
             wwe.getEditor().setHTML('TEST');
 
             //이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
-            setTimeout(function() {
+            setTimeout(() => {
                 wwe.getValue();
-                setTimeout(function() {
+                setTimeout(() => {
                     wwe.getEditor().insertHTML('TEST2');
                 }, 1000);
             }, 0);
         });
 
-        it('when editor gain focus, emit focus event', function() {
-            em.listen('focus', function(ev) {
+        it('when editor gain focus, emit focus event', () => {
+            em.listen('focus', ev => {
                 expect(ev.source).toEqual('wysiwyg');
             });
 
             wwe.editor.focus();
         });
 
-        it('when editor lost focus, emit blur event', function() {
-            em.listen('blur', function(ev) {
+        it('when editor lost focus, emit blur event', () => {
+            em.listen('blur', ev => {
                 expect(ev.source).toEqual('wysiwyg');
             });
 
             wwe.editor.blur();
         });
 
-        it('fire stateChange event when state changed', function() {
-            em.listen('stateChange', function(data) {
+        it('fire stateChange event when state changed', () => {
+            em.listen('stateChange', data => {
                 expect(data.bold).toBe(true);
             });
 
-            wwe.editor.modifyDocument(function() {
+            wwe.editor.modifyDocument(() => {
                 wwe.editor.insertPlainText('test');
             });
 
@@ -234,40 +228,40 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('getValue, setValue', function() {
-        it('remove all unnecessary brs', function() {
-            var html = '<h1>1</h1><h1>2</h1>';
+    describe('getValue, setValue', () => {
+        it('remove all unnecessary brs', () => {
+            const html = '<h1>1</h1><h1>2</h1>';
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual('<h1>1</h1><h1>2</h1><br />');
         });
 
-        it('dont remove necessary brs', function() {
-            var html = '<h1>1</h1><div><br></div><h1>2</h1>';
+        it('dont remove necessary brs', () => {
+            const html = '<h1>1</h1><div><br></div><h1>2</h1>';
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual('<h1>1</h1><br /><h1>2</h1><br />');
         });
 
-        it('remove contentEditable block tag(div)', function() {
-            var html = 'abcde<br />efg';
+        it('remove contentEditable block tag(div)', () => {
+            const html = 'abcde<br />efg';
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
         });
 
-        it('empty line replace to br', function() {
-            var html = '<div><br /></div>test';
+        it('empty line replace to br', () => {
+            const html = '<div><br /></div>test';
             wwe.setValue(html);
             expect(wwe.getValue()).toEqual('<br />test<br />');
         });
 
-        it('empty line li dont replace to br', function() {
-            var html = '<ul><li></li></ul>';
+        it('empty line li dont replace to br', () => {
+            const html = '<ul><li></li></ul>';
             wwe.setValue(html);
-            expect(wwe.getValue()).toEqual(html + '<br />');
+            expect(wwe.getValue()).toEqual(`${html}<br />`);
         });
 
-        it('prevent text, image merge', function() {
+        it('prevent text, image merge', () => {
             /* eslint-disable */
-            var html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
+            const html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
             /* eslint-enable */
             wwe.setValue(html);
             expect(wwe.get$Body().find('div').length).toEqual(3);
@@ -275,18 +269,18 @@ describe('WysiwygEditor', function() {
             expect(wwe.get$Body().find('div').eq(1).find('img').length).toEqual(1);
         });
 
-        it('record undo state after all setValue process not setHTML', function(done) {
-            var html = '<ul><li>test</li></ul>';
+        it('record undo state after all setValue process not setHTML', done => {
+            const html = '<ul><li>test</li></ul>';
 
-            em.listen('wysiwygSetValueAfter', function() {
+            em.listen('wysiwygSetValueAfter', () => {
                 wwe.get$Body().html('<h2>test<br></h2>');
             });
 
             wwe.setValue(html);
 
-            setTimeout(function() {
+            setTimeout(() => {
                 wwe.getEditor().insertHTML('<h1>test</h1>');
-                setTimeout(function() {
+                setTimeout(() => {
                     wwe.getEditor().undo();
                     expect(wwe.get$Body().find('h1').length).toEqual(0);
                     expect(wwe.get$Body().find('h2').length).toEqual(1);
@@ -295,30 +289,29 @@ describe('WysiwygEditor', function() {
             }, 0);
         });
 
-        it('move cursor to end after setValue() cuz we need new range after whole conntent changed', function() {
-            var range;
+        it('move cursor to end after setValue() cuz we need new range after whole conntent changed', () => {
             wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>');
-            range = wwe.getEditor().getSelection();
+            const range = wwe.getEditor().getSelection();
 
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
             expect(range.startOffset).toEqual(1);
         });
     });
 
-    it('get$Body() get current wysiwyg iframe body that wrapped jquery', function() {
+    it('get$Body() get current wysiwyg iframe body that wrapped jquery', () => {
         expect(wwe.get$Body().length).toEqual(1);
         expect(wwe.get$Body().prop('tagName')).toEqual('DIV');
         expect(wwe.get$Body().hasClass('tui-editor-contents')).toBe(true);
     });
 
-    it('hasFormatWithRx() check hasFormat with RegExp', function() {
+    it('hasFormatWithRx() check hasFormat with RegExp', () => {
         wwe.setValue('<h1>hasHeading</h1>');
         expect(wwe.hasFormatWithRx(/h[\d]/i)[0]).toEqual('H1');
     });
 
-    describe('_wrapDefaultBlockTo', function() {
-        it('wrap selection defulat block', function(done) {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('_wrapDefaultBlockTo', () => {
+        it('wrap selection defulat block', done => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.get$Body().html('abcdef');
 
@@ -331,13 +324,11 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('breakToNewDefaultBlock()', function() {
-        it('make new defulatBlock then move selection to it', function() {
-            var range;
-
+    describe('breakToNewDefaultBlock()', () => {
+        it('make new defulatBlock then move selection to it', () => {
             wwe.get$Body().html('<div>aef<br></div>');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body()[0], 0);
             range.collapse(true);
@@ -348,12 +339,10 @@ describe('WysiwygEditor', function() {
             expect(wwe.getEditor().getSelection().startContainer.tagName).toEqual('DIV');
         });
 
-        it('make new defulatBlock to body child then move selection to it', function() {
-            var range;
-
+        it('make new defulatBlock to body child then move selection to it', () => {
             wwe.get$Body().html('<h1><div>aef<br></div></h1>');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             //select text node
             range.setStart(wwe.get$Body().find('div')[0], 0);
@@ -366,9 +355,9 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('unwrapBlockTag()', function() {
-        it('unwrap tag of current selection with tag name', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('unwrapBlockTag()', () => {
+        it('unwrap tag of current selection with tag name', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
@@ -380,8 +369,8 @@ describe('WysiwygEditor', function() {
             expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('test');
         });
 
-        it('unwrap tag of current selection with condition callback', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+        it('unwrap tag of current selection with condition callback', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.get$Body().html('<h1><div>test<br></div></h1>');
 
@@ -389,16 +378,14 @@ describe('WysiwygEditor', function() {
             range.collapse(true);
             wwe.getEditor().setSelection(range);
 
-            wwe.unwrapBlockTag(function(tagName) {
-                return tagName === 'H1';
-            });
+            wwe.unwrapBlockTag(tagName => tagName === 'H1');
 
             expect(wwe.getValue().replace(/<br \/>/g, '')).toBe('test');
         });
     });
 
-    describe('replace node\'s content text', function() {
-        it('replace text without affect tags', function() {
+    describe('replace node\'s content text', () => {
+        it('replace text without affect tags', () => {
             wwe.get$Body().html('<ul><li class="custom-class">list1</li><li>list2</li></ul>');
 
             wwe.replaceContentText(wwe.get$Body().find('li')[0], 'list1', 'list2');
@@ -408,27 +395,25 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('focus()', function() {
-        it('focus to ww editor', function() {
+    describe('focus()', () => {
+        it('focus to ww editor', () => {
             wwe.getEditor().focus = jasmine.createSpy('focus');
             wwe.focus();
             expect(wwe.getEditor().focus).toHaveBeenCalled();
         });
     });
 
-    describe('manager handling', function() {
-        it('add and get manager', function() {
-            var manager = jasmine.createSpy('manager');
+    describe('manager handling', () => {
+        it('add and get manager', () => {
+            const manager = jasmine.createSpy('manager');
             wwe.addManager('myManager', manager);
 
             expect(manager).toHaveBeenCalledWith(wwe);
             expect(wwe.getManager('myManager')).toBeDefined();
         });
 
-        it('add manager with manager default', function() {
-            var manager = function() {
-                return {name: 'myManager'};
-            };
+        it('add manager with manager default', () => {
+            const manager = () => ({name: 'myManager'});
 
             wwe.addManager(manager);
 
@@ -436,30 +421,26 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('move cursor to start, end', function() {
-        beforeEach(function() {
+    describe('move cursor to start, end', () => {
+        beforeEach(() => {
             wwe.setHeight(30);
         });
-        it('move cursor to end and scroll to end', function() {
-            var range;
-
+        it('move cursor to end and scroll to end', () => {
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
 
-            range = wwe.getRange();
+            const range = wwe.getRange();
 
             expect(wwe.getEditor().scrollTop()).not.toEqual(0);
             expect(range.startContainer).toEqual(wwe.get$Body()[0].lastChild);
             expect(range.startOffset).toEqual(1);
         });
-        it('move cursor to start and scroll to top', function() {
-            var range;
-
+        it('move cursor to start and scroll to top', () => {
             wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
             wwe.moveCursorToEnd();
             wwe.moveCursorToStart();
 
-            range = wwe.getRange();
+            const range = wwe.getRange();
 
             expect(wwe.getEditor().scrollTop()).toEqual(0);
             expect(range.startContainer).toEqual(wwe.get$Body().find('div')[0].firstChild);
@@ -467,18 +448,18 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('get current range', function() {
-        it('get range', function() {
-            var range = wwe.getEditor().getSelection();
+    describe('get current range', () => {
+        it('get range', () => {
+            const range = wwe.getEditor().getSelection();
             expect(wwe.getRange()).toEqual(range);
         });
     });
 
-    describe('defer()', function() {
-        it('should run passed callback on next frame', function(done) {
-            var count = 0;
+    describe('defer()', () => {
+        it('should run passed callback on next frame', done => {
+            let count = 0;
 
-            wwe.defer(function() {
+            wwe.defer(() => {
                 expect(count).toEqual(1);
                 done();
             });
@@ -486,16 +467,16 @@ describe('WysiwygEditor', function() {
             count += 1;
         });
 
-        it('should not run passed callback on next frame if editor is not valid #1', function() {
-            wwe.defer(function() {
+        it('should not run passed callback on next frame if editor is not valid #1', () => {
+            wwe.defer(() => {
                 fail('defer() callback has been called');
             });
 
             wwe.remove();
         });
 
-        it('should not run passed callback on next frame if editor is not valid #2', function() {
-            wwe.defer(function() {
+        it('should not run passed callback on next frame if editor is not valid #2', () => {
+            wwe.defer(() => {
                 fail('defer() callback has been called');
             });
 
@@ -503,12 +484,12 @@ describe('WysiwygEditor', function() {
         });
     });
 
-    describe('_getLastListString ', function() {
-        it('should get last list string', function() {
+    describe('_getLastListString ', () => {
+        it('should get last list string', () => {
             expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI>DIV')).toEqual('LI>DIV');
             expect(wwe._getLastLiString('UL>LI>UL>LI>OL>LI.te-task-list>DIV')).toEqual('LI.te-task-list>DIV');
         });
-        it('should return empty string when Last LI not exists', function() {
+        it('should return empty string when Last LI not exists', () => {
             expect(wwe._getLastLiString('DIV')).toEqual('');
             expect(wwe._getLastLiString('BLOCKQUOTE>DIV')).toEqual('');
         });
