@@ -20,7 +20,7 @@ CodeMirror.commands.subListIndentTab = function (cm) {
                 line: pos.line, ch: 0
             }, {
                 line: pos.line, ch: line.length
-            });
+            }, '+input');
         } else {
             if (cm.somethingSelected()) cm.indentSelection("add");
             else cm.execCommand("insertSoftTab");
