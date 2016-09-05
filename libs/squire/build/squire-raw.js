@@ -2118,16 +2118,18 @@ var onCopy = function ( event ) {
     var range = this.getSelection();
     var node = this.createElement( 'div' );
     var root = this._root;
-    var contents, parent, newContents;
+    var startBlock, contents, parent, newContents;
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     // Mobile Safari flat out doesn't work:
     // https://bugs.webkit.org/show_bug.cgi?id=143776
     if ( !isEdge && !isIOS && clipboardData ) {
         range = range.cloneRange();
-        if ( getStartBlockOfRange( range, root ) ===
-                getEndBlockOfRange( range, root ) ) {
+        startBlock = getStartBlockOfRange( range, root );
+        if ( startBlock === getEndBlockOfRange( range, root ) ) {
+            // Copy all inline formatting, but that's it.
             moveRangeBoundariesDownTree( range );
+            moveRangeBoundariesUpTree( range, startBlock );
             contents = range.cloneContents();
         } else {
             moveRangeBoundariesUpTree( range, root );
