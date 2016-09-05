@@ -4,18 +4,18 @@
  */
 
 
-var domUtils = require('./domUtils');
+import domUtils from './domUtils';
 
-var util = tui.util;
+const util = tui.util;
 
-var tagEntities = {
+const tagEntities = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;'
 };
 
-var FIND_ZWS_RX = /\u200B/g;
-var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
+const FIND_ZWS_RX = /\u200B/g;
+const CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
 
 /**
  * WwCodeBlockManager
@@ -24,288 +24,288 @@ var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
  * @constructor
  * @param {WysiwygEditor} wwe wysiwygEditor instance
  */
-function WwCodeBlockManager(wwe) {
-    this.wwe = wwe;
-    this.eventManager = wwe.eventManager;
+class WwCodeBlockManager {
+    constructor(wwe) {
+        this.wwe = wwe;
+        this.eventManager = wwe.eventManager;
 
-    this._init();
-}
+        /**
+         * Name property
+         * @api
+         * @memberOf WwCodeBlockManager
+         * @type {string}
+         */
+        this.name = 'codeblock';
 
-/**
- * Name property
- * @api
- * @memberOf WwCodeBlockManager
- * @type {string}
- */
-WwCodeBlockManager.prototype.name = 'codeblock';
-
-/**
- * _init
- * Initialize
- * @memberOf WwCodeBlockManager
- * @private
- */
-WwCodeBlockManager.prototype._init = function() {
-    this._initKeyHandler();
-    this._initEvent();
-};
-
-/**
- * _initKeyHandler
- * Initialize key event handler
- * @memberOf WwCodeBlockManager
- * @private
- */
-WwCodeBlockManager.prototype._initKeyHandler = function() {
-    this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
-};
-
-/**
- * _initEvent
- * Initialize eventmanager event
- * @memberOf WwCodeBlockManager
- * @private
- */
-WwCodeBlockManager.prototype._initEvent = function() {
-    var self = this;
-
-    this.eventManager.listen('wysiwygSetValueAfter', function() {
-        self.splitCodeblockToEachLine();
-    });
-
-    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
-        return self._mergeCodeblockEachlinesFromHTMLText(html);
-    });
-};
-
-/**
- * Convert copied nodes to code block if need
- * @api
- * @memberOf WwCodeBlockManager
- * @param {Array.<Node>} nodes Node array
- * @returns {DocumentFragment}
- */
-WwCodeBlockManager.prototype.prepareToPasteOnCodeblock = function(nodes) {
-    var range = this.wwe.getEditor().getSelection().cloneRange();
-    var frag = this.wwe.getEditor().getDocument().createDocumentFragment();
-
-    if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
-    } else {
-        frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this.convertToCodeblock(nodes), range));
+        this._init();
+    }
+    /**
+     * _init
+     * Initialize
+     * @memberOf WwCodeBlockManager
+     * @private
+     */
+    _init() {
+        this._initKeyHandler();
+        this._initEvent();
     }
 
-    return frag;
-};
-
-/**
- * Wrap nodes into code block
- * @api
- * @memberOf WwCodeBlockManager
- * @param {Array.<Node>} nodes Node array
- * @returns {HTMLElement} Code block element
- */
-WwCodeBlockManager.prototype.convertToCodeblock = function(nodes) {
-    var $codeblock = $('<pre />');
-    var self = this;
-    var node = nodes.shift();
-
-    while (util.isTruthy(node)) {
-        $codeblock.append(self._makeCodeBlockLineHtml(util.isString(node) ? node : node.textContent));
-        node = nodes.shift();
+    /**
+     * _initKeyHandler
+     * Initialize key event handler
+     * @memberOf WwCodeBlockManager
+     * @private
+     */
+    _initKeyHandler() {
+        this.wwe.addKeyEventHandler('BACK_SPACE', this._removeCodeblockIfNeed.bind(this));
     }
 
-    $codeblock.attr(CODEBLOCK_ATTR_NAME, '');
+    /**
+     * _initEvent
+     * Initialize eventmanager event
+     * @memberOf WwCodeBlockManager
+     * @private
+     */
+    _initEvent() {
+        const self = this;
 
-    return $codeblock[0];
-};
-
-/**
- * Copy content with code block style from code block selection
- * @memberOf WwCodeBlockManager
- * @param {HTMLElement} element Copied element
- * @param {Range} range Range object
- * @returns {HTMLElement}
- * @private
- */
-WwCodeBlockManager.prototype._copyCodeblockTypeFromRangeCodeblock = function(element, range) {
-    var blockNode, attrs;
-
-    blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.get$Body()[0]);
-
-    if (domUtils.getNodeName(blockNode) === 'PRE') {
-        attrs = $(blockNode).prop('attributes');
-
-        util.forEach(attrs, function(attr) {
-            $(element).attr(attr.name, attr.value);
+        this.eventManager.listen('wysiwygSetValueAfter', () => {
+            self.splitCodeblockToEachLine();
         });
+
+        this.eventManager.listen('wysiwygProcessHTMLText', html => self._mergeCodeblockEachlinesFromHTMLText(html));
     }
 
-    return element;
-};
+    /**
+     * Convert copied nodes to code block if need
+     * @api
+     * @memberOf WwCodeBlockManager
+     * @param {Array.<Node>} nodes Node array
+     * @returns {DocumentFragment}
+     */
+    prepareToPasteOnCodeblock(nodes) {
+        const range = this.wwe.getEditor().getSelection().cloneRange();
+        const frag = this.wwe.getEditor().getDocument().createDocumentFragment();
 
-/**
- * Merge code block lines
- * @memberOf WwCodeBlockManager
- * @param {string} html HTML string
- * @returns {string}
- * @private
- */
-WwCodeBlockManager.prototype._mergeCodeblockEachlinesFromHTMLText = function(html) {
-    html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, function(match, codeAttr, code) {
-        code = code.replace(/<br \/>/g, '\n');
-        code = code.replace(/<div ?(.*?)>/g, '');
-        code = code.replace(/\n$/, '');
+        if (nodes.length === 1 && this._isCodeBlock(nodes[0])) {
+            frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(nodes.shift(), range));
+        } else {
+            frag.appendChild(this._copyCodeblockTypeFromRangeCodeblock(this.convertToCodeblock(nodes), range));
+        }
 
-        return '<pre><code' + (codeAttr || '') + '>' + code + '</code></pre>';
-    });
-
-    return html;
-};
-
-/**
- * Split code block to lines
- * @memberOf WwCodeBlockManager
- * @param {HTMLElement} node root node to find pre
- * @private
- */
-WwCodeBlockManager.prototype.splitCodeblockToEachLine = function(node) {
-    var self = this;
-
-    if (!node) {
-        node = this.wwe.get$Body();
+        return frag;
     }
 
-    $(node).find('pre').each(function(index, pre) {
-        var textLines;
-        var $pre = $(pre);
-        var lang = $pre.find('code').attr('data-language');
+    /**
+     * Wrap nodes into code block
+     * @api
+     * @memberOf WwCodeBlockManager
+     * @param {Array.<Node>} nodes Node array
+     * @returns {HTMLElement} Code block element
+     */
+    convertToCodeblock(nodes) {
+        const $codeblock = $('<pre />');
+        const self = this;
+        let node = nodes.shift();
 
-        //pre태그 밑에 라인으로 의심되는 요소들이 있다면
-        if ($pre.children().length > 1) {
-            textLines = [];
+        while (util.isTruthy(node)) {
+            $codeblock.append(self._makeCodeBlockLineHtml(util.isString(node) ? node : node.textContent));
+            node = nodes.shift();
+        }
 
-            $pre.children().each(function() {
-                if ((this.nodeName === 'DIV' || this.nodeName === 'P')
-                   && !$(this).find('br').length) {
-                    $(this).append('<br>');
-                }
+        $codeblock.attr(CODEBLOCK_ATTR_NAME, '');
+
+        return $codeblock[0];
+    }
+
+    /**
+     * Copy content with code block style from code block selection
+     * @memberOf WwCodeBlockManager
+     * @param {HTMLElement} element Copied element
+     * @param {Range} range Range object
+     * @returns {HTMLElement}
+     * @private
+     */
+    _copyCodeblockTypeFromRangeCodeblock(element, range) {
+        const blockNode = domUtils.getParentUntil(range.commonAncestorContainer, this.wwe.get$Body()[0]);
+
+        if (domUtils.getNodeName(blockNode) === 'PRE') {
+            const attrs = $(blockNode).prop('attributes');
+
+            util.forEach(attrs, attr => {
+                $(element).attr(attr.name, attr.value);
             });
         }
 
-        $pre.find('br').replaceWith('\n');
-        textLines = $pre.text().replace(/\s+$/, '').split(/\n/g);
-
-        if (lang) {
-            $pre.attr('data-language', lang);
-            $pre.addClass('lang-' + lang);
-        }
-
-        $pre.empty();
-
-        util.forEach(textLines, function(line) {
-            $pre.append(self._makeCodeBlockLineHtml(line));
-        });
-
-        $pre.attr(CODEBLOCK_ATTR_NAME, '');
-    });
-};
-
-/**
- * Make code HTML text
- * @memberOf WwCodeBlockManager
- * @param {string} lineContent Content text
- * @returns {string}
- * @private
- */
-WwCodeBlockManager.prototype._makeCodeBlockLineHtml = function(lineContent) {
-    if (!lineContent) {
-        lineContent = '<br>';
-    } else {
-        lineContent = sanitizeHtmlCode(lineContent);
+        return element;
     }
 
-    return '<div>' + lineContent + '</div>';
-};
+    /**
+     * Merge code block lines
+     * @memberOf WwCodeBlockManager
+     * @param {string} html HTML string
+     * @returns {string}
+     * @private
+     */
+    _mergeCodeblockEachlinesFromHTMLText(html) {
+        html = html.replace(/<pre( .*?)?>(.*?)<\/pre>/g, (match, codeAttr, code) => {
+            code = code.replace(/<br \/>/g, '\n');
+            code = code.replace(/<div ?(.*?)>/g, '');
+            code = code.replace(/\n$/, '');
 
-/**
- * Remove codeblock if need
- * @memberOf WwCodeBlockManager
- * @param {Event} ev Event object
- * @param {Range} range Range object
- * @returns {boolean}
- * @private
- */
-WwCodeBlockManager.prototype._removeCodeblockIfNeed = function(ev, range) {
-    var pre, $div, codeContent;
-    var self = this;
+            return `<pre><code${(codeAttr || '')}>${code}</code></pre>`;
+        });
 
-    if (!this.isInCodeBlock(range)) {
+        return html;
+    }
+
+    /**
+     * Split code block to lines
+     * @memberOf WwCodeBlockManager
+     * @param {HTMLElement} node root node to find pre
+     * @private
+     */
+    splitCodeblockToEachLine(node) {
+        const self = this;
+
+        if (!node) {
+            node = this.wwe.get$Body();
+        }
+
+        $(node).find('pre').each((index, pre) => {
+            const $pre = $(pre);
+            const lang = $pre.find('code').attr('data-language');
+            let textLines;
+
+            //pre태그 밑에 라인으로 의심되는 요소들이 있다면
+            if ($pre.children().length > 1) {
+                textLines = [];
+
+                $pre.children().each((idx, childNode) => {
+                    if ((childNode.nodeName === 'DIV' || childNode.nodeName === 'P')
+                        && !$(childNode).find('br').length
+                    ) {
+                        $(childNode).append('<br>');
+                    }
+                });
+            }
+
+            $pre.find('br').replaceWith('\n');
+            textLines = $pre.text().replace(/\s+$/, '').split(/\n/g);
+
+            if (lang) {
+                $pre.attr('data-language', lang);
+                $pre.addClass(`lang-${lang}`);
+            }
+
+            $pre.empty();
+
+            util.forEach(textLines, line => {
+                $pre.append(self._makeCodeBlockLineHtml(line));
+            });
+
+            $pre.attr(CODEBLOCK_ATTR_NAME, '');
+        });
+    }
+
+    /**
+     * Make code HTML text
+     * @memberOf WwCodeBlockManager
+     * @param {string} lineContent Content text
+     * @returns {string}
+     * @private
+     */
+    _makeCodeBlockLineHtml(lineContent) {
+        if (!lineContent) {
+            lineContent = '<br>';
+        } else {
+            lineContent = sanitizeHtmlCode(lineContent);
+        }
+
+        return `<div>${lineContent}</div>`;
+    }
+
+    /**
+     * Remove codeblock if need
+     * @memberOf WwCodeBlockManager
+     * @param {Event} ev Event object
+     * @param {Range} range Range object
+     * @returns {boolean}
+     * @private
+     */
+    _removeCodeblockIfNeed(ev, range) {
+        const self = this;
+
+        if (!this.isInCodeBlock(range)) {
+            return true;
+        }
+
+        const pre = $(range.startContainer).closest('pre');
+        const $div = $(pre).find('div').eq(0);
+        const codeContent = $div.text().replace(FIND_ZWS_RX, '');
+
+        //코드블럭이 code한줄 밖에 없을때
+        if ((range.startOffset === 0 || codeContent.length === 0)
+            && $(pre).find('div').length <= 1
+        ) {
+            this.wwe.getEditor().modifyBlocks(() => {
+                const newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
+                let content;
+
+                if (codeContent.length === 0) {
+                    content = '<br>';
+                } else {
+                    content = $div.html().replace(FIND_ZWS_RX, '');
+                }
+
+                $(newFrag).append($(`<div>${content}</div>`));
+
+                return newFrag;
+            });
+
+            return false;
+        }
+
         return true;
     }
 
-    pre = $(range.startContainer).closest('pre');
-    $div = $(pre).find('div').eq(0);
-    codeContent = $div.text().replace(FIND_ZWS_RX, '');
+    /**
+     * Return boolean value of whether current range is in the code block
+     * @memberOf WwCodeBlockManager
+     * @param {Range} range Range object
+     * @returns {boolean}
+     */
+    isInCodeBlock(range) {
+        let target;
 
-    //코드블럭이 code한줄 밖에 없을때
-    if ((range.startOffset === 0 || codeContent.length === 0)
-        && $(pre).find('div').length <= 1
-    ) {
-        this.wwe.getEditor().modifyBlocks(function() {
-            var newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
-            var content;
+        if (range.collapsed) {
+            target = range.startContainer;
+        } else {
+            target = range.commonAncestorContainer;
+        }
 
-            if (codeContent.length === 0) {
-                content = '<br>';
-            } else {
-                content = $div.html().replace(FIND_ZWS_RX, '');
-            }
-
-            $(newFrag).append($('<div>' + content + '</div>'));
-
-            return newFrag;
-        });
-
-        return false;
+        return this._isCodeBlock(target);
     }
 
-    return true;
-};
-
-/**
- * Return boolean value of whether current range is in the code block
- * @memberOf WwCodeBlockManager
- * @param {Range} range Range object
- * @returns {boolean}
- */
-WwCodeBlockManager.prototype.isInCodeBlock = function(range) {
-    var target;
-
-    if (range.collapsed) {
-        target = range.startContainer;
-    } else {
-        target = range.commonAncestorContainer;
+    /**
+     * Verify given element is code block
+     * @memberOf WwCodeBlockManager
+     * @param {HTMLElement} element Element
+     * @returns {boolean}
+     * @private
+     */
+    _isCodeBlock(element) {
+        return !!$(element).closest('pre').length;
     }
-
-    return this._isCodeBlock(target);
-};
+}
 
 /**
- * Verify given element is code block
- * @memberOf WwCodeBlockManager
- * @param {HTMLElement} element Element
- * @returns {boolean}
- * @private
+ * Sanitize HTML code
+ * @param {string} code code string
+ * @returns {string}
  */
-WwCodeBlockManager.prototype._isCodeBlock = function(element) {
-    return !!$(element).closest('pre').length;
-};
-
 function sanitizeHtmlCode(code) {
-    return code.replace(/[<>&]/g, function(tag) {
-        return tagEntities[tag] || tag;
-    });
+    return code.replace(/[<>&]/g, tag => tagEntities[tag] || tag);
 }
 
 module.exports = WwCodeBlockManager;

@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * AddImage
@@ -12,31 +12,30 @@ var CommandManager = require('../commandManager');
  * @exports AddImage
  * @augments Command
  */
-var AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
+const AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
     name: 'AddImage',
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      * @param {object} data data for image
      */
-    exec: function(mde, data) {
-        var replaceText, range, from, to,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde, data) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
-        range = mde.getCurrentRange();
+        const range = mde.getCurrentRange();
 
-        from = {
+        const from = {
             line: range.from.line,
             ch: range.from.ch
         };
 
-        to = {
+        const to = {
             line: range.to.line,
             ch: range.to.ch
         };
 
-        replaceText = '![' + data.altText + '](' + data.imageUrl + ')';
+        const replaceText = `![${data.altText}](${data.imageUrl})`;
 
         doc.replaceRange(replaceText, from, to, '+addImage');
 

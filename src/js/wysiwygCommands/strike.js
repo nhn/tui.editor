@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Strike
@@ -13,15 +13,15 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
+const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     name: 'Strike',
     keyMap: ['CTRL+S', 'META+S'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WysiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor();
+    exec(wwe) {
+        const sq = wwe.getEditor();
 
         if (sq.hasFormat('S')) {
             sq.changeFormat(null, {tag: 'S'});

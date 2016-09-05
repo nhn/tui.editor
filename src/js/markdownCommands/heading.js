@@ -4,9 +4,9 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * Heading
@@ -14,40 +14,39 @@ var util = tui.util;
  * @exports Heading
  * @augments Command
  */
-var Heading = CommandManager.command('markdown', /** @lends Heading */{
+const Heading = CommandManager.command('markdown', /** @lends Heading */{
     name: 'Heading',
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      * @param {number} size heading size
      */
-    exec: function(mde, size) {
-        var textToModify, range, from, to, textLinesToModify, lengthOfCurrentLineBefore,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde, size) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
         // 선택된 영역을 가공함
-        range = mde.getCurrentRange();
+        const range = mde.getCurrentRange();
 
-        from = {
+        const from = {
             line: range.from.line,
             ch: 0
         };
 
-        to = {
+        const to = {
             line: range.to.line,
             ch: doc.getLineHandle(range.to.line).text.length
         };
 
-        lengthOfCurrentLineBefore = doc.getLine(to.line).length;
+        const lengthOfCurrentLineBefore = doc.getLine(to.line).length;
 
         //영역의 텍스트를 가저오고
-        textToModify = doc.getRange(from, to);
+        const textToModify = doc.getRange(from, to);
 
         //원하는 대로 가공한다
-        textLinesToModify = textToModify.split('\n');
+        const textLinesToModify = textToModify.split('\n');
 
-        util.forEachArray(textLinesToModify, function(line, index) {
+        util.forEachArray(textLinesToModify, (line, index) => {
             textLinesToModify[index] = getHeadingMarkdown(line, size);
         });
 
@@ -62,11 +61,17 @@ var Heading = CommandManager.command('markdown', /** @lends Heading */{
     }
 });
 
-var FIND_HEADING_RX = /^#+\s/g;
+const FIND_HEADING_RX = /^#+\s/g;
 
+/**
+ * Get heading markdown
+ * @param {string} text Source test
+ * @param {number} size size
+ * @returns {string}
+ */
 function getHeadingMarkdown(text, size) {
-    var foundedHeading = text.match(FIND_HEADING_RX),
-        heading = '';
+    const foundedHeading = text.match(FIND_HEADING_RX);
+    let heading = '';
 
     do {
         heading += '#';
@@ -77,7 +82,7 @@ function getHeadingMarkdown(text, size) {
         text = text.split(foundedHeading[0])[1];
     }
 
-    return heading + ' ' + text;
+    return `${heading} ${text}`;
 }
 
 module.exports = Heading;

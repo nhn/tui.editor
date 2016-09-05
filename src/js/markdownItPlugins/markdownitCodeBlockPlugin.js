@@ -1,6 +1,6 @@
 // Copyright (c) 2016, Revin Guillen.
 // Distributed under an MIT license: https://github.com/revin/markdown-it-task-lists/
-
+/* eslint-disable */
 /**
  * @fileoverview Implements markdownitCodeBlockPlugin
  * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
@@ -66,5 +66,6 @@ function escape(html, encode) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+/* eslint-enable */
 
 module.exports = MarkdownitCodeBlockRenderer;

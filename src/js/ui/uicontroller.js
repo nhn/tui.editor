@@ -4,8 +4,8 @@
  */
 
 
-var util = tui.util,
-    _id = 0;
+const util = tui.util;
+let _id = 0;
 /**
  * UIController 클래스
  * @exports UIController
@@ -43,10 +43,10 @@ function UIController(options) {
  * @param {function} aFn 이벤트 핸들러
  */
 UIController.prototype.on = function(aType, aFn) {
-    var self = this;
+    const self = this;
 
     if (util.isObject(aType)) {
-        util.forEach(aType, function(fn, type) {
+        util.forEach(aType, (fn, type) => {
             self._addEvent(type, fn);
         });
     } else {
@@ -63,7 +63,7 @@ UIController.prototype.on = function(aType, aFn) {
  * @private
  */
 UIController.prototype._addEvent = function(type, fn) {
-    var parsedType = this._parseEventType(type),
+    const parsedType = this._parseEventType(type),
         event = parsedType[0],
         selector = parsedType[1];
 
@@ -82,14 +82,10 @@ UIController.prototype._addEvent = function(type, fn) {
  * @param {function} fn 이벤트 핸들러
  */
 UIController.prototype.off = function(type, fn) {
-    var parsedType,
-        event,
-        selector;
-
     if (type) {
-        parsedType = this._parseEventType(type);
-        event = parsedType[0];
-        selector = parsedType[1];
+        const parsedType = this._parseEventType(type);
+        const event = parsedType[0];
+        const selector = parsedType[1];
 
         if (selector) {
             this.$el.off(event, selector, fn);
@@ -108,7 +104,7 @@ UIController.prototype.off = function(type, fn) {
  * @returns {array} Event, Selector
  */
 UIController.prototype._parseEventType = function(type) {
-    var splitType = type.split(' '),
+    const splitType = type.split(' '),
         event = splitType.shift(),
         selector = splitType.join(' ');
 
@@ -120,18 +116,18 @@ UIController.prototype._parseEventType = function(type) {
  * @param {object} events 이벤트 목록
  */
 UIController.prototype.attachEvents = function(events) {
-    var self = this,
-        handler,
-        eventlist = events || this.events;
+    const self = this;
+    const eventlist = events || this.events;
+    let handler;
 
     if (eventlist) {
-        util.forEach(eventlist, function(handlerName, type) {
+        util.forEach(eventlist, (handlerName, type) => {
             if (self[handlerName]) {
                 type = self.getEventNameWithNamespace(type);
                 handler = util.bind(self[handlerName], self);
                 self.on(type, handler);
             } else {
-                throw new Error('UIController#attachEvents: ' + handlerName + '란 메서드가 없습니다.');
+                throw new Error(`UIController#attachEvents: ${handlerName}란 메서드가 없습니다.`);
             }
         });
     }
@@ -141,7 +137,7 @@ UIController.prototype.attachEvents = function(events) {
  * attachEvents로 걸린 이벤트핸들러를 한꺼번에 해제한다.
  */
 UIController.prototype.detachEvents = function() {
-    this.$el.off('.uicEvent' + this.id);
+    this.$el.off(`.uicEvent${this.id}`);
 };
 
 /**
@@ -149,12 +145,12 @@ UIController.prototype.detachEvents = function() {
  * @param {jQuery} $el 설정할 엘리먼트
  */
 UIController.prototype.setRootElement = function($el) {
-    var className = this.className,
-        tagName = this.tagName;
+    let className = this.className;
+    const tagName = this.tagName;
 
     if (!$el) {
-        className = className || ('uic' + this.id);
-        $el = $('<' + tagName + ' class="' + className + '"/>');
+        className = className || (`uic${this.id}`);
+        $el = $(`<${tagName} class="${className}"/>`);
     }
     this.$el = $el;
 };
@@ -162,8 +158,8 @@ UIController.prototype.setRootElement = function($el) {
 /**
  * 커스텀 이벤트를 발생시킨다.
  */
-UIController.prototype.trigger = function() {
-    this.$el.trigger.apply(this.$el, arguments);
+UIController.prototype.trigger = function(...args) {
+    this.$el.trigger(...args);
 };
 
 /**
@@ -182,8 +178,9 @@ UIController.prototype._initID = function() {
  * @returns {string} 네임스페이스가 포함된 이벤트스트링
  */
 UIController.prototype.getEventNameWithNamespace = function(event) {
-    var eventSplited = event.split(' ');
-    eventSplited[0] += ('.uicEvent' + this.id);
+    const eventSplited = event.split(' ');
+    eventSplited[0] += (`.uicEvent${this.id}`);
+
     return eventSplited.join(' ');
 };
 
@@ -213,12 +210,12 @@ UIController.prototype.remove = function() {
  * 소멸자
  */
 UIController.prototype.destroy = function() {
-    var self = this;
+    const self = this;
 
     this.remove();
     this.detachEvents();
 
-    util.forEachOwnProperties(this, function(value, key) {
+    util.forEachOwnProperties(this, (value, key) => {
         self[key] = null;
     });
 };
@@ -229,8 +226,10 @@ UIController.prototype.destroy = function() {
  * @returns {UIController} 생성자
  */
 UIController.extend = function(props) {
-    var newUIC = util.defineClass(this, props);
+    const newUIC = util.defineClass(this, props);
+
     newUIC.extend = UIController.extend;
+
     return newUIC;
 };
 

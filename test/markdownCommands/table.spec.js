@@ -1,16 +1,12 @@
-'use strict';
+import Table from '../../src/js/markdownCommands/table';
+import MarkdownEditor from '../../src/js/markdownEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Table = require('../../src/js/markdownCommands/table'),
-    MarkdownEditor = require('../../src/js/markdownEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Table', () => {
+    let cm, doc, mde;
 
-describe('Table', function() {
-    var cm,
-        doc,
-        mde;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -23,12 +19,12 @@ describe('Table', function() {
         doc = cm.getDoc();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('Table', function() {
-        it('Add table 2x2', function() {
+    describe('Table', () => {
+        it('Add table 2x2', () => {
             Table.exec(mde, 2, 2);
 
             expect(doc.getValue()).toEqual([
@@ -38,7 +34,7 @@ describe('Table', function() {
             ].join('\n'));
         });
 
-        it('Add table 4x3', function() {
+        it('Add table 4x3', () => {
             Table.exec(mde, 4, 3);
 
             expect(doc.getValue()).toEqual([
@@ -49,7 +45,7 @@ describe('Table', function() {
             ].join('\n'));
         });
 
-        it('move cursor to first header after insert table', function() {
+        it('move cursor to first header after insert table', () => {
             Table.exec(mde, 2, 2);
 
             expect(doc.getValue()).toEqual([
@@ -62,7 +58,7 @@ describe('Table', function() {
             expect(cm.getCursor().ch).toEqual(2);
         });
 
-        it('add initial data', function() {
+        it('add initial data', () => {
             Table.exec(mde, 2, 3, ['a', 'b', 'c', 'd', 'e', 'f']);
 
             expect(doc.getValue()).toEqual([

@@ -3,93 +3,95 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-var util = tui.util;
+const util = tui.util;
 
 /**
- * Command
- * It implements command to editors
+ * Command class
  * @exports Command
- * @class Command
- * @param {string} name Command name
- * @param {number} type Command type (Command.TYPE)
- * @param {Array.<string>} [keyMap] keyMap
+ * @class
  */
-function Command(name, type, keyMap) {
-    this.name = name;
-    this.type = type;
+class Command {
+    /**
+     * @param {string} name Command name
+     * @param {number} type Command type (Command.TYPE)
+     * @param {Array.<string>} [keyMap] keyMap
+     */
+    constructor(name, type, keyMap) {
+        this.name = name;
+        this.type = type;
 
-    if (keyMap) {
-        this.setKeyMap(keyMap);
+        if (keyMap) {
+            this.setKeyMap(keyMap);
+        }
+    }
+    /**
+     * getName
+     * returns Name of command
+     * @api
+     * @memberOf Command
+     * @returns {string} Command Name
+     */
+    getName() {
+        return this.name;
+    }
+
+    /**
+     * getType
+     * returns Type of command
+     * @api
+     * @memberOf Command
+     * @returns {number} Command Command type number
+     */
+    getType() {
+        return this.type;
+    }
+
+    /**
+     * isMDType
+     * returns whether Command Type is Markdown or not
+     * @api
+     * @memberOf Command
+     * @returns {boolean} result
+     */
+    isMDType() {
+        return this.type === Command.TYPE.MD;
+    }
+
+    /**
+     * isWWType
+     * returns whether Command Type is Wysiwyg or not
+     * @api
+     * @memberOf Command
+     * @returns {boolean} result
+     */
+    isWWType() {
+        return this.type === Command.TYPE.WW;
+    }
+
+    /**
+     * isGlobalType
+     * returns whether Command Type is Global or not
+     * @api
+     * @memberOf Command
+     * @returns {boolean} result
+     */
+    isGlobalType() {
+        return this.type === Command.TYPE.GB;
+    }
+
+    /**
+     * setKeyMap
+     * Set keymap value for each os
+     * @api
+     * @memberOf Command
+     * @param {string} win Windows Key(and etc)
+     * @param {string} mac Mac osx key
+     */
+    setKeyMap(win, mac) {
+        this.keyMap = [win, mac];
     }
 }
 
-/**
- * getName
- * returns Name of command
- * @api
- * @memberOf Command
- * @returns {string} Command Name
- */
-Command.prototype.getName = function() {
-    return this.name;
-};
-
-/**
- * getType
- * returns Type of command
- * @api
- * @memberOf Command
- * @returns {number} Command Command type number
- */
-Command.prototype.getType = function() {
-    return this.type;
-};
-
-/**
- * isMDType
- * returns whether Command Type is Markdown or not
- * @api
- * @memberOf Command
- * @returns {boolean} result
- */
-Command.prototype.isMDType = function() {
-    return this.type === Command.TYPE.MD;
-};
-
-/**
- * isWWType
- * returns whether Command Type is Wysiwyg or not
- * @api
- * @memberOf Command
- * @returns {boolean} result
- */
-Command.prototype.isWWType = function() {
-    return this.type === Command.TYPE.WW;
-};
-
-/**
- * isGlobalType
- * returns whether Command Type is Global or not
- * @api
- * @memberOf Command
- * @returns {boolean} result
- */
-Command.prototype.isGlobalType = function() {
-    return this.type === Command.TYPE.GB;
-};
-
-/**
- * setKeyMap
- * Set keymap value for each os
- * @api
- * @memberOf Command
- * @param {string} win Windows Key(and etc)
- * @param {string} mac Mac osx key
- */
-Command.prototype.setKeyMap = function(win, mac) {
-    this.keyMap = [win, mac];
-};
 
 /**
  * Command factory method
@@ -102,7 +104,7 @@ Command.prototype.setKeyMap = function(win, mac) {
  * @returns {Command}
  */
 Command.factory = function(typeStr, props) {
-    var command, type;
+    let type;
 
     if (typeStr === 'markdown') {
         type = Command.TYPE.MD;
@@ -112,7 +114,7 @@ Command.factory = function(typeStr, props) {
         type = Command.TYPE.GB;
     }
 
-    command = new Command(props.name, type);
+    const command = new Command(props.name, type);
 
     util.extend(command, props);
 

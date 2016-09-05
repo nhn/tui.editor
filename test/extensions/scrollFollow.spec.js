@@ -1,13 +1,11 @@
-'use strict';
+import TuiEditor from '../../src/js/editor';
 
-var TuiEditor = require('../../src/js/editor');
+const loadStyleFixtures = window.loadStyleFixtures;
 
-var loadStyleFixtures = window.loadStyleFixtures;
+xdescribe('scrollFollow', () => {
+    let ned;
 
-xdescribe('scrollFollow', function() {
-    var ned;
-
-    beforeEach(function() {
+    beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
         $('body').html('<div id="editSection"></div>');
@@ -19,7 +17,7 @@ xdescribe('scrollFollow', function() {
             initialEditType: 'markdown',
             exts: ['scrollFollow'],
             events: {
-                'load': function(editor) {
+                'load': editor => {
                     editor.getCodeMirror().setSize(200, 50);
                     $('.preview').css('padding', '0');
                     $('.preview').css('overflow', 'auto');
@@ -29,15 +27,15 @@ xdescribe('scrollFollow', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('disable/enable, 어찌테스트해야할지 고민중', function() {
-        beforeEach(function() {
+    describe('disable/enable, 어찌테스트해야할지 고민중', () => {
+        beforeEach(() => {
             ned.setValue([
                 'paragraph',
                 '# header1',
@@ -48,7 +46,7 @@ xdescribe('scrollFollow', function() {
             ].join('\n'));
         });
 
-        it('disable scrollFollow', function() {
+        it('disable scrollFollow', () => {
             ned.exec('scrollFollow.diasable');
         });
     });

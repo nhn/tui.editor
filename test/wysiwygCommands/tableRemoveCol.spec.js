@@ -1,15 +1,13 @@
-'use strict';
+import RemoveCol from '../../src/js/wysiwygCommands/tableRemoveCol';
+import WwTableManager from '../../src/js/wwTableManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var RemoveCol = require('../../src/js/wysiwygCommands/tableRemoveCol'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    WwTableManager = require('../../src/js/wwTableManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('Table - RemoveCol', () => {
+    let wwe;
 
-describe('Table - RemoveCol', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -22,15 +20,15 @@ describe('Table - RemoveCol', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('remove col that have selected cell', function() {
-        var sq = wwe.getEditor(),
+    it('remove col that have selected cell', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -56,8 +54,8 @@ describe('Table - RemoveCol', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
-    it('dont remove col if there have only one col', function() {
-        var sq = wwe.getEditor(),
+    it('dont remove col if there have only one col', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([

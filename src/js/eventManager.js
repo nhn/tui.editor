@@ -64,7 +64,6 @@ const eventList = [
 /**
  * EventManager
  * @exports EventManager
- * @constructor
  * @class EventManager
  */
 class EventManager {

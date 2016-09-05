@@ -1,13 +1,11 @@
-'use strict';
+import EventManager from '../src/js/eventManager';
+import WysiwygEditor from '../src/js/wysiwygEditor';
 
-var EventManager = require('../src/js/eventManager'),
-    WysiwygEditor = require('../src/js/wysiwygEditor');
+describe('WwClipboardManager', () => {
+    let wwe, cbm;
 
-describe('WwClipboardManager', function() {
-    var wwe, cbm;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -18,36 +16,34 @@ describe('WwClipboardManager', function() {
         cbm = wwe._clipboardManager;
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('_refineCursorWithPasteContentsIfNeed', function() {
-        it('set selection to last element of contents', function(done) {
-            var fragment = wwe.getEditor().getDocument().createDocumentFragment();
-            var range;
+    describe('_refineCursorWithPasteContentsIfNeed', () => {
+        it('set selection to last element of contents', done => {
+            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append('<ul><li>ddd<br></li><li>dd2<br></li</ul>');
 
             cbm._refineCursorWithPasteContentsIfNeed(fragment);
             wwe.getEditor().insertHTML(fragment);
 
-            setTimeout(function() {
-                range = wwe.getEditor().getSelection();
+            setTimeout(() => {
+                const range = wwe.getEditor().getSelection();
                 expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
                 done();
             }, 50);
         });
-        it('do nothing when pasting content is empty', function(done) {
-            var fragment = wwe.getEditor().getDocument().createDocumentFragment();
-            var range, cursorPositionElement;
+        it('do nothing when pasting content is empty', done => {
+            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
 
-            range = wwe.getEditor().getSelection();
-            cursorPositionElement = range.startContainer;
+            let range = wwe.getEditor().getSelection();
+            const cursorPositionElement = range.startContainer;
 
             cbm._refineCursorWithPasteContentsIfNeed(fragment);
             wwe.getEditor().insertHTML(fragment);
 
-            setTimeout(function() {
+            setTimeout(() => {
                 range = wwe.getEditor().getSelection();
                 expect(range.startContainer).toBe(cursorPositionElement);
                 done();
@@ -55,15 +51,13 @@ describe('WwClipboardManager', function() {
         });
     });
 
-    describe('_extendRange', function() {
-        beforeEach(function() {
+    describe('_extendRange', () => {
+        beforeEach(() => {
             wwe.focus();
         });
-        it('Extend start selection if whole content of startContainer are contained', function() {
-            var range;
-
+        it('Extend start selection if whole content of startContainer are contained', () => {
             wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            let range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 3);
@@ -77,11 +71,9 @@ describe('WwClipboardManager', function() {
             expect(range.endContainer.nodeValue[range.endOffset]).toEqual('t');
         });
 
-        it('Extend end selection if whole content of endContainer are contained', function() {
-            var range;
-
+        it('Extend end selection if whole content of endContainer are contained', () => {
             wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            let range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 3);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
@@ -95,11 +87,9 @@ describe('WwClipboardManager', function() {
             expect(range.endContainer.childNodes[range.endOffset - 1].textContent).toEqual('list2');
         });
 
-        it('if selection area is whole content of commonAncestorContainer then select commonAncestorContainer', function() {
-            var range;
-
+        it('if selection area is whole content of commonAncestorContainer then select commonAncestorContainer', () => {
             wwe.getEditor().setHTML('<ul><li>list1</li><li>list2</li></ul>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            let range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('LI')[0].childNodes[0], 0);
             range.setEnd(wwe.get$Body().find('LI')[1].childNodes[0], 5);
@@ -111,11 +101,9 @@ describe('WwClipboardManager', function() {
             expect(range.endContainer.childNodes[range.endOffset - 1].tagName).toEqual('UL');
         });
 
-        it('if selection area is whole text content of one element then extend to commonAncestorContainer', function() {
-            var range;
-
+        it('if selection area is whole text content of one element then extend to commonAncestorContainer', () => {
             wwe.getEditor().setHTML('<h1>hello world<br></h1>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            let range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('h1')[0].firstChild, 0);
             range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
@@ -129,11 +117,9 @@ describe('WwClipboardManager', function() {
             expect(range.endOffset).toEqual(1);
         });
 
-        it('if partial text selected of one text node then dont do anything', function() {
-            var range;
-
+        it('if partial text selected of one text node then dont do anything', () => {
             wwe.getEditor().setHTML('<h1>hello world<br></h1>');
-            range = wwe.getEditor().getSelection().cloneRange();
+            let range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('h1')[0].firstChild, 5);
             range.setEnd(wwe.get$Body().find('h1')[0].firstChild, 11);
@@ -148,9 +134,9 @@ describe('WwClipboardManager', function() {
             expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
         });
     });
-    describe('_addRangeInfoAndReplaceFragmentIfNeed', function() {
-        it('add rangeInfo when exist', function() {
-            var pasteData = {
+    describe('_addRangeInfoAndReplaceFragmentIfNeed', () => {
+        it('add rangeInfo when exist', () => {
+            const pasteData = {
                 fragment: $('<div>bye</div>')[0]
             };
 
@@ -164,8 +150,8 @@ describe('WwClipboardManager', function() {
             expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
             expect(pasteData.fragment.textContent).toBe('bye');
         });
-        it('add rangeInfo and do not replace fragment when textContents are same', function() {
-            var pasteData = {
+        it('add rangeInfo and do not replace fragment when textContents are same', () => {
+            const pasteData = {
                 fragment: $('<div>bye</div>')[0]
             };
 
@@ -180,8 +166,8 @@ describe('WwClipboardManager', function() {
             expect(pasteData.fragment.textContent).toBe('bye');
         });
 
-        it('add rangeInfo and do not replace fragment when textContents are same', function() {
-            var pasteData = {
+        it('add rangeInfo and do not replace fragment when textContents are same', () => {
+            const pasteData = {
                 fragment: $('<div>hello</div>')[0]
             };
 
@@ -196,8 +182,8 @@ describe('WwClipboardManager', function() {
             expect(pasteData.fragment.textContent).toBe('hello');
             expect(pasteData.fragment.className).toBe('hello');
         });
-        it('do nothing when _latestClipboardRangeInfo not exists', function() {
-            var pasteData = {
+        it('do nothing when _latestClipboardRangeInfo not exists', () => {
+            const pasteData = {
                 fragment: $('<div>hello</div>')[0]
             };
 

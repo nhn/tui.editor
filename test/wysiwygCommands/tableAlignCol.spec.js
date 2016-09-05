@@ -1,15 +1,13 @@
-'use strict';
+import AlignCol from '../../src/js/wysiwygCommands/tableAlignCol';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var AlignCol = require('../../src/js/wysiwygCommands/tableAlignCol'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager'),
-    WwTableSelectionManager = require('../../src/js/wwTableSelectionManager');
+describe('Table - AlignCol', () => {
+    let wwe;
 
-describe('Table - AlignCol', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -21,16 +19,16 @@ describe('Table - AlignCol', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('set align center to current column', function() {
-        it('at TD', function() {
-            var sq = wwe.getEditor(),
+    describe('set align center to current column', () => {
+        it('at TD', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -59,8 +57,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('at TH', function() {
-            var sq = wwe.getEditor(),
+        it('at TH', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -89,8 +87,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -124,8 +122,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -159,8 +157,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi line selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi line selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -195,9 +193,9 @@ describe('Table - AlignCol', function() {
         });
     });
 
-    describe('set align left to current column', function() {
-        it('at TD', function() {
-            var sq = wwe.getEditor(),
+    describe('set align left to current column', () => {
+        it('at TD', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -226,8 +224,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('at TH', function() {
-            var sq = wwe.getEditor(),
+        it('at TH', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -256,8 +254,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('on multiline selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multiline selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -286,8 +284,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).toEqual('left');
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -321,8 +319,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -356,8 +354,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi line selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi line selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -392,9 +390,9 @@ describe('Table - AlignCol', function() {
         });
     });
 
-    describe('set align right to current column', function() {
-        it('at TD', function() {
-            var sq = wwe.getEditor(),
+    describe('set align right to current column', () => {
+        it('at TD', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -423,8 +421,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('at TH', function() {
-            var sq = wwe.getEditor(),
+        it('at TH', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -453,8 +451,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(1).attr('align')).not.toBeDefined();
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -488,8 +486,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi cell selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi cell selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([
@@ -523,8 +521,8 @@ describe('Table - AlignCol', function() {
             expect(wwe.get$Body().find('tbody td').eq(3).attr('align')).not.toBeDefined();
         });
 
-        it('on multi line selection', function() {
-            var sq = wwe.getEditor(),
+        it('on multi line selection', () => {
+            const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
             sq.setHTML([

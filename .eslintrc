@@ -1,7 +1,7 @@
 {
     "parser": "babel-eslint",
     "parserOptions": {
-        "ecmaVersion": 6,
+        "ecmaVersion": 7,
         "sourceType": "module",
         "ecmaFeatures": {
             "classes": true,
@@ -226,14 +226,14 @@
         "no-useless-constructor": 2,
         "no-useless-computed-key": 2,
         "no-useless-rename": 2,
-        "no-var": 1, // ES6 적용과 함께 error로 변경
-        "object-shorthand": [1, "always", {"avoidQuotes": true}], // ES6 적용과 함께 error로 변경
-        "prefer-arrow-callback": [1, {"allowUnboundThis": false, "allowNamedFunctions": true}], // ES6 적용과 함께 error로 변경
+        "no-var": 2,
+        "object-shorthand": [2, "always", {"avoidQuotes": true}],
+        "prefer-arrow-callback": [2, {"allowUnboundThis": false, "allowNamedFunctions": true}],
         "prefer-const": [2, {"destructuring": "any"}],
-        "prefer-reflect": 1, // ES6 적용과 함께 error로 변경
-        "prefer-rest-params": 1, // ES6 적용과 함께 error로 변경
-        "prefer-spread": 1, // ES6 적용과 함께 error로 변경
-        "prefer-template": 1, // ES6 적용과 함께 error로 변경
+        "prefer-reflect": 0,
+        "prefer-rest-params": 2,
+        "prefer-spread": 2,
+        "prefer-template": 2,
         "require-yield": 2,
         "rest-spread-spacing": [2, "never"],
         "sort-imports": 0,

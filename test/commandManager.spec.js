@@ -1,10 +1,8 @@
-var CommandManager = require('../src/js/commandManager'),
-    Command = require('../src/js/command'),
-    EventManager = require('../src/js/eventManager');
+import CommandManager from '../src/js/commandManager';
+import Command from '../src/js/command';
+import EventManager from '../src/js/eventManager';
 
 describe('CommandManager', function() {
-    'use strict';
-
     var mockupCm = {
         execCommand: function(name) {
             return name;

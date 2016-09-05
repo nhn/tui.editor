@@ -4,7 +4,7 @@
  */
 
 
-var FIND_LI_ELEMENT = /<li/i;
+const FIND_LI_ELEMENT = /<li/i;
 
 /**
  * WwListManager
@@ -13,165 +13,155 @@ var FIND_LI_ELEMENT = /<li/i;
  * @class WwListManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
-function WwListManager(wwe) {
-    this.wwe = wwe;
-    this.eventManager = wwe.eventManager;
+class WwListManager {
 
-    this._init();
-}
+    constructor(wwe) {
+        this.wwe = wwe;
+        this.eventManager = wwe.eventManager;
 
-/**
- * Name property
- * @api
- * @memberOf WwListManager
- * @type {string}
- */
-WwListManager.prototype.name = 'list';
+        /**
+         * Name property
+         * @api
+         * @memberOf WwListManager
+         * @type {string}
+         */
+        this.name = 'list';
 
-/**
- * _init
- * Initialize
- * @memberOf WwListManager
- * @private
- */
-WwListManager.prototype._init = function() {
-    this._initEvent();
-    this._initKeyHandler();
-};
+        this._init();
+    }
 
-/**
- * _initEvent
- * Initialize event
- * @memberOf WwListManager
- * @private
- */
-WwListManager.prototype._initEvent = function() {
-    var self = this;
+    /**
+     * _init
+     * Initialize
+     * @memberOf WwListManager
+     * @private
+     */
+    _init() {
+        this._initEvent();
+        this._initKeyHandler();
+    }
 
-    this.eventManager.listen('wysiwygRangeChangeAfter', function() {
-        self._findAndRemoveEmptyList();
-        self._removeBranchListAll();
-        self._wrapDefaultBlockToListInner();
-    });
+    /**
+     * _initEvent
+     * Initialize event
+     * @memberOf WwListManager
+     * @private
+     */
+    _initEvent() {
+        this.eventManager.listen('wysiwygRangeChangeAfter', () => {
+            this._findAndRemoveEmptyList();
+            this._removeBranchListAll();
+            this._wrapDefaultBlockToListInner();
+        });
 
-    this.eventManager.listen('wysiwygSetValueAfter', function() {
-        self._removeBranchListAll();
-        self._wrapDefaultBlockToListInner();
-    });
+        this.eventManager.listen('wysiwygSetValueAfter', () => {
+            this._removeBranchListAll();
+            this._wrapDefaultBlockToListInner();
+        });
 
-    this.eventManager.listen('wysiwygProcessHTMLText', function(html) {
-        return self._prepareInsertBlankToBetweenSameList(html);
-    });
+        this.eventManager.listen('wysiwygProcessHTMLText', html => this._prepareInsertBlankToBetweenSameList(html));
 
-    this.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-        return markdown.replace(/:BLANK_LINE:\n/g, '');
-    });
-};
+        this.eventManager.listen('convertorAfterHtmlToMarkdownConverted',
+            markdown => markdown.replace(/:BLANK_LINE:\n/g, ''));
+    }
 
-WwListManager.prototype._initKeyHandler = function() {
-    var self = this;
+    _initKeyHandler() {
+        this.wwe.addKeyEventHandler('TAB', (ev, range) => {
+            if (range.collapsed) {
+                if (this.wwe.getEditor().hasFormat('LI')) {
+                    ev.preventDefault();
+                    this.eventManager.emit('command', 'IncreaseDepth');
 
-    this.wwe.addKeyEventHandler('TAB', function(ev, range) {
-        if (range.collapsed) {
-            if (self.wwe.getEditor().hasFormat('LI')) {
-                ev.preventDefault();
-                self.eventManager.emit('command', 'IncreaseDepth');
-
-                return false;
-            }
-        }
-
-        return true;
-    });
-
-    this.wwe.addKeyEventHandler('SHIFT+TAB', function(ev, range) {
-        var isNeedNext;
-        var $ul;
-
-        if (range.collapsed) {
-            if (self.wwe.getEditor().hasFormat('LI')) {
-                ev.preventDefault();
-                $ul = $(range.startContainer).closest('li').children('ul, ol');
-
-                self.eventManager.emit('command', 'DecreaseDepth');
-
-                if ($ul.length && !$ul.prev().length) {
-                    self._removeBranchList($ul);
+                    return false;
                 }
-
-                isNeedNext = false;
             }
-        }
 
-        return isNeedNext;
-    });
-};
+            return true;
+        });
 
-/**
- * Find empty list for whole container and remove it.
- * @memberOf WwListManager
- * @private
- */
-WwListManager.prototype._findAndRemoveEmptyList = function() {
-    this.wwe.get$Body()
-        .find('ul,ol')
-        .each(function(index, node) {
+        this.wwe.addKeyEventHandler('SHIFT+TAB', (ev, range) => {
+            let isNeedNext;
+
+            if (range.collapsed) {
+                if (this.wwe.getEditor().hasFormat('LI')) {
+                    ev.preventDefault();
+                    const $ul = $(range.startContainer).closest('li').children('ul, ol');
+
+                    this.eventManager.emit('command', 'DecreaseDepth');
+
+                    if ($ul.length && !$ul.prev().length) {
+                        this._removeBranchList($ul);
+                    }
+
+                    isNeedNext = false;
+                }
+            }
+
+            return isNeedNext;
+        });
+    }
+
+    /**
+     * Find empty list for whole container and remove it.
+     * @memberOf WwListManager
+     * @private
+     */
+    _findAndRemoveEmptyList() {
+        this.wwe.get$Body().find('ul,ol').each((index, node) => {
             if (!(FIND_LI_ELEMENT.test(node.innerHTML))) {
                 $(node).remove();
             }
         });
-};
-
-/**
- * Remove branch lists all from body
- */
-WwListManager.prototype._removeBranchListAll = function() {
-    var self = this;
-
-    self.wwe.get$Body().find('li ul, li ol').each(function() {
-        if (!this || this.previousSibling) {
-            return;
-        }
-        self._removeBranchList(this);
-    });
-};
-
-/**
- * Remove branch list of passed list(ul, ol)
- * @param {HTMLElement} list list
- */
-WwListManager.prototype._removeBranchList = function(list) {
-    var $list = $(list);
-    var $branchRoot = $list;
-    var $firstLi;
-
-    while (!$branchRoot[0].previousSibling) {
-        $branchRoot = $branchRoot.parent();
     }
 
-    $firstLi = $branchRoot.children('li').eq(0);
+    /**
+     * Remove branch lists all from body
+     */
+    _removeBranchListAll() {
+        this.wwe.get$Body().find('li ul, li ol').each((idx, node) => {
+            if (!node || node.previousSibling) {
+                return;
+            }
+            this._removeBranchList(node);
+        });
+    }
 
-    $branchRoot.prepend($list.children().unwrap());
+    /**
+     * Remove branch list of passed list(ul, ol)
+     * @param {HTMLElement} list list
+     */
+    _removeBranchList(list) {
+        const $list = $(list);
+        let $branchRoot = $list;
 
-    $firstLi.remove();
-};
-
-/**
- * _wrapDefaultBlockToListInner
- * Wrap default block to list inner contents
- * @private
- */
-WwListManager.prototype._wrapDefaultBlockToListInner = function() {
-    this.wwe.get$Body().find('li').each(function(index, node) {
-        if ($(node).children('div, p').length <= 0) {
-            $(this).wrapInner('<div />');
-            $(this).find('div').children('ul, ol').appendTo(this);
+        while (!$branchRoot[0].previousSibling) {
+            $branchRoot = $branchRoot.parent();
         }
-    });
-};
 
-WwListManager.prototype._prepareInsertBlankToBetweenSameList = function(html) {
-    return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
-};
+        const $firstLi = $branchRoot.children('li').eq(0);
+
+        $branchRoot.prepend($list.children().unwrap());
+
+        $firstLi.remove();
+    }
+
+    /**
+     * _wrapDefaultBlockToListInner
+     * Wrap default block to list inner contents
+     * @private
+     */
+    _wrapDefaultBlockToListInner() {
+        this.wwe.get$Body().find('li').each((index, node) => {
+            if ($(node).children('div, p').length <= 0) {
+                $(node).wrapInner('<div />');
+                $(node).find('div').children('ul, ol').appendTo(node);
+            }
+        });
+    }
+
+    _prepareInsertBlankToBetweenSameList(html) {
+        return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
+    }
+}
 
 module.exports = WwListManager;

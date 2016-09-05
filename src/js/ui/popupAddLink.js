@@ -4,12 +4,12 @@
  */
 
 
-var LayerPopup = require('./layerpopup');
+const LayerPopup = require('./layerpopup');
 
-var util = tui.util;
+const util = tui.util;
 
 /* eslint-disable indent */
-var POPUP_CONTENT = [
+const POPUP_CONTENT = [
     '<label for="linkText">링크에 표시할 내용</label>',
     '<input type="text" class="te-link-text-input" />',
     '<label for="url">URL</label>',
@@ -50,44 +50,44 @@ PopupAddLink.prototype = util.extend(
 );
 
 PopupAddLink.prototype._bindContentEvent = function() {
-    var self = this;
+    const self = this;
 
-    this.on('click .te-ok-button', function() {
+    this.on('click .te-ok-button', () => {
         self.trigger('okButtonClicked', self);
         self.hide();
     });
 
-    this.on('click .te-close-button', function() {
+    this.on('click .te-close-button', () => {
         self.trigger('closeButtonClicked', self);
         self.hide();
     });
 
-    this.on('shown', function() {
+    this.on('shown', () => {
         self.$el.find('.te-link-text-input').focus();
     });
 
-    this.on('hidden', function() {
+    this.on('hidden', () => {
         self.resetInputs();
     });
 };
 
 PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
-    var self = this;
+    const self = this;
 
-    eventManager.listen('focus', function() {
+    eventManager.listen('focus', () => {
         self.hide();
     });
 
-    eventManager.listen('openPopupAddLink', function() {
+    eventManager.listen('openPopupAddLink', () => {
         eventManager.emit('closeAllPopup');
         self.show();
     });
 
-    eventManager.listen('closeAllPopup', function() {
+    eventManager.listen('closeAllPopup', () => {
         self.hide();
     });
 
-    this.on('okButtonClicked', function() {
+    this.on('okButtonClicked', () => {
         eventManager.emit('command', 'AddLink', self.getValue());
     });
 };

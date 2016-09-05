@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwListManager from '../src/js/wwListManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    WwListManager = require('../src/js/wwListManager');
+describe('WwListManager', () => {
+    let $container, em, wwe, mgr;
 
-describe('WwListManager', function() {
-    var $container, em, wwe, mgr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -22,16 +20,16 @@ describe('WwListManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('Event', function() {
-        it('wysiwygSetValueAfter: wrap list inner to div after setValue', function() {
-            var html = '<ul><li>test</li></ul>';
+    describe('Event', () => {
+        it('wysiwygSetValueAfter: wrap list inner to div after setValue', () => {
+            const html = '<ul><li>test</li></ul>';
             wwe.setValue(html);
 
             expect(wwe.get$Body().find('li div').length).toEqual(1);
@@ -39,8 +37,8 @@ describe('WwListManager', function() {
         });
     });
 
-    describe('_findAndRemoveEmptyList()', function() {
-        it('remove ul that without li element within.', function() {
+    describe('_findAndRemoveEmptyList()', () => {
+        it('remove ul that without li element within.', () => {
             wwe.setValue(['<ul>this will deleted</ul>',
                 '<ol>and this too</ol>'].join(''));
 
@@ -52,13 +50,13 @@ describe('WwListManager', function() {
             expect(wwe.get$Body().find('ul').length).toEqual(0);
             expect(wwe.get$Body().find('ol').length).toEqual(0);
         });
-        it('do not remove when ul have li element within.', function() {
+        it('do not remove when ul have li element within.', () => {
             wwe.setValue([
                 '<ul>',
-                    '<li><div>survived!</div></li>',
+                '<li><div>survived!</div></li>',
                 '</ul>',
                 '<ol>',
-                    '<li><div>me too!</div></li>',
+                '<li><div>me too!</div></li>',
                 '</ol>'].join(''));
 
             expect(wwe.get$Body().find('ul').length).toEqual(1);
@@ -72,27 +70,27 @@ describe('WwListManager', function() {
         });
     });
 
-    describe('_removeBranchListAll', function() {
-        it('Remove all branch list', function() {
+    describe('_removeBranchListAll', () => {
+        it('Remove all branch list', () => {
             wwe.getEditor().setHTML([
                 '<ul>',
-                    '<li>',
-                        '<div>t1<br></div>',
-                        '<ul>',
-                            '<li>',
-                                '<ul>',
-                                    '<li>',
-                                        '<div>t2<br></div>',
-                                        '<ul>',
-                                            '<li><div>t3<br></div></li>',
-                                            '<li><div>t4<br></div></li>',
-                                        '</ul>',
-                                    '</li>',
-                                '</ul>',
-                            '</li>',
-                            '<li><div>t5</div></li>',
-                        '</ul>',
-                    '</li>',
+                '<li>',
+                '<div>t1<br></div>',
+                '<ul>',
+                '<li>',
+                '<ul>',
+                '<li>',
+                '<div>t2<br></div>',
+                '<ul>',
+                '<li><div>t3<br></div></li>',
+                '<li><div>t4<br></div></li>',
+                '</ul>',
+                '</li>',
+                '</ul>',
+                '</li>',
+                '<li><div>t5</div></li>',
+                '</ul>',
+                '</li>',
                 '</ul>'].join(''));
             mgr._removeBranchListAll();
 
@@ -102,16 +100,16 @@ describe('WwListManager', function() {
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t5');
         });
 
-        it('Dont remove correct list with text node', function() {
+        it('Dont remove correct list with text node', () => {
             wwe.getEditor().setHTML([
                 '<ul>',
-                    '<li>',
-                        't1',
-                        '<ul>',
-                            '<li><div>t3<br></div></li>',
-                            '<li><div>t4<br></div></li>',
-                        '</ul>',
-                    '</li>',
+                '<li>',
+                't1',
+                '<ul>',
+                '<li><div>t3<br></div></li>',
+                '<li><div>t4<br></div></li>',
+                '</ul>',
+                '</li>',
                 '</ul>'].join(''));
             mgr._removeBranchListAll();
 
@@ -122,67 +120,67 @@ describe('WwListManager', function() {
         });
     });
 
-    describe('Control list blank line', function() {
-        it('ul - br - ul', function() {
-            var html = [
+    describe('Control list blank line', () => {
+        it('ul - br - ul', () => {
+            const html = [
                 '<ul>',
-                    '<li><div>1</div></li>',
+                '<li><div>1</div></li>',
                 '</ul>',
                 '<br />',
                 '<ul>',
-                    '<li><div>2</div></li>',
+                '<li><div>2</div></li>',
                 '</ul>'
             ].join('');
 
-            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._prepareInsertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
         });
 
-        it('ul - br - br - ul', function() {
-            var html = [
+        it('ul - br - br - ul', () => {
+            const html = [
                 '<ul>',
-                    '<li><div>1</div></li>',
+                '<li><div>1</div></li>',
                 '</ul>',
                 '<br />',
                 '<br />',
                 '<ul>',
-                    '<li><div>2</div></li>',
+                '<li><div>2</div></li>',
                 '</ul>'
             ].join('');
 
-            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._prepareInsertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
         });
 
-        it('ul - ul', function() {
-            var html = [
+        it('ul - ul', () => {
+            const html = [
                 '<ul>',
-                    '<li><div>1</div></li>',
+                '<li><div>1</div></li>',
                 '</ul>',
                 '<ul>',
-                    '<li><div>2</div></li>',
+                '<li><div>2</div></li>',
                 '</ul>'
             ].join('');
 
-            var result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._prepareInsertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
         });
     });
-    describe('_wrapDefaultBlockToListInner', function() {
-        it('Wrap default blocks to list top inline nodes', function() {
+    describe('_wrapDefaultBlockToListInner', () => {
+        it('Wrap default blocks to list top inline nodes', () => {
             wwe.getEditor().setHTML([
                 '<ul>',
-                    '<li>',
-                        't1<br>',
-                        '<ul><li>t2<br></li></ul>',
-                    '</li>',
-                '</ul>'].join(''))
+                '<li>',
+                't1<br>',
+                '<ul><li>t2<br></li></ul>',
+                '</li>',
+                '</ul>'].join(''));
 
             mgr._wrapDefaultBlockToListInner();
 

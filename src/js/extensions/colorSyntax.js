@@ -4,43 +4,41 @@
  */
 
 
-var extManager = require('../extManager');
+import extManager from '../extManager';
 
-var colorSyntaxRx = /{color:(.+?)}(.*?){color}/g,
-    colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g,
-    colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g,
-    decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
+const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
+const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
+const colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g;
+const decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
-var RESET_COLOR = '#181818';
+const RESET_COLOR = '#181818';
 
-extManager.defineExtension('colorSyntax', function(editor) {
-    var useCustomSyntax = false,
-        preset;
+extManager.defineExtension('colorSyntax', editor => {
+    let useCustomSyntax = false;
+    let preset;
 
     if (editor.options.colorSyntax) {
         useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
         preset = editor.options.colorSyntax.preset;
     }
 
-    editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function(html) {
-        var replacement;
+    editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
+        let replacement;
 
         if (!useCustomSyntax) {
             replacement = html;
         } else {
-            replacement = html.replace(colorSyntaxRx, function(matched, p1, p2) {
-                return makeHTMLColorSyntax(p2, p1);
-            });
+            replacement = html.replace(colorSyntaxRx, (matched, p1, p2) => makeHTMLColorSyntax(p2, p1));
         }
 
         return replacement;
     });
 
-    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', function(markdown) {
-        var findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
+    editor.eventManager.listen('convertorAfterHtmlToMarkdownConverted', markdown => {
+        const findRx = useCustomSyntax ? colorHtmlCompleteRx : colorHtmlRx;
 
-        return markdown.replace(findRx, function(founded, color, text) {
-            var replacement;
+        return markdown.replace(findRx, (founded, color, text) => {
+            let replacement;
 
             if (color.match(decimalColorRx)) {
                 color = changeDecColorToHex(color);
@@ -59,8 +57,8 @@ extManager.defineExtension('colorSyntax', function(editor) {
     if (!editor.isViewOnly() && editor.getUI().name === 'default') {
         editor.addCommand('markdown', {
             name: 'color',
-            exec: function(mde, color) {
-                var cm = mde.getEditor();
+            exec(mde, color) {
+                const cm = mde.getEditor();
 
                 if (!color) {
                     return;
@@ -78,8 +76,8 @@ extManager.defineExtension('colorSyntax', function(editor) {
 
         editor.addCommand('wysiwyg', {
             name: 'color',
-            exec: function(wwe, color) {
-                var sq = wwe.getEditor();
+            exec(wwe, color) {
+                const sq = wwe.getEditor();
 
                 if (!color) {
                     return;
@@ -104,26 +102,29 @@ extManager.defineExtension('colorSyntax', function(editor) {
     }
 });
 
+/**
+ * Initialize UI
+ * @param {object} editor Editor instance
+ * @param {Array.<string>} preset Preset for color palette
+ */
 function initUI(editor, preset) {
-    var $colorPickerContainer, $button, colorPicker, popup, $buttonBar, selectedColor, className, cpOptions;
-
-    className = 'tui-color';
+    const className = 'tui-color';
 
     editor.eventManager.addEventType('colorButtonClicked');
 
     editor.getUI().toolbar.addButton({
-        className: className,
+        className,
         event: 'colorButtonClicked',
         tooltip: '글자색상'
     }, 2);
-    $button = editor.getUI().toolbar.$el.find('button.' + className);
+    const $button = editor.getUI().toolbar.$el.find(`button.${className}`);
 
-    $colorPickerContainer = $('<div />');
+    const $colorPickerContainer = $('<div />');
 
-    $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
+    const $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
     $buttonBar.css('margin-top', 10);
 
-    cpOptions = {
+    const cpOptions = {
         container: $colorPickerContainer[0]
     };
 
@@ -131,13 +132,13 @@ function initUI(editor, preset) {
         cpOptions.preset = preset;
     }
 
-    colorPicker = tui.component.colorpicker.create(cpOptions);
+    const colorPicker = tui.component.colorpicker.create(cpOptions);
 
-    selectedColor = colorPicker.getColor();
+    let selectedColor = colorPicker.getColor();
 
     $colorPickerContainer.append($buttonBar);
 
-    popup = editor.getUI().createPopup({
+    const popup = editor.getUI().createPopup({
         title: false,
         content: $colorPickerContainer,
         $target: editor.getUI().$el,
@@ -147,11 +148,11 @@ function initUI(editor, preset) {
         }
     });
 
-    editor.eventManager.listen('focus', function() {
+    editor.eventManager.listen('focus', () => {
         popup.hide();
     });
 
-    editor.eventManager.listen('colorButtonClicked', function() {
+    editor.eventManager.listen('colorButtonClicked', () => {
         editor.eventManager.emit('closeAllPopup');
         if (popup.isShow()) {
             popup.hide();
@@ -164,15 +165,15 @@ function initUI(editor, preset) {
         }
     });
 
-    editor.eventManager.listen('closeAllPopup', function() {
+    editor.eventManager.listen('closeAllPopup', () => {
         popup.hide();
     });
 
-    editor.eventManager.listen('removeEditor', function() {
+    editor.eventManager.listen('removeEditor', () => {
         colorPicker.off('selectColor');
     });
 
-    colorPicker.on('selectColor', function(e) {
+    colorPicker.on('selectColor', e => {
         selectedColor = e.color;
 
         if (e.origin === 'palette') {
@@ -181,31 +182,55 @@ function initUI(editor, preset) {
         }
     });
 
-    popup.$el.find('.te-apply-button').on('click', function() {
+    popup.$el.find('.te-apply-button').on('click', () => {
         editor.exec('color', selectedColor);
     });
 }
 
+/**
+ * Make custom color syntax
+ * @param {string} text Text content
+ * @param {string} color Color value
+ * @returns {string}
+ */
 function makeCustomColorSyntax(text, color) {
-    return '{color:' + color + '}' + text + '{color}';
+    return `{color:${color}}${text}{color}`;
 }
 
+/**
+ * Make HTML color syntax by given text content and color value
+ * @param {string} text Text content
+ * @param {string} color Color value
+ * @returns {string}
+ */
 function makeHTMLColorSyntax(text, color) {
-    return '<span style="color:' + color + '">' + text + '</span>';
+    return `<span style="color:${color}">${text}</span>`;
 }
 
+/**
+ * Change decimal color value to hexadecimal color value
+ * @param {string} color Color value string
+ * @returns {string}
+ */
 function changeDecColorToHex(color) {
-    return color.replace(decimalColorRx, function(colorValue, r, g, b) {
+    return color.replace(decimalColorRx, (colorValue, r, g, b) => {
         r = parseInt(r, 10);
         g = parseInt(g, 10);
         b = parseInt(b, 10);
 
-        return '#' + get2DigitNumberString(r.toString(16))
+        const colorHexValue = get2DigitNumberString(r.toString(16))
             + get2DigitNumberString(g.toString(16))
             + get2DigitNumberString(b.toString(16));
+
+        return `#${colorHexValue}`;
     });
 }
 
+/**
+ * Get binary number string
+ * @param {string} numberStr String to convert binary number
+ * @returns {string}
+ */
 function get2DigitNumberString(numberStr) {
     return numberStr === '0' ? '00' : numberStr;
 }

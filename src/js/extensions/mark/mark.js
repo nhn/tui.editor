@@ -4,26 +4,26 @@
  */
 
 
-var extManager = require('../../extManager'),
-    MarkerList = require('./markerList'),
-    MarkerManager = require('./markerManager'),
-    WysiwygMarkerHelper = require('./wysiwygMarkerHelper'),
-    ViewOnlyMarkerHelper = require('./viewOnlyMarkerHelper'),
-    MarkdownMarkerHelper = require('./markdownMarkerHelper');
+import extManager from '../../extManager';
+import MarkerList from './markerList';
+import MarkerManager from './markerManager';
+import WysiwygMarkerHelper from './wysiwygMarkerHelper';
+import ViewOnlyMarkerHelper from './viewOnlyMarkerHelper';
+import MarkdownMarkerHelper from './markdownMarkerHelper';
 
-var util = tui.util;
+const util = tui.util;
 
-var MARKER_UPDATE_DELAY = 100,
-    FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
+const MARKER_UPDATE_DELAY = 100;
+const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
  * Mark Extension
  * Define marker extension
  */
-extManager.defineExtension('mark', function(editor) {
-    var ml = new MarkerList(),
-        mm = new MarkerManager(ml),
-        wmh, mmh, vmh;
+extManager.defineExtension('mark', editor => {
+    const ml = new MarkerList();
+    const mm = new MarkerManager(ml);
+    let wmh, mmh, vmh;
 
     editor.eventManager.addEventType('markerUpdated');
 
@@ -40,7 +40,7 @@ extManager.defineExtension('mark', function(editor) {
      * @returns {object} helper
      */
     function getHelper() {
-        var helper;
+        let helper;
 
         if (editor.isViewOnly()) {
             helper = vmh;
@@ -53,10 +53,13 @@ extManager.defineExtension('mark', function(editor) {
         return helper;
     }
 
+    /**
+     * Update mark when resizing
+     */
     function updateMarkWhenResizing() {
-        var helper = getHelper();
+        const helper = getHelper();
 
-        ml.getAll().forEach(function(marker) {
+        ml.getAll().forEach(marker => {
             helper.updateMarkerWithExtraInfo(marker);
         });
 
@@ -66,13 +69,13 @@ extManager.defineExtension('mark', function(editor) {
     //We need to update marker after window have been resized
     $(window).on('resize', updateMarkWhenResizing);
 
-    editor.on('removeEditor', function() {
+    editor.on('removeEditor', () => {
         $(window).off('resize', updateMarkWhenResizing);
     });
 
     //Reset marker content after set value
-    editor.on('setValueAfter', function() {
-        var helper = getHelper();
+    editor.on('setValueAfter', () => {
+        const helper = getHelper();
         mm.resetContent(helper.getTextContent());
     });
 
@@ -83,12 +86,12 @@ extManager.defineExtension('mark', function(editor) {
      * @param {object} markerDataCollection marker data that obtain with exportMarkers method
      * @returns {Array.<object>} markers
      */
-    editor.setValueWithMarkers = function(value, markerDataCollection) {
-        var helper;
+    editor.setValueWithMarkers = (value, markerDataCollection) => {
+        let helper;
 
         ml.resetMarkers();
 
-        markerDataCollection.forEach(function(markerData) {
+        markerDataCollection.forEach(markerData => {
             ml.addMarker(markerData.start, markerData.end, markerData.id);
         });
 
@@ -96,18 +99,18 @@ extManager.defineExtension('mark', function(editor) {
 
         mm.resetContent(value.replace(FIND_CRLF_RX, ''));
 
-        if (this.isViewOnly() || this.isWysiwygMode()) {
+        if (editor.isViewOnly() || editor.isWysiwygMode()) {
             helper = getHelper();
             mm.updateMarkersByContent(helper.getTextContent());
         } else {
             helper = mmh;
         }
 
-        ml.getAll().forEach(function(marker) {
+        ml.getAll().forEach(marker => {
             helper.updateMarkerWithExtraInfo(marker);
         });
 
-        this.eventManager.emit('markerUpdated', ml.getAll());
+        editor.eventManager.emit('markerUpdated', ml.getAll());
 
         return ml.getAll();
     };
@@ -118,18 +121,14 @@ extManager.defineExtension('mark', function(editor) {
      * @param {string} id id of marker
      * @returns {object}
      */
-    editor.getMarker = function(id) {
-        return ml.getMarker(id);
-    };
+    editor.getMarker = id => ml.getMarker(id);
 
     /**
      * getMarkersAll
      * Get all markers
      * @returns {Array.<object>}
      */
-    editor.getMarkersAll = function() {
-        return ml.getAll();
-    };
+    editor.getMarkersAll = () => ml.getAll();
 
     /**
      * removeMarker
@@ -137,22 +136,20 @@ extManager.defineExtension('mark', function(editor) {
      * @param {string} id of marker that should be removed
      * @returns {marker} removed marker
      */
-    editor.removeMarker = function(id) {
-        return ml.removeMarker(id);
-    };
+    editor.removeMarker = id => ml.removeMarker(id);
 
     /**
      * getMarkersData
      * Get marker data to export so you can restore markers next time
      * @returns {object} markers data
      */
-    editor.exportMarkers = function() {
-        var markersData;
+    editor.exportMarkers = () => {
+        let markersData;
 
-        if (this.isMarkdownMode()) {
+        if (editor.isMarkdownMode()) {
             markersData = ml.getMarkersData();
-        } else if (this.isViewOnly() || this.isWysiwygMode()) {
-            mm.updateMarkersByContent(this.getValue().replace(FIND_CRLF_RX, ''));
+        } else if (editor.isViewOnly() || editor.isWysiwygMode()) {
+            mm.updateMarkersByContent(editor.getValue().replace(FIND_CRLF_RX, ''));
             markersData = ml.getMarkersData();
             mm.updateMarkersByContent(getHelper().getTextContent());
         }
@@ -165,9 +162,9 @@ extManager.defineExtension('mark', function(editor) {
      * Make selection with marker that have given id
      * @param {string} id id of marker
      */
-    editor.selectMarker = function(id) {
-        var helper = getHelper(),
-            marker = this.getMarker(id);
+    editor.selectMarker = id => {
+        const helper = getHelper();
+        const marker = editor.getMarker(id);
 
         if (marker) {
             helper.selectOffsetRange(marker.start, marker.end);
@@ -184,17 +181,17 @@ extManager.defineExtension('mark', function(editor) {
      * @param {string} id id of marker
      * @returns {object} marker that have made
      */
-    editor.addMarker = function(start, end, id) {
-        var marker,
-            helper = getHelper();
+    editor.addMarker = (start, end, id) => {
+        let marker;
+        const helper = getHelper();
 
         if (!id) {
             id = start;
             marker = helper.getMarkerInfoOfCurrentSelection();
         } else {
             marker = {
-                start: start,
-                end: end
+                start,
+                end
             };
 
             marker = helper.updateMarkerWithExtraInfo(marker);
@@ -204,7 +201,7 @@ extManager.defineExtension('mark', function(editor) {
             marker.id = id;
             marker = ml.addMarker(marker);
             ml.sortBy('end');
-            this.eventManager.emit('markerUpdated', [marker]);
+            editor.eventManager.emit('markerUpdated', [marker]);
         }
 
         return marker;
@@ -214,16 +211,16 @@ extManager.defineExtension('mark', function(editor) {
      * clearSelect
      * Clear selection
      */
-    editor.clearSelect = function() {
+    editor.clearSelect = () => {
         getHelper().clearSelect();
     };
 
     if (!editor.isViewOnly()) {
-        editor.on('changeMode', function() {
+        editor.on('changeMode', () => {
             editor._updateMarkers();
         });
 
-        editor.on('change', util.debounce(function() {
+        editor.on('change', util.debounce(() => {
             editor._updateMarkers();
         }, MARKER_UPDATE_DELAY));
 
@@ -231,8 +228,8 @@ extManager.defineExtension('mark', function(editor) {
          * _updateMarkers
          * Update markers with current text content
          */
-        editor._updateMarkers = function() {
-            var helper = getHelper();
+        editor._updateMarkers = () => {
+            const helper = getHelper();
 
             if (!ml.getAll().length) {
                 return;
@@ -240,7 +237,7 @@ extManager.defineExtension('mark', function(editor) {
 
             mm.updateMarkersByContent(helper.getTextContent());
 
-            ml.getAll().forEach(function(marker) {
+            ml.getAll().forEach(marker => {
                 helper.updateMarkerWithExtraInfo(marker);
             });
 

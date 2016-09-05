@@ -1,11 +1,11 @@
 /**
  * @fileoverview Implements HR wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-var CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * HR
@@ -14,17 +14,17 @@ var CommandManager = require('../commandManager'),
  * @augments Command
  * @augments WysiwygCommand
  */
-var HR = CommandManager.command('wysiwyg', /** @lends HR */{
+const HR = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'HR',
     keyMap: ['CTRL+L', 'META+L'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection(),
-            currentNode, nextBlockNode, hr, previousSibling;
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection();
+        let currentNode, nextBlockNode, previousSibling;
 
         if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
@@ -35,9 +35,9 @@ var HR = CommandManager.command('wysiwyg', /** @lends HR */{
                 wwe.get$Body().append(nextBlockNode);
             }
 
-            hr = sq.createElement('HR');
+            const hr = sq.createElement('HR');
 
-            sq.modifyBlocks(function(frag) {
+            sq.modifyBlocks(frag => {
                 frag.appendChild(hr);
 
                 return frag;

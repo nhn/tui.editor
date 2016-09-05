@@ -1,14 +1,12 @@
-'use strict';
+import Italic from '../../src/js/wysiwygCommands/italic';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Italic = require('../../src/js/wysiwygCommands/italic'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Italic', () => {
+    let wwe;
 
-describe('Italic', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -19,15 +17,15 @@ describe('Italic', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add italic to current selection', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('add italic to current selection', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line1<br />line2');
 
@@ -39,8 +37,8 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<i>line1</i><br />line2<br />');
     });
 
-    it('dont add italic in Achor tag', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('dont add italic in Achor tag', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<a href="#">line1</a>');
 
@@ -52,8 +50,8 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
     });
 
-    it('if there have italic already remove format', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have italic already remove format', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('line1<br />line2');
 
@@ -66,8 +64,8 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('line1<br />line2<br />');
     });
 
-    it('if there have italic already remove format in colappsed selection', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have italic already remove format in colappsed selection', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<i>line</i>');
 
@@ -81,8 +79,8 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<i>line</i>a<br />');
     });
 
-    it('if there have bold apply italic into bold', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have bold apply italic into bold', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<b>line</b>');
 
@@ -94,8 +92,8 @@ describe('Italic', function() {
         expect(wwe.getValue()).toEqual('<b><i>line</i></b><br />');
     });
 
-    it('if there have code remove and add italic', function() {
-        var range = wwe.getEditor().getSelection().cloneRange();
+    it('if there have code remove and add italic', () => {
+        const range = wwe.getEditor().getSelection().cloneRange();
 
         wwe.setValue('<code>line</code>');
 

@@ -4,8 +4,6 @@
  */
 
 
-var ToastUIEditor;
-
 //codemirror modes&addons
 require('./codemirror/overlay');
 require('./codemirror/markdown');
@@ -18,25 +16,23 @@ require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 
-ToastUIEditor = require('./editor');
+import ToastUIEditor from './editor';
 
 //for jquery
-$.fn.tuiEditor = function() {
-    var args = $.makeArray(arguments),
-        options,
-        instance,
-        el;
+$.fn.tuiEditor = function(...args) {
+    const argumentArray = $.makeArray(...args);
+    let options, instance;
 
-    el = this[0];
+    const el = this[0];
 
     if (el) {
-        options = args[0] || {};
+        options = argumentArray[0] || {};
 
         instance = $.data(el, 'tuiEditor');
 
         if (instance) {
             if (typeof options === 'string') {
-                return instance[options].apply(instance, args.slice(1));
+                return instance[options](...argumentArray.slice(1));
             }
         } else {
             options.el = el;

@@ -1,14 +1,12 @@
-'use strict';
+import AddRow from '../../src/js/wysiwygCommands/tableAddRow';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var AddRow = require('../../src/js/wysiwygCommands/tableAddRow'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Table - AddRow', () => {
+    let wwe;
 
-describe('Table - AddRow', function() {
-    var wwe;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -19,15 +17,15 @@ describe('Table - AddRow', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add row to current td cell below', function() {
-        var sq = wwe.getEditor(),
+    it('add row to current td cell below', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -53,8 +51,8 @@ describe('Table - AddRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(4);
     });
 
-    it('add row to tbody`s first index', function() {
-        var sq = wwe.getEditor(),
+    it('add row to tbody`s first index', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([
@@ -82,8 +80,8 @@ describe('Table - AddRow', function() {
         expect(wwe.get$Body().find('tbody td').length).toEqual(4);
     });
 
-    it('focus to new row\'s first td', function() {
-        var sq = wwe.getEditor(),
+    it('focus to new row\'s first td', () => {
+        const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();
 
         sq.setHTML([

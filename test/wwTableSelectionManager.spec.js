@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwTableSelectionManager from '../src/js/wwTableSelectionManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    WwTableSelectionManager = require('../src/js/wwTableSelectionManager');
+describe('WwTableSelectionManager', () => {
+    let $container, em, wwe, mgr;
 
-describe('WwTableSelectionManager', function() {
-    var $container, em, wwe, mgr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -23,17 +21,16 @@ describe('WwTableSelectionManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('_reArrangeSelectionIfneed', function() {
-        it('should return range that startContainer is first th when startContainer is out of table', function() {
-            var sq = wwe.getEditor();
-            var reArrangedSelection, $tds;
+    describe('_reArrangeSelectionIfneed', () => {
+        it('should return range that startContainer is first th when startContainer is out of table', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<div>div element</div>' +
                 '<table>' +
@@ -46,15 +43,14 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $tds = $('td');
-            reArrangedSelection = mgr._reArrangeSelectionIfneed(sq.get$Body().find('div').eq(0)[0], $tds[1]);
+            const $tds = $('td');
+            const reArrangedSelection = mgr._reArrangeSelectionIfneed(sq.get$Body().find('div').eq(0)[0], $tds[1]);
 
             expect(reArrangedSelection.startContainer).toBe($('th')[0]);
             expect(reArrangedSelection.endContainer).toBe($tds[1]);
         });
-        it('should return range that endContainer is last td when endContainer is out of table', function() {
-            var sq = wwe.getEditor();
-            var reArrangedSelection, $tds;
+        it('should return range that endContainer is last td when endContainer is out of table', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -67,18 +63,17 @@ describe('WwTableSelectionManager', function() {
                 '</table>' +
                 '<div>div element</div>');
 
-            $tds = $('td');
-            reArrangedSelection = mgr._reArrangeSelectionIfneed($tds[1], sq.get$Body().find('div').eq(0)[0]);
+            const $tds = $('td');
+            const reArrangedSelection = mgr._reArrangeSelectionIfneed($tds[1], sq.get$Body().find('div').eq(0)[0]);
 
             expect(reArrangedSelection.startContainer).toBe($tds[1]);
             expect(reArrangedSelection.endContainer).toBe($tds[3]);
         });
     });
-    describe('_applySelectionDirection', function() {
-        it('should return range naturally at same row', function() {
-            var sq = wwe.getEditor();
-            var range = sq.getSelection();
-            var newRange, $tds;
+    describe('_applySelectionDirection', () => {
+        it('should return range naturally at same row', () => {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -90,8 +85,8 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $tds = $('td');
-            newRange = mgr._applySelectionDirection({
+            const $tds = $('td');
+            const newRange = mgr._applySelectionDirection({
                 startContainer: $tds[0],
                 endContainer: $tds[1]
             }, range);
@@ -99,10 +94,9 @@ describe('WwTableSelectionManager', function() {
             expect(newRange.startContainer).toBe($tds[0]);
             expect(newRange.endContainer).toBe($tds[1]);
         });
-        it('should return range reversed at same row', function() {
-            var sq = wwe.getEditor();
-            var range = sq.getSelection();
-            var newRange, $tds;
+        it('should return range reversed at same row', () => {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -114,8 +108,8 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $tds = $('td');
-            newRange = mgr._applySelectionDirection({
+            const $tds = $('td');
+            const newRange = mgr._applySelectionDirection({
                 startContainer: $tds[1],
                 endContainer: $tds[0]
             }, range);
@@ -123,10 +117,9 @@ describe('WwTableSelectionManager', function() {
             expect(newRange.startContainer).toBe($tds[0]);
             expect(newRange.endContainer).toBe($tds[1]);
         });
-        it('should return range naturally row index increases', function() {
-            var sq = wwe.getEditor();
-            var range = sq.getSelection();
-            var newRange, $tds, $ths;
+        it('should return range naturally row index increases', () => {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -138,9 +131,9 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $ths = $('th');
-            $tds = $('td');
-            newRange = mgr._applySelectionDirection({
+            const $ths = $('th');
+            const $tds = $('td');
+            const newRange = mgr._applySelectionDirection({
                 startContainer: $ths[0],
                 endContainer: $tds[2]
             }, range);
@@ -148,10 +141,9 @@ describe('WwTableSelectionManager', function() {
             expect(newRange.startContainer).toBe($ths[0]);
             expect(newRange.endContainer).toBe($tds[2]);
         });
-        it('should return range naturally row index decreases', function() {
-            var sq = wwe.getEditor();
-            var range = sq.getSelection();
-            var newRange, $tds, $ths;
+        it('should return range naturally row index decreases', () => {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -163,9 +155,9 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $tds = $('td');
-            $ths = $('th');
-            newRange = mgr._applySelectionDirection({
+            const $tds = $('td');
+            const $ths = $('th');
+            const newRange = mgr._applySelectionDirection({
                 startContainer: $tds[2],
                 endContainer: $ths[0]
             }, range);
@@ -174,20 +166,19 @@ describe('WwTableSelectionManager', function() {
             expect(newRange.endContainer).toBe($tds[2]);
         });
     });
-    describe('_getTableCell', function() {
-        it('should return td when td element passed', function() {
-            var result = mgr._getTableCell($('<td></td>')[0]);
+    describe('_getTableCell', () => {
+        it('should return td when td element passed', () => {
+            const result = mgr._getTableCell($('<td></td>')[0]);
             expect(result.nodeName).toBe('TD');
         });
-        it('should return td when td element passed', function() {
-            var result = mgr._getTableCell($('<td>hi</td>')[0].firstChild);
+        it('should return td when td element passed', () => {
+            const result = mgr._getTableCell($('<td>hi</td>')[0].firstChild);
             expect(result.nodeName).toBe('TD');
         });
     });
-    describe('getSelectionRangeFromTable', function() {
-        it('should increase endRowOffset by 1 when thead and tbody selected', function() {
-            var sq = wwe.getEditor();
-            var selectionInformation;
+    describe('getSelectionRangeFromTable', () => {
+        it('should increase endRowOffset by 1 when thead and tbody selected', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -199,13 +190,12 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            selectionInformation = mgr.getSelectionRangeFromTable($('th')[0], $('td')[3]);
+            const selectionInformation = mgr.getSelectionRangeFromTable($('th')[0], $('td')[3]);
 
             expect(selectionInformation.to.row).toBe(2);
         });
-        it('should increase both startRowOffset and endRowOffset by 1 when only tbody selected', function() {
-            var sq = wwe.getEditor();
-            var $tds, selectionInformation;
+        it('should increase both startRowOffset and endRowOffset by 1 when only tbody selected', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -217,16 +207,15 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $tds = $('td');
+            const $tds = $('td');
 
-            selectionInformation = mgr.getSelectionRangeFromTable($tds[0], $tds[3]);
+            const selectionInformation = mgr.getSelectionRangeFromTable($tds[0], $tds[3]);
 
             expect(selectionInformation.from.row).toBe(1);
             expect(selectionInformation.to.row).toBe(2);
         });
-        it('should return startRowOffset and endRowOffset zero when only thead selected', function() {
-            var sq = wwe.getEditor();
-            var $ths, selectionInformation;
+        it('should return startRowOffset and endRowOffset zero when only thead selected', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -238,18 +227,18 @@ describe('WwTableSelectionManager', function() {
                 '</tbody>' +
                 '</table>');
 
-            $ths = $('th');
+            const $ths = $('th');
 
-            selectionInformation = mgr.getSelectionRangeFromTable($ths[0], $ths[1]);
+            const selectionInformation = mgr.getSelectionRangeFromTable($ths[0], $ths[1]);
 
             expect(selectionInformation.from.row).toBe(0);
             expect(selectionInformation.to.row).toBe(0);
         });
     });
 
-    describe('_removeCellSelectedClassFromAllCells', function() {
-        it('should remove \'.te-cell-selected\' class from all table cells', function() {
-            var sq = wwe.getEditor();
+    describe('_removeCellSelectedClassFromAllCells', () => {
+        it('should remove \'.te-cell-selected\' class from all table cells', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -268,10 +257,9 @@ describe('WwTableSelectionManager', function() {
         });
     });
 
-    describe('__highlightTableCellsBy', function() {
-        it('should add \'.te-cell-selected\' class to selected cells', function() {
-            var sq = wwe.getEditor();
-            var selectedCells;
+    describe('__highlightTableCellsBy', () => {
+        it('should add \'.te-cell-selected\' class to selected cells', () => {
+            const sq = wwe.getEditor();
 
             sq.setHTML('<table>' +
                 '<thead>' +
@@ -285,7 +273,7 @@ describe('WwTableSelectionManager', function() {
 
             mgr._highlightTableCellsBy($('th')[0], $('td')[3]);
 
-            selectedCells = $('.te-cell-selected');
+            const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(6);
             expect(selectedCells.eq(0).text()).toBe('1');
             expect(selectedCells.eq(1).text()).toBe('2');
@@ -295,9 +283,9 @@ describe('WwTableSelectionManager', function() {
             expect(selectedCells.eq(5).text()).toBe('6');
         });
 
-        it('should add \'.te-cell-selected\' class to selected TDs', function() {
-            var sq = wwe.getEditor();
-            var selectedCells, $tds;
+        it('should add \'.te-cell-selected\' class to selected TDs', () => {
+            const sq = wwe.getEditor();
+
             sq.setHTML('<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -307,11 +295,11 @@ describe('WwTableSelectionManager', function() {
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>' +
                 '</table>');
-            $tds = $('td');
+            const $tds = $('td');
 
             mgr._highlightTableCellsBy($tds[0], $tds[3]);
 
-            selectedCells = $('.te-cell-selected');
+            const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);
             expect(selectedCells.eq(0).text()).toBe('3');
             expect(selectedCells.eq(1).text()).toBe('4');
@@ -319,9 +307,8 @@ describe('WwTableSelectionManager', function() {
             expect(selectedCells.eq(3).text()).toBe('6');
         });
 
-        it('should add \'.te-cell-selected\' class to selected TDs abnormally', function() {
-            var sq = wwe.getEditor();
-            var selectedCells;
+        it('should add \'.te-cell-selected\' class to selected TDs abnormally', () => {
+            const sq = wwe.getEditor();
             sq.setHTML('<table>' +
                 '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
@@ -334,7 +321,7 @@ describe('WwTableSelectionManager', function() {
 
             mgr._highlightTableCellsBy($('th')[1], $('td')[2]);
 
-            selectedCells = $('.te-cell-selected');
+            const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);
             expect(selectedCells.eq(0).text()).toBe('2');
             expect(selectedCells.eq(1).text()).toBe('3');

@@ -1,11 +1,12 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * RemoveCol
@@ -14,25 +15,24 @@ var CommandManager = require('../commandManager'),
  * @augments Command
  * @augments WysiwygCommand
  */
-var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
+const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     name: 'RemoveCol',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor();
-        var range = sq.getSelection().cloneRange();
-        var tableMgr = wwe.getManager('table');
-        var isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
-        var $cell, $nextFocus;
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        const tableMgr = wwe.getManager('table');
+        const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
         sq.focus();
 
         if (sq.hasFormat('TR') && isAbleToRemoveColumn) {
             sq.saveUndoState(range);
-            $cell = getCellByRange(range);
-            $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
+            const $cell = getCellByRange(range);
+            const $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
 
             removeColByCell($cell);
 
@@ -41,8 +41,13 @@ var RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     }
 });
 
+/**
+ * Get cell by range object
+ * @param {Range} range range
+ * @returns {HTMLElement|Node}
+ */
 function getCellByRange(range) {
-    var cell = range.startContainer;
+    let cell = range.startContainer;
 
     if (domUtils.getNodeName(cell) === 'TD' || domUtils.getNodeName(cell) === 'TH') {
         cell = $(cell);
@@ -53,20 +58,29 @@ function getCellByRange(range) {
     return cell;
 }
 
+/**
+ * Remove column by given cell
+ * @param {jQuery} $cell jQuery wrapped table cell
+ */
 function removeColByCell($cell) {
-    var index = $cell.index();
+    const index = $cell.index();
 
-    $cell.parents('table').find('tr').each(function(n, tr) {
+    $cell.parents('table').find('tr').each((n, tr) => {
         $(tr).children().eq(index).remove();
     });
 }
 
+/**
+ * Focus to given cell
+ * @param {Squire} sq Squire instance
+ * @param {jQuery} $cell jQuery wrapped table cell
+ * @param {object} tableMgr Table manager instance
+ */
 function focusToCell(sq, $cell, tableMgr) {
-    var nextFocusCell = $cell[0];
-    var range;
+    const nextFocusCell = $cell[0];
 
     if ($cell.length) {
-        range = sq.getSelection();
+        const range = sq.getSelection();
         range.selectNodeContents($cell[0]);
         range.collapse(true);
         sq.setSelection(range);

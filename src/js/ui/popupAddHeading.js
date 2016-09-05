@@ -4,12 +4,12 @@
  */
 
 
-var LayerPopup = require('./layerpopup');
+import LayerPopup from './layerpopup';
 
-var util = tui.util;
+const util = tui.util;
 
 /* eslint-disable indent */
-var POPUP_CONTENT = [
+const POPUP_CONTENT = [
     '<ul>',
         '<li data-value="1"><h1>제목</h1></li>',
         '<li data-value="2"><h2>제목</h2></li>',
@@ -50,13 +50,13 @@ PopupAddHeading.prototype = util.extend(
 );
 
 PopupAddHeading.prototype._linkWithEventManager = function() {
-    var self = this;
+    const self = this;
 
-    this.eventManager.listen('focus', function() {
+    this.eventManager.listen('focus', () => {
         self.hide();
     });
 
-    this.eventManager.listen('openHeadingSelect', function() {
+    this.eventManager.listen('openHeadingSelect', () => {
         self.eventManager.emit('closeAllPopup');
         self.$el.css({
             'top': self.$button.position().top + self.$button.height() + 5,
@@ -65,17 +65,19 @@ PopupAddHeading.prototype._linkWithEventManager = function() {
         self.show();
     });
 
-    this.eventManager.listen('closeAllPopup', function() {
+    this.eventManager.listen('closeAllPopup', () => {
         self.hide();
     });
 };
 
 PopupAddHeading.prototype._bindEvent = function() {
-    var self = this;
+    const self = this;
 
+    /* eslint-disable prefer-arrow-callback*/
     this.on('click li', /** @this Node */function() {
         self.eventManager.emit('command', 'Heading', $(this).data('value'));
     });
+    /* eslint-enable prefer-arrow-callback*/
 };
 
 module.exports = PopupAddHeading;

@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Table
@@ -13,7 +14,7 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var Table = CommandManager.command('wysiwyg', /** @lends Table */{
+const Table = CommandManager.command('wysiwyg', /** @lends Table */{
     name: 'Table',
     /**
      * Command Handler
@@ -22,10 +23,10 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
      * @param {number} row row count
      * @param {Array} data initial table data
      */
-    exec: function(wwe, col, row, data) {
-        var sq = wwe.getEditor();
-        var tableIDClassName = wwe.getManager('table').getTableIDClassName();
-        var table;
+    exec(wwe, col, row, data) {
+        const sq = wwe.getEditor();
+        const tableIDClassName = wwe.getManager('table').getTableIDClassName();
+        let tableHTMLString;
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
             sq.focus();
@@ -33,25 +34,29 @@ var Table = CommandManager.command('wysiwyg', /** @lends Table */{
             return;
         }
 
-        table = '<table class="' + tableIDClassName + '">';
-        table += makeHeader(col, data);
-        table += makeBody(col, row - 1, data);
-        table += '</table>';
+        tableHTMLString = `<table class="${tableIDClassName}">`;
+        tableHTMLString += makeHeader(col, data);
+        tableHTMLString += makeBody(col, row - 1, data);
+        tableHTMLString += '</table>';
 
-        sq.insertHTML(table);
+        sq.insertHTML(tableHTMLString);
 
         sq.focus();
 
         if (!data) {
-            focusToFirstTh(sq, wwe.get$Body().find('.' + tableIDClassName));
+            focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
         }
     }
 });
 
+/**
+ * Focus to first th
+ * @param {Squire} sq Squire instance
+ * @param {jQuery} $table jQuery wrapped table element
+ */
 function focusToFirstTh(sq, $table) {
-    var range;
+    const range = sq.getSelection();
 
-    range = sq.getSelection();
     range.selectNodeContents($table.find('th')[0]);
     range.collapse(true);
     sq.setSelection(range);
@@ -65,8 +70,8 @@ function focusToFirstTh(sq, $table) {
  * @returns {string} html string
  */
 function makeHeader(col, data) {
-    var header = '<thead><tr>',
-        index = 0;
+    let header = '<thead><tr>';
+    let index = 0;
 
     while (col) {
         header += '<th>';
@@ -94,14 +99,13 @@ function makeHeader(col, data) {
  * @returns {string} html string
  */
 function makeBody(col, row, data) {
-    var body = '<tbody>',
-        index = col,
-        irow, icol;
+    let body = '<tbody>';
+    let index = col;
 
-    for (irow = 0; irow < row; irow += 1) {
+    for (let irow = 0; irow < row; irow += 1) {
         body += '<tr>';
 
-        for (icol = 0; icol < col; icol += 1) {
+        for (let icol = 0; icol < col; icol += 1) {
             body += '<td>';
 
             if (data) {

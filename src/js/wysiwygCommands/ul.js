@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements WysiwygCommand
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * UL
@@ -13,16 +14,16 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var UL = CommandManager.command('wysiwyg', /** @lends UL */{
+const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     name: 'UL',
     keyMap: ['CTRL+U', 'META+U'],
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var sq = wwe.getEditor(),
-            range = sq.getSelection();
+    exec(wwe) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection();
 
         sq.focus();
 

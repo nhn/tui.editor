@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Table
@@ -12,7 +12,7 @@ var CommandManager = require('../commandManager');
  * @exports Table
  * @augments Command
  */
-var Table = CommandManager.command('markdown', /** @lends Table */{
+const Table = CommandManager.command('markdown', /** @lends Table */{
     name: 'Table',
     /**
      * Command handler
@@ -21,10 +21,10 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
      * @param {number} row row count
      * @param {Array} data initial table data
      */
-    exec: function(mde, col, row, data) {
-        var cm = mde.getEditor(),
-            doc = cm.getDoc(),
-            table = '\n';
+    exec(mde, col, row, data) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
+        let table = '\n';
 
         if (cm.getCursor().ch > 0) {
             table += '\n';
@@ -43,20 +43,21 @@ var Table = CommandManager.command('markdown', /** @lends Table */{
     }
 });
 
-/*
+/**
  * makeHeader
  * make table header markdown string
- * @param {number} col column count
+ * @param {number} col Column count
+ * @param {array} data Cell's text content
  * @returns {string} markdown string
  */
 function makeHeader(col, data) {
-    var header = '|',
-        border = '|',
-        index = 0;
+    let header = '|';
+    let border = '|';
+    let index = 0;
 
     while (col) {
         if (data) {
-            header += ' ' + data[index] + ' |';
+            header += ` ${data[index]} |`;
             index += 1;
         } else {
             header += '  |';
@@ -66,7 +67,8 @@ function makeHeader(col, data) {
 
         col -= 1;
     }
-    return header + '\n' + border + '\n';
+
+    return `${header}\n${border}\n`;
 }
 
 /**
@@ -78,16 +80,15 @@ function makeHeader(col, data) {
  * @returns {string} html string
  */
 function makeBody(col, row, data) {
-    var body = '',
-        index = col,
-        irow, icol;
+    let body = '';
+    let index = col;
 
-    for (irow = 0; irow < row; irow += 1) {
+    for (let irow = 0; irow < row; irow += 1) {
         body += '|';
 
-        for (icol = 0; icol < col; icol += 1) {
+        for (let icol = 0; icol < col; icol += 1) {
             if (data) {
-                body += ' ' + data[index] + ' |';
+                body += ` ${data[index]} |`;
                 index += 1;
             } else {
                 body += '  |';

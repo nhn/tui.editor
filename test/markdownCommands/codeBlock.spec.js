@@ -1,17 +1,12 @@
-'use strict';
+import CodeBlock from '../../src/js/markdownCommands/codeBlock';
+import MarkdownEditor from '../../src/js/markdownEditor';
+import EventManager from '../../src/js/eventManager';
 
-var CodeBlock = require('../../src/js/markdownCommands/codeBlock'),
-    MarkdownEditor = require('../../src/js/markdownEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('CodeBlock', () => {
+    let cm, doc, mde;
 
-describe('CodeBlock', function() {
-    var cm,
-        doc,
-        mde;
-
-    beforeEach(function() {
-        var $container = $('<div />'),
-            sourceText;
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -21,17 +16,17 @@ describe('CodeBlock', function() {
 
         cm = mde.getEditor();
 
-        sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
+        const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    it('Add code block in empty line', function() {
+    it('Add code block in empty line', () => {
         doc.setCursor(1, 0);
 
         CodeBlock.exec(mde);
@@ -40,7 +35,7 @@ describe('CodeBlock', function() {
         expect(cm.getCursor().line).toEqual(3);
     });
 
-    it('Add code block in line that has text', function() {
+    it('Add code block in line that has text', () => {
         doc.setCursor(0, 7);
 
         CodeBlock.exec(mde);

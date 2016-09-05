@@ -4,11 +4,11 @@
  */
 
 
-var UIController = require('./uicontroller');
+import UIController from './uicontroller';
 
-var util = tui.util;
+const util = tui.util;
 
-var TYPE = {
+const TYPE = {
     MARKDOWN: 'markdown',
     WYSIWYG: 'wysiwyg'
 };
@@ -59,7 +59,7 @@ ModeSwitch.prototype._changeWysiwyg = function() {
 };
 
 ModeSwitch.prototype._setActiveButton = function(type) {
-    util.forEach(this.$buttons, function($button) {
+    util.forEach(this.$buttons, $button => {
         $button.removeClass('active');
     });
     this.$buttons[type].addClass('active');

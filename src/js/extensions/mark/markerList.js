@@ -1,6 +1,10 @@
+/**
+ * @fileoverview Implements markdown marker helper for additional information
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ */
 
 
-var util = tui.util;
+const util = tui.util;
 
 /**
  * Markerlist
@@ -8,159 +12,152 @@ var util = tui.util;
  * @constructor
  * @class
  */
-function Markerlist() {
-    this._sortedMarkers = [];
-    this._markersWithId = {};
-}
-
-/**
- * addMarker
- * Add Marker
- * @param {number|object} start start text offset
- * @param {number} end end text offset
- * @param {string} id id of marker
- * @returns {object} marker
- */
-Markerlist.prototype.addMarker = function(start, end, id) {
-    var marker;
-
-    if (!id) {
-        marker = start;
-    } else {
-        marker = {
-            start: start,
-            end: end,
-            id: id
-        };
+class Markerlist {
+    constructor() {
+        this._sortedMarkers = [];
+        this._markersWithId = {};
     }
 
-    if (!this._markersWithId[marker.id]) {
-        this._sortedMarkers.push(marker);
-        this._markersWithId[marker.id] = marker;
-    }
+    /**
+     * addMarker
+     * Add Marker
+     * @param {number|object} start start text offset
+     * @param {number} end end text offset
+     * @param {string} id id of marker
+     * @returns {object} marker
+     */
+    addMarker(start, end, id) {
+        let marker;
 
-    return marker;
-};
-
-/**
- * getMarker
- * Get marker with given id
- * @param {string} id id of marker
- * @returns {object} marker
- */
-Markerlist.prototype.getMarker = function(id) {
-    return this._markersWithId[id];
-};
-
-/**
- * removeMarker
- * Remove marker with given id
- * @param {string} id of marker that should be removed
- * @returns {marker} removed marker
- */
-Markerlist.prototype.removeMarker = function(id) {
-    var removedMarker, index;
-
-    removedMarker = this._markersWithId[id];
-    delete this._markersWithId[id];
-
-    index = this._sortedMarkers.indexOf(removedMarker);
-    this._sortedMarkers.splice(index, 1);
-
-    return removedMarker;
-};
-
-/**
- * updateMarker
- * Update marker with extra information
- * @param {string} id id of marker
- * @param {object} obj extra information
- * @returns {object} marker
- */
-Markerlist.prototype.updateMarker = function(id, obj) {
-    var marker = this.getMarker(id);
-
-    return util.extend(marker, obj);
-};
-
-/**
- * forEachByRangeAffected
- * Iterate markers affected by given range
- * @param {number} start start offset
- * @param {end} end end offset
- * @param {function} iteratee iteratee
- */
-Markerlist.prototype.forEachByRangeAffected = function(start, end, iteratee) {
-    var rangeMarkers;
-
-    rangeMarkers = this._getMarkersByRangeAffected(start, end);
-
-    rangeMarkers.forEach(iteratee);
-};
-
-/**
- * _getMarkersByRangeAffected
- * Get markers affected by given range
- * @param {number} start start offset
- * @param {end} end end offset
- * @returns {Array.<object>} markers
- */
-Markerlist.prototype._getMarkersByRangeAffected = function(start, end) {
-    var rangeMarkers;
-
-    rangeMarkers = this._sortedMarkers.filter(function(marker) {
-        if (marker.end > end || marker.end > start) {
-            return true;
+        if (!id) {
+            marker = start;
+        } else {
+            marker = {
+                start,
+                end,
+                id
+            };
         }
 
-        return false;
-    });
+        if (!this._markersWithId[marker.id]) {
+            this._sortedMarkers.push(marker);
+            this._markersWithId[marker.id] = marker;
+        }
 
-    return rangeMarkers;
-};
+        return marker;
+    }
 
-/**
- * getAll
- * Get markers all
- * @returns {Array.<object>} markers
- */
-Markerlist.prototype.getAll = function() {
-    return this._sortedMarkers;
-};
+    /**
+     * getMarker
+     * Get marker with given id
+     * @param {string} id id of marker
+     * @returns {object} marker
+     */
+    getMarker(id) {
+        return this._markersWithId[id];
+    }
 
-/**
- * resetMarkers
- * Reset markerlist
- */
-Markerlist.prototype.resetMarkers = function() {
-    this._sortedMarkers = [];
-    this._markersWithId = {};
-};
+    /**
+     * removeMarker
+     * Remove marker with given id
+     * @param {string} id of marker that should be removed
+     * @returns {marker} removed marker
+     */
+    removeMarker(id) {
+        const removedMarker = this._markersWithId[id];
+        delete this._markersWithId[id];
 
-/**
- * sortBy
- * Sort markers with given key of marker
- * @param {string} rangeKey, start or end
- */
-Markerlist.prototype.sortBy = function(rangeKey) {
-    this._sortedMarkers.sort(function(a, b) {
-        return a[rangeKey] - b[rangeKey];
-    });
-};
+        const index = this._sortedMarkers.indexOf(removedMarker);
+        this._sortedMarkers.splice(index, 1);
 
-/**
- * getMarkersData
- * Get marker data to export
- * @returns {object} markers data
- */
-Markerlist.prototype.getMarkersData = function() {
-    return this.getAll().map(function(marker) {
-        return {
+        return removedMarker;
+    }
+
+    /**
+     * updateMarker
+     * Update marker with extra information
+     * @param {string} id id of marker
+     * @param {object} obj extra information
+     * @returns {object} marker
+     */
+    updateMarker(id, obj) {
+        const marker = this.getMarker(id);
+
+        return util.extend(marker, obj);
+    }
+
+    /**
+     * forEachByRangeAffected
+     * Iterate markers affected by given range
+     * @param {number} start start offset
+     * @param {end} end end offset
+     * @param {function} iteratee iteratee
+     */
+    forEachByRangeAffected(start, end, iteratee) {
+        const rangeMarkers = this._getMarkersByRangeAffected(start, end);
+
+        rangeMarkers.forEach(iteratee);
+    }
+
+    /**
+     * _getMarkersByRangeAffected
+     * Get markers affected by given range
+     * @param {number} start start offset
+     * @param {end} end end offset
+     * @returns {Array.<object>} markers
+     */
+    _getMarkersByRangeAffected(start, end) {
+        const rangeMarkers = this._sortedMarkers.filter(marker => {
+            if (marker.end > end || marker.end > start) {
+                return true;
+            }
+
+            return false;
+        });
+
+        return rangeMarkers;
+    }
+
+    /**
+     * getAll
+     * Get markers all
+     * @returns {Array.<object>} markers
+     */
+    getAll() {
+        return this._sortedMarkers;
+    }
+
+    /**
+     * resetMarkers
+     * Reset markerlist
+     */
+    resetMarkers() {
+        this._sortedMarkers = [];
+        this._markersWithId = {};
+    }
+
+    /**
+     * sortBy
+     * Sort markers with given key of marker
+     * @param {string} rangeKey, start or end
+     */
+    sortBy(rangeKey) {
+        this._sortedMarkers.sort((a, b) => a[rangeKey] - b[rangeKey]);
+    }
+
+    /**
+     * getMarkersData
+     * Get marker data to export
+     * @returns {object} markers data
+     */
+    getMarkersData() {
+        return this.getAll().map(marker => ({
             start: marker.start,
             end: marker.end,
             id: marker.id
-        };
-    });
-};
+        })
+        );
+    }
+}
 
 module.exports = Markerlist;

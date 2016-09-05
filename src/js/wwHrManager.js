@@ -4,7 +4,7 @@
  */
 
 
-var domUtils = require('./domUtils');
+import domUtils from './domUtils';
 
 /**
  * WwHrManager
@@ -13,214 +13,225 @@ var domUtils = require('./domUtils');
  * @class WwHrManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
-function WwHrManager(wwe) {
-    this.wwe = wwe;
-    this.eventManager = wwe.eventManager;
+class WwHrManager {
+    constructor(wwe) {
+        this.wwe = wwe;
+        this.eventManager = wwe.eventManager;
 
-    this._init();
-}
-/**
- * Name property
- * @api
- * @memberOf WwHrManager
- * @type {string}
- */
-WwHrManager.prototype.name = 'hr';
+        /**
+         * Name property
+         * @api
+         * @memberOf WwHrManager
+         * @type {string}
+         */
+        this.name = 'hr';
 
-/**
- * _init
- * Initialize
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._init = function() {
-    this._initKeyHandler();
-    this._initEvent();
-};
+        this._init();
+    }
 
-/**
- * _initEvent
- * Initialize eventmanager event
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._initEvent = function() {
-    var self = this;
+    /**
+     * _init
+     * Initialize
+     * @memberOf WwHrManager
+     * @private
+     */
+    _init() {
+        this._initKeyHandler();
+        this._initEvent();
+    }
 
-    this.eventManager.listen('wysiwygSetValueAfter', function() {
-        self._unwrapDivOnHr();
-    });
+    /**
+     * _initEvent
+     * Initialize eventmanager event
+     * @memberOf WwHrManager
+     * @private
+     */
+    _initEvent() {
+        this.eventManager.listen('wysiwygSetValueAfter', () => {
+            this._unwrapDivOnHr();
+        });
 
-    this.eventManager.listen('wysiwygGetValueBefore', function() {
-        self._wrapDefaultBlockToOrphanTexts();
-    });
-};
-
-/**
- * _initKeyHandler
- * Initialize key event handler
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._initKeyHandler = function() {
-    var self = this;
-
-    this.wwe.addKeyEventHandler(function(ev, range) {
-        return self._onTypedInHr(range);
-    });
-
-    this.wwe.addKeyEventHandler('ENTER', function(ev, range) {
-        if (range.collapsed) {
-            return self._removeHrOnEnter(range, ev);
-        }
-
-        return true;
-    });
-
-    this.wwe.addKeyEventHandler('BACK_SPACE', function(ev, range) {
-        if (range.collapsed) {
-            return self._removeHrOnBackspace(range, ev);
-        }
-
-        return true;
-    });
-};
-
-/**
- * _isInHr
- * Check whether passed range is in hr or not
- * @param {Range} range range
- * @returns {boolean} result
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._isInHr = function(range) {
-    return domUtils.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
-};
-
-/**
- * _isNearHr
- * Check whether passed range is near hr or not
- * @param {Range} range range
- * @returns {boolean} result
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._isNearHr = function(range) {
-    var prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-
-    return domUtils.getNodeName(prevNode) === 'HR';
-};
-
-/**
- * Handler for delete HR when user typing within
- * @param {Range} range Range object
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._onTypedInHr = function(range) {
-    var self = this;
-
-    //HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
-    if (this._isInHr(range) || this._isNearHr(range)) {
-        this.wwe.defer(function(wwe) {
-            wwe.saveSelection();
-            self._wrapDefaultBlockToOrphanTexts();
-            wwe.restoreSavedSelection();
+        this.eventManager.listen('wysiwygGetValueBefore', () => {
+            this._wrapDefaultBlockToOrphanTexts();
         });
     }
-};
 
-/**
- * _removeHrOnEnter
- * Remove hr if need on enter
- * @param {Range} range range
- * @param {Event} ev event
- * @returns {boolean} return true if hr was removed
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._removeHrOnEnter = function(range, ev) {
-    var hrSuspect, blockPosition;
+    /**
+     * _initKeyHandler
+     * Initialize key event handler
+     * @memberOf WwHrManager
+     * @private
+     */
+    _initKeyHandler() {
+        this.wwe.addKeyEventHandler((ev, range) => this._onTypedInHr(range));
 
-    if (this._isInHr(range)) {
-        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-    } else if (this._isNearHr(range)) {
-        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        blockPosition = 'before';
+        this.wwe.addKeyEventHandler('ENTER', (ev, range) => {
+            if (range.collapsed) {
+                return this._removeHrOnEnter(range, ev);
+            }
+
+            return true;
+        });
+
+        this.wwe.addKeyEventHandler('BACK_SPACE', (ev, range) => {
+            if (range.collapsed) {
+                return this._removeHrOnBackspace(range, ev);
+            }
+
+            return true;
+        });
     }
 
-    return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
-};
-
-/**
- * _removeHrOnBackspace
- * Remove hr if need on backspace
- * @param {Range} range range
- * @param {Event} ev event
- * @returns {boolean} return true if hr was removed
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._removeHrOnBackspace = function(range, ev) {
-    var hrSuspect, blockPosition;
-
-    if (this._isInHr(range)) {
-        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-    } else if (range.startOffset === 0) {
-        hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
-        blockPosition = 'none';
-    } else if (this._isNearHr(range)) {
-        hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
-        blockPosition = 'before';
+    /**
+     * _isInHr
+     * Check whether passed range is in hr or not
+     * @param {Range} range range
+     * @returns {boolean} result
+     * @memberOf WwHrManager
+     * @private
+     */
+    _isInHr(range) {
+        return domUtils.getNodeName(range.startContainer.childNodes[range.startOffset]) === 'HR';
     }
 
-    return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
-};
+    /**
+     * _isNearHr
+     * Check whether passed range is near hr or not
+     * @param {Range} range range
+     * @returns {boolean} result
+     * @memberOf WwHrManager
+     * @private
+     */
+    _isNearHr(range) {
+        const prevNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
 
-/**
- * _changeHrToNewDefaultBlock
- * Remove hr and add new default block then set range to it
- * @param {Node} hrSuspect Node could be hr
- * @param {Range} range range
- * @param {Event} ev event
- * @param {strong} newBlockPosition new default block add position
- * @returns {boolean} return true if hr was removed
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._changeHrToNewDefaultBlock = function(hrSuspect, range, ev, newBlockPosition) {
-    if (hrSuspect && domUtils.getNodeName(hrSuspect) === 'HR') {
-        ev.preventDefault();
+        return domUtils.getNodeName(prevNode) === 'HR';
+    }
 
-        if (newBlockPosition !== 'none') {
-            this.wwe.breakToNewDefaultBlock(range, newBlockPosition);
+    /**
+     * Handler for delete HR when user typing within
+     * @param {Range} range Range object
+     * @memberOf WwHrManager
+     * @private
+     */
+    _onTypedInHr(range) {
+        //HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
+        if (this._isInHr(range) || this._isNearHr(range)) {
+            this.wwe.defer(wwe => {
+                wwe.saveSelection();
+                this._wrapDefaultBlockToOrphanTexts();
+                wwe.restoreSavedSelection();
+            });
+        }
+    }
+
+    /**
+     * _removeHrOnEnter
+     * Remove hr if need on enter
+     * @param {Range} range range
+     * @param {Event} ev event
+     * @returns {boolean} return true if hr was removed
+     * @memberOf WwHrManager
+     * @private
+     */
+    _removeHrOnEnter(range, ev) {
+        let hrSuspect, blockPosition;
+
+        if (this._isInHr(range)) {
+            hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+        } else if (this._isNearHr(range)) {
+            hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+            blockPosition = 'before';
         }
 
-        $(hrSuspect).remove();
-
-        return false;
+        return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
     }
 
-    return true;
-};
+    /**
+     * _removeHrOnBackspace
+     * Remove hr if need on backspace
+     * @param {Range} range range
+     * @param {Event} ev event
+     * @returns {boolean} return true if hr was removed
+     * @memberOf WwHrManager
+     * @private
+     */
+    _removeHrOnBackspace(range, ev) {
+        let hrSuspect, blockPosition;
 
-/**
- * _unwrapDivOnHr
- * Unwrap default block on hr
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._unwrapDivOnHr = function() {
-    var editorContentBody = this.wwe.get$Body()[0];
-    this.wwe.get$Body().find('hr').each(function(index, node) {
-        var parentDiv = $(node).parent('div');
-        if (parentDiv[0] !== editorContentBody) {
-            parentDiv.find('br').remove();
-            $(node).unwrap();
+        if (this._isInHr(range)) {
+            hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+        } else if (range.startOffset === 0) {
+            hrSuspect = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
+            blockPosition = 'none';
+        } else if (this._isNearHr(range)) {
+            hrSuspect = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset - 1);
+            blockPosition = 'before';
         }
-    });
-};
+
+        return this._changeHrToNewDefaultBlock(hrSuspect, range, ev, blockPosition);
+    }
+
+    /**
+     * _changeHrToNewDefaultBlock
+     * Remove hr and add new default block then set range to it
+     * @param {Node} hrSuspect Node could be hr
+     * @param {Range} range range
+     * @param {Event} ev event
+     * @param {strong} newBlockPosition new default block add position
+     * @returns {boolean} return true if hr was removed
+     * @memberOf WwHrManager
+     * @private
+     */
+    _changeHrToNewDefaultBlock(hrSuspect, range, ev, newBlockPosition) {
+        if (hrSuspect && domUtils.getNodeName(hrSuspect) === 'HR') {
+            ev.preventDefault();
+
+            if (newBlockPosition !== 'none') {
+                this.wwe.breakToNewDefaultBlock(range, newBlockPosition);
+            }
+
+            $(hrSuspect).remove();
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * _unwrapDivOnHr
+     * Unwrap default block on hr
+     * @memberOf WwHrManager
+     * @private
+     */
+    _unwrapDivOnHr() {
+        const editorContentBody = this.wwe.get$Body()[0];
+        this.wwe.get$Body().find('hr').each((index, node) => {
+            const parentDiv = $(node).parent('div');
+            if (parentDiv[0] !== editorContentBody) {
+                parentDiv.find('br').remove();
+                $(node).unwrap();
+            }
+        });
+    }
+
+    /**
+     * _wrapDefaultBlockToOrphanTexts
+     * Wrap default block to orphan texts
+     * mainly, this is used for orphan text that made by controlling hr
+     * @memberOf WwHrManager
+     * @private
+     */
+    _wrapDefaultBlockToOrphanTexts() {
+        const textNodes = this.wwe.get$Body().contents().filter(findTextNodeFilter);
+
+        textNodes.each((i, node) => {
+            $(node).wrap('<div />');
+        });
+    }
+}
+
 
 /**
  * findTextNodeFilter
@@ -231,22 +242,5 @@ WwHrManager.prototype._unwrapDivOnHr = function() {
 function findTextNodeFilter() {
     return this.nodeType === Node.TEXT_NODE;
 }
-
-/**
- * _wrapDefaultBlockToOrphanTexts
- * Wrap default block to orphan texts
- * mainly, this is used for orphan text that made by controlling hr
- * @memberOf WwHrManager
- * @private
- */
-WwHrManager.prototype._wrapDefaultBlockToOrphanTexts = function() {
-    var textNodes;
-
-    textNodes = this.wwe.get$Body().contents().filter(findTextNodeFilter);
-
-    textNodes.each(function(i, node) {
-        $(node).wrap('<div />');
-    });
-};
 
 module.exports = WwHrManager;

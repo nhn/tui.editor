@@ -1,17 +1,12 @@
-'use strict';
+import Code from '../../src/js/markdownCommands/code';
+import MarkdownEditor from '../../src/js/markdownEditor';
+import EventManager from '../../src/js/eventManager';
 
-var Code = require('../../src/js/markdownCommands/code'),
-    MarkdownEditor = require('../../src/js/markdownEditor'),
-    EventManager = require('../../src/js/eventManager');
+describe('Code', () => {
+    let cm, doc, mde;
 
-describe('Code', function() {
-    var cm,
-        doc,
-        mde;
-
-    beforeEach(function() {
-        var $container = $('<div />'),
-            sourceText;
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -21,17 +16,17 @@ describe('Code', function() {
 
         cm = mde.getEditor();
 
-        sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
+        const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
 
         cm.setValue(sourceText.join('\n'));
         doc = cm.getDoc();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    it('Add code', function() {
+    it('Add code', () => {
         doc.setCursor(1, 0);
 
         Code.exec(mde);
@@ -40,7 +35,7 @@ describe('Code', function() {
         expect(cm.getCursor().ch).toEqual(1);
     });
 
-    it('Add code for selection', function() {
+    it('Add code for selection', () => {
         doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
 
         Code.exec(mde);

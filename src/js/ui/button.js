@@ -3,11 +3,11 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-var UIController = require('./uicontroller');
-var Tooltip = require('./tooltip');
+const UIController = require('./uicontroller');
+const Tooltip = require('./tooltip');
 
-var util = tui.util;
-var tooltip = new Tooltip();
+const util = tui.util;
+const tooltip = new Tooltip();
 
 /**
  * Button
@@ -25,7 +25,7 @@ var tooltip = new Tooltip();
 function Button(options) {
     UIController.call(this, {
         tagName: 'button',
-        className: options.className + ' tui-toolbar-icons',
+        className: `${options.className} tui-toolbar-icons`,
         rootElement: options.$el
     });
 

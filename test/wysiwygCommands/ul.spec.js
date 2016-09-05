@@ -1,15 +1,13 @@
-'use strict';
+import UL from '../../src/js/wysiwygCommands/ul';
+import WwTaskManager from '../../src/js/wwTaskManager';
+import WysiwygEditor from '../../src/js/wysiwygEditor';
+import EventManager from '../../src/js/eventManager';
 
-var UL = require('../../src/js/wysiwygCommands/ul'),
-    WysiwygEditor = require('../../src/js/wysiwygEditor'),
-    WwTaskManager = require('../../src/js/wwTaskManager'),
-    EventManager = require('../../src/js/eventManager');
+describe('UL', () => {
+    let wwe, sq;
 
-describe('UL', function() {
-    var wwe, sq;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -23,22 +21,22 @@ describe('UL', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    it('add UL', function() {
+    it('add UL', () => {
         UL.exec(wwe);
 
         expect(wwe.get$Body().find('ul').length).toEqual(1);
         expect(wwe.get$Body().find('li').length).toEqual(1);
     });
 
-    it('if have task in range then remove task and change to ul', function() {
-        var range = sq.getSelection().cloneRange();
+    it('if have task in range then remove task and change to ul', () => {
+        const range = sq.getSelection().cloneRange();
 
         sq.setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
 

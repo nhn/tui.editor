@@ -4,7 +4,7 @@
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Code
@@ -12,20 +12,19 @@ var CommandManager = require('../commandManager');
  * @exports Code
  * @augments Command
  */
-var Code = CommandManager.command('markdown', /** @lends Code */{
+const Code = CommandManager.command('markdown', /** @lends Code */{
     name: 'Code',
     keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
     /**
      * Command Handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var range, selection,
-            cm = mde.getEditor(),
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
 
-        selection = doc.getSelection();
-        range = cm.getCursor();
+        const selection = doc.getSelection();
+        const range = cm.getCursor();
 
         doc.replaceSelection(this.append(selection), 'around');
 
@@ -40,8 +39,8 @@ var Code = CommandManager.command('markdown', /** @lends Code */{
      * @param {string} text 셀렉션텍스트
      * @returns {string} 가 적용된 텍스트
      */
-    append: function(text) {
-        return '`' + text + '`';
+    append(text) {
+        return `\`${text}\``;
     }
 });
 

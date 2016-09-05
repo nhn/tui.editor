@@ -1,10 +1,11 @@
 /**
  * @fileoverview Implements incease depth wysiwyg command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
 
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * IncreaseDepth
@@ -13,21 +14,21 @@ var CommandManager = require('../commandManager');
  * @augments Command
  * @augments WysiwygCommand
  */
-var IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
+const IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'IncreaseDepth',
     /**
      *  커맨드 핸들러
      *  @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
-    exec: function(wwe) {
-        var $next, $prev, prevClasses, nodeClasses, nextClasses;
-        var range = wwe.getEditor().getSelection();
-        var $node = $(range.startContainer).closest('li');
+    exec(wwe) {
+        const range = wwe.getEditor().getSelection();
+        const $node = $(range.startContainer).closest('li');
+        let prevClasses, nodeClasses, nextClasses;
 
-        $prev = $node.prev();
+        const $prev = $node.prev();
 
         if ($prev.length && $node.length) {
-            $next = $node.find('li').eq(0);
+            const $next = $node.find('li').eq(0);
 
             wwe.getEditor().saveUndoState();
 

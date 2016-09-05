@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-var CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * HR
@@ -12,27 +11,26 @@ var CommandManager = require('../commandManager');
  * @exports HR
  * @augments Command
  */
-var HR = CommandManager.command('markdown', /** @lends HR */{
+const HR = CommandManager.command('markdown', /** @lends HR */{
     name: 'HR',
     keyMap: ['CTRL+L', 'META+L'],
     /**
      * Command handler
      * @param {MarkdownEditor} mde MarkdownEditor instance
      */
-    exec: function(mde) {
-        var range, from, to,
-            cm = mde.getEditor(),
-            replaceText = '',
-            doc = cm.getDoc();
+    exec(mde) {
+        const cm = mde.getEditor();
+        const doc = cm.getDoc();
+        let replaceText = '';
 
-        range = mde.getCurrentRange();
+        const range = mde.getCurrentRange();
 
-        from = {
+        const from = {
             line: range.from.line,
             ch: range.from.ch
         };
 
-        to = {
+        const to = {
             line: range.to.line,
             ch: range.to.ch
         };

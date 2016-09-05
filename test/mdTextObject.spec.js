@@ -1,14 +1,12 @@
-'use strict';
+import MdTextObject from '../src/js/mdTextObject';
+import MarkdownEditor from '../src/js/markdownEditor';
+import EventManager from '../src/js/eventManager';
 
-var MdTextObject = require('../src/js/mdTextObject');
-var MarkdownEditor = require('../src/js/markdownEditor');
-var EventManager = require('../src/js/eventManager');
+describe('MdTextObject', () => {
+    let cm, doc, mde, to;
 
-describe('MdTextObject', function() {
-    var cm, doc, mde, to;
-
-    beforeEach(function() {
-        var $container = $('<div />');
+    beforeEach(() => {
+        const $container = $('<div />');
 
         $('body').append($container);
 
@@ -22,19 +20,19 @@ describe('MdTextObject', function() {
         doc = cm.getDoc();
     });
 
-    describe('set range', function() {
-        beforeEach(function() {
+    describe('set range', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde);
         });
 
-        it('if constructor has no range argument then use current range', function() {
-            var range = mde.getRange();
+        it('if constructor has no range argument then use current range', () => {
+            const range = mde.getRange();
             expect(range.start).toEqual(to._start);
             expect(range.end).toEqual(to._end);
         });
 
-        it('set start and set end', function() {
-            var cursor = {line: 1, ch: 1};
+        it('set start and set end', () => {
+            const cursor = {line: 1, ch: 1};
 
             to._setStart(cursor);
             to._setEnd(cursor);
@@ -43,16 +41,16 @@ describe('MdTextObject', function() {
             expect(to._end).toEqual(cursor);
         });
 
-        it('set with range', function() {
-            var range = mde.getRange();
+        it('set with range', () => {
+            const range = mde.getRange();
 
             expect(to._start).toEqual(range.start);
             expect(to._end).toEqual(range.end);
         });
     });
 
-    describe('Get text of range', function() {
-        beforeEach(function() {
+    describe('Get text of range', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -64,13 +62,13 @@ describe('MdTextObject', function() {
                 }
             });
         });
-        it('get text', function() {
+        it('get text', () => {
             expect(to.getTextContent()).toEqual('es');
         });
     });
 
-    describe('Update range', function() {
-        beforeEach(function() {
+    describe('Update range', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -82,8 +80,8 @@ describe('MdTextObject', function() {
                 }
             });
         });
-        it('set end before range', function() {
-            var expected = {
+        it('set end before range', () => {
+            const expected = {
                 line: 0,
                 ch: 6
             };
@@ -95,8 +93,8 @@ describe('MdTextObject', function() {
         });
     });
 
-    describe('Range expand', function() {
-        beforeEach(function() {
+    describe('Range expand', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -109,17 +107,17 @@ describe('MdTextObject', function() {
             });
         });
 
-        it('Expand start offset', function() {
+        it('Expand start offset', () => {
             to.expandStartOffset();
             expect(to.getTextContent()).toEqual('tes');
         });
-        it('Expand end offset', function() {
+        it('Expand end offset', () => {
             to.expandEndOffset();
             expect(to.getTextContent()).toEqual('est');
         });
     });
-    describe('Replace range with text', function() {
-        beforeEach(function() {
+    describe('Replace range with text', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -132,14 +130,14 @@ describe('MdTextObject', function() {
             });
         });
 
-        it('replace text', function() {
+        it('replace text', () => {
             to.replaceContent('12');
             expect(doc.getValue()).toEqual('t12t textObject');
         });
     });
 
-    describe('Delete text content within range', function() {
-        beforeEach(function() {
+    describe('Delete text content within range', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -152,14 +150,14 @@ describe('MdTextObject', function() {
             });
         });
 
-        it('delete text', function() {
+        it('delete text', () => {
             to.deleteContent();
             expect(doc.getValue()).toEqual('tt textObject');
         });
     });
 
-    describe('peek text content with given offset number', function() {
-        beforeEach(function() {
+    describe('peek text content with given offset number', () => {
+        beforeEach(() => {
             to = new MdTextObject(mde, {
                 start: {
                     line: 0,
@@ -172,7 +170,7 @@ describe('MdTextObject', function() {
             });
         });
 
-        it('peekStartBeforeOffset() returns text content from start with given offset to start offset', function() {
+        it('peekStartBeforeOffset() returns text content from start with given offset to start offset', () => {
             expect(to.peekStartBeforeOffset(3)).toEqual(' te');
         });
     });

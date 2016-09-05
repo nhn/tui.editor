@@ -1,13 +1,11 @@
-'use strict';
+import WysiwygEditor from '../src/js/wysiwygEditor';
+import EventManager from '../src/js/eventManager';
+import WwCodeBlockManager from '../src/js/wwCodeBlockManager';
 
-var WysiwygEditor = require('../src/js/wysiwygEditor'),
-    EventManager = require('../src/js/eventManager'),
-    WwCodeBlockManager = require('../src/js/wwCodeBlockManager');
+describe('WwCodeBlockManager', () => {
+    let $container, em, wwe, mgr;
 
-describe('WwCodeBlockManager', function() {
-    var $container, em, wwe, mgr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         $container = $('<div />');
 
         $('body').append($container);
@@ -23,16 +21,16 @@ describe('WwCodeBlockManager', function() {
     });
 
     //we need to wait squire input event process
-    afterEach(function(done) {
-        setTimeout(function() {
+    afterEach(done => {
+        setTimeout(() => {
             $('body').empty();
             done();
         });
     });
 
-    describe('isInCodeBlock', function() {
-        it('check if passed range is in codeblock', function() {
-            var range = wwe.getEditor().getSelection().cloneRange();
+    describe('isInCodeBlock', () => {
+        it('check if passed range is in codeblock', () => {
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor().setHTML('<pre><div>test</div></pre>');
 
@@ -43,10 +41,10 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('key handlers', function() {
-        describe('BACKSPACE', function() {
-            it('_revmoeCodeblockIfNeed() remove codeblock if codeblock has one code tag when offset is 0', function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+    describe('key handlers', () => {
+        describe('BACKSPACE', () => {
+            it('_revmoeCodeblockIfNeed() remove codeblock if codeblock has one code tag when offset is 0', () => {
+                const range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<pre><div>test</div></pre>');
 
@@ -58,7 +56,7 @@ describe('WwCodeBlockManager', function() {
                 em.emit('wysiwygKeyEvent', {
                     keyMap: 'BACK_SPACE',
                     data: {
-                        preventDefault: function() {}
+                        preventDefault: () => {}
                     }
                 });
 
@@ -67,8 +65,8 @@ describe('WwCodeBlockManager', function() {
                 expect(wwe.get$Body().find('pre').length).toEqual(0);
             });
 
-            it('_revmoeCodeblockIfNeed() remove codeblock and make one br if there is no content', function() {
-                var range = wwe.getEditor().getSelection().cloneRange();
+            it('_revmoeCodeblockIfNeed() remove codeblock and make one br if there is no content', () => {
+                const range = wwe.getEditor().getSelection().cloneRange();
 
                 wwe.setValue('<pre><div><br></div></pre>');
 
@@ -80,7 +78,7 @@ describe('WwCodeBlockManager', function() {
                 em.emit('wysiwygKeyEvent', {
                     keyMap: 'BACK_SPACE',
                     data: {
-                        preventDefault: function() {}
+                        preventDefault: () => {}
                     }
                 });
 
@@ -90,15 +88,14 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('_copyCodeblockTypeFromRangeCodeblock', function() {
-        it('copy codeblock\'s type to range codeblock', function() {
-            var codeblock = $('<pre><code>test</code><br></pre'),
-                range;
+    describe('_copyCodeblockTypeFromRangeCodeblock', () => {
+        it('copy codeblock\'s type to range codeblock', () => {
+            const codeblock = $('<pre><code>test</code><br></pre>');
 
             wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'mycode</code></pre>');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('div')[0], 1);
             range.collapse(true);
@@ -111,41 +108,37 @@ describe('WwCodeBlockManager', function() {
         });
     });
 
-    describe('prepareToPasteOnCodeblock', function() {
-        beforeEach(function() {
-            var range;
-
+    describe('prepareToPasteOnCodeblock', () => {
+        beforeEach(() => {
             wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'mycode</code></pre>');
 
-            range = wwe.getEditor().getSelection().cloneRange();
+            const range = wwe.getEditor().getSelection().cloneRange();
 
             range.setStart(wwe.get$Body().find('div')[0], 1);
             range.collapse(true);
 
             wwe.getEditor().setSelection(range);
         });
-        it('if fragment is complete codeblock then copy attribute from current selected codeblock\' to fragment', function() {
-            var codeblock = $('<pre><code>test</code><br></pre>');
-            var fragment, resultFragment;
+        it('if fragment is complete codeblock then copy attribute from current selected codeblock\'' +
+            ' to fragment', () => {
+            const codeblock = $('<pre><code>test</code><br></pre>');
 
-            fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
+            const resultFragment = mgr.prepareToPasteOnCodeblock(tui.util.toArray(fragment.childNodes));
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
         });
-        it('if current selection is within codeblock then make textContent of paste data codeblock', function() {
-            var codeblock = $('<div>test<br></div><div>test2<br></div>');
-            var fragment, resultFragment;
+        it('if current selection is within codeblock then make textContent of paste data codeblock', () => {
+            const codeblock = $('<div>test<br></div><div>test2<br></div>');
 
-
-            fragment = wwe.getEditor().getDocument().createDocumentFragment();
+            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            resultFragment = mgr.prepareToPasteOnCodeblock([].slice.call(fragment.childNodes));
+            const resultFragment = mgr.prepareToPasteOnCodeblock(tui.util.toArray(fragment.childNodes));
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
@@ -153,14 +146,12 @@ describe('WwCodeBlockManager', function() {
             expect($(resultFragment).find('div').eq(1).text()).toEqual('test2');
         });
     });
-    describe('Event', function() {
-        it('split to each code tag in code block on line feed on wysiwygSetValueAfter', function() {
-            var codeblock;
-
+    describe('Event', () => {
+        it('split to each code tag in code block on line feed on wysiwygSetValueAfter', () => {
             wwe.setValue('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'test\ntest2\n\ntest3\n</code></pre>');
 
-            codeblock = wwe.get$Body().find('pre');
+            const codeblock = wwe.get$Body().find('pre');
 
             expect(codeblock.length).toEqual(1);
             expect(codeblock.find('div').length).toEqual(4);
@@ -169,7 +160,7 @@ describe('WwCodeBlockManager', function() {
             expect(codeblock.attr('data-te-codeblock')).toBeDefined();
         });
 
-        it('join each line of code block to one codeblock on wysiwygProcessHTMLText', function() {
+        it('join each line of code block to one codeblock on wysiwygProcessHTMLText', () => {
             wwe.getEditor().setHTML([
                 '<pre>',
                 '<div>test1</div>',
@@ -184,7 +175,7 @@ describe('WwCodeBlockManager', function() {
             ].join(''));
         });
 
-        it('join each line of code block to one codeblock on wysiwygProcessHTMLText with code attr', function() {
+        it('join each line of code block to one codeblock on wysiwygProcessHTMLText with code attr', () => {
             wwe.getEditor().setHTML([
                 '<pre class="lang-javascript" data-language="javascript">',
                 '<div>test1</div>',
@@ -199,7 +190,7 @@ describe('WwCodeBlockManager', function() {
             ].join(''));
         });
 
-        it('join each line of multiple code block to one codeblock on wysiwygProcessHTMLText', function() {
+        it('join each line of multiple code block to one codeblock on wysiwygProcessHTMLText', () => {
             wwe.getEditor().setHTML([
                 '<pre class="lang-javascript" data-language="javascript">',
                 '<div>test1</div>',
@@ -217,10 +208,9 @@ describe('WwCodeBlockManager', function() {
             ].join(''));
         });
     });
-    describe('splitCodeblockToEachLine', function() {
-        it('update pre tag with language attributes and add data-te-codeblock attribute', function() {
-            var frag = document.createDocumentFragment();
-            var codeblock;
+    describe('splitCodeblockToEachLine', () => {
+        it('update pre tag with language attributes and add data-te-codeblock attribute', () => {
+            const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'test</code></pre>');
@@ -228,16 +218,15 @@ describe('WwCodeBlockManager', function() {
 
             mgr.splitCodeblockToEachLine(frag);
 
-            codeblock = $($(frag).find('pre'));
+            const codeblock = $($(frag).find('pre'));
 
             expect(codeblock.length).toEqual(1);
             expect(codeblock.hasClass('lang-javascript')).toBe(true);
             expect(codeblock.attr('data-language')).toEqual('javascript');
             expect(codeblock.attr('data-te-codeblock')).toBeDefined();
         });
-        it('trim last linefeeds', function() {
-            var frag = document.createDocumentFragment();
-            var codeblock;
+        it('trim last linefeeds', () => {
+            const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'test\n\ntest\n\n\n</code></pre>');
@@ -245,14 +234,13 @@ describe('WwCodeBlockManager', function() {
 
             mgr.splitCodeblockToEachLine(frag);
 
-            codeblock = $($(frag).find('pre'));
+            const codeblock = $($(frag).find('pre'));
 
             expect(codeblock.find('div').length).toEqual(3);
         });
 
-        it('makes normal codeblock with pre > code > textlines', function() {
-            var frag = document.createDocumentFragment();
-            var codeblock;
+        it('makes normal codeblock with pre > code > textlines', () => {
+            const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
                          + 'test\ntest2\n\ntest3\n</code></pre>');
@@ -260,14 +248,13 @@ describe('WwCodeBlockManager', function() {
 
             mgr.splitCodeblockToEachLine(frag);
 
-            codeblock = $($(frag).find('pre'));
+            const codeblock = $($(frag).find('pre'));
 
             expect(codeblock.find('div').length).toEqual(4);
         });
 
-        it('Makes normal codeblock with pre > divs', function() {
-            var frag = document.createDocumentFragment();
-            var codeblock;
+        it('Makes normal codeblock with pre > divs', () => {
+            const frag = document.createDocumentFragment();
 
             $(frag).append('<pre>'
                          + '<div>test</div>'
@@ -278,7 +265,7 @@ describe('WwCodeBlockManager', function() {
 
             mgr.splitCodeblockToEachLine(frag);
 
-            codeblock = $($(frag).find('pre'));
+            const codeblock = $($(frag).find('pre'));
 
             expect(codeblock.find('div').length).toEqual(3);
         });

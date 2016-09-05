@@ -1,29 +1,27 @@
-'use strict';
+import LazyRunner from '../src/js/lazyRunner';
 
-var LazyRunner = require('../src/js/lazyRunner');
+describe('LazyRunner', () => {
+    let lr;
 
-describe('LazyRunner', function() {
-    var lr;
-
-    beforeEach(function() {
+    beforeEach(() => {
         lr = new LazyRunner();
         jasmine.clock().install();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         jasmine.clock().uninstall();
         $('body').empty();
     });
 
-    describe('invoke function after delay time', function() {
-        it('function has not invoke immediately', function() {
-            var func = jasmine.createSpy('func');
+    describe('invoke function after delay time', () => {
+        it('function has not invoke immediately', () => {
+            const func = jasmine.createSpy('func');
             lr.run(func, 100);
             expect(func).not.toHaveBeenCalled();
         });
 
-        it('function have been invoked after delay time', function() {
-            var func = jasmine.createSpy('func');
+        it('function have been invoked after delay time', () => {
+            const func = jasmine.createSpy('func');
 
             lr.run(func, 0);
 
@@ -32,12 +30,11 @@ describe('LazyRunner', function() {
             expect(func).toHaveBeenCalled();
         });
 
-        it('function invoked with context', function() {
-            var callback, context;
-            context = {
+        it('function invoked with context', () => {
+            const context = {
                 data: null
             };
-            callback = function() {
+            const callback = function() {
                 this.data = 'myData';
             };
 
@@ -48,8 +45,8 @@ describe('LazyRunner', function() {
             expect(context.data).toEqual('myData');
         });
 
-        it('ignore current run function when run() is called again before current run function be invoked', function() {
-            var func = jasmine.createSpy('func');
+        it('ignore current run function when run() is called again before current run function be invoked', () => {
+            const func = jasmine.createSpy('func');
 
             lr.run(func, 0);
             lr.run(func, 0);
@@ -59,9 +56,9 @@ describe('LazyRunner', function() {
             expect(func.calls.count()).toEqual(1);
         });
 
-        it('althought run functions are different, ignore current run function when run() is called', function() {
-            var func1 = jasmine.createSpy('func1'),
-                func2 = jasmine.createSpy('func2');
+        it('althought run functions are different, ignore current run function when run() is called', () => {
+            const func1 = jasmine.createSpy('func1');
+            const func2 = jasmine.createSpy('func2');
 
             lr.run(func1, 0);
             lr.run(func1, 0);
@@ -73,9 +70,9 @@ describe('LazyRunner', function() {
         });
     });
 
-    describe('registered run', function() {
-        it('It can be regist run with several params', function() {
-            var func = jasmine.createSpy('func');
+    describe('registered run', () => {
+        it('It can be regist run with several params', () => {
+            const func = jasmine.createSpy('func');
 
             lr.registerLazyRunFunction('lrrun', func, 0);
 
@@ -86,8 +83,8 @@ describe('LazyRunner', function() {
             expect(func).toHaveBeenCalled();
         });
 
-        it('ignore current run function that is not invoked yet when run() is called with same run again', function() {
-            var func = jasmine.createSpy('func');
+        it('ignore current run function that is not invoked yet when run() is called with same run again', () => {
+            const func = jasmine.createSpy('func');
 
             lr.registerLazyRunFunction('lrrun', func, null, 0);
 
@@ -99,9 +96,9 @@ describe('LazyRunner', function() {
             expect(func.calls.count()).toEqual(1);
         });
 
-        it('if resgistered run functions are different, invoke without any ignoring', function() {
-            var func1 = jasmine.createSpy('func1'),
-            func2 = jasmine.createSpy('func2');
+        it('if resgistered run functions are different, invoke without any ignoring', () => {
+            const func1 = jasmine.createSpy('func1');
+            const func2 = jasmine.createSpy('func2');
 
             lr.registerLazyRunFunction('run1', func1, 0, null);
             lr.registerLazyRunFunction('run2', func2, 0, null);
@@ -115,16 +112,14 @@ describe('LazyRunner', function() {
             expect(func2).toHaveBeenCalled();
         });
 
-        it('if context are registred, fn is called with context', function() {
-            var result,
-                func,
-                context;
+        it('if context are registred, fn is called with context', () => {
+            let result;
 
-            func = function() {
+            const func = function() {
                 result = this.res;
             };
 
-            context = {
+            const context = {
                 res: 'myres'
             };
 
@@ -137,11 +132,10 @@ describe('LazyRunner', function() {
             expect(result).toEqual('myres');
         });
 
-        it('Invoke with parameters', function() {
-            var result,
-                func;
+        it('Invoke with parameters', () => {
+            let result;
 
-            func = function(param) {
+            const func = function(param) {
                 result = param;
             };
 
