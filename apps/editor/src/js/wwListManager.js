@@ -67,16 +67,18 @@ class WwListManager {
 
     _initKeyHandler() {
         this.wwe.addKeyEventHandler('TAB', (ev, range) => {
+            let isNeedNext;
+
             if (range.collapsed) {
                 if (this.wwe.getEditor().hasFormat('LI')) {
                     ev.preventDefault();
                     this.eventManager.emit('command', 'IncreaseDepth');
 
-                    return false;
+                    isNeedNext = false;
                 }
             }
 
-            return true;
+            return isNeedNext;
         });
 
         this.wwe.addKeyEventHandler('SHIFT+TAB', (ev, range) => {
@@ -98,6 +100,16 @@ class WwListManager {
             }
 
             return isNeedNext;
+        });
+
+        this.wwe.addKeyEventHandler('ENTER', (ev, range) => {
+            if (range.collapsed) {
+                if (this.wwe.getEditor().hasFormat('LI')) {
+                    this.wwe.defer(() => {
+                        this._removeBranchListAll();
+                    });
+                }
+            }
         });
     }
 
