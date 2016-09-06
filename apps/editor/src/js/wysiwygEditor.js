@@ -619,6 +619,16 @@ class WysiwygEditor {
     }
 
     /**
+     * blur
+     * Remove focus of editor
+     * @api
+     * @memberOf WysiwygEditor
+     */
+    blur() {
+        this.editor.blur();
+    }
+
+    /**
      * remove
      * Remove wysiwyg editor
      * @api
