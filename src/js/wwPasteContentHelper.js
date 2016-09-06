@@ -83,7 +83,8 @@ class WwPasteContentHelper {
             if (isTextNode) {
                 const divElement = document.createElement('div');
 
-                divElement.innerHTML = `${node.nodeValue}<br>`;
+                divElement.textContent = node.nodeValue;
+                divElement.appendChild($('<br/>')[0]);
 
                 fragment.replaceChild(divElement, node);
             }
