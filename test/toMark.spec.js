@@ -11,7 +11,7 @@ describe('toMark', function() {
     });
     it('should escape vertical bars', function() {
         expect(toMark('<div>1 | Introduction</div>')).toEqual('<div>1 \\| Introduction</div>');
-        expect(toMark('<p>|||, Exercise</p>')).toEqual('\\|\\|\\|, Exercise');
+        expect(toMark('<p>|||. Exercise</p>')).toEqual('\\|\\|\\|\\. Exercise');
         expect(toMark('<b>|go ro Work|</b>')).toEqual('**\\|go ro Work\\|**');
     });
     it('markdown text\'s EOL FOL newline characters should be removed', function() {
