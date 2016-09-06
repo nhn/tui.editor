@@ -78,6 +78,12 @@ describe('Markdown-it', () => {
         const codeblockText = '\n```javascript'
             + '\nconst a = 100;'
             + '\n```';
+        const wrongLanguageText = '\n```korea'
+            + '\n<div>asd</div>'
+            + '\n```';
+        const planeText = '\n```'
+            + '\n<div>asd</div>'
+            + '\n```';
 
         it('rendering Codeblock element accurately', () => {
             const codeblockHTML = convertor._markdownToHtml(codeblockText);
@@ -101,6 +107,31 @@ describe('Markdown-it', () => {
             expect($container.children('pre').children('code').children('span').length).toBe(2);
             expect($container.children('pre').children('code').attr('data-language')).toBe('javascript');
             expect($container.children('pre').children('code').hasClass('lang-javascript')).toBe(true);
+        });
+        it('rendering Codeblock element with invalid language name should escape html entity', () => {
+            const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(wrongLanguageText);
+            const $container = $('<div></div>');
+
+            $container.html(codeblockHTML);
+
+            expect($container.children('pre').length).toBe(1);
+            expect($container.children('pre').children('code').length).toBe(1);
+            expect($container.children('pre').children('code').children('span').length).toBe(0);
+            expect($container.children('pre').children('code').children('div').length).toBe(0);
+            expect($container.children('pre').children('code').text()).toBe('<div>asd</div>\n');
+            expect($container.children('pre').children('code').attr('data-language')).toBe('korea');
+            expect($container.children('pre').children('code').hasClass('lang-korea')).toBe(true);
+        });
+        it('rendering Codeblock element without language name should escape html entity', () => {
+            const codeblockHTML = convertor._markdownToHtmlWithCodeHighlight(planeText);
+            const $container = $('<div></div>');
+
+            $container.html(codeblockHTML);
+
+            expect($container.children('pre').length).toBe(1);
+            expect($container.children('pre').children('code').length).toBe(1);
+            expect($container.children('pre').children('code').children('div').length).toBe(0);
+            expect($container.children('pre').children('code').text()).toBe('<div>asd</div>\n');
         });
     });
 });

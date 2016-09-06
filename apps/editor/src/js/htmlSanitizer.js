@@ -84,15 +84,18 @@ function leaveOnlyWhitelistAttribute($html) {
  * @returns {string|DocumentFragment} result
  */
 function finalizeHtml($html, needHtmlText) {
-    let returnValue, frag;
+    let returnValue;
 
     if (needHtmlText) {
         returnValue = $html[0].innerHTML;
     } else {
-        frag = document.createDocumentFragment();
-        $html.children().each((i, node) => {
-            frag.appendChild(node);
-        });
+        const frag = document.createDocumentFragment();
+        const childNodes = tui.util.toArray($html[0].childNodes);
+        const length = childNodes.length;
+
+        for (let i = 0; i < length; i += 1) {
+            frag.appendChild(childNodes[i]);
+        }
         returnValue = frag;
     }
 
