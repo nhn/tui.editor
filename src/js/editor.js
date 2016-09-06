@@ -237,6 +237,15 @@ class ToastUIEditor {
     }
 
     /**
+     * Remove focus of current Editor
+     * @api
+     * @memberOf ToastUIEditor
+     */
+    blur() {
+        this.getCurrentModeEditor().blur();
+    }
+
+    /**
      * Set cursor position to end
      * @api
      * @memberOf ToastUIEditor

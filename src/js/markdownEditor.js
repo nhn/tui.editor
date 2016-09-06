@@ -209,6 +209,15 @@ class MarkdownEditor {
     }
 
     /**
+     * Set focus to current Editor
+     * @api
+     * @memberOf MarkdownEditor
+     */
+    blur() {
+        this.cm.getInputField().blur();
+    }
+
+    /**
      * Remove Editor from document
      * @api
      * @memberOf MarkdownEditor
