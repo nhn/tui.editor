@@ -106,7 +106,9 @@ class WwListManager {
             if (range.collapsed) {
                 if (this.wwe.getEditor().hasFormat('LI')) {
                     this.wwe.defer(() => {
-                        this._removeBranchListAll();
+                        const afterRange = this.wwe.getRange();
+                        const $li = $(afterRange.startContainer).parents('li').eq(0);
+                        this._removeBranchListAll($li);
                     });
                 }
             }
@@ -128,9 +130,14 @@ class WwListManager {
 
     /**
      * Remove branch lists all from body
+     * @memberOf WwListManager
+     * @private
+     * @param {jQuery|HTMLElement} $root root to remove branch list
      */
-    _removeBranchListAll() {
-        this.wwe.get$Body().find('li ul, li ol').each((idx, node) => {
+    _removeBranchListAll($root) {
+        $root = !$root ? this.wwe.get$Body() : $($root);
+
+        $root.find('li ul, li ol').each((idx, node) => {
             if (!node || node.previousSibling) {
                 return;
             }
@@ -140,7 +147,9 @@ class WwListManager {
 
     /**
      * Remove branch list of passed list(ul, ol)
+     * @memberOf WwListManager
      * @param {HTMLElement} list list
+     * @private
      */
     _removeBranchList(list) {
         const $list = $(list);
