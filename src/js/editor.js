@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import MarkdownEditor from './markdownEditor';
 import Preview from './preview';
 import WysiwygEditor from './wysiwygEditor';
@@ -15,6 +14,7 @@ import ImportManager from './importManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
 import DefaultUI from './ui/defaultUI';
+import I18n from './i18n';
 
 //markdown commands
 import mdBold from './markdownCommands/bold';
@@ -59,6 +59,8 @@ import wwCodeBlock from './wysiwygCommands/codeBlock';
 const util = tui.util;
 
 const __nedInstance = [];
+
+const i18n = I18n.getSharedInstance();
 
 /**
  * ToastUI Editor
@@ -110,6 +112,8 @@ class ToastUIEditor {
         }
 
         this.layout = new Layout(options, this.eventManager);
+
+        this.i18n = i18n;
 
         this.setUI(this.options.UI || new DefaultUI(this));
 
@@ -607,6 +611,9 @@ class ToastUIEditor {
         return tuiEditor;
     }
 }
+
+ToastUIEditor.i18n = i18n;
+
 /**
  * MarkdownIt custom renderer with code highlighting
  */

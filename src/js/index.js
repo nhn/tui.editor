@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 //codemirror modes&addons
 require('./codemirror/overlay');
 require('./codemirror/markdown');
@@ -15,6 +14,9 @@ require('./extensions/taskCounter');
 require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
+
+//langs
+require('./langs/en_US');
 
 import ToastUIEditor from './editor';
 
