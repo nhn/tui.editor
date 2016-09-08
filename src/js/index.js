@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 //codemirror modes&addons
 require('./codemirror/overlay');
 require('./codemirror/markdown');
@@ -17,6 +16,15 @@ require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 
 import ToastUIEditor from './editor';
+
+window.tui = window.tui || {};
+window.tui.Editor = ToastUIEditor;
+
+//langs
+require('./langs/en_US');
+require('./langs/ko_KR');
+require('./langs/zh_CN');
+require('./langs/ja_JP');
 
 //for jquery
 $.fn.tuiEditor = function(...args) {
@@ -44,5 +52,4 @@ $.fn.tuiEditor = function(...args) {
     return this;
 };
 
-window.tui = window.tui || {};
-window.tui.Editor = ToastUIEditor;
+

@@ -3,23 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const LayerPopup = require('./layerpopup');
+import LayerPopup from './layerpopup';
+import i18n from '../i18n';
 
 const util = tui.util;
-
-/* eslint-disable indent */
-const POPUP_CONTENT = [
-    '<label for="linkText">링크에 표시할 내용</label>',
-    '<input type="text" class="te-link-text-input" />',
-    '<label for="url">URL</label>',
-    '<input type="text" class="te-url-input" />',
-    '<div class="te-button-section">',
-        '<button type="button" class="te-ok-button">확인</button>',
-        '<button type="button" class="te-close-button">취소</button>',
-    '</div>'
-].join('');
-/* eslint-enable indent */
 
 /**
  * PopupAddLink
@@ -31,8 +18,21 @@ const POPUP_CONTENT = [
  * @param {object} options options
  */
 function PopupAddLink(options) {
+    /* eslint-disable indent */
+    const POPUP_CONTENT = [
+        `<label for="linkText">${i18n.get('Link text')}</label>`,
+        '<input type="text" class="te-link-text-input" />',
+        `<label for="url">${i18n.get('URL')}</label>`,
+        '<input type="text" class="te-url-input" />',
+        '<div class="te-button-section">',
+        `<button type="button" class="te-ok-button">${i18n.get('OK')}</button>`,
+        `<button type="button" class="te-close-button">${i18n.get('Cancel')}</button>`,
+        '</div>'
+    ].join('');
+    /* eslint-enable indent */
+
     options = util.extend({
-        title: '링크 추가',
+        title: i18n.get('Insert link'),
         className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
