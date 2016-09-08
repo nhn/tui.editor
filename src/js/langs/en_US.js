@@ -1,4 +1,4 @@
-tui.Editor.i18n.setLang('en_US', {
+tui.Editor.i18n.setLang(['en', 'en_US'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
     'Headings': 'Headings',

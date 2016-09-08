@@ -1,4 +1,4 @@
-tui.Editor.i18n.setLang('zh_CN', {
+tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
     'Markdown': '降价',
     'WYSIWYG': '所见即所得',
     'Headings': '标题',

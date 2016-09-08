@@ -1,4 +1,4 @@
-tui.Editor.i18n.setLang('ko_KR', {
+tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
     'Markdown': '마크다운',
     'WYSIWYG': '위지윅',
     'Headings': '제목크기',

@@ -1,4 +1,4 @@
-tui.Editor.i18n.setLang('ja_JP', {
+tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
     'Markdown': 'マークダウン',
     'WYSIWYG': 'WYSIWYG',
     'Headings': '見出し',
