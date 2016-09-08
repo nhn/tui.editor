@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const LayerPopup = require('./layerpopup');
+import LayerPopup from './layerpopup';
 
 const util = tui.util;
 

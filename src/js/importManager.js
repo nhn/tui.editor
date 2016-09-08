@@ -3,8 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import excelTableParser from './excelTableParser';
+import i18n from './i18n';
 
 const util = tui.util;
 const FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
@@ -95,7 +95,6 @@ class ImportManager {
      */
     _processClipboard(evData) {
         const cbData = evData.clipboardData || window.clipboardData;
-
         const blobItems = cbData && cbData.items;
         const types = cbData.types;
 
@@ -139,7 +138,7 @@ class ImportManager {
     _precessDataTransfer(cbData, evData) {
         const textContent = cbData.getData('text');
 
-        if (FIND_EXCEL_DATA.test(textContent) && confirm('테이블 포맷으로 붙여넣겠습니까?')) {
+        if (FIND_EXCEL_DATA.test(textContent) && i18n.get('Would you like to paste as table?')) {
             evData.preventDefault();
             evData.codemirrorIgnore = true;
             this._addExcelTable(textContent);

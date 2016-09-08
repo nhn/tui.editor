@@ -3,31 +3,11 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const LayerPopup = require('./layerpopup'),
-    Tab = require('./tab');
+import LayerPopup from './layerpopup';
+import Tab from './tab';
+import i18n from '../i18n';
 
 const util = tui.util;
-
-/* eslint-disable indent */
-const POPUP_CONTENT = [
-    '<div class="te-tab-section"></div>',
-    '<div class="te-url-type">',
-        '<label for="">이미지 URL</label>',
-        '<input type="text" class="te-image-url-input" />',
-    '</div>',
-    '<form enctype="multipart/form-data" class="te-file-type">',
-        '<label for="">이미지 선택</label>',
-        '<input type="file" class="te-image-file-input" accept="image/*" />',
-    '</form>',
-    '<label for="url">설명</label>',
-    '<input type="text" class="te-alt-text-input" />',
-    '<div class="te-button-section">',
-        '<button type="button" class="te-ok-button">삽입</button>',
-        '<button type="button" class="te-close-button">취소</button>',
-    '</div>'
-].join('');
-/* eslint-enable indent */
 
 /**
  * PopupAddImage
@@ -39,8 +19,28 @@ const POPUP_CONTENT = [
  * @param {object} options options
  */
 function PopupAddImage(options) {
+    /* eslint-disable indent */
+    const POPUP_CONTENT = [
+        '<div class="te-tab-section"></div>',
+        '<div class="te-url-type">',
+            `<label for="">${i18n.get('Image URL')}</label>`,
+            '<input type="text" class="te-image-url-input" />',
+        '</div>',
+        '<form enctype="multipart/form-data" class="te-file-type">',
+            `<label for="">${i18n.get('Select image file')}</label>`,
+            '<input type="file" class="te-image-file-input" accept="image/*" />',
+        '</form>',
+        `<label for="url">${i18n.get('Description')}</label>`,
+        '<input type="text" class="te-alt-text-input" />',
+        '<div class="te-button-section">',
+            `<button type="button" class="te-ok-button">${i18n.get('OK')}</button>`,
+            `<button type="button" class="te-close-button">${i18n.get('Cancel')}</button>`,
+        '</div>'
+    ].join('');
+    /* eslint-enable indent */
+
     options = util.extend({
-        title: '이미지 삽입',
+        title: i18n.get('Insert image'),
         className: 'te-popup-add-image tui-editor-popup',
         content: POPUP_CONTENT
     }, options);
@@ -151,8 +151,8 @@ PopupAddImage.prototype._renderContent = function() {
     LayerPopup.prototype._renderContent.call(this);
 
     this.tab = new Tab({
-        initName: 'File',
-        items: ['File', 'URL'],
+        initName: i18n.get('File'),
+        items: [i18n.get('File'), i18n.get('URL')],
         sections: [$popup.find('.te-file-type'), $popup.find('.te-url-type')]
     });
 

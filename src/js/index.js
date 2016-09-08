@@ -15,10 +15,16 @@ require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 
+import ToastUIEditor from './editor';
+
+window.tui = window.tui || {};
+window.tui.Editor = ToastUIEditor;
+
 //langs
 require('./langs/en_US');
-
-import ToastUIEditor from './editor';
+require('./langs/ko_KR');
+require('./langs/zh_CN');
+require('./langs/ja_JP');
 
 //for jquery
 $.fn.tuiEditor = function(...args) {
@@ -46,5 +52,4 @@ $.fn.tuiEditor = function(...args) {
     return this;
 };
 
-window.tui = window.tui || {};
-window.tui.Editor = ToastUIEditor;
+
