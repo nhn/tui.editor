@@ -3,21 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import LayerPopup from './layerpopup';
+import i18n from '../i18n';
 
 const util = tui.util;
-
-const POPUP_CONTENT = [
-    '<button type="button" class="te-table-add-row">행 삽입</button>',
-    '<button type="button" class="te-table-add-col">열 삽입</button>',
-    '<button type="button" class="te-table-remove-row">행 삭제</button>',
-    '<button type="button" class="te-table-remove-col">열 삭제</button>',
-    '<button type="button" class="te-table-col-align-left">열 왼쪽 정렬</button>',
-    '<button type="button" class="te-table-col-align-center">열 가운데 정렬</button>',
-    '<button type="button" class="te-table-col-align-right">열 오른쪽 정렬</button>',
-    '<button type="button" class="te-table-remove">표 삭제</button>'
-].join('');
 
 /**
  * PopupTableUtils
@@ -29,6 +18,17 @@ const POPUP_CONTENT = [
  * @param {object} options options
  */
 function PopupTableUtils(options) {
+    const POPUP_CONTENT = [
+        `<button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>`,
+        `<button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>`,
+        `<button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>`,
+        `<button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>`,
+        `<button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>`,
+        `<button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>`,
+        `<button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>`,
+        `<button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>`
+    ].join('');
+
     options = util.extend({
         title: false,
         className: 'te-popup-table-utils',

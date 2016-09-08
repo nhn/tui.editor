@@ -3,9 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import UIController from './uicontroller';
 import Button from './button';
+import i18n from '../i18n';
 
 const util = tui.util;
 
@@ -80,87 +80,87 @@ Toolbar.prototype._initButton = function() {
     this.addButton(new Button({
         className: 'tui-heading',
         event: 'openHeadingSelect',
-        tooltip: '제목크기'
+        tooltip: i18n.get('Headings')
     }));
 
     this.addButton(new Button({
         className: 'tui-bold',
         command: 'Bold',
-        tooltip: '굵게'
+        tooltip: i18n.get('Bold')
     }));
 
     this.addButton(new Button({
         className: 'tui-italic',
         command: 'Italic',
-        tooltip: '기울임꼴'
+        tooltip: i18n.get('Italic')
     }));
 
     this.addButton(new Button({
         className: 'tui-strike',
         command: 'Strike',
         text: '~',
-        tooltip: '취소선'
+        tooltip: i18n.get('Strike')
     }));
 
     this.addButton(new Button({
         className: 'tui-hrline',
         command: 'HR',
-        tooltip: '문단나눔'
+        tooltip: i18n.get('Line')
     }));
 
     this.addButton(new Button({
         className: 'tui-quote',
         command: 'Blockquote',
-        tooltip: '인용구'
+        tooltip: i18n.get('Blockquote')
     }));
 
     this.addButton(new Button({
         className: 'tui-ul',
         command: 'UL',
-        tooltip: '글머리 기호'
+        tooltip: i18n.get('Unordered list')
     }));
 
     this.addButton(new Button({
         className: 'tui-ol',
         command: 'OL',
-        tooltip: '번호 매기기'
+        tooltip: i18n.get('Ordered list')
     }));
 
     this.addButton(new Button({
         className: 'tui-task',
         command: 'Task',
-        tooltip: '체크박스'
+        tooltip: i18n.get('Task')
     }));
 
     this.addButton(new Button({
         className: 'tui-table',
         event: 'openPopupAddTable',
-        tooltip: '표 삽입'
+        tooltip: i18n.get('Insert table')
     }));
 
     this.addButton(new Button({
         className: 'tui-link',
         event: 'openPopupAddLink',
-        tooltip: '링크 삽입'
+        tooltip: i18n.get('Insert link')
     }));
 
     this.addButton(new Button({
         className: 'tui-codeblock',
         command: 'CodeBlock',
         text: 'CB',
-        tooltip: '코드블럭 삽입'
+        tooltip: i18n.get('Insert codeblock')
     }));
 
     this.addButton(new Button({
         className: 'tui-code',
         command: 'Code',
-        tooltip: '코드 삽입'
+        tooltip: i18n.get('Code')
     }));
 
     this.addButton(new Button({
         className: 'tui-image',
         event: 'openPopupAddImage',
-        tooltip: '이미지 삽입'
+        tooltip: i18n.get('Insert image')
     }));
 };
 

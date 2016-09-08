@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import MarkdownEditor from './markdownEditor';
 import Preview from './preview';
 import WysiwygEditor from './wysiwygEditor';
@@ -15,6 +14,7 @@ import ImportManager from './importManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
 import DefaultUI from './ui/defaultUI';
+import i18n from './i18n';
 
 //markdown commands
 import mdBold from './markdownCommands/bold';
@@ -79,6 +79,7 @@ const __nedInstance = [];
      * @param {object} options.hooks Hook list
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
          * @param {function} options.hooks.addImageBlobHook hook for image upload.
+    * @param {string} language language
  */
 class ToastUIEditor {
     constructor(options) {
@@ -87,7 +88,8 @@ class ToastUIEditor {
         this.options = $.extend({
             'previewStyle': 'tab',
             'initialEditType': 'markdown',
-            'height': 300
+            'height': 300,
+            'language': 'en_US'
         }, options);
 
         this.eventManager = new EventManager();
@@ -110,6 +112,9 @@ class ToastUIEditor {
         }
 
         this.layout = new Layout(options, this.eventManager);
+
+        this.i18n = i18n;
+        this.i18n.setCode(this.options.language);
 
         this.setUI(this.options.UI || new DefaultUI(this));
 
@@ -607,6 +612,13 @@ class ToastUIEditor {
         return tuiEditor;
     }
 }
+
+/**
+ * Export i18n instance
+ * @type {I18n}
+ */
+ToastUIEditor.i18n = i18n;
+
 /**
  * MarkdownIt custom renderer with code highlighting
  */
