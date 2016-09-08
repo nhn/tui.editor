@@ -30,16 +30,20 @@ class I18n {
 
     /**
      * Set language set
-     * @param {string} code locale code
+     * @param {string|string[]} codes locale code
      * @param {object} data language set
      */
-    setLang(code, data) {
-        if (!this._langs.has(code)) {
-            this._langs.set(code, data);
-        } else {
-            const langData = this._langs.get(code);
-            this._langs.set(code, Object.assign(langData, data));
-        }
+    setLang(codes, data) {
+        codes = [].concat(codes);
+
+        codes.forEach(code => {
+            if (!this._langs.has(code)) {
+                this._langs.set(code, data);
+            } else {
+                const langData = this._langs.get(code);
+                this._langs.set(code, util.extend(langData, data));
+            }
+        });
     }
 
     /**

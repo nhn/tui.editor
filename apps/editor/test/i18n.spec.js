@@ -6,12 +6,19 @@ describe('I18n', () => {
     beforeEach(() => {
         i18n = new I18n();
     });
-    it('should add lang', () => {
+    it('should add lang set', () => {
         i18n.setLang('ko_KR', {
             'Hello': '안녕하세요'
         });
 
         expect(i18n.get('Hello', 'ko_KR')).toEqual('안녕하세요');
+    });
+    it('should add lang set with array locale code', () => {
+        i18n.setLang(['ko', 'ko_KR'], {
+            'Hello': '안녕하세요'
+        });
+        expect(i18n.get('Hello', 'ko_KR')).toEqual('안녕하세요');
+        expect(i18n.get('Hello', 'ko')).toEqual('안녕하세요');
     });
     it('should update lang data', () => {
         i18n.setLang('ko_KR', {
