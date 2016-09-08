@@ -48,4 +48,14 @@ fdescribe('I18n', () => {
 
         expect(i18n.get('Hello')).toEqual('안녕하세요');
     });
+    it('should use default lang data if dont have current lang set', () => {
+        i18n.setLang('en_US', {
+            'Hello': 'Hello',
+            'Bye': 'Hello'
+        });
+
+        i18n.setCode('fr_FR');
+
+        expect(i18n.get('Hello')).toEqual('Hello');
+    });
 });

@@ -38,7 +38,19 @@ class I18n {
             langCode = this._code;
         }
 
-        return this._langs.get(langCode)[key];
+        let langData = this._langs.get(langCode);
+
+        if (!langData) {
+            langData = this._langs.get(DEFAULT_CODE);
+        }
+
+        const text = langData[key];
+
+        if (!text) {
+            throw new Error(`There is no text key "${key}" in ${langCode}`);
+        }
+
+        return text;
     }
 
     static getSharedInstance() {
