@@ -1,6 +1,6 @@
-import I18n from '../src/js/i18n';
+import {I18n} from '../src/js/i18n';
 
-fdescribe('I18n', () => {
+describe('I18n', () => {
     let i18n;
 
     beforeEach(() => {

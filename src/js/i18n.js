@@ -20,34 +20,49 @@ class I18n {
         this._langs = new util.Map();
     }
 
+    /**
+     * Set locale code
+     * @param {string} code locale code
+     */
     setCode(code) {
         this._code = code;
     }
 
-    setLang(langCode, data) {
-        if (!this._langs.has(langCode)) {
-            this._langs.set(langCode, data);
+    /**
+     * Set language set
+     * @param {string} code locale code
+     * @param {object} data language set
+     */
+    setLang(code, data) {
+        if (!this._langs.has(code)) {
+            this._langs.set(code, data);
         } else {
-            const langData = this._langs.get(langCode);
-            this._langs.set(langCode, Object.assign(langData, data));
+            const langData = this._langs.get(code);
+            this._langs.set(code, Object.assign(langData, data));
         }
     }
 
-    get(key, langCode) {
-        if (!langCode) {
-            langCode = this._code;
+    /**
+     * Get text of key
+     * @param {string} key key of text
+     * @param {string} code locale code
+     * @returns {string}
+     */
+    get(key, code) {
+        if (!code) {
+            code = this._code;
         }
 
-        let langData = this._langs.get(langCode);
+        let langSet = this._langs.get(code);
 
-        if (!langData) {
-            langData = this._langs.get(DEFAULT_CODE);
+        if (!langSet) {
+            langSet = this._langs.get(DEFAULT_CODE);
         }
 
-        const text = langData[key];
+        const text = langSet[key];
 
         if (!text) {
-            throw new Error(`There is no text key "${key}" in ${langCode}`);
+            throw new Error(`There is no text key "${key}" in ${code}`);
         }
 
         return text;
@@ -62,4 +77,5 @@ class I18n {
     }
 }
 
-module.exports = I18n;
+export {I18n};
+export default I18n.getSharedInstance();
