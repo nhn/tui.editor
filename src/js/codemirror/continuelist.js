@@ -41,7 +41,7 @@ CodeMirror.commands.newlineAndIndentContinue = function(cm) {
         var line = cm.getLine(pos.line);
         var isCodeBlockStart = FIND_CODEBLOCK_START_RX.test(line);
         var match = listRE.exec(line);
-        var cursor;
+        var cursor = cm.getCursor();
 
         if (!ranges[i].empty() || (!inList && !inQuote && !isCodeBlockStart) || (!match && !isCodeBlockStart)) {
             cm.execCommand("newlineAndIndent");
@@ -57,11 +57,11 @@ CodeMirror.commands.newlineAndIndentContinue = function(cm) {
             }
         }
 
-        if (emptyListRE.test(line)) {
+        if (emptyListRE.test(line) && cursor.ch > 0) {
             cm.replaceRange("", {
                 line: pos.line, ch: 0
             }, {
-                line: pos.line, ch: pos.ch + 1
+                line: pos.line, ch: line.length
             });
             replacements[i] = "\n";
         } else if(isCodeBlockStart) {
