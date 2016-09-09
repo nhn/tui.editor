@@ -50,6 +50,18 @@ describe('gfmRenderer', function() {
         it('checked task', function() {
             expect(getMarkdownText('<ul><li class="checked task-list-item"></li></ul>', 'test', 2)).toEqual('* [x] test\n');
         });
+        it('unchecked task without text', function() {
+            expect(getMarkdownText('<ul><li class="task-list-item"></li></ul>', '', 2)).toEqual('* [ ] \n');
+        });
+        it('checked task without text', function() {
+            expect(getMarkdownText('<ul><li class="task-list-item checked"></li></ul>', '', 2)).toEqual('* [x] \n');
+        });
+        it('unchecked ordered list task without text', function() {
+            expect(getMarkdownText('<ol><li class="task-list-item"></li></ol>', '', 2)).toEqual('1. [ ] \n');
+        });
+        it('checked ordered list task without text', function() {
+            expect(getMarkdownText('<ol><li class="task-list-item checked"></li></ol>', '', 2)).toEqual('1. [x] \n');
+        });
     });
 
     describe('table', function() {
