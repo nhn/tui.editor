@@ -123,23 +123,63 @@ class WwHeadingManager {
      */
     _removePrevTopNodeIfNeed(event, range) {
         let isHandled = false;
-        let prevTopNode;
 
-        if (range.collapsed) {
-            prevTopNode = domUtils.getTopPrevNodeUnder(range.startContainer, this.wwe.get$Body()[0]);
+        if (range.collapsed && range.startOffset === 0) {
+            const startContainer = range.startContainer;
+            const prevTopNode = domUtils.getTopPrevNodeUnder(startContainer, this.wwe.get$Body()[0]);
+            const isPrevTopNodeEmpty = prevTopNode && prevTopNode.textContent.length === 0;
+            const sq = this.wwe.getEditor();
 
-            if (range.startOffset === 0
-                && prevTopNode
-                && !prevTopNode.textContent.length
-            ) {
+
+            if (startContainer.textContent.length === 0) {
+                isHandled = this._removeHedingAndChangeSelection(event, range, prevTopNode);
+            } else if (isPrevTopNodeEmpty) {
                 event.preventDefault();
-                this.wwe.getEditor().saveUndoState(range);
+                sq.saveUndoState(range);
+
                 $(prevTopNode).remove();
                 isHandled = true;
             }
         }
 
         return isHandled;
+    }
+
+    /**
+     * Remove heading and change selection
+     * @param {object} event Event object
+     * @param {Range} range Range object
+     * @param {HTMLElement} prevTopNode Previous top node
+     * @returns {boolean}
+     * @private
+     */
+    _removeHedingAndChangeSelection(event, range, prevTopNode) {
+        const startContainer = range.startContainer;
+        const sq = this.wwe.getEditor();
+        const $Body = this.wwe.get$Body();
+        const headingElement = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer))
+            ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
+        let targetNode = prevTopNode;
+        let offset = 1;
+
+        if (!event.defaultPrevented) {
+            event.preventDefault();
+            sq.saveUndoState(range);
+        }
+
+        $(headingElement).remove();
+
+        if (!prevTopNode) {
+            targetNode = $Body.children('div').first()[0];
+            offset = 0;
+        }
+
+        range.setStart(targetNode, offset);
+        range.collapse(true);
+        sq.setSelection(range);
+
+
+        return true;
     }
 }
 
