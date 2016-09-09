@@ -29,13 +29,13 @@ You can try a demo at [nhnent.github.io/tui.editor](http://nhnent.github.io/tui.
 * **API** : https://nhnent.github.io/tui.editor/api/latest
 
 ## Dependency
-* codemirror ~1.0.4
-* squire #84ae8a0
-* jquery ~2.1.3
-* tui-code-snippet ~1.0.4
-* highlightjs ~9.1.0
-* marked ~0.3.5
-* toMark 0.0.4
+* codemirror
+* squire
+* jquery 2.1.3
+* tui-code-snippet
+* highlightjs
+* markdown-it
+* toMark
 
 ## Test environment
 * PC
@@ -45,8 +45,8 @@ You can try a demo at [nhnent.github.io/tui.editor](http://nhnent.github.io/tui.
 
 ## Download/Install
 * Bower
-   * Latest version: `bower install https://github.com/nhnent/tui-editor.git`
-   * Specific version: `bower install https://github.com/nhnent/tui-editor.git#[tagName]`
+   * Latest version: `bower install https://github.com/nhnent/tui.editor.git`
+   * Specific version: `bower install https://github.com/nhnent/tui.editor.git#[tagName]`
 
 ## License
 This software is licensed under the [MIT License](https://github.com/nhnent/tui.editor/blob/master/LICENSE).
