@@ -39,7 +39,7 @@ var onCopy = function ( event ) {
     var range = this.getSelection();
     var node = this.createElement( 'div' );
     var root = this._root;
-    var startBlock, contents, parent, newContents;
+    var startBlock, endBlock, copyRoot, contents, parent, newContents;
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     // Mobile Safari flat out doesn't work:
@@ -47,23 +47,20 @@ var onCopy = function ( event ) {
     if ( !isEdge && !isIOS && clipboardData ) {
         range = range.cloneRange();
         startBlock = getStartBlockOfRange( range, root );
-        if ( startBlock === getEndBlockOfRange( range, root ) ) {
-            // Copy all inline formatting, but that's it.
-            moveRangeBoundariesDownTree( range );
-            moveRangeBoundariesUpTree( range, startBlock );
-            contents = range.cloneContents();
-        } else {
-            moveRangeBoundariesUpTree( range, root );
-            contents = range.cloneContents();
-            parent = range.commonAncestorContainer;
-            while ( parent && parent !== root ) {
-                newContents = parent.cloneNode( false );
-                newContents.appendChild( contents );
-                contents = newContents;
-                parent = parent.parentNode;
-            }
+        endBlock = getEndBlockOfRange( range, root );
+        copyRoot = ( startBlock === endBlock ) ? startBlock : root;
+        moveRangeBoundariesDownTree( range );
+        moveRangeBoundariesUpTree( range, copyRoot );
+        contents = range.cloneContents();
+        parent = range.commonAncestorContainer;
+        while ( parent && parent !== copyRoot ) {
+            newContents = parent.cloneNode( false );
+            newContents.appendChild( contents );
+            contents = newContents;
+            parent = parent.parentNode;
         }
         node.appendChild( contents );
+
         clipboardData.setData( 'text/html', node.innerHTML );
         clipboardData.setData( 'text/plain',
             node.innerText || node.textContent );
