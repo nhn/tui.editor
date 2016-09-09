@@ -1,4 +1,5 @@
 import Bold from '../../src/js/wysiwygCommands/bold';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
@@ -13,6 +14,8 @@ describe('Bold', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+
+        wwe.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

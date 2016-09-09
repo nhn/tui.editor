@@ -29,7 +29,7 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
     exec(wwe, type) {
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        if (!sq.hasFormat('PRE')) {
+        if (!sq.hasFormat('PRE') && !sq.hasFormat('TABLE')) {
             let attr = `${CODEBLOCK_ATTR_NAME} class = "${CODEBLOCK_CLASS_PREFIX}${codeBlockID}"`;
 
             if (type) {

@@ -10,6 +10,8 @@ const isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
 const TABLE_COMPLETION_DELAY = 10;
 const SET_SELECTION_DELAY = 50;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
+const isIE10And11 = tui.util.browser.msie
+    && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
 
 /**
  * WwTableManager
@@ -98,6 +100,7 @@ class WwTableManager {
 
             if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
                 this._recordUndoStateIfNeed(range);
+                this._removeBRIfNeed(range);
                 this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
             } else if (!isRangeInTable && this._lastCellNode) {
                 this._recordUndoStateAndResetCellNode(range);
@@ -211,6 +214,7 @@ class WwTableManager {
                     this._tableHandlerOnDelete(range, ev);
                 }
 
+                this._insertBRIfNeed(range);
                 this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
                 isNeedNext = false;
             } else if ((isBackspace && this._isBeforeTable(range))
@@ -307,6 +311,7 @@ class WwTableManager {
 
         if (domUtils.getNodeName(tdOrTh.lastChild) !== 'BR'
             && domUtils.getNodeName(tdOrTh.lastChild) !== 'DIV'
+            && !isIE10And11
         ) {
             $(tdOrTh).append($('<br />')[0]);
         }
@@ -320,9 +325,16 @@ class WwTableManager {
      * @private
      */
     _unwrapBlockInTable() {
-        this.wwe.get$Body().find('td div,th div,tr>br').each((index, node) => {
-            if (node.nodeName === 'BR') {
-                $(node).remove();
+        this.wwe.get$Body().find('td div,th div,tr>br,td>br,th>br').each((index, node) => {
+            if (domUtils.getNodeName(node) === 'BR') {
+                const parentNodeName = domUtils.getNodeName(node.parentNode);
+                const isInTableCell = /TD|TH/.test(parentNodeName);
+                const isEmptyTableCell = node.parentNode.textContent.length === 0;
+                const isLastBR = node.parentNode.lastChild === node;
+
+                if (parentNodeName === 'TR' || (isInTableCell && !isEmptyTableCell && isLastBR)) {
+                    $(node).remove();
+                }
             } else {
                 $(node).children().unwrap();
             }
@@ -996,22 +1008,6 @@ class WwTableManager {
      * Create selection by selected cells and collapse that selection to end
      * @private
      */
-    _createRangeBySelectedCells() {
-        const sq = this.wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-        const selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
-
-        if (selectedCells.length && this.isInTable(range)) {
-            range.setStart(selectedCells.first()[0], 0);
-            range.setEnd(selectedCells.last()[0], 1);
-            sq.setSelection(range);
-        }
-    }
-
-    /**
-     * Create selection by selected cells and collapse that selection to end
-     * @private
-     */
     _collapseRangeToEndContainer() {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
@@ -1062,10 +1058,11 @@ class WwTableManager {
     _bindKeyEventForTableCopyAndCut() {
         const isMac = /Mac OS X/.test(navigator.userAgent);
         const commandKey = isMac ? 'metaKey' : 'ctrlKey';
+        const selectionManager = this.wwe.getManager('tableSelection');
 
         this.wwe.getEditor().addEventListener('keydown', event => {
             if (event[commandKey]) {
-                this._createRangeBySelectedCells();
+                selectionManager.createRangeBySelectedCells();
             }
         });
 
@@ -1112,6 +1109,44 @@ class WwTableManager {
         this.tableID += 1;
 
         return tableClassName;
+    }
+
+    /**
+     * Remove br when text inputted
+     * @param {Range} range Range object
+     * @private
+     */
+    _removeBRIfNeed(range) {
+        const startContainer = domUtils.isTextNode(range.startContainer)
+            ? range.startContainer.parentNode : range.startContainer;
+        const nodeName = domUtils.getNodeName(startContainer);
+
+        if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
+            $(startContainer).find('br').remove();
+        }
+    }
+
+
+    /**
+     * Insert br when text deleted
+     * @param {Range} range Range object
+     * @private
+     */
+    _insertBRIfNeed(range) {
+        const currentCell = range.startContainer.nodeType === 3
+            ? range.startContainer.parentNode : range.startContainer;
+        const nodeName = domUtils.getNodeName(currentCell);
+        const $currentCell = $(currentCell);
+
+        if (/td|th/i.test(nodeName)
+            && range.collapsed
+            && !currentCell.textContent.length
+            && !$currentCell.children().length
+            && !isIE10And11
+        ) {
+            currentCell.normalize();
+            $currentCell.append('<br>');
+        }
     }
 }
 

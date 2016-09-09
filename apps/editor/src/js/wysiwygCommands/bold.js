@@ -5,7 +5,8 @@
  */
 
 
-const CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Bold
@@ -23,8 +24,13 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
+        const tableSelectionManager = wwe.getManager('tableSelection');
 
         sq.focus();
+
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+            tableSelectionManager.createRangeBySelectedCells();
+        }
 
         if (sq.hasFormat('b') || sq.hasFormat('strong')) {
             sq.changeFormat(null, {tag: 'b'});
@@ -33,6 +39,12 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
                 sq.changeFormat(null, {tag: 'code'});
             }
             sq.bold();
+        }
+
+        const range = sq.getSelection();
+        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+            range.collapse(true);
+            sq.setSelection(range);
         }
     }
 });

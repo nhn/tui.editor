@@ -6,6 +6,7 @@
 
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Italic
@@ -23,6 +24,14 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
+        const range = sq.getSelection();
+        const tableSelectionManager = wwe.getManager('tableSelection');
+
+        sq.focus();
+
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+            tableSelectionManager.createRangeBySelectedCells();
+        }
 
         if (sq.hasFormat('i') || sq.hasFormat('em')) {
             sq.changeFormat(null, {tag: 'i'});
@@ -33,7 +42,10 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
             sq.italic();
         }
 
-        sq.focus();
+        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+            range.collapse(true);
+            sq.setSelection(range);
+        }
     }
 });
 

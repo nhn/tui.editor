@@ -1,6 +1,7 @@
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwTableSelectionManager from '../src/js/wwTableSelectionManager';
+import WwTableManager from '../src/js/wwTableManager';
 
 describe('WwTableSelectionManager', () => {
     let $container, em, wwe, mgr;
@@ -18,6 +19,7 @@ describe('WwTableSelectionManager', () => {
 
         mgr = new WwTableSelectionManager(wwe);
         wwe.focus();
+        wwe.addManager(WwTableManager);
     });
 
     //we need to wait squire input event process
@@ -327,6 +329,58 @@ describe('WwTableSelectionManager', () => {
             expect(selectedCells.eq(1).text()).toBe('3');
             expect(selectedCells.eq(2).text()).toBe('4');
             expect(selectedCells.eq(3).text()).toBe('5');
+        });
+    });
+
+    describe('_createRangeBySelectedCells', () => {
+        it('should create selection by selected cells and current selection is in table', () => {
+            const html = '<table>' +
+                '<thead>' +
+                '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td class="te-cell-selected">3<br>2<br>1</td><td class="te-cell-selected">4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table>';
+
+            wwe.focus();
+            wwe.get$Body().html(html);
+
+            let range = wwe.getEditor().getSelection();
+            range.setStart(wwe.get$Body().find('th')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr.createRangeBySelectedCells();
+            range = wwe.getEditor().getSelection();
+
+            expect(range.startContainer).toBe(wwe.get$Body().find('th')[0]);
+            expect(range.endContainer).toBe(wwe.get$Body().find('td')[1]);
+        });
+        it('do not selection on table when current selection is not in table', () => {
+            const html = '<table>' +
+                '<thead>' +
+                '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
+                '</thead>' +
+                '<tbody>' +
+                '<tr><td class="te-cell-selected">3<br>2<br>1</td><td class="te-cell-selected">4</td></tr>' +
+                '<tr><td>5</td><td>6</td></tr>' +
+                '</tbody>' +
+                '</table><div>2</div>';
+
+            wwe.focus();
+            wwe.get$Body().html(html);
+
+            let range = wwe.getEditor().getSelection();
+            range.setStart(wwe.get$Body().find('div')[0], 0);
+            range.collapse(true);
+            wwe.getEditor().setSelection(range);
+
+            mgr.createRangeBySelectedCells();
+            range = wwe.getEditor().getSelection();
+
+            expect(range.startContainer).toBe(wwe.get$Body().find('div')[0]);
         });
     });
 });
