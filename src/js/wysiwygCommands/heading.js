@@ -35,7 +35,6 @@ const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
                 wwe.changeBlockFormatTo(`H${size}`);
             }
         }
-
     }
 });
 
