@@ -45,10 +45,8 @@ You can try a demo at [nhnent.github.io/tui.editor](http://nhnent.github.io/tui.
 
 ## Download/Install
 * Bower
-   * Latest version: `bower install git@github.com:nhnent/tui-editor.git`
-   * Specific version: `bower install git@github.com:nhnent/tui-editor.git#[tagName]`
-* Download
-   * https://github.com/nhnent/tui.editor/tree/master/dist
+   * Latest version: `bower install https://github.com/nhnent/tui-editor.git`
+   * Specific version: `bower install https://github.com/nhnent/tui-editor.git#[tagName]`
 
 ## License
 This software is licensed under the [MIT License](https://github.com/nhnent/tui.editor/blob/master/LICENSE).
