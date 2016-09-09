@@ -25,6 +25,7 @@ require('./langs/en_US');
 require('./langs/ko_KR');
 require('./langs/zh_CN');
 require('./langs/ja_JP');
+require('./langs/nl_NL');
 
 //for jquery
 $.fn.tuiEditor = function(...args) {
