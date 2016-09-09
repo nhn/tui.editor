@@ -81,7 +81,7 @@ var gfmRenderer = Renderer.factory(basicRenderer, {
 function makeTaskIfNeed(node, subContent) {
     var condition;
 
-    if (subContent && node.className.indexOf('task-list-item') !== -1) {
+    if (node.className.indexOf('task-list-item') !== -1) {
         condition = node.className.indexOf('checked') !== -1 ? 'x' : ' ';
         subContent = '[' + condition + '] ' + subContent;
     }
