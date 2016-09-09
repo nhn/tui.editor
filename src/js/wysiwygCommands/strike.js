@@ -5,6 +5,7 @@
 
 
 import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Strike
@@ -22,6 +23,14 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
+        const range = sq.getSelection();
+        const tableSelectionManager = wwe.getManager('tableSelection');
+
+        sq.focus();
+
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+            tableSelectionManager.createRangeBySelectedCells();
+        }
 
         if (sq.hasFormat('S')) {
             sq.changeFormat(null, {tag: 'S'});
@@ -32,7 +41,10 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
             sq.strikethrough();
         }
 
-        sq.focus();
+        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+            range.collapse(true);
+            sq.setSelection(range);
+        }
     }
 });
 

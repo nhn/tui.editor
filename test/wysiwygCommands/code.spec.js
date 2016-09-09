@@ -1,5 +1,6 @@
 import Code from '../../src/js/wysiwygCommands/code';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import EventManager from '../../src/js/eventManager';
 
 describe('Code', () => {
@@ -13,6 +14,8 @@ describe('Code', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+
+        wwe.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

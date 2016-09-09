@@ -77,7 +77,7 @@ class WwTableSelectionManager {
 
         this.eventManager.listen('mousedown', ev => {
             const MOUSE_RIGHT_BUTTON = 2;
-            selectionStart = ev.data.target;
+            selectionStart = $(ev.data.target).closest('td,th')[0];
             const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
             selectionEnd = null;
 
@@ -91,12 +91,14 @@ class WwTableSelectionManager {
         });
 
         this.eventManager.listen('mouseover', ev => {
-            const isTextSelect = this.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
+            selectionEnd = $(ev.data.target).closest('td,th')[0];
 
-            selectionEnd = ev.data.target;
-            const isTableCell = $(selectionEnd).parents('table')[0];
+            const range = this.wwe.getEditor().getSelection();
+            const isEndsInTable = $(selectionEnd).parents('table')[0];
+            const isSameCell = selectionStart === selectionEnd;
+            const isTextSelect = this._isTextSelect(range, isSameCell);
 
-            if (this._isSelectionStarted && !isTextSelect && isTableCell) {
+            if (this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell && !isTextSelect)) {
                 // For disable firefox's native table cell selection
                 if (tui.util.browser.firefox && !this._removeSelectionTimer) {
                     this._removeSelectionTimer = setInterval(() => {
@@ -106,21 +108,40 @@ class WwTableSelectionManager {
                 this._highlightTableCellsBy(selectionStart, selectionEnd);
             }
         });
-        this.eventManager.listen('mouseup', () => {
-            const isTextSelect = this.wwe.getEditor().getSelection().commonAncestorContainer.nodeType === 3;
+        this.eventManager.listen('mouseup', ev => {
+            selectionEnd = $(ev.data.target).closest('td,th')[0];
+
+            let range = this.wwe.getEditor().getSelection();
+            const isSameCell = selectionStart === selectionEnd;
+            const isTextSelect = this._isTextSelect(range, isSameCell);
 
             this._clearTableSelectionTimerIfNeed();
 
-            if (this._isSelectionStarted && !isTextSelect) {
-                this.wwe.getManager('table').resetLastCellNode();
+            if (this._isSelectionStarted) {
+                if (isTextSelect) {
+                    this.removeClassAttrbuteFromAllCellsIfNeed();
+                } else {
+                    this.wwe.getManager('table').resetLastCellNode();
 
-                const range = this.wwe.getEditor().getSelection();
-                range.collapse(true);
-                this.wwe.getEditor().setSelection(range);
+                    range = this.wwe.getEditor().getSelection();
+                    range.collapse(true);
+                    this.wwe.getEditor().setSelection(range);
+                }
             }
 
             this._isSelectionStarted = false;
         });
+    }
+
+    /**
+     * Return whether single cell text selection or not
+     * @param {Range} range Range object
+     * @param {boolean} isSameCell Boolean value for same cell selection
+     * @returns {boolean}
+     * @private
+     */
+    _isTextSelect(range, isSameCell) {
+        return /TD|TH|TEXT/i.test(range.commonAncestorContainer.nodeName) && isSameCell;
     }
 
     /**
@@ -134,8 +155,6 @@ class WwTableSelectionManager {
         if (isTableSelecting) {
             this._tableSelectionTimer = setTimeout(() => {
                 this._isSelectionStarted = true;
-                this._isCellsSelected = true;
-                this._isSecondMouseDown = false;
             }, 100);
         }
     }
@@ -334,6 +353,23 @@ class WwTableSelectionManager {
 
     getSelectedCells() {
         return this.wwe.get$Body().find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
+    }
+
+    /**
+     * Create selection by selected cells and collapse that selection to end
+     * @private
+     */
+    createRangeBySelectedCells() {
+        const sq = this.wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        const selectedCells = this.getSelectedCells();
+        const tableManager = this.wwe.getManager('table');
+
+        if (selectedCells.length && tableManager.isInTable(range)) {
+            range.setStart(selectedCells.first()[0], 0);
+            range.setEnd(selectedCells.last()[0], 1);
+            sq.setSelection(range);
+        }
     }
 }
 module.exports = WwTableSelectionManager;

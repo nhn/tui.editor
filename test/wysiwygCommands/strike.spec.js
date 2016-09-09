@@ -1,5 +1,6 @@
 import Strike from '../../src/js/wysiwygCommands/strike';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import EventManager from '../../src/js/eventManager';
 
 describe('Strike', () => {
@@ -13,6 +14,8 @@ describe('Strike', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+
+        wwe.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

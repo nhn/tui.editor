@@ -1,5 +1,6 @@
 import Italic from '../../src/js/wysiwygCommands/italic';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
+import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import EventManager from '../../src/js/eventManager';
 
 describe('Italic', () => {
@@ -13,6 +14,8 @@ describe('Italic', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
+
+        wwe.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

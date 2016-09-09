@@ -24,6 +24,9 @@ const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
      */
     exec(wwe, size) {
         const sq = wwe.getEditor();
+
+        sq.focus();
+
         const range = sq.getSelection().cloneRange();
         const nodeName = domUtils.getNodeName(range.commonAncestorContainer);
 
@@ -33,7 +36,6 @@ const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
             }
         }
 
-        sq.focus();
     }
 });
 

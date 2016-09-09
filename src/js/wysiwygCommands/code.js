@@ -5,8 +5,8 @@
  */
 
 
-const CommandManager = require('../commandManager'),
-    domUtils = require('../domUtils');
+import CommandManager from '../commandManager';
+import domUtils from '../domUtils';
 
 /**
  * Code
@@ -24,8 +24,14 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
+        let range = sq.getSelection();
+        const tableSelectionManager = wwe.getManager('tableSelection');
 
         sq.focus();
+
+        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+            tableSelectionManager.createRangeBySelectedCells();
+        }
 
         if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
             sq.changeFormat(null, {tag: 'code'});
@@ -39,10 +45,15 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
 
             sq.changeFormat({tag: 'code'});
 
-            const range = sq.getSelection().cloneRange();
+            range = sq.getSelection().cloneRange();
             range.setStart(range.endContainer, range.endOffset);
             range.collapse(true);
 
+            sq.setSelection(range);
+        }
+
+        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+            range.collapse(true);
             sq.setSelection(range);
         }
     }
