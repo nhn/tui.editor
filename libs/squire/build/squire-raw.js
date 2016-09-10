@@ -2132,6 +2132,9 @@ var onCopy = function ( event ) {
         moveRangeBoundariesUpTree( range, copyRoot );
         contents = range.cloneContents();
         parent = range.commonAncestorContainer;
+        if ( parent.nodeType === TEXT_NODE ) {
+            parent = parent.parentNode;
+        }
         while ( parent && parent !== copyRoot ) {
             newContents = parent.cloneNode( false );
             newContents.appendChild( contents );
