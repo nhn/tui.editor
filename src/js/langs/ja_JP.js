@@ -32,5 +32,8 @@ tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
     'Align center': '中央揃え',
     'Align right': '右揃え',
     'Remove table': 'テーブル削除',
-    'Would you like to paste as table?': 'テーブルを貼り付けますか?'
+    'Would you like to paste as table?': 'テーブルを貼り付けますか?',
+    'Text color': '文字色相',
+    'Enable auto scroll': '自動スクロール使用',
+    'Disable auto scroll': '自動スクロール非使用'
 });

@@ -32,5 +32,8 @@ tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
     'Align center': 'Centreren',
     'Align right': 'Rechts uitlijnen',
     'Remove table': 'Verwijder tabel',
-    'Would you like to paste as table?': 'Wil je dit als tabel plakken?'
+    'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
+    'Text color': 'tekst kleur',
+    'Enable auto scroll': 'Auto scroll gebruik',
+    'Disable auto scroll': 'Auto scroll niet gebruik'
 });
