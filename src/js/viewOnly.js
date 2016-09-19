@@ -55,8 +55,8 @@ class ToastUIEditorViewOnly {
         this.preview = new Preview($(this.options.el), this.eventManager, this.convertor);
 
         this.preview.$el.on('mousedown', ev => {
-            const isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
-            if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+            const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
                 $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
                 this.eventManager.emit('change', {
                     source: 'viewOnly',
