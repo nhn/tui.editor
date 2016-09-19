@@ -32,5 +32,8 @@ tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
     'Align center': '가운데 정렬',
     'Align right': '오른쪽 정렬',
     'Remove table': '표 삭제',
-    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?'
+    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
+    'Text color': '글자 색상',
+    'Enable auto scroll': '자동 스크롤 켜짐',
+    'Disable auto scroll': '자동 스크롤 꺼짐'
 });
