@@ -32,5 +32,8 @@ tui.Editor.i18n.setLang(['en', 'en_US'], {
     'Align center': 'Align center',
     'Align right': 'Align right',
     'Remove table': 'Remove table',
-    'Would you like to paste as table?': 'Would you like to paste as table?'
+    'Would you like to paste as table?': 'Would you like to paste as table?',
+    'Text color': 'Text color',
+    'Enable auto scroll': 'Enable auto scroll',
+    'Disable auto scroll': 'Disable auto scroll'
 });

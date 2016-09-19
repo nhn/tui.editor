@@ -8,12 +8,13 @@ import extManager from '../extManager';
 import ScrollSync from './scrollFollow.scrollSync';
 import SectionManager from './scrollFollow.sectionManager';
 import Button from '../ui/button';
+import i18n from '../i18n';
 
 extManager.defineExtension('scrollFollow', editor => {
     const className = 'tui-scrollfollow';
     const TOOL_TIP = {
-        active: '자동 스크롤 끄기',
-        inActive: '자동 스크롤 켜기'
+        active: i18n.get('Enable auto scroll'),
+        inActive: i18n.get('Disable auto scroll')
     };
 
     if (editor.isViewOnly()) {

@@ -5,6 +5,7 @@
 
 
 import extManager from '../extManager';
+import i18n from '../i18n';
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
@@ -115,7 +116,7 @@ function initUI(editor, preset) {
     editor.getUI().toolbar.addButton({
         className,
         event: 'colorButtonClicked',
-        tooltip: '글자색상'
+        tooltip: i18n.get('Text color')
     }, 2);
     const $button = editor.getUI().toolbar.$el.find(`button.${className}`);
 
