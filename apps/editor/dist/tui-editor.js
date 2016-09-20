@@ -83,6 +83,7 @@
 	__webpack_require__(103);
 	__webpack_require__(104);
 	__webpack_require__(105);
+	__webpack_require__(106);
 
 	//for jquery
 	$.fn.tuiEditor = function () {
@@ -10995,8 +10996,8 @@
 	        this.preview = new _preview2.default($(this.options.el), this.eventManager, this.convertor);
 
 	        this.preview.$el.on('mousedown', function (ev) {
-	            var isOnTaskBox = ev.offsetX < 18 && ev.offsetY < 18;
-	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && isOnTaskBox) {
+	            var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
 	                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
 	                _this.eventManager.emit('change', {
 	                    source: 'viewOnly',
@@ -17402,18 +17403,17 @@
 
 	var _button2 = _interopRequireDefault(_button);
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _i18n = __webpack_require__(30);
 
-	/**
-	 * @fileoverview Implements Scroll Follow Extension
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	_extManager2.default.defineExtension('scrollFollow', function (editor) {
 	    var className = 'tui-scrollfollow';
 	    var TOOL_TIP = {
-	        active: '자동 스크롤 끄기',
-	        inActive: '자동 스크롤 켜기'
+	        active: _i18n2.default.get('Enable auto scroll'),
+	        inActive: _i18n2.default.get('Disable auto scroll')
 	    };
 
 	    if (editor.isViewOnly()) {
@@ -17493,7 +17493,10 @@
 	            scrollSync.saveScrollInfo();
 	        }
 	    });
-	});
+	}); /**
+	     * @fileoverview Implements Scroll Follow Extension
+	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	     */
 
 /***/ },
 /* 92 */
@@ -18186,13 +18189,18 @@
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
+	var _i18n = __webpack_require__(30);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g; /**
-	                                                     * @fileoverview Implements Color syntax Extension
-	                                                     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	                                                     */
+	/**
+	 * @fileoverview Implements Color syntax Extension
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
 
+	var colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 	var colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
 	var colorHtmlCompleteRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)<\/span>/g;
 	var decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
@@ -18303,7 +18311,7 @@
 	    editor.getUI().toolbar.addButton({
 	        className: className,
 	        event: 'colorButtonClicked',
-	        tooltip: '글자색상'
+	        tooltip: _i18n2.default.get('Text color')
 	    }, 2);
 	    var $button = editor.getUI().toolbar.$el.find('button.' + className);
 
@@ -22073,7 +22081,10 @@
 	    'Align center': 'Align center',
 	    'Align right': 'Align right',
 	    'Remove table': 'Remove table',
-	    'Would you like to paste as table?': 'Would you like to paste as table?'
+	    'Would you like to paste as table?': 'Would you like to paste as table?',
+	    'Text color': 'Text color',
+	    'Enable auto scroll': 'Enable auto scroll',
+	    'Disable auto scroll': 'Disable auto scroll'
 	});
 
 /***/ },
@@ -22116,7 +22127,10 @@
 	    'Align center': '가운데 정렬',
 	    'Align right': '오른쪽 정렬',
 	    'Remove table': '표 삭제',
-	    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?'
+	    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
+	    'Text color': '글자 색상',
+	    'Enable auto scroll': '자동 스크롤 켜짐',
+	    'Disable auto scroll': '자동 스크롤 꺼짐'
 	});
 
 /***/ },
@@ -22126,15 +22140,15 @@
 	'use strict';
 
 	tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
-	    'Markdown': '降价',
+	    'Markdown': 'Markdown',
 	    'WYSIWYG': '所见即所得',
 	    'Headings': '标题',
-	    'Bold': '大胆',
-	    'Italic': '斜体',
-	    'Strike': '罢工',
-	    'Code': '代码',
-	    'Line': '行',
-	    'Blockquote': '大段引用',
+	    'Bold': '加粗',
+	    'Italic': '斜体字',
+	    'Strike': '删除线',
+	    'Code': '内嵌代码',
+	    'Line': '画水平线',
+	    'Blockquote': '引用块',
 	    'Unordered list': '无序列表',
 	    'Ordered list': '有序列表',
 	    'Task': '任务',
@@ -22146,20 +22160,23 @@
 	    'Image URL': '图片网址',
 	    'Select image file': '选择映像文件',
 	    'Description': '说明',
-	    'OK': '好的',
+	    'OK': '确认',
 	    'Cancel': '取消',
 	    'File': '文件',
 	    'URL': 'URL',
 	    'Link text': '链接文本',
 	    'Add row': '添加一行',
-	    'Add col': '添加山坳',
+	    'Add col': '添加列',
 	    'Remove row': '删除行',
-	    'Remove col': '删除山坳',
+	    'Remove col': '删除列',
 	    'Align left': '左对齐',
 	    'Align center': '居中对齐',
 	    'Align right': '右对齐',
 	    'Remove table': '删除表',
-	    'Would you like to paste as table?': '你想粘贴为表?'
+	    'Would you like to paste as table?': '你想粘贴表吗?',
+	    'Text color': '文字色相',
+	    'Enable auto scroll': '自动的滚动使用',
+	    'Disable auto scroll': '自动的滚动作非使用'
 	});
 
 /***/ },
@@ -22202,7 +22219,56 @@
 	    'Align center': '中央揃え',
 	    'Align right': '右揃え',
 	    'Remove table': 'テーブル削除',
-	    'Would you like to paste as table?': 'テーブルを貼り付けますか?'
+	    'Would you like to paste as table?': 'テーブルを貼り付けますか?',
+	    'Text color': '文字色相',
+	    'Enable auto scroll': '自動スクロール使用',
+	    'Disable auto scroll': '自動スクロール非使用'
+	});
+
+/***/ },
+/* 106 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
+	    'Markdown': 'Markdown',
+	    'WYSIWYG': 'WYSIWYG',
+	    'Headings': 'Koppen',
+	    'Bold': 'Vet',
+	    'Italic': 'Cursief',
+	    'Strike': 'Doorhalen',
+	    'Code': 'Code',
+	    'Line': 'Regel',
+	    'Blockquote': 'Citaatblok',
+	    'Unordered list': 'Opsomming',
+	    'Ordered list': 'Genummerde opsomming',
+	    'Task': 'Taak',
+	    'Insert link': 'Link invoegen',
+	    'Insert codeblock': 'Codeblok toevoegen',
+	    'Insert table': 'Tabel invoegen',
+	    'Insert image': 'Afbeelding invoegen',
+	    'Heading': 'Kop',
+	    'Image URL': 'Afbeelding URL',
+	    'Select image file': 'Selecteer een afbeelding',
+	    'Description': 'Omschrijving',
+	    'OK': 'OK',
+	    'Cancel': 'Annuleren',
+	    'File': 'Bestand',
+	    'URL': 'URL',
+	    'Link text': 'Link tekst',
+	    'Add row': 'Rij toevoegen',
+	    'Add col': 'Kolom toevoegen',
+	    'Remove row': 'Rij verwijderen',
+	    'Remove col': 'Kolom verwijderen',
+	    'Align left': 'Links uitlijnen',
+	    'Align center': 'Centreren',
+	    'Align right': 'Rechts uitlijnen',
+	    'Remove table': 'Verwijder tabel',
+	    'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
+	    'Text color': 'tekst kleur',
+	    'Enable auto scroll': 'Auto scroll gebruik',
+	    'Disable auto scroll': 'Auto scroll niet gebruik'
 	});
 
 /***/ }
