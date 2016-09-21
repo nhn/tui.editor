@@ -477,7 +477,7 @@
 	    },
 	    'IMG': function(node) {
 	        var res = '',
-	            src = node.src,
+	            src = node.getAttribute('src'),
 	            alt = node.alt;
 
 	        if (src) {
