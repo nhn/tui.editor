@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "private",
   "authors": [
     {
@@ -33,7 +33,7 @@
     "highlightjs": "~9.5.0",
     "jquery": "~2.1.4",
     "markdown-it": "^7.0.1",
-    "toMark": "https://github.com/shiren/toMark.git#0.0.8",
+    "toMark": "https://github.com/shiren/toMark.git",
     "squire-rte": "https://github.com/nhnent/Squire.git#61c3df3dfc509487a9247e944c8373198d216882"
   },
   "devDependencies": {

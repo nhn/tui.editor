@@ -14806,7 +14806,7 @@
 	    sq.focus();
 
 	    if (!sq.hasFormat('PRE')) {
-	      sq.insertImage(data.imageUrl);
+	      sq.insertImage(data.imageUrl, { 'alt': data.altText });
 	    }
 	  }
 	});
