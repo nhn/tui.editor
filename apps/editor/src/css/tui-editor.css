@@ -446,7 +446,7 @@
 }
 
 .te-heading-add {
-    width: 120px;
+    width: auto;
 }
 
 .te-heading-add .tui-popup-body {
