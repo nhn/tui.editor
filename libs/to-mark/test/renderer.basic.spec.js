@@ -73,7 +73,11 @@ describe('basicRenderer', function() {
         });
 
         it('image', function() {
-            expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com/)');
+            expect(getMarkdownText('<img src="http://www.nhnent.com" alt="NHNENT" />')).toEqual('![NHNENT](http://www.nhnent.com)');
+        });
+
+        it('image return relative path', function() {
+            expect(getMarkdownText('<img src="/nhnent" alt="NHNENT" />')).toEqual('![NHNENT](/nhnent)');
         });
 
         it('image without src returns empty string', function() {
