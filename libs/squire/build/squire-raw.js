@@ -1111,7 +1111,7 @@ var getStartBlockOfRange = function ( range, root ) {
     // If inline, get the containing block.
     if ( isInline( container ) ) {
         block = getPreviousBlock( container, root );
-    } else if ( isBlock( container ) ) {
+    } else if ( container !== root && isBlock( container ) ) {
         block = container;
     } else {
         block = getNodeBefore( container, range.startOffset );
@@ -1130,7 +1130,7 @@ var getEndBlockOfRange = function ( range, root ) {
     // If inline, get the containing block.
     if ( isInline( container ) ) {
         block = getPreviousBlock( container, root );
-    } else if ( isBlock( container ) ) {
+    } else if ( container !== root && isBlock( container ) ) {
         block = container;
     } else {
         block = getNodeAfter( container, range.endOffset );
