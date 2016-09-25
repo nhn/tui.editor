@@ -1033,6 +1033,7 @@ var moveRangeBoundariesDownTree = function ( range ) {
         startOffset = range.startOffset,
         endContainer = range.endContainer,
         endOffset = range.endOffset,
+        maySkipBR = true,
         child;
 
     while ( startContainer.nodeType !== TEXT_NODE ) {
@@ -1047,6 +1048,11 @@ var moveRangeBoundariesDownTree = function ( range ) {
         while ( endContainer.nodeType !== TEXT_NODE ) {
             child = endContainer.childNodes[ endOffset - 1 ];
             if ( !child || isLeaf( child ) ) {
+                if ( maySkipBR && child && child.nodeName === 'BR' ) {
+                    endOffset -= 1;
+                    maySkipBR = false;
+                    continue;
+                }
                 break;
             }
             endContainer = child;
@@ -1079,6 +1085,7 @@ var moveRangeBoundariesUpTree = function ( range, common ) {
         startOffset = range.startOffset,
         endContainer = range.endContainer,
         endOffset = range.endOffset,
+        maySkipBR = true,
         parent;
 
     if ( !common ) {
@@ -1091,8 +1098,18 @@ var moveRangeBoundariesUpTree = function ( range, common ) {
         startContainer = parent;
     }
 
-    while ( endContainer !== common &&
-            endOffset === getLength( endContainer ) ) {
+    while ( true ) {
+        if ( maySkipBR &&
+                endContainer.nodeType !== TEXT_NODE &&
+                endContainer.childNodes[ endOffset ] &&
+                endContainer.childNodes[ endOffset ].nodeName === 'BR' ) {
+            endOffset += 1;
+            maySkipBR = false;
+        }
+        if ( endContainer === common ||
+                endOffset !== getLength( endContainer ) ) {
+            break;
+        }
         parent = endContainer.parentNode;
         endOffset = indexOf.call( parent.childNodes, endContainer ) + 1;
         endContainer = parent;
