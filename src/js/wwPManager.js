@@ -34,10 +34,48 @@ class WwPManager {
      * @private
      */
     _initEvent() {
+        this.eventManager.listen('wysiwygSetValueBefore', html => {
+            return this._splitPtagContentLines(html);
+        });
+
         this.eventManager.listen('wysiwygSetValueAfter', () => {
             this._ensurePtagContentWrappedWithDiv();
             this._unwrapPtags();
         });
+    }
+
+    /**
+     * Split multiple line content of p tags
+     * @param {string} html html text
+     * @returns {string} result
+     */
+    _splitPtagContentLines(html) {
+        html = html.replace(/<p>([\s\S]*?)<\/p>/gi, (whole, content) => {
+            const lines = content.split(/<br>/gi);
+            const linesLenIndex = lines.length - 1;
+            let splitedContent = '';
+
+            splitedContent = lines.map((line, index) => {
+                let result = '';
+
+                if (index > 0 && index < linesLenIndex) {
+                    line = line ? line : '<br>';
+                }
+
+                if (line) {
+                    result = `<div>${line}</div>`;
+                }
+
+                return result;
+            });
+
+            //For paragraph, we add empty line
+            splitedContent.push('<div><br></div>');
+
+            return splitedContent.join('');
+        });
+
+        return html;
     }
 
     /**
