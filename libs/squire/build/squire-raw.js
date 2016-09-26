@@ -206,7 +206,10 @@ function isLeaf ( node ) {
         !!leafNodeNames[ node.nodeName ];
 }
 function isInline ( node ) {
-    return inlineNodeNames.test( node.nodeName );
+    return inlineNodeNames.test( node.nodeName ) &&
+        // Malformed HTML can have block tags inside inline tags. Need to treat
+        // these as containers rather than inline. See #239.
+        ( node.nodeType === TEXT_NODE || every( node.childNodes, isInline ) );
 }
 function isBlock ( node ) {
     var type = node.nodeType;
