@@ -34,9 +34,7 @@ class WwPManager {
      * @private
      */
     _initEvent() {
-        this.eventManager.listen('wysiwygSetValueBefore', html => {
-            return this._splitPtagContentLines(html);
-        });
+        this.eventManager.listen('wysiwygSetValueBefore', html => this._splitPtagContentLines(html));
 
         this.eventManager.listen('wysiwygSetValueAfter', () => {
             this._ensurePtagContentWrappedWithDiv();
