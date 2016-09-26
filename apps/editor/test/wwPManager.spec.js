@@ -34,4 +34,8 @@ describe('WwPManager', () => {
         expect(wwe.get$Body().find('p').length).toEqual(0);
         expect(wwe.get$Body().find('div')[0].textContent).toEqual('text1');
     });
+    it('split muiltiple lines inside p when wysiwygSetValueBefore event fire', () => {
+        const html = em.emitReduce('wysiwygSetValueBefore', '<p>text<br><br><a href="#">link</a><br></p>');
+        expect(html).toEqual('<div>text</div><div><br></div><div><a href="#">link</a></div><div><br></div>');
+    });
 });
