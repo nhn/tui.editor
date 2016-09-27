@@ -50,7 +50,7 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/squire-rte/build/squire-raw.js',
-            'test/fixtures/*',
+            'test/fixtures/*.*',
             'test/test.bundle.js'
         ],
 
