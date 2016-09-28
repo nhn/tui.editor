@@ -243,7 +243,7 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
                         nodeName = sibling.nodeName;
                         if ( nodeName === 'IMG' ||
                                 ( nodeName === '#text' &&
-                                    /\S/.test( sibling.data ) ) ) {
+                                    notWS.test( sibling.data ) ) ) {
                             break;
                         }
                         if ( !isInline( sibling ) ) {
@@ -251,14 +251,14 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
                             break;
                         }
                     }
-                    data = data.replace( /^\s+/g, sibling ? ' ' : '' );
+                    data = data.replace( /^[ \t\r\n]+/g, sibling ? ' ' : '' );
                 }
                 if ( endsWithWS ) {
                     walker.currentNode = child;
                     while ( sibling = walker.nextNode() ) {
                         if ( nodeName === 'IMG' ||
                                 ( nodeName === '#text' &&
-                                    /\S/.test( sibling.data ) ) ) {
+                                    notWS.test( sibling.data ) ) ) {
                             break;
                         }
                         if ( !isInline( sibling ) ) {
@@ -266,7 +266,7 @@ var cleanTree = function cleanTree ( node, preserveWS ) {
                             break;
                         }
                     }
-                    data = data.replace( /\s+$/g, sibling ? ' ' : '' );
+                    data = data.replace( /[ \t\r\n]+$/g, sibling ? ' ' : '' );
                 }
                 if ( data ) {
                     child.data = data;
