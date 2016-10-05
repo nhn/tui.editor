@@ -92,7 +92,7 @@ class ToastUIEditorViewOnly {
      * @returns {string}
      */
     getValue() {
-        return this.convertor.toMarkdown(this.preview.$el.html());
+        return this.convertor.toMarkdown(this.preview.$el.find('div.tui-editor-contents').eq(0).html());
     }
 
     /**
