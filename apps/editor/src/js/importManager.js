@@ -138,7 +138,7 @@ class ImportManager {
     _precessDataTransfer(cbData, evData) {
         const textContent = cbData.getData('text');
 
-        if (FIND_EXCEL_DATA.test(textContent) && i18n.get('Would you like to paste as table?')) {
+        if (FIND_EXCEL_DATA.test(textContent) && confirm(i18n.get('Would you like to paste as table?'))) {
             evData.preventDefault();
             evData.codemirrorIgnore = true;
             this._addExcelTable(textContent);
