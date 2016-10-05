@@ -1,14 +1,7 @@
 'use strict';
 
 var webpackConfig = require('./webpack.config');
-
-Object.assign(webpackConfig.module, {
-    postLoaders: [{
-        test: /\.js/,
-        exclude: /\.(spec|bundle)\.js/,
-        loader: 'istanbul-instrumenter'
-    }]
-});
+var reportCoverage = process.env.NODE_ENV === 'coverage';
 
 module.exports = function(config) {
     config.set({
@@ -28,7 +21,6 @@ module.exports = function(config) {
             'karma-jasmine-jquery',
             'karma-sourcemap-loader',
             'karma-webpack',
-            'istanbul-instrumenter-loader',
             'karma-coverage',
 
             //this config only
@@ -58,18 +50,13 @@ module.exports = function(config) {
         // list of files to exclude
         exclude: [],
 
-        // test results reporter to use
-        // possible values: 'dots', 'progress'
-        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: [
-            'narrow',
-            'coverage'
-        ],
+        reporters: reportCoverage ? ['narrow', 'coverage'] : ['narrow'],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
         preprocessors: {
+            'src/js/**/*.js': ['webpack', 'sourcemap'],
             'test/test.bundle.js': ['webpack', 'sourcemap']
         },
 
