@@ -68,22 +68,23 @@
 	__webpack_require__(87);
 	__webpack_require__(88);
 	__webpack_require__(89);
+	__webpack_require__(90);
 
 	//default extensions
-	__webpack_require__(90);
 	__webpack_require__(91);
-	__webpack_require__(94);
+	__webpack_require__(92);
 	__webpack_require__(95);
+	__webpack_require__(96);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	//langs
-	__webpack_require__(102);
 	__webpack_require__(103);
 	__webpack_require__(104);
 	__webpack_require__(105);
 	__webpack_require__(106);
+	__webpack_require__(107);
 
 	//for jquery
 	$.fn.tuiEditor = function () {
@@ -1091,7 +1092,11 @@
 	                extraKeys: {
 	                    'Enter': 'newlineAndIndentContinue',
 	                    'Tab': 'subListIndentTab',
-	                    'Shift-Tab': 'indentLess'
+	                    'Shift-Tab': 'indentLess',
+	                    'Alt-Left': 'indentLess',
+	                    'Alt-Right': 'indentMore',
+	                    'Alt-Up': 'replaceLineTextToUpper',
+	                    'Alt-Down': 'replaceLineTextToLower'
 	                },
 	                indentUnit: 4
 	            });
@@ -7762,10 +7767,51 @@
 	        value: function _initEvent() {
 	            var _this = this;
 
+	            this.eventManager.listen('wysiwygSetValueBefore', function (html) {
+	                return _this._splitPtagContentLines(html);
+	            });
+
 	            this.eventManager.listen('wysiwygSetValueAfter', function () {
 	                _this._ensurePtagContentWrappedWithDiv();
 	                _this._unwrapPtags();
 	            });
+	        }
+
+	        /**
+	         * Split multiple line content of p tags
+	         * @param {string} html html text
+	         * @returns {string} result
+	         */
+
+	    }, {
+	        key: '_splitPtagContentLines',
+	        value: function _splitPtagContentLines(html) {
+	            html = html.replace(/<p>([\s\S]*?)<\/p>/gi, function (whole, content) {
+	                var lines = content.split(/<br>/gi);
+	                var linesLenIndex = lines.length - 1;
+	                var splitedContent = '';
+
+	                splitedContent = lines.map(function (line, index) {
+	                    var result = '';
+
+	                    if (index > 0 && index < linesLenIndex) {
+	                        line = line ? line : '<br>';
+	                    }
+
+	                    if (line) {
+	                        result = '<div>' + line + '</div>';
+	                    }
+
+	                    return result;
+	                });
+
+	                //For paragraph, we add empty line
+	                splitedContent.push('<div><br></div>');
+
+	                return splitedContent.join('');
+	            });
+
+	            return html;
 	        }
 
 	        /**
@@ -10113,7 +10159,7 @@
 	        value: function _precessDataTransfer(cbData, evData) {
 	            var textContent = cbData.getData('text');
 
-	            if (FIND_EXCEL_DATA.test(textContent) && _i18n2.default.get('Would you like to paste as table?')) {
+	            if (FIND_EXCEL_DATA.test(textContent) && confirm(_i18n2.default.get('Would you like to paste as table?'))) {
 	                evData.preventDefault();
 	                evData.codemirrorIgnore = true;
 	                this._addExcelTable(textContent);
@@ -17333,6 +17379,153 @@
 
 /***/ },
 /* 90 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	// CodeMirror, copyright (c) by Marijn Haverbeke and others
+	// Distributed under an MIT license: http://codemirror.net/LICENSE
+	// Modified by Junghwan Park <junghwan.park@nhnent.com>
+
+	/*eslint-disable */
+
+	CodeMirror.commands.replaceLineTextToUpper = function (cm) {
+	    if (cm.getOption("disableInput")) {
+	        return CodeMirror.Pass;
+	    }
+
+	    var ranges = cm.listSelections();
+	    var lineAdjustment = -1;
+
+	    for (var i = 0; i < ranges.length; i++) {
+	        var range = ranges[i];
+	        var from = range.anchor;
+	        var to = range.head;
+
+	        if (isSameLineSelection(range) && to.line > 0) {
+	            replaceSingleLine(cm, from, to, lineAdjustment);
+	        } else if (!isRangeCollapsed(range)) {
+	            var topLine = from.line < to.line ? from.line : to.line;
+
+	            if (topLine > 0) {
+	                var upper = from.line === topLine ? from : to;
+	                var bottom = from.line === topLine ? to : from;
+	                replaceMultiLine(cm, upper, bottom, lineAdjustment);
+	            }
+	        }
+	    }
+	};
+
+	CodeMirror.commands.replaceLineTextToLower = function (cm) {
+	    if (cm.getOption("disableInput")) {
+	        return CodeMirror.Pass;
+	    }
+
+	    var ranges = cm.listSelections();
+	    var lineAdjustment = 1;
+
+	    for (var i = 0; i < ranges.length; i++) {
+	        var range = ranges[i];
+	        var from = range.anchor;
+	        var to = range.head;
+	        var isLastLine = to.line === cm.lastLine();
+
+	        if (isSameLineSelection(range) && !isLastLine) {
+	            replaceSingleLine(cm, from, to, lineAdjustment);
+	        } else if (!isRangeCollapsed(range)) {
+	            var topLine = from.line < to.line ? from.line : to.line;
+	            var upper = from.line === topLine ? from : to;
+	            var bottom = from.line === topLine ? to : from;
+
+	            if (bottom.line < cm.lastLine()) {
+	                replaceMultiLine(cm, upper, bottom, lineAdjustment);
+	            }
+	        }
+	    }
+	};
+
+	function isRangeCollapsed(range) {
+	    return isSameLineSelection(range) && range.anchor.ch === range.head.ch;
+	}
+
+	function isSameLineSelection(range) {
+	    return range.anchor.line === range.head.line;
+	}
+
+	function replaceSingleLine(cm, from, to, lineAdjustment) {
+	    var currentLine = cm.getLine(to.line);
+	    var replacement = cm.getLine(to.line + lineAdjustment);
+	    var range = {
+	        anchor: from,
+	        head: to
+	    };
+
+	    cm.replaceRange(replacement, {
+	        line: to.line, ch: 0
+	    }, {
+	        line: to.line, ch: currentLine.length
+	    }, '+input');
+
+	    cm.replaceRange(currentLine, {
+	        line: to.line + lineAdjustment, ch: 0
+	    }, {
+	        line: to.line + lineAdjustment, ch: replacement.length
+	    }, '+input');
+
+	    if (isRangeCollapsed(range)) {
+	        cm.setCursor({
+	            line: to.line + lineAdjustment,
+	            ch: to.ch
+	        });
+	    } else {
+	        cm.setSelection({
+	            line: from.line + lineAdjustment,
+	            ch: from.ch
+	        }, {
+	            line: to.line + lineAdjustment,
+	            ch: to.ch
+	        });
+	    }
+	}
+
+	function replaceMultiLine(cm, upper, bottom, lineAdjustment) {
+	    var rangeContent = cm.getRange({
+	        line: upper.line, ch: 0
+	    }, {
+	        line: bottom.line, ch: cm.getLine(bottom.line).length
+	    });
+	    var edgeLineOfConcern = lineAdjustment > 0 ? bottom : upper;
+	    var replacement = cm.getLine(edgeLineOfConcern.line + lineAdjustment);
+	    var targetLine = void 0;
+
+	    if (lineAdjustment > 0) {
+	        targetLine = upper;
+	    } else {
+	        targetLine = bottom;
+	    }
+
+	    cm.replaceRange(replacement, {
+	        line: targetLine.line, ch: 0
+	    }, {
+	        line: targetLine.line, ch: cm.getLine(targetLine.line).length
+	    }, '+input');
+
+	    cm.replaceRange(rangeContent, {
+	        line: upper.line + lineAdjustment, ch: 0
+	    }, {
+	        line: bottom.line + lineAdjustment, ch: cm.getLine(bottom.line + lineAdjustment).length
+	    }, '+input');
+
+	    cm.setSelection({
+	        line: upper.line + lineAdjustment, ch: upper.ch
+	    }, {
+	        line: bottom.line + lineAdjustment, ch: bottom.ch
+	    });
+	}
+	/*eslint-enable */
+
+/***/ },
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17382,7 +17575,7 @@
 	});
 
 /***/ },
-/* 91 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17391,11 +17584,11 @@
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(92);
+	var _scrollFollow = __webpack_require__(93);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(93);
+	var _scrollFollow3 = __webpack_require__(94);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
@@ -17499,7 +17692,7 @@
 	     */
 
 /***/ },
-/* 92 */
+/* 93 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17764,7 +17957,7 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 93 */
+/* 94 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18180,7 +18373,7 @@
 	module.exports = SectionManager;
 
 /***/ },
-/* 94 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18430,7 +18623,7 @@
 	}
 
 /***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18439,23 +18632,23 @@
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(96);
+	var _markerList = __webpack_require__(97);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(97);
+	var _markerManager = __webpack_require__(98);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(99);
+	var _wysiwygMarkerHelper = __webpack_require__(100);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(100);
+	var _viewOnlyMarkerHelper = __webpack_require__(101);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(101);
+	var _markdownMarkerHelper = __webpack_require__(102);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -18710,7 +18903,7 @@
 	});
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18923,7 +19116,7 @@
 	module.exports = Markerlist;
 
 /***/ },
-/* 97 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18937,7 +19130,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(98);
+	var DiffMatchPatch = __webpack_require__(99);
 
 	var util = tui.util;
 
@@ -19166,7 +19359,7 @@
 	module.exports = MarkerManager;
 
 /***/ },
-/* 98 */
+/* 99 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21242,7 +21435,7 @@
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21494,7 +21687,7 @@
 	module.exports = WysiwygMarkerHelper;
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21765,7 +21958,7 @@
 	module.exports = ViewOnlyMarkerHelper;
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22042,7 +22235,7 @@
 	module.exports = MarkdownMarkerHelper;
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22088,7 +22281,7 @@
 	});
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22134,7 +22327,7 @@
 	});
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22180,7 +22373,7 @@
 	});
 
 /***/ },
-/* 105 */
+/* 106 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22226,7 +22419,7 @@
 	});
 
 /***/ },
-/* 106 */
+/* 107 */
 /***/ function(module, exports) {
 
 	'use strict';
