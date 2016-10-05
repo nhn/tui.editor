@@ -55,7 +55,11 @@ class MarkdownEditor {
             extraKeys: {
                 'Enter': 'newlineAndIndentContinue',
                 'Tab': 'subListIndentTab',
-                'Shift-Tab': 'indentLess'
+                'Shift-Tab': 'indentLess',
+                'Alt-Left': 'indentLess',
+                'Alt-Right': 'indentMore',
+                'Alt-Up': 'replaceLineTextToUpper',
+                'Alt-Down': 'replaceLineTextToLower'
             },
             indentUnit: 4
         });
