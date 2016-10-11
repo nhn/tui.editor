@@ -778,7 +778,10 @@
 	    var result,
 	        converter = this._getConverter(node);
 
-	    if (converter) {
+	    if (node && node.nodeType === Node.ELEMENT_NODE && node.hasAttribute('data-tomark-pass')) {
+	        node.removeAttribute('data-tomark-pass');
+	        result = node.outerHTML;
+	    } else if (converter) {
 	        result = converter.call(this, node, subContent);
 	    } else if (node) {
 	        result = this.getSpaceControlled(this._getInlineHtml(node, subContent), node);
