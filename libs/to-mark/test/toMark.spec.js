@@ -3,6 +3,12 @@
 var toMark = require('../src/toMark');
 
 describe('toMark', function() {
+    it('do not converting markdown syntax when passed element has \'data-tomark-pass\' attribute', function() {
+        expect(toMark('<br data-tomark-pass>')).toEqual('<br>');
+        expect(toMark('<div data-tomark-pass>hello</div>')).toEqual('<div>hello</div>');
+        expect(toMark('<span data-tomark-pass>world</span>')).toEqual('<span>world</span>');
+        expect(toMark('<ul data-tomark-pass><li>1</li><li>2</li></ul>')).toEqual('<ul><li>1</li><li>2</li></ul>');
+    });
     it('if pass empty string or falsy object return empty string', function() {
         expect(toMark('')).toEqual('');
         expect(toMark(false)).toEqual('');
