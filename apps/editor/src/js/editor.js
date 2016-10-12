@@ -126,7 +126,7 @@ class ToastUIEditor {
 
         this.mdEditor.init();
 
-        this.changeMode(self.options.initialEditType);
+        this.changeMode(self.options.initialEditType, true);
 
         this.contentHeight(self.options.height);
 
@@ -399,7 +399,7 @@ class ToastUIEditor {
      * @memberOf ToastUIEditor
      * @param {string} mode Editor mode name of want to change
      */
-    changeMode(mode) {
+    changeMode(mode, isWithoutFocus) {
         if (this.currentMode === mode) {
             return;
         }
@@ -421,7 +421,9 @@ class ToastUIEditor {
 
         this.eventManager.emit('changeMode', mode);
 
-        this.focus();
+        if (!isWithoutFocus) {
+            this.focus();
+        }
     }
 
     /**

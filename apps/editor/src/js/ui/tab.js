@@ -101,6 +101,7 @@ Tab.prototype._getButtonData = function() {
 Tab.prototype._onButtonClick = function(ev) {
     const $button = $(ev.target);
     this._activateTabByButton($button);
+    this.trigger('itemClick', $button.text());
 };
 
 /**
@@ -162,8 +163,6 @@ Tab.prototype._activateTabByButton = function($button) {
 
     this._activateButton($button);
     this._activateSection($button.attr('data-index'));
-
-    this.trigger('itemClick', $button.text());
 };
 
 /**
