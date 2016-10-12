@@ -86,16 +86,6 @@ class ToastUIEditorViewOnly {
     }
 
     /**
-     * Get content of preview
-     * @api
-     * @memberOf ToastUIEditorViewOnly
-     * @returns {string}
-     */
-    getValue() {
-        return this.convertor.toMarkdown(this.preview.$el.find('div.tui-editor-contents').eq(0).html());
-    }
-
-    /**
      * Bind eventHandler to event type
      * @api
      * @memberOf ToastUIEditorViewOnly
