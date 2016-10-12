@@ -398,6 +398,7 @@ class ToastUIEditor {
      * @api
      * @memberOf ToastUIEditor
      * @param {string} mode Editor mode name of want to change
+     * @param {boolean} isWithoutFocus Change mode without focus
      */
     changeMode(mode, isWithoutFocus) {
         if (this.currentMode === mode) {
