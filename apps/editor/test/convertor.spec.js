@@ -7,6 +7,7 @@ describe('Convertor', () => {
     beforeEach(() => {
         em = new EventManager();
         convertor = new Convertor(em);
+        convertor.initHtmlSanitizer();
     });
 
     afterEach(() => {

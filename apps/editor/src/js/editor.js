@@ -80,6 +80,7 @@ const __nedInstance = [];
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
          * @param {function} options.hooks.addImageBlobHook hook for image upload.
     * @param {string} language language
+    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
  */
 class ToastUIEditor {
     constructor(options) {
@@ -89,7 +90,8 @@ class ToastUIEditor {
             'previewStyle': 'tab',
             'initialEditType': 'markdown',
             'height': 300,
-            'language': 'en_US'
+            'language': 'en_US',
+            'useDefaultHTMLSanitizer': true
         }, options);
 
         this.eventManager = new EventManager();
@@ -98,6 +100,10 @@ class ToastUIEditor {
 
         this.commandManager = new CommandManager(this);
         this.convertor = new Convertor(this.eventManager);
+
+        if (this.options.useDefaultHTMLSanitizer) {
+            this.convertor.initHtmlSanitizer();
+        }
 
         if (this.options.hooks) {
             util.forEach(this.options.hooks, (fn, key) => {

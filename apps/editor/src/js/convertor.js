@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
 import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
@@ -85,8 +84,7 @@ class Convertor {
     toHTMLWithCodeHightlight(markdown) {
         let html = this._markdownToHtmlWithCodeHighlight(markdown);
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
-
-        return htmlSanitizer(html, true);
+        return html;
     }
 
     /**
@@ -101,8 +99,11 @@ class Convertor {
     toHTML(markdown) {
         let html = this._markdownToHtml(markdown);
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+        return html;
+    }
 
-        return htmlSanitizer(html, true);
+    initHtmlSanitizer() {
+        this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => htmlSanitizer(html, true));
     }
 
     /**
