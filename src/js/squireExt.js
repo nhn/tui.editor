@@ -314,6 +314,21 @@ class SquireExt extends Squire {
     isIgnoreChange() {
         return this._ignoreChange;
     }
+
+    focus() {
+        const scrollTop = this.scrollTop();
+
+        Squire.prototype.focus.call(this);
+
+        // In webkit, if contenteditable element focus method have been invoked when another input element has focus,
+        // contenteditable scroll to top automatically so we need scroll it back
+        if (scrollTop !== this.scrollTop()) {
+            this.scrollTop(scrollTop);
+        }
+
+        return this;
+    }
 }
 
 module.exports = SquireExt;
+

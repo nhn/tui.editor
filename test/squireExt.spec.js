@@ -269,4 +269,21 @@ describe('SquireExt', () => {
             expect(sqe.scrollTop()).not.toEqual(0);
         });
     });
+
+    describe('focus', () => {
+        it('should preserve scrollTop especially in webket', () => {
+            sqe.setHTML('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+            sqe.moveCursorToEnd();
+
+            $('body').append('<input type="text" id="myInput" />');
+
+            const scrollTop = sqe.scrollTop();
+
+            $('#myInput').focus();
+            sqe.focus();
+
+            expect(sqe.scrollTop()).toEqual(scrollTop);
+        });
+    });
 });
+
