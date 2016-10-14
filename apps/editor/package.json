@@ -5,18 +5,18 @@
   "author": "Sungho Kim <shirenbeat@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "babel-core": "^6.14.0",
-    "babel-eslint": "^6.1.2",
+    "babel-core": "^6.17.0",
+    "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.5",
     "babel-plugin-istanbul": "^2.0.1",
-    "babel-preset-es2015": "^6.14.0",
+    "babel-preset-es2015": "^6.16.0",
     "concat-cli": "^4.0.0",
     "cpy-cli": "^1.0.1",
-    "csslint": "^1.0.2",
+    "csslint": "^1.0.3",
     "del-cli": "^0.2.0",
-    "eslint": "^3.4.0",
+    "eslint": "^3.7.1",
     "fedoc-template": "git+https://github.nhnent.com/fe/share-fedoc-template.git#develop",
-    "jasmine-core": "^2.4.1",
+    "jasmine-core": "^2.5.2",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-cli": "^1.0.1",
@@ -32,7 +32,7 @@
     "karma-webpack": "^1.8.0",
     "uglify-js": "^2.7.3",
     "webpack": "^1.13.2",
-    "webpack-dev-server": "^1.15.0"
+    "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
     "doc": "jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/",
