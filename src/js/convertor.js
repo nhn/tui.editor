@@ -7,6 +7,7 @@ import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
 import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
+import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 
 const markdownIt = window.markdownit,
     toMark = window.toMark,
@@ -29,10 +30,12 @@ const markdownit = markdownIt({
 });
 
 markdownitHighlight.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownitHighlight.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
 markdownitHighlight.use(taskList);
 markdownitHighlight.use(codeBlock);
 
 markdownit.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownit.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
 markdownit.use(taskList);
 markdownit.use(codeBlock);
 
@@ -57,7 +60,7 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtmlWithCodeHighlight(markdown) {
-        return markdownitHighlight.render(markdown);
+        return markdownitHighlight.render(markdown.replace(/<br>/ig, '<br data-tomark-pass>'));
     }
 
     /**
@@ -69,7 +72,7 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtml(markdown) {
-        return markdownit.render(markdown);
+        return markdownit.render(markdown.replace(/<br>/ig, '<br data-tomark-pass>'));
     }
 
     /**
@@ -116,12 +119,39 @@ class Convertor {
      * @returns {string} markdown text
      */
     toMarkdown(html) {
-        let markdown = toMark(html);
+        let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
-
+        markdown = markdown.replace(/<br>/ig, '<br>\n');
         return markdown;
     }
 
+    _appendAttributeForBrIfNeed(html) {
+        const FIND_BR_RX = /<br>/ig;
+        const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
+        const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.+)/ig;
+        const FIND_FIRST_TWO_BRS_RX = /([^>]{1,1})<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+
+        html = html.replace(FIND_BR_RX, '<br />');
+
+        html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
+
+        const div = document.createElement('div');
+        const $div = $(div);
+        $div.html(html);
+        $div.find('pre br').each((index, node) => {
+            if (node.hasAttribute('data-tomark-pass')) {
+                node.removeAttribute('data-tomark-pass');
+            }
+        });
+
+        html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
+        html = html.replace(FIND_BR_RX, '<br />');
+
+        html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
+        html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
+
+        return html;
+    }
     /**
      * factory
      * Convertor factory

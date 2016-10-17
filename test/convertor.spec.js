@@ -32,14 +32,25 @@ describe('Convertor', () => {
         });
 
         it('Avoid hidden last cell in table', () => {
-            expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length)
-                .toEqual(6);
+            expect(convertor.toHTML('| a |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
+        });
+        it('Avoid hidden last cell in table', () => {
+            expect(convertor.toHTML('first\n\n<br>first\n\n```\nsecond\n\n\nsecond\n```\n\n')).toBe('<p>first</p>\n<p><br data-tomark-pass="">first</p>\n<pre><code>second\n\n\nsecond\n</code></pre>\n');
         });
     });
 
     describe('html to markdown', () => {
         it('converting markdown to html', () => {
             expect(convertor.toMarkdown('<h1 id="hello-world">HELLO WORLD</h1>')).toEqual('# HELLO WORLD');
+        });
+        it('should reserve br on multi line breaks', () => {
+            expect(convertor.toMarkdown('HELLO WORLD<br><br><br>!')).toEqual('HELLO WORLD\n\n<br>\n!');
+        });
+        it('should not reserve br on normal line breaks', () => {
+            expect(convertor.toMarkdown('HELLO WORLD<br><br>!')).toEqual('HELLO WORLD\n\n!');
+        });
+        it('should not reserve br in codeblock', () => {
+            expect(convertor.toMarkdown('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toEqual('```\nHELLO WORLD\n\n\n\n\n!\n```');
         });
     });
 
