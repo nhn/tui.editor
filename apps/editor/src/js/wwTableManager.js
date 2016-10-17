@@ -106,7 +106,7 @@ class WwTableManager {
                 this._recordUndoStateAndResetCellNode(range);
             }
 
-            if (!this._isModifierKeyPushed(ev)) {
+            if (isRangeInTable && !this._isModifierKeyPushed(ev)) {
                 this.wwe.getEditor().modifyDocument(() => {
                     selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
                 });
