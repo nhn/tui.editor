@@ -46,7 +46,8 @@ class Preview {
             latestMarkdownValue = markdownEditor.getValue();
 
             if (this.isVisible()) {
-                this.lazyRunner.run('refresh', markdownEditor.getValue());
+                this.lazyRunner.run('refresh',
+                    markdownEditor.getValue().replace(/<br>\n/g, '<br>'));
             }
         });
 

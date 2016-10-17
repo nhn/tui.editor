@@ -53,7 +53,12 @@ const mdInput = ['# HELLO\n\n',
     '\\~\\~strikeThrought\\~\\~\n\n',
     '\\`\\`\\` javascript\n\n',
     'var a = 10;\n',
-    '\\`\\`\\`'].join('');
+    '\\`\\`\\`',
+    '\n',
+    '<br>\n',
+    '<br>\n',
+    '<br>\n',
+    'end'].join('');
 
 const mdOutput = ['# HELLO\n\n',
     '## HELLO\n\n',
@@ -113,7 +118,12 @@ const mdOutput = ['# HELLO\n\n',
     '\\~\\~strikeThrought\\~\\~\n\n',
     '\\`\\`\\` javascript\n',
     ' var a = 10;\n',
-    '\\`\\`\\`'].join('');
+    '\\`\\`\\`',
+    '\n',
+    '<br>\n',
+    '<br>\n',
+    '<br>\n',
+    'end'].join('');
 
 import Editor from '../src/js/editor';
 
