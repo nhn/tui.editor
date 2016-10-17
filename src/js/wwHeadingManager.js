@@ -37,7 +37,14 @@ class WwHeadingManager {
      * @private
      */
     _init() {
+        this._initEvent();
         this._initKeyHandler();
+    }
+
+    _initEvent() {
+        this.eventManager.listen('wysiwygSetValueAfter', () => {
+            this._wrapDefaultBlockToHeadingInner();
+        });
     }
 
     /**
@@ -65,6 +72,19 @@ class WwHeadingManager {
             }
 
             return true;
+        });
+    }
+
+    /**
+     * _wrapDefaultBlockToHeadingInner
+     * Wrap default block to heading inner contents
+     * @private
+     */
+    _wrapDefaultBlockToHeadingInner() {
+        this.wwe.get$Body().find('h1, h2, h3, h4, h5, h6').each((index, node) => {
+            if ($(node).children('div, p').length <= 0) {
+                $(node).wrapInner('<div />');
+            }
         });
     }
 

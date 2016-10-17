@@ -41,8 +41,8 @@ describe('Mark', function() {
             var marker, range;
 
             range = sq.getSelection().cloneRange();
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 1);
-            range.setEnd(sq.get$Body().find('h2')[0].firstChild, 4);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
+            range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
 
             sq.setSelection(range);
 
@@ -125,8 +125,8 @@ describe('Mark', function() {
             var range, marker;
 
             range = sq.getSelection().cloneRange();
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 1);
-            range.setEnd(sq.get$Body().find('h2')[0].firstChild, 4);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
+            range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
             sq.setSelection(range);
 
             marker = editor.addMarker('myId');
@@ -150,8 +150,8 @@ describe('Mark', function() {
             var range, marker;
 
             range = sq.getSelection().cloneRange();
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 1);
-            range.setEnd(sq.get$Body().find('h2')[0].firstChild, 4);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
+            range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
             sq.setSelection(range);
 
             marker = editor.addMarker('myId');
@@ -175,8 +175,8 @@ describe('Mark', function() {
             var range, marker;
 
             range = sq.getSelection().cloneRange();
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 1);
-            range.setEnd(sq.get$Body().find('h2')[0].firstChild, 4);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
+            range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
             sq.setSelection(range);
 
             marker = editor.addMarker('myId');
@@ -201,13 +201,13 @@ describe('Mark', function() {
             var range, marker;
 
             range = sq.getSelection().cloneRange();
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 1);
-            range.setEnd(sq.get$Body().find('h2')[0].firstChild, 4);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
+            range.setEnd(sq.get$Body().find('h2 div')[0].firstChild, 4);
             sq.setSelection(range);
 
             marker = editor.addMarker('myId');
 
-            range.setStart(sq.get$Body().find('h2')[0].firstChild, 2);
+            range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 2);
             range.collapse(true);
             sq.setSelection(range);
 
