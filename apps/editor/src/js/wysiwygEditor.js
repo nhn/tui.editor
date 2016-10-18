@@ -190,8 +190,8 @@ class WysiwygEditor {
             return false;
         });
 
-        //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
-        //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
+        // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
+        // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
         this.getEditor().addEventListener('input', util.debounce(() => {
             if (!self._silentChange && self.isEditorValid()) {
                 const eventObj = {
@@ -243,8 +243,8 @@ class WysiwygEditor {
                 }
             });
 
-            //파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
-            //이렇게 하지 않으면 textObject에 문제가 생긴다.
+            // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
+            // 이렇게 하지 않으면 textObject에 문제가 생긴다.
             self.getEditor().addEventListener('keyup', () => {
                 const range = self.getRange();
 
@@ -376,7 +376,7 @@ class WysiwygEditor {
     _onKeyDown(keyboardEvent) {
         const keyMap = keyMapper.convert(keyboardEvent);
 
-        //to avoid duplicate event firing in firefox
+        // to avoid duplicate event firing in firefox
         if (keyboardEvent.keyCode) {
             this.eventManager.emit('keyMap', {
                 source: 'wysiwyg',
@@ -401,7 +401,7 @@ class WysiwygEditor {
 
         this.addKeyEventHandler('ENTER', (ev, range) => {
             if (self._isInOrphanText(range)) {
-                //We need this cuz input text right after table make orphan text in webkit
+                // We need this cuz input text right after table make orphan text in webkit
                 self.defer(() => {
                     self._wrapDefaultBlockToOrphanTexts();
                     self.breakToNewDefaultBlock(range, 'before');
@@ -483,16 +483,16 @@ class WysiwygEditor {
         const textElem = range.startContainer;
         const cursorOffset = range.startOffset;
 
-        //이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
-        //after code below, range range is arranged by body
+        // 이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
+        // after code below, range range is arranged by body
         const block = this.getEditor().createDefaultBlock([range.startContainer]);
 
-        //range for insert block
+        // range for insert block
         const insertTargetNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
         if (insertTargetNode) {
             range.setStartBefore(insertTargetNode);
         } else {
-            //컨테이너의 차일드가 이노드 한개뿐일경우
+            // 컨테이너의 차일드가 이노드 한개뿐일경우
             range.selectNodeContents(range.startContainer);
         }
 
@@ -500,7 +500,7 @@ class WysiwygEditor {
 
         range.insertNode(block);
 
-        //revert range to original node
+        // revert range to original node
         range.setStart(textElem, cursorOffset);
         range.collapse(true);
 
@@ -696,14 +696,14 @@ class WysiwygEditor {
 
         let html = this.editor.getHTML();
 
-        //empty line replace to br
+        // empty line replace to br
         html = html.replace(FIND_EMPTY_LINE, (match, tag) => {
             let result;
 
-            //we maintain empty list
+            // we maintain empty list
             if (tag === 'li') {
                 result = match;
-                //we maintain empty table
+                // we maintain empty table
             } else if (tag === 'td' || tag === 'th') {
                 result = `<${tag}></${tag}>`;
             } else {
@@ -713,10 +713,10 @@ class WysiwygEditor {
             return result;
         });
 
-        //remove unnecessary brs
+        // remove unnecessary brs
         html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
-        //remove contenteditable block, in this case div
+        // remove contenteditable block, in this case div
         html = html.replace(/<div>/g, '');
         html = html.replace(/<\/div>/g, '<br />');
 
@@ -733,7 +733,7 @@ class WysiwygEditor {
      */
     _prepareGetHTML() {
         const self = this;
-        //for ensure to fire change event
+        // for ensure to fire change event
         self.get$Body().attr('lastGetValue', Date.now());
 
         self._joinSplitedTextNodes();

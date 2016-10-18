@@ -116,18 +116,18 @@ class SectionManager {
                 onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
             }
 
-            //atx header
+            // atx header
             if (this._isAtxHeader(lineString)) {
                 isSection = true;
-                //setext header
+                // setext header
             } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
                 isSection = true;
             } else if (this._isImage(lineString)) {
                 isSection = true;
             }
 
-            //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
-            //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
+            // 빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
+            // 프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
             if (isTrimming) {
                 trimCapture += lineString.trim();
 

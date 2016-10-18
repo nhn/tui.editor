@@ -66,14 +66,14 @@ extManager.defineExtension('mark', editor => {
         editor.eventManager.emit('markerUpdated', ml.getAll());
     }
 
-    //We need to update marker after window have been resized
+    // We need to update marker after window have been resized
     $(window).on('resize', updateMarkWhenResizing);
 
     editor.on('removeEditor', () => {
         $(window).off('resize', updateMarkWhenResizing);
     });
 
-    //Reset marker content after set value
+    // Reset marker content after set value
     editor.on('setValueAfter', () => {
         const helper = getHelper();
         mm.resetContent(helper.getTextContent());

@@ -79,8 +79,16 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
     expendSelection(doc, cursor) {
         const tmpSelection = doc.getSelection();
         let result;
+        const start = {
+            line: cursor.line,
+            ch: cursor.ch - 2
+        };
+        const end = {
+            line: cursor.line,
+            ch: cursor.ch + 2
+        };
 
-        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+        doc.setSelection(start, end);
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             result = tmpSelection;

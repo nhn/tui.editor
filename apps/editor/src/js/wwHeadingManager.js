@@ -108,7 +108,7 @@ class WwHeadingManager {
      */
     _onEnter(event, range) {
         if (range.startOffset > 0) {
-            //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+            // squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
             this.wwe.defer(wwe => {
                 this._unwrapHeading();
                 wwe.getEditor().removeLastUndoStack();
@@ -177,8 +177,8 @@ class WwHeadingManager {
         const startContainer = range.startContainer;
         const sq = this.wwe.getEditor();
         const $Body = this.wwe.get$Body();
-        const headingElement = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer))
-            ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
+        const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer));
+        const headingElement = isHeading ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
         let targetNode = prevTopNode;
         let offset = 1;
 

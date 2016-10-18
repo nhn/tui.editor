@@ -70,7 +70,7 @@ class WwTableManager {
             this._insertDefaultBlockBetweenTable();
         });
 
-        //remove last br in td or th
+        // remove last br in td or th
         this.eventManager.listen('wysiwygProcessHTMLText', html => html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1'));
 
         this.wwe.getEditor().addEventListener('paste', ev => {
@@ -1037,7 +1037,9 @@ class WwTableManager {
 
         if (range.collapsed) {
             if (this.isInTable(range) && currentCell) {
-                if (direction === 'previous' || interval === 'row' && !tui.util.isUndefined(ev)) {
+                if ((direction === 'previous' || interval === 'row')
+                    && !tui.util.isUndefined(ev)
+                ) {
                     ev.preventDefault();
                 }
 
@@ -1117,8 +1119,8 @@ class WwTableManager {
      * @private
      */
     _removeBRIfNeed(range) {
-        const startContainer = domUtils.isTextNode(range.startContainer)
-            ? range.startContainer.parentNode : range.startContainer;
+        const isText = domUtils.isTextNode(range.startContainer);
+        const startContainer = isText ? range.startContainer.parentNode : range.startContainer;
         const nodeName = domUtils.getNodeName(startContainer);
 
         if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
@@ -1133,8 +1135,8 @@ class WwTableManager {
      * @private
      */
     _insertBRIfNeed(range) {
-        const currentCell = range.startContainer.nodeType === 3
-            ? range.startContainer.parentNode : range.startContainer;
+        const isText = domUtils.isTextNode(range.startContainer);
+        const currentCell = isText ? range.startContainer.parentNode : range.startContainer;
         const nodeName = domUtils.getNodeName(currentCell);
         const $currentCell = $(currentCell);
 

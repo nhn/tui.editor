@@ -198,7 +198,7 @@ class EventManager {
         const {type, namespace} = this._getTypeInfo(typeStr);
 
         if (type && !namespace) {
-            //dont use dot notation cuz eslint
+            // dont use dot notation cuz eslint
             this.events['delete'](type);
         } else if (!type && namespace) {
             this.events.forEach((eventHandlers, eventType) => {

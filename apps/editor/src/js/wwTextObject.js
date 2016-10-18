@@ -21,8 +21,8 @@ class WwTextObject {
     constructor(wwe, range) {
         this._wwe = wwe;
 
-        //msie11 and window chrome can't make start offset of range api correctly when compositing korean.
-        //so we need fix this when compositing korean.(and maybe other languages that needs composition.)
+        // msie11 and window chrome can't make start offset of range api correctly when compositing korean.
+        // so we need fix this when compositing korean.(and maybe other languages that needs composition.)
         if (isNeedOffsetFix) {
             this.isComposition = false;
             this._initCompositionEvent();

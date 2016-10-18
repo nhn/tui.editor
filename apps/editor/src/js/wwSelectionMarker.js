@@ -45,7 +45,10 @@ class WwSelectionMarker {
      * @private
      */
     _makeMarker(sq) {
-        return sq.createElement('INPUT', {type: 'hidden', class: MARKER_CSS_CLASS});
+        return sq.createElement('INPUT', {
+            type: 'hidden',
+            class: MARKER_CSS_CLASS}
+        );
     }
 
     /**
@@ -66,8 +69,8 @@ class WwSelectionMarker {
 
         $(this._markerNode).remove();
 
-        //task안의 컬러의 경우, 컨테이너가 컬러span 그리고 startOffset이 0인경우 컬러가 끊긴다.
-        //입력시 컬러가 이어지도록하려면 추가 보정이 필요하다
+        // task안의 컬러의 경우, 컨테이너가 컬러span 그리고 startOffset이 0인경우 컬러가 끊긴다.
+        // 입력시 컬러가 이어지도록하려면 추가 보정이 필요하다
         if (newRange.startOffset === 0
             && domUtils.isTextNode(newRange.startContainer.childNodes[0])
             && !newRange.startContainer.childNodes[0].textContent.replace(/\u200B/, '')
