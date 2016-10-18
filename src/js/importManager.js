@@ -73,10 +73,13 @@ class ImportManager {
      * @private
      */
     _emitAddImageBlobHook(item) {
-        const blob = item.name ? item : item.getAsFile(); //Blob or File
+        const blob = item.name ? item : item.getAsFile(); // Blob or File
 
         this.eventManager.emit('addImageBlobHook', blob, url => {
-            this.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
+            this.eventManager.emit('command', 'AddImage', {
+                imageUrl: url,
+                altText: blob.name || 'image'
+            });
         });
     }
 

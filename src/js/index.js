@@ -3,14 +3,14 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-//codemirror modes&addons
+// codemirror modes&addons
 require('./codemirror/overlay');
 require('./codemirror/markdown');
 require('./codemirror/gfm');
 require('./codemirror/continuelist');
 require('./codemirror/arrowKeyFunction');
 
-//default extensions
+// default extensions
 require('./extensions/taskCounter');
 require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
@@ -21,14 +21,14 @@ import ToastUIEditor from './editor';
 window.tui = window.tui || {};
 window.tui.Editor = ToastUIEditor;
 
-//langs
+// langs
 require('./langs/en_US');
 require('./langs/ko_KR');
 require('./langs/zh_CN');
 require('./langs/ja_JP');
 require('./langs/nl_NL');
 
-//for jquery
+// for jquery
 $.fn.tuiEditor = function(...args) {
     const argumentArray = $.makeArray(...args);
     let options, instance;

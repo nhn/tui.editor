@@ -99,8 +99,16 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     expendWithBoldSelection(doc, cursor) {
         const tmpSelection = doc.getSelection();
         let result;
+        const start = {
+            line: cursor.line,
+            ch: cursor.ch - 3
+        };
+        const end = {
+            line: cursor.line,
+            ch: cursor.ch + 3
+        };
 
-        doc.setSelection({line: cursor.line, ch: cursor.ch - 3}, {line: cursor.line, ch: cursor.ch + 3});
+        doc.setSelection(start, end);
 
         if (tmpSelection === '******' || tmpSelection === '______') {
             result = tmpSelection;
@@ -120,8 +128,16 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     expendOnlyBoldSelection(doc, cursor) {
         const tmpSelection = doc.getSelection();
         let result = false;
+        const start = {
+            line: cursor.line,
+            ch: cursor.ch - 2
+        };
+        const end = {
+            line: cursor.line,
+            ch: cursor.ch + 2
+        };
 
-        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+        doc.setSelection(start, end);
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             doc.setSelection(cursor);
@@ -140,8 +156,16 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     expendSelection(doc, cursor) {
         const tmpSelection = doc.getSelection();
         let result;
+        const start = {
+            line: cursor.line,
+            ch: cursor.ch - 2
+        };
+        const end = {
+            line: cursor.line,
+            ch: cursor.ch + 2
+        };
 
-        doc.setSelection({line: cursor.line, ch: cursor.ch - 2}, {line: cursor.line, ch: cursor.ch + 2});
+        doc.setSelection(start, end);
 
         if (tmpSelection === '****' || tmpSelection === '____') {
             result = tmpSelection;

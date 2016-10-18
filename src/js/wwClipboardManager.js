@@ -143,7 +143,7 @@ class WwClipboardManager {
      * @private
      */
     _extendRange(range) {
-        //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+        // 텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
         if (domUtils.isTextNode(range.commonAncestorContainer)
             && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
             && range.commonAncestorContainer.nodeName !== 'TD'
@@ -159,7 +159,7 @@ class WwClipboardManager {
             range = this._extendEndRange(range);
         }
 
-        //commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
+        // commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
         if (this._isWholeCommonAncestorContainerSelected(range)) {
             range.selectNode(range.commonAncestorContainer);
         }
@@ -176,7 +176,7 @@ class WwClipboardManager {
     _extendStartRange(range) {
         let newBound = range.startContainer;
 
-        //레인지 확장
+        // 레인지 확장
         while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
         && !newBound.previousSibling
@@ -184,7 +184,7 @@ class WwClipboardManager {
             newBound = newBound.parentNode;
         }
 
-        //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+        // range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
         range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
 
         return range;
@@ -201,7 +201,7 @@ class WwClipboardManager {
         let newBound = range.endContainer;
         let boundNext = newBound.nextSibling;
 
-        //레인지 확장
+        // 레인지 확장
         while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
         && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
@@ -210,7 +210,7 @@ class WwClipboardManager {
             boundNext = newBound.nextSibling;
         }
 
-        //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+        // range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
         range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
 
         return range;

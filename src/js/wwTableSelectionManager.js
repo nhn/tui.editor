@@ -98,7 +98,10 @@ class WwTableSelectionManager {
             const isSameCell = selectionStart === selectionEnd;
             const isTextSelect = this._isTextSelect(range, isSameCell);
 
-            if (this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell && !isTextSelect)) {
+            if (this._isSelectionStarted
+                && isEndsInTable
+                && ((!isTextSelect || isSameCell) && !isTextSelect)
+            ) {
                 // For disable firefox's native table cell selection
                 if (tui.util.browser.firefox && !this._removeSelectionTimer) {
                     this._removeSelectionTimer = setInterval(() => {

@@ -58,8 +58,8 @@ class SquireExt extends Squire {
         this.modifyBlocks(frag => {
             let current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
 
-            //HR은 Block으로 치지 않아서 frag에나타나지 않는다
-            //디폴트 블럭을 만들어준다.
+            // HR은 Block으로 치지 않아서 frag에나타나지 않는다
+            // 디폴트 블럭을 만들어준다.
             if (frag.childNodes.length) {
                 current = frag.childNodes[0];
             } else {
@@ -68,7 +68,7 @@ class SquireExt extends Squire {
             }
 
             if (srcCondition) {
-                //find last depth
+                // find last depth
                 while (current.firstChild) {
                     current = current.firstChild;
                 }
@@ -77,15 +77,15 @@ class SquireExt extends Squire {
                     nextBlock.appendChild(node);
                 };
 
-                //find tag
+                // find tag
                 while (current !== frag) {
                     tagName = current.tagName;
 
                     if (util.isFunction(srcCondition) ? srcCondition(tagName) : (tagName === srcCondition)) {
                         nextBlock = current.childNodes[0];
 
-                        //there is no next blocktag
-                        //eslint-disable-next-line max-depth
+                        // there is no next blocktag
+                        // eslint-disable-next-line max-depth
                         if (!domUtils.isElemNode(nextBlock) || current.childNodes.length > 1) {
                             nextBlock = this.createDefaultBlock();
 
@@ -93,14 +93,14 @@ class SquireExt extends Squire {
 
                             lastNodeOfNextBlock = nextBlock.lastChild;
 
-                            //remove unneccesary br
-                            //eslint-disable-next-line max-depth
+                            // remove unneccesary br
+                            // eslint-disable-next-line max-depth
                             if (lastNodeOfNextBlock && domUtils.getNodeName(lastNodeOfNextBlock) === 'BR') {
                                 nextBlock.removeChild(lastNodeOfNextBlock);
                             }
                         }
 
-                        //eslint-disable-next-line max-depth
+                        // eslint-disable-next-line max-depth
                         if (targetTagName) {
                             newBlock = this.createElement(targetTagName, [nextBlock]);
                         } else {
@@ -119,7 +119,7 @@ class SquireExt extends Squire {
                 }
             }
 
-            //if source condition node is not founded, we wrap current div node with node named targetTagName
+            // if source condition node is not founded, we wrap current div node with node named targetTagName
             if (
                 (!newFrag || !srcCondition)
                 && targetTagName
@@ -256,7 +256,7 @@ class SquireExt extends Squire {
         range.setStart(range.startContainer, range.startOffset);
         range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
-        //to prevent squire input event fire
+        // to prevent squire input event fire
         this._ignoreChange = true;
         this.insertElement(marker, range);
 

@@ -80,7 +80,10 @@ class MarkdownEditor {
 
         this.cm.on('beforeChange', (cm, ev) => {
             if (ev.origin === 'paste') {
-                this.eventManager.emit('pasteBefore', {source: 'markdown', data: ev});
+                this.eventManager.emit('pasteBefore', {
+                    source: 'markdown',
+                    data: ev
+                });
             }
         });
 

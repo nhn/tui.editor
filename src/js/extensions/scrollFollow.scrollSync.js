@@ -94,8 +94,8 @@ class ScrollSync {
         let scrollInfo = cm.getScrollInfo();
         let topLine, topSection, ratio, factors;
 
-        //if codemirror has not visible scrollInfo have incorrect value
-        //so we use saved scroll info for alternative
+        // if codemirror has not visible scrollInfo have incorrect value
+        // so we use saved scroll info for alternative
         scrollInfo = this._fallbackScrollInfoIfIncorrect(scrollInfo);
 
         const isEditorBottom = (scrollInfo.height - scrollInfo.top) <= scrollInfo.clientHeight;
@@ -281,7 +281,7 @@ class ScrollSync {
             startTime = Date.now(),
             self = this;
 
-        //if already doing animation
+        // if already doing animation
         if (this._currentTimeoutId) {
             clearTimeout(this._currentTimeoutId);
         }
@@ -291,11 +291,11 @@ class ScrollSync {
          */
         function step() {
             const stepTime = Date.now();
-            const progress = (stepTime - startTime) / 200; //200 is animation time
+            const progress = (stepTime - startTime) / 200; // 200 is animation time
             let deltaValue;
 
             if (progress < 1) {
-                deltaValue = originValue + valueDiff * Math.cos((1 - progress) * Math.PI / 2);
+                deltaValue = originValue + (valueDiff * Math.cos((1 - progress) * Math.PI / 2));
                 stepCB(Math.ceil(deltaValue));
                 self._currentTimeoutId = setTimeout(step, 1);
             } else {

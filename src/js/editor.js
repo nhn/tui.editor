@@ -16,7 +16,7 @@ import ViewOnly from './viewOnly';
 import DefaultUI from './ui/defaultUI';
 import i18n from './i18n';
 
-//markdown commands
+// markdown commands
 import mdBold from './markdownCommands/bold';
 import mdItalic from './markdownCommands/italic';
 import mdStrike from './markdownCommands/strike';
@@ -32,7 +32,7 @@ import mdTask from './markdownCommands/task';
 import mdCode from './markdownCommands/code';
 import mdCodeBlock from './markdownCommands/codeBlock';
 
-//wysiwyg Commands
+// wysiwyg Commands
 import wwBold from './wysiwygCommands/bold';
 import wwItalic from './wysiwygCommands/italic';
 import wwStrike from './wysiwygCommands/strike';

@@ -162,7 +162,7 @@ class WwTaskManager {
      * @private
      */
     _removeTaskListClass() {
-        //because task-list class is block merge normal list and task list
+        // because task-list class is block merge normal list and task list
         this.wwe.get$Body().find('.task-list').each((index, node) => {
             $(node).removeClass('task-list');
         });

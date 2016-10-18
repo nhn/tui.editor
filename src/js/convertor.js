@@ -87,6 +87,7 @@ class Convertor {
     toHTMLWithCodeHightlight(markdown) {
         let html = this._markdownToHtmlWithCodeHighlight(markdown);
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
         return html;
     }
 
@@ -102,6 +103,7 @@ class Convertor {
     toHTML(markdown) {
         let html = this._markdownToHtml(markdown);
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
+
         return html;
     }
 
@@ -122,6 +124,7 @@ class Convertor {
         let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
         markdown = markdown.replace(/<br>/ig, '<br>\n');
+
         return markdown;
     }
 

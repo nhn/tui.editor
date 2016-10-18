@@ -103,10 +103,11 @@ function getTrs(range, selectionMgr, $table) {
             selectedCells.last()[0]);
         trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
     } else {
-        startCell = domUtil.isTextNode(range.startContainer) ?
-            $(range.startContainer).parent('td,th')[0] : range.startContainer;
-        endCell = domUtil.isTextNode(range.endContainer) ?
-            $(range.endContainer).parent('td,th')[0] : range.endContainer;
+        const startContainer = range.startContainer;
+        const endContainer = range.endContainer;
+
+        startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
+        endCell = domUtil.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
         rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
         trs = getSelectedRows(startCell, rangeInformation, $table);
     }

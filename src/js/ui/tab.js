@@ -7,8 +7,9 @@ import UIController from './uicontroller';
 import templater from './templater';
 
 const util = tui.util;
-
+/*eslint-disable*/
 const buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
+/*eslint-enable*/
 
 /**
  * Tab
