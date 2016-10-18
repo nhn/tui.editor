@@ -374,21 +374,52 @@ class WwPasteContentHelper {
      * @private
      */
     _tableElementAid(fragment) {
+        this._completeTableIfNeed(fragment);
+        this._updateTableIDClassName(fragment);
+    }
+
+    /**
+     * Complete and append table to fragment
+     * @param {DocumentFragment} fragment Copied data
+     * @private
+     */
+    _completeTableIfNeed(fragment) {
         const tableManager = this.wwe.getManager('table');
         const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
 
         if (wrapperTr) {
             $(fragment).append(wrapperTr);
         }
+
         const wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+
         if (wrapperTbody) {
             $(fragment).append(wrapperTbody);
         }
+
         const wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+
         if (wrapperTable) {
-            $(wrapperTable).addClass(tableManager.getTableIDClassName());
             $(fragment).append(wrapperTable);
         }
+    }
+
+    /**
+     * Update table ID class name in fragment
+     * @param {DocumentFragment} fragment Copied data
+     * @private
+     */
+    _updateTableIDClassName(fragment) {
+        const tableManager = this.wwe.getManager('table');
+
+        $(fragment).find('table').each((index, table) => {
+            $(table).removeClass((idx, className) =>
+                className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1'));
+        });
+
+        $(fragment).find('table').each((index, table) => {
+            $(table).addClass(tableManager.getTableIDClassName());
+        });
     }
 }
 
