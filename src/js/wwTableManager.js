@@ -217,11 +217,12 @@ class WwTableManager {
                 this._insertBRIfNeed(range);
                 this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
                 isNeedNext = false;
-            } else if ((isBackspace && this._isBeforeTable(range))
-                || (!isBackspace && this._isAfterTable(range))
+            } else if ((!isBackspace && this._isBeforeTable(range))
+                || (isBackspace && this._isAfterTable(range))
             ) {
                 ev.preventDefault();
-                this._removeTableOnBackspace(range);
+                const startOffset = (isBackspace ? range.startOffset - 1 : range.startOffset);
+                this._removeTable(range, domUtils.getChildNodeByOffset(range.startContainer, startOffset));
                 isNeedNext = false;
             }
         } else if (this.isInTable(range)) {
@@ -356,20 +357,20 @@ class WwTableManager {
     }
 
     /**
-     * _removeTableOnBackspace
-     * Remove table on backspace
+     * _removeTable
+     * Remove table
      * @param {Range} range range
+     * @param {Node} table table
      * @memberOf WwTableManager
      * @private
      */
-    _removeTableOnBackspace(range) {
-        const table = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-
-        this.wwe.getEditor().saveUndoState(range);
-
-        this.wwe.insertSelectionMarker(range);
-        $(table).remove();
-        this.wwe.restoreSelectionMarker();
+    _removeTable(range, table) {
+        if (table.tagName === 'TABLE') {
+            this.wwe.getEditor().saveUndoState(range);
+            this.wwe.saveSelection(range);
+            $(table).remove();
+            this.wwe.restoreSavedSelection();
+        }
     }
 
     /**
