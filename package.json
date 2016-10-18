@@ -40,7 +40,7 @@
     "testwd": "NODE_ENV=DEV karma start karma.conf.ne.js",
     "coverage": "NODE_ENV=coverage karma start karma.conf.ne.js",
     "dev": "node develop",
-    "jslint": "eslint src/js",
+    "eslint": "eslint src/js",
     "csslint": "csslint src/css --quiet --ignore=adjoining-classes,important,box-sizing,box-model,overqualified-elements,qualified-headings,unique-headings,display-property-grouping,order-alphabetical,universal-selector,outline-none,font-sizes",
     "clean": "rm -rf dist",
     "build:uglifyjs": "uglifyjs dist/tui-editor.js -o dist/tui-editor.min.js",

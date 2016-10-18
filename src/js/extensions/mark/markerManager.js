@@ -105,7 +105,7 @@ class MarkerManager {
 
             const changedLen = text.length;
 
-            //이전 변경점 end를 이번 변경점 start로 만들어 위치를 조정한다.
+            // 이전 변경점 end를 이번 변경점 start로 만들어 위치를 조정한다.
             changedStart = changedEnd;
 
             if (type === CHANGE_NOTHING) {
@@ -116,10 +116,10 @@ class MarkerManager {
             }
 
             if (type === CHANGE_ADD) {
-                diffLen += changedLen; //더해진경우는 End값이 변경될 필요가없다 변경전의 위치는 start와 end가 collapse일수밖에 없다.. 일반적인 컨트롤상황에서는
+                diffLen += changedLen; // 더해진경우는 End값이 변경될 필요가없다 변경전의 위치는 start와 end가 collapse일수밖에 없다.. 일반적인 컨트롤상황에서는
             } else if (type === CHANGE_MINUS) {
                 diffLen -= changedLen;
-                changedEnd += changedLen; //빠지면 빠지기전까지의 범위가 end가 되어야한다.
+                changedEnd += changedLen; // 빠지면 빠지기전까지의 범위가 end가 되어야한다.
             }
 
             iteratee(changedStart, changedEnd, diffLen);

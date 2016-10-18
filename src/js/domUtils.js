@@ -329,8 +329,8 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
         walkerOffset = newWalkerOffset;
     }
 
-    //오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
-    //중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
+    // 오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
+    // 중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
     do {
         result.push({
             container: walker.currentNode,

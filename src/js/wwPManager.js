@@ -67,7 +67,7 @@ class WwPManager {
                 return result;
             });
 
-            //For paragraph, we add empty line
+            // For paragraph, we add empty line
             splitedContent.push('<div><br></div>');
 
             return splitedContent.join('');

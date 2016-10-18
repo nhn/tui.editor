@@ -119,8 +119,8 @@ function getRangeInformation(range, selectionMgr) {
         rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],
             selectedCells.last()[0]);
     } else {
-        startCell = domUtil.isTextNode(range.startContainer) ?
-            $(range.startContainer).parent('td,th')[0] : range.startContainer;
+        const startContainer = range.startContainer;
+        startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
         rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
     }
 
