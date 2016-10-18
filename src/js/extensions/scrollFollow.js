@@ -79,17 +79,21 @@ extManager.defineExtension('scrollFollow', editor => {
 
     editor.on('previewRenderAfter', () => {
         sectionManager.sectionMatch();
-        scrollSync.syncToPreview();
+        scrollSync.syncPreviewScrollTopToMarkdown();
         isScrollable = true;
     });
 
-    cm.on('scroll', () => {
+    editor.eventManager.listen('scroll', event => {
         if (!isActive) {
             return;
         }
 
         if (isScrollable && editor.preview.isVisible()) {
-            scrollSync.syncToPreview();
+            if (event.source === 'markdown' && !scrollSync.isMarkdownScrollEventBlocked) {
+                scrollSync.syncPreviewScrollTopToMarkdown();
+            } else if (event.source === 'preview' && !scrollSync.isPreviewScrollEventBlocked) {
+                scrollSync.syncMarkdownScrollTopToPreview();
+            }
         } else {
             scrollSync.saveScrollInfo();
         }

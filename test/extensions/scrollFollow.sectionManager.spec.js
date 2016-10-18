@@ -323,5 +323,41 @@ describe('scrollFollow.sectionManager', () => {
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
         });
+
+        it('create new section of image where at root level', () => {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '![nhnent](http://www.nhnent.com)',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[3]);
+        });
+
+        it('do not new section of image where at non root level', () => {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                '* NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
+        });
     });
 });

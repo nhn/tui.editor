@@ -3,8 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
+const PREVIEW_MARGIN_TOP = 57;
 const SCROLL_TOP_PADDING = 20;
+const SCROLL_BOCKING_RESET_DELAY = 15;
 
 /**
  * ScrollSync
@@ -13,7 +14,7 @@ const SCROLL_TOP_PADDING = 20;
  * @constructor
  * @class
  * @param {SectionManager} sectionManager sectionManager
- * @param {CodeMirror} cm codemirror
+ * @param {CodeMirror} cm CodeMirror
  * @param {jQuery} $previewContainerEl preview container
  */
 class ScrollSync {
@@ -22,7 +23,7 @@ class ScrollSync {
         this.cm = cm;
         this.$previewContainerEl = $previewContainerEl;
         this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
-
+        this.releaseTimer = null;
         /**
          * current timeout id needs animation
          * @type {number}
@@ -30,7 +31,7 @@ class ScrollSync {
         this._currentTimeoutId = null;
 
         /**
-         * Saved scrollInfo object of codemirror
+         * Saved scrollInfo object of CodeMirror
          * @type {object}
          */
         this._savedScrollInfo = null;
@@ -38,8 +39,8 @@ class ScrollSync {
 
     /**
      * _getEditorSectionHeight
-     * get section height of editor
-     * @param {object} section section be caculated height
+     * Return section height of editor
+     * @param {object} section section be calculated height
      * @returns {number} height
      */
     _getEditorSectionHeight(section) {
@@ -51,8 +52,8 @@ class ScrollSync {
 
     /**
      * _getLineHeightGapInSection
-     * get height gap between passed line in passed section
-     * @param {object} section section be caculated
+     * Return height gap between passed line in passed section
+     * @param {object} section section be calculated
      * @param {number} line line number
      * @returns {number} gap
      */
@@ -65,8 +66,8 @@ class ScrollSync {
 
     /**
      * _getSectionScrollRatio
-     * get ratio of height between scrollTop line and scrollTop section
-     * @param {object} section section be caculated
+     * Return ratio of height between scrollTop line and scrollTop section
+     * @param {object} section section be calculated
      * @param {number} line line number
      * @returns {number} ratio
      */
@@ -85,7 +86,7 @@ class ScrollSync {
 
     /**
      * _getScrollFactorsOfEditor
-     * get Scroll Information of editor for preivew scroll sync
+     * Return Scroll Information of editor for preview scroll sync
      * @returns {object} scroll factors
      */
     _getScrollFactorsOfEditor() {
@@ -123,8 +124,53 @@ class ScrollSync {
     }
 
     /**
+     * Return Scroll Information of editor for Markdown scroll sync
+     * @returns {object} scroll factors
+     * @private
+     */
+    _getScrollInfoForMarkdown() {
+        const sectionList = this.sectionManager.getSectionList();
+        let factors;
+
+        tui.util.forEachArray(sectionList, section => {
+            const $div = section.$previewSectionEl;
+            const $preview = $div.parent().parent();
+            const isPreviewBottom = ($preview[0].clientHeight - $preview.scrollTop()) <= $preview[0].height;
+            let needNext = true;
+
+            if (isPreviewBottom) {
+                factors = {
+                    isPreviewBottom
+                };
+                needNext = false;
+            } else if (this._isTopSection($preview, $div)) {
+                factors = {
+                    section,
+                    sectionRatio: this._getMarkdownEditorScrollRatio($preview, $div)
+                };
+                needNext = false;
+            }
+
+            return needNext;
+        });
+
+        return factors;
+    }
+
+    /**
+     * Return ScrollRatio for Markdown scroll value
+     * @param {jQuery} $preview jQuery wrapped preview container
+     * @param {jQuery} $div jQuery wrapped section div element
+     * @returns {number}
+     * @private
+     */
+    _getMarkdownEditorScrollRatio($preview, $div) {
+        return ($preview.scrollTop() - $div[0].offsetTop) / $div.height();
+    }
+
+    /**
      * _getScrollTopForPreview
-     * get ScrolTop value for preview
+     * Return scrollTop value for preview
      * @returns {number|undefined} scrollTop value, when something wrong then return undefined
      */
     _getScrollTopForPreview() {
@@ -147,15 +193,79 @@ class ScrollSync {
     }
 
     /**
-     * syncToPreview
-     * sync preview with markdown scroll
+     * Return scrollTop value for Markdown editor
+     * @returns {number}
+     * @private
      */
-    syncToPreview() {
-        const self = this,
-            targetScrollTop = this._getScrollTopForPreview();
+    _getScrollTopForMarkdown() {
+        let scrollTop;
+        const scrollFactors = this._getScrollInfoForMarkdown();
+        const section = scrollFactors.section;
+        const ratio = scrollFactors.sectionRatio;
 
-        this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, deltaScrollTop => {
-            self.$previewContainerEl.scrollTop(deltaScrollTop);
+        if (scrollFactors.isPreviewBottom) {
+            scrollTop = this.cm.getScrollInfo().height;
+        } else if (section) {
+            const coordsAtStart = this.cm.charCoords({
+                line: section.start,
+                char: 0
+            }, 'local');
+            const coordsAtEnd = this.cm.charCoords({
+                line: section.end,
+                char: 0
+            }, 'local');
+
+            scrollTop = coordsAtStart.top;
+            scrollTop += ((coordsAtEnd.top - coordsAtStart.top) * ratio);
+        }
+
+        scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+        return scrollTop;
+    }
+
+    /**
+     * syncPreviewScrollTopToMarkdown
+     * sync preview scroll to markdown
+     */
+    syncPreviewScrollTopToMarkdown() {
+        const $previewContainerEl = this.$previewContainerEl;
+        const sourceScrollTop = $previewContainerEl.scrollTop();
+        const targetScrollTop = this._getScrollTopForPreview();
+
+        this.isPreviewScrollEventBlocked = true;
+
+        this._animateRun(sourceScrollTop, targetScrollTop, deltaScrollTop => {
+            clearTimeout(this.releaseTimer);
+
+            $previewContainerEl.scrollTop(deltaScrollTop);
+
+            this.releaseTimer = setTimeout(() => {
+                this.isPreviewScrollEventBlocked = false;
+            }, SCROLL_BOCKING_RESET_DELAY);
+        });
+    }
+
+    /**
+     * syncMarkdownScrollTopToPreview
+     * sync markdown scroll to preview
+     */
+    syncMarkdownScrollTopToPreview() {
+        const codeMirror = this.cm;
+        const codeMirrorScrollInfo = codeMirror.getScrollInfo();
+        const sourceScrollTop = codeMirrorScrollInfo.top;
+        const targetScrollTop = this._getScrollTopForMarkdown();
+
+        this.isMarkdownScrollEventBlocked = true;
+
+        this._animateRun(sourceScrollTop, targetScrollTop, deltaScrollTop => {
+            clearTimeout(this.releaseTimer);
+
+            codeMirror.scrollTo(0, deltaScrollTop);
+
+            this.releaseTimer = setTimeout(() => {
+                this.isMarkdownScrollEventBlocked = false;
+            }, SCROLL_BOCKING_RESET_DELAY);
         });
     }
 
@@ -199,9 +309,10 @@ class ScrollSync {
 
     /**
      * Fallback to saved scrolInfo if incorrect scrollInfo passed
-     * this because incorrect codemirror returns scrollInfo if codemirror is invisible
+     * this because incorrect CodeMirror returns scrollInfo if CodeMirror is invisible
      * @param {object} scrollInfo scrollInfo
      * @returns {object} scrollInfo
+     * @private
      */
     _fallbackScrollInfoIfIncorrect(scrollInfo) {
         return scrollInfo.height < 0 && this._savedScrollInfo ? this._savedScrollInfo : scrollInfo;
@@ -209,9 +320,28 @@ class ScrollSync {
 
     /**
      * Save Codemirror's scrollInfo for alternative use
+     * memberOf ScrollSync
      */
     saveScrollInfo() {
         this._savedScrollInfo = this.cm.getScrollInfo();
     }
+
+    /**
+     * Return whether given range is top section of preview contents or not
+     * @param {jQuery} $preview jQuery wrapped preview container
+     * @param {jQuery} $div jQuery wrapped section div element
+     * @returns {boolean}
+     * @private
+     */
+    _isTopSection($preview, $div) {
+        const previewScrollTop = $preview.scrollTop();
+        const divOffsetTop = $div[0].offsetTop;
+        const divHeight = $div.height();
+        const isSectionBegin = previewScrollTop >= (divOffsetTop - PREVIEW_MARGIN_TOP);
+        const isSectionEnd = previewScrollTop > (divOffsetTop + divHeight);
+
+        return isSectionBegin && !isSectionEnd;
+    }
+
 }
 module.exports = ScrollSync;

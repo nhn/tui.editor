@@ -121,7 +121,7 @@ describe('scrollFollow.ScrollSync', () => {
                 sectionManager.sectionMatch();
                 cm.scrollTo(0, cm.heightAtLine(3, 'local'));
 
-                scrollSync.syncToPreview();
+                scrollSync.syncPreviewScrollTopToMarkdown();
 
                 expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
 
@@ -154,7 +154,7 @@ describe('scrollFollow.ScrollSync', () => {
 
                 cm.scrollTo(0, cm.heightAtLine(1, 'local'));
 
-                scrollSync.syncToPreview();
+                scrollSync.syncPreviewScrollTopToMarkdown();
 
                 expect(scrollSync.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
 

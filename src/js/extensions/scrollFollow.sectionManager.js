@@ -5,6 +5,7 @@
 
 
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
+const FIND_IMAGE_RX = /^ *(!\[.*])\([\w\d;:/.,=&%+_-]*\)(?:\n+|$)/;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */;
@@ -121,6 +122,8 @@ class SectionManager {
                 //setext header
             } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
                 isSection = true;
+            } else if (this._isImage(lineString)) {
+                isSection = true;
             }
 
             //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
@@ -232,6 +235,10 @@ class SectionManager {
             && FIND_SETEXT_HEADER_RX.test(nextLineString);
     }
 
+    _isImage(lineString) {
+        return FIND_IMAGE_RX.test(lineString);
+    }
+
     /**
      * makeSectionList
      * make section list
@@ -285,8 +292,13 @@ class SectionManager {
         sections[0] = [];
 
         this.$previewContent.contents().filter(findElementNodeFilter).each((index, el) => {
-            if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
-                if (sections[lastSection].length) {
+            if (el.tagName.match(/^(H1|H2|H3|H4|H5|H6|P)$/)) {
+                const isParagraph = (el.tagName === 'P');
+                const isImage = ($(el).children('img').length && isParagraph);
+
+                if ((!isParagraph || isImage)
+                    && sections[lastSection].length
+                ) {
                     sections.push([]);
                     lastSection += 1;
                 }

@@ -54,6 +54,12 @@ class Preview {
         this.eventManager.listen('previewNeedsRefresh', value => {
             this.refresh(value || latestMarkdownValue);
         });
+        this.$el.on('scroll', event => {
+            this.eventManager.emit('scroll', {
+                source: 'preview',
+                data: event
+            });
+        });
     }
 
     /**
