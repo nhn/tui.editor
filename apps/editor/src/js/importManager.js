@@ -43,6 +43,10 @@ class ImportManager {
         this.eventManager.listen('paste', ev => {
             this._processClipboard(ev.data);
         });
+
+        this.eventManager.listen('pasteBefore', ev => {
+            this._decodeURL(ev);
+        });
     }
 
     /**
@@ -74,6 +78,26 @@ class ImportManager {
         this.eventManager.emit('addImageBlobHook', blob, url => {
             this.eventManager.emit('command', 'AddImage', {imageUrl: url, altText: blob.name || 'image'});
         });
+    }
+
+    /**
+     * Decode url when paste link
+     * @param {object} ev event object
+     */
+    _decodeURL(ev) {
+        if (ev.source === 'markdown'
+            && ev.data.text.length === 1
+            && ev.data.text[0].match(/https?:\/\//g)
+        ) {
+            ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
+        } else if (
+            ev.source === 'wysiwyg'
+            && ev.data.fragment.childNodes.length === 1
+            && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE
+            && ev.data.fragment.firstChild.tagName === 'A'
+        ) {
+            ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
+        }
     }
 
     /**
