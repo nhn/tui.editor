@@ -6,7 +6,6 @@
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
-import WwSelectionMarker from './wwSelectionMarker';
 import WwListManager from './wwListManager';
 import WwTaskManager from './wwTaskManager';
 import WwTableManager from './wwTableManager';
@@ -75,7 +74,6 @@ class WysiwygEditor {
         });
 
         this._clipboardManager = new WwClipboardManager(this);
-        this._selectionMarker = new WwSelectionMarker();
         this._initSquireEvent();
         this._clipboardManager.init();
 
@@ -903,29 +901,6 @@ class WysiwygEditor {
 
         this.getEditor().changeBlockFormat(condition);
         this.eventManager.emit('wysiwygRangeChangeAfter', this);
-    }
-
-    /**
-     * insertSelectionMarker
-     * Insert selection marker
-     * @api
-     * @memberOf WysiwygEditor
-     * @param {Range} range Range to save selection
-     * @returns {Range} range
-     */
-    insertSelectionMarker(range) {
-        return this._selectionMarker.insertMarker(range, this.getEditor());
-    }
-
-    /**
-     * restoreSelectionMarker
-     * Restore marker to selection
-     * @api
-     * @memberOf WysiwygEditor
-     * @returns {Range} range
-     */
-    restoreSelectionMarker() {
-        return this._selectionMarker.restore(this.getEditor());
     }
 
     /**
