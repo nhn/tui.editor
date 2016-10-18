@@ -466,12 +466,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.htmlState = CodeMirror.startState(htmlMode);
       return switchBlock(stream, state, htmlBlock);
     }
-*/
 
     if (ch === '<' && stream.match(/^\/\w*?>/)) {
       state.md_inside = false;
       return "tag";
     }
+*/
 
     var ignoreUnderscore = false;
     if (!modeCfg.underscoresBreakWords) {
@@ -783,7 +783,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     blankLine: blankLine,
 
     getType: getType,
-
+    closeBrackets: "()[]{}''\"\"``",
     fold: "markdown"
   };
   return mode;
