@@ -3715,8 +3715,11 @@ var makeList = function ( self, frag, type ) {
         listItemAttrs = tagAttributes.li;
 
     while ( node = walker.nextNode() ) {
-        tag = node.parentNode.nodeName;
-        if ( tag !== 'LI' ) {
+        if ( node.parentNode.nodeName === 'LI' ) {
+            node = node.parentNode;
+            walker.currentNode = node.lastChild;
+        }
+        if ( node.nodeName !== 'LI' ) {
             newLi = self.createElement( 'LI', listItemAttrs );
             if ( node.dir ) {
                 newLi.dir = node.dir;
@@ -3739,7 +3742,7 @@ var makeList = function ( self, frag, type ) {
             newLi.appendChild( empty( node ) );
             walker.currentNode = newLi;
         } else {
-            node = node.parentNode.parentNode;
+            node = node.parentNode;
             tag = node.nodeName;
             if ( tag !== type && ( /^[OU]L$/.test( tag ) ) ) {
                 replaceWith( node,
