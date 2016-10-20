@@ -27,11 +27,18 @@
 <div id="editSection"></div>
 <script src="../build/bundle.js"></script>
 <script>
-let textObject;
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: 400,
-        initialEditType: 'wysiwyg'
+        initialEditType: 'wysiwyg',
+        events: {
+            'keyMap': function(ev) {
+                if (ev.keyMap === 'ENTER') {
+                    console.log('!!!');
+                    ev.data.preventDefault();
+                }
+            }
+        }
     });
 
     $('#editSection').tuiEditor('focus');
