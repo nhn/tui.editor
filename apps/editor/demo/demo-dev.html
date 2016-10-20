@@ -27,11 +27,14 @@
 <div id="editSection"></div>
 <script src="../build/bundle.js"></script>
 <script>
+let textObject;
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: 400,
         initialEditType: 'wysiwyg'
     });
+
+    $('#editSection').tuiEditor('focus');
 </script>
 </body>
 </html>

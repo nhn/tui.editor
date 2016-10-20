@@ -30,19 +30,18 @@ require('./langs/nl_NL');
 
 // for jquery
 $.fn.tuiEditor = function(...args) {
-    const argumentArray = $.makeArray(...args);
     let options, instance;
 
     const el = this[0];
 
     if (el) {
-        options = argumentArray[0] || {};
+        options = args[0] || {};
 
         instance = $.data(el, 'tuiEditor');
 
         if (instance) {
             if (typeof options === 'string') {
-                return instance[options](...argumentArray.slice(1));
+                return instance[options](...args.slice(1));
             }
         } else {
             options.el = el;
