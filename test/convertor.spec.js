@@ -37,6 +37,14 @@ describe('Convertor', () => {
         it('Avoid hidden last cell in table', () => {
             expect(convertor.toHTML('first\n\n<br>first\n\n```\nsecond\n\n\nsecond\n```\n\n')).toBe('<p>first</p>\n<p><br data-tomark-pass="">first</p>\n<pre><code>second\n\n\nsecond\n</code></pre>\n');
         });
+
+        it('do not add line breaks in table before and after image syntax', () => {
+            expect(convertor._markdownToHtmlWithCodeHighlight('\n| ![naver](www.naver.com/) |  |  |\n| ----------- | --- | --- |\n|  | b |  |\n|  |  |  |\ntext').match(/\/td/g).length).toEqual(6);
+        });
+
+        it('do not add line breaks in list before and after image syntax', () => {
+            expect(convertor._markdownToHtmlWithCodeHighlight('\n* asd![naver](www.naver.com/)\n- asd![naver](www.naver.com/)\n1. asd![naver](www.naver.com/)\n* [ ] asd![naver](www.naver.com/)\n').match(/\/p/g)).toBe(null);
+        });
     });
 
     describe('html to markdown', () => {

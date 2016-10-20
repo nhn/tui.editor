@@ -338,7 +338,10 @@ describe('scrollFollow.sectionManager', () => {
             sectionManager.makeSectionList();
             const sectionList = sectionManager.getSectionList();
 
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(4)).toBe(sectionList[2]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[3]);
         });
 
@@ -356,8 +359,49 @@ describe('scrollFollow.sectionManager', () => {
             sectionManager.makeSectionList();
             const sectionList = sectionManager.getSectionList();
 
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(4)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
+        });
+
+        it('do not create new section of image where at non root level', () => {
+            ned.setValue([
+                'paragraph',
+                '# header1',
+                'paragraph',
+                'paragraph',
+                'asdNHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '* NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '* [ ] NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '1. NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '- NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '> NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '>> NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                '```',
+                '![nhnent](http://www.nhnent.com)',
+                '```',
+                '## header2',
+                'paragraph'
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(4)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(5)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(6)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(7)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(8)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(9)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(10)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(11)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(12)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(13)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[4]);
         });
     });
 });
