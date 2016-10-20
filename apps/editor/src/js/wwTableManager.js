@@ -140,6 +140,8 @@ class WwTableManager {
         this.wwe.addKeyEventHandler('TAB', () => this._moveCursorTo('next', 'cell'));
 
         this.wwe.addKeyEventHandler('SHIFT+TAB', ev => this._moveCursorTo('previous', 'cell', ev));
+        this.wwe.addKeyEventHandler('UP', ev => this._moveCursorTo('previous', 'row', ev));
+        this.wwe.addKeyEventHandler('DOWN', ev => this._moveCursorTo('next', 'row', ev));
 
         this._bindKeyEventForTableCopyAndCut();
     }
