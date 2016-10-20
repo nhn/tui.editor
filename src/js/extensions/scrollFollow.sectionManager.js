@@ -5,7 +5,9 @@
 
 
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
-const FIND_IMAGE_RX = /^ *(!\[.*])\([\w\d;:/.,=&%+_-]*\)(?:\n+|$)/;
+const FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
+const FIND_QUOTE_RX = /^ {0,3}(> ?)*\s/;
+const FIND_IMAGE_RX = /!\[([^\[\]]*)]\(([^)]*)\)/g;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */;
@@ -95,6 +97,7 @@ class SectionManager {
             onTable = false,
             onCodeBlock = false,
             trimCapture = '';
+        let isRightAfterImageSection = false;
 
         const lineLength = this.cm.getDoc().lineCount();
 
@@ -110,7 +113,10 @@ class SectionManager {
                 onTable = true;
             }
 
-            if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
+            if (onCodeBlock
+                && this._isCodeBlockEnd(prevLineString)
+                && !this._doFollowedLinesHaveCodeBlockEnd(i, lineLength)
+            ) {
                 onCodeBlock = false;
             } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
                 onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
@@ -118,11 +124,22 @@ class SectionManager {
 
             // atx header
             if (this._isAtxHeader(lineString)) {
+                isRightAfterImageSection = false;
                 isSection = true;
                 // setext header
-            } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+            } else if (!this._isCodeBlockEnd(lineString)
+                && !onTable
+                && this._isSeTextHeader(lineString, nextLineString)
+            ) {
+                isRightAfterImageSection = false;
                 isSection = true;
-            } else if (this._isImage(lineString)) {
+            } else if (!onCodeBlock && !onTable
+                && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)
+            ) {
+                isRightAfterImageSection = true;
+                isSection = true;
+            } else if (isRightAfterImageSection) {
+                isRightAfterImageSection = false;
                 isSection = true;
             }
 
@@ -239,6 +256,14 @@ class SectionManager {
         return FIND_IMAGE_RX.test(lineString);
     }
 
+    _isList(lineString) {
+        return FIND_LIST_RX.test(lineString);
+    }
+
+    _isQuote(lineString) {
+        return FIND_QUOTE_RX.test(lineString);
+    }
+
     /**
      * makeSectionList
      * make section list
@@ -288,20 +313,25 @@ class SectionManager {
     _getPreviewSections() {
         const sections = [];
         let lastSection = 0;
+        let isRightAfterImageSection = false;
 
         sections[0] = [];
 
         this.$previewContent.contents().filter(findElementNodeFilter).each((index, el) => {
-            if (el.tagName.match(/^(H1|H2|H3|H4|H5|H6|P)$/)) {
-                const isParagraph = (el.tagName === 'P');
-                const isImage = ($(el).children('img').length && isParagraph);
+            const isParagraph = (el.tagName === 'P');
+            const isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
+            const isImage = (isParagraph && $(el).children('IMG').length !== 0);
 
-                if ((!isParagraph || isImage)
-                    && sections[lastSection].length
-                ) {
-                    sections.push([]);
-                    lastSection += 1;
-                }
+            if ((isHeading || isImage || isRightAfterImageSection)
+                && sections[lastSection].length
+            ) {
+                sections.push([]);
+                lastSection += 1;
+                isRightAfterImageSection = false;
+            }
+
+            if (isImage) {
+                isRightAfterImageSection = true;
             }
 
             sections[lastSection].push(el);

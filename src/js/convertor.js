@@ -60,7 +60,10 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtmlWithCodeHighlight(markdown) {
-        return markdownitHighlight.render(markdown.replace(/<br>/ig, '<br data-tomark-pass>'));
+        markdown = this._addLineBreaksIfNeed(markdown);
+        markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+
+        return markdownitHighlight.render(markdown);
     }
 
     /**
@@ -155,6 +158,27 @@ class Convertor {
 
         return html;
     }
+
+    /**
+     * Add line breaks for image section process
+     * @param {string} markdown Markdown text
+     * @returns {string}
+     * @private
+     */
+    _addLineBreaksIfNeed(markdown) {
+        const FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
+        const FIND_IMAGE_IN_LIST_OR_QUOTE_RX =
+            /(\n* *(?:\*|-|\d+\.|[*-] \[[ xX]])\s.*|\n(?: *> *)+)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+        const FIND_IMAGE_IN_TABLE_RX =
+            /(\n\|[^|]*)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+
+        markdown = markdown.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
+        markdown = markdown.replace(FIND_IMAGE_IN_LIST_OR_QUOTE_RX, '$1$2');
+        markdown = markdown.replace(FIND_IMAGE_IN_TABLE_RX, '$1$2');
+
+        return markdown;
+    }
+
     /**
      * factory
      * Convertor factory

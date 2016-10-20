@@ -200,12 +200,12 @@ class ScrollSync {
     _getScrollTopForMarkdown() {
         let scrollTop;
         const scrollFactors = this._getScrollInfoForMarkdown();
-        const section = scrollFactors.section;
         const ratio = scrollFactors.sectionRatio;
 
         if (scrollFactors.isPreviewBottom) {
             scrollTop = this.cm.getScrollInfo().height;
-        } else if (section) {
+        } else if (scrollFactors.section) {
+            const section = scrollFactors.section;
             const coordsAtStart = this.cm.charCoords({
                 line: section.start,
                 char: 0
