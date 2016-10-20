@@ -382,10 +382,12 @@ class WysiwygEditor {
                 data: keyboardEvent
             });
 
-            this.eventManager.emit('wysiwygKeyEvent', {
-                keyMap,
-                data: keyboardEvent
-            });
+            if (!keyboardEvent.defaultPrevented) {
+                this.eventManager.emit('wysiwygKeyEvent', {
+                    keyMap,
+                    data: keyboardEvent
+                });
+            }
         }
     }
 
