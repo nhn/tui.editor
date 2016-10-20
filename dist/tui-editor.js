@@ -63,14 +63,14 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	//codemirror modes&addons
+	// codemirror modes&addons
 	__webpack_require__(86);
 	__webpack_require__(87);
 	__webpack_require__(88);
 	__webpack_require__(89);
 	__webpack_require__(90);
 
-	//default extensions
+	// default extensions
 	__webpack_require__(91);
 	__webpack_require__(92);
 	__webpack_require__(95);
@@ -79,25 +79,26 @@
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
-	//langs
+	// langs
 	__webpack_require__(103);
 	__webpack_require__(104);
 	__webpack_require__(105);
 	__webpack_require__(106);
 	__webpack_require__(107);
 
-	//for jquery
+	// for jquery
 	$.fn.tuiEditor = function () {
-	    var _$;
-
-	    var argumentArray = (_$ = $).makeArray.apply(_$, arguments);
 	    var options = void 0,
 	        instance = void 0;
 
 	    var el = this[0];
 
 	    if (el) {
-	        options = argumentArray[0] || {};
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        options = args[0] || {};
 
 	        instance = $.data(el, 'tuiEditor');
 
@@ -105,7 +106,7 @@
 	            if (typeof options === 'string') {
 	                var _instance;
 
-	                return (_instance = instance)[options].apply(_instance, _toConsumableArray(argumentArray.slice(1)));
+	                return (_instance = instance)[options].apply(_instance, _toConsumableArray(args.slice(1)));
 	            }
 	        } else {
 	            options.el = el;
@@ -128,10 +129,10 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	//markdown commands
+	// markdown commands
 
 
-	//wysiwyg Commands
+	// wysiwyg Commands
 
 
 	var _markdownEditor = __webpack_require__(2);
@@ -146,27 +147,27 @@
 
 	var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-	var _layout = __webpack_require__(23);
+	var _layout = __webpack_require__(22);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _eventManager = __webpack_require__(24);
+	var _eventManager = __webpack_require__(23);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager2 = __webpack_require__(25);
+	var _commandManager2 = __webpack_require__(24);
 
 	var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-	var _extManager = __webpack_require__(27);
+	var _extManager = __webpack_require__(26);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _importManager = __webpack_require__(28);
+	var _importManager = __webpack_require__(27);
 
 	var _importManager2 = _interopRequireDefault(_importManager);
 
-	var _convertor = __webpack_require__(31);
+	var _convertor = __webpack_require__(30);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -178,7 +179,7 @@
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -354,6 +355,7 @@
 	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
 	         * @param {function} options.hooks.addImageBlobHook hook for image upload.
 	    * @param {string} language language
+	    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
 	 */
 
 	var ToastUIEditor = function () {
@@ -366,7 +368,8 @@
 	            'previewStyle': 'tab',
 	            'initialEditType': 'markdown',
 	            'height': 300,
-	            'language': 'en_US'
+	            'language': 'en_US',
+	            'useDefaultHTMLSanitizer': true
 	        }, options);
 
 	        this.eventManager = new _eventManager2.default();
@@ -375,6 +378,10 @@
 
 	        this.commandManager = new _commandManager3.default(this);
 	        this.convertor = new _convertor2.default(this.eventManager);
+
+	        if (this.options.useDefaultHTMLSanitizer) {
+	            this.convertor.initHtmlSanitizer();
+	        }
 
 	        if (this.options.hooks) {
 	            util.forEach(this.options.hooks, function (fn, key) {
@@ -403,7 +410,7 @@
 
 	        this.mdEditor.init();
 
-	        this.changeMode(self.options.initialEditType);
+	        this.changeMode(self.options.initialEditType, true);
 
 	        this.contentHeight(self.options.height);
 
@@ -742,11 +749,12 @@
 	         * @api
 	         * @memberOf ToastUIEditor
 	         * @param {string} mode Editor mode name of want to change
+	         * @param {boolean} isWithoutFocus Change mode without focus
 	         */
 
 	    }, {
 	        key: 'changeMode',
-	        value: function changeMode(mode) {
+	        value: function changeMode(mode, isWithoutFocus) {
 	            if (this.currentMode === mode) {
 	                return;
 	            }
@@ -768,7 +776,9 @@
 
 	            this.eventManager.emit('changeMode', mode);
 
-	            this.focus();
+	            if (!isWithoutFocus) {
+	                this.focus();
+	            }
 	        }
 
 	        /**
@@ -1093,8 +1103,6 @@
 	                    'Enter': 'newlineAndIndentContinue',
 	                    'Tab': 'subListIndentTab',
 	                    'Shift-Tab': 'indentLess',
-	                    'Alt-Left': 'indentLess',
-	                    'Alt-Right': 'indentMore',
 	                    'Alt-Up': 'replaceLineTextToUpper',
 	                    'Alt-Down': 'replaceLineTextToLower'
 	                },
@@ -1124,7 +1132,10 @@
 
 	            this.cm.on('beforeChange', function (cm, ev) {
 	                if (ev.origin === 'paste') {
-	                    _this.eventManager.emit('pasteBefore', { source: 'markdown', data: ev });
+	                    _this.eventManager.emit('pasteBefore', {
+	                        source: 'markdown',
+	                        data: ev
+	                    });
 	                }
 	            });
 
@@ -2235,12 +2246,18 @@
 	                latestMarkdownValue = markdownEditor.getValue();
 
 	                if (_this.isVisible()) {
-	                    _this.lazyRunner.run('refresh', markdownEditor.getValue());
+	                    _this.lazyRunner.run('refresh', markdownEditor.getValue().replace(/<br>\n/g, '<br>'));
 	                }
 	            });
 
 	            this.eventManager.listen('previewNeedsRefresh', function (value) {
 	                _this.refresh(value || latestMarkdownValue);
+	            });
+	            this.$el.on('scroll', function (event) {
+	                _this.eventManager.emit('scroll', {
+	                    source: 'preview',
+	                    data: event
+	                });
 	            });
 	        }
 
@@ -2438,43 +2455,39 @@
 
 	var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-	var _wwSelectionMarker = __webpack_require__(12);
-
-	var _wwSelectionMarker2 = _interopRequireDefault(_wwSelectionMarker);
-
-	var _wwListManager = __webpack_require__(13);
+	var _wwListManager = __webpack_require__(12);
 
 	var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-	var _wwTaskManager = __webpack_require__(14);
+	var _wwTaskManager = __webpack_require__(13);
 
 	var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-	var _wwTableManager = __webpack_require__(15);
+	var _wwTableManager = __webpack_require__(14);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _wwTableSelectionManager = __webpack_require__(16);
+	var _wwTableSelectionManager = __webpack_require__(15);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _wwHrManager = __webpack_require__(17);
+	var _wwHrManager = __webpack_require__(16);
 
 	var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-	var _wwPManager = __webpack_require__(18);
+	var _wwPManager = __webpack_require__(17);
 
 	var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-	var _wwHeadingManager = __webpack_require__(19);
+	var _wwHeadingManager = __webpack_require__(18);
 
 	var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-	var _wwCodeBlockManager = __webpack_require__(20);
+	var _wwCodeBlockManager = __webpack_require__(19);
 
 	var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-	var _squireExt = __webpack_require__(21);
+	var _squireExt = __webpack_require__(20);
 
 	var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -2482,7 +2495,7 @@
 
 	var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-	var _wwTextObject = __webpack_require__(22);
+	var _wwTextObject = __webpack_require__(21);
 
 	var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
@@ -2557,7 +2570,6 @@
 	            });
 
 	            this._clipboardManager = new _wwClipboardManager2.default(this);
-	            this._selectionMarker = new _wwSelectionMarker2.default();
 	            this._initSquireEvent();
 	            this._clipboardManager.init();
 
@@ -2694,8 +2706,8 @@
 	                return false;
 	            });
 
-	            //no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
-	            //그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
+	            // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
+	            // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
 	            this.getEditor().addEventListener('input', util.debounce(function () {
 	                if (!self._silentChange && self.isEditorValid()) {
 	                    var eventObj = {
@@ -2747,8 +2759,8 @@
 	                    }
 	                });
 
-	                //파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
-	                //이렇게 하지 않으면 textObject에 문제가 생긴다.
+	                // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
+	                // 이렇게 하지 않으면 textObject에 문제가 생긴다.
 	                self.getEditor().addEventListener('keyup', function () {
 	                    var range = self.getRange();
 
@@ -2884,7 +2896,7 @@
 	        value: function _onKeyDown(keyboardEvent) {
 	            var keyMap = keyMapper.convert(keyboardEvent);
 
-	            //to avoid duplicate event firing in firefox
+	            // to avoid duplicate event firing in firefox
 	            if (keyboardEvent.keyCode) {
 	                this.eventManager.emit('keyMap', {
 	                    source: 'wysiwyg',
@@ -2912,7 +2924,7 @@
 
 	            this.addKeyEventHandler('ENTER', function (ev, range) {
 	                if (self._isInOrphanText(range)) {
-	                    //We need this cuz input text right after table make orphan text in webkit
+	                    // We need this cuz input text right after table make orphan text in webkit
 	                    self.defer(function () {
 	                        self._wrapDefaultBlockToOrphanTexts();
 	                        self.breakToNewDefaultBlock(range, 'before');
@@ -2932,7 +2944,7 @@
 
 	                ev.preventDefault();
 	                if (isAbleToInput4Spaces || isTextSelection) {
-	                    sq.insertPlainText('    ');
+	                    sq.insertPlainText('\xA0\xA0\xA0\xA0');
 
 	                    return false;
 	                }
@@ -3003,16 +3015,16 @@
 	            var textElem = range.startContainer;
 	            var cursorOffset = range.startOffset;
 
-	            //이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
-	            //after code below, range range is arranged by body
+	            // 이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
+	            // after code below, range range is arranged by body
 	            var block = this.getEditor().createDefaultBlock([range.startContainer]);
 
-	            //range for insert block
+	            // range for insert block
 	            var insertTargetNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
 	            if (insertTargetNode) {
 	                range.setStartBefore(insertTargetNode);
 	            } else {
-	                //컨테이너의 차일드가 이노드 한개뿐일경우
+	                // 컨테이너의 차일드가 이노드 한개뿐일경우
 	                range.selectNodeContents(range.startContainer);
 	            }
 
@@ -3020,7 +3032,7 @@
 
 	            range.insertNode(block);
 
-	            //revert range to original node
+	            // revert range to original node
 	            range.setStart(textElem, cursorOffset);
 	            range.collapse(true);
 
@@ -3256,14 +3268,14 @@
 
 	            var html = this.editor.getHTML();
 
-	            //empty line replace to br
+	            // empty line replace to br
 	            html = html.replace(FIND_EMPTY_LINE, function (match, tag) {
 	                var result = void 0;
 
-	                //we maintain empty list
+	                // we maintain empty list
 	                if (tag === 'li') {
 	                    result = match;
-	                    //we maintain empty table
+	                    // we maintain empty table
 	                } else if (tag === 'td' || tag === 'th') {
 	                    result = '<' + tag + '></' + tag + '>';
 	                } else {
@@ -3273,10 +3285,10 @@
 	                return result;
 	            });
 
-	            //remove unnecessary brs
+	            // remove unnecessary brs
 	            html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
-	            //remove contenteditable block, in this case div
+	            // remove contenteditable block, in this case div
 	            html = html.replace(/<div>/g, '');
 	            html = html.replace(/<\/div>/g, '<br />');
 
@@ -3296,7 +3308,7 @@
 	        key: '_prepareGetHTML',
 	        value: function _prepareGetHTML() {
 	            var self = this;
-	            //for ensure to fire change event
+	            // for ensure to fire change event
 	            self.get$Body().attr('lastGetValue', Date.now());
 
 	            self._joinSplitedTextNodes();
@@ -3500,35 +3512,6 @@
 
 	            this.getEditor().changeBlockFormat(condition);
 	            this.eventManager.emit('wysiwygRangeChangeAfter', this);
-	        }
-
-	        /**
-	         * insertSelectionMarker
-	         * Insert selection marker
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @param {Range} range Range to save selection
-	         * @returns {Range} range
-	         */
-
-	    }, {
-	        key: 'insertSelectionMarker',
-	        value: function insertSelectionMarker(range) {
-	            return this._selectionMarker.insertMarker(range, this.getEditor());
-	        }
-
-	        /**
-	         * restoreSelectionMarker
-	         * Restore marker to selection
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @returns {Range} range
-	         */
-
-	    }, {
-	        key: 'restoreSelectionMarker',
-	        value: function restoreSelectionMarker() {
-	            return this._selectionMarker.restore(this.getEditor());
 	        }
 
 	        /**
@@ -4068,8 +4051,8 @@
 	        walkerOffset = newWalkerOffset;
 	    }
 
-	    //오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
-	    //중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
+	    // 오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
+	    // 중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
 	    do {
 	        result.push({
 	            container: walker.currentNode,
@@ -4402,7 +4385,7 @@
 	    }, {
 	        key: '_extendRange',
 	        value: function _extendRange(range) {
-	            //텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+	            // 텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
 	            if (_domUtils2.default.isTextNode(range.commonAncestorContainer) && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset) && range.commonAncestorContainer.nodeName !== 'TD') {
 	                return;
 	            }
@@ -4415,7 +4398,7 @@
 	                range = this._extendEndRange(range);
 	            }
 
-	            //commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
+	            // commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
 	            if (this._isWholeCommonAncestorContainerSelected(range)) {
 	                range.selectNode(range.commonAncestorContainer);
 	            }
@@ -4435,12 +4418,12 @@
 	        value: function _extendStartRange(range) {
 	            var newBound = range.startContainer;
 
-	            //레인지 확장
+	            // 레인지 확장
 	            while (newBound.parentNode !== range.commonAncestorContainer && newBound.parentNode !== this.wwe.get$Body()[0] && !newBound.previousSibling) {
 	                newBound = newBound.parentNode;
 	            }
 
-	            //range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+	            // range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
 	            range.setStart(newBound.parentNode, _domUtils2.default.getNodeOffsetOfParent(newBound));
 
 	            return range;
@@ -4460,13 +4443,13 @@
 	            var newBound = range.endContainer;
 	            var boundNext = newBound.nextSibling;
 
-	            //레인지 확장
+	            // 레인지 확장
 	            while (newBound.parentNode !== range.commonAncestorContainer && newBound.parentNode !== this.wwe.get$Body()[0] && (!boundNext || _domUtils2.default.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext)) {
 	                newBound = newBound.parentNode;
 	                boundNext = newBound.nextSibling;
 	            }
 
-	            //range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+	            // range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
 	            range.setEnd(newBound.parentNode, _domUtils2.default.getNodeOffsetOfParent(newBound) + 1);
 
 	            return range;
@@ -4595,8 +4578,8 @@
 
 	            var childNodes = util.toArray(pasteData.fragment.childNodes);
 
-	            //prepare to paste as inline of first node if possible
-	            //앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
+	            // prepare to paste as inline of first node if possible
+	            // 앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
 	            if (childNodes.length && childNodes[0].tagName === 'DIV') {
 	                $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
 	                childNodes.shift();
@@ -4614,7 +4597,7 @@
 	                    childNodes.shift();
 	                } else if (isPastingList) {
 	                    newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
-	                    //첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
+	                    // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
 	                    firstBlockIsTaken = true;
 	                } else {
 	                    newFragment.appendChild(childNodes.shift());
@@ -4797,7 +4780,7 @@
 	            if (_domUtils2.default.getNodeName($node[0]) !== 'SPAN') {
 	                $node.removeAttr('style');
 	            } else {
-	                //Most browser return computed color value even if without style attribute
+	                // Most browser return computed color value even if without style attribute
 	                if ($node.attr('style')) {
 	                    colorValue = $node.css('color');
 	                }
@@ -4829,7 +4812,7 @@
 	            var node = nodes.shift();
 	            var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 
-	            //IE에서는 LI-UL 구조에서 UL이 전체가 선택되었는데 LI를 포함하지 않고 UL만 넘어올때가 있다.
+	            // IE에서는 LI-UL 구조에서 UL이 전체가 선택되었는데 LI를 포함하지 않고 UL만 넘어올때가 있다.
 	            if (nodeName !== 'LI' && nodes.length && nodes[0].tagName === 'LI') {
 	                nodeName = 'LI';
 
@@ -4838,16 +4821,16 @@
 	                }, node);
 	            }
 
-	            //UL과 OL이고 리스트에 paste하는경우 뎊스처리
+	            // UL과 OL이고 리스트에 paste하는경우 뎊스처리
 	            if (nodeName === 'OL' || nodeName === 'UL') {
-	                //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+	                // 페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
 	                if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
 	                    $(newFragment).append(this._wrapCurrentFormat(node));
 	                } else {
 	                    $(newFragment).append(node);
 	                }
 	            } else if (nodeName === 'LI') {
-	                //리스트 그룹처리
+	                // 리스트 그룹처리
 	                var listGroup = this.wwe.getEditor().getDocument().createDocumentFragment();
 	                listGroup.appendChild(node);
 
@@ -4855,16 +4838,16 @@
 	                    listGroup.appendChild(nodes.shift());
 	                }
 
-	                //리스트에 붙는경우 뎊스 연결
-	                //페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+	                // 리스트에 붙는경우 뎊스 연결
+	                // 페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
 	                if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
 	                    $(newFragment).append(this._wrapCurrentFormat(listGroup));
-	                    //카피할당시의 정보가 있다면 해당 리스트로 만듬
+	                    // 카피할당시의 정보가 있다면 해당 리스트로 만듬
 	                } else if (rangeInfo && (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')) {
 	                    $(newFragment).append(this._makeNodeAndAppend({
 	                        tagName: rangeInfo.commonAncestorName
 	                    }, listGroup));
-	                    //외부에서온 리스트
+	                    // 외부에서온 리스트
 	                } else {
 	                    $(newFragment).append(this._makeNodeAndAppend({
 	                        tagName: 'UL'
@@ -4970,21 +4953,59 @@
 	    }, {
 	        key: '_tableElementAid',
 	        value: function _tableElementAid(fragment) {
+	            this._completeTableIfNeed(fragment);
+	            this._updateTableIDClassName(fragment);
+	        }
+
+	        /**
+	         * Complete and append table to fragment
+	         * @param {DocumentFragment} fragment Copied data
+	         * @private
+	         */
+
+	    }, {
+	        key: '_completeTableIfNeed',
+	        value: function _completeTableIfNeed(fragment) {
 	            var tableManager = this.wwe.getManager('table');
 	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
 
 	            if (wrapperTr) {
 	                $(fragment).append(wrapperTr);
 	            }
+
 	            var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+
 	            if (wrapperTbody) {
 	                $(fragment).append(wrapperTbody);
 	            }
+
 	            var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+
 	            if (wrapperTable) {
-	                $(wrapperTable).addClass(tableManager.getTableIDClassName());
 	                $(fragment).append(wrapperTable);
 	            }
+	        }
+
+	        /**
+	         * Update table ID class name in fragment
+	         * @param {DocumentFragment} fragment Copied data
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateTableIDClassName',
+	        value: function _updateTableIDClassName(fragment) {
+	            var tableManager = this.wwe.getManager('table');
+
+	            $(fragment).find('table').each(function (index, table) {
+	                $(table).removeClass(function (idx, className) {
+	                    return className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1');
+	                });
+	            });
+
+	            $(fragment).find('table').each(function (index, table) {
+	                $(table).addClass(tableManager.getTableIDClassName());
+	            });
 	        }
 	    }]);
 
@@ -5088,114 +5109,6 @@
 
 /***/ },
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements selection marker for wysiwyg
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-	var _domUtils = __webpack_require__(8);
-
-	var _domUtils2 = _interopRequireDefault(_domUtils);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var MARKER_CSS_CLASS = 'tui-editor-selection-marker';
-
-	/**
-	 * WwSelectionMarker
-	 * @exports WwSelectionMarker
-	 * @class WwSelectionMarker
-	 * @constructor
-	 */
-
-	var WwSelectionMarker = function () {
-	    function WwSelectionMarker() {
-	        _classCallCheck(this, WwSelectionMarker);
-
-	        this._markerNode = null;
-	    }
-
-	    /**
-	     * insertMarker
-	     * @param {Range} range range
-	     * @param {SquireExt} sq SquireExt instance
-	     * @returns {Range} range range
-	     * @memberOf WwSelectionMarker
-	     * @api
-	     */
-
-
-	    _createClass(WwSelectionMarker, [{
-	        key: 'insertMarker',
-	        value: function insertMarker(range, sq) {
-	            this._markerNode = this._makeMarker(sq);
-
-	            range.insertNode(this._markerNode);
-	            range.setStartAfter(this._markerNode);
-
-	            return range;
-	        }
-
-	        /**
-	         * _makeMarker
-	         * Make marker element
-	         * @param {SquireExt} sq SquireExt instance
-	         * @returns {Node} marker
-	         * @memberOf WwSelectionMarker
-	         * @private
-	         */
-
-	    }, {
-	        key: '_makeMarker',
-	        value: function _makeMarker(sq) {
-	            return sq.createElement('INPUT', { type: 'hidden', class: MARKER_CSS_CLASS });
-	        }
-
-	        /**
-	         * restore
-	         * Restore marker to selection
-	         * @param {SquireExt} sq SquireExt instance
-	         * @returns {Range} range
-	         * @memberOf WwSelectionMarker
-	         * @api
-	         */
-
-	    }, {
-	        key: 'restore',
-	        value: function restore(sq) {
-	            var newRange = sq.getSelection().cloneRange();
-
-	            newRange.setStartBefore(this._markerNode);
-	            newRange.collapse(true);
-
-	            sq.setSelection(newRange);
-
-	            $(this._markerNode).remove();
-
-	            //task안의 컬러의 경우, 컨테이너가 컬러span 그리고 startOffset이 0인경우 컬러가 끊긴다.
-	            //입력시 컬러가 이어지도록하려면 추가 보정이 필요하다
-	            if (newRange.startOffset === 0 && _domUtils2.default.isTextNode(newRange.startContainer.childNodes[0]) && !newRange.startContainer.childNodes[0].textContent.replace(/\u200B/, '')) {
-	                newRange.setStart(newRange.startContainer.childNodes[0], 1);
-	                sq.setSelection(newRange);
-	            }
-
-	            return newRange;
-	        }
-	    }]);
-
-	    return WwSelectionMarker;
-	}();
-
-	module.exports = WwSelectionMarker;
-
-/***/ },
-/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5428,7 +5341,7 @@
 	module.exports = WwListManager;
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5630,7 +5543,7 @@
 	    }, {
 	        key: '_removeTaskListClass',
 	        value: function _removeTaskListClass() {
-	            //because task-list class is block merge normal list and task list
+	            // because task-list class is block merge normal list and task list
 	            this.wwe.get$Body().find('.task-list').each(function (index, node) {
 	                $(node).removeClass('task-list');
 	            });
@@ -5643,7 +5556,7 @@
 	module.exports = WwTaskManager;
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5737,7 +5650,7 @@
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
-	            //remove last br in td or th
+	            // remove last br in td or th
 	            this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
 	                return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
 	            });
@@ -5780,7 +5693,7 @@
 	                    _this2._recordUndoStateAndResetCellNode(range);
 	                }
 
-	                if (!_this2._isModifierKeyPushed(ev)) {
+	                if (isRangeInTable && !_this2._isModifierKeyPushed(ev)) {
 	                    _this2.wwe.getEditor().modifyDocument(function () {
 	                        selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
 	                    });
@@ -5909,9 +5822,10 @@
 	                    this._insertBRIfNeed(range);
 	                    this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
 	                    isNeedNext = false;
-	                } else if (isBackspace && this._isBeforeTable(range) || !isBackspace && this._isAfterTable(range)) {
+	                } else if (!isBackspace && this._isBeforeTable(range) || isBackspace && this._isAfterTable(range)) {
 	                    ev.preventDefault();
-	                    this._removeTableOnBackspace(range);
+	                    var startOffset = isBackspace ? range.startOffset - 1 : range.startOffset;
+	                    this._removeTable(range, _domUtils2.default.getChildNodeByOffset(range.startContainer, startOffset));
 	                    isNeedNext = false;
 	                }
 	            } else if (this.isInTable(range)) {
@@ -6056,23 +5970,23 @@
 	        }
 
 	        /**
-	         * _removeTableOnBackspace
-	         * Remove table on backspace
+	         * _removeTable
+	         * Remove table
 	         * @param {Range} range range
+	         * @param {Node} table table
 	         * @memberOf WwTableManager
 	         * @private
 	         */
 
 	    }, {
-	        key: '_removeTableOnBackspace',
-	        value: function _removeTableOnBackspace(range) {
-	            var table = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-
-	            this.wwe.getEditor().saveUndoState(range);
-
-	            this.wwe.insertSelectionMarker(range);
-	            $(table).remove();
-	            this.wwe.restoreSelectionMarker();
+	        key: '_removeTable',
+	        value: function _removeTable(range, table) {
+	            if (table.tagName === 'TABLE') {
+	                this.wwe.getEditor().saveUndoState(range);
+	                this.wwe.saveSelection(range);
+	                $(table).remove();
+	                this.wwe.restoreSavedSelection();
+	            }
 	        }
 
 	        /**
@@ -6830,7 +6744,7 @@
 
 	            if (range.collapsed) {
 	                if (this.isInTable(range) && currentCell) {
-	                    if (direction === 'previous' || interval === 'row' && !tui.util.isUndefined(ev)) {
+	                    if ((direction === 'previous' || interval === 'row') && !tui.util.isUndefined(ev)) {
 	                        ev.preventDefault();
 	                    }
 
@@ -6924,7 +6838,8 @@
 	    }, {
 	        key: '_removeBRIfNeed',
 	        value: function _removeBRIfNeed(range) {
-	            var startContainer = _domUtils2.default.isTextNode(range.startContainer) ? range.startContainer.parentNode : range.startContainer;
+	            var isText = _domUtils2.default.isTextNode(range.startContainer);
+	            var startContainer = isText ? range.startContainer.parentNode : range.startContainer;
 	            var nodeName = _domUtils2.default.getNodeName(startContainer);
 
 	            if (/td|th/i.test(nodeName) && range.collapsed && startContainer.textContent.length === 1) {
@@ -6941,7 +6856,8 @@
 	    }, {
 	        key: '_insertBRIfNeed',
 	        value: function _insertBRIfNeed(range) {
-	            var currentCell = range.startContainer.nodeType === 3 ? range.startContainer.parentNode : range.startContainer;
+	            var isText = _domUtils2.default.isTextNode(range.startContainer);
+	            var currentCell = isText ? range.startContainer.parentNode : range.startContainer;
 	            var nodeName = _domUtils2.default.getNodeName(currentCell);
 	            var $currentCell = $(currentCell);
 
@@ -6978,7 +6894,7 @@
 	module.exports = WwTableManager;
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7100,7 +7016,7 @@
 	                var isSameCell = selectionStart === selectionEnd;
 	                var isTextSelect = _this._isTextSelect(range, isSameCell);
 
-	                if (_this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell && !isTextSelect)) {
+	                if (_this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell) && !isTextSelect) {
 	                    // For disable firefox's native table cell selection
 	                    if (tui.util.browser.firefox && !_this._removeSelectionTimer) {
 	                        _this._removeSelectionTimer = setInterval(function () {
@@ -7407,7 +7323,7 @@
 	module.exports = WwTableSelectionManager;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7563,7 +7479,7 @@
 	        value: function _onTypedInHr(range) {
 	            var _this3 = this;
 
-	            //HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
+	            // HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
 	            if (this._isInHr(range) || this._isNearHr(range)) {
 	                this.wwe.defer(function (wwe) {
 	                    wwe.saveSelection();
@@ -7715,7 +7631,7 @@
 	module.exports = WwHrManager;
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7805,7 +7721,7 @@
 	                    return result;
 	                });
 
-	                //For paragraph, we add empty line
+	                // For paragraph, we add empty line
 	                splitedContent.push('<div><br></div>');
 
 	                return splitedContent.join('');
@@ -7859,7 +7775,7 @@
 	module.exports = WwPManager;
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7916,7 +7832,17 @@
 	    _createClass(WwHeadingManager, [{
 	        key: '_init',
 	        value: function _init() {
+	            this._initEvent();
 	            this._initKeyHandler();
+	        }
+	    }, {
+	        key: '_initEvent',
+	        value: function _initEvent() {
+	            var _this = this;
+
+	            this.eventManager.listen('wysiwygSetValueAfter', function () {
+	                _this._wrapDefaultBlockToHeadingInner();
+	            });
 	        }
 
 	        /**
@@ -7929,11 +7855,11 @@
 	    }, {
 	        key: '_initKeyHandler',
 	        value: function _initKeyHandler() {
-	            var _this = this;
+	            var _this2 = this;
 
 	            this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
-	                if (_this.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
-	                    _this._onEnter(ev, range);
+	                if (_this2.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
+	                    _this2._onEnter(ev, range);
 
 	                    return false;
 	                }
@@ -7942,13 +7868,29 @@
 	            });
 
 	            this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range) {
-	                if (_this.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
-	                    _this._removePrevTopNodeIfNeed(ev, range);
+	                if (_this2.wwe.hasFormatWithRx(FIND_HEADING_RX)) {
+	                    _this2._removePrevTopNodeIfNeed(ev, range);
 
 	                    return false;
 	                }
 
 	                return true;
+	            });
+	        }
+
+	        /**
+	         * _wrapDefaultBlockToHeadingInner
+	         * Wrap default block to heading inner contents
+	         * @private
+	         */
+
+	    }, {
+	        key: '_wrapDefaultBlockToHeadingInner',
+	        value: function _wrapDefaultBlockToHeadingInner() {
+	            this.wwe.get$Body().find('h1, h2, h3, h4, h5, h6').each(function (index, node) {
+	                if ($(node).children('div, p').length <= 0) {
+	                    $(node).wrapInner('<div />');
+	                }
 	            });
 	        }
 
@@ -7979,12 +7921,12 @@
 	    }, {
 	        key: '_onEnter',
 	        value: function _onEnter(event, range) {
-	            var _this2 = this;
+	            var _this3 = this;
 
 	            if (range.startOffset > 0) {
-	                //squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+	                // squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
 	                this.wwe.defer(function (wwe) {
-	                    _this2._unwrapHeading();
+	                    _this3._unwrapHeading();
 	                    wwe.getEditor().removeLastUndoStack();
 	                });
 	            } else {
@@ -8059,7 +8001,8 @@
 	            var startContainer = range.startContainer;
 	            var sq = this.wwe.getEditor();
 	            var $Body = this.wwe.get$Body();
-	            var headingElement = FIND_HEADING_RX.test(_domUtils2.default.getNodeName(startContainer)) ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
+	            var isHeading = FIND_HEADING_RX.test(_domUtils2.default.getNodeName(startContainer));
+	            var headingElement = isHeading ? startContainer : $(startContainer).parents('h1,h2,h3,h4,h5,h6')[0];
 	            var targetNode = prevTopNode;
 	            var offset = 1;
 
@@ -8089,7 +8032,7 @@
 	module.exports = WwHeadingManager;
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8308,7 +8251,7 @@
 	                var lang = $pre.find('code').attr('data-language');
 	                var textLines = void 0;
 
-	                //pre태그 밑에 라인으로 의심되는 요소들이 있다면
+	                // pre태그 밑에 라인으로 의심되는 요소들이 있다면
 	                if ($pre.children().length > 1) {
 	                    textLines = [];
 
@@ -8379,7 +8322,7 @@
 	            var $div = $(pre).find('div').eq(0);
 	            var codeContent = $div.text().replace(FIND_ZWS_RX, '');
 
-	            //코드블럭이 code한줄 밖에 없을때
+	            // 코드블럭이 code한줄 밖에 없을때
 	            if ((range.startOffset === 0 || codeContent.length === 0) && $(pre).find('div').length <= 1) {
 	                this.wwe.getEditor().modifyBlocks(function () {
 	                    var newFrag = self.wwe.getEditor().getDocument().createDocumentFragment();
@@ -8457,7 +8400,7 @@
 	module.exports = WwCodeBlockManager;
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8556,8 +8499,8 @@
 	                    lastNodeOfNextBlock = void 0,
 	                    appendChidToNextBlock = void 0;
 
-	                //HR은 Block으로 치지 않아서 frag에나타나지 않는다
-	                //디폴트 블럭을 만들어준다.
+	                // HR은 Block으로 치지 않아서 frag에나타나지 않는다
+	                // 디폴트 블럭을 만들어준다.
 	                if (frag.childNodes.length) {
 	                    current = frag.childNodes[0];
 	                } else {
@@ -8566,7 +8509,7 @@
 	                }
 
 	                if (srcCondition) {
-	                    //find last depth
+	                    // find last depth
 	                    while (current.firstChild) {
 	                        current = current.firstChild;
 	                    }
@@ -8575,15 +8518,15 @@
 	                        nextBlock.appendChild(node);
 	                    };
 
-	                    //find tag
+	                    // find tag
 	                    while (current !== frag) {
 	                        tagName = current.tagName;
 
 	                        if (util.isFunction(srcCondition) ? srcCondition(tagName) : tagName === srcCondition) {
 	                            nextBlock = current.childNodes[0];
 
-	                            //there is no next blocktag
-	                            //eslint-disable-next-line max-depth
+	                            // there is no next blocktag
+	                            // eslint-disable-next-line max-depth
 	                            if (!_domUtils2.default.isElemNode(nextBlock) || current.childNodes.length > 1) {
 	                                nextBlock = _this2.createDefaultBlock();
 
@@ -8591,14 +8534,14 @@
 
 	                                lastNodeOfNextBlock = nextBlock.lastChild;
 
-	                                //remove unneccesary br
-	                                //eslint-disable-next-line max-depth
+	                                // remove unneccesary br
+	                                // eslint-disable-next-line max-depth
 	                                if (lastNodeOfNextBlock && _domUtils2.default.getNodeName(lastNodeOfNextBlock) === 'BR') {
 	                                    nextBlock.removeChild(lastNodeOfNextBlock);
 	                                }
 	                            }
 
-	                            //eslint-disable-next-line max-depth
+	                            // eslint-disable-next-line max-depth
 	                            if (targetTagName) {
 	                                newBlock = _this2.createElement(targetTagName, [nextBlock]);
 	                            } else {
@@ -8617,7 +8560,7 @@
 	                    }
 	                }
 
-	                //if source condition node is not founded, we wrap current div node with node named targetTagName
+	                // if source condition node is not founded, we wrap current div node with node named targetTagName
 	                if ((!newFrag || !srcCondition) && targetTagName && _domUtils2.default.getNodeName(frag.childNodes[0]) === 'DIV') {
 	                    frag = _this2.createElement(targetTagName, [frag.childNodes[0]]);
 	                }
@@ -8764,7 +8707,7 @@
 	            range.setStart(range.startContainer, range.startOffset);
 	            range.setEnd(endSelectionInfo.element, endSelectionInfo.offset);
 
-	            //to prevent squire input event fire
+	            // to prevent squire input event fire
 	            this._ignoreChange = true;
 	            this.insertElement(marker, range);
 
@@ -8827,6 +8770,21 @@
 	        value: function isIgnoreChange() {
 	            return this._ignoreChange;
 	        }
+	    }, {
+	        key: 'focus',
+	        value: function focus() {
+	            var scrollTop = this.scrollTop();
+
+	            Squire.prototype.focus.call(this);
+
+	            // In webkit, if contenteditable element focus method have been invoked when another input element has focus,
+	            // contenteditable scroll to top automatically so we need scroll it back
+	            if (scrollTop !== this.scrollTop()) {
+	                this.scrollTop(scrollTop);
+	            }
+
+	            return this;
+	        }
 	    }]);
 
 	    return SquireExt;
@@ -8835,7 +8793,7 @@
 	module.exports = SquireExt;
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8872,8 +8830,8 @@
 
 	        this._wwe = wwe;
 
-	        //msie11 and window chrome can't make start offset of range api correctly when compositing korean.
-	        //so we need fix this when compositing korean.(and maybe other languages that needs composition.)
+	        // msie11 and window chrome can't make start offset of range api correctly when compositing korean.
+	        // so we need fix this when compositing korean.(and maybe other languages that needs composition.)
 	        if (isNeedOffsetFix) {
 	            this.isComposition = false;
 	            this._initCompositionEvent();
@@ -9039,7 +8997,7 @@
 	module.exports = WwTextObject;
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9311,7 +9269,7 @@
 	module.exports = Layout;
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9504,7 +9462,7 @@
 
 
 	            if (type && !namespace) {
-	                //dont use dot notation cuz eslint
+	                // dont use dot notation cuz eslint
 	                this.events['delete'](type);
 	            } else if (!type && namespace) {
 	                this.events.forEach(function (eventHandlers, eventType) {
@@ -9545,7 +9503,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9555,7 +9513,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _command = __webpack_require__(26);
+	var _command = __webpack_require__(25);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9723,7 +9681,7 @@
 	module.exports = CommandManager;
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9899,7 +9857,7 @@
 	module.exports = Command;
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9974,7 +9932,7 @@
 	module.exports = new ExtManager();
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9984,11 +9942,11 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _excelTableParser = __webpack_require__(29);
+	var _excelTableParser = __webpack_require__(28);
 
 	var _excelTableParser2 = _interopRequireDefault(_excelTableParser);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -10042,6 +10000,10 @@
 	            this.eventManager.listen('paste', function (ev) {
 	                _this._processClipboard(ev.data);
 	            });
+
+	            this.eventManager.listen('pasteBefore', function (ev) {
+	                _this._decodeURL(ev);
+	            });
 	        }
 
 	        /**
@@ -10076,11 +10038,29 @@
 	        value: function _emitAddImageBlobHook(item) {
 	            var _this2 = this;
 
-	            var blob = item.name ? item : item.getAsFile(); //Blob or File
+	            var blob = item.name ? item : item.getAsFile(); // Blob or File
 
 	            this.eventManager.emit('addImageBlobHook', blob, function (url) {
-	                _this2.eventManager.emit('command', 'AddImage', { imageUrl: url, altText: blob.name || 'image' });
+	                _this2.eventManager.emit('command', 'AddImage', {
+	                    imageUrl: url,
+	                    altText: blob.name || 'image'
+	                });
 	            });
+	        }
+
+	        /**
+	         * Decode url when paste link
+	         * @param {object} ev event object
+	         */
+
+	    }, {
+	        key: '_decodeURL',
+	        value: function _decodeURL(ev) {
+	            if (ev.source === 'markdown' && ev.data.text.length === 1 && ev.data.text[0].match(/https?:\/\//g)) {
+	                ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
+	            } else if (ev.source === 'wysiwyg' && ev.data.fragment.childNodes.length === 1 && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE && ev.data.fragment.firstChild.tagName === 'A') {
+	                ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
+	            }
 	        }
 
 	        /**
@@ -10187,7 +10167,7 @@
 	module.exports = ImportManager;
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10240,9 +10220,9 @@
 	        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
 	    });
 
-	    //remove last LF or CR
+	    // remove last LF or CR
 	    content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
-	    //CR or CR-LF to LF
+	    // CR or CR-LF to LF
 	    content = content.replace(/(\r\n)|(\r)/g, '\n');
 
 	    return content.split('\n');
@@ -10251,7 +10231,7 @@
 	module.exports = excelTableParser;
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10370,7 +10350,7 @@
 	exports.default = I18n.getSharedInstance();
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10384,17 +10364,21 @@
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-	var _markdownitTaskPlugin = __webpack_require__(32);
+	var _markdownitTaskPlugin = __webpack_require__(31);
 
 	var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-	var _markdownitCodeBlockPlugin = __webpack_require__(33);
+	var _markdownitCodeBlockPlugin = __webpack_require__(32);
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitTableRenderer = __webpack_require__(34);
+	var _markdownitTableRenderer = __webpack_require__(33);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
+
+	var _markdownitHtmlBlockRenderer = __webpack_require__(34);
+
+	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10421,10 +10405,12 @@
 	});
 
 	markdownitHighlight.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+	markdownitHighlight.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
 	markdownitHighlight.use(_markdownitTaskPlugin2.default);
 	markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
 
 	markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+	markdownit.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
 	markdownit.use(_markdownitTaskPlugin2.default);
 	markdownit.use(_markdownitCodeBlockPlugin2.default);
 
@@ -10456,6 +10442,9 @@
 	    _createClass(Convertor, [{
 	        key: '_markdownToHtmlWithCodeHighlight',
 	        value: function _markdownToHtmlWithCodeHighlight(markdown) {
+	            markdown = this._addLineBreaksIfNeed(markdown);
+	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+
 	            return markdownitHighlight.render(markdown);
 	        }
 
@@ -10471,7 +10460,7 @@
 	    }, {
 	        key: '_markdownToHtml',
 	        value: function _markdownToHtml(markdown) {
-	            return markdownit.render(markdown);
+	            return markdownit.render(markdown.replace(/<br>/ig, '<br data-tomark-pass>'));
 	        }
 
 	        /**
@@ -10490,7 +10479,7 @@
 	            var html = this._markdownToHtmlWithCodeHighlight(markdown);
 	            html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-	            return (0, _htmlSanitizer2.default)(html, true);
+	            return html;
 	        }
 
 	        /**
@@ -10509,7 +10498,14 @@
 	            var html = this._markdownToHtml(markdown);
 	            html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
-	            return (0, _htmlSanitizer2.default)(html, true);
+	            return html;
+	        }
+	    }, {
+	        key: 'initHtmlSanitizer',
+	        value: function initHtmlSanitizer() {
+	            this.eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
+	                return (0, _htmlSanitizer2.default)(html, true);
+	            });
 	        }
 
 	        /**
@@ -10525,8 +10521,59 @@
 	    }, {
 	        key: 'toMarkdown',
 	        value: function toMarkdown(html) {
-	            var markdown = toMark(html);
+	            var markdown = toMark(this._appendAttributeForBrIfNeed(html));
 	            markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
+	            markdown = markdown.replace(/<br>/ig, '<br>\n');
+
+	            return markdown;
+	        }
+	    }, {
+	        key: '_appendAttributeForBrIfNeed',
+	        value: function _appendAttributeForBrIfNeed(html) {
+	            var FIND_BR_RX = /<br>/ig;
+	            var FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
+	            var FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.+)/ig;
+	            var FIND_FIRST_TWO_BRS_RX = /([^>]{1,1})<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+
+	            html = html.replace(FIND_BR_RX, '<br />');
+
+	            html = html.replace(FIND_DOUBLE_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />');
+
+	            var div = document.createElement('div');
+	            var $div = $(div);
+	            $div.html(html);
+	            $div.find('pre br').each(function (index, node) {
+	                if (node.hasAttribute('data-tomark-pass')) {
+	                    node.removeAttribute('data-tomark-pass');
+	                }
+	            });
+
+	            html = $div.html().replace(/<br data-tomark-pass="">/ig, '<br data-tomark-pass />');
+	            html = html.replace(FIND_BR_RX, '<br />');
+
+	            html = html.replace(FIND_PASSING_AND_NORMAL_BR_RX, '<br data-tomark-pass /><br data-tomark-pass />$1');
+	            html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
+
+	            return html;
+	        }
+
+	        /**
+	         * Add line breaks for image section process
+	         * @param {string} markdown Markdown text
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addLineBreaksIfNeed',
+	        value: function _addLineBreaksIfNeed(markdown) {
+	            var FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
+	            var FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /(\n* *(?:\*|-|\d+\.|[*-] \[[ xX]])\s.*|\n(?: *> *)+)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+	            var FIND_IMAGE_IN_TABLE_RX = /(\n\|[^|]*)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+
+	            markdown = markdown.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
+	            markdown = markdown.replace(FIND_IMAGE_IN_LIST_OR_QUOTE_RX, '$1$2');
+	            markdown = markdown.replace(FIND_IMAGE_IN_TABLE_RX, '$1$2');
 
 	            return markdown;
 	        }
@@ -10575,7 +10622,7 @@
 	module.exports = Convertor;
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10677,7 +10724,7 @@
 	module.exports = MarkdownitTaskRenderer;
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10749,7 +10796,7 @@
 	module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10958,6 +11005,103 @@
 	/*eslint-enable */
 
 /***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
+	// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
+
+	/**
+	 * @fileoverview Implements markdownitHtmlBlockRenderer
+	 * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	 * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+	/* eslint-disable */
+	// HTML block
+
+	'use strict';
+
+	// An array of opening and corresponding closing sequences for html tags,
+	// last argument defines whether it can terminate a paragraph or not
+	//
+
+	// void tag names --- Added by Junghwan Park
+
+	var voidTagNames = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
+	var HTML_SEQUENCES = [[/^<(script|pre|style)(?=(\s|>|$))/i, /<\/(script|pre|style)>/i, true], [/^<!--/, /-->/, true], [/^<\?/, /\?>/, true], [/^<![A-Z]/, />/, true], [/^<!\[CDATA\[/, /\]\]>/, true], [new RegExp('^<(' + voidTagNames.join('|') + ')', 'i'), /^\/?>$/, true], [new RegExp('^</?(address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|pre|section|source|title|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?=(\\s|/?>|$))', 'i'), /^$/, true], [/^(?:<[A-Za-z][A-Za-z0-9\-]*(?:\s+[a-zA-Z_:][a-zA-Z0-9:._-]*(?:\s*=\s*(?:[^"'=<>`\x00-\x20]+|'[^']*'|"[^"]*"))?)*\s*\/?>|<\/[A-Za-z][A-Za-z0-9\-]*\s*>)\s*$/, /^$/, false]];
+
+	module.exports = function html_block(state, startLine, endLine, silent) {
+	    var i,
+	        nextLine,
+	        token,
+	        lineText,
+	        pos = state.bMarks[startLine] + state.tShift[startLine],
+	        max = state.eMarks[startLine];
+
+	    if (!state.md.options.html) {
+	        return false;
+	    }
+
+	    if (state.src.charCodeAt(pos) !== 0x3C /* < */) {
+	            return false;
+	        }
+
+	    lineText = state.src.slice(pos, max);
+
+	    for (i = 0; i < HTML_SEQUENCES.length; i++) {
+	        if (HTML_SEQUENCES[i][0].test(lineText)) {
+	            // add condition for return when meet void element --- Added by Junghwan Park
+	            if (i === 5) {
+	                return false;
+	            } else {
+	                break;
+	            }
+	        }
+	    }
+
+	    if (i === HTML_SEQUENCES.length) {
+	        return false;
+	    }
+
+	    if (silent) {
+	        // true if this sequence can be a terminator, false otherwise
+	        return HTML_SEQUENCES[i][2];
+	    }
+
+	    nextLine = startLine + 1;
+
+	    // If we are here - we detected HTML block.
+	    // Let's roll down till block end.
+	    if (!HTML_SEQUENCES[i][1].test(lineText)) {
+	        for (; nextLine < endLine; nextLine++) {
+	            if (state.sCount[nextLine] < state.blkIndent) {
+	                break;
+	            }
+
+	            pos = state.bMarks[nextLine] + state.tShift[nextLine];
+	            max = state.eMarks[nextLine];
+	            lineText = state.src.slice(pos, max);
+
+	            if (HTML_SEQUENCES[i][1].test(lineText)) {
+	                if (lineText.length !== 0) {
+	                    nextLine++;
+	                }
+	                break;
+	            }
+	        }
+	    }
+
+	    state.line = nextLine;
+
+	    token = state.push('html_block', '', 0);
+	    token.map = [startLine, nextLine];
+	    token.content = state.getLines(startLine, nextLine, state.blkIndent, true);
+
+	    return true;
+	};
+	/* eslint-enable */
+
+/***/ },
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -10972,19 +11116,19 @@
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _eventManager = __webpack_require__(24);
+	var _eventManager = __webpack_require__(23);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _extManager = __webpack_require__(27);
+	var _extManager = __webpack_require__(26);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _convertor = __webpack_require__(31);
+	var _convertor = __webpack_require__(30);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -11074,19 +11218,6 @@
 
 	            this.preview.refresh(this.markdownValue);
 	            this.eventManager.emit('setValueAfter', this.markdownValue);
-	        }
-
-	        /**
-	         * Get content of preview
-	         * @api
-	         * @memberOf ToastUIEditorViewOnly
-	         * @returns {string}
-	         */
-
-	    }, {
-	        key: 'getValue',
-	        value: function getValue() {
-	            return this.convertor.toMarkdown(this.preview.$el.find('div.tui-editor-contents').eq(0).html());
 	        }
 
 	        /**
@@ -11431,7 +11562,7 @@
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -11732,7 +11863,7 @@
 	                handler = util.bind(self[handlerName], self);
 	                self.on(type, handler);
 	            } else {
-	                throw new Error('UIController#attachEvents: ' + handlerName + '란 메서드가 없습니다.');
+	                throw new Error('UIController#attachEvents: ' + handlerName + '\uB780 \uBA54\uC11C\uB4DC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4.');
 	            }
 	        });
 	    }
@@ -12005,8 +12136,9 @@
 	 */
 
 	var util = tui.util;
-
+	/*eslint-disable*/
 	var buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
+	/*eslint-enable*/
 
 	/**
 	 * Tab
@@ -12096,6 +12228,7 @@
 	Tab.prototype._onButtonClick = function (ev) {
 	    var $button = $(ev.target);
 	    this._activateTabByButton($button);
+	    this.trigger('itemClick', $button.text());
 	};
 
 	/**
@@ -12157,8 +12290,6 @@
 
 	    this._activateButton($button);
 	    this._activateSection($button.attr('data-index'));
-
-	    this.trigger('itemClick', $button.text());
 	};
 
 	/**
@@ -12487,7 +12618,7 @@
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -12578,7 +12709,7 @@
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -12690,7 +12821,7 @@
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -12873,7 +13004,7 @@
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13355,7 +13486,7 @@
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13436,7 +13567,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13524,8 +13655,16 @@
 	    expendSelection: function expendSelection(doc, cursor) {
 	        var tmpSelection = doc.getSelection();
 	        var result = void 0;
+	        var start = {
+	            line: cursor.line,
+	            ch: cursor.ch - 2
+	        };
+	        var end = {
+	            line: cursor.line,
+	            ch: cursor.ch + 2
+	        };
 
-	        doc.setSelection({ line: cursor.line, ch: cursor.ch - 2 }, { line: cursor.line, ch: cursor.ch + 2 });
+	        doc.setSelection(start, end);
 
 	        if (tmpSelection === '****' || tmpSelection === '____') {
 	            result = tmpSelection;
@@ -13554,7 +13693,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13662,8 +13801,16 @@
 	    expendWithBoldSelection: function expendWithBoldSelection(doc, cursor) {
 	        var tmpSelection = doc.getSelection();
 	        var result = void 0;
+	        var start = {
+	            line: cursor.line,
+	            ch: cursor.ch - 3
+	        };
+	        var end = {
+	            line: cursor.line,
+	            ch: cursor.ch + 3
+	        };
 
-	        doc.setSelection({ line: cursor.line, ch: cursor.ch - 3 }, { line: cursor.line, ch: cursor.ch + 3 });
+	        doc.setSelection(start, end);
 
 	        if (tmpSelection === '******' || tmpSelection === '______') {
 	            result = tmpSelection;
@@ -13684,8 +13831,16 @@
 	    expendOnlyBoldSelection: function expendOnlyBoldSelection(doc, cursor) {
 	        var tmpSelection = doc.getSelection();
 	        var result = false;
+	        var start = {
+	            line: cursor.line,
+	            ch: cursor.ch - 2
+	        };
+	        var end = {
+	            line: cursor.line,
+	            ch: cursor.ch + 2
+	        };
 
-	        doc.setSelection({ line: cursor.line, ch: cursor.ch - 2 }, { line: cursor.line, ch: cursor.ch + 2 });
+	        doc.setSelection(start, end);
 
 	        if (tmpSelection === '****' || tmpSelection === '____') {
 	            doc.setSelection(cursor);
@@ -13705,8 +13860,16 @@
 	    expendSelection: function expendSelection(doc, cursor) {
 	        var tmpSelection = doc.getSelection();
 	        var result = void 0;
+	        var start = {
+	            line: cursor.line,
+	            ch: cursor.ch - 2
+	        };
+	        var end = {
+	            line: cursor.line,
+	            ch: cursor.ch + 2
+	        };
 
-	        doc.setSelection({ line: cursor.line, ch: cursor.ch - 2 }, { line: cursor.line, ch: cursor.ch + 2 });
+	        doc.setSelection(start, end);
 
 	        if (tmpSelection === '****' || tmpSelection === '____') {
 	            result = tmpSelection;
@@ -13738,7 +13901,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13838,7 +14001,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13861,7 +14024,7 @@
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
 
-	        //range 을 가공함
+	        // range 을 가공함
 	        var range = mde.getCurrentRange();
 
 	        var from = {
@@ -13874,10 +14037,10 @@
 	            ch: doc.getLineHandle(range.to.line).text.length
 	        };
 
-	        //영역의 텍스트를 가저오고
+	        // 영역의 텍스트를 가저오고
 	        var textToModify = doc.getRange(from, to);
 
-	        //텍스트 컨텐트를 변경 한다
+	        // 텍스트 컨텐트를 변경 한다
 	        var textLinesToModify = textToModify.split('\n');
 	        var lineLength = textLinesToModify.length;
 
@@ -13885,7 +14048,7 @@
 	            textLinesToModify[i] = '>' + textLinesToModify[i];
 	        }
 
-	        //해당 에디터의 내용을 변경한다
+	        // 해당 에디터의 내용을 변경한다
 	        doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
 	        range.to.ch += 1;
@@ -13907,7 +14070,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13952,17 +14115,17 @@
 
 	        var lengthOfCurrentLineBefore = doc.getLine(to.line).length;
 
-	        //영역의 텍스트를 가저오고
+	        // 영역의 텍스트를 가저오고
 	        var textToModify = doc.getRange(from, to);
 
-	        //원하는 대로 가공한다
+	        // 원하는 대로 가공한다
 	        var textLinesToModify = textToModify.split('\n');
 
 	        util.forEachArray(textLinesToModify, function (line, index) {
 	            textLinesToModify[index] = getHeadingMarkdown(line, size);
 	        });
 
-	        //해당 에디터의 내용을 변경한다
+	        // 해당 에디터의 내용을 변경한다
 	        doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
 	        range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
@@ -14005,7 +14168,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14070,7 +14233,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14124,7 +14287,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14178,7 +14341,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14243,7 +14406,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14309,7 +14472,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14424,7 +14587,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14478,7 +14641,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14534,7 +14697,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14588,7 +14751,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14653,7 +14816,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14718,7 +14881,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14788,7 +14951,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 
 	/**
 	 * Blockquote
@@ -14830,7 +14993,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 
 	/**
 	 * AddImage
@@ -14871,7 +15034,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 
 	/**
 	 * AddLink
@@ -14914,7 +15077,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14999,7 +15162,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 	var domUtils = __webpack_require__(8);
 
 	/**
@@ -15040,7 +15203,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15095,7 +15258,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15151,7 +15314,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15288,7 +15451,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15373,7 +15536,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15481,7 +15644,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15594,8 +15757,11 @@
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0], selectedCells.last()[0]);
 	        trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
 	    } else {
-	        startCell = _domUtils2.default.isTextNode(range.startContainer) ? $(range.startContainer).parent('td,th')[0] : range.startContainer;
-	        endCell = _domUtils2.default.isTextNode(range.endContainer) ? $(range.endContainer).parent('td,th')[0] : range.endContainer;
+	        var startContainer = range.startContainer;
+	        var endContainer = range.endContainer;
+
+	        startCell = _domUtils2.default.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
+	        endCell = _domUtils2.default.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
 	        trs = getSelectedRows(startCell, rangeInformation, $table);
 	    }
@@ -15610,7 +15776,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15715,7 +15881,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15842,7 +16008,8 @@
 	    if (selectedCells.length) {
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0], selectedCells.last()[0]);
 	    } else {
-	        startCell = _domUtils2.default.isTextNode(range.startContainer) ? $(range.startContainer).parent('td,th')[0] : range.startContainer;
+	        var startContainer = range.startContainer;
+	        startCell = _domUtils2.default.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
 	    }
 
@@ -15857,7 +16024,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15903,7 +16070,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15974,7 +16141,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 
 	/**
 	 * DecreaseDepth
@@ -16023,7 +16190,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16075,7 +16242,7 @@
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(25);
+	var _commandManager = __webpack_require__(24);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16167,7 +16334,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(25);
+	var CommandManager = __webpack_require__(24);
 
 	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -16809,12 +16976,12 @@
 	          state.htmlState = CodeMirror.startState(htmlMode);
 	          return switchBlock(stream, state, htmlBlock);
 	        }
+	    
+	        if (ch === '<' && stream.match(/^\/\w*?>/)) {
+	          state.md_inside = false;
+	          return "tag";
+	        }
 	    */
-
-	    if (ch === '<' && stream.match(/^\/\w*?>/)) {
-	      state.md_inside = false;
-	      return "tag";
-	    }
 
 	    var ignoreUnderscore = false;
 	    if (!modeCfg.underscoresBreakWords) {
@@ -17140,7 +17307,7 @@
 	    blankLine: blankLine,
 
 	    getType: getType,
-
+	    closeBrackets: "()[]{}''\"\"``",
 	    fold: "markdown"
 	  };
 	  return mode;
@@ -17535,7 +17702,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var extManager = __webpack_require__(27);
+	var extManager = __webpack_require__(26);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -17580,7 +17747,7 @@
 
 	'use strict';
 
-	var _extManager = __webpack_require__(27);
+	var _extManager = __webpack_require__(26);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
@@ -17596,7 +17763,7 @@
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -17621,9 +17788,9 @@
 	    var isActive = true;
 	    var button = void 0;
 
-	    //UI
+	    // UI
 	    if (editor.getUI().name === 'default') {
-	        //init button
+	        // init button
 	        button = new _button2.default({
 	            className: className,
 	            command: 'scrollFollowToggle',
@@ -17637,7 +17804,7 @@
 	            button.$el.hide();
 	        }
 
-	        //hide scroll follow button in wysiwyg
+	        // hide scroll follow button in wysiwyg
 	        editor.on('changeModeToWysiwyg', function () {
 	            button.$el.hide();
 	        });
@@ -17646,7 +17813,7 @@
 	            button.$el.show();
 	        });
 
-	        //Commands
+	        // Commands
 	        editor.addCommand('markdown', {
 	            name: 'scrollFollowToggle',
 	            exec: function exec() {
@@ -17663,7 +17830,7 @@
 	        });
 	    }
 
-	    //Events
+	    // Events
 	    cm.on('change', function () {
 	        isScrollable = false;
 	        sectionManager.makeSectionList();
@@ -17671,17 +17838,21 @@
 
 	    editor.on('previewRenderAfter', function () {
 	        sectionManager.sectionMatch();
-	        scrollSync.syncToPreview();
+	        scrollSync.syncPreviewScrollTopToMarkdown();
 	        isScrollable = true;
 	    });
 
-	    cm.on('scroll', function () {
+	    editor.eventManager.listen('scroll', function (event) {
 	        if (!isActive) {
 	            return;
 	        }
 
 	        if (isScrollable && editor.preview.isVisible()) {
-	            scrollSync.syncToPreview();
+	            if (event.source === 'markdown' && !scrollSync.isMarkdownScrollEventBlocked) {
+	                scrollSync.syncPreviewScrollTopToMarkdown();
+	            } else if (event.source === 'preview' && !scrollSync.isPreviewScrollEventBlocked) {
+	                scrollSync.syncMarkdownScrollTopToPreview();
+	            }
 	        } else {
 	            scrollSync.saveScrollInfo();
 	        }
@@ -17706,7 +17877,9 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
+	var PREVIEW_MARGIN_TOP = 57;
 	var SCROLL_TOP_PADDING = 20;
+	var SCROLL_BOCKING_RESET_DELAY = 15;
 
 	/**
 	 * ScrollSync
@@ -17715,7 +17888,7 @@
 	 * @constructor
 	 * @class
 	 * @param {SectionManager} sectionManager sectionManager
-	 * @param {CodeMirror} cm codemirror
+	 * @param {CodeMirror} cm CodeMirror
 	 * @param {jQuery} $previewContainerEl preview container
 	 */
 
@@ -17727,7 +17900,7 @@
 	        this.cm = cm;
 	        this.$previewContainerEl = $previewContainerEl;
 	        this.$contents = this.$previewContainerEl.find('.tui-editor-contents');
-
+	        this.releaseTimer = null;
 	        /**
 	         * current timeout id needs animation
 	         * @type {number}
@@ -17735,7 +17908,7 @@
 	        this._currentTimeoutId = null;
 
 	        /**
-	         * Saved scrollInfo object of codemirror
+	         * Saved scrollInfo object of CodeMirror
 	         * @type {object}
 	         */
 	        this._savedScrollInfo = null;
@@ -17743,8 +17916,8 @@
 
 	    /**
 	     * _getEditorSectionHeight
-	     * get section height of editor
-	     * @param {object} section section be caculated height
+	     * Return section height of editor
+	     * @param {object} section section be calculated height
 	     * @returns {number} height
 	     */
 
@@ -17760,8 +17933,8 @@
 
 	        /**
 	         * _getLineHeightGapInSection
-	         * get height gap between passed line in passed section
-	         * @param {object} section section be caculated
+	         * Return height gap between passed line in passed section
+	         * @param {object} section section be calculated
 	         * @param {number} line line number
 	         * @returns {number} gap
 	         */
@@ -17777,8 +17950,8 @@
 
 	        /**
 	         * _getSectionScrollRatio
-	         * get ratio of height between scrollTop line and scrollTop section
-	         * @param {object} section section be caculated
+	         * Return ratio of height between scrollTop line and scrollTop section
+	         * @param {object} section section be calculated
 	         * @param {number} line line number
 	         * @returns {number} ratio
 	         */
@@ -17800,7 +17973,7 @@
 
 	        /**
 	         * _getScrollFactorsOfEditor
-	         * get Scroll Information of editor for preivew scroll sync
+	         * Return Scroll Information of editor for preview scroll sync
 	         * @returns {object} scroll factors
 	         */
 
@@ -17814,8 +17987,8 @@
 	                ratio = void 0,
 	                factors = void 0;
 
-	            //if codemirror has not visible scrollInfo have incorrect value
-	            //so we use saved scroll info for alternative
+	            // if codemirror has not visible scrollInfo have incorrect value
+	            // so we use saved scroll info for alternative
 	            scrollInfo = this._fallbackScrollInfoIfIncorrect(scrollInfo);
 
 	            var isEditorBottom = scrollInfo.height - scrollInfo.top <= scrollInfo.clientHeight;
@@ -17844,8 +18017,61 @@
 	        }
 
 	        /**
+	         * Return Scroll Information of editor for Markdown scroll sync
+	         * @returns {object} scroll factors
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getScrollInfoForMarkdown',
+	        value: function _getScrollInfoForMarkdown() {
+	            var _this = this;
+
+	            var sectionList = this.sectionManager.getSectionList();
+	            var factors = void 0;
+
+	            tui.util.forEachArray(sectionList, function (section) {
+	                var $div = section.$previewSectionEl;
+	                var $preview = $div.parent().parent();
+	                var isPreviewBottom = $preview[0].clientHeight - $preview.scrollTop() <= $preview[0].height;
+	                var needNext = true;
+
+	                if (isPreviewBottom) {
+	                    factors = {
+	                        isPreviewBottom: isPreviewBottom
+	                    };
+	                    needNext = false;
+	                } else if (_this._isTopSection($preview, $div)) {
+	                    factors = {
+	                        section: section,
+	                        sectionRatio: _this._getMarkdownEditorScrollRatio($preview, $div)
+	                    };
+	                    needNext = false;
+	                }
+
+	                return needNext;
+	            });
+
+	            return factors;
+	        }
+
+	        /**
+	         * Return ScrollRatio for Markdown scroll value
+	         * @param {jQuery} $preview jQuery wrapped preview container
+	         * @param {jQuery} $div jQuery wrapped section div element
+	         * @returns {number}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getMarkdownEditorScrollRatio',
+	        value: function _getMarkdownEditorScrollRatio($preview, $div) {
+	            return ($preview.scrollTop() - $div[0].offsetTop) / $div.height();
+	        }
+
+	        /**
 	         * _getScrollTopForPreview
-	         * get ScrolTop value for preview
+	         * Return scrollTop value for preview
 	         * @returns {number|undefined} scrollTop value, when something wrong then return undefined
 	         */
 
@@ -17871,18 +18097,92 @@
 	        }
 
 	        /**
-	         * syncToPreview
-	         * sync preview with markdown scroll
+	         * Return scrollTop value for Markdown editor
+	         * @returns {number}
+	         * @private
 	         */
 
 	    }, {
-	        key: 'syncToPreview',
-	        value: function syncToPreview() {
-	            var self = this,
-	                targetScrollTop = this._getScrollTopForPreview();
+	        key: '_getScrollTopForMarkdown',
+	        value: function _getScrollTopForMarkdown() {
+	            var scrollTop = void 0;
+	            var scrollFactors = this._getScrollInfoForMarkdown();
+	            var ratio = scrollFactors.sectionRatio;
 
-	            this._animateRun(this.$previewContainerEl.scrollTop(), targetScrollTop, function (deltaScrollTop) {
-	                self.$previewContainerEl.scrollTop(deltaScrollTop);
+	            if (scrollFactors.isPreviewBottom) {
+	                scrollTop = this.cm.getScrollInfo().height;
+	            } else if (scrollFactors.section) {
+	                var section = scrollFactors.section;
+	                var coordsAtStart = this.cm.charCoords({
+	                    line: section.start,
+	                    char: 0
+	                }, 'local');
+	                var coordsAtEnd = this.cm.charCoords({
+	                    line: section.end,
+	                    char: 0
+	                }, 'local');
+
+	                scrollTop = coordsAtStart.top;
+	                scrollTop += (coordsAtEnd.top - coordsAtStart.top) * ratio;
+	            }
+
+	            scrollTop = scrollTop && Math.max(scrollTop, 0);
+
+	            return scrollTop;
+	        }
+
+	        /**
+	         * syncPreviewScrollTopToMarkdown
+	         * sync preview scroll to markdown
+	         */
+
+	    }, {
+	        key: 'syncPreviewScrollTopToMarkdown',
+	        value: function syncPreviewScrollTopToMarkdown() {
+	            var _this2 = this;
+
+	            var $previewContainerEl = this.$previewContainerEl;
+	            var sourceScrollTop = $previewContainerEl.scrollTop();
+	            var targetScrollTop = this._getScrollTopForPreview();
+
+	            this.isPreviewScrollEventBlocked = true;
+
+	            this._animateRun(sourceScrollTop, targetScrollTop, function (deltaScrollTop) {
+	                clearTimeout(_this2.releaseTimer);
+
+	                $previewContainerEl.scrollTop(deltaScrollTop);
+
+	                _this2.releaseTimer = setTimeout(function () {
+	                    _this2.isPreviewScrollEventBlocked = false;
+	                }, SCROLL_BOCKING_RESET_DELAY);
+	            });
+	        }
+
+	        /**
+	         * syncMarkdownScrollTopToPreview
+	         * sync markdown scroll to preview
+	         */
+
+	    }, {
+	        key: 'syncMarkdownScrollTopToPreview',
+	        value: function syncMarkdownScrollTopToPreview() {
+	            var _this3 = this;
+
+	            var codeMirror = this.cm;
+	            var codeMirrorScrollInfo = codeMirror.getScrollInfo();
+	            var sourceScrollTop = codeMirrorScrollInfo.top;
+	            var targetScrollTop = this._getScrollTopForMarkdown();
+
+	            this.isMarkdownScrollEventBlocked = true;
+
+	            this._animateRun(sourceScrollTop, targetScrollTop, function (deltaScrollTop) {
+	                clearTimeout(_this3.releaseTimer);
+
+	                codeMirror.scrollTo(0, deltaScrollTop);
+
+	                _this3.releaseTimer = setTimeout(function () {
+	                    _this3.isMarkdownScrollEventBlocked = false;
+	                }, SCROLL_BOCKING_RESET_DELAY);
 	            });
 	        }
 
@@ -17901,7 +18201,7 @@
 	                startTime = Date.now(),
 	                self = this;
 
-	            //if already doing animation
+	            // if already doing animation
 	            if (this._currentTimeoutId) {
 	                clearTimeout(this._currentTimeoutId);
 	            }
@@ -17911,7 +18211,7 @@
 	             */
 	            function step() {
 	                var stepTime = Date.now();
-	                var progress = (stepTime - startTime) / 200; //200 is animation time
+	                var progress = (stepTime - startTime) / 200; // 200 is animation time
 	                var deltaValue = void 0;
 
 	                if (progress < 1) {
@@ -17929,9 +18229,10 @@
 
 	        /**
 	         * Fallback to saved scrolInfo if incorrect scrollInfo passed
-	         * this because incorrect codemirror returns scrollInfo if codemirror is invisible
+	         * this because incorrect CodeMirror returns scrollInfo if CodeMirror is invisible
 	         * @param {object} scrollInfo scrollInfo
 	         * @returns {object} scrollInfo
+	         * @private
 	         */
 
 	    }, {
@@ -17942,12 +18243,33 @@
 
 	        /**
 	         * Save Codemirror's scrollInfo for alternative use
+	         * memberOf ScrollSync
 	         */
 
 	    }, {
 	        key: 'saveScrollInfo',
 	        value: function saveScrollInfo() {
 	            this._savedScrollInfo = this.cm.getScrollInfo();
+	        }
+
+	        /**
+	         * Return whether given range is top section of preview contents or not
+	         * @param {jQuery} $preview jQuery wrapped preview container
+	         * @param {jQuery} $div jQuery wrapped section div element
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isTopSection',
+	        value: function _isTopSection($preview, $div) {
+	            var previewScrollTop = $preview.scrollTop();
+	            var divOffsetTop = $div[0].offsetTop;
+	            var divHeight = $div.height();
+	            var isSectionBegin = previewScrollTop >= divOffsetTop - PREVIEW_MARGIN_TOP;
+	            var isSectionEnd = previewScrollTop > divOffsetTop + divHeight;
+
+	            return isSectionBegin && !isSectionEnd;
 	        }
 	    }]);
 
@@ -17972,6 +18294,9 @@
 	 */
 
 	var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
+	var FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
+	var FIND_QUOTE_RX = /^ {0,3}(> ?)*\s/;
+	var FIND_IMAGE_RX = /!\[([^\[\]]*)]\(([^)]*)\)/g;
 	var FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 	var FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 	var FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */;
@@ -18084,6 +18409,7 @@
 	                onTable = false,
 	                onCodeBlock = false,
 	                trimCapture = '';
+	            var isRightAfterImageSection = false;
 
 	            var lineLength = this.cm.getDoc().lineCount();
 
@@ -18099,22 +18425,30 @@
 	                    onTable = true;
 	                }
 
-	                if (onCodeBlock && this._isCodeBlockEnd(prevLineString)) {
+	                if (onCodeBlock && this._isCodeBlockEnd(prevLineString) && !this._doFollowedLinesHaveCodeBlockEnd(i, lineLength)) {
 	                    onCodeBlock = false;
 	                } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
 	                    onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
 	                }
 
-	                //atx header
+	                // atx header
 	                if (this._isAtxHeader(lineString)) {
+	                    isRightAfterImageSection = false;
 	                    isSection = true;
-	                    //setext header
-	                } else if (!onCodeBlock && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+	                    // setext header
+	                } else if (!this._isCodeBlockEnd(lineString) && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
+	                    isRightAfterImageSection = false;
+	                    isSection = true;
+	                } else if (!onCodeBlock && !onTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)) {
+	                    isRightAfterImageSection = true;
+	                    isSection = true;
+	                } else if (isRightAfterImageSection) {
+	                    isRightAfterImageSection = false;
 	                    isSection = true;
 	                }
 
-	                //빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
-	                //프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
+	                // 빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
+	                // 프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
 	                if (isTrimming) {
 	                    trimCapture += lineString.trim();
 
@@ -18245,6 +18579,21 @@
 	        value: function _isSeTextHeader(lineString, nextLineString) {
 	            return lineString.replace(FIND_SPACE, '') !== '' && nextLineString && FIND_SETEXT_HEADER_RX.test(nextLineString);
 	        }
+	    }, {
+	        key: '_isImage',
+	        value: function _isImage(lineString) {
+	            return FIND_IMAGE_RX.test(lineString);
+	        }
+	    }, {
+	        key: '_isList',
+	        value: function _isList(lineString) {
+	            return FIND_LIST_RX.test(lineString);
+	        }
+	    }, {
+	        key: '_isQuote',
+	        value: function _isQuote(lineString) {
+	            return FIND_QUOTE_RX.test(lineString);
+	        }
 
 	        /**
 	         * makeSectionList
@@ -18311,15 +18660,23 @@
 	        value: function _getPreviewSections() {
 	            var sections = [];
 	            var lastSection = 0;
+	            var isRightAfterImageSection = false;
 
 	            sections[0] = [];
 
 	            this.$previewContent.contents().filter(findElementNodeFilter).each(function (index, el) {
-	                if (el.tagName.match(/H1|H2|H3|H4|H5|H6/)) {
-	                    if (sections[lastSection].length) {
-	                        sections.push([]);
-	                        lastSection += 1;
-	                    }
+	                var isParagraph = el.tagName === 'P';
+	                var isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
+	                var isImage = isParagraph && $(el).children('IMG').length !== 0;
+
+	                if ((isHeading || isImage || isRightAfterImageSection) && sections[lastSection].length) {
+	                    sections.push([]);
+	                    lastSection += 1;
+	                    isRightAfterImageSection = false;
+	                }
+
+	                if (isImage) {
+	                    isRightAfterImageSection = true;
 	                }
 
 	                sections[lastSection].push(el);
@@ -18378,11 +18735,11 @@
 
 	'use strict';
 
-	var _extManager = __webpack_require__(27);
+	var _extManager = __webpack_require__(26);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _i18n = __webpack_require__(30);
+	var _i18n = __webpack_require__(29);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -18628,7 +18985,7 @@
 
 	'use strict';
 
-	var _extManager = __webpack_require__(27);
+	var _extManager = __webpack_require__(26);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
@@ -18716,14 +19073,14 @@
 	        editor.eventManager.emit('markerUpdated', ml.getAll());
 	    }
 
-	    //We need to update marker after window have been resized
+	    // We need to update marker after window have been resized
 	    $(window).on('resize', updateMarkWhenResizing);
 
 	    editor.on('removeEditor', function () {
 	        $(window).off('resize', updateMarkWhenResizing);
 	    });
 
-	    //Reset marker content after set value
+	    // Reset marker content after set value
 	    editor.on('setValueAfter', function () {
 	        var helper = getHelper();
 	        mm.resetContent(helper.getTextContent());
@@ -19248,7 +19605,7 @@
 
 	                var changedLen = text.length;
 
-	                //이전 변경점 end를 이번 변경점 start로 만들어 위치를 조정한다.
+	                // 이전 변경점 end를 이번 변경점 start로 만들어 위치를 조정한다.
 	                changedStart = changedEnd;
 
 	                if (type === CHANGE_NOTHING) {
@@ -19259,10 +19616,10 @@
 	                }
 
 	                if (type === CHANGE_ADD) {
-	                    diffLen += changedLen; //더해진경우는 End값이 변경될 필요가없다 변경전의 위치는 start와 end가 collapse일수밖에 없다.. 일반적인 컨트롤상황에서는
+	                    diffLen += changedLen; // 더해진경우는 End값이 변경될 필요가없다 변경전의 위치는 start와 end가 collapse일수밖에 없다.. 일반적인 컨트롤상황에서는
 	                } else if (type === CHANGE_MINUS) {
 	                    diffLen -= changedLen;
-	                    changedEnd += changedLen; //빠지면 빠지기전까지의 범위가 end가 되어야한다.
+	                    changedEnd += changedLen; // 빠지면 빠지기전까지의 범위가 end가 되어야한다.
 	                }
 
 	                iteratee(changedStart, changedEnd, diffLen);
@@ -19364,7 +19721,7 @@
 
 	'use strict';
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	/*eslint-disable */
 	/**
@@ -21539,7 +21896,7 @@
 	            if (rect && !rect.top) {
 	                this.sqe.modifyDocument(function () {
 	                    node = document.createElement('SPAN');
-	                    node.textContent = '​';
+	                    node.textContent = '\u200B';
 	                    range.endContainer.parentNode.insertBefore(node, range.endContainer);
 	                    rect = node.getBoundingClientRect();
 	                    parentNode = node.parentNode;
@@ -21787,7 +22144,7 @@
 
 	            if (rect && !rect.top) {
 	                node = document.createElement('SPAN');
-	                node.textContent = '​';
+	                node.textContent = '\u200B';
 	                range.endContainer.parentNode.insertBefore(node, range.endContainer);
 	                rect = node.getBoundingClientRect();
 	                parentNode = node.parentNode;
