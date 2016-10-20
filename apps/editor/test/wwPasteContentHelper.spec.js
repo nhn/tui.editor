@@ -241,6 +241,7 @@ describe('WwPasteContentHelper', () => {
 
             expect($(fragment).find('tbody').length).toEqual(1);
             expect($(fragment).find('tbody').text()).toEqual('12');
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-0');
         });
         it('_tableElementAid should wrap TDs with TR', () => {
             const fragment = document.createDocumentFragment();
@@ -256,6 +257,7 @@ describe('WwPasteContentHelper', () => {
             expect($(fragment).find('tbody').length).toEqual(1);
             expect($(fragment).find('tr').length).toEqual(2);
             expect($(fragment).find('tr').text()).toEqual('1234');
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-0');
         });
         it('_tableElementAid should wrap THEAD and TBODY with TABLE', () => {
             const fragment = document.createDocumentFragment();
@@ -270,6 +272,38 @@ describe('WwPasteContentHelper', () => {
             expect($(fragment).find('tbody').length).toEqual(1);
             expect($(fragment).find('thead').text()).toEqual('12');
             expect($(fragment).find('tbody').text()).toEqual('ab');
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-0');
+        });
+        it('_tableElementAid should update table ID class name', () => {
+            const fragment = document.createDocumentFragment();
+
+            fragment.appendChild($('<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>')[0]);
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('table').length).toEqual(1);
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-0');
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-1');
+        });
+        it('_tableElementAid should update all table ID class name in fragment', () => {
+            const fragment = document.createDocumentFragment();
+
+            fragment.appendChild($('<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>')[0]);
+            fragment.appendChild($('<table><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>')[0]);
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('table').length).toEqual(2);
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-0');
+            expect($(fragment).find('table')[1].className).toEqual('te-content-table-1');
+
+            pch._tableElementAid(fragment);
+
+            expect($(fragment).find('table')[0].className).toEqual('te-content-table-2');
+            expect($(fragment).find('table')[1].className).toEqual('te-content-table-3');
         });
     });
 
