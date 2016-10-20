@@ -30,15 +30,7 @@
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: 400,
-        initialEditType: 'wysiwyg',
-        events: {
-            'keyMap': function(ev) {
-                if (ev.keyMap === 'ENTER') {
-                    console.log('!!!');
-                    ev.data.preventDefault();
-                }
-            }
-        }
+        initialEditType: 'wysiwyg'
     });
 
     $('#editSection').tuiEditor('focus');
