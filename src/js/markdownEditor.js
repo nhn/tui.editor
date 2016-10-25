@@ -6,6 +6,7 @@
 
 import KeyMapper from './keyMapper';
 import MdTextObject from './mdTextObject';
+import mdListManager from './mdListManager';
 
 const CodeMirror = window.CodeMirror;
 const keyMapper = KeyMapper.getSharedInstance();
@@ -28,6 +29,13 @@ class MarkdownEditor {
          * @type {object}
          */
         this._latestState = null;
+
+        /**
+         * manager list
+         * @type {Array}
+         * @private
+         */
+        this._managers = {};
     }
 
     /**
@@ -61,6 +69,8 @@ class MarkdownEditor {
             },
             indentUnit: 4
         });
+
+        this.addManager('list', mdListManager);
 
         this._initEvent();
     }
@@ -300,6 +310,36 @@ class MarkdownEditor {
                 ch: e.to.ch
             }
         };
+    }
+
+    /**
+     * addManager
+     * Add manager
+     * @api
+     * @memberOf MarkdownEditor
+     * @param {string} name Manager name
+     * @param {function} Manager Constructor
+     */
+    addManager(name, Manager) {
+        if (!Manager) {
+            Manager = name;
+            name = null;
+        }
+
+        const instance = new Manager(this);
+        this._managers[name || instance.name] = instance;
+    }
+
+    /**
+     * getManager
+     * Get manager by manager name
+     * @api
+     * @memberOf MarkdownEditor
+     * @param {string} name Manager name
+     * @returns {object} manager
+     */
+    getManager(name) {
+        return this._managers[name];
     }
 
     /**
