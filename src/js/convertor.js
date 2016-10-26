@@ -124,11 +124,20 @@ class Convertor {
      * @returns {string} markdown text
      */
     toMarkdown(html) {
+        const resultArray = [];
         let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
-        markdown = markdown.replace(/<br>/ig, '<br>\n');
 
-        return markdown;
+        tui.util.forEach(markdown.split('\n'), (line, index) => {
+            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+
+            if (!FIND_TABLE_RX.test(line)) {
+                line = line.replace(/<br>/ig, '<br>\n');
+            }
+            resultArray[index] = line;
+        });
+
+        return resultArray.join('\n');
     }
 
     _appendAttributeForBrIfNeed(html) {
