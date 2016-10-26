@@ -2904,10 +2904,12 @@
 	                    data: keyboardEvent
 	                });
 
-	                this.eventManager.emit('wysiwygKeyEvent', {
-	                    keyMap: keyMap,
-	                    data: keyboardEvent
-	                });
+	                if (!keyboardEvent.defaultPrevented) {
+	                    this.eventManager.emit('wysiwygKeyEvent', {
+	                        keyMap: keyMap,
+	                        data: keyboardEvent
+	                    });
+	                }
 	            }
 	        }
 
@@ -5732,6 +5734,12 @@
 
 	            this.wwe.addKeyEventHandler('SHIFT+TAB', function (ev) {
 	                return _this2._moveCursorTo('previous', 'cell', ev);
+	            });
+	            this.wwe.addKeyEventHandler('UP', function (ev) {
+	                return _this2._moveCursorTo('previous', 'row', ev);
+	            });
+	            this.wwe.addKeyEventHandler('DOWN', function (ev) {
+	                return _this2._moveCursorTo('next', 'row', ev);
 	            });
 
 	            this._bindKeyEventForTableCopyAndCut();
@@ -10521,11 +10529,20 @@
 	    }, {
 	        key: 'toMarkdown',
 	        value: function toMarkdown(html) {
+	            var resultArray = [];
 	            var markdown = toMark(this._appendAttributeForBrIfNeed(html));
 	            markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
-	            markdown = markdown.replace(/<br>/ig, '<br>\n');
 
-	            return markdown;
+	            tui.util.forEach(markdown.split('\n'), function (line, index) {
+	                var FIND_TABLE_RX = /^\|[^|]*\|/ig;
+
+	                if (!FIND_TABLE_RX.test(line)) {
+	                    line = line.replace(/<br>/ig, '<br>\n');
+	                }
+	                resultArray[index] = line;
+	            });
+
+	            return resultArray.join('\n');
 	        }
 	    }, {
 	        key: '_appendAttributeForBrIfNeed',
@@ -10568,14 +10585,19 @@
 	        key: '_addLineBreaksIfNeed',
 	        value: function _addLineBreaksIfNeed(markdown) {
 	            var FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
-	            var FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /(\n* *(?:\*|-|\d+\.|[*-] \[[ xX]])\s.*|\n(?: *> *)+)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
-	            var FIND_IMAGE_IN_TABLE_RX = /(\n\|[^|]*)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+	            var resultArray = [];
+	            tui.util.forEach(markdown.split('\n'), function (line, index) {
+	                var FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /^ *(?:\*|-|\d+\.|[*-] \[[ xX]])\s|(?: *> *)+/g;
+	                var FIND_TABLE_RX = /^\|[^|]*\|/ig;
+	                var FIND_INLINE_CODEBLOCK_RX = /^ {4}[^\s]*/ig;
 
-	            markdown = markdown.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
-	            markdown = markdown.replace(FIND_IMAGE_IN_LIST_OR_QUOTE_RX, '$1$2');
-	            markdown = markdown.replace(FIND_IMAGE_IN_TABLE_RX, '$1$2');
+	                if (!FIND_TABLE_RX.test(line) && !FIND_IMAGE_IN_LIST_OR_QUOTE_RX.test(line) && !FIND_INLINE_CODEBLOCK_RX.test(line)) {
+	                    line = line.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
+	                }
+	                resultArray[index] = line;
+	            });
 
-	            return markdown;
+	            return resultArray.join('\n');
 	        }
 
 	        /**
