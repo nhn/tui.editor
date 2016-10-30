@@ -52,7 +52,7 @@ describe('Convertor', () => {
             expect(convertor.toMarkdown('<h1 id="hello-world">HELLO WORLD</h1>')).toEqual('# HELLO WORLD');
         });
         it('should reserve br on multi line breaks', () => {
-            expect(convertor.toMarkdown('HELLO WORLD<br><br><br>!')).toEqual('HELLO WORLD\n\n<br>\n!');
+            expect(convertor.toMarkdown('HELLO WORLD<br><br><br>!')).toEqual('HELLO WORLD\n\n<br>!');
         });
         it('should not reserve br on normal line breaks', () => {
             expect(convertor.toMarkdown('HELLO WORLD<br><br>!')).toEqual('HELLO WORLD\n\n!');

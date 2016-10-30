@@ -75,7 +75,10 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtml(markdown) {
-        return markdownit.render(markdown.replace(/<br>/ig, '<br data-tomark-pass>'));
+        markdown = this._addLineBreaksIfNeed(markdown);
+        markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+
+        return markdownitHighlight.render(markdown);
     }
 
     /**
@@ -124,27 +127,18 @@ class Convertor {
      * @returns {string} markdown text
      */
     toMarkdown(html) {
-        const resultArray = [];
         let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
-        tui.util.forEach(markdown.split('\n'), (line, index) => {
-            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
-
-            if (!FIND_TABLE_RX.test(line)) {
-                line = line.replace(/<br>/ig, '<br>\n');
-            }
-            resultArray[index] = line;
-        });
-
-        return resultArray.join('\n');
+        return markdown;
     }
 
     _appendAttributeForBrIfNeed(html) {
         const FIND_BR_RX = /<br>/ig;
         const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
-        const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.+)/ig;
-        const FIND_FIRST_TWO_BRS_RX = /([^>]{1,1})<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+        const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
+        const FIND_FIRST_TWO_BRS_RX =
+            /((?:[^b][^r]|[^p][^a][^s][^s]).[^/].)<br data-tomark-pass \/><br(?: data-tomark-pass)? \/>/g;
 
         html = html.replace(FIND_BR_RX, '<br />');
 

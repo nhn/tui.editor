@@ -7,10 +7,10 @@
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
 const FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
 const FIND_QUOTE_RX = /^ {0,3}(> ?)*\s/;
-const FIND_IMAGE_RX = /!\[([^\[\]]*)]\(([^)]*)\)/g;
+const FIND_IMAGE_RX = / *!\[([^\[\]]*)]\(([^)]*)\)/;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
-const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ \.]*(\S+)? */;
+const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ .]*(\S+)? */;
 const FIND_SPACE = /\s/g;
 
 /**
@@ -98,6 +98,7 @@ class SectionManager {
             onCodeBlock = false,
             trimCapture = '';
         let isRightAfterImageSection = false;
+        let codeblockStartLineIndex;
 
         const lineLength = this.cm.getDoc().lineCount();
 
@@ -106,6 +107,7 @@ class SectionManager {
             lineString = this.cm.getLine(i);
             nextLineString = this.cm.getLine(i + 1) || '';
             prevLineString = this.cm.getLine(i - 1) || '';
+            const isCodeBlockEnded = this._isCodeBlockEnd(prevLineString) && (codeblockStartLineIndex !== (i - 1));
 
             if (onTable && (!lineString || !this._isTableCode(lineString))) {
                 onTable = false;
@@ -113,13 +115,12 @@ class SectionManager {
                 onTable = true;
             }
 
-            if (onCodeBlock
-                && this._isCodeBlockEnd(prevLineString)
-                && !this._doFollowedLinesHaveCodeBlockEnd(i, lineLength)
-            ) {
+            if (onCodeBlock && isCodeBlockEnded) {
                 onCodeBlock = false;
-            } else if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
+            }
+            if (!onCodeBlock && this._isCodeBlockStart(lineString)) {
                 onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
+                codeblockStartLineIndex = i;
             }
 
             // atx header
@@ -138,7 +139,7 @@ class SectionManager {
             ) {
                 isRightAfterImageSection = true;
                 isSection = true;
-            } else if (isRightAfterImageSection) {
+            } else if (isRightAfterImageSection && lineString.length !== 0) {
                 isRightAfterImageSection = false;
                 isSection = true;
             }
