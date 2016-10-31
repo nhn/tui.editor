@@ -124,11 +124,20 @@ class Convertor {
      * @returns {string} markdown text
      */
     toMarkdown(html) {
+        const resultArray = [];
         let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
-        markdown = markdown.replace(/<br>/ig, '<br>\n');
 
-        return markdown;
+        tui.util.forEach(markdown.split('\n'), (line, index) => {
+            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+
+            if (!FIND_TABLE_RX.test(line)) {
+                line = line.replace(/<br>/ig, '<br>\n');
+            }
+            resultArray[index] = line;
+        });
+
+        return resultArray.join('\n');
     }
 
     _appendAttributeForBrIfNeed(html) {
@@ -167,16 +176,22 @@ class Convertor {
      */
     _addLineBreaksIfNeed(markdown) {
         const FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
-        const FIND_IMAGE_IN_LIST_OR_QUOTE_RX =
-            /(\n* *(?:\*|-|\d+\.|[*-] \[[ xX]])\s.*|\n(?: *> *)+)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
-        const FIND_IMAGE_IN_TABLE_RX =
-            /(\n\|[^|]*)\n\n(!\[(?:[^\[\]]*)]\((?:[^)]*)\)[^\n]*)\n\n/g;
+        const resultArray = [];
+        tui.util.forEach(markdown.split('\n'), (line, index) => {
+            const FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /^ *(?:\*|-|\d+\.|[*-] \[[ xX]])\s|(?: *> *)+/g;
+            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+            const FIND_INLINE_CODEBLOCK_RX = /^ {4}[^\s]*/ig;
 
-        markdown = markdown.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
-        markdown = markdown.replace(FIND_IMAGE_IN_LIST_OR_QUOTE_RX, '$1$2');
-        markdown = markdown.replace(FIND_IMAGE_IN_TABLE_RX, '$1$2');
+            if (!FIND_TABLE_RX.test(line)
+                && !FIND_IMAGE_IN_LIST_OR_QUOTE_RX.test(line)
+                && !FIND_INLINE_CODEBLOCK_RX.test(line)
+            ) {
+                line = line.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
+            }
+            resultArray[index] = line;
+        });
 
-        return markdown;
+        return resultArray.join('\n');
     }
 
     /**
