@@ -155,7 +155,8 @@ class WwListManager {
         const $list = $(list);
         let $branchRoot = $list;
 
-        while (!$branchRoot[0].previousSibling) {
+        while (!$branchRoot[0].previousSibling
+               && $branchRoot[0].parentElement.tagName.match(/UL|OL|LI/g)) {
             $branchRoot = $branchRoot.parent();
         }
 
