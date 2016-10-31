@@ -100,6 +100,28 @@ describe('WwListManager', () => {
             expect(wwe.get$Body().find('ul li ul').eq(0).children('li').eq(1).text()).toEqual('t5');
         });
 
+        it('Dont break to contentEditable root body', () => {
+            wwe.getEditor().setHTML([
+                '<div>',
+                '<ul>',
+                '<li>',
+                '<ul>',
+                '<li><div>t1<br></div></li>',
+                '<li><div>t1<br></div></li>',
+                '<li><div>t1<br></div></li>',
+                '</ul>',
+                '</li>',
+                '<li><div>t2</div></li>',
+                '</ul>',
+                '</div>'].join(''));
+
+            mgr._removeBranchListAll();
+
+            expect(wwe.get$Body().find('ul').length).toEqual(1);
+            expect(wwe.get$Body().find('ul li ul').eq(0).children('li').length).toEqual(0);
+            expect(wwe.get$Body().children('div').length).toEqual(1);
+        });
+
         it('Dont remove correct list with text node', () => {
             wwe.getEditor().setHTML([
                 '<ul>',
