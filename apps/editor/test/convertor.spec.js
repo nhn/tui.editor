@@ -60,6 +60,14 @@ describe('Convertor', () => {
         it('should not reserve br in codeblock', () => {
             expect(convertor.toMarkdown('<pre><code>HELLO WORLD\n\n\n\n\n!</code></pre>')).toEqual('```\nHELLO WORLD\n\n\n\n\n!\n```');
         });
+        it('should reserve br to inline in table', () => {
+            const html = '<table>' +
+                '<thead><th>1</th><th>2</th><th>3</th></thead>' +
+                '<tbody><td>HELLO WORLD<br><br><br><br><br>!</td><td>4</td><td>5</td></tbody>' +
+                '</table>';
+            const markdown = '| 1 | 2 | 3 |\n| --- | --- | --- |\n| HELLO WORLD<br><br><br><br><br>! | 4 | 5 |';
+            expect(convertor.toMarkdown(html)).toEqual(markdown);
+        });
     });
 
     describe('event', () => {
@@ -85,6 +93,40 @@ describe('Convertor', () => {
             convertor.toMarkdown('<h1 id="hello-world">HELLO WORLD</h1>');
 
             expect(param).toEqual('# HELLO WORLD');
+        });
+    });
+    describe('addLineBreakesIfNeed', () => {
+        it('should add line breakes before and after image syntax', () => {
+            const markdown = ['first line',
+                '![image](www.naver.com)![image](www.naver.com)',
+                ' - ![image](www.naver.com)'].join('\n');
+            const convertedMarkdown = ['first line',
+                '',
+                '',
+                '![image](www.naver.com)',
+                '',
+                '',
+                '',
+                '![image](www.naver.com)',
+                '',
+                '',
+                ' - ![image](www.naver.com)'].join('\n');
+            expect(convertor._addLineBreaksIfNeed(markdown)).toEqual(convertedMarkdown);
+        });
+
+        it('should not add line breakes in table syntax', () => {
+            const markdown = [
+                '* ![image](www.naver.com) ![image](www.naver.com)',
+                '1. ![image](www.naver.com)',
+                ' - ![image](www.naver.com)',
+                '    * [ ] ![image](www.naver.com)',
+                '> [ ] ![image](www.naver.com)',
+                ' > > [ ] ![image](www.naver.com)',
+                '|  |  | ![image](www.naver.com) |',
+                '| --- | --- | --- |',
+                '|  |  | ![image](www.naver.com) ![image](www.naver.com) |',
+                '|  |  | ![image](www.naver.com) |'].join('\n');
+            expect(convertor._addLineBreaksIfNeed(markdown)).toEqual(markdown);
         });
     });
 });
