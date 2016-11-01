@@ -2,6 +2,7 @@ tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
     'Markdown': '마크다운',
     'WYSIWYG': '위지윅',
     'Headings': '제목크기',
+    'Paragraph': '본문',
     'Bold': '굵게',
     'Italic': '기울임꼴',
     'Strike': '취소선',

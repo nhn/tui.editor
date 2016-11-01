@@ -122,8 +122,7 @@ function initUI(editor, preset) {
 
     const $colorPickerContainer = $('<div />');
 
-    const $buttonBar = $('<div><button type="button" class="te-apply-button">입력</button></div>');
-    $buttonBar.css('margin-top', 10);
+    const $buttonBar = $('<button type="button" class="te-apply-button">입력</button>');
 
     const cpOptions = {
         container: $colorPickerContainer[0]
@@ -142,9 +141,10 @@ function initUI(editor, preset) {
     const popup = editor.getUI().createPopup({
         title: false,
         content: $colorPickerContainer,
+        className: 'tui-popup-color',
         $target: editor.getUI().$el,
         css: {
-            'width': 178,
+            'width': 'auto',
             'position': 'absolute'
         }
     });
@@ -163,6 +163,7 @@ function initUI(editor, preset) {
                 'left': $button.position().left
             });
             popup.show();
+            colorPicker.slider.toggle(true);
         }
     });
 

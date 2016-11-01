@@ -2,6 +2,7 @@ tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
     'Headings': 'Koppen',
+    'Paragraph': 'tekst',
     'Bold': 'Vet',
     'Italic': 'Cursief',
     'Strike': 'Doorhalen',

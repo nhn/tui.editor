@@ -2,6 +2,7 @@ tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
     'Markdown': 'マークダウン',
     'WYSIWYG': 'WYSIWYG',
     'Headings': '見出し',
+    'Paragraph': '本文',
     'Bold': '太字',
     'Italic': 'イタリック',
     'Strike': 'ストライク',

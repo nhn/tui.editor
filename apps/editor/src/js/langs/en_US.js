@@ -2,6 +2,7 @@ tui.Editor.i18n.setLang(['en', 'en_US'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
     'Headings': 'Headings',
+    'Paragraph': 'Paragraph',
     'Bold': 'Bold',
     'Italic': 'Italic',
     'Strike': 'Strike',
