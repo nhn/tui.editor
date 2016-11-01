@@ -27,7 +27,7 @@ describe('scrollFollow.sectionManager', () => {
         });
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -402,6 +402,57 @@ describe('scrollFollow.sectionManager', () => {
             expect(sectionManager.sectionByLine(12)).toBe(sectionList[3]);
             expect(sectionManager.sectionByLine(13)).toBe(sectionList[3]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[4]);
+        });
+
+        it('should create new image section right after two codeblocks that without line breaks between', () => {
+            ned.setValue([
+                '``` js',
+                'var a = 10;',
+                '```',
+                '``` js',
+                'var b = 20;',
+                '```',
+                '![nhnent](http://www.nhnent.com)',
+                ''
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(6)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
+        });
+
+        it('do not create new section right after image that line has no content', () => {
+            ned.setValue([
+                '![nhnent](http://www.nhnent.com)',
+                ''
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[0]);
+        });
+
+        it('should create new section on sequential image', () => {
+            ned.setValue([
+                '![nhnent](http://www.nhnent.com)',
+                '![nhnent](http://www.nhnent.com)',
+                ''
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(2)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
         });
     });
 });
