@@ -36,12 +36,12 @@ extManager.defineExtension('scrollFollow', editor => {
             className,
             command: 'scrollFollowToggle',
             tooltip: TOOL_TIP.active,
-            $el: $(`<button class="active ${className} tui-toolbar-icons" type="button"></button>`)
+            $el: $(`<button class="active ${className}" type="button"></button>`)
         });
 
         editor.getUI().toolbar.addButton(button);
 
-        if (editor.currentMode === 'wysiwyg') {
+        if (editor.currentMode === 'wysiwyg' || editor.mdPreviewStyle === 'tab') {
             button.$el.hide();
         }
 
@@ -51,7 +51,9 @@ extManager.defineExtension('scrollFollow', editor => {
         });
 
         editor.on('changeModeToMarkdown', () => {
-            button.$el.show();
+            if (editor.mdPreviewStyle !== 'tab') {
+                button.$el.show();
+            }
         });
 
         // Commands
@@ -59,7 +61,7 @@ extManager.defineExtension('scrollFollow', editor => {
             name: 'scrollFollowToggle',
             exec() {
                 isActive = !isActive;
-
+                button._onOut();
                 if (isActive) {
                     button.$el.addClass('active');
                     button.tooltip = TOOL_TIP.active;
@@ -67,6 +69,7 @@ extManager.defineExtension('scrollFollow', editor => {
                     button.$el.removeClass('active');
                     button.tooltip = TOOL_TIP.inActive;
                 }
+                button._onOver();
             }
         });
     }

@@ -56,6 +56,7 @@ Button.prototype._setOptions = function(options) {
     this.text = options.text;
     this.tooltip = options.tooltip;
     this.style = options.style;
+    this.state = options.state;
 };
 
 /**

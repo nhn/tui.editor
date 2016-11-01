@@ -53,6 +53,24 @@ describe('Toolbar', function() {
             expect(toolbar.buttons.length).toBe(len + 1);
         });
 
+        it('여러 버튼을 추가할 수 있다.', function() {
+            var len;
+
+            len = toolbar.buttons.length;
+
+            toolbar.addButton([{
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            }, {
+                className: 'test2',
+                command: 'test2',
+                text: 'test2'
+            }]);
+
+            expect(toolbar.buttons.length).toBe(len + 2);
+        });
+
         it('버튼에 커맨드 연결이되어 버튼클릭시 커맨드가 실행된다', function() {
             var command;
 
@@ -114,5 +132,13 @@ describe('Toolbar', function() {
             expect($('.tui-codeblock').length).toEqual(1);
             expect($('.tui-code').length).toEqual(1);
         });
+    });
+
+    describe('상태가 바뀌면 해당 버튼의 active 상태가 바뀐다.', function() {
+        beforeEach(function() {
+            $('body').append(toolbar.$el);
+        });
+
+    
     });
 });

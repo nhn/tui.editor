@@ -2,6 +2,7 @@ tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
     'Markdown': 'Markdown',
     'WYSIWYG': '所见即所得',
     'Headings': '标题',
+    'Paragraph': '文本',
     'Bold': '加粗',
     'Italic': '斜体字',
     'Strike': '删除线',
