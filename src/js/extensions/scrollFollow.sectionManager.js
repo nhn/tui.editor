@@ -6,7 +6,7 @@
 
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
 const FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
-const FIND_QUOTE_RX = /^ {0,3}(> ?)*\s/;
+const FIND_QUOTE_RX = /^ {0,3}(> ?)+\s/;
 const FIND_IMAGE_RX = / *!\[([^\[\]]*)]\(([^)]*)\)/;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;

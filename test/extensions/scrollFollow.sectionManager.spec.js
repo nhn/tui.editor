@@ -454,5 +454,20 @@ describe('scrollFollow.sectionManager', () => {
             expect(sectionManager.sectionByLine(2)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
         });
+        it('should create new section on spaced image', () => {
+            ned.setValue([
+                ' ![nhnent](http://www.nhnent.com)',
+                '  ![nhnent](http://www.nhnent.com)',
+                ''
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(2)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
+        });
     });
 });
