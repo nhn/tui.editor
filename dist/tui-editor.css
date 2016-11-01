@@ -11,7 +11,7 @@
 .tui-editor {
     position: relative;
     line-height: 1;
-    border: 1px solid #ebebeb;
+    border: 1px solid #cacaca;
     border-bottom: 0;
     color: #181818;
 }
@@ -83,7 +83,7 @@
     top: 0;
     height: 100%;
     width: 1px;
-    border-left: 1px solid #ebebeb;
+    border-left: 1px solid #cacaca;
 }
 
 .tui-editor .te-preview-style-vertical .te-md-splitter {
@@ -176,52 +176,67 @@
 }
 
 .tui-editor-defaultUI-toolbar {
-    padding: 3px;
-    background: #fafafa;
-    border-color: #ebebeb;
+    background: #ededed;
+    border-color: #cacaca;
     border-style: solid;
     border-width: 1px 1px 0 1px;
 }
 
+.tui-toolbar-button-group {
+    height: 28px;
+    border-right: 1px solid #d9d9d9;
+    float: left;
+}  
+
 .tui-editor-defaultUI-toolbar button {
     float: left;
     box-sizing: border-box;
-    min-width: 30px;
-    height: 26px;
+    width: 32px;
+    height: 28px;
     padding: 2px;
-    margin-left: 4px;
     outline: none;
     cursor: pointer;
-    background-color: #fff;
-    border: 1px solid #ebebeb;
-    border-radius: 3px;
+    background-color: #ededed;
+    border: 1px solid #ededed;
     font-size: 13px;
 }
 
-.tui-editor-defaultUI-toolbar button:hover {
-    background-color: #eee;
-}
-
+.tui-editor-defaultUI-toolbar button:hover,
 .tui-editor-defaultUI-toolbar button:active,
 .tui-editor-defaultUI-toolbar button.active {
-    box-shadow: inset 1px 1px 2px 1px rgba(0,0,0,0.1), inset 0 0 1px rgba(9,9,9,0.1);
+    background-color: #d9d9d9;
+    border: 1px solid #d9d9d9;
 }
 
-.tui-editor-defaultUI-toolbar button:first-child {
-    border-left-width: 1px;
+.tui-editor-defaultUI-toolbar button.tui-scrollfollow {
+    position: absolute;
+    right: 18px;
+    top: 33px;
+    width: auto;
+    padding: 0 5px 1px;
+    height: auto;
+    border-radius: 3px;
+    color: #fff;
+    background-color: #333;
+    opacity: 0.2;
+    z-index: 101;
 }
 
-.tui-editor-defaultUI-toolbar button.te-bold {
-    font-weight: 700;
+.tui-editor-defaultUI-toolbar button.tui-scrollfollow:after {
+    content: "scroll off";
+} 
+
+.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active {
+    opacity: 0.5;
 }
 
-.tui-editor-defaultUI-toolbar button.te-italic {
-    font-style: italic;
+.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active:after {
+    content: "scroll on";
 }
 
 .tui-editor-defaultUI .te-mode-switch-section {
-    background-color: #fafafa;
-    border: 1px solid #ebebeb;
+    background-color: #ededed;
+    border: 1px solid #cacaca;
     border-top: 0;
     height: 20px;
     font-size: 12px;
@@ -250,13 +265,13 @@
 
 .tui-editor-defaultUI .te-markdown-tab-section {
     border-style: solid;
-    border-color: #ebebeb;
+    border-color: #cacaca;
     border-width: 0 1px 0 1px;
 }
 
 .te-markdown-tab-section .te-tab {
     padding: 0 5px;
-    background: #fafafa;
+    background: #ededed;
     border-bottom: 0;
 }
 
@@ -267,7 +282,7 @@
     font-size: 11px;
     line-height: 100%;
     background: #fafafa;
-    border: 1px solid #ebebeb;
+    border: 1px solid #cacaca;
     position: relative;
     top: 1px;
     left: -1px;
@@ -292,12 +307,10 @@
 
 .tui-popup-wrapper {
     width: 500px;
-    left: auto;
     margin-right: auto;
-    margin-left: auto;
-    margin-top: 3px;
-    border: 1px solid #999;
-    border-radius: 5px;
+    margin-left: 2px;
+    margin-top: 1px;
+    border: 1px solid #cacaca;
     background: white;
     z-index: 9999;
 }
@@ -307,7 +320,7 @@
     height: auto;
     line-height: normal;
     position: relative;
-    border-bottom: 1px solid #999;
+    border-bottom: 1px solid #cacaca;
 }
 
 .tui-popup-header .tui-popup-close-button {
@@ -459,7 +472,8 @@
 .te-heading-add h4,
 .te-heading-add h5,
 .te-heading-add h6,
-.te-heading-add ul {
+.te-heading-add ul,
+.te-heading-add p {
     padding: 0;
     margin: 0;
 }
@@ -469,7 +483,7 @@
 }
 
 .te-heading-add ul li {
-    padding: 2px;
+    padding: 2px 10px;
     cursor: pointer;
 }
 
@@ -499,6 +513,77 @@
 
 .te-heading-add h6 {
     font-size: 14px;
+}
+
+.tui-popup-color {
+    padding: 0;
+}
+
+.tui-popup-color .tui-colorpicker-container, 
+.tui-popup-color .tui-colorpicker-palette-container {
+    width: 144px;
+}
+
+.tui-popup-color .tui-colorpicker-container ul {
+    width: 144px;
+    margin-bottom: 8px;
+}
+
+.tui-popup-color .tui-colorpicker-container li {
+    padding: 0 1px 1px 0;;
+}
+
+.tui-popup-color .tui-colorpicker-container li .tui-colorpicker-palette-button {
+    border: 0;
+    width: 17px;
+    height: 17px;
+}
+
+.tui-popup-color .tui-popup-body {
+    padding: 10px;
+}
+
+.tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-toggle-slider {
+    display: none;
+}
+
+.tui-popup-color .te-apply-button,
+.tui-popup-color .tui-colorpicker-palette-hex {
+    float: right;
+}
+
+.tui-popup-color .te-apply-button {
+    height: 21px;
+    width: 35px;
+    border: 0;
+    background: #fff;
+    border: 1px solid #efefef;
+    position: absolute;
+    bottom: 141px;
+    right: 10px;
+}
+
+.tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-hex {
+    border: 1px solid #E1E1E1;
+    padding: 3px 14px;
+    margin-left: -1px;
+}
+
+.tui-popup-color .tui-colorpicker-container div.tui-colorpicker-clearfix {
+    display: inline-block;
+}
+
+.tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-preview {
+    width: 19px;
+    height: 19px;
+}
+
+.tui-popup-color .tui-colorpicker-slider-container .tui-colorpicker-slider-right {
+    width: 22px;
+}
+
+.tui-popup-color .tui-colorpicker-slider-container .tui-colorpicker-huebar-handle {
+    display: none;
 }
 
 .tui-tooltip {
@@ -535,23 +620,23 @@
 }
 
 .tui-toolbar-icons.tui-bold {
-    background-position: -14px -24px;
+    background-position: -15px -23px;
 }
 
 .tui-toolbar-icons.tui-color {
-    background-position: -39px -23px;
+    background-position: -40px -22px;
 }
 
 .tui-toolbar-icons.tui-italic {
-    background-position: -64px -24px;
+    background-position: -65px -23px;
 }
 
 .tui-toolbar-icons.tui-quote {
-    background-position: -90px -24px;
+    background-position: -91px -24px;
 }
 
 .tui-toolbar-icons.tui-heading {
-    background-position: -115px -25px;
+    background-position: -116px -24px;
 }
 
 .tui-toolbar-icons.tui-hrline {
@@ -559,43 +644,33 @@
 }
 
 .tui-toolbar-icons.tui-task {
-    background-position: -163px -24px;
+    background-position: -164px -23px;
 }
 
 .tui-toolbar-icons.tui-ol {
-    background-position: -188px -25px;
+    background-position: -189px -25px;
 }
 
 .tui-toolbar-icons.tui-ul {
-    background-position: -214px -25px;
+    background-position: -215px -25px;
 }
 
 .tui-toolbar-icons.tui-table {
-    background-position: -242px -26px;
+    background-position: -243px -25px;
 }
 
 .tui-toolbar-icons.tui-code {
-    background-position: -267px -25px;
-}
-
-.tui-toolbar-icons.tui-scrollfollow {
-    background-position: -292px -26px;
-}
-
-.tui-toolbar-icons.tui-scrollfollow.active {
-    background-color: #ddedfb;
+    background-position: -269px -24px;
 }
 
 .tui-toolbar-icons.tui-link {
-    background-position: -321px -27px;
+    background-position: -322px -25px;
 }
 
-.tui-colorpicker-palette-button {
-    border: 1px solid #ebebeb;
+.tui-toolbar-icons.tui-image {
+    background-position: -349px -25px;
 }
-.tui-colorpicker-palette-preview {
-    border: 1px solid #ebebeb;
-}
+
 .tui-colorpicker-svg-slider {
     border: 1px solid #ebebeb;
 }
@@ -604,10 +679,6 @@
 }
 .tui-colorpicker-svg-huebar {
     border: 1px solid #ebebeb;
-}
-
-.tui-toolbar-icons.tui-image {
-    background-position: -348px -27px;
 }
 
 .CodeMirror .cm-header {
