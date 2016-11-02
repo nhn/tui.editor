@@ -15,12 +15,13 @@ CodeMirror.commands.subListIndentTab = function (cm) {
         var line = cm.getLine(pos.line);
         var cursorBeforeTextInline = line.substr(0, pos.ch);
 
-        if (emptyListRE.test(cursorBeforeTextInline)) {
+        if (listRE.test(cursorBeforeTextInline)) {
             cm.replaceRange(Array(cm.getOption("indentUnit") + 1).join(" ") + line, {
                 line: pos.line, ch: 0
             }, {
                 line: pos.line, ch: line.length
             }, '+input');
+            cm.setCursor(pos.line, pos.ch + 4);
         } else {
             if (cm.somethingSelected()) cm.indentSelection("add");
             else cm.execCommand("insertSoftTab");
