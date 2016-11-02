@@ -1,5 +1,18 @@
 /*jshint strict:false, undef:false, unused:false */
 
+// The (non-standard but supported enough) innerText property is based on the
+// render tree in Firefox and possibly other browsers, so we must insert the
+// DOM node into the document to ensure the text part is correct.
+var setClipboardData = function ( clipboardData, node ) {
+    var body = node.ownerDocument.body;
+    node.setAttribute( 'style',
+        'position:fixed;overflow:hidden;bottom:100%;right:100%;' );
+    body.appendChild( node );
+    clipboardData.setData( 'text/html', node.innerHTML );
+    clipboardData.setData( 'text/plain', node.innerText || node.textContent );
+    body.removeChild( node );
+};
+
 var onCut = function ( event ) {
     var clipboardData = event.clipboardData;
     var range = this.getSelection();
@@ -16,9 +29,7 @@ var onCut = function ( event ) {
     if ( !isEdge && !isIOS && clipboardData ) {
         moveRangeBoundariesUpTree( range, root );
         node.appendChild( deleteContentsOfRange( range, root ) );
-        clipboardData.setData( 'text/html', node.innerHTML );
-        clipboardData.setData( 'text/plain',
-            node.innerText || node.textContent );
+        setClipboardData( clipboardData, node );
         event.preventDefault();
     } else {
         setTimeout( function () {
@@ -64,9 +75,7 @@ var onCopy = function ( event ) {
         }
         node.appendChild( contents );
 
-        clipboardData.setData( 'text/html', node.innerHTML );
-        clipboardData.setData( 'text/plain',
-            node.innerText || node.textContent );
+        setClipboardData( clipboardData, node );
         event.preventDefault();
     }
 };
