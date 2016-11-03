@@ -330,7 +330,9 @@ describe('scrollFollow.sectionManager', () => {
                 '# header1',
                 'paragraph',
                 'paragraph',
+                '',
                 '![nhnent](http://www.nhnent.com)',
+                '',
                 '## header2',
                 'paragraph'
             ].join('\n'));
@@ -341,17 +343,18 @@ describe('scrollFollow.sectionManager', () => {
             expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
             expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
-            expect(sectionManager.sectionByLine(4)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(5)).toBe(sectionList[2]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[3]);
         });
 
-        it('do not new section of image where at non root level', () => {
+        it('do not new section of image where at non root level & paragraph first child', () => {
             ned.setValue([
                 'paragraph',
                 '# header1',
                 'paragraph',
                 'paragraph',
                 '* NHN EnterTainment ![nhnent](http://www.nhnent.com)',
+                'NHN EnterTainment ![nhnent](http://www.nhnent.com)',
                 '## header2',
                 'paragraph'
             ].join('\n'));
@@ -363,6 +366,7 @@ describe('scrollFollow.sectionManager', () => {
             expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(4)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(5)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
         });
 
@@ -391,17 +395,17 @@ describe('scrollFollow.sectionManager', () => {
 
             expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
             expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
-            expect(sectionManager.sectionByLine(4)).toBe(sectionList[2]);
-            expect(sectionManager.sectionByLine(5)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(6)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(7)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(8)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(9)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(10)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(11)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(12)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(13)).toBe(sectionList[3]);
-            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[4]);
+            expect(sectionManager.sectionByLine(4)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(5)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(6)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(7)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(8)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(9)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(10)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(11)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(12)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(13)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[2]);
         });
 
         it('should create new image section right after two codeblocks that without line breaks between', () => {
@@ -412,6 +416,7 @@ describe('scrollFollow.sectionManager', () => {
                 '``` js',
                 'var b = 20;',
                 '```',
+                '',
                 '![nhnent](http://www.nhnent.com)',
                 ''
             ].join('\n'));
@@ -421,7 +426,7 @@ describe('scrollFollow.sectionManager', () => {
 
             expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
             expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
-            expect(sectionManager.sectionByLine(6)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(7)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
         });
 
@@ -442,6 +447,15 @@ describe('scrollFollow.sectionManager', () => {
         it('should create new section on sequential image', () => {
             ned.setValue([
                 '![nhnent](http://www.nhnent.com)',
+                '',
+                '![nhnent](http://www.nhnent.com)',
+                '',
+                '',
+                '',
+                '![nhnent](http://www.nhnent.com)',
+                '',
+                '',
+                '',
                 '![nhnent](http://www.nhnent.com)',
                 ''
             ].join('\n'));
@@ -450,13 +464,22 @@ describe('scrollFollow.sectionManager', () => {
             const sectionList = sectionManager.getSectionList();
 
             expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
-            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
             expect(sectionManager.sectionByLine(2)).toBe(sectionList[1]);
-            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(4)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(5)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(6)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(7)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(8)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(9)).toBe(sectionList[2]);
+            expect(sectionManager.sectionByLine(10)).toBe(sectionList[3]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[3]);
         });
         it('should create new section on spaced image', () => {
             ned.setValue([
                 ' ![nhnent](http://www.nhnent.com)',
+                '',
                 '  ![nhnent](http://www.nhnent.com)',
                 ''
             ].join('\n'));
@@ -465,9 +488,27 @@ describe('scrollFollow.sectionManager', () => {
             const sectionList = sectionManager.getSectionList();
 
             expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
-            expect(sectionManager.sectionByLine(1)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
             expect(sectionManager.sectionByLine(2)).toBe(sectionList[1]);
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[1]);
             expect(sectionManager.sectionByLine(99999)).toBe(sectionList[1]);
+        });
+        it('should create new section on non independent inline image', () => {
+            ned.setValue([
+                'This is ![nhnent](http://www.nhnent.com) official logo.',
+                '',
+                'And here is too ![nhnent](http://www.nhnent.com).',
+                ''
+            ].join('\n'));
+
+            sectionManager.makeSectionList();
+            const sectionList = sectionManager.getSectionList();
+
+            expect(sectionManager.sectionByLine(0)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(1)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(2)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(3)).toBe(sectionList[0]);
+            expect(sectionManager.sectionByLine(99999)).toBe(sectionList[0]);
         });
     });
 });
