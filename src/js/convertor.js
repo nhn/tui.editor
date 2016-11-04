@@ -6,6 +6,8 @@
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
 import codeBlock from './markdownItPlugins/markdownitCodeBlockPlugin';
+import code from './markdownItPlugins/markdownitCodeRenderer';
+import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 
@@ -18,8 +20,8 @@ const markdownitHighlight = markdownIt({
     breaks: true,
     quotes: '“”‘’',
     langPrefix: 'lang-',
-    highlight(code, type) {
-        return hljs.getLanguage(type) ? hljs.highlight(type, code).value : escape(code, false);
+    highlight(codeText, type) {
+        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
     }
 });
 const markdownit = markdownIt({
@@ -30,11 +32,15 @@ const markdownit = markdownIt({
 });
 
 markdownitHighlight.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownitHighlight.block.ruler.at('code', code);
+markdownitHighlight.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
 markdownitHighlight.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
 markdownitHighlight.use(taskList);
 markdownitHighlight.use(codeBlock);
 
 markdownit.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+markdownit.block.ruler.at('code', code);
+markdownit.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
 markdownit.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
 markdownit.use(taskList);
 markdownit.use(codeBlock);

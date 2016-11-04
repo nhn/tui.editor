@@ -95,4 +95,82 @@ describe('Convertor', () => {
             expect(param).toEqual('# HELLO WORLD');
         });
     });
+    describe('should not convert to', () => {
+        it('code in list', () => {
+            const markdown = [
+                '*    codeblock',
+                '',
+                '1.    codeblock',
+                '',
+                'paragraph',
+                '',
+                '    code',
+                '    block'].join('\n');
+            const expectedMarkdown = [
+                '* codeblock',
+                '',
+                '1. codeblock',
+                '',
+                'paragraph',
+                '',
+                '```',
+                'code',
+                'block',
+                '```'
+            ].join('\n');
+            const expectedHTML = [
+                '<ul>',
+                '<li>codeblock</li>',
+                '</ul>',
+                '<ol>',
+                '<li>codeblock</li>',
+                '</ol>',
+                '<p>paragraph</p>',
+                '<pre><code>code',
+                'block</code></pre>',
+                ''].join('\n');
+
+            const result = convertor.toHTML(markdown);
+
+            expect(result).toEqual(expectedHTML);
+            expect(convertor.toMarkdown(result)).toEqual(expectedMarkdown);
+        });
+
+        it('blockquote in list', () => {
+            const markdown = [
+                '* > blockquote',
+                '',
+                '1. > blockquote',
+                '',
+                'paragraph',
+                '',
+                '> blockquote'].join('\n');
+            const html = [
+                '<ul>',
+                '<li>&gt; blockquote</li>',
+                '</ul>',
+                '<ol>',
+                '<li>&gt; blockquote</li>',
+                '</ol>',
+                '<p>paragraph</p>',
+                '<blockquote>',
+                '<p>blockquote</p>',
+                '</blockquote>',
+                ''
+            ].join('\n');
+            const resultMarkdown = [
+                '* \\> blockquote',
+                '',
+                '1. \\> blockquote',
+                '',
+                'paragraph',
+                '',
+                '> blockquote'].join('\n');
+
+            const result = convertor.toHTML(markdown);
+
+            expect(result).toEqual(html);
+            expect(convertor.toMarkdown(convertor.toHTML(markdown))).toEqual(resultMarkdown);
+        });
+    });
 });
