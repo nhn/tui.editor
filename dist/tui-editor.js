@@ -64,27 +64,27 @@
 	 */
 
 	// codemirror modes&addons
-	__webpack_require__(86);
-	__webpack_require__(87);
-	__webpack_require__(88);
-	__webpack_require__(89);
 	__webpack_require__(90);
-
-	// default extensions
 	__webpack_require__(91);
 	__webpack_require__(92);
+	__webpack_require__(93);
+	__webpack_require__(94);
+
+	// default extensions
 	__webpack_require__(95);
 	__webpack_require__(96);
+	__webpack_require__(99);
+	__webpack_require__(100);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	// langs
-	__webpack_require__(103);
-	__webpack_require__(104);
-	__webpack_require__(105);
-	__webpack_require__(106);
 	__webpack_require__(107);
+	__webpack_require__(108);
+	__webpack_require__(109);
+	__webpack_require__(110);
+	__webpack_require__(111);
 
 	// for jquery
 	$.fn.tuiEditor = function () {
@@ -171,11 +171,11 @@
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
-	var _viewOnly = __webpack_require__(35);
+	var _viewOnly = __webpack_require__(37);
 
 	var _viewOnly2 = _interopRequireDefault(_viewOnly);
 
-	var _defaultUI = __webpack_require__(36);
+	var _defaultUI = __webpack_require__(38);
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
@@ -183,147 +183,155 @@
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
-	var _bold = __webpack_require__(50);
+	var _bold = __webpack_require__(52);
 
 	var _bold2 = _interopRequireDefault(_bold);
 
-	var _italic = __webpack_require__(51);
+	var _italic = __webpack_require__(53);
 
 	var _italic2 = _interopRequireDefault(_italic);
 
-	var _strike = __webpack_require__(52);
+	var _strike = __webpack_require__(54);
 
 	var _strike2 = _interopRequireDefault(_strike);
 
-	var _blockquote = __webpack_require__(53);
+	var _blockquote = __webpack_require__(55);
 
 	var _blockquote2 = _interopRequireDefault(_blockquote);
 
-	var _heading = __webpack_require__(54);
+	var _heading = __webpack_require__(56);
 
 	var _heading2 = _interopRequireDefault(_heading);
 
-	var _hr = __webpack_require__(55);
+	var _paragraph = __webpack_require__(57);
+
+	var _paragraph2 = _interopRequireDefault(_paragraph);
+
+	var _hr = __webpack_require__(58);
 
 	var _hr2 = _interopRequireDefault(_hr);
 
-	var _addLink = __webpack_require__(56);
+	var _addLink = __webpack_require__(59);
 
 	var _addLink2 = _interopRequireDefault(_addLink);
 
-	var _addImage = __webpack_require__(57);
+	var _addImage = __webpack_require__(60);
 
 	var _addImage2 = _interopRequireDefault(_addImage);
 
-	var _ul = __webpack_require__(58);
+	var _ul = __webpack_require__(61);
 
 	var _ul2 = _interopRequireDefault(_ul);
 
-	var _ol = __webpack_require__(59);
+	var _ol = __webpack_require__(62);
 
 	var _ol2 = _interopRequireDefault(_ol);
 
-	var _table = __webpack_require__(60);
+	var _table = __webpack_require__(63);
 
 	var _table2 = _interopRequireDefault(_table);
 
-	var _task = __webpack_require__(61);
+	var _task = __webpack_require__(64);
 
 	var _task2 = _interopRequireDefault(_task);
 
-	var _code = __webpack_require__(62);
+	var _code = __webpack_require__(65);
 
 	var _code2 = _interopRequireDefault(_code);
 
-	var _codeBlock = __webpack_require__(63);
+	var _codeBlock = __webpack_require__(66);
 
 	var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-	var _bold3 = __webpack_require__(64);
+	var _bold3 = __webpack_require__(67);
 
 	var _bold4 = _interopRequireDefault(_bold3);
 
-	var _italic3 = __webpack_require__(65);
+	var _italic3 = __webpack_require__(68);
 
 	var _italic4 = _interopRequireDefault(_italic3);
 
-	var _strike3 = __webpack_require__(66);
+	var _strike3 = __webpack_require__(69);
 
 	var _strike4 = _interopRequireDefault(_strike3);
 
-	var _blockquote3 = __webpack_require__(67);
+	var _blockquote3 = __webpack_require__(70);
 
 	var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-	var _addImage3 = __webpack_require__(68);
+	var _addImage3 = __webpack_require__(71);
 
 	var _addImage4 = _interopRequireDefault(_addImage3);
 
-	var _addLink3 = __webpack_require__(69);
+	var _addLink3 = __webpack_require__(72);
 
 	var _addLink4 = _interopRequireDefault(_addLink3);
 
-	var _hr3 = __webpack_require__(70);
+	var _hr3 = __webpack_require__(73);
 
 	var _hr4 = _interopRequireDefault(_hr3);
 
-	var _heading3 = __webpack_require__(71);
+	var _heading3 = __webpack_require__(74);
 
 	var _heading4 = _interopRequireDefault(_heading3);
 
-	var _ul3 = __webpack_require__(72);
+	var _paragraph3 = __webpack_require__(75);
+
+	var _paragraph4 = _interopRequireDefault(_paragraph3);
+
+	var _ul3 = __webpack_require__(76);
 
 	var _ul4 = _interopRequireDefault(_ul3);
 
-	var _ol3 = __webpack_require__(73);
+	var _ol3 = __webpack_require__(77);
 
 	var _ol4 = _interopRequireDefault(_ol3);
 
-	var _table3 = __webpack_require__(74);
+	var _table3 = __webpack_require__(78);
 
 	var _table4 = _interopRequireDefault(_table3);
 
-	var _tableAddRow = __webpack_require__(75);
+	var _tableAddRow = __webpack_require__(79);
 
 	var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-	var _tableAddCol = __webpack_require__(76);
+	var _tableAddCol = __webpack_require__(80);
 
 	var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-	var _tableRemoveRow = __webpack_require__(77);
+	var _tableRemoveRow = __webpack_require__(81);
 
 	var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-	var _tableRemoveCol = __webpack_require__(78);
+	var _tableRemoveCol = __webpack_require__(82);
 
 	var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-	var _tableAlignCol = __webpack_require__(79);
+	var _tableAlignCol = __webpack_require__(83);
 
 	var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-	var _tableRemove = __webpack_require__(80);
+	var _tableRemove = __webpack_require__(84);
 
 	var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-	var _increaseDepth = __webpack_require__(81);
+	var _increaseDepth = __webpack_require__(85);
 
 	var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-	var _decreaseDepth = __webpack_require__(82);
+	var _decreaseDepth = __webpack_require__(86);
 
 	var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-	var _task3 = __webpack_require__(83);
+	var _task3 = __webpack_require__(87);
 
 	var _task4 = _interopRequireDefault(_task3);
 
-	var _code3 = __webpack_require__(84);
+	var _code3 = __webpack_require__(88);
 
 	var _code4 = _interopRequireDefault(_code3);
 
-	var _codeBlock3 = __webpack_require__(85);
+	var _codeBlock3 = __webpack_require__(89);
 
 	var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -967,6 +975,7 @@
 	                tuiEditor.addCommand(_italic2.default);
 	                tuiEditor.addCommand(_blockquote2.default);
 	                tuiEditor.addCommand(_heading2.default);
+	                tuiEditor.addCommand(_paragraph2.default);
 	                tuiEditor.addCommand(_hr2.default);
 	                tuiEditor.addCommand(_addLink2.default);
 	                tuiEditor.addCommand(_addImage2.default);
@@ -987,6 +996,7 @@
 	                tuiEditor.addCommand(_addLink4.default);
 	                tuiEditor.addCommand(_hr4.default);
 	                tuiEditor.addCommand(_heading4.default);
+	                tuiEditor.addCommand(_paragraph4.default);
 	                tuiEditor.addCommand(_increaseDepth2.default);
 	                tuiEditor.addCommand(_decreaseDepth2.default);
 	                tuiEditor.addCommand(_task4.default);
@@ -4610,29 +4620,44 @@
 	        }
 
 	        /**
-	         * Wrap textNodes with div element
+	         * Wrap orphan node(inline, text) with div element
 	         * @param {DocumentFragment} fragment - Fragment of paste data
 	         * @memberOf WwPasteContentHelper
+	         * @returns {DocumentFragment}
 	         * @private
 	         */
 
 	    }, {
-	        key: '_wrapTextNodeWithDiv',
-	        value: function _wrapTextNodeWithDiv(fragment) {
+	        key: '_wrapOrphanNodeWithDiv',
+	        value: function _wrapOrphanNodeWithDiv(fragment) {
+	            var newFrag = document.createDocumentFragment();
 	            var array = util.toArray(fragment.childNodes);
+	            var currentDiv = void 0;
 
 	            util.forEachArray(array, function (node) {
 	                var isTextNode = node.nodeType === 3;
+	                /* eslint-disable max-len */
+	                var isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
+	                /* eslint-enable max-len */
 
-	                if (isTextNode) {
-	                    var divElement = document.createElement('div');
+	                if (isTextNode || isInlineNode) {
+	                    if (!currentDiv) {
+	                        currentDiv = document.createElement('div');
+	                        newFrag.appendChild(currentDiv);
+	                    }
 
-	                    divElement.textContent = node.nodeValue;
-	                    divElement.appendChild($('<br/>')[0]);
+	                    currentDiv.appendChild(node);
+	                } else {
+	                    if (currentDiv && currentDiv.lastChild.tagName !== 'BR') {
+	                        currentDiv.appendChild($('<br/>')[0]);
+	                    }
 
-	                    fragment.replaceChild(divElement, node);
+	                    currentDiv = null;
+	                    newFrag.appendChild(node);
 	                }
 	            });
+
+	            return newFrag;
 	        }
 
 	        /**
@@ -4662,7 +4687,7 @@
 	            this._removeUnnecessaryBlocks(fragment, blockTags);
 	            this._removeStyles(fragment);
 
-	            this._wrapTextNodeWithDiv(fragment);
+	            fragment = this._wrapOrphanNodeWithDiv(fragment);
 
 	            this._preElementAid(fragment);
 
@@ -4719,12 +4744,10 @@
 	    }, {
 	        key: '_unwrapNestedBlocks',
 	        value: function _unwrapNestedBlocks(fragment, blockTags) {
-	            var _this2 = this;
-
-	            var leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code');
+	            var leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code,span');
 
 	            leafElements.each(function (i, node) {
-	                var leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(_this2);
+	                var leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
 	                var parent = void 0;
 
 	                while (leafElement.parents(blockTags).length) {
@@ -4886,7 +4909,7 @@
 	    }, {
 	        key: '_wrapCurrentFormat',
 	        value: function _wrapCurrentFormat(nodes) {
-	            var _this3 = this;
+	            var _this2 = this;
 
 	            var currentTagName = void 0;
 
@@ -4901,7 +4924,7 @@
 	                    }
 
 	                    if (path.tagName !== currentTagName) {
-	                        nodes = _this3._makeNodeAndAppend(path, nodes);
+	                        nodes = _this2._makeNodeAndAppend(path, nodes);
 	                    }
 	                }
 	            });
@@ -5058,7 +5081,7 @@
 	 * @param {jQuery} $html jQuery instance
 	 */
 	function removeUnnecessaryTags($html) {
-	    $html.find('script, iframe, textarea, form, button, select, .Apple-converted-space').remove();
+	    $html.find('script, iframe, textarea, form, button, select').remove();
 	}
 
 	/**
@@ -5246,6 +5269,16 @@
 	                            var afterRange = _this2.wwe.getRange();
 	                            var $li = $(afterRange.startContainer).parents('li').eq(0);
 	                            _this2._removeBranchListAll($li);
+	                        });
+	                    }
+	                }
+	            });
+
+	            this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range) {
+	                if (range.collapsed) {
+	                    if (_this2.wwe.getEditor().hasFormat('LI')) {
+	                        _this2.wwe.defer(function () {
+	                            _this2._removeBranchListAll();
 	                        });
 	                    }
 	                }
@@ -9463,11 +9496,9 @@
 	        value: function removeEventHandler(typeStr) {
 	            var _this = this;
 
-	            var _getTypeInfo2 = this._getTypeInfo(typeStr);
-
-	            var type = _getTypeInfo2.type;
-	            var namespace = _getTypeInfo2.namespace;
-
+	            var _getTypeInfo2 = this._getTypeInfo(typeStr),
+	                type = _getTypeInfo2.type,
+	                namespace = _getTypeInfo2.namespace;
 
 	            if (type && !namespace) {
 	                // dont use dot notation cuz eslint
@@ -10380,11 +10411,19 @@
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitTableRenderer = __webpack_require__(33);
+	var _markdownitCodeRenderer = __webpack_require__(33);
+
+	var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
+
+	var _markdownitBlockQuoteRenderer = __webpack_require__(34);
+
+	var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
+
+	var _markdownitTableRenderer = __webpack_require__(35);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-	var _markdownitHtmlBlockRenderer = __webpack_require__(34);
+	var _markdownitHtmlBlockRenderer = __webpack_require__(36);
 
 	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
@@ -10401,8 +10440,8 @@
 	    breaks: true,
 	    quotes: '“”‘’',
 	    langPrefix: 'lang-',
-	    highlight: function highlight(code, type) {
-	        return hljs.getLanguage(type) ? hljs.highlight(type, code).value : escape(code, false);
+	    highlight: function highlight(codeText, type) {
+	        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
 	    }
 	});
 	var markdownit = markdownIt({
@@ -10413,11 +10452,15 @@
 	});
 
 	markdownitHighlight.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+	markdownitHighlight.block.ruler.at('code', _markdownitCodeRenderer2.default);
+	markdownitHighlight.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, ['paragraph', 'reference', 'list']);
 	markdownitHighlight.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
 	markdownitHighlight.use(_markdownitTaskPlugin2.default);
 	markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
 
 	markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+	markdownit.block.ruler.at('code', _markdownitCodeRenderer2.default);
+	markdownit.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, ['paragraph', 'reference', 'list']);
 	markdownit.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
 	markdownit.use(_markdownitTaskPlugin2.default);
 	markdownit.use(_markdownitCodeBlockPlugin2.default);
@@ -10450,10 +10493,12 @@
 	    _createClass(Convertor, [{
 	        key: '_markdownToHtmlWithCodeHighlight',
 	        value: function _markdownToHtmlWithCodeHighlight(markdown) {
-	            markdown = this._addLineBreaksIfNeed(markdown);
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-	            return markdownitHighlight.render(markdown);
+	            var renderedHTML = markdownitHighlight.render(markdown);
+	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
+
+	            return renderedHTML;
 	        }
 
 	        /**
@@ -10468,10 +10513,36 @@
 	    }, {
 	        key: '_markdownToHtml',
 	        value: function _markdownToHtml(markdown) {
-	            markdown = this._addLineBreaksIfNeed(markdown);
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-	            return markdownitHighlight.render(markdown);
+	            var renderedHTML = markdownitHighlight.render(markdown);
+	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
+
+	            return renderedHTML;
+	        }
+
+	        /**
+	         * Remove BR's data-tomark-pass attribute text when br in code element
+	         * @param {string} renderedHTML Rendered HTML string from markdown editor
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_removeBrToMarkPassAttributeInCode',
+	        value: function _removeBrToMarkPassAttributeInCode(renderedHTML) {
+	            var $wrapperDiv = $('<div />');
+
+	            $wrapperDiv.html(renderedHTML);
+
+	            $wrapperDiv.find('code, pre').each(function (i, codeOrPre) {
+	                var $code = $(codeOrPre);
+	                $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+	            });
+
+	            renderedHTML = $wrapperDiv.html();
+
+	            return renderedHTML;
 	        }
 
 	        /**
@@ -10532,10 +10603,21 @@
 	    }, {
 	        key: 'toMarkdown',
 	        value: function toMarkdown(html) {
+	            var resultArray = [];
 	            var markdown = toMark(this._appendAttributeForBrIfNeed(html));
 	            markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
-	            return markdown;
+	            tui.util.forEach(markdown.split('\n'), function (line, index) {
+	                var FIND_TABLE_RX = /^\|[^|]*\|/ig;
+	                var FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
+
+	                if (!FIND_CODE_RX.test(line) && !FIND_TABLE_RX.test(line)) {
+	                    line = line.replace(/<br>/ig, '<br>\n');
+	                }
+	                resultArray[index] = line;
+	            });
+
+	            return resultArray.join('\n');
 	        }
 	    }, {
 	        key: '_appendAttributeForBrIfNeed',
@@ -10543,7 +10625,7 @@
 	            var FIND_BR_RX = /<br>/ig;
 	            var FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
 	            var FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-	            var FIND_FIRST_TWO_BRS_RX = /((?:[^b][^r]|[^p][^a][^s][^s]).[^/].)<br data-tomark-pass \/><br(?: data-tomark-pass)? \/>/g;
+	            var FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
 
 	            html = html.replace(FIND_BR_RX, '<br />');
 
@@ -10552,7 +10634,7 @@
 	            var div = document.createElement('div');
 	            var $div = $(div);
 	            $div.html(html);
-	            $div.find('pre br').each(function (index, node) {
+	            $div.find('pre br,code br').each(function (index, node) {
 	                if (node.hasAttribute('data-tomark-pass')) {
 	                    node.removeAttribute('data-tomark-pass');
 	                }
@@ -10565,32 +10647,6 @@
 	            html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
 
 	            return html;
-	        }
-
-	        /**
-	         * Add line breaks for image section process
-	         * @param {string} markdown Markdown text
-	         * @returns {string}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addLineBreaksIfNeed',
-	        value: function _addLineBreaksIfNeed(markdown) {
-	            var FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
-	            var resultArray = [];
-	            tui.util.forEach(markdown.split('\n'), function (line, index) {
-	                var FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /^ *(?:\*|-|\d+\.|[*-] \[[ xX]])\s|(?: *> *)+/g;
-	                var FIND_TABLE_RX = /^\|[^|]*\|/ig;
-	                var FIND_INLINE_CODEBLOCK_RX = /^ {4}[^\s]*/ig;
-
-	                if (!FIND_TABLE_RX.test(line) && !FIND_IMAGE_IN_LIST_OR_QUOTE_RX.test(line) && !FIND_INLINE_CODEBLOCK_RX.test(line)) {
-	                    line = line.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
-	                }
-	                resultArray[index] = line;
-	            });
-
-	            return resultArray.join('\n');
 	        }
 
 	        /**
@@ -10818,6 +10874,302 @@
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
 	// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
+	/**
+	 * @fileoverview Implements MarkdownItCodeRenderer
+	 * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	 * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/* eslint-disable */
+	module.exports = function code(state, startLine, endLine /*, silent*/) {
+	    // Added by Junghwan Park
+	    var FIND_LIST_RX = / {0,3}(?:-|\*|\d\.) /;
+	    var lines = state.src.split('\n');
+	    var currentLine = lines[startLine];
+	    // Added by Junghwan Park
+
+	    var nextLine,
+	        last,
+	        token,
+	        emptyLines = 0;
+
+	    // Add condition by Junghwan Park
+	    if (currentLine.match(FIND_LIST_RX) || state.sCount[startLine] - state.blkIndent < 4) {
+	        // Add condition by Junghwan Park
+	        return false;
+	    }
+
+	    last = nextLine = startLine + 1;
+
+	    while (nextLine < endLine) {
+	        if (state.isEmpty(nextLine)) {
+	            emptyLines++;
+
+	            // workaround for lists: 2 blank lines should terminate indented
+	            // code block, but not fenced code block
+	            if (emptyLines >= 2 && state.parentType === 'list') {
+	                break;
+	            }
+
+	            nextLine++;
+	            continue;
+	        }
+
+	        emptyLines = 0;
+
+	        if (state.sCount[nextLine] - state.blkIndent >= 4) {
+	            nextLine++;
+	            last = nextLine;
+	            continue;
+	        }
+	        break;
+	    }
+
+	    state.line = last;
+
+	    token = state.push('code_block', 'code', 0);
+	    token.content = state.getLines(startLine, last, 4 + state.blkIndent, true);
+	    token.map = [startLine, state.line];
+
+	    return true;
+	};
+	/* eslint-enable */
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
+	// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
+	/**
+	 * @fileoverview Implements MarkdownItBlockQuoteRenderer
+	 * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	 * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/* eslint-disable */
+	module.exports = function blockquote(state, startLine, endLine, silent) {
+	    // Added by Junghwan Park
+	    var FIND_LIST_RX = /(?:-|\*|\d+\.) {1,4}(?:> {0,3})[^>]*$/;
+	    var sourceLines = state.src.split('\n');
+	    var currentLine = sourceLines[startLine];
+	    // Added by Junghwan Park
+
+	    var nextLine,
+	        lastLineEmpty,
+	        oldTShift,
+	        oldSCount,
+	        oldBMarks,
+	        oldIndent,
+	        oldParentType,
+	        lines,
+	        initial,
+	        offset,
+	        ch,
+	        terminatorRules,
+	        token,
+	        i,
+	        l,
+	        terminate,
+	        pos = state.bMarks[startLine] + state.tShift[startLine],
+	        max = state.eMarks[startLine];
+
+	    // check the block quote marker
+	    // Add condition by Junghwan Park
+	    if (currentLine.match(FIND_LIST_RX) /*&& !currentLine.match(/^ {0,6}>/)*/ || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
+	        return false;
+	    }
+
+	    // we know that it's going to be a valid blockquote,
+	    // so no point trying to find the end of it in silent mode
+	    if (silent) {
+	        return true;
+	    }
+
+	    // skip one optional space (but not tab, check cmark impl) after '>'
+	    if (state.src.charCodeAt(pos) === 0x20) {
+	        pos++;
+	    }
+
+	    oldIndent = state.blkIndent;
+	    state.blkIndent = 0;
+
+	    // skip spaces after ">" and re-calculate offset
+	    initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+
+	    oldBMarks = [state.bMarks[startLine]];
+	    state.bMarks[startLine] = pos;
+
+	    while (pos < max) {
+	        ch = state.src.charCodeAt(pos);
+
+	        if (isSpace(ch)) {
+	            if (ch === 0x09) {
+	                offset += 4 - offset % 4;
+	            } else {
+	                offset++;
+	            }
+	        } else {
+	            break;
+	        }
+
+	        pos++;
+	    }
+
+	    lastLineEmpty = pos >= max;
+
+	    oldSCount = [state.sCount[startLine]];
+	    state.sCount[startLine] = offset - initial;
+
+	    oldTShift = [state.tShift[startLine]];
+	    state.tShift[startLine] = pos - state.bMarks[startLine];
+
+	    terminatorRules = state.md.block.ruler.getRules('blockquote');
+
+	    // Search the end of the block
+	    //
+	    // Block ends with either:
+	    //  1. an empty line outside:
+	    //     ```
+	    //     > test
+	    //
+	    //     ```
+	    //  2. an empty line inside:
+	    //     ```
+	    //     >
+	    //     test
+	    //     ```
+	    //  3. another tag
+	    //     ```
+	    //     > test
+	    //      - - -
+	    //     ```
+	    for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
+	        if (state.sCount[nextLine] < oldIndent) {
+	            break;
+	        }
+
+	        pos = state.bMarks[nextLine] + state.tShift[nextLine];
+	        max = state.eMarks[nextLine];
+
+	        if (pos >= max) {
+	            // Case 1: line is not inside the blockquote, and this line is empty.
+	            break;
+	        }
+
+	        if (state.src.charCodeAt(pos++) === 0x3E /* > */) {
+	                // This line is inside the blockquote.
+
+	                // skip one optional space (but not tab, check cmark impl) after '>'
+	                if (state.src.charCodeAt(pos) === 0x20) {
+	                    pos++;
+	                }
+
+	                // skip spaces after ">" and re-calculate offset
+	                initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
+
+	                oldBMarks.push(state.bMarks[nextLine]);
+	                state.bMarks[nextLine] = pos;
+
+	                while (pos < max) {
+	                    ch = state.src.charCodeAt(pos);
+
+	                    if (isSpace(ch)) {
+	                        if (ch === 0x09) {
+	                            offset += 4 - offset % 4;
+	                        } else {
+	                            offset++;
+	                        }
+	                    } else {
+	                        break;
+	                    }
+
+	                    pos++;
+	                }
+
+	                lastLineEmpty = pos >= max;
+
+	                oldSCount.push(state.sCount[nextLine]);
+	                state.sCount[nextLine] = offset - initial;
+
+	                oldTShift.push(state.tShift[nextLine]);
+	                state.tShift[nextLine] = pos - state.bMarks[nextLine];
+	                continue;
+	            }
+
+	        // Case 2: line is not inside the blockquote, and the last line was empty.
+	        if (lastLineEmpty) {
+	            break;
+	        }
+
+	        // Case 3: another tag found.
+	        terminate = false;
+	        for (i = 0, l = terminatorRules.length; i < l; i++) {
+	            if (terminatorRules[i](state, nextLine, endLine, true)) {
+	                terminate = true;
+	                break;
+	            }
+	        }
+	        if (terminate) {
+	            break;
+	        }
+
+	        oldBMarks.push(state.bMarks[nextLine]);
+	        oldTShift.push(state.tShift[nextLine]);
+	        oldSCount.push(state.sCount[nextLine]);
+
+	        // A negative indentation means that this is a paragraph continuation
+	        //
+	        state.sCount[nextLine] = -1;
+	    }
+
+	    oldParentType = state.parentType;
+	    state.parentType = 'blockquote';
+
+	    token = state.push('blockquote_open', 'blockquote', 1);
+	    token.markup = '>';
+	    token.map = lines = [startLine, 0];
+
+	    state.md.block.tokenize(state, startLine, nextLine);
+
+	    token = state.push('blockquote_close', 'blockquote', -1);
+	    token.markup = '>';
+
+	    state.parentType = oldParentType;
+	    lines[1] = state.line;
+
+	    // Restore original tShift; this might not be necessary since the parser
+	    // has already been here, but just to make sure we can do that.
+	    for (i = 0; i < oldTShift.length; i++) {
+	        state.bMarks[i + startLine] = oldBMarks[i];
+	        state.tShift[i + startLine] = oldTShift[i];
+	        state.sCount[i + startLine] = oldSCount[i];
+	    }
+	    state.blkIndent = oldIndent;
+
+	    return true;
+	};
+
+	function isSpace(code) {
+	    switch (code) {
+	        case 0x09:
+	        case 0x20:
+	            return true;
+	    }
+	    return false;
+	}
+	/* eslint-enable */
+
+/***/ },
+/* 35 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
+	// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
 
 	/**
 	 * @fileoverview Implements markdownitTableRenderer
@@ -11020,7 +11372,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports) {
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
@@ -11117,7 +11469,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11340,44 +11692,44 @@
 	module.exports = ToastUIEditorViewOnly;
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _toolbar = __webpack_require__(37);
+	var _toolbar = __webpack_require__(39);
 
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 
-	var _tab = __webpack_require__(41);
+	var _tab = __webpack_require__(43);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _modeSwitch = __webpack_require__(44);
+	var _modeSwitch = __webpack_require__(46);
 
 	var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-	var _popupAddLink = __webpack_require__(45);
+	var _popupAddLink = __webpack_require__(47);
 
 	var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-	var _popupAddImage = __webpack_require__(46);
+	var _popupAddImage = __webpack_require__(48);
 
 	var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-	var _popupTableUtils = __webpack_require__(47);
+	var _popupTableUtils = __webpack_require__(49);
 
 	var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-	var _popupAddTable = __webpack_require__(48);
+	var _popupAddTable = __webpack_require__(50);
 
 	var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-	var _popupAddHeading = __webpack_require__(49);
+	var _popupAddHeading = __webpack_require__(51);
 
 	var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
@@ -11564,16 +11916,16 @@
 	module.exports = DefaultUI;
 
 /***/ },
-/* 37 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(38);
+	var _uicontroller = __webpack_require__(40);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _button = __webpack_require__(39);
+	var _button = __webpack_require__(41);
 
 	var _button2 = _interopRequireDefault(_button);
 
@@ -11771,7 +12123,7 @@
 	module.exports = Toolbar;
 
 /***/ },
-/* 38 */
+/* 40 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12015,7 +12367,7 @@
 	module.exports = UIController;
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12025,8 +12377,8 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var UIController = __webpack_require__(38);
-	var Tooltip = __webpack_require__(40);
+	var UIController = __webpack_require__(40);
+	var Tooltip = __webpack_require__(42);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12115,7 +12467,7 @@
 	module.exports = Button;
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12157,16 +12509,16 @@
 	module.exports = Tooltip;
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(38);
+	var _uicontroller = __webpack_require__(40);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _templater = __webpack_require__(42);
+	var _templater = __webpack_require__(44);
 
 	var _templater2 = _interopRequireDefault(_templater);
 
@@ -12358,7 +12710,7 @@
 	module.exports = Tab;
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12399,12 +12751,12 @@
 	module.exports = templater;
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(38);
+	var _uicontroller = __webpack_require__(40);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -12651,12 +13003,12 @@
 	module.exports = LayerPopup;
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(38);
+	var _uicontroller = __webpack_require__(40);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -12742,12 +13094,12 @@
 	module.exports = ModeSwitch;
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -12850,16 +13202,16 @@
 	module.exports = PopupAddLink;
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _tab = __webpack_require__(41);
+	var _tab = __webpack_require__(43);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
@@ -13037,12 +13389,12 @@
 	module.exports = PopupAddImage;
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -13167,12 +13519,12 @@
 	module.exports = PopupTableUtils;
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -13519,12 +13871,12 @@
 	module.exports = PopupAddTable;
 
 /***/ },
-/* 49 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(43);
+	var _layerpopup = __webpack_require__(45);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -13552,7 +13904,7 @@
 	 */
 	function PopupAddHeading(options) {
 	    /* eslint-disable indent */
-	    var POPUP_CONTENT = ['<ul>', '<li data-value="1"><h1>' + _i18n2.default.get('Heading') + ' 1</h1></li>', '<li data-value="2"><h2>' + _i18n2.default.get('Heading') + ' 2</h2></li>', '<li data-value="3"><h3>' + _i18n2.default.get('Heading') + ' 3</h3></li>', '<li data-value="4"><h4>' + _i18n2.default.get('Heading') + ' 4</h4></li>', '<li data-value="5"><h5>' + _i18n2.default.get('Heading') + ' 5</h5></li>', '<li data-value="6"><h6>' + _i18n2.default.get('Heading') + ' 6</h6></li>', '</ul>'].join('');
+	    var POPUP_CONTENT = ['<ul>', '<li data-value="1" data-type="Heading"><h1>' + _i18n2.default.get('Heading') + ' 1</h1></li>', '<li data-value="2" data-type="Heading"><h2>' + _i18n2.default.get('Heading') + ' 2</h2></li>', '<li data-value="3" data-type="Heading"><h3>' + _i18n2.default.get('Heading') + ' 3</h3></li>', '<li data-value="4" data-type="Heading"><h4>' + _i18n2.default.get('Heading') + ' 4</h4></li>', '<li data-value="5" data-type="Heading"><h5>' + _i18n2.default.get('Heading') + ' 5</h5></li>', '<li data-value="6" data-type="Heading"><h6>' + _i18n2.default.get('Heading') + ' 6</h6></li>', '<li data-type="Paragraph"><div>' + _i18n2.default.get('Paragraph') + '</div></li>', '</ul>'].join('');
 	    /* eslint-enable indent */
 
 	    options = util.extend({
@@ -13596,7 +13948,7 @@
 
 	    /* eslint-disable prefer-arrow-callback*/
 	    this.on('click li', /** @this Node */function () {
-	        self.eventManager.emit('command', 'Heading', $(this).data('value'));
+	        self.eventManager.emit('command', $(this).data('type'), $(this).data('value'));
 	    });
 	    /* eslint-enable prefer-arrow-callback*/
 	};
@@ -13604,7 +13956,7 @@
 	module.exports = PopupAddHeading;
 
 /***/ },
-/* 50 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13730,7 +14082,7 @@
 	module.exports = Bold;
 
 /***/ },
-/* 51 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13938,7 +14290,7 @@
 	module.exports = Italic;
 
 /***/ },
-/* 52 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14038,7 +14390,7 @@
 	module.exports = Strike;
 
 /***/ },
-/* 53 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14107,7 +14459,7 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 54 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14118,7 +14470,14 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var util = tui.util;
+	var util = tui.util; /**
+	                      * @fileoverview Implements Heading markdown command
+	                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	                      * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	                      * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
+	                      */
+
+	var FIND_HEADING_RX = /^#+\s/g;
 
 	/**
 	 * Heading
@@ -14126,11 +14485,6 @@
 	 * @exports Heading
 	 * @augments Command
 	 */
-	/**
-	 * @fileoverview Implements Heading markdown command
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
 	var Heading = _commandManager2.default.command('markdown', /** @lends Heading */{
 	    name: 'Heading',
 	    /**
@@ -14172,13 +14526,11 @@
 
 	        range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
 
-	        doc.setCursor(range.to);
+	        doc.setSelection(from, range.to);
 
 	        cm.focus();
 	    }
 	});
-
-	var FIND_HEADING_RX = /^#+\s/g;
 
 	/**
 	 * Get heading markdown
@@ -14205,7 +14557,83 @@
 	module.exports = Heading;
 
 /***/ },
-/* 55 */
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _commandManager = __webpack_require__(24);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var util = tui.util;
+
+	/**
+	 * Paragraph
+	 * Convert selected lines to paragraph
+	 * @exports Paragraph
+	 * @augments Command
+	 */
+	/**
+	 * @fileoverview Implements Paragraph markdown command
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	var Paragraph = _commandManager2.default.command('markdown', /** @lends Paragraph */{
+	    name: 'Paragraph',
+	    /**
+	     * Command Handler
+	     * @param {MarkdownEditor} mde MarkdownEditor instance
+	     */
+	    exec: function exec(mde) {
+	        var cm = mde.getEditor();
+	        var doc = cm.getDoc();
+	        var range = mde.getCurrentRange();
+	        var from = {
+	            line: range.from.line,
+	            ch: 0
+	        };
+	        var to = {
+	            line: range.to.line,
+	            ch: doc.getLineHandle(range.to.line).text.length
+	        };
+
+	        var lengthOfCurrentLineBefore = doc.getLine(to.line).length;
+	        var textToModify = doc.getRange(from, to);
+	        var textLines = textToModify.split('\n');
+
+	        util.forEachArray(textLines, function (line, index) {
+	            textLines[index] = getParagraphMarkdown(line);
+	        });
+
+	        doc.replaceRange(textLines.join('\n'), from, to);
+
+	        range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
+
+	        doc.setSelection(from, to);
+
+	        cm.focus();
+	    }
+	});
+	/**
+	 * Get paragraph markdown lineText
+	 * @param {string} lineText line lineText
+	 * @returns {string}
+	 */
+	function getParagraphMarkdown(lineText) {
+	    var headingRx = /^(#{1,6}| *((?:\*|-|\d\.)(?: \[[ xX]])?)) /;
+
+	    return lineText.replace(headingRx, '');
+	}
+
+	module.exports = Paragraph;
+
+/***/ },
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14270,7 +14698,7 @@
 	module.exports = HR;
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14324,7 +14752,7 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14378,7 +14806,7 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14443,7 +14871,7 @@
 	module.exports = UL;
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14509,7 +14937,7 @@
 	module.exports = OL;
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14624,7 +15052,7 @@
 	module.exports = Table;
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14678,7 +15106,7 @@
 	module.exports = Task;
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14734,7 +15162,7 @@
 	module.exports = Code;
 
 /***/ },
-/* 63 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14788,7 +15216,7 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 64 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14853,7 +15281,7 @@
 	module.exports = Bold;
 
 /***/ },
-/* 65 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14918,7 +15346,7 @@
 	module.exports = Italic;
 
 /***/ },
-/* 66 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14982,7 +15410,7 @@
 	module.exports = Strike;
 
 /***/ },
-/* 67 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15024,7 +15452,7 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 68 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15065,7 +15493,7 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 69 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15114,7 +15542,7 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 70 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15193,54 +15621,128 @@
 	module.exports = HR;
 
 /***/ },
-/* 71 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	/**
-	 * @fileoverview Implements Heading wysiwyg command
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
-	 */
+	var _commandManager = __webpack_require__(24);
 
-	var CommandManager = __webpack_require__(24);
-	var domUtils = __webpack_require__(8);
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
 	 * Heading
-	 * Add horizontal line markdown syntax to wysiwyg Editor
+	 * Convert selected root level contents to heading with size wysiwyg Editor
 	 * @exports Heading
 	 * @augments Command
 	 * @augments WysiwygCommand
 	 */
-	var Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
+	var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 	    name: 'Heading',
 	    /**
-	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-	     *  @param {Number} size size
+	     * Command handler
+	     * @param {WysiwygEditor} wwe WYSIWYGEditor instance
+	     * @param {Number} size size
 	     */
 	    exec: function exec(wwe, size) {
 	        var sq = wwe.getEditor();
+	        var blockTagName = 'h1, h2, h3, h4, h5, h6, div';
 
 	        sq.focus();
 
-	        var range = sq.getSelection().cloneRange();
-	        var nodeName = domUtils.getNodeName(range.commonAncestorContainer);
-
 	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            if (range.collapsed || nodeName === 'DIV' || nodeName === 'TEXT') {
-	                wwe.changeBlockFormatTo('H' + size);
-	            }
+	            sq.modifyBlocks(function (fragment) {
+	                $(fragment).children(blockTagName).each(function (index, block) {
+	                    var headingHTML = '<H' + size + ' />';
+	                    var $block = $(block);
+
+	                    if ($block.is('DIV')) {
+	                        $block.wrap(headingHTML);
+	                    } else {
+	                        var $wrapperHeading = $(headingHTML);
+
+	                        $wrapperHeading.insertBefore(block);
+	                        $wrapperHeading.html($block.html());
+	                        $block.remove();
+	                    }
+	                });
+
+	                return fragment;
+	            });
 	        }
 	    }
-	});
+	}); /**
+	     * @fileoverview Implements Heading wysiwyg command
+	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	     * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	     * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
+	     */
 
 	module.exports = Heading;
 
 /***/ },
-/* 72 */
+/* 75 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _commandManager = __webpack_require__(24);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Paragraph
+	 * Convert selected contents to paragraph only heading and list
+	 * @exports Heading
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph */{
+	    name: 'Paragraph',
+	    /**
+	     * Command handler
+	     * @param {WysiwygEditor} wwe WYSIWYGEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            sq.modifyBlocks(function (fragment) {
+	                var $newFragment = $(document.createDocumentFragment());
+
+	                $(fragment).children().each(function (index, block) {
+	                    if (block.nodeName.match(/h\d/i)) {
+	                        $newFragment.append($(block).children());
+	                    } else if (block.nodeName.match(/ul|ol/i)) {
+	                        $(block).find('li').each(function (i, listItem) {
+	                            $newFragment.append($(listItem).children());
+	                        });
+	                    } else {
+	                        $newFragment.append(block);
+	                    }
+	                });
+
+	                return $newFragment[0];
+	            });
+	        }
+	    }
+	}); /**
+	     * @fileoverview Implements Paragraph wysiwyg command
+	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+	     * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+	     * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
+	     */
+
+	module.exports = Paragraph;
+
+/***/ },
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15295,7 +15797,7 @@
 	module.exports = UL;
 
 /***/ },
-/* 73 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15351,7 +15853,7 @@
 	module.exports = OL;
 
 /***/ },
-/* 74 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15488,7 +15990,7 @@
 	module.exports = Table;
 
 /***/ },
-/* 75 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15573,7 +16075,7 @@
 	module.exports = AddRow;
 
 /***/ },
-/* 76 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15681,7 +16183,7 @@
 	module.exports = AddCol;
 
 /***/ },
-/* 77 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15813,7 +16315,7 @@
 	module.exports = RemoveRow;
 
 /***/ },
-/* 78 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15918,7 +16420,7 @@
 	module.exports = RemoveCol;
 
 /***/ },
-/* 79 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16061,7 +16563,7 @@
 	module.exports = AlignCol;
 
 /***/ },
-/* 80 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16107,7 +16609,7 @@
 	module.exports = RemoveTable;
 
 /***/ },
-/* 81 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16172,7 +16674,7 @@
 	module.exports = IncreaseTask;
 
 /***/ },
-/* 82 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16227,7 +16729,7 @@
 	module.exports = DecreaseDepth;
 
 /***/ },
-/* 83 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16279,7 +16781,7 @@
 	module.exports = Task;
 
 /***/ },
-/* 84 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16365,7 +16867,7 @@
 	module.exports = Code;
 
 /***/ },
-/* 85 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16460,7 +16962,7 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 86 */
+/* 90 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -16538,7 +17040,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 87 */
+/* 91 */
 /***/ function(module, exports) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17359,7 +17861,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 88 */
+/* 92 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17490,7 +17992,7 @@
 	CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
 /***/ },
-/* 89 */
+/* 93 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17512,12 +18014,13 @@
 	        var line = cm.getLine(pos.line);
 	        var cursorBeforeTextInline = line.substr(0, pos.ch);
 
-	        if (emptyListRE.test(cursorBeforeTextInline)) {
+	        if (listRE.test(cursorBeforeTextInline)) {
 	            cm.replaceRange(Array(cm.getOption("indentUnit") + 1).join(" ") + line, {
 	                line: pos.line, ch: 0
 	            }, {
 	                line: pos.line, ch: line.length
 	            }, '+input');
+	            cm.setCursor(pos.line, pos.ch + 4);
 	        } else {
 	            if (cm.somethingSelected()) cm.indentSelection("add");else cm.execCommand("insertSoftTab");
 	        }
@@ -17587,7 +18090,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 90 */
+/* 94 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17734,7 +18237,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 91 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17784,7 +18287,7 @@
 	});
 
 /***/ },
-/* 92 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17793,15 +18296,15 @@
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(93);
+	var _scrollFollow = __webpack_require__(97);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(94);
+	var _scrollFollow3 = __webpack_require__(98);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
-	var _button = __webpack_require__(39);
+	var _button = __webpack_require__(41);
 
 	var _button2 = _interopRequireDefault(_button);
 
@@ -17814,8 +18317,8 @@
 	_extManager2.default.defineExtension('scrollFollow', function (editor) {
 	    var className = 'tui-scrollfollow';
 	    var TOOL_TIP = {
-	        active: _i18n2.default.get('Enable auto scroll'),
-	        inActive: _i18n2.default.get('Disable auto scroll')
+	        active: _i18n2.default.get('Auto scroll enabled'),
+	        inActive: _i18n2.default.get('Auto scroll disabled')
 	    };
 
 	    if (editor.isViewOnly()) {
@@ -17842,20 +18345,10 @@
 
 	        editor.getUI().toolbar.addButton(button);
 
-	        if (editor.currentMode === 'wysiwyg' || editor.mdPreviewStyle === 'tab') {
-	            button.$el.hide();
-	        }
-
+	        changeButtonVisiblityStateIfNeed();
 	        // hide scroll follow button in wysiwyg
-	        editor.on('changeModeToWysiwyg', function () {
-	            button.$el.hide();
-	        });
-
-	        editor.on('changeModeToMarkdown', function () {
-	            if (editor.mdPreviewStyle !== 'tab') {
-	                button.$el.show();
-	            }
-	        });
+	        editor.on('changeMode', changeButtonVisiblityStateIfNeed);
+	        editor.on('changePreviewStyle', changeButtonVisiblityStateIfNeed);
 
 	        // Commands
 	        editor.addCommand('markdown', {
@@ -17880,6 +18373,14 @@
 	        isScrollable = false;
 	        sectionManager.makeSectionList();
 	    });
+
+	    function changeButtonVisiblityStateIfNeed() {
+	        if (editor.mdPreviewStyle === 'vertical' && editor.currentMode === 'markdown') {
+	            button.$el.show();
+	        } else {
+	            button.$el.hide();
+	        }
+	    }
 
 	    editor.on('previewRenderAfter', function () {
 	        sectionManager.sectionMatch();
@@ -17908,7 +18409,7 @@
 	     */
 
 /***/ },
-/* 93 */
+/* 97 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18324,7 +18825,7 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 94 */
+/* 98 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18341,7 +18842,7 @@
 	var FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
 	var FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
 	var FIND_QUOTE_RX = /^ {0,3}(> ?)+\s/;
-	var FIND_IMAGE_RX = / *!\[([^\[\]]*)]\(([^)]*)\)/;
+	var FIND_IMAGE_RX = /^ {0,3}!\[([^\[\]]*)]\(([^)]*)\)/;
 	var FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 	var FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 	var FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ .]*(\S+)? */;
@@ -18455,6 +18956,7 @@
 	                onCodeBlock = false,
 	                trimCapture = '';
 	            var isRightAfterImageSection = false;
+	            var isEnsuredSection = false;
 	            var codeblockStartLineIndex = void 0;
 
 	            var lineLength = this.cm.getDoc().lineCount();
@@ -18480,20 +18982,32 @@
 	                    codeblockStartLineIndex = i;
 	                }
 
-	                // atx header
-	                if (this._isAtxHeader(lineString)) {
+	                if (isEnsuredSection && lineString.length !== 0) {
+	                    if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+	                        isRightAfterImageSection = true;
+	                        isEnsuredSection = true;
+	                    } else {
+	                        isRightAfterImageSection = false;
+	                        isEnsuredSection = false;
+	                    }
+
+	                    isSection = true;
+	                } else if (this._isAtxHeader(lineString)) {
 	                    isRightAfterImageSection = false;
 	                    isSection = true;
+	                    isEnsuredSection = false;
 	                    // setext header
 	                } else if (!this._isCodeBlockEnd(lineString) && !onTable && this._isSeTextHeader(lineString, nextLineString)) {
 	                    isRightAfterImageSection = false;
 	                    isSection = true;
-	                } else if (!onCodeBlock && !onTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)) {
+	                    isEnsuredSection = false;
+	                } else if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
 	                    isRightAfterImageSection = true;
 	                    isSection = true;
-	                } else if (isRightAfterImageSection && lineString.length !== 0) {
+	                    isEnsuredSection = false;
+	                } else if (isRightAfterImageSection && lineString.length === 0) {
 	                    isRightAfterImageSection = false;
-	                    isSection = true;
+	                    isEnsuredSection = true;
 	                }
 
 	                // 빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
@@ -18510,6 +19024,22 @@
 
 	                iteratee(isSection, i);
 	            }
+	        }
+
+	        /**
+	         * Return whether is independent image line with padding lines top and bottom
+	         * @param {boolean} onCodeBlock Is on codeblock
+	         * @param {boolean} onTable Is on table
+	         * @param {string} lineString Current line string
+	         * @param {string} prevLineString Previous line string
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isIndependentImage',
+	        value: function _isIndependentImage(onCodeBlock, onTable, lineString, prevLineString) {
+	            return !onCodeBlock && !onTable && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString) && prevLineString.length === 0;
 	        }
 
 	        /**
@@ -18716,7 +19246,7 @@
 	            this.$previewContent.contents().filter(findElementNodeFilter).each(function (index, el) {
 	                var isParagraph = el.tagName === 'P';
 	                var isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-	                var isImage = isParagraph && $(el).children('IMG').length !== 0;
+	                var isImage = isParagraph && el.childNodes[0].nodeName === 'IMG';
 
 	                if ((isHeading || isImage || isRightAfterImageSection) && sections[lastSection].length) {
 	                    sections.push([]);
@@ -18779,7 +19309,7 @@
 	module.exports = SectionManager;
 
 /***/ },
-/* 95 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19030,7 +19560,7 @@
 	}
 
 /***/ },
-/* 96 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19039,23 +19569,23 @@
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(97);
+	var _markerList = __webpack_require__(101);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(98);
+	var _markerManager = __webpack_require__(102);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(100);
+	var _wysiwygMarkerHelper = __webpack_require__(104);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(101);
+	var _viewOnlyMarkerHelper = __webpack_require__(105);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(102);
+	var _markdownMarkerHelper = __webpack_require__(106);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -19310,7 +19840,7 @@
 	});
 
 /***/ },
-/* 97 */
+/* 101 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19523,7 +20053,7 @@
 	module.exports = Markerlist;
 
 /***/ },
-/* 98 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19537,7 +20067,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(99);
+	var DiffMatchPatch = __webpack_require__(103);
 
 	var util = tui.util;
 
@@ -19766,7 +20296,7 @@
 	module.exports = MarkerManager;
 
 /***/ },
-/* 99 */
+/* 103 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21842,7 +22372,7 @@
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
 /***/ },
-/* 100 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22094,7 +22624,7 @@
 	module.exports = WysiwygMarkerHelper;
 
 /***/ },
-/* 101 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22365,7 +22895,7 @@
 	module.exports = ViewOnlyMarkerHelper;
 
 /***/ },
-/* 102 */
+/* 106 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22642,7 +23172,7 @@
 	module.exports = MarkdownMarkerHelper;
 
 /***/ },
-/* 103 */
+/* 107 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22684,12 +23214,12 @@
 	    'Remove table': 'Remove table',
 	    'Would you like to paste as table?': 'Would you like to paste as table?',
 	    'Text color': 'Text color',
-	    'Enable auto scroll': 'Enable auto scroll',
-	    'Disable auto scroll': 'Disable auto scroll'
+	    'Auto scroll enabled': 'Auto scroll enabled',
+	    'Auto scroll disabled': 'Auto scroll disabled'
 	});
 
 /***/ },
-/* 104 */
+/* 108 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22731,12 +23261,12 @@
 	    'Remove table': '표 삭제',
 	    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
 	    'Text color': '글자 색상',
-	    'Enable auto scroll': '자동 스크롤 켜짐',
-	    'Disable auto scroll': '자동 스크롤 꺼짐'
+	    'Auto scroll enabled': '자동 스크롤 켜짐',
+	    'Auto scroll disabled': '자동 스크롤 꺼짐'
 	});
 
 /***/ },
-/* 105 */
+/* 109 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22778,12 +23308,12 @@
 	    'Remove table': '删除表',
 	    'Would you like to paste as table?': '你想粘贴表吗?',
 	    'Text color': '文字色相',
-	    'Enable auto scroll': '自动的滚动使用',
-	    'Disable auto scroll': '自动的滚动作非使用'
+	    'Auto scroll enabled': '自动滚动启用',
+	    'Auto scroll disabled': '自动的滚动作非使用'
 	});
 
 /***/ },
-/* 106 */
+/* 110 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22825,12 +23355,12 @@
 	    'Remove table': 'テーブル削除',
 	    'Would you like to paste as table?': 'テーブルを貼り付けますか?',
 	    'Text color': '文字色相',
-	    'Enable auto scroll': '自動スクロール使用',
-	    'Disable auto scroll': '自動スクロール非使用'
+	    'Auto scroll enabled': '自動スクロールが有効',
+	    'Auto scroll disabled': '自動スクロールを無効に'
 	});
 
 /***/ },
-/* 107 */
+/* 111 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22872,8 +23402,8 @@
 	    'Remove table': 'Verwijder tabel',
 	    'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
 	    'Text color': 'tekst kleur',
-	    'Enable auto scroll': 'Auto scroll gebruik',
-	    'Disable auto scroll': 'Auto scroll niet gebruik'
+	    'Auto scroll enabled': 'Auto scroll enabled',
+	    'Auto scroll disabled': 'Auto scroll uitgeschakeld'
 	});
 
 /***/ }
