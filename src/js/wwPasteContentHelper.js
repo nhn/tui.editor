@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
 
@@ -69,26 +68,41 @@ class WwPasteContentHelper {
     }
 
     /**
-     * Wrap textNodes with div element
+     * Wrap orphan node(inline, text) with div element
      * @param {DocumentFragment} fragment - Fragment of paste data
      * @memberOf WwPasteContentHelper
+     * @returns {DocumentFragment}
      * @private
      */
-    _wrapTextNodeWithDiv(fragment) {
+    _wrapOrphanNodeWithDiv(fragment) {
+        const newFrag = document.createDocumentFragment();
         const array = util.toArray(fragment.childNodes);
+        let currentDiv;
 
         util.forEachArray(array, node => {
             const isTextNode = node.nodeType === 3;
+            /* eslint-disable max-len */
+            const isInlineNode = /^(SPAN|A|CODE|EM|I|STRONG|B|S|ABBR|ACRONYM|CITE|DFN|KBD|SAMP|VAR|BDO|Q|SUB|SUP)$/ig.test(node.tagName);
+            /* eslint-enable max-len */
 
-            if (isTextNode) {
-                const divElement = document.createElement('div');
+            if (isTextNode || isInlineNode) {
+                if (!currentDiv) {
+                    currentDiv = document.createElement('div');
+                    newFrag.appendChild(currentDiv);
+                }
 
-                divElement.textContent = node.nodeValue;
-                divElement.appendChild($('<br/>')[0]);
+                currentDiv.appendChild(node);
+            } else {
+                if (currentDiv && currentDiv.lastChild.tagName !== 'BR') {
+                    currentDiv.appendChild($('<br/>')[0]);
+                }
 
-                fragment.replaceChild(divElement, node);
+                currentDiv = null;
+                newFrag.appendChild(node);
             }
         });
+
+        return newFrag;
     }
 
     /**
@@ -113,7 +127,7 @@ class WwPasteContentHelper {
         this._removeUnnecessaryBlocks(fragment, blockTags);
         this._removeStyles(fragment);
 
-        this._wrapTextNodeWithDiv(fragment);
+        fragment = this._wrapOrphanNodeWithDiv(fragment);
 
         this._preElementAid(fragment);
 
@@ -161,10 +175,10 @@ class WwPasteContentHelper {
      * @private
      */
     _unwrapNestedBlocks(fragment, blockTags) {
-        const leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code');
+        const leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code,span');
 
         leafElements.each((i, node) => {
-            let leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(this);
+            let leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
             let parent;
 
             while (leafElement.parents(blockTags).length) {
