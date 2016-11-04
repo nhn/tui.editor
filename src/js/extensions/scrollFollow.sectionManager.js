@@ -7,7 +7,7 @@
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
 const FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
 const FIND_QUOTE_RX = /^ {0,3}(> ?)+\s/;
-const FIND_IMAGE_RX = / *!\[([^\[\]]*)]\(([^)]*)\)/;
+const FIND_IMAGE_RX = /^ {0,3}!\[([^\[\]]*)]\(([^)]*)\) *$/;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ .]*(\S+)? */;
@@ -98,6 +98,7 @@ class SectionManager {
             onCodeBlock = false,
             trimCapture = '';
         let isRightAfterImageSection = false;
+        let isEnsuredSection = false;
         let codeblockStartLineIndex;
 
         const lineLength = this.cm.getDoc().lineCount();
@@ -123,10 +124,21 @@ class SectionManager {
                 codeblockStartLineIndex = i;
             }
 
-            // atx header
-            if (this._isAtxHeader(lineString)) {
+
+            if (isEnsuredSection && lineString.length !== 0) {
+                if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
+                    isRightAfterImageSection = true;
+                    isEnsuredSection = true;
+                } else {
+                    isRightAfterImageSection = false;
+                    isEnsuredSection = false;
+                }
+
+                isSection = true;
+            } else if (this._isAtxHeader(lineString)) {
                 isRightAfterImageSection = false;
                 isSection = true;
+                isEnsuredSection = false;
                 // setext header
             } else if (!this._isCodeBlockEnd(lineString)
                 && !onTable
@@ -134,14 +146,14 @@ class SectionManager {
             ) {
                 isRightAfterImageSection = false;
                 isSection = true;
-            } else if (!onCodeBlock && !onTable
-                && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)
-            ) {
+                isEnsuredSection = false;
+            } else if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {
                 isRightAfterImageSection = true;
                 isSection = true;
-            } else if (isRightAfterImageSection && lineString.length !== 0) {
+                isEnsuredSection = false;
+            } else if (isRightAfterImageSection && lineString.length === 0) {
                 isRightAfterImageSection = false;
-                isSection = true;
+                isEnsuredSection = true;
             }
 
             // 빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
@@ -158,6 +170,21 @@ class SectionManager {
 
             iteratee(isSection, i);
         }
+    }
+
+    /**
+     * Return whether is independent image line with padding lines top and bottom
+     * @param {boolean} onCodeBlock Is on codeblock
+     * @param {boolean} onTable Is on table
+     * @param {string} lineString Current line string
+     * @param {string} prevLineString Previous line string
+     * @returns {boolean}
+     * @private
+     */
+    _isIndependentImage(onCodeBlock, onTable, lineString, prevLineString) {
+        return !onCodeBlock && !onTable
+            && this._isImage(lineString) && !this._isList(lineString) && !this._isQuote(lineString)
+            && prevLineString.length === 0;
     }
 
     /**
@@ -321,7 +348,7 @@ class SectionManager {
         this.$previewContent.contents().filter(findElementNodeFilter).each((index, el) => {
             const isParagraph = (el.tagName === 'P');
             const isHeading = el.tagName.match(/^(H1|H2|H3|H4|H5|H6)$/);
-            const isImage = (isParagraph && $(el).children('IMG').length !== 0);
+            const isImage = (isParagraph && el.childNodes[0].nodeName === 'IMG');
 
             if ((isHeading || isImage || isRightAfterImageSection)
                 && sections[lastSection].length
