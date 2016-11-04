@@ -113,6 +113,16 @@ class WwListManager {
                 }
             }
         });
+
+        this.wwe.addKeyEventHandler('BACK_SPACE', (ev, range) => {
+            if (range.collapsed) {
+                if (this.wwe.getEditor().hasFormat('LI')) {
+                    this.wwe.defer(() => {
+                        this._removeBranchListAll();
+                    });
+                }
+            }
+        });
     }
 
     /**
