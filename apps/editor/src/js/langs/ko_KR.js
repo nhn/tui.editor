@@ -35,6 +35,6 @@ tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
     'Remove table': '표 삭제',
     'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
     'Text color': '글자 색상',
-    'Enable auto scroll': '자동 스크롤 켜짐',
-    'Disable auto scroll': '자동 스크롤 꺼짐'
+    'Auto scroll enabled': '자동 스크롤 켜짐',
+    'Auto scroll disabled': '자동 스크롤 꺼짐'
 });

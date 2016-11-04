@@ -1,16 +1,15 @@
 /**
  * @fileoverview Implements Heading wysiwyg command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
-const CommandManager = require('../commandManager');
-const domUtils = require('../domUtils');
+import CommandManager from '../commandManager';
 
 /**
  * Heading
- * Add horizontal line markdown syntax to wysiwyg Editor
+ * Convert selected root level contents to heading with size wysiwyg Editor
  * @exports Heading
  * @augments Command
  * @augments WysiwygCommand
@@ -18,22 +17,35 @@ const domUtils = require('../domUtils');
 const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
     name: 'Heading',
     /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     *  @param {Number} size size
+     * Command handler
+     * @param {WysiwygEditor} wwe WYSIWYGEditor instance
+     * @param {Number} size size
      */
     exec(wwe, size) {
         const sq = wwe.getEditor();
+        const blockTagName = 'h1, h2, h3, h4, h5, h6, div';
 
         sq.focus();
 
-        const range = sq.getSelection().cloneRange();
-        const nodeName = domUtils.getNodeName(range.commonAncestorContainer);
-
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-            if (range.collapsed || nodeName === 'DIV' || nodeName === 'TEXT') {
-                wwe.changeBlockFormatTo(`H${size}`);
-            }
+            sq.modifyBlocks(fragment => {
+                $(fragment).children(blockTagName).each((index, block) => {
+                    const headingHTML = `<H${size} />`;
+                    const $block = $(block);
+
+                    if ($block.is('DIV')) {
+                        $block.wrap(headingHTML);
+                    } else {
+                        const $wrapperHeading = $(headingHTML);
+
+                        $wrapperHeading.insertBefore(block);
+                        $wrapperHeading.html($block.html());
+                        $block.remove();
+                    }
+                });
+
+                return fragment;
+            });
         }
     }
 });

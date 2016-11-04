@@ -35,6 +35,6 @@ tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
     'Remove table': '删除表',
     'Would you like to paste as table?': '你想粘贴表吗?',
     'Text color': '文字色相',
-    'Enable auto scroll': '自动的滚动使用',
-    'Disable auto scroll': '自动的滚动作非使用'
+    'Auto scroll enabled': '自动滚动启用',
+    'Auto scroll disabled': '自动的滚动作非使用'
 });

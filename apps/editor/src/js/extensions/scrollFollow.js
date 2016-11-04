@@ -13,8 +13,8 @@ import i18n from '../i18n';
 extManager.defineExtension('scrollFollow', editor => {
     const className = 'tui-scrollfollow';
     const TOOL_TIP = {
-        active: i18n.get('Enable auto scroll'),
-        inActive: i18n.get('Disable auto scroll')
+        active: i18n.get('Auto scroll enabled'),
+        inActive: i18n.get('Auto scroll disabled')
     };
 
     if (editor.isViewOnly()) {
@@ -41,20 +41,10 @@ extManager.defineExtension('scrollFollow', editor => {
 
         editor.getUI().toolbar.addButton(button);
 
-        if (editor.currentMode === 'wysiwyg' || editor.mdPreviewStyle === 'tab') {
-            button.$el.hide();
-        }
-
+        changeButtonVisiblityStateIfNeed();
         // hide scroll follow button in wysiwyg
-        editor.on('changeModeToWysiwyg', () => {
-            button.$el.hide();
-        });
-
-        editor.on('changeModeToMarkdown', () => {
-            if (editor.mdPreviewStyle !== 'tab') {
-                button.$el.show();
-            }
-        });
+        editor.on('changeMode', changeButtonVisiblityStateIfNeed);
+        editor.on('changePreviewStyle', changeButtonVisiblityStateIfNeed);
 
         // Commands
         editor.addCommand('markdown', {
@@ -79,6 +69,14 @@ extManager.defineExtension('scrollFollow', editor => {
         isScrollable = false;
         sectionManager.makeSectionList();
     });
+
+    function changeButtonVisiblityStateIfNeed() {
+        if (editor.mdPreviewStyle === 'vertical' && editor.currentMode === 'markdown') {
+            button.$el.show();
+        } else {
+            button.$el.hide();
+        }
+    }
 
     editor.on('previewRenderAfter', () => {
         sectionManager.sectionMatch();
