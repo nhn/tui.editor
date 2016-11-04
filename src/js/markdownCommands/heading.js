@@ -1,12 +1,15 @@
 /**
  * @fileoverview Implements Heading markdown command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 
 import CommandManager from '../commandManager';
 
 const util = tui.util;
+const FIND_HEADING_RX = /^#+\s/g;
 
 /**
  * Heading
@@ -55,13 +58,11 @@ const Heading = CommandManager.command('markdown', /** @lends Heading */{
 
         range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;
 
-        doc.setCursor(range.to);
+        doc.setSelection(from, range.to);
 
         cm.focus();
     }
 });
-
-const FIND_HEADING_RX = /^#+\s/g;
 
 /**
  * Get heading markdown

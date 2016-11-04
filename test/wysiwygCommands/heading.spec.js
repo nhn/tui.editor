@@ -39,6 +39,32 @@ describe('Heading', () => {
         expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('<h1>text</h1>');
     });
 
+    it('set heading tag 1~6 rotation', () => {
+        const range = wwe.getRange();
+
+        wwe.get$Body().html('<div>text</div><div>text2</div>');
+
+        range.setStart(wwe.get$Body().children('div')[0], 0);
+        range.setEnd(wwe.get$Body().children('div')[1], 1);
+        wwe.getEditor().setSelection(range);
+
+        Heading.exec(wwe, 1);
+        expect(wwe.get$Body().find('h1').length).toBe(2);
+    });
+
+    it('set heading tag', () => {
+        const range = wwe.getRange();
+
+        wwe.get$Body().html('<h2><div>text</div></h2><h2><div>text2</div></h2>');
+
+        range.setStart(wwe.get$Body().find('h2 div')[0], 0);
+        range.setEnd(wwe.get$Body().find('h2 div')[1], 1);
+        wwe.getEditor().setSelection(range);
+
+        Heading.exec(wwe, 1);
+        expect(wwe.get$Body().find('h1').length).toBe(2);
+        expect(wwe.get$Body().find('h2').length).toBe(0);
+    });
 
     it('set heading tag 1~6 rotation', () => {
         const range = wwe.getEditor().getSelection().cloneRange();
@@ -66,5 +92,24 @@ describe('Heading', () => {
 
         Heading.exec(wwe, 6);
         expect(wwe.getValue().replace(/<br \/>/g, '')).toEqual('<h6>text</h6>');
+    });
+
+    it('pass converting on list element', () => {
+        const range = wwe.getRange();
+
+        wwe.get$Body().html([
+            '<h2><div>text</div></h2>',
+            '<ul><li><div>hi</div></li></ul>',
+            '<h2><div>text2</div></h2>'
+        ].join(''));
+
+        range.setStart(wwe.get$Body().find('h2 div')[0], 0);
+        range.setEnd(wwe.get$Body().find('h2 div')[1], 1);
+        wwe.getEditor().setSelection(range);
+
+        Heading.exec(wwe, 1);
+        expect(wwe.get$Body().find('h1').length).toBe(2);
+        expect(wwe.get$Body().find('h2').length).toBe(0);
+        expect(wwe.get$Body().find('ul').length).toBe(1);
     });
 });
