@@ -102,8 +102,8 @@ class Convertor {
 
         $wrapperDiv.html(renderedHTML);
 
-        $wrapperDiv.find('code, pre').each((i, code) => {
-            const $code = $(code);
+        $wrapperDiv.find('code, pre').each((i, codeOrPre) => {
+            const $code = $(codeOrPre);
             $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
         });
 
