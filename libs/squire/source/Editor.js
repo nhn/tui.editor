@@ -228,6 +228,7 @@ proto.modifyDocument = function ( modificationCallback ) {
             characterData: true,
             subtree: true
         });
+        this._ignoreChange = false;
     }
 };
 
