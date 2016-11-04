@@ -63,7 +63,10 @@ class Convertor {
         markdown = this._addLineBreaksIfNeed(markdown);
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-        return markdownitHighlight.render(markdown);
+        let renderedHTML = markdownitHighlight.render(markdown);
+        renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
+
+        return renderedHTML;
     }
 
     /**
@@ -78,7 +81,31 @@ class Convertor {
         markdown = this._addLineBreaksIfNeed(markdown);
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-        return markdownitHighlight.render(markdown);
+        let renderedHTML = markdownitHighlight.render(markdown);
+        renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
+
+        return renderedHTML;
+    }
+
+    /**
+     * Remove BR's data-tomark-pass attribute text when br in code element
+     * @param {string} renderedHTML Rendered HTML string from markdown editor
+     * @returns {string}
+     * @private
+     */
+    _removeBrToMarkPassAttributeInCode(renderedHTML) {
+        const $wrapperDiv = $('<div />');
+
+        $wrapperDiv.html(renderedHTML);
+
+        $wrapperDiv.find('code, pre').each((i, code) => {
+            const $code = $(code);
+            $code.html($code.html().replace(/&lt;br data-tomark-pass&gt;/, '&lt;br&gt;'));
+        });
+
+        renderedHTML = $wrapperDiv.html();
+
+        return renderedHTML;
     }
 
     /**
@@ -127,18 +154,28 @@ class Convertor {
      * @returns {string} markdown text
      */
     toMarkdown(html) {
+        const resultArray = [];
         let markdown = toMark(this._appendAttributeForBrIfNeed(html));
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
-        return markdown;
+        tui.util.forEach(markdown.split('\n'), (line, index) => {
+            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
+            const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
+
+            if (!FIND_CODE_RX.test(line) && !FIND_TABLE_RX.test(line)) {
+                line = line.replace(/<br>/ig, '<br>\n');
+            }
+            resultArray[index] = line;
+        });
+
+        return resultArray.join('\n');
     }
 
     _appendAttributeForBrIfNeed(html) {
         const FIND_BR_RX = /<br>/ig;
         const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
         const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-        const FIND_FIRST_TWO_BRS_RX =
-            /((?:[^b][^r]|[^p][^a][^s][^s]).[^/].)<br data-tomark-pass \/><br(?: data-tomark-pass)? \/>/g;
+        const FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
 
         html = html.replace(FIND_BR_RX, '<br />');
 
@@ -147,7 +184,7 @@ class Convertor {
         const div = document.createElement('div');
         const $div = $(div);
         $div.html(html);
-        $div.find('pre br').each((index, node) => {
+        $div.find('pre br,code br').each((index, node) => {
             if (node.hasAttribute('data-tomark-pass')) {
                 node.removeAttribute('data-tomark-pass');
             }
