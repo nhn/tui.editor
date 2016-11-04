@@ -53,7 +53,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-    $html.find('script, iframe, textarea, form, button, select, .Apple-converted-space').remove();
+    $html.find('script, iframe, textarea, form, button, select').remove();
 }
 
 /**

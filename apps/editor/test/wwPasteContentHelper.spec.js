@@ -169,15 +169,25 @@ describe('WwPasteContentHelper', () => {
             expect($node.find('div').eq(0).text()).toEqual('TEST');
             expect($node.find('div').eq(1).text()).toEqual('TEST2');
         });
-        it('_wrapTextNodeWithDiv should wrap textNodes with div element', () => {
-            const fragment = document.createDocumentFragment();
+
+        it('_wrapOrphanNodeWithDiv should wrap orphan nodes with div element', () => {
+            let $fragment = $(document.createDocumentFragment());
+
+            $fragment.append($('<span>text1</span>text2<br>text3<code>text4</code>'));
+
+            $fragment = $(pch._wrapOrphanNodeWithDiv($fragment[0]));
+
+            expect($fragment.find('div').length).toEqual(2);
+        });
+        it('_wrapOrphanNodeWithDiv should wrap orphan nodes with div element', () => {
+            let fragment = document.createDocumentFragment();
 
             fragment.appendChild(document.createTextNode('ip lorem sit amet'));
             fragment.appendChild(document.createElement('br'));
             fragment.appendChild(document.createTextNode('and so on'));
             fragment.appendChild(document.createElement('br'));
 
-            pch._wrapTextNodeWithDiv(fragment);
+            fragment = pch._wrapOrphanNodeWithDiv(fragment);
 
             const $documentFragment = $(fragment);
             expect($documentFragment.find('div').length).toEqual(2);
@@ -185,16 +195,16 @@ describe('WwPasteContentHelper', () => {
             expect($documentFragment.find('div')[0].innerHTML).toEqual('ip lorem sit amet<br>');
             expect($documentFragment.find('div')[1].innerHTML).toEqual('and so on<br>');
         });
-        it('_wrapTextNodeWithDiv should not wrap element nodes', () => {
+        it('_wrapOrphanNodeWithDiv should not wrap block element nodes', () => {
             const $node = $('<p>ip lorem sit amet</p><br><span>and so on</span>');
 
             contentFrag.appendChild($node[0]);
             contentFrag.appendChild($node[1]);
             contentFrag.appendChild($node[2]);
 
-            pch._wrapTextNodeWithDiv(contentFrag);
+            contentFrag = pch._wrapOrphanNodeWithDiv(contentFrag);
 
-            expect($(contentFrag).find('div').length).toEqual(0);
+            expect($(contentFrag).find('div').length).toEqual(1);
             expect($(contentFrag).find('p').length).toEqual(1);
             expect($(contentFrag).find('span').length).toEqual(1);
             expect($(contentFrag).find('br').length).toEqual(1);
