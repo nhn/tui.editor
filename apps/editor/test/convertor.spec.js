@@ -95,38 +95,4 @@ describe('Convertor', () => {
             expect(param).toEqual('# HELLO WORLD');
         });
     });
-    describe('addLineBreakesIfNeed', () => {
-        it('should add line breakes before and after image syntax', () => {
-            const markdown = ['first line',
-                '![image](www.naver.com)![image](www.naver.com)',
-                ' - ![image](www.naver.com)'].join('\n');
-            const convertedMarkdown = ['first line',
-                '',
-                '',
-                '![image](www.naver.com)',
-                '',
-                '',
-                '',
-                '![image](www.naver.com)',
-                '',
-                '',
-                ' - ![image](www.naver.com)'].join('\n');
-            expect(convertor._addLineBreaksIfNeed(markdown)).toEqual(convertedMarkdown);
-        });
-
-        it('should not add line breakes in table syntax', () => {
-            const markdown = [
-                '* ![image](www.naver.com) ![image](www.naver.com)',
-                '1. ![image](www.naver.com)',
-                ' - ![image](www.naver.com)',
-                '    * [ ] ![image](www.naver.com)',
-                '> [ ] ![image](www.naver.com)',
-                ' > > [ ] ![image](www.naver.com)',
-                '|  |  | ![image](www.naver.com) |',
-                '| --- | --- | --- |',
-                '|  |  | ![image](www.naver.com) ![image](www.naver.com) |',
-                '|  |  | ![image](www.naver.com) |'].join('\n');
-            expect(convertor._addLineBreaksIfNeed(markdown)).toEqual(markdown);
-        });
-    });
 });

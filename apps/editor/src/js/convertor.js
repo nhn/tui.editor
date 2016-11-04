@@ -60,7 +60,6 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtmlWithCodeHighlight(markdown) {
-        markdown = this._addLineBreaksIfNeed(markdown);
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
         let renderedHTML = markdownitHighlight.render(markdown);
@@ -78,7 +77,6 @@ class Convertor {
      * @returns {string} html text
      */
     _markdownToHtml(markdown) {
-        markdown = this._addLineBreaksIfNeed(markdown);
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
         let renderedHTML = markdownitHighlight.render(markdown);
@@ -197,32 +195,6 @@ class Convertor {
         html = html.replace(FIND_FIRST_TWO_BRS_RX, '$1<br /><br />');
 
         return html;
-    }
-
-    /**
-     * Add line breaks for image section process
-     * @param {string} markdown Markdown text
-     * @returns {string}
-     * @private
-     */
-    _addLineBreaksIfNeed(markdown) {
-        const FIND_IMAGE_RX = /(!\[(?:[^\[\]]*)]\((?:[^)]*)\))/g;
-        const resultArray = [];
-        tui.util.forEach(markdown.split('\n'), (line, index) => {
-            const FIND_IMAGE_IN_LIST_OR_QUOTE_RX = /^ *(?:\*|-|\d+\.|[*-] \[[ xX]])\s|(?: *> *)+/g;
-            const FIND_TABLE_RX = /^\|[^|]*\|/ig;
-            const FIND_INLINE_CODEBLOCK_RX = /^ {4}[^\s]*/ig;
-
-            if (!FIND_TABLE_RX.test(line)
-                && !FIND_IMAGE_IN_LIST_OR_QUOTE_RX.test(line)
-                && !FIND_INLINE_CODEBLOCK_RX.test(line)
-            ) {
-                line = line.replace(FIND_IMAGE_RX, '\n\n$1\n\n');
-            }
-            resultArray[index] = line;
-        });
-
-        return resultArray.join('\n');
     }
 
     /**
