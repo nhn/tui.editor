@@ -36,7 +36,7 @@ describe('WysiwygEditor', () => {
 
     describe('managing key event handlers', () => {
         beforeEach(() => {
-            wwe.addManager('list', ListManager);
+            wwe.componentManager.addManager('list', ListManager);
         });
 
         it('add key event handler and run', () => {
@@ -400,24 +400,6 @@ describe('WysiwygEditor', () => {
             wwe.getEditor().focus = jasmine.createSpy('focus');
             wwe.focus();
             expect(wwe.getEditor().focus).toHaveBeenCalled();
-        });
-    });
-
-    describe('manager handling', () => {
-        it('add and get manager', () => {
-            const manager = jasmine.createSpy('manager');
-            wwe.addManager('myManager', manager);
-
-            expect(manager).toHaveBeenCalledWith(wwe);
-            expect(wwe.getManager('myManager')).toBeDefined();
-        });
-
-        it('add manager with manager default', () => {
-            const manager = () => ({name: 'myManager'});
-
-            wwe.addManager(manager);
-
-            expect(wwe.getManager('myManager')).toBeDefined();
         });
     });
 

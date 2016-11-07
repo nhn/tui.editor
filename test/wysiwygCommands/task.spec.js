@@ -17,8 +17,8 @@ describe('Task', () => {
         wwe.init();
 
         sq = wwe.getEditor();
-        wwe.addManager(WwTaskManager);
-        wwe.addManager(WwListManager);
+        wwe.componentManager.addManager(WwTaskManager);
+        wwe.componentManager.addManager(WwListManager);
         wwe.getEditor().focus();
     });
 

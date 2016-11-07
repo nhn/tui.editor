@@ -28,8 +28,8 @@ class WwPasteContentHelper {
      */
     preparePaste(pasteData) {
         const range = this.wwe.getEditor().getSelection().cloneRange();
-        const codeblockManager = this.wwe.getManager('codeblock');
-        const tableManager = this.wwe.getManager('table');
+        const codeblockManager = this.wwe.componentManager.getManager('codeblock');
+        const tableManager = this.wwe.componentManager.getManager('table');
         let firstBlockIsTaken = false;
         let newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
         let nodeName, node, isPastingList;
@@ -145,7 +145,7 @@ class WwPasteContentHelper {
      * @param {DocumentFragment} nodes Pasting DocumentFragment
      */
     _preElementAid(nodes) {
-        const codeblockManager = this.wwe.getManager('codeblock');
+        const codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
         codeblockManager.splitCodeblockToEachLine(nodes);
     }
@@ -398,7 +398,7 @@ class WwPasteContentHelper {
      * @private
      */
     _completeTableIfNeed(fragment) {
-        const tableManager = this.wwe.getManager('table');
+        const tableManager = this.wwe.componentManager.getManager('table');
         const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
 
         if (wrapperTr) {
@@ -424,7 +424,7 @@ class WwPasteContentHelper {
      * @private
      */
     _updateTableIDClassName(fragment) {
-        const tableManager = this.wwe.getManager('table');
+        const tableManager = this.wwe.componentManager.getManager('table');
 
         $(fragment).find('table').each((index, table) => {
             $(table).removeClass((idx, className) =>

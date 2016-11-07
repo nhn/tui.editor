@@ -23,7 +23,7 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     exec(wwe) {
         const sq = wwe.getEditor();
         let range = sq.getSelection();
-        const listManager = wwe.getManager('list');
+        const listManager = wwe.componentManager.getManager('list');
         const start = range.startContainer;
         const startOffset = range.startOffset;
         const end = range.endContainer;

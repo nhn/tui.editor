@@ -126,13 +126,11 @@ class ToastUIEditor {
 
         this.setUI(this.options.UI || new DefaultUI(this));
 
-        this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
+        this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
         this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
         this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
 
         this.changePreviewStyle(this.options.previewStyle);
-
-        this.mdEditor.init();
 
         this.changeMode(self.options.initialEditType, true);
 

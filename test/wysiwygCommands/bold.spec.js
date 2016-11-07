@@ -15,7 +15,7 @@ describe('Bold', () => {
 
         wwe.init();
 
-        wwe.addManager(WwTableSelectionManager);
+        wwe.componentManager.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

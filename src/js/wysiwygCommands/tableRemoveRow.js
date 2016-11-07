@@ -25,8 +25,8 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
         const $table = $(range.startContainer).parents('table');
-        const selectionMgr = wwe.getManager('tableSelection');
-        const tableMgr = wwe.getManager('table');
+        const selectionMgr = wwe.componentManager.getManager('tableSelection');
+        const tableMgr = wwe.componentManager.getManager('table');
         const $tr = getTrs(range, selectionMgr, $table);
         const tbodyRowLength = $table.find('tbody tr').length;
 

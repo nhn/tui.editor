@@ -25,7 +25,7 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     exec(wwe) {
         const sq = wwe.getEditor();
         const range = sq.getSelection();
-        const tableSelectionManager = wwe.getManager('tableSelection');
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
         sq.focus();
 

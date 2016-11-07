@@ -1,6 +1,7 @@
 import task from '../../src/js/markdownCommands/task';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
+import mdListManager from '../../src/js/mdListManager';
 
 describe('task', () => {
     let cm, doc, mde;
@@ -11,6 +12,7 @@ describe('task', () => {
         $('body').append($container);
 
         mde = new MarkdownEditor($container, new EventManager());
+        mde.componentManager.addManager(mdListManager);
 
         mde.init();
 

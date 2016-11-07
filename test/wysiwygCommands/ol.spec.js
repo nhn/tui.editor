@@ -17,8 +17,8 @@ describe('OL', () => {
         wwe.init();
 
         sq = wwe.getEditor();
-        wwe.addManager('task', WwTaskManager);
-        wwe.addManager('list', WwListManager);
+        wwe.componentManager.addManager('task', WwTaskManager);
+        wwe.componentManager.addManager('list', WwListManager);
         sq.focus();
     });
 

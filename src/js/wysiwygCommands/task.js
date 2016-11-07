@@ -23,7 +23,7 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     exec(wwe) {
         const sq = wwe.getEditor();
         let range = sq.getSelection();
-        const taskManager = wwe.getManager('task');
+        const taskManager = wwe.componentManager.getManager('task');
         const start = range.startContainer;
         const startOffset = range.startOffset;
         const end = range.endContainer;
@@ -54,7 +54,7 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     _changeFormatToTaskIfNeed(wwe, target) {
         const sq = wwe.getEditor();
         const range = sq.getSelection();
-        const taskManager = wwe.getManager('task');
+        const taskManager = wwe.componentManager.getManager('task');
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             range.setStart(target, 0);

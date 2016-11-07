@@ -124,7 +124,7 @@ class WwTableSelectionManager {
                 if (isTextSelect) {
                     this.removeClassAttrbuteFromAllCellsIfNeed();
                 } else {
-                    this.wwe.getManager('table').resetLastCellNode();
+                    this.wwe.componentManager.getManager('table').resetLastCellNode();
 
                     range = this.wwe.getEditor().getSelection();
                     range.collapse(true);
@@ -366,7 +366,7 @@ class WwTableSelectionManager {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
         const selectedCells = this.getSelectedCells();
-        const tableManager = this.wwe.getManager('table');
+        const tableManager = this.wwe.componentManager.getManager('table');
 
         if (selectedCells.length && tableManager.isInTable(range)) {
             range.setStart(selectedCells.first()[0], 0);

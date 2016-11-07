@@ -18,8 +18,8 @@ describe('WwPasteContentHelper', () => {
 
         wwe.getEditor().focus();
 
-        wwe.addManager(WwCodeBlockManager);
-        wwe.addManager(WwTableManager);
+        wwe.componentManager.addManager(WwCodeBlockManager);
+        wwe.componentManager.addManager(WwTableManager);
 
         pch = new WwPasteContentHelper(wwe);
 

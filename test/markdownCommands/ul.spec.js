@@ -1,6 +1,7 @@
 import UL from '../../src/js/markdownCommands/ul';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
+import mdListManager from '../../src/js/mdListManager';
 
 describe('UL', () => {
     let cm, doc, mde;
@@ -13,6 +14,7 @@ describe('UL', () => {
         mde = new MarkdownEditor($container, new EventManager());
 
         mde.init();
+        mde.componentManager.addManager(mdListManager);
 
         cm = mde.getEditor();
 

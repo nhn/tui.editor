@@ -6,7 +6,8 @@
 
 import KeyMapper from './keyMapper';
 import MdTextObject from './mdTextObject';
-import mdListManager from './mdListManager';
+import MdListManager from './mdListManager';
+import ComponentManager from './componentManager';
 
 const CodeMirror = window.CodeMirror;
 const keyMapper = KeyMapper.getSharedInstance();
@@ -21,6 +22,7 @@ const keyMapper = KeyMapper.getSharedInstance();
  */
 class MarkdownEditor {
     constructor($el, eventManager) {
+        this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
         this.$editorContainerEl = $el;
 
@@ -29,20 +31,13 @@ class MarkdownEditor {
          * @type {object}
          */
         this._latestState = null;
-
-        /**
-         * manager list
-         * @type {Array}
-         * @private
-         */
-        this._managers = {};
     }
 
     /**
      * init
      * @api
      * @memberOf WysiwygEditor
-     * @param {string} initialValue Editor's initial content
+     * @param {string} [initialValue] Editor's initial content
      */
     init(initialValue) {
         const cmTextarea = $('<textarea />');
@@ -69,8 +64,6 @@ class MarkdownEditor {
             },
             indentUnit: 4
         });
-
-        this.addManager('list', mdListManager);
 
         this._initEvent();
     }
@@ -313,36 +306,6 @@ class MarkdownEditor {
     }
 
     /**
-     * addManager
-     * Add manager
-     * @api
-     * @memberOf MarkdownEditor
-     * @param {string} name Manager name
-     * @param {function} Manager Constructor
-     */
-    addManager(name, Manager) {
-        if (!Manager) {
-            Manager = name;
-            name = null;
-        }
-
-        const instance = new Manager(this);
-        this._managers[name || instance.name] = instance;
-    }
-
-    /**
-     * getManager
-     * Get manager by manager name
-     * @api
-     * @memberOf MarkdownEditor
-     * @param {string} name Manager name
-     * @returns {object} manager
-     */
-    getManager(name) {
-        return this._managers[name];
-    }
-
-    /**
      * Emit changeEvent
      * @memberOf MarkdownEditor
      * @param {event} e Event object
@@ -530,6 +493,24 @@ class MarkdownEditor {
         });
 
         return result;
+    }
+
+    /**
+     * MarkdownEditor factory method
+     * @api
+     * @memberOf MarkdownEditor
+     * @param {jQuery} $el Container element for editor
+     * @param {EventManager} eventManager EventManager instance
+     * @returns {MarkdownEditor} MarkdownEditor
+     */
+    static factory($el, eventManager) {
+        const mde = new MarkdownEditor($el, eventManager);
+
+        mde.init();
+
+        mde.componentManager.addManager(MdListManager);
+
+        return mde;
     }
 }
 

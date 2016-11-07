@@ -19,7 +19,7 @@ describe('WwTableSelectionManager', () => {
 
         mgr = new WwTableSelectionManager(wwe);
         wwe.focus();
-        wwe.addManager(WwTableManager);
+        wwe.componentManager.addManager(WwTableManager);
     });
 
     //we need to wait squire input event process
