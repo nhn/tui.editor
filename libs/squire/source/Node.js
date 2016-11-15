@@ -22,25 +22,48 @@ function every ( nodeList, fn ) {
 
 // ---
 
+var UNKNOWN = 0;
+var INLINE = 1;
+var BLOCK = 2;
+var CONTAINER = 3;
+
+var nodeCategoryCache = canWeakMap ? new WeakMap() : null;
+
 function isLeaf ( node ) {
-    return node.nodeType === ELEMENT_NODE &&
-        !!leafNodeNames[ node.nodeName ];
+    return node.nodeType === ELEMENT_NODE && !!leafNodeNames[ node.nodeName ];
 }
-function isInline ( node ) {
-    return inlineNodeNames.test( node.nodeName ) &&
+function getNodeCategory ( node ) {
+    if ( canWeakMap && nodeCategoryCache.has( node ) ) {
+        return nodeCategoryCache.get( node );
+    }
+    var type = node.nodeType;
+    var nodeCategory;
+    if ( type === TEXT_NODE ) {
+        nodeCategory = INLINE;
+    } else if ( type !== ELEMENT_NODE && type !== DOCUMENT_FRAGMENT_NODE ) {
+        nodeCategory = UNKNOWN;
+    } else if ( !every( node.childNodes, isInline ) ) {
         // Malformed HTML can have block tags inside inline tags. Need to treat
         // these as containers rather than inline. See #239.
-        ( node.nodeType === TEXT_NODE || every( node.childNodes, isInline ) );
+        nodeCategory = CONTAINER;
+    } else if ( inlineNodeNames.test( node.nodeName ) ) {
+        nodeCategory = INLINE;
+    } else {
+        nodeCategory = BLOCK;
+    }
+    if ( canWeakMap ) {
+        nodeCategoryCache.set( node, nodeCategory );
+    }
+    return nodeCategory;
+}
+function isInline ( node ) {
+    return getNodeCategory( node ) === INLINE;
 }
 function isBlock ( node ) {
-    var type = node.nodeType;
-    return ( type === ELEMENT_NODE || type === DOCUMENT_FRAGMENT_NODE ) &&
-        !isInline( node ) && every( node.childNodes, isInline );
+    return getNodeCategory( node ) === BLOCK;
 }
 function isContainer ( node ) {
-    var type = node.nodeType;
-    return ( type === ELEMENT_NODE || type === DOCUMENT_FRAGMENT_NODE ) &&
-        !isInline( node ) && !isBlock( node );
+    return getNodeCategory( node ) === CONTAINER;
 }
 
 function getBlockWalker ( node, root ) {
