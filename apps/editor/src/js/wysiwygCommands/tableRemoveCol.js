@@ -24,7 +24,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     exec(wwe) {
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const tableMgr = wwe.getManager('table');
+        const tableMgr = wwe.componentManager.getManager('table');
         const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
         sq.focus();

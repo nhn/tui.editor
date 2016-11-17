@@ -14,7 +14,7 @@ describe('Table', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager('table', tableManager);
+        wwe.componentManager.addManager('table', tableManager);
         wwe.getEditor().focus();
     });
 

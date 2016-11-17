@@ -118,7 +118,7 @@ class CommandManager {
 /**
  * Create command by given editor type and property object
  * @api
- * @memberOf CommandManager
+ * @memberOf ComponentManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: object}} props Property
  * @returns {*}

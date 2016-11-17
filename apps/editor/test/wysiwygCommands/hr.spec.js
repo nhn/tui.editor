@@ -16,7 +16,7 @@ describe('HR', () => {
         wwe.init();
 
         sq = wwe.getEditor();
-        wwe.addManager('task', WwTaskManager);
+        wwe.componentManager.addManager('task', WwTaskManager);
         sq.focus();
     });
 

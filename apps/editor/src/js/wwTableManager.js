@@ -61,7 +61,7 @@ class WwTableManager {
             this.wwe.defer(() => {
                 this._completeTableIfNeed();
             }, TABLE_COMPLETION_DELAY);
-            this.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+            this.wwe.componentManager.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
             this._insertDefaultBlockBetweenTable();
         });
 
@@ -93,7 +93,7 @@ class WwTableManager {
      * @private
      */
     _initKeyHandler() {
-        const selectionManager = this.wwe.getManager('tableSelection');
+        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
 
         this.wwe.addKeyEventHandler((ev, range, keymap) => {
             const isRangeInTable = this.isInTable(range);
@@ -1014,7 +1014,7 @@ class WwTableManager {
     _collapseRangeToEndContainer() {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+        const selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
 
         if (selectedCells.length && this.isInTable(range)) {
             this.wwe.defer(() => {
@@ -1063,7 +1063,7 @@ class WwTableManager {
     _bindKeyEventForTableCopyAndCut() {
         const isMac = /Mac OS X/.test(navigator.userAgent);
         const commandKey = isMac ? 'metaKey' : 'ctrlKey';
-        const selectionManager = this.wwe.getManager('tableSelection');
+        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
 
         this.wwe.getEditor().addEventListener('keydown', event => {
             if (event[commandKey]) {
@@ -1086,7 +1086,7 @@ class WwTableManager {
     _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
         const isTextInput = keymap.length <= 1;
         const isDeleteOperation = (keymap === 'BACK_SPACE' || keymap === 'DELETE');
-        const selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+        const selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const firstSelectedCell = selectedCells.first()[0];
 
         if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && selectedCells.length) {

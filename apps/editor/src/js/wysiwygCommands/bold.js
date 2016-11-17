@@ -24,7 +24,7 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
-        const tableSelectionManager = wwe.getManager('tableSelection');
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
         sq.focus();
 

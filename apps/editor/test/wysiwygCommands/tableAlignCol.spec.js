@@ -14,7 +14,7 @@ describe('Table - AlignCol', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager(WwTableSelectionManager);
+        wwe.componentManager.addManager(WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

@@ -3,6 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
+import domUtils from './domUtils';
 
 const TASK_CLASS_NAME = 'task-list-item';
 const TASK_ATTR_NAME = 'data-te-task';
@@ -166,6 +167,79 @@ class WwTaskManager {
         this.wwe.get$Body().find('.task-list').each((index, node) => {
             $(node).removeClass('task-list');
         });
+    }
+
+    /**
+     * Return lines in selection
+     * @param {Node} start Start element
+     * @param {Node} end End element
+     * @param {HTMLElement} body Editor body element
+     * @returns {Array.<HTMLElement>}
+     * @private
+     */
+    getLinesOfSelection(start, end) {
+        const divOrLi = 'DIV,LI';
+        const lines = [];
+        let isEndPassed = false;
+        let needNext = true;
+        let nextLine;
+
+        if (domUtils.isTextNode(start)) {
+            start = $(start).parents('div').first()[0];
+        }
+
+        if (domUtils.isTextNode(end)) {
+            end = $(end).parents('div').first()[0];
+        }
+
+
+        for (let line = start; needNext; line = nextLine) {
+            if ($(line).is(divOrLi)) {
+                lines.push(line);
+
+                if (line === end || line.parentNode === end) {
+                    isEndPassed = true;
+                }
+
+                const isStartInList = $(start).is('li') || ($(start).parent('li').length !== 0);
+                nextLine = this._getNextLine(line, isStartInList, isEndPassed);
+            } else {
+                break;
+            }
+
+            needNext = nextLine && !isEndPassed;
+        }
+
+        return lines;
+    }
+
+    /**
+     * Get next line element
+     * @param {HTMLElement} line Current line element
+     * @param {boolean} isStartInList Boolean value of start in list
+     * @param {boolean} isEndPassed Boolean value of end element passed
+     * @returns {HTMLElement|undefined}
+     * @private
+     */
+    _getNextLine(line, isStartInList, isEndPassed) {
+        let nextLine;
+        if (isStartInList && line.parentNode.tagName === 'LI') {
+            const $nextLI = $(line).parent().next();
+
+            nextLine = $nextLI.children('div').first()[0];
+
+            const hasNextLiHaveDivChild = $nextLI[0] && !nextLine;
+            const isLastLiInList = !$nextLI[0] && !nextLine;
+            if (hasNextLiHaveDivChild) {
+                nextLine = $nextLI[0];
+            } else if (isLastLiInList && !isEndPassed) {
+                nextLine = $(line).parents('ol,ul').first().next()[0];
+            }
+        } else {
+            nextLine = line.nextElementSibling;
+        }
+
+        return nextLine;
     }
 }
 

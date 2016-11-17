@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
 /**
@@ -19,24 +18,59 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     keyMap: ['CTRL+T', 'META+T'],
     /**
      *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
      */
     exec(wwe) {
         const sq = wwe.getEditor();
+        let range = sq.getSelection();
+        const taskManager = wwe.componentManager.getManager('task');
+        const start = range.startContainer;
+        const startOffset = range.startOffset;
+        const end = range.endContainer;
+        const endOffset = range.endOffset;
 
         sq.focus();
 
-        let range = sq.getSelection().cloneRange();
+        sq.saveUndoState(range);
 
-        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+        const lines = taskManager.getLinesOfSelection(start, end);
+
+        for (let i = 0; i < lines.length; i += 1) {
+            this._changeFormatToTaskIfNeed(wwe, lines[i]);
+        }
+
+        range = sq.getSelection();
+        range.setStart(start, startOffset);
+        range.setEnd(end, endOffset);
+        sq.setSelection(range);
+        sq.saveUndoState(range);
+    },
+    /**
+     * Change format to unordered list and return current li element if need
+     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+     * @param {HTMLElement} target Element target for change
+     * @private
+     */
+    _changeFormatToTaskIfNeed(wwe, target) {
+        const sq = wwe.getEditor();
+        const range = sq.getSelection();
+        const taskManager = wwe.componentManager.getManager('task');
+
+        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+            range.setStart(target, 0);
+            range.collapse(true);
+            sq.setSelection(range);
+
             if (!sq.hasFormat('li')) {
                 wwe.unwrapBlockTag();
                 sq.makeUnorderedList();
-                range = sq.getSelection().cloneRange();
             }
 
-            sq.saveUndoState(range);
-            wwe.getManager('task').formatTask(range.startContainer);
+            if ($(target).parents('li').first().hasClass('task-list-item')) {
+                taskManager.unformatTask(target);
+            } else {
+                taskManager.formatTask(target);
+            }
         }
     }
 });

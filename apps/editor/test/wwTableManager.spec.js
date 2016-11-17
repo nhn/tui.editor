@@ -18,7 +18,7 @@ describe('WwTableManager', () => {
         wwe.init();
 
         mgr = new WwTableManager(wwe);
-        wwe.addManager('tableSelection', WwTableSelectionManager);
+        wwe.componentManager.addManager('tableSelection', WwTableSelectionManager);
         wwe.focus();
     });
 

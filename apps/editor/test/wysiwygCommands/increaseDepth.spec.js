@@ -16,7 +16,7 @@ describe('IncreaseDepth', () => {
         wwe.init();
 
         sq = wwe.getEditor();
-        wwe.addManager(WwTaskManager);
+        wwe.componentManager.addManager(WwTaskManager);
         sq.focus();
 
         wwe.get$Body().html([
