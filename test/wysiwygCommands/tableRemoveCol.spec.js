@@ -14,7 +14,7 @@ describe('Table - RemoveCol', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager('table', WwTableManager);
+        wwe.componentManager.addManager('table', WwTableManager);
 
         wwe.getEditor().focus();
     });

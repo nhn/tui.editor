@@ -70,7 +70,7 @@ function focusToFirstCode($pre, wwe) {
  * @returns {string}
  */
 function getCodeBlockBody(range, wwe) {
-    const mgr = wwe.getManager('codeblock');
+    const mgr = wwe.componentManager.getManager('codeblock');
     let contents, nodes;
 
     if (range.collapsed) {

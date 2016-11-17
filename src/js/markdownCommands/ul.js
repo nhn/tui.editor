@@ -7,7 +7,8 @@
 import CommandManager from '../commandManager';
 
 const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
-const FIND_MD_UL_RX = /^[ \t]*\* .*/;
+const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 
 /**
  * UL
@@ -26,31 +27,45 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
         const cm = mde.getEditor();
         const doc = cm.getDoc();
         const range = mde.getCurrentRange();
+        const listManager = mde.componentManager.getManager('list');
+        const lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
+        const startLineNumber = lineRange.start;
+        const endLineNumber = lineRange.end;
+        let line, currentLineStart;
 
-        const from = {
-            line: range.from.line,
-            ch: 0
-        };
-
-        let line = doc.getLine(from.line);
-
-        let to;
-
-        if (line.match(FIND_MD_OL_RX)) {
-            line = line.replace(/[\d]+\. /, '* ');
-
-            to = {
-                line: from.line,
-                ch: line.length + 1
+        for (let i = startLineNumber; i <= endLineNumber; i += 1) {
+            currentLineStart = {
+                line: i,
+                ch: 0
             };
 
-            doc.replaceRange(line, from, to);
-        } else if (!line.match(FIND_MD_UL_RX)) {
-            doc.replaceRange('* ', from);
-        }
+            line = doc.getLine(i);
 
+            if (listManager.isListOrParagraph(line)) {
+                if (isOlOrTask(line)) {
+                    listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
+                } else if (!line.match(FIND_MD_UL_RX)) {
+                    doc.replaceRange('* ', currentLineStart);
+                }
+
+                if (i === endLineNumber) {
+                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+                }
+            } else {
+                break;
+            }
+        }
         cm.focus();
     }
 });
+
+/**
+ * Return whether passed line is OL or TASK or neither
+ * @param {string} line Line text
+ * @returns {boolean}
+ */
+function isOlOrTask(line) {
+    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
+}
 
 module.exports = UL;

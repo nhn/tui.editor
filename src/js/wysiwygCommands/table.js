@@ -25,7 +25,7 @@ const Table = CommandManager.command('wysiwyg', /** @lends Table */{
      */
     exec(wwe, col, row, data) {
         const sq = wwe.getEditor();
-        const tableIDClassName = wwe.getManager('table').getTableIDClassName();
+        const tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
         let tableHTMLString;
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {

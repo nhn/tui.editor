@@ -15,8 +15,8 @@ describe('Table - RemoveRow', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager('table', WwTableManager);
-        wwe.addManager('tableSelection', WwTableSelectionManager);
+        wwe.componentManager.addManager('table', WwTableManager);
+        wwe.componentManager.addManager('tableSelection', WwTableSelectionManager);
         wwe.getEditor().focus();
     });
 

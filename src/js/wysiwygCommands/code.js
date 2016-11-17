@@ -25,7 +25,7 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
     exec(wwe) {
         const sq = wwe.getEditor();
         let range = sq.getSelection();
-        const tableSelectionManager = wwe.getManager('tableSelection');
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
         sq.focus();
 

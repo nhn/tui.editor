@@ -16,6 +16,7 @@ import WwCodeBlockManager from './wwCodeBlockManager';
 import SquireExt from './squireExt';
 import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
+import ComponentManager from './componentManager';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -39,6 +40,7 @@ const canObserveMutations = (typeof MutationObserver !== 'undefined');
  */
 class WysiwygEditor {
     constructor($el, eventManager) {
+        this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
         this.$editorContainerEl = $el;
 
@@ -905,36 +907,6 @@ class WysiwygEditor {
     }
 
     /**
-     * addManager
-     * Add manager
-     * @api
-     * @memberOf WysiwygEditor
-     * @param {string} name Manager name
-     * @param {function} Manager Constructor
-     */
-    addManager(name, Manager) {
-        if (!Manager) {
-            Manager = name;
-            name = null;
-        }
-
-        const instance = new Manager(this);
-        this._managers[name || instance.name] = instance;
-    }
-
-    /**
-     * getManager
-     * Get manager by manager name
-     * @api
-     * @memberOf WysiwygEditor
-     * @param {string} name Manager name
-     * @returns {object} manager
-     */
-    getManager(name) {
-        return this._managers[name];
-    }
-
-    /**
      * Set cursor position to end
      * @api
      * @memberOf WysiwygEditor
@@ -1053,14 +1025,14 @@ class WysiwygEditor {
 
         wwe.init();
 
-        wwe.addManager(WwListManager);
-        wwe.addManager(WwTaskManager);
-        wwe.addManager(WwTableSelectionManager);
-        wwe.addManager(WwTableManager);
-        wwe.addManager(WwHrManager);
-        wwe.addManager(WwPManager);
-        wwe.addManager(WwHeadingManager);
-        wwe.addManager(WwCodeBlockManager);
+        wwe.componentManager.addManager(WwListManager);
+        wwe.componentManager.addManager(WwTaskManager);
+        wwe.componentManager.addManager(WwTableSelectionManager);
+        wwe.componentManager.addManager(WwTableManager);
+        wwe.componentManager.addManager(WwHrManager);
+        wwe.componentManager.addManager(WwPManager);
+        wwe.componentManager.addManager(WwHeadingManager);
+        wwe.componentManager.addManager(WwCodeBlockManager);
 
         return wwe;
     }

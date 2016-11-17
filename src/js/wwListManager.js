@@ -3,6 +3,7 @@
  * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
  */
 
+import domUtils from './domUtils';
 
 const FIND_LI_ELEMENT = /<li/i;
 
@@ -193,6 +194,45 @@ class WwListManager {
 
     _prepareInsertBlankToBetweenSameList(html) {
         return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
+    }
+
+    /**
+     * Return lines in selection
+     * @param {Node} start Start element
+     * @param {Node} end End element
+     * @param {HTMLElement} body Editor body element
+     * @returns {Array.<HTMLElement>}
+     * @private
+     */
+    getLinesOfSelection(start, end) {
+        const lines = [];
+        let isEndPassed = false;
+        let needNext = true;
+        let nextLine;
+
+        if (domUtils.isTextNode(start)) {
+            start = $(start).parents('div').first()[0];
+        }
+
+        if (domUtils.isTextNode(end)) {
+            end = $(end).parents('div').first()[0];
+        }
+
+        for (let line = start; needNext; line = nextLine) {
+            if ($(line).is('DIV')) {
+                lines.push(line);
+
+                if (line === end) {
+                    isEndPassed = true;
+                }
+                nextLine = line.nextElementSibling;
+            } else {
+                break;
+            }
+            needNext = nextLine && !isEndPassed;
+        }
+
+        return lines;
     }
 }
 

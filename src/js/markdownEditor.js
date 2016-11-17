@@ -6,6 +6,8 @@
 
 import KeyMapper from './keyMapper';
 import MdTextObject from './mdTextObject';
+import MdListManager from './mdListManager';
+import ComponentManager from './componentManager';
 
 const CodeMirror = window.CodeMirror;
 const keyMapper = KeyMapper.getSharedInstance();
@@ -20,6 +22,7 @@ const keyMapper = KeyMapper.getSharedInstance();
  */
 class MarkdownEditor {
     constructor($el, eventManager) {
+        this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
         this.$editorContainerEl = $el;
 
@@ -34,7 +37,7 @@ class MarkdownEditor {
      * init
      * @api
      * @memberOf WysiwygEditor
-     * @param {string} initialValue Editor's initial content
+     * @param {string} [initialValue] Editor's initial content
      */
     init(initialValue) {
         const cmTextarea = $('<textarea />');
@@ -490,6 +493,24 @@ class MarkdownEditor {
         });
 
         return result;
+    }
+
+    /**
+     * MarkdownEditor factory method
+     * @api
+     * @memberOf MarkdownEditor
+     * @param {jQuery} $el Container element for editor
+     * @param {EventManager} eventManager EventManager instance
+     * @returns {MarkdownEditor} MarkdownEditor
+     */
+    static factory($el, eventManager) {
+        const mde = new MarkdownEditor($el, eventManager);
+
+        mde.init();
+
+        mde.componentManager.addManager(MdListManager);
+
+        return mde;
     }
 }
 
