@@ -18,7 +18,6 @@ let sharedInstance;
 class CodeBlockManager {
     constructor() {
         this._elementReplacer = new util.Map();
-        //this._codeTextCreator = new util.Map();
     }
 
     /**
@@ -136,31 +135,6 @@ class CodeBlockManager {
             }
         });
     }
-
-    //setCodeTextCreator(type, creator) {
-    //    this._codeTextCreator.set(type, creator);
-    //}
-    //
-    //_restoreElement(codeBlockElement) {
-    //    const $codeBlock = $(codeBlockElement);
-    //    const type = $codeBlock.data('language');
-    //    const createCodeText = this._codeTextCreator.get(type);
-    //    let codeText = decodeURIComponent($codeBlock.data('code-text'));
-    //
-    //    codeText = createCodeText ? createCodeText({
-    //        codeBlockElement,
-    //        type,
-    //        codeText
-    //    }) : codeText;
-    //
-    //    const $pre = $('<pre data-language="' + type + '" class="lang-' + type + '"></pre>');
-    //
-    //    if (codeText) {
-    //        $pre.html('<div>' + escape(codeText, false).replace(/\n/g, '<br>') + '</div>');
-    //    }
-    //
-    //    $codeBlock.replaceWith($pre);
-    //}
 
     /**
      * Restore code block element to markdown-it style.
