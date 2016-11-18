@@ -11,6 +11,7 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import ImportManager from './importManager';
+import codeBlockManager from './codeBlockManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
 import DefaultUI from './ui/defaultUI';
@@ -101,6 +102,9 @@ class ToastUIEditor {
         this.importManager = new ImportManager(this.eventManager);
 
         this.commandManager = new CommandManager(this);
+
+        this.codeBlockManager = codeBlockManager;
+
         this.convertor = new Convertor(this.eventManager);
 
         if (this.options.useDefaultHTMLSanitizer) {

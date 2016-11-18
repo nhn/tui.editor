@@ -4,7 +4,8 @@
  */
 
 
-const LazyRunner = require('./lazyRunner');
+import LazyRunner from './lazyRunner';
+import codeBlockManager from './codeBlockManager';
 
 /**
  * Preview
@@ -13,13 +14,14 @@ const LazyRunner = require('./lazyRunner');
  * @constructor
  * @param {jQuery} $el Container element for preview
  * @param {EventManager} eventManager Event manager instance
- * @param {Convertor} converter Convertor instance
+ * @param {Convertor} convertor Convertor instance
  **/
 class Preview {
-    constructor($el, eventManager, converter) {
+    constructor($el, eventManager, convertor, isViewOnly) {
         this.eventManager = eventManager;
-        this.converter = converter;
+        this.convertor = convertor;
         this.$el = $el;
+        this.isViewOnly = !!isViewOnly;
 
         this._initContentSection();
 
@@ -97,6 +99,8 @@ class Preview {
 
         this.$previewContent.empty();
         this.$previewContent.html(finalHtml);
+
+        codeBlockManager.replaceElements(this.$previewContent);
 
         this.eventManager.emit('previewRenderAfter', this);
     }

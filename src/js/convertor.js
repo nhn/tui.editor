@@ -10,10 +10,10 @@ import code from './markdownItPlugins/markdownitCodeRenderer';
 import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
+import codeBlockManager from './codeBlockManager';
 
 const markdownIt = window.markdownit,
-    toMark = window.toMark,
-    hljs = window.hljs;
+    toMark = window.toMark;
 
 const markdownitHighlight = markdownIt({
     html: true,
@@ -21,7 +21,7 @@ const markdownitHighlight = markdownIt({
     quotes: '“”‘’',
     langPrefix: 'lang-',
     highlight(codeText, type) {
-        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+        return codeBlockManager.createCodeBlockHtml(type, codeText);
     }
 });
 const markdownit = markdownIt({
@@ -224,14 +224,4 @@ class Convertor {
     }
 }
 
-/**
- * escape code from markdown-it
- * @param {string} html HTML string
- * @param {string} encode Boolean value of whether encode or not
- * @returns {string}
- */
-function escape(html, encode) {
-    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
 module.exports = Convertor;

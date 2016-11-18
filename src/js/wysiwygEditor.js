@@ -17,6 +17,7 @@ import SquireExt from './squireExt';
 import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
+import codeBlockManager from './codeBlockManager';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -674,6 +675,8 @@ class WysiwygEditor {
 
         this.editor.setHTML(html);
 
+        codeBlockManager.replaceElements(this.$editorContainerEl, false, true);
+
         this.eventManager.emit('wysiwygSetValueAfter', this);
         this.eventManager.emit('contentChangedFromWysiwyg', this);
 
@@ -693,6 +696,8 @@ class WysiwygEditor {
      * @returns {string} html
      */
     getValue() {
+        codeBlockManager.restoreElements(this.$editorContainerEl, false, true);
+
         this._prepareGetHTML();
 
         let html = this.editor.getHTML();
