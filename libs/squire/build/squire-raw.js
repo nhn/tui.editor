@@ -213,16 +213,21 @@ function isLeaf ( node ) {
     return node.nodeType === ELEMENT_NODE && !!leafNodeNames[ node.nodeName ];
 }
 function getNodeCategory ( node ) {
-    if ( canWeakMap && nodeCategoryCache.has( node ) ) {
-        return nodeCategoryCache.get( node );
+    switch ( node.nodeType ) {
+    case TEXT_NODE:
+        return INLINE;
+    case ELEMENT_NODE:
+    case DOCUMENT_FRAGMENT_NODE:
+        if ( canWeakMap && nodeCategoryCache.has( node ) ) {
+            return nodeCategoryCache.get( node );
+        }
+        break;
+    default:
+        return UNKNOWN;
     }
-    var type = node.nodeType;
+
     var nodeCategory;
-    if ( type === TEXT_NODE ) {
-        nodeCategory = INLINE;
-    } else if ( type !== ELEMENT_NODE && type !== DOCUMENT_FRAGMENT_NODE ) {
-        nodeCategory = UNKNOWN;
-    } else if ( !every( node.childNodes, isInline ) ) {
+    if ( !every( node.childNodes, isInline ) ) {
         // Malformed HTML can have block tags inside inline tags. Need to treat
         // these as containers rather than inline. See #239.
         nodeCategory = CONTAINER;
