@@ -2263,7 +2263,7 @@ var onPaste = function ( event ) {
                 });
             }
         } else if ( plainItem ) {
-            item.getAsString( function ( text ) {
+            plainItem.getAsString( function ( text ) {
                 self.insertPlainText( text, true );
             });
         }
