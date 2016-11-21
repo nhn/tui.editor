@@ -33,12 +33,12 @@ describe('CodeBlockManager', () => {
 
             const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');
             const expected = '<pre class="tui-editor-custom-code-block" data-language="tui.grid"' +
-                ' data-code-text="var%20a%20%3D%201%3B">tui.grid</pre>'
+                ' data-code-text="var%20a%20%3D%201%3B">tui.grid</pre>';
 
             expect(actual).toBe(expected);
         });
 
-        it('Create code block html for highlight.js type with no registered replacer.', () => {
+        it('Create code block html for highlight.js type without replacer.', () => {
             const type = 'javascript';
             const actual = codeBlockManager.createCodeBlockHtml(type, 'var a = 1;');
             const expected = '<span class="hljs-keyword">var</span> a = <span class="hljs-number">1</span>;';

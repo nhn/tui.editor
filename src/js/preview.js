@@ -15,6 +15,7 @@ import codeBlockManager from './codeBlockManager';
  * @param {jQuery} $el Container element for preview
  * @param {EventManager} eventManager Event manager instance
  * @param {Convertor} convertor Convertor instance
+ * @param {boolean} isViewOnly - whether viewOnly mode or not
  **/
 class Preview {
     constructor($el, eventManager, convertor, isViewOnly) {
@@ -80,7 +81,7 @@ class Preview {
      * @param {string} markdown Markdown text
      */
     refresh(markdown) {
-        this.render(this.converter.toHTMLWithCodeHightlight(markdown));
+        this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
     }
 
     /**
@@ -100,7 +101,7 @@ class Preview {
         this.$previewContent.empty();
         this.$previewContent.html(finalHtml);
 
-        codeBlockManager.replaceElements(this.$previewContent);
+        codeBlockManager.replaceElements(this.$previewContent, this.isViewOnly);
 
         this.eventManager.emit('previewRenderAfter', this);
     }

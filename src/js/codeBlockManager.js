@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements CodeBlockManager
- * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
+ * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 const util = tui.util;
@@ -37,11 +37,12 @@ class CodeBlockManager {
      */
     createCodeBlockHtml(type, codeText) {
         const replacer = this._elementReplacer.get(type);
+        const className = CUSTOM_CODE_BLOCK_CLASS_NAME;
         let html;
 
         if (replacer) {
             codeText = encodeURIComponent(codeText).replace(/(%0A)+$/, '');
-            html = '<pre class="' + CUSTOM_CODE_BLOCK_CLASS_NAME+ '" data-language="' + type + '" data-code-text="' + codeText + '">' + type + '</pre>';
+            html = `<pre class="${className}" data-language="${type}" data-code-text="${codeText}">${type}</pre>`;
         } else {
             html = hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
         }
@@ -83,9 +84,7 @@ class CodeBlockManager {
         const type = $codeBlock.data('language');
         const beforeParentNode = codeBlockElement.parentNode;
         const codeText = $codeBlock.data('code-text');
-        let $newCodeBlock;
-
-        $newCodeBlock = $(replace({
+        const $newCodeBlock = $(replace({
             id,
             containerElement,
             codeBlockElement,
@@ -117,18 +116,18 @@ class CodeBlockManager {
      * @param {boolean} isWysiwygMode - whether wysiwyg mode or not
      */
     replaceElements($container, isViewOnly, isWysiwygMode) {
-        const $codeBlocks = $container.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+        const $codeBlocks = $container.find(`.${CUSTOM_CODE_BLOCK_CLASS_NAME}`);
         const containerElement = $container[0];
         const viewMode = this._getViewMode(isViewOnly, isWysiwygMode);
         const replaceElement = $.proxy(this._replaceElement, this);
-        const timestamp = (new Date).getTime();
+        const timestamp = (new Date()).getTime();
 
         $codeBlocks.each((index, codeBlockElement) => {
-            const id = CUSTOM_CODE_BLOCK_CLASS_NAME + '-' + timestamp + '-' + index;
+            const id = `${CUSTOM_CODE_BLOCK_CLASS_NAME}-${timestamp}-${index}`;
             const replacer = this._elementReplacer.get($(codeBlockElement).data('language'));
             const replace = replacer ? replacer[viewMode] : null;
 
-            if (!replace) {
+            if (replace) {
                 replaceElement(containerElement, codeBlockElement, replace, id);
             } else {
                 codeBlockElement.id = id;
@@ -144,11 +143,11 @@ class CodeBlockManager {
     _restoreElement(codeBlockElement) {
         const $codeBlock = $(codeBlockElement);
         const type = $codeBlock.data('language');
-        let codeText = decodeURIComponent($codeBlock.data('code-text'));
-        const $pre = $('<pre data-language="' + type + '" class="lang-' + type + '"></pre>');
+        const codeText = decodeURIComponent($codeBlock.data('code-text'));
+        const $pre = $(`<pre data-language="${type}" class="lang-${type}"></pre>`);
 
         if (codeText) {
-            $pre.html('<div>' + escape(codeText, false).replace(/\n/g, '<br>') + '</div>');
+            $pre.html(`<div>${escape(codeText, false).replace(/\n/g, '<br>')}</div>`);
         }
 
         $codeBlock.replaceWith($pre);
@@ -160,7 +159,7 @@ class CodeBlockManager {
      * @private
      */
     restoreElements($wweContainer) {
-        const $codeBlocks = $wweContainer.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+        const $codeBlocks = $wweContainer.find(`.${CUSTOM_CODE_BLOCK_CLASS_NAME}`);
         const restoreElement = $.proxy(this._restoreElement, this);
 
         $codeBlocks.each((index, codeBlockElement) => {
@@ -175,11 +174,15 @@ class CodeBlockManager {
      * @param {string} codeText - code text for updating
      */
     updateCodeTextById(containerElement, id, codeText) {
-        const $codeBlock = $(containerElement).find('#' + id);
+        const $codeBlock = $(containerElement).find(`#${id}`);
 
         $codeBlock.data('code-text', encodeURIComponent(codeText));
     }
 
+    /**
+     * Get shared instance to CodeBlockManager.
+     * @returns {CodeBlockManager}
+     */
     static getSharedInstance() {
         if (!sharedInstance) {
             sharedInstance = new CodeBlockManager();
