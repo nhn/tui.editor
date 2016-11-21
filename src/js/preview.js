@@ -4,7 +4,8 @@
  */
 
 
-const LazyRunner = require('./lazyRunner');
+import LazyRunner from './lazyRunner';
+import codeBlockManager from './codeBlockManager';
 
 /**
  * Preview
@@ -13,13 +14,15 @@ const LazyRunner = require('./lazyRunner');
  * @constructor
  * @param {jQuery} $el Container element for preview
  * @param {EventManager} eventManager Event manager instance
- * @param {Convertor} converter Convertor instance
+ * @param {Convertor} convertor Convertor instance
+ * @param {boolean} isViewOnly - whether viewOnly mode or not
  **/
 class Preview {
-    constructor($el, eventManager, converter) {
+    constructor($el, eventManager, convertor, isViewOnly) {
         this.eventManager = eventManager;
-        this.converter = converter;
+        this.convertor = convertor;
         this.$el = $el;
+        this.isViewOnly = !!isViewOnly;
 
         this._initContentSection();
 
@@ -78,7 +81,7 @@ class Preview {
      * @param {string} markdown Markdown text
      */
     refresh(markdown) {
-        this.render(this.converter.toHTMLWithCodeHightlight(markdown));
+        this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
     }
 
     /**
@@ -97,6 +100,8 @@ class Preview {
 
         this.$previewContent.empty();
         this.$previewContent.html(finalHtml);
+
+        codeBlockManager.replaceElements(this.$previewContent, this.isViewOnly);
 
         this.eventManager.emit('previewRenderAfter', this);
     }

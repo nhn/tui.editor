@@ -9,6 +9,7 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
+import codeBlockManager from './codeBlockManager';
 
 const util = tui.util;
 
@@ -36,9 +37,9 @@ class ToastUIEditorViewOnly {
         this.options = options;
 
         this.eventManager = new EventManager();
-
         this.commandManager = new CommandManager(this);
         this.convertor = new Convertor(this.eventManager);
+        this.codeBlockManager = codeBlockManager;
 
         if (this.options.hooks) {
             util.forEach(this.options.hooks, (fn, key) => {
@@ -52,7 +53,7 @@ class ToastUIEditorViewOnly {
             });
         }
 
-        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor);
+        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor, true);
 
         this.preview.$el.on('mousedown', ev => {
             const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
