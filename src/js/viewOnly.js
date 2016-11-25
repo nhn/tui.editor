@@ -66,7 +66,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Toggle task by detecting mousedown event.
-     * @param ev
+     * @param {MouseEvent} ev - event
      * @private
      */
     _toggleTask(ev) {
