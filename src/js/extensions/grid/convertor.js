@@ -5,6 +5,8 @@
 
 import parser from './parser';
 
+const util = tui.util;
+
 const COLUMN_NAME_PREFIX = 'grid-column-';
 const DEFAULT_OPTION = {
     displayRowCount: 5,
@@ -33,7 +35,7 @@ const convertor = {
             type: isEdit ? 'text' : 'normal'
         };
 
-        return header.map((headerItem, index) => Object.assign(headerItem || {}, {
+        return header.map((headerItem, index) => util.extend({}, headerItem, {
             editOption,
             columnName: COLUMN_NAME_PREFIX + index
         }));
@@ -69,7 +71,7 @@ const convertor = {
         const parsedData = parser.parseCodeText(codeText);
         const columnModelList = this._createColumnModelList(parsedData.data.header, isEdit);
         const rowList = this._createRowList(parsedData.data.body);
-        const options = Object.assign(DEFAULT_OPTION, parsedData.options);
+        const options = util.extend(DEFAULT_OPTION, parsedData.options);
 
         return {
             options,
