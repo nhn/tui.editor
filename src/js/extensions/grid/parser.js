@@ -24,7 +24,7 @@ const parser = {
      * @private
      */
     _pickDataString(codeText) {
-        const result = /@startdata([^]*)@enddata/i.exec(codeText);
+        const result = /@startdata((.|\n)*)@enddata/i.exec(codeText);
 
         return result && result[1].replace(FIND_FRONT_SPACE_RX, '').trim();
     },
@@ -169,7 +169,7 @@ const parser = {
      * @private
      */
     _pickOptionString(codeText) {
-        const result = /@startoption([^]*)@endoption/i.exec(codeText);
+        const result = /@startoption((.|\n)*)@endoption/i.exec(codeText);
 
         return result && result[1].replace(FIND_FRONT_SPACE_RX, '').trim();
     },
