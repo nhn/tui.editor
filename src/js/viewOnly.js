@@ -55,22 +55,30 @@ class ToastUIEditorViewOnly {
 
         this.preview = new Preview($(this.options.el), this.eventManager, this.convertor, true);
 
-        this.preview.$el.on('mousedown', ev => {
-            const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-                this.eventManager.emit('change', {
-                    source: 'viewOnly',
-                    data: ev
-                });
-            }
-        });
+        this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
         extManager.applyExtension(this, this.options.exts);
 
         this.setValue(this.options.initialValue);
 
         this.eventManager.emit('load', this);
+    }
+
+    /**
+     * Toggle task by detecting mousedown event.
+     * @param ev
+     * @private
+     */
+    _toggleTask(ev) {
+        const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+
+        if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+            this.eventManager.emit('change', {
+                source: 'viewOnly',
+                data: ev
+            });
+        }
     }
 
     /**
@@ -114,6 +122,7 @@ class ToastUIEditorViewOnly {
      */
     remove() {
         this.eventManager.emit('removeEditor');
+        this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
         this.options = null;
         this.eventManager = null;
         this.commandManager = null;
