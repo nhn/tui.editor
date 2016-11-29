@@ -132,7 +132,7 @@ class ToastUIEditor {
 
         this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
         this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, this.convertor);
+        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
 
         this.changePreviewStyle(this.options.previewStyle);
 

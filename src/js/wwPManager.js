@@ -49,20 +49,21 @@ class WwPManager {
      */
     _splitPtagContentLines(html) {
         if (html) {
-            const $wrapper = $('<div>');
+            const $wrapper = $('<div />');
 
             $wrapper.html(html);
             $wrapper.find('p').each((pIndex, para) => {
                 const content = para.innerHTML;
                 const lines = content.split(/<br>/gi);
-                const linesLenIndex = lines.length - 1;
-                const nextPara = para.nextElementSibling || para.nextSibling;
+                const lastIndex = lines.length - 1;
+                // cross browsing: old browser not has nextElementSibling attribute
+                const nextElement = para.nextElementSibling || para.nextSibling;
                 let splitedContent = '';
 
                 splitedContent = lines.map((line, index) => {
                     let result = '';
 
-                    if (index > 0 && index < linesLenIndex) {
+                    if (index > 0 && index < lastIndex) {
                         line = line ? line : '<br>';
                     }
 
@@ -74,7 +75,7 @@ class WwPManager {
                 });
 
                 // For paragraph, we add empty line
-                if (nextPara && nextPara.nodeName === 'P') {
+                if (nextElement && nextElement.nodeName === 'P') {
                     splitedContent.push('<div><br></div>');
                 }
 
