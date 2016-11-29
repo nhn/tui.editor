@@ -48,30 +48,40 @@ class WwPManager {
      * @returns {string} result
      */
     _splitPtagContentLines(html) {
-        html = html.replace(/<p>([\s\S]*?)<\/p>/gi, (whole, content) => {
-            const lines = content.split(/<br>/gi);
-            const linesLenIndex = lines.length - 1;
-            let splitedContent = '';
+        if (html) {
+            const $first = $('<div>');
 
-            splitedContent = lines.map((line, index) => {
-                let result = '';
+            $first.html(html);
+            $first.find('p').each((pIndex, para) => {
+                const content = para.innerHTML;
+                const lines = content.split(/<br>/gi);
+                const linesLenIndex = lines.length - 1;
+                const nextPara = para.nextElementSibling || para.nextSibling;
+                let splitedContent = '';
 
-                if (index > 0 && index < linesLenIndex) {
-                    line = line ? line : '<br>';
+                splitedContent = lines.map((line, index) => {
+                    let result = '';
+
+                    if (index > 0 && index < linesLenIndex) {
+                        line = line ? line : '<br>';
+                    }
+
+                    if (line) {
+                        result = `<div>${line}</div>`;
+                    }
+
+                    return result;
+                });
+
+                // For paragraph, we add empty line
+                if (nextPara && nextPara.nodeName === 'P') {
+                    splitedContent.push('<div><br></div>');
                 }
 
-                if (line) {
-                    result = `<div>${line}</div>`;
-                }
-
-                return result;
+                $(para).replaceWith($(splitedContent.join('')));
             });
-
-            // For paragraph, we add empty line
-            splitedContent.push('<div><br></div>');
-
-            return splitedContent.join('');
-        });
+            html = $first.html();
+        }
 
         return html;
     }
