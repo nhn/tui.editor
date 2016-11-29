@@ -49,10 +49,10 @@ class WwPManager {
      */
     _splitPtagContentLines(html) {
         if (html) {
-            const $first = $('<div>');
+            const $wrapper = $('<div>');
 
-            $first.html(html);
-            $first.find('p').each((pIndex, para) => {
+            $wrapper.html(html);
+            $wrapper.find('p').each((pIndex, para) => {
                 const content = para.innerHTML;
                 const lines = content.split(/<br>/gi);
                 const linesLenIndex = lines.length - 1;
@@ -80,7 +80,7 @@ class WwPManager {
 
                 $(para).replaceWith($(splitedContent.join('')));
             });
-            html = $first.html();
+            html = $wrapper.html();
         }
 
         return html;
