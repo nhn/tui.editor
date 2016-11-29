@@ -135,6 +135,7 @@
 .tui-editor-contents table {
     margin: 2px 0 14px;
     color: #555;
+    width: auto;
     border-collapse: collapse;
     box-sizing: border-box;
 }
@@ -147,6 +148,7 @@
 
 .tui-editor-contents table td {
     border: 1px solid #eaeaea;
+    text-align: left;
 }
 
 .tui-editor-contents table th {
@@ -183,6 +185,11 @@
 
 .tui-editor-contents ul li {
     position: relative;
+    list-style-type: disc;
+}
+
+.tui-editor-contents ol li {
+    list-style-type: decimal;
 }
 
 .tui-editor-contents ul p, ol p {
