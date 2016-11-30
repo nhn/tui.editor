@@ -29,7 +29,7 @@
   "keywords": [],
   "dependencies": {
     "tui-code-snippet": "1.0.4",
-    "codemirror": "~5.13.4",
+    "codemirror": "~5.14.0",
     "highlightjs": "~9.1.0",
     "jquery": "~2.1.4",
     "marked": "~0.3.5",
