@@ -8,7 +8,7 @@ const OPTION_TYPE_CONSTRUCTOR = {
     headerHeight: Number,
     rowHeight: Number
 };
-const FIND_FRONT_SPACE_RX = /^\s+|\s+$/mg;
+const FIND_TERMINAL_SPACE_RX = /^\s+|\s+$/mg;
 
 /**
  * Code text parser for tui.grid
@@ -47,7 +47,7 @@ const parser = {
      * @returns {boolean}
      * @private
      */
-    _hasHeader(lineString) {
+    _isSeparatorLine(lineString) {
         return /^[\|\-:]+$/.test(lineString || '');
     },
 
@@ -83,13 +83,13 @@ const parser = {
     },
 
     /**
-     * Parse the seperator line string for getting align option.
+     * Parse the separator line string for getting align option.
      * @memberOf module:parser
-     * @param {string} lineString - seperator line string
+     * @param {string} lineString - separator line string
      * @returns {Array}
      * @private
      */
-    _parseSeperatorLine(lineString) {
+    _parseSeparatorLine(lineString) {
         const cells = this._splitToCells(lineString);
 
         return cells.map(cellString => this._getAlign(cellString), this);
@@ -104,7 +104,7 @@ const parser = {
      * @private
      */
     _parseHeader(lines) {
-        const alignList = this._parseSeperatorLine(lines[1]);
+        const alignList = this._parseSeparatorLine(lines[1]);
         const cells = this._splitToCells(lines[0]);
 
         return cells.map((cell, index) => ({
@@ -150,7 +150,7 @@ const parser = {
         const lines = this._splitToLines(dataString);
         const data = {};
 
-        if (this._hasHeader(lines[1])) {
+        if (this._isSeparatorLine(lines[1])) {
             data.header = this._parseHeader(lines.slice(0, 2));
             data.body = this._parseBody(lines.slice(2));
         } else {

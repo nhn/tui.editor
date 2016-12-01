@@ -26,13 +26,13 @@ const convertor = {
      * Create columnModelList for grid data.
      * @memberOf module:convertor
      * @param {object} header - parsed header data
-     * @param {boolean} isEdit - whether edit mode or not.
+     * @param {boolean} isEditMode - whether edit mode or not.
      * @returns {Array.<object>}
      * @private
      */
-    _createColumnModelList(header, isEdit) {
+    _createColumnModelList(header, isEditMode) {
         const editOption = {
-            type: isEdit ? 'text' : 'normal'
+            type: isEditMode ? 'text' : 'normal'
         };
 
         return header.map((headerItem, index) => util.extend({}, headerItem, {
@@ -64,12 +64,12 @@ const convertor = {
      * Convert code text to grid data.
      * @memberOf module:convertor
      * @param {string} codeText - code text
-     * @param {boolean} isEdit - whether edit mode or not.
+     * @param {boolean} isEditMode - whether edit mode or not.
      * @returns {{options: object, columnModelList: Array.<object>, rowList: Array.<object>}}
      */
-    convertToGridData(codeText, isEdit) {
+    convertToGridData(codeText, isEditMode) {
         const parsedData = parser.parseCodeText(codeText);
-        const columnModelList = this._createColumnModelList(parsedData.data.header, isEdit);
+        const columnModelList = this._createColumnModelList(parsedData.data.header, isEditMode);
         const rowList = this._createRowList(parsedData.data.body);
         const options = util.extend(DEFAULT_OPTION, parsedData.options);
 

@@ -58,23 +58,23 @@ describe('parser', () => {
         });
     });
 
-    describe('_hasHeader()', () => {
-        it('If line is seperator type, returns true.', () => {
+    describe('_isSeparatorLine()', () => {
+        it('If line is separator type, returns true.', () => {
             const lineString = '|---|:---:|---|';
-            const actual = parser._hasHeader(lineString);
+            const actual = parser._isSeparatorLine(lineString);
 
             expect(actual).toBe(true);
         });
 
-        it('If second line is not seperator type, returns false.', () => {
+        it('If line is not separator type, returns false.', () => {
             const lineString = '|a|b|c|';
-            const actual = parser._hasHeader(lineString);
+            const actual = parser._isSeparatorLine(lineString);
 
             expect(actual).toBe(false);
         });
 
         it('If line is undefined, returns false', () => {
-            const actual = parser._hasHeader();
+            const actual = parser._isSeparatorLine();
 
             expect(actual).toBe(false);
         });
@@ -112,10 +112,10 @@ describe('parser', () => {
         });
     });
 
-    describe('_parseSeperatorLine()', () => {
-        it('Parse seperator line.', () => {
+    describe('_parseSeparatorLine()', () => {
+        it('Parse separator line.', () => {
             const lineString = '|---|:---|:---:|---:|';
-            const actual = parser._parseSeperatorLine(lineString);
+            const actual = parser._parseSeparatorLine(lineString);
 
             expect(actual).toEqual(['left', 'left', 'center', 'right']);
         });
