@@ -40,6 +40,7 @@ const eventList = [
     'wysiwygProcessHTMLText',
     'wysiwygRangeChangeAfter',
     'wysiwygKeyEvent',
+    'replaceCodeBlockElementsBefore',
     'pasteBefore',
     'scroll',
     'click',

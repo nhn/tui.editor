@@ -134,6 +134,42 @@ describe('convertor', () => {
         });
     });
 
+    describe('_createCoditionalOptions()', () => {
+        it('Create conditional options, when row count is more than ten.', () =>{
+            const rowCount =  11;
+            const rowHeight = 30;
+            const actual = convertor._createConditionalOptions(rowCount, rowHeight);
+            const expeted = {
+                bodyHeight: 300,
+                isFixedHeight: true
+            };
+
+            expect(actual).toEqual(expeted);
+        });
+
+        it('Create conditional options, when row count is ten or less than ten.', () => {
+            const rowCount = 8;
+            const actual = convertor._createConditionalOptions(rowCount);
+            const expected = {
+                scrollY: false
+            };
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('Create conditional options, when rowHeight option is undefined or null or zero.', () => {
+            const rowCount = 11;
+            const rowHeight = 0;
+            const actual = convertor._createConditionalOptions(rowCount, rowHeight);
+            const expected = {
+                bodyHeight: 320,
+                isFixedHeight: true
+            };
+
+            expect(actual).toEqual(expected);
+        });
+    });
+
     describe('convertToGridData()', () => {
         it('Convert to grid data from codeText, when edit mode.', () => {
             const codeText = `@startdata
