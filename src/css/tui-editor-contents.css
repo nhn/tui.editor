@@ -5,7 +5,7 @@
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.tui-editor-contents *:not(table) {
+.tui-editor-contents *:not(table, .tui-grid-cell) {
     line-height: 160%;
     box-sizing: content-box;
 }
@@ -132,24 +132,24 @@
     max-width: 100%;
 }
 
-.tui-editor-contents table {
+.tui-editor-contents table:not(.tui-grid-table) {
     margin: 2px 0 14px;
     color: #555;
     border-collapse: collapse;
     box-sizing: border-box;
 }
 
-.tui-editor-contents table th,
-.tui-editor-contents table td {
+.tui-editor-contents table:not(.tui-grid-table) th, 
+.tui-editor-contents table:not(.tui-grid-table) td {
     height: 32px;
     padding: 5px 14px 5px 12px;
 }
 
-.tui-editor-contents table td {
+.tui-editor-contents table:not(.tui-grid-table) td {
     border: 1px solid #eaeaea;
 }
 
-.tui-editor-contents table th {
+.tui-editor-contents table:not(.tui-grid-table) th {
     border: 1px solid #72777b;
     border-top: 0;
     background-color: #7b8184;
