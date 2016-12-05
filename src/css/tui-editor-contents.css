@@ -5,7 +5,7 @@
     font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-.tui-editor-contents *:not(table, .tui-grid-cell) {
+.tui-editor-contents *:not(table):not(.tui-grid-cell) {
     line-height: 160%;
     box-sizing: content-box;
 }
