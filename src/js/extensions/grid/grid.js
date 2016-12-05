@@ -41,6 +41,7 @@ extManager.defineExtension('grid', editor => {
      *   @param {HTMLElement} codeBlockElement - original code block element
      *   @param {string} type - code block type
      *   @param {string} codeText - code text
+     * @returns {HTMLElement}
      */
     function createGridElement({codeBlockElement, type, codeText}) {
         let gridElement = null;
@@ -61,7 +62,7 @@ extManager.defineExtension('grid', editor => {
     });
 
     editor.eventManager.listen('replaceCodeBlockElementsBefore', () => {
-        gridinstancelist.forEach(instance => instance.destroy());
+        gridInstanceList.forEach(instance => instance.destroy());
 
         gridInstanceList = [];
     });

@@ -11,8 +11,7 @@ const COLUMN_NAME_PREFIX = 'grid-column-';
 const DEFAULT_OPTION = {
     toolbar: null,
     autoNumbering: false,
-    rowHeight: 30,
-
+    rowHeight: 30
 };
 
 /**
@@ -67,7 +66,7 @@ const convertor = {
      * @returns {object}
      */
     _createConditionalOptions(rowCount, rowHeight) {
-        let conditionalOptions = {};
+        const conditionalOptions = {};
 
         if (rowCount > 10) {
             rowHeight = rowHeight || (DEFAULT_OPTION.rowHeight + 2);
@@ -88,9 +87,9 @@ const convertor = {
      * @returns {object}
      */
     _createOptions(userOptions, rowCount) {
-        let conditionalOptions = this._createConditionalOptions(rowCount, userOptions.rowHeight);
+        const conditionalOptions = this._createConditionalOptions(rowCount, userOptions.rowHeight);
 
-        return util.extend({}, DEFAULT_OPTION, conditionalOptions, userOptions); 
+        return util.extend({}, DEFAULT_OPTION, conditionalOptions, userOptions);
     },
 
     /**
