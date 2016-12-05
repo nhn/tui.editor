@@ -6,7 +6,17 @@
 const OPTION_TYPE_CONSTRUCTOR = {
     autoNumbering: Boolean,
     headerHeight: Number,
-    rowHeight: Number
+    rowHeight: Number,
+    isFixedRowHeight: Boolean,
+    bodyHeight: Number,
+    minimumColumnWidth: Number,
+    useClientSort: Boolean,
+    scrollX: Boolean,
+    scrollY: Boolean,
+    fitToParentHeight: Boolean,
+    showDummyRow: Boolean,
+    toolbar: Boolean,
+    resizeHandle: Boolean
 };
 const FIND_TERMINAL_SPACE_RX = /^\s+|\s+$/mg;
 
@@ -48,7 +58,7 @@ const parser = {
      * @private
      */
     _isSeparatorLine(lineString) {
-        return /^[\|\-:]+$/.test(lineString || '');
+        return /^[\|\-: ]+$/.test(lineString || '');
     },
 
     /**
@@ -59,7 +69,7 @@ const parser = {
      * @private
      */
     _splitToCells(lineString) {
-        return lineString.replace(/(^\||\|$)/g, '').split('|');
+        return lineString.replace(/(^\||\|$)/g, '').split('|').map(cell => cell.trim());
     },
 
     /**

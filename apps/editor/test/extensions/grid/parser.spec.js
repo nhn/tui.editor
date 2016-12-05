@@ -66,6 +66,13 @@ describe('parser', () => {
             expect(actual).toBe(true);
         });
 
+        it('If line string contain space, returns true', () => {
+            const lineString = '| --- |:---|';
+            const actual = parser._isSeparatorLine(lineString);
+
+            expect(actual).toBe(true);
+        })
+
         it('If line is not separator type, returns false.', () => {
             const lineString = '|a|b|c|';
             const actual = parser._isSeparatorLine(lineString);
@@ -81,12 +88,19 @@ describe('parser', () => {
     });
 
     describe('_splitToCells()', () => {
-        it('Split data or option string to cells.', () => {
+        it('Split line string to cells.', () => {
             const lineString = '|a|b|c|';
             const actual = parser._splitToCells(lineString);
 
             expect(actual).toEqual(['a', 'b', 'c']);
         });
+
+        it('Split line string to cells, when line string contain space.', () => {
+            const lineString = '| a | b | c |';
+            const actual = parser._splitToCells(lineString);
+
+            expect(actual).toEqual(['a', 'b', 'c']);
+        })
     });
 
     describe('_getAlign()', () => {

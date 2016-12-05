@@ -101,6 +101,7 @@ class Preview {
         this.$previewContent.empty();
         this.$previewContent.html(finalHtml);
 
+        this.eventManager.emit('replaceCodeBlockElementsBefore');
         codeBlockManager.replaceElements(this.$previewContent, this.isViewOnly);
 
         this.eventManager.emit('previewRenderAfter', this);
