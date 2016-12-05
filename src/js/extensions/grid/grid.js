@@ -37,7 +37,7 @@ extManager.defineExtension('grid', editor => {
 
     /**
      * Create grid element for replacment.
-     * @param {object} paramMap - parameter map
+     * @param {object} params - parameters
      *   @param {HTMLElement} codeBlockElement - original code block element
      *   @param {string} type - code block type
      *   @param {string} codeText - code text

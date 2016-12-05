@@ -64,6 +64,7 @@ const convertor = {
      * @param {number} rowCount - row count of grid data
      * @param {number} rowHeight - row height user option
      * @returns {object}
+     * @private
      */
     _createConditionalOptions(rowCount, rowHeight) {
         const conditionalOptions = {};
@@ -85,6 +86,7 @@ const convertor = {
      * @param {object} userOptions - user defined options
      * @param {number} rowCount - row count of grid data
      * @returns {object}
+     * @private
      */
     _createOptions(userOptions, rowCount) {
         const conditionalOptions = this._createConditionalOptions(rowCount, userOptions.rowHeight);
