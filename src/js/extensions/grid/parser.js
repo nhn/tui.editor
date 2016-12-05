@@ -58,7 +58,7 @@ const parser = {
      * @private
      */
     _isSeparatorLine(lineString) {
-        return /^[\|\-:]+$/.test(lineString || '');
+        return /^[\|\-: ]+$/.test(lineString || '');
     },
 
     /**
@@ -69,7 +69,7 @@ const parser = {
      * @private
      */
     _splitToCells(lineString) {
-        return lineString.replace(/(^\||\|$)/g, '').split('|');
+        return lineString.replace(/(^\||\|$)/g, '').split('|').map(cell => cell.trim());
     },
 
     /**
