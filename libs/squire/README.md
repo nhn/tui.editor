@@ -46,6 +46,12 @@ Squire can also be used without an iframe for the document. To use it this way:
 
 You can have multiple squire instances in a single page without issue. If you are using the editor as part of a long lived single-page app, be sure to call `editor.destroy()` once you have finished using an instance to ensure it doesn't leak resources.
 
+### Security
+
+Malicious HTML can be a source of XSS and other security issues. I highly recommended you use [DOMPurify](https://github.com/cure53/DOMPurify) with Squire to prevent these security issues. If DOMPurify is included in the page (with the standard global variable), Squire will automatically sanitise any HTML pasted into the editor. (In more detail, it sanitises the HTML given to it in an `insertHTML` call, which is how pastes are inserted).
+
+Please note though, it **does not automatically sanitise HTML passed in calls to `setHTML`**. Since this is only called from code integrating with Squire, and not user actions, sanitising the HTML here is left to the integration. This is because the default DOMPurify settings might not be the best fit for your application.
+
 Advanced usage
 --------------
 
