@@ -48,9 +48,15 @@ You can have multiple squire instances in a single page without issue. If you ar
 
 ### Security
 
-Malicious HTML can be a source of XSS and other security issues. I highly recommended you use [DOMPurify](https://github.com/cure53/DOMPurify) with Squire to prevent these security issues. If DOMPurify is included in the page (with the standard global variable), Squire will automatically sanitise any HTML pasted into the editor. (In more detail, it sanitises the HTML given to it in an `insertHTML` call, which is how pastes are inserted).
+Malicious HTML can be a source of XSS and other security issues. I highly recommended you use [DOMPurify](https://github.com/cure53/DOMPurify) with Squire to prevent these security issues. If DOMPurify is included in the page (with the standard global variable), Squire will automatically sanitise any HTML passed in via `setHTML` or `insertHTML` (which includes HTML the user pastes from the clipboard).
 
-Please note though, it **does not automatically sanitise HTML passed in calls to `setHTML`**. Since this is only called from code integrating with Squire, and not user actions, sanitising the HTML here is left to the integration. This is because the default DOMPurify settings might not be the best fit for your application.
+You can override this by setting properties on the config object (the second argument passed to the constructor, see below). The properties are:
+
+* **isSetHTMLSanitized**: `Boolean`
+  Should the HTML passed via calls to `setHTML` be passed to the sanitizer? If your app always sanitizes the HTML in some other way before calling this, you may wish to set this to `false` to avoid the overhead.
+* **isInsertedHTMLSanitized**: `Boolean` (defaults to `true`) – Should the HTML passed via calls to `insertHTML` be passed to the sanitizer? This includes when the user pastes from the clipboard. Since you cannot control what other apps put on the clipboard, it is highly recommended you do not set this to `false`.
+* **sanitizeToDOMFragment**: `(html: String, isPaste: Boolean) -> DOMFragment`
+  A custom sanitization function. This will be called instead of the default call to DOMPurify to sanitize the potentially dangerous HTML. It is passed two arguments: the first is the string of HTML, the second is a boolean indicating if this content has come from the clipboard, rather than an explicit call by your own code. It must return a DOM Fragment node belonging to the same document as the editor's root node, with the contents being clean DOM nodes to set/insert.
 
 Advanced usage
 --------------

@@ -2556,6 +2556,15 @@ function Squire ( root, config ) {
 
 var proto = Squire.prototype;
 
+var sanitizeToDOMFragment = function ( html/*, isPaste*/ ) {
+    var frag = DOMPurify.sanitize( html, {
+        WHOLE_DOCUMENT: false,
+        RETURN_DOM: true,
+        RETURN_DOM_FRAGMENT: true
+    });
+    return doc.importNode( frag, true );
+};
+
 proto.setConfig = function ( config ) {
     config = mergeObjects({
         blockTag: 'DIV',
@@ -2571,7 +2580,13 @@ proto.setConfig = function ( config ) {
         undo: {
             documentSizeThreshold: -1, // -1 means no threshold
             undoLimit: -1 // -1 means no limit
-        }
+        },
+        isInsertedHTMLSanitized: true,
+        isSetHTMLSanitized: true,
+        sanitizeToDOMFragment:
+            typeof DOMPurify !== 'undefined' && DOMPurify.isSupported ?
+            sanitizeToDOMFragment : null
+
     }, config, true );
 
     // Users may specify block tag in lower case
@@ -3967,14 +3982,21 @@ proto.getHTML = function ( withBookMark ) {
 };
 
 proto.setHTML = function ( html ) {
-    var frag = this._doc.createDocumentFragment();
-    var div = this.createElement( 'DIV' );
+    var config = this._config;
+    var sanitizeToDOMFragment = config.isSetHTMLSanitized ?
+            config.sanitizeToDOMFragment : null;
     var root = this._root;
-    var child;
+    var div, frag, child;
 
     // Parse HTML into DOM tree
-    div.innerHTML = html;
-    frag.appendChild( empty( div ) );
+    if ( typeof sanitizeToDOMFragment === 'function' ) {
+        frag = sanitizeToDOMFragment( html, false );
+    } else {
+        div = this.createElement( 'DIV' );
+        div.innerHTML = html;
+        frag = this._doc.createDocumentFragment();
+        frag.appendChild( empty( div ) );
+    }
 
     cleanTree( frag );
     cleanupBRs( frag, root );
@@ -4109,6 +4131,9 @@ var addLinks = function ( frag, root, self ) {
 // insertTreeFragmentIntoRange will delete the selection so that it is replaced
 // by the html being inserted.
 proto.insertHTML = function ( html, isPaste ) {
+    var config = this._config;
+    var sanitizeToDOMFragment = config.isInsertedHTMLSanitized ?
+            config.sanitizeToDOMFragment : null;
     var range = this.getSelection();
     var doc = this._doc;
     var startFragmentIndex, endFragmentIndex;
@@ -4117,13 +4142,8 @@ proto.insertHTML = function ( html, isPaste ) {
     // Edge doesn't just copy the fragment, but includes the surrounding guff
     // including the full <head> of the page. Need to strip this out. If
     // available use DOMPurify to parse and sanitise.
-    if ( typeof DOMPurify !== 'undefined' && DOMPurify.isSupported ) {
-        frag = DOMPurify.sanitize( html, {
-            WHOLE_DOCUMENT: false,
-            RETURN_DOM: true,
-            RETURN_DOM_FRAGMENT: true
-        });
-        frag = doc.importNode( frag, true );
+    if ( typeof sanitizeToDOMFragment === 'function' ) {
+        frag = sanitizeToDOMFragment( html, isPaste );
     } else {
         if ( isPaste ) {
             startFragmentIndex = html.indexOf( '<!--StartFragment-->' );
