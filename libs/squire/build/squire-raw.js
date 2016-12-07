@@ -4353,21 +4353,30 @@ proto.setHighlightColour = function ( colour ) {
 
 proto.setTextAlignment = function ( alignment ) {
     this.forEachBlock( function ( block ) {
-        block.className = ( block.className
+        var className = block.className
             .split( /\s+/ )
             .filter( function ( klass ) {
-                return !( /align/.test( klass ) );
+                return !!klass && !/^align/.test( klass );
             })
-            .join( ' ' ) +
-            ' align-' + alignment ).trim();
-        block.style.textAlign = alignment;
+            .join( ' ' );
+        if ( alignment ) {
+            block.className = className + ' align-' + alignment;
+            block.style.textAlign = alignment;
+        } else {
+            block.className = className;
+            block.style.textAlign = '';
+        }
     }, true );
     return this.focus();
 };
 
 proto.setTextDirection = function ( direction ) {
     this.forEachBlock( function ( block ) {
-        block.dir = direction;
+        if ( direction ) {
+            block.dir = direction;
+        } else {
+            block.removeAttribute( 'dir' );
+        }
     }, true );
     return this.focus();
 };
