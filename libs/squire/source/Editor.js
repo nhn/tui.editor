@@ -1768,7 +1768,7 @@ proto.insertHTML = function ( html, isPaste ) {
         frag.normalize();
 
         while ( node = getNextBlock( node, frag ) ) {
-            fixCursor( node, null );
+            fixCursor( node, root );
         }
 
         if ( isPaste ) {
