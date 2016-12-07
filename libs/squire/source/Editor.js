@@ -1,19 +1,5 @@
 /*jshint strict:false, undef:false, unused:false */
 
-var instances = [];
-
-function getSquireInstance ( doc ) {
-    var l = instances.length,
-        instance;
-    while ( l-- ) {
-        instance = instances[l];
-        if ( instance._doc === doc ) {
-            return instance;
-        }
-    }
-    return null;
-}
-
 function mergeObjects ( base, extras, mayOverride ) {
     var prop, value;
     if ( !base ) {
@@ -154,7 +140,7 @@ function Squire ( root, config ) {
         doc.execCommand( 'enableInlineTableEditing', false, 'false' );
     } catch ( error ) {}
 
-    instances.push( this );
+    root.__squire__ = this;
 
     // Need to register instance before calling setHTML, so that the fixCursor
     // function can lookup any default block tag options set.
@@ -305,7 +291,6 @@ proto.fireEvent = function ( type, event ) {
 };
 
 proto.destroy = function () {
-    var l = instances.length;
     var events = this._events;
     var type;
 
@@ -315,11 +300,7 @@ proto.destroy = function () {
     if ( this._mutation ) {
         this._mutation.disconnect();
     }
-    while ( l-- ) {
-        if ( instances[l] === this ) {
-            instances.splice( l, 1 );
-        }
-    }
+    delete this._root.__squire__;
 
     // Destroy undo stack
     this._undoIndex = -1;

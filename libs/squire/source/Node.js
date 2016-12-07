@@ -223,13 +223,14 @@ function fixCursor ( node, root ) {
     // unfocussable if they have no content. To remedy this, a <BR> must be
     // inserted. In Opera and IE, we just need a textnode in order for the
     // cursor to appear.
-    var doc = node.ownerDocument,
-        originalNode = node,
-        fixer, child;
+    var self = root.__squire__;
+    var doc = node.ownerDocument;
+    var originalNode = node;
+    var fixer, child;
 
     if ( node === root ) {
         if ( !( child = node.firstChild ) || child.nodeName === 'BR' ) {
-            fixer = getSquireInstance( doc ).createDefaultBlock();
+            fixer = self.createDefaultBlock();
             if ( child ) {
                 node.replaceChild( fixer, child );
             }
@@ -255,7 +256,7 @@ function fixCursor ( node, root ) {
         if ( !child ) {
             if ( cantFocusEmptyTextNodes ) {
                 fixer = doc.createTextNode( ZWS );
-                getSquireInstance( doc )._didAddZWS();
+                self._didAddZWS();
             } else {
                 fixer = doc.createTextNode( '' );
             }
@@ -291,7 +292,7 @@ function fixCursor ( node, root ) {
         try {
             node.appendChild( fixer );
         } catch ( error ) {
-            getSquireInstance( doc ).didError({
+            self.didError({
                 name: 'Squire: fixCursor – ' + error,
                 message: 'Parent: ' + node.nodeName + '/' + node.innerHTML +
                     ' appendChild: ' + fixer.nodeName
@@ -304,11 +305,11 @@ function fixCursor ( node, root ) {
 
 // Recursively examine container nodes and wrap any inline children.
 function fixContainer ( container, root ) {
-    var children = container.childNodes,
-        doc = container.ownerDocument,
-        wrapper = null,
-        i, l, child, isBR,
-        config = getSquireInstance( doc )._config;
+    var children = container.childNodes;
+    var doc = container.ownerDocument;
+    var wrapper = null;
+    var i, l, child, isBR;
+    var config = root.__squire__._config;
 
     for ( i = 0, l = children.length; i < l; i += 1 ) {
         child = children[i];
