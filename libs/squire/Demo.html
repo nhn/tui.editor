@@ -85,6 +85,7 @@
   <span id="makeLink" class="prompt">Link</span>
   </p>
   <p>
+    <span id="makeHeader">Make Header</span>
     <span id="increaseQuoteLevel">Quote</span>
     <span id="decreaseQuoteLevel">Dequote</span>
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -114,6 +115,18 @@
           a: {'target': '_blank'}
       }
   });
+  Squire.prototype.makeHeader = function() {
+    return this.modifyBlocks( function( frag ) {
+      var output = this._doc.createDocumentFragment();
+      var block = frag;
+      while ( block = Squire.getNextBlock( block ) ) {
+        output.appendChild(
+          this.createElement( 'h2', [ Squire.empty( block ) ] )
+        );
+      }
+      return output;
+    });
+  };
 
   document.addEventListener( 'click', function ( e ) {
     var id = e.target.id,
