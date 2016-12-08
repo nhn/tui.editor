@@ -59,7 +59,7 @@ var onCopy = function ( event ) {
         range = range.cloneRange();
         startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
-        copyRoot = ( startBlock === endBlock ) ? startBlock : root;
+        copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
         moveRangeBoundariesDownTree( range );
         moveRangeBoundariesUpTree( range, copyRoot );
         contents = range.cloneContents();

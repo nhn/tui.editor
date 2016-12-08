@@ -897,7 +897,7 @@ var deleteContentsOfRange = function ( range, root ) {
         fixCursor( root, root );
         range.selectNodeContents( root.firstChild );
     } else {
-        range.collapse( false );
+        range.collapse( range.endContainer === root ? true : false );
     }
     return frag;
 };
@@ -2185,7 +2185,7 @@ var onCopy = function ( event ) {
         range = range.cloneRange();
         startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
-        copyRoot = ( startBlock === endBlock ) ? startBlock : root;
+        copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
         moveRangeBoundariesDownTree( range );
         moveRangeBoundariesUpTree( range, copyRoot );
         contents = range.cloneContents();
