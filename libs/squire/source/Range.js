@@ -172,7 +172,7 @@ var deleteContentsOfRange = function ( range, root ) {
         fixCursor( root, root );
         range.selectNodeContents( root.firstChild );
     } else {
-        range.collapse( false );
+        range.collapse( range.endContainer === root ? true : false );
     }
     return frag;
 };
