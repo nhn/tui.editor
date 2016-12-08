@@ -1763,7 +1763,7 @@ proto.insertHTML = function ( html, isPaste ) {
 
         addLinks( frag, frag, this );
         cleanTree( frag );
-        cleanupBRs( frag, null );
+        cleanupBRs( frag, root );
         removeEmptyInlines( frag );
         frag.normalize();
 
