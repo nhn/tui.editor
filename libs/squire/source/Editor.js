@@ -1905,12 +1905,12 @@ proto.setFontFace = function ( name ) {
     this.changeFormat( name ? {
         tag: 'SPAN',
         attributes: {
-            'class': 'font',
+            'class': FONT_FAMILY_CLASS,
             style: 'font-family: ' + name + ', sans-serif;'
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': 'font' }
+        attributes: { 'class': FONT_FAMILY_CLASS }
     });
     return this.focus();
 };
@@ -1918,13 +1918,13 @@ proto.setFontSize = function ( size ) {
     this.changeFormat( size ? {
         tag: 'SPAN',
         attributes: {
-            'class': 'size',
+            'class': FONT_SIZE_CLASS,
             style: 'font-size: ' +
                 ( typeof size === 'number' ? size + 'px' : size )
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': 'size' }
+        attributes: { 'class': FONT_SIZE_CLASS }
     });
     return this.focus();
 };
@@ -1933,12 +1933,12 @@ proto.setTextColour = function ( colour ) {
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': 'colour',
+            'class': COLOUR_CLASS,
             style: 'color:' + colour
         }
     } : null, {
         tag: 'SPAN',
-        attributes: { 'class': 'colour' }
+        attributes: { 'class': COLOUR_CLASS }
     });
     return this.focus();
 };
@@ -1947,12 +1947,12 @@ proto.setHighlightColour = function ( colour ) {
     this.changeFormat( colour ? {
         tag: 'SPAN',
         attributes: {
-            'class': 'highlight',
+            'class': HIGHLIGHT_CLASS,
             style: 'background-color:' + colour
         }
     } : colour, {
         tag: 'SPAN',
-        attributes: { 'class': 'highlight' }
+        attributes: { 'class': HIGHLIGHT_CLASS }
     });
     return this.focus();
 };

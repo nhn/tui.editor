@@ -125,7 +125,7 @@ var stylesRewriters = {
             newTreeBottom, newTreeTop;
         if ( face ) {
             fontSpan = createElement( doc, 'SPAN', {
-                'class': 'font',
+                'class': FONT_FAMILY_CLASS,
                 style: 'font-family:' + face
             });
             newTreeTop = fontSpan;
@@ -133,7 +133,7 @@ var stylesRewriters = {
         }
         if ( size ) {
             sizeSpan = createElement( doc, 'SPAN', {
-                'class': 'size',
+                'class': FONT_SIZE_CLASS,
                 style: 'font-size:' + fontSizes[ size ] + 'px'
             });
             if ( !newTreeTop ) {
@@ -149,7 +149,7 @@ var stylesRewriters = {
                 colour = '#' + colour;
             }
             colourSpan = createElement( doc, 'SPAN', {
-                'class': 'colour',
+                'class': COLOUR_CLASS,
                 style: 'color:' + colour
             });
             if ( !newTreeTop ) {
@@ -169,7 +169,7 @@ var stylesRewriters = {
     },
     TT: function ( node, parent ) {
         var el = createElement( node.ownerDocument, 'SPAN', {
-            'class': 'font',
+            'class': FONT_FAMILY_CLASS,
             style: 'font-family:menlo,consolas,"courier new",monospace'
         });
         parent.replaceChild( el, node );
