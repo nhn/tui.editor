@@ -3,13 +3,31 @@
 // The (non-standard but supported enough) innerText property is based on the
 // render tree in Firefox and possibly other browsers, so we must insert the
 // DOM node into the document to ensure the text part is correct.
-var setClipboardData = function ( clipboardData, node ) {
+var setClipboardData = function ( clipboardData, node, root ) {
     var body = node.ownerDocument.body;
+    var html, text;
+
+    // Firefox will add an extra new line for BRs at the end of block when
+    // calculating innerText, even though they don't actually affect display.
+    // So we need to remove them first.
+    cleanupBRs( node, root );
+
     node.setAttribute( 'style',
         'position:fixed;overflow:hidden;bottom:100%;right:100%;' );
     body.appendChild( node );
-    clipboardData.setData( 'text/html', node.innerHTML );
-    clipboardData.setData( 'text/plain', node.innerText || node.textContent );
+    html = node.innerHTML;
+    text = node.innerText || node.textContent;
+
+    // Firefox (and others?) returns unix line endings (\n) even on Windows.
+    // If on Windows, normalise to \r\n, since Notepad and some other crappy
+    // apps do not understand just \n.
+    if ( isWin ) {
+        text = text.replace( /\r?\n/g, '\r\n' );
+    }
+
+    clipboardData.setData( 'text/html', html );
+    clipboardData.setData( 'text/plain', text );
+
     body.removeChild( node );
 };
 
@@ -29,7 +47,7 @@ var onCut = function ( event ) {
     if ( !isEdge && !isIOS && clipboardData ) {
         moveRangeBoundariesUpTree( range, root );
         node.appendChild( deleteContentsOfRange( range, root ) );
-        setClipboardData( clipboardData, node );
+        setClipboardData( clipboardData, node, root );
         event.preventDefault();
     } else {
         setTimeout( function () {
@@ -75,7 +93,7 @@ var onCopy = function ( event ) {
         }
         node.appendChild( contents );
 
-        setClipboardData( clipboardData, node );
+        setClipboardData( clipboardData, node, root );
         event.preventDefault();
     }
 };
