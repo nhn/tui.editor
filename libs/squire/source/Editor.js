@@ -214,16 +214,20 @@ proto.getRoot = function () {
 };
 
 proto.modifyDocument = function ( modificationCallback ) {
-    this._ignoreAllChanges = true;
-    if ( this._mutation ) {
-        this._mutation.disconnect();
+    var mutation = this._mutation;
+    if ( mutation ) {
+        if ( mutation.takeRecords().length ) {
+            this._docWasChanged();
+        }
+        mutation.disconnect();
     }
 
+    this._ignoreAllChanges = true;
     modificationCallback();
-
     this._ignoreAllChanges = false;
-    if ( this._mutation ) {
-        this._mutation.observe( this._root, {
+
+    if ( mutation ) {
+        mutation.observe( this._root, {
             childList: true,
             attributes: true,
             characterData: true,
