@@ -149,13 +149,14 @@ function Squire ( root, config ) {
 
 var proto = Squire.prototype;
 
-var sanitizeToDOMFragment = function ( html/*, isPaste*/ ) {
-    var frag = DOMPurify.sanitize( html, {
+var sanitizeToDOMFragment = function ( html, isPaste, self ) {
+    var doc = self._doc;
+    var frag = html ? DOMPurify.sanitize( html, {
         WHOLE_DOCUMENT: false,
         RETURN_DOM: true,
         RETURN_DOM_FRAGMENT: true
-    });
-    return doc.importNode( frag, true );
+    }) : null;
+    return frag ? doc.importNode( frag, true ) : doc.createDocumentFragment();
 };
 
 proto.setConfig = function ( config ) {
@@ -1582,7 +1583,7 @@ proto.setHTML = function ( html ) {
 
     // Parse HTML into DOM tree
     if ( typeof sanitizeToDOMFragment === 'function' ) {
-        frag = sanitizeToDOMFragment( html, false );
+        frag = sanitizeToDOMFragment( html, false, this );
     } else {
         div = this.createElement( 'DIV' );
         div.innerHTML = html;
@@ -1735,7 +1736,7 @@ proto.insertHTML = function ( html, isPaste ) {
     // including the full <head> of the page. Need to strip this out. If
     // available use DOMPurify to parse and sanitise.
     if ( typeof sanitizeToDOMFragment === 'function' ) {
-        frag = sanitizeToDOMFragment( html, isPaste );
+        frag = sanitizeToDOMFragment( html, isPaste, this );
     } else {
         if ( isPaste ) {
             startFragmentIndex = html.indexOf( '<!--StartFragment-->' );

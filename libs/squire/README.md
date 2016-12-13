@@ -55,8 +55,8 @@ You can override this by setting properties on the config object (the second arg
 * **isSetHTMLSanitized**: `Boolean`
   Should the HTML passed via calls to `setHTML` be passed to the sanitizer? If your app always sanitizes the HTML in some other way before calling this, you may wish to set this to `false` to avoid the overhead.
 * **isInsertedHTMLSanitized**: `Boolean` (defaults to `true`) – Should the HTML passed via calls to `insertHTML` be passed to the sanitizer? This includes when the user pastes from the clipboard. Since you cannot control what other apps put on the clipboard, it is highly recommended you do not set this to `false`.
-* **sanitizeToDOMFragment**: `(html: String, isPaste: Boolean) -> DOMFragment`
-  A custom sanitization function. This will be called instead of the default call to DOMPurify to sanitize the potentially dangerous HTML. It is passed two arguments: the first is the string of HTML, the second is a boolean indicating if this content has come from the clipboard, rather than an explicit call by your own code. It must return a DOM Fragment node belonging to the same document as the editor's root node, with the contents being clean DOM nodes to set/insert.
+* **sanitizeToDOMFragment**: `(html: String, isPaste: Boolean, self: Squire) -> DOMFragment`
+  A custom sanitization function. This will be called instead of the default call to DOMPurify to sanitize the potentially dangerous HTML. It is passed three arguments: the first is the string of HTML, the second is a boolean indicating if this content has come from the clipboard, rather than an explicit call by your own code, the third is the squire instance. It must return a DOM Fragment node belonging to the same document as the editor's root node, with the contents being clean DOM nodes to set/insert.
 
 Advanced usage
 --------------
