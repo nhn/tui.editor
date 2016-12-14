@@ -279,30 +279,58 @@ class ToastUIEditor {
     }
 
     /**
-     * Set Editor value
-     * @api
-     * @memberOf ToastUIEditor
-     * @param {string} markdown Markdown syntax text
+     * Set markdown value.
+     * @param {string} markdown - Markdown syntax text.
+     * @private
      */
-    setValue(markdown) {
-        markdown = markdown || '';
-
+    _setMarkdownValue(markdown) {
         if (this.isMarkdownMode()) {
             this.mdEditor.setValue(markdown);
         } else {
             this.wwEditor.setValue(this.convertor.toHTML(markdown));
+        }
+    }
+
+    /**
+     * Set html value.
+     * @param {string} html - Html syntax text
+     * @private
+     */
+    _setHtmlValue(html) {
+        this.wwEditor.setValue(html);
+
+        if (this.isMarkdownMode()) {
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+        }
+    }
+
+    /**
+     * Set Editor value.
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {string} value - html or markdown syntax text
+     * @param {boolean} isHtml - Whether value type is html or not
+     */
+    setValue(value, isHtml) {
+        let markdown;
+
+        value = value || '';
+
+        if (isHtml) {
+            this._setHtmlValue(value);
+        } else {
+            this._setMarkdownValue(value);
         }
 
         this.eventManager.emit('setValueAfter', markdown);
     }
 
     /**
-     * Get editor value
-     * @api
-     * @memberOf ToastUIEditor
+     * Get markdown value.
      * @returns {string}
+     * @private
      */
-    getValue() {
+    _getMarkdownValue() {
         let markdown;
 
         if (this.isMarkdownMode()) {
@@ -312,6 +340,38 @@ class ToastUIEditor {
         }
 
         return markdown;
+    }
+
+    /**
+     * Get html value.
+     * @returns {string}
+     * @private
+     */
+    _getHtmlValue() {
+        if (this.isWysiwygMode()) {
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+        }
+
+        return this.convertor.toHTML(this.mdEditor.getValue());
+    }
+
+    /**
+     * Get editor value.
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {boolean} isHtml - whether value type is html or not
+     * @returns {string}
+     */
+    getValue(isHtml) {
+        let value;
+
+        if (isHtml) {
+            value = this._getHtmlValue();
+        } else {
+            value = this._getMarkdownValue();
+        }
+
+        return value;
     }
 
     /**

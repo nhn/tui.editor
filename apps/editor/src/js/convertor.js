@@ -179,7 +179,9 @@ class Convertor {
         const FIND_BR_RX = /<br>/ig;
         const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
         const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-        const FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+        const FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
+        const TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
+        const FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
 
         html = html.replace(FIND_BR_RX, '<br />');
 
