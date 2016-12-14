@@ -48,30 +48,41 @@ class WwPManager {
      * @returns {string} result
      */
     _splitPtagContentLines(html) {
-        html = html.replace(/<p>([\s\S]*?)<\/p>/gi, (whole, content) => {
-            const lines = content.split(/<br>/gi);
-            const linesLenIndex = lines.length - 1;
-            let splitedContent = '';
+        if (html) {
+            const $wrapper = $('<div />');
 
-            splitedContent = lines.map((line, index) => {
-                let result = '';
+            $wrapper.html(html);
+            $wrapper.find('p').each((pIndex, para) => {
+                const content = para.innerHTML;
+                const lines = content.split(/<br>/gi);
+                const lastIndex = lines.length - 1;
+                // cross browsing: old browser not has nextElementSibling attribute
+                const nextElement = para.nextElementSibling || para.nextSibling;
+                let splitedContent = '';
 
-                if (index > 0 && index < linesLenIndex) {
-                    line = line ? line : '<br>';
+                splitedContent = lines.map((line, index) => {
+                    let result = '';
+
+                    if (index > 0 && index < lastIndex) {
+                        line = line ? line : '<br>';
+                    }
+
+                    if (line) {
+                        result = `<div>${line}</div>`;
+                    }
+
+                    return result;
+                });
+
+                // For paragraph, we add empty line
+                if (nextElement && nextElement.nodeName === 'P') {
+                    splitedContent.push('<div><br></div>');
                 }
 
-                if (line) {
-                    result = `<div>${line}</div>`;
-                }
-
-                return result;
+                $(para).replaceWith($(splitedContent.join('')));
             });
-
-            // For paragraph, we add empty line
-            splitedContent.push('<div><br></div>');
-
-            return splitedContent.join('');
-        });
+            html = $wrapper.html();
+        }
 
         return html;
     }

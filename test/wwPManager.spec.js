@@ -36,6 +36,6 @@ describe('WwPManager', () => {
     });
     it('split muiltiple lines inside p when wysiwygSetValueBefore event fire', () => {
         const html = em.emitReduce('wysiwygSetValueBefore', '<p>text<br><br><a href="#">link</a><br></p>');
-        expect(html).toEqual('<div>text</div><div><br></div><div><a href="#">link</a></div><div><br></div>');
+        expect(html).toEqual('<div>text</div><div><br></div><div><a href="#">link</a></div>');
     });
 });
