@@ -36,27 +36,27 @@ describe('Editor', () => {
                 let height = $('.te-ww-container .te-editor').height();
                 editor.contentHeight('auto');
                 editor.changeMode('wysiwyg');
-                editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
+                editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-ww-container .tui-editor-contents').height()).not.toEqual(height);
             });
 
             it('set content height "auto" to fit contents height of markdown', () => {
                 let height = $('.te-md-container .te-editor').height();
                 editor.contentHeight('auto');
-                editor.setValue('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
+                editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-md-container .te-editor').height()).not.toEqual(height);
             });
         });
-        describe('setValue()', () => {
-            it('fire setValueAfter evnet after setValue', done => {
-                editor.on('setValueAfter', done);
-                editor.setValue('dd');
+        describe('setMarkdown()', () => {
+            it('fire setMarkdownAfter evnet after setMarkdown', done => {
+                editor.on('setMarkdownAfter', done);
+                editor.setMarkdown('dd');
             });
         });
         describe('changePreviewStyle()', () => {
             it('Preview should refreash after preview style is changed', () => {
                 editor.changePreviewStyle('tab');
-                editor.setValue('1\n2');
+                editor.setMarkdown('1\n2');
                 editor.changePreviewStyle('vertical');
                 expect(editor.preview.$el.text()).toEqual('1\n2\n');
             });

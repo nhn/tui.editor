@@ -74,7 +74,7 @@ extManager.defineExtension('mark', editor => {
     });
 
     // Reset marker content after set value
-    editor.on('setValueAfter', () => {
+    editor.on('setMarkdownAfter', () => {
         const helper = getHelper();
         mm.resetContent(helper.getTextContent());
     });

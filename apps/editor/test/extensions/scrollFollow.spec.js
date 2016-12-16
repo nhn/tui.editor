@@ -2,7 +2,7 @@ import TuiEditor from '../../src/js/editor';
 
 const loadStyleFixtures = window.loadStyleFixtures;
 
-xdescribe('scrollFollow', () => {
+describe('scrollFollow', () => {
     let ned;
 
     beforeEach(() => {
