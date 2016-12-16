@@ -139,6 +139,7 @@ class Convertor {
      */
     toHTML(markdown) {
         let html = this._markdownToHtml(markdown);
+
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
         return html;

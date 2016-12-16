@@ -279,24 +279,31 @@ class ToastUIEditor {
     }
 
     /**
-     * Set markdown value.
-     * @param {string} markdown - Markdown syntax text.
-     * @private
+     * Set markdown syntax text.
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {string} markdown - markdown syntax text.
      */
-    _setMarkdownValue(markdown) {
+    setMarkdown(markdown) {
+        markdown = markdown || '';
+
         if (this.isMarkdownMode()) {
             this.mdEditor.setValue(markdown);
         } else {
             this.wwEditor.setValue(this.convertor.toHTML(markdown));
         }
+
+        this.eventManager.emit('setMarkdownAfter', markdown);
     }
 
     /**
      * Set html value.
-     * @param {string} html - Html syntax text
-     * @private
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {string} html - html syntax text
      */
-    _setHtmlValue(html) {
+    setHtml(html) {
+        html = html || '';
         this.wwEditor.setValue(html);
 
         if (this.isMarkdownMode()) {
@@ -305,32 +312,23 @@ class ToastUIEditor {
     }
 
     /**
-     * Set Editor value.
+     * Set markdown syntax text.
      * @api
      * @memberOf ToastUIEditor
-     * @param {string} value - html or markdown syntax text
-     * @param {boolean} isHtml - Whether value type is html or not
+     * @param {string} value - markdown syntax text
+     * @deprecated
      */
-    setValue(value, isHtml) {
-        let markdown;
-
-        value = value || '';
-
-        if (isHtml) {
-            this._setHtmlValue(value);
-        } else {
-            this._setMarkdownValue(value);
-        }
-
-        this.eventManager.emit('setValueAfter', markdown);
+    setValue(value) {
+        this.setMarkdown(value);
     }
 
     /**
-     * Get markdown value.
+     * Get markdown syntax text.
+     * @api
+     * @memberOf ToastUIEditor
      * @returns {string}
-     * @private
      */
-    _getMarkdownValue() {
+    getMarkdown() {
         let markdown;
 
         if (this.isMarkdownMode()) {
@@ -343,11 +341,12 @@ class ToastUIEditor {
     }
 
     /**
-     * Get html value.
+     * Get html syntax text.
+     * @api
+     * @memberOf ToastUIEditor
      * @returns {string}
-     * @private
      */
-    _getHtmlValue() {
+    getHtml() {
         if (this.isWysiwygMode()) {
             this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
         }
@@ -359,19 +358,11 @@ class ToastUIEditor {
      * Get editor value.
      * @api
      * @memberOf ToastUIEditor
-     * @param {boolean} isHtml - whether value type is html or not
      * @returns {string}
+     * @deprecated
      */
-    getValue(isHtml) {
-        let value;
-
-        if (isHtml) {
-            value = this._getHtmlValue();
-        } else {
-            value = this._getMarkdownValue();
-        }
-
-        return value;
+    getValue() {
+        return this.getMarkdown();
     }
 
     /**

@@ -87,11 +87,22 @@ class ToastUIEditorViewOnly {
      * @memberOf ToastUIEditorViewOnly
      * @param {string} markdown Markdown text
      */
-    setValue(markdown) {
+    setMarkdown(markdown) {
         this.markdownValue = markdown = markdown || '';
 
         this.preview.refresh(this.markdownValue);
-        this.eventManager.emit('setValueAfter', this.markdownValue);
+        this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+    }
+
+    /**
+     * Set content for preview
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} markdown Markdown text
+     * @deprecated
+     */
+    setValue(markdown) {
+        this.setMarkdown(markdown);
     }
 
     /**

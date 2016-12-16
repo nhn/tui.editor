@@ -9,7 +9,7 @@ const eventList = [
     'previewRenderAfter',
     'previewNeedsRefresh',
     'addImageBlobHook',
-    'setValueAfter',
+    'setMarkdownAfter',
     'contentChangedFromWysiwyg',
     'changeFromWysiwyg',
     'contentChangedFromMarkdown',
