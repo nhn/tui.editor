@@ -15,7 +15,7 @@ require('./extensions/taskCounter');
 require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
-require('./extensions/tableExtension');
+require('./extensions/table/tableExtension');
 
 import ToastUIEditor from './editor';
 

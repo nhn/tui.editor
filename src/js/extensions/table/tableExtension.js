@@ -4,7 +4,7 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import extManager from '../extManager';
+import extManager from '../../extManager';
 import mergeTable from './tableMerge';
 
 extManager.defineExtension('tableExtension', editor => {

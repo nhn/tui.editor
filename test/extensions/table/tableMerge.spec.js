@@ -6,8 +6,8 @@ import {
     _mergeByColspan,
     _getRemovalTdCountsByRowspan,
     _mergeByRowspan
-} from '../../src/js/extensions/tableMerge';
-import mergeTable from '../../src/js/extensions/tableMerge';
+} from '../../../src/js/extensions/table/tableMerge';
+import mergeTable from '../../../src/js/extensions/table/tableMerge';
 
 describe('tableMerge', () => {
     describe('_extractPropertiesForMerge()', () => {
