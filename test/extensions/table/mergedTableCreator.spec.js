@@ -7,7 +7,7 @@ import {
     _getRemovalTdCountsByRowspan,
     _mergeByRowspan
 } from '../../../src/js/extensions/table/mergedTableCreator';
-import createMegedTable from '../../../src/js/extensions/table/mergedTableCreator';
+import createMergedTable from '../../../src/js/extensions/table/mergedTableCreator';
 
 describe('mergedTableCreator', () => {
     describe('_extractPropertiesForMerge()', () => {
@@ -434,7 +434,7 @@ describe('mergedTableCreator', () => {
         });
     });
 
-    describe('createMegedTable()', () => {
+    describe('createMergedTable()', () => {
         it('Create merged table by @cols, @rows value in td innerHTML.', () => {
             const tableHtml = [
                 '<table>',
@@ -448,7 +448,7 @@ describe('mergedTableCreator', () => {
                 '</table>'
             ].join('');
             const tableElement = $(tableHtml)[0];
-            const $actual = $(createMegedTable(tableElement));
+            const $actual = $(createMergedTable(tableElement));
             const $trs = $actual.find('tr');
 
             expect($trs.eq(0).find('th').eq(0).attr('colspan')).toBe('2');
