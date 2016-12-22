@@ -85,7 +85,7 @@ class Convertor {
     _markdownToHtml(markdown) {
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-        let renderedHTML = markdownitHighlight.render(markdown);
+        let renderedHTML = markdownit.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
         return renderedHTML;
