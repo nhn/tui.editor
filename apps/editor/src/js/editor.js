@@ -307,7 +307,9 @@ class ToastUIEditor {
         this.wwEditor.setValue(html);
 
         if (this.isMarkdownMode()) {
-            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+            const markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+            this.mdEditor.setValue(markdown);
+            this.eventManager.emit('setMarkdownAfter', markdown);
         }
     }
 
