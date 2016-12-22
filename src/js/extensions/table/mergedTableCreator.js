@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements tableMerge extends.
+ * @fileoverview Implements mergedTableCreator extends.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
@@ -137,14 +137,14 @@ export function _mergeByRowspan(trs) {
 }
 
 /**
- * Generate html for thead or tbody.
+ * Create html for thead or tbody.
  * @param {Array.<Array.<object>>} trs - tr list
  * @param {string} nodeName - node name like TD, TH
  * @param {string} middleNodeName - middle node name like THEAD, TBODY
  * @returns {string}
  * @private
  */
-function _generateMiddleHtml(trs, nodeName, middleNodeName) {
+function _createMiddleHtml(trs, nodeName, middleNodeName) {
     let html = '';
 
     if (trs.length) {
@@ -166,25 +166,25 @@ function _generateMiddleHtml(trs, nodeName, middleNodeName) {
 }
 
 /**
- * Generate table html.
+ * Create table html.
  * @param {Array.<Array.<object>>} thead - trs in thead
  * @param {Array.<Array.<object>>} tbody - trs in tbody
  * @returns {string}
  * @private
  */
-function _generateTableHtml(thead, tbody) {
-    const theadHtml = _generateMiddleHtml(thead, 'TH', 'THEAD');
-    const tbodyHtml = _generateMiddleHtml(tbody, 'TD', 'TBODY');
+function _createTableHtml(thead, tbody) {
+    const theadHtml = _createMiddleHtml(thead, 'TH', 'THEAD');
+    const tbodyHtml = _createMiddleHtml(tbody, 'TD', 'TBODY');
 
     return `<table>${ theadHtml + tbodyHtml }</table>`;
 }
 
 /**
- * Merge table by colspan and rowspan.
- * @param {HTMLElement} tableElement
+ * Create merged table by @cols, @rows value in td innerHTML.
+ * @param {HTMLElement} tableElement - unmerged table
  * @returns {HTMLElement} 
  */
-export default function mergeTable(tableElement) {
+export default function createMergedTable(tableElement) {
     let table = _generateTableObjectFrom$Table($(tableElement));
     let [thead, tbody] = _divideTrs(table);
 
@@ -192,6 +192,7 @@ export default function mergeTable(tableElement) {
     _mergeByColspan(tbody);
     _mergeByRowspan(tbody);
 
-    return $(_generateTableHtml(thead, tbody))[0];
+    return $(_createTableHtml(thead, tbody))[0];
 }
+
 

@@ -5,7 +5,7 @@
  */
 
 import extManager from '../../extManager';
-import mergeTable from './tableMerge';
+import createMergedTable from './mergedTableCreator';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
@@ -16,7 +16,7 @@ extManager.defineExtension('tableExtension', editor => {
 
         if ($tables.length) { 
             $tables.get().forEach(tableElement => {
-                const mergedTableElement = mergeTable(tableElement);
+                const mergedTableElement = createMergedTable(tableElement);
 
                 $(tableElement).replaceWith(mergedTableElement);
             });

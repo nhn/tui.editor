@@ -6,10 +6,10 @@ import {
     _mergeByColspan,
     _getRemovalTdCountsByRowspan,
     _mergeByRowspan
-} from '../../../src/js/extensions/table/tableMerge';
-import mergeTable from '../../../src/js/extensions/table/tableMerge';
+} from '../../../src/js/extensions/table/mergedTableCreator';
+import createMegedTable from '../../../src/js/extensions/table/mergedTableCreator';
 
-describe('tableMerge', () => {
+describe('mergedTableCreator', () => {
     describe('_extractPropertiesForMerge()', () => {
         it('Extract properties for merge, when type is "@cols" and value is "@cols=3:@rows=3:value"', () => {
             const value = '@cols=3:@rows=3:value';
@@ -434,8 +434,8 @@ describe('tableMerge', () => {
         });
     });
 
-    describe('mergeTable()', () => {
-        it('Merge table by colspan, rowspan.', () => {
+    describe('createMegedTable()', () => {
+        it('Create merged table by @cols, @rows value in td innerHTML.', () => {
             const tableHtml = [
                 '<table>',
                 '<thead>',
@@ -448,7 +448,7 @@ describe('tableMerge', () => {
                 '</table>'
             ].join('');
             const tableElement = $(tableHtml)[0];
-            const $actual = $(mergeTable(tableElement));
+            const $actual = $(createMegedTable(tableElement));
             const $trs = $actual.find('tr');
 
             expect($trs.eq(0).find('th').eq(0).attr('colspan')).toBe('2');
