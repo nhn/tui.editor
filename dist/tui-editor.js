@@ -7743,30 +7743,41 @@
 	    }, {
 	        key: '_splitPtagContentLines',
 	        value: function _splitPtagContentLines(html) {
-	            html = html.replace(/<p>([\s\S]*?)<\/p>/gi, function (whole, content) {
-	                var lines = content.split(/<br>/gi);
-	                var linesLenIndex = lines.length - 1;
-	                var splitedContent = '';
+	            if (html) {
+	                var $wrapper = $('<div />');
 
-	                splitedContent = lines.map(function (line, index) {
-	                    var result = '';
+	                $wrapper.html(html);
+	                $wrapper.find('p').each(function (pIndex, para) {
+	                    var content = para.innerHTML;
+	                    var lines = content.split(/<br>/gi);
+	                    var lastIndex = lines.length - 1;
+	                    // cross browsing: old browser not has nextElementSibling attribute
+	                    var nextElement = para.nextElementSibling || para.nextSibling;
+	                    var splitedContent = '';
 
-	                    if (index > 0 && index < linesLenIndex) {
-	                        line = line ? line : '<br>';
+	                    splitedContent = lines.map(function (line, index) {
+	                        var result = '';
+
+	                        if (index > 0 && index < lastIndex) {
+	                            line = line ? line : '<br>';
+	                        }
+
+	                        if (line) {
+	                            result = '<div>' + line + '</div>';
+	                        }
+
+	                        return result;
+	                    });
+
+	                    // For paragraph, we add empty line
+	                    if (nextElement && nextElement.nodeName === 'P') {
+	                        splitedContent.push('<div><br></div>');
 	                    }
 
-	                    if (line) {
-	                        result = '<div>' + line + '</div>';
-	                    }
-
-	                    return result;
+	                    $(para).replaceWith($(splitedContent.join('')));
 	                });
-
-	                // For paragraph, we add empty line
-	                splitedContent.push('<div><br></div>');
-
-	                return splitedContent.join('');
-	            });
+	                html = $wrapper.html();
+	            }
 
 	            return html;
 	        }
@@ -10515,7 +10526,7 @@
 	        value: function _markdownToHtml(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-	            var renderedHTML = markdownitHighlight.render(markdown);
+	            var renderedHTML = markdownit.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
 	            return renderedHTML;
