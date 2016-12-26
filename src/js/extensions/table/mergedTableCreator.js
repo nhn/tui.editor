@@ -56,12 +56,12 @@ export function _parseTd(td) {
 }
 
 /**
- * Generate table object from jQuery table.
+ * Create table object from jQuery table.
  * @param {jQuery} $table
  * @returns {Array.<Array.<object>>}
  * @private
  */
-export function _generateTableObjectFrom$Table($table) {
+export function _createTableObjectFrom$Table($table) {
     return $table.find('tr').get().map(tr => {
         return $(tr).find('td, th').get().map(_parseTd);
     });
@@ -185,7 +185,7 @@ function _createTableHtml(thead, tbody) {
  * @returns {HTMLElement} 
  */
 export default function createMergedTable(tableElement) {
-    let table = _generateTableObjectFrom$Table($(tableElement));
+    let table = _createTableObjectFrom$Table($(tableElement));
     let [thead, tbody] = _divideTrs(table);
 
     _mergeByColspan(thead);
