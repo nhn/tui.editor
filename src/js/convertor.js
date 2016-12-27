@@ -160,7 +160,13 @@ class Convertor {
      */
     toMarkdown(html) {
         const resultArray = [];
-        let markdown = toMark(this._appendAttributeForBrIfNeed(html));
+        let toMarkOptions = {};
+
+        html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+        toMarkOptions = this.eventManager.emitReduce('setToMarkOptions', {});
+
+        let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
         tui.util.forEach(markdown.split('\n'), (line, index) => {

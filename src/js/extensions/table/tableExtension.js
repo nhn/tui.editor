@@ -5,24 +5,40 @@
 
 import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
+import prepareTableUnmerge from './tableUnmergePreparer';
+import getToMarkRenderer from './toMarkRendererCreator';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
 
-    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
-        const $tempDiv = $(`<div>${html}</div>`);
-        const $tables = $tempDiv.find('table');
+    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
+    eventManager.listen('setToMarkOptions', options => {
+        options.renderer = getToMarkRenderer(options);
 
-        if ($tables.length) {
-            $tables.get().forEach(tableElement => {
-                const mergedTableElement = createMergedTable(tableElement);
-
-                $(tableElement).replaceWith(mergedTableElement);
-            });
-            html = $tempDiv.html();
-        }
-
-        return html;
+        return options;
     });
+    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
 });
+
+/**
+ * Change html by onChangeTable function.
+ * @param {string} html - original html
+ * @param {function} onChangeTable - function for changing html
+ * @returns {string}
+ */
+function _changeHtml(html, onChangeTable) {
+    const $tempDiv = $(`<div>${html}</div>`);
+    const $tables = $tempDiv.find('table');
+
+    if ($tables.length) {
+        $tables.get().forEach(tableElement => {
+            const changedTableElement = onChangeTable(tableElement);
+
+            $(tableElement).replaceWith(changedTableElement);
+        });
+        html = $tempDiv.html();
+    }
+
+    return html;
+}
 
