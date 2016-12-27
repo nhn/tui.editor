@@ -12782,7 +12782,7 @@
 	var _id = 0;
 
 	/* eslint-disable indent */
-	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
+	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button type="button" class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
 	/* eslint-enable indent */
 
 	/**
