@@ -70,7 +70,7 @@ export function _createTableObjectFrom$Table($table) {
  * Find index by onFind function.
  * @param {Array} arr - target array
  * @param {function} onFind - find function
- * @returns {number} 
+ * @returns {number}
  */
 function _findIndex(arr, onFind) {
     let foundIndex = -1;
