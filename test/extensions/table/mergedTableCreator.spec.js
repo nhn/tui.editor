@@ -1,6 +1,6 @@
 import {
     _extractPropertiesForMerge,
-    _parseTd,
+    _parseTableCell,
     _createTableObjectFrom$Table,
     _divideTrs,
     _mergeByColspan,
@@ -81,14 +81,14 @@ describe('mergedTableCreator', () => {
         });
     });
 
-    describe('_parseTd()', () => {
-        it('Parse td value(innerHTML).', () => {
+    describe('_parseTableCell()', () => {
+        it('Parse table cell value(innerHTML).', () => {
             const td = {
                 nodeName: 'TD',
                 innerHTML: '@rows=3:@cols=2:abcde',
                 align: 'center'
             };
-            const actual = _parseTd(td);
+            const actual = _parseTableCell(td);
 
             expect(actual.nodeName).toBe('TD');
             expect(actual.colspan).toBe(2);
@@ -97,12 +97,12 @@ describe('mergedTableCreator', () => {
             expect(actual.align).toBe('center');
         });
 
-        it('Parse td value, when has only value.', () => {
-            const td = {
+        it('Parse table cell value, when has only value.', () => {
+            const th = {
                 nodeName: 'TH',
                 innerHTML: 'abcde'
             };
-            const actual = _parseTd(td);
+            const actual = _parseTableCell(th);
 
             expect(actual.nodeName).toBe('TH');
             expect(actual.colspan).toBe(1);

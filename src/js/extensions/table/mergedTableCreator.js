@@ -1,33 +1,33 @@
 /**
- * @fileoverview Implements mergedTableCreator extends.
+ * @fileoverview Implements mergedTableCreator.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 /**
  * Extract properties for merge.
  * @param {string} value - value
- * @param {string} type - merge type
+ * @param {string} type - merge type like colspan, rowspan
  * @param {string} oppossitType - oppossit merge type
- * @returns {[number, string]}
+ *                                if merge type is colspan, opossit merge type is rowspan
+ * @returns {[number, string]} - returns merge count and value
  * @private
  */
 export function _extractPropertiesForMerge(value, type, oppossitType) {
     const regex = new RegExp(`^((?:${ oppossitType }=[0-9]+:)?)${ type }=([0-9]+):(.*)`);
     const regexResult = regex.exec(value);
-    let result;
+    let mergeCount = 1;
 
     if (regexResult) {
-        result = [parseInt(regexResult[2], 10), regexResult[1] + regexResult[3]];
-    } else {
-        result = [1, value];
+        mergeCount = parseInt(regexResult[2], 10);
+        value = regexResult[1] + regexResult[3];
     }
 
-    return result; 
+    return [mergeCount, value]; 
 }
 
 /**
- * Parse td element. 
- * @param {HTMLElement} td - td element
+ * Parse table cell element like td, th. 
+ * @param {HTMLElement} cell - table cell element like td, th
  * @returns {{
  *   nodeName: string
  *   cospan: number,
@@ -37,10 +37,10 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
  * }}
  * @private
  */
-export function _parseTd(td) {
-    const nodeName = td.nodeName;
-    const align = td.align || '';
-    let value = td.innerHTML.trim();
+export function _parseTableCell(cell) {
+    const nodeName = cell.nodeName;
+    const align = cell.align || '';
+    let value = cell.innerHTML.trim();
     let colspan, rowspan;
 
     [colspan, value] = _extractPropertiesForMerge(value, '@cols', '@rows');
@@ -63,20 +63,20 @@ export function _parseTd(td) {
  */
 export function _createTableObjectFrom$Table($table) {
     return $table.find('tr').get().map(tr => {
-        return $(tr).find('td, th').get().map(_parseTd);
+        return $(tr).find('td, th').get().map(_parseTableCell);
     });
 }
 
 /**
- * Divide tr list to thead and tbody.
+ * Separate the trs according to the type of parent, such as thead and tbody.
  * @param {Array.<Array.<object>>} trs - tr list
- * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]}
+ * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]} - returns thead and tbody
  * @private
  */
 export function _divideTrs(trs) {
-    const bodyStartIndex = trs.findIndex(tr => (tr[0].nodeName === 'TD'));
+    const tbodyStartIndex = trs.findIndex(tr => (tr[0].nodeName === 'TD'));
 
-    return [trs.slice(0, bodyStartIndex), trs.slice(bodyStartIndex)];
+    return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
 }
 
 /**
@@ -109,12 +109,13 @@ export function _getRemovalTdCountsByRowspan(trs) {
 
     trs.forEach((tr, trIndex) => {
         const rowspanTds = tr.filter(td => (td.rowspan > 1));
-        const startTrIndex = trIndex + 1;
+        const startTrIndexForRemoval = trIndex + 1;
 
         rowspanTds.forEach((td) => {
-            const removeCount = 1 * td.colspan;
+            const removeCount = td.colspan;
+            const endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
 
-            trIndexes.slice(startTrIndex, startTrIndex + (td.rowspan - 1)).forEach(removeIndex => {
+            trIndexes.slice(startTrIndexForRemoval, endTrIndexForRemoval).forEach(removeIndex => {
                 removalCounts[removeIndex] += removeCount;
             });
         });
@@ -140,11 +141,11 @@ export function _mergeByRowspan(trs) {
  * Create html for thead or tbody.
  * @param {Array.<Array.<object>>} trs - tr list
  * @param {string} nodeName - node name like TD, TH
- * @param {string} middleNodeName - middle node name like THEAD, TBODY
+ * @param {string} wrapperNodeName - wrapper node name like THEAD, TBODY
  * @returns {string}
  * @private
  */
-function _createMiddleHtml(trs, nodeName, middleNodeName) {
+function _createTheadOrTbodyHtml(trs, nodeName, wrapperNodeName) {
     let html = '';
 
     if (trs.length) {
@@ -159,7 +160,7 @@ function _createMiddleHtml(trs, nodeName, middleNodeName) {
 
             return `<tr>${ tdHtml }</tr>`;
         }).join('');
-        html = `<${ middleNodeName }>${ html }</${ middleNodeName }>`;
+        html = `<${ wrapperNodeName }>${ html }</${ wrapperNodeName }>`;
     }
 
     return html;
@@ -173,8 +174,8 @@ function _createMiddleHtml(trs, nodeName, middleNodeName) {
  * @private
  */
 function _createTableHtml(thead, tbody) {
-    const theadHtml = _createMiddleHtml(thead, 'TH', 'THEAD');
-    const tbodyHtml = _createMiddleHtml(tbody, 'TD', 'TBODY');
+    const theadHtml = _createTheadOrTbodyHtml(thead, 'TH', 'THEAD');
+    const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TD', 'TBODY');
 
     return `<table>${ theadHtml + tbodyHtml }</table>`;
 }
@@ -194,5 +195,4 @@ export default function createMergedTable(tableElement) {
 
     return $(_createTableHtml(thead, tbody))[0];
 }
-
 

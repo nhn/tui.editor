@@ -1,6 +1,5 @@
-
 /**
- * @fileoverview Implements tableExtension extends.
+ * @fileoverview Implements tableExtension.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
