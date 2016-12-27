@@ -13,7 +13,7 @@
  * @private
  */
 export function _extractPropertiesForMerge(value, type, oppossitType) {
-    const regex = new RegExp(`^((?:${ oppossitType }=[0-9]+:)?)${ type }=([0-9]+):(.*)`);
+    const regex = new RegExp(`^((?:${oppossitType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
     const regexResult = regex.exec(value);
     let mergeCount = 1;
 
@@ -22,15 +22,15 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
         value = regexResult[1] + regexResult[3];
     }
 
-    return [mergeCount, value]; 
+    return [mergeCount, value];
 }
 
 /**
- * Parse table cell element like td, th. 
+ * Parse table cell element like td, th.
  * @param {HTMLElement} cell - table cell element like td, th
  * @returns {{
- *   nodeName: string
- *   cospan: number,
+ *   nodeName: string,
+ *   colspan: number,
  *   rowspan: number,
  *   value: string,
  *   align: string
@@ -41,7 +41,8 @@ export function _parseTableCell(cell) {
     const nodeName = cell.nodeName;
     const align = cell.align || '';
     let value = cell.innerHTML.trim();
-    let colspan, rowspan;
+    let colspan = null;
+    let rowspan = null;
 
     [colspan, value] = _extractPropertiesForMerge(value, '@cols', '@rows');
     [rowspan, value] = _extractPropertiesForMerge(value, '@rows', '@cols');
@@ -57,14 +58,12 @@ export function _parseTableCell(cell) {
 
 /**
  * Create table object from jQuery table.
- * @param {jQuery} $table
+ * @param {jQuery} $table - jQuery table
  * @returns {Array.<Array.<object>>}
  * @private
  */
 export function _createTableObjectFrom$Table($table) {
-    return $table.find('tr').get().map(tr => {
-        return $(tr).find('td, th').get().map(_parseTableCell);
-    });
+    return $table.find('tr').get().map(tr => $(tr).find('td, th').get().map(_parseTableCell));
 }
 
 /**
@@ -82,7 +81,7 @@ export function _divideTrs(trs) {
 /**
  * Merge by colspan.
  * @param {Array.<Array.<object>>} trs - tr list
- * @private  
+ * @private
  */
 export function _mergeByColspan(trs) {
     trs.forEach(tr => {
@@ -111,7 +110,7 @@ export function _getRemovalTdCountsByRowspan(trs) {
         const rowspanTds = tr.filter(td => (td.rowspan > 1));
         const startTrIndexForRemoval = trIndex + 1;
 
-        rowspanTds.forEach((td) => {
+        rowspanTds.forEach(td => {
             const removeCount = td.colspan;
             const endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
 
@@ -151,16 +150,16 @@ function _createTheadOrTbodyHtml(trs, nodeName, wrapperNodeName) {
     if (trs.length) {
         html = trs.map(tr => {
             const tdHtml = tr.map(td => {
-                let attrs = td.colspan > 1 ? ` colspan="${ td.colspan }"` : '';
-                attrs += td.rowspan > 1 ? ` rowspan="${ td.rowspan }"` : '';
-                attrs += td.align ? ` align="${ td.align }"` : '';
+                let attrs = td.colspan > 1 ? ` colspan="${td.colspan}"` : '';
+                attrs += td.rowspan > 1 ? ` rowspan="${td.rowspan}"` : '';
+                attrs += td.align ? ` align="${td.align}"` : '';
 
-                return `<${ nodeName }${ attrs }>${ td.value }</${ nodeName }>`;
+                return `<${nodeName}${attrs}>${td.value}</${nodeName}>`;
             }).join('');
 
-            return `<tr>${ tdHtml }</tr>`;
+            return `<tr>${tdHtml}</tr>`;
         }).join('');
-        html = `<${ wrapperNodeName }>${ html }</${ wrapperNodeName }>`;
+        html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
     }
 
     return html;
@@ -177,17 +176,17 @@ function _createTableHtml(thead, tbody) {
     const theadHtml = _createTheadOrTbodyHtml(thead, 'TH', 'THEAD');
     const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TD', 'TBODY');
 
-    return `<table>${ theadHtml + tbodyHtml }</table>`;
+    return `<table>${theadHtml + tbodyHtml}</table>`;
 }
 
 /**
  * Create merged table by @cols, @rows value in td innerHTML.
  * @param {HTMLElement} tableElement - unmerged table
- * @returns {HTMLElement} 
+ * @returns {HTMLElement}
  */
 export default function createMergedTable(tableElement) {
-    let table = _createTableObjectFrom$Table($(tableElement));
-    let [thead, tbody] = _divideTrs(table);
+    const table = _createTableObjectFrom$Table($(tableElement));
+    const [thead, tbody] = _divideTrs(table);
 
     _mergeByColspan(thead);
     _mergeByColspan(tbody);
