@@ -67,13 +67,35 @@ export function _createTableObjectFrom$Table($table) {
 }
 
 /**
+ * Find index by onFind function.
+ * @param {Array} arr - target array
+ * @param {function} onFind - find function
+ * @returns {number} 
+ */
+function _findIndex(arr, onFind) {
+    let foundIndex = -1;
+
+    tui.util.forEach(arr, (item, index) => {
+        let nextFind = true;
+        if (onFind(item, index)) {
+            foundIndex = index;
+            nextFind = false;
+        }
+
+        return nextFind;
+    });
+
+    return foundIndex;
+}
+
+/**
  * Separate the trs according to the type of parent, such as thead and tbody.
  * @param {Array.<Array.<object>>} trs - tr list
  * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]} - returns thead and tbody
  * @private
  */
 export function _divideTrs(trs) {
-    const tbodyStartIndex = trs.findIndex(tr => (tr[0].nodeName === 'TD'));
+    const tbodyStartIndex = _findIndex(trs, tr => (tr[0].nodeName === 'TD'));
 
     return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
 }
