@@ -13,7 +13,7 @@ extManager.defineExtension('tableExtension', editor => {
         const $tempDiv = $(`<div>${html}</div>`);
         const $tables = $tempDiv.find('table');
 
-        if ($tables.length) { 
+        if ($tables.length) {
             $tables.get().forEach(tableElement => {
                 const mergedTableElement = createMergedTable(tableElement);
 
