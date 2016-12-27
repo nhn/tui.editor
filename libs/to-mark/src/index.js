@@ -6,6 +6,13 @@
 'use strict';
 
 var toMark = require('./toMark');
+var Renderer = require('./renderer');
+var basicRenderer = require('./renderer.basic');
+var gfmRenderer = require('./renderer.gfm');
+
+toMark.Renderer = Renderer;
+toMark.basicRenderer = basicRenderer;
+toMark.gfmRenderer = gfmRenderer;
 
 if (typeof define === 'function' && define.amd) {
     define(function() {

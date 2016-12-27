@@ -52,6 +52,13 @@
 	'use strict';
 
 	var toMark = __webpack_require__(1);
+	var Renderer = __webpack_require__(5);
+	var basicRenderer = __webpack_require__(4);
+	var gfmRenderer = __webpack_require__(6);
+
+	toMark.Renderer = Renderer;
+	toMark.basicRenderer = basicRenderer;
+	toMark.gfmRenderer = gfmRenderer;
 
 	if (true) {
 	    !(__WEBPACK_AMD_DEFINE_RESULT__ = function() {
