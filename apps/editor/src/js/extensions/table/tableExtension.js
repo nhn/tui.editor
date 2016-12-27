@@ -10,7 +10,7 @@ extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
 
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
-        const $tempDiv = $(`<div>${ html }</div>`);
+        const $tempDiv = $(`<div>${html}</div>`);
         const $tables = $tempDiv.find('table');
 
         if ($tables.length) { 
