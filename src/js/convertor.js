@@ -163,7 +163,8 @@ class Convertor {
         let toMarkOptions = {};
 
         html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
-        toMarkOptions = this.eventManager.emitReduce('setToMarkOptions', {});
+
+        this.eventManager.emit('setToMarkOptions', toMarkOptions);
 
         let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 

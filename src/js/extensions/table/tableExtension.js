@@ -14,8 +14,6 @@ extManager.defineExtension('tableExtension', editor => {
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
     eventManager.listen('setToMarkOptions', options => {
         options.renderer = getToMarkRenderer(options);
-
-        return options;
     });
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
 });
