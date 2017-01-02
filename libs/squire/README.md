@@ -183,9 +183,10 @@ Returns the text currently selected in the editor.
 
 Inserts an image at the current cursor location.
 
-The method takes one argument:
+The method takes two arguments:
 
 * **src**: The source path for the image.
+* **attributes**: (optional) An object containing other attributes to set on the `<img>` node. e.g. `{ class: 'class-name' }`. Any `src` attribute will be overwritten by the url given as the first argument.
 
 Returns a reference to the newly inserted image element.
 
