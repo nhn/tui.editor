@@ -6,15 +6,15 @@
 import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
-import getToMarkRenderer from './toMarkRendererCreator';
+import toMarkRenderer from './toMarkRendererCreator';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
 
+    editor.toMarkOptions = editor.toMarkOptions || {};
+    editor.toMarkOptions.renderer = toMarkRenderer;
+
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
-    eventManager.listen('setToMarkOptions', options => {
-        options.renderer = getToMarkRenderer(options);
-    });
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
 });
 

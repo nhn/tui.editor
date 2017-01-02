@@ -59,28 +59,19 @@ export function _getAdditionalThCount(ths) {
 /**
  * Create thead markdown.
  * @param {HTMLElement} theadElement - theadElement element
- * @param {string} theadContent - thead markdown content
+ * @param {string} theadContentMarkdown - thead markdown content
  * @returns {string}
  */
-export function _createTheadMarkdown(theadElement, theadContent) {
+export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
     const ths = $(theadElement).find('th').get();
     let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
 
     align += ' --- |'.repeat(_getAdditionalThCount(ths));
 
-    return theadContent ? `${theadContent}|${align}\n` : '';
+    return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
 }
 
-/**
- * Get toMark renderer.
- * @returns {object}
- */
-export default function getToMarkRenderer() {
-    if (!toMarkRenderer) {
-        toMarkRenderer = toMark.Renderer.factory(toMark.gfmRenderer, {
-            'THEAD': _createTheadMarkdown
-        });
-    }
+export default toMark.Renderer.factory(toMark.gfmRenderer, {
+    'THEAD': _createTheadMarkdown
+});
 
-    return toMarkRenderer;
-}

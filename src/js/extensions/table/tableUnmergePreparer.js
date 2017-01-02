@@ -4,25 +4,25 @@
  */
 
 /**
- * Copy attribute for merge to value.
+ * Prepend merge syntax to content.
  * @param {HTMLElement} cell - td or th
  */
-export function _copyMergeAttrToValue(cell) {
+export function _prependMergeSyntaxToContent(cell) {
     const $cell = $(cell);
     const colspan = $cell.attr('colspan') || '';
     const rowspan = $cell.attr('rowspan') || '';
-    let value = $cell.html();
+    let content = $cell.html();
 
     if (colspan) {
-        value = `@cols=${colspan}:${value}`;
+        content = `@cols=${colspan}:${content}`;
     }
 
     if (rowspan) {
-        value = `@rows=${rowspan}:${value}`;
+        content = `@rows=${rowspan}:${content}`;
     }
 
-    if (value) {
-        $cell.html(value);
+    if (content) {
+        $cell.html(content);
     }
 }
 
@@ -32,7 +32,7 @@ export function _copyMergeAttrToValue(cell) {
  * @returns {HTMLElement}
  */
 export default function prepareTableUnmerge(tableElement) {
-    $(tableElement).find('td, th').get().forEach(_copyMergeAttrToValue);
+    $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
 
     return tableElement;
 }

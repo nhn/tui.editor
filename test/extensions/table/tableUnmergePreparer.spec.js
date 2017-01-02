@@ -1,44 +1,44 @@
-import {_copyMergeAttrToValue} from '../../../src/js/extensions/table/tableUnmergePreparer';
+import {_prependMergeSyntaxToContent} from '../../../src/js/extensions/table/tableUnmergePreparer';
 import prepareTableUnmerge from '../../../src/js/extensions/table/tableUnmergePreparer';
 
 describe('tableUnmergePreparer', () => {
-    describe('_copyMergeAttrToValue()', () => {
-        it('Copy attribute for merge to value, when has colspan', () => {
+    describe('_prependMergeSyntaxToContent()', () => {
+        it('Prepend merge syntax to content, when has colspan', () => {
             const $td = $('<td colspan="2">value</td>');
 
             expect($td.html()).toBe('value');
 
-            _copyMergeAttrToValue($td[0]);
+            _prependMergeSyntaxToContent($td[0]);
 
             expect($td.html()).toBe('@cols=2:value');
         });
 
-        it('Copy attribute for merge to value, when has rowspan', () => {
+        it('Prepend merge syntax to content, when has rowspan', () => {
             const $td = $('<td rowspan="2">value</td>');
 
             expect($td.html()).toBe('value');
 
-            _copyMergeAttrToValue($td[0]);
+            _prependMergeSyntaxToContent($td[0]);
 
             expect($td.html()).toBe('@rows=2:value');
         });
 
-        it('Copy attribute for merge to value, when has both colspan and rowspan', () => {
+        it('Prepend merge syntax to content, when has both colspan and rowspan', () => {
             const $td = $('<td colspan="2" rowspan="2">value</td>');
 
             expect($td.html()).toBe('value');
 
-            _copyMergeAttrToValue($td[0]);
+            _prependMergeSyntaxToContent($td[0]);
 
             expect($td.html()).toBe('@rows=2:@cols=2:value');
         });
 
-        it('Copy attribute for merge to value, when has not both colspan and rowspan', () => {
+        it('Prepend merge syntax to content, when has not both colspan and rowspan', () => {
             const $td = $('<td>value</td>');
 
             expect($td.html()).toBe('value');
 
-            _copyMergeAttrToValue($td[0]);
+            _prependMergeSyntaxToContent($td[0]);
 
             expect($td.html()).toBe('value');
         });

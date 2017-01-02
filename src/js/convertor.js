@@ -158,13 +158,10 @@ class Convertor {
      * @param {string} html html text
      * @returns {string} markdown text
      */
-    toMarkdown(html) {
+    toMarkdown(html, toMarkOptions) {
         const resultArray = [];
-        let toMarkOptions = {};
 
         html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
-
-        this.eventManager.emit('setToMarkOptions', toMarkOptions);
 
         let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 

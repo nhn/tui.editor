@@ -34,7 +34,6 @@ const eventList = [
     'convertorAfterMarkdownToHtmlConverted',
     'convertorBeforeHtmlToMarkdownConverted',
     'convertorAfterHtmlToMarkdownConverted',
-    'setToMarkOptions',
     'stateChange',
     'wysiwygSetValueAfter',
     'wysiwygSetValueBefore',
