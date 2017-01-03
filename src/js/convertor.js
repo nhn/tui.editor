@@ -158,9 +158,13 @@ class Convertor {
      * @param {string} html html text
      * @returns {string} markdown text
      */
-    toMarkdown(html) {
+    toMarkdown(html, toMarkOptions) {
         const resultArray = [];
-        let markdown = toMark(this._appendAttributeForBrIfNeed(html));
+
+        html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+
+        let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
         tui.util.forEach(markdown.split('\n'), (line, index) => {

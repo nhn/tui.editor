@@ -32,6 +32,7 @@ const eventList = [
     'renderedHtmlUpdated',
     'removeEditor',
     'convertorAfterMarkdownToHtmlConverted',
+    'convertorBeforeHtmlToMarkdownConverted',
     'convertorAfterHtmlToMarkdownConverted',
     'stateChange',
     'wysiwygSetValueAfter',
