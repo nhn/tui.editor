@@ -133,6 +133,7 @@ class ToastUIEditor {
         this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
         this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
         this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+        this.toMarkOptions = null;
 
         this.changePreviewStyle(this.options.previewStyle);
 
@@ -307,7 +308,7 @@ class ToastUIEditor {
         this.wwEditor.setValue(html);
 
         if (this.isMarkdownMode()) {
-            const markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+            const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
             this.mdEditor.setValue(markdown);
             this.eventManager.emit('setMarkdownAfter', markdown);
         }
@@ -336,7 +337,7 @@ class ToastUIEditor {
         if (this.isMarkdownMode()) {
             markdown = this.mdEditor.getValue();
         } else {
-            markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+            markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
         }
 
         return markdown;
@@ -350,7 +351,7 @@ class ToastUIEditor {
      */
     getHtml() {
         if (this.isWysiwygMode()) {
-            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
         }
 
         return this.convertor.toHTML(this.mdEditor.getValue());
@@ -478,7 +479,7 @@ class ToastUIEditor {
             this.eventManager.emit('changeModeToWysiwyg');
         } else {
             this.layout.switchToMarkdown();
-            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
             this.getCodeMirror().refresh();
             this.eventManager.emit('changeModeToMarkdown');
         }
