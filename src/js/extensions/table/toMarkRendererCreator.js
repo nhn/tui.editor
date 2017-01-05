@@ -7,6 +7,16 @@ const toMark = window.toMark;
 const RX_COLS = /@cols=[0-9]+:/g;
 
 /**
+ * Create repeat string.
+ * @param {string} str - target string
+ * @param {number} count - count
+ * @returns {string}
+ */
+function _createRepeatString(str, count) {
+    return tui.util.range(0, count).map(() => str).join('');
+}
+
+/**
  * Make table head align text.
  * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
  * @param {HTMLElement} thElement - Table head cell element
@@ -36,7 +46,7 @@ function _makeTableHeadAlignText(thElement) {
 
     textLength = Math.max(textLength, 3);
 
-    return leftAlignValue + '-'.repeat(textLength) + rightAlignValue;
+    return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
 }
 
 /**
@@ -65,7 +75,7 @@ export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
     const ths = $(theadElement).find('th').get();
     let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
 
-    align += ' --- |'.repeat(_getAdditionalThCount(ths));
+    align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
 
     return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
 }
