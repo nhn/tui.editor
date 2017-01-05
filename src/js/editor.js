@@ -181,6 +181,13 @@ class ToastUIEditor {
     }
 
     /**
+     * After added command.
+     */
+    afterAddedCommand() {
+        this.eventManager.emit('afterAddedCommand', this);
+    }
+
+    /**
      * Bind eventHandler to event type
      * @api
      * @memberOf ToastUIEditor
@@ -676,6 +683,7 @@ class ToastUIEditor {
             tuiEditor.addCommand(wwCode);
             tuiEditor.addCommand(wwCodeBlock);
             tuiEditor.addCommand(wwStrike);
+            tuiEditor.afterAddedCommand();
         }
 
         return tuiEditor;

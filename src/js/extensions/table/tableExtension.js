@@ -6,7 +6,12 @@
 import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
-import toMarkRenderer from './toMarkRendererCreator';
+import toMarkRenderer from './toMarkRenderer';
+import wwAddRow from './mergedTableAddRow';
+import wwAddCol from './mergedTableAddCol';
+import wwRemoveRow from './mergedTableRemoveRow';
+import wwRemoveCol from './mergedTableRemoveCol';
+import wwAlignCol from './mergedTableAlignCol';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
@@ -16,6 +21,8 @@ extManager.defineExtension('tableExtension', editor => {
 
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
+
+    eventManager.listen('afterAddedCommand', _addCommands);
 });
 
 /**
@@ -40,3 +47,14 @@ function _changeHtml(html, onChangeTable) {
     return html;
 }
 
+/**
+ * Add commands.
+ * @param {object} editor -  
+ */
+function _addCommands(editor) {
+    editor.addCommand(wwAddRow);
+    editor.addCommand(wwAddCol);
+    editor.addCommand(wwRemoveRow);
+    editor.addCommand(wwRemoveCol);
+    editor.addCommand(wwAlignCol);
+}
