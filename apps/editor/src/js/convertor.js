@@ -156,7 +156,7 @@ class Convertor {
      * @api
      * @memberOf Convertor
      * @param {string} html html text
-     * @param {object || null} toMarkOptions - toMark library options
+     * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text
      */
     toMarkdown(html, toMarkOptions) {
