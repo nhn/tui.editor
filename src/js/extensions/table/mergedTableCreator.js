@@ -3,6 +3,8 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
+import tableRenderer from './tableRenderer';
+
 /**
  * Extract properties for merge.
  * @param {string} value - value
@@ -32,7 +34,7 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
  *   nodeName: string,
  *   colspan: number,
  *   rowspan: number,
- *   value: string,
+ *   content: string,
  *   align: string
  * }}
  * @private
@@ -40,18 +42,18 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
 export function _parseTableCell(cell) {
     const nodeName = cell.nodeName;
     const align = cell.align || '';
-    let value = cell.innerHTML.trim();
+    let content = cell.innerHTML.trim();
     let colspan = null;
     let rowspan = null;
 
-    [colspan, value] = _extractPropertiesForMerge(value, '@cols', '@rows');
-    [rowspan, value] = _extractPropertiesForMerge(value, '@rows', '@cols');
+    [colspan, content] = _extractPropertiesForMerge(content, '@cols', '@rows');
+    [rowspan, content] = _extractPropertiesForMerge(content, '@rows', '@cols');
 
     return {
         nodeName,
         colspan,
         rowspan,
-        value,
+        content,
         align
     };
 }
@@ -158,48 +160,6 @@ export function _mergeByRowspan(trs) {
     });
 }
 
-/**
- * Create html for thead or tbody.
- * @param {Array.<Array.<object>>} trs - tr list
- * @param {string} nodeName - node name like TD, TH
- * @param {string} wrapperNodeName - wrapper node name like THEAD, TBODY
- * @returns {string}
- * @private
- */
-function _createTheadOrTbodyHtml(trs, nodeName, wrapperNodeName) {
-    let html = '';
-
-    if (trs.length) {
-        html = trs.map(tr => {
-            const tdHtml = tr.map(td => {
-                let attrs = td.colspan > 1 ? ` colspan="${td.colspan}"` : '';
-                attrs += td.rowspan > 1 ? ` rowspan="${td.rowspan}"` : '';
-                attrs += td.align ? ` align="${td.align}"` : '';
-
-                return `<${nodeName}${attrs}>${td.value}</${nodeName}>`;
-            }).join('');
-
-            return `<tr>${tdHtml}</tr>`;
-        }).join('');
-        html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
-    }
-
-    return html;
-}
-
-/**
- * Create table html.
- * @param {Array.<Array.<object>>} thead - trs in thead
- * @param {Array.<Array.<object>>} tbody - trs in tbody
- * @returns {string}
- * @private
- */
-function _createTableHtml(thead, tbody) {
-    const theadHtml = _createTheadOrTbodyHtml(thead, 'TH', 'THEAD');
-    const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TD', 'TBODY');
-
-    return `<table>${theadHtml + tbodyHtml}</table>`;
-}
 
 /**
  * Create merged table by @cols, @rows value in td innerHTML.
@@ -214,6 +174,6 @@ export default function createMergedTable(tableElement) {
     _mergeByColspan(tbody);
     _mergeByRowspan(tbody);
 
-    return $(_createTableHtml(thead, tbody))[0];
+    return $(tableRenderer.createTableHtml(table))[0];
 }
 

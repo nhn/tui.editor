@@ -27,6 +27,7 @@ const eventList = [
     'openHeadingSelect',
     'closeAllPopup',
     'command',
+    'afterAddedCommand',
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
