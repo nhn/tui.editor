@@ -1,5 +1,5 @@
-import {_getAdditionalThCount, _createTheadMarkdown} from '../../../src/js/extensions/table/toMarkRendererCreator';
-import getToMarkRenderer from '../../../src/js/extensions/table/toMarkRendererCreator';
+import {_getAdditionalThCount, _createTheadMarkdown} from '../../../src/js/extensions/table/toMarkRenderer';
+import getToMarkRenderer from '../../../src/js/extensions/table/toMarkRenderer';
 
 describe('toMarkRendererCreator', () => {
     describe('_getAdditionalThCount()', () => {
