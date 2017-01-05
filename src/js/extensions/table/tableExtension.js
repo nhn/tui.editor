@@ -49,7 +49,7 @@ function _changeHtml(html, onChangeTable) {
 
 /**
  * Add commands.
- * @param {object} editor -  
+ * @param {object} editor - editor instance
  */
 function _addCommands(editor) {
     editor.addCommand(wwAddRow);

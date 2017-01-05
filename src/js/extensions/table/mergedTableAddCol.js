@@ -35,16 +35,16 @@ const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
         const data = tableDataHandler.createDataFrom$Table($table);
-        const mpIndexes = tableDataHandler.findMappingIndexes($startContainer);
+        const indexes = tableDataHandler.findIndexes(data.mapping, $startContainer);
 
-        _addCol(data, mpIndexes);
+        _addCol(data, indexes);
 
         const renderData = tableDataHandler.createRenderData(data);
         const $newTable = tableRenderer.replaceTable($table, renderData);
 
         $newTable.data('data', data);
 
-        _focus(sq, range, $newTable, mpIndexes.cellIndex);
+        _focus(sq, range, $newTable, data, indexes);
     }
 });
 
@@ -112,13 +112,11 @@ export function _createNewCol(base, cellIndex) {
 /**
  * Add col.
  * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {number} mpRowIndex - mapping row index
- * @param {number} mpCellIndex - mapping cell index
+ * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
  * @private
  */
-export function _addCol(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex}) {
-    const indexes = data.mapping[mpRowIndex][mpCellIndex];
-    const cellIndex = tableDataHandler.getCurCellIndex(data.base, indexes);
+export function _addCol(data, indexes) {
+    const cellIndex = tableDataHandler.findColMergedLastIndex(data.base, indexes);
     const newColumns = _createNewCol(data.base, cellIndex);
 
     data.base.forEach((row, rowIndex) => {
@@ -133,11 +131,15 @@ export function _addCol(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex}) {
  * @param {squireext} sq - squire instance
  * @param {range} range - range object
  * @param {jquery} $newTable - changed table jquery element
- * @param {number} cellIndex - cell index of mapping table data
+ * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
+ * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
  * @private
  */
-function _focus(sq, range, $newTable, cellIndex) {
-    const focusTh = $newTable.find('tr').eq(0).find('th')[cellIndex + 1];
+function _focus(sq, range, $newTable, data, indexes) {
+    const {rowIndex, cellIndex} = tableDataHandler.findMergedLastIndexes(data.base, indexes);
+
+    const focusIndexes = tableDataHandler.getFocusIndexes(data, rowIndex, cellIndex + 1);
+    const focusTh = $newTable.find('tr').eq(focusIndexes.rowIndex).find('td, th')[focusIndexes.cellIndex];
 
     range.setStart(focusTh, 0);
     range.collapse(true);

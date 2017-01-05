@@ -36,9 +36,9 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const $table = $startContainer.closest('table');
         const data = tableDataHandler.createDataFrom$Table($table);
         const beforeRowLength = data.base.length;
-        const mpIndexes = tableDataHandler.findMappingIndexes($startContainer);
+        const indexes = tableDataHandler.findIndexes(data.mapping, $startContainer);
 
-        _removeRow(data, mpIndexes);
+        _removeRow(data, indexes);
 
         if (beforeRowLength === data.base.length) {
             return;
@@ -49,7 +49,7 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
 
         $newTable.data('data', data);
 
-        _focus(sq, range, $newTable, mpIndexes.rowIndex);
+        _focus(sq, range, $newTable, data, indexes);
     }
 });
 
@@ -102,15 +102,13 @@ function _updateMergeStartIndex(base, startRowIndex, endRowIndex) {
 /**
  * Remove row.
  * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {number} mpRowIndex - row index of mapping data
- * @param {number} mpCellIndex - cell index of mapping data
+ * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
  * @private
  */
-export function _removeRow(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex}) {
+export function _removeRow(data, indexes) {
     const base = data.base;
-    const indexes = data.mapping[mpRowIndex][mpCellIndex];
     const startRowIndex = indexes.rowIndex;
-    const endRowIndex = tableDataHandler.getCurRowIndex(data.base, indexes);
+    const endRowIndex = tableDataHandler.findRowMergedLastIndex(data.base, indexes);
     const removeCount = endRowIndex - startRowIndex + 1;
 
     if (removeCount === base.length - 1) {
@@ -129,13 +127,18 @@ export function _removeRow(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex})
  * @param {squireext} sq - squire instance
  * @param {range} range - range object
  * @param {jquery} $newTable - changed table jquery element
- * @param {number} rowIndex - row index of mapping table data
- * @param {number} cellIndex - cell index of mapping table data
+ * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
+ * @param {number} rowIndex - row index of base table data
+ * @param {number} cellIndex - cell index of base table data
  * @private
  */
-function _focus(sq, range, $newTable, rowIndex) {
-    const $trs = $newTable.find('tr');
-    const focusTd = $($trs[rowIndex] || $trs[rowIndex - 1]).find('td')[0];
+function _focus(sq, range, $newTable, data, {rowIndex, cellIndex}) {
+    if (data.base.length - 1 < rowIndex) {
+        rowIndex -= 1;
+    }
+
+    const focusIndexes = tableDataHandler.getFocusIndexes(data, rowIndex, cellIndex);
+    const focusTd = $newTable.find('tr').eq(focusIndexes.rowIndex).find('td')[focusIndexes.cellIndex];
 
     range.setStart(focusTd, 0);
     range.collapse(true);

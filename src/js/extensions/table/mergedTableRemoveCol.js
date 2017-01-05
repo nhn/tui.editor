@@ -36,9 +36,9 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const $table = $startContainer.closest('table');
         const data = tableDataHandler.createDataFrom$Table($table);
         const beforeCellLength = data.base[0].length;
-        const mpIndexes = tableDataHandler.findMappingIndexes($startContainer);
+        const indexes = tableDataHandler.findIndexes(data.mapping, $startContainer);
 
-        _removeCol(data, mpIndexes);
+        _removeCol(data, indexes);
 
         if (beforeCellLength === data.base[0].length) {
             return;
@@ -49,28 +49,9 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
 
         $newTable.data('data', data);
 
-        _focus(sq, range, $newTable, mpIndexes.cellIndex);
+        _focus(sq, range, $newTable, data, indexes);
     }
 });
-
-/**
- * Get current row index for row addition.
- * @param {Array.<Array.<object>>} base - base table data
- * @param {number} rowIndex - row index of base table data
- * @param {number} cellIndex - cell index of base table data
- * @returns {number}
- * @private
- */
-export function _getCurRowIndex(base, {rowIndex, cellIndex}) {
-    const targetCell = base[rowIndex][cellIndex];
-    let foundRowIndex = rowIndex;
-
-    if (targetCell.rowspan > 1) {
-        foundRowIndex += targetCell.rowspan - 1;
-    }
-
-    return foundRowIndex;
-}
 
 /**
  * Update colspan to col merger.
@@ -122,16 +103,14 @@ function _updateMergeStartIndex(base, startCellIndex, endCellIndex) {
 
 /**
  * Remove row.
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {number} mpRowIndex - row index of mapping data
- * @param {number} mpCellIndex - cell index of mapping data
+ * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
+ * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
  * @private
  */
-export function _removeCol(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex}) {
+export function _removeCol(data, indexes) {
     const base = data.base;
-    const indexes = data.mapping[mpRowIndex][mpCellIndex];
     const startCellIndex = indexes.cellIndex;
-    const endCellIndex = tableDataHandler.getCurCellIndex(data.base, indexes);
+    const endCellIndex = tableDataHandler.findColMergedLastIndex(data.base, indexes);
     const removeCount = endCellIndex - startCellIndex + 1;
 
     if (removeCount === base[0].length) {
@@ -152,14 +131,20 @@ export function _removeCol(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex})
  * @param {squireext} sq - squire instance
  * @param {range} range - range object
  * @param {jquery} $newTable - changed table jquery element
- * @param {number} cellIndex - cell index of mapping table data
+ * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
+ * @param {number} rowIndex - row index of base table data
+ * @param {number} cellIndex - cell index of base table data
  * @private
  */
-function _focus(sq, range, $newTable, cellIndex) {
-    const $cells = $newTable.find('tr').eq(0).find('th');
-    const focusTh = $cells[cellIndex] || $cells[cellIndex - 1];
+function _focus(sq, range, $newTable, data, {rowIndex, cellIndex}) {
+    if (data.base[0].length - 1 < cellIndex) {
+        cellIndex -= 1;
+    }
 
-    range.setStart(focusTh, 0);
+    const focusIndexes = tableDataHandler.getFocusIndexes(data, rowIndex, cellIndex);
+    const focusCell = $newTable.find('tr').eq(focusIndexes.rowIndex).find('td, th')[focusIndexes.cellIndex];
+
+    range.setStart(focusCell, 0);
     range.collapse(true);
     sq.setSelection(range);
 }

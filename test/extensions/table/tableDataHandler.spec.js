@@ -185,7 +185,7 @@ describe('tableDataHandler', () => {
         });
     });
 
-    describe('getCurRowIndex()', () => {
+    describe('findRowMergedLastIndex()', () => {
         const base = [
             [
                 {
@@ -218,24 +218,79 @@ describe('tableDataHandler', () => {
             ]
         ];
 
-        it('Get current row index for row addition, when target cell is not merged cell.', () => {
+        it('Find last index of row merged cells, when target cell is not merged cell.', () => {
             const indexes = {
                 rowIndex: 1,
                 cellIndex: 0
             }
-            const actual = tableDataHandler.getCurRowIndex(base, indexes);
+            const actual = tableDataHandler.findRowMergedLastIndex(base, indexes);
 
             expect(actual).toBe(1);
         });
 
-        it('Get current row index for row addition, when target cell is meged cell.', () => {
+        it('Find last index of row merged cells, when target cell is meged cell.', () => {
             const indexes = {
                 rowIndex: 1,
                 cellIndex: 1
             }
-            const actual = tableDataHandler.getCurRowIndex(base, indexes);
+            const actual = tableDataHandler.findRowMergedLastIndex(base, indexes);
 
             expect(actual).toBe(2);
+        });
+    });
+
+    describe('findColMergedLastIndex()', () => {
+        const base = [
+            [
+                {
+                    colspan: 1,
+                    rowspan: 1,
+                    content: 'title1'
+                }, {
+                    colspan: 1,
+                    rowspan: 1,
+                    content: 'title2'
+                }
+            ], [
+                {
+                    colspan: 2,
+                    rowspan: 1,
+                    content: 'content1-1'
+                }, {
+                    corMerged: true,
+                    colMergeStart: 0
+                }
+            ], [
+                {
+                    colspan: 1,
+                    rowspan: 1,
+                    content: 'content2-1'
+                }, {
+                    colspan: 1,
+                    rowspan: 1,
+                    content: 'content2-2'
+                }
+            ]
+        ];
+
+        it('Find last cell index of col merged cells, when target cell is not merged cell.', () => {
+            const indexes = {
+                rowIndex: 2,
+                cellIndex: 0
+            }
+            const actual = tableDataHandler.findColMergedLastIndex(base, indexes);
+
+            expect(actual).toBe(0);
+        });
+
+        it('Find last cell index of col merged cells, when target cell is meged cell.', () => {
+            const indexes = {
+                rowIndex: 1,
+                cellIndex: 0
+            }
+            const actual = tableDataHandler.findColMergedLastIndex(base, indexes);
+
+            expect(actual).toBe(1);
         });
     });
 });
