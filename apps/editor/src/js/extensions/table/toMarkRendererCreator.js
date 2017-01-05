@@ -5,7 +5,6 @@
 
 const toMark = window.toMark;
 const RX_COLS = /@cols=[0-9]+:/g;
-let toMarkRenderer = null;
 
 /**
  * Make table head align text.
