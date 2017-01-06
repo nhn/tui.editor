@@ -53,7 +53,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
 
         tableRenderer.focusToCell(sq, range, focusCell);
 
-        // undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+        // TODO: 개선 필요 - undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
         sq.undo();
         sq.redo();
     }
