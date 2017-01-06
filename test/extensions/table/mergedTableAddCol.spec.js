@@ -1,8 +1,8 @@
-import {_createNewCol, _addCol} from '../../../src/js/extensions/table/mergedTableAddCol';
+import {_createNewColumns, _addColumns} from '../../../src/js/extensions/table/mergedTableAddCol';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
-    describe('_createNewCol()',  () => {
+    describe('_createNewColumns()',  () => {
         let base;
 
         beforeEach(function() {
@@ -32,12 +32,10 @@ describe('mergedTableAddCol', () => {
                         content: 'content1-1'
                     }, {
                         nodeName: 'TD',
-                        colMerged: true,
-                        colMergeStart: 0
+                        colMergeWith: 0
                     }, {
                         nodeName: 'TD',
-                        colMerged: true,
-                        colMergeStart: 0
+                        colMergeWith: 0
                     }
                 ], [
                     {
@@ -60,9 +58,9 @@ describe('mergedTableAddCol', () => {
             ];
         });
 
-        it('Create new col, when target col has merged cell.', () => {
+        it('Create new columns, when target col has merged cell.', () => {
             const cellIndex = 1;
-            const actual = _createNewCol(base, cellIndex);
+            const actual = _createNewColumns(base, cellIndex);
 
             expect(base[1][0].colspan).toBe(4);
             expect(actual.length).toBe(3);
@@ -70,24 +68,23 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
             expect(actual[2]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
 
-        it('Create new col, when target col has start merge cell(has colspan).', () => {
+        it('Create new columns, when target col has start merge cell(has colspan).', () => {
             const cellIndex = 0;
-            const actual = _createNewCol(base, cellIndex);
+            const actual = _createNewColumns(base, cellIndex);
 
             expect(base[1][0].colspan).toBe(4);
             expect(actual.length).toBe(3);
@@ -95,48 +92,47 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
             expect(actual[2]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
 
-        it('Create new row, when target row has last merged cell.', () => {
+        it('Create new columns, when target row has last merged cell.', () => {
             const cellIndex = 2;
-            const actual = _createNewCol(base, cellIndex);
+            const actual = _createNewColumns(base, cellIndex);
 
             expect(actual.length).toBe(3);
             expect(actual[0]).toEqual({
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
             expect(actual[2]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
     });
 
-    describe('_addCol()', () => {
+    describe('_addColumns()', () => {
         const tableHtml = [
             '<table>',
             '<thead>',
@@ -149,76 +145,62 @@ describe('mergedTableAddCol', () => {
             '</table>'
         ].join('');
         const $table = $(tableHtml);
-        let data;
+        let tableData;
 
         beforeEach(() => {
-            data = tableDataHandler.createDataFrom$Table($table);
+            tableData = tableDataHandler.createTableData($table);
         });
 
-        it('Add col, when target col has start merge cell(has colspan).', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 1
-            };
-            const actual = _addCol(data, mpIndexes);
+        it('Add columns, when target col has start merge cell(has colspan).', () => {
+            const actual = _addColumns(tableData, 2, 1);
 
-            expect(data.base[0].length).toBe(4);
-            expect(data.base[1][0].colspan).toBe(4);
-            expect(data.base[1][2]).toEqual({
+            expect(tableData[0].length).toBe(4);
+            expect(tableData[1][0].colspan).toBe(4);
+            expect(tableData[1][2]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
-            expect(data.base[2][2]).toEqual({
+            expect(tableData[2][2]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
 
-        it('Add col, when target col has merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 0
-            };
-            const actual = _addCol(data, mpIndexes);
+        it('Add columns, when target col has merged cell.', () => {
+            const actual = _addColumns(tableData, 2, 0);
 
-            expect(data.base[0].length).toBe(4);
-            expect(data.base[1][0].colspan).toBe(4);
-            expect(data.base[1][1]).toEqual({
+            expect(tableData[0].length).toBe(4);
+            expect(tableData[1][0].colspan).toBe(4);
+            expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
-            expect(data.base[2][1]).toEqual({
+            expect(tableData[2][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
 
-        it('Add col, when target col has last merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 2
-            };
-            const actual = _addCol(data, mpIndexes);
+        it('Add columns, when target col has last merged cell.', () => {
+            const actual = _addColumns(tableData, 2, 2);
 
-            expect(data.base[0].length).toBe(4);
-            expect(data.base[1][0].colspan).toBe(3);
-            expect(data.base[1][3]).toEqual({
+            expect(tableData[0].length).toBe(4);
+            expect(tableData[1][0].colspan).toBe(3);
+            expect(tableData[1][3]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: '<br>'
+                content: ''
             });
-            expect(data.base[2][3]).toEqual({
+            expect(tableData[2][3]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: '<br>'
+                content: ''
             });
         });
     });

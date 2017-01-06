@@ -4,7 +4,7 @@
  */
 
 import CommandManager from '../../commandManager';
-import tableDataHandler from './tableDataHandler';
+import dataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 
 
@@ -29,72 +29,78 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
 
         sq.focus();
 
-        if (!sq.hasFormat('TD') && !sq.hasFormat('TH')) {
+        if (!sq.hasFormat('TABLE')) {
             return;
         }
 
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
-        const data = tableDataHandler.createDataFrom$Table($table);
-        const indexes = tableDataHandler.findIndexes(data.mapping, $startContainer);
+        const tableData = dataHandler.createTableData($table);
+        let cellIndexData = dataHandler.createCellIndexData(tableData);
+        const {rowIndex, colIndex} = dataHandler.findCellIndex(cellIndexData, $startContainer);
 
-        _addRow(data, indexes);
+        _addRow(tableData, rowIndex, colIndex);
+        cellIndexData = dataHandler.createCellIndexData(tableData); // row 추가로 인한 갱신
 
-        const renderData = tableDataHandler.createRenderData(data);
+        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
+        const focusTd = _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex);
 
-        _focus(sq, range, $newTable, data, indexes);
+        tableRenderer.focusToCell(sq, range, focusTd);
+
+        // undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+        sq.undo();
+        sq.redo();
     }
 });
 
 /**
  * Create row merged cell data.
- * @param {number} rowMergeStart - row merge start index
+ * @param {number} rowMergeWith - row merge with index
  * @returns {{
  *   nodeName: string,
- *   rowMerged: boolean,
- *   rowMergeStart: number
+ *   rowMergeWith: number
  * }}
  * @private
  */
-function _createRowMergedCell(rowMergeStart) {
+function _createRowMergedCell(rowMergeWith) {
     return {
         nodeName: 'TD',
-        rowMerged: true,
-        rowMergeStart
+        rowMergeWith
     };
 }
 
 /**
  * Create new row.
- * @param {Array.<Array.<object>>} base - base table data
- * @param {number} rowIndex - row index
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {number} rowIndex - row index of table data
  * @returns {object}
  * @private
  */
-export function _createNewRow(base, rowIndex) {
+export function _createNewRow(tableData, rowIndex) {
     let prevCell = null;
 
-    return base[rowIndex].map((cell, cellIndex) => {
+    return tableData[rowIndex].map((cellData, cellIndex) => {
         let newCell;
 
-        if (cell.rowMerged) {
-            const {rowMergeStart} = cell;
-            const merger = base[rowMergeStart][cellIndex];
+        if (util.isExisty(cellData.rowMergeWith)) {
+            const {rowMergeWith} = cellData;
+            const merger = tableData[rowMergeWith][cellIndex];
+            const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
 
-            if (merger.colMerged && prevCell) {
+            if (util.isExisty(merger.colMergeWith) && prevCell) {
                 newCell = util.extend({}, prevCell);
-            } else if ((rowMergeStart + merger.rowspan - 1) > rowIndex) {
-                base[rowMergeStart][cellIndex].rowspan += 1;
-                newCell = util.extend({}, cell);
+            } else if (lastMergedRowIndex > rowIndex) {
+                merger.rowspan += 1;
+                newCell = util.extend({}, cellData);
             }
-        } else if (cell.rowspan > 1) {
-            cell.rowspan += 1;
+        } else if (cellData.rowspan > 1) {
+            cellData.rowspan += 1;
             newCell = _createRowMergedCell(rowIndex);
         }
 
         if (!newCell) {
-            newCell = tableDataHandler.createBasicCell();
+            newCell = dataHandler.createBasicCell();
         }
 
         prevCell = newCell;
@@ -105,43 +111,41 @@ export function _createNewRow(base, rowIndex) {
 
 /**
  * Add row.
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {number} rowIndex - row index of table data
+ * @param {number} colIndex - column index of tabld data
  * @private
  */
-export function _addRow(data, indexes) {
-    let rowIndex = 0;
+export function _addRow(tableData, rowIndex, colIndex) {
+    let lastMergedRowIndex = 0;
 
-    if (indexes.rowIndex > 0) {
-        rowIndex = tableDataHandler.findRowMergedLastIndex(data.base, indexes);
+    if (rowIndex > 0) {
+        const cellData = tableData[rowIndex][colIndex];
+        lastMergedRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex);
     }
 
-    const newRow = _createNewRow(data.base, rowIndex);
-    const newRowIndex = rowIndex + 1;
+    const newRow = _createNewRow(tableData, lastMergedRowIndex);
+    const newRowIndex = lastMergedRowIndex + 1;
 
-    data.base.splice(newRowIndex, 0, newRow);
-    tableDataHandler.updateMappingData(data);
+    tableData.splice(newRowIndex, 0, newRow);
 }
 
-
 /**
- * Focus to cell.
- * @param {squireext} sq - squire instance
- * @param {range} range - range object
- * @param {jquery} $newTable - changed table jquery element
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
- * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
- * @private
+ * Find focus td element.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {Array.<Array.<object>>} cellIndexData - cell index data
+ * @param {jQuery} $newTable - changed table jQuery element
+ * @param {number} rowIndex - row index of table data
+ * @param {number} colIndex - column index of tabld data
+ * @returns {HTMLElement}
  */
-function _focus(sq, range, $newTable, data, indexes) {
-    const {rowIndex, cellIndex} = tableDataHandler.findMergedLastIndexes(data.base, indexes);
+function _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
+    const cellData = tableData[rowIndex][colIndex];
+    const newRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex) + 1;
+    const newColIndex = dataHandler.findColMergedLastIndex(cellData, colIndex);
+    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, newRowIndex, newColIndex);
 
-    const focusIndexes = tableDataHandler.getFocusIndexes(data, rowIndex + 1, cellIndex);
-    const focusTd = $newTable.find('tr').eq(focusIndexes.rowIndex).find('td')[focusIndexes.cellIndex];
-
-    range.setStart(focusTd, 0);
-    range.collapse(true);
-    sq.setSelection(range);
+    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
 }
 
 export default AddRow;

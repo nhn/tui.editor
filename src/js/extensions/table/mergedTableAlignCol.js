@@ -4,8 +4,10 @@
  */
 
 import CommandManager from '../../commandManager';
-import tableDataHandler from './tableDataHandler';
+import dataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
+
+const util = tui.util;
 
 /**
  * AlignCol
@@ -27,62 +29,59 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
 
         sq.focus();
 
-        if (!sq.hasFormat('TD') && !sq.hasFormat('TH')) {
+        if (!sq.hasFormat('TABLE')) {
             return;
         }
 
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
-        const data = tableDataHandler.createDataFrom$Table($table);
-        const mpIndexes = tableDataHandler.findMappingIndexes($startContainer);
+        const tableData = dataHandler.createTableData($table);
+        let cellIndexData = dataHandler.createCellIndexData(tableData);
+        const elementRowIndex = dataHandler.findElementRowIndex($startContainer);
+        const elementColIndex = dataHandler.findElementColIndex($startContainer);
+        const {colIndex} = cellIndexData[elementRowIndex][elementColIndex];
 
-        _align(data, mpIndexes, alignDirection);
+        _align(tableData[0], colIndex, alignDirection);
+        cellIndexData = dataHandler.createCellIndexData(tableData); // column 삭제로 인한 갱신
 
-        const renderData = tableDataHandler.createRenderData(data);
+        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
+        const focusCell = _findFocusCell($newTable, elementRowIndex, elementColIndex);
 
-        $newTable.data('data', data);
+        tableRenderer.focusToCell(sq, range, focusCell);
 
-        _focus(sq, range, $newTable, mpIndexes);
+        // undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+        sq.undo();
+        sq.redo();
     }
 });
 
 /**
  * Align to table header.
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {object} indexes - mapping index info
- * @param {number} indexes.mpRowIndex - row index of mapping data
- * @param {number} indexes.mpCellIndex - cell index of mapping data
+ * @param {Array.<object>} headRowData - head row data
+ * @param {number} colIndex - column index of tabld data
  * @param {string} alignDirection - align direction
  * @private
  */
-function _align(data, {rowIndex: mpRowIndex, cellIndex: mpCellIndex}, alignDirection) {
-    const indexes = data.mapping[mpRowIndex][mpCellIndex];
-    const header = data.base[0];
-    const headCell = header[indexes.cellIndex];
+function _align(headRowData, colIndex, alignDirection) {
+    const headCellData = headRowData[colIndex];
 
-    if (headCell.colMerged) {
-        header[headCell.colMergeStart].align = alignDirection;
+    if (util.isExisty(headCellData.colMergeWith)) {
+        headRowData[headCellData.colMergeWith].align = alignDirection;
     } else {
-        headCell.align = alignDirection;
+        headCellData.align = alignDirection;
     }
 }
 
 /**
- * Focus to cell.
- * @param {squireext} sq - squire instance
- * @param {range} range - range object
- * @param {jquery} $newTable - changed table jquery element
- * @param {number} rowIndex - row index of mapping table data
- * @param {number} cellIndex - cell index of mapping table data
- * @private
+ * Find focus cell element like td or th.
+ * @param {jQuery} $newTable - changed table jQuery element
+ * @param {number} elementRowIndex - row index of table element
+ * @param {number} elementCellIndex - column index of talbe element
+ * @returns {HTMLElement}
  */
-function _focus(sq, range, $newTable, {rowIndex, cellIndex}) {
-    const focusCell = $newTable.find('tr').eq(rowIndex).find('td, th')[cellIndex];
-
-    range.setStart(focusCell, 0);
-    range.collapse(true);
-    sq.setSelection(range);
+function _findFocusCell($newTable, elementRowIndex, elementCellIndex) {
+    return $newTable.find('tr').eq(elementRowIndex).find('td, th')[elementCellIndex];
 }
 
 export default AlignCol;

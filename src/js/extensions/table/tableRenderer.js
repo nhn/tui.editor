@@ -67,7 +67,21 @@ function replaceTable($table, renderData) {
     return $newTable;
 }
 
+/**
+ * Focus to cell.
+ * @param {squireext} sq - squire instance
+ * @param {range} range - range object
+ * @param {HTMLElement} targetCell - cell element for focus
+ * @private
+ */
+function focusToCell(sq, range, targetCell) {
+    range.setStart(targetCell, 0);
+    range.collapse(true);
+    sq.setSelection(range);
+}
+
 export default {
     createTableHtml,
-    replaceTable
+    replaceTable,
+    focusToCell
 };

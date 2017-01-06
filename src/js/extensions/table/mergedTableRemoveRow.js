@@ -4,7 +4,7 @@
  */
 
 import CommandManager from '../../commandManager';
-import tableDataHandler from './tableDataHandler';
+import dataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 
 const util = tui.util;
@@ -28,43 +28,49 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
 
         sq.focus();
 
-        if (!sq.hasFormat('TD')) {
+        if (!sq.hasFormat('TABLE')) {
             return;
         }
 
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
-        const data = tableDataHandler.createDataFrom$Table($table);
-        const beforeRowLength = data.base.length;
-        const indexes = tableDataHandler.findIndexes(data.mapping, $startContainer);
+        const tableData = dataHandler.createTableData($table);
+        const beforeRowLength = tableData.length;
+        let cellIndexData = dataHandler.createCellIndexData(tableData);
+        const {rowIndex, colIndex} = dataHandler.findCellIndex(cellIndexData, $startContainer);
 
-        _removeRow(data, indexes);
+        _removeRow(tableData, rowIndex, colIndex);
 
-        if (beforeRowLength === data.base.length) {
+        if (beforeRowLength === tableData.length) {
             return;
         }
 
-        const renderData = tableDataHandler.createRenderData(data);
+        cellIndexData = dataHandler.createCellIndexData(tableData); // row 삭제로 인한 갱신
+
+        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
+        const focusTd = _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex);
 
-        $newTable.data('data', data);
+        tableRenderer.focusToCell(sq, range, focusTd);
 
-        _focus(sq, range, $newTable, data, indexes);
+        // undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+        sq.undo();
+        sq.redo();
     }
 });
 
 /**
  * Update rowspan to row merger.
- * @param {Array.<Array.<object>>} base - base table data
+ * @param {Array.<Array.<object>>} tableData - table data
  * @param {number} startRowIndex - start row index
  * @param {number} endRowIndex - end row index
  * @private
  */
-function _updateRowspan(base, startRowIndex, endRowIndex) {
+function _updateRowspan(tableData, startRowIndex, endRowIndex) {
     util.range(startRowIndex, endRowIndex + 1).forEach(rowIndex => {
-        base[rowIndex].forEach((cell, cellIndex) => {
-            if (cell.rowMerged) {
-                const merger = base[cell.rowMergeStart][cellIndex];
+        tableData[rowIndex].forEach((cell, cellIndex) => {
+            if (util.isExisty(cell.rowMergeWith)) {
+                const merger = tableData[cell.rowMergeWith][cellIndex];
 
                 if (merger.rowspan) {
                     merger.rowspan -= 1;
@@ -75,7 +81,7 @@ function _updateRowspan(base, startRowIndex, endRowIndex) {
                 cell.rowspan -= (endRowIndex - rowIndex + 1);
 
                 if (lastMergedRowIndex > endRowIndex) {
-                    base[endRowIndex + 1][cellIndex] = util.extend({}, cell);
+                    tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
                 }
             }
         });
@@ -84,16 +90,16 @@ function _updateRowspan(base, startRowIndex, endRowIndex) {
 
 /**
  * Update row merge start index to merged cell.
- * @param {Array.<Array.<object>>} base - base table data
+ * @param {Array.<Array.<object>>} tableData - table data
  * @param {number} startRowIndex - start row index
  * @param {number} endRowIndex - end row index
  * @private
  */
-function _updateMergeStartIndex(base, startRowIndex, endRowIndex) {
-    base.slice(endRowIndex + 1).forEach(row => {
+function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
+    tableData.slice(endRowIndex + 1).forEach(row => {
         row.forEach(cell => {
-            if (cell.rowMerged && cell.rowMergeStart >= startRowIndex) {
-                cell.rowMergeStart = endRowIndex + 1;
+            if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
+                cell.rowMergeWith = endRowIndex + 1;
             }
         });
     });
@@ -101,48 +107,46 @@ function _updateMergeStartIndex(base, startRowIndex, endRowIndex) {
 
 /**
  * Remove row.
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
- * @param {{rowIndex: number, cellIndex: number}} indexes - indexes of base data
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {number} rowIndex - row index of table data
+ * @param {number} colIndex - column index of tabld data
  * @private
  */
-export function _removeRow(data, indexes) {
-    const base = data.base;
-    const startRowIndex = indexes.rowIndex;
-    const endRowIndex = tableDataHandler.findRowMergedLastIndex(data.base, indexes);
+export function _removeRow(tableData, rowIndex, colIndex) {
+    const startRowIndex = rowIndex;
+    const cellData = tableData[rowIndex][colIndex];
+    const endRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex);
     const removeCount = endRowIndex - startRowIndex + 1;
 
-    if (removeCount === base.length - 1) {
+    if (removeCount === tableData.length - 1) {
         return;
     }
 
-    _updateRowspan(base, startRowIndex, endRowIndex);
-    _updateMergeStartIndex(base, startRowIndex, endRowIndex);
+    _updateRowspan(tableData, startRowIndex, endRowIndex);
+    _updateMergeStartIndex(tableData, startRowIndex, endRowIndex);
 
-    base.splice(startRowIndex, removeCount);
-    tableDataHandler.updateMappingData(data);
+    tableData.splice(startRowIndex, removeCount);
 }
 
 /**
- * Focus to cell.
- * @param {squireext} sq - squire instance
- * @param {range} range - range object
- * @param {jquery} $newTable - changed table jquery element
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data for editing table element
- * @param {number} rowIndex - row index of base table data
- * @param {number} cellIndex - cell index of base table data
- * @private
+ * Find focus td element.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {Array.<Array.<object>>} cellIndexData - cell index data
+ * @param {jQuery} $newTable - changed table jQuery element
+ * @param {number} rowIndex - row index of table data
+ * @param {number} colIndex - column index of tabld data
+ * @returns {HTMLElement}
  */
-function _focus(sq, range, $newTable, data, {rowIndex, cellIndex}) {
-    if (data.base.length - 1 < rowIndex) {
+function _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
+    const cellData = tableData[rowIndex][colIndex];
+
+    if (tableData.length - 1 < rowIndex) {
         rowIndex -= 1;
     }
 
-    const focusIndexes = tableDataHandler.getFocusIndexes(data, rowIndex, cellIndex);
-    const focusTd = $newTable.find('tr').eq(focusIndexes.rowIndex).find('td')[focusIndexes.cellIndex];
+    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex);
 
-    range.setStart(focusTd, 0);
-    range.collapse(true);
-    sq.setSelection(range);
+    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
 }
 
 export default RemoveRow;

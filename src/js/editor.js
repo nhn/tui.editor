@@ -683,7 +683,6 @@ class ToastUIEditor {
             tuiEditor.addCommand(wwCode);
             tuiEditor.addCommand(wwCodeBlock);
             tuiEditor.addCommand(wwStrike);
-            tuiEditor.afterAddedCommand();
         }
 
         return tuiEditor;

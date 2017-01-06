@@ -16,27 +16,23 @@ describe('mergedTableRemoveRow', () => {
             '</table>'
         ].join('');
         const $table = $(tableHtml);
-        let data;
+        let tableData;
 
         beforeEach(() => {
-            data = tableDataHandler.createDataFrom$Table($table);
+            tableData = tableDataHandler.createTableData($table);
         });
 
         it('Remove row, when target row has start merge cell(has rowspan).', () => {
-            const mpIndexes = {
-                rowIndex: 1,
-                cellIndex: 1
-            };
-            const actual = _removeRow(data, mpIndexes);
+            const actual = _removeRow(tableData, 1, 1);
 
-            expect(data.base.length).toBe(3);
-            expect(data.base[1][0]).toEqual({
+            expect(tableData.length).toBe(3);
+            expect(tableData[1][0]).toEqual({
                 nodeName: 'TD',
                 rowspan: 2,
                 colspan: 1,
                 content: 'content1-1'
             });
-            expect(data.base[1][1]).toEqual({
+            expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -45,20 +41,15 @@ describe('mergedTableRemoveRow', () => {
         });
 
         it('Remove row, when target row has merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 0
-            };
-            const actual = _removeRow(data, mpIndexes);
+            const actual = _removeRow(tableData, 2, 1);
 
-            expect(data.base.length).toBe(3);
-            expect(data.base[1][0].rowspan).toBe(2);
-            expect(data.base[2][0]).toEqual({
+            expect(tableData.length).toBe(3);
+            expect(tableData[1][0].rowspan).toBe(2);
+            expect(tableData[2][0]).toEqual({
                 nodeName: 'TD',
-                rowMerged: true,
-                rowMergeStart: 1
+                rowMergeWith: 1
             });
-            expect(data.base[2][1]).toEqual({
+            expect(tableData[2][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -67,20 +58,15 @@ describe('mergedTableRemoveRow', () => {
         });
 
         it('Remove row, when target row has last merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 3,
-                cellIndex: 0
-            };
-            const actual = _removeRow(data, mpIndexes);
+            const actual = _removeRow(tableData, 3, 1);
 
-            expect(data.base.length).toBe(3);
-            expect(data.base[1][0].rowspan).toBe(2);
-            expect(data.base[2][0]).toEqual({
+            expect(tableData.length).toBe(3);
+            expect(tableData[1][0].rowspan).toBe(2);
+            expect(tableData[2][0]).toEqual({
                 nodeName: 'TD',
-                rowMerged: true,
-                rowMergeStart: 1
+                rowMergeWith: 1
             });
-            expect(data.base[2][1]).toEqual({
+            expect(tableData[2][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -89,14 +75,10 @@ describe('mergedTableRemoveRow', () => {
         });
 
         it('If removed after remain only header, rows will not remove.', () => {
-            const mpIndexes = {
-                rowIndex: 1,
-                cellIndex: 0
-            };
-            const actual = _removeRow(data, mpIndexes);
+            const actual = _removeRow(tableData, 1, 0);
 
-            expect(data.base.length).toBe(4);
-            expect(data.base[1][0].rowspan).toBe(3);
+            expect(tableData.length).toBe(4);
+            expect(tableData[1][0].rowspan).toBe(3);
         });
     });
 });

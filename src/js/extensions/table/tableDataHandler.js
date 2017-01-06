@@ -70,13 +70,11 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
             }
 
             if (colMerged) {
-                mergedData.colMerged = true;
-                mergedData.colMergeStart = startCellIndex;
+                mergedData.colMergeWith = startCellIndex;
             }
 
             if (rowMerged) {
-                mergedData.rowMerged = true;
-                mergedData.rowMergeStart = startRowIndex;
+                mergedData.rowMergeWith = startRowIndex;
             }
 
             base[rowIndex][cellIndex] = mergedData;
@@ -85,84 +83,70 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
 }
 
 /**
- * Create base table data from jQuery table Element.
+ * Create table data from jQuery table Element.
  * @param {jQuery} $table - jQuery table element
  * @returns {Array.<Array.<object>>}
  * @private
  */
-export function _createBaseDataFrom$Table($table) {
-    const baseTable = [];
+export function createTableData($table) {
+    const tableData = [];
 
     $table.find('tr').each((trIndex, tr) => {
         let stackedColCount = 0;
 
-        baseTable[trIndex] = baseTable[trIndex] || [];
+        tableData[trIndex] = tableData[trIndex] || [];
 
         $(tr).children().each((tdIndex, cell) => {
             const cellData = _parseCell(cell);
             let cellIndex = tdIndex + stackedColCount;
 
-            while (baseTable[trIndex][cellIndex]) {
+            while (tableData[trIndex][cellIndex]) {
                 cellIndex += 1;
                 stackedColCount += 1;
             }
 
-            baseTable[trIndex][cellIndex] = cellData;
-            _addMergedCell(baseTable, cellData, trIndex, cellIndex);
+            tableData[trIndex][cellIndex] = cellData;
+            _addMergedCell(tableData, cellData, trIndex, cellIndex);
         });
     });
 
-    return baseTable;
+    return tableData;
 }
 
 /**
- * Create mapping data.
- * @param {Array.<Array.<object>>} base - base table data
+ * Create cell index data of table data.
+ * @param {Array.<Array.<object>>} tableData - table data
  * @returns {Array.<Array.<object>>}
  * @priavte
  */
-export function _createMappingData(base) {
-    const mappingTable = [];
+export function createCellIndexData(tableData) {
+    const mappingData = [];
 
-    base.forEach((row, rowIndex) => {
+    tableData.forEach((row, rowIndex) => {
         const mappingRow = [];
 
-        row.forEach((cell, cellIndex) => {
-            if (!cell.colMerged && !cell.rowMerged) {
+        row.forEach((cell, colIndex) => {
+            if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
                 mappingRow.push({
                     rowIndex,
-                    cellIndex
+                    colIndex
                 });
             }
         });
-        mappingTable.push(mappingRow);
+        mappingData.push(mappingRow);
     });
 
-    return mappingTable;
-}
-
-/**
- * Create table data from jQuery table element.
- * @param {jQuery} $table - jQuery table element
- * @returns {{base: object, mapping: object}}
- */
-function createDataFrom$Table($table) {
-    const base = _createBaseDataFrom$Table($table);
-
-    return {
-        base,
-        mapping: _createMappingData(base)
-    };
+    return mappingData;
 }
 
 /**
  * Create render data.
- * @param {Array.<object>} base - base table data
- * @param {Array.<object>} mapping - mapping data
+ * @param {Array.<object>} tableData - table data
+ * @param {Array.<object>} cellIndexData - cell index data
  * @returns {Array.<Array.<object>>}
  */
-function createRenderData({base, mapping}) {
-    return mapping.map(row => row.map(({rowIndex, cellIndex}) => base[rowIndex][cellIndex]));
+function createRenderData(tableData, cellIndexData) {
+    return cellIndexData.map(row => row.map(({rowIndex, colIndex}) => tableData[rowIndex][colIndex]));
 }
 
 /**
@@ -180,63 +164,60 @@ function createBasicCell(nodeName) {
         nodeName: nodeName || 'TD',
         colspan: 1,
         rowspan: 1,
-        content: '<br>'
+        content: ''
     };
 }
 
 /**
- * Find mapping indexes.
- * @param {jQuery} $cell - jQuery element
- * @returns {{rowIndex: number, cellIndex: number}}
+ * Find element row index.
+ * @param {jQuery} $cell - cell jQuery element like td or th
+ * @returns {number}
  */
-function findMappingIndexes($cell) {
+function findElementRowIndex($cell) {
     const $tr = $cell.closest('tr');
     let rowIndex = $tr.prevAll().length;
-    const cellIndex = $cell.closest('td, th').prevAll().length;
 
     if ($tr.parent()[0].nodeName === 'TBODY') {
         rowIndex += 1;
     }
 
-    return {
-        rowIndex,
-        cellIndex
-    };
+    return rowIndex;
+}
+
+/**
+ * Find element col index.
+ * @param {jQuery} $cell - cell jQuery element like td or th
+ * @returns {number}
+ */
+function findElementColIndex($cell) {
+    return $cell.closest('td, th').prevAll().length;
 }
 
 
 /**
- * Find indexes of base table data.
- * @param {Array.<Array.<object>>} mapping - mapping data
- * @param {jQuery} $cell - cell jQuery element like td, th
+ * Find indexes of base table data from mappin data.
+ * @param {Array.<Array.<object>>} cellIndexData - cell index data
+ * @param {jQuery} $cell - cell jQuery element like td or th
  * @returns {{rowIndex: number, cellIndex: number}}
  */
-function findIndexes(mapping, $cell) {
-    const {rowIndex, cellIndex} = findMappingIndexes($cell);
+function findCellIndex(cellIndexData, $cell) {
+    const elementRowIndex = findElementRowIndex($cell);
+    const elementColIndex = findElementColIndex($cell);
 
-    return mapping[rowIndex][cellIndex];
-}
-
-/**
- * Update mapping data.
- * @param {{base: Array.<Array.<object>>, mpaaing: Array.<Array.<object>>}} data - table data
- */
-function updateMappingData(data) {
-    data.mapping = _createMappingData(data.base);
+    return cellIndexData[elementRowIndex][elementColIndex];
 }
 
 /**
  * Find last index of col merged cells.
- * @param {Array.<Array.<object>>} base - base table data
- * @param {{rowIndex: number, cellIndex: number}} indexes - cell index info of base table data
+ * @param {{rowspan: number}} cellData - cell data of table data
+ * @param {number} rowIndex - row index of table data
  * @returns {number}
  */
-function findRowMergedLastIndex(base, indexes) {
-    const targetCell = base[indexes.rowIndex][indexes.cellIndex];
-    let foundRowIndex = indexes.rowIndex;
+function findRowMergedLastIndex(cellData, rowIndex) {
+    let foundRowIndex = rowIndex;
 
-    if (targetCell.rowspan > 1) {
-        foundRowIndex += targetCell.rowspan - 1;
+    if (cellData.rowspan > 1) {
+        foundRowIndex += cellData.rowspan - 1;
     }
 
     return foundRowIndex;
@@ -244,77 +225,55 @@ function findRowMergedLastIndex(base, indexes) {
 
 /**
  * Find last index of col merged cells.
- * @param {Array.<Array.<object>>} base - base table data
- * @param {{rowIndex: number, cellIndex: number}} indexes - cell index info of base table data
+ * @param {{colspan: number}} cellData - cell data of table data
+ * @param {number} colIndex - column index of tabld data
  * @returns {number}
  */
-function findColMergedLastIndex(base, indexes) {
-    const targetCell = base[indexes.rowIndex][indexes.cellIndex];
-    let foundCellIndex = indexes.cellIndex;
+function findColMergedLastIndex(cellData, colIndex) {
+    let foundColIndex = colIndex;
 
-    if (targetCell.colspan > 1) {
-        foundCellIndex += targetCell.colspan - 1;
+    if (cellData.colspan > 1) {
+        foundColIndex += cellData.colspan - 1;
     }
 
-    return foundCellIndex;
+    return foundColIndex;
 }
 
 /**
- * Find merged last indexes.
- * @param {Array.<Array.<object>>} base - base data for table
- * @param {{rowIndex: number, cellIndex: number}} indexes - rowIndex, cellIndex of base data
- * @returns {{rowIndex: number, cellIndex: number}}
- */
-function findMergedLastIndexes(base, indexes) {
-    const rowIndex = findRowMergedLastIndex(base, indexes);
-    const cellIndex = findColMergedLastIndex(base, indexes);
-
-    return {
-        rowIndex,
-        cellIndex
-    };
-}
-
-/**
- * Get focus indexes.
- * @param {{base: Array.<Array.<object>>, mapping: Array.<Array.<object>>}} data - table data
+ * Find focus cell element index.
+ * @param {{rowMergWith: ?number, colMergeWith: ?number}} cellData - cell data of table data
+ * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {number} rowIndex - row index of base data
- * @param {number} cellIndex - cell index of base data
- * @returns {{rowIndex: number, cellIndex: number}}
+ * @param {number} colIndex - col index of base data
+ * @returns {{rowIndex: number, colIndex: number}}
  */
-function getFocusIndexes(data, rowIndex, cellIndex) {
-    const baseCell = data.base[rowIndex][cellIndex];
-    const focusIndexes = {};
+function findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex) {
+    const focusCellIndex = {};
 
-    if (baseCell.rowMerged) {
-        rowIndex = baseCell.rowMergeStart;
-    }
+    rowIndex = util.isExisty(cellData.rowMereWith) ? cellData.rowMereWith : rowIndex;
+    colIndex = util.isExisty(cellData.colMereWith) ? cellData.colMereWith : colIndex;
 
-    if (baseCell.colMerged) {
-        cellIndex = baseCell.colMergeStart;
-    }
-
-    data.mapping.forEach((row, mpRowIndex) => {
-        row.forEach((cell, mpCellIndex) => {
-            if (cell.rowIndex === rowIndex && cell.cellIndex === cellIndex) {
-                focusIndexes.rowIndex = mpRowIndex;
-                focusIndexes.cellIndex = mpCellIndex;
+    cellIndexData.forEach((row, elementRowIndex) => {
+        row.forEach((cell, elementColIndex) => {
+            if (cell.rowIndex === rowIndex && cell.colIndex === colIndex) {
+                focusCellIndex.rowIndex = elementRowIndex;
+                focusCellIndex.colIndex = elementColIndex;
             }
         });
     });
 
-    return focusIndexes;
+    return focusCellIndex;
 }
 
 export default {
-    createDataFrom$Table,
+    createTableData,
+    createCellIndexData,
     createRenderData,
-    findIndexes,
-    findMappingIndexes,
+    findElementRowIndex,
+    findElementColIndex,
+    findCellIndex,
     createBasicCell,
-    updateMappingData,
     findRowMergedLastIndex,
     findColMergedLastIndex,
-    findMergedLastIndexes,
-    getFocusIndexes
+    findFocusCellElementIndex
 };

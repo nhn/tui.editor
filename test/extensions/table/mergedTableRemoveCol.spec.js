@@ -1,8 +1,8 @@
-import {_removeCol} from '../../../src/js/extensions/table/mergedTableRemoveCol';
+import {_removeColumns} from '../../../src/js/extensions/table/mergedTableRemoveCol';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableRemoveCol', () => {
-    describe('_removeCol()', () => {
+    describe('_removeColumns()', () => {
         const tableHtml = [
             '<table>',
             '<thead>',
@@ -15,27 +15,23 @@ describe('mergedTableRemoveCol', () => {
             '</table>'
         ].join('');
         const $table = $(tableHtml);
-        let data;
+        let tableData;
 
         beforeEach(() => {
-            data = tableDataHandler.createDataFrom$Table($table);
+            tableData = tableDataHandler.createTableData($table);
         });
 
-        it('Remove col, when target col has start merge cell(has colspan).', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 0
-            };
-            const actual = _removeCol(data, mpIndexes);
+        it('Remove columns, when target cell data has start merge cell(has colspan).', () => {
+            const actual = _removeColumns(tableData, 2, 0);
 
-            expect(data.base[0].length).toBe(2);
-            expect(data.base[1][0]).toEqual({
+            expect(tableData[0].length).toBe(2);
+            expect(tableData[1][0]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 2,
                 content: 'content1-1'
             });
-            expect(data.base[2][0]).toEqual({
+            expect(tableData[2][0]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -43,21 +39,16 @@ describe('mergedTableRemoveCol', () => {
             });
         });
 
-        it('Remove col, when target col has merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 1
-            };
-            const actual = _removeCol(data, mpIndexes);
+        it('Remove columns, when target cell data has merged cell.', () => {
+            const actual = _removeColumns(tableData, 2, 1);
 
-            expect(data.base[0].length).toBe(2);
-            expect(data.base[1][0].colspan).toBe(2);
-            expect(data.base[1][1]).toEqual({
+            expect(tableData[0].length).toBe(2);
+            expect(tableData[1][0].colspan).toBe(2);
+            expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
-            expect(data.base[2][1]).toEqual({
+            expect(tableData[2][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -65,21 +56,16 @@ describe('mergedTableRemoveCol', () => {
             });
         });
 
-        it('Remove col, when target col has last merged cell.', () => {
-            const mpIndexes = {
-                rowIndex: 2,
-                cellIndex: 2
-            };
-            const actual = _removeCol(data, mpIndexes);
+        it('Remove columns, when target cell data has last merged cell.', () => {
+            const actual = _removeColumns(tableData, 2, 2);
 
-            expect(data.base[0].length).toBe(2);
-            expect(data.base[1][0].colspan).toBe(2);
-            expect(data.base[1][1]).toEqual({
+            expect(tableData[0].length).toBe(2);
+            expect(tableData[1][0].colspan).toBe(2);
+            expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
-                colMerged: true,
-                colMergeStart: 0
+                colMergeWith: 0
             });
-            expect(data.base[2][1]).toEqual({
+            expect(tableData[2][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
@@ -87,15 +73,11 @@ describe('mergedTableRemoveCol', () => {
             });
         });
 
-        it('If removed all col, cols will not remove.', () => {
-            const mpIndexes = {
-                rowIndex: 1,
-                cellIndex: 0
-            };
-            const actual = _removeCol(data, mpIndexes);
+        it('If removed all cells, cells will not remove.', () => {
+            const actual = _removeColumns(tableData, 1, 0);
 
-            expect(data.base[0].length).toBe(3);
-            expect(data.base[1][0].colspan).toBe(3);
+            expect(tableData[0].length).toBe(3);
+            expect(tableData[1][0].colspan).toBe(3);
         });
     });
 });
