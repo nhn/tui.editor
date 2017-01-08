@@ -1592,7 +1592,7 @@ proto.setHTML = function ( html ) {
     }
 
     cleanTree( frag );
-    cleanupBRs( frag, root );
+    cleanupBRs( frag, root, false );
 
     fixContainer( frag, root );
 
@@ -1768,7 +1768,7 @@ proto.insertHTML = function ( html, isPaste ) {
 
         addLinks( frag, frag, this );
         cleanTree( frag );
-        cleanupBRs( frag, root );
+        cleanupBRs( frag, root, false );
         removeEmptyInlines( frag );
         frag.normalize();
 

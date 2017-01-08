@@ -307,16 +307,17 @@ var notWSTextNode = function ( node ) {
         node.nodeName === 'BR' :
         notWS.test( node.data );
 };
-var isLineBreak = function ( br ) {
-    var block = br.parentNode,
-        walker;
+var isLineBreak = function ( br, isLBIfEmptyBlock ) {
+    var block = br.parentNode;
+    var walker;
     while ( isInline( block ) ) {
         block = block.parentNode;
     }
     walker = new TreeWalker(
         block, SHOW_ELEMENT|SHOW_TEXT, notWSTextNode );
     walker.currentNode = br;
-    return !!walker.nextNode();
+    return !!walker.nextNode() ||
+        ( isLBIfEmptyBlock && !walker.previousNode() );
 };
 
 // <br> elements are treated specially, and differently depending on the
@@ -325,11 +326,11 @@ var isLineBreak = function ( br ) {
 // line breaks by wrapping the inline text in a <div>. Browsers that want <br>
 // elements at the end of each block will then have them added back in a later
 // fixCursor method call.
-var cleanupBRs = function ( node, root ) {
-    var brs = node.querySelectorAll( 'BR' ),
-        brBreaksLine = [],
-        l = brs.length,
-        i, br, parent;
+var cleanupBRs = function ( node, root, keepForBlankLine ) {
+    var brs = node.querySelectorAll( 'BR' );
+    var brBreaksLine = [];
+    var l = brs.length;
+    var i, br, parent;
 
     // Must calculate whether the <br> breaks a line first, because if we
     // have two <br>s next to each other, after the first one is converted
@@ -337,7 +338,7 @@ var cleanupBRs = function ( node, root ) {
     // therefore seem to not be a line break. But in its original context it
     // was, so we should also convert it to a block split.
     for ( i = 0; i < l; i += 1 ) {
-        brBreaksLine[i] = isLineBreak( brs[i] );
+        brBreaksLine[i] = isLineBreak( brs[i], keepForBlankLine );
     }
     while ( l-- ) {
         br = brs[l];
