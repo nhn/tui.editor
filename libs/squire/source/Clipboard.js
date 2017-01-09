@@ -51,7 +51,6 @@ var onCut = function ( event ) {
     // Mobile Safari flat out doesn't work:
     // https://bugs.webkit.org/show_bug.cgi?id=143776
     if ( !isEdge && !isIOS && clipboardData ) {
-        moveRangeBoundariesUpTree( range, root );
         node.appendChild( deleteContentsOfRange( range, root ) );
         setClipboardData( clipboardData, node, root );
         event.preventDefault();
@@ -85,7 +84,7 @@ var onCopy = function ( event ) {
         endBlock = getEndBlockOfRange( range, root );
         copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
         moveRangeBoundariesDownTree( range );
-        moveRangeBoundariesUpTree( range, copyRoot );
+        moveRangeBoundariesUpTree( range, copyRoot, copyRoot );
         contents = range.cloneContents();
         parent = range.commonAncestorContainer;
         if ( parent.nodeType === TEXT_NODE ) {

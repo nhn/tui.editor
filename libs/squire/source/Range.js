@@ -133,28 +133,24 @@ var extractContentsOfRange = function ( range, common, root ) {
 };
 
 var deleteContentsOfRange = function ( range, root ) {
-    // Move boundaries up as much as possible to reduce need to split.
-    // But we need to check whether we've moved the boundary outside of a
-    // block. If so, the entire block will be removed, so we shouldn't merge
-    // later.
-    moveRangeBoundariesUpTree( range );
+    var startBlock = getStartBlockOfRange( range, root );
+    var endBlock = getEndBlockOfRange( range, root );
+    var needsMerge = ( startBlock !== endBlock );
+    var frag, child;
 
-    var startBlock = range.startContainer,
-        endBlock = range.endContainer,
-        needsMerge = ( isInline( startBlock ) || isBlock( startBlock ) ) &&
-            ( isInline( endBlock ) || isBlock( endBlock ) );
+    // Move boundaries up as much as possible without exiting block,
+    // to reduce need to split.
+    moveRangeBoundariesUpTree( range, startBlock, endBlock );
 
     // Remove selected range
-    var frag = extractContentsOfRange( range, null, root );
+    frag = extractContentsOfRange( range, null, root );
 
-    // Move boundaries back down tree so that they are inside the blocks.
-    // If we don't do this, the range may be collapsed to a point between
-    // two blocks, so get(Start|End)BlockOfRange will return null.
+    // Move boundaries back down tree as far as possible.
     moveRangeBoundariesDownTree( range );
 
     // If we split into two different blocks, merge the blocks.
-    startBlock = getStartBlockOfRange( range, root );
     if ( needsMerge ) {
+        // endBlock will have been split, so need to refetch
         endBlock = getEndBlockOfRange( range, root );
         if ( startBlock && endBlock && startBlock !== endBlock ) {
             mergeWithBlock( startBlock, endBlock, range );
@@ -167,12 +163,12 @@ var deleteContentsOfRange = function ( range, root ) {
     }
 
     // Ensure root has a block-level element in it.
-    var child = root.firstChild;
+    child = root.firstChild;
     if ( !child || child.nodeName === 'BR' ) {
         fixCursor( root, root );
         range.selectNodeContents( root.firstChild );
     } else {
-        range.collapse( range.endContainer === root ? true : false );
+        range.collapse( true );
     }
     return frag;
 };
@@ -388,19 +384,22 @@ var moveRangeBoundariesDownTree = function ( range ) {
     }
 };
 
-var moveRangeBoundariesUpTree = function ( range, common ) {
-    var startContainer = range.startContainer,
-        startOffset = range.startOffset,
-        endContainer = range.endContainer,
-        endOffset = range.endOffset,
-        maySkipBR = true,
-        parent;
+var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
+    var startContainer = range.startContainer;
+    var startOffset = range.startOffset;
+    var endContainer = range.endContainer;
+    var endOffset = range.endOffset;
+    var maySkipBR = true;
+    var parent;
 
-    if ( !common ) {
-        common = range.commonAncestorContainer;
+    if ( !startMax ) {
+        startMax = range.commonAncestorContainer;
+    }
+    if ( !endMax ) {
+        endMax = startMax;
     }
 
-    while ( startContainer !== common && !startOffset ) {
+    while ( startContainer !== startMax && !startOffset ) {
         parent = startContainer.parentNode;
         startOffset = indexOf.call( parent.childNodes, startContainer );
         startContainer = parent;
@@ -414,7 +413,7 @@ var moveRangeBoundariesUpTree = function ( range, common ) {
             endOffset += 1;
             maySkipBR = false;
         }
-        if ( endContainer === common ||
+        if ( endContainer === endMax ||
                 endOffset !== getLength( endContainer ) ) {
             break;
         }
