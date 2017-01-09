@@ -2165,6 +2165,12 @@ var onCut = function ( event ) {
     var root = this._root;
     var self = this;
 
+    // Nothing to do
+    if ( range.collapsed ) {
+        event.preventDefault();
+        return;
+    }
+
     // Save undo checkpoint
     this.saveUndoState( range );
 
