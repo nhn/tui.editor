@@ -130,6 +130,24 @@ class WysiwygEditor {
     }
 
     /**
+     * REmove key event handler.
+     * @param {string} keyMap keyMap string
+     * @param {function} handler handler
+     */
+    removeKeyEventHandler(keyMap, handler) {
+        if (!handler) {
+            handler = keyMap;
+            keyMap = 'DEFAULT';
+        }
+
+        const handlers = this._keyEventHandlers[keyMap];
+
+        if (handlers) {
+            this._keyEventHandlers[keyMap] = handlers.filter(_handler => _handler !== handler);
+        }
+    }
+
+    /**
      * _runKeyEventHandlers
      * Run key event handler
      * @param {Event} event event object

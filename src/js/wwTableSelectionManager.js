@@ -75,7 +75,7 @@ class WwTableSelectionManager {
          */
         this._isSelectionStarted = false;
 
-        this.eventManager.listen('mousedown', ev => {
+        this.eventManager.listen('mousedown.table', ev => {
             const MOUSE_RIGHT_BUTTON = 2;
             selectionStart = $(ev.data.target).closest('td,th')[0];
             const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
@@ -85,12 +85,11 @@ class WwTableSelectionManager {
                 || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
             ) {
                 this.removeClassAttrbuteFromAllCellsIfNeed();
-
                 this._setTableSelectionTimerIfNeed(selectionStart);
             }
         });
 
-        this.eventManager.listen('mouseover', ev => {
+        this.eventManager.listen('mouseover.table', ev => {
             selectionEnd = $(ev.data.target).closest('td,th')[0];
 
             const range = this.wwe.getEditor().getSelection();
@@ -102,6 +101,7 @@ class WwTableSelectionManager {
                 && isEndsInTable
                 && ((!isTextSelect || isSameCell) && !isTextSelect)
             ) {
+                window.getSelection().removeAllRanges();
                 // For disable firefox's native table cell selection
                 if (tui.util.browser.firefox && !this._removeSelectionTimer) {
                     this._removeSelectionTimer = setInterval(() => {
@@ -111,7 +111,7 @@ class WwTableSelectionManager {
                 this._highlightTableCellsBy(selectionStart, selectionEnd);
             }
         });
-        this.eventManager.listen('mouseup', ev => {
+        this.eventManager.listen('mouseup.table', ev => {
             selectionEnd = $(ev.data.target).closest('td,th')[0];
 
             let range = this.wwe.getEditor().getSelection();
@@ -127,6 +127,8 @@ class WwTableSelectionManager {
                     this.wwe.componentManager.getManager('table').resetLastCellNode();
 
                     range = this.wwe.getEditor().getSelection();
+                    range.setStart(selectionEnd, 0);
+                    range.setEnd(selectionEnd, 1);
                     range.collapse(true);
                     this.wwe.getEditor().setSelection(range);
                 }
@@ -373,6 +375,24 @@ class WwTableSelectionManager {
             range.setEnd(selectedCells.last()[0], 1);
             sq.setSelection(range);
         }
+    }
+
+    /**
+     * Style to selected cells.
+     * @param {function} onStyle - function for styling
+     */
+    styleToSelectedCells(onStyle) {
+        this.createRangeBySelectedCells();
+        onStyle(this.wwe.getEditor());
+    }
+
+    /**
+     * Destroy.
+     */
+    destroy() {
+        this.eventManager.removeEventHandler('mousedown.table');
+        this.eventManager.removeEventHandler('mouseover.table');
+        this.eventManager.removeEventHandler('mouseup.table');
     }
 }
 module.exports = WwTableSelectionManager;

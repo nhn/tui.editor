@@ -2,6 +2,8 @@ import {_createNewColumns, _addColumns} from '../../../src/js/extensions/table/m
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
+    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
     describe('_createNewColumns()',  () => {
         let base;
 
@@ -68,7 +70,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 2
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
@@ -78,7 +84,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
             });
         });
 
@@ -92,7 +102,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 1
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
@@ -102,7 +116,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
             });
         });
 
@@ -115,19 +133,31 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 3
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
             });
             expect(actual[2]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
             });
         });
     });
@@ -164,7 +194,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
             });
         });
 
@@ -181,7 +215,11 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
             });
         });
 
@@ -194,13 +232,21 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
             });
             expect(tableData[2][3]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
             });
         });
     });

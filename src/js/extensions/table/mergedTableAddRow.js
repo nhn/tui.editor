@@ -44,7 +44,7 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
 
         const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusTd = _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex);
+        const focusTd = _findFocusTd($newTable, rowIndex, colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);
 
@@ -80,12 +80,12 @@ function _createRowMergedCell(rowMergeWith) {
 export function _createNewRow(tableData, rowIndex) {
     let prevCell = null;
 
-    return tableData[rowIndex].map((cellData, cellIndex) => {
+    return tableData[rowIndex].map((cellData, colIndex) => {
         let newCell;
 
         if (util.isExisty(cellData.rowMergeWith)) {
             const {rowMergeWith} = cellData;
-            const merger = tableData[rowMergeWith][cellIndex];
+            const merger = tableData[rowMergeWith][colIndex];
             const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
 
             if (util.isExisty(merger.colMergeWith) && prevCell) {
@@ -100,7 +100,7 @@ export function _createNewRow(tableData, rowIndex) {
         }
 
         if (!newCell) {
-            newCell = dataHandler.createBasicCell();
+            newCell = dataHandler.createBasicCell(rowIndex + 1, colIndex);
         }
 
         prevCell = newCell;
@@ -132,18 +132,17 @@ export function _addRow(tableData, rowIndex, colIndex) {
 
 /**
  * Find focus td element.
- * @param {Array.<Array.<object>>} tableData - table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  */
-function _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
+function _findFocusTd($newTable, rowIndex, colIndex) {
+    const tableData = dataHandler.createTableData($newTable);
     const cellData = tableData[rowIndex][colIndex];
     const newRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex) + 1;
     const newColIndex = dataHandler.findColMergedLastIndex(cellData, colIndex);
-    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, newRowIndex, newColIndex);
+    const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, newColIndex);
 
     return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
 }

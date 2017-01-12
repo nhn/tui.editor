@@ -22,7 +22,11 @@ describe('tableDataHandler', () => {
                 nodeName: 'TH',
                 colspan: 2,
                 rowspan: 1,
-                content: 'title'
+                content: 'title',
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 0
+                }
             });
             expect(actual[0][1]).toEqual({
                 nodeName: 'TH',
@@ -32,19 +36,31 @@ describe('tableDataHandler', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: 'content1-1'
+                content: 'content1-1',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
             });
             expect(actual[1][1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 2,
-                content: 'content1-2'
+                content: 'content1-2',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
             });
             expect(actual[2][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: 'content2-1'
+                content: 'content2-1',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
             expect(actual[2][1]).toEqual({
                 nodeName: 'TD',

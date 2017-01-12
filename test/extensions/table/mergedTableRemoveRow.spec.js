@@ -30,13 +30,21 @@ describe('mergedTableRemoveRow', () => {
                 nodeName: 'TD',
                 rowspan: 2,
                 colspan: 1,
-                content: 'content1-1'
+                content: 'content1-1',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
             });
             expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content2-2'
+                content: 'content2-2',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
         });
 
@@ -53,7 +61,11 @@ describe('mergedTableRemoveRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content3-2'
+                content: 'content3-2',
+                elementIndex: {
+                    rowIndex: 3,
+                    colIndex: 0
+                }
             });
         });
 
@@ -70,7 +82,11 @@ describe('mergedTableRemoveRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content2-2'
+                content: 'content2-2',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
         });
 

@@ -2,6 +2,8 @@ import {_createNewRow, _addRow} from '../../../src/js/extensions/table/mergedTab
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddRow', () => {
+    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
     describe('_createNewRow()',  () => {
         let tableData;
 
@@ -54,7 +56,11 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 3,
+                    colIndex: 0
+                }
             });
             expect(actual[1]).toEqual({
                 rowMergeWith: 1
@@ -70,7 +76,11 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
@@ -87,13 +97,21 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 0
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 1
+                }
             });
         });
 
@@ -106,13 +124,21 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
             });
             expect(actual[1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
             });
         });
     });
@@ -150,7 +176,11 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
             });
         });
 
@@ -167,7 +197,11 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 3,
+                    colIndex: 1
+                }
             });
         });
 
@@ -180,13 +214,21 @@ describe('mergedTableAddRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 0
+                }
             });
             expect(tableData[4][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 1
+                }
             });
         });
     });

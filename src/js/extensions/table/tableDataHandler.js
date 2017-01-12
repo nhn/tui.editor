@@ -8,6 +8,8 @@ const util = tui.util;
 /**
  * Parse cell like td or th.
  * @param {HTMLElement} cell - cell element like td or th
+ * @param {number} rowIndex - row index
+ * @param {number} colIndex - column index
  * @returns {{
  *   nodeName: string,
  *   colspan: number,
@@ -17,7 +19,7 @@ const util = tui.util;
  * }}
  * @private
  */
-function _parseCell(cell) {
+function _parseCell(cell, rowIndex, colIndex) {
     const $cell = $(cell);
     const colspan = $cell.attr('colspan');
     const rowspan = $cell.attr('rowspan');
@@ -25,7 +27,11 @@ function _parseCell(cell) {
         nodeName: cell.nodeName,
         colspan: colspan ? parseInt(colspan, 10) : 1,
         rowspan: rowspan ? parseInt(rowspan, 10) : 1,
-        content: $cell.html()
+        content: $cell.html(),
+        elementIndex: {
+            rowIndex,
+            colIndex
+        }
     };
 
     if (cell.align) {
@@ -91,22 +97,22 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
 export function createTableData($table) {
     const tableData = [];
 
-    $table.find('tr').each((trIndex, tr) => {
+    $table.find('tr').each((rowIndex, tr) => {
         let stackedColCount = 0;
 
-        tableData[trIndex] = tableData[trIndex] || [];
+        tableData[rowIndex] = tableData[rowIndex] || [];
 
-        $(tr).children().each((tdIndex, cell) => {
-            const cellData = _parseCell(cell);
-            let cellIndex = tdIndex + stackedColCount;
+        $(tr).children().each((colIndex, cell) => {
+            const cellData = _parseCell(cell, rowIndex, colIndex);
+            let dataColIndex = colIndex + stackedColCount;
 
-            while (tableData[trIndex][cellIndex]) {
-                cellIndex += 1;
+            while (tableData[rowIndex][dataColIndex]) {
+                dataColIndex += 1;
                 stackedColCount += 1;
             }
 
-            tableData[trIndex][cellIndex] = cellData;
-            _addMergedCell(tableData, cellData, trIndex, cellIndex);
+            tableData[rowIndex][dataColIndex] = cellData;
+            _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
         });
     });
 
@@ -149,8 +155,12 @@ function createRenderData(tableData, cellIndexData) {
     return cellIndexData.map(row => row.map(({rowIndex, colIndex}) => tableData[rowIndex][colIndex]));
 }
 
+const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
 /**
- * Create basice cell data.
+ * Create basic cell data.
+ * @param {number} rowIndex - row index
+ * @param {number} colIndex - column index
  * @param {string} nodeName - node name
  * @returns {{
  *   nodeName: string,
@@ -159,12 +169,16 @@ function createRenderData(tableData, cellIndexData) {
  *   content: string
  * }}
  */
-function createBasicCell(nodeName) {
+function createBasicCell(rowIndex, colIndex, nodeName) {
     return {
         nodeName: nodeName || 'TD',
         colspan: 1,
         rowspan: 1,
-        content: ''
+        content: BASIC_CELL_CONTENT,
+        elementIndex: {
+            rowIndex,
+            colIndex
+        }
     };
 }
 
@@ -240,29 +254,49 @@ function findColMergedLastIndex(cellData, colIndex) {
 }
 
 /**
- * Find focus cell element index.
- * @param {{rowMergWith: ?number, colMergeWith: ?number}} cellData - cell data of table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
+ * Find cell element index.
+ * @param {Array.<Array.<object>>} tableData - tableData data
  * @param {number} rowIndex - row index of base data
  * @param {number} colIndex - col index of base data
  * @returns {{rowIndex: number, colIndex: number}}
  */
-function findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex) {
-    const focusCellIndex = {};
+function findElementIndex(tableData, rowIndex, colIndex) {
+    const cellData = tableData[rowIndex][colIndex];
 
     rowIndex = util.isExisty(cellData.rowMereWith) ? cellData.rowMereWith : rowIndex;
-    colIndex = util.isExisty(cellData.colMereWith) ? cellData.colMereWith : colIndex;
+    colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
 
-    cellIndexData.forEach((row, elementRowIndex) => {
-        row.forEach((cell, elementColIndex) => {
-            if (cell.rowIndex === rowIndex && cell.colIndex === colIndex) {
-                focusCellIndex.rowIndex = elementRowIndex;
-                focusCellIndex.colIndex = elementColIndex;
-            }
+    return tableData[rowIndex][colIndex].elementIndex;
+}
+
+/**
+ * Find max cell count.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @returns {number}
+ * @private
+ */
+function _findMaxCellCount(tableData) {
+    const cellCounts = tableData.map(rowData => rowData.length);
+
+    return Math.max.apply(null, cellCounts);
+}
+
+/**
+ * Stuff cells into incomplete row.
+ * @param {Array.<Array.<object>>} tableData - table data
+ */
+function stuffCellsIntoIncompleteRow(tableData) {
+    const maxCellCount = _findMaxCellCount(tableData);
+
+    tableData.forEach((rowData, rowIndex) => {
+        const cellCount = rowData.length;
+        const diffCount = maxCellCount - cellCount;
+        const nodeName = rowData[0].nodeName;
+
+        util.range(cellCount, cellCount + diffCount + 1).forEach(colIndex => {
+            rowData.push(createBasicCell(nodeName, rowIndex, colIndex));
         });
     });
-
-    return focusCellIndex;
 }
 
 export default {
@@ -275,5 +309,6 @@ export default {
     createBasicCell,
     findRowMergedLastIndex,
     findColMergedLastIndex,
-    findFocusCellElementIndex
+    findElementIndex,
+    stuffCellsIntoIncompleteRow
 };

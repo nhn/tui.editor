@@ -75,7 +75,7 @@ function replaceTable($table, renderData) {
  * @private
  */
 function focusToCell(sq, range, targetCell) {
-    range.setStart(targetCell, 0);
+    range.selectNodeContents(targetCell);
     range.collapse(true);
     sq.setSelection(range);
 }

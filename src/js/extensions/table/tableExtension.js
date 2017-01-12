@@ -7,6 +7,8 @@ import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
 import toMarkRenderer from './toMarkRenderer';
+import WwMergedTableManager from './wwMergedTableManager';
+import WwMergedTableSelectionManager from './wwMergedTableSelectionManager';
 import wwAddRow from './mergedTableAddRow';
 import wwAddCol from './mergedTableAddCol';
 import wwRemoveRow from './mergedTableRemoveRow';
@@ -15,14 +17,28 @@ import wwAlignCol from './mergedTableAlignCol';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
+    const wwComponentManager = editor.wwEditor.componentManager;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
 
+    _changeWysiwygManagers(wwComponentManager);
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
     eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 });
+
+/**
+ * Change wysiwyg component managers.
+ * @param {object} wwComponentManager - componentMananger instance
+ */
+function _changeWysiwygManagers(wwComponentManager) {
+    wwComponentManager.removeManager('table');
+    wwComponentManager.removeManager('tableSelection');
+
+    wwComponentManager.addManager(WwMergedTableManager);
+    wwComponentManager.addManager(WwMergedTableSelectionManager);
+}
 
 /**
  * Change html by onChangeTable function.
@@ -40,6 +56,7 @@ function _changeHtml(html, onChangeTable) {
 
             $(tableElement).replaceWith(changedTableElement);
         });
+
         html = $tempDiv.html();
     }
 
@@ -76,3 +93,4 @@ function _snatchWysiwygCommand(commandWrapper) {
         default:
     }
 }
+

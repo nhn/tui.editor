@@ -49,7 +49,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
 
         const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusCell = _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex);
+        const focusCell = _findFocusCell($newTable, rowIndex, colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
 
@@ -134,21 +134,19 @@ export function _removeColumns(tableData, rowIndex, colIndex) {
 
 /**
  * Find focus cell element like td or th.
- * @param {Array.<Array.<object>>} tableData - table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  */
-function _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
+function _findFocusCell($newTable, rowIndex, colIndex) {
+    const tableData = dataHandler.createTableData($newTable);
 
     if (tableData[0].length - 1 < colIndex) {
         colIndex -= 1;
     }
 
-    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex);
+    const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
 
     return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
 }

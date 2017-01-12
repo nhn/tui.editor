@@ -43,7 +43,7 @@ const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
 
         const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusCell = _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex);
+        const focusCell = _findFocusCell($newTable, rowIndex, colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
 
@@ -82,7 +82,7 @@ export function _createNewColumns(tableData, colIndex) {
     const newColumns = [];
     let prevCell = null;
 
-    tableData.forEach(rowData => {
+    tableData.forEach((rowData, rowIndex) => {
         const cellData = rowData[colIndex];
         let newCell;
 
@@ -103,7 +103,7 @@ export function _createNewColumns(tableData, colIndex) {
         }
 
         if (!newCell) {
-            newCell = dataHandler.createBasicCell(cellData.nodeName);
+            newCell = dataHandler.createBasicCell(rowIndex, colIndex + 1, cellData.nodeName);
         }
 
         prevCell = newCell;
@@ -134,18 +134,17 @@ export function _addColumns(tableData, rowIndex, colIndex) {
 
 /**
  * Find focus cell element like td or th.
- * @param {Array.<Array.<object>>} tableData - table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  */
-function _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
+function _findFocusCell($newTable, rowIndex, colIndex) {
+    const tableData = dataHandler.createTableData($newTable);
     const cellData = tableData[rowIndex][colIndex];
     const newRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex);
     const newColIndex = dataHandler.findColMergedLastIndex(cellData, colIndex) + 1;
-    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, newRowIndex, newColIndex);
+    const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, newColIndex);
 
     return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
 }
