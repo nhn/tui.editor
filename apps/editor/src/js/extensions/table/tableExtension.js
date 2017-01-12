@@ -6,7 +6,12 @@
 import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
-import toMarkRenderer from './toMarkRendererCreator';
+import toMarkRenderer from './toMarkRenderer';
+import wwAddRow from './mergedTableAddRow';
+import wwAddCol from './mergedTableAddCol';
+import wwRemoveRow from './mergedTableRemoveRow';
+import wwRemoveCol from './mergedTableRemoveCol';
+import wwAlignCol from './mergedTableAlignCol';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
@@ -16,6 +21,7 @@ extManager.defineExtension('tableExtension', editor => {
 
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
+    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 });
 
 /**
@@ -40,3 +46,33 @@ function _changeHtml(html, onChangeTable) {
     return html;
 }
 
+/**
+ * Snatch wysiwyg command.
+ * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+ */
+function _snatchWysiwygCommand(commandWrapper) {
+    const command = commandWrapper.command;
+
+    if (!command.isWWType()) {
+        return;
+    }
+
+    switch (command.getName()) {
+        case 'AddRow':
+            commandWrapper.command = wwAddRow;
+            break;
+        case 'AddCol':
+            commandWrapper.command = wwAddCol;
+            break;
+        case 'RemoveRow':
+            commandWrapper.command = wwRemoveRow;
+            break;
+        case 'RemoveCol':
+            commandWrapper.command = wwRemoveCol;
+            break;
+        case 'AlignCol':
+            commandWrapper.command = wwAlignCol;
+            break;
+        default:
+    }
+}

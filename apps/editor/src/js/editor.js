@@ -181,6 +181,13 @@ class ToastUIEditor {
     }
 
     /**
+     * After added command.
+     */
+    afterAddedCommand() {
+        this.eventManager.emit('afterAddedCommand', this);
+    }
+
+    /**
      * Bind eventHandler to event type
      * @api
      * @memberOf ToastUIEditor

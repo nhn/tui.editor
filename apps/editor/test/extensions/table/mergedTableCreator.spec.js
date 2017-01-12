@@ -93,11 +93,11 @@ describe('mergedTableCreator', () => {
             expect(actual.nodeName).toBe('TD');
             expect(actual.colspan).toBe(2);
             expect(actual.rowspan).toBe(3);
-            expect(actual.value).toBe('abcde');
+            expect(actual.content).toBe('abcde');
             expect(actual.align).toBe('center');
         });
 
-        it('Parse table cell value, when has only value.', () => {
+        it('Parse table cell content, when has only value.', () => {
             const th = {
                 nodeName: 'TH',
                 innerHTML: 'abcde'
@@ -107,7 +107,7 @@ describe('mergedTableCreator', () => {
             expect(actual.nodeName).toBe('TH');
             expect(actual.colspan).toBe(1);
             expect(actual.rowspan).toBe(1);
-            expect(actual.value).toBe('abcde');
+            expect(actual.content).toBe('abcde');
         });
     });
 
@@ -133,14 +133,14 @@ describe('mergedTableCreator', () => {
                 nodeName: 'TH',
                 colspan: 2,
                 rowspan: 1,
-                value: 'title1',
+                content: 'title1',
                 align: 'center'
             });
             expect(actual[0][1]).toEqual({
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                value: '',
+                content: '',
                 align: ''
             });
             expect(actual[1].length).toBe(2);
@@ -148,14 +148,14 @@ describe('mergedTableCreator', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                value: 'content1-1',
+                content: 'content1-1',
                 align: '',
             });
             expect(actual[1][1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 2,
-                value: 'content1-2',
+                content: 'content1-2',
                 align: ''
             });
             expect(actual[2].length).toBe(2);
@@ -163,14 +163,14 @@ describe('mergedTableCreator', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                value: 'content2-1',
+                content: 'content2-1',
                 align: ''
             });
             expect(actual[2][1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                value: '',
+                content: '',
                 align:''
             });
         });
