@@ -34,9 +34,9 @@ var setClipboardData = function ( clipboardData, node, root ) {
 var onCut = function ( event ) {
     var clipboardData = event.clipboardData;
     var range = this.getSelection();
-    var node = this.createElement( 'div' );
     var root = this._root;
     var self = this;
+    var startBlock, endBlock, copyRoot, contents, parent, newContents, node;
 
     // Nothing to do
     if ( range.collapsed ) {
@@ -51,7 +51,27 @@ var onCut = function ( event ) {
     // Mobile Safari flat out doesn't work:
     // https://bugs.webkit.org/show_bug.cgi?id=143776
     if ( !isEdge && !isIOS && clipboardData ) {
-        node.appendChild( deleteContentsOfRange( range, root ) );
+        // Clipboard content should include all parents within block, or all
+        // parents up to root if selection across blocks
+        startBlock = getStartBlockOfRange( range, root );
+        endBlock = getEndBlockOfRange( range, root );
+        copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
+        // Extract the contents
+        parent = range.commonAncestorContainer;
+        contents = deleteContentsOfRange( range, root );
+        // Add any other parents not in extracted content, up to copy root
+        if ( parent.nodeType === TEXT_NODE ) {
+            parent = parent.parentNode;
+        }
+        while ( parent && parent !== copyRoot ) {
+            newContents = parent.cloneNode( false );
+            newContents.appendChild( contents );
+            contents = newContents;
+            parent = parent.parentNode;
+        }
+        // Set clipboard data
+        node = this.createElement( 'div' );
+        node.appendChild( contents );
         setClipboardData( clipboardData, node, root );
         event.preventDefault();
     } else {
@@ -71,22 +91,27 @@ var onCut = function ( event ) {
 var onCopy = function ( event ) {
     var clipboardData = event.clipboardData;
     var range = this.getSelection();
-    var node = this.createElement( 'div' );
     var root = this._root;
-    var startBlock, endBlock, copyRoot, contents, parent, newContents;
+    var startBlock, endBlock, copyRoot, contents, parent, newContents, node;
 
     // Edge only seems to support setting plain text as of 2016-03-11.
     // Mobile Safari flat out doesn't work:
     // https://bugs.webkit.org/show_bug.cgi?id=143776
     if ( !isEdge && !isIOS && clipboardData ) {
-        range = range.cloneRange();
+        // Clipboard content should include all parents within block, or all
+        // parents up to root if selection across blocks
         startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
         copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
+        // Clone range to mutate, then move up as high as possible without
+        // passing the copy root node.
+        range = range.cloneRange();
         moveRangeBoundariesDownTree( range );
         moveRangeBoundariesUpTree( range, copyRoot, copyRoot );
-        contents = range.cloneContents();
+        // Extract the contents
         parent = range.commonAncestorContainer;
+        contents = range.cloneContents();
+        // Add any other parents not in extracted content, up to copy root
         if ( parent.nodeType === TEXT_NODE ) {
             parent = parent.parentNode;
         }
@@ -96,8 +121,9 @@ var onCopy = function ( event ) {
             contents = newContents;
             parent = parent.parentNode;
         }
+        // Set clipboard data
+        node = this.createElement( 'div' );
         node.appendChild( contents );
-
         setClipboardData( clipboardData, node, root );
         event.preventDefault();
     }
