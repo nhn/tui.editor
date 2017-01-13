@@ -865,7 +865,8 @@ var deleteContentsOfRange = function ( range, root ) {
 
     // Move boundaries up as much as possible without exiting block,
     // to reduce need to split.
-    moveRangeBoundariesUpTree( range, startBlock, endBlock );
+    moveRangeBoundariesDownTree( range );
+    moveRangeBoundariesUpTree( range, startBlock, endBlock, root );
 
     // Remove selected range
     frag = extractContentsOfRange( range, null, root );
@@ -1109,7 +1110,7 @@ var moveRangeBoundariesDownTree = function ( range ) {
     }
 };
 
-var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
+var moveRangeBoundariesUpTree = function ( range, startMax, endMax, root ) {
     var startContainer = range.startContainer;
     var startOffset = range.startOffset;
     var endContainer = range.endContainer;
@@ -1124,7 +1125,9 @@ var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
         endMax = startMax;
     }
 
-    while ( startContainer !== startMax && !startOffset ) {
+    while ( !startOffset &&
+            startContainer !== startMax &&
+            startContainer !== root ) {
         parent = startContainer.parentNode;
         startOffset = indexOf.call( parent.childNodes, startContainer );
         startContainer = parent;
@@ -1139,6 +1142,7 @@ var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
             maySkipBR = false;
         }
         if ( endContainer === endMax ||
+                endContainer === root ||
                 endOffset !== getLength( endContainer ) ) {
             break;
         }
@@ -1637,7 +1641,7 @@ var keyHandlers = {
             // delete it ourselves, because the browser won't if it is not
             // inline.
             originalRange = range.cloneRange();
-            moveRangeBoundariesUpTree( range, root, root );
+            moveRangeBoundariesUpTree( range, root, root, root );
             cursorContainer = range.endContainer;
             cursorOffset = range.endOffset;
             if ( cursorContainer.nodeType === ELEMENT_NODE ) {
@@ -2233,7 +2237,7 @@ var onCopy = function ( event ) {
         // passing the copy root node.
         range = range.cloneRange();
         moveRangeBoundariesDownTree( range );
-        moveRangeBoundariesUpTree( range, copyRoot, copyRoot );
+        moveRangeBoundariesUpTree( range, copyRoot, copyRoot, root );
         // Extract the contents
         parent = range.commonAncestorContainer;
         contents = range.cloneContents();
@@ -3744,7 +3748,7 @@ proto.modifyBlocks = function ( modify, range ) {
     expandRangeToBlockBoundaries( range, root );
 
     // 3. Remove range.
-    moveRangeBoundariesUpTree( range, root, root );
+    moveRangeBoundariesUpTree( range, root, root, root );
     frag = extractContentsOfRange( range, root, root );
 
     // 4. Modify tree of fragment and reinsert.
@@ -4478,7 +4482,7 @@ proto.removeAllFormatting = function ( range ) {
     this.saveUndoState( range );
 
     // Avoid splitting where we're already at edges.
-    moveRangeBoundariesUpTree( range, stopNode, stopNode );
+    moveRangeBoundariesUpTree( range, stopNode, stopNode, root );
 
     // Split the selection up to the block, or if whole selection in same
     // block, expand range boundaries to ends of block and split up to root.

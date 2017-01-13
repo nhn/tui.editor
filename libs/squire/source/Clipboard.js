@@ -107,7 +107,7 @@ var onCopy = function ( event ) {
         // passing the copy root node.
         range = range.cloneRange();
         moveRangeBoundariesDownTree( range );
-        moveRangeBoundariesUpTree( range, copyRoot, copyRoot );
+        moveRangeBoundariesUpTree( range, copyRoot, copyRoot, root );
         // Extract the contents
         parent = range.commonAncestorContainer;
         contents = range.cloneContents();

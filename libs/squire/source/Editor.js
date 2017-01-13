@@ -1301,7 +1301,7 @@ proto.modifyBlocks = function ( modify, range ) {
     expandRangeToBlockBoundaries( range, root );
 
     // 3. Remove range.
-    moveRangeBoundariesUpTree( range, root, root );
+    moveRangeBoundariesUpTree( range, root, root, root );
     frag = extractContentsOfRange( range, root, root );
 
     // 4. Modify tree of fragment and reinsert.
@@ -2035,7 +2035,7 @@ proto.removeAllFormatting = function ( range ) {
     this.saveUndoState( range );
 
     // Avoid splitting where we're already at edges.
-    moveRangeBoundariesUpTree( range, stopNode, stopNode );
+    moveRangeBoundariesUpTree( range, stopNode, stopNode, root );
 
     // Split the selection up to the block, or if whole selection in same
     // block, expand range boundaries to ends of block and split up to root.

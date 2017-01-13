@@ -140,7 +140,8 @@ var deleteContentsOfRange = function ( range, root ) {
 
     // Move boundaries up as much as possible without exiting block,
     // to reduce need to split.
-    moveRangeBoundariesUpTree( range, startBlock, endBlock );
+    moveRangeBoundariesDownTree( range );
+    moveRangeBoundariesUpTree( range, startBlock, endBlock, root );
 
     // Remove selected range
     frag = extractContentsOfRange( range, null, root );
@@ -384,7 +385,7 @@ var moveRangeBoundariesDownTree = function ( range ) {
     }
 };
 
-var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
+var moveRangeBoundariesUpTree = function ( range, startMax, endMax, root ) {
     var startContainer = range.startContainer;
     var startOffset = range.startOffset;
     var endContainer = range.endContainer;
@@ -399,7 +400,9 @@ var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
         endMax = startMax;
     }
 
-    while ( startContainer !== startMax && !startOffset ) {
+    while ( !startOffset &&
+            startContainer !== startMax &&
+            startContainer !== root ) {
         parent = startContainer.parentNode;
         startOffset = indexOf.call( parent.childNodes, startContainer );
         startContainer = parent;
@@ -414,6 +417,7 @@ var moveRangeBoundariesUpTree = function ( range, startMax, endMax ) {
             maySkipBR = false;
         }
         if ( endContainer === endMax ||
+                endContainer === root ||
                 endOffset !== getLength( endContainer ) ) {
             break;
         }

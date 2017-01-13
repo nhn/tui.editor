@@ -362,7 +362,7 @@ var keyHandlers = {
             // delete it ourselves, because the browser won't if it is not
             // inline.
             originalRange = range.cloneRange();
-            moveRangeBoundariesUpTree( range, root, root );
+            moveRangeBoundariesUpTree( range, root, root, root );
             cursorContainer = range.endContainer;
             cursorOffset = range.endOffset;
             if ( cursorContainer.nodeType === ELEMENT_NODE ) {
