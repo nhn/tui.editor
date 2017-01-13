@@ -5,6 +5,7 @@
 
 import CommandManager from '../../commandManager';
 import dataHandler from './tableDataHandler';
+import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const util = tui.util;
@@ -35,11 +36,12 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
         const beforeCellLength = tableData[0].length;
         let cellIndexData = dataHandler.createCellIndexData(tableData);
-        const {rowIndex, colIndex} = dataHandler.findCellIndex(cellIndexData, $startContainer);
 
-        _removeColumns(tableData, rowIndex, colIndex);
+        _removeColumns(tableData, tableRange);
 
         if (beforeCellLength === tableData[0].length) {
             return;
@@ -49,7 +51,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
 
         const renderData = dataHandler.createRenderData(tableData, cellIndexData);
         const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusCell = _findFocusCell($newTable, rowIndex, colIndex);
+        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
 
@@ -110,14 +112,16 @@ function _updateMergeStartIndex(tableData, startColIndex, endColIndex) {
 /**
  * Remove columns.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {number} rowIndex - row index of table data
- * @param {number} colIndex - column index of tabld data
+ * @param {{
+ *   start: {rowIndex: number, colIndex: number},
+ *   end: {rowIndex: number, colIndex: number}
+ * }} tableRange - table selection range
  * @private
  */
-export function _removeColumns(tableData, rowIndex, colIndex) {
-    const startColIndex = colIndex;
-    const cellData = tableData[rowIndex][colIndex];
-    const endColIndex = dataHandler.findColMergedLastIndex(cellData, colIndex);
+export function _removeColumns(tableData, tableRange) {
+    const startColIndex = tableRange.start.colIndex;
+    const endRange = tableRange.end;
+    const endColIndex = dataHandler.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
     const removeCount = endColIndex - startColIndex + 1;
 
     if (removeCount === tableData[0].length) {

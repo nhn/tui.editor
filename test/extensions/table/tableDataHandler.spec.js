@@ -157,8 +157,7 @@ describe('tableDataHandler', () => {
         it('Find last index of row merged cells, when target cell is not merged cell.', () => {
             const rowIndex = 1;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex);
+            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(1);
         });
@@ -166,8 +165,7 @@ describe('tableDataHandler', () => {
         it('Find last index of row merged cells, when target cell is meged cell.', () => {
             const rowIndex = 1;
             const colIndex = 1;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findRowMergedLastIndex(cellData, rowIndex);
+            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(2);
         });
@@ -209,8 +207,7 @@ describe('tableDataHandler', () => {
         it('Find last cell index of col merged cells, when target cell is not merged cell.', () => {
             const rowIndex = 2;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findColMergedLastIndex(cellData, colIndex);
+            const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(0);
         });
@@ -218,10 +215,10 @@ describe('tableDataHandler', () => {
         it('Find last cell index of col merged cells, when target cell is meged cell.', () => {
             const rowIndex = 1;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findColMergedLastIndex(cellData, colIndex);
+            const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(1);
         });
     });
 });
+

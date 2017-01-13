@@ -164,7 +164,17 @@ describe('mergedTableAddRow', () => {
         });
 
         it('Add row, when target row has start merge cell(has rowspan).', () => {
-            const actual = _addRow(tableData, 1, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 1,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
+            };
+            const actual = _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(4);
@@ -185,7 +195,17 @@ describe('mergedTableAddRow', () => {
         });
 
         it('Add row, when target row has merged cell.', () => {
-            const actual = _addRow(tableData, 2, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
+            };
+            const actual = _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(4);
@@ -206,7 +226,17 @@ describe('mergedTableAddRow', () => {
         });
 
         it('Add row, when target row has last merged cell.', () => {
-            const actual = _addRow(tableData, 3, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 3,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 3,
+                    colIndex: 1
+                }
+            };
+            const actual = _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(3);
@@ -221,6 +251,63 @@ describe('mergedTableAddRow', () => {
                 }
             });
             expect(tableData[4][1]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 1
+                }
+            });
+        });
+
+        it('Add row, when table selection.', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 3,
+                    colIndex: 1
+                }
+            };
+            const actual = _addRow(tableData, tableRange);
+
+            expect(tableData.length).toBe(6);
+            expect(tableData[1][0].rowspan).toBe(3);
+            expect(tableData[4][0]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 0
+                }
+            });
+            expect(tableData[4][1]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 1
+                }
+            });
+            expect(tableData[5][0]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 4,
+                    colIndex: 0
+                }
+            });
+            expect(tableData[5][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,

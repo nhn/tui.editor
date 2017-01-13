@@ -162,6 +162,44 @@ function findSelectionRange(tableData, $start, $end) {
     return _expandMergedRange(tableData, unmergedRange);
 }
 
+/**
+ * Get table selection range.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @param {jQuery} $selectedCells - selected cells jQuery elements
+ * @param {jQuery} $startContainer - start container jQuery element of text range
+ * @returns {{
+ *   start: {rowIndex: number, colIndex: number},
+ *   end: {rowIndex: number, colIndex: number}
+ *}}
+ */
+function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
+    const cellIndexData = tableDataHandler.createCellIndexData(tableData);
+    const tableRange = {};
+
+    if ($selectedCells.length) {
+        const startRange = tableDataHandler.findCellIndex(cellIndexData, $selectedCells.first());
+        const endRange = util.extend({}, startRange);
+
+        $selectedCells.slice(1).each((index, cell) => {
+            const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $(cell));
+
+            endRange.rowIndex = Math.max(endRange.rowIndex, cellIndex.rowIndex);
+            endRange.colIndex = Math.max(endRange.colIndex, cellIndex.colIndex);
+        });
+
+        tableRange.start = startRange;
+        tableRange.end = endRange;
+    } else {
+        const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $startContainer);
+
+        tableRange.start = cellIndex;
+        tableRange.end = util.extend({}, cellIndex);
+    }
+
+    return tableRange;
+}
+
 export default {
-    findSelectionRange
+    findSelectionRange,
+    getTableSelectionRange
 };

@@ -223,11 +223,13 @@ function findCellIndex(cellIndexData, $cell) {
 
 /**
  * Find last index of col merged cells.
- * @param {{rowspan: number}} cellData - cell data of table data
- * @param {number} rowIndex - row index of table data
+ * @param {Array.<Array.<object>>} tableData - tableData data
+ * @param {number} rowIndex - row index of base data
+ * @param {number} colIndex - column index of tabld data
  * @returns {number}
  */
-function findRowMergedLastIndex(cellData, rowIndex) {
+function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
+    const cellData = tableData[rowIndex][colIndex];
     let foundRowIndex = rowIndex;
 
     if (cellData.rowspan > 1) {
@@ -239,11 +241,13 @@ function findRowMergedLastIndex(cellData, rowIndex) {
 
 /**
  * Find last index of col merged cells.
- * @param {{colspan: number}} cellData - cell data of table data
+ * @param {Array.<Array.<object>>} tableData - tableData data
+ * @param {number} rowIndex - row index of base data
  * @param {number} colIndex - column index of tabld data
  * @returns {number}
  */
-function findColMergedLastIndex(cellData, colIndex) {
+function findColMergedLastIndex(tableData, rowIndex, colIndex) {
+    const cellData = tableData[rowIndex][colIndex];
     let foundColIndex = colIndex;
 
     if (cellData.colspan > 1) {
@@ -263,7 +267,7 @@ function findColMergedLastIndex(cellData, colIndex) {
 function findElementIndex(tableData, rowIndex, colIndex) {
     const cellData = tableData[rowIndex][colIndex];
 
-    rowIndex = util.isExisty(cellData.rowMereWith) ? cellData.rowMereWith : rowIndex;
+    rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
     colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
 
     return tableData[rowIndex][colIndex].elementIndex;
