@@ -45,6 +45,7 @@ function _changeWysiwygManagers(wwComponentManager) {
  * @param {string} html - original html
  * @param {function} onChangeTable - function for changing html
  * @returns {string}
+ * @private
  */
 function _changeHtml(html, onChangeTable) {
     const $tempDiv = $(`<div>${html}</div>`);
@@ -66,6 +67,7 @@ function _changeHtml(html, onChangeTable) {
 /**
  * Snatch wysiwyg command.
  * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+ * @private
  */
 function _snatchWysiwygCommand(commandWrapper) {
     const command = commandWrapper.command;

@@ -16,6 +16,7 @@ const util = tui.util;
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
+ * @private
  */
 function _findUnmergedRange(tableData, $start, $end) {
     const cellIndexData = tableDataHandler.createCellIndexData(tableData);
@@ -59,6 +60,7 @@ function _findUnmergedRange(tableData, $start, $end) {
  *   end: {rowIndex: number, colIndex: number}
  * }} tableRange - table range
  * @param {string} rangeType - range type like start, end
+ * @private
  */
 function _expandRowMergedRange(tableData, tableRange, rangeType) {
     const rowIndex = tableRange[rangeType].rowIndex;
@@ -94,6 +96,7 @@ function _expandRowMergedRange(tableData, tableRange, rangeType) {
  * }} tableRange - table range
  * @param {number} rowIndex - row index
  * @param {number} colIndex - col index
+ * @param @private
  */
 function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
     const rowData = tableData[rowIndex];
@@ -127,6 +130,7 @@ function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
+ * @private
  */
 function _expandMergedRange(tableData, tableRange) {
     let rangeStr = '';

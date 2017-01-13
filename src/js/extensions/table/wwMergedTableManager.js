@@ -47,6 +47,7 @@ class WwMergedTableManager extends WwTableManager {
      * Replace incompletion table to completion table.
      * @param {jQuery} $table - current jQuery table element
      * @param {Array.<Array.<object>>} tableData - table data
+     * @private
      */
     _replaceToCompletionTable($table, tableData) {
         tableDataHandler.stuffCellsIntoIncompleteRow(tableData);
