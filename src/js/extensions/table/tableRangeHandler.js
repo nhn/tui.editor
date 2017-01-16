@@ -10,8 +10,8 @@ const util = tui.util;
 /**
  * Find unmerged table range.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {jQuery} $start - start jQuery element
- * @param {jQuery} $end - end jQuery element
+ * @param {jQuery} $start - start talbe cell jQuery element
+ * @param {jQuery} $end - end table cell jQuery element
  * @returns {{
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}

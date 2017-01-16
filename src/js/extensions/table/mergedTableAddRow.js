@@ -39,13 +39,10 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
 
         _addRow(tableData, tableRange);
-        cellIndexData = dataHandler.createCellIndexData(tableData); // row 추가로 인한 갱신
 
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);

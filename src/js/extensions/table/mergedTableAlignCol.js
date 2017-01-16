@@ -41,10 +41,8 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
         _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
-        const cellIndexData = dataHandler.createCellIndexData(tableData);
 
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusCell = _findFocusCell($newTable, $startContainer);
 
         tableRenderer.focusToCell(sq, range, focusCell);

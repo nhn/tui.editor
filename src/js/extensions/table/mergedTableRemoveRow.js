@@ -39,7 +39,6 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const beforeRowLength = tableData.length;
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
 
         _removeRow(tableData, tableRange);
 
@@ -47,10 +46,7 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
             return;
         }
 
-        cellIndexData = dataHandler.createCellIndexData(tableData); // row 삭제로 인한 갱신
-
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
+        const $newTable = tableRangeHandler.replaceTable($table, tableData);
         const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);

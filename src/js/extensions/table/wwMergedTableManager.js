@@ -51,10 +51,7 @@ class WwMergedTableManager extends WwTableManager {
      */
     _replaceToCompletionTable($table, tableData) {
         tableDataHandler.stuffCellsIntoIncompleteRow(tableData);
-        const cellIndexData = tableDataHandler.createCellIndexData(tableData);
-        const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
-
-        tableRenderer.replaceTable($table, renderData);
+        tableRenderer.replaceTable($table, tableData);
     }
 
     /**

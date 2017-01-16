@@ -38,13 +38,10 @@ const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
         const tableData = dataHandler.createTableData($table);
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
 
         _addColumns(tableData, tableRange);
-        cellIndexData = dataHandler.createCellIndexData(tableData); // column 추가로 인한 갱신
 
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
@@ -122,9 +119,10 @@ export function _createNewColumns(tableData, startColIndex, endColIndex) {
     let prevCells = null;
 
     tableData.forEach((rowData, rowIndex) => {
-        const newCells = colIndexes.map((colIndex, index) =>
-            _createNewCell(rowData, rowIndex, endColIndex, prevCells && prevCells[index - 1])
-        );
+        const newCells = colIndexes.map((colIndex, index) => {
+            const prevCell = prevCells ? prevCells[index - 1] : null;
+            return _createNewCell(rowData, rowIndex, endColIndex, prevCells && prevCells[index - 1]);
+        });
 
         prevCells = newCells;
         newColumns.push(newCells);

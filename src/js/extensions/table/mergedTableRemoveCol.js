@@ -39,7 +39,6 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
         const beforeCellLength = tableData[0].length;
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
 
         _removeColumns(tableData, tableRange);
 
@@ -47,10 +46,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
             return;
         }
 
-        cellIndexData = dataHandler.createCellIndexData(tableData); // column 삭제로 인한 갱신
-
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
+        const $newTable = tableRangeHandler.replaceTable($table, tableData);
         const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
