@@ -95,7 +95,8 @@ class WwTableSelectionManager {
             const range = this.wwe.getEditor().getSelection();
             const isEndsInTable = $(selectionEnd).parents('table')[0];
             const isSameCell = selectionStart === selectionEnd;
-            const isTextSelect = this._isTextSelect(range, isSameCell);
+            const isTextSelect = this._isTextSelect(range, isSameCell) &&
+                  !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
             if (this._isSelectionStarted && isEndsInTable && !isTextSelect) {
                 window.getSelection().removeAllRanges();
@@ -108,12 +109,14 @@ class WwTableSelectionManager {
                 this._highlightTableCellsBy(selectionStart, selectionEnd);
             }
         });
+
         this.eventManager.listen('mouseup.table', ev => {
             selectionEnd = $(ev.data.target).closest('td,th')[0];
 
             let range = this.wwe.getEditor().getSelection();
             const isSameCell = selectionStart === selectionEnd;
-            const isTextSelect = this._isTextSelect(range, isSameCell);
+            const isTextSelect = this._isTextSelect(range, isSameCell) &&
+                  !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
             this._clearTableSelectionTimerIfNeed();
 
