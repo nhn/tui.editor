@@ -95,8 +95,8 @@ function _expandRowMergedRange(tableData, tableRange, rangeType) {
  *   end: {rowIndex: number, colIndex: number}
  * }} tableRange - table range
  * @param {number} rowIndex - row index
- * @param {number} colIndex - col index
- * @param @private
+ * @param {number} colIndex - column index
+ * @private
  */
 function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
     const rowData = tableData[rowIndex];

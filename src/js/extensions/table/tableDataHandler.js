@@ -34,7 +34,7 @@ function _parseCell(cell, rowIndex, colIndex) {
         }
     };
 
-    if (cell.align) {
+    if (cell.nodeName === 'TH' && cell.align) {
         cellData.align = cell.align;
     }
 
@@ -146,13 +146,37 @@ export function createCellIndexData(tableData) {
 }
 
 /**
+ * Get header aligns.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @returns {Array.<?string>}
+ */
+function _getHeaderAligns(tableData) {
+    const headRowData = tableData[0];
+    return headRowData.map(cellData => {
+        let align;
+
+        if (util.isExisty(cellData.colMergeWith)) {
+            align = headRowData[cellData.colMergeWith].align;
+        } else {
+            align = cellData.align;
+        }
+
+        return align;
+    });
+}
+
+/**
  * Create render data.
  * @param {Array.<object>} tableData - table data
  * @param {Array.<object>} cellIndexData - cell index data
  * @returns {Array.<Array.<object>>}
  */
 function createRenderData(tableData, cellIndexData) {
-    return cellIndexData.map(row => row.map(({rowIndex, colIndex}) => tableData[rowIndex][colIndex]));
+    const headerAligns = _getHeaderAligns(tableData);
+
+    return cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
+        align: headerAligns[colIndex]
+    }, tableData[rowIndex][colIndex]))));
 }
 
 const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
