@@ -46,7 +46,7 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
             return;
         }
 
-        const $newTable = tableRangeHandler.replaceTable($table, tableData);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);

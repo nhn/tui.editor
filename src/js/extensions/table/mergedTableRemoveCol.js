@@ -46,7 +46,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
             return;
         }
 
-        const $newTable = tableRangeHandler.replaceTable($table, tableData);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
         const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
