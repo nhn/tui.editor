@@ -24,7 +24,6 @@ extManager.defineExtension('tableExtension', editor => {
 
     _changeWysiwygManagers(wwComponentManager);
     _bindEvents(eventManager);
-
 });
 
 /**
