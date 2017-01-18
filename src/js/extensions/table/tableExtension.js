@@ -22,20 +22,9 @@ extManager.defineExtension('tableExtension', editor => {
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
 
-    _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
     _bindEvents(eventManager);
-});
 
-/**
- * Add commands.
- * @param {object} editor - editor instance
- * @private
- */
-function _addCommands(editor) {
-    editor.addCommand(wwMergeCell);
-    editor.addCommand(wwUnergeCell);
-}
 
 /**
  * Change wysiwyg component managers.

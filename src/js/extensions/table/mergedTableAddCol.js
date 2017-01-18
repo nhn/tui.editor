@@ -121,7 +121,8 @@ export function _createNewColumns(tableData, startColIndex, endColIndex) {
     tableData.forEach((rowData, rowIndex) => {
         const newCells = colIndexes.map((colIndex, index) => {
             const prevCell = prevCells ? prevCells[index - 1] : null;
-            return _createNewCell(rowData, rowIndex, endColIndex, prevCells && prevCells[index - 1]);
+
+            return _createNewCell(rowData, rowIndex, endColIndex, prevCell);
         });
 
         prevCells = newCells;
