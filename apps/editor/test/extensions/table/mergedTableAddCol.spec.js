@@ -2,11 +2,13 @@ import {_createNewColumns, _addColumns} from '../../../src/js/extensions/table/m
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
+    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
     describe('_createNewColumns()',  () => {
-        let base;
+        let tableData;
 
         beforeEach(function() {
-            base = [
+            tableData = [
                 [
                     {
                         nodeName: 'TH',
@@ -59,75 +61,186 @@ describe('mergedTableAddCol', () => {
         });
 
         it('Create new columns, when target col has merged cell.', () => {
-            const cellIndex = 1;
-            const actual = _createNewColumns(base, cellIndex);
+            const startColIndex = 1;
+            const endColIndex = 1;
+            const actual = _createNewColumns(tableData, startColIndex, endColIndex);
 
-            expect(base[1][0].colspan).toBe(4);
+            expect(tableData[1][0].colspan).toBe(4);
             expect(actual.length).toBe(3);
-            expect(actual[0]).toEqual({
+            expect(actual[0].length).toBe(1);
+            expect(actual[0][0]).toEqual({
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 2
+                }
             });
-            expect(actual[1]).toEqual({
+            expect(actual[1].length).toBe(1);
+            expect(actual[1][0]).toEqual({
                 nodeName: 'TD',
                 colMergeWith: 0
             });
-            expect(actual[2]).toEqual({
+            expect(actual[2].length).toBe(1);
+            expect(actual[2][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
             });
         });
 
         it('Create new columns, when target col has start merge cell(has colspan).', () => {
-            const cellIndex = 0;
-            const actual = _createNewColumns(base, cellIndex);
+            const startColIndex = 0;
+            const endColIndex = 0;
+            const actual = _createNewColumns(tableData, startColIndex, endColIndex);
 
-            expect(base[1][0].colspan).toBe(4);
+            expect(tableData[1][0].colspan).toBe(4);
             expect(actual.length).toBe(3);
-            expect(actual[0]).toEqual({
+            expect(actual[0].length).toBe(1);
+            expect(actual[0][0]).toEqual({
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 1
+                }
             });
-            expect(actual[1]).toEqual({
+            expect(actual[1].length).toBe(1);
+            expect(actual[1][0]).toEqual({
                 nodeName: 'TD',
                 colMergeWith: 0
             });
-            expect(actual[2]).toEqual({
+            expect(actual[2].length).toBe(1);
+            expect(actual[2][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
             });
         });
 
         it('Create new columns, when target row has last merged cell.', () => {
-            const cellIndex = 2;
-            const actual = _createNewColumns(base, cellIndex);
+            const startColIndex = 2;
+            const endColIndex = 2;
+            const actual = _createNewColumns(tableData, startColIndex, endColIndex);
 
             expect(actual.length).toBe(3);
-            expect(actual[0]).toEqual({
+            expect(actual[0].length).toBe(1);
+            expect(actual[0][0]).toEqual({
                 nodeName: 'TH',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 3
+                }
             });
-            expect(actual[1]).toEqual({
+            expect(actual[1].length).toBe(1);
+            expect(actual[1][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
             });
-            expect(actual[2]).toEqual({
+            expect(actual[2].length).toBe(1);
+            expect(actual[2][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
+            });
+        });
+
+        it('Create new columns, when has table selection.', () => {
+            const startColIndex = 1;
+            const endColIndex = 2;
+            const actual = _createNewColumns(tableData, startColIndex, endColIndex);
+
+            expect(actual.length).toBe(3);
+            expect(actual[0].length).toBe(2);
+            expect(actual[0][0]).toEqual({
+                nodeName: 'TH',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 3
+                }
+            });
+            expect(actual[0][1]).toEqual({
+                nodeName: 'TH',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 3
+                }
+            });
+            expect(actual[1].length).toBe(2);
+            expect(actual[1][0]).toEqual({
+                nodeName: 'TD',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
+            });
+            expect(actual[1][1]).toEqual({
+                nodeName: 'TD',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
+            });
+            expect(actual[2].length).toBe(2);
+            expect(actual[2][0]).toEqual({
+                nodeName: 'TD',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
+            });
+            expect(actual[2][1]).toEqual({
+                nodeName: 'TD',
+                colspan: 1,
+                rowspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
             });
         });
     });
@@ -152,7 +265,17 @@ describe('mergedTableAddCol', () => {
         });
 
         it('Add columns, when target col has start merge cell(has colspan).', () => {
-            const actual = _addColumns(tableData, 2, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
+            };
+            const actual = _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(4);
@@ -164,12 +287,26 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
             });
         });
 
         it('Add columns, when target col has merged cell.', () => {
-            const actual = _addColumns(tableData, 2, 0);
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 0
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
+            };
+            const actual = _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(4);
@@ -181,12 +318,26 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
             });
         });
 
         it('Add columns, when target col has last merged cell.', () => {
-            const actual = _addColumns(tableData, 2, 2);
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 2
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
+            };
+            const actual = _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(3);
@@ -194,13 +345,66 @@ describe('mergedTableAddCol', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 3
+                }
             });
             expect(tableData[2][3]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: ''
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 3
+                }
+            });
+        });
+
+        it('Add columns, when has table selction.', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 0
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
+            };
+            const actual = _addColumns(tableData, tableRange);
+
+            expect(tableData[0].length).toBe(5);
+            expect(tableData[1][0].colspan).toBe(5);
+            expect(tableData[1][2]).toEqual({
+                nodeName: 'TD',
+                colMergeWith: 0
+            });
+            expect(tableData[1][3]).toEqual({
+                nodeName: 'TD',
+                colMergeWith: 0
+            });
+            expect(tableData[2][2]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
+            });
+            expect(tableData[2][3]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: BASIC_CELL_CONTENT,
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
             });
         });
     });

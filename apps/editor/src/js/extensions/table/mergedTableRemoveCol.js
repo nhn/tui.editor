@@ -5,6 +5,7 @@
 
 import CommandManager from '../../commandManager';
 import dataHandler from './tableDataHandler';
+import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const util = tui.util;
@@ -35,21 +36,18 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const $startContainer = $(range.startContainer);
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
         const beforeCellLength = tableData[0].length;
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
-        const {rowIndex, colIndex} = dataHandler.findCellIndex(cellIndexData, $startContainer);
 
-        _removeColumns(tableData, rowIndex, colIndex);
+        _removeColumns(tableData, tableRange);
 
         if (beforeCellLength === tableData[0].length) {
             return;
         }
 
-        cellIndexData = dataHandler.createCellIndexData(tableData); // column 삭제로 인한 갱신
-
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusCell = _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusCell);
 
@@ -110,14 +108,16 @@ function _updateMergeStartIndex(tableData, startColIndex, endColIndex) {
 /**
  * Remove columns.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {number} rowIndex - row index of table data
- * @param {number} colIndex - column index of tabld data
+ * @param {{
+ *   start: {rowIndex: number, colIndex: number},
+ *   end: {rowIndex: number, colIndex: number}
+ * }} tableRange - table selection range
  * @private
  */
-export function _removeColumns(tableData, rowIndex, colIndex) {
-    const startColIndex = colIndex;
-    const cellData = tableData[rowIndex][colIndex];
-    const endColIndex = dataHandler.findColMergedLastIndex(cellData, colIndex);
+export function _removeColumns(tableData, tableRange) {
+    const startColIndex = tableRange.start.colIndex;
+    const endRange = tableRange.end;
+    const endColIndex = dataHandler.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
     const removeCount = endColIndex - startColIndex + 1;
 
     if (removeCount === tableData[0].length) {
@@ -134,21 +134,19 @@ export function _removeColumns(tableData, rowIndex, colIndex) {
 
 /**
  * Find focus cell element like td or th.
- * @param {Array.<Array.<object>>} tableData - table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  */
-function _findFocusCell(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
+function _findFocusCell($newTable, rowIndex, colIndex) {
+    const tableData = dataHandler.createTableData($newTable);
 
     if (tableData[0].length - 1 < colIndex) {
         colIndex -= 1;
     }
 
-    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex);
+    const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
 
     return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
 }

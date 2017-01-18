@@ -23,25 +23,53 @@ describe('mergedTableRemoveRow', () => {
         });
 
         it('Remove row, when target row has start merge cell(has rowspan).', () => {
-            const actual = _removeRow(tableData, 1, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 1,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
+            };
+            const actual = _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0]).toEqual({
                 nodeName: 'TD',
                 rowspan: 2,
                 colspan: 1,
-                content: 'content1-1'
+                content: 'content1-1',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
             });
             expect(tableData[1][1]).toEqual({
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content2-2'
+                content: 'content2-2',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
         });
 
         it('Remove row, when target row has merged cell.', () => {
-            const actual = _removeRow(tableData, 2, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
+            };
+            const actual = _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0].rowspan).toBe(2);
@@ -53,12 +81,26 @@ describe('mergedTableRemoveRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content3-2'
+                content: 'content3-2',
+                elementIndex: {
+                    rowIndex: 3,
+                    colIndex: 0
+                }
             });
         });
 
         it('Remove row, when target row has last merged cell.', () => {
-            const actual = _removeRow(tableData, 3, 1);
+            const tableRange = {
+                start: {
+                    rowIndex: 3,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 3,
+                    colIndex: 1
+                }
+            };
+            const actual = _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0].rowspan).toBe(2);
@@ -70,12 +112,53 @@ describe('mergedTableRemoveRow', () => {
                 nodeName: 'TD',
                 rowspan: 1,
                 colspan: 1,
-                content: 'content2-2'
+                content: 'content2-2',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
+            });
+        });
+
+        it('Remove row, when has table selection.', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 3,
+                    colIndex: 1
+                }
+            };
+            const actual = _removeRow(tableData, tableRange);
+
+            expect(tableData.length).toBe(2);
+            expect(tableData[1][0].rowspan).toBe(1);
+            expect(tableData[1][1]).toEqual({
+                nodeName: 'TD',
+                rowspan: 1,
+                colspan: 1,
+                content: 'content1-2',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
             });
         });
 
         it('If removed after remain only header, rows will not remove.', () => {
-            const actual = _removeRow(tableData, 1, 0);
+            const tableRange = {
+                start: {
+                    rowIndex: 1,
+                    colIndex: 0
+                },
+                end: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
+            };
+            const actual = _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(4);
             expect(tableData[1][0].rowspan).toBe(3);

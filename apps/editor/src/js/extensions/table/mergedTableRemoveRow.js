@@ -5,6 +5,7 @@
 
 import CommandManager from '../../commandManager';
 import dataHandler from './tableDataHandler';
+import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const util = tui.util;
@@ -36,20 +37,17 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const $table = $startContainer.closest('table');
         const tableData = dataHandler.createTableData($table);
         const beforeRowLength = tableData.length;
-        let cellIndexData = dataHandler.createCellIndexData(tableData);
-        const {rowIndex, colIndex} = dataHandler.findCellIndex(cellIndexData, $startContainer);
+        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
-        _removeRow(tableData, rowIndex, colIndex);
+        _removeRow(tableData, tableRange);
 
         if (beforeRowLength === tableData.length) {
             return;
         }
 
-        cellIndexData = dataHandler.createCellIndexData(tableData); // row 삭제로 인한 갱신
-
-        const renderData = dataHandler.createRenderData(tableData, cellIndexData);
-        const $newTable = tableRenderer.replaceTable($table, renderData);
-        const focusTd = _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex);
+        const $newTable = tableRenderer.replaceTable($table, tableData);
+        const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);
 
@@ -108,14 +106,16 @@ function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
 /**
  * Remove row.
  * @param {Array.<Array.<object>>} tableData - table data
- * @param {number} rowIndex - row index of table data
- * @param {number} colIndex - column index of tabld data
+ * @param {{
+ *   start: {rowIndex: number, colIndex: number},
+ *   end: {rowIndex: number, colIndex: number}
+ * }} tableRange - table selection range
  * @private
  */
-export function _removeRow(tableData, rowIndex, colIndex) {
-    const startRowIndex = rowIndex;
-    const cellData = tableData[rowIndex][colIndex];
-    const endRowIndex = dataHandler.findRowMergedLastIndex(cellData, rowIndex);
+export function _removeRow(tableData, tableRange) {
+    const startRowIndex = tableRange.start.rowIndex;
+    const endRange = tableRange.end;
+    const endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
     const removeCount = endRowIndex - startRowIndex + 1;
 
     if (removeCount === tableData.length - 1) {
@@ -130,21 +130,19 @@ export function _removeRow(tableData, rowIndex, colIndex) {
 
 /**
  * Find focus td element.
- * @param {Array.<Array.<object>>} tableData - table data
- * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
  */
-function _findFocusTd(tableData, cellIndexData, $newTable, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
+function _findFocusTd($newTable, rowIndex, colIndex) {
+    const tableData = dataHandler.createTableData($newTable);
 
     if (tableData.length - 1 < rowIndex) {
         rowIndex -= 1;
     }
 
-    const cellElementIndex = dataHandler.findFocusCellElementIndex(cellData, cellIndexData, rowIndex, colIndex);
+    const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
 
     return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
 }

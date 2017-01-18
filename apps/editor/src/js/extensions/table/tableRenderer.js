@@ -3,6 +3,8 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
+import tableDataHandler from './tableDataHandler';
+
 /**
  * Create cell html.
  * @param {object} cell - cell data of table base data
@@ -56,10 +58,12 @@ function createTableHtml(table) {
 /**
  * Replace table.
  * @param {jQuery} $table - table jQuery element
- * @param {Array.<Array.<object>>} renderData - data for rendering
+ * @param {Array.<Array.<object>>} tableData - table data
  * @returns {jQuery}
  */
-function replaceTable($table, renderData) {
+function replaceTable($table, tableData) {
+    const cellIndexData = tableDataHandler.createCellIndexData(tableData);
+    const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
     const $newTable = $(createTableHtml(renderData));
 
     $table.replaceWith($newTable);
@@ -75,7 +79,7 @@ function replaceTable($table, renderData) {
  * @private
  */
 function focusToCell(sq, range, targetCell) {
-    range.setStart(targetCell, 0);
+    range.selectNodeContents(targetCell);
     range.collapse(true);
     sq.setSelection(range);
 }

@@ -7,6 +7,8 @@ import extManager from '../../extManager';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
 import toMarkRenderer from './toMarkRenderer';
+import WwMergedTableManager from './wwMergedTableManager';
+import WwMergedTableSelectionManager from './wwMergedTableSelectionManager';
 import wwAddRow from './mergedTableAddRow';
 import wwAddCol from './mergedTableAddCol';
 import wwRemoveRow from './mergedTableRemoveRow';
@@ -15,20 +17,45 @@ import wwAlignCol from './mergedTableAlignCol';
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
+    const wwComponentManager = editor.wwEditor.componentManager;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
 
-    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
-    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
-    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+    _addCommands(editor);
+    _changeWysiwygManagers(wwComponentManager);
+    _bindEvents(eventManager);
 });
+
+/**
+ * Add commands.
+ * @param {object} editor - editor instance
+ * @private
+ */
+function _addCommands(editor) {
+    editor.addCommand(wwMergeCell);
+    editor.addCommand(wwUnergeCell);
+}
+
+/**
+ * Change wysiwyg component managers.
+ * @param {object} wwComponentManager - componentMananger instance
+ * @private
+ */
+function _changeWysiwygManagers(wwComponentManager) {
+    wwComponentManager.removeManager('table');
+    wwComponentManager.removeManager('tableSelection');
+
+    wwComponentManager.addManager(WwMergedTableManager);
+    wwComponentManager.addManager(WwMergedTableSelectionManager);
+}
 
 /**
  * Change html by onChangeTable function.
  * @param {string} html - original html
  * @param {function} onChangeTable - function for changing html
  * @returns {string}
+ * @private
  */
 function _changeHtml(html, onChangeTable) {
     const $tempDiv = $(`<div>${html}</div>`);
@@ -40,6 +67,7 @@ function _changeHtml(html, onChangeTable) {
 
             $(tableElement).replaceWith(changedTableElement);
         });
+
         html = $tempDiv.html();
     }
 
@@ -49,6 +77,7 @@ function _changeHtml(html, onChangeTable) {
 /**
  * Snatch wysiwyg command.
  * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+ * @private
  */
 function _snatchWysiwygCommand(commandWrapper) {
     const command = commandWrapper.command;
@@ -76,3 +105,15 @@ function _snatchWysiwygCommand(commandWrapper) {
         default:
     }
 }
+
+/**
+ * Bind events.
+ * @param {object} eventManager - eventManager instance
+ * @private
+ */
+function _bindEvents(eventManager) {
+    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
+    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
+    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+}
+

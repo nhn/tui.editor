@@ -30,16 +30,9 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
         sq.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-            tableSelectionManager.createRangeBySelectedCells();
-        }
-
-        if (sq.hasFormat('i') || sq.hasFormat('em')) {
-            sq.changeFormat(null, {tag: 'i'});
-        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-            if (sq.hasFormat('code')) {
-                sq.changeFormat(null, {tag: 'code'});
-            }
-            sq.italic();
+            tableSelectionManager.styleToSelectedCells(styleItalic);
+        } else {
+            styleItalic(sq);
         }
 
         if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
@@ -49,4 +42,20 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     }
 });
 
+/**
+ * Style italic.
+ * @param {object} sq - squire editor instance
+ */
+function styleItalic(sq) {
+    if (sq.hasFormat('i') || sq.hasFormat('em')) {
+        sq.changeFormat(null, {tag: 'i'});
+    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+        if (sq.hasFormat('code')) {
+            sq.changeFormat(null, {tag: 'code'});
+        }
+        sq.italic();
+    }
+}
+
 module.exports = Italic;
+
