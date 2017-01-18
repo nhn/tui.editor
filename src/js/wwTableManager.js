@@ -683,9 +683,8 @@ class WwTableManager {
     /**
      * Append table cells
      * @param {HTMLElement} node Table element
-     * @private
      */
-    _tableCellAppendAidForTableElement(node) {
+    tableCellAppendAidForTableElement(node) {
         const table = $(node);
 
         this._addTbodyOrTheadIfNeed(table);
@@ -793,7 +792,7 @@ class WwTableManager {
             table.append(completedTableContents.thead);
             table.append(completedTableContents.tbody);
         }
-        this._tableCellAppendAidForTableElement(table);
+        this.tableCellAppendAidForTableElement(table);
     }
 
     /**

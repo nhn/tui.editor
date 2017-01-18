@@ -21,10 +21,9 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     /**
      * Set setTimeout and setInterval timer execution if table selecting situation
      * @param {HTMLElement} selectionStart Start element
-     * @private
      * @override
      */
-    _setTableSelectionTimerIfNeed(selectionStart) {
+    setTableSelectionTimerIfNeed(selectionStart) {
         const isTableSelecting = $(selectionStart).parents('table').length;
 
         if (isTableSelecting) {
@@ -66,10 +65,9 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
      * Highlight selected table cells
      * @param {HTMLElement} selectionStart start element
      * @param {HTMLElement} selectionEnd end element
-     * @private
      * @override
      */
-    _highlightTableCellsBy(selectionStart, selectionEnd) {
+    highlightTableCellsBy(selectionStart, selectionEnd) {
         const $start = $(selectionStart);
         const $end = $(selectionEnd);
         const $table = $start.closest('table');

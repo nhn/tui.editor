@@ -57,10 +57,9 @@ class WwMergedTableManager extends WwTableManager {
     /**
      * Append table cells
      * @param {HTMLElement} node Table element
-     * @private
      * @override
      */
-    _tableCellAppendAidForTableElement(node) {
+    tableCellAppendAidForTableElement(node) {
         const $table = $(node);
 
         this._addTbodyOrTheadIfNeed($table);

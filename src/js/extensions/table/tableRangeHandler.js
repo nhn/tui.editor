@@ -184,11 +184,14 @@ function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
         const startRange = tableDataHandler.findCellIndex(cellIndexData, $selectedCells.first());
         const endRange = util.extend({}, startRange);
 
-        $selectedCells.slice(1).each((index, cell) => {
+        $selectedCells.each((index, cell) => {
             const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $(cell));
+            const cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
+            const lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
+            const lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
 
-            endRange.rowIndex = Math.max(endRange.rowIndex, cellIndex.rowIndex);
-            endRange.colIndex = Math.max(endRange.colIndex, cellIndex.colIndex);
+            endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
+            endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
         });
 
         tableRange.start = startRange;

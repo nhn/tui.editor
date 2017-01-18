@@ -22,15 +22,25 @@ extManager.defineExtension('tableExtension', editor => {
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
 
+    _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
-    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
-    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
-    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+    _bindEvents(eventManager);
 });
+
+/**
+ * Add commands.
+ * @param {object} editor - editor instance
+ * @private
+ */
+function _addCommands(editor) {
+    editor.addCommand(wwMergeCell);
+    editor.addCommand(wwUnergeCell);
+}
 
 /**
  * Change wysiwyg component managers.
  * @param {object} wwComponentManager - componentMananger instance
+ * @private
  */
 function _changeWysiwygManagers(wwComponentManager) {
     wwComponentManager.removeManager('table');
@@ -94,5 +104,16 @@ function _snatchWysiwygCommand(commandWrapper) {
             break;
         default:
     }
+}
+
+/**
+ * Bind events.
+ * @param {object} eventManager - eventManager instance
+ * @private
+ */
+function _bindEvents(eventManager) {
+    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
+    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
+    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 }
 

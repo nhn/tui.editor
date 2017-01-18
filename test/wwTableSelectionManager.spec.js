@@ -259,7 +259,7 @@ describe('WwTableSelectionManager', () => {
         });
     });
 
-    describe('__highlightTableCellsBy', () => {
+    describe('highlightTableCellsBy', () => {
         it('should add \'.te-cell-selected\' class to selected cells', () => {
             const sq = wwe.getEditor();
 
@@ -273,7 +273,7 @@ describe('WwTableSelectionManager', () => {
                 '</tbody>' +
                 '</table>');
 
-            mgr._highlightTableCellsBy($('th')[0], $('td')[3]);
+            mgr.highlightTableCellsBy($('th')[0], $('td')[3]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(6);
@@ -299,7 +299,7 @@ describe('WwTableSelectionManager', () => {
                 '</table>');
             const $tds = $('td');
 
-            mgr._highlightTableCellsBy($tds[0], $tds[3]);
+            mgr.highlightTableCellsBy($tds[0], $tds[3]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);
@@ -321,7 +321,7 @@ describe('WwTableSelectionManager', () => {
                 '</tbody>' +
                 '</table>');
 
-            mgr._highlightTableCellsBy($('th')[1], $('td')[2]);
+            mgr.highlightTableCellsBy($('th')[1], $('td')[2]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);

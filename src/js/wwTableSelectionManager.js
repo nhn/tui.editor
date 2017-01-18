@@ -85,7 +85,7 @@ class WwTableSelectionManager {
                 || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
             ) {
                 this.removeClassAttrbuteFromAllCellsIfNeed();
-                this._setTableSelectionTimerIfNeed(selectionStart);
+                this.setTableSelectionTimerIfNeed(selectionStart);
             }
         });
 
@@ -106,7 +106,7 @@ class WwTableSelectionManager {
                         window.getSelection().removeAllRanges();
                     }, 10);
                 }
-                this._highlightTableCellsBy(selectionStart, selectionEnd);
+                this.highlightTableCellsBy(selectionStart, selectionEnd);
             }
         });
 
@@ -152,9 +152,8 @@ class WwTableSelectionManager {
     /**
      * Set setTimeout and setInterval timer execution if table selecting situation
      * @param {HTMLElement} selectionStart Start element
-     * @private
      */
-    _setTableSelectionTimerIfNeed(selectionStart) {
+    setTableSelectionTimerIfNeed(selectionStart) {
         const isTableSelecting = $(selectionStart).parents('table').length;
 
         if (isTableSelecting) {
@@ -309,9 +308,8 @@ class WwTableSelectionManager {
      * Highlight selected table cells
      * @param {HTMLElement} selectionStart start element
      * @param {HTMLElement} selectionEnd end element
-     * @private
      */
-    _highlightTableCellsBy(selectionStart, selectionEnd) {
+    highlightTableCellsBy(selectionStart, selectionEnd) {
         const trs = $(selectionStart).parents('table').find('tr');
         const selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
         const rowFrom = selection.from.row;
