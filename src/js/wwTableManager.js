@@ -6,12 +6,13 @@
 
 
 import domUtils from './domUtils';
-const isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
+const util = tui.util;
+const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_COMPLETION_DELAY = 10;
 const SET_SELECTION_DELAY = 50;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
-const isIE10And11 = tui.util.browser.msie
-    && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
+const isIE10And11 = util.browser.msie
+    && (util.browser.version === 10 || util.browser.version === 11);
 
 /**
  * WwTableManager
@@ -56,7 +57,7 @@ class WwTableManager {
      * @private
      */
     _initEvent() {
-        this.eventManager.listen('wysiwygRangeChangeAfter', () => {
+        this.eventManager.listen('wysiwygRangeChangeAfter.table', () => {
             this._unwrapBlockInTable();
             this.wwe.defer(() => {
                 this._completeTableIfNeed();
@@ -65,25 +66,33 @@ class WwTableManager {
             this._insertDefaultBlockBetweenTable();
         });
 
-        this.eventManager.listen('wysiwygSetValueAfter', () => {
+        this.eventManager.listen('wysiwygSetValueAfter.table', () => {
             this._unwrapBlockInTable();
             this._insertDefaultBlockBetweenTable();
         });
 
         // remove last br in td or th
-        this.eventManager.listen('wysiwygProcessHTMLText', html => html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1'));
+        this.eventManager.listen('wysiwygProcessHTMLText.table', html => html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1'));
 
-        this.wwe.getEditor().addEventListener('paste', ev => {
-            const range = this.wwe.getEditor().getSelection();
-            const isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
+        // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
+        this.onBindedPaste = this._onPaste.bind(this);
+        this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
+    }
 
-            if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-                ev.preventDefault();
-            }
-            this.wwe.defer(() => {
-                this._completeTableIfNeed();
-            }, TABLE_COMPLETION_DELAY);
-        });
+    /**
+     * On paste.
+     * @param {MouseEvent} ev - event
+     */
+    _onPaste(ev) {
+        const range = this.wwe.getEditor().getSelection();
+        const isNotPastingIntoTextNode = !domUtils.isTextNode(range.commonAncestorContainer);
+
+        if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
+            ev.preventDefault();
+        }
+        this.wwe.defer(() => {
+            this._completeTableIfNeed();
+        }, TABLE_COMPLETION_DELAY);
     }
 
     /**
@@ -93,55 +102,54 @@ class WwTableManager {
      * @private
      */
     _initKeyHandler() {
-        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+        this.keyEventHandlers = {
+            'DEFAULT': (ev, range, keymap) => {
+                const isRangeInTable = this.isInTable(range);
 
-        this.wwe.addKeyEventHandler((ev, range, keymap) => {
-            const isRangeInTable = this.isInTable(range);
+                if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
+                    this._recordUndoStateIfNeed(range);
+                    this._removeBRIfNeed(range);
+                    this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+                } else if (!isRangeInTable && this._lastCellNode) {
+                    this._recordUndoStateAndResetCellNode(range);
+                }
 
-            if (isRangeInTable && !this._isSingleModifierKey(keymap)) {
-                this._recordUndoStateIfNeed(range);
-                this._removeBRIfNeed(range);
-                this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
-            } else if (!isRangeInTable && this._lastCellNode) {
-                this._recordUndoStateAndResetCellNode(range);
-            }
+                if (isRangeInTable && !this._isModifierKeyPushed(ev)) {
+                    this.wwe.getEditor().modifyDocument(() => {
+                        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
 
-            if (isRangeInTable && !this._isModifierKeyPushed(ev)) {
-                this.wwe.getEditor().modifyDocument(() => {
-                    selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
-                });
-            }
-        });
+                        selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+                    });
+                }
+            },
+            'ENTER': (ev, range) => {
+                let isNeedNext;
 
-        this.wwe.addKeyEventHandler('ENTER', (ev, range) => {
-            let isNeedNext;
+                if (this._isAfterTable(range)) {
+                    ev.preventDefault();
+                    range.setStart(range.startContainer, range.startOffset - 1);
+                    this.wwe.breakToNewDefaultBlock(range);
+                    isNeedNext = false;
+                } else if (this._isBeforeTable(range)) {
+                    ev.preventDefault();
+                    this.wwe.breakToNewDefaultBlock(range, 'before');
+                    isNeedNext = false;
+                } else if (this.isInTable(range)) {
+                    this._appendBrIfTdOrThNotHaveAsLastChild(range);
+                    isNeedNext = false;
+                }
 
-            if (this._isAfterTable(range)) {
-                ev.preventDefault();
-                range.setStart(range.startContainer, range.startOffset - 1);
-                this.wwe.breakToNewDefaultBlock(range);
-                isNeedNext = false;
-            } else if (this._isBeforeTable(range)) {
-                ev.preventDefault();
-                this.wwe.breakToNewDefaultBlock(range, 'before');
-                isNeedNext = false;
-            } else if (this.isInTable(range)) {
-                this._appendBrIfTdOrThNotHaveAsLastChild(range);
-                isNeedNext = false;
-            }
+                return isNeedNext;
+            },
+            'BACKSPACE': (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap),
+            'DELETE': (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap),
+            'TAB': () => this._moveCursorTo('next', 'cell'),
+            'SHIFT+TAB': ev => this._moveCursorTo('previous', 'cell', ev),
+            'UP': ev => this._moveCursorTo('previous', 'row', ev),
+            'DOWN': ev => this._moveCursorTo('next', 'row', ev)
+        };
 
-            return isNeedNext;
-        });
-
-        this.wwe.addKeyEventHandler('BACK_SPACE',
-            (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap));
-        this.wwe.addKeyEventHandler('DELETE',
-            (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap));
-        this.wwe.addKeyEventHandler('TAB', () => this._moveCursorTo('next', 'cell'));
-
-        this.wwe.addKeyEventHandler('SHIFT+TAB', ev => this._moveCursorTo('previous', 'cell', ev));
-        this.wwe.addKeyEventHandler('UP', ev => this._moveCursorTo('previous', 'row', ev));
-        this.wwe.addKeyEventHandler('DOWN', ev => this._moveCursorTo('next', 'row', ev));
+        util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
 
         this._bindKeyEventForTableCopyAndCut();
     }
@@ -675,9 +683,8 @@ class WwTableManager {
     /**
      * Append table cells
      * @param {HTMLElement} node Table element
-     * @private
      */
-    _tableCellAppendAidForTableElement(node) {
+    tableCellAppendAidForTableElement(node) {
         const table = $(node);
 
         this._addTbodyOrTheadIfNeed(table);
@@ -785,7 +792,7 @@ class WwTableManager {
             table.append(completedTableContents.thead);
             table.append(completedTableContents.tbody);
         }
-        this._tableCellAppendAidForTableElement(table);
+        this.tableCellAppendAidForTableElement(table);
     }
 
     /**
@@ -1041,7 +1048,7 @@ class WwTableManager {
         if (range.collapsed) {
             if (this.isInTable(range) && currentCell) {
                 if ((direction === 'previous' || interval === 'row')
-                    && !tui.util.isUndefined(ev)
+                    && !util.isUndefined(ev)
                 ) {
                     ev.preventDefault();
                 }
@@ -1063,17 +1070,19 @@ class WwTableManager {
     _bindKeyEventForTableCopyAndCut() {
         const isMac = /Mac OS X/.test(navigator.userAgent);
         const commandKey = isMac ? 'metaKey' : 'ctrlKey';
-        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
 
-        this.wwe.getEditor().addEventListener('keydown', event => {
-            if (event[commandKey]) {
+        // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
+        this.onBindedKeydown = ev => {
+            const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+
+            if (ev[commandKey]) {
                 selectionManager.createRangeBySelectedCells();
             }
-        });
+        };
+        this.onBindedKeyup = this._collapseRangeToEndContainer.bind(this);
 
-        this.wwe.getEditor().addEventListener('keyup', () => {
-            this._collapseRangeToEndContainer();
-        });
+        this.wwe.getEditor().addEventListener('keydown', this.onBindedKeydown);
+        this.wwe.getEditor().addEventListener('keyup', this.onBindedKeyup);
     }
 
     /**
@@ -1153,6 +1162,20 @@ class WwTableManager {
             $currentCell.append('<br>');
         }
     }
+
+    /**
+     * Destroy.
+     */
+    destroy() {
+        this.eventManager.removeEventHandler('wysiwygRangeChangeAfter.table');
+        this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
+        this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
+        this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
+        this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
+        this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
+
+        util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
+    }
 }
 
 /**
@@ -1173,4 +1196,6 @@ function tableCellGenerator(amount, tagName) {
 
     return tdString;
 }
+
 module.exports = WwTableManager;
+

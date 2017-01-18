@@ -29,16 +29,9 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
         sq.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-            tableSelectionManager.createRangeBySelectedCells();
-        }
-
-        if (sq.hasFormat('S')) {
-            sq.changeFormat(null, {tag: 'S'});
-        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-            if (sq.hasFormat('code')) {
-                sq.changeFormat(null, {tag: 'code'});
-            }
-            sq.strikethrough();
+            tableSelectionManager.styleToSelectedCells(styleStrike);
+        } else {
+            styleStrike(sq);
         }
 
         if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
@@ -48,4 +41,20 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     }
 });
 
+/**
+ * Style strike.
+ * @param {object} sq - squire editor instance
+ */
+function styleStrike(sq) {
+    if (sq.hasFormat('S')) {
+        sq.changeFormat(null, {tag: 'S'});
+    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+        if (sq.hasFormat('code')) {
+            sq.changeFormat(null, {tag: 'code'});
+        }
+        sq.strikethrough();
+    }
+}
+
 module.exports = Strike;
+

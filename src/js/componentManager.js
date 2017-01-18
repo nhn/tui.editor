@@ -38,6 +38,7 @@ class ComponentManager {
         }
 
         const instance = new ManagerConstructor(this._editor);
+
         this._managers[nameOrConstructor || instance.name] = instance;
     }
 
@@ -51,6 +52,24 @@ class ComponentManager {
      */
     getManager(name) {
         return this._managers[name];
+    }
+
+    /**
+     * Remove Manager.
+     * @param {string} name - manager name
+     */
+    removeManager(name) {
+        const manager = this.getManager(name);
+
+        if (!manager) {
+            return;
+        }
+
+        if (manager.destroy) {
+            manager.destroy();
+        }
+
+        delete this._managers[name];
     }
 
 }

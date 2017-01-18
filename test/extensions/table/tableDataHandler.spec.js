@@ -22,7 +22,11 @@ describe('tableDataHandler', () => {
                 nodeName: 'TH',
                 colspan: 2,
                 rowspan: 1,
-                content: 'title'
+                content: 'title',
+                elementIndex: {
+                    rowIndex: 0,
+                    colIndex: 0
+                }
             });
             expect(actual[0][1]).toEqual({
                 nodeName: 'TH',
@@ -32,19 +36,31 @@ describe('tableDataHandler', () => {
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: 'content1-1'
+                content: 'content1-1',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 0
+                }
             });
             expect(actual[1][1]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 2,
-                content: 'content1-2'
+                content: 'content1-2',
+                elementIndex: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
             });
             expect(actual[2][0]).toEqual({
                 nodeName: 'TD',
                 colspan: 1,
                 rowspan: 1,
-                content: 'content2-1'
+                content: 'content2-1',
+                elementIndex: {
+                    rowIndex: 2,
+                    colIndex: 0
+                }
             });
             expect(actual[2][1]).toEqual({
                 nodeName: 'TD',
@@ -141,8 +157,7 @@ describe('tableDataHandler', () => {
         it('Find last index of row merged cells, when target cell is not merged cell.', () => {
             const rowIndex = 1;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex);
+            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(1);
         });
@@ -150,8 +165,7 @@ describe('tableDataHandler', () => {
         it('Find last index of row merged cells, when target cell is meged cell.', () => {
             const rowIndex = 1;
             const colIndex = 1;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findRowMergedLastIndex(cellData, rowIndex);
+            const actual = tableDataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(2);
         });
@@ -193,8 +207,7 @@ describe('tableDataHandler', () => {
         it('Find last cell index of col merged cells, when target cell is not merged cell.', () => {
             const rowIndex = 2;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findColMergedLastIndex(cellData, colIndex);
+            const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(0);
         });
@@ -202,10 +215,10 @@ describe('tableDataHandler', () => {
         it('Find last cell index of col merged cells, when target cell is meged cell.', () => {
             const rowIndex = 1;
             const colIndex = 0;
-            const cellData = tableData[rowIndex][colIndex];
-            const actual = tableDataHandler.findColMergedLastIndex(cellData, colIndex);
+            const actual = tableDataHandler.findColMergedLastIndex(tableData, rowIndex, colIndex);
 
             expect(actual).toBe(1);
         });
     });
 });
+
