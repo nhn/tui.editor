@@ -121,7 +121,7 @@ class WwTableSelectionManager {
             this._clearTableSelectionTimerIfNeed();
 
             if (this._isSelectionStarted) {
-                if (isTextSelect) {
+                if (isTextSelect || !selectionEnd) {
                     this.removeClassAttrbuteFromAllCellsIfNeed();
                 } else {
                     this.wwe.componentManager.getManager('table').resetLastCellNode();
