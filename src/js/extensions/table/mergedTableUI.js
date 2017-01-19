@@ -37,11 +37,11 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
     const $unmergeBtn = $($popupContent[5]);
 
     popupTableUtils.on('click .te-table-merge', () => {
-        eventManager.emit('command', 'MergeCell');
+        eventManager.emit('command', 'MergeCells');
     });
 
     popupTableUtils.on('click .te-table-unmerge', () => {
-        eventManager.emit('command', 'UnmergeCell');
+        eventManager.emit('command', 'UnmergeCells');
     });
 
     eventManager.listen('openPopupTableUtils', () => {

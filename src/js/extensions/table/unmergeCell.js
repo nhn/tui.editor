@@ -11,7 +11,7 @@ import tableRenderer from './tableRenderer';
 const util = tui.util;
 
 const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
-    name: 'UnmergeCell',
+    name: 'UnmergeCells',
     /**
      * Command handler.
      * @param {WysiwygEditor} wwe - WYsiwygEditor instance
