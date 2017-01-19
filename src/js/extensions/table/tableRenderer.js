@@ -82,6 +82,10 @@ function focusToCell(sq, range, targetCell) {
     range.selectNodeContents(targetCell);
     range.collapse(true);
     sq.setSelection(range);
+
+    // TODO: 개선 필요 - undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+    sq.undo();
+    sq.redo();
 }
 
 export default {

@@ -152,6 +152,7 @@ export function createCellIndexData(tableData) {
  */
 function _getHeaderAligns(tableData) {
     const headRowData = tableData[0];
+
     return headRowData.map(cellData => {
         let align;
 
