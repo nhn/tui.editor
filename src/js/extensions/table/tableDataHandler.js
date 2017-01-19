@@ -307,7 +307,7 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function _findMaxCellCount(tableData) {
     const cellCounts = tableData.map(rowData => rowData.length);
 
-    return Math.max.apply(null, cellCounts);
+    return Math.max(...cellCounts);
 }
 
 /**
@@ -323,7 +323,7 @@ function stuffCellsIntoIncompleteRow(tableData) {
         const nodeName = rowData[0].nodeName;
 
         util.range(cellCount, cellCount + diffCount + 1).forEach(colIndex => {
-            rowData.push(createBasicCell(nodeName, rowIndex, colIndex));
+            rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
         });
     });
 }
