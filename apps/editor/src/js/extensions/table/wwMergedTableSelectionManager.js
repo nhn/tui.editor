@@ -100,7 +100,18 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
             onStyle(sq);
         });
     }
+
+    /**
+     * Whether has selected both TH and TD.
+     * @param {jQuery} $selectedCells - selected cells jQuery element
+     * @returns {boolean}
+     */
+    hasSelectedBothThAndTd($selectedCells) {
+        $selectedCells = $selectedCells || this.getSelectedCells();
+
+        return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+    }
 }
 
-module.exports = WwMergedTableSelectionManager;
+export default WwMergedTableSelectionManager;
 

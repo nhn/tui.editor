@@ -14,17 +14,38 @@ import wwAddCol from './mergedTableAddCol';
 import wwRemoveRow from './mergedTableRemoveRow';
 import wwRemoveCol from './mergedTableRemoveCol';
 import wwAlignCol from './mergedTableAlignCol';
+import wwMergeCell from './mergeCell';
+import wwUnergeCell from './unmergeCell';
+import mergedTableUI from './mergedTableUI';
+
+require('./langs');
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
     const wwComponentManager = editor.wwEditor.componentManager;
+    const popupTableUtils = editor._ui.popupTableUtils;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
 
+    _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
     _bindEvents(eventManager);
+
+    if (editor._ui.popupTableUtils) {
+        mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
+    }
 });
+
+/**
+ * Add commands.
+ * @param {object} editor - editor instance
+ * @private
+ */
+function _addCommands(editor) {
+    editor.addCommand(wwMergeCell);
+    editor.addCommand(wwUnergeCell);
+}
 
 /**
  * Change wysiwyg component managers.
