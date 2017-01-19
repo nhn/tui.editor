@@ -54,7 +54,7 @@ class WwTableSelectionManager {
      * @private
      */
     _initEvent() {
-        let selectionStart, selectionEnd;
+        let selectionStart, selectionEnd, validSelectionEnd;
 
         /**
          * Start table selection timer
@@ -107,6 +107,7 @@ class WwTableSelectionManager {
                     }, 10);
                 }
                 this.highlightTableCellsBy(selectionStart, selectionEnd);
+                validSelectionEnd = selectionEnd;
             }
         });
 
@@ -126,6 +127,7 @@ class WwTableSelectionManager {
                 } else {
                     this.wwe.componentManager.getManager('table').resetLastCellNode();
 
+                    selectionEnd = selectionEnd || validSelectionEnd;
                     range = this.wwe.getEditor().getSelection();
                     range.setStart(selectionEnd, 0);
                     range.setEnd(selectionEnd, 1);
