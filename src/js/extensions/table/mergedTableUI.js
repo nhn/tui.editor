@@ -49,10 +49,10 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
         const selectedCellCount = $selectedCells.length;
 
         if (selectedCellCount) {
-            if (selectedCellCount > 1) {
-                $mergeBtn.show();
-            } else {
+            if (selectedCellCount < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
                 $mergeBtn.hide();
+            } else {
+                $mergeBtn.show();
             }
 
             if ($selectedCells.is('[rowspan], [colspan]')) {

@@ -81,7 +81,7 @@ function _updateMergedCells(tableData, startRowIndex, startColIndex, rowspan, co
         const startIndex = (rowIndex === startRowIndex) ? 1 : 0;
 
         colRange.slice(startIndex).forEach(colIndex => {
-            rowData[colIndex] = dataHandler.createBasicCell(rowData[colIndex].nodeName);
+            rowData[colIndex] = dataHandler.createBasicCell(rowIndex, colIndex, rowData[colIndex].nodeName);
         });
     });
 }

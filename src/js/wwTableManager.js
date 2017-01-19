@@ -141,7 +141,7 @@ class WwTableManager {
 
                 return isNeedNext;
             },
-            'BACKSPACE': (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap),
+            'BACK_SPACE': (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap),
             'DELETE': (ev, range, keymap) => this._handleBackspaceAndDeleteKeyEvent(ev, range, keymap),
             'TAB': () => this._moveCursorTo('next', 'cell'),
             'SHIFT+TAB': ev => this._moveCursorTo('previous', 'cell', ev),

@@ -9,6 +9,7 @@ import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const util = tui.util;
+const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
 const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
     name: 'MergeCells',
@@ -18,7 +19,6 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
      */
     exec(wwe) {
         const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
 
         sq.focus();
 
@@ -26,15 +26,17 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
             return;
         }
 
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const selectionManager = wwe.componentManager.getManager('tableSelection');
+        const $selectedCells = selectionManager.getSelectedCells();
 
-        if ($selectedCells.length < 2 || $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName) {
+        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
             return;
         }
 
+        const range = sq.getSelection().cloneRange();
+        const $startContainer = $(range.startContainer);
+        const $table = $startContainer.closest('table');
+        const tableData = dataHandler.createTableData($table);
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
         _mergeCells(tableData, tableRange);
@@ -45,6 +47,21 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
         tableRenderer.focusToCell(sq, range, focusCell);
     }
 });
+
+/**
+ * Pick merger content from selected cells.
+ * @param {Array.<Array.<object>>} targetRows - target rows
+ * @param {number} startColIndex - start column index
+ * @param {number} endColIndex - end column index
+ * @returns {string}
+ */
+function _pickContent(targetRows, startColIndex, endColIndex) {
+    const limitColIndex = endColIndex + 1;
+    const cells = [].concat(...targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex)));
+    const foundCellData = cells.find(({content}) => content && content !== BASIC_CELL_CONTENT);
+
+    return foundCellData ? foundCellData.content : BASIC_CELL_CONTENT;
+}
 
 /**
  * Initialize cell data of target rows.
@@ -120,6 +137,7 @@ export function _mergeCells(tableData, {start: startRange, end: endRange}) {
 
     merger.rowspan = rowspan;
     merger.colspan = colspan;
+    merger.content = _pickContent(targetRows, startColIndex, endColIndex);
     _initCellData(targetRows, startColIndex, endColIndex);
 
     if (rowspan > 1) {
