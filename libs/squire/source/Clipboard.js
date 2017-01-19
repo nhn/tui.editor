@@ -57,9 +57,9 @@ var onCut = function ( event ) {
         endBlock = getEndBlockOfRange( range, root );
         copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
         // Extract the contents
-        parent = range.commonAncestorContainer;
         contents = deleteContentsOfRange( range, root );
         // Add any other parents not in extracted content, up to copy root
+        parent = range.commonAncestorContainer;
         if ( parent.nodeType === TEXT_NODE ) {
             parent = parent.parentNode;
         }
@@ -109,9 +109,9 @@ var onCopy = function ( event ) {
         moveRangeBoundariesDownTree( range );
         moveRangeBoundariesUpTree( range, copyRoot, copyRoot, root );
         // Extract the contents
-        parent = range.commonAncestorContainer;
         contents = range.cloneContents();
         // Add any other parents not in extracted content, up to copy root
+        parent = range.commonAncestorContainer;
         if ( parent.nodeType === TEXT_NODE ) {
             parent = parent.parentNode;
         }
