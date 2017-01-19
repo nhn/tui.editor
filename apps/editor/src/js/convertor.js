@@ -163,6 +163,8 @@ class Convertor {
         const resultArray = [];
 
         html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+        // markdown에서 <, > 가 \<, \>로 표시되도록 처리
+        html = html.replace(/&lt;/g, '\\&lt;').replace(/&gt;/g, '\\&gt;');
 
         let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 

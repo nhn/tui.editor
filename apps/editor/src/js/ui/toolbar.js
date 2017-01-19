@@ -119,7 +119,8 @@ Toolbar.prototype._initButton = function() {
             className: 'tui-strike',
             command: 'Strike',
             text: '~',
-            tooltip: i18n.get('Strike')
+            tooltip: i18n.get('Strike'),
+            state: 'strike'
         })
     ]);
 

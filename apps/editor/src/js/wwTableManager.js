@@ -393,7 +393,7 @@ class WwTableManager {
     _recordUndoStateIfNeed(range) {
         const currentCellNode = domUtils.getParentUntil(range.startContainer, 'TR');
 
-        if (range.collapsed && this._lastCellNode !== currentCellNode) {
+        if (range.collapsed && currentCellNode && this._lastCellNode !== currentCellNode) {
             this.wwe.getEditor().saveUndoState(range);
             this._lastCellNode = currentCellNode;
         }
@@ -792,6 +792,7 @@ class WwTableManager {
             table.append(completedTableContents.thead);
             table.append(completedTableContents.tbody);
         }
+
         this.tableCellAppendAidForTableElement(table);
     }
 
@@ -841,7 +842,7 @@ class WwTableManager {
      * @private
      */
     _isSingleModifierKey(keymap) {
-        return ((keymap === 'META') && (keymap === 'SHIFT') && (keymap === 'ALT') && (keymap === 'CONTROL'));
+        return ((keymap === 'META') || (keymap === 'SHIFT') || (keymap === 'ALT') || (keymap === 'CONTROL'));
     }
 
     /**
