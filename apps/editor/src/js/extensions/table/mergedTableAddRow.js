@@ -46,10 +46,6 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
         const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
         tableRenderer.focusToCell(sq, range, focusTd);
-
-        // TODO: 개선 필요 - undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
-        sq.undo();
-        sq.redo();
     }
 });
 
