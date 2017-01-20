@@ -7,6 +7,7 @@ import WwTableManager from '../../wwTableManager';
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 
+const util = tui.util;
 /**
  * WwMergedTableManager
  * @exports WwMergedTableManager
@@ -19,9 +20,9 @@ class WwMergedTableManager extends WwTableManager {
      * Prepare to table cell stuffing
      * @param {Array.<Array.<object>>} tableData - table data
      * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
-     * @private
+     * @override
      */
-    _prepareToTableCellStuffing(tableData) {
+    prepareToTableCellStuffing(tableData) {
         let maximumCellLength = tableData[0].length;
         let needTableCellStuffingAid = false;
 
@@ -55,21 +56,51 @@ class WwMergedTableManager extends WwTableManager {
     }
 
     /**
-     * Append table cells
+     * Add tbody or thead of table data if need.
+     * @param {Array.<Array.<object>>} tableData - table data
+     * @returns {boolean}
+     */
+    _addTbodyOrTheadOfTableDataIfNeed(tableData) {
+        const header = tableData[0];
+        const cellCount = header.length;
+        let added = true;
+
+        if (!cellCount && tableData[1]) {
+            util.range(0, tableData[1].length).forEach(colIndex => {
+                header.push(tableDataHandler.createBasicCell(0, colIndex, 'TH'));
+            });
+        } else if (tableData[0][0].nodeName !== 'TH') {
+            const newHeader = util.range(0, cellCount).map(colIndex => (
+                tableDataHandler.createBasicCell(0, colIndex, 'TH')
+            ));
+
+            tableData.unshift(newHeader);
+        } else if (tableData.length === 1) {
+            const newRow = util.range(0, cellCount).map(colIndex => (
+                tableDataHandler.createBasicCell(1, colIndex, 'TD')
+            ));
+
+            tableData.push(newRow);
+        } else {
+            added = false;
+        }
+
+        return added;
+    }
+
+    /**
+     * Append table cells.
      * @param {HTMLElement} node Table element
      * @override
      */
     tableCellAppendAidForTableElement(node) {
         const $table = $(node);
-
-        this._addTbodyOrTheadIfNeed($table);
-        this._addTrIntoContainerIfNeed($table);
-
         const tableData = tableDataHandler.createTableData($table);
-        const tableAidInformation = this._prepareToTableCellStuffing(tableData);
+        const added = this._addTbodyOrTheadOfTableDataIfNeed(tableData);
+        const tableAidInformation = this.prepareToTableCellStuffing(tableData);
         const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
-        if (needTableCellStuffingAid) {
+        if (added || needTableCellStuffingAid) {
             this._replaceToCompletionTable($table, tableData);
         }
     }

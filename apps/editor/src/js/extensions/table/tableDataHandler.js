@@ -23,6 +23,12 @@ function _parseCell(cell, rowIndex, colIndex) {
     const $cell = $(cell);
     const colspan = $cell.attr('colspan');
     const rowspan = $cell.attr('rowspan');
+    const nodeName = cell.nodeName;
+
+    if (nodeName !== 'TH' && nodeName !== 'TD') {
+        return null;
+    }
+
     const cellData = {
         nodeName: cell.nodeName,
         colspan: colspan ? parseInt(colspan, 10) : 1,
@@ -104,6 +110,10 @@ export function createTableData($table) {
 
         $(tr).children().each((colIndex, cell) => {
             const cellData = _parseCell(cell, rowIndex, colIndex);
+
+            if (!cellData) {
+                return;
+            }
             let dataColIndex = colIndex + stackedColCount;
 
             while (tableData[rowIndex][dataColIndex]) {

@@ -637,9 +637,8 @@ class WwTableManager {
      * Prepare to table cell stuffing
      * @param {jQuery} $trs jQuery wrapped TRs
      * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
-     * @private
      */
-    _prepareToTableCellStuffing($trs) {
+    prepareToTableCellStuffing($trs) {
         let maximumCellLength = $trs.eq(0).find('th,td').length;
         let needTableCellStuffingAid = false;
 
@@ -691,7 +690,7 @@ class WwTableManager {
         this._addTrIntoContainerIfNeed(table);
 
         const trs = table.find('tr');
-        const tableAidInformation = this._prepareToTableCellStuffing(trs);
+        const tableAidInformation = this.prepareToTableCellStuffing(trs);
         const maximumCellLength = tableAidInformation.maximumCellLength;
         const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
