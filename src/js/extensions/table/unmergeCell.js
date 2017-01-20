@@ -53,13 +53,13 @@ const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
  * @returns {boolean}
  * @private
  */
-function _hasMergedCell(tableData, {start: startRange, end: endRange}) {
+export function _hasMergedCell(tableData, {start: startRange, end: endRange}) {
     const startColIndex = startRange.colIndex;
     const limitColIndex = endRange.colIndex + 1;
     const targetRows = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
     const targetCells = targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex));
 
-    return !![].concat(...targetCells).find(cellData => (cellData.colspan > 1 || cellData.rowspan > 1));
+    return !![].concat(...targetCells).filter(cellData => (cellData.colspan > 1 || cellData.rowspan > 1)).length;
 }
 
 /**
