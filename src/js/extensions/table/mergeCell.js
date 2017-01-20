@@ -58,9 +58,9 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
 function _pickContent(targetRows, startColIndex, endColIndex) {
     const limitColIndex = endColIndex + 1;
     const cells = [].concat(...targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex)));
-    const foundCellData = cells.find(({content}) => content && content !== BASIC_CELL_CONTENT);
+    const foundCellData = cells.filter(({content}) => content && content !== BASIC_CELL_CONTENT);
 
-    return foundCellData ? foundCellData.content : BASIC_CELL_CONTENT;
+    return foundCellData.length ? foundCellData[0].content : BASIC_CELL_CONTENT;
 }
 
 /**
