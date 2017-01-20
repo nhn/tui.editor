@@ -14,6 +14,7 @@ import domUtils from '../domUtils';
  * @exports Code
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Code = CommandManager.command('wysiwyg', /** @lends Code */{
     name: 'Code',

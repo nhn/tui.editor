@@ -10,9 +10,10 @@ const CommandManager = require('../commandManager');
 /**
  * DecreaseDepth
  * decrease depth of list or task to wysiwyg Editor
- * @exports IncreaseDepth
+ * @exports DecreaseDepth
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'DecreaseDepth',

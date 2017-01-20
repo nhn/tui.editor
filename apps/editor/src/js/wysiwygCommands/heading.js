@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports Heading
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
     name: 'Heading',

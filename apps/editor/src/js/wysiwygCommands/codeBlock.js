@@ -17,6 +17,7 @@ let codeBlockID = 0;
  * @exports CodeBlock
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
     name: 'CodeBlock',

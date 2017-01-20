@@ -198,6 +198,7 @@ class CodeBlockManager {
  * @param {string} html HTML string
  * @param {string} encode Boolean value of whether encode or not
  * @returns {string}
+ * @ignore
  */
 function escape(html, encode) {
     return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')

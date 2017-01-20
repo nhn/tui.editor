@@ -18,6 +18,7 @@ const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
  * @augments Squire
  * @constructor
  * @class
+ * @ignore
  */
 class SquireExt extends Squire {
     constructor(...args) {

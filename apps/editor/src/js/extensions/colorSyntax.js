@@ -107,6 +107,7 @@ extManager.defineExtension('colorSyntax', editor => {
  * Initialize UI
  * @param {object} editor Editor instance
  * @param {Array.<string>} preset Preset for color palette
+ * @ignore
  */
 function initUI(editor, preset) {
     const className = 'tui-color';
@@ -194,6 +195,7 @@ function initUI(editor, preset) {
  * @param {string} text Text content
  * @param {string} color Color value
  * @returns {string}
+ * @ignore
  */
 function makeCustomColorSyntax(text, color) {
     return `{color:${color}}${text}{color}`;
@@ -204,6 +206,7 @@ function makeCustomColorSyntax(text, color) {
  * @param {string} text Text content
  * @param {string} color Color value
  * @returns {string}
+ * @ignore
  */
 function makeHTMLColorSyntax(text, color) {
     return `<span style="color:${color}">${text}</span>`;
@@ -213,6 +216,7 @@ function makeHTMLColorSyntax(text, color) {
  * Change decimal color value to hexadecimal color value
  * @param {string} color Color value string
  * @returns {string}
+ * @ignore
  */
 function changeDecColorToHex(color) {
     return color.replace(decimalColorRx, (colorValue, r, g, b) => {
@@ -232,6 +236,7 @@ function changeDecColorToHex(color) {
  * Get binary number string
  * @param {string} numberStr String to convert binary number
  * @returns {string}
+ * @ignore
  */
 function get2DigitNumberString(numberStr) {
     return numberStr === '0' ? '00' : numberStr;

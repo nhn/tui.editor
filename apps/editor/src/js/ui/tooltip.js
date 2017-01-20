@@ -10,6 +10,7 @@ const TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span
  * Tooltip
  * @exports Tooltip
  * @constructor
+ * @ignore
  */
 function Tooltip() {
     this.$el = $(TOOLTIP_CONTENT);

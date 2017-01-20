@@ -238,6 +238,7 @@ class WwHrManager {
  * @function
  * @this Node
  * @returns {boolean}
+ * @ignore
  */
 function findTextNodeFilter() {
     return this.nodeType === Node.TEXT_NODE;

@@ -34,6 +34,7 @@ const LAYOUT_TEMPLATE = [
  * @param {string} options.textContent popup text content
  * @param {string} options.title popup title
  * @param {jQuery} options.$target element to append popup
+ * @ignore
  */
 function LayerPopup(options) {
     options = util.extend({}, options);

@@ -17,6 +17,7 @@ const util = tui.util;
  * @exports AddRow
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     name: 'AddRow',
@@ -130,6 +131,7 @@ export function _addRow(tableData, tableRange) {
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
+ * @private
  */
 function _findFocusTd($newTable, rowIndex, colIndex) {
     const tableData = dataHandler.createTableData($newTable);

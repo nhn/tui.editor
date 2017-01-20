@@ -11,6 +11,7 @@
  * @exports excelTableParser
  * @param {string} content excel table content
  * @returns {object} result
+ * @ignore
  */
 function excelTableParser(content) {
     const rows = getRows(content);

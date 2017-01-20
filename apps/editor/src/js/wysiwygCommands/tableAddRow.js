@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports AddRow
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     name: 'AddRow',

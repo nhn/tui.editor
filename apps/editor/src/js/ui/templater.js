@@ -12,6 +12,7 @@ const util = tui.util;
  * @param {string} template 템플릿 텍스트
  * @param {object|object[]} mapper 템플릿과 합성될 데이터
  * @returns {array} rendered text
+ * @ignore
  */
 function templater(template, mapper) {
     const totalReplaced = [];

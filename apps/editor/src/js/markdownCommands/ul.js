@@ -15,6 +15,7 @@ const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
  * Add unordered list markdown syntax to markdown editor
  * @exports UL
  * @augments Command
+ * @ignore
  */
 const UL = CommandManager.command('markdown', /** @lends UL */{
     name: 'UL',

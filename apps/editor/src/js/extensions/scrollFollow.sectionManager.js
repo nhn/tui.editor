@@ -397,6 +397,7 @@ class SectionManager {
  * findElementNodeFilter
  * @this Node
  * @returns {boolean} true or not
+ * @ignore
  */
 function findElementNodeFilter() {
     return this.nodeType === Node.ELEMENT_NODE;

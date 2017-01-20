@@ -34,6 +34,7 @@ class CommandManager {
      * You can change command before command addition by addCommandBefore event.
      * @param {object} command - command
      * @returns {object}
+     * @private
      */
     _addCommandBefore(command) {
         const commandWrapper = {command};

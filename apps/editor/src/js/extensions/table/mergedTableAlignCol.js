@@ -16,6 +16,7 @@ const util = tui.util;
  * @exports AlignCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     name: 'AlignCol',
@@ -74,6 +75,7 @@ function _align(headRowData, startColIndex, endColIndex, alignDirection) {
  * @param {jQuery} $newTable - changed table jQuery element
  * @param {jQuery} $startContainer - start container jQuery element of text range
  * @returns {HTMLElement}
+ * @private
  */
 function _findFocusCell($newTable, $startContainer) {
     const elementRowIndex = dataHandler.findElementRowIndex($startContainer);

@@ -13,6 +13,7 @@ const util = tui.util;
  * Check if node is text node
  * @param {Node} node node to check
  * @returns {boolean} result
+ * @ignore
  */
 const isTextNode = function(node) {
     return node && node.nodeType === Node.TEXT_NODE;
@@ -23,6 +24,7 @@ const isTextNode = function(node) {
  * Check if node is element node
  * @param {Node} node node to check
  * @returns {boolean} result
+ * @ignore
  */
 const isElemNode = function(node) {
     return node && node.nodeType === Node.ELEMENT_NODE;
@@ -33,6 +35,7 @@ const isElemNode = function(node) {
  * Get node name of node
  * @param {Node} node node
  * @returns {string} node name
+ * @ignore
  */
 const getNodeName = function(node) {
     if (isElemNode(node)) {
@@ -47,6 +50,7 @@ const getNodeName = function(node) {
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
+ * @ignore
  */
 const getTextLength = function(node) {
     let len;
@@ -65,6 +69,7 @@ const getTextLength = function(node) {
  * Get node offset length of node(for Range API)
  * @param {Node} node node
  * @returns {number} length
+ * @ignore
  */
 const getOffsetLength = function(node) {
     let len;
@@ -83,6 +88,7 @@ const getOffsetLength = function(node) {
  * get node offset between parent's childnodes
  * @param {Node} node node
  * @returns {number} offset(index)
+ * @ignore
  */
 const getNodeOffsetOfParent = function(node) {
     const childNodesOfParent = node.parentNode.childNodes;
@@ -104,6 +110,7 @@ const getNodeOffsetOfParent = function(node) {
  * @param {Node} node node
  * @param {number} index offset index
  * @returns {Node} foudned node
+ * @ignore
  */
 const getChildNodeByOffset = function(node, index) {
     let currentNode;
@@ -126,6 +133,7 @@ const getChildNodeByOffset = function(node, index) {
  * @param {Node} node node
  * @param {string} untilNodeName parent node name to limit
  * @returns {Node} founded node
+ * @ignore
  */
 const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
     const directionKey = `${direction}Sibling`;
@@ -158,6 +166,7 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
  * @param {number} index offset index
  * @param {string} untilNodeName parent node name to limit
  * @returns {Node} founded node
+ * @ignore
  */
 const getPrevOffsetNodeUntil = function(node, index, untilNodeName) {
     let prevNode;
@@ -192,6 +201,7 @@ const getParentUntilBy = function(node, condition) {
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
  * @returns {Node} founded node
+ * @ignore
  */
 const getParentUntil = function(node, untilNode) {
     let foundedNode;
@@ -213,6 +223,7 @@ const getParentUntil = function(node, untilNode) {
  * @param {Node} node node
  * @param {string|Node} underNode parent node name to limit
  * @returns {Node} founded node
+ * @ignore
  */
 const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
     const directionKey = `${direction}Sibling`;
@@ -233,6 +244,7 @@ const getNodeWithDirectionUnderParent = function(direction, node, underNode) {
  * @param {Node} node node
  * @param {Node} underNode underNode
  * @returns {Node} founded node
+ * @ignore
  */
 const getTopPrevNodeUnder = function(node, underNode) {
     return getNodeWithDirectionUnderParent('previous', node, underNode);
@@ -244,6 +256,7 @@ const getTopPrevNodeUnder = function(node, underNode) {
  * @param {Node} node node
  * @param {Node} underNode underNode
  * @returns {Node} founded node
+ * @ignore
  */
 const getTopNextNodeUnder = function(node, underNode) {
     return getNodeWithDirectionUnderParent('next', node, underNode);
@@ -253,6 +266,7 @@ const getTopNextNodeUnder = function(node, underNode) {
  * Get parent element the body element
  * @param {Node} node Node for start searching
  * @returns {Node}
+ * @ignore
  */
 const getTopBlockNode = function(node) {
     return getParentUntil(node, 'BODY');
@@ -262,6 +276,7 @@ const getTopBlockNode = function(node) {
  * Get previous text node
  * @param {Node} node Node for start searching
  * @returns {Node}
+ * @ignore
  */
 const getPrevTextNode = function(node) {
     node = node.previousSibling || node.parentNode;
@@ -291,6 +306,7 @@ const getPrevTextNode = function(node) {
  * @param {Array.<number>} offsetList offset list
  * @param {function} textNodeFilter Text node filter
  * @returns {Array}
+ * @ignore
  */
 const findOffsetNode = function(root, offsetList, textNodeFilter) {
     const result = [];
@@ -380,6 +396,7 @@ const getPath = function(node, root) {
  * @param {HTMLElement} node TD element
  * @param {string} direction Boolean value for direction true is find next cell
  * @returns {HTMLElement|null}
+ * @ignore
  */
 const getTableCellByDirection = function(node, direction) {
     let isForward = true;
@@ -406,6 +423,7 @@ const getTableCellByDirection = function(node, direction) {
  * @param {string} direction Boolean value for find first TD in next line
  * @param {boolean} [needEdgeCell=false] Boolean value for find first TD in next line
  * @returns {HTMLElement|null}
+ * @ignore
  */
 const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
     let isForward = true;

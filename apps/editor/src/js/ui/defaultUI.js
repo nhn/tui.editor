@@ -32,6 +32,7 @@ const containerTmpl = [
  * @constructor
  * @class
  * @param {ToastUIEditor} editor editor
+ * @ignore
  */
 function DefaultUI(editor) {
     this.name = 'default';

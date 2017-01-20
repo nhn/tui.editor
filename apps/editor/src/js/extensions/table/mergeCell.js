@@ -54,6 +54,7 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
  * @param {number} startColIndex - start column index
  * @param {number} endColIndex - end column index
  * @returns {string}
+ * @private
  */
 function _pickContent(targetRows, startColIndex, endColIndex) {
     const limitColIndex = endColIndex + 1;

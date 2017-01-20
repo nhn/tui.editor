@@ -13,6 +13,7 @@ const CommandManager = require('../commandManager');
  * @exports AddLink
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
     name: 'AddLink',

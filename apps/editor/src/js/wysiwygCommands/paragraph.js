@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports Heading
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Paragraph = CommandManager.command('wysiwyg', /** @lends Paragraph */{
     name: 'Paragraph',

@@ -11,6 +11,7 @@
 /**
  * Task list renderer for Markdown-it
  * @param {object} markdownit Markdown-it instance
+ * @ignore
  */
 var MarkdownitTaskRenderer = function(markdownit) {
     markdownit.core.ruler.after('inline', 'tui-task-list', function(state) {
@@ -41,6 +42,7 @@ var MarkdownitTaskRenderer = function(markdownit) {
 /**
  * Remove task format text for rendering
  * @param {object} token Token object
+ * @ignore
  */
 function removeMarkdownTaskFormatText(token) {
     // '[X] ' length is 4
@@ -53,6 +55,7 @@ function removeMarkdownTaskFormatText(token) {
  * Return boolean value whether task checked or not
  * @param {object} token Token object
  * @returns {boolean}
+ * @ignore
  */
 function isChecked(token) {
     var checked = false;
@@ -69,6 +72,7 @@ function isChecked(token) {
  * @param {object} token Token object
  * @param {string} attributeName Attribute name for set
  * @param {string} attributeValue Attribute value for set
+ * @ignore
  */
 function setTokenAttribute(token, attributeName, attributeValue) {
     var index = token.attrIndex(attributeName);
@@ -86,6 +90,7 @@ function setTokenAttribute(token, attributeName, attributeValue) {
  * @param {array} tokens Token object
  * @param {number} index Number of token index
  * @returns {boolean}
+ * @ignore
  */
 function isTaskListItemToken(tokens, index) {
     return tokens[index].type === 'inline'

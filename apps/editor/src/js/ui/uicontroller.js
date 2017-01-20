@@ -13,6 +13,7 @@ let _id = 0;
  * @class
  * @param {Object} options 옵션
  * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
+ * @ignore
  */
 function UIController(options) {
     options = util.extend({

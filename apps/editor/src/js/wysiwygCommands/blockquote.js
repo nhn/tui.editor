@@ -13,6 +13,7 @@ const CommandManager = require('../commandManager');
  * @exports Blockquote
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     name: 'Blockquote',

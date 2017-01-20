@@ -16,6 +16,7 @@ const util = tui.util;
  * @exports RemoveRow
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     name: 'RemoveRow',
@@ -130,6 +131,7 @@ export function _removeRow(tableData, tableRange) {
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
+ * @private
  */
 function _findFocusTd($newTable, rowIndex, colIndex) {
     const tableData = dataHandler.createTableData($newTable);

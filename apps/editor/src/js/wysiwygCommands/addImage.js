@@ -13,6 +13,7 @@ const CommandManager = require('../commandManager');
  * @exports AddImage
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
     name: 'AddImage',

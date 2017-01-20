@@ -16,6 +16,7 @@ const SCROLL_BOCKING_RESET_DELAY = 15;
  * @param {SectionManager} sectionManager sectionManager
  * @param {CodeMirror} cm CodeMirror
  * @param {jQuery} $previewContainerEl preview container
+ * @ignore
  */
 class ScrollSync {
     constructor(sectionManager, cm, $previewContainerEl) {

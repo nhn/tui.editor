@@ -11,6 +11,7 @@ const util = tui.util;
  * @exports LazyRunner
  * @constructor
  * @class
+ * @ignore
  */
 class LazyRunner {
     constructor() {

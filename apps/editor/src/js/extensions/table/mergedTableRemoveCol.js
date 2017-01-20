@@ -16,6 +16,7 @@ const util = tui.util;
  * @exports RemoveCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     name: 'RemoveCol',
@@ -134,6 +135,7 @@ export function _removeColumns(tableData, tableRange) {
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
+ * @private
  */
 function _findFocusCell($newTable, rowIndex, colIndex) {
     const tableData = dataHandler.createTableData($newTable);

@@ -11,6 +11,7 @@
  * @class mdTextObject
  * @param {MarkdownEditor} mde MarkdownEditor instance
  * @param {object} range range
+ * @ignore
  */
 class mdTextObject {
     constructor(mde, range) {

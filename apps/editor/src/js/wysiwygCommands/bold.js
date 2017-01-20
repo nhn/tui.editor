@@ -14,6 +14,7 @@ import domUtils from '../domUtils';
  * @exports Bold
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
     name: 'Bold',

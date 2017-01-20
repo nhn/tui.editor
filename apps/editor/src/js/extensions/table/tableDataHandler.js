@@ -98,7 +98,7 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
  * Create table data from jQuery table Element.
  * @param {jQuery} $table - jQuery table element
  * @returns {Array.<Array.<object>>}
- * @private
+ * @ignore
  */
 export function createTableData($table) {
     const tableData = [];
@@ -133,7 +133,7 @@ export function createTableData($table) {
  * Create cell index data of table data.
  * @param {Array.<Array.<object>>} tableData - table data
  * @returns {Array.<Array.<object>>}
- * @priavte
+ * @ignore
  */
 export function createCellIndexData(tableData) {
     const mappingData = [];
@@ -159,6 +159,7 @@ export function createCellIndexData(tableData) {
  * Get header aligns.
  * @param {Array.<Array.<object>>} tableData - table data
  * @returns {Array.<?string>}
+ * @private
  */
 function _getHeaderAligns(tableData) {
     const headRowData = tableData[0];
@@ -181,6 +182,7 @@ function _getHeaderAligns(tableData) {
  * @param {Array.<object>} tableData - table data
  * @param {Array.<object>} cellIndexData - cell index data
  * @returns {Array.<Array.<object>>}
+ * @ignore
  */
 function createRenderData(tableData, cellIndexData) {
     const headerAligns = _getHeaderAligns(tableData);
@@ -203,6 +205,7 @@ const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
  *   rowspan: number,
  *   content: string
  * }}
+ * @ignore
  */
 function createBasicCell(rowIndex, colIndex, nodeName) {
     return {
@@ -221,6 +224,7 @@ function createBasicCell(rowIndex, colIndex, nodeName) {
  * Find element row index.
  * @param {jQuery} $cell - cell jQuery element like td or th
  * @returns {number}
+ * @ignore
  */
 function findElementRowIndex($cell) {
     const $tr = $cell.closest('tr');
@@ -237,6 +241,7 @@ function findElementRowIndex($cell) {
  * Find element col index.
  * @param {jQuery} $cell - cell jQuery element like td or th
  * @returns {number}
+ * @ignore
  */
 function findElementColIndex($cell) {
     return $cell.closest('td, th').prevAll().length;
@@ -248,6 +253,7 @@ function findElementColIndex($cell) {
  * @param {Array.<Array.<object>>} cellIndexData - cell index data
  * @param {jQuery} $cell - cell jQuery element like td or th
  * @returns {{rowIndex: number, cellIndex: number}}
+ * @ignore
  */
 function findCellIndex(cellIndexData, $cell) {
     const elementRowIndex = findElementRowIndex($cell);
@@ -262,6 +268,7 @@ function findCellIndex(cellIndexData, $cell) {
  * @param {number} rowIndex - row index of base data
  * @param {number} colIndex - column index of tabld data
  * @returns {number}
+ * @ignore
  */
 function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
     const cellData = tableData[rowIndex][colIndex];
@@ -280,6 +287,7 @@ function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
  * @param {number} rowIndex - row index of base data
  * @param {number} colIndex - column index of tabld data
  * @returns {number}
+ * @ignore
  */
 function findColMergedLastIndex(tableData, rowIndex, colIndex) {
     const cellData = tableData[rowIndex][colIndex];
@@ -298,6 +306,7 @@ function findColMergedLastIndex(tableData, rowIndex, colIndex) {
  * @param {number} rowIndex - row index of base data
  * @param {number} colIndex - col index of base data
  * @returns {{rowIndex: number, colIndex: number}}
+ * @ignore
  */
 function findElementIndex(tableData, rowIndex, colIndex) {
     const cellData = tableData[rowIndex][colIndex];
@@ -323,6 +332,7 @@ function _findMaxCellCount(tableData) {
 /**
  * Stuff cells into incomplete row.
  * @param {Array.<Array.<object>>} tableData - table data
+ * @ignore
  */
 function stuffCellsIntoIncompleteRow(tableData) {
     const maxCellCount = _findMaxCellCount(tableData);

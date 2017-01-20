@@ -11,6 +11,7 @@ const util = tui.util;
  * @exports Markerlist
  * @constructor
  * @class
+ * @ignore
  */
 class Markerlist {
     constructor() {

@@ -27,6 +27,7 @@
 /**
  * Class containing the diff, match and patch methods.
  * @constructor
+ * @ignore
  */
 function diff_match_patch() {
 
@@ -61,6 +62,7 @@ function diff_match_patch() {
  * The data structure representing a diff is an array of tuples:
  * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
  * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+ * @ignore
  */
 var DIFF_DELETE = -1;
 var DIFF_INSERT = 1;
@@ -2089,6 +2091,7 @@ diff_match_patch.prototype.patch_fromText = function(textline) {
 /**
  * Class representing one patch operation.
  * @constructor
+ * @ignore
  */
 diff_match_patch.patch_obj = function() {
   /** @type {!Array.<!diff_match_patch.Diff>} */
