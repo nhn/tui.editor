@@ -64,27 +64,28 @@
 	 */
 
 	// codemirror modes&addons
-	__webpack_require__(90);
-	__webpack_require__(91);
-	__webpack_require__(92);
 	__webpack_require__(93);
 	__webpack_require__(94);
-
-	// default extensions
 	__webpack_require__(95);
 	__webpack_require__(96);
+	__webpack_require__(97);
+
+	// default extensions
+	__webpack_require__(98);
 	__webpack_require__(99);
-	__webpack_require__(100);
+	__webpack_require__(102);
+	__webpack_require__(103);
+	__webpack_require__(110);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	// langs
-	__webpack_require__(107);
-	__webpack_require__(108);
-	__webpack_require__(109);
-	__webpack_require__(110);
-	__webpack_require__(111);
+	__webpack_require__(128);
+	__webpack_require__(129);
+	__webpack_require__(130);
+	__webpack_require__(131);
+	__webpack_require__(132);
 
 	// for jquery
 	$.fn.tuiEditor = function () {
@@ -139,199 +140,203 @@
 
 	var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-	var _preview = __webpack_require__(5);
+	var _preview = __webpack_require__(7);
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _wysiwygEditor = __webpack_require__(7);
+	var _wysiwygEditor = __webpack_require__(10);
 
 	var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-	var _layout = __webpack_require__(22);
+	var _layout = __webpack_require__(25);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _eventManager = __webpack_require__(23);
+	var _eventManager = __webpack_require__(26);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager2 = __webpack_require__(24);
+	var _commandManager2 = __webpack_require__(27);
 
 	var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(29);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _importManager = __webpack_require__(27);
+	var _importManager = __webpack_require__(30);
 
 	var _importManager2 = _interopRequireDefault(_importManager);
 
-	var _convertor = __webpack_require__(30);
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
+
+	var _convertor = __webpack_require__(33);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
-	var _viewOnly = __webpack_require__(37);
+	var _viewOnly = __webpack_require__(40);
 
 	var _viewOnly2 = _interopRequireDefault(_viewOnly);
 
-	var _defaultUI = __webpack_require__(38);
+	var _defaultUI = __webpack_require__(41);
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
-	var _bold = __webpack_require__(52);
+	var _bold = __webpack_require__(55);
 
 	var _bold2 = _interopRequireDefault(_bold);
 
-	var _italic = __webpack_require__(53);
+	var _italic = __webpack_require__(56);
 
 	var _italic2 = _interopRequireDefault(_italic);
 
-	var _strike = __webpack_require__(54);
+	var _strike = __webpack_require__(57);
 
 	var _strike2 = _interopRequireDefault(_strike);
 
-	var _blockquote = __webpack_require__(55);
+	var _blockquote = __webpack_require__(58);
 
 	var _blockquote2 = _interopRequireDefault(_blockquote);
 
-	var _heading = __webpack_require__(56);
+	var _heading = __webpack_require__(59);
 
 	var _heading2 = _interopRequireDefault(_heading);
 
-	var _paragraph = __webpack_require__(57);
+	var _paragraph = __webpack_require__(60);
 
 	var _paragraph2 = _interopRequireDefault(_paragraph);
 
-	var _hr = __webpack_require__(58);
+	var _hr = __webpack_require__(61);
 
 	var _hr2 = _interopRequireDefault(_hr);
 
-	var _addLink = __webpack_require__(59);
+	var _addLink = __webpack_require__(62);
 
 	var _addLink2 = _interopRequireDefault(_addLink);
 
-	var _addImage = __webpack_require__(60);
+	var _addImage = __webpack_require__(63);
 
 	var _addImage2 = _interopRequireDefault(_addImage);
 
-	var _ul = __webpack_require__(61);
+	var _ul = __webpack_require__(64);
 
 	var _ul2 = _interopRequireDefault(_ul);
 
-	var _ol = __webpack_require__(62);
+	var _ol = __webpack_require__(65);
 
 	var _ol2 = _interopRequireDefault(_ol);
 
-	var _table = __webpack_require__(63);
+	var _table = __webpack_require__(66);
 
 	var _table2 = _interopRequireDefault(_table);
 
-	var _task = __webpack_require__(64);
+	var _task = __webpack_require__(67);
 
 	var _task2 = _interopRequireDefault(_task);
 
-	var _code = __webpack_require__(65);
+	var _code = __webpack_require__(68);
 
 	var _code2 = _interopRequireDefault(_code);
 
-	var _codeBlock = __webpack_require__(66);
+	var _codeBlock = __webpack_require__(69);
 
 	var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-	var _bold3 = __webpack_require__(67);
+	var _bold3 = __webpack_require__(70);
 
 	var _bold4 = _interopRequireDefault(_bold3);
 
-	var _italic3 = __webpack_require__(68);
+	var _italic3 = __webpack_require__(71);
 
 	var _italic4 = _interopRequireDefault(_italic3);
 
-	var _strike3 = __webpack_require__(69);
+	var _strike3 = __webpack_require__(72);
 
 	var _strike4 = _interopRequireDefault(_strike3);
 
-	var _blockquote3 = __webpack_require__(70);
+	var _blockquote3 = __webpack_require__(73);
 
 	var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-	var _addImage3 = __webpack_require__(71);
+	var _addImage3 = __webpack_require__(74);
 
 	var _addImage4 = _interopRequireDefault(_addImage3);
 
-	var _addLink3 = __webpack_require__(72);
+	var _addLink3 = __webpack_require__(75);
 
 	var _addLink4 = _interopRequireDefault(_addLink3);
 
-	var _hr3 = __webpack_require__(73);
+	var _hr3 = __webpack_require__(76);
 
 	var _hr4 = _interopRequireDefault(_hr3);
 
-	var _heading3 = __webpack_require__(74);
+	var _heading3 = __webpack_require__(77);
 
 	var _heading4 = _interopRequireDefault(_heading3);
 
-	var _paragraph3 = __webpack_require__(75);
+	var _paragraph3 = __webpack_require__(78);
 
 	var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-	var _ul3 = __webpack_require__(76);
+	var _ul3 = __webpack_require__(79);
 
 	var _ul4 = _interopRequireDefault(_ul3);
 
-	var _ol3 = __webpack_require__(77);
+	var _ol3 = __webpack_require__(80);
 
 	var _ol4 = _interopRequireDefault(_ol3);
 
-	var _table3 = __webpack_require__(78);
+	var _table3 = __webpack_require__(81);
 
 	var _table4 = _interopRequireDefault(_table3);
 
-	var _tableAddRow = __webpack_require__(79);
+	var _tableAddRow = __webpack_require__(82);
 
 	var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-	var _tableAddCol = __webpack_require__(80);
+	var _tableAddCol = __webpack_require__(83);
 
 	var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-	var _tableRemoveRow = __webpack_require__(81);
+	var _tableRemoveRow = __webpack_require__(84);
 
 	var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-	var _tableRemoveCol = __webpack_require__(82);
+	var _tableRemoveCol = __webpack_require__(85);
 
 	var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-	var _tableAlignCol = __webpack_require__(83);
+	var _tableAlignCol = __webpack_require__(86);
 
 	var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-	var _tableRemove = __webpack_require__(84);
+	var _tableRemove = __webpack_require__(87);
 
 	var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-	var _increaseDepth = __webpack_require__(85);
+	var _increaseDepth = __webpack_require__(88);
 
 	var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-	var _decreaseDepth = __webpack_require__(86);
+	var _decreaseDepth = __webpack_require__(89);
 
 	var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-	var _task3 = __webpack_require__(87);
+	var _task3 = __webpack_require__(90);
 
 	var _task4 = _interopRequireDefault(_task3);
 
-	var _code3 = __webpack_require__(88);
+	var _code3 = __webpack_require__(91);
 
 	var _code4 = _interopRequireDefault(_code3);
 
-	var _codeBlock3 = __webpack_require__(89);
+	var _codeBlock3 = __webpack_require__(92);
 
 	var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -385,6 +390,9 @@
 	        this.importManager = new _importManager2.default(this.eventManager);
 
 	        this.commandManager = new _commandManager3.default(this);
+
+	        this.codeBlockManager = _codeBlockManager2.default;
+
 	        this.convertor = new _convertor2.default(this.eventManager);
 
 	        if (this.options.useDefaultHTMLSanitizer) {
@@ -410,13 +418,12 @@
 
 	        this.setUI(this.options.UI || new _defaultUI2.default(this));
 
-	        this.mdEditor = new _markdownEditor2.default(this.layout.getMdEditorContainerEl(), this.eventManager);
+	        this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
 	        this.preview = new _preview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
 	        this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+	        this.toMarkOptions = null;
 
 	        this.changePreviewStyle(this.options.previewStyle);
-
-	        this.mdEditor.init();
 
 	        this.changeMode(self.options.initialEditType, true);
 
@@ -469,6 +476,16 @@
 	            } else {
 	                this.commandManager.addCommand(_commandManager3.default.command(type, props));
 	            }
+	        }
+
+	        /**
+	         * After added command.
+	         */
+
+	    }, {
+	        key: 'afterAddedCommand',
+	        value: function afterAddedCommand() {
+	            this.eventManager.emit('afterAddedCommand', this);
 	        }
 
 	        /**
@@ -601,15 +618,15 @@
 	        }
 
 	        /**
-	         * Set Editor value
+	         * Set markdown syntax text.
 	         * @api
 	         * @memberOf ToastUIEditor
-	         * @param {string} markdown Markdown syntax text
+	         * @param {string} markdown - markdown syntax text.
 	         */
 
 	    }, {
-	        key: 'setValue',
-	        value: function setValue(markdown) {
+	        key: 'setMarkdown',
+	        value: function setMarkdown(markdown) {
 	            markdown = markdown || '';
 
 	            if (this.isMarkdownMode()) {
@@ -618,28 +635,93 @@
 	                this.wwEditor.setValue(this.convertor.toHTML(markdown));
 	            }
 
-	            this.eventManager.emit('setValueAfter', markdown);
+	            this.eventManager.emit('setMarkdownAfter', markdown);
 	        }
 
 	        /**
-	         * Get editor value
+	         * Set html value.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @param {string} html - html syntax text
+	         */
+
+	    }, {
+	        key: 'setHtml',
+	        value: function setHtml(html) {
+	            html = html || '';
+	            this.wwEditor.setValue(html);
+
+	            if (this.isMarkdownMode()) {
+	                var markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+	                this.mdEditor.setValue(markdown);
+	                this.eventManager.emit('setMarkdownAfter', markdown);
+	            }
+	        }
+
+	        /**
+	         * Set markdown syntax text.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @param {string} value - markdown syntax text
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'setValue',
+	        value: function setValue(value) {
+	            this.setMarkdown(value);
+	        }
+
+	        /**
+	         * Get markdown syntax text.
 	         * @api
 	         * @memberOf ToastUIEditor
 	         * @returns {string}
 	         */
 
 	    }, {
-	        key: 'getValue',
-	        value: function getValue() {
+	        key: 'getMarkdown',
+	        value: function getMarkdown() {
 	            var markdown = void 0;
 
 	            if (this.isMarkdownMode()) {
 	                markdown = this.mdEditor.getValue();
 	            } else {
-	                markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+	                markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
 	            }
 
 	            return markdown;
+	        }
+
+	        /**
+	         * Get html syntax text.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'getHtml',
+	        value: function getHtml() {
+	            if (this.isWysiwygMode()) {
+	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+	            }
+
+	            return this.convertor.toHTML(this.mdEditor.getValue());
+	        }
+
+	        /**
+	         * Get editor value.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @returns {string}
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'getValue',
+	        value: function getValue() {
+	            return this.getMarkdown();
 	        }
 
 	        /**
@@ -777,7 +859,7 @@
 	                this.eventManager.emit('changeModeToWysiwyg');
 	            } else {
 	                this.layout.switchToMarkdown();
-	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
 	                this.getCodeMirror().refresh();
 	                this.eventManager.emit('changeModeToMarkdown');
 	            }
@@ -1053,6 +1135,14 @@
 
 	var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
+	var _mdListManager = __webpack_require__(5);
+
+	var _mdListManager2 = _interopRequireDefault(_mdListManager);
+
+	var _componentManager = __webpack_require__(6);
+
+	var _componentManager2 = _interopRequireDefault(_componentManager);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1073,6 +1163,7 @@
 	    function MarkdownEditor($el, eventManager) {
 	        _classCallCheck(this, MarkdownEditor);
 
+	        this.componentManager = new _componentManager2.default(this);
 	        this.eventManager = eventManager;
 	        this.$editorContainerEl = $el;
 
@@ -1087,7 +1178,7 @@
 	     * init
 	     * @api
 	     * @memberOf WysiwygEditor
-	     * @param {string} initialValue Editor's initial content
+	     * @param {string} [initialValue] Editor's initial content
 	     */
 
 
@@ -1233,6 +1324,7 @@
 	                var state = {
 	                    bold: !!base.strong,
 	                    italic: !!base.em,
+	                    strike: !!base.strikethrough,
 	                    code: !!overlay.code,
 	                    codeBlock: !!overlay.codeBlock,
 	                    quote: !!base.quote,
@@ -1618,6 +1710,27 @@
 	            });
 
 	            return result;
+	        }
+
+	        /**
+	         * MarkdownEditor factory method
+	         * @api
+	         * @memberOf MarkdownEditor
+	         * @param {jQuery} $el Container element for editor
+	         * @param {EventManager} eventManager EventManager instance
+	         * @returns {MarkdownEditor} MarkdownEditor
+	         */
+
+	    }], [{
+	        key: 'factory',
+	        value: function factory($el, eventManager) {
+	            var mde = new MarkdownEditor($el, eventManager);
+
+	            mde.init();
+
+	            mde.componentManager.addManager(_mdListManager2.default);
+
+	            return mde;
 	        }
 	    }]);
 
@@ -2197,7 +2310,7 @@
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -2206,11 +2319,411 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @fileoverview Implements wysiwyg p manager
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
-	var LazyRunner = __webpack_require__(6);
+	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+	var FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\\/'";: \r\[\]]*\|+)+/i;
+	var FIND_HEADING_RX = /^#+\s/;
+	var FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
+
+	/**
+	 * MdListManager
+	 * @exports MdListManager
+	 * @class MdListManager
+	 * @constructor
+	 * @param {MarkdownEditor} mde MarkdownEditor instance
+	 */
+
+	var MdListManager = function () {
+	    function MdListManager(mde) {
+	        _classCallCheck(this, MdListManager);
+
+	        this.mde = mde;
+	        this.eventManager = mde.eventManager;
+
+	        /**
+	         * Name property
+	         * @api
+	         * @memberOf MdListManager
+	         * @type {string}
+	         */
+	        this.name = 'list';
+	    }
+
+	    /**
+	     * Return whether passed line is list or paragraph or not
+	     * @param {string} line line text
+	     * @api
+	     * @returns {boolean}
+	     */
+
+
+	    _createClass(MdListManager, [{
+	        key: 'isListOrParagraph',
+	        value: function isListOrParagraph(line) {
+	            return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
+	        }
+
+	        /**
+	         * Append blank line at list top or bottom if needed
+	         * @param {CodeMirror} cm CodeMirror instance
+	         * @param {number} index index number
+	         * @param {number} endLineNumber end line index number
+	         * @param {number} startLineNumber start line index number
+	         * @api
+	         */
+
+	    }, {
+	        key: 'appendBlankLineIfNeed',
+	        value: function appendBlankLineIfNeed(cm, index, endLineNumber, startLineNumber) {
+	            var doc = cm.getDoc();
+	            var cursorPositionFactor = 0;
+	            var isMultiLineSelection = startLineNumber !== endLineNumber;
+	            var nextLineOfLastIndex = doc.getLine(this._getEndLineNumberOfList(doc, endLineNumber) + 1);
+	            var previousLineOfFirstIndex = doc.getLine(this._getStartLineNumberOfList(doc, startLineNumber) - 1);
+
+	            var nextLine = doc.getLine(index + 1);
+	            if (isMultiLineSelection && this._isNeedAppendBlankLine(nextLineOfLastIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(nextLine)) {
+	                doc.replaceRange('\n', {
+	                    line: index,
+	                    ch: doc.getLine(index).length
+	                });
+	            }
+
+	            var previousLine = doc.getLine(index - 1);
+	            if (isMultiLineSelection && this._isNeedAppendBlankLine(previousLineOfFirstIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(previousLine)) {
+	                doc.replaceRange('\n', {
+	                    line: startLineNumber,
+	                    ch: 0
+	                });
+	                cursorPositionFactor += 1;
+	            }
+	            if (!isMultiLineSelection) {
+	                var currentLineNumber = index + cursorPositionFactor;
+	                cm.setCursor(currentLineNumber, doc.getLine(currentLineNumber).length);
+	            }
+	        }
+
+	        /**
+	         * Return whether need to append blank line or not
+	         * @param {string} line Line text
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isNeedAppendBlankLine',
+	        value: function _isNeedAppendBlankLine(line) {
+	            return line && line.length !== 0 && !this._isAList(line);
+	        }
+
+	        /**
+	         * Sort line number of selection descending
+	         * @param {{from, to}} range start, end CodeMirror range information
+	         * @api
+	         * @returns {{start: {number}, end: {number}}}
+	         */
+
+	    }, {
+	        key: 'createSortedLineRange',
+	        value: function createSortedLineRange(range) {
+	            var isReversed = range.from.line > range.to.line;
+	            var rangeStart = {
+	                line: isReversed ? range.to.line : range.from.line,
+	                ch: 0
+	            };
+	            var rangeEnd = {
+	                line: isReversed ? range.from.line : range.to.line,
+	                ch: 0
+	            };
+
+	            return {
+	                start: rangeStart.line,
+	                end: rangeEnd.line
+	            };
+	        }
+
+	        /**
+	         * Expand line range if need
+	         * @param {object} doc doc instance
+	         * @param {{from, to}} range CodeMirror range information
+	         * @param {function} comparator comparator function
+	         * @api
+	         * @returns {{start: number, end: number}}
+	         */
+
+	    }, {
+	        key: 'expandLineRangeIfNeed',
+	        value: function expandLineRangeIfNeed(doc, range, comparator) {
+	            var lineRange = this.createSortedLineRange(range);
+	            var start = lineRange.start;
+	            var end = lineRange.end;
+
+	            var isRangeStartInUlOrTask = this._isDifferentListType(comparator, doc.getLine(start));
+	            var isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));
+
+	            if (isRangeStartInUlOrTask) {
+	                start = this._getStartLineNumberOfList(doc, start);
+	            }
+
+	            if (isRangeEndInUlOrTask) {
+	                end = this._getEndLineNumberOfList(doc, end);
+	            }
+
+	            return {
+	                start: start,
+	                end: end
+	            };
+	        }
+
+	        /**
+	         * Replace list syntax
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} lineNumber Line number
+	         * @param {RegExp} regexp Regexp for find list syntax
+	         * @param {string} replacePattern Replacement string
+	         * @api
+	         */
+
+	    }, {
+	        key: 'replaceLineText',
+	        value: function replaceLineText(doc, lineNumber, regexp, replacePattern) {
+	            var line = doc.getLine(lineNumber);
+	            var currentLineStart = {
+	                line: lineNumber,
+	                ch: 0
+	            };
+	            var currentLineEnd = {
+	                line: lineNumber,
+	                ch: line.length
+	            };
+
+	            line = line.replace(regexp, replacePattern);
+
+	            doc.replaceRange(line, currentLineStart, currentLineEnd);
+	        }
+
+	        /**
+	         * Return whether is a different list type or not
+	         * @param {function} comparator comparator function
+	         * @param {string} line line string
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isDifferentListType',
+	        value: function _isDifferentListType(comparator, line) {
+	            return line && line.length !== 0 && comparator.call(this, line);
+	        }
+
+	        /**
+	         * Return whether is a list or not
+	         * @param {string} line line string
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isAList',
+	        value: function _isAList(line) {
+	            return line && line.length !== 0 && this._isListLine(line);
+	        }
+
+	        /**
+	         * Return whether passed line is list or not
+	         * @param {string} line Line text
+	         * @returns {Boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isListLine',
+	        value: function _isListLine(line) {
+	            return !!(line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX));
+	        }
+
+	        /**
+	         * Get start line number of current list
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} startLineNumber start line number of selection
+	         * @returns {number|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getStartLineNumberOfList',
+	        value: function _getStartLineNumberOfList(doc, startLineNumber) {
+	            var lineNumber = void 0;
+
+	            for (lineNumber = startLineNumber; lineNumber > 0; lineNumber -= 1) {
+	                var previousLine = doc.getLine(lineNumber - 1);
+	                if (!previousLine || !this._isListLine(previousLine)) {
+	                    break;
+	                }
+	            }
+
+	            return lineNumber;
+	        }
+
+	        /**
+	         * Get end line number of current list
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} endLineNumber end line number of selection
+	         * @returns {number|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getEndLineNumberOfList',
+	        value: function _getEndLineNumberOfList(doc, endLineNumber) {
+	            var lineCount = doc.lineCount();
+	            var lineNumber = void 0;
+
+	            for (lineNumber = endLineNumber; lineNumber < lineCount; lineNumber += 1) {
+	                var nextLine = doc.getLine(lineNumber + 1);
+	                if (!nextLine || !this._isListLine(nextLine)) {
+	                    break;
+	                }
+	            }
+
+	            return lineNumber;
+	        }
+	    }]);
+
+	    return MdListManager;
+	}();
+
+	module.exports = MdListManager;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements CommandManager
+	 * @author Junghwan Park(junghwan.parkm@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/**
+	 * ComponentManager
+	 * @exports CommandManager
+	 * @class
+	 */
+	var ComponentManager = function () {
+	    /**
+	     * Constructor
+	     * @param {MarkdownEditor|WysiwygEditor} editor Editor instance
+	     */
+	    function ComponentManager(editor) {
+	        _classCallCheck(this, ComponentManager);
+
+	        /**
+	         * private
+	         * @type {object}
+	         * @private
+	         */
+	        this._managers = {};
+	        this._editor = editor;
+	    }
+
+	    /**
+	     * addManager
+	     * Add manager
+	     * @api
+	     * @memberOf CommandManager
+	     * @param {string|function} nameOrConstructor Manager name or constructor
+	     * @param {function} [ManagerConstructor] Constructor
+	     */
+
+
+	    _createClass(ComponentManager, [{
+	        key: "addManager",
+	        value: function addManager(nameOrConstructor, ManagerConstructor) {
+	            if (!ManagerConstructor) {
+	                ManagerConstructor = nameOrConstructor;
+	                nameOrConstructor = null;
+	            }
+
+	            var instance = new ManagerConstructor(this._editor);
+
+	            this._managers[nameOrConstructor || instance.name] = instance;
+	        }
+
+	        /**
+	         * getManager
+	         * Get manager by manager name
+	         * @api
+	         * @memberOf CommandManager
+	         * @param {string} name Manager name
+	         * @returns {object} manager
+	         */
+
+	    }, {
+	        key: "getManager",
+	        value: function getManager(name) {
+	            return this._managers[name];
+	        }
+
+	        /**
+	         * Remove Manager.
+	         * @param {string} name - manager name
+	         */
+
+	    }, {
+	        key: "removeManager",
+	        value: function removeManager(name) {
+	            var manager = this.getManager(name);
+
+	            if (!manager) {
+	                return;
+	            }
+
+	            if (manager.destroy) {
+	                manager.destroy();
+	            }
+
+	            delete this._managers[name];
+	        }
+	    }]);
+
+	    return ComponentManager;
+	}();
+
+	module.exports = ComponentManager;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _lazyRunner = __webpack_require__(8);
+
+	var _lazyRunner2 = _interopRequireDefault(_lazyRunner);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
 	 * Preview
@@ -2219,20 +2732,21 @@
 	 * @constructor
 	 * @param {jQuery} $el Container element for preview
 	 * @param {EventManager} eventManager Event manager instance
-	 * @param {Convertor} converter Convertor instance
+	 * @param {Convertor} convertor Convertor instance
+	 * @param {boolean} isViewOnly - whether viewOnly mode or not
 	 **/
-
 	var Preview = function () {
-	    function Preview($el, eventManager, converter) {
+	    function Preview($el, eventManager, convertor, isViewOnly) {
 	        _classCallCheck(this, Preview);
 
 	        this.eventManager = eventManager;
-	        this.converter = converter;
+	        this.convertor = convertor;
 	        this.$el = $el;
+	        this.isViewOnly = !!isViewOnly;
 
 	        this._initContentSection();
 
-	        this.lazyRunner = new LazyRunner();
+	        this.lazyRunner = new _lazyRunner2.default();
 
 	        this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
 
@@ -2293,7 +2807,7 @@
 	    }, {
 	        key: 'refresh',
 	        value: function refresh(markdown) {
-	            this.render(this.converter.toHTMLWithCodeHightlight(markdown));
+	            this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
 	        }
 
 	        /**
@@ -2315,6 +2829,9 @@
 
 	            this.$previewContent.empty();
 	            this.$previewContent.html(finalHtml);
+
+	            this.eventManager.emit('replaceCodeBlockElementsBefore');
+	            _codeBlockManager2.default.replaceElements(this.$previewContent, this.isViewOnly);
 
 	            this.eventManager.emit('previewRenderAfter', this);
 	        }
@@ -2350,7 +2867,7 @@
 	module.exports = Preview;
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2447,7 +2964,266 @@
 	module.exports = LazyRunner;
 
 /***/ },
-/* 7 */
+/* 9 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements CodeBlockManager
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+	var hljs = window.hljs;
+
+	var CUSTOM_CODE_BLOCK_CLASS_NAME = 'tui-editor-custom-code-block';
+
+	var sharedInstance = void 0;
+
+	/**
+	 * CodeBlockManager
+	 * @exports CodeBlockManager
+	 * @class
+	 */
+
+	var CodeBlockManager = function () {
+	    function CodeBlockManager() {
+	        _classCallCheck(this, CodeBlockManager);
+
+	        this._elementReplacer = new util.Map();
+	    }
+
+	    /**
+	     * Set replacer for code block element.
+	     * @param {string} type - code block type
+	     * @param {{viewOnly: ?function, wysiwyg: ?function, preview: ?function}} replacer - replacer to code block element
+	     */
+
+
+	    _createClass(CodeBlockManager, [{
+	        key: 'setElementReplacer',
+	        value: function setElementReplacer(type, replacer) {
+	            this._elementReplacer.set(type, replacer);
+	        }
+
+	        /**
+	         * Create code block html.
+	         * @param {string} type - code block type or language type
+	         * @param {string} codeText - code text
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'createCodeBlockHtml',
+	        value: function createCodeBlockHtml(type, codeText) {
+	            var replacer = this._elementReplacer.get(type);
+	            var className = CUSTOM_CODE_BLOCK_CLASS_NAME;
+	            var html = void 0;
+
+	            if (replacer) {
+	                codeText = encodeURIComponent(codeText).replace(/(%0A)+$/, '');
+	                html = '<pre class="' + className + '" data-language="' + type + '" data-code-text="' + codeText + '">' + type + '</pre>';
+	            } else {
+	                html = hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+	            }
+
+	            return html;
+	        }
+
+	        /**
+	         * Get view mode for replace.
+	         * @param {boolean} isViewOnly - whether view only or not
+	         * @param {boolean} isWysiwygMode - whether wysiwyg mode or not
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getViewMode',
+	        value: function _getViewMode(isViewOnly, isWysiwygMode) {
+	            var replaceMode = void 0;
+
+	            if (isViewOnly) {
+	                replaceMode = 'viewOnly';
+	            } else if (isWysiwygMode) {
+	                replaceMode = 'wysiwyg';
+	            } else {
+	                replaceMode = 'preview';
+	            }
+
+	            return replaceMode;
+	        }
+
+	        /**
+	         * Replace the code block element.
+	         * @param {HTMLElement} containerElement - container element by view mode like viewOnly, wysiwyg, preview.
+	         * @param {HTMLElement} codeBlockElement - target code block element
+	         * @param {function} replace - function for replacing block element
+	         * @param {string} id - code block id
+	         * @private
+	         */
+
+	    }, {
+	        key: '_replaceElement',
+	        value: function _replaceElement(containerElement, codeBlockElement, replace, id) {
+	            var $codeBlock = $(codeBlockElement);
+	            var type = $codeBlock.data('language');
+	            var beforeParentNode = codeBlockElement.parentNode;
+	            var codeText = $codeBlock.data('code-text');
+	            var $newCodeBlock = $(replace({
+	                id: id,
+	                containerElement: containerElement,
+	                codeBlockElement: codeBlockElement,
+	                type: type,
+	                codeText: decodeURIComponent(codeText)
+	            }));
+
+	            if ($newCodeBlock.length) {
+	                if (codeBlockElement !== $newCodeBlock[0] && beforeParentNode === codeBlockElement.parentNode) {
+	                    $codeBlock.replaceWith($newCodeBlock);
+	                }
+
+	                $newCodeBlock[0].id = id;
+	                $newCodeBlock.data('language', type);
+	                $newCodeBlock.addClass(CUSTOM_CODE_BLOCK_CLASS_NAME);
+
+	                if (tui.util.isEmpty($newCodeBlock.data('code-text'))) {
+	                    $newCodeBlock.data('code-text', codeText);
+	                }
+	            } else {
+	                codeBlockElement.id = id;
+	            }
+	        }
+
+	        /**
+	         * Replace code block elements.
+	         * @param {jQuery} $container - jQuery element container by view mode like viewOnly, wysiwyg, preview
+	         * @param {boolean} isViewOnly - whether view only or not
+	         * @param {boolean} isWysiwygMode - whether wysiwyg mode or not
+	         */
+
+	    }, {
+	        key: 'replaceElements',
+	        value: function replaceElements($container, isViewOnly, isWysiwygMode) {
+	            var _this = this;
+
+	            var $codeBlocks = $container.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+	            var containerElement = $container[0];
+	            var viewMode = this._getViewMode(isViewOnly, isWysiwygMode);
+	            var replaceElement = $.proxy(this._replaceElement, this);
+	            var timestamp = new Date().getTime();
+
+	            $codeBlocks.each(function (index, codeBlockElement) {
+	                var id = CUSTOM_CODE_BLOCK_CLASS_NAME + '-' + timestamp + '-' + index;
+	                var replacer = _this._elementReplacer.get($(codeBlockElement).data('language'));
+	                var replace = replacer ? replacer[viewMode] : null;
+
+	                if (replace) {
+	                    replaceElement(containerElement, codeBlockElement, replace, id);
+	                } else {
+	                    codeBlockElement.id = id;
+	                }
+	            });
+	        }
+
+	        /**
+	         * Restore code block element to markdown-it style.
+	         * @param {HTMLElement} codeBlockElement - replaced code block element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_restoreElement',
+	        value: function _restoreElement(codeBlockElement) {
+	            var $codeBlock = $(codeBlockElement);
+	            var type = $codeBlock.data('language');
+	            var codeText = decodeURIComponent($codeBlock.data('code-text'));
+	            var $pre = $('<pre data-language="' + type + '" class="lang-' + type + '"></pre>');
+
+	            if (codeText) {
+	                $pre.html('<div>' + escape(codeText, false).replace(/\n/g, '<br>') + '</div>');
+	            }
+
+	            $codeBlock.replaceWith($pre);
+	        }
+
+	        /**
+	         * Restore code block elements to markdown-it style.
+	         * @param {jQuery} $wweContainer - jQuery element container for wysiwyg editor
+	         * @private
+	         */
+
+	    }, {
+	        key: 'restoreElements',
+	        value: function restoreElements($wweContainer) {
+	            var $codeBlocks = $wweContainer.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+	            var restoreElement = $.proxy(this._restoreElement, this);
+
+	            $codeBlocks.each(function (index, codeBlockElement) {
+	                restoreElement(codeBlockElement);
+	            });
+	        }
+
+	        /**
+	         * Update code text by code block id and container element.
+	         * @param {HTMLElement} containerElement - container element by view mode like viewOnly, wysiwyg, preview.
+	         * @param {string} id - code block id
+	         * @param {string} codeText - code text for updating
+	         */
+
+	    }, {
+	        key: 'updateCodeTextById',
+	        value: function updateCodeTextById(containerElement, id, codeText) {
+	            var $codeBlock = $(containerElement).find('#' + id);
+
+	            $codeBlock.data('code-text', encodeURIComponent(codeText));
+	        }
+
+	        /**
+	         * Get shared instance to CodeBlockManager.
+	         * @returns {CodeBlockManager}
+	         */
+
+	    }], [{
+	        key: 'getSharedInstance',
+	        value: function getSharedInstance() {
+	            if (!sharedInstance) {
+	                sharedInstance = new CodeBlockManager();
+	            }
+
+	            return sharedInstance;
+	        }
+	    }]);
+
+	    return CodeBlockManager;
+	}();
+
+	/**
+	 * escape code from markdown-it
+	 * @param {string} html HTML string
+	 * @param {string} encode Boolean value of whether encode or not
+	 * @returns {string}
+	 */
+
+
+	function escape(html, encode) {
+	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+	}
+
+	exports.CodeBlockManager = CodeBlockManager;
+	exports.default = CodeBlockManager.getSharedInstance();
+
+/***/ },
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2457,47 +3233,47 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _wwClipboardManager = __webpack_require__(9);
+	var _wwClipboardManager = __webpack_require__(12);
 
 	var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-	var _wwListManager = __webpack_require__(12);
+	var _wwListManager = __webpack_require__(15);
 
 	var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-	var _wwTaskManager = __webpack_require__(13);
+	var _wwTaskManager = __webpack_require__(16);
 
 	var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-	var _wwTableManager = __webpack_require__(14);
+	var _wwTableManager = __webpack_require__(17);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _wwTableSelectionManager = __webpack_require__(15);
+	var _wwTableSelectionManager = __webpack_require__(18);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _wwHrManager = __webpack_require__(16);
+	var _wwHrManager = __webpack_require__(19);
 
 	var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-	var _wwPManager = __webpack_require__(17);
+	var _wwPManager = __webpack_require__(20);
 
 	var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-	var _wwHeadingManager = __webpack_require__(18);
+	var _wwHeadingManager = __webpack_require__(21);
 
 	var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-	var _wwCodeBlockManager = __webpack_require__(19);
+	var _wwCodeBlockManager = __webpack_require__(22);
 
 	var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-	var _squireExt = __webpack_require__(20);
+	var _squireExt = __webpack_require__(23);
 
 	var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -2505,9 +3281,17 @@
 
 	var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-	var _wwTextObject = __webpack_require__(21);
+	var _wwTextObject = __webpack_require__(24);
 
 	var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
+
+	var _componentManager = __webpack_require__(6);
+
+	var _componentManager2 = _interopRequireDefault(_componentManager);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2540,6 +3324,7 @@
 
 	        _classCallCheck(this, WysiwygEditor);
 
+	        this.componentManager = new _componentManager2.default(this);
 	        this.eventManager = eventManager;
 	        this.$editorContainerEl = $el;
 
@@ -2644,6 +3429,29 @@
 	            }
 
 	            this._keyEventHandlers[keyMap].push(handler);
+	        }
+
+	        /**
+	         * REmove key event handler.
+	         * @param {string} keyMap keyMap string
+	         * @param {function} handler handler
+	         */
+
+	    }, {
+	        key: 'removeKeyEventHandler',
+	        value: function removeKeyEventHandler(keyMap, handler) {
+	            if (!handler) {
+	                handler = keyMap;
+	                keyMap = 'DEFAULT';
+	            }
+
+	            var handlers = this._keyEventHandlers[keyMap];
+
+	            if (handlers) {
+	                this._keyEventHandlers[keyMap] = handlers.filter(function (_handler) {
+	                    return _handler !== handler;
+	                });
+	            }
 	        }
 
 	        /**
@@ -2861,6 +3669,7 @@
 	                var state = {
 	                    bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
 	                    italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
+	                    strike: /(>S)/.test(data.path),
 	                    code: /CODE/.test(data.path),
 	                    codeBlock: /PRE/.test(data.path),
 	                    quote: /BLOCKQUOTE/.test(data.path),
@@ -3254,6 +4063,8 @@
 
 	            this.editor.setHTML(html);
 
+	            _codeBlockManager2.default.replaceElements(this.$editorContainerEl, false, true);
+
 	            this.eventManager.emit('wysiwygSetValueAfter', this);
 	            this.eventManager.emit('contentChangedFromWysiwyg', this);
 
@@ -3276,6 +4087,8 @@
 	    }, {
 	        key: 'getValue',
 	        value: function getValue() {
+	            _codeBlockManager2.default.restoreElements(this.$editorContainerEl, false, true);
+
 	            this._prepareGetHTML();
 
 	            var html = this.editor.getHTML();
@@ -3527,42 +4340,6 @@
 	        }
 
 	        /**
-	         * addManager
-	         * Add manager
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @param {string} name Manager name
-	         * @param {function} Manager Constructor
-	         */
-
-	    }, {
-	        key: 'addManager',
-	        value: function addManager(name, Manager) {
-	            if (!Manager) {
-	                Manager = name;
-	                name = null;
-	            }
-
-	            var instance = new Manager(this);
-	            this._managers[name || instance.name] = instance;
-	        }
-
-	        /**
-	         * getManager
-	         * Get manager by manager name
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @param {string} name Manager name
-	         * @returns {object} manager
-	         */
-
-	    }, {
-	        key: 'getManager',
-	        value: function getManager(name) {
-	            return this._managers[name];
-	        }
-
-	        /**
 	         * Set cursor position to end
 	         * @api
 	         * @memberOf WysiwygEditor
@@ -3704,14 +4481,14 @@
 
 	            wwe.init();
 
-	            wwe.addManager(_wwListManager2.default);
-	            wwe.addManager(_wwTaskManager2.default);
-	            wwe.addManager(_wwTableSelectionManager2.default);
-	            wwe.addManager(_wwTableManager2.default);
-	            wwe.addManager(_wwHrManager2.default);
-	            wwe.addManager(_wwPManager2.default);
-	            wwe.addManager(_wwHeadingManager2.default);
-	            wwe.addManager(_wwCodeBlockManager2.default);
+	            wwe.componentManager.addManager(_wwListManager2.default);
+	            wwe.componentManager.addManager(_wwTaskManager2.default);
+	            wwe.componentManager.addManager(_wwTableSelectionManager2.default);
+	            wwe.componentManager.addManager(_wwTableManager2.default);
+	            wwe.componentManager.addManager(_wwHrManager2.default);
+	            wwe.componentManager.addManager(_wwPManager2.default);
+	            wwe.componentManager.addManager(_wwHeadingManager2.default);
+	            wwe.componentManager.addManager(_wwCodeBlockManager2.default);
 
 	            return wwe;
 	        }
@@ -3723,7 +4500,7 @@
 	module.exports = WysiwygEditor;
 
 /***/ },
-/* 8 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4214,7 +4991,7 @@
 	};
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4224,11 +5001,11 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _wwPasteContentHelper = __webpack_require__(10);
+	var _wwPasteContentHelper = __webpack_require__(13);
 
 	var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
@@ -4527,7 +5304,7 @@
 	module.exports = WwClipboardManager;
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4537,11 +5314,11 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _htmlSanitizer = __webpack_require__(11);
+	var _htmlSanitizer = __webpack_require__(14);
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -4578,8 +5355,8 @@
 	        key: 'preparePaste',
 	        value: function preparePaste(pasteData) {
 	            var range = this.wwe.getEditor().getSelection().cloneRange();
-	            var codeblockManager = this.wwe.getManager('codeblock');
-	            var tableManager = this.wwe.getManager('table');
+	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
+	            var tableManager = this.wwe.componentManager.getManager('table');
 	            var firstBlockIsTaken = false;
 	            var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 	            var nodeName = void 0,
@@ -4708,7 +5485,7 @@
 	    }, {
 	        key: '_preElementAid',
 	        value: function _preElementAid(nodes) {
-	            var codeblockManager = this.wwe.getManager('codeblock');
+	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
 	            codeblockManager.splitCodeblockToEachLine(nodes);
 	        }
@@ -4991,7 +5768,7 @@
 	    }, {
 	        key: '_completeTableIfNeed',
 	        value: function _completeTableIfNeed(fragment) {
-	            var tableManager = this.wwe.getManager('table');
+	            var tableManager = this.wwe.componentManager.getManager('table');
 	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
 
 	            if (wrapperTr) {
@@ -5020,7 +5797,7 @@
 	    }, {
 	        key: '_updateTableIDClassName',
 	        value: function _updateTableIDClassName(fragment) {
-	            var tableManager = this.wwe.getManager('table');
+	            var tableManager = this.wwe.componentManager.getManager('table');
 
 	            $(fragment).find('table').each(function (index, table) {
 	                $(table).removeClass(function (idx, className) {
@@ -5040,7 +5817,7 @@
 	module.exports = WwPasteContentHelper;
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -5133,19 +5910,23 @@
 	module.exports = htmlSanitizer;
 
 /***/ },
-/* 12 */
-/***/ function(module, exports) {
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg list manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _domUtils = __webpack_require__(11);
+
+	var _domUtils2 = _interopRequireDefault(_domUtils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements wysiwyg list manager
-	 * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
-	 */
 
 	var FIND_LI_ELEMENT = /<li/i;
 
@@ -5368,6 +6149,48 @@
 	        value: function _prepareInsertBlankToBetweenSameList(html) {
 	            return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
 	        }
+
+	        /**
+	         * Return lines in selection
+	         * @param {Node} start Start element
+	         * @param {Node} end End element
+	         * @param {HTMLElement} body Editor body element
+	         * @returns {Array.<HTMLElement>}
+	         * @private
+	         */
+
+	    }, {
+	        key: 'getLinesOfSelection',
+	        value: function getLinesOfSelection(start, end) {
+	            var lines = [];
+	            var isEndPassed = false;
+	            var needNext = true;
+	            var nextLine = void 0;
+
+	            if (_domUtils2.default.isTextNode(start)) {
+	                start = $(start).parents('div').first()[0];
+	            }
+
+	            if (_domUtils2.default.isTextNode(end)) {
+	                end = $(end).parents('div').first()[0];
+	            }
+
+	            for (var line = start; needNext; line = nextLine) {
+	                if ($(line).is('DIV')) {
+	                    lines.push(line);
+
+	                    if (line === end) {
+	                        isEndPassed = true;
+	                    }
+	                    nextLine = line.nextElementSibling;
+	                } else {
+	                    break;
+	                }
+	                needNext = nextLine && !isEndPassed;
+	            }
+
+	            return lines;
+	        }
 	    }]);
 
 	    return WwListManager;
@@ -5376,19 +6199,23 @@
 	module.exports = WwListManager;
 
 /***/ },
-/* 13 */
-/***/ function(module, exports) {
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg task manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _domUtils = __webpack_require__(11);
+
+	var _domUtils2 = _interopRequireDefault(_domUtils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements wysiwyg task manager
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
 
 	var TASK_CLASS_NAME = 'task-list-item';
 	var TASK_ATTR_NAME = 'data-te-task';
@@ -5583,6 +6410,84 @@
 	                $(node).removeClass('task-list');
 	            });
 	        }
+
+	        /**
+	         * Return lines in selection
+	         * @param {Node} start Start element
+	         * @param {Node} end End element
+	         * @param {HTMLElement} body Editor body element
+	         * @returns {Array.<HTMLElement>}
+	         * @private
+	         */
+
+	    }, {
+	        key: 'getLinesOfSelection',
+	        value: function getLinesOfSelection(start, end) {
+	            var divOrLi = 'DIV,LI';
+	            var lines = [];
+	            var isEndPassed = false;
+	            var needNext = true;
+	            var nextLine = void 0;
+
+	            if (_domUtils2.default.isTextNode(start)) {
+	                start = $(start).parents('div').first()[0];
+	            }
+
+	            if (_domUtils2.default.isTextNode(end)) {
+	                end = $(end).parents('div').first()[0];
+	            }
+
+	            for (var line = start; needNext; line = nextLine) {
+	                if ($(line).is(divOrLi)) {
+	                    lines.push(line);
+
+	                    if (line === end || line.parentNode === end) {
+	                        isEndPassed = true;
+	                    }
+
+	                    var isStartInList = $(start).is('li') || $(start).parent('li').length !== 0;
+	                    nextLine = this._getNextLine(line, isStartInList, isEndPassed);
+	                } else {
+	                    break;
+	                }
+
+	                needNext = nextLine && !isEndPassed;
+	            }
+
+	            return lines;
+	        }
+
+	        /**
+	         * Get next line element
+	         * @param {HTMLElement} line Current line element
+	         * @param {boolean} isStartInList Boolean value of start in list
+	         * @param {boolean} isEndPassed Boolean value of end element passed
+	         * @returns {HTMLElement|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getNextLine',
+	        value: function _getNextLine(line, isStartInList, isEndPassed) {
+	            var nextLine = void 0;
+	            if (isStartInList && line.parentNode.tagName === 'LI') {
+	                var $nextLI = $(line).parent().next();
+
+	                nextLine = $nextLI.children('div').first()[0];
+
+	                var hasNextLiHaveDivChild = $nextLI[0] && !nextLine;
+	                var isLastLiInList = !$nextLI[0] && !nextLine;
+	                if (hasNextLiHaveDivChild) {
+	                    nextLine = $nextLI[0];
+	                } else if (isLastLiInList && !isEndPassed) {
+	                    nextLine = $(line).parents('ol,ul').first().next()[0];
+	                }
+	            } else {
+	                nextLine = line.nextElementSibling;
+	            }
+
+	            return nextLine;
+	        }
 	    }]);
 
 	    return WwTaskManager;
@@ -5591,7 +6496,7 @@
 	module.exports = WwTaskManager;
 
 /***/ },
-/* 14 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5602,7 +6507,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -5610,11 +6515,12 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
+	var util = tui.util;
+	var isIE10 = util.browser.msie && util.browser.version === 10;
 	var TABLE_COMPLETION_DELAY = 10;
 	var SET_SELECTION_DELAY = 50;
 	var TABLE_CLASS_PREFIX = 'te-content-table-';
-	var isIE10And11 = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
+	var isIE10And11 = util.browser.msie && (util.browser.version === 10 || util.browser.version === 11);
 
 	/**
 	 * WwTableManager
@@ -5671,36 +6577,49 @@
 	        value: function _initEvent() {
 	            var _this = this;
 
-	            this.eventManager.listen('wysiwygRangeChangeAfter', function () {
+	            this.eventManager.listen('wysiwygRangeChangeAfter.table', function () {
 	                _this._unwrapBlockInTable();
 	                _this.wwe.defer(function () {
 	                    _this._completeTableIfNeed();
 	                }, TABLE_COMPLETION_DELAY);
-	                _this.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+	                _this.wwe.componentManager.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
-	            this.eventManager.listen('wysiwygSetValueAfter', function () {
+	            this.eventManager.listen('wysiwygSetValueAfter.table', function () {
 	                _this._unwrapBlockInTable();
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
 	            // remove last br in td or th
-	            this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
+	            this.eventManager.listen('wysiwygProcessHTMLText.table', function (html) {
 	                return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
 	            });
 
-	            this.wwe.getEditor().addEventListener('paste', function (ev) {
-	                var range = _this.wwe.getEditor().getSelection();
-	                var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
+	            // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
+	            this.onBindedPaste = this._onPaste.bind(this);
+	            this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
+	        }
 
-	                if (_this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-	                    ev.preventDefault();
-	                }
-	                _this.wwe.defer(function () {
-	                    _this._completeTableIfNeed();
-	                }, TABLE_COMPLETION_DELAY);
-	            });
+	        /**
+	         * On paste.
+	         * @param {MouseEvent} ev - event
+	         */
+
+	    }, {
+	        key: '_onPaste',
+	        value: function _onPaste(ev) {
+	            var _this2 = this;
+
+	            var range = this.wwe.getEditor().getSelection();
+	            var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
+
+	            if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
+	                ev.preventDefault();
+	            }
+	            this.wwe.defer(function () {
+	                _this2._completeTableIfNeed();
+	            }, TABLE_COMPLETION_DELAY);
 	        }
 
 	        /**
@@ -5713,66 +6632,69 @@
 	    }, {
 	        key: '_initKeyHandler',
 	        value: function _initKeyHandler() {
-	            var _this2 = this;
+	            var _this3 = this;
 
-	            var selectionManager = this.wwe.getManager('tableSelection');
+	            this.keyEventHandlers = {
+	                'DEFAULT': function DEFAULT(ev, range, keymap) {
+	                    var isRangeInTable = _this3.isInTable(range);
 
-	            this.wwe.addKeyEventHandler(function (ev, range, keymap) {
-	                var isRangeInTable = _this2.isInTable(range);
+	                    if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
+	                        _this3._recordUndoStateIfNeed(range);
+	                        _this3._removeBRIfNeed(range);
+	                        _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+	                    } else if (!isRangeInTable && _this3._lastCellNode) {
+	                        _this3._recordUndoStateAndResetCellNode(range);
+	                    }
 
-	                if (isRangeInTable && !_this2._isSingleModifierKey(keymap)) {
-	                    _this2._recordUndoStateIfNeed(range);
-	                    _this2._removeBRIfNeed(range);
-	                    _this2._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
-	                } else if (!isRangeInTable && _this2._lastCellNode) {
-	                    _this2._recordUndoStateAndResetCellNode(range);
+	                    if (isRangeInTable && !_this3._isModifierKeyPushed(ev)) {
+	                        _this3.wwe.getEditor().modifyDocument(function () {
+	                            var selectionManager = _this3.wwe.componentManager.getManager('tableSelection');
+
+	                            selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+	                        });
+	                    }
+	                },
+	                'ENTER': function ENTER(ev, range) {
+	                    var isNeedNext = void 0;
+
+	                    if (_this3._isAfterTable(range)) {
+	                        ev.preventDefault();
+	                        range.setStart(range.startContainer, range.startOffset - 1);
+	                        _this3.wwe.breakToNewDefaultBlock(range);
+	                        isNeedNext = false;
+	                    } else if (_this3._isBeforeTable(range)) {
+	                        ev.preventDefault();
+	                        _this3.wwe.breakToNewDefaultBlock(range, 'before');
+	                        isNeedNext = false;
+	                    } else if (_this3.isInTable(range)) {
+	                        _this3._appendBrIfTdOrThNotHaveAsLastChild(range);
+	                        isNeedNext = false;
+	                    }
+
+	                    return isNeedNext;
+	                },
+	                'BACK_SPACE': function BACK_SPACE(ev, range, keymap) {
+	                    return _this3._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
+	                },
+	                'DELETE': function DELETE(ev, range, keymap) {
+	                    return _this3._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
+	                },
+	                'TAB': function TAB() {
+	                    return _this3._moveCursorTo('next', 'cell');
+	                },
+	                'SHIFT+TAB': function SHIFTTAB(ev) {
+	                    return _this3._moveCursorTo('previous', 'cell', ev);
+	                },
+	                'UP': function UP(ev) {
+	                    return _this3._moveCursorTo('previous', 'row', ev);
+	                },
+	                'DOWN': function DOWN(ev) {
+	                    return _this3._moveCursorTo('next', 'row', ev);
 	                }
+	            };
 
-	                if (isRangeInTable && !_this2._isModifierKeyPushed(ev)) {
-	                    _this2.wwe.getEditor().modifyDocument(function () {
-	                        selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
-	                    });
-	                }
-	            });
-
-	            this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
-	                var isNeedNext = void 0;
-
-	                if (_this2._isAfterTable(range)) {
-	                    ev.preventDefault();
-	                    range.setStart(range.startContainer, range.startOffset - 1);
-	                    _this2.wwe.breakToNewDefaultBlock(range);
-	                    isNeedNext = false;
-	                } else if (_this2._isBeforeTable(range)) {
-	                    ev.preventDefault();
-	                    _this2.wwe.breakToNewDefaultBlock(range, 'before');
-	                    isNeedNext = false;
-	                } else if (_this2.isInTable(range)) {
-	                    _this2._appendBrIfTdOrThNotHaveAsLastChild(range);
-	                    isNeedNext = false;
-	                }
-
-	                return isNeedNext;
-	            });
-
-	            this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range, keymap) {
-	                return _this2._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
-	            });
-	            this.wwe.addKeyEventHandler('DELETE', function (ev, range, keymap) {
-	                return _this2._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
-	            });
-	            this.wwe.addKeyEventHandler('TAB', function () {
-	                return _this2._moveCursorTo('next', 'cell');
-	            });
-
-	            this.wwe.addKeyEventHandler('SHIFT+TAB', function (ev) {
-	                return _this2._moveCursorTo('previous', 'cell', ev);
-	            });
-	            this.wwe.addKeyEventHandler('UP', function (ev) {
-	                return _this2._moveCursorTo('previous', 'row', ev);
-	            });
-	            this.wwe.addKeyEventHandler('DOWN', function (ev) {
-	                return _this2._moveCursorTo('next', 'row', ev);
+	            util.forEach(this.keyEventHandlers, function (handler, key) {
+	                return _this3.wwe.addKeyEventHandler(key, handler);
 	            });
 
 	            this._bindKeyEventForTableCopyAndCut();
@@ -6043,7 +6965,7 @@
 	        value: function _recordUndoStateIfNeed(range) {
 	            var currentCellNode = _domUtils2.default.getParentUntil(range.startContainer, 'TR');
 
-	            if (range.collapsed && this._lastCellNode !== currentCellNode) {
+	            if (range.collapsed && currentCellNode && this._lastCellNode !== currentCellNode) {
 	                this.wwe.getEditor().saveUndoState(range);
 	                this._lastCellNode = currentCellNode;
 	            }
@@ -6323,12 +7245,11 @@
 	         * Prepare to table cell stuffing
 	         * @param {jQuery} $trs jQuery wrapped TRs
 	         * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
-	         * @private
 	         */
 
 	    }, {
-	        key: '_prepareToTableCellStuffing',
-	        value: function _prepareToTableCellStuffing($trs) {
+	        key: 'prepareToTableCellStuffing',
+	        value: function prepareToTableCellStuffing($trs) {
 	            var maximumCellLength = $trs.eq(0).find('th,td').length;
 	            var needTableCellStuffingAid = false;
 
@@ -6375,19 +7296,18 @@
 	        /**
 	         * Append table cells
 	         * @param {HTMLElement} node Table element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_tableCellAppendAidForTableElement',
-	        value: function _tableCellAppendAidForTableElement(node) {
+	        key: 'tableCellAppendAidForTableElement',
+	        value: function tableCellAppendAidForTableElement(node) {
 	            var table = $(node);
 
 	            this._addTbodyOrTheadIfNeed(table);
 	            this._addTrIntoContainerIfNeed(table);
 
 	            var trs = table.find('tr');
-	            var tableAidInformation = this._prepareToTableCellStuffing(trs);
+	            var tableAidInformation = this.prepareToTableCellStuffing(trs);
 	            var maximumCellLength = tableAidInformation.maximumCellLength;
 	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
@@ -6502,7 +7422,8 @@
 	                table.append(completedTableContents.thead);
 	                table.append(completedTableContents.tbody);
 	            }
-	            this._tableCellAppendAidForTableElement(table);
+
+	            this.tableCellAppendAidForTableElement(table);
 	        }
 
 	        /**
@@ -6513,20 +7434,20 @@
 	    }, {
 	        key: '_completeTableIfNeed',
 	        value: function _completeTableIfNeed() {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            var $body = this.wwe.getEditor().get$Body();
 
 	            $body.children().each(function (index, node) {
 	                var $node = $(node);
 
-	                if (!_this3._isTableOrSubTableElement(node.nodeName)) {
+	                if (!_this4._isTableOrSubTableElement(node.nodeName)) {
 	                    return;
 	                } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
 	                    $node.remove();
 	                }
 
-	                _this3._completeIncompleteTable(node);
+	                _this4._completeIncompleteTable(node);
 	            });
 	        }
 
@@ -6562,7 +7483,7 @@
 	    }, {
 	        key: '_isSingleModifierKey',
 	        value: function _isSingleModifierKey(keymap) {
-	            return keymap === 'META' && keymap === 'SHIFT' && keymap === 'ALT' && keymap === 'CONTROL';
+	            return keymap === 'META' || keymap === 'SHIFT' || keymap === 'ALT' || keymap === 'CONTROL';
 	        }
 
 	        /**
@@ -6756,7 +7677,7 @@
 	        value: function _collapseRangeToEndContainer() {
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
-	            var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+	            var selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
 
 	            if (selectedCells.length && this.isInTable(range)) {
 	                this.wwe.defer(function () {
@@ -6785,7 +7706,7 @@
 
 	            if (range.collapsed) {
 	                if (this.isInTable(range) && currentCell) {
-	                    if ((direction === 'previous' || interval === 'row') && !tui.util.isUndefined(ev)) {
+	                    if ((direction === 'previous' || interval === 'row') && !util.isUndefined(ev)) {
 	                        ev.preventDefault();
 	                    }
 
@@ -6807,21 +7728,23 @@
 	    }, {
 	        key: '_bindKeyEventForTableCopyAndCut',
 	        value: function _bindKeyEventForTableCopyAndCut() {
-	            var _this4 = this;
+	            var _this5 = this;
 
 	            var isMac = /Mac OS X/.test(navigator.userAgent);
 	            var commandKey = isMac ? 'metaKey' : 'ctrlKey';
-	            var selectionManager = this.wwe.getManager('tableSelection');
 
-	            this.wwe.getEditor().addEventListener('keydown', function (event) {
-	                if (event[commandKey]) {
+	            // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
+	            this.onBindedKeydown = function (ev) {
+	                var selectionManager = _this5.wwe.componentManager.getManager('tableSelection');
+
+	                if (ev[commandKey]) {
 	                    selectionManager.createRangeBySelectedCells();
 	                }
-	            });
+	            };
+	            this.onBindedKeyup = this._collapseRangeToEndContainer.bind(this);
 
-	            this.wwe.getEditor().addEventListener('keyup', function () {
-	                _this4._collapseRangeToEndContainer();
-	            });
+	            this.wwe.getEditor().addEventListener('keydown', this.onBindedKeydown);
+	            this.wwe.getEditor().addEventListener('keyup', this.onBindedKeyup);
 	        }
 
 	        /**
@@ -6837,7 +7760,7 @@
 	        value: function _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
 	            var isTextInput = keymap.length <= 1;
 	            var isDeleteOperation = keymap === 'BACK_SPACE' || keymap === 'DELETE';
-	            var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+	            var selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
 	            var firstSelectedCell = selectedCells.first()[0];
 
 	            if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && selectedCells.length) {
@@ -6907,6 +7830,27 @@
 	                $currentCell.append('<br>');
 	            }
 	        }
+
+	        /**
+	         * Destroy.
+	         */
+
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            var _this6 = this;
+
+	            this.eventManager.removeEventHandler('wysiwygRangeChangeAfter.table');
+	            this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
+	            this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
+	            this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
+	            this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
+	            this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
+
+	            util.forEach(this.keyEventHandlers, function (handler, key) {
+	                return _this6.wwe.removeKeyEventHandler(key, handler);
+	            });
+	        }
 	    }]);
 
 	    return WwTableManager;
@@ -6932,10 +7876,11 @@
 
 	    return tdString;
 	}
+
 	module.exports = WwTableManager;
 
 /***/ },
-/* 15 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6946,7 +7891,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -7015,7 +7960,8 @@
 	            var _this = this;
 
 	            var selectionStart = void 0,
-	                selectionEnd = void 0;
+	                selectionEnd = void 0,
+	                validSelectionEnd = void 0;
 
 	            /**
 	             * Start table selection timer
@@ -7036,7 +7982,7 @@
 	             */
 	            this._isSelectionStarted = false;
 
-	            this.eventManager.listen('mousedown', function (ev) {
+	            this.eventManager.listen('mousedown.table', function (ev) {
 	                var MOUSE_RIGHT_BUTTON = 2;
 	                selectionStart = $(ev.data.target).closest('td,th')[0];
 	                var isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
@@ -7044,35 +7990,37 @@
 
 	                if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
 	                    _this.removeClassAttrbuteFromAllCellsIfNeed();
-
-	                    _this._setTableSelectionTimerIfNeed(selectionStart);
+	                    _this.setTableSelectionTimerIfNeed(selectionStart);
 	                }
 	            });
 
-	            this.eventManager.listen('mouseover', function (ev) {
+	            this.eventManager.listen('mouseover.table', function (ev) {
 	                selectionEnd = $(ev.data.target).closest('td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
 	                var isEndsInTable = $(selectionEnd).parents('table')[0];
 	                var isSameCell = selectionStart === selectionEnd;
-	                var isTextSelect = _this._isTextSelect(range, isSameCell);
+	                var isTextSelect = _this._isTextSelect(range, isSameCell) && !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
-	                if (_this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell) && !isTextSelect) {
+	                if (_this._isSelectionStarted && isEndsInTable && !isTextSelect) {
+	                    window.getSelection().removeAllRanges();
 	                    // For disable firefox's native table cell selection
 	                    if (tui.util.browser.firefox && !_this._removeSelectionTimer) {
 	                        _this._removeSelectionTimer = setInterval(function () {
 	                            window.getSelection().removeAllRanges();
 	                        }, 10);
 	                    }
-	                    _this._highlightTableCellsBy(selectionStart, selectionEnd);
+	                    _this.highlightTableCellsBy(selectionStart, selectionEnd);
+	                    validSelectionEnd = selectionEnd;
 	                }
 	            });
-	            this.eventManager.listen('mouseup', function (ev) {
+
+	            this.eventManager.listen('mouseup.table', function (ev) {
 	                selectionEnd = $(ev.data.target).closest('td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
 	                var isSameCell = selectionStart === selectionEnd;
-	                var isTextSelect = _this._isTextSelect(range, isSameCell);
+	                var isTextSelect = _this._isTextSelect(range, isSameCell) && !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
 	                _this._clearTableSelectionTimerIfNeed();
 
@@ -7080,9 +8028,12 @@
 	                    if (isTextSelect) {
 	                        _this.removeClassAttrbuteFromAllCellsIfNeed();
 	                    } else {
-	                        _this.wwe.getManager('table').resetLastCellNode();
+	                        _this.wwe.componentManager.getManager('table').resetLastCellNode();
 
+	                        selectionEnd = selectionEnd || validSelectionEnd;
 	                        range = _this.wwe.getEditor().getSelection();
+	                        range.setStart(selectionEnd, 0);
+	                        range.setEnd(selectionEnd, 1);
 	                        range.collapse(true);
 	                        _this.wwe.getEditor().setSelection(range);
 	                    }
@@ -7110,12 +8061,11 @@
 	        /**
 	         * Set setTimeout and setInterval timer execution if table selecting situation
 	         * @param {HTMLElement} selectionStart Start element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_setTableSelectionTimerIfNeed',
-	        value: function _setTableSelectionTimerIfNeed(selectionStart) {
+	        key: 'setTableSelectionTimerIfNeed',
+	        value: function setTableSelectionTimerIfNeed(selectionStart) {
 	            var _this2 = this;
 
 	            var isTableSelecting = $(selectionStart).parents('table').length;
@@ -7284,12 +8234,11 @@
 	         * Highlight selected table cells
 	         * @param {HTMLElement} selectionStart start element
 	         * @param {HTMLElement} selectionEnd end element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_highlightTableCellsBy',
-	        value: function _highlightTableCellsBy(selectionStart, selectionEnd) {
+	        key: 'highlightTableCellsBy',
+	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
 	            var trs = $(selectionStart).parents('table').find('tr');
 	            var selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
 	            var rowFrom = selection.from.row;
@@ -7348,13 +8297,37 @@
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
 	            var selectedCells = this.getSelectedCells();
-	            var tableManager = this.wwe.getManager('table');
+	            var tableManager = this.wwe.componentManager.getManager('table');
 
 	            if (selectedCells.length && tableManager.isInTable(range)) {
 	                range.setStart(selectedCells.first()[0], 0);
 	                range.setEnd(selectedCells.last()[0], 1);
 	                sq.setSelection(range);
 	            }
+	        }
+
+	        /**
+	         * Style to selected cells.
+	         * @param {function} onStyle - function for styling
+	         */
+
+	    }, {
+	        key: 'styleToSelectedCells',
+	        value: function styleToSelectedCells(onStyle) {
+	            this.createRangeBySelectedCells();
+	            onStyle(this.wwe.getEditor());
+	        }
+
+	        /**
+	         * Destroy.
+	         */
+
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            this.eventManager.removeEventHandler('mousedown.table');
+	            this.eventManager.removeEventHandler('mouseover.table');
+	            this.eventManager.removeEventHandler('mouseup.table');
 	        }
 	    }]);
 
@@ -7364,7 +8337,7 @@
 	module.exports = WwTableSelectionManager;
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7374,7 +8347,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -7672,7 +8645,7 @@
 	module.exports = WwHrManager;
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7743,30 +8716,41 @@
 	    }, {
 	        key: '_splitPtagContentLines',
 	        value: function _splitPtagContentLines(html) {
-	            html = html.replace(/<p>([\s\S]*?)<\/p>/gi, function (whole, content) {
-	                var lines = content.split(/<br>/gi);
-	                var linesLenIndex = lines.length - 1;
-	                var splitedContent = '';
+	            if (html) {
+	                var $wrapper = $('<div />');
 
-	                splitedContent = lines.map(function (line, index) {
-	                    var result = '';
+	                $wrapper.html(html);
+	                $wrapper.find('p').each(function (pIndex, para) {
+	                    var content = para.innerHTML;
+	                    var lines = content.split(/<br>/gi);
+	                    var lastIndex = lines.length - 1;
+	                    // cross browsing: old browser not has nextElementSibling attribute
+	                    var nextElement = para.nextElementSibling || para.nextSibling;
+	                    var splitedContent = '';
 
-	                    if (index > 0 && index < linesLenIndex) {
-	                        line = line ? line : '<br>';
+	                    splitedContent = lines.map(function (line, index) {
+	                        var result = '';
+
+	                        if (index > 0 && index < lastIndex) {
+	                            line = line ? line : '<br>';
+	                        }
+
+	                        if (line) {
+	                            result = '<div>' + line + '</div>';
+	                        }
+
+	                        return result;
+	                    });
+
+	                    // For paragraph, we add empty line
+	                    if (nextElement && nextElement.nodeName === 'P') {
+	                        splitedContent.push('<div><br></div>');
 	                    }
 
-	                    if (line) {
-	                        result = '<div>' + line + '</div>';
-	                    }
-
-	                    return result;
+	                    $(para).replaceWith($(splitedContent.join('')));
 	                });
-
-	                // For paragraph, we add empty line
-	                splitedContent.push('<div><br></div>');
-
-	                return splitedContent.join('');
-	            });
+	                html = $wrapper.html();
+	            }
 
 	            return html;
 	        }
@@ -7816,7 +8800,7 @@
 	module.exports = WwPManager;
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7826,7 +8810,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8073,7 +9057,7 @@
 	module.exports = WwHeadingManager;
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8083,7 +9067,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8441,14 +9425,14 @@
 	module.exports = WwCodeBlockManager;
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8834,7 +9818,7 @@
 	module.exports = SquireExt;
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8844,7 +9828,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -9038,7 +10022,7 @@
 	module.exports = WwTextObject;
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9310,7 +10294,7 @@
 	module.exports = Layout;
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9325,7 +10309,7 @@
 	 */
 	var util = tui.util;
 
-	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setValueAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'cut', 'drop', 'show', 'hide'];
+	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'replaceCodeBlockElementsBefore', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'cut', 'drop', 'show', 'hide'];
 
 	/**
 	 * EventManager
@@ -9542,7 +10526,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9552,7 +10536,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _command = __webpack_require__(25);
+	var _command = __webpack_require__(28);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9587,16 +10571,33 @@
 
 	        this._initEvent();
 	    }
+
 	    /**
-	     * Add command
-	     * @api
-	     * @memberOf CommandManager
-	     * @param {Command} command Command instance
-	     * @returns {Command} Command
+	     * You can change command before command addition by addCommandBefore event.
+	     * @param {object} command - command
+	     * @returns {object}
 	     */
 
 
 	    _createClass(CommandManager, [{
+	        key: '_addCommandBefore',
+	        value: function _addCommandBefore(command) {
+	            var commandWrapper = { command: command };
+
+	            this.base.eventManager.emit('addCommandBefore', commandWrapper);
+
+	            return commandWrapper.command || command;
+	        }
+
+	        /**
+	         * Add command
+	         * @api
+	         * @memberOf CommandManager
+	         * @param {Command} command Command instance
+	         * @returns {Command} Command
+	         */
+
+	    }, {
 	        key: 'addCommand',
 	        value: function addCommand(command) {
 	            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -9606,6 +10607,8 @@
 	            if (args.length) {
 	                command = CommandManager.command.apply(CommandManager, [command].concat(args));
 	            }
+
+	            command = this._addCommandBefore(command);
 
 	            var name = command.getName();
 
@@ -9702,7 +10705,7 @@
 	/**
 	 * Create command by given editor type and property object
 	 * @api
-	 * @memberOf CommandManager
+	 * @memberOf ComponentManager
 	 * @param {string} type Command type
 	 * @param {{name: string, keyMap: object}} props Property
 	 * @returns {*}
@@ -9720,7 +10723,7 @@
 	module.exports = CommandManager;
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9896,7 +10899,7 @@
 	module.exports = Command;
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -9971,7 +10974,7 @@
 	module.exports = new ExtManager();
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9981,11 +10984,11 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _excelTableParser = __webpack_require__(28);
+	var _excelTableParser = __webpack_require__(31);
 
 	var _excelTableParser2 = _interopRequireDefault(_excelTableParser);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -10206,7 +11209,7 @@
 	module.exports = ImportManager;
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10270,7 +11273,7 @@
 	module.exports = excelTableParser;
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10389,7 +11392,7 @@
 	exports.default = I18n.getSharedInstance();
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10399,41 +11402,44 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _htmlSanitizer = __webpack_require__(11);
+	var _htmlSanitizer = __webpack_require__(14);
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-	var _markdownitTaskPlugin = __webpack_require__(31);
+	var _markdownitTaskPlugin = __webpack_require__(34);
 
 	var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-	var _markdownitCodeBlockPlugin = __webpack_require__(32);
+	var _markdownitCodeBlockPlugin = __webpack_require__(35);
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitCodeRenderer = __webpack_require__(33);
+	var _markdownitCodeRenderer = __webpack_require__(36);
 
 	var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-	var _markdownitBlockQuoteRenderer = __webpack_require__(34);
+	var _markdownitBlockQuoteRenderer = __webpack_require__(37);
 
 	var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-	var _markdownitTableRenderer = __webpack_require__(35);
+	var _markdownitTableRenderer = __webpack_require__(38);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-	var _markdownitHtmlBlockRenderer = __webpack_require__(36);
+	var _markdownitHtmlBlockRenderer = __webpack_require__(39);
 
 	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var markdownIt = window.markdownit,
-	    toMark = window.toMark,
-	    hljs = window.hljs;
+	    toMark = window.toMark;
 
 	var markdownitHighlight = markdownIt({
 	    html: true,
@@ -10441,7 +11447,7 @@
 	    quotes: '“”‘’',
 	    langPrefix: 'lang-',
 	    highlight: function highlight(codeText, type) {
-	        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+	        return _codeBlockManager2.default.createCodeBlockHtml(type, codeText);
 	    }
 	});
 	var markdownit = markdownIt({
@@ -10515,7 +11521,7 @@
 	        value: function _markdownToHtml(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
 
-	            var renderedHTML = markdownitHighlight.render(markdown);
+	            var renderedHTML = markdownit.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
 	            return renderedHTML;
@@ -10578,6 +11584,7 @@
 	        key: 'toHTML',
 	        value: function toHTML(markdown) {
 	            var html = this._markdownToHtml(markdown);
+
 	            html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
 	            return html;
@@ -10597,14 +11604,21 @@
 	         * @api
 	         * @memberOf Convertor
 	         * @param {string} html html text
+	         * @param {object | null} toMarkOptions - toMark library options
 	         * @returns {string} markdown text
 	         */
 
 	    }, {
 	        key: 'toMarkdown',
-	        value: function toMarkdown(html) {
+	        value: function toMarkdown(html, toMarkOptions) {
 	            var resultArray = [];
-	            var markdown = toMark(this._appendAttributeForBrIfNeed(html));
+
+	            html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+	            // markdown에서 <, > 가 \<, \>로 표시되도록 처리
+	            html = html.replace(/&lt;/g, '\\&lt;').replace(/&gt;/g, '\\&gt;');
+
+	            var markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+
 	            markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
 	            tui.util.forEach(markdown.split('\n'), function (line, index) {
@@ -10625,7 +11639,9 @@
 	            var FIND_BR_RX = /<br>/ig;
 	            var FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
 	            var FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-	            var FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+	            var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
+	            var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
+	            var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
 
 	            html = html.replace(FIND_BR_RX, '<br />');
 
@@ -10679,21 +11695,10 @@
 	    return Convertor;
 	}();
 
-	/**
-	 * escape code from markdown-it
-	 * @param {string} html HTML string
-	 * @param {string} encode Boolean value of whether encode or not
-	 * @returns {string}
-	 */
-
-
-	function escape(html, encode) {
-	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-	}
 	module.exports = Convertor;
 
 /***/ },
-/* 31 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10795,7 +11800,7 @@
 	module.exports = MarkdownitTaskRenderer;
 
 /***/ },
-/* 32 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10867,7 +11872,7 @@
 	module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10936,7 +11941,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11163,7 +12168,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 35 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11228,7 +12233,7 @@
 	}
 
 	module.exports = function table(state, startLine, endLine, silent) {
-	    var ch, lineText, pos, i, nextLine, columns, columnCount, token, aligns, t, tableLines, tbodyLines;
+	    var ch, lineText, pos, i, nextLine, columns, columnCount, token, aligns, alignCount, t, tableLines, tbodyLines;
 
 	    // should have at least three lines
 	    if (startLine + 2 > endLine) {
@@ -11283,6 +12288,7 @@
 	            aligns.push('');
 	        }
 	    }
+	    alignCount = aligns.length;
 
 	    lineText = getLine(state, startLine).trim();
 	    if (lineText.indexOf('|') === -1) {
@@ -11293,8 +12299,13 @@
 	    // header row will define an amount of columns in the entire table,
 	    // and align row shouldn't be smaller than that (the rest of the rows can)
 	    columnCount = columns.length;
-	    if (columnCount > aligns.length) {
+	    if (columnCount > alignCount) {
 	        return false;
+	    } else if (columnCount < alignCount) {
+	        for (i = 0; i < alignCount - columnCount; i += 1) {
+	            columns.push('');
+	        }
+	        columnCount = columns.length;
 	    }
 
 	    if (silent) {
@@ -11310,7 +12321,7 @@
 	    token = state.push('tr_open', 'tr', 1);
 	    token.map = [startLine, startLine + 1];
 
-	    for (i = 0; i < columns.length; i += 1) {
+	    for (i = 0; i < columnCount; i += 1) {
 	        token = state.push('th_open', 'th', 1);
 	        token.map = [startLine, startLine + 1];
 	        if (aligns[i]) {
@@ -11372,7 +12383,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports) {
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
@@ -11469,7 +12480,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11479,25 +12490,29 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _preview = __webpack_require__(5);
+	var _preview = __webpack_require__(7);
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _eventManager = __webpack_require__(23);
+	var _eventManager = __webpack_require__(26);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(29);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _convertor = __webpack_require__(30);
+	var _convertor = __webpack_require__(33);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11534,9 +12549,9 @@
 	        this.options = options;
 
 	        this.eventManager = new _eventManager2.default();
-
 	        this.commandManager = new _commandManager2.default(this);
 	        this.convertor = new _convertor2.default(this.eventManager);
+	        this.codeBlockManager = _codeBlockManager2.default;
 
 	        if (this.options.hooks) {
 	            util.forEach(this.options.hooks, function (fn, key) {
@@ -11550,18 +12565,9 @@
 	            });
 	        }
 
-	        this.preview = new _preview2.default($(this.options.el), this.eventManager, this.convertor);
+	        this.preview = new _preview2.default($(this.options.el), this.eventManager, this.convertor, true);
 
-	        this.preview.$el.on('mousedown', function (ev) {
-	            var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-	                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-	                _this.eventManager.emit('change', {
-	                    source: 'viewOnly',
-	                    data: ev
-	                });
-	            }
-	        });
+	        this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
 	        _extManager2.default.applyExtension(this, this.options.exts);
 
@@ -11571,20 +12577,54 @@
 	    }
 
 	    /**
-	     * Set content for preview
-	     * @api
-	     * @memberOf ToastUIEditorViewOnly
-	     * @param {string} markdown Markdown text
+	     * Toggle task by detecting mousedown event.
+	     * @param {MouseEvent} ev - event
+	     * @private
 	     */
 
 
 	    _createClass(ToastUIEditorViewOnly, [{
-	        key: 'setValue',
-	        value: function setValue(markdown) {
+	        key: '_toggleTask',
+	        value: function _toggleTask(ev) {
+	            var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+
+	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+	                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+	                this.eventManager.emit('change', {
+	                    source: 'viewOnly',
+	                    data: ev
+	                });
+	            }
+	        }
+
+	        /**
+	         * Set content for preview
+	         * @api
+	         * @memberOf ToastUIEditorViewOnly
+	         * @param {string} markdown Markdown text
+	         */
+
+	    }, {
+	        key: 'setMarkdown',
+	        value: function setMarkdown(markdown) {
 	            this.markdownValue = markdown = markdown || '';
 
 	            this.preview.refresh(this.markdownValue);
-	            this.eventManager.emit('setValueAfter', this.markdownValue);
+	            this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+	        }
+
+	        /**
+	         * Set content for preview
+	         * @api
+	         * @memberOf ToastUIEditorViewOnly
+	         * @param {string} markdown Markdown text
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'setValue',
+	        value: function setValue(markdown) {
+	            this.setMarkdown(markdown);
 	        }
 
 	        /**
@@ -11624,6 +12664,7 @@
 	        key: 'remove',
 	        value: function remove() {
 	            this.eventManager.emit('removeEditor');
+	            this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
 	            this.options = null;
 	            this.eventManager = null;
 	            this.commandManager = null;
@@ -11692,44 +12733,44 @@
 	module.exports = ToastUIEditorViewOnly;
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _toolbar = __webpack_require__(39);
+	var _toolbar = __webpack_require__(42);
 
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 
-	var _tab = __webpack_require__(43);
+	var _tab = __webpack_require__(46);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _modeSwitch = __webpack_require__(46);
+	var _modeSwitch = __webpack_require__(49);
 
 	var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-	var _popupAddLink = __webpack_require__(47);
+	var _popupAddLink = __webpack_require__(50);
 
 	var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-	var _popupAddImage = __webpack_require__(48);
+	var _popupAddImage = __webpack_require__(51);
 
 	var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-	var _popupTableUtils = __webpack_require__(49);
+	var _popupTableUtils = __webpack_require__(52);
 
 	var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-	var _popupAddTable = __webpack_require__(50);
+	var _popupAddTable = __webpack_require__(53);
 
 	var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-	var _popupAddHeading = __webpack_require__(51);
+	var _popupAddHeading = __webpack_require__(54);
 
 	var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
@@ -11916,20 +12957,20 @@
 	module.exports = DefaultUI;
 
 /***/ },
-/* 39 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _button = __webpack_require__(41);
+	var _button = __webpack_require__(44);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -12050,7 +13091,8 @@
 	        className: 'tui-strike',
 	        command: 'Strike',
 	        text: '~',
-	        tooltip: _i18n2.default.get('Strike')
+	        tooltip: _i18n2.default.get('Strike'),
+	        state: 'strike'
 	    })]);
 
 	    this.addButton([new _button2.default({
@@ -12123,7 +13165,7 @@
 	module.exports = Toolbar;
 
 /***/ },
-/* 40 */
+/* 43 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12367,7 +13409,7 @@
 	module.exports = UIController;
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12377,8 +13419,8 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var UIController = __webpack_require__(40);
-	var Tooltip = __webpack_require__(42);
+	var UIController = __webpack_require__(43);
+	var Tooltip = __webpack_require__(45);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12467,7 +13509,7 @@
 	module.exports = Button;
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12509,16 +13551,16 @@
 	module.exports = Tooltip;
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _templater = __webpack_require__(44);
+	var _templater = __webpack_require__(47);
 
 	var _templater2 = _interopRequireDefault(_templater);
 
@@ -12710,7 +13752,7 @@
 	module.exports = Tab;
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12751,12 +13793,12 @@
 	module.exports = templater;
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -12771,7 +13813,7 @@
 	var _id = 0;
 
 	/* eslint-disable indent */
-	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
+	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button type="button" class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
 	/* eslint-enable indent */
 
 	/**
@@ -13003,16 +14045,16 @@
 	module.exports = LayerPopup;
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13094,16 +14136,16 @@
 	module.exports = ModeSwitch;
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13202,20 +14244,20 @@
 	module.exports = PopupAddLink;
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _tab = __webpack_require__(43);
+	var _tab = __webpack_require__(46);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13389,16 +14431,16 @@
 	module.exports = PopupAddImage;
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13519,12 +14561,12 @@
 	module.exports = PopupTableUtils;
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -13871,16 +14913,16 @@
 	module.exports = PopupAddTable;
 
 /***/ },
-/* 51 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13956,12 +14998,12 @@
 	module.exports = PopupAddHeading;
 
 /***/ },
-/* 52 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14082,12 +15124,12 @@
 	module.exports = Bold;
 
 /***/ },
-/* 53 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14290,12 +15332,12 @@
 	module.exports = Italic;
 
 /***/ },
-/* 54 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14390,12 +15432,12 @@
 	module.exports = Strike;
 
 /***/ },
-/* 55 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14459,12 +15501,12 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 56 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14557,12 +15599,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 57 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14633,12 +15675,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 58 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14698,12 +15740,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 59 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14752,12 +15794,12 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 60 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14806,12 +15848,12 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 61 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14822,7 +15864,8 @@
 	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                          */
 
-	var FIND_MD_UL_RX = /^[ \t]*\* .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 
 	/**
 	 * UL
@@ -14841,42 +15884,57 @@
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: 0
-	        };
-
-	        var line = doc.getLine(from.line);
-
-	        var to = void 0;
-
-	        if (line.match(FIND_MD_OL_RX)) {
-	            line = line.replace(/[\d]+\. /, '* ');
-
-	            to = {
-	                line: from.line,
-	                ch: line.length + 1
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
 	            };
 
-	            doc.replaceRange(line, from, to);
-	        } else if (!line.match(FIND_MD_UL_RX)) {
-	            doc.replaceRange('* ', from);
-	        }
+	            line = doc.getLine(i);
 
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isOlOrTask(line)) {
+	                    listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
+	                } else if (!line.match(FIND_MD_UL_RX)) {
+	                    doc.replaceRange('* ', currentLineStart);
+	                }
+
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
 	});
 
+	/**
+	 * Return whether passed line is OL or TASK or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isOlOrTask(line) {
+	    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
+	}
+
 	module.exports = UL;
 
 /***/ },
-/* 62 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14887,7 +15945,8 @@
 	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                          */
 
-	var FIND_MD_UL_RX = /^[ \t]*\* .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 
 	/**
 	 * OL
@@ -14905,44 +15964,61 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.expandLineRangeIfNeed(doc, range, isUlOrTask);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var ordinalNumber = 1;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: 0
-	        };
-
-	        var line = doc.getLine(from.line);
-
-	        var to = void 0;
-
-	        if (line.match(FIND_MD_UL_RX)) {
-	            line = line.replace(/\* /, '1. ');
-
-	            to = {
-	                line: from.line,
-	                ch: line.length - 1
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
 	            };
 
-	            doc.replaceRange(line, from, to);
-	        } else if (!line.match(FIND_MD_OL_RX)) {
-	            doc.replaceRange('1. ', from);
-	        }
+	            line = doc.getLine(i);
 
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isUlOrTask(line)) {
+	                    listManager.replaceLineText(doc, i, /[*-] /, ordinalNumber + '. ');
+	                } else if (!line.match(FIND_MD_OL_RX)) {
+	                    doc.replaceRange(ordinalNumber + '. ', currentLineStart);
+	                }
+
+	                ordinalNumber += 1;
+
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
 	});
 
+	/**
+	 * Return whether passed line is UL or TASK or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isUlOrTask(line) {
+	    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX)));
+	}
+
 	module.exports = OL;
 
 /***/ },
-/* 63 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15052,16 +16128,25 @@
 	module.exports = Table;
 
 /***/ },
-/* 64 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/; /**
+	                                          * @fileoverview Implements Task markdown command
+	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                          */
+
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+	var FIND_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
 
 	/**
 	 * Task
@@ -15079,39 +16164,62 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.createSortedLineRange(range);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: range.from.ch
-	        };
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
+	            };
 
-	        var to = {
-	            line: range.to.line,
-	            ch: range.to.ch
-	        };
+	            line = doc.getLine(i);
 
-	        var replaceText = '* [ ] ';
+	            var hasTaskSyntax = !!line.match(FIND_TASK_SYNTAX_RX);
 
-	        doc.replaceRange(replaceText, from, to);
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isOlOrUl(line) && hasTaskSyntax) {
+	                    listManager.replaceLineText(doc, i, FIND_TASK_SYNTAX_RX, '$1');
+	                } else if (isOlOrUl(line) && !hasTaskSyntax) {
+	                    listManager.replaceLineText(doc, i, /([*-] |[\d]+\. )/, '$1[ ] ');
+	                } else if (!line.match(FIND_MD_TASK_RX)) {
+	                    doc.replaceRange('* [ ] ', currentLineStart);
+	                }
 
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
-	}); /**
-	     * @fileoverview Implements Task markdown command
-	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	     */
+	});
+
+	/**
+	 * Return whether passed line is OL or UL or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isOlOrUl(line) {
+	    return !!(line && (line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX)));
+	}
 
 	module.exports = Task;
 
 /***/ },
-/* 65 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15162,12 +16270,12 @@
 	module.exports = Code;
 
 /***/ },
-/* 66 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15216,16 +16324,16 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 67 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15253,21 +16361,14 @@
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-	            sq.changeFormat(null, { tag: 'b' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.bold();
+	            tableSelectionManager.styleToSelectedCells(styleBold);
+	        } else {
+	            styleBold(sq);
 	        }
 
 	        var range = sq.getSelection();
@@ -15278,19 +16379,34 @@
 	    }
 	});
 
+	/**
+	 * Style bold.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleBold(sq) {
+	    if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+	        sq.changeFormat(null, { tag: 'b' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.bold();
+	    }
+	}
+
 	module.exports = Bold;
 
 /***/ },
-/* 68 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15319,21 +16435,14 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('i') || sq.hasFormat('em')) {
-	            sq.changeFormat(null, { tag: 'i' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.italic();
+	            tableSelectionManager.styleToSelectedCells(styleItalic);
+	        } else {
+	            styleItalic(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -15343,19 +16452,34 @@
 	    }
 	});
 
+	/**
+	 * Style italic.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleItalic(sq) {
+	    if (sq.hasFormat('i') || sq.hasFormat('em')) {
+	        sq.changeFormat(null, { tag: 'i' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.italic();
+	    }
+	}
+
 	module.exports = Italic;
 
 /***/ },
-/* 69 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15383,21 +16507,14 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('S')) {
-	            sq.changeFormat(null, { tag: 'S' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.strikethrough();
+	            tableSelectionManager.styleToSelectedCells(styleStrike);
+	        } else {
+	            styleStrike(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -15407,10 +16524,25 @@
 	    }
 	});
 
+	/**
+	 * Style strike.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleStrike(sq) {
+	    if (sq.hasFormat('S')) {
+	        sq.changeFormat(null, { tag: 'S' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.strikethrough();
+	    }
+	}
+
 	module.exports = Strike;
 
 /***/ },
-/* 70 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15421,7 +16553,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(27);
 
 	/**
 	 * Blockquote
@@ -15452,7 +16584,7 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 71 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15463,7 +16595,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(27);
 
 	/**
 	 * AddImage
@@ -15493,7 +16625,7 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 72 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15504,7 +16636,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(27);
 
 	/**
 	 * AddLink
@@ -15542,16 +16674,16 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 73 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15621,12 +16753,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 74 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15683,12 +16815,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 75 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15742,12 +16874,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 76 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15765,27 +16897,56 @@
 	    keyMap: ['CTRL+U', 'META+U'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
+	        var listManager = wwe.componentManager.getManager('list');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
+	        sq.saveUndoState(range);
 
-	        if (!range.collapsed) {
-	            return;
+	        var lines = listManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
 	        }
 
-	        if (sq.hasFormat('LI')) {
-	            wwe.saveSelection(range);
-	            sq.saveUndoState(range);
-	            wwe.getManager('task').unformatTask(range.startContainer);
-	            sq.replaceParent(range.startContainer, 'ol', 'ul');
-	            wwe.restoreSavedSelection();
-	        } else if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            wwe.unwrapBlockTag();
-	            sq.makeUnorderedList();
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
+
+	    /**
+	     * Change format to unordered list if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToUnorderedListIfNeed: function _changeFormatToUnorderedListIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
+	            if (sq.hasFormat('LI')) {
+	                wwe.saveSelection(range);
+	                sq.replaceParent(range.startContainer, 'ol', 'ul');
+	                wwe.restoreSavedSelection();
+	            } else {
+	                wwe.unwrapBlockTag();
+	                sq.makeUnorderedList();
+	            }
 	        }
 	    }
 	}); /**
@@ -15797,12 +16958,12 @@
 	module.exports = UL;
 
 /***/ },
-/* 77 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15820,28 +16981,56 @@
 	    keyMap: ['CTRL+O', 'META+O'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
+	        var listManager = wwe.componentManager.getManager('list');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
+	        sq.saveUndoState(range);
 
-	        if (!range.collapsed) {
-	            return;
+	        var lines = listManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
 	        }
 
-	        if (sq.hasFormat('LI')) {
-	            sq.saveUndoState(range);
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
 
-	            wwe.saveSelection(range);
-	            wwe.getManager('task').unformatTask(range.startContainer);
-	            sq.replaceParent(range.startContainer, 'ul', 'ol');
-	            wwe.restoreSavedSelection();
-	        } else if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            wwe.unwrapBlockTag();
-	            sq.makeOrderedList();
+	    /**
+	     * Change format to unordered list if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToOrderedListIfNeed: function _changeFormatToOrderedListIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
+	            if (sq.hasFormat('LI')) {
+	                wwe.saveSelection(range);
+	                sq.replaceParent(range.startContainer, 'ul', 'ol');
+	                wwe.restoreSavedSelection();
+	            } else {
+	                wwe.unwrapBlockTag();
+	                sq.makeOrderedList();
+	            }
 	        }
 	    }
 	}); /**
@@ -15853,12 +17042,12 @@
 	module.exports = OL;
 
 /***/ },
-/* 78 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15882,7 +17071,7 @@
 	     */
 	    exec: function exec(wwe, col, row, data) {
 	        var sq = wwe.getEditor();
-	        var tableIDClassName = wwe.getManager('table').getTableIDClassName();
+	        var tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
 	        var tableHTMLString = void 0;
 
 	        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
@@ -15990,12 +17179,12 @@
 	module.exports = Table;
 
 /***/ },
-/* 79 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16075,16 +17264,16 @@
 	module.exports = AddRow;
 
 /***/ },
-/* 80 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16183,16 +17372,16 @@
 	module.exports = AddCol;
 
 /***/ },
-/* 81 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16221,8 +17410,8 @@
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
 	        var $table = $(range.startContainer).parents('table');
-	        var selectionMgr = wwe.getManager('tableSelection');
-	        var tableMgr = wwe.getManager('table');
+	        var selectionMgr = wwe.componentManager.getManager('tableSelection');
+	        var tableMgr = wwe.componentManager.getManager('table');
 	        var $tr = getTrs(range, selectionMgr, $table);
 	        var tbodyRowLength = $table.find('tbody tr').length;
 
@@ -16315,16 +17504,16 @@
 	module.exports = RemoveRow;
 
 /***/ },
-/* 82 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16352,7 +17541,7 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
-	        var tableMgr = wwe.getManager('table');
+	        var tableMgr = wwe.componentManager.getManager('table');
 	        var isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
 	        sq.focus();
@@ -16420,16 +17609,16 @@
 	module.exports = RemoveCol;
 
 /***/ },
-/* 83 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16458,7 +17647,7 @@
 	    exec: function exec(wwe, alignDirection) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
-	        var selectionMgr = wwe.getManager('tableSelection');
+	        var selectionMgr = wwe.componentManager.getManager('tableSelection');
 	        var rangeInformation = getRangeInformation(range, selectionMgr);
 
 	        sq.focus();
@@ -16563,12 +17752,12 @@
 	module.exports = AlignCol;
 
 /***/ },
-/* 84 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16609,12 +17798,12 @@
 	module.exports = RemoveTable;
 
 /***/ },
-/* 85 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16674,7 +17863,7 @@
 	module.exports = IncreaseTask;
 
 /***/ },
-/* 86 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16685,7 +17874,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(27);
 
 	/**
 	 * DecreaseDepth
@@ -16729,12 +17918,12 @@
 	module.exports = DecreaseDepth;
 
 /***/ },
-/* 87 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16752,24 +17941,60 @@
 	    keyMap: ['CTRL+T', 'META+T'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+	        var taskManager = wwe.componentManager.getManager('task');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
 
-	        var range = sq.getSelection().cloneRange();
+	        sq.saveUndoState(range);
 
-	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	        var lines = taskManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToTaskIfNeed(wwe, lines[i]);
+	        }
+
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
+
+	    /**
+	     * Change format to unordered list and return current li element if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToTaskIfNeed: function _changeFormatToTaskIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+	        var taskManager = wwe.componentManager.getManager('task');
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
 	            if (!sq.hasFormat('li')) {
 	                wwe.unwrapBlockTag();
 	                sq.makeUnorderedList();
-	                range = sq.getSelection().cloneRange();
 	            }
 
-	            sq.saveUndoState(range);
-	            wwe.getManager('task').formatTask(range.startContainer);
+	            if ($(target).parents('li').first().hasClass('task-list-item')) {
+	                taskManager.unformatTask(target);
+	            } else {
+	                taskManager.formatTask(target);
+	            }
 	        }
 	    }
 	}); /**
@@ -16781,16 +18006,16 @@
 	module.exports = Task;
 
 /***/ },
-/* 88 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(27);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16819,31 +18044,15 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+	        var _styleCode = tui.util.bind(styleCode, null, wwe.getEditor());
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
-	            sq.changeFormat(null, { tag: 'code' });
-	            removeUnnecessaryCodeInNextToRange(wwe.getEditor().getSelection().cloneRange());
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('b')) {
-	                sq.removeBold();
-	            } else if (sq.hasFormat('i')) {
-	                sq.removeItalic();
-	            }
-
-	            sq.changeFormat({ tag: 'code' });
-
-	            range = sq.getSelection().cloneRange();
-	            range.setStart(range.endContainer, range.endOffset);
-	            range.collapse(true);
-
-	            sq.setSelection(range);
+	            tableSelectionManager.styleToSelectedCells(_styleCode);
+	        } else {
+	            _styleCode(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -16864,10 +18073,36 @@
 	    }
 	}
 
+	/**
+	 * Style code.
+	 * @param {object} editor - editor instance
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleCode(editor, sq) {
+	    if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
+	        sq.changeFormat(null, { tag: 'code' });
+	        removeUnnecessaryCodeInNextToRange(editor.getSelection().cloneRange());
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('b')) {
+	            sq.removeBold();
+	        } else if (sq.hasFormat('i')) {
+	            sq.removeItalic();
+	        }
+
+	        sq.changeFormat({ tag: 'code' });
+
+	        var range = sq.getSelection().cloneRange();
+	        range.setStart(range.endContainer, range.endOffset);
+	        range.collapse(true);
+
+	        sq.setSelection(range);
+	    }
+	}
+
 	module.exports = Code;
 
 /***/ },
-/* 89 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16878,7 +18113,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(27);
 
 	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -16943,7 +18178,7 @@
 	 * @returns {string}
 	 */
 	function getCodeBlockBody(range, wwe) {
-	    var mgr = wwe.getManager('codeblock');
+	    var mgr = wwe.componentManager.getManager('codeblock');
 	    var contents = void 0,
 	        nodes = void 0;
 
@@ -16962,7 +18197,7 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 90 */
+/* 93 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17040,7 +18275,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 91 */
+/* 94 */
 /***/ function(module, exports) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -17861,7 +19096,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 92 */
+/* 95 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17992,7 +19227,7 @@
 	CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
 /***/ },
-/* 93 */
+/* 96 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18090,7 +19325,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 94 */
+/* 97 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18237,7 +19472,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 95 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18247,7 +19482,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var extManager = __webpack_require__(26);
+	var extManager = __webpack_require__(29);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -18287,28 +19522,28 @@
 	});
 
 /***/ },
-/* 96 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(29);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(97);
+	var _scrollFollow = __webpack_require__(100);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(98);
+	var _scrollFollow3 = __webpack_require__(101);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
-	var _button = __webpack_require__(41);
+	var _button = __webpack_require__(44);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -18409,7 +19644,7 @@
 	     */
 
 /***/ },
-/* 97 */
+/* 100 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18825,7 +20060,7 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 98 */
+/* 101 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19309,16 +20544,16 @@
 	module.exports = SectionManager;
 
 /***/ },
-/* 99 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(29);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(32);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -19560,32 +20795,32 @@
 	}
 
 /***/ },
-/* 100 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(29);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(101);
+	var _markerList = __webpack_require__(104);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(102);
+	var _markerManager = __webpack_require__(105);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(104);
+	var _wysiwygMarkerHelper = __webpack_require__(107);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(105);
+	var _viewOnlyMarkerHelper = __webpack_require__(108);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(106);
+	var _markdownMarkerHelper = __webpack_require__(109);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -19661,7 +20896,7 @@
 	    });
 
 	    // Reset marker content after set value
-	    editor.on('setValueAfter', function () {
+	    editor.on('setMarkdownAfter', function () {
 	        var helper = getHelper();
 	        mm.resetContent(helper.getTextContent());
 	    });
@@ -19840,7 +21075,7 @@
 	});
 
 /***/ },
-/* 101 */
+/* 104 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -20053,7 +21288,7 @@
 	module.exports = Markerlist;
 
 /***/ },
-/* 102 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20067,7 +21302,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(103);
+	var DiffMatchPatch = __webpack_require__(106);
 
 	var util = tui.util;
 
@@ -20296,7 +21531,7 @@
 	module.exports = MarkerManager;
 
 /***/ },
-/* 103 */
+/* 106 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22372,7 +23607,7 @@
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
 /***/ },
-/* 104 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22386,7 +23621,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var domUtils = __webpack_require__(8);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_ZWB_RX = /\u200B/g;
 
@@ -22624,7 +23859,7 @@
 	module.exports = WysiwygMarkerHelper;
 
 /***/ },
-/* 105 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22638,7 +23873,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var domUtils = __webpack_require__(8);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
@@ -22895,7 +24130,7 @@
 	module.exports = ViewOnlyMarkerHelper;
 
 /***/ },
-/* 106 */
+/* 109 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23172,7 +24407,2931 @@
 	module.exports = MarkdownMarkerHelper;
 
 /***/ },
-/* 107 */
+/* 110 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extManager = __webpack_require__(29);
+
+	var _extManager2 = _interopRequireDefault(_extManager);
+
+	var _mergedTableCreator = __webpack_require__(111);
+
+	var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
+
+	var _tableUnmergePreparer = __webpack_require__(114);
+
+	var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
+
+	var _toMarkRenderer = __webpack_require__(115);
+
+	var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
+
+	var _wwMergedTableManager = __webpack_require__(116);
+
+	var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
+
+	var _wwMergedTableSelectionManager = __webpack_require__(117);
+
+	var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
+
+	var _mergedTableAddRow = __webpack_require__(119);
+
+	var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
+
+	var _mergedTableAddCol = __webpack_require__(120);
+
+	var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
+
+	var _mergedTableRemoveRow = __webpack_require__(121);
+
+	var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
+
+	var _mergedTableRemoveCol = __webpack_require__(122);
+
+	var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
+
+	var _mergedTableAlignCol = __webpack_require__(123);
+
+	var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
+
+	var _mergeCell = __webpack_require__(124);
+
+	var _mergeCell2 = _interopRequireDefault(_mergeCell);
+
+	var _unmergeCell = __webpack_require__(125);
+
+	var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
+
+	var _mergedTableUI = __webpack_require__(126);
+
+	var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements tableExtension.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	__webpack_require__(127);
+
+	_extManager2.default.defineExtension('tableExtension', function (editor) {
+	    var eventManager = editor.eventManager;
+	    var wwComponentManager = editor.wwEditor.componentManager;
+	    var popupTableUtils = editor._ui.popupTableUtils;
+
+	    editor.toMarkOptions = editor.toMarkOptions || {};
+	    editor.toMarkOptions.renderer = _toMarkRenderer2.default;
+
+	    _addCommands(editor);
+	    _changeWysiwygManagers(wwComponentManager);
+	    _bindEvents(eventManager);
+
+	    if (editor._ui.popupTableUtils) {
+	        _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
+	    }
+	});
+
+	/**
+	 * Add commands.
+	 * @param {object} editor - editor instance
+	 * @private
+	 */
+	function _addCommands(editor) {
+	    editor.addCommand(_mergeCell2.default);
+	    editor.addCommand(_unmergeCell2.default);
+	}
+
+	/**
+	 * Change wysiwyg component managers.
+	 * @param {object} wwComponentManager - componentMananger instance
+	 * @private
+	 */
+	function _changeWysiwygManagers(wwComponentManager) {
+	    wwComponentManager.removeManager('table');
+	    wwComponentManager.removeManager('tableSelection');
+
+	    wwComponentManager.addManager(_wwMergedTableManager2.default);
+	    wwComponentManager.addManager(_wwMergedTableSelectionManager2.default);
+	}
+
+	/**
+	 * Change html by onChangeTable function.
+	 * @param {string} html - original html
+	 * @param {function} onChangeTable - function for changing html
+	 * @returns {string}
+	 * @private
+	 */
+	function _changeHtml(html, onChangeTable) {
+	    var $tempDiv = $('<div>' + html + '</div>');
+	    var $tables = $tempDiv.find('table');
+
+	    if ($tables.length) {
+	        $tables.get().forEach(function (tableElement) {
+	            var changedTableElement = onChangeTable(tableElement);
+
+	            $(tableElement).replaceWith(changedTableElement);
+	        });
+
+	        html = $tempDiv.html();
+	    }
+
+	    return html;
+	}
+
+	/**
+	 * Snatch wysiwyg command.
+	 * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+	 * @private
+	 */
+	function _snatchWysiwygCommand(commandWrapper) {
+	    var command = commandWrapper.command;
+
+	    if (!command.isWWType()) {
+	        return;
+	    }
+
+	    switch (command.getName()) {
+	        case 'AddRow':
+	            commandWrapper.command = _mergedTableAddRow2.default;
+	            break;
+	        case 'AddCol':
+	            commandWrapper.command = _mergedTableAddCol2.default;
+	            break;
+	        case 'RemoveRow':
+	            commandWrapper.command = _mergedTableRemoveRow2.default;
+	            break;
+	        case 'RemoveCol':
+	            commandWrapper.command = _mergedTableRemoveCol2.default;
+	            break;
+	        case 'AlignCol':
+	            commandWrapper.command = _mergedTableAlignCol2.default;
+	            break;
+	        default:
+	    }
+	}
+
+	/**
+	 * Bind events.
+	 * @param {object} eventManager - eventManager instance
+	 * @private
+	 */
+	function _bindEvents(eventManager) {
+	    eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
+	        return _changeHtml(html, _mergedTableCreator2.default);
+	    });
+	    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', function (html) {
+	        return _changeHtml(html, _tableUnmergePreparer2.default);
+	    });
+	    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+	}
+
+/***/ },
+/* 111 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview Implements mergedTableCreator.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
+
+	exports._extractPropertiesForMerge = _extractPropertiesForMerge;
+	exports._parseTableCell = _parseTableCell;
+	exports._createTableObjectFrom$Table = _createTableObjectFrom$Table;
+	exports._divideTrs = _divideTrs;
+	exports._mergeByColspan = _mergeByColspan;
+	exports._getRemovalTdCountsByRowspan = _getRemovalTdCountsByRowspan;
+	exports._mergeByRowspan = _mergeByRowspan;
+	exports.default = createMergedTable;
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Extract properties for merge.
+	 * @param {string} value - value
+	 * @param {string} type - merge type like colspan, rowspan
+	 * @param {string} oppossitType - oppossit merge type
+	 *                                if merge type is colspan, opossit merge type is rowspan
+	 * @returns {[number, string]} - returns merge count and value
+	 * @private
+	 */
+	function _extractPropertiesForMerge(value, type, oppossitType) {
+	    var regex = new RegExp('^((?:' + oppossitType + '=[0-9]+:)?)' + type + '=([0-9]+):(.*)');
+	    var regexResult = regex.exec(value);
+	    var mergeCount = 1;
+
+	    if (regexResult) {
+	        mergeCount = parseInt(regexResult[2], 10);
+	        value = regexResult[1] + regexResult[3];
+	    }
+
+	    return [mergeCount, value];
+	}
+
+	/**
+	 * Parse table cell element like td, th.
+	 * @param {HTMLElement} cell - table cell element like td, th
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string,
+	 *   align: string
+	 * }}
+	 * @private
+	 */
+	function _parseTableCell(cell) {
+	    var nodeName = cell.nodeName;
+	    var align = cell.align || '';
+	    var content = cell.innerHTML.trim();
+	    var colspan = null;
+	    var rowspan = null;
+
+	    var _extractPropertiesFor = _extractPropertiesForMerge(content, '@cols', '@rows');
+
+	    var _extractPropertiesFor2 = _slicedToArray(_extractPropertiesFor, 2);
+
+	    colspan = _extractPropertiesFor2[0];
+	    content = _extractPropertiesFor2[1];
+
+	    var _extractPropertiesFor3 = _extractPropertiesForMerge(content, '@rows', '@cols');
+
+	    var _extractPropertiesFor4 = _slicedToArray(_extractPropertiesFor3, 2);
+
+	    rowspan = _extractPropertiesFor4[0];
+	    content = _extractPropertiesFor4[1];
+
+
+	    return {
+	        nodeName: nodeName,
+	        colspan: colspan,
+	        rowspan: rowspan,
+	        content: content,
+	        align: align
+	    };
+	}
+
+	/**
+	 * Create table object from jQuery table.
+	 * @param {jQuery} $table - jQuery table
+	 * @returns {Array.<Array.<object>>}
+	 * @private
+	 */
+	function _createTableObjectFrom$Table($table) {
+	    return $table.find('tr').get().map(function (tr) {
+	        return $(tr).find('td, th').get().map(_parseTableCell);
+	    });
+	}
+
+	/**
+	 * Find index by onFind function.
+	 * @param {Array} arr - target array
+	 * @param {function} onFind - find function
+	 * @returns {number}
+	 */
+	function _findIndex(arr, onFind) {
+	    var foundIndex = -1;
+
+	    tui.util.forEach(arr, function (item, index) {
+	        var nextFind = true;
+	        if (onFind(item, index)) {
+	            foundIndex = index;
+	            nextFind = false;
+	        }
+
+	        return nextFind;
+	    });
+
+	    return foundIndex;
+	}
+
+	/**
+	 * Separate the trs according to the type of parent, such as thead and tbody.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]} - returns thead and tbody
+	 * @private
+	 */
+	function _divideTrs(trs) {
+	    var tbodyStartIndex = _findIndex(trs, function (tr) {
+	        return tr[0].nodeName === 'TD';
+	    });
+
+	    return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
+	}
+
+	/**
+	 * Merge by colspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @private
+	 */
+	function _mergeByColspan(trs) {
+	    trs.forEach(function (tr) {
+	        var tdCount = tr.length;
+	        var removalCount = 0;
+
+	        tr.forEach(function (td) {
+	            removalCount += td.colspan - 1;
+	        });
+
+	        tr.splice(tdCount - removalCount);
+	    });
+	}
+
+	/**
+	 * Get removal td counts by rowspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @returns {number}
+	 * @private
+	 */
+	function _getRemovalTdCountsByRowspan(trs) {
+	    var trIndexes = trs.map(function (tr, index) {
+	        return index;
+	    });
+	    var removalCounts = trIndexes.map(function () {
+	        return 0;
+	    });
+
+	    trs.forEach(function (tr, trIndex) {
+	        var rowspanTds = tr.filter(function (td) {
+	            return td.rowspan > 1;
+	        });
+	        var startTrIndexForRemoval = trIndex + 1;
+
+	        rowspanTds.forEach(function (td) {
+	            var removeCount = td.colspan;
+	            var endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
+
+	            trIndexes.slice(startTrIndexForRemoval, endTrIndexForRemoval).forEach(function (removeIndex) {
+	                removalCounts[removeIndex] += removeCount;
+	            });
+	        });
+	    });
+
+	    return removalCounts;
+	}
+
+	/**
+	 * Merge by rowspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @private
+	 */
+	function _mergeByRowspan(trs) {
+	    var removalCounts = _getRemovalTdCountsByRowspan(trs);
+
+	    trs.forEach(function (tr, trIndex) {
+	        tr.splice(tr.length - removalCounts[trIndex]);
+	    });
+	}
+
+	/**
+	 * Create merged table by @cols, @rows value in td innerHTML.
+	 * @param {HTMLElement} tableElement - unmerged table
+	 * @returns {HTMLElement}
+	 */
+	function createMergedTable(tableElement) {
+	    var table = _createTableObjectFrom$Table($(tableElement));
+
+	    var _divideTrs2 = _divideTrs(table),
+	        _divideTrs3 = _slicedToArray(_divideTrs2, 2),
+	        thead = _divideTrs3[0],
+	        tbody = _divideTrs3[1];
+
+	    _mergeByColspan(thead);
+	    _mergeByColspan(tbody);
+	    _mergeByRowspan(tbody);
+
+	    return $(_tableRenderer2.default.createTableHtml(table))[0];
+	}
+
+/***/ },
+/* 112 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Create cell html.
+	 * @param {object} cell - cell data of table base data
+	 * @returns {string}
+	 */
+	function _createCellHtml(cell) {
+	    var attrs = cell.colspan > 1 ? ' colspan="' + cell.colspan + '"' : '';
+	    attrs += cell.rowspan > 1 ? ' rowspan="' + cell.rowspan + '"' : '';
+	    attrs += cell.align ? ' align="' + cell.align + '"' : '';
+
+	    return '<' + cell.nodeName + attrs + '>' + cell.content + '</' + cell.nodeName + '>';
+	}
+
+	/**
+	 * Create html for thead or tbody.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @param {string} wrapperNodeName - wrapper node name like THEAD, TBODY
+	 * @returns {string}
+	 * @private
+	 */
+	/**
+	 * @fileoverview Implements tableRenderer
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
+	    var html = '';
+
+	    if (trs.length) {
+	        html = trs.map(function (tr) {
+	            var tdHtml = tr.map(_createCellHtml).join('');
+
+	            return '<tr>' + tdHtml + '</tr>';
+	        }).join('');
+	        html = '<' + wrapperNodeName + '>' + html + '</' + wrapperNodeName + '>';
+	    }
+
+	    return html;
+	}
+
+	/**
+	 * Create table html.
+	 * @param {Array.<Array.<object>>} table - table data
+	 * @returns {string}
+	 * @private
+	 */
+	function createTableHtml(table) {
+	    var thead = [table[0]];
+	    var tbody = table.slice(1);
+	    var theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
+	    var tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
+
+	    return '<table>' + (theadHtml + tbodyHtml) + '</table>';
+	}
+
+	/**
+	 * Replace table.
+	 * @param {jQuery} $table - table jQuery element
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {jQuery}
+	 */
+	function replaceTable($table, tableData) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var renderData = _tableDataHandler2.default.createRenderData(tableData, cellIndexData);
+	    var $newTable = $(createTableHtml(renderData));
+
+	    $table.replaceWith($newTable);
+
+	    return $newTable;
+	}
+
+	/**
+	 * Focus to cell.
+	 * @param {squireext} sq - squire instance
+	 * @param {range} range - range object
+	 * @param {HTMLElement} targetCell - cell element for focus
+	 * @private
+	 */
+	function focusToCell(sq, range, targetCell) {
+	    range.selectNodeContents(targetCell);
+	    range.collapse(true);
+	    sq.setSelection(range);
+
+	    // TODO: 개선 필요 - undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
+	    sq.undo();
+	    sq.redo();
+	}
+
+	exports.default = {
+	    createTableHtml: createTableHtml,
+	    replaceTable: replaceTable,
+	    focusToCell: focusToCell
+	};
+
+/***/ },
+/* 113 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createTableData = createTableData;
+	exports.createCellIndexData = createCellIndexData;
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	/**
+	 * @fileoverview Implements tableDataHandler
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * Parse cell like td or th.
+	 * @param {HTMLElement} cell - cell element like td or th
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string,
+	 *   align: ?string
+	 * }}
+	 * @private
+	 */
+	function _parseCell(cell, rowIndex, colIndex) {
+	    var $cell = $(cell);
+	    var colspan = $cell.attr('colspan');
+	    var rowspan = $cell.attr('rowspan');
+	    var nodeName = cell.nodeName;
+
+	    if (nodeName !== 'TH' && nodeName !== 'TD') {
+	        return null;
+	    }
+
+	    var cellData = {
+	        nodeName: cell.nodeName,
+	        colspan: colspan ? parseInt(colspan, 10) : 1,
+	        rowspan: rowspan ? parseInt(rowspan, 10) : 1,
+	        content: $cell.html(),
+	        elementIndex: {
+	            rowIndex: rowIndex,
+	            colIndex: colIndex
+	        }
+	    };
+
+	    if (cell.nodeName === 'TH' && cell.align) {
+	        cellData.align = cell.align;
+	    }
+
+	    return cellData;
+	}
+
+	/**
+	 * Add merged cell.
+	 * @param {object} base - base table data
+	 * @param {object} cellData - cell data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} startCellIndex - start cell index
+	 * @private
+	 */
+	function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
+	    var colspan = cellData.colspan;
+	    var rowspan = cellData.rowspan;
+	    var colMerged = colspan > 1;
+	    var rowMerged = rowspan > 1;
+	    var nodeName = cellData.nodeName;
+
+	    if (!colMerged && !rowMerged) {
+	        return;
+	    }
+
+	    var limitRowIndex = startRowIndex + rowspan;
+	    var limitCellIndex = startCellIndex + colspan;
+
+	    util.range(startRowIndex, limitRowIndex).forEach(function (rowIndex) {
+	        base[rowIndex] = base[rowIndex] || [];
+
+	        util.range(startCellIndex, limitCellIndex).forEach(function (cellIndex) {
+	            var mergedData = {
+	                nodeName: nodeName
+	            };
+
+	            if (rowIndex === startRowIndex && cellIndex === startCellIndex) {
+	                return;
+	            }
+
+	            if (colMerged) {
+	                mergedData.colMergeWith = startCellIndex;
+	            }
+
+	            if (rowMerged) {
+	                mergedData.rowMergeWith = startRowIndex;
+	            }
+
+	            base[rowIndex][cellIndex] = mergedData;
+	        });
+	    });
+	}
+
+	/**
+	 * Create table data from jQuery table Element.
+	 * @param {jQuery} $table - jQuery table element
+	 * @returns {Array.<Array.<object>>}
+	 * @private
+	 */
+	function createTableData($table) {
+	    var tableData = [];
+
+	    $table.find('tr').each(function (rowIndex, tr) {
+	        var stackedColCount = 0;
+
+	        tableData[rowIndex] = tableData[rowIndex] || [];
+
+	        $(tr).children().each(function (colIndex, cell) {
+	            var cellData = _parseCell(cell, rowIndex, colIndex);
+
+	            if (!cellData) {
+	                return;
+	            }
+	            var dataColIndex = colIndex + stackedColCount;
+
+	            while (tableData[rowIndex][dataColIndex]) {
+	                dataColIndex += 1;
+	                stackedColCount += 1;
+	            }
+
+	            tableData[rowIndex][dataColIndex] = cellData;
+	            _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
+	        });
+	    });
+
+	    return tableData;
+	}
+
+	/**
+	 * Create cell index data of table data.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {Array.<Array.<object>>}
+	 * @priavte
+	 */
+	function createCellIndexData(tableData) {
+	    var mappingData = [];
+
+	    tableData.forEach(function (row, rowIndex) {
+	        var mappingRow = [];
+
+	        row.forEach(function (cell, colIndex) {
+	            if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
+	                mappingRow.push({
+	                    rowIndex: rowIndex,
+	                    colIndex: colIndex
+	                });
+	            }
+	        });
+	        mappingData.push(mappingRow);
+	    });
+
+	    return mappingData;
+	}
+
+	/**
+	 * Get header aligns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {Array.<?string>}
+	 */
+	function _getHeaderAligns(tableData) {
+	    var headRowData = tableData[0];
+
+	    return headRowData.map(function (cellData) {
+	        var align = void 0;
+
+	        if (util.isExisty(cellData.colMergeWith)) {
+	            align = headRowData[cellData.colMergeWith].align;
+	        } else {
+	            align = cellData.align;
+	        }
+
+	        return align;
+	    });
+	}
+
+	/**
+	 * Create render data.
+	 * @param {Array.<object>} tableData - table data
+	 * @param {Array.<object>} cellIndexData - cell index data
+	 * @returns {Array.<Array.<object>>}
+	 */
+	function createRenderData(tableData, cellIndexData) {
+	    var headerAligns = _getHeaderAligns(tableData);
+
+	    return cellIndexData.map(function (row) {
+	        return row.map(function (_ref) {
+	            var rowIndex = _ref.rowIndex,
+	                colIndex = _ref.colIndex;
+	            return util.extend({
+	                align: headerAligns[colIndex]
+	            }, tableData[rowIndex][colIndex]);
+	        });
+	    });
+	}
+
+	var BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
+	/**
+	 * Create basic cell data.
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @param {string} nodeName - node name
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string
+	 * }}
+	 */
+	function createBasicCell(rowIndex, colIndex, nodeName) {
+	    return {
+	        nodeName: nodeName || 'TD',
+	        colspan: 1,
+	        rowspan: 1,
+	        content: BASIC_CELL_CONTENT,
+	        elementIndex: {
+	            rowIndex: rowIndex,
+	            colIndex: colIndex
+	        }
+	    };
+	}
+
+	/**
+	 * Find element row index.
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {number}
+	 */
+	function findElementRowIndex($cell) {
+	    var $tr = $cell.closest('tr');
+	    var rowIndex = $tr.prevAll().length;
+
+	    if ($tr.parent()[0].nodeName === 'TBODY') {
+	        rowIndex += 1;
+	    }
+
+	    return rowIndex;
+	}
+
+	/**
+	 * Find element col index.
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {number}
+	 */
+	function findElementColIndex($cell) {
+	    return $cell.closest('td, th').prevAll().length;
+	}
+
+	/**
+	 * Find indexes of base table data from mappin data.
+	 * @param {Array.<Array.<object>>} cellIndexData - cell index data
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {{rowIndex: number, cellIndex: number}}
+	 */
+	function findCellIndex(cellIndexData, $cell) {
+	    var elementRowIndex = findElementRowIndex($cell);
+	    var elementColIndex = findElementColIndex($cell);
+
+	    return cellIndexData[elementRowIndex][elementColIndex];
+	}
+
+	/**
+	 * Find last index of col merged cells.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {number}
+	 */
+	function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+	    var foundRowIndex = rowIndex;
+
+	    if (cellData.rowspan > 1) {
+	        foundRowIndex += cellData.rowspan - 1;
+	    }
+
+	    return foundRowIndex;
+	}
+
+	/**
+	 * Find last index of col merged cells.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {number}
+	 */
+	function findColMergedLastIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+	    var foundColIndex = colIndex;
+
+	    if (cellData.colspan > 1) {
+	        foundColIndex += cellData.colspan - 1;
+	    }
+
+	    return foundColIndex;
+	}
+
+	/**
+	 * Find cell element index.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - col index of base data
+	 * @returns {{rowIndex: number, colIndex: number}}
+	 */
+	function findElementIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+
+	    rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
+	    colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
+
+	    return tableData[rowIndex][colIndex].elementIndex;
+	}
+
+	/**
+	 * Find max cell count.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {number}
+	 * @private
+	 */
+	function _findMaxCellCount(tableData) {
+	    var cellCounts = tableData.map(function (rowData) {
+	        return rowData.length;
+	    });
+
+	    return Math.max.apply(Math, _toConsumableArray(cellCounts));
+	}
+
+	/**
+	 * Stuff cells into incomplete row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 */
+	function stuffCellsIntoIncompleteRow(tableData) {
+	    var maxCellCount = _findMaxCellCount(tableData);
+
+	    tableData.forEach(function (rowData, rowIndex) {
+	        var cellCount = rowData.length;
+	        var diffCount = maxCellCount - cellCount;
+	        var nodeName = rowData[0].nodeName;
+
+	        util.range(cellCount, cellCount + diffCount + 1).forEach(function (colIndex) {
+	            rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+	        });
+	    });
+	}
+
+	exports.default = {
+	    createTableData: createTableData,
+	    createCellIndexData: createCellIndexData,
+	    createRenderData: createRenderData,
+	    findElementRowIndex: findElementRowIndex,
+	    findElementColIndex: findElementColIndex,
+	    findCellIndex: findCellIndex,
+	    createBasicCell: createBasicCell,
+	    findRowMergedLastIndex: findRowMergedLastIndex,
+	    findColMergedLastIndex: findColMergedLastIndex,
+	    findElementIndex: findElementIndex,
+	    stuffCellsIntoIncompleteRow: stuffCellsIntoIncompleteRow
+	};
+
+/***/ },
+/* 114 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._prependMergeSyntaxToContent = _prependMergeSyntaxToContent;
+	exports.default = prepareTableUnmerge;
+	/**
+	 * @fileoverview Implements tableUnmergePreparer.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/**
+	 * Prepend merge syntax to content.
+	 * @param {HTMLElement} cell - td or th
+	 */
+	function _prependMergeSyntaxToContent(cell) {
+	    var $cell = $(cell);
+	    var colspan = $cell.attr('colspan') || '';
+	    var rowspan = $cell.attr('rowspan') || '';
+	    var content = $cell.html();
+
+	    if (colspan) {
+	        content = '@cols=' + colspan + ':' + content;
+	    }
+
+	    if (rowspan) {
+	        content = '@rows=' + rowspan + ':' + content;
+	    }
+
+	    if (content) {
+	        $cell.html(content);
+	    }
+	}
+
+	/**
+	 * Prepare table unmerge.
+	 * @param {HTMLElement} tableElement - table element
+	 * @returns {HTMLElement}
+	 */
+	function prepareTableUnmerge(tableElement) {
+	    $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
+
+	    return tableElement;
+	}
+
+/***/ },
+/* 115 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._getAdditionalThCount = _getAdditionalThCount;
+	exports._createTheadMarkdown = _createTheadMarkdown;
+	/**
+	 * @fileoverview Implements toMarkRendererCreator.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var toMark = window.toMark;
+	var RX_COLS = /@cols=[0-9]+:/g;
+
+	/**
+	 * Create repeat string.
+	 * @param {string} str - target string
+	 * @param {number} count - count
+	 * @returns {string}
+	 */
+	function _createRepeatString(str, count) {
+	    return tui.util.range(0, count).map(function () {
+	        return str;
+	    }).join('');
+	}
+
+	/**
+	 * Make table head align text.
+	 * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
+	 * @param {HTMLElement} thElement - Table head cell element
+	 * @returns {string}
+	 * @private
+	 */
+	function _makeTableHeadAlignText(thElement) {
+	    var align = thElement.align;
+	    var textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
+	    var textLength = textContent.length;
+	    var leftAlignValue = '';
+	    var rightAlignValue = '';
+
+	    if (align) {
+	        if (align === 'left') {
+	            leftAlignValue = ':';
+	            textLength -= 1;
+	        } else if (align === 'right') {
+	            rightAlignValue = ':';
+	            textLength -= 1;
+	        } else if (align === 'center') {
+	            rightAlignValue = ':';
+	            leftAlignValue = ':';
+	            textLength -= 2;
+	        }
+	    }
+
+	    textLength = Math.max(textLength, 3);
+
+	    return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
+	}
+
+	/**
+	 * Get additional th element count.
+	 * @param {Array.<HTMLElement>} ths - th element list
+	 * @private
+	 * @returns {Number}
+	 */
+	function _getAdditionalThCount(ths) {
+	    var additionalThCount = 0;
+
+	    ths.filter(function (th) {
+	        return $(th).attr('colspan');
+	    }).forEach(function (th) {
+	        additionalThCount += parseInt($(th).attr('colspan'), 10) - 1;
+	    });
+
+	    return additionalThCount;
+	}
+
+	/**
+	 * Create thead markdown.
+	 * @param {HTMLElement} theadElement - theadElement element
+	 * @param {string} theadContentMarkdown - thead markdown content
+	 * @returns {string}
+	 */
+	function _createTheadMarkdown(theadElement, theadContentMarkdown) {
+	    var ths = $(theadElement).find('th').get();
+	    var align = ths.map(function (th) {
+	        return ' ' + _makeTableHeadAlignText(th) + ' |';
+	    }).join('');
+
+	    align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
+
+	    return theadContentMarkdown ? theadContentMarkdown + '|' + align + '\n' : '';
+	}
+
+	exports.default = toMark.Renderer.factory(toMark.gfmRenderer, {
+	    'THEAD': _createTheadMarkdown
+	});
+
+/***/ },
+/* 116 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _wwTableManager = __webpack_require__(17);
+
+	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+	var util = tui.util;
+	/**
+	 * WwMergedTableManager
+	 * @exports WwMergedTableManager
+	 * @constructor
+	 * @class WwMergedTableManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 */
+
+	var WwMergedTableManager = function (_WwTableManager) {
+	    _inherits(WwMergedTableManager, _WwTableManager);
+
+	    function WwMergedTableManager() {
+	        _classCallCheck(this, WwMergedTableManager);
+
+	        return _possibleConstructorReturn(this, (WwMergedTableManager.__proto__ || Object.getPrototypeOf(WwMergedTableManager)).apply(this, arguments));
+	    }
+
+	    _createClass(WwMergedTableManager, [{
+	        key: 'prepareToTableCellStuffing',
+
+	        /**
+	         * Prepare to table cell stuffing
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
+	         * @override
+	         */
+	        value: function prepareToTableCellStuffing(tableData) {
+	            var maximumCellLength = tableData[0].length;
+	            var needTableCellStuffingAid = false;
+
+	            tableData.slice(1).forEach(function (rowData) {
+	                var cellCount = rowData.length;
+
+	                if (maximumCellLength !== cellCount) {
+	                    needTableCellStuffingAid = true;
+
+	                    if (maximumCellLength < cellCount) {
+	                        maximumCellLength = cellCount;
+	                    }
+	                }
+	            });
+
+	            return {
+	                maximumCellLength: maximumCellLength,
+	                needTableCellStuffingAid: needTableCellStuffingAid
+	            };
+	        }
+
+	        /**
+	         * Replace incompletion table to completion table.
+	         * @param {jQuery} $table - current jQuery table element
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @private
+	         */
+
+	    }, {
+	        key: '_replaceToCompletionTable',
+	        value: function _replaceToCompletionTable($table, tableData) {
+	            _tableDataHandler2.default.stuffCellsIntoIncompleteRow(tableData);
+	            _tableRenderer2.default.replaceTable($table, tableData);
+	        }
+
+	        /**
+	         * Add tbody or thead of table data if need.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: '_addTbodyOrTheadOfTableDataIfNeed',
+	        value: function _addTbodyOrTheadOfTableDataIfNeed(tableData) {
+	            var header = tableData[0];
+	            var cellCount = header.length;
+	            var added = true;
+
+	            if (!cellCount && tableData[1]) {
+	                util.range(0, tableData[1].length).forEach(function (colIndex) {
+	                    header.push(_tableDataHandler2.default.createBasicCell(0, colIndex, 'TH'));
+	                });
+	            } else if (tableData[0][0].nodeName !== 'TH') {
+	                var newHeader = util.range(0, cellCount).map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(0, colIndex, 'TH');
+	                });
+
+	                tableData.unshift(newHeader);
+	            } else if (tableData.length === 1) {
+	                var newRow = util.range(0, cellCount).map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(1, colIndex, 'TD');
+	                });
+
+	                tableData.push(newRow);
+	            } else {
+	                added = false;
+	            }
+
+	            return added;
+	        }
+
+	        /**
+	         * Append table cells.
+	         * @param {HTMLElement} node Table element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'tableCellAppendAidForTableElement',
+	        value: function tableCellAppendAidForTableElement(node) {
+	            var $table = $(node);
+	            var tableData = _tableDataHandler2.default.createTableData($table);
+	            var added = this._addTbodyOrTheadOfTableDataIfNeed(tableData);
+	            var tableAidInformation = this.prepareToTableCellStuffing(tableData);
+	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+
+	            if (added || needTableCellStuffingAid) {
+	                this._replaceToCompletionTable($table, tableData);
+	            }
+	        }
+	    }]);
+
+	    return WwMergedTableManager;
+	}(_wwTableManager2.default);
+
+	module.exports = WwMergedTableManager;
+
+/***/ },
+/* 117 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _wwTableSelectionManager = __webpack_require__(18);
+
+	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table selection manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
+
+	var util = tui.util;
+
+	/**
+	 * WwMergedTableSelectionManager
+	 * @exports WwMergedTableSelectionManager
+	 * @constructor
+	 * @class WwMergedTableTableSelectionManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 */
+
+	var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
+	    _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
+
+	    function WwMergedTableSelectionManager() {
+	        _classCallCheck(this, WwMergedTableSelectionManager);
+
+	        return _possibleConstructorReturn(this, (WwMergedTableSelectionManager.__proto__ || Object.getPrototypeOf(WwMergedTableSelectionManager)).apply(this, arguments));
+	    }
+
+	    _createClass(WwMergedTableSelectionManager, [{
+	        key: 'setTableSelectionTimerIfNeed',
+
+	        /**
+	         * Set setTimeout and setInterval timer execution if table selecting situation
+	         * @param {HTMLElement} selectionStart Start element
+	         * @override
+	         */
+	        value: function setTableSelectionTimerIfNeed(selectionStart) {
+	            var isTableSelecting = $(selectionStart).parents('table').length;
+
+	            if (isTableSelecting) {
+	                this._isSelectionStarted = true;
+	            }
+	        }
+
+	        /**
+	         * Add css class for selected cells.
+	         * @param {jQuery} $table - table jQuery element
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{
+	         *   start: {rowIndex: number, colIndex: number},
+	         *   end: {rowIndex: number, colIndex: number}
+	         * }} tableRange - table selected range
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addClassToSelectedCells',
+	        value: function _addClassToSelectedCells($table, tableData, tableRange) {
+	            var startRange = tableRange.start;
+	            var endRange = tableRange.end;
+	            var cellIndexRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+	            var $trs = $table.find('tr');
+
+	            util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
+	                var rowData = tableData[rowIndex];
+	                var $cells = $trs.eq(rowIndex).find('td, th');
+
+	                return cellIndexRange.forEach(function (colIndex) {
+	                    var cellData = rowData[colIndex];
+
+	                    if (cellData.elementIndex) {
+	                        $cells.eq(rowData[colIndex].elementIndex.colIndex).addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	                    }
+	                });
+	            });
+	        }
+
+	        /**
+	         * Highlight selected table cells
+	         * @param {HTMLElement} selectionStart start element
+	         * @param {HTMLElement} selectionEnd end element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'highlightTableCellsBy',
+	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
+	            var $start = $(selectionStart);
+	            var $end = $(selectionEnd);
+	            var $table = $start.closest('table');
+	            var tableData = _tableDataHandler2.default.createTableData($table);
+	            var tableRange = _tableRangeHandler2.default.findSelectionRange(tableData, $start, $end);
+
+	            this.removeClassAttrbuteFromAllCellsIfNeed();
+	            this._addClassToSelectedCells($table, tableData, tableRange);
+	        }
+
+	        /**
+	         * Style to selected cells.
+	         * @param {function} onStyle - function for styling
+	         */
+
+	    }, {
+	        key: 'styleToSelectedCells',
+	        value: function styleToSelectedCells(onStyle) {
+	            var sq = this.wwe.getEditor();
+	            var range = sq.getSelection().cloneRange();
+	            var $table = $(range.startContainer).closest('table');
+
+	            $table.find('tr').get().forEach(function (tr) {
+	                var cells = $(tr).find('.' + TABLE_CELL_SELECTED_CLASS_NAME);
+
+	                if (!cells.length) {
+	                    return;
+	                }
+
+	                range.setStart(cells.first()[0], 0);
+	                range.setEnd(cells.last()[0], 1);
+	                sq.setSelection(range);
+	                onStyle(sq);
+	            });
+	        }
+
+	        /**
+	         * Whether has selected both TH and TD.
+	         * @param {jQuery} $selectedCells - selected cells jQuery element
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'hasSelectedBothThAndTd',
+	        value: function hasSelectedBothThAndTd($selectedCells) {
+	            $selectedCells = $selectedCells || this.getSelectedCells();
+
+	            return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+	        }
+	    }]);
+
+	    return WwMergedTableSelectionManager;
+	}(_wwTableSelectionManager2.default);
+
+	exports.default = WwMergedTableSelectionManager;
+
+/***/ },
+/* 118 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var util = tui.util;
+
+	/**
+	 * Find unmerged table range.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $start - start talbe cell jQuery element
+	 * @param {jQuery} $end - end table cell jQuery element
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 * @private
+	 */
+	/**
+	 * @fileoverview Implements tableRangeHandler
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	function _findUnmergedRange(tableData, $start, $end) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var startCellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $start);
+	    var endCellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $end);
+	    var startRowIndex = void 0,
+	        endRowIndex = void 0,
+	        startColIndex = void 0,
+	        endColIndex = void 0;
+
+	    if (startCellIndex.rowIndex > endCellIndex.rowIndex) {
+	        startRowIndex = endCellIndex.rowIndex;
+	        endRowIndex = startCellIndex.rowIndex;
+	    } else {
+	        startRowIndex = startCellIndex.rowIndex;
+	        endRowIndex = endCellIndex.rowIndex;
+	    }
+
+	    if (startCellIndex.colIndex > endCellIndex.colIndex) {
+	        startColIndex = endCellIndex.colIndex;
+	        endColIndex = startCellIndex.colIndex;
+	    } else {
+	        startColIndex = startCellIndex.colIndex;
+	        endColIndex = endCellIndex.colIndex;
+	    }
+
+	    return {
+	        start: {
+	            rowIndex: startRowIndex,
+	            colIndex: startColIndex
+	        },
+	        end: {
+	            rowIndex: endRowIndex,
+	            colIndex: endColIndex
+	        }
+	    };
+	}
+
+	/**
+	 * Expand table range by row merge properties like rowspan, rowMergeWith.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @param {string} rangeType - range type like start, end
+	 * @private
+	 */
+	function _expandRowMergedRange(tableData, tableRange, rangeType) {
+	    var rowIndex = tableRange[rangeType].rowIndex;
+	    var rowData = tableData[rowIndex];
+
+	    util.range(tableRange.start.colIndex, tableRange.end.colIndex + 1).forEach(function (colIndex) {
+	        var cellData = rowData[colIndex];
+	        var rowMergeWith = cellData.rowMergeWith;
+	        var lastRowMergedIndex = -1;
+
+	        if (util.isExisty(rowMergeWith)) {
+	            if (rowMergeWith < tableRange.start.rowIndex) {
+	                tableRange.start.rowIndex = rowMergeWith;
+	            }
+
+	            lastRowMergedIndex = rowMergeWith + tableData[rowMergeWith][colIndex].rowspan - 1;
+	        } else if (cellData.rowspan > 1) {
+	            lastRowMergedIndex = rowIndex + cellData.rowspan - 1;
+	        }
+
+	        if (lastRowMergedIndex > tableRange.end.rowIndex) {
+	            tableRange.end.rowIndex = lastRowMergedIndex;
+	        }
+	    });
+	}
+
+	/**
+	 * Expand table range by column merge properties like colspan, colMergeWith.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @private
+	 */
+	function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
+	    var rowData = tableData[rowIndex];
+	    var cellData = rowData[colIndex];
+	    var colMergeWith = cellData.colMergeWith;
+	    var lastColMergedIndex = -1;
+
+	    if (util.isExisty(colMergeWith)) {
+	        if (colMergeWith < tableRange.start.colIndex) {
+	            tableRange.start.colIndex = colMergeWith;
+	        }
+
+	        lastColMergedIndex = colMergeWith + rowData[colMergeWith].colspan - 1;
+	    } else if (cellData.colspan > 1) {
+	        lastColMergedIndex = colIndex + cellData.colspan - 1;
+	    }
+
+	    if (lastColMergedIndex > tableRange.end.colIndex) {
+	        tableRange.end.colIndex = lastColMergedIndex;
+	    }
+	}
+
+	/**
+	 * Expand table range by merge properties like colspan, rowspan.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 * @private
+	 */
+	function _expandMergedRange(tableData, tableRange) {
+	    var rangeStr = '';
+
+	    while (rangeStr !== JSON.stringify(tableRange)) {
+	        rangeStr = JSON.stringify(tableRange);
+
+	        _expandRowMergedRange(tableData, tableRange, 'start');
+	        _expandRowMergedRange(tableData, tableRange, 'end');
+
+	        util.range(tableRange.start.rowIndex, tableRange.end.rowIndex + 1).forEach(function (rowIndex) {
+	            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.start.colIndex);
+	            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.end.colIndex);
+	        });
+	    }
+
+	    return tableRange;
+	}
+
+	/**
+	 * Find table range for selection.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $start - start jQuery element
+	 * @param {jQuery} $end - end jQuery element
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 */
+	function findSelectionRange(tableData, $start, $end) {
+	    var unmergedRange = _findUnmergedRange(tableData, $start, $end);
+
+	    return _expandMergedRange(tableData, unmergedRange);
+	}
+
+	/**
+	 * Get table selection range.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $selectedCells - selected cells jQuery elements
+	 * @param {jQuery} $startContainer - start container jQuery element of text range
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 *}}
+	 */
+	function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var tableRange = {};
+
+	    if ($selectedCells.length) {
+	        (function () {
+	            var startRange = _tableDataHandler2.default.findCellIndex(cellIndexData, $selectedCells.first());
+	            var endRange = util.extend({}, startRange);
+
+	            $selectedCells.each(function (index, cell) {
+	                var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $(cell));
+	                var cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
+	                var lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
+	                var lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
+
+	                endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
+	                endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
+	            });
+
+	            tableRange.start = startRange;
+	            tableRange.end = endRange;
+	        })();
+	    } else {
+	        var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $startContainer);
+
+	        tableRange.start = cellIndex;
+	        tableRange.end = util.extend({}, cellIndex);
+	    }
+
+	    return tableRange;
+	}
+
+	exports.default = {
+	    findSelectionRange: findSelectionRange,
+	    getTableSelectionRange: getTableSelectionRange
+	};
+
+/***/ },
+/* 119 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._createNewRow = _createNewRow;
+	exports._addRow = _addRow;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements mergedTableAddRow
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	/**
+	 * AddRow
+	 * Add Row to selected table
+	 * @exports AddRow
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var AddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow */{
+	    name: 'AddRow',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _addRow(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusTd);
+	    }
+	});
+
+	/**
+	 * Create row merged cell data.
+	 * @param {number} rowMergeWith - row merge with index
+	 * @returns {{
+	 *   nodeName: string,
+	 *   rowMergeWith: number
+	 * }}
+	 * @private
+	 */
+	function _createRowMergedCell(rowMergeWith) {
+	    return {
+	        nodeName: 'TD',
+	        rowMergeWith: rowMergeWith
+	    };
+	}
+
+	/**
+	 * Create new row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} rowIndex - row index of table data
+	 * @returns {object}
+	 * @private
+	 */
+	function _createNewRow(tableData, rowIndex) {
+	    var prevCell = null;
+
+	    return tableData[rowIndex].map(function (cellData, colIndex) {
+	        var newCell = void 0;
+
+	        if (util.isExisty(cellData.rowMergeWith)) {
+	            var rowMergeWith = cellData.rowMergeWith;
+
+	            var merger = tableData[rowMergeWith][colIndex];
+	            var lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
+
+	            if (util.isExisty(merger.colMergeWith) && prevCell) {
+	                newCell = util.extend({}, prevCell);
+	            } else if (lastMergedRowIndex > rowIndex) {
+	                merger.rowspan += 1;
+	                newCell = util.extend({}, cellData);
+	            }
+	        } else if (cellData.rowspan > 1) {
+	            cellData.rowspan += 1;
+	            newCell = _createRowMergedCell(rowIndex);
+	        }
+
+	        if (!newCell) {
+	            newCell = _tableDataHandler2.default.createBasicCell(rowIndex + 1, colIndex);
+	        }
+
+	        prevCell = newCell;
+
+	        return newCell;
+	    });
+	}
+
+	/**
+	 * Add row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @private
+	 */
+	function _addRow(tableData, tableRange) {
+	    var startRowIndex = tableRange.start.rowIndex;
+	    var endRange = tableRange.end;
+	    var endRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var newRows = util.range(startRowIndex, endRowIndex + 1).map(function () {
+	        return _createNewRow(tableData, endRowIndex);
+	    });
+
+	    tableData.splice.apply(tableData, _toConsumableArray([endRowIndex + 1, 0].concat(newRows)));
+	}
+
+	/**
+	 * Find focus td element.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 */
+	function _findFocusTd($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var newRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, newRowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+	}
+
+	exports.default = AddRow;
+
+/***/ },
+/* 120 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._createNewColumns = _createNewColumns;
+	exports._addColumns = _addColumns;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements mergedTableAddCol
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	/**
+	 * AddCol
+	 * Add Row to selected table
+	 * @exports AddCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var AddCol = _commandManager2.default.command('wysiwyg', /** @lends AddCol */{
+	    name: 'AddCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _addColumns(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Create column merged cell.
+	 * @param {number} colMergeWith - column merge start index
+	 * @param {string} nodeName - node name
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colMerged: boolean,
+	 *   colMergeWith: number
+	 * }}
+	 * @private
+	 */
+	function _createColMergedCell(colMergeWith, nodeName) {
+	    return {
+	        nodeName: nodeName,
+	        colMergeWith: colMergeWith
+	    };
+	}
+
+	/**
+	 * Create new cell data.
+	 * @param {Array.<object>} rowData - row data of table data
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of table data
+	 * @param {object | null} prevCell - previous cell data
+	 * @returns {object}
+	 */
+	function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
+	    var cellData = rowData[colIndex];
+	    var newCell = void 0;
+
+	    if (util.isExisty(cellData.colMergeWith)) {
+	        var colMergeWith = cellData.colMergeWith;
+
+	        var merger = rowData[colMergeWith];
+	        var lastMergedCellIndex = colMergeWith + merger.colspan - 1;
+
+	        if (util.isExisty(merger.rowMergeWith) && prevCell) {
+	            newCell = util.extend({}, prevCell);
+	        } else if (lastMergedCellIndex > colIndex) {
+	            merger.colspan += 1;
+	            newCell = util.extend({}, cellData);
+	        }
+	    } else if (cellData.colspan > 1) {
+	        cellData.colspan += 1;
+	        newCell = _createColMergedCell(colIndex, cellData.nodeName);
+	    }
+
+	    if (!newCell) {
+	        newCell = _tableDataHandler2.default.createBasicCell(rowIndex, colIndex + 1, cellData.nodeName);
+	    }
+
+	    return newCell;
+	}
+
+	/**
+	 * Create new columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @returns {Array.<Array.<object>>}
+	 * @private
+	 */
+	function _createNewColumns(tableData, startColIndex, endColIndex) {
+	    var colIndexes = util.range(startColIndex, endColIndex + 1);
+	    var newColumns = [];
+	    var prevCells = null;
+
+	    tableData.forEach(function (rowData, rowIndex) {
+	        var newCells = colIndexes.map(function (colIndex, index) {
+	            var prevCell = prevCells ? prevCells[index - 1] : null;
+
+	            return _createNewCell(rowData, rowIndex, endColIndex, prevCell);
+	        });
+
+	        prevCells = newCells;
+	        newColumns.push(newCells);
+	    });
+
+	    return newColumns;
+	}
+
+	/**
+	 * Add columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _addColumns(tableData, tableRange) {
+	    var endRange = tableRange.end;
+	    var endColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var newColumns = _createNewColumns(tableData, tableRange.start.colIndex, endColIndex);
+	    var newColIndex = endColIndex + 1;
+
+	    tableData.forEach(function (rowData, rowIndex) {
+	        rowData.splice.apply(rowData, _toConsumableArray([newColIndex, 0].concat(newColumns[rowIndex])));
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var newColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, rowIndex, colIndex) + 1;
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, newColIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = AddCol;
+
+/***/ },
+/* 121 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._removeRow = _removeRow;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableRemoveRow
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * RemoveRow
+	 * Remove row to selected table
+	 * @exports RemoveRow
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var RemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
+	    name: 'RemoveRow',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var beforeRowLength = tableData.length;
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _removeRow(tableData, tableRange);
+
+	        if (beforeRowLength === tableData.length) {
+	            return;
+	        }
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusTd);
+	    }
+	});
+
+	/**
+	 * Update rowspan to row merger.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} endRowIndex - end row index
+	 * @private
+	 */
+	function _updateRowspan(tableData, startRowIndex, endRowIndex) {
+	    util.range(startRowIndex, endRowIndex + 1).forEach(function (rowIndex) {
+	        tableData[rowIndex].forEach(function (cell, cellIndex) {
+	            if (util.isExisty(cell.rowMergeWith)) {
+	                var merger = tableData[cell.rowMergeWith][cellIndex];
+
+	                if (merger.rowspan) {
+	                    merger.rowspan -= 1;
+	                }
+	            } else if (cell.rowspan > 1) {
+	                var lastMergedRowIndex = rowIndex + cell.rowspan - 1;
+
+	                cell.rowspan -= endRowIndex - rowIndex + 1;
+
+	                if (lastMergedRowIndex > endRowIndex) {
+	                    tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
+	                }
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Update row merge start index to merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} endRowIndex - end row index
+	 * @private
+	 */
+	function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
+	    tableData.slice(endRowIndex + 1).forEach(function (row) {
+	        row.forEach(function (cell) {
+	            if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
+	                cell.rowMergeWith = endRowIndex + 1;
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Remove row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _removeRow(tableData, tableRange) {
+	    var startRowIndex = tableRange.start.rowIndex;
+	    var endRange = tableRange.end;
+	    var endRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var removeCount = endRowIndex - startRowIndex + 1;
+
+	    if (removeCount === tableData.length - 1) {
+	        return;
+	    }
+
+	    _updateRowspan(tableData, startRowIndex, endRowIndex);
+	    _updateMergeStartIndex(tableData, startRowIndex, endRowIndex);
+
+	    tableData.splice(startRowIndex, removeCount);
+	}
+
+	/**
+	 * Find focus td element.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 */
+	function _findFocusTd($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+
+	    if (tableData.length - 1 < rowIndex) {
+	        rowIndex -= 1;
+	    }
+
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+	}
+
+	exports.default = RemoveRow;
+
+/***/ },
+/* 122 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._removeColumns = _removeColumns;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableRemoveCol
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * RemoveCol
+	 * Remove col to selected table
+	 * @exports RemoveCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var RemoveCol = _commandManager2.default.command('wysiwyg', /** @lends RemoveCol */{
+	    name: 'RemoveCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+	        var beforeCellLength = tableData[0].length;
+
+	        _removeColumns(tableData, tableRange);
+
+	        if (beforeCellLength === tableData[0].length) {
+	            return;
+	        }
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Update colspan to col merger.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start col index
+	 * @param {number} endColIndex - end col index
+	 * @private
+	 */
+	function _updateColspan(tableData, startColIndex, endColIndex) {
+	    tableData.forEach(function (rowData) {
+	        util.range(startColIndex, endColIndex + 1).forEach(function (colIndex) {
+	            var cellData = rowData[colIndex];
+
+	            if (util.isExisty(cellData.colMergeWith)) {
+	                var merger = rowData[cellData.colMergeWith];
+
+	                if (merger.colspan) {
+	                    merger.colspan -= 1;
+	                }
+	            } else if (cellData.colspan > 1) {
+	                var lastMergedCellIndex = colIndex + cellData.colspan - 1;
+
+	                cellData.colspan -= endColIndex - colIndex + 1;
+
+	                if (lastMergedCellIndex > endColIndex) {
+	                    rowData[endColIndex + 1] = util.extend({}, cellData);
+	                }
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Update row merge start index to merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start col index
+	 * @param {number} endColIndex - end col index
+	 * @private
+	 */
+	function _updateMergeStartIndex(tableData, startColIndex, endColIndex) {
+	    tableData.forEach(function (rowData) {
+	        rowData.slice(endColIndex + 1).forEach(function (cellData) {
+	            if (util.isExisty(cellData.colMergeWith) && cellData.colMergeWith >= startColIndex) {
+	                cellData.colMergeWith = endColIndex + 1;
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Remove columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _removeColumns(tableData, tableRange) {
+	    var startColIndex = tableRange.start.colIndex;
+	    var endRange = tableRange.end;
+	    var endColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var removeCount = endColIndex - startColIndex + 1;
+
+	    if (removeCount === tableData[0].length) {
+	        return;
+	    }
+
+	    _updateColspan(tableData, startColIndex, endColIndex);
+	    _updateMergeStartIndex(tableData, startColIndex, endColIndex);
+
+	    tableData.forEach(function (row) {
+	        row.splice(startColIndex, removeCount);
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+
+	    if (tableData[0].length - 1 < colIndex) {
+	        colIndex -= 1;
+	    }
+
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = RemoveCol;
+
+/***/ },
+/* 123 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableAlignCol
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * AlignCol
+	 * Align selected column's text content to given direction
+	 * @exports AlignCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 */
+	var AlignCol = _commandManager2.default.command('wysiwyg', /** @lends AlignCol */{
+	    name: 'AlignCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     * @param {string} alignDirection - align direction for table header
+	     */
+	    exec: function exec(wwe, alignDirection) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, $startContainer);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Align to table header.
+	 * @param {Array.<object>} headRowData - head row data
+	 * @param {number} startColIndex - start column index for styling align
+	 * @param {number} endColIndex - end column index for styling align
+	 * @param {string} alignDirection - align direction
+	 * @private
+	 */
+	function _align(headRowData, startColIndex, endColIndex, alignDirection) {
+	    util.range(startColIndex, endColIndex + 1).forEach(function (colIndex) {
+	        var headCellData = headRowData[colIndex];
+
+	        if (util.isExisty(headCellData.colMergeWith)) {
+	            headRowData[headCellData.colMergeWith].align = alignDirection;
+	        } else {
+	            headCellData.align = alignDirection;
+	        }
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {jQuery} $startContainer - start container jQuery element of text range
+	 * @returns {HTMLElement}
+	 */
+	function _findFocusCell($newTable, $startContainer) {
+	    var elementRowIndex = _tableDataHandler2.default.findElementRowIndex($startContainer);
+	    var elementColIndex = _tableDataHandler2.default.findElementColIndex($startContainer);
+
+	    return $newTable.find('tr').eq(elementRowIndex).find('td, th')[elementColIndex];
+	}
+
+	exports.default = AlignCol;
+
+/***/ },
+/* 124 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._mergeCells = _mergeCells;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements MergeCell
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+	var BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+
+	var MergeCell = _commandManager2.default.command('wysiwyg', /** @lends MergeCell */{
+	    name: 'MergeCells',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var selectionManager = wwe.componentManager.getManager('tableSelection');
+	        var $selectedCells = selectionManager.getSelectedCells();
+
+	        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+	            return;
+	        }
+
+	        var range = sq.getSelection().cloneRange();
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _mergeCells(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Pick merger content from selected cells.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @returns {string}
+	 */
+	function _pickContent(targetRows, startColIndex, endColIndex) {
+	    var _ref;
+
+	    var limitColIndex = endColIndex + 1;
+	    var cells = (_ref = []).concat.apply(_ref, _toConsumableArray(targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    })));
+	    var foundCellData = cells.filter(function (_ref2) {
+	        var content = _ref2.content;
+	        return content && content !== BASIC_CELL_CONTENT;
+	    });
+
+	    return foundCellData.length ? foundCellData[0].content : BASIC_CELL_CONTENT;
+	}
+
+	/**
+	 * Initialize cell data of target rows.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @private
+	 */
+	function _initCellData(targetRows, startColIndex, endColIndex) {
+	    var _ref3;
+
+	    var limitColIndex = endColIndex + 1;
+	    var targetCells = targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    });
+
+	    (_ref3 = []).concat.apply(_ref3, _toConsumableArray(targetCells)).slice(1).forEach(function (cellData) {
+	        var nodeName = cellData.nodeName;
+
+	        util.forEach(cellData, function (value, name) {
+	            return delete cellData[name];
+	        });
+	        cellData.nodeName = nodeName;
+	    });
+	}
+
+	/**
+	 * Update rowMergeWith property of target rows for row merge.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @param {number} rowMergeWith - index of row merger
+	 * @private
+	 */
+	function _updateRowMergeWith(targetRows, startColIndex, endColIndex, rowMergeWith) {
+	    var limitColIndex = endColIndex + 1;
+
+	    targetRows.forEach(function (rowData) {
+	        rowData.slice(startColIndex, limitColIndex).forEach(function (cellData) {
+	            cellData.rowMergeWith = rowMergeWith;
+	        });
+	    });
+	}
+
+	/**
+	 * Update colMergeWith property of target rows for column merge.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @param {number} colMergeWith - index of column merger
+	 * @private
+	 */
+	function _updateColMergeWith(targetRows, startColIndex, endColIndex, colMergeWith) {
+	    var limitColIndex = endColIndex + 1;
+
+	    targetRows.forEach(function (rowData) {
+	        rowData.slice(startColIndex, limitColIndex).forEach(function (cellData) {
+	            cellData.colMergeWith = colMergeWith;
+	        });
+	    });
+	}
+
+	/**
+	 * Merge selected cells.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @private
+	 */
+	function _mergeCells(tableData, _ref4) {
+	    var startRange = _ref4.start,
+	        endRange = _ref4.end;
+
+	    var startRowIndex = startRange.rowIndex;
+	    var startColIndex = startRange.colIndex;
+	    var endRowIndex = endRange.rowIndex;
+	    var endColIndex = endRange.colIndex;
+	    var merger = tableData[startRowIndex][startColIndex];
+	    var targetRows = tableData.slice(startRowIndex, endRowIndex + 1);
+	    var rowspan = endRowIndex - startRowIndex + 1;
+	    var colspan = endColIndex - startColIndex + 1;
+
+	    merger.rowspan = rowspan;
+	    merger.colspan = colspan;
+	    merger.content = _pickContent(targetRows, startColIndex, endColIndex);
+	    _initCellData(targetRows, startColIndex, endColIndex);
+
+	    if (rowspan > 1) {
+	        _updateRowMergeWith(targetRows.slice(1), startColIndex, endColIndex, startRowIndex);
+	    }
+
+	    if (colspan > 1) {
+	        _updateColMergeWith(targetRows, startColIndex + 1, endColIndex, startColIndex);
+	    }
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = MergeCell;
+
+/***/ },
+/* 125 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._hasMergedCell = _hasMergedCell;
+	exports._unmergeCells = _unmergeCells;
+
+	var _commandManager = __webpack_require__(27);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(113);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(112);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements UnmergeCell
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	var UnmergeCell = _commandManager2.default.command('wysiwyg', /** @lends UnmergeCell */{
+	    name: 'UnmergeCells',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        if (!_hasMergedCell(tableData, tableRange)) {
+	            return;
+	        }
+
+	        _unmergeCells(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Whether has merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @returns {boolean}
+	 * @private
+	 */
+	function _hasMergedCell(tableData, _ref) {
+	    var _ref2;
+
+	    var startRange = _ref.start,
+	        endRange = _ref.end;
+
+	    var startColIndex = startRange.colIndex;
+	    var limitColIndex = endRange.colIndex + 1;
+	    var targetRows = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
+	    var targetCells = targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    });
+
+	    return !!(_ref2 = []).concat.apply(_ref2, _toConsumableArray(targetCells)).filter(function (cellData) {
+	        return cellData.colspan > 1 || cellData.rowspan > 1;
+	    }).length;
+	}
+
+	/**
+	 * Update merged cell data to basic cell data.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} startColIndex - start col index
+	 * @param {number} rowspan - rowspan property of merger cell
+	 * @param {number} colspan - colspan property of merger cell
+	 * @private
+	 */
+	function _updateMergedCells(tableData, startRowIndex, startColIndex, rowspan, colspan) {
+	    var limitRowIndex = startRowIndex + rowspan;
+	    var limitColIndex = startColIndex + colspan;
+	    var colRange = util.range(startColIndex, limitColIndex);
+
+	    util.range(startRowIndex, limitRowIndex).forEach(function (rowIndex) {
+	        var rowData = tableData[rowIndex];
+	        var startIndex = rowIndex === startRowIndex ? 1 : 0;
+
+	        colRange.slice(startIndex).forEach(function (colIndex) {
+	            rowData[colIndex] = _tableDataHandler2.default.createBasicCell(rowIndex, colIndex, rowData[colIndex].nodeName);
+	        });
+	    });
+	}
+
+	/**
+	 * Unmerge selected cells.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @private
+	 */
+	function _unmergeCells(tableData, _ref3) {
+	    var startRange = _ref3.start,
+	        endRange = _ref3.end;
+
+	    var colRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+
+	    util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
+	        colRange.forEach(function (colIndex) {
+	            var cellData = tableData[rowIndex][colIndex];
+	            var colspan = cellData.colspan,
+	                rowspan = cellData.rowspan;
+
+
+	            if (colspan > 1 || rowspan > 1) {
+	                cellData.colspan = 1;
+	                cellData.rowspan = 1;
+	                _updateMergedCells(tableData, rowIndex, colIndex, rowspan, colspan);
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = UnmergeCell;
+
+/***/ },
+/* 126 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _i18n = __webpack_require__(32);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Change contextmenu content.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @private
+	 */
+	function _changeContent(popupTableUtils) {
+	    var POPUP_CONTENT = ['<button type="button" class="te-table-add-row">' + _i18n2.default.get('Add row') + '</button>', '<button type="button" class="te-table-add-col">' + _i18n2.default.get('Add col') + '</button>', '<button type="button" class="te-table-remove-row">' + _i18n2.default.get('Remove row') + '</button>', '<button type="button" class="te-table-remove-col">' + _i18n2.default.get('Remove col') + '</button>', '<button type="button" class="te-table-merge">' + _i18n2.default.get('Merge cells') + '</button>', '<button type="button" class="te-table-unmerge">' + _i18n2.default.get('Unmerge cells') + '</button>', '<button type="button" class="te-table-col-align-left">' + _i18n2.default.get('Align left') + '</button>', '<button type="button" class="te-table-col-align-center">' + _i18n2.default.get('Align center') + '</button>', '<button type="button" class="te-table-col-align-right">' + _i18n2.default.get('Align right') + '</button>', '<button type="button" class="te-table-remove">' + _i18n2.default.get('Remove table') + '</button>'].join('');
+	    var $popupContent = $(POPUP_CONTENT);
+
+	    popupTableUtils.$content = $popupContent;
+	    popupTableUtils.setContent($popupContent);
+	}
+
+	/**
+	 * Bind events for merge feature of contextmenu.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @param {object} eventManager - event manager instance of editor
+	 * @param {object} selectionManager - table selection manager instance
+	 * @private
+	 */
+	function _bindEvents(popupTableUtils, eventManager, selectionManager) {
+	    var $popupContent = popupTableUtils.$content;
+	    var $mergeBtn = $($popupContent[4]);
+	    var $unmergeBtn = $($popupContent[5]);
+
+	    popupTableUtils.on('click .te-table-merge', function () {
+	        eventManager.emit('command', 'MergeCells');
+	    });
+
+	    popupTableUtils.on('click .te-table-unmerge', function () {
+	        eventManager.emit('command', 'UnmergeCells');
+	    });
+
+	    eventManager.listen('openPopupTableUtils', function () {
+	        var $selectedCells = selectionManager.getSelectedCells();
+	        var selectedCellCount = $selectedCells.length;
+
+	        if (selectedCellCount) {
+	            if (selectedCellCount < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+	                $mergeBtn.hide();
+	            } else {
+	                $mergeBtn.show();
+	            }
+
+	            if ($selectedCells.is('[rowspan], [colspan]')) {
+	                $unmergeBtn.show();
+	            } else {
+	                $unmergeBtn.hide();
+	            }
+	        } else {
+	            $mergeBtn.hide();
+	            $unmergeBtn.hide();
+	        }
+	    });
+	}
+
+	/**
+	 * Update contextmenu UI.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @param {object} eventManager - event manager instance of editor
+	 * @param {object} selectionManager - table selection manager instance
+	 */
+	function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
+	    _changeContent(popupTableUtils);
+	    _bindEvents(popupTableUtils, eventManager, selectionManager);
+	}
+
+	exports.default = {
+	    updateContextMenu: updateContextMenu
+	};
+
+/***/ },
+/* 127 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _i18n = __webpack_require__(32);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	_i18n2.default.setLang(['ko', 'ko_KR'], {
+	    'Merge cells': '셀 병합',
+	    'Unmerge cells': '셀 병합해제'
+	});
+
+	_i18n2.default.setLang(['en', 'en_US'], {
+	    'Merge cells': 'Merge cells',
+	    'Unmerge cells': 'Unmerge cells'
+	});
+
+	_i18n2.default.setLang(['ja', 'ja_JP'], {
+	    'Merge cells': 'セルの結合',
+	    'Unmerge cells': 'セルの結合を解除'
+	});
+
+	_i18n2.default.setLang(['nl', 'nl_NL'], {
+	    'Merge cells': 'cellen samenvoegen',
+	    'Unmerge cells': 'Samenvoegen cellen ongedaan maken'
+	});
+
+	_i18n2.default.setLang(['zh', 'zh_CN'], {
+	    'Merge cells': '合并单元格',
+	    'Unmerge cells': '取消合并单元格'
+	});
+
+/***/ },
+/* 128 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23219,7 +27378,7 @@
 	});
 
 /***/ },
-/* 108 */
+/* 129 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23266,7 +27425,7 @@
 	});
 
 /***/ },
-/* 109 */
+/* 130 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23313,7 +27472,7 @@
 	});
 
 /***/ },
-/* 110 */
+/* 131 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23360,7 +27519,7 @@
 	});
 
 /***/ },
-/* 111 */
+/* 132 */
 /***/ function(module, exports) {
 
 	'use strict';
