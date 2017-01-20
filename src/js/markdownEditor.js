@@ -174,6 +174,7 @@ class MarkdownEditor {
             const state = {
                 bold: !!base.strong,
                 italic: !!base.em,
+                strike: !!base.strikethrough,
                 code: !!overlay.code,
                 codeBlock: !!overlay.codeBlock,
                 quote: !!base.quote,
