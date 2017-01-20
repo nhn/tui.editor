@@ -1,27 +1,61 @@
-import {_unmergeCells} from '../../../src/js/extensions/table/unmergeCell';
+import {_hasMergedCell, _unmergeCells} from '../../../src/js/extensions/table/unmergeCell';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('unmergeCell', () => {
-    describe('_unmergeCells', () => {
-        const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
-        const tableHtml = [
-            '<table>',
-            '<thead>',
-            '<tr><th colspan="2">title1</th><th>title3</th></tr>',
-            '</thead>',
-            '<tbody>',
-            '<tr><td colspan="2" rowspan="2">content1-1</td><td>content1-3</td></tr>',
-            '<tr><td>content2-3</td></tr>',
-            '<tbody>',
-            '</table>'
-        ].join('');
-        let tableData;
+    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+    const tableHtml = [
+        '<table>',
+        '<thead>',
+        '<tr><th colspan="2">title1</th><th>title3</th></tr>',
+        '</thead>',
+        '<tbody>',
+        '<tr><td colspan="2" rowspan="2">content1-1</td><td>content1-3</td></tr>',
+        '<tr><td>content2-3</td></tr>',
+        '<tbody>',
+        '</table>'
+    ].join('');
+    let tableData;
 
-        beforeEach(function() {
-            const $table = $(tableHtml);
-            tableData = tableDataHandler.createTableData($table);
+    beforeEach(function() {
+        const $table = $(tableHtml);
+        tableData = tableDataHandler.createTableData($table);
+    });
+
+    describe('_hasMergedCell', () => {
+        it('Whether has merged cell, when has merged cell.', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 1,
+                    colIndex: 0
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 1
+                }
+            };
+            const actual = _hasMergedCell(tableData, tableRange);
+
+            expect(actual).toBe(true);
         });
 
+        it('Whether has merged cell, when has not merged cell.', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 2,
+                    colIndex: 2
+                },
+                end: {
+                    rowIndex: 2,
+                    colIndex: 2
+                }
+            };
+            const actual = _hasMergedCell(tableData, tableRange);
+
+            expect(actual).toBe(false);
+        });
+    });
+
+    describe('_unmergeCells', () => {
         it('Unmerge selected merged cells.', () => {
             const tableRange = {
                 start: {
