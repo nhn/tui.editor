@@ -16,6 +16,7 @@ const util = tui.util;
  * @exports AddCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
     name: 'AddCol',
@@ -73,6 +74,7 @@ function _createColMergedCell(colMergeWith, nodeName) {
  * @param {number} colIndex - column index of table data
  * @param {object | null} prevCell - previous cell data
  * @returns {object}
+ * @private
  */
 function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
     const cellData = rowData[colIndex];
@@ -154,6 +156,7 @@ export function _addColumns(tableData, tableRange) {
  * @param {number} rowIndex - row index of table data
  * @param {number} colIndex - column index of tabld data
  * @returns {HTMLElement}
+ * @private
  */
 function _findFocusCell($newTable, rowIndex, colIndex) {
     const tableData = dataHandler.createTableData($newTable);

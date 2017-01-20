@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports IncreaseDepth
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'IncreaseDepth',

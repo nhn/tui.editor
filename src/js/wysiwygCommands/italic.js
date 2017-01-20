@@ -14,6 +14,7 @@ import domUtils from '../domUtils';
  * @exports Italic
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
     name: 'Italic',

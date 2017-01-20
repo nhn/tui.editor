@@ -159,6 +159,7 @@ function _expandMergedRange(tableData, tableRange) {
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  * }}
+ * @ignore
  */
 function findSelectionRange(tableData, $start, $end) {
     const unmergedRange = _findUnmergedRange(tableData, $start, $end);
@@ -175,6 +176,7 @@ function findSelectionRange(tableData, $start, $end) {
  *   start: {rowIndex: number, colIndex: number},
  *   end: {rowIndex: number, colIndex: number}
  *}}
+ * @ignore
  */
 function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
     const cellIndexData = tableDataHandler.createCellIndexData(tableData);

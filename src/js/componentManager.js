@@ -1,11 +1,11 @@
 /**
- * @fileoverview Implements CommandManager
+ * @fileoverview Implements ComponentManager
  * @author Junghwan Park(junghwan.parkm@nhnent.com) FE Development Lab/NHN Ent.
  */
 
 /**
  * ComponentManager
- * @exports CommandManager
+ * @exports ComponentManager
  * @class
  */
 class ComponentManager {
@@ -27,7 +27,7 @@ class ComponentManager {
      * addManager
      * Add manager
      * @api
-     * @memberOf CommandManager
+     * @memberOf ComponentManager
      * @param {string|function} nameOrConstructor Manager name or constructor
      * @param {function} [ManagerConstructor] Constructor
      */
@@ -46,7 +46,7 @@ class ComponentManager {
      * getManager
      * Get manager by manager name
      * @api
-     * @memberOf CommandManager
+     * @memberOf ComponentManager
      * @param {string} name Manager name
      * @returns {object} manager
      */

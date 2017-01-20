@@ -16,6 +16,7 @@ const util = tui.util;
  * @constructor
  * @class
  * @param {object} options options
+ * @ignore
  */
 function PopupTableUtils(options) {
     const POPUP_CONTENT = [

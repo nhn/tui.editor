@@ -11,7 +11,7 @@ import tableRenderer from './tableRenderer';
  * @param {string} type - merge type like colspan, rowspan
  * @param {string} oppossitType - oppossit merge type
  *                                if merge type is colspan, opossit merge type is rowspan
- * @returns {[number, string]} - returns merge count and value
+ * @returns {Array.<number|string>} - returns merge count and value
  * @private
  */
 export function _extractPropertiesForMerge(value, type, oppossitType) {
@@ -73,6 +73,7 @@ export function _createTableObjectFrom$Table($table) {
  * @param {Array} arr - target array
  * @param {function} onFind - find function
  * @returns {number}
+ * @private
  */
 function _findIndex(arr, onFind) {
     let foundIndex = -1;
@@ -93,7 +94,7 @@ function _findIndex(arr, onFind) {
 /**
  * Separate the trs according to the type of parent, such as thead and tbody.
  * @param {Array.<Array.<object>>} trs - tr list
- * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]} - returns thead and tbody
+ * @returns {Array.<Array.<Array.<object>>>} - returns thead and tbody
  * @private
  */
 export function _divideTrs(trs) {

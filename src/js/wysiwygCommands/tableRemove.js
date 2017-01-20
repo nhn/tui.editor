@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports RemoveTable
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
     name: 'RemoveTable',

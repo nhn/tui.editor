@@ -35,6 +35,7 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
  * @param {string|Node} html html or Node
  * @param {boolean} [needHtmlText] pass true if need html text
  * @returns {string|DocumentFragment} result
+ * @ignore
  */
 function htmlSanitizer(html, needHtmlText) {
     const $html = $('<div />');

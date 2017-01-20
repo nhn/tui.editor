@@ -14,6 +14,7 @@ import domUtil from '../domUtils';
  * @exports AlignCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     name: 'AlignCol',

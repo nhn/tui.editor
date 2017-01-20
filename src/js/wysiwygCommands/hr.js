@@ -13,6 +13,7 @@ import domUtils from '../domUtils';
  * @exports HR
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const HR = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'HR',

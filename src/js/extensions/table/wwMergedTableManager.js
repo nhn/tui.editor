@@ -59,6 +59,7 @@ class WwMergedTableManager extends WwTableManager {
      * Add tbody or thead of table data if need.
      * @param {Array.<Array.<object>>} tableData - table data
      * @returns {boolean}
+     * @private
      */
     _addTbodyOrTheadOfTableDataIfNeed(tableData) {
         const header = tableData[0];

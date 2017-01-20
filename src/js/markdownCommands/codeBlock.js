@@ -11,6 +11,7 @@ import CommandManager from '../commandManager';
  * Add CodeBlock markdown syntax to markdown editor
  * @exports CodeBlock
  * @augments Command
+ * @ignore
  */
 const CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
     name: 'CodeBlock',

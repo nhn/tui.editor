@@ -12,6 +12,7 @@ import CommandManager from '../commandManager';
  * @exports Task
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     name: 'Task',

@@ -14,6 +14,7 @@ import domUtils from '../domUtils';
  * @exports RemoveCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     name: 'RemoveCol',

@@ -13,6 +13,7 @@ import domUtils from '../domUtils';
  * @exports Strike
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     name: 'Strike',

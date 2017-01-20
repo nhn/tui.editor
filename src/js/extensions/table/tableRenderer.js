@@ -9,6 +9,7 @@ import tableDataHandler from './tableDataHandler';
  * Create cell html.
  * @param {object} cell - cell data of table base data
  * @returns {string}
+ * @private
  */
 function _createCellHtml(cell) {
     let attrs = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
@@ -60,6 +61,7 @@ function createTableHtml(table) {
  * @param {jQuery} $table - table jQuery element
  * @param {Array.<Array.<object>>} tableData - table data
  * @returns {jQuery}
+ * @ignore
  */
 function replaceTable($table, tableData) {
     const cellIndexData = tableDataHandler.createCellIndexData(tableData);
@@ -76,7 +78,7 @@ function replaceTable($table, tableData) {
  * @param {squireext} sq - squire instance
  * @param {range} range - range object
  * @param {HTMLElement} targetCell - cell element for focus
- * @private
+ * @ignore
  */
 function focusToCell(sq, range, targetCell) {
     range.selectNodeContents(targetCell);

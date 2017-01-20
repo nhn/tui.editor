@@ -14,6 +14,7 @@ const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
  * @constructor
  * @class
  * @param {Preview} preview preview instance
+ * @ignore
  */
 class ViewOnlyMarkerHelper {
     constructor(preview) {
@@ -198,6 +199,7 @@ class ViewOnlyMarkerHelper {
  * getRange
  * get current range
  * @returns {Range}
+ * @ignore
  */
 function getRange() {
     const selection = window.getSelection();

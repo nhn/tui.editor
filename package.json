@@ -15,8 +15,9 @@
     "csslint": "^1.0.4",
     "del-cli": "^0.2.0",
     "eslint": "3.7.1",
-    "fedoc-template": "git+https://github.nhnent.com/fe/share-fedoc-template.git#develop",
+    "fedoc-template": "git+https://14bfd38a036366f7ca90355d202038126127bd01:x-oauth-basic@github.nhnent.com/fe/share-fedoc-template.git#develop",
     "jasmine-core": "^2.5.2",
+    "jsdoc": "^3.4.3",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
     "karma-cli": "^1.0.1",
@@ -35,7 +36,7 @@
     "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
-    "doc": "jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/",
+    "doc": "jsdoc -c jsdoc-conf.json -t ./node_modules/tui-doc-template",
     "test": "NODE_ENV=DEV karma start karma.conf.js",
     "testwd": "NODE_ENV=DEV karma start karma.conf.ne.js",
     "coverage": "NODE_ENV=coverage karma start karma.conf.ne.js",

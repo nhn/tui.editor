@@ -13,6 +13,7 @@ const boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
  * Add bold markdown syntax to markdown editor
  * @exports Bold
  * @augments Command
+ * @ignore
  */
 const Bold = CommandManager.command('markdown', /** @lends Bold */{
     name: 'Bold',

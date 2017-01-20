@@ -11,6 +11,7 @@ const RX_COLS = /@cols=[0-9]+:/g;
  * @param {string} str - target string
  * @param {number} count - count
  * @returns {string}
+ * @private
  */
 function _createRepeatString(str, count) {
     return tui.util.range(0, count).map(() => str).join('');
@@ -70,6 +71,7 @@ export function _getAdditionalThCount(ths) {
  * @param {HTMLElement} theadElement - theadElement element
  * @param {string} theadContentMarkdown - thead markdown content
  * @returns {string}
+ * @private
  */
 export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
     const ths = $(theadElement).find('th').get();

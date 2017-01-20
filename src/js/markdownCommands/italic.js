@@ -13,6 +13,7 @@ const italicRegex = /^[\*_][^\*_]*[\*_]$/;
  * Add italic markdown syntax to markdown editor
  * @exports Italic
  * @augments Command
+ * @ignore
  */
 const Italic = CommandManager.command('markdown', /** @lends Italic */{
     name: 'Italic',

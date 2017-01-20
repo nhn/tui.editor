@@ -13,6 +13,7 @@ import CommandManager from '../commandManager';
  * @exports Table
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Table = CommandManager.command('wysiwyg', /** @lends Table */{
     name: 'Table',

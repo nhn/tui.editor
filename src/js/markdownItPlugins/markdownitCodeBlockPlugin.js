@@ -10,6 +10,7 @@
 /**
  * Code block renderer for Markdown-it
  * @param {object} markdownit Markdown-it instance
+ * @ignore
  */
 var MarkdownitCodeBlockRenderer = function(markdownit) {
     markdownit.core.ruler.after('block', 'tui-code-block', function(state) {
@@ -31,6 +32,7 @@ var MarkdownitCodeBlockRenderer = function(markdownit) {
  * @param {object} token Token object
  * @param {string} attributeName Attribute name for set
  * @param {string} attributeValue Attribute value for set
+ * @ignore
  */
 function setTokenAttribute(token, attributeName, attributeValue) {
     var index = token.attrIndex(attributeName);
@@ -46,6 +48,7 @@ function setTokenAttribute(token, attributeName, attributeValue) {
  * Return boolean value whether passed token is code fence or not
  * @param {object} token Token object
  * @returns {boolean}
+ * @ignore
  */
 function isCodeFenceToken(token) {
     return token.block === true
@@ -58,6 +61,7 @@ function isCodeFenceToken(token) {
  * @param {string} html HTML string
  * @param {string} encode Boolean value of whether encode or not
  * @returns {string}
+ * @ignore
  */
 function escape(html, encode) {
     return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;')

@@ -16,6 +16,7 @@ const util = tui.util;
  * @constructor
  * @class
  * @param {object} options options
+ * @ignore
  */
 function PopupAddLink(options) {
     /* eslint-disable indent */

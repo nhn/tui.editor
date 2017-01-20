@@ -12,6 +12,7 @@ import CommandManager from '../commandManager';
  * @exports UL
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     name: 'UL',

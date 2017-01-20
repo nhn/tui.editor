@@ -11,6 +11,7 @@ import CommandManager from '../commandManager';
  * Add Image markdown syntax to markdown Editor
  * @exports AddImage
  * @augments Command
+ * @ignore
  */
 const AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
     name: 'AddImage',

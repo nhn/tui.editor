@@ -6,6 +6,7 @@
 /**
  * Prepend merge syntax to content.
  * @param {HTMLElement} cell - td or th
+ * @private
  */
 export function _prependMergeSyntaxToContent(cell) {
     const $cell = $(cell);

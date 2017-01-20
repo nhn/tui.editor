@@ -15,8 +15,8 @@ const FIND_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
  * Task
  * @exports Task
  * @augments Command
+ * @ignore
  */
-
 const Task = CommandManager.command('markdown', /** @lends Task */{
     name: 'Task',
     keyMap: ['CTRL+T', 'META+T'],

@@ -21,6 +21,7 @@ const TYPE = {
  * @constructor
  * @class
  * @param {number} initialType initial type of editor
+ * @ignore
  */
 function ModeSwitch(initialType) {
     UIController.call(this, {

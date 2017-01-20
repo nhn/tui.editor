@@ -72,6 +72,7 @@ function _bindEvents(popupTableUtils, eventManager, selectionManager) {
  * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
  * @param {object} eventManager - event manager instance of editor
  * @param {object} selectionManager - table selection manager instance
+ * @ignore
  */
 function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
     _changeContent(popupTableUtils);

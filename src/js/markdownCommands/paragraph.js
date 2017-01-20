@@ -15,6 +15,7 @@ const util = tui.util;
  * Convert selected lines to paragraph
  * @exports Paragraph
  * @augments Command
+ * @ignore
  */
 const Paragraph = CommandManager.command('markdown', /** @lends Paragraph */{
     name: 'Paragraph',
