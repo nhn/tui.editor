@@ -318,34 +318,56 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 }
 
 /**
- * Find max cell count.
- * @param {Array.<Array.<object>>} tableData - table data
- * @returns {number}
- * @private
- */
-function _findMaxCellCount(tableData) {
-    const cellCounts = tableData.map(rowData => rowData.length);
-
-    return Math.max(...cellCounts);
-}
-
-/**
  * Stuff cells into incomplete row.
  * @param {Array.<Array.<object>>} tableData - table data
  * @ignore
  */
-function stuffCellsIntoIncompleteRow(tableData) {
-    const maxCellCount = _findMaxCellCount(tableData);
-
+function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
     tableData.forEach((rowData, rowIndex) => {
-        const cellCount = rowData.length;
-        const diffCount = maxCellCount - cellCount;
+        const startIndex = rowData.length;
         const nodeName = rowData[0].nodeName;
 
-        util.range(cellCount, cellCount + diffCount + 1).forEach(colIndex => {
+        util.range(startIndex, limitIndex).forEach(colIndex => {
             rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
         });
     });
+}
+
+/**
+ * Add tbody or thead of table data if need.
+ * @param {Array.<Array.<object>>} tableData - table data
+ * @returns {boolean}
+ */
+function addTbodyOrTheadIfNeed(tableData) {
+    const header = tableData[0];
+    const cellCount = header.length;
+    let added = true;
+
+    if (!cellCount && tableData[1]) {
+        util.range(0, tableData[1].length).forEach(colIndex => {
+            header.push(createBasicCell(0, colIndex, 'TH'));
+        });
+    } else if (tableData[0][0].nodeName !== 'TH') {
+        const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
+
+        [].concat(...tableData).forEach((cellData) => {
+            if (cellData.elementIndex) {
+                cellData.elementIndex.rowIndex += 1;
+            }
+        });
+
+        tableData.unshift(newHeader);
+    } else if (tableData.length === 1) {
+        const newRow = util.range(0, cellCount).map(colIndex => (
+            createBasicCell(1, colIndex, 'TD')
+        ));
+
+        tableData.push(newRow);
+    } else {
+        added = false;
+    }
+
+    return added;
 }
 
 export default {
@@ -359,5 +381,6 @@ export default {
     findRowMergedLastIndex,
     findColMergedLastIndex,
     findElementIndex,
-    stuffCellsIntoIncompleteRow
+    stuffCellsIntoIncompleteRow,
+    addTbodyOrTheadIfNeed
 };
