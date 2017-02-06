@@ -45,51 +45,6 @@ class WwMergedTableManager extends WwTableManager {
     }
 
     /**
-     * Replace incompletion table to completion table.
-     * @param {jQuery} $table - current jQuery table element
-     * @param {Array.<Array.<object>>} tableData - table data
-     * @private
-     */
-    _replaceToCompletionTable($table, tableData) {
-        tableDataHandler.stuffCellsIntoIncompleteRow(tableData);
-        tableRenderer.replaceTable($table, tableData);
-    }
-
-    /**
-     * Add tbody or thead of table data if need.
-     * @param {Array.<Array.<object>>} tableData - table data
-     * @returns {boolean}
-     * @private
-     */
-    _addTbodyOrTheadOfTableDataIfNeed(tableData) {
-        const header = tableData[0];
-        const cellCount = header.length;
-        let added = true;
-
-        if (!cellCount && tableData[1]) {
-            util.range(0, tableData[1].length).forEach(colIndex => {
-                header.push(tableDataHandler.createBasicCell(0, colIndex, 'TH'));
-            });
-        } else if (tableData[0][0].nodeName !== 'TH') {
-            const newHeader = util.range(0, cellCount).map(colIndex => (
-                tableDataHandler.createBasicCell(0, colIndex, 'TH')
-            ));
-
-            tableData.unshift(newHeader);
-        } else if (tableData.length === 1) {
-            const newRow = util.range(0, cellCount).map(colIndex => (
-                tableDataHandler.createBasicCell(1, colIndex, 'TD')
-            ));
-
-            tableData.push(newRow);
-        } else {
-            added = false;
-        }
-
-        return added;
-    }
-
-    /**
      * Append table cells.
      * @param {HTMLElement} node Table element
      * @override
@@ -97,12 +52,16 @@ class WwMergedTableManager extends WwTableManager {
     tableCellAppendAidForTableElement(node) {
         const $table = $(node);
         const tableData = tableDataHandler.createTableData($table);
-        const added = this._addTbodyOrTheadOfTableDataIfNeed(tableData);
+        const added = tableDataHandler.addTbodyOrTheadIfNeed(tableData);
         const tableAidInformation = this.prepareToTableCellStuffing(tableData);
         const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
+        if (needTableCellStuffingAid) {
+            tableDataHandler.stuffCellsIntoIncompleteRow(tableData, tableAidInformation.maximumCellLength);
+        }
+
         if (added || needTableCellStuffingAid) {
-            this._replaceToCompletionTable($table, tableData);
+            tableRenderer.replaceTable($table, tableData);
         }
     }
 }
