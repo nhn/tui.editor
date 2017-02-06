@@ -320,6 +320,7 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 /**
  * Stuff cells into incomplete row.
  * @param {Array.<Array.<object>>} tableData - table data
+ * @param {number} limitIndex - limit index
  * @ignore
  */
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
@@ -350,7 +351,7 @@ function addTbodyOrTheadIfNeed(tableData) {
     } else if (tableData[0][0].nodeName !== 'TH') {
         const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
 
-        [].concat(...tableData).forEach((cellData) => {
+        [].concat(...tableData).forEach(cellData => {
             if (cellData.elementIndex) {
                 cellData.elementIndex.rowIndex += 1;
             }

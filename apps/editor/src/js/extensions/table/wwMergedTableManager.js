@@ -7,7 +7,6 @@ import WwTableManager from '../../wwTableManager';
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 
-const util = tui.util;
 /**
  * WwMergedTableManager
  * @exports WwMergedTableManager
