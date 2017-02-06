@@ -24,24 +24,25 @@ class WwPasteContentHelper {
      * Process paste data before paste
      * @api
      * @memberOf WwPasteContentHelper
-     * @param {object} pasteData Pasting data
+     * @param {jQuery} $container - clipboard container
      */
-    preparePaste(pasteData) {
+    preparePaste($container) {
         const range = this.wwe.getEditor().getSelection().cloneRange();
         const codeblockManager = this.wwe.componentManager.getManager('codeblock');
         const tableManager = this.wwe.componentManager.getManager('table');
         let firstBlockIsTaken = false;
-        let newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+        let $tempContainer = $('<div />');
+
         let nodeName, node, isPastingList;
 
-        pasteData.fragment = this._pasteFirstAid(pasteData.fragment);
+        this._pasteFirstAid($container);
 
-        const childNodes = util.toArray(pasteData.fragment.childNodes);
+        const childNodes = util.toArray($container[0].childNodes);
 
         // prepare to paste as inline of first node if possible
         // 앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
         if (childNodes.length && childNodes[0].tagName === 'DIV') {
-            $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
+            $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
             childNodes.shift();
         }
 
@@ -51,32 +52,32 @@ class WwPasteContentHelper {
             isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
             if (codeblockManager.isInCodeBlock(range)) {
-                newFragment.appendChild(codeblockManager.prepareToPasteOnCodeblock(childNodes));
+                $tempContainer.append(codeblockManager.prepareToPasteOnCodeblock(childNodes));
             } else if (tableManager.isInTable(range)) {
-                newFragment = tableManager.prepareToPasteOnTable(pasteData, node);
+                $tempContainer = tableManager.prepareToPasteOnTable($container, node);
                 childNodes.shift();
             } else if (isPastingList) {
-                newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
+                $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
                 // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
                 firstBlockIsTaken = true;
             } else {
-                newFragment.appendChild(childNodes.shift());
+                $tempContainer.append(childNodes.shift());
             }
         }
 
-        pasteData.fragment = newFragment;
+        $container.html($tempContainer.html());
     }
 
     /**
      * Wrap orphan node(inline, text) with div element
-     * @param {DocumentFragment} fragment - Fragment of paste data
+     * @param {jQuery} $container - clipboard container
      * @memberOf WwPasteContentHelper
      * @returns {DocumentFragment}
      * @private
      */
-    _wrapOrphanNodeWithDiv(fragment) {
-        const newFrag = document.createDocumentFragment();
-        const array = util.toArray(fragment.childNodes);
+    _wrapOrphanNodeWithDiv($container) {
+        const $tempContainer = $('<div />');
+        const array = util.toArray($container[0].childNodes);
         let currentDiv;
 
         util.forEachArray(array, node => {
@@ -88,7 +89,8 @@ class WwPasteContentHelper {
             if (isTextNode || isInlineNode) {
                 if (!currentDiv) {
                     currentDiv = document.createElement('div');
-                    newFrag.appendChild(currentDiv);
+                    $tempContainer.append(currentDiv);
+                    // newFrag.appendChild(currentDiv);
                 }
 
                 currentDiv.appendChild(node);
@@ -98,66 +100,63 @@ class WwPasteContentHelper {
                 }
 
                 currentDiv = null;
-                newFrag.appendChild(node);
+                $tempContainer.append(node);
+                // newFrag.appendChild(node);
             }
         });
 
-        return newFrag;
+        return $tempContainer.html();
     }
 
     /**
      * Processing paste data after paste
-     * @param {DocumentFragment} fragment Pasting data
+     * @param {jQuery} $container - clipboard container
      * @memberOf WwPasteContentHelper
-     * @returns {DocumentFragment}
      * @private
      */
-    _pasteFirstAid(fragment) {
+    _pasteFirstAid($container) {
         const blockTags = 'div, section, article, aside, nav, menus, p';
 
-        fragment = htmlSanitizer(fragment);
+        $container.html(htmlSanitizer($container.html(), true));
 
-        $(fragment).find('*').each((i, node) => {
+        $container.find('*').each((i, node) => {
             this._removeStyles(node);
         });
 
-        this._unwrapIfNonBlockElementHasBr(fragment);
-        this._unwrapNestedBlocks(fragment, blockTags);
+        this._unwrapIfNonBlockElementHasBr($container);
+        this._unwrapNestedBlocks($container, blockTags);
 
-        this._removeUnnecessaryBlocks(fragment, blockTags);
-        this._removeStyles(fragment);
+        this._removeUnnecessaryBlocks($container, blockTags);
 
-        fragment = this._wrapOrphanNodeWithDiv(fragment);
+        $container.html(this._wrapOrphanNodeWithDiv($container));
 
-        this._preElementAid(fragment);
+        this._preElementAid($container);
 
-        this._tableElementAid(fragment);
+        this._tableElementAid($container);
 
-        $(fragment).children('br').remove();
-
-        return fragment;
+        $container.children('br').remove();
     }
 
     /**
      * PRE tag formatting
      * @memberOf WwPasteContentHelper
      * @private
-     * @param {DocumentFragment} nodes Pasting DocumentFragment
+     * @param {jQuery} $container - clipboard container
      */
-    _preElementAid(nodes) {
+    _preElementAid($container) {
         const codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-        codeblockManager.splitCodeblockToEachLine(nodes);
+        codeblockManager.splitCodeblockToEachLine($container);
     }
 
     /**
      * Unwrap span children of document fragment with div element
-     * @param {DocumentFragment} fragment - Fragment of paste data
+     * @param {jQuery} $container - clipboard container
      * @memberOf WwPasteContentHelper
      * @private
      */
-    _unwrapIfNonBlockElementHasBr(fragment) {
-        const nonBlockElements = $(fragment).find('span, a, b, em, i, s');
+    _unwrapIfNonBlockElementHasBr($container) {
+        const nonBlockElements = $container.find('span, a, b, em, i, s');
 
         nonBlockElements.each((i, node) => {
             const brChildren = $(node).children('br');
@@ -170,21 +169,20 @@ class WwPasteContentHelper {
 
     /**
      * Unwrap nested block elements
-     * @param {DocumentFragment} fragment - Fragment of paste data
+     * @param {jQuery} $container - clipboard container
      * @param {string} blockTags - Tag names of block tag
      * @private
      */
-    _unwrapNestedBlocks(fragment, blockTags) {
-        const leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code,span');
+    _unwrapNestedBlocks($container, blockTags) {
+        const $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span');
 
-        leafElements.each((i, node) => {
+        $leafElements.each((i, node) => {
             let leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
-            let parent;
 
             while (leafElement.parents(blockTags).length) {
-                parent = leafElement.parent(blockTags);
+                const $parent = leafElement.parent(blockTags);
 
-                if (parent.length) {
+                if ($parent.length && $parent[0] !== $container[0]) {
                     leafElement.unwrap();
                 } else {
                     leafElement = leafElement.parent();
@@ -195,13 +193,13 @@ class WwPasteContentHelper {
 
     /**
      * Remove unnecessary block element in pasting data
-     * @param {DocumentFragment} fragment Pasting DocumentFragment
+     * @param {jQuery} $container - clipboard container
      * @param {string} blockTags - Tag names of block tag
      * @memberOf WwPasteContentHelper
      * @private
      */
-    _removeUnnecessaryBlocks(fragment, blockTags) {
-        $(fragment).find(blockTags).each((index, blockElement) => {
+    _removeUnnecessaryBlocks($container, blockTags) {
+        $container.find(blockTags).each((index, blockElement) => {
             const $blockElement = $(blockElement);
             const tagName = blockElement.tagName;
             const isDivElement = tagName === 'DIV';
@@ -383,55 +381,55 @@ class WwPasteContentHelper {
 
     /**
      * Pasting table element pre-process
-     * @param {DocumentFragment} fragment pasteData's fragment
+     * @param {jQuery} $container - clipboard container
      * @memberOf WwPasteContentHelper
      * @private
      */
-    _tableElementAid(fragment) {
-        this._completeTableIfNeed(fragment);
-        this._updateTableIDClassName(fragment);
+    _tableElementAid($container) {
+        this._completeTableIfNeed($container);
+        this._updateTableIDClassName($container);
     }
 
     /**
      * Complete and append table to fragment
-     * @param {DocumentFragment} fragment Copied data
+     * @param {jQuery} $container - clipboard container
      * @private
      */
-    _completeTableIfNeed(fragment) {
+    _completeTableIfNeed($container) {
         const tableManager = this.wwe.componentManager.getManager('table');
-        const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+        const wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed($container);
 
         if (wrapperTr) {
-            $(fragment).append(wrapperTr);
+            $container.append(wrapperTr);
         }
 
-        const wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+        const wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed($container);
 
         if (wrapperTbody) {
-            $(fragment).append(wrapperTbody);
+            $container.append(wrapperTbody);
         }
 
-        const wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+        const wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed($container);
 
         if (wrapperTable) {
-            $(fragment).append(wrapperTable);
+            $container.append(wrapperTable);
         }
     }
 
     /**
      * Update table ID class name in fragment
-     * @param {DocumentFragment} fragment Copied data
+     * @param {jQuery} $container - clipboard container
      * @private
      */
-    _updateTableIDClassName(fragment) {
+    _updateTableIDClassName($container) {
         const tableManager = this.wwe.componentManager.getManager('table');
 
-        $(fragment).find('table').each((index, table) => {
+        $container.find('table').each((index, table) => {
             $(table).removeClass((idx, className) =>
                 className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1'));
         });
 
-        $(fragment).find('table').each((index, table) => {
+        $container.find('table').each((index, table) => {
             $(table).addClass(tableManager.getTableIDClassName());
         });
     }

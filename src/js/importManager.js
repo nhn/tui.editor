@@ -3,11 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-import excelTableParser from './excelTableParser';
-import i18n from './i18n';
-
 const util = tui.util;
-const FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
 
 /**
  * ImportManager
@@ -93,25 +89,11 @@ class ImportManager {
             && ev.data.text[0].match(/https?:\/\//g)
         ) {
             ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
-        } else if (
-            ev.source === 'wysiwyg'
-            && ev.data.fragment.childNodes.length === 1
-            && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE
-            && ev.data.fragment.firstChild.tagName === 'A'
-        ) {
-            ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
-        }
-    }
+        } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
+            const $anchor = ev.$clipboardContainer.find('A');
 
-    /**
-     * Add table with excel style data
-     * @memberOf ImportManager
-     * @param {string} content Table data
-     * @private
-     */
-    _addExcelTable(content) {
-        const tableInfo = excelTableParser(content);
-        this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
+            $anchor.text(decodeURIComponent($anchor.text()));
+        }
     }
 
     /**
@@ -127,8 +109,6 @@ class ImportManager {
 
         if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
             this._processBlobItems(blobItems, evData);
-        } else if (!this._isInBlockFormat()) {
-            this._precessDataTransfer(cbData, evData);
         }
     }
 
@@ -152,23 +132,6 @@ class ImportManager {
 
                 return true;
             });
-        }
-    }
-
-    /**
-     * Process for excel style data
-     * @memberOf ImportManager
-     * @param {HTMLElement} cbData Clipboard data
-     * @param {object} evData Event data
-     * @private
-     */
-    _precessDataTransfer(cbData, evData) {
-        const textContent = cbData.getData('text');
-
-        if (FIND_EXCEL_DATA.test(textContent) && confirm(i18n.get('Would you like to paste as table?'))) {
-            evData.preventDefault();
-            evData.codemirrorIgnore = true;
-            this._addExcelTable(textContent);
         }
     }
 

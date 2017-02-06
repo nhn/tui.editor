@@ -20,37 +20,6 @@ describe('WwClipboardManager', () => {
         $('body').empty();
     });
 
-    describe('_refineCursorWithPasteContentsIfNeed', () => {
-        it('set selection to last element of contents', done => {
-            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
-            $(fragment).append('<ul><li>ddd<br></li><li>dd2<br></li</ul>');
-
-            cbm._refineCursorWithPasteContentsIfNeed(fragment);
-            wwe.getEditor().insertHTML(fragment);
-
-            setTimeout(() => {
-                const range = wwe.getEditor().getSelection();
-                expect(range.startContainer.childNodes[range.startOffset - 1].tagName).toEqual('BR');
-                done();
-            }, 50);
-        });
-        it('do nothing when pasting content is empty', done => {
-            const fragment = wwe.getEditor().getDocument().createDocumentFragment();
-
-            let range = wwe.getEditor().getSelection();
-            const cursorPositionElement = range.startContainer;
-
-            cbm._refineCursorWithPasteContentsIfNeed(fragment);
-            wwe.getEditor().insertHTML(fragment);
-
-            setTimeout(() => {
-                range = wwe.getEditor().getSelection();
-                expect(range.startContainer).toBe(cursorPositionElement);
-                done();
-            }, 0);
-        });
-    });
-
     describe('_extendRange', () => {
         beforeEach(() => {
             wwe.focus();
@@ -132,64 +101,6 @@ describe('WwClipboardManager', () => {
             expect(range.startContainer.className).toBe();
             expect(range.startContainer.nodeType === Node.TEXT_NODE).toBe(true);
             expect(range.endContainer.nodeType === Node.TEXT_NODE).toBe(true);
-        });
-    });
-    describe('_addRangeInfoAndReplaceFragmentIfNeed', () => {
-        it('add rangeInfo when exist', () => {
-            const pasteData = {
-                fragment: $('<div>bye</div>')[0]
-            };
-
-            cbm._latestClipboardRangeInfo = {
-                commonAncestorName: 'DIV',
-                contents: $('<div>hello</div>')[0]
-            };
-
-            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
-            expect(pasteData.fragment.textContent).toBe('bye');
-        });
-        it('add rangeInfo and do not replace fragment when textContents are same', () => {
-            const pasteData = {
-                fragment: $('<div>bye</div>')[0]
-            };
-
-            cbm._latestClipboardRangeInfo = {
-                commonAncestorName: 'DIV',
-                contents: $('<div>hello</div>')[0]
-            };
-
-            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
-            expect(pasteData.fragment.textContent).toBe('bye');
-        });
-
-        it('add rangeInfo and do not replace fragment when textContents are same', () => {
-            const pasteData = {
-                fragment: $('<div>hello</div>')[0]
-            };
-
-            cbm._latestClipboardRangeInfo = {
-                commonAncestorName: 'DIV',
-                contents: $('<div class="hello">hello</div>')[0]
-            };
-
-            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-            expect(pasteData.rangeInfo.commonAncestorName).toBe('DIV');
-            expect(pasteData.fragment.textContent).toBe('hello');
-            expect(pasteData.fragment.className).toBe('hello');
-        });
-        it('do nothing when _latestClipboardRangeInfo not exists', () => {
-            const pasteData = {
-                fragment: $('<div>hello</div>')[0]
-            };
-
-            cbm._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-            expect(pasteData.rangeInfo).toBeUndefined();
         });
     });
 });
