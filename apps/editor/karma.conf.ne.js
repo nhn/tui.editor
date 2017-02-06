@@ -122,6 +122,9 @@ module.exports = function(config) {
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true,
 
+        // 동시 실행 browser 수를 두개로 제한
+        // parallel 하게 실행하면 chrome과 IE10이 동시에 실행될 경우 chrome에서 포커스를 잃게되어 테스트가 깨지게 됨
+        concurrency: 2,
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
