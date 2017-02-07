@@ -8,7 +8,7 @@
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwClipboardHandler from './wwClipboardHandler';
-import WwFakeClipboardHandler from './wwFakeClipboardHandler';
+import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
 
 /**
  * WwClipboardManager
@@ -19,13 +19,13 @@ import WwFakeClipboardHandler from './wwFakeClipboardHandler';
  */
 class WwClipboardManager {
     constructor(wwe) {
-        const ClipboardHandler = tui.util.browser.chrome ? WwClipboardHandler : WwFakeClipboardHandler;
+        const ClipboardHandler = tui.util.browser.chrome ? WwClipboardHandler : WwPseudoClipboardHandler;
 
         this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
         this._cbHdr = new ClipboardHandler(this.wwe, {
             onCopyBefore: this.onCopyBefore.bind(this),
-            onCutBefore: this.onCutBefore.bind(this),
+            onCutBefore: this.onCopyBefore.bind(this),
             onCut: this.onCut.bind(this),
             onPaste: this.onPaste.bind(this)
         });
@@ -65,14 +65,6 @@ class WwClipboardManager {
     }
 
     /**
-     * This handler execute before cut.
-     * @param {Event} ev - clipboard event
-     */
-    onCutBefore(ev) {
-        this.onCopyBefore(ev);
-    }
-
-    /**
      * This handler execute cut.
      * @param {Event} ev - clipboard event
      */
@@ -84,12 +76,11 @@ class WwClipboardManager {
         this.wwe.postProcessForChange();
     }
 
-
     /**
-     * Remove meta elemen, if has it.
+     * Remove meta element, if exist it.
      * @param {HTMLElement} firstElement - first element of clipboard container
      */
-    _removeMetaElementIfHas(firstElement) {
+    _removeMetaElementIfExist(firstElement) {
         if (firstElement && firstElement.nodeName === 'META') {
             $(firstElement).remove();
         }
@@ -103,9 +94,13 @@ class WwClipboardManager {
         const $clipboardContainer = $('<div />');
         const html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
 
+        if (!html) {
+            return;
+        }
+
         $clipboardContainer.html(html);
 
-        this._removeMetaElementIfHas($clipboardContainer[0].firstChild);
+        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
 
         this._pch.preparePaste($clipboardContainer);
 

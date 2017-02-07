@@ -20,13 +20,13 @@ if (window.getSelection) {
 }
 
 /**
- * FakeDataTransfer
- * Fake DataTransfer for paste.
+ * PseudoDataTransfer
+ * Psudo DataTransfer for paste.
  * @constructor
- * @class FakeDataTransfer
+ * @class PseudoDataTransfer
  * @param {object} data - data for initionalizing
  */
-class FakeDataTransfer {
+class PseudoDataTransfer {
     constructor(data) {
         this.html = data.html;
     }
@@ -34,7 +34,7 @@ class FakeDataTransfer {
     /**
      * get data.
      * @returns {string}
-     * @memberOf FakeDataTransfer
+     * @memberOf PseudoDataTransfer
      */
     getData() {
         return this.html;
@@ -42,16 +42,16 @@ class FakeDataTransfer {
 }
 
 /**
- * WwFakeClipboardHandler
- * @exports WwFakeClipboardHandler
+ * WwPseudoClipboardHandler
+ * @exports WwPseudoClipboardHandler
  * @constructor
- * @class WwFakeClipboardHandler
+ * @class WwPseudoClipboardHandler
  * @param {WysiwygEditor} wwe - WysiwygEditor instance
  * @param {object} eventHandler - EventHandler instance
  */
-class WwFakeClipboardHandler {
+class WwPseudoClipboardHandler {
     constructor(wwe, eventHandler) {
-        const $clipboardBody = $('<div class="tui-editor-fake-clipboard" contentEditable="true" />');
+        const $clipboardBody = $('<div class="tui-editor-pseudo-clipboard" contentEditable="true" />');
 
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
@@ -71,7 +71,7 @@ class WwFakeClipboardHandler {
      * @param {function} onCut - cut handler
      * @param {function} onPaste - paste handler
      * @private
-     * @memberOf WwFakeClipboardHandler
+     * @memberOf WwPseudoClipboardHandler
      */
     _initEvent({onCopyBefore, onCutBefore, onCut, onPaste}) {
         this.wwe.addKeyEventHandler(`${META_KEY}+C`, ev => {
@@ -110,7 +110,7 @@ class WwFakeClipboardHandler {
                 this.$clipboardBody.html('');
 
                 const ev = {
-                    clipboardData: new FakeDataTransfer({html})
+                    clipboardData: new PseudoDataTransfer({html})
                 };
 
                 onPaste(ev);
@@ -123,7 +123,7 @@ class WwFakeClipboardHandler {
      * Set clipboard data.
      * @param {Event} ev - clipboard event like copy, cut
      * @param {string} htmlContent - html content
-     * @memberOf WwFakeClipboardHandler
+     * @memberOf WwPseudoClipboardHandler
      */
     setClipboardData(ev, htmlContent) {
         this.$clipboardBody.html(htmlContent);
@@ -133,4 +133,4 @@ class WwFakeClipboardHandler {
     }
 }
 
-export default WwFakeClipboardHandler;
+export default WwPseudoClipboardHandler;

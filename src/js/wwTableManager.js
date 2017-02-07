@@ -90,9 +90,6 @@ class WwTableManager {
         if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
             ev.preventDefault();
         }
-        // this.wwe.defer(() => {
-        //     this._completeTableIfNeed();
-        // }, TABLE_COMPLETION_DELAY);
     }
 
     /**
