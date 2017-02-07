@@ -90,9 +90,6 @@ class WwTableManager {
         if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
             ev.preventDefault();
         }
-        this.wwe.defer(() => {
-            this._completeTableIfNeed();
-        }, TABLE_COMPLETION_DELAY);
     }
 
     /**
@@ -151,7 +148,7 @@ class WwTableManager {
 
         util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
 
-        this._bindKeyEventForTableCopyAndCut();
+        // this._bindKeyEventForTableCopyAndCut();
     }
 
     /**
@@ -500,11 +497,11 @@ class WwTableManager {
 
     /**
      * Wrap dangling table cells with new TR
-     * @param {DocumentFragment} fragment Pasting data
+     * @param {jQuery} $container - clipboard container
      * @returns {HTMLElement|null}
      */
-    wrapDanglingTableCellsIntoTrIfNeed(fragment) {
-        const danglingTableCells = $(fragment).children('td,th');
+    wrapDanglingTableCellsIntoTrIfNeed($container) {
+        const danglingTableCells = $container.children('td,th');
         let tr;
 
         if (danglingTableCells.length) {
@@ -522,11 +519,11 @@ class WwTableManager {
 
     /**
      * Wrap TRs with new TBODY
-     * @param {DocumentFragment} fragment Pasting data
+     * @param {jQuery} $container - clipboard container
      * @returns {HTMLElement|null}
      */
-    wrapTrsIntoTbodyIfNeed(fragment) {
-        const danglingTrs = $(fragment).children('tr');
+    wrapTrsIntoTbodyIfNeed($container) {
+        const danglingTrs = $container.children('tr');
         const ths = danglingTrs.find('th');
         let tbody;
 
@@ -557,12 +554,12 @@ class WwTableManager {
 
     /**
      * Wrap THEAD followed by TBODY both into Table
-     * @param {DocumentFragment} fragment Pasting data
+     * @param {jQuery} $container - clipboard container
      * @returns {HTMLElement|null}
      */
-    wrapTheadAndTbodyIntoTableIfNeed(fragment) {
-        const danglingThead = $(fragment).children('thead');
-        const danglingTbody = $(fragment).children('tbody');
+    wrapTheadAndTbodyIntoTableIfNeed($container) {
+        const danglingThead = $container.children('thead');
+        const danglingTbody = $container.children('tbody');
         const $wrapperTable = $('<table></table>');
         let table;
 
@@ -1171,8 +1168,8 @@ class WwTableManager {
         this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
         this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
         this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
-        this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
-        this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
+        // this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
+        // this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
 
         util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
     }

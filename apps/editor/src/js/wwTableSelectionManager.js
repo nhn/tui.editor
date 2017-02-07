@@ -128,6 +128,7 @@ class WwTableSelectionManager {
                     this.wwe.componentManager.getManager('table').resetLastCellNode();
 
                     selectionEnd = selectionEnd || validSelectionEnd;
+
                     range = this.wwe.getEditor().getSelection();
                     range.setStart(selectionEnd, 0);
                     range.setEnd(selectionEnd, 1);
@@ -137,6 +138,12 @@ class WwTableSelectionManager {
             }
 
             this._isSelectionStarted = false;
+        });
+
+        this.eventManager.listen('copyBefore.table', () => {
+            if (this._isSelectionStarted) {
+                this._isSelectionStarted = false;
+            }
         });
     }
 
@@ -393,6 +400,7 @@ class WwTableSelectionManager {
         this.eventManager.removeEventHandler('mousedown.table');
         this.eventManager.removeEventHandler('mouseover.table');
         this.eventManager.removeEventHandler('mouseup.table');
+        this.eventManager.removeEventHandler('copyBefore.table');
     }
 }
 module.exports = WwTableSelectionManager;

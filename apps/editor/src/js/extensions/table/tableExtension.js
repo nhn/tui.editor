@@ -18,6 +18,10 @@ import wwMergeCell from './mergeCell';
 import wwUnergeCell from './unmergeCell';
 import mergedTableUI from './mergedTableUI';
 
+import dataHandler from './tableDataHandler';
+import tableRangeHandler from './tableRangeHandler';
+import tableRenderer from './tableRenderer';
+
 require('./langs');
 
 extManager.defineExtension('tableExtension', editor => {
@@ -30,7 +34,7 @@ extManager.defineExtension('tableExtension', editor => {
 
     _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
-    _bindEvents(eventManager);
+    _bindEvents(eventManager, wwComponentManager);
 
     if (editor._ui.popupTableUtils) {
         mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
@@ -117,13 +121,53 @@ function _snatchWysiwygCommand(commandWrapper) {
 }
 
 /**
+ * Update table html of clipboard data, if has selected cells.
+ * @param {jQuery} $clipboardContainer - jQuery element
+ * @param {object} wwComponentManager - wysiwyg component manager
+ */
+function _updateTableHtmlOfClipboardIfNeed($clipboardContainer, wwComponentManager) {
+    const $selectedCells = wwComponentManager.getManager('tableSelection').getSelectedCells();
+
+    if (!$selectedCells.length) {
+        return;
+    }
+
+    const tableData = dataHandler.createTableData($($selectedCells[0]).closest('TABLE'));
+    const {start: startRange, end: endRange} = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells);
+
+    let copyTableData = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
+    copyTableData = copyTableData.map(rowData => rowData.slice(startRange.colIndex, endRange.colIndex + 1));
+
+    const cellIndexData = dataHandler.createCellIndexData(copyTableData);
+    const renderData = dataHandler.createRenderData(copyTableData, cellIndexData);
+
+    $clipboardContainer.html(tableRenderer.createTableHtml(renderData));
+}
+
+/**
+ * Remove selected cells, when cut event and has selected cells.
+ * @param {object} wwComponentManager - wysiwyg component manager
+ */
+function _removeSelectedCellsIfNeed(wwComponentManager) {
+    const $selectedCells = wwComponentManager.getManager('tableSelection').getSelectedCells();
+
+    if ($selectedCells.length) {
+        $selectedCells.get().forEach(cell => ($(cell).html('')));
+    }
+}
+
+/**
  * Bind events.
  * @param {object} eventManager - eventManager instance
+ * @param {object} wwComponentManager - wysiwg component manager instance
  * @private
  */
-function _bindEvents(eventManager) {
+function _bindEvents(eventManager, wwComponentManager) {
     eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
     eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
     eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+    eventManager.listen('copyBefore', ({$clipboardContainer}) =>
+                        _updateTableHtmlOfClipboardIfNeed($clipboardContainer, wwComponentManager));
+    eventManager.listen('cut', () => _removeSelectedCellsIfNeed(wwComponentManager));
 }
 

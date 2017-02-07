@@ -58,6 +58,7 @@ const eventList = [
     'blur',
     'paste',
     'copy',
+    'copyBefore',
     'cut',
     'drop',
     'show',

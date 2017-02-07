@@ -413,14 +413,14 @@ describe('WwTableManager', () => {
     });
     describe('wrap table', () => {
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '<tr><td>7</td><td>8</td></tr>' +
                 '<tr><td>9</td><td>10</td></tr>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -429,11 +429,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tr><th>3</th><th>4</th></tr>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -442,11 +442,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapDanglingTableCellsIntoTrIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<td>3</td><td>4</td><td>5</td><td>6</td>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TR');
@@ -454,7 +454,7 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTheadAndTbodyIntoTableIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -462,9 +462,9 @@ describe('WwTableManager', () => {
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
@@ -474,14 +474,14 @@ describe('WwTableManager', () => {
             expect($result.find('thead').text()).toBe('12');
         });
         it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tbody>' +
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
