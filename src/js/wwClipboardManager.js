@@ -1,12 +1,14 @@
 /**
  * @fileoverview Implements wysiwyg editor clipboard manager
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author Sungho Kim(sungho-kim@nhnent.com),
+ *         Jiung Kang(jiung.kang@nhnent.com)
+ *         FE Development Team/NHN Ent.
  */
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
-
-const SET_SELECTION_DELAY = 50;
+import WwClipboardHandler from './wwClipboardHandler';
+import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
 
 /**
  * WwClipboardManager
@@ -17,9 +19,16 @@ const SET_SELECTION_DELAY = 50;
  */
 class WwClipboardManager {
     constructor(wwe) {
-        this.wwe = wwe;
+        const ClipboardHandler = tui.util.browser.chrome ? WwClipboardHandler : WwPseudoClipboardHandler;
 
+        this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
+        this._cbHdr = new ClipboardHandler(this.wwe, {
+            onCopyBefore: this.onCopyBefore.bind(this),
+            onCutBefore: this.onCopyBefore.bind(this),
+            onCut: this.onCut.bind(this),
+            onPaste: this.onPaste.bind(this)
+        });
     }
 
     /**
@@ -29,110 +38,79 @@ class WwClipboardManager {
      * @memberOf WwClipboardManager
      */
     init() {
-        this._initSquireEvent();
-    }
-
-    /**
-     * _initSquireEvent
-     * initialize squire events
-     * @private
-     * @memberOf WwClipboardManager
-     */
-    _initSquireEvent() {
-        this.wwe.getEditor().addEventListener('copy', ev => {
-            this.wwe.eventManager.emit('copy', {
-                source: 'wysiwyg',
-                data: ev
-            });
-
-            this._executeActionFor('copy');
-        });
-
-        this.wwe.getEditor().addEventListener('cut', ev => {
-            this.wwe.eventManager.emit('cut', {
-                source: 'wysiwyg',
-                data: ev
-            });
-
-            this._executeActionFor('cut');
-        });
-
+        // squire의 willPaste가 동작하지 않도록 처리
         this.wwe.getEditor().addEventListener('willPaste', pasteData => {
-            this._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-            this._pch.preparePaste(pasteData);
-
-            this.wwe.eventManager.emit('pasteBefore', {
-                source: 'wysiwyg',
-                data: pasteData
-            });
-
-            this._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
-            this.wwe.postProcessForChange();
+            pasteData.preventDefault();
         });
     }
-    /**
-     * Refine cursor position with paste contents
-     * @memberOf WwClipboardManager
-     * @param {DocumentFragment} fragment Copied contents
-     * @private
-     */
-    _refineCursorWithPasteContentsIfNeed(fragment) {
-        let node = fragment;
-        const sq = this.wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-
-        if (fragment.childNodes.length !== 0 && !domUtils.isTextNode(node.firstChild)) {
-            while (node.lastChild) {
-                node = node.lastChild;
-            }
-
-            this.wwe.defer(() => {
-                sq.focus();
-
-                range.setStartAfter(node);
-                range.collapse(true);
-                sq.setSelection(range);
-            }, SET_SELECTION_DELAY);
-        }
-    }
 
     /**
-     * Check whether copied content from editor or not
-     * @memberOf WwClipboardManager
-     * @param {DocumentFragment} pasteData Copied contents
-     * @returns {boolean}
-     * @private
+     * This handler execute before copy.
+     * @param {Event} ev - clipboard event
      */
-    _isCopyFromEditor(pasteData) {
-        if (!this._latestClipboardRangeInfo) {
-            return false;
-        }
-
-        const lastestClipboardContents = this._latestClipboardRangeInfo.contents.textContent;
-
-        return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
-    }
-    /**
-     * Save latest clipboard range information to _latestClipboardRangeInfo
-     * @memberOf WwClipboardManager
-     * @private
-     */
-    _saveLastestClipboardRangeInfo() {
-        let commonAncestorName;
+    onCopyBefore(ev) {
+        const $clipboardContainer = $('<div />');
         const range = this.wwe.getEditor().getSelection().cloneRange();
+
         this._extendRange(range);
 
-        if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
-            commonAncestorName = 'BODY';
-        } else {
-            commonAncestorName = range.commonAncestorContainer.tagName;
+        $clipboardContainer.append(range.cloneContents());
+
+        this.wwe.eventManager.emit('copyBefore', {
+            source: 'wysiwyg',
+            $clipboardContainer
+        });
+
+        this._cbHdr.setClipboardData(ev, $clipboardContainer.html(), $clipboardContainer.text());
+    }
+
+    /**
+     * This handler execute cut.
+     * @param {Event} ev - clipboard event
+     */
+    onCut(ev) {
+        this.wwe.eventManager.emit('cut', {
+            source: 'wysiwyg',
+            data: ev
+        });
+        this.wwe.postProcessForChange();
+    }
+
+    /**
+     * Remove meta element, if exist it.
+     * @param {HTMLElement} firstElement - first element of clipboard container
+     */
+    _removeMetaElementIfExist(firstElement) {
+        if (firstElement && firstElement.nodeName === 'META') {
+            $(firstElement).remove();
+        }
+    }
+
+    /**
+     * This handler execute paste.
+     * @param {Event} ev - clipboard event
+     */
+    onPaste(ev) {
+        const $clipboardContainer = $('<div />');
+        const html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+
+        if (!html) {
+            return;
         }
 
-        this._latestClipboardRangeInfo = {
-            contents: range.cloneContents(),
-            commonAncestorName
-        };
+        $clipboardContainer.html(html);
+
+        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
+
+        this._pch.preparePaste($clipboardContainer);
+
+        this.wwe.eventManager.emit('pasteBefore', {
+            source: 'wysiwyg',
+            $clipboardContainer
+        });
+
+        this.wwe.getEditor().insertHTML($clipboardContainer.html());
+        this.wwe.postProcessForChange();
     }
 
     /**
@@ -233,36 +211,6 @@ class WwClipboardManager {
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
     }
-
-    /**
-     * Table cut and copy action helper for safari and IE's
-     * @param {string} [action] Boolean value for cut action
-     * @private
-     */
-    _executeActionFor(action) {
-        this._saveLastestClipboardRangeInfo();
-        if (action === 'cut') {
-            this.wwe.postProcessForChange();
-        }
-    }
-
-    /**
-     * Replace pasteData to lastClipboardRangeInfo's data
-     * @param {object} pasteData Clipboard data
-     * @private
-     */
-    _addRangeInfoAndReplaceFragmentIfNeed(pasteData) {
-        const hasRangeInfo = !!this._latestClipboardRangeInfo;
-        const savedContents = (hasRangeInfo && this._latestClipboardRangeInfo.contents);
-        const isSameContents = savedContents.textContent === pasteData.fragment.textContent;
-
-        if (hasRangeInfo) {
-            pasteData.rangeInfo = this._latestClipboardRangeInfo;
-
-            if (isSameContents) {
-                pasteData.fragment = $(savedContents).clone()[0];
-            }
-        }
-    }
 }
+
 module.exports = WwClipboardManager;
