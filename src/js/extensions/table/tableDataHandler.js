@@ -126,6 +126,10 @@ export function createTableData($table) {
         });
     });
 
+    if ($table[0].className) {
+        tableData.className = $table[0].className;
+    }
+
     return tableData;
 }
 
@@ -186,10 +190,15 @@ function _getHeaderAligns(tableData) {
  */
 function createRenderData(tableData, cellIndexData) {
     const headerAligns = _getHeaderAligns(tableData);
-
-    return cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
+    const renderData = cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
         align: headerAligns[colIndex]
     }, tableData[rowIndex][colIndex]))));
+
+    if (tableData.className) {
+        renderData.className = tableData.className;
+    }
+
+    return renderData;
 }
 
 const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';

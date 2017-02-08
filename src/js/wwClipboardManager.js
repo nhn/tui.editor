@@ -10,6 +10,8 @@ import WwPasteContentHelper from './wwPasteContentHelper';
 import WwClipboardHandler from './wwClipboardHandler';
 import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
 
+const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+
 /**
  * WwClipboardManager
  * @exports WwClipboardManager
@@ -73,7 +75,7 @@ class WwClipboardManager {
             source: 'wysiwyg',
             data: ev
         });
-        this.wwe.postProcessForChange();
+        this.wwe.debouncedPostProcessForChange();
     }
 
     /**
@@ -84,6 +86,39 @@ class WwClipboardManager {
         if (firstElement && firstElement.nodeName === 'META') {
             $(firstElement).remove();
         }
+    }
+
+    /**
+     * Prepare paste.
+     * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
+     */
+    _preparePaste($clipboardContainer) {
+        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
+
+        this._pch.preparePaste($clipboardContainer);
+
+        this.wwe.eventManager.emit('pasteBefore', {
+            source: 'wysiwyg',
+            $clipboardContainer
+        });
+    }
+
+    /**
+     * Focus to after table.
+     * @param {object} sq - squire editor instance
+     */
+    _focusToAfterTable(sq) {
+        const range = sq.getSelection();
+        const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
+
+        if ($bookmarkedTable.length) {
+            return;
+        }
+
+        $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+        range.setEndAfter($bookmarkedTable[0]);
+        range.collapse();
+        sq.setSelection(range);
     }
 
     /**
@@ -100,17 +135,23 @@ class WwClipboardManager {
 
         $clipboardContainer.html(html);
 
-        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
+        this._preparePaste($clipboardContainer);
 
-        this._pch.preparePaste($clipboardContainer);
+        const $lastNode = $($clipboardContainer[0].childNodes).last();
+        const isLastNodeTable = $lastNode[0].nodeName === 'TABLE';
+        const sq = this.wwe.getEditor();
 
-        this.wwe.eventManager.emit('pasteBefore', {
-            source: 'wysiwyg',
-            $clipboardContainer
-        });
+        if (isLastNodeTable) {
+            $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+        }
 
-        this.wwe.getEditor().insertHTML($clipboardContainer.html());
+        sq.getEditor().insertHTML($clipboardContainer.html());
+
         this.wwe.postProcessForChange();
+
+        if (isLastNodeTable) {
+            this._focusToAfterTable(sq);
+        }
     }
 
     /**

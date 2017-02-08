@@ -8,7 +8,6 @@
 import domUtils from './domUtils';
 const util = tui.util;
 const isIE10 = util.browser.msie && util.browser.version === 10;
-const TABLE_COMPLETION_DELAY = 10;
 const SET_SELECTION_DELAY = 50;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -59,9 +58,7 @@ class WwTableManager {
     _initEvent() {
         this.eventManager.listen('wysiwygRangeChangeAfter.table', () => {
             this._unwrapBlockInTable();
-            this.wwe.defer(() => {
-                this._completeTableIfNeed();
-            }, TABLE_COMPLETION_DELAY);
+            this._completeTableIfNeed();
             this.wwe.componentManager.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
             this._insertDefaultBlockBetweenTable();
         });
