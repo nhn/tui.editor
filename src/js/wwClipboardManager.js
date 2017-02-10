@@ -80,13 +80,13 @@ class WwClipboardManager {
     }
 
     /**
-     * Remove meta element, if exist it.
-     * @param {HTMLElement} firstElement - first element of clipboard container
+     * Remove invalid elements.
+     * @param {jQuery} $clipboardContainer - cliboard jQuery container
      */
-    _removeMetaElementIfExist(firstElement) {
-        if (firstElement && firstElement.nodeName === 'META') {
-            $(firstElement).remove();
-        }
+    _removeInvalidElements($clipboardContainer) {
+        $clipboardContainer.children('meta, style, link').each((index, $element) => {
+            $element.remove();
+        });
     }
 
     /**
@@ -94,7 +94,9 @@ class WwClipboardManager {
      * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
      */
     _preparePaste($clipboardContainer) {
-        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
+        this._removeInvalidElements($clipboardContainer);
+
+        $clipboardContainer.html($clipboardContainer.html().trim());
 
         this._pch.preparePaste($clipboardContainer);
 
@@ -159,12 +161,23 @@ class WwClipboardManager {
     }
 
     /**
+     * Remove html comments.
+     * @param {string} html - html
+     * @returns {string}
+     */
+    _removeHtmlComments(html) {
+        return html.replace(/<!--[\s\S]*?-->/g, '');
+    }
+
+    /**
      * This handler execute paste.
      * @param {Event} ev - clipboard event
      */
     onPaste(ev) {
         const $clipboardContainer = $('<div />');
-        const html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+        let html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+
+        html = this._removeHtmlComments(html).trim();
 
         if (!html) {
             return;
