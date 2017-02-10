@@ -36,5 +36,7 @@ tui.Editor.i18n.setLang(['en', 'en_US'], {
     'Would you like to paste as table?': 'Would you like to paste as table?',
     'Text color': 'Text color',
     'Auto scroll enabled': 'Auto scroll enabled',
-    'Auto scroll disabled': 'Auto scroll disabled'
+    'Auto scroll disabled': 'Auto scroll disabled',
+    'Cannot paste values ​​other than a table in the cell selection state':
+        'Cannot paste values ​​other than a table in the cell selection state.'
 });

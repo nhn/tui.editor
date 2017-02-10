@@ -36,5 +36,7 @@ tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
     'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
     'Text color': 'tekst kleur',
     'Auto scroll enabled': 'Auto scroll enabled',
-    'Auto scroll disabled': 'Auto scroll uitgeschakeld'
+    'Auto scroll disabled': 'Auto scroll uitgeschakeld',
+    'Cannot paste values ​​other than a table in the cell selection state':
+        'Kan niet anders dan een tafel in de cel selectie staat waarden te plakken.'
 });

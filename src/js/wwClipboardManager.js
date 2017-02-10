@@ -9,6 +9,7 @@ import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwClipboardHandler from './wwClipboardHandler';
 import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
+import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 
@@ -148,7 +149,7 @@ class WwClipboardManager {
             if (this._isPasteOnlyTable($clipboardContainer)) {
                 tableManager.pasteClipboardData($clipboardContainer.first());
             } else if (tableSelectionManager.getSelectedCells().length) {
-                alert('cell선택 상태에서는 table 이외의 값은 붙여넣을 수 없습니다.');
+                alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
             } else {
                 pasted = false;
             }
