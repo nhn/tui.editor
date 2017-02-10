@@ -107,18 +107,54 @@ class WwClipboardManager {
      * Focus to after table.
      * @param {object} sq - squire editor instance
      */
-    _focusToAfterTable(sq) {
-        const range = sq.getSelection();
+    _focusToAfterTable() {
+        const sq = this.wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
         const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
 
         if ($bookmarkedTable.length) {
-            return;
+            $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+            range.setEndAfter($bookmarkedTable[0]);
+            range.collapse(false);
+            sq.setSelection(range);
+        }
+    }
+
+    /**
+     * Whether paste only table or not.
+     * @param {jQuery} $clipboardContainer - clibpard container
+     * @returns {boolean}
+     */
+    _isPasteOnlyTable($clipboardContainer) {
+        const childNodes = $clipboardContainer[0].childNodes;
+
+        return childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
+    }
+
+    /**
+     * Paste to table.
+     * @param {jQuery} $clipboardContainer - clibpard container
+     * @returns {boolean}
+     */
+    _pasteToTable($clipboardContainer) {
+        const tableManager = this.wwe.componentManager.getManager('table');
+        const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+        const range = this.wwe.getEditor().getSelection();
+        let pasted = false;
+
+        if (tableManager.isInTable(range)) {
+            pasted = true;
+
+            if (this._isPasteOnlyTable($clipboardContainer)) {
+                tableManager.pasteClipboardData($clipboardContainer.first());
+            } else if (tableSelectionManager.getSelectedCells().length) {
+                alert('cell선택 상태에서는 table 이외의 값은 붙여넣을 수 없습니다.');
+            } else {
+                pasted = false;
+            }
         }
 
-        $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
-        range.setEndAfter($bookmarkedTable[0]);
-        range.collapse();
-        sq.setSelection(range);
+        return pasted;
     }
 
     /**
@@ -139,18 +175,22 @@ class WwClipboardManager {
 
         const $lastNode = $($clipboardContainer[0].childNodes).last();
         const isLastNodeTable = $lastNode[0].nodeName === 'TABLE';
-        const sq = this.wwe.getEditor();
 
         if (isLastNodeTable) {
             $lastNode.addClass(PASTE_TABLE_BOOKMARK);
         }
 
-        sq.getEditor().insertHTML($clipboardContainer.html());
+        const pastedTable = this._pasteToTable($clipboardContainer);
 
+        if (pastedTable) {
+            return;
+        }
+
+        this.wwe.getEditor().insertHTML($clipboardContainer.html());
         this.wwe.postProcessForChange();
 
         if (isLastNodeTable) {
-            this._focusToAfterTable(sq);
+            this._focusToAfterTable();
         }
     }
 

@@ -75,13 +75,17 @@ class WwPseudoClipboardHandler {
      */
     _initEvent({onCopyBefore, onCutBefore, onCut, onPaste}) {
         this.wwe.addKeyEventHandler(`${META_KEY}+C`, ev => {
+            const selectedCellCount = this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length;
             const cachedRange = this.wwEditor.getSelection().cloneRange();
 
             onCopyBefore(ev);
 
             setTimeout(() => {
-                this.wwEditor.focus();
-                this.wwEditor.setSelection(cachedRange);
+                this.wwEditor.get$Body().focus();
+
+                if (!selectedCellCount) {
+                    this.wwEditor.setSelection(cachedRange);
+                }
             }, 0);
         });
 
