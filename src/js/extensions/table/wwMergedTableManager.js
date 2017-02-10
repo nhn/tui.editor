@@ -24,6 +24,7 @@ class WwMergedTableManager extends WwTableManager {
      * Update mergeWidth property like rowMergeWith, colMergeWith of table data for copy.
      * @param {Array.<Array.<object>>} copyTableData - table data for copy
      * @param {{rowIndex: number, colIndex: number}} startRange - start range
+     * @private
      */
     _updateCopyDataMergeWith(copyTableData, startRange) {
         copyTableData.forEach(rowData => {
@@ -45,6 +46,7 @@ class WwMergedTableManager extends WwTableManager {
      * @param {{rowIndex: number, colIndex: number}} startRange - start range
      * @param {{rowIndex: number, colIndex: number}} endRange - end range
      * @returns {Array.<Array.<object>>}
+     * @private
      */
     _createCopyTableData(tableData, startRange, endRange) {
         let copyTableData = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
@@ -258,37 +260,37 @@ class WwMergedTableManager extends WwTableManager {
         const endColIndex = endCellIndex.colIndex;
         const filterdTableData = tableData.slice(startRowIndex, endRowIndex + 1);
         const firstRow = filterdTableData[0].slice(startColIndex, endColIndex + 1);
-        let possibled = !any(firstRow, cellData => util.isExisty(cellData.rowMergeWith));
+        let isPossible = !any(firstRow, cellData => util.isExisty(cellData.rowMergeWith));
 
-        if (possibled) {
+        if (isPossible) {
             const firstCells = util.pluck(filterdTableData, startColIndex);
 
-            possibled = !any(firstCells, cellData => util.isExisty(cellData.colMergeWith));
+            isPossible = !any(firstCells, cellData => util.isExisty(cellData.colMergeWith));
         }
 
-        if (possibled && tableData.length > endRowIndex + 1) {
+        if (isPossible && tableData.length > endRowIndex + 1) {
             const nextRow = tableData[endRowIndex + 1].slice(startColIndex, endColIndex + 1);
 
-            possibled = !any(nextRow, cellData => util.isExisty(cellData.rowMergeWith));
+            isPossible = !any(nextRow, cellData => util.isExisty(cellData.rowMergeWith));
         }
 
-        if (possibled && tableData[0].length > endColIndex + 1) {
+        if (isPossible && tableData[0].length > endColIndex + 1) {
             const nextCells = util.pluck(filterdTableData, endColIndex + 1);
 
-            possibled = !any(nextCells, cellData => util.isExisty(cellData.colMergeWith));
+            isPossible = !any(nextCells, cellData => util.isExisty(cellData.colMergeWith));
         }
 
-        return possibled;
+        return isPossible;
     }
 
     /**
-     * Make small to clipboardTableData by target row count and col count.
+     * Splice clipboardTableData by target row count and col count.
      * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
      * @param {number} targetRowCount - target row count
      * @param {number} targetColCount - target col count
      * @private
      */
-    _makeSmallToClipboardData(clipboardTableData, targetRowCount, targetColCount) {
+    _spliceClipboardData(clipboardTableData, targetRowCount, targetColCount) {
         clipboardTableData.splice(targetRowCount);
         clipboardTableData.forEach(rowData => {
             rowData.splice(targetColCount);
@@ -321,16 +323,18 @@ class WwMergedTableManager extends WwTableManager {
     }
 
     /**
-     * Paste to smaller selection area than clipboard data.
+     * Update clipboard data for paste to smaller selection area than clipboard data.
      * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
      * @param {Array.<Array.<object>>} tableData - table data
      * @param {number} targetRowCount - target row count
      * @param {number} targetColCount - target col count
      * @param {{rowIndex: number, colIndex: number}} startRange - start table range
      * @returns {boolean}
+     * @private
      */
-    _pasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount, targetColCount, startRange) {
-        let shouldPaste = true;
+    _updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount,
+                                                      targetColCount, startRange) {
+        let updated = true;
         const startCellIndex = {
             rowIndex: 0,
             colIndex: 0
@@ -342,13 +346,13 @@ class WwMergedTableManager extends WwTableManager {
         };
 
         if (this._isPossibleToPaste(clipboardTableData, startCellIndex, endCellIndex)) {
-            this._makeSmallToClipboardData(clipboardTableData, targetRowCount, targetColCount);
+            this._spliceClipboardData(clipboardTableData, targetRowCount, targetColCount);
             this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
         } else {
-            shouldPaste = false;
+            updated = false;
         }
 
-        return shouldPaste;
+        return updated;
     }
 
     /**
@@ -368,12 +372,12 @@ class WwMergedTableManager extends WwTableManager {
         const isSelectionLargerThanData = (targetRowCount >= clipboardRowCount) &&
               (targetColCount >= clipboardColCount);
         let alertMessage = i18n.get('Cannot change part of merged cell');
-        let shouldPaste = true;
+        let updated = true;
         let endCellIndex;
 
         if (this._hasRowMergedHeader(clipboardTableData, tableData, startRange)) {
             alertMessage = i18n.get('Cannot paste row merged cells into the table header');
-            shouldPaste = false;
+            updated = false;
         } else if (this._isExactlyFit(clipboardTableData, targetRowCount, targetColCount)) {
             // data가 clipboard영역에 딱 맞는 경우(배수 포함)
 
@@ -389,7 +393,7 @@ class WwMergedTableManager extends WwTableManager {
             if (this._isPossibleToPaste(tableData, startRange, endCellIndex)) {
                 this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
             } else {
-                shouldPaste = false;
+                updated = false;
             }
         } else { // selection이 paste 데이터 보다 작은 경우
             endCellIndex = {
@@ -397,11 +401,11 @@ class WwMergedTableManager extends WwTableManager {
                 colIndex: startRange.colIndex + targetColCount - 1
             };
 
-            shouldPaste = this._pasteToSamllerSelectedArea(clipboardTableData, tableData,
-                                                               targetRowCount, targetColCount, startRange);
+            updated = this._updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData,
+                                                       tableData, targetRowCount, targetColCount, startRange);
         }
 
-        if (shouldPaste) {
+        if (updated) {
             tableData.className += ` ${PASTE_TABLE_BOOKMARK}`;
             tableRenderer.replaceTable($table, tableData);
             this._focusLastTd(endCellIndex);

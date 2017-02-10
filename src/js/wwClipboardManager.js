@@ -92,6 +92,7 @@ class WwClipboardManager {
     /**
      * Prepare paste.
      * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
+     * @private
      */
     _preparePaste($clipboardContainer) {
         this._removeInvalidElements($clipboardContainer);
@@ -109,6 +110,7 @@ class WwClipboardManager {
     /**
      * Focus to after table.
      * @param {object} sq - squire editor instance
+     * @private
      */
     _focusToAfterTable() {
         const sq = this.wwe.getEditor();
@@ -127,6 +129,7 @@ class WwClipboardManager {
      * Whether paste only table or not.
      * @param {jQuery} $clipboardContainer - clibpard container
      * @returns {boolean}
+     * @private
      */
     _isPasteOnlyTable($clipboardContainer) {
         const childNodes = $clipboardContainer[0].childNodes;
@@ -138,6 +141,7 @@ class WwClipboardManager {
      * Paste to table.
      * @param {jQuery} $clipboardContainer - clibpard container
      * @returns {boolean}
+     * @private
      */
     _pasteToTable($clipboardContainer) {
         const tableManager = this.wwe.componentManager.getManager('table');
@@ -164,6 +168,7 @@ class WwClipboardManager {
      * Remove html comments.
      * @param {string} html - html
      * @returns {string}
+     * @private
      */
     _removeHtmlComments(html) {
         return html.replace(/<!--[\s\S]*?-->/g, '');
