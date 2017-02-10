@@ -84,8 +84,16 @@ class WwClipboardManager {
      * @param {jQuery} $clipboardContainer - cliboard jQuery container
      */
     _removeInvalidElements($clipboardContainer) {
-        $clipboardContainer.children('meta, style, link').each((index, $element) => {
-            $element.remove();
+        $clipboardContainer.children('meta, style, link').each((index, element) => {
+            $(element).remove();
+        });
+
+        $clipboardContainer.children('font').each((index, element) => {
+            const $element = $(element);
+
+            if (!$element.text().trim()) {
+                $element.remove();
+            }
         });
     }
 
