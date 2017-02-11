@@ -2910,7 +2910,9 @@ proto.getSelection = function () {
     var sel = getWindowSelection( this );
     var root = this._root;
     var selection, startContainer, endContainer;
-    if ( sel && sel.rangeCount ) {
+    // If not focused, always rely on cached selection; another function may
+    // have set it but the DOM is not modified until focus again
+    if ( this._isFocused && sel && sel.rangeCount ) {
         selection  = sel.getRangeAt( 0 ).cloneRange();
         startContainer = selection.startContainer;
         endContainer = selection.endContainer;
