@@ -88,6 +88,7 @@ class WwClipboardManager {
             $(element).remove();
         });
 
+        // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
         $clipboardContainer.children('font').each((index, element) => {
             const $element = $(element);
 
