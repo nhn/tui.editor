@@ -8,11 +8,11 @@
 import domUtils from './domUtils';
 const util = tui.util;
 const isIE10 = util.browser.msie && util.browser.version === 10;
-const TABLE_COMPLETION_DELAY = 10;
-const SET_SELECTION_DELAY = 50;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
     && (util.browser.version === 10 || util.browser.version === 11);
+const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
  * WwTableManager
@@ -58,11 +58,17 @@ class WwTableManager {
      */
     _initEvent() {
         this.eventManager.listen('wysiwygRangeChangeAfter.table', () => {
+            const range = this.wwe.getEditor().getSelection();
+            const isRangeInTable = this.isInTable(range);
+
             this._unwrapBlockInTable();
-            this.wwe.defer(() => {
-                this._completeTableIfNeed();
-            }, TABLE_COMPLETION_DELAY);
-            this.wwe.componentManager.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+            this._completeTableIfNeed();
+
+            if (!isRangeInTable) {
+                const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+                selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+            }
+
             this._insertDefaultBlockBetweenTable();
         });
 
@@ -74,9 +80,75 @@ class WwTableManager {
         // remove last br in td or th
         this.eventManager.listen('wysiwygProcessHTMLText.table', html => html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1'));
 
+        this.eventManager.listen('cut.table', () => {
+            const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+            const $selectedCells = selectionManager.getSelectedCells();
+
+            if ($selectedCells.length) {
+                $selectedCells.get().forEach(cell => ($(cell).html(BASIC_CELL_CONTENT)));
+            }
+
+            selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+        });
+
+        this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
+                                 this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
+
         // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
         this.onBindedPaste = this._onPaste.bind(this);
         this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
+    }
+
+    /**
+     * Update table html of clipboard data, if has selected cells.
+     * @param {jQuery} $clipboardContainer - jQuery element
+     */
+    updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+        const $selectedCells = selectionManager.getSelectedCells();
+
+        if ($selectedCells.length) {
+            selectionManager.createRangeBySelectedCells();
+
+            const fragment = this.wwe.getEditor().getSelection().cloneContents();
+
+            $(fragment).children().each((index, node) => {
+                const $node = $(node);
+
+                if (!this.isTableOrSubTableElement(node.nodeName)) {
+                    return;
+                } else if (node.nodeName === 'TABLE'
+                           && $node.find('thead').length === 0
+                           && $node.find('tbody').length === 0
+                          ) {
+                    $node.remove();
+                } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
+                    node.previousSibling.appendChild(node);
+                } else {
+                    this._completeIncompleteTable(node);
+
+                    if (node.nodeName !== 'TABLE' && node.nodeName !== 'THEAD') {
+                        $(node).closest('table').find('thead').remove();
+                    }
+                }
+            });
+
+            $clipboardContainer.append(fragment);
+            $clipboardContainer.find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+        }
+    }
+
+    /**
+     * Paste clibpard data.
+     * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+     */
+    pasteClipboardData($clipboardTable) {
+        if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
+            return;
+        }
+
+        this._expandTableIfNeed($clipboardTable);
+        this._pasteDataIntoTable($clipboardTable);
     }
 
     /**
@@ -114,7 +186,6 @@ class WwTableManager {
                 if (isRangeInTable && !this._isModifierKeyPushed(ev)) {
                     this.wwe.getEditor().modifyDocument(() => {
                         const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-
                         selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
                     });
                 }
@@ -147,8 +218,6 @@ class WwTableManager {
         };
 
         util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.addKeyEventHandler(key, handler));
-
-        // this._bindKeyEventForTableCopyAndCut();
     }
 
     /**
@@ -579,34 +648,13 @@ class WwTableManager {
 
         return table;
     }
-    /**
-     * Prepare to paste data on table
-     * @param {object} pasteData Pasting data
-     * @param {HTMLElement} node Current pasting element
-     * @returns {DocumentFragment}
-     * @memberOf WwTableManager
-     * @api
-     */
-    prepareToPasteOnTable(pasteData, node) {
-        const newFragment = document.createDocumentFragment();
-        if (this._isTableOrSubTableElement(node.nodeName)) {
-            this._expandTableIfNeed(pasteData.fragment);
-            this._pasteDataIntoTable(pasteData.fragment);
-            pasteData.fragment = newFragment;
-        } else {
-            newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
-        }
-
-        return newFragment;
-    }
 
     /**
      * Whether pasting element is table element
      * @param {string} pastingNodeName Pasting node name
      * @returns {boolean}
-     * @private
      */
-    _isTableOrSubTableElement(pastingNodeName) {
+    isTableOrSubTableElement(pastingNodeName) {
         return (pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY'
             || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD');
     }
@@ -659,20 +707,20 @@ class WwTableManager {
 
     /**
      * Add TBODY or THEAD if need
-     * @param {jQuery} table Table element
+     * @param {jQuery} $table - Table jQuery element
      * @private
      */
-    _addTbodyOrTheadIfNeed(table) {
-        const isTheadNotExists = !table.find('thead').length;
-        const isTbodyNotExists = !table.find('tbody').length;
+    _addTbodyOrTheadIfNeed($table) {
+        const isTheadNotExists = !$table.find('thead').length;
+        const isTbodyNotExists = !$table.find('tbody').length;
         let absentNode;
 
         if (isTheadNotExists) {
             absentNode = $('<thead><tr></tr></thead>')[0];
-            table.prepend(absentNode);
+            $table.prepend(absentNode);
         } else if (isTbodyNotExists) {
             absentNode = $('<tbody><tr></tr></tbody>')[0];
-            table.append(absentNode);
+            $table.append(absentNode);
         }
     }
 
@@ -681,12 +729,12 @@ class WwTableManager {
      * @param {HTMLElement} node Table element
      */
     tableCellAppendAidForTableElement(node) {
-        const table = $(node);
+        const $table = $(node);
 
-        this._addTbodyOrTheadIfNeed(table);
-        this._addTrIntoContainerIfNeed(table);
+        this._addTbodyOrTheadIfNeed($table);
+        this._addTrIntoContainerIfNeed($table);
 
-        const trs = table.find('tr');
+        const trs = $table.find('tr');
         const tableAidInformation = this.prepareToTableCellStuffing(trs);
         const maximumCellLength = tableAidInformation.maximumCellLength;
         const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
@@ -765,12 +813,15 @@ class WwTableManager {
 
     /**
      * Complete passed table
-     * @param {HTMLElement} node Table inner element
+     * @param {HTMLElement} node - Table inner element
+     * @param {?boolean} useHeader - whether use header or not
      * @private
      */
-    _completeIncompleteTable(node) {
+    _completeIncompleteTable(node, useHeader) {
         const nodeName = node.tagName;
         let table, completedTableContents;
+
+        useHeader = util.isUndefined(useHeader) ? true : useHeader;
 
         if (nodeName === 'TABLE') {
             table = node;
@@ -785,7 +836,11 @@ class WwTableManager {
             } else if (nodeName === 'TR') {
                 completedTableContents = this._generateTheadAndTbodyFromTr(node);
             }
-            table.append(completedTableContents.thead);
+
+            if (useHeader) {
+                table.append(completedTableContents.thead);
+            }
+
             table.append(completedTableContents.tbody);
         }
 
@@ -802,7 +857,7 @@ class WwTableManager {
         $body.children().each((index, node) => {
             const $node = $(node);
 
-            if (!this._isTableOrSubTableElement(node.nodeName)) {
+            if (!this.isTableOrSubTableElement(node.nodeName)) {
                 return;
             } else if (node.nodeName === 'TABLE'
                 && $node.find('thead').length === 0
@@ -1012,23 +1067,6 @@ class WwTableManager {
     }
 
     /**
-     * Create selection by selected cells and collapse that selection to end
-     * @private
-     */
-    _collapseRangeToEndContainer() {
-        const sq = this.wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-        const selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
-
-        if (selectedCells.length && this.isInTable(range)) {
-            this.wwe.defer(() => {
-                range.collapse(false);
-                sq.setSelection(range);
-            }, SET_SELECTION_DELAY);
-        }
-    }
-
-    /**
      * Move cursor to given direction by interval formatter
      * @param {string} direction 'next' or 'previous'
      * @param {string} interval 'row' or 'cell'
@@ -1058,28 +1096,6 @@ class WwTableManager {
         }
 
         return isNeedNext;
-    }
-
-    /**
-     * Bind pre process for table copy and cut key event
-     * @private
-     */
-    _bindKeyEventForTableCopyAndCut() {
-        const isMac = /Mac OS X/.test(navigator.userAgent);
-        const commandKey = isMac ? 'metaKey' : 'ctrlKey';
-
-        // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
-        this.onBindedKeydown = ev => {
-            const selectionManager = this.wwe.componentManager.getManager('tableSelection');
-
-            if (ev[commandKey]) {
-                selectionManager.createRangeBySelectedCells();
-            }
-        };
-        this.onBindedKeyup = this._collapseRangeToEndContainer.bind(this);
-
-        this.wwe.getEditor().addEventListener('keydown', this.onBindedKeydown);
-        this.wwe.getEditor().addEventListener('keyup', this.onBindedKeyup);
     }
 
     /**
@@ -1167,10 +1183,9 @@ class WwTableManager {
         this.eventManager.removeEventHandler('wysiwygRangeChangeAfter.table');
         this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
         this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
+        this.eventManager.removeEventHandler('cut.table');
+        this.eventManager.removeEventHandler('copyBefore.table');
         this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
-        // this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
-        // this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
-
         util.forEach(this.keyEventHandlers, (handler, key) => this.wwe.removeKeyEventHandler(key, handler));
     }
 }

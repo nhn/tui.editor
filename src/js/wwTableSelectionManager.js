@@ -75,21 +75,7 @@ class WwTableSelectionManager {
          */
         this._isSelectionStarted = false;
 
-        this.eventManager.listen('mousedown.table', ev => {
-            const MOUSE_RIGHT_BUTTON = 2;
-            selectionStart = $(ev.data.target).closest('td,th')[0];
-            const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
-            selectionEnd = null;
-
-            if (!isSelectedCell
-                || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
-            ) {
-                this.removeClassAttrbuteFromAllCellsIfNeed();
-                this.setTableSelectionTimerIfNeed(selectionStart);
-            }
-        });
-
-        this.eventManager.listen('mouseover.table', ev => {
+        const onMouseover = ev => {
             selectionEnd = $(ev.data.target).closest('td,th')[0];
 
             const range = this.wwe.getEditor().getSelection();
@@ -109,9 +95,17 @@ class WwTableSelectionManager {
                 this.highlightTableCellsBy(selectionStart, selectionEnd);
                 validSelectionEnd = selectionEnd;
             }
-        });
+        };
 
-        this.eventManager.listen('mouseup.table', ev => {
+        const finishSelection = () => {
+            if (this._isSelectionStarted) {
+                this._isSelectionStarted = false;
+                this.eventManager.removeEventHandler('mouseover.tableSelection');
+                this.eventManager.removeEventHandler('mouseup.tableSelection');
+            }
+        };
+
+        const onMouseup = ev => {
             selectionEnd = $(ev.data.target).closest('td,th')[0];
 
             let range = this.wwe.getEditor().getSelection();
@@ -137,14 +131,29 @@ class WwTableSelectionManager {
                 }
             }
 
-            this._isSelectionStarted = false;
-        });
+            finishSelection();
+        };
 
-        this.eventManager.listen('copyBefore.table', () => {
-            if (this._isSelectionStarted) {
-                this._isSelectionStarted = false;
+        const onMousedown = ev => {
+            const MOUSE_RIGHT_BUTTON = 2;
+            selectionStart = $(ev.data.target).closest('td,th')[0];
+            const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+            selectionEnd = null;
+
+            if (!isSelectedCell
+                || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
+               ) {
+                this.removeClassAttrbuteFromAllCellsIfNeed();
+                this.setTableSelectionTimerIfNeed(selectionStart);
+                this.eventManager.listen('mouseover.tableSelection', onMouseover);
+                this.eventManager.listen('mouseup.tableSelection', onMouseup);
             }
-        });
+        };
+
+
+        this.eventManager.listen('mousedown.tableSelection', onMousedown);
+        this.eventManager.listen('copyBefore.tableSelection', finishSelection);
+        this.eventManager.listen('pasteBefore.tableSelection', finishSelection);
     }
 
     /**
@@ -397,10 +406,12 @@ class WwTableSelectionManager {
      * Destroy.
      */
     destroy() {
-        this.eventManager.removeEventHandler('mousedown.table');
-        this.eventManager.removeEventHandler('mouseover.table');
-        this.eventManager.removeEventHandler('mouseup.table');
-        this.eventManager.removeEventHandler('copyBefore.table');
+        this.eventManager.removeEventHandler('mousedown.tableSelection');
+        this.eventManager.removeEventHandler('mouseover.tableSelection');
+        this.eventManager.removeEventHandler('mouseup.tableSelection');
+        this.eventManager.removeEventHandler('copyBefore.tableSelection');
+        this.eventManager.removeEventHandler('pasteBefore.tableSelection');
     }
 }
+
 module.exports = WwTableSelectionManager;

@@ -55,7 +55,7 @@ class WysiwygEditor {
         this._initEvent();
         this._initDefaultKeyEventHandler();
 
-        this.postProcessForChange = util.debounce(() => this._postProcessForChange(), 0);
+        this.debouncedPostProcessForChange = util.debounce(() => this.postProcessForChange(), 0);
     }
 
     /**
@@ -287,7 +287,7 @@ class WysiwygEditor {
 
         this.getEditor().addEventListener('keyup', keyboardEvent => {
             if (isNeedFirePostProcessForRangeChange) {
-                self.postProcessForChange();
+                self.debouncedPostProcessForChange();
                 isNeedFirePostProcessForRangeChange = false;
             }
 
@@ -769,12 +769,11 @@ class WysiwygEditor {
     }
 
     /**
-     * _postProcessForChange
+     * postProcessForChange
      * Post process for change
-     * @private
      * @memberOf WysiwygEditor
      */
-    _postProcessForChange() {
+    postProcessForChange() {
         const self = this;
         self.getEditor().modifyDocument(() => {
             self.eventManager.emit('wysiwygRangeChangeAfter', self);

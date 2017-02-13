@@ -36,5 +36,6 @@ tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
     'Would you like to paste as table?': 'テーブルを貼り付けますか?',
     'Text color': '文字色相',
     'Auto scroll enabled': '自動スクロールが有効',
-    'Auto scroll disabled': '自動スクロールを無効に'
+    'Auto scroll disabled': '自動スクロールを無効に',
+    'Cannot paste values ​​other than a table in the cell selection state': '表以外の値をセル選択状態に貼り付けることはできません。'
 });

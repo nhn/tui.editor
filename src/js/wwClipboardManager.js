@@ -9,6 +9,9 @@ import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwClipboardHandler from './wwClipboardHandler';
 import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
+import i18n from './i18n';
+
+const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 
 /**
  * WwClipboardManager
@@ -73,17 +76,111 @@ class WwClipboardManager {
             source: 'wysiwyg',
             data: ev
         });
-        this.wwe.postProcessForChange();
+        this.wwe.debouncedPostProcessForChange();
     }
 
     /**
-     * Remove meta element, if exist it.
-     * @param {HTMLElement} firstElement - first element of clipboard container
+     * Remove invalid elements.
+     * @param {jQuery} $clipboardContainer - cliboard jQuery container
      */
-    _removeMetaElementIfExist(firstElement) {
-        if (firstElement && firstElement.nodeName === 'META') {
-            $(firstElement).remove();
+    _removeInvalidElements($clipboardContainer) {
+        $clipboardContainer.children('meta, style, link').each((index, element) => {
+            $(element).remove();
+        });
+
+        // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
+        $clipboardContainer.children('font').each((index, element) => {
+            const $element = $(element);
+
+            if (!$element.text().trim()) {
+                $element.remove();
+            }
+        });
+    }
+
+    /**
+     * Prepare paste.
+     * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
+     * @private
+     */
+    _preparePaste($clipboardContainer) {
+        this._removeInvalidElements($clipboardContainer);
+
+        $clipboardContainer.html($clipboardContainer.html().trim());
+
+        this._pch.preparePaste($clipboardContainer);
+
+        this.wwe.eventManager.emit('pasteBefore', {
+            source: 'wysiwyg',
+            $clipboardContainer
+        });
+    }
+
+    /**
+     * Focus to after table.
+     * @param {object} sq - squire editor instance
+     * @private
+     */
+    _focusToAfterTable() {
+        const sq = this.wwe.getEditor();
+        const range = sq.getSelection().cloneRange();
+        const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
+
+        if ($bookmarkedTable.length) {
+            $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+            range.setEndAfter($bookmarkedTable[0]);
+            range.collapse(false);
+            sq.setSelection(range);
         }
+    }
+
+    /**
+     * Whether paste only table or not.
+     * @param {jQuery} $clipboardContainer - clibpard container
+     * @returns {boolean}
+     * @private
+     */
+    _isPasteOnlyTable($clipboardContainer) {
+        const childNodes = $clipboardContainer[0].childNodes;
+
+        return childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
+    }
+
+    /**
+     * Paste to table.
+     * @param {jQuery} $clipboardContainer - clibpard container
+     * @returns {boolean}
+     * @private
+     */
+    _pasteToTable($clipboardContainer) {
+        const tableManager = this.wwe.componentManager.getManager('table');
+        const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+        const range = this.wwe.getEditor().getSelection();
+        let pasted = false;
+
+        if (tableManager.isInTable(range)) {
+            pasted = true;
+
+            if (this._isPasteOnlyTable($clipboardContainer)) {
+                tableManager.pasteClipboardData($clipboardContainer.first());
+            } else if (tableSelectionManager.getSelectedCells().length) {
+                alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
+            } else {
+                pasted = false;
+            }
+        }
+
+        return pasted;
+    }
+
+    /**
+     * Remove html comments.
+     * @param {string} html - html
+     * @returns {string}
+     * @private
+     */
+    _removeHtmlComments(html) {
+        return html.replace(/<!--[\s\S]*?-->/g, '');
     }
 
     /**
@@ -92,7 +189,9 @@ class WwClipboardManager {
      */
     onPaste(ev) {
         const $clipboardContainer = $('<div />');
-        const html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+        let html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+
+        html = this._removeHtmlComments(html).trim();
 
         if (!html) {
             return;
@@ -100,17 +199,27 @@ class WwClipboardManager {
 
         $clipboardContainer.html(html);
 
-        this._removeMetaElementIfExist($clipboardContainer[0].firstChild);
+        this._preparePaste($clipboardContainer);
 
-        this._pch.preparePaste($clipboardContainer);
+        const $lastNode = $($clipboardContainer[0].childNodes).last();
+        const isLastNodeTable = $lastNode[0].nodeName === 'TABLE';
 
-        this.wwe.eventManager.emit('pasteBefore', {
-            source: 'wysiwyg',
-            $clipboardContainer
-        });
+        if (isLastNodeTable) {
+            $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+        }
+
+        const pastedTable = this._pasteToTable($clipboardContainer);
+
+        if (pastedTable) {
+            return;
+        }
 
         this.wwe.getEditor().insertHTML($clipboardContainer.html());
         this.wwe.postProcessForChange();
+
+        if (isLastNodeTable) {
+            this._focusToAfterTable();
+        }
     }
 
     /**
