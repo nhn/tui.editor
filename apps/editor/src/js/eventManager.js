@@ -224,6 +224,10 @@ class EventManager {
         const handlersToSurvive = [];
         const eventHandlers = this.events.get(type);
 
+        if (!eventHandlers) {
+            return;
+        }
+
         eventHandlers.map(handler => {
             if (handler.namespace !== namespace) {
                 handlersToSurvive.push(handler);

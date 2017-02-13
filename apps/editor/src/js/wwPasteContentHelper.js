@@ -29,9 +29,8 @@ class WwPasteContentHelper {
     preparePaste($container) {
         const range = this.wwe.getEditor().getSelection().cloneRange();
         const codeblockManager = this.wwe.componentManager.getManager('codeblock');
-        const tableManager = this.wwe.componentManager.getManager('table');
         let firstBlockIsTaken = false;
-        let $tempContainer = $('<div />');
+        const $tempContainer = $('<div />');
 
         let nodeName, node, isPastingList;
 
@@ -53,9 +52,6 @@ class WwPasteContentHelper {
 
             if (codeblockManager.isInCodeBlock(range)) {
                 $tempContainer.append(codeblockManager.prepareToPasteOnCodeblock(childNodes));
-            } else if (tableManager.isInTable(range)) {
-                $tempContainer = tableManager.prepareToPasteOnTable($container, node);
-                childNodes.shift();
             } else if (isPastingList) {
                 $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
                 // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
