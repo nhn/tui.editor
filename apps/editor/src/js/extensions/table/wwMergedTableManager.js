@@ -529,9 +529,9 @@ class WwMergedTableManager extends WwTableManager {
         const tableData = tableDataHandler.createTableData($table);
         const startCellIndex = this._findStartCellIndex(tableData, $startCell);
 
-        if ($selectedCells.length > 1) {
+        if ($selectedCells.length > 1) { // selection 상태
             this._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
-        } else {
+        } else { // cursor 상태
             this._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
         }
     }
