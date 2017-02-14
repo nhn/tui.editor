@@ -6,8 +6,8 @@
 const util = tui.util;
 
 const HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
-    'color|cols|colspan|compact|coords|dir|face|headers|height|hreflang|hspace|' +
-    'ismap|lang|language|nohref|nowrap|rel|rev|rows|rowspan|rules|' +
+    'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
+    'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
     'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
@@ -54,7 +54,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-    $html.find('script, iframe, textarea, form, button, select').remove();
+    $html.find('script, iframe, textarea, form, button, select, meta, style, link').remove();
 }
 
 /**
