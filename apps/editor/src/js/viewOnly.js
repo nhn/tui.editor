@@ -40,6 +40,7 @@ class ToastUIEditorViewOnly {
         this.commandManager = new CommandManager(this);
         this.convertor = new Convertor(this.eventManager);
         this.codeBlockManager = codeBlockManager;
+        this.toMarkOptions = null;
 
         if (this.options.hooks) {
             util.forEach(this.options.hooks, (fn, key) => {
