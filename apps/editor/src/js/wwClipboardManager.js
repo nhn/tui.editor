@@ -9,6 +9,7 @@ import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
 import WwClipboardHandler from './wwClipboardHandler';
 import WwPseudoClipboardHandler from './wwPseudoClipboardHandler';
+import htmlSanitizer from './htmlSanitizer';
 import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
@@ -80,14 +81,10 @@ class WwClipboardManager {
     }
 
     /**
-     * Remove invalid elements.
+     * Remove empty font elements.
      * @param {jQuery} $clipboardContainer - cliboard jQuery container
      */
-    _removeInvalidElements($clipboardContainer) {
-        $clipboardContainer.children('meta, style, link').each((index, element) => {
-            $(element).remove();
-        });
-
+    _removeEmptyFontElement($clipboardContainer) {
         // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
         $clipboardContainer.children('font').each((index, element) => {
             const $element = $(element);
@@ -104,7 +101,7 @@ class WwClipboardManager {
      * @private
      */
     _preparePaste($clipboardContainer) {
-        this._removeInvalidElements($clipboardContainer);
+        this._removeEmptyFontElement($clipboardContainer);
 
         $clipboardContainer.html($clipboardContainer.html().trim());
 
@@ -192,6 +189,7 @@ class WwClipboardManager {
         let html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
 
         html = this._removeHtmlComments(html).trim();
+        html = htmlSanitizer(html, true).trim();
 
         if (!html) {
             return;
