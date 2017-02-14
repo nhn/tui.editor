@@ -200,7 +200,7 @@ class WwClipboardManager {
         this._preparePaste($clipboardContainer);
 
         const $lastNode = $($clipboardContainer[0].childNodes).last();
-        const isLastNodeTable = $lastNode[0].nodeName === 'TABLE';
+        const isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
 
         if (isLastNodeTable) {
             $lastNode.addClass(PASTE_TABLE_BOOKMARK);
