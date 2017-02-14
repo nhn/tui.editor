@@ -22,15 +22,20 @@ require('./langs');
 
 extManager.defineExtension('tableExtension', editor => {
     const eventManager = editor.eventManager;
-    const wwComponentManager = editor.wwEditor.componentManager;
-    const popupTableUtils = editor._ui.popupTableUtils;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
+    _bindEvents(eventManager);
+
+    if (editor.isViewOnly()) {
+        return;
+    }
+
+    const wwComponentManager = editor.wwEditor.componentManager;
+    const popupTableUtils = editor._ui.popupTableUtils;
 
     _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
-    _bindEvents(eventManager);
 
     if (editor._ui.popupTableUtils) {
         mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
