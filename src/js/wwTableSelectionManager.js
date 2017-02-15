@@ -125,7 +125,7 @@ class WwTableSelectionManager {
 
                     range = this.wwe.getEditor().getSelection();
                     range.setStart(selectionEnd, 0);
-                    range.setEnd(selectionEnd, 1);
+                    range.setEnd(selectionEnd, 0);
                     range.collapse(true);
                     this.wwe.getEditor().setSelection(range);
                 }
