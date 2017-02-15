@@ -129,6 +129,9 @@ class WwTableSelectionManager {
                     range.collapse(true);
                     this.wwe.getEditor().setSelection(range);
                 }
+                if (this.onDragEnd) {
+                    this.onDragEnd();
+                }
             }
 
             finishSelection();
@@ -147,6 +150,9 @@ class WwTableSelectionManager {
                 this.setTableSelectionTimerIfNeed(selectionStart);
                 this.eventManager.listen('mouseover.tableSelection', onMouseover);
                 this.eventManager.listen('mouseup.tableSelection', onMouseup);
+                if (this.onDragStart && selectionStart) {
+                    this.onDragStart(selectionStart);
+                }
             } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
                 finishSelection();
             }

@@ -18,6 +18,17 @@ const util = tui.util;
  * @param {WysiwygEditor} wwe WysiwygEditor instance
  */
 class WwMergedTableSelectionManager extends WwTableSelectionManager {
+    constructor(wwe) {
+        super(wwe);
+
+        /**
+         * table cache data
+         * @type {Array.<Array.<Object>>}
+         * @private
+         */
+        this._tableData = null;
+    }
+
     /**
      * Set setTimeout and setInterval timer execution if table selecting situation
      * @param {HTMLElement} selectionStart Start element
@@ -62,6 +73,22 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     }
 
     /**
+     * cache table data on drag start
+     * @param {HTMLElement} selectionStart - start element
+     */
+    onDragStart(selectionStart) {
+        const $table = $(selectionStart).closest('table');
+        this._tableData = tableDataHandler.createTableData($table);
+    }
+
+    /**
+     * clear table data in cache on drag end
+     */
+    onDragEnd() {
+        this._tableData = null;
+    }
+
+    /**
      * Highlight selected table cells
      * @param {HTMLElement} selectionStart start element
      * @param {HTMLElement} selectionEnd end element
@@ -71,11 +98,10 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
         const $start = $(selectionStart);
         const $end = $(selectionEnd);
         const $table = $start.closest('table');
-        const tableData = tableDataHandler.createTableData($table);
-        const tableRange = tableRangeHandler.findSelectionRange(tableData, $start, $end);
+        const tableRange = tableRangeHandler.findSelectionRange(this._tableData, $start, $end);
 
         this.removeClassAttrbuteFromAllCellsIfNeed();
-        this._addClassToSelectedCells($table, tableData, tableRange);
+        this._addClassToSelectedCells($table, this._tableData, tableRange);
     }
 
     /**
