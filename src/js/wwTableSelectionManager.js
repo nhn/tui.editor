@@ -147,6 +147,8 @@ class WwTableSelectionManager {
                 this.setTableSelectionTimerIfNeed(selectionStart);
                 this.eventManager.listen('mouseover.tableSelection', onMouseover);
                 this.eventManager.listen('mouseup.tableSelection', onMouseup);
+            } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
+                finishSelection();
             }
         };
 
