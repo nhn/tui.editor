@@ -66,15 +66,12 @@ class WwClipboardHandler {
      * @memberOf WwClipboardHandler
      */
     setClipboardData(ev, htmlContent, textContent) {
-        console.log(htmlContent);
         if (!htmlContent) {
             return;
         }
-        console.log(htmlContent);
         ev.clipboardData.setData('text/html', htmlContent);
         ev.clipboardData.setData('text/plain', textContent);
 
-        console.log('getData', ev.clipboardData.getData('text/html'));
         ev.preventDefault();
         ev.stopPropagation();
     }
