@@ -351,11 +351,12 @@ class WysiwygEditor {
             });
         });
 
+        // Toolbar status active/inactive
         this.getEditor().addEventListener('pathChange', data => {
             const state = {
                 bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
                 italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
-                strike: /(>S)/.test(data.path),
+                strike: /(^S>|>S$|>S>|^S$)/.test(data.path),
                 code: /CODE/.test(data.path),
                 codeBlock: /PRE/.test(data.path),
                 quote: /BLOCKQUOTE/.test(data.path),
