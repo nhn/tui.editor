@@ -31,17 +31,26 @@ class WwClipboardHandler {
      * @memberOf WwClipboardHandler
      */
     _initEvent({onCopyBefore, onCutBefore, onCut, onPaste}) {
-        this.$editorBody.on('copy', $ev => {
-            const ev = $ev.originalEvent;
+        this.$editorBody.on('beforecopy', $ev => {
+            $ev.preventDefault();
+            $ev.stopPropagation();
+        });
 
-            onCopyBefore(ev);
+        this.$editorBody.on('copy', $ev => {
+            onCopyBefore($ev.originalEvent);
+        });
+
+        this.$editorBody.on('beforecut', $ev => {
+            $ev.preventDefault();
+            $ev.stopPropagation();
         });
 
         this.$editorBody.on('cut', $ev => {
             const ev = $ev.originalEvent;
-
             onCutBefore(ev);
             onCut(ev);
+            $ev.preventDefault();
+            $ev.stopPropagation();
         });
 
         this.$editorBody.on('paste', $ev => {
@@ -57,8 +66,15 @@ class WwClipboardHandler {
      * @memberOf WwClipboardHandler
      */
     setClipboardData(ev, htmlContent, textContent) {
+        console.log(htmlContent);
+        if (!htmlContent) {
+            return;
+        }
+        console.log(htmlContent);
         ev.clipboardData.setData('text/html', htmlContent);
         ev.clipboardData.setData('text/plain', textContent);
+
+        console.log('getData', ev.clipboardData.getData('text/html'));
         ev.preventDefault();
         ev.stopPropagation();
     }
