@@ -469,7 +469,7 @@
 	        foundedHref = FIND_LINK_HREF.exec(node.outerHTML);
 
 	        if (foundedHref) {
-	            url = foundedHref[1];
+	            url = foundedHref[1].replace(/&amp;/g, '&');
 	        }
 
 	        if (node.title) {
