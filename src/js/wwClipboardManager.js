@@ -50,6 +50,23 @@ class WwClipboardManager {
     }
 
     /**
+     * Update copy data, when commonAncestorContainer nodeName is list type like UL or OL.
+     * @param {object} range - text range
+     * @param {jQuery} $clipboardContainer - clibpard container jQuery element
+     */
+    _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
+        const commonAncestorNodeName = range.commonAncestorContainer.nodeName;
+        if (commonAncestorNodeName !== 'UL' && commonAncestorNodeName !== 'OL') {
+            return;
+        }
+
+        const $newParent = $(`<${commonAncestorNodeName} />`);
+        $newParent.append($clipboardContainer.html());
+        $clipboardContainer.html('');
+        $clipboardContainer.append($newParent);
+    }
+
+    /**
      * This handler execute before copy.
      * @param {Event} ev - clipboard event
      */
@@ -64,6 +81,8 @@ class WwClipboardManager {
         this._extendRange(range);
 
         $clipboardContainer.append(range.cloneContents());
+
+        this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
 
         this.wwe.eventManager.emit('copyBefore', {
             source: 'wysiwyg',
