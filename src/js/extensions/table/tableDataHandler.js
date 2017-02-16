@@ -347,6 +347,7 @@ function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
  * Add tbody or thead of table data if need.
  * @param {Array.<Array.<object>>} tableData - table data
  * @returns {boolean}
+ * @ignore
  */
 function addTbodyOrTheadIfNeed(tableData) {
     const header = tableData[0];

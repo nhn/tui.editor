@@ -16,6 +16,7 @@ const util = tui.util;
  * @constructor
  * @class WwMergedTableTableSelectionManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * @ignore
  */
 class WwMergedTableSelectionManager extends WwTableSelectionManager {
     constructor(wwe) {

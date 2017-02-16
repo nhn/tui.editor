@@ -18,6 +18,7 @@ const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
  * @constructor
  * @class WwMergedTableManager
  * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * @ignore
  */
 class WwMergedTableManager extends WwTableManager {
     /**
@@ -542,6 +543,7 @@ class WwMergedTableManager extends WwTableManager {
  * @param {Array} arr - target array
  * @param {function} contition - condition function
  * @returns {boolean}
+ * @ignore
  */
 function any(arr, contition) {
     let result = false;
