@@ -23,7 +23,8 @@ const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
  */
 class WwClipboardManager {
     constructor(wwe) {
-        const ClipboardHandler = tui.util.browser.chrome ? WwClipboardHandler : WwPseudoClipboardHandler;
+        const browser = tui.util.browser;
+        const ClipboardHandler = (browser.chrome || browser.safari) ? WwClipboardHandler : WwPseudoClipboardHandler;
 
         this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
@@ -53,8 +54,12 @@ class WwClipboardManager {
      * @param {Event} ev - clipboard event
      */
     onCopyBefore(ev) {
+        const editor = this.wwe.getEditor();
+
+        editor.focus();
+
+        const range = editor.getSelection().cloneRange();
         const $clipboardContainer = $('<div />');
-        const range = this.wwe.getEditor().getSelection().cloneRange();
 
         this._extendRange(range);
 
