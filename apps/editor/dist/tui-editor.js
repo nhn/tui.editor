@@ -64,28 +64,28 @@
 	 */
 
 	// codemirror modes&addons
-	__webpack_require__(93);
 	__webpack_require__(94);
 	__webpack_require__(95);
 	__webpack_require__(96);
 	__webpack_require__(97);
+	__webpack_require__(98);
 
 	// default extensions
-	__webpack_require__(98);
 	__webpack_require__(99);
-	__webpack_require__(102);
+	__webpack_require__(100);
 	__webpack_require__(103);
-	__webpack_require__(110);
+	__webpack_require__(104);
+	__webpack_require__(111);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	// langs
-	__webpack_require__(128);
 	__webpack_require__(129);
 	__webpack_require__(130);
 	__webpack_require__(131);
 	__webpack_require__(132);
+	__webpack_require__(133);
 
 	// for jquery
 	$.fn.tuiEditor = function () {
@@ -148,23 +148,23 @@
 
 	var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-	var _layout = __webpack_require__(25);
+	var _layout = __webpack_require__(28);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _eventManager = __webpack_require__(26);
+	var _eventManager = __webpack_require__(29);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager2 = __webpack_require__(27);
+	var _commandManager2 = __webpack_require__(30);
 
 	var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _importManager = __webpack_require__(30);
+	var _importManager = __webpack_require__(33);
 
 	var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -172,171 +172,171 @@
 
 	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-	var _convertor = __webpack_require__(33);
+	var _convertor = __webpack_require__(34);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
-	var _viewOnly = __webpack_require__(40);
+	var _viewOnly = __webpack_require__(41);
 
 	var _viewOnly2 = _interopRequireDefault(_viewOnly);
 
-	var _defaultUI = __webpack_require__(41);
+	var _defaultUI = __webpack_require__(42);
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
-	var _bold = __webpack_require__(55);
+	var _bold = __webpack_require__(56);
 
 	var _bold2 = _interopRequireDefault(_bold);
 
-	var _italic = __webpack_require__(56);
+	var _italic = __webpack_require__(57);
 
 	var _italic2 = _interopRequireDefault(_italic);
 
-	var _strike = __webpack_require__(57);
+	var _strike = __webpack_require__(58);
 
 	var _strike2 = _interopRequireDefault(_strike);
 
-	var _blockquote = __webpack_require__(58);
+	var _blockquote = __webpack_require__(59);
 
 	var _blockquote2 = _interopRequireDefault(_blockquote);
 
-	var _heading = __webpack_require__(59);
+	var _heading = __webpack_require__(60);
 
 	var _heading2 = _interopRequireDefault(_heading);
 
-	var _paragraph = __webpack_require__(60);
+	var _paragraph = __webpack_require__(61);
 
 	var _paragraph2 = _interopRequireDefault(_paragraph);
 
-	var _hr = __webpack_require__(61);
+	var _hr = __webpack_require__(62);
 
 	var _hr2 = _interopRequireDefault(_hr);
 
-	var _addLink = __webpack_require__(62);
+	var _addLink = __webpack_require__(63);
 
 	var _addLink2 = _interopRequireDefault(_addLink);
 
-	var _addImage = __webpack_require__(63);
+	var _addImage = __webpack_require__(64);
 
 	var _addImage2 = _interopRequireDefault(_addImage);
 
-	var _ul = __webpack_require__(64);
+	var _ul = __webpack_require__(65);
 
 	var _ul2 = _interopRequireDefault(_ul);
 
-	var _ol = __webpack_require__(65);
+	var _ol = __webpack_require__(66);
 
 	var _ol2 = _interopRequireDefault(_ol);
 
-	var _table = __webpack_require__(66);
+	var _table = __webpack_require__(67);
 
 	var _table2 = _interopRequireDefault(_table);
 
-	var _task = __webpack_require__(67);
+	var _task = __webpack_require__(68);
 
 	var _task2 = _interopRequireDefault(_task);
 
-	var _code = __webpack_require__(68);
+	var _code = __webpack_require__(69);
 
 	var _code2 = _interopRequireDefault(_code);
 
-	var _codeBlock = __webpack_require__(69);
+	var _codeBlock = __webpack_require__(70);
 
 	var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-	var _bold3 = __webpack_require__(70);
+	var _bold3 = __webpack_require__(71);
 
 	var _bold4 = _interopRequireDefault(_bold3);
 
-	var _italic3 = __webpack_require__(71);
+	var _italic3 = __webpack_require__(72);
 
 	var _italic4 = _interopRequireDefault(_italic3);
 
-	var _strike3 = __webpack_require__(72);
+	var _strike3 = __webpack_require__(73);
 
 	var _strike4 = _interopRequireDefault(_strike3);
 
-	var _blockquote3 = __webpack_require__(73);
+	var _blockquote3 = __webpack_require__(74);
 
 	var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-	var _addImage3 = __webpack_require__(74);
+	var _addImage3 = __webpack_require__(75);
 
 	var _addImage4 = _interopRequireDefault(_addImage3);
 
-	var _addLink3 = __webpack_require__(75);
+	var _addLink3 = __webpack_require__(76);
 
 	var _addLink4 = _interopRequireDefault(_addLink3);
 
-	var _hr3 = __webpack_require__(76);
+	var _hr3 = __webpack_require__(77);
 
 	var _hr4 = _interopRequireDefault(_hr3);
 
-	var _heading3 = __webpack_require__(77);
+	var _heading3 = __webpack_require__(78);
 
 	var _heading4 = _interopRequireDefault(_heading3);
 
-	var _paragraph3 = __webpack_require__(78);
+	var _paragraph3 = __webpack_require__(79);
 
 	var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-	var _ul3 = __webpack_require__(79);
+	var _ul3 = __webpack_require__(80);
 
 	var _ul4 = _interopRequireDefault(_ul3);
 
-	var _ol3 = __webpack_require__(80);
+	var _ol3 = __webpack_require__(81);
 
 	var _ol4 = _interopRequireDefault(_ol3);
 
-	var _table3 = __webpack_require__(81);
+	var _table3 = __webpack_require__(82);
 
 	var _table4 = _interopRequireDefault(_table3);
 
-	var _tableAddRow = __webpack_require__(82);
+	var _tableAddRow = __webpack_require__(83);
 
 	var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-	var _tableAddCol = __webpack_require__(83);
+	var _tableAddCol = __webpack_require__(84);
 
 	var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-	var _tableRemoveRow = __webpack_require__(84);
+	var _tableRemoveRow = __webpack_require__(85);
 
 	var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-	var _tableRemoveCol = __webpack_require__(85);
+	var _tableRemoveCol = __webpack_require__(86);
 
 	var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-	var _tableAlignCol = __webpack_require__(86);
+	var _tableAlignCol = __webpack_require__(87);
 
 	var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-	var _tableRemove = __webpack_require__(87);
+	var _tableRemove = __webpack_require__(88);
 
 	var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-	var _increaseDepth = __webpack_require__(88);
+	var _increaseDepth = __webpack_require__(89);
 
 	var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-	var _decreaseDepth = __webpack_require__(89);
+	var _decreaseDepth = __webpack_require__(90);
 
 	var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-	var _task3 = __webpack_require__(90);
+	var _task3 = __webpack_require__(91);
 
 	var _task4 = _interopRequireDefault(_task3);
 
-	var _code3 = __webpack_require__(91);
+	var _code3 = __webpack_require__(92);
 
 	var _code4 = _interopRequireDefault(_code3);
 
-	var _codeBlock3 = __webpack_require__(92);
+	var _codeBlock3 = __webpack_require__(93);
 
 	var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -1757,6 +1757,7 @@
 	/**
 	 * Constant of key mapping
 	 * @type {string[]}
+	 * @ignore
 	 */
 	var KEYBOARD_MAP = ['', // [0]
 	'', // [1]
@@ -2148,6 +2149,7 @@
 	 * @class mdTextObject
 	 * @param {MarkdownEditor} mde MarkdownEditor instance
 	 * @param {object} range range
+	 * @ignore
 	 */
 	var mdTextObject = function () {
 	    function mdTextObject(mde, range) {
@@ -2611,13 +2613,13 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
-	 * @fileoverview Implements CommandManager
+	 * @fileoverview Implements ComponentManager
 	 * @author Junghwan Park(junghwan.parkm@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
 	/**
 	 * ComponentManager
-	 * @exports CommandManager
+	 * @exports ComponentManager
 	 * @class
 	 */
 	var ComponentManager = function () {
@@ -2641,7 +2643,7 @@
 	     * addManager
 	     * Add manager
 	     * @api
-	     * @memberOf CommandManager
+	     * @memberOf ComponentManager
 	     * @param {string|function} nameOrConstructor Manager name or constructor
 	     * @param {function} [ManagerConstructor] Constructor
 	     */
@@ -2664,7 +2666,7 @@
 	         * getManager
 	         * Get manager by manager name
 	         * @api
-	         * @memberOf CommandManager
+	         * @memberOf ComponentManager
 	         * @param {string} name Manager name
 	         * @returns {object} manager
 	         */
@@ -2888,6 +2890,7 @@
 	 * @exports LazyRunner
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var LazyRunner = function () {
@@ -3212,6 +3215,7 @@
 	 * @param {string} html HTML string
 	 * @param {string} encode Boolean value of whether encode or not
 	 * @returns {string}
+	 * @ignore
 	 */
 
 
@@ -3241,39 +3245,39 @@
 
 	var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-	var _wwListManager = __webpack_require__(15);
+	var _wwListManager = __webpack_require__(18);
 
 	var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-	var _wwTaskManager = __webpack_require__(16);
+	var _wwTaskManager = __webpack_require__(19);
 
 	var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-	var _wwTableManager = __webpack_require__(17);
+	var _wwTableManager = __webpack_require__(20);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _wwTableSelectionManager = __webpack_require__(18);
+	var _wwTableSelectionManager = __webpack_require__(21);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _wwHrManager = __webpack_require__(19);
+	var _wwHrManager = __webpack_require__(22);
 
 	var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-	var _wwPManager = __webpack_require__(20);
+	var _wwPManager = __webpack_require__(23);
 
 	var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-	var _wwHeadingManager = __webpack_require__(21);
+	var _wwHeadingManager = __webpack_require__(24);
 
 	var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-	var _wwCodeBlockManager = __webpack_require__(22);
+	var _wwCodeBlockManager = __webpack_require__(25);
 
 	var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-	var _squireExt = __webpack_require__(23);
+	var _squireExt = __webpack_require__(26);
 
 	var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -3281,7 +3285,7 @@
 
 	var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-	var _wwTextObject = __webpack_require__(24);
+	var _wwTextObject = __webpack_require__(27);
 
 	var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
@@ -3338,8 +3342,8 @@
 	        this._initEvent();
 	        this._initDefaultKeyEventHandler();
 
-	        this.postProcessForChange = util.debounce(function () {
-	            return _this._postProcessForChange();
+	        this.debouncedPostProcessForChange = util.debounce(function () {
+	            return _this.postProcessForChange();
 	        }, 0);
 	    }
 
@@ -3601,7 +3605,7 @@
 
 	            this.getEditor().addEventListener('keyup', function (keyboardEvent) {
 	                if (isNeedFirePostProcessForRangeChange) {
-	                    self.postProcessForChange();
+	                    self.debouncedPostProcessForChange();
 	                    isNeedFirePostProcessForRangeChange = false;
 	                }
 
@@ -3665,11 +3669,12 @@
 	                });
 	            });
 
+	            // Toolbar status active/inactive
 	            this.getEditor().addEventListener('pathChange', function (data) {
 	                var state = {
 	                    bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
 	                    italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
-	                    strike: /(>S)/.test(data.path),
+	                    strike: /(^S>|>S$|>S>|^S$)/.test(data.path),
 	                    code: /CODE/.test(data.path),
 	                    codeBlock: /PRE/.test(data.path),
 	                    quote: /BLOCKQUOTE/.test(data.path),
@@ -4144,15 +4149,14 @@
 	        }
 
 	        /**
-	         * _postProcessForChange
+	         * postProcessForChange
 	         * Post process for change
-	         * @private
 	         * @memberOf WysiwygEditor
 	         */
 
 	    }, {
-	        key: '_postProcessForChange',
-	        value: function _postProcessForChange() {
+	        key: 'postProcessForChange',
+	        value: function postProcessForChange() {
 	            var self = this;
 	            self.getEditor().modifyDocument(function () {
 	                self.eventManager.emit('wysiwygRangeChangeAfter', self);
@@ -4519,6 +4523,7 @@
 	 * Check if node is text node
 	 * @param {Node} node node to check
 	 * @returns {boolean} result
+	 * @ignore
 	 */
 	var isTextNode = function isTextNode(node) {
 	    return node && node.nodeType === Node.TEXT_NODE;
@@ -4529,6 +4534,7 @@
 	 * Check if node is element node
 	 * @param {Node} node node to check
 	 * @returns {boolean} result
+	 * @ignore
 	 */
 	var isElemNode = function isElemNode(node) {
 	    return node && node.nodeType === Node.ELEMENT_NODE;
@@ -4539,6 +4545,7 @@
 	 * Get node name of node
 	 * @param {Node} node node
 	 * @returns {string} node name
+	 * @ignore
 	 */
 	var getNodeName = function getNodeName(node) {
 	    if (isElemNode(node)) {
@@ -4553,6 +4560,7 @@
 	 * Get node offset length of node(for Range API)
 	 * @param {Node} node node
 	 * @returns {number} length
+	 * @ignore
 	 */
 	var getTextLength = function getTextLength(node) {
 	    var len = void 0;
@@ -4571,6 +4579,7 @@
 	 * Get node offset length of node(for Range API)
 	 * @param {Node} node node
 	 * @returns {number} length
+	 * @ignore
 	 */
 	var getOffsetLength = function getOffsetLength(node) {
 	    var len = void 0;
@@ -4589,6 +4598,7 @@
 	 * get node offset between parent's childnodes
 	 * @param {Node} node node
 	 * @returns {number} offset(index)
+	 * @ignore
 	 */
 	var getNodeOffsetOfParent = function getNodeOffsetOfParent(node) {
 	    var childNodesOfParent = node.parentNode.childNodes;
@@ -4612,6 +4622,7 @@
 	 * @param {Node} node node
 	 * @param {number} index offset index
 	 * @returns {Node} foudned node
+	 * @ignore
 	 */
 	var getChildNodeByOffset = function getChildNodeByOffset(node, index) {
 	    var currentNode = void 0;
@@ -4634,6 +4645,7 @@
 	 * @param {Node} node node
 	 * @param {string} untilNodeName parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getNodeWithDirectionUntil = function getNodeWithDirectionUntil(direction, node, untilNodeName) {
 	    var directionKey = direction + 'Sibling';
@@ -4665,6 +4677,7 @@
 	 * @param {number} index offset index
 	 * @param {string} untilNodeName parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getPrevOffsetNodeUntil = function getPrevOffsetNodeUntil(node, index, untilNodeName) {
 	    var prevNode = void 0;
@@ -4699,6 +4712,7 @@
 	 * @param {Node} node node
 	 * @param {string|HTMLNode} untilNode node name or node to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getParentUntil = function getParentUntil(node, untilNode) {
 	    var foundedNode = void 0;
@@ -4724,6 +4738,7 @@
 	 * @param {Node} node node
 	 * @param {string|Node} underNode parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getNodeWithDirectionUnderParent = function getNodeWithDirectionUnderParent(direction, node, underNode) {
 	    var directionKey = direction + 'Sibling';
@@ -4744,6 +4759,7 @@
 	 * @param {Node} node node
 	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getTopPrevNodeUnder = function getTopPrevNodeUnder(node, underNode) {
 	    return getNodeWithDirectionUnderParent('previous', node, underNode);
@@ -4755,6 +4771,7 @@
 	 * @param {Node} node node
 	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getTopNextNodeUnder = function getTopNextNodeUnder(node, underNode) {
 	    return getNodeWithDirectionUnderParent('next', node, underNode);
@@ -4764,6 +4781,7 @@
 	 * Get parent element the body element
 	 * @param {Node} node Node for start searching
 	 * @returns {Node}
+	 * @ignore
 	 */
 	var getTopBlockNode = function getTopBlockNode(node) {
 	    return getParentUntil(node, 'BODY');
@@ -4773,6 +4791,7 @@
 	 * Get previous text node
 	 * @param {Node} node Node for start searching
 	 * @returns {Node}
+	 * @ignore
 	 */
 	var getPrevTextNode = function getPrevTextNode(node) {
 	    node = node.previousSibling || node.parentNode;
@@ -4802,6 +4821,7 @@
 	 * @param {Array.<number>} offsetList offset list
 	 * @param {function} textNodeFilter Text node filter
 	 * @returns {Array}
+	 * @ignore
 	 */
 	var findOffsetNode = function findOffsetNode(root, offsetList, textNodeFilter) {
 	    var result = [];
@@ -4891,6 +4911,7 @@
 	 * @param {HTMLElement} node TD element
 	 * @param {string} direction Boolean value for direction true is find next cell
 	 * @returns {HTMLElement|null}
+	 * @ignore
 	 */
 	var getTableCellByDirection = function getTableCellByDirection(node, direction) {
 	    var isForward = true;
@@ -4917,6 +4938,7 @@
 	 * @param {string} direction Boolean value for find first TD in next line
 	 * @param {boolean} [needEdgeCell=false] Boolean value for find first TD in next line
 	 * @returns {HTMLElement|null}
+	 * @ignore
 	 */
 	var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, direction, needEdgeCell) {
 	    var isForward = true;
@@ -4998,7 +5020,9 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg editor clipboard manager
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com),
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *         Jiung Kang(jiung.kang@nhnent.com)
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *         FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 	var _domUtils = __webpack_require__(11);
@@ -5009,11 +5033,27 @@
 
 	var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
+	var _wwClipboardHandler = __webpack_require__(15);
+
+	var _wwClipboardHandler2 = _interopRequireDefault(_wwClipboardHandler);
+
+	var _wwPseudoClipboardHandler = __webpack_require__(16);
+
+	var _wwPseudoClipboardHandler2 = _interopRequireDefault(_wwPseudoClipboardHandler);
+
+	var _htmlSanitizer = __webpack_require__(14);
+
+	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
+
+	var _i18n = __webpack_require__(17);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var SET_SELECTION_DELAY = 50;
+	var PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 
 	/**
 	 * WwClipboardManager
@@ -5027,9 +5067,17 @@
 	    function WwClipboardManager(wwe) {
 	        _classCallCheck(this, WwClipboardManager);
 
-	        this.wwe = wwe;
+	        var browser = tui.util.browser;
+	        var ClipboardHandler = browser.chrome || browser.safari ? _wwClipboardHandler2.default : _wwPseudoClipboardHandler2.default;
 
+	        this.wwe = wwe;
 	        this._pch = new _wwPasteContentHelper2.default(this.wwe);
+	        this._cbHdr = new ClipboardHandler(this.wwe, {
+	            onCopyBefore: this.onCopyBefore.bind(this),
+	            onCutBefore: this.onCopyBefore.bind(this),
+	            onCut: this.onCut.bind(this),
+	            onPaste: this.onPaste.bind(this)
+	        });
 	    }
 
 	    /**
@@ -5043,124 +5091,235 @@
 	    _createClass(WwClipboardManager, [{
 	        key: 'init',
 	        value: function init() {
-	            this._initSquireEvent();
-	        }
-
-	        /**
-	         * _initSquireEvent
-	         * initialize squire events
-	         * @private
-	         * @memberOf WwClipboardManager
-	         */
-
-	    }, {
-	        key: '_initSquireEvent',
-	        value: function _initSquireEvent() {
-	            var _this = this;
-
-	            this.wwe.getEditor().addEventListener('copy', function (ev) {
-	                _this.wwe.eventManager.emit('copy', {
-	                    source: 'wysiwyg',
-	                    data: ev
-	                });
-
-	                _this._executeActionFor('copy');
-	            });
-
-	            this.wwe.getEditor().addEventListener('cut', function (ev) {
-	                _this.wwe.eventManager.emit('cut', {
-	                    source: 'wysiwyg',
-	                    data: ev
-	                });
-
-	                _this._executeActionFor('cut');
-	            });
-
+	            // squire의 willPaste가 동작하지 않도록 처리
 	            this.wwe.getEditor().addEventListener('willPaste', function (pasteData) {
-	                _this._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
-
-	                _this._pch.preparePaste(pasteData);
-
-	                _this.wwe.eventManager.emit('pasteBefore', {
-	                    source: 'wysiwyg',
-	                    data: pasteData
-	                });
-
-	                _this._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
-	                _this.wwe.postProcessForChange();
+	                pasteData.preventDefault();
 	            });
 	        }
+
 	        /**
-	         * Refine cursor position with paste contents
-	         * @memberOf WwClipboardManager
-	         * @param {DocumentFragment} fragment Copied contents
+	         * Update copy data, when commonAncestorContainer nodeName is list type like UL or OL.
+	         * @param {object} range - text range
+	         * @param {jQuery} $clipboardContainer - clibpard container jQuery element
+	         */
+
+	    }, {
+	        key: '_updateCopyDataForListTypeIfNeed',
+	        value: function _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
+	            var commonAncestorNodeName = range.commonAncestorContainer.nodeName;
+	            if (commonAncestorNodeName !== 'UL' && commonAncestorNodeName !== 'OL') {
+	                return;
+	            }
+
+	            var $newParent = $('<' + commonAncestorNodeName + ' />');
+	            $newParent.append($clipboardContainer.html());
+	            $clipboardContainer.html('');
+	            $clipboardContainer.append($newParent);
+	        }
+
+	        /**
+	         * This handler execute before copy.
+	         * @param {Event} ev - clipboard event
+	         */
+
+	    }, {
+	        key: 'onCopyBefore',
+	        value: function onCopyBefore(ev) {
+	            var editor = this.wwe.getEditor();
+
+	            editor.focus();
+
+	            var range = editor.getSelection().cloneRange();
+	            var $clipboardContainer = $('<div />');
+
+	            this._extendRange(range);
+
+	            $clipboardContainer.append(range.cloneContents());
+
+	            this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
+
+	            this.wwe.eventManager.emit('copyBefore', {
+	                source: 'wysiwyg',
+	                $clipboardContainer: $clipboardContainer
+	            });
+
+	            this._cbHdr.setClipboardData(ev, $clipboardContainer.html(), $clipboardContainer.text());
+	        }
+
+	        /**
+	         * This handler execute cut.
+	         * @param {Event} ev - clipboard event
+	         */
+
+	    }, {
+	        key: 'onCut',
+	        value: function onCut(ev) {
+	            this.wwe.eventManager.emit('cut', {
+	                source: 'wysiwyg',
+	                data: ev
+	            });
+	            this.wwe.debouncedPostProcessForChange();
+	        }
+
+	        /**
+	         * Remove empty font elements.
+	         * @param {jQuery} $clipboardContainer - cliboard jQuery container
+	         */
+
+	    }, {
+	        key: '_removeEmptyFontElement',
+	        value: function _removeEmptyFontElement($clipboardContainer) {
+	            // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
+	            $clipboardContainer.children('font').each(function (index, element) {
+	                var $element = $(element);
+
+	                if (!$element.text().trim()) {
+	                    $element.remove();
+	                }
+	            });
+	        }
+
+	        /**
+	         * Prepare paste.
+	         * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
 	         * @private
 	         */
 
 	    }, {
-	        key: '_refineCursorWithPasteContentsIfNeed',
-	        value: function _refineCursorWithPasteContentsIfNeed(fragment) {
-	            var node = fragment;
+	        key: '_preparePaste',
+	        value: function _preparePaste($clipboardContainer) {
+	            this._removeEmptyFontElement($clipboardContainer);
+
+	            $clipboardContainer.html($clipboardContainer.html().trim());
+
+	            this._pch.preparePaste($clipboardContainer);
+
+	            this.wwe.eventManager.emit('pasteBefore', {
+	                source: 'wysiwyg',
+	                $clipboardContainer: $clipboardContainer
+	            });
+	        }
+
+	        /**
+	         * Focus to after table.
+	         * @param {object} sq - squire editor instance
+	         * @private
+	         */
+
+	    }, {
+	        key: '_focusToAfterTable',
+	        value: function _focusToAfterTable() {
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
+	            var $bookmarkedTable = sq.get$Body().find('.' + PASTE_TABLE_BOOKMARK);
 
-	            if (fragment.childNodes.length !== 0 && !_domUtils2.default.isTextNode(node.firstChild)) {
-	                while (node.lastChild) {
-	                    node = node.lastChild;
-	                }
-
-	                this.wwe.defer(function () {
-	                    sq.focus();
-
-	                    range.setStartAfter(node);
-	                    range.collapse(true);
-	                    sq.setSelection(range);
-	                }, SET_SELECTION_DELAY);
+	            if ($bookmarkedTable.length) {
+	                $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+	                range.setEndAfter($bookmarkedTable[0]);
+	                range.collapse(false);
+	                sq.setSelection(range);
 	            }
 	        }
 
 	        /**
-	         * Check whether copied content from editor or not
-	         * @memberOf WwClipboardManager
-	         * @param {DocumentFragment} pasteData Copied contents
+	         * Whether paste only table or not.
+	         * @param {jQuery} $clipboardContainer - clibpard container
 	         * @returns {boolean}
 	         * @private
 	         */
 
 	    }, {
-	        key: '_isCopyFromEditor',
-	        value: function _isCopyFromEditor(pasteData) {
-	            if (!this._latestClipboardRangeInfo) {
-	                return false;
-	            }
+	        key: '_isPasteOnlyTable',
+	        value: function _isPasteOnlyTable($clipboardContainer) {
+	            var childNodes = $clipboardContainer[0].childNodes;
 
-	            var lastestClipboardContents = this._latestClipboardRangeInfo.contents.textContent;
-
-	            return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
+	            return childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
 	        }
+
 	        /**
-	         * Save latest clipboard range information to _latestClipboardRangeInfo
-	         * @memberOf WwClipboardManager
+	         * Paste to table.
+	         * @param {jQuery} $clipboardContainer - clibpard container
+	         * @returns {boolean}
 	         * @private
 	         */
 
 	    }, {
-	        key: '_saveLastestClipboardRangeInfo',
-	        value: function _saveLastestClipboardRangeInfo() {
-	            var commonAncestorName = void 0;
-	            var range = this.wwe.getEditor().getSelection().cloneRange();
-	            this._extendRange(range);
+	        key: '_pasteToTable',
+	        value: function _pasteToTable($clipboardContainer) {
+	            var tableManager = this.wwe.componentManager.getManager('table');
+	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var range = this.wwe.getEditor().getSelection();
+	            var pasted = false;
 
-	            if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
-	                commonAncestorName = 'BODY';
-	            } else {
-	                commonAncestorName = range.commonAncestorContainer.tagName;
+	            if (tableManager.isInTable(range)) {
+	                pasted = true;
+
+	                if (this._isPasteOnlyTable($clipboardContainer)) {
+	                    tableManager.pasteClipboardData($clipboardContainer.first());
+	                } else if (tableSelectionManager.getSelectedCells().length) {
+	                    alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
+	                } else {
+	                    pasted = false;
+	                }
 	            }
 
-	            this._latestClipboardRangeInfo = {
-	                contents: range.cloneContents(),
-	                commonAncestorName: commonAncestorName
-	            };
+	            return pasted;
+	        }
+
+	        /**
+	         * Remove html comments.
+	         * @param {string} html - html
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_removeHtmlComments',
+	        value: function _removeHtmlComments(html) {
+	            return html.replace(/<!--[\s\S]*?-->/g, '');
+	        }
+
+	        /**
+	         * This handler execute paste.
+	         * @param {Event} ev - clipboard event
+	         */
+
+	    }, {
+	        key: 'onPaste',
+	        value: function onPaste(ev) {
+	            var $clipboardContainer = $('<div />');
+	            var html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+
+	            html = this._removeHtmlComments(html).trim();
+	            html = (0, _htmlSanitizer2.default)(html, true).trim();
+
+	            if (!html) {
+	                return;
+	            }
+
+	            $clipboardContainer.html(html);
+
+	            this._preparePaste($clipboardContainer);
+
+	            var $lastNode = $($clipboardContainer[0].childNodes).last();
+	            var isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
+
+	            if (isLastNodeTable) {
+	                $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+	            }
+
+	            var pastedTable = this._pasteToTable($clipboardContainer);
+
+	            if (pastedTable) {
+	                return;
+	            }
+
+	            this.wwe.getEditor().insertHTML($clipboardContainer.html());
+	            this.wwe.postProcessForChange();
+
+	            if (isLastNodeTable) {
+	                this._focusToAfterTable();
+	            }
 	        }
 
 	        /**
@@ -5259,43 +5418,6 @@
 	        value: function _isWholeCommonAncestorContainerSelected(range) {
 	            return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE && range.commonAncestorContainer !== this.wwe.get$Body()[0] && range.startOffset === 0 && range.endOffset === range.commonAncestorContainer.childNodes.length && range.commonAncestorContainer === range.startContainer && range.commonAncestorContainer === range.endContainer;
 	        }
-
-	        /**
-	         * Table cut and copy action helper for safari and IE's
-	         * @param {string} [action] Boolean value for cut action
-	         * @private
-	         */
-
-	    }, {
-	        key: '_executeActionFor',
-	        value: function _executeActionFor(action) {
-	            this._saveLastestClipboardRangeInfo();
-	            if (action === 'cut') {
-	                this.wwe.postProcessForChange();
-	            }
-	        }
-
-	        /**
-	         * Replace pasteData to lastClipboardRangeInfo's data
-	         * @param {object} pasteData Clipboard data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addRangeInfoAndReplaceFragmentIfNeed',
-	        value: function _addRangeInfoAndReplaceFragmentIfNeed(pasteData) {
-	            var hasRangeInfo = !!this._latestClipboardRangeInfo;
-	            var savedContents = hasRangeInfo && this._latestClipboardRangeInfo.contents;
-	            var isSameContents = savedContents.textContent === pasteData.fragment.textContent;
-
-	            if (hasRangeInfo) {
-	                pasteData.rangeInfo = this._latestClipboardRangeInfo;
-
-	                if (isSameContents) {
-	                    pasteData.fragment = $(savedContents).clone()[0];
-	                }
-	            }
-	        }
 	    }]);
 
 	    return WwClipboardManager;
@@ -5347,30 +5469,30 @@
 	     * Process paste data before paste
 	     * @api
 	     * @memberOf WwPasteContentHelper
-	     * @param {object} pasteData Pasting data
+	     * @param {jQuery} $container - clipboard container
 	     */
 
 
 	    _createClass(WwPasteContentHelper, [{
 	        key: 'preparePaste',
-	        value: function preparePaste(pasteData) {
+	        value: function preparePaste($container) {
 	            var range = this.wwe.getEditor().getSelection().cloneRange();
 	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
-	            var tableManager = this.wwe.componentManager.getManager('table');
 	            var firstBlockIsTaken = false;
-	            var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+	            var $tempContainer = $('<div />');
+
 	            var nodeName = void 0,
 	                node = void 0,
 	                isPastingList = void 0;
 
-	            pasteData.fragment = this._pasteFirstAid(pasteData.fragment);
+	            this._pasteFirstAid($container);
 
-	            var childNodes = util.toArray(pasteData.fragment.childNodes);
+	            var childNodes = util.toArray($container[0].childNodes);
 
 	            // prepare to paste as inline of first node if possible
 	            // 앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
 	            if (childNodes.length && childNodes[0].tagName === 'DIV') {
-	                $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
+	                $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
 	                childNodes.shift();
 	            }
 
@@ -5380,25 +5502,22 @@
 	                isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
 	                if (codeblockManager.isInCodeBlock(range)) {
-	                    newFragment.appendChild(codeblockManager.prepareToPasteOnCodeblock(childNodes));
-	                } else if (tableManager.isInTable(range)) {
-	                    newFragment = tableManager.prepareToPasteOnTable(pasteData, node);
-	                    childNodes.shift();
+	                    $tempContainer.append(codeblockManager.prepareToPasteOnCodeblock(childNodes));
 	                } else if (isPastingList) {
-	                    newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
+	                    $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
 	                    // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
 	                    firstBlockIsTaken = true;
 	                } else {
-	                    newFragment.appendChild(childNodes.shift());
+	                    $tempContainer.append(childNodes.shift());
 	                }
 	            }
 
-	            pasteData.fragment = newFragment;
+	            $container.html($tempContainer.html());
 	        }
 
 	        /**
 	         * Wrap orphan node(inline, text) with div element
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @returns {DocumentFragment}
 	         * @private
@@ -5406,9 +5525,9 @@
 
 	    }, {
 	        key: '_wrapOrphanNodeWithDiv',
-	        value: function _wrapOrphanNodeWithDiv(fragment) {
-	            var newFrag = document.createDocumentFragment();
-	            var array = util.toArray(fragment.childNodes);
+	        value: function _wrapOrphanNodeWithDiv($container) {
+	            var $tempContainer = $('<div />');
+	            var array = util.toArray($container[0].childNodes);
 	            var currentDiv = void 0;
 
 	            util.forEachArray(array, function (node) {
@@ -5420,7 +5539,8 @@
 	                if (isTextNode || isInlineNode) {
 	                    if (!currentDiv) {
 	                        currentDiv = document.createElement('div');
-	                        newFrag.appendChild(currentDiv);
+	                        $tempContainer.append(currentDiv);
+	                        // newFrag.appendChild(currentDiv);
 	                    }
 
 	                    currentDiv.appendChild(node);
@@ -5430,77 +5550,74 @@
 	                    }
 
 	                    currentDiv = null;
-	                    newFrag.appendChild(node);
+	                    $tempContainer.append(node);
+	                    // newFrag.appendChild(node);
 	                }
 	            });
 
-	            return newFrag;
+	            return $tempContainer.html();
 	        }
 
 	        /**
 	         * Processing paste data after paste
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
-	         * @returns {DocumentFragment}
 	         * @private
 	         */
 
 	    }, {
 	        key: '_pasteFirstAid',
-	        value: function _pasteFirstAid(fragment) {
+	        value: function _pasteFirstAid($container) {
 	            var _this = this;
 
 	            var blockTags = 'div, section, article, aside, nav, menus, p';
 
-	            fragment = (0, _htmlSanitizer2.default)(fragment);
+	            $container.html((0, _htmlSanitizer2.default)($container.html(), true));
 
-	            $(fragment).find('*').each(function (i, node) {
+	            $container.find('*').each(function (i, node) {
 	                _this._removeStyles(node);
 	            });
 
-	            this._unwrapIfNonBlockElementHasBr(fragment);
-	            this._unwrapNestedBlocks(fragment, blockTags);
+	            this._unwrapIfNonBlockElementHasBr($container);
+	            this._unwrapNestedBlocks($container, blockTags);
 
-	            this._removeUnnecessaryBlocks(fragment, blockTags);
-	            this._removeStyles(fragment);
+	            this._removeUnnecessaryBlocks($container, blockTags);
 
-	            fragment = this._wrapOrphanNodeWithDiv(fragment);
+	            $container.html(this._wrapOrphanNodeWithDiv($container));
 
-	            this._preElementAid(fragment);
+	            this._preElementAid($container);
 
-	            this._tableElementAid(fragment);
+	            this._tableElementAid($container);
 
-	            $(fragment).children('br').remove();
-
-	            return fragment;
+	            $container.children('br').remove();
 	        }
 
 	        /**
 	         * PRE tag formatting
 	         * @memberOf WwPasteContentHelper
 	         * @private
-	         * @param {DocumentFragment} nodes Pasting DocumentFragment
+	         * @param {jQuery} $container - clipboard container
 	         */
 
 	    }, {
 	        key: '_preElementAid',
-	        value: function _preElementAid(nodes) {
+	        value: function _preElementAid($container) {
 	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-	            codeblockManager.splitCodeblockToEachLine(nodes);
+	            codeblockManager.splitCodeblockToEachLine($container);
 	        }
 
 	        /**
 	         * Unwrap span children of document fragment with div element
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @private
 	         */
 
 	    }, {
 	        key: '_unwrapIfNonBlockElementHasBr',
-	        value: function _unwrapIfNonBlockElementHasBr(fragment) {
-	            var nonBlockElements = $(fragment).find('span, a, b, em, i, s');
+	        value: function _unwrapIfNonBlockElementHasBr($container) {
+	            var nonBlockElements = $container.find('span, a, b, em, i, s');
 
 	            nonBlockElements.each(function (i, node) {
 	                var brChildren = $(node).children('br');
@@ -5513,24 +5630,23 @@
 
 	        /**
 	         * Unwrap nested block elements
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @param {string} blockTags - Tag names of block tag
 	         * @private
 	         */
 
 	    }, {
 	        key: '_unwrapNestedBlocks',
-	        value: function _unwrapNestedBlocks(fragment, blockTags) {
-	            var leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code,span');
+	        value: function _unwrapNestedBlocks($container, blockTags) {
+	            var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span');
 
-	            leafElements.each(function (i, node) {
+	            $leafElements.each(function (i, node) {
 	                var leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
-	                var parent = void 0;
 
 	                while (leafElement.parents(blockTags).length) {
-	                    parent = leafElement.parent(blockTags);
+	                    var $parent = leafElement.parent(blockTags);
 
-	                    if (parent.length) {
+	                    if ($parent.length && $parent[0] !== $container[0]) {
 	                        leafElement.unwrap();
 	                    } else {
 	                        leafElement = leafElement.parent();
@@ -5541,7 +5657,7 @@
 
 	        /**
 	         * Remove unnecessary block element in pasting data
-	         * @param {DocumentFragment} fragment Pasting DocumentFragment
+	         * @param {jQuery} $container - clipboard container
 	         * @param {string} blockTags - Tag names of block tag
 	         * @memberOf WwPasteContentHelper
 	         * @private
@@ -5549,8 +5665,8 @@
 
 	    }, {
 	        key: '_removeUnnecessaryBlocks',
-	        value: function _removeUnnecessaryBlocks(fragment, blockTags) {
-	            $(fragment).find(blockTags).each(function (index, blockElement) {
+	        value: function _removeUnnecessaryBlocks($container, blockTags) {
+	            $container.find(blockTags).each(function (index, blockElement) {
 	                var $blockElement = $(blockElement);
 	                var tagName = blockElement.tagName;
 	                var isDivElement = tagName === 'DIV';
@@ -5747,65 +5863,65 @@
 
 	        /**
 	         * Pasting table element pre-process
-	         * @param {DocumentFragment} fragment pasteData's fragment
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @private
 	         */
 
 	    }, {
 	        key: '_tableElementAid',
-	        value: function _tableElementAid(fragment) {
-	            this._completeTableIfNeed(fragment);
-	            this._updateTableIDClassName(fragment);
+	        value: function _tableElementAid($container) {
+	            this._completeTableIfNeed($container);
+	            this._updateTableIDClassName($container);
 	        }
 
 	        /**
 	         * Complete and append table to fragment
-	         * @param {DocumentFragment} fragment Copied data
+	         * @param {jQuery} $container - clipboard container
 	         * @private
 	         */
 
 	    }, {
 	        key: '_completeTableIfNeed',
-	        value: function _completeTableIfNeed(fragment) {
+	        value: function _completeTableIfNeed($container) {
 	            var tableManager = this.wwe.componentManager.getManager('table');
-	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed($container);
 
 	            if (wrapperTr) {
-	                $(fragment).append(wrapperTr);
+	                $container.append(wrapperTr);
 	            }
 
-	            var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+	            var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed($container);
 
 	            if (wrapperTbody) {
-	                $(fragment).append(wrapperTbody);
+	                $container.append(wrapperTbody);
 	            }
 
-	            var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+	            var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed($container);
 
 	            if (wrapperTable) {
-	                $(fragment).append(wrapperTable);
+	                $container.append(wrapperTable);
 	            }
 	        }
 
 	        /**
 	         * Update table ID class name in fragment
-	         * @param {DocumentFragment} fragment Copied data
+	         * @param {jQuery} $container - clipboard container
 	         * @private
 	         */
 
 	    }, {
 	        key: '_updateTableIDClassName',
-	        value: function _updateTableIDClassName(fragment) {
+	        value: function _updateTableIDClassName($container) {
 	            var tableManager = this.wwe.componentManager.getManager('table');
 
-	            $(fragment).find('table').each(function (index, table) {
+	            $container.find('table').each(function (index, table) {
 	                $(table).removeClass(function (idx, className) {
 	                    return className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1');
 	                });
 	            });
 
-	            $(fragment).find('table').each(function (index, table) {
+	            $container.find('table').each(function (index, table) {
 	                $(table).addClass(tableManager.getTableIDClassName());
 	            });
 	        }
@@ -5829,7 +5945,7 @@
 
 	var util = tui.util;
 
-	var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|colspan|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rowspan|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+	var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
 	var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
@@ -5840,6 +5956,7 @@
 	 * @param {string|Node} html html or Node
 	 * @param {boolean} [needHtmlText] pass true if need html text
 	 * @returns {string|DocumentFragment} result
+	 * @ignore
 	 */
 	function htmlSanitizer(html, needHtmlText) {
 	    var $html = $('<div />');
@@ -5858,7 +5975,7 @@
 	 * @param {jQuery} $html jQuery instance
 	 */
 	function removeUnnecessaryTags($html) {
-	    $html.find('script, iframe, textarea, form, button, select').remove();
+	    $html.find('script, iframe, textarea, form, button, select, meta, style, link').remove();
 	}
 
 	/**
@@ -5911,6 +6028,423 @@
 
 /***/ },
 /* 15 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements clipboard handler.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	/**
+	 * WwClipboardHandler
+	 * @exports WwClipboardHandler
+	 * @constructor
+	 * @class WwClipboardHandler
+	 * @param {WysiwygEditor} wwe - WysiwygEditor instance
+	 * @param {object} eventHandler - EventHandler instance
+	 */
+	var WwClipboardHandler = function () {
+	    function WwClipboardHandler(wwe, eventHandler) {
+	        _classCallCheck(this, WwClipboardHandler);
+
+	        this.wwe = wwe;
+	        this.eventManager = wwe.eventManager;
+	        this.$editorBody = wwe.getEditor().get$Body();
+
+	        this._initEvent(eventHandler);
+	    }
+
+	    /**
+	     * Initilize event for clipboard.
+	     * @param {function} onCopyBefore  - copy before handler
+	     * @param {function} onCopy - copy handler
+	     * @param {function} onCutBefore - cut before handler
+	     * @param {function} onCut - cut handler
+	     * @param {function} onPaste - paste handler
+	     * @private
+	     * @memberOf WwClipboardHandler
+	     */
+
+
+	    _createClass(WwClipboardHandler, [{
+	        key: '_initEvent',
+	        value: function _initEvent(_ref) {
+	            var onCopyBefore = _ref.onCopyBefore,
+	                onCutBefore = _ref.onCutBefore,
+	                onCut = _ref.onCut,
+	                onPaste = _ref.onPaste;
+
+	            this.$editorBody.on('beforecopy', function ($ev) {
+	                $ev.preventDefault();
+	                $ev.stopPropagation();
+	            });
+
+	            this.$editorBody.on('copy', function ($ev) {
+	                onCopyBefore($ev.originalEvent);
+	            });
+
+	            this.$editorBody.on('beforecut', function ($ev) {
+	                $ev.preventDefault();
+	                $ev.stopPropagation();
+	            });
+
+	            this.$editorBody.on('cut', function ($ev) {
+	                var ev = $ev.originalEvent;
+	                onCutBefore(ev);
+	                onCut(ev);
+	                $ev.preventDefault();
+	                $ev.stopPropagation();
+	            });
+
+	            this.$editorBody.on('paste', function ($ev) {
+	                onPaste($ev.originalEvent);
+	            });
+	        }
+
+	        /**
+	         * Set clipboard data.
+	         * @param {Event} ev - clipboard event like copy, cut
+	         * @param {string} htmlContent - html content
+	         * @param {string} textContent - text content
+	         * @memberOf WwClipboardHandler
+	         */
+
+	    }, {
+	        key: 'setClipboardData',
+	        value: function setClipboardData(ev, htmlContent, textContent) {
+	            if (!htmlContent) {
+	                return;
+	            }
+	            ev.clipboardData.setData('text/html', htmlContent);
+	            ev.clipboardData.setData('text/plain', textContent);
+
+	            ev.preventDefault();
+	            ev.stopPropagation();
+	        }
+	    }]);
+
+	    return WwClipboardHandler;
+	}();
+
+	exports.default = WwClipboardHandler;
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements fake clipboard handler.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	var isMac = /Mac/.test(navigator.platform);
+	var META_KEY = isMac ? 'META' : 'CTRL';
+	var selectAllContent = void 0;
+
+	if (window.getSelection) {
+	    selectAllContent = function selectAllContent(clipboardBody) {
+	        window.getSelection().selectAllChildren(clipboardBody);
+	    };
+	} else {
+	    selectAllContent = function selectAllContent(clipboardBody) {
+	        var range = document.selection.createRange();
+	        range.moveToElementText(clipboardBody);
+	        range.selectAllContent();
+	    };
+	}
+
+	/**
+	 * PseudoDataTransfer
+	 * Psudo DataTransfer for paste.
+	 * @constructor
+	 * @class PseudoDataTransfer
+	 * @param {object} data - data for initionalizing
+	 */
+
+	var PseudoDataTransfer = function () {
+	    function PseudoDataTransfer(data) {
+	        _classCallCheck(this, PseudoDataTransfer);
+
+	        this.html = data.html;
+	    }
+
+	    /**
+	     * get data.
+	     * @returns {string}
+	     * @memberOf PseudoDataTransfer
+	     */
+
+
+	    _createClass(PseudoDataTransfer, [{
+	        key: 'getData',
+	        value: function getData() {
+	            return this.html;
+	        }
+	    }]);
+
+	    return PseudoDataTransfer;
+	}();
+
+	/**
+	 * WwPseudoClipboardHandler
+	 * @exports WwPseudoClipboardHandler
+	 * @constructor
+	 * @class WwPseudoClipboardHandler
+	 * @param {WysiwygEditor} wwe - WysiwygEditor instance
+	 * @param {object} eventHandler - EventHandler instance
+	 */
+
+
+	var WwPseudoClipboardHandler = function () {
+	    function WwPseudoClipboardHandler(wwe, eventHandler) {
+	        _classCallCheck(this, WwPseudoClipboardHandler);
+
+	        var $clipboardBody = $('<div class="tui-editor-pseudo-clipboard" contentEditable="true" />');
+
+	        this.wwe = wwe;
+	        this.eventManager = wwe.eventManager;
+	        this.wwEditor = wwe.getEditor();
+	        this.$editorBody = this.wwEditor.get$Body();
+	        this.$clipboardBody = $clipboardBody;
+
+	        $(document.body).append($clipboardBody);
+	        this._initEvent(eventHandler);
+	    }
+
+	    /**
+	     * Initilize event for fake clipboard.
+	     * @param {function} onCopyBefore  - copy before handler
+	     * @param {function} onCopy - copy handler
+	     * @param {function} onCutBefore - cut before handler
+	     * @param {function} onCut - cut handler
+	     * @param {function} onPaste - paste handler
+	     * @private
+	     * @memberOf WwPseudoClipboardHandler
+	     */
+
+
+	    _createClass(WwPseudoClipboardHandler, [{
+	        key: '_initEvent',
+	        value: function _initEvent(_ref) {
+	            var _this = this;
+
+	            var onCopyBefore = _ref.onCopyBefore,
+	                onCutBefore = _ref.onCutBefore,
+	                onCut = _ref.onCut,
+	                onPaste = _ref.onPaste;
+
+	            this.wwe.addKeyEventHandler(META_KEY + '+C', function (ev) {
+	                var selectedCellCount = _this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length;
+	                var cachedRange = _this.wwEditor.getSelection().cloneRange();
+
+	                onCopyBefore(ev);
+
+	                setTimeout(function () {
+	                    _this.wwEditor.get$Body().focus();
+
+	                    if (!selectedCellCount) {
+	                        _this.wwEditor.setSelection(cachedRange);
+	                    }
+	                }, 0);
+	            });
+
+	            this.wwe.addKeyEventHandler(META_KEY + '+X', onCutBefore);
+
+	            this.$clipboardBody.on('cut', function ($ev) {
+	                onCut($ev.originalEvent);
+
+	                setTimeout(function () {
+	                    var range = _this.wwEditor.getSelection();
+
+	                    _this.wwEditor.focus();
+	                    range.deleteContents();
+	                }, 0);
+	            });
+
+	            this.wwe.addKeyEventHandler(META_KEY + '+V', function () {
+	                _this.$clipboardBody.html('');
+	                _this.$clipboardBody.focus();
+	            });
+
+	            this.$clipboardBody.on('paste', function () {
+	                setTimeout(function () {
+	                    var html = _this.$clipboardBody.html();
+
+	                    _this.$clipboardBody.html('');
+
+	                    var ev = {
+	                        clipboardData: new PseudoDataTransfer({ html: html })
+	                    };
+
+	                    onPaste(ev);
+	                    _this.wwEditor.focus();
+	                }, 0);
+	            });
+	        }
+
+	        /**
+	         * Set clipboard data.
+	         * @param {Event} ev - clipboard event like copy, cut
+	         * @param {string} htmlContent - html content
+	         * @memberOf WwPseudoClipboardHandler
+	         */
+
+	    }, {
+	        key: 'setClipboardData',
+	        value: function setClipboardData(ev, htmlContent) {
+	            this.$clipboardBody.html(htmlContent);
+	            this.$clipboardBody.focus();
+
+	            selectAllContent(this.$clipboardBody[0]);
+	        }
+	    }]);
+
+	    return WwPseudoClipboardHandler;
+	}();
+
+	exports.default = WwPseudoClipboardHandler;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements i18n
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	var sharedInstance = void 0;
+
+	var DEFAULT_CODE = 'en_US';
+
+	/**
+	 * I18n
+	 * @exports I18n
+	 * @class
+	 */
+
+	var I18n = function () {
+	    function I18n() {
+	        _classCallCheck(this, I18n);
+
+	        this._code = DEFAULT_CODE;
+	        this._langs = new util.Map();
+	    }
+
+	    /**
+	     * Set locale code
+	     * @param {string} code locale code
+	     */
+
+
+	    _createClass(I18n, [{
+	        key: 'setCode',
+	        value: function setCode(code) {
+	            this._code = code;
+	        }
+
+	        /**
+	         * Set language set
+	         * @param {string|string[]} codes locale code
+	         * @param {object} data language set
+	         */
+
+	    }, {
+	        key: 'setLang',
+	        value: function setLang(codes, data) {
+	            var _this = this;
+
+	            codes = [].concat(codes);
+
+	            codes.forEach(function (code) {
+	                if (!_this._langs.has(code)) {
+	                    _this._langs.set(code, data);
+	                } else {
+	                    var langData = _this._langs.get(code);
+	                    _this._langs.set(code, util.extend(langData, data));
+	                }
+	            });
+	        }
+
+	        /**
+	         * Get text of key
+	         * @param {string} key key of text
+	         * @param {string} code locale code
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'get',
+	        value: function get(key, code) {
+	            if (!code) {
+	                code = this._code;
+	            }
+
+	            var langSet = this._langs.get(code);
+
+	            if (!langSet) {
+	                langSet = this._langs.get(DEFAULT_CODE);
+	            }
+
+	            var text = langSet[key];
+
+	            if (!text) {
+	                throw new Error('There is no text key "' + key + '" in ' + code);
+	            }
+
+	            return text;
+	        }
+	    }], [{
+	        key: 'getSharedInstance',
+	        value: function getSharedInstance() {
+	            if (!sharedInstance) {
+	                sharedInstance = new I18n();
+	            }
+
+	            return sharedInstance;
+	        }
+	    }]);
+
+	    return I18n;
+	}();
+
+	exports.I18n = I18n;
+	exports.default = I18n.getSharedInstance();
+
+/***/ },
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6199,7 +6733,7 @@
 	module.exports = WwListManager;
 
 /***/ },
-/* 16 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6496,7 +7030,7 @@
 	module.exports = WwTaskManager;
 
 /***/ },
-/* 17 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6517,10 +7051,10 @@
 
 	var util = tui.util;
 	var isIE10 = util.browser.msie && util.browser.version === 10;
-	var TABLE_COMPLETION_DELAY = 10;
-	var SET_SELECTION_DELAY = 50;
 	var TABLE_CLASS_PREFIX = 'te-content-table-';
 	var isIE10And11 = util.browser.msie && (util.browser.version === 10 || util.browser.version === 11);
+	var BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 	/**
 	 * WwTableManager
@@ -6578,11 +7112,17 @@
 	            var _this = this;
 
 	            this.eventManager.listen('wysiwygRangeChangeAfter.table', function () {
+	                var range = _this.wwe.getEditor().getSelection();
+	                var isRangeInTable = _this.isInTable(range);
+
 	                _this._unwrapBlockInTable();
-	                _this.wwe.defer(function () {
-	                    _this._completeTableIfNeed();
-	                }, TABLE_COMPLETION_DELAY);
-	                _this.wwe.componentManager.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+	                _this._completeTableIfNeed();
+
+	                if (!isRangeInTable) {
+	                    var selectionManager = _this.wwe.componentManager.getManager('tableSelection');
+	                    selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+	                }
+
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
@@ -6596,9 +7136,84 @@
 	                return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
 	            });
 
+	            this.eventManager.listen('cut.table', function () {
+	                var selectionManager = _this.wwe.componentManager.getManager('tableSelection');
+	                var $selectedCells = selectionManager.getSelectedCells();
+
+	                if ($selectedCells.length) {
+	                    $selectedCells.get().forEach(function (cell) {
+	                        return $(cell).html(BASIC_CELL_CONTENT);
+	                    });
+	                }
+
+	                selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+	            });
+
+	            this.eventManager.listen('copyBefore.table', function (_ref) {
+	                var $clipboardContainer = _ref.$clipboardContainer;
+	                return _this.updateTableHtmlOfClipboardIfNeed($clipboardContainer);
+	            });
+
 	            // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
 	            this.onBindedPaste = this._onPaste.bind(this);
 	            this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
+	        }
+
+	        /**
+	         * Update table html of clipboard data, if has selected cells.
+	         * @param {jQuery} $clipboardContainer - jQuery element
+	         */
+
+	    }, {
+	        key: 'updateTableHtmlOfClipboardIfNeed',
+	        value: function updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+	            var _this2 = this;
+
+	            var selectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var $selectedCells = selectionManager.getSelectedCells();
+
+	            if ($selectedCells.length) {
+	                selectionManager.createRangeBySelectedCells();
+
+	                var fragment = this.wwe.getEditor().getSelection().cloneContents();
+
+	                $(fragment).children().each(function (index, node) {
+	                    var $node = $(node);
+
+	                    if (!_this2.isTableOrSubTableElement(node.nodeName)) {
+	                        return;
+	                    } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
+	                        $node.remove();
+	                    } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
+	                        node.previousSibling.appendChild(node);
+	                    } else {
+	                        _this2._completeIncompleteTable(node);
+
+	                        if (node.nodeName !== 'TABLE' && node.nodeName !== 'THEAD') {
+	                            $(node).closest('table').find('thead').remove();
+	                        }
+	                    }
+	                });
+
+	                $clipboardContainer.append(fragment);
+	                $clipboardContainer.find('.' + TABLE_CELL_SELECTED_CLASS_NAME).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	            }
+	        }
+
+	        /**
+	         * Paste clibpard data.
+	         * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+	         */
+
+	    }, {
+	        key: 'pasteClipboardData',
+	        value: function pasteClipboardData($clipboardTable) {
+	            if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
+	                return;
+	            }
+
+	            this._expandTableIfNeed($clipboardTable);
+	            this._pasteDataIntoTable($clipboardTable);
 	        }
 
 	        /**
@@ -6609,17 +7224,12 @@
 	    }, {
 	        key: '_onPaste',
 	        value: function _onPaste(ev) {
-	            var _this2 = this;
-
 	            var range = this.wwe.getEditor().getSelection();
 	            var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
 
 	            if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
 	                ev.preventDefault();
 	            }
-	            this.wwe.defer(function () {
-	                _this2._completeTableIfNeed();
-	            }, TABLE_COMPLETION_DELAY);
 	        }
 
 	        /**
@@ -6649,7 +7259,6 @@
 	                    if (isRangeInTable && !_this3._isModifierKeyPushed(ev)) {
 	                        _this3.wwe.getEditor().modifyDocument(function () {
 	                            var selectionManager = _this3.wwe.componentManager.getManager('tableSelection');
-
 	                            selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
 	                        });
 	                    }
@@ -6696,8 +7305,6 @@
 	            util.forEach(this.keyEventHandlers, function (handler, key) {
 	                return _this3.wwe.addKeyEventHandler(key, handler);
 	            });
-
-	            this._bindKeyEventForTableCopyAndCut();
 	        }
 
 	        /**
@@ -7087,14 +7694,14 @@
 
 	        /**
 	         * Wrap dangling table cells with new TR
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapDanglingTableCellsIntoTrIfNeed',
-	        value: function wrapDanglingTableCellsIntoTrIfNeed(fragment) {
-	            var danglingTableCells = $(fragment).children('td,th');
+	        value: function wrapDanglingTableCellsIntoTrIfNeed($container) {
+	            var danglingTableCells = $container.children('td,th');
 	            var tr = void 0;
 
 	            if (danglingTableCells.length) {
@@ -7114,14 +7721,14 @@
 
 	        /**
 	         * Wrap TRs with new TBODY
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapTrsIntoTbodyIfNeed',
-	        value: function wrapTrsIntoTbodyIfNeed(fragment) {
-	            var danglingTrs = $(fragment).children('tr');
+	        value: function wrapTrsIntoTbodyIfNeed($container) {
+	            var danglingTrs = $container.children('tr');
 	            var ths = danglingTrs.find('th');
 	            var tbody = void 0;
 
@@ -7154,15 +7761,15 @@
 
 	        /**
 	         * Wrap THEAD followed by TBODY both into Table
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapTheadAndTbodyIntoTableIfNeed',
-	        value: function wrapTheadAndTbodyIntoTableIfNeed(fragment) {
-	            var danglingThead = $(fragment).children('thead');
-	            var danglingTbody = $(fragment).children('tbody');
+	        value: function wrapTheadAndTbodyIntoTableIfNeed($container) {
+	            var danglingThead = $container.children('thead');
+	            var danglingTbody = $container.children('tbody');
 	            var $wrapperTable = $('<table></table>');
 	            var table = void 0;
 
@@ -7182,40 +7789,16 @@
 
 	            return table;
 	        }
-	        /**
-	         * Prepare to paste data on table
-	         * @param {object} pasteData Pasting data
-	         * @param {HTMLElement} node Current pasting element
-	         * @returns {DocumentFragment}
-	         * @memberOf WwTableManager
-	         * @api
-	         */
-
-	    }, {
-	        key: 'prepareToPasteOnTable',
-	        value: function prepareToPasteOnTable(pasteData, node) {
-	            var newFragment = document.createDocumentFragment();
-	            if (this._isTableOrSubTableElement(node.nodeName)) {
-	                this._expandTableIfNeed(pasteData.fragment);
-	                this._pasteDataIntoTable(pasteData.fragment);
-	                pasteData.fragment = newFragment;
-	            } else {
-	                newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
-	            }
-
-	            return newFragment;
-	        }
 
 	        /**
 	         * Whether pasting element is table element
 	         * @param {string} pastingNodeName Pasting node name
 	         * @returns {boolean}
-	         * @private
 	         */
 
 	    }, {
-	        key: '_isTableOrSubTableElement',
-	        value: function _isTableOrSubTableElement(pastingNodeName) {
+	        key: 'isTableOrSubTableElement',
+	        value: function isTableOrSubTableElement(pastingNodeName) {
 	            return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY' || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
 	        }
 
@@ -7273,23 +7856,23 @@
 
 	        /**
 	         * Add TBODY or THEAD if need
-	         * @param {jQuery} table Table element
+	         * @param {jQuery} $table - Table jQuery element
 	         * @private
 	         */
 
 	    }, {
 	        key: '_addTbodyOrTheadIfNeed',
-	        value: function _addTbodyOrTheadIfNeed(table) {
-	            var isTheadNotExists = !table.find('thead').length;
-	            var isTbodyNotExists = !table.find('tbody').length;
+	        value: function _addTbodyOrTheadIfNeed($table) {
+	            var isTheadNotExists = !$table.find('thead').length;
+	            var isTbodyNotExists = !$table.find('tbody').length;
 	            var absentNode = void 0;
 
 	            if (isTheadNotExists) {
 	                absentNode = $('<thead><tr></tr></thead>')[0];
-	                table.prepend(absentNode);
+	                $table.prepend(absentNode);
 	            } else if (isTbodyNotExists) {
 	                absentNode = $('<tbody><tr></tr></tbody>')[0];
-	                table.append(absentNode);
+	                $table.append(absentNode);
 	            }
 	        }
 
@@ -7301,12 +7884,12 @@
 	    }, {
 	        key: 'tableCellAppendAidForTableElement',
 	        value: function tableCellAppendAidForTableElement(node) {
-	            var table = $(node);
+	            var $table = $(node);
 
-	            this._addTbodyOrTheadIfNeed(table);
-	            this._addTrIntoContainerIfNeed(table);
+	            this._addTbodyOrTheadIfNeed($table);
+	            this._addTrIntoContainerIfNeed($table);
 
-	            var trs = table.find('tr');
+	            var trs = $table.find('tr');
 	            var tableAidInformation = this.prepareToTableCellStuffing(trs);
 	            var maximumCellLength = tableAidInformation.maximumCellLength;
 	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
@@ -7395,16 +7978,19 @@
 
 	        /**
 	         * Complete passed table
-	         * @param {HTMLElement} node Table inner element
+	         * @param {HTMLElement} node - Table inner element
+	         * @param {?boolean} useHeader - whether use header or not
 	         * @private
 	         */
 
 	    }, {
 	        key: '_completeIncompleteTable',
-	        value: function _completeIncompleteTable(node) {
+	        value: function _completeIncompleteTable(node, useHeader) {
 	            var nodeName = node.tagName;
 	            var table = void 0,
 	                completedTableContents = void 0;
+
+	            useHeader = util.isUndefined(useHeader) ? true : useHeader;
 
 	            if (nodeName === 'TABLE') {
 	                table = node;
@@ -7419,7 +8005,11 @@
 	                } else if (nodeName === 'TR') {
 	                    completedTableContents = this._generateTheadAndTbodyFromTr(node);
 	                }
-	                table.append(completedTableContents.thead);
+
+	                if (useHeader) {
+	                    table.append(completedTableContents.thead);
+	                }
+
 	                table.append(completedTableContents.tbody);
 	            }
 
@@ -7441,7 +8031,7 @@
 	            $body.children().each(function (index, node) {
 	                var $node = $(node);
 
-	                if (!_this4._isTableOrSubTableElement(node.nodeName)) {
+	                if (!_this4.isTableOrSubTableElement(node.nodeName)) {
 	                    return;
 	                } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
 	                    $node.remove();
@@ -7668,26 +8258,6 @@
 	        }
 
 	        /**
-	         * Create selection by selected cells and collapse that selection to end
-	         * @private
-	         */
-
-	    }, {
-	        key: '_collapseRangeToEndContainer',
-	        value: function _collapseRangeToEndContainer() {
-	            var sq = this.wwe.getEditor();
-	            var range = sq.getSelection().cloneRange();
-	            var selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
-
-	            if (selectedCells.length && this.isInTable(range)) {
-	                this.wwe.defer(function () {
-	                    range.collapse(false);
-	                    sq.setSelection(range);
-	                }, SET_SELECTION_DELAY);
-	            }
-	        }
-
-	        /**
 	         * Move cursor to given direction by interval formatter
 	         * @param {string} direction 'next' or 'previous'
 	         * @param {string} interval 'row' or 'cell'
@@ -7718,33 +8288,6 @@
 	            }
 
 	            return isNeedNext;
-	        }
-
-	        /**
-	         * Bind pre process for table copy and cut key event
-	         * @private
-	         */
-
-	    }, {
-	        key: '_bindKeyEventForTableCopyAndCut',
-	        value: function _bindKeyEventForTableCopyAndCut() {
-	            var _this5 = this;
-
-	            var isMac = /Mac OS X/.test(navigator.userAgent);
-	            var commandKey = isMac ? 'metaKey' : 'ctrlKey';
-
-	            // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
-	            this.onBindedKeydown = function (ev) {
-	                var selectionManager = _this5.wwe.componentManager.getManager('tableSelection');
-
-	                if (ev[commandKey]) {
-	                    selectionManager.createRangeBySelectedCells();
-	                }
-	            };
-	            this.onBindedKeyup = this._collapseRangeToEndContainer.bind(this);
-
-	            this.wwe.getEditor().addEventListener('keydown', this.onBindedKeydown);
-	            this.wwe.getEditor().addEventListener('keyup', this.onBindedKeyup);
 	        }
 
 	        /**
@@ -7838,17 +8381,16 @@
 	    }, {
 	        key: 'destroy',
 	        value: function destroy() {
-	            var _this6 = this;
+	            var _this5 = this;
 
 	            this.eventManager.removeEventHandler('wysiwygRangeChangeAfter.table');
 	            this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
 	            this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
+	            this.eventManager.removeEventHandler('cut.table');
+	            this.eventManager.removeEventHandler('copyBefore.table');
 	            this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
-	            this.wwe.getEditor().removeEventListener('keydown', this.onBindedKeydown);
-	            this.wwe.getEditor().removeEventListener('keyup', this.onBindedKeyup);
-
 	            util.forEach(this.keyEventHandlers, function (handler, key) {
-	                return _this6.wwe.removeKeyEventHandler(key, handler);
+	                return _this5.wwe.removeKeyEventHandler(key, handler);
 	            });
 	        }
 	    }]);
@@ -7880,7 +8422,7 @@
 	module.exports = WwTableManager;
 
 /***/ },
-/* 18 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7982,19 +8524,7 @@
 	             */
 	            this._isSelectionStarted = false;
 
-	            this.eventManager.listen('mousedown.table', function (ev) {
-	                var MOUSE_RIGHT_BUTTON = 2;
-	                selectionStart = $(ev.data.target).closest('td,th')[0];
-	                var isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
-	                selectionEnd = null;
-
-	                if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
-	                    _this.removeClassAttrbuteFromAllCellsIfNeed();
-	                    _this.setTableSelectionTimerIfNeed(selectionStart);
-	                }
-	            });
-
-	            this.eventManager.listen('mouseover.table', function (ev) {
+	            var onMouseover = function onMouseover(ev) {
 	                selectionEnd = $(ev.data.target).closest('td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
@@ -8013,9 +8543,17 @@
 	                    _this.highlightTableCellsBy(selectionStart, selectionEnd);
 	                    validSelectionEnd = selectionEnd;
 	                }
-	            });
+	            };
 
-	            this.eventManager.listen('mouseup.table', function (ev) {
+	            var finishSelection = function finishSelection() {
+	                if (_this._isSelectionStarted) {
+	                    _this._isSelectionStarted = false;
+	                    _this.eventManager.removeEventHandler('mouseover.tableSelection');
+	                    _this.eventManager.removeEventHandler('mouseup.tableSelection');
+	                }
+	            };
+
+	            var onMouseup = function onMouseup(ev) {
 	                selectionEnd = $(ev.data.target).closest('td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
@@ -8031,16 +8569,43 @@
 	                        _this.wwe.componentManager.getManager('table').resetLastCellNode();
 
 	                        selectionEnd = selectionEnd || validSelectionEnd;
+
 	                        range = _this.wwe.getEditor().getSelection();
 	                        range.setStart(selectionEnd, 0);
-	                        range.setEnd(selectionEnd, 1);
+	                        range.setEnd(selectionEnd, 0);
 	                        range.collapse(true);
 	                        _this.wwe.getEditor().setSelection(range);
 	                    }
+	                    if (_this.onDragEnd) {
+	                        _this.onDragEnd();
+	                    }
 	                }
 
-	                _this._isSelectionStarted = false;
-	            });
+	                finishSelection();
+	            };
+
+	            var onMousedown = function onMousedown(ev) {
+	                var MOUSE_RIGHT_BUTTON = 2;
+	                selectionStart = $(ev.data.target).closest('td,th')[0];
+	                var isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	                selectionEnd = null;
+
+	                if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
+	                    _this.removeClassAttrbuteFromAllCellsIfNeed();
+	                    _this.setTableSelectionTimerIfNeed(selectionStart);
+	                    _this.eventManager.listen('mouseover.tableSelection', onMouseover);
+	                    _this.eventManager.listen('mouseup.tableSelection', onMouseup);
+	                    if (_this.onDragStart && selectionStart) {
+	                        _this.onDragStart(selectionStart);
+	                    }
+	                } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
+	                    finishSelection();
+	                }
+	            };
+
+	            this.eventManager.listen('mousedown.tableSelection', onMousedown);
+	            this.eventManager.listen('copyBefore.tableSelection', finishSelection);
+	            this.eventManager.listen('pasteBefore.tableSelection', finishSelection);
 	        }
 
 	        /**
@@ -8325,9 +8890,11 @@
 	    }, {
 	        key: 'destroy',
 	        value: function destroy() {
-	            this.eventManager.removeEventHandler('mousedown.table');
-	            this.eventManager.removeEventHandler('mouseover.table');
-	            this.eventManager.removeEventHandler('mouseup.table');
+	            this.eventManager.removeEventHandler('mousedown.tableSelection');
+	            this.eventManager.removeEventHandler('mouseover.tableSelection');
+	            this.eventManager.removeEventHandler('mouseup.tableSelection');
+	            this.eventManager.removeEventHandler('copyBefore.tableSelection');
+	            this.eventManager.removeEventHandler('pasteBefore.tableSelection');
 	        }
 	    }]);
 
@@ -8337,7 +8904,7 @@
 	module.exports = WwTableSelectionManager;
 
 /***/ },
-/* 19 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8635,6 +9202,7 @@
 	 * @function
 	 * @this Node
 	 * @returns {boolean}
+	 * @ignore
 	 */
 
 
@@ -8645,7 +9213,7 @@
 	module.exports = WwHrManager;
 
 /***/ },
-/* 20 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8800,7 +9368,7 @@
 	module.exports = WwPManager;
 
 /***/ },
-/* 21 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9057,7 +9625,7 @@
 	module.exports = WwHeadingManager;
 
 /***/ },
-/* 22 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9413,6 +9981,7 @@
 	 * Sanitize HTML code
 	 * @param {string} code code string
 	 * @returns {string}
+	 * @ignore
 	 */
 
 
@@ -9425,7 +9994,7 @@
 	module.exports = WwCodeBlockManager;
 
 /***/ },
-/* 23 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9459,6 +10028,7 @@
 	 * @augments Squire
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var SquireExt = function (_Squire) {
@@ -9818,7 +10388,7 @@
 	module.exports = SquireExt;
 
 /***/ },
-/* 24 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10022,7 +10592,7 @@
 	module.exports = WwTextObject;
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10039,6 +10609,7 @@
 	/**
 	 * Editor container template
 	 * @type {string}
+	 * @ignore
 	 */
 	var containerTmpl = ['<div class="tui-editor">', '<div class="te-md-container">', '<div class="te-editor" />', '<div class="te-md-splitter" />', '<div class="te-preview" />', '</div>', '<div class="te-ww-container">', '<div class="te-editor" />', '</div>', '</div>'].join('');
 
@@ -10294,7 +10865,7 @@
 	module.exports = Layout;
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10309,7 +10880,7 @@
 	 */
 	var util = tui.util;
 
-	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'replaceCodeBlockElementsBefore', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'cut', 'drop', 'show', 'hide'];
+	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'replaceCodeBlockElementsBefore', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'copyBefore', 'cut', 'drop', 'show', 'hide'];
 
 	/**
 	 * EventManager
@@ -10510,6 +11081,10 @@
 	            var handlersToSurvive = [];
 	            var eventHandlers = this.events.get(type);
 
+	            if (!eventHandlers) {
+	                return;
+	            }
+
 	            eventHandlers.map(function (handler) {
 	                if (handler.namespace !== namespace) {
 	                    handlersToSurvive.push(handler);
@@ -10526,7 +11101,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10536,7 +11111,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _command = __webpack_require__(28);
+	var _command = __webpack_require__(31);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10576,6 +11151,7 @@
 	     * You can change command before command addition by addCommandBefore event.
 	     * @param {object} command - command
 	     * @returns {object}
+	     * @private
 	     */
 
 
@@ -10723,7 +11299,7 @@
 	module.exports = CommandManager;
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10899,7 +11475,7 @@
 	module.exports = Command;
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10974,30 +11550,21 @@
 	module.exports = new ExtManager();
 
 /***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/* 33 */
+/***/ function(module, exports) {
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implement Module for managing import external data such as image
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-	var _excelTableParser = __webpack_require__(31);
-
-	var _excelTableParser2 = _interopRequireDefault(_excelTableParser);
-
-	var _i18n = __webpack_require__(32);
-
-	var _i18n2 = _interopRequireDefault(_i18n);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	/**
+	 * @fileoverview Implement Module for managing import external data such as image
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
 	var util = tui.util;
-	var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
 
 	/**
 	 * ImportManager
@@ -11100,23 +11667,11 @@
 	        value: function _decodeURL(ev) {
 	            if (ev.source === 'markdown' && ev.data.text.length === 1 && ev.data.text[0].match(/https?:\/\//g)) {
 	                ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
-	            } else if (ev.source === 'wysiwyg' && ev.data.fragment.childNodes.length === 1 && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE && ev.data.fragment.firstChild.tagName === 'A') {
-	                ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
+	            } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
+	                var $anchor = ev.$clipboardContainer.find('A');
+
+	                $anchor.text(decodeURIComponent($anchor.text()));
 	            }
-	        }
-
-	        /**
-	         * Add table with excel style data
-	         * @memberOf ImportManager
-	         * @param {string} content Table data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addExcelTable',
-	        value: function _addExcelTable(content) {
-	            var tableInfo = (0, _excelTableParser2.default)(content);
-	            this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 	        }
 
 	        /**
@@ -11135,8 +11690,6 @@
 
 	            if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
 	                this._processBlobItems(blobItems, evData);
-	            } else if (!this._isInBlockFormat()) {
-	                this._precessDataTransfer(cbData, evData);
 	            }
 	        }
 
@@ -11169,26 +11722,6 @@
 	        }
 
 	        /**
-	         * Process for excel style data
-	         * @memberOf ImportManager
-	         * @param {HTMLElement} cbData Clipboard data
-	         * @param {object} evData Event data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_precessDataTransfer',
-	        value: function _precessDataTransfer(cbData, evData) {
-	            var textContent = cbData.getData('text');
-
-	            if (FIND_EXCEL_DATA.test(textContent) && confirm(_i18n2.default.get('Would you like to paste as table?'))) {
-	                evData.preventDefault();
-	                evData.codemirrorIgnore = true;
-	                this._addExcelTable(textContent);
-	            }
-	        }
-
-	        /**
 	         * Returns if current cursor state is in block format ex) blockquote, list, task, codeblock
 	         * @returns {boolean}
 	         * @private
@@ -11209,190 +11742,7 @@
 	module.exports = ImportManager;
 
 /***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/**
-	 * @fileoverview Implements excelTableParser
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	/**
-	 * excelTableParser
-	 * Parse excel paste data
-	 * @public
-	 * @exports excelTableParser
-	 * @param {string} content excel table content
-	 * @returns {object} result
-	 */
-	function excelTableParser(content) {
-	    var rows = getRows(content);
-	    var rowLength = rows.length;
-	    var data = [];
-	    var colLength = 0;
-
-	    rows.forEach(function (row) {
-	        var cols = row.split('\t');
-
-	        if (!cols) {
-	            return;
-	        } else if (!colLength) {
-	            colLength = cols.length;
-	        }
-
-	        data = data.concat(cols);
-	    });
-
-	    return {
-	        col: colLength,
-	        row: rowLength,
-	        data: data
-	    };
-	}
-	/**
-	 * Get row data from raw text with Regexp
-	 * @public
-	 * @param {string} content Raw copied text data
-	 * @returns {Array}
-	 */
-	function getRows(content) {
-	    content = content.replace(/"([^"]+)"/g, function (match, cell) {
-	        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
-	    });
-
-	    // remove last LF or CR
-	    content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
-	    // CR or CR-LF to LF
-	    content = content.replace(/(\r\n)|(\r)/g, '\n');
-
-	    return content.split('\n');
-	}
-
-	module.exports = excelTableParser;
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements i18n
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	var util = tui.util;
-
-	var sharedInstance = void 0;
-
-	var DEFAULT_CODE = 'en_US';
-
-	/**
-	 * I18n
-	 * @exports I18n
-	 * @class
-	 */
-
-	var I18n = function () {
-	    function I18n() {
-	        _classCallCheck(this, I18n);
-
-	        this._code = DEFAULT_CODE;
-	        this._langs = new util.Map();
-	    }
-
-	    /**
-	     * Set locale code
-	     * @param {string} code locale code
-	     */
-
-
-	    _createClass(I18n, [{
-	        key: 'setCode',
-	        value: function setCode(code) {
-	            this._code = code;
-	        }
-
-	        /**
-	         * Set language set
-	         * @param {string|string[]} codes locale code
-	         * @param {object} data language set
-	         */
-
-	    }, {
-	        key: 'setLang',
-	        value: function setLang(codes, data) {
-	            var _this = this;
-
-	            codes = [].concat(codes);
-
-	            codes.forEach(function (code) {
-	                if (!_this._langs.has(code)) {
-	                    _this._langs.set(code, data);
-	                } else {
-	                    var langData = _this._langs.get(code);
-	                    _this._langs.set(code, util.extend(langData, data));
-	                }
-	            });
-	        }
-
-	        /**
-	         * Get text of key
-	         * @param {string} key key of text
-	         * @param {string} code locale code
-	         * @returns {string}
-	         */
-
-	    }, {
-	        key: 'get',
-	        value: function get(key, code) {
-	            if (!code) {
-	                code = this._code;
-	            }
-
-	            var langSet = this._langs.get(code);
-
-	            if (!langSet) {
-	                langSet = this._langs.get(DEFAULT_CODE);
-	            }
-
-	            var text = langSet[key];
-
-	            if (!text) {
-	                throw new Error('There is no text key "' + key + '" in ' + code);
-	            }
-
-	            return text;
-	        }
-	    }], [{
-	        key: 'getSharedInstance',
-	        value: function getSharedInstance() {
-	            if (!sharedInstance) {
-	                sharedInstance = new I18n();
-	            }
-
-	            return sharedInstance;
-	        }
-	    }]);
-
-	    return I18n;
-	}();
-
-	exports.I18n = I18n;
-	exports.default = I18n.getSharedInstance();
-
-/***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11406,27 +11756,27 @@
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-	var _markdownitTaskPlugin = __webpack_require__(34);
+	var _markdownitTaskPlugin = __webpack_require__(35);
 
 	var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-	var _markdownitCodeBlockPlugin = __webpack_require__(35);
+	var _markdownitCodeBlockPlugin = __webpack_require__(36);
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitCodeRenderer = __webpack_require__(36);
+	var _markdownitCodeRenderer = __webpack_require__(37);
 
 	var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-	var _markdownitBlockQuoteRenderer = __webpack_require__(37);
+	var _markdownitBlockQuoteRenderer = __webpack_require__(38);
 
 	var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-	var _markdownitTableRenderer = __webpack_require__(38);
+	var _markdownitTableRenderer = __webpack_require__(39);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-	var _markdownitHtmlBlockRenderer = __webpack_require__(39);
+	var _markdownitHtmlBlockRenderer = __webpack_require__(40);
 
 	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
@@ -11698,7 +12048,7 @@
 	module.exports = Convertor;
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11716,6 +12066,7 @@
 	/**
 	 * Task list renderer for Markdown-it
 	 * @param {object} markdownit Markdown-it instance
+	 * @ignore
 	 */
 	var MarkdownitTaskRenderer = function MarkdownitTaskRenderer(markdownit) {
 	    markdownit.core.ruler.after('inline', 'tui-task-list', function (state) {
@@ -11746,6 +12097,7 @@
 	/**
 	 * Remove task format text for rendering
 	 * @param {object} token Token object
+	 * @ignore
 	 */
 	function removeMarkdownTaskFormatText(token) {
 	    // '[X] ' length is 4
@@ -11758,6 +12110,7 @@
 	 * Return boolean value whether task checked or not
 	 * @param {object} token Token object
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isChecked(token) {
 	    var checked = false;
@@ -11774,6 +12127,7 @@
 	 * @param {object} token Token object
 	 * @param {string} attributeName Attribute name for set
 	 * @param {string} attributeValue Attribute value for set
+	 * @ignore
 	 */
 	function setTokenAttribute(token, attributeName, attributeValue) {
 	    var index = token.attrIndex(attributeName);
@@ -11791,6 +12145,7 @@
 	 * @param {array} tokens Token object
 	 * @param {number} index Number of token index
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isTaskListItemToken(tokens, index) {
 	    return tokens[index].type === 'inline' && tokens[index - 1].type === 'paragraph_open' && tokens[index - 2].type === 'list_item_open' && (tokens[index].content.indexOf('[ ]') === 0 || tokens[index].content.indexOf('[x]') === 0 || tokens[index].content.indexOf('[X]') === 0);
@@ -11800,7 +12155,7 @@
 	module.exports = MarkdownitTaskRenderer;
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11817,6 +12172,7 @@
 	/**
 	 * Code block renderer for Markdown-it
 	 * @param {object} markdownit Markdown-it instance
+	 * @ignore
 	 */
 	var MarkdownitCodeBlockRenderer = function MarkdownitCodeBlockRenderer(markdownit) {
 	    markdownit.core.ruler.after('block', 'tui-code-block', function (state) {
@@ -11838,6 +12194,7 @@
 	 * @param {object} token Token object
 	 * @param {string} attributeName Attribute name for set
 	 * @param {string} attributeValue Attribute value for set
+	 * @ignore
 	 */
 	function setTokenAttribute(token, attributeName, attributeValue) {
 	    var index = token.attrIndex(attributeName);
@@ -11853,6 +12210,7 @@
 	 * Return boolean value whether passed token is code fence or not
 	 * @param {object} token Token object
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isCodeFenceToken(token) {
 	    return token.block === true && token.tag === 'code' && token.type === 'fence';
@@ -11863,6 +12221,7 @@
 	 * @param {string} html HTML string
 	 * @param {string} encode Boolean value of whether encode or not
 	 * @returns {string}
+	 * @ignore
 	 */
 	function escape(html, encode) {
 	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -11872,7 +12231,7 @@
 	module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11941,7 +12300,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12168,7 +12527,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12383,7 +12742,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports) {
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
@@ -12480,7 +12839,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12494,19 +12853,19 @@
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _eventManager = __webpack_require__(26);
+	var _eventManager = __webpack_require__(29);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _convertor = __webpack_require__(33);
+	var _convertor = __webpack_require__(34);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -12552,6 +12911,7 @@
 	        this.commandManager = new _commandManager2.default(this);
 	        this.convertor = new _convertor2.default(this.eventManager);
 	        this.codeBlockManager = _codeBlockManager2.default;
+	        this.toMarkOptions = null;
 
 	        if (this.options.hooks) {
 	            util.forEach(this.options.hooks, function (fn, key) {
@@ -12733,44 +13093,44 @@
 	module.exports = ToastUIEditorViewOnly;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _toolbar = __webpack_require__(42);
+	var _toolbar = __webpack_require__(43);
 
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 
-	var _tab = __webpack_require__(46);
+	var _tab = __webpack_require__(47);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _modeSwitch = __webpack_require__(49);
+	var _modeSwitch = __webpack_require__(50);
 
 	var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-	var _popupAddLink = __webpack_require__(50);
+	var _popupAddLink = __webpack_require__(51);
 
 	var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-	var _popupAddImage = __webpack_require__(51);
+	var _popupAddImage = __webpack_require__(52);
 
 	var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-	var _popupTableUtils = __webpack_require__(52);
+	var _popupTableUtils = __webpack_require__(53);
 
 	var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-	var _popupAddTable = __webpack_require__(53);
+	var _popupAddTable = __webpack_require__(54);
 
 	var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-	var _popupAddHeading = __webpack_require__(54);
+	var _popupAddHeading = __webpack_require__(55);
 
 	var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
@@ -12787,6 +13147,7 @@
 	 * @constructor
 	 * @class
 	 * @param {ToastUIEditor} editor editor
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -12957,20 +13318,20 @@
 	module.exports = DefaultUI;
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(43);
+	var _uicontroller = __webpack_require__(44);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _button = __webpack_require__(44);
+	var _button = __webpack_require__(45);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -12985,6 +13346,7 @@
 	 * @constructor
 	 * @class
 	 * @param {EventManager} eventManager 이벤트 매니저
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -13165,7 +13527,7 @@
 	module.exports = Toolbar;
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13184,6 +13546,7 @@
 	 * @class
 	 * @param {Object} options 옵션
 	 * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
+	 * @ignore
 	 */
 	function UIController(options) {
 	    options = util.extend({
@@ -13409,7 +13772,7 @@
 	module.exports = UIController;
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13419,8 +13782,8 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var UIController = __webpack_require__(43);
-	var Tooltip = __webpack_require__(45);
+	var UIController = __webpack_require__(44);
+	var Tooltip = __webpack_require__(46);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -13437,6 +13800,7 @@
 	 * @param {string} options.command 클릭되면 실행될 커맨드명
 	 * @param {string} options.text 버튼안에 들어갈 텍스트
 	 * @param {string} options.style 추가적으로 적용될 CSS스타일
+	 * @ignore
 	 */
 	function Button(options) {
 	    UIController.call(this, {
@@ -13509,7 +13873,7 @@
 	module.exports = Button;
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13525,6 +13889,7 @@
 	 * Tooltip
 	 * @exports Tooltip
 	 * @constructor
+	 * @ignore
 	 */
 	function Tooltip() {
 	    this.$el = $(TOOLTIP_CONTENT);
@@ -13551,16 +13916,16 @@
 	module.exports = Tooltip;
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(43);
+	var _uicontroller = __webpack_require__(44);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _templater = __webpack_require__(47);
+	var _templater = __webpack_require__(48);
 
 	var _templater2 = _interopRequireDefault(_templater);
 
@@ -13591,6 +13956,7 @@
 	 *     items: ['Editor', 'Preview'],
 	 *     sections: [this.$mdEditorContainerEl, this.$previewEl]
 	 * });
+	 * @ignore
 	 */
 	function Tab(options) {
 	    _uicontroller2.default.call(this, {
@@ -13752,7 +14118,7 @@
 	module.exports = Tab;
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13770,6 +14136,7 @@
 	 * @param {string} template 템플릿 텍스트
 	 * @param {object|object[]} mapper 템플릿과 합성될 데이터
 	 * @returns {array} rendered text
+	 * @ignore
 	 */
 	function templater(template, mapper) {
 	    var totalReplaced = [];
@@ -13793,12 +14160,12 @@
 	module.exports = templater;
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(43);
+	var _uicontroller = __webpack_require__(44);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -13830,6 +14197,7 @@
 	 * @param {string} options.textContent popup text content
 	 * @param {string} options.title popup title
 	 * @param {jQuery} options.$target element to append popup
+	 * @ignore
 	 */
 	function LayerPopup(options) {
 	    options = util.extend({}, options);
@@ -14045,16 +14413,16 @@
 	module.exports = LayerPopup;
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(43);
+	var _uicontroller = __webpack_require__(44);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14080,6 +14448,7 @@
 	 * @constructor
 	 * @class
 	 * @param {number} initialType initial type of editor
+	 * @ignore
 	 */
 	function ModeSwitch(initialType) {
 	    _uicontroller2.default.call(this, {
@@ -14136,16 +14505,16 @@
 	module.exports = ModeSwitch;
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14166,6 +14535,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddLink(options) {
 	    /* eslint-disable indent */
@@ -14244,20 +14614,20 @@
 	module.exports = PopupAddLink;
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _tab = __webpack_require__(46);
+	var _tab = __webpack_require__(47);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14273,6 +14643,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements PopupAddImage
@@ -14431,16 +14802,16 @@
 	module.exports = PopupAddImage;
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14461,6 +14832,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupTableUtils(options) {
 	    var POPUP_CONTENT = ['<button type="button" class="te-table-add-row">' + _i18n2.default.get('Add row') + '</button>', '<button type="button" class="te-table-add-col">' + _i18n2.default.get('Add col') + '</button>', '<button type="button" class="te-table-remove-row">' + _i18n2.default.get('Remove row') + '</button>', '<button type="button" class="te-table-remove-col">' + _i18n2.default.get('Remove col') + '</button>', '<button type="button" class="te-table-col-align-left">' + _i18n2.default.get('Align left') + '</button>', '<button type="button" class="te-table-col-align-center">' + _i18n2.default.get('Align center') + '</button>', '<button type="button" class="te-table-col-align-right">' + _i18n2.default.get('Align right') + '</button>', '<button type="button" class="te-table-remove">' + _i18n2.default.get('Remove table') + '</button>'].join('');
@@ -14561,12 +14933,12 @@
 	module.exports = PopupTableUtils;
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -14602,6 +14974,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddTable(options) {
 	    options = util.extend({
@@ -14913,16 +15286,16 @@
 	module.exports = PopupAddTable;
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(48);
+	var _layerpopup = __webpack_require__(49);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14943,6 +15316,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddHeading(options) {
 	    /* eslint-disable indent */
@@ -14998,12 +15372,12 @@
 	module.exports = PopupAddHeading;
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15016,6 +15390,7 @@
 	 * Add bold markdown syntax to markdown editor
 	 * @exports Bold
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -15124,12 +15499,12 @@
 	module.exports = Bold;
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15147,6 +15522,7 @@
 	 * Add italic markdown syntax to markdown editor
 	 * @exports Italic
 	 * @augments Command
+	 * @ignore
 	 */
 	var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 	    name: 'Italic',
@@ -15332,12 +15708,12 @@
 	module.exports = Italic;
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15350,6 +15726,7 @@
 	 * Add strike markdown syntax to markdown editor
 	 * @exports Strike
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements StrikeThrough markdown command
@@ -15432,12 +15809,12 @@
 	module.exports = Strike;
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15448,6 +15825,7 @@
 	 * Add blockquote markdown syntax to markdown editor
 	 * @exports Blockquote
 	 * @augments Command
+	 * @ignore
 	 */
 	var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
 	    name: 'Blockquote',
@@ -15501,12 +15879,12 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15526,6 +15904,7 @@
 	 * Add heading markdown syntax to markdown editor
 	 * @exports Heading
 	 * @augments Command
+	 * @ignore
 	 */
 	var Heading = _commandManager2.default.command('markdown', /** @lends Heading */{
 	    name: 'Heading',
@@ -15599,12 +15978,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 60 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15617,6 +15996,7 @@
 	 * Convert selected lines to paragraph
 	 * @exports Paragraph
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements Paragraph markdown command
@@ -15675,12 +16055,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 61 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15691,6 +16071,7 @@
 	 * Add HR markdown syntax to markdown editor
 	 * @exports HR
 	 * @augments Command
+	 * @ignore
 	 */
 	var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 	    name: 'HR',
@@ -15740,12 +16121,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 62 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15756,6 +16137,7 @@
 	 * Add link markdown syntax to markdown editor
 	 * @exports AddLink
 	 * @augments Command
+	 * @ignore
 	 */
 	var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */{
 	    name: 'AddLink',
@@ -15794,12 +16176,12 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 63 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15810,6 +16192,7 @@
 	 * Add Image markdown syntax to markdown Editor
 	 * @exports AddImage
 	 * @augments Command
+	 * @ignore
 	 */
 	var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage */{
 	    name: 'AddImage',
@@ -15848,12 +16231,12 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 64 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15872,6 +16255,7 @@
 	 * Add unordered list markdown syntax to markdown editor
 	 * @exports UL
 	 * @augments Command
+	 * @ignore
 	 */
 	var UL = _commandManager2.default.command('markdown', /** @lends UL */{
 	    name: 'UL',
@@ -15929,12 +16313,12 @@
 	module.exports = UL;
 
 /***/ },
-/* 65 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15953,6 +16337,7 @@
 	 * Add ordered list markdown syntax to markdown editor
 	 * @exports OL
 	 * @augments Command
+	 * @ignore
 	 */
 	var OL = _commandManager2.default.command('markdown', /** @lends OL */{
 	    name: 'OL',
@@ -16013,12 +16398,12 @@
 	module.exports = OL;
 
 /***/ },
-/* 66 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16029,6 +16414,7 @@
 	 * Add table markdown syntax to markdown editor
 	 * @exports Table
 	 * @augments Command
+	 * @ignore
 	 */
 	var Table = _commandManager2.default.command('markdown', /** @lends Table */{
 	    name: 'Table',
@@ -16128,12 +16514,12 @@
 	module.exports = Table;
 
 /***/ },
-/* 67 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16152,8 +16538,8 @@
 	 * Task
 	 * @exports Task
 	 * @augments Command
+	 * @ignore
 	 */
-
 	var Task = _commandManager2.default.command('markdown', /** @lends Task */{
 	    name: 'Task',
 	    keyMap: ['CTRL+T', 'META+T'],
@@ -16214,12 +16600,12 @@
 	module.exports = Task;
 
 /***/ },
-/* 68 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16230,6 +16616,7 @@
 	 * Add code markdown syntax to markdown editor
 	 * @exports Code
 	 * @augments Command
+	 * @ignore
 	 */
 	var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 	  name: 'Code',
@@ -16270,12 +16657,12 @@
 	module.exports = Code;
 
 /***/ },
-/* 69 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16286,6 +16673,7 @@
 	 * Add CodeBlock markdown syntax to markdown editor
 	 * @exports CodeBlock
 	 * @augments Command
+	 * @ignore
 	 */
 	var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBlock */{
 	    name: 'CodeBlock',
@@ -16310,7 +16698,6 @@
 	            replaceText += '\n``` \n\n```\n';
 	            rowFix = 2;
 	        }
-
 	        doc.replaceSelection(replaceText);
 	        cm.setCursor(doc.getCursor().line - rowFix, 0);
 
@@ -16324,12 +16711,12 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 70 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16345,6 +16732,7 @@
 	 * @exports Bold
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16397,12 +16785,12 @@
 	module.exports = Bold;
 
 /***/ },
-/* 71 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16418,6 +16806,7 @@
 	 * @exports Italic
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16470,12 +16859,12 @@
 	module.exports = Italic;
 
 /***/ },
-/* 72 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16491,6 +16880,7 @@
 	 * @exports Strike
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16542,7 +16932,7 @@
 	module.exports = Strike;
 
 /***/ },
-/* 73 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16553,7 +16943,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(27);
+	var CommandManager = __webpack_require__(30);
 
 	/**
 	 * Blockquote
@@ -16561,6 +16951,7 @@
 	 * @exports Blockquote
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
 	  name: 'Blockquote',
@@ -16584,7 +16975,7 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 74 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16595,7 +16986,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(27);
+	var CommandManager = __webpack_require__(30);
 
 	/**
 	 * AddImage
@@ -16603,6 +16994,7 @@
 	 * @exports AddImage
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
 	  name: 'AddImage',
@@ -16625,7 +17017,7 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 75 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16636,7 +17028,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(27);
+	var CommandManager = __webpack_require__(30);
 
 	/**
 	 * AddLink
@@ -16644,6 +17036,7 @@
 	 * @exports AddLink
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
 	    name: 'AddLink',
@@ -16674,12 +17067,12 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 76 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16695,6 +17088,7 @@
 	 * @exports HR
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements HR wysiwyg command
@@ -16753,12 +17147,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 77 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16770,6 +17164,7 @@
 	 * @exports Heading
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 	    name: 'Heading',
@@ -16815,12 +17210,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 78 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16832,6 +17227,7 @@
 	 * @exports Heading
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph */{
 	    name: 'Paragraph',
@@ -16874,12 +17270,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 79 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16891,6 +17287,7 @@
 	 * @exports UL
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 	    name: 'UL',
@@ -16958,12 +17355,12 @@
 	module.exports = UL;
 
 /***/ },
-/* 80 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16975,6 +17372,7 @@
 	 * @exports OL
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 	    name: 'OL',
@@ -17042,12 +17440,12 @@
 	module.exports = OL;
 
 /***/ },
-/* 81 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17059,6 +17457,7 @@
 	 * @exports Table
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Table = _commandManager2.default.command('wysiwyg', /** @lends Table */{
 	    name: 'Table',
@@ -17179,12 +17578,12 @@
 	module.exports = Table;
 
 /***/ },
-/* 82 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17196,6 +17595,7 @@
 	 * @exports AddRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow */{
 	    name: 'AddRow',
@@ -17264,12 +17664,12 @@
 	module.exports = AddRow;
 
 /***/ },
-/* 83 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17285,6 +17685,7 @@
 	 * @exports AddCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -17372,12 +17773,12 @@
 	module.exports = AddCol;
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17393,6 +17794,7 @@
 	 * @exports RemoveRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -17504,12 +17906,12 @@
 	module.exports = RemoveRow;
 
 /***/ },
-/* 85 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17525,6 +17927,7 @@
 	 * @exports RemoveCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -17609,12 +18012,12 @@
 	module.exports = RemoveCol;
 
 /***/ },
-/* 86 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17630,6 +18033,7 @@
 	 * @exports AlignCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -17752,12 +18156,12 @@
 	module.exports = AlignCol;
 
 /***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17769,6 +18173,7 @@
 	 * @exports RemoveTable
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var RemoveTable = _commandManager2.default.command('wysiwyg', /** @lends RemoveTable */{
 	  name: 'RemoveTable',
@@ -17798,12 +18203,12 @@
 	module.exports = RemoveTable;
 
 /***/ },
-/* 88 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17815,6 +18220,7 @@
 	 * @exports IncreaseDepth
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var IncreaseTask = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 	    name: 'IncreaseDepth',
@@ -17863,7 +18269,7 @@
 	module.exports = IncreaseTask;
 
 /***/ },
-/* 89 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17874,14 +18280,15 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(27);
+	var CommandManager = __webpack_require__(30);
 
 	/**
 	 * DecreaseDepth
 	 * decrease depth of list or task to wysiwyg Editor
-	 * @exports IncreaseDepth
+	 * @exports DecreaseDepth
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 	  name: 'DecreaseDepth',
@@ -17918,12 +18325,12 @@
 	module.exports = DecreaseDepth;
 
 /***/ },
-/* 90 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17935,6 +18342,7 @@
 	 * @exports Task
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 	    name: 'Task',
@@ -18006,12 +18414,12 @@
 	module.exports = Task;
 
 /***/ },
-/* 91 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18027,6 +18435,7 @@
 	 * @exports Code
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -18102,7 +18511,7 @@
 	module.exports = Code;
 
 /***/ },
-/* 92 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18113,7 +18522,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(27);
+	var CommandManager = __webpack_require__(30);
 
 	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -18125,6 +18534,7 @@
 	 * @exports CodeBlock
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
 	    name: 'CodeBlock',
@@ -18197,7 +18607,7 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 93 */
+/* 94 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18275,7 +18685,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 94 */
+/* 95 */
 /***/ function(module, exports) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -19096,7 +19506,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19227,7 +19637,7 @@
 	CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19325,7 +19735,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 97 */
+/* 98 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19472,7 +19882,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 98 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19482,7 +19892,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var extManager = __webpack_require__(29);
+	var extManager = __webpack_require__(32);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -19522,28 +19932,28 @@
 	});
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(100);
+	var _scrollFollow = __webpack_require__(101);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(101);
+	var _scrollFollow3 = __webpack_require__(102);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
-	var _button = __webpack_require__(44);
+	var _button = __webpack_require__(45);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -19644,7 +20054,7 @@
 	     */
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19671,6 +20081,7 @@
 	 * @param {SectionManager} sectionManager sectionManager
 	 * @param {CodeMirror} cm CodeMirror
 	 * @param {jQuery} $previewContainerEl preview container
+	 * @ignore
 	 */
 
 	var ScrollSync = function () {
@@ -20060,7 +20471,7 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20534,6 +20945,7 @@
 	 * findElementNodeFilter
 	 * @this Node
 	 * @returns {boolean} true or not
+	 * @ignore
 	 */
 
 
@@ -20544,16 +20956,16 @@
 	module.exports = SectionManager;
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20666,6 +21078,7 @@
 	 * Initialize UI
 	 * @param {object} editor Editor instance
 	 * @param {Array.<string>} preset Preset for color palette
+	 * @ignore
 	 */
 	function initUI(editor, preset) {
 	    var className = 'tui-color';
@@ -20753,6 +21166,7 @@
 	 * @param {string} text Text content
 	 * @param {string} color Color value
 	 * @returns {string}
+	 * @ignore
 	 */
 	function makeCustomColorSyntax(text, color) {
 	    return '{color:' + color + '}' + text + '{color}';
@@ -20763,6 +21177,7 @@
 	 * @param {string} text Text content
 	 * @param {string} color Color value
 	 * @returns {string}
+	 * @ignore
 	 */
 	function makeHTMLColorSyntax(text, color) {
 	    return '<span style="color:' + color + '">' + text + '</span>';
@@ -20772,6 +21187,7 @@
 	 * Change decimal color value to hexadecimal color value
 	 * @param {string} color Color value string
 	 * @returns {string}
+	 * @ignore
 	 */
 	function changeDecColorToHex(color) {
 	    return color.replace(decimalColorRx, function (colorValue, r, g, b) {
@@ -20789,38 +21205,39 @@
 	 * Get binary number string
 	 * @param {string} numberStr String to convert binary number
 	 * @returns {string}
+	 * @ignore
 	 */
 	function get2DigitNumberString(numberStr) {
 	    return numberStr === '0' ? '00' : numberStr;
 	}
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(104);
+	var _markerList = __webpack_require__(105);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(105);
+	var _markerManager = __webpack_require__(106);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(107);
+	var _wysiwygMarkerHelper = __webpack_require__(108);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(108);
+	var _viewOnlyMarkerHelper = __webpack_require__(109);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(109);
+	var _markdownMarkerHelper = __webpack_require__(110);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -21075,7 +21492,7 @@
 	});
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21096,6 +21513,7 @@
 	 * @exports Markerlist
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var Markerlist = function () {
@@ -21288,7 +21706,7 @@
 	module.exports = Markerlist;
 
 /***/ },
-/* 105 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21302,7 +21720,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(106);
+	var DiffMatchPatch = __webpack_require__(107);
 
 	var util = tui.util;
 
@@ -21531,7 +21949,7 @@
 	module.exports = MarkerManager;
 
 /***/ },
-/* 106 */
+/* 107 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21567,6 +21985,7 @@
 	/**
 	 * Class containing the diff, match and patch methods.
 	 * @constructor
+	 * @ignore
 	 */
 	function diff_match_patch() {
 
@@ -21601,6 +22020,7 @@
 	 * The data structure representing a diff is an array of tuples:
 	 * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
 	 * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+	 * @ignore
 	 */
 	var DIFF_DELETE = -1;
 	var DIFF_INSERT = 1;
@@ -23539,6 +23959,7 @@
 	/**
 	 * Class representing one patch operation.
 	 * @constructor
+	 * @ignore
 	 */
 	diff_match_patch.patch_obj = function () {
 	  /** @type {!Array.<!diff_match_patch.Diff>} */
@@ -23607,7 +24028,7 @@
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
 /***/ },
-/* 107 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23859,7 +24280,7 @@
 	module.exports = WysiwygMarkerHelper;
 
 /***/ },
-/* 108 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -23883,6 +24304,7 @@
 	 * @constructor
 	 * @class
 	 * @param {Preview} preview preview instance
+	 * @ignore
 	 */
 
 	var ViewOnlyMarkerHelper = function () {
@@ -24109,6 +24531,7 @@
 	 * getRange
 	 * get current range
 	 * @returns {Range}
+	 * @ignore
 	 */
 
 
@@ -24130,7 +24553,7 @@
 	module.exports = ViewOnlyMarkerHelper;
 
 /***/ },
-/* 109 */
+/* 110 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24155,6 +24578,7 @@
 	 * @constructor
 	 * @class
 	 * @param {CodeMirror} cm codemirror instance
+	 * @ignore
 	 */
 
 	var MarkdownMarkerHelper = function () {
@@ -24212,6 +24636,7 @@
 	         * @param {number} endLine end line
 	         * @param {number} endCh end offset
 	         * @returns {object} information
+	         * @private
 	         */
 
 	    }, {
@@ -24292,6 +24717,7 @@
 	         * _getSelection
 	         * Get selection of CodeMirror, if selection is reversed then correct it
 	         * @returns {object} selection
+	         * @private
 	         */
 
 	    }, {
@@ -24320,6 +24746,7 @@
 	         * Find offset cursor by given offset list
 	         * @param {Array.<number>} offsetlist offset list
 	         * @returns {Array.<object>} offset cursors
+	         * @private
 	         */
 
 	    }, {
@@ -24407,64 +24834,64 @@
 	module.exports = MarkdownMarkerHelper;
 
 /***/ },
-/* 110 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(29);
+	var _extManager = __webpack_require__(32);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _mergedTableCreator = __webpack_require__(111);
+	var _mergedTableCreator = __webpack_require__(112);
 
 	var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-	var _tableUnmergePreparer = __webpack_require__(114);
+	var _tableUnmergePreparer = __webpack_require__(115);
 
 	var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-	var _toMarkRenderer = __webpack_require__(115);
+	var _toMarkRenderer = __webpack_require__(116);
 
 	var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-	var _wwMergedTableManager = __webpack_require__(116);
+	var _wwMergedTableManager = __webpack_require__(117);
 
 	var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-	var _wwMergedTableSelectionManager = __webpack_require__(117);
+	var _wwMergedTableSelectionManager = __webpack_require__(119);
 
 	var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-	var _mergedTableAddRow = __webpack_require__(119);
+	var _mergedTableAddRow = __webpack_require__(120);
 
 	var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-	var _mergedTableAddCol = __webpack_require__(120);
+	var _mergedTableAddCol = __webpack_require__(121);
 
 	var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-	var _mergedTableRemoveRow = __webpack_require__(121);
+	var _mergedTableRemoveRow = __webpack_require__(122);
 
 	var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-	var _mergedTableRemoveCol = __webpack_require__(122);
+	var _mergedTableRemoveCol = __webpack_require__(123);
 
 	var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-	var _mergedTableAlignCol = __webpack_require__(123);
+	var _mergedTableAlignCol = __webpack_require__(124);
 
 	var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-	var _mergeCell = __webpack_require__(124);
+	var _mergeCell = __webpack_require__(125);
 
 	var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-	var _unmergeCell = __webpack_require__(125);
+	var _unmergeCell = __webpack_require__(126);
 
 	var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-	var _mergedTableUI = __webpack_require__(126);
+	var _mergedTableUI = __webpack_require__(127);
 
 	var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -24475,19 +24902,24 @@
 	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
-	__webpack_require__(127);
+	__webpack_require__(128);
 
 	_extManager2.default.defineExtension('tableExtension', function (editor) {
 	    var eventManager = editor.eventManager;
-	    var wwComponentManager = editor.wwEditor.componentManager;
-	    var popupTableUtils = editor._ui.popupTableUtils;
 
 	    editor.toMarkOptions = editor.toMarkOptions || {};
 	    editor.toMarkOptions.renderer = _toMarkRenderer2.default;
+	    _bindEvents(eventManager);
+
+	    if (editor.isViewOnly()) {
+	        return;
+	    }
+
+	    var wwComponentManager = editor.wwEditor.componentManager;
+	    var popupTableUtils = editor._ui.popupTableUtils;
 
 	    _addCommands(editor);
 	    _changeWysiwygManagers(wwComponentManager);
-	    _bindEvents(eventManager);
 
 	    if (editor._ui.popupTableUtils) {
 	        _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
@@ -24589,7 +25021,7 @@
 	}
 
 /***/ },
-/* 111 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24612,7 +25044,7 @@
 	exports._mergeByRowspan = _mergeByRowspan;
 	exports.default = createMergedTable;
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -24624,7 +25056,7 @@
 	 * @param {string} type - merge type like colspan, rowspan
 	 * @param {string} oppossitType - oppossit merge type
 	 *                                if merge type is colspan, opossit merge type is rowspan
-	 * @returns {[number, string]} - returns merge count and value
+	 * @returns {Array.<number|string>} - returns merge count and value
 	 * @private
 	 */
 	function _extractPropertiesForMerge(value, type, oppossitType) {
@@ -24700,6 +25132,7 @@
 	 * @param {Array} arr - target array
 	 * @param {function} onFind - find function
 	 * @returns {number}
+	 * @private
 	 */
 	function _findIndex(arr, onFind) {
 	    var foundIndex = -1;
@@ -24720,7 +25153,7 @@
 	/**
 	 * Separate the trs according to the type of parent, such as thead and tbody.
 	 * @param {Array.<Array.<object>>} trs - tr list
-	 * @returns {[Array.<Array.<object>>, Array.<Array.<object>>]} - returns thead and tbody
+	 * @returns {Array.<Array.<Array.<object>>>} - returns thead and tbody
 	 * @private
 	 */
 	function _divideTrs(trs) {
@@ -24816,7 +25249,7 @@
 	}
 
 /***/ },
-/* 112 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24825,7 +25258,7 @@
 	    value: true
 	});
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -24835,6 +25268,7 @@
 	 * Create cell html.
 	 * @param {object} cell - cell data of table base data
 	 * @returns {string}
+	 * @private
 	 */
 	function _createCellHtml(cell) {
 	    var attrs = cell.colspan > 1 ? ' colspan="' + cell.colspan + '"' : '';
@@ -24873,17 +25307,18 @@
 
 	/**
 	 * Create table html.
-	 * @param {Array.<Array.<object>>} table - table data
+	 * @param {Array.<Array.<object>>} renderData - table data for render
 	 * @returns {string}
 	 * @private
 	 */
-	function createTableHtml(table) {
-	    var thead = [table[0]];
-	    var tbody = table.slice(1);
+	function createTableHtml(renderData) {
+	    var thead = [renderData[0]];
+	    var tbody = renderData.slice(1);
 	    var theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
 	    var tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
+	    var className = renderData.className ? ' class="' + renderData.className + '"' : '';
 
-	    return '<table>' + (theadHtml + tbodyHtml) + '</table>';
+	    return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</renderData>';
 	}
 
 	/**
@@ -24891,6 +25326,7 @@
 	 * @param {jQuery} $table - table jQuery element
 	 * @param {Array.<Array.<object>>} tableData - table data
 	 * @returns {jQuery}
+	 * @ignore
 	 */
 	function replaceTable($table, tableData) {
 	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
@@ -24907,16 +25343,12 @@
 	 * @param {squireext} sq - squire instance
 	 * @param {range} range - range object
 	 * @param {HTMLElement} targetCell - cell element for focus
-	 * @private
+	 * @ignore
 	 */
 	function focusToCell(sq, range, targetCell) {
 	    range.selectNodeContents(targetCell);
 	    range.collapse(true);
 	    sq.setSelection(range);
-
-	    // TODO: 개선 필요 - undo를 두번 실행해야 동작하는 문제를 해결하기 위해 임시방편으로 처리
-	    sq.undo();
-	    sq.redo();
 	}
 
 	exports.default = {
@@ -24926,7 +25358,7 @@
 	};
 
 /***/ },
-/* 113 */
+/* 114 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25039,7 +25471,7 @@
 	 * Create table data from jQuery table Element.
 	 * @param {jQuery} $table - jQuery table element
 	 * @returns {Array.<Array.<object>>}
-	 * @private
+	 * @ignore
 	 */
 	function createTableData($table) {
 	    var tableData = [];
@@ -25067,6 +25499,10 @@
 	        });
 	    });
 
+	    if ($table[0].className) {
+	        tableData.className = $table[0].className;
+	    }
+
 	    return tableData;
 	}
 
@@ -25074,7 +25510,7 @@
 	 * Create cell index data of table data.
 	 * @param {Array.<Array.<object>>} tableData - table data
 	 * @returns {Array.<Array.<object>>}
-	 * @priavte
+	 * @ignore
 	 */
 	function createCellIndexData(tableData) {
 	    var mappingData = [];
@@ -25100,6 +25536,7 @@
 	 * Get header aligns.
 	 * @param {Array.<Array.<object>>} tableData - table data
 	 * @returns {Array.<?string>}
+	 * @private
 	 */
 	function _getHeaderAligns(tableData) {
 	    var headRowData = tableData[0];
@@ -25122,11 +25559,11 @@
 	 * @param {Array.<object>} tableData - table data
 	 * @param {Array.<object>} cellIndexData - cell index data
 	 * @returns {Array.<Array.<object>>}
+	 * @ignore
 	 */
 	function createRenderData(tableData, cellIndexData) {
 	    var headerAligns = _getHeaderAligns(tableData);
-
-	    return cellIndexData.map(function (row) {
+	    var renderData = cellIndexData.map(function (row) {
 	        return row.map(function (_ref) {
 	            var rowIndex = _ref.rowIndex,
 	                colIndex = _ref.colIndex;
@@ -25135,6 +25572,12 @@
 	            }, tableData[rowIndex][colIndex]);
 	        });
 	    });
+
+	    if (tableData.className) {
+	        renderData.className = tableData.className;
+	    }
+
+	    return renderData;
 	}
 
 	var BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
@@ -25150,6 +25593,7 @@
 	 *   rowspan: number,
 	 *   content: string
 	 * }}
+	 * @ignore
 	 */
 	function createBasicCell(rowIndex, colIndex, nodeName) {
 	    return {
@@ -25168,6 +25612,7 @@
 	 * Find element row index.
 	 * @param {jQuery} $cell - cell jQuery element like td or th
 	 * @returns {number}
+	 * @ignore
 	 */
 	function findElementRowIndex($cell) {
 	    var $tr = $cell.closest('tr');
@@ -25184,6 +25629,7 @@
 	 * Find element col index.
 	 * @param {jQuery} $cell - cell jQuery element like td or th
 	 * @returns {number}
+	 * @ignore
 	 */
 	function findElementColIndex($cell) {
 	    return $cell.closest('td, th').prevAll().length;
@@ -25194,6 +25640,7 @@
 	 * @param {Array.<Array.<object>>} cellIndexData - cell index data
 	 * @param {jQuery} $cell - cell jQuery element like td or th
 	 * @returns {{rowIndex: number, cellIndex: number}}
+	 * @ignore
 	 */
 	function findCellIndex(cellIndexData, $cell) {
 	    var elementRowIndex = findElementRowIndex($cell);
@@ -25208,6 +25655,7 @@
 	 * @param {number} rowIndex - row index of base data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {number}
+	 * @ignore
 	 */
 	function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
 	    var cellData = tableData[rowIndex][colIndex];
@@ -25226,6 +25674,7 @@
 	 * @param {number} rowIndex - row index of base data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {number}
+	 * @ignore
 	 */
 	function findColMergedLastIndex(tableData, rowIndex, colIndex) {
 	    var cellData = tableData[rowIndex][colIndex];
@@ -25244,6 +25693,7 @@
 	 * @param {number} rowIndex - row index of base data
 	 * @param {number} colIndex - col index of base data
 	 * @returns {{rowIndex: number, colIndex: number}}
+	 * @ignore
 	 */
 	function findElementIndex(tableData, rowIndex, colIndex) {
 	    var cellData = tableData[rowIndex][colIndex];
@@ -25255,35 +25705,62 @@
 	}
 
 	/**
-	 * Find max cell count.
-	 * @param {Array.<Array.<object>>} tableData - table data
-	 * @returns {number}
-	 * @private
-	 */
-	function _findMaxCellCount(tableData) {
-	    var cellCounts = tableData.map(function (rowData) {
-	        return rowData.length;
-	    });
-
-	    return Math.max.apply(Math, _toConsumableArray(cellCounts));
-	}
-
-	/**
 	 * Stuff cells into incomplete row.
 	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} limitIndex - limit index
+	 * @ignore
 	 */
-	function stuffCellsIntoIncompleteRow(tableData) {
-	    var maxCellCount = _findMaxCellCount(tableData);
-
+	function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
 	    tableData.forEach(function (rowData, rowIndex) {
-	        var cellCount = rowData.length;
-	        var diffCount = maxCellCount - cellCount;
+	        var startIndex = rowData.length;
 	        var nodeName = rowData[0].nodeName;
 
-	        util.range(cellCount, cellCount + diffCount + 1).forEach(function (colIndex) {
+	        util.range(startIndex, limitIndex).forEach(function (colIndex) {
 	            rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
 	        });
 	    });
+	}
+
+	/**
+	 * Add tbody or thead of table data if need.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {boolean}
+	 * @ignore
+	 */
+	function addTbodyOrTheadIfNeed(tableData) {
+	    var header = tableData[0];
+	    var cellCount = header.length;
+	    var added = true;
+
+	    if (!cellCount && tableData[1]) {
+	        util.range(0, tableData[1].length).forEach(function (colIndex) {
+	            header.push(createBasicCell(0, colIndex, 'TH'));
+	        });
+	    } else if (tableData[0][0].nodeName !== 'TH') {
+	        var _ref2;
+
+	        var newHeader = util.range(0, cellCount).map(function (colIndex) {
+	            return createBasicCell(0, colIndex, 'TH');
+	        });
+
+	        (_ref2 = []).concat.apply(_ref2, _toConsumableArray(tableData)).forEach(function (cellData) {
+	            if (cellData.elementIndex) {
+	                cellData.elementIndex.rowIndex += 1;
+	            }
+	        });
+
+	        tableData.unshift(newHeader);
+	    } else if (tableData.length === 1) {
+	        var newRow = util.range(0, cellCount).map(function (colIndex) {
+	            return createBasicCell(1, colIndex, 'TD');
+	        });
+
+	        tableData.push(newRow);
+	    } else {
+	        added = false;
+	    }
+
+	    return added;
 	}
 
 	exports.default = {
@@ -25297,11 +25774,12 @@
 	    findRowMergedLastIndex: findRowMergedLastIndex,
 	    findColMergedLastIndex: findColMergedLastIndex,
 	    findElementIndex: findElementIndex,
-	    stuffCellsIntoIncompleteRow: stuffCellsIntoIncompleteRow
+	    stuffCellsIntoIncompleteRow: stuffCellsIntoIncompleteRow,
+	    addTbodyOrTheadIfNeed: addTbodyOrTheadIfNeed
 	};
 
 /***/ },
-/* 114 */
+/* 115 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25319,6 +25797,7 @@
 	/**
 	 * Prepend merge syntax to content.
 	 * @param {HTMLElement} cell - td or th
+	 * @private
 	 */
 	function _prependMergeSyntaxToContent(cell) {
 	    var $cell = $(cell);
@@ -25351,7 +25830,7 @@
 	}
 
 /***/ },
-/* 115 */
+/* 116 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25374,6 +25853,7 @@
 	 * @param {string} str - target string
 	 * @param {number} count - count
 	 * @returns {string}
+	 * @private
 	 */
 	function _createRepeatString(str, count) {
 	    return tui.util.range(0, count).map(function () {
@@ -25437,6 +25917,7 @@
 	 * @param {HTMLElement} theadElement - theadElement element
 	 * @param {string} theadContentMarkdown - thead markdown content
 	 * @returns {string}
+	 * @private
 	 */
 	function _createTheadMarkdown(theadElement, theadContentMarkdown) {
 	    var ths = $(theadElement).find('th').get();
@@ -25454,26 +25935,36 @@
 	});
 
 /***/ },
-/* 116 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _wwTableManager = __webpack_require__(17);
+	var _wwTableManager = __webpack_require__(20);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _i18n = __webpack_require__(17);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -25485,12 +25976,15 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 	var util = tui.util;
+	var PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+
 	/**
 	 * WwMergedTableManager
 	 * @exports WwMergedTableManager
 	 * @constructor
 	 * @class WwMergedTableManager
 	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 * @ignore
 	 */
 
 	var WwMergedTableManager = function (_WwTableManager) {
@@ -25503,7 +25997,76 @@
 	    }
 
 	    _createClass(WwMergedTableManager, [{
-	        key: 'prepareToTableCellStuffing',
+	        key: '_updateCopyDataMergeWith',
+
+	        /**
+	         * Update mergeWidth property like rowMergeWith, colMergeWith of table data for copy.
+	         * @param {Array.<Array.<object>>} copyTableData - table data for copy
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start range
+	         * @private
+	         */
+	        value: function _updateCopyDataMergeWith(copyTableData, startRange) {
+	            copyTableData.forEach(function (rowData) {
+	                rowData.forEach(function (cellData) {
+	                    if (util.isExisty(cellData.rowMergeWith)) {
+	                        cellData.rowMergeWith -= startRange.rowIndex;
+	                    }
+
+	                    if (util.isExisty(cellData.colMergeWith)) {
+	                        cellData.colMergeWith -= startRange.colIndex;
+	                    }
+	                });
+	            });
+	        }
+
+	        /**
+	         * Create table data for copy.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start range
+	         * @param {{rowIndex: number, colIndex: number}} endRange - end range
+	         * @returns {Array.<Array.<object>>}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createCopyTableData',
+	        value: function _createCopyTableData(tableData, startRange, endRange) {
+	            var copyTableData = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
+
+	            copyTableData = copyTableData.map(function (rowData) {
+	                return rowData.slice(startRange.colIndex, endRange.colIndex + 1);
+	            });
+
+	            this._updateCopyDataMergeWith(copyTableData, startRange);
+
+	            return copyTableData;
+	        }
+
+	        /**
+	         * Update table html of clipboard data, if has selected cells.
+	         * @param {jQuery} $clipboardContainer - jQuery element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'updateTableHtmlOfClipboardIfNeed',
+	        value: function updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+	            var $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
+
+	            if ($selectedCells.length) {
+	                var tableData = _tableDataHandler2.default.createTableData($($selectedCells[0]).closest('TABLE'));
+
+	                var _tableRangeHandler$ge = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells),
+	                    startRange = _tableRangeHandler$ge.start,
+	                    endRange = _tableRangeHandler$ge.end;
+
+	                var copyTableData = this._createCopyTableData(tableData, startRange, endRange);
+	                var cellIndexData = _tableDataHandler2.default.createCellIndexData(copyTableData);
+	                var renderData = _tableDataHandler2.default.createRenderData(copyTableData, cellIndexData);
+
+	                $clipboardContainer.html(_tableRenderer2.default.createTableHtml(renderData));
+	            }
+	        }
 
 	        /**
 	         * Prepare to table cell stuffing
@@ -25511,6 +26074,9 @@
 	         * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
 	         * @override
 	         */
+
+	    }, {
+	        key: 'prepareToTableCellStuffing',
 	        value: function prepareToTableCellStuffing(tableData) {
 	            var maximumCellLength = tableData[0].length;
 	            var needTableCellStuffingAid = false;
@@ -25534,56 +26100,6 @@
 	        }
 
 	        /**
-	         * Replace incompletion table to completion table.
-	         * @param {jQuery} $table - current jQuery table element
-	         * @param {Array.<Array.<object>>} tableData - table data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_replaceToCompletionTable',
-	        value: function _replaceToCompletionTable($table, tableData) {
-	            _tableDataHandler2.default.stuffCellsIntoIncompleteRow(tableData);
-	            _tableRenderer2.default.replaceTable($table, tableData);
-	        }
-
-	        /**
-	         * Add tbody or thead of table data if need.
-	         * @param {Array.<Array.<object>>} tableData - table data
-	         * @returns {boolean}
-	         */
-
-	    }, {
-	        key: '_addTbodyOrTheadOfTableDataIfNeed',
-	        value: function _addTbodyOrTheadOfTableDataIfNeed(tableData) {
-	            var header = tableData[0];
-	            var cellCount = header.length;
-	            var added = true;
-
-	            if (!cellCount && tableData[1]) {
-	                util.range(0, tableData[1].length).forEach(function (colIndex) {
-	                    header.push(_tableDataHandler2.default.createBasicCell(0, colIndex, 'TH'));
-	                });
-	            } else if (tableData[0][0].nodeName !== 'TH') {
-	                var newHeader = util.range(0, cellCount).map(function (colIndex) {
-	                    return _tableDataHandler2.default.createBasicCell(0, colIndex, 'TH');
-	                });
-
-	                tableData.unshift(newHeader);
-	            } else if (tableData.length === 1) {
-	                var newRow = util.range(0, cellCount).map(function (colIndex) {
-	                    return _tableDataHandler2.default.createBasicCell(1, colIndex, 'TD');
-	                });
-
-	                tableData.push(newRow);
-	            } else {
-	                added = false;
-	            }
-
-	            return added;
-	        }
-
-	        /**
 	         * Append table cells.
 	         * @param {HTMLElement} node Table element
 	         * @override
@@ -25594,12 +26110,501 @@
 	        value: function tableCellAppendAidForTableElement(node) {
 	            var $table = $(node);
 	            var tableData = _tableDataHandler2.default.createTableData($table);
-	            var added = this._addTbodyOrTheadOfTableDataIfNeed(tableData);
+	            var added = _tableDataHandler2.default.addTbodyOrTheadIfNeed(tableData);
 	            var tableAidInformation = this.prepareToTableCellStuffing(tableData);
 	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
+	            if (needTableCellStuffingAid) {
+	                _tableDataHandler2.default.stuffCellsIntoIncompleteRow(tableData, tableAidInformation.maximumCellLength);
+	            }
+
 	            if (added || needTableCellStuffingAid) {
-	                this._replaceToCompletionTable($table, tableData);
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	            }
+	        }
+
+	        /**
+	         * Find start cell.
+	         * @param {jQuery} $selectedCells - jQuery elements like td, th
+	         * @returns {HTMLElement}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findStartCell',
+	        value: function _findStartCell($selectedCells) {
+	            var startCell = void 0;
+
+	            if ($selectedCells.length === 1) {
+	                startCell = $selectedCells[0];
+	            } else {
+	                startCell = this.wwe.getEditor().getSelection().startContainer;
+	            }
+
+	            return startCell;
+	        }
+
+	        /**
+	         * Find start cell index.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {jQuery} $startCell - start jQuery element like td, th
+	         * @returns {{rowIndex: number, colIndex: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findStartCellIndex',
+	        value: function _findStartCellIndex(tableData, $startCell) {
+	            var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+
+	            return _tableDataHandler2.default.findCellIndex(cellIndexData, $startCell);
+	        }
+
+	        /**
+	         * Whether has row merged header in clipboardTableData.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_hasRowMergedHeader',
+	        value: function _hasRowMergedHeader(clipboardTableData, tableData, startCellIndex) {
+	            var isHeader = tableData[startCellIndex.rowIndex][startCellIndex.colIndex].nodeName === 'TH';
+	            var hasHeaderMerge = any(clipboardTableData[0], function (cellData) {
+	                return cellData.rowspan && cellData.rowspan > 1;
+	            });
+
+	            return isHeader && hasHeaderMerge;
+	        }
+
+	        /**
+	         * Whether exactly fit table selection by clipboardTableData.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isExactlyFit',
+	        value: function _isExactlyFit(clipboardTableData, targetRowCount, targetColCount) {
+	            return targetRowCount % clipboardTableData.length === 0 && targetColCount % clipboardTableData[0].length === 0;
+	        }
+
+	        /**
+	         * Update clibpard table data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateClipboardTableData',
+	        value: function _updateClipboardTableData(clipboardTableData, targetRowCount, targetColCount) {
+	            var clipboardRowCount = clipboardTableData.length;
+	            var clipboardColCount = clipboardTableData[0].length;
+	            var increaseRowCount = parseInt(targetRowCount / clipboardRowCount, 10);
+	            var increaseColCount = parseInt(targetColCount / clipboardColCount, 10);
+
+	            if (increaseRowCount > 1) {
+	                (function () {
+	                    var originalData = JSON.parse(JSON.stringify(clipboardTableData));
+
+	                    util.range(0, increaseRowCount - 1).forEach(function () {
+	                        var newRows = JSON.parse(JSON.stringify(originalData));
+
+	                        clipboardTableData.push.apply(clipboardTableData, _toConsumableArray(newRows));
+	                    });
+	                })();
+	            }
+
+	            if (increaseColCount > 1) {
+	                (function () {
+	                    var originalData = JSON.parse(JSON.stringify(clipboardTableData));
+
+	                    util.range(0, increaseColCount - 1).forEach(function () {
+	                        var newData = JSON.parse(JSON.stringify(originalData));
+	                        clipboardTableData.forEach(function (rowData, rowIndex) {
+	                            rowData.push.apply(rowData, _toConsumableArray(newData[rowIndex]));
+	                        });
+	                    });
+	                })();
+	            }
+	        }
+
+	        /**
+	         * Update table data by cliboard table data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateTableDataByClipboardData',
+	        value: function _updateTableDataByClipboardData(clipboardTableData, tableData, startCellIndex) {
+	            var startRowIndex = startCellIndex.rowIndex;
+	            var startColIndex = startCellIndex.colIndex;
+
+	            clipboardTableData.forEach(function (rowData, rowIndex) {
+	                var updateRowIndex = startRowIndex + rowIndex;
+
+	                rowData.forEach(function (cellData, colIndex) {
+	                    var updateColIndex = startColIndex + colIndex;
+	                    var prevCellData = tableData[updateRowIndex][updateColIndex];
+
+	                    cellData.nodeName = prevCellData.nodeName;
+	                    tableData[updateRowIndex][updateColIndex] = cellData;
+	                });
+	            });
+	        }
+
+	        /**
+	         * Whether possible to paste or not.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @param {{rowIndex: number, colIndex: number}} endCellIndex - end cell index
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isPossibleToPaste',
+	        value: function _isPossibleToPaste(tableData, startCellIndex, endCellIndex) {
+	            var startRowIndex = startCellIndex.rowIndex;
+	            var startColIndex = startCellIndex.colIndex;
+	            var endRowIndex = endCellIndex.rowIndex;
+	            var endColIndex = endCellIndex.colIndex;
+	            var filterdTableData = tableData.slice(startRowIndex, endRowIndex + 1);
+	            var firstRow = filterdTableData[0].slice(startColIndex, endColIndex + 1);
+	            var isPossible = !any(firstRow, function (cellData) {
+	                return util.isExisty(cellData.rowMergeWith);
+	            });
+
+	            if (isPossible) {
+	                var firstCells = util.pluck(filterdTableData, startColIndex);
+
+	                isPossible = !any(firstCells, function (cellData) {
+	                    return util.isExisty(cellData.colMergeWith);
+	                });
+	            }
+
+	            if (isPossible && tableData.length > endRowIndex + 1) {
+	                var nextRow = tableData[endRowIndex + 1].slice(startColIndex, endColIndex + 1);
+
+	                isPossible = !any(nextRow, function (cellData) {
+	                    return util.isExisty(cellData.rowMergeWith);
+	                });
+	            }
+
+	            if (isPossible && tableData[0].length > endColIndex + 1) {
+	                var nextCells = util.pluck(filterdTableData, endColIndex + 1);
+
+	                isPossible = !any(nextCells, function (cellData) {
+	                    return util.isExisty(cellData.colMergeWith);
+	                });
+	            }
+
+	            return isPossible;
+	        }
+
+	        /**
+	         * Splice clipboardTableData by target row count and col count.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_spliceClipboardData',
+	        value: function _spliceClipboardData(clipboardTableData, targetRowCount, targetColCount) {
+	            clipboardTableData.splice(targetRowCount);
+	            clipboardTableData.forEach(function (rowData) {
+	                rowData.splice(targetColCount);
+	            });
+	        }
+
+	        /**
+	         * Focus last td.
+	         * @param {number} endRowIndex - end row index
+	         * @param {number} endColIndex - end col index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_focusLastTd',
+	        value: function _focusLastTd(_ref) {
+	            var endRowIndex = _ref.rowIndex,
+	                endColIndex = _ref.colIndex;
+
+	            var sq = this.wwe.getEditor();
+	            var range = sq.getSelection().cloneRange();
+	            var $bookmarkedTable = sq.get$Body().find('.' + PASTE_TABLE_BOOKMARK);
+	            var tableData = _tableDataHandler2.default.createTableData($bookmarkedTable);
+	            var lastCellData = tableData[endRowIndex][endColIndex];
+
+	            endRowIndex = util.isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
+	            endColIndex = util.isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
+
+	            var lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
+	            var lastTd = $bookmarkedTable.find('tr').eq(lastCellIndex.rowIndex).children()[lastCellIndex.colIndex];
+
+	            $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+	            range.selectNodeContents(lastTd);
+	            range.collapse(false);
+	            sq.setSelection(range);
+	        }
+
+	        /**
+	         * Update clipboard data for paste to smaller selection area than clipboard data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start table range
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateClipboardDataForPasteToSamllerSelectedArea',
+	        value: function _updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount, targetColCount, startRange) {
+	            var updated = true;
+	            var startCellIndex = {
+	                rowIndex: 0,
+	                colIndex: 0
+	            };
+
+	            var endCellIndex = {
+	                rowIndex: targetRowCount - 1,
+	                colIndex: targetColCount - 1
+	            };
+
+	            if (this._isPossibleToPaste(clipboardTableData, startCellIndex, endCellIndex)) {
+	                this._spliceClipboardData(clipboardTableData, targetRowCount, targetColCount);
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	            } else {
+	                updated = false;
+	            }
+
+	            return updated;
+	        }
+
+	        /**
+	         * Paste to selected area.
+	         * @param {jQuery} $table - target jQuery table element
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {jQuery} $selectedCells - selected jQuery elements like td, th
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pasteToSelectedArea',
+	        value: function _pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells) {
+	            var _tableRangeHandler$ge2 = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells),
+	                startRange = _tableRangeHandler$ge2.start,
+	                endRange = _tableRangeHandler$ge2.end;
+
+	            var targetRowCount = endRange.rowIndex - startRange.rowIndex + 1;
+	            var targetColCount = endRange.colIndex - startRange.colIndex + 1;
+	            var clipboardRowCount = clipboardTableData.length;
+	            var clipboardColCount = clipboardTableData[0].length;
+	            var isSelectionLargerThanData = targetRowCount >= clipboardRowCount && targetColCount >= clipboardColCount;
+	            var alertMessage = _i18n2.default.get('Cannot change part of merged cell');
+	            var updated = true;
+	            var endCellIndex = void 0;
+
+	            if (this._hasRowMergedHeader(clipboardTableData, tableData, startRange)) {
+	                alertMessage = _i18n2.default.get('Cannot paste row merged cells into the table header');
+	                updated = false;
+	            } else if (this._isExactlyFit(clipboardTableData, targetRowCount, targetColCount)) {
+	                // data가 clipboard영역에 딱 맞는 경우(배수 포함)
+
+	                endCellIndex = endRange;
+	                this._updateClipboardTableData(clipboardTableData, targetRowCount, targetColCount);
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	            } else if (isSelectionLargerThanData) {
+	                // selection이 paste 데이터 보다 큰 경우
+	                endCellIndex = {
+	                    rowIndex: startRange.rowIndex + clipboardRowCount - 1,
+	                    colIndex: startRange.colIndex + clipboardColCount - 1
+	                };
+
+	                if (this._isPossibleToPaste(tableData, startRange, endCellIndex)) {
+	                    this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	                } else {
+	                    updated = false;
+	                }
+	            } else {
+	                // selection이 paste 데이터 보다 작은 경우
+	                endCellIndex = {
+	                    rowIndex: startRange.rowIndex + targetRowCount - 1,
+	                    colIndex: startRange.colIndex + targetColCount - 1
+	                };
+
+	                updated = this._updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount, targetColCount, startRange);
+	            }
+
+	            if (updated) {
+	                tableData.className += ' ' + PASTE_TABLE_BOOKMARK;
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	                this._focusLastTd(endCellIndex);
+	            } else {
+	                alert(alertMessage);
+	                this.wwe.getEditor().focus();
+	            }
+	        }
+
+	        /**
+	         * Find end cell index.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} startRowIndex - start row index
+	         * @param {number} startColIndex - start col index
+	         * @returns {{rowIndex: number, colIndex: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findEndCellIndex',
+	        value: function _findEndCellIndex(clipboardTableData, _ref2) {
+	            var startRowIndex = _ref2.rowIndex,
+	                startColIndex = _ref2.colIndex;
+
+	            return {
+	                rowIndex: startRowIndex + clipboardTableData.length - 1,
+	                colIndex: startColIndex + clipboardTableData[0].length - 1
+	            };
+	        }
+
+	        /**
+	         * Expand row.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} expandCount - expand count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandRow',
+	        value: function _expandRow(tableData, expandCount) {
+	            var startRowIndex = tableData.length;
+	            var cellCount = tableData[0].length;
+	            var newRows = util.range(startRowIndex, startRowIndex + expandCount).map(function (rowIndex) {
+	                return util.range(0, cellCount).map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(rowIndex, colIndex);
+	                });
+	            });
+
+	            tableData.push.apply(tableData, _toConsumableArray(newRows));
+	        }
+
+	        /**
+	         * Expand column.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} expandCount - expand count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandCoumn',
+	        value: function _expandCoumn(tableData, expandCount) {
+	            var startCellIndex = tableData[0].length;
+	            var additionalCellRange = util.range(startCellIndex, startCellIndex + expandCount);
+
+	            tableData.forEach(function (rowData, rowIndex) {
+	                var nodeName = rowData[0].nodeName;
+	                var newCells = additionalCellRange.map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(rowIndex, colIndex, nodeName);
+	                });
+
+	                rowData.push.apply(rowData, _toConsumableArray(newCells));
+	            });
+	        }
+
+	        /**
+	         * Expand table data, if need.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @param {{rowIndex: number, colIndex: number}} endCellIndex - end cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandTableDataIfNeed',
+	        value: function _expandTableDataIfNeed(tableData, startCellIndex, endCellIndex) {
+	            var expandRowCount = endCellIndex.rowIndex - tableData.length + 1;
+	            var expandCellCount = endCellIndex.colIndex - tableData[0].length + 1;
+
+	            if (expandRowCount > 0) {
+	                this._expandRow(tableData, expandRowCount);
+	            }
+
+	            if (expandCellCount > 0) {
+	                this._expandCoumn(tableData, expandCellCount);
+	            }
+	        }
+
+	        /**
+	         * Paste all clipboard table data.
+	         * @param {jQuery} $table - jQuery table element
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pasteAllClipboardTableData',
+	        value: function _pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex) {
+	            var endCellIndex = this._findEndCellIndex(clipboardTableData, startCellIndex);
+
+	            if (this._hasRowMergedHeader(clipboardTableData, tableData, startCellIndex)) {
+	                alert(_i18n2.default.get('Cannot paste row merged cells into the table header'));
+	                this.wwe.getEditor().focus();
+	                return;
+	            }
+
+	            this._expandTableDataIfNeed(tableData, startCellIndex, endCellIndex);
+
+	            if (this._isPossibleToPaste(tableData, startCellIndex, endCellIndex)) {
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startCellIndex);
+	                tableData.className += ' ' + PASTE_TABLE_BOOKMARK;
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	                this._focusLastTd(endCellIndex);
+	            } else {
+	                alert(_i18n2.default.get('Cannot change part of merged cell'));
+	                this.wwe.getEditor().focus();
+	            }
+	        }
+
+	        /**
+	         * Paste clibpard data.
+	         * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+	         */
+
+	    }, {
+	        key: 'pasteClipboardData',
+	        value: function pasteClipboardData($clipboardTable) {
+	            var clipboardTableData = _tableDataHandler2.default.createTableData($clipboardTable);
+	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var $selectedCells = tableSelectionManager.getSelectedCells();
+	            var $startCell = $(this._findStartCell($selectedCells));
+	            var $table = $startCell.closest('table');
+	            var tableData = _tableDataHandler2.default.createTableData($table);
+	            var startCellIndex = this._findStartCellIndex(tableData, $startCell);
+
+	            if ($selectedCells.length > 1) {
+	                // selection 상태
+	                this._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
+	            } else {
+	                // cursor 상태
+	                this._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
 	            }
 	        }
 	    }]);
@@ -25607,178 +26612,28 @@
 	    return WwMergedTableManager;
 	}(_wwTableManager2.default);
 
-	module.exports = WwMergedTableManager;
-
-/***/ },
-/* 117 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _wwTableSelectionManager = __webpack_require__(18);
-
-	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
-
-	var _tableDataHandler = __webpack_require__(113);
-
-	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
-
-	var _tableRangeHandler = __webpack_require__(118);
-
-	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table selection manager
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
-
-	var util = tui.util;
-
 	/**
-	 * WwMergedTableSelectionManager
-	 * @exports WwMergedTableSelectionManager
-	 * @constructor
-	 * @class WwMergedTableTableSelectionManager
-	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 * Whether one of them is true or not.
+	 * @param {Array} arr - target array
+	 * @param {function} contition - condition function
+	 * @returns {boolean}
+	 * @ignore
 	 */
 
-	var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
-	    _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
 
-	    function WwMergedTableSelectionManager() {
-	        _classCallCheck(this, WwMergedTableSelectionManager);
+	function any(arr, contition) {
+	    var result = false;
 
-	        return _possibleConstructorReturn(this, (WwMergedTableSelectionManager.__proto__ || Object.getPrototypeOf(WwMergedTableSelectionManager)).apply(this, arguments));
-	    }
+	    util.forEach(arr, function (item) {
+	        result = contition(item);
 
-	    _createClass(WwMergedTableSelectionManager, [{
-	        key: 'setTableSelectionTimerIfNeed',
+	        return !result;
+	    });
 
-	        /**
-	         * Set setTimeout and setInterval timer execution if table selecting situation
-	         * @param {HTMLElement} selectionStart Start element
-	         * @override
-	         */
-	        value: function setTableSelectionTimerIfNeed(selectionStart) {
-	            var isTableSelecting = $(selectionStart).parents('table').length;
+	    return result;
+	}
 
-	            if (isTableSelecting) {
-	                this._isSelectionStarted = true;
-	            }
-	        }
-
-	        /**
-	         * Add css class for selected cells.
-	         * @param {jQuery} $table - table jQuery element
-	         * @param {Array.<Array.<object>>} tableData - table data
-	         * @param {{
-	         *   start: {rowIndex: number, colIndex: number},
-	         *   end: {rowIndex: number, colIndex: number}
-	         * }} tableRange - table selected range
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addClassToSelectedCells',
-	        value: function _addClassToSelectedCells($table, tableData, tableRange) {
-	            var startRange = tableRange.start;
-	            var endRange = tableRange.end;
-	            var cellIndexRange = util.range(startRange.colIndex, endRange.colIndex + 1);
-	            var $trs = $table.find('tr');
-
-	            util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
-	                var rowData = tableData[rowIndex];
-	                var $cells = $trs.eq(rowIndex).find('td, th');
-
-	                return cellIndexRange.forEach(function (colIndex) {
-	                    var cellData = rowData[colIndex];
-
-	                    if (cellData.elementIndex) {
-	                        $cells.eq(rowData[colIndex].elementIndex.colIndex).addClass(TABLE_CELL_SELECTED_CLASS_NAME);
-	                    }
-	                });
-	            });
-	        }
-
-	        /**
-	         * Highlight selected table cells
-	         * @param {HTMLElement} selectionStart start element
-	         * @param {HTMLElement} selectionEnd end element
-	         * @override
-	         */
-
-	    }, {
-	        key: 'highlightTableCellsBy',
-	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
-	            var $start = $(selectionStart);
-	            var $end = $(selectionEnd);
-	            var $table = $start.closest('table');
-	            var tableData = _tableDataHandler2.default.createTableData($table);
-	            var tableRange = _tableRangeHandler2.default.findSelectionRange(tableData, $start, $end);
-
-	            this.removeClassAttrbuteFromAllCellsIfNeed();
-	            this._addClassToSelectedCells($table, tableData, tableRange);
-	        }
-
-	        /**
-	         * Style to selected cells.
-	         * @param {function} onStyle - function for styling
-	         */
-
-	    }, {
-	        key: 'styleToSelectedCells',
-	        value: function styleToSelectedCells(onStyle) {
-	            var sq = this.wwe.getEditor();
-	            var range = sq.getSelection().cloneRange();
-	            var $table = $(range.startContainer).closest('table');
-
-	            $table.find('tr').get().forEach(function (tr) {
-	                var cells = $(tr).find('.' + TABLE_CELL_SELECTED_CLASS_NAME);
-
-	                if (!cells.length) {
-	                    return;
-	                }
-
-	                range.setStart(cells.first()[0], 0);
-	                range.setEnd(cells.last()[0], 1);
-	                sq.setSelection(range);
-	                onStyle(sq);
-	            });
-	        }
-
-	        /**
-	         * Whether has selected both TH and TD.
-	         * @param {jQuery} $selectedCells - selected cells jQuery element
-	         * @returns {boolean}
-	         */
-
-	    }, {
-	        key: 'hasSelectedBothThAndTd',
-	        value: function hasSelectedBothThAndTd($selectedCells) {
-	            $selectedCells = $selectedCells || this.getSelectedCells();
-
-	            return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
-	        }
-	    }]);
-
-	    return WwMergedTableSelectionManager;
-	}(_wwTableSelectionManager2.default);
-
-	exports.default = WwMergedTableSelectionManager;
+	module.exports = WwMergedTableManager;
 
 /***/ },
 /* 118 */
@@ -25790,7 +26645,7 @@
 	    value: true
 	});
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -25958,6 +26813,7 @@
 	 *   start: {rowIndex: number, colIndex: number},
 	 *   end: {rowIndex: number, colIndex: number}
 	 * }}
+	 * @ignore
 	 */
 	function findSelectionRange(tableData, $start, $end) {
 	    var unmergedRange = _findUnmergedRange(tableData, $start, $end);
@@ -25974,6 +26830,7 @@
 	 *   start: {rowIndex: number, colIndex: number},
 	 *   end: {rowIndex: number, colIndex: number}
 	 *}}
+	 * @ignore
 	 */
 	function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
 	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
@@ -26021,14 +26878,14 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	exports._createNewRow = _createNewRow;
-	exports._addRow = _addRow;
 
-	var _commandManager = __webpack_require__(27);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _commandManager2 = _interopRequireDefault(_commandManager);
+	var _wwTableSelectionManager = __webpack_require__(21);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
+
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26036,7 +26893,209 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table selection manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
+
+	var util = tui.util;
+
+	/**
+	 * WwMergedTableSelectionManager
+	 * @exports WwMergedTableSelectionManager
+	 * @constructor
+	 * @class WwMergedTableTableSelectionManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 * @ignore
+	 */
+
+	var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
+	    _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
+
+	    function WwMergedTableSelectionManager(wwe) {
+	        _classCallCheck(this, WwMergedTableSelectionManager);
+
+	        /**
+	         * table cache data
+	         * @type {Array.<Array.<Object>>}
+	         * @private
+	         */
+	        var _this = _possibleConstructorReturn(this, (WwMergedTableSelectionManager.__proto__ || Object.getPrototypeOf(WwMergedTableSelectionManager)).call(this, wwe));
+
+	        _this._tableData = null;
+	        return _this;
+	    }
+
+	    /**
+	     * Set setTimeout and setInterval timer execution if table selecting situation
+	     * @param {HTMLElement} selectionStart Start element
+	     * @override
+	     */
+
+
+	    _createClass(WwMergedTableSelectionManager, [{
+	        key: 'setTableSelectionTimerIfNeed',
+	        value: function setTableSelectionTimerIfNeed(selectionStart) {
+	            var isTableSelecting = $(selectionStart).parents('table').length;
+
+	            if (isTableSelecting) {
+	                this._isSelectionStarted = true;
+	            }
+	        }
+
+	        /**
+	         * Add css class for selected cells.
+	         * @param {jQuery} $table - table jQuery element
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{
+	         *   start: {rowIndex: number, colIndex: number},
+	         *   end: {rowIndex: number, colIndex: number}
+	         * }} tableRange - table selected range
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addClassToSelectedCells',
+	        value: function _addClassToSelectedCells($table, tableData, tableRange) {
+	            var startRange = tableRange.start;
+	            var endRange = tableRange.end;
+	            var cellIndexRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+	            var $trs = $table.find('tr');
+
+	            util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
+	                var rowData = tableData[rowIndex];
+	                var $cells = $trs.eq(rowIndex).find('td, th');
+
+	                return cellIndexRange.forEach(function (colIndex) {
+	                    var cellData = rowData[colIndex];
+
+	                    if (cellData.elementIndex) {
+	                        $cells.eq(rowData[colIndex].elementIndex.colIndex).addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	                    }
+	                });
+	            });
+	        }
+
+	        /**
+	         * cache table data on drag start
+	         * @param {HTMLElement} selectionStart - start element
+	         */
+
+	    }, {
+	        key: 'onDragStart',
+	        value: function onDragStart(selectionStart) {
+	            var $table = $(selectionStart).closest('table');
+	            this._tableData = _tableDataHandler2.default.createTableData($table);
+	        }
+
+	        /**
+	         * clear table data in cache on drag end
+	         */
+
+	    }, {
+	        key: 'onDragEnd',
+	        value: function onDragEnd() {
+	            this._tableData = null;
+	        }
+
+	        /**
+	         * Highlight selected table cells
+	         * @param {HTMLElement} selectionStart start element
+	         * @param {HTMLElement} selectionEnd end element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'highlightTableCellsBy',
+	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
+	            var $start = $(selectionStart);
+	            var $end = $(selectionEnd);
+	            var $table = $start.closest('table');
+	            var tableRange = _tableRangeHandler2.default.findSelectionRange(this._tableData, $start, $end);
+
+	            this.removeClassAttrbuteFromAllCellsIfNeed();
+	            this._addClassToSelectedCells($table, this._tableData, tableRange);
+	        }
+
+	        /**
+	         * Style to selected cells.
+	         * @param {function} onStyle - function for styling
+	         */
+
+	    }, {
+	        key: 'styleToSelectedCells',
+	        value: function styleToSelectedCells(onStyle) {
+	            var sq = this.wwe.getEditor();
+	            var range = sq.getSelection().cloneRange();
+	            var $table = $(range.startContainer).closest('table');
+
+	            $table.find('tr').get().forEach(function (tr) {
+	                var cells = $(tr).find('.' + TABLE_CELL_SELECTED_CLASS_NAME);
+
+	                if (!cells.length) {
+	                    return;
+	                }
+
+	                range.setStart(cells.first()[0], 0);
+	                range.setEnd(cells.last()[0], 1);
+	                sq.setSelection(range);
+	                onStyle(sq);
+	            });
+	        }
+
+	        /**
+	         * Whether has selected both TH and TD.
+	         * @param {jQuery} $selectedCells - selected cells jQuery element
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'hasSelectedBothThAndTd',
+	        value: function hasSelectedBothThAndTd($selectedCells) {
+	            $selectedCells = $selectedCells || this.getSelectedCells();
+
+	            return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+	        }
+	    }]);
+
+	    return WwMergedTableSelectionManager;
+	}(_wwTableSelectionManager2.default);
+
+	exports.default = WwMergedTableSelectionManager;
+
+/***/ },
+/* 120 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._createNewRow = _createNewRow;
+	exports._addRow = _addRow;
+
+	var _commandManager = __webpack_require__(30);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(114);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(118);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26055,6 +27114,7 @@
 	 * @exports AddRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow */{
 	    name: 'AddRow',
@@ -26171,6 +27231,7 @@
 	 * @param {number} rowIndex - row index of table data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {HTMLElement}
+	 * @private
 	 */
 	function _findFocusTd($newTable, rowIndex, colIndex) {
 	    var tableData = _tableDataHandler2.default.createTableData($newTable);
@@ -26183,7 +27244,7 @@
 	exports.default = AddRow;
 
 /***/ },
-/* 120 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26194,11 +27255,11 @@
 	exports._createNewColumns = _createNewColumns;
 	exports._addColumns = _addColumns;
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26206,7 +27267,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26225,6 +27286,7 @@
 	 * @exports AddCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddCol = _commandManager2.default.command('wysiwyg', /** @lends AddCol */{
 	    name: 'AddCol',
@@ -26282,6 +27344,7 @@
 	 * @param {number} colIndex - column index of table data
 	 * @param {object | null} prevCell - previous cell data
 	 * @returns {object}
+	 * @private
 	 */
 	function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
 	    var cellData = rowData[colIndex];
@@ -26364,6 +27427,7 @@
 	 * @param {number} rowIndex - row index of table data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {HTMLElement}
+	 * @private
 	 */
 	function _findFocusCell($newTable, rowIndex, colIndex) {
 	    var tableData = _tableDataHandler2.default.createTableData($newTable);
@@ -26376,7 +27440,7 @@
 	exports.default = AddCol;
 
 /***/ },
-/* 121 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26386,11 +27450,11 @@
 	});
 	exports._removeRow = _removeRow;
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26398,7 +27462,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26417,6 +27481,7 @@
 	 * @exports RemoveRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var RemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
 	    name: 'RemoveRow',
@@ -26531,6 +27596,7 @@
 	 * @param {number} rowIndex - row index of table data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {HTMLElement}
+	 * @private
 	 */
 	function _findFocusTd($newTable, rowIndex, colIndex) {
 	    var tableData = _tableDataHandler2.default.createTableData($newTable);
@@ -26547,7 +27613,7 @@
 	exports.default = RemoveRow;
 
 /***/ },
-/* 122 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26557,11 +27623,11 @@
 	});
 	exports._removeColumns = _removeColumns;
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26569,7 +27635,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26588,6 +27654,7 @@
 	 * @exports RemoveCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var RemoveCol = _commandManager2.default.command('wysiwyg', /** @lends RemoveCol */{
 	    name: 'RemoveCol',
@@ -26706,6 +27773,7 @@
 	 * @param {number} rowIndex - row index of table data
 	 * @param {number} colIndex - column index of tabld data
 	 * @returns {HTMLElement}
+	 * @private
 	 */
 	function _findFocusCell($newTable, rowIndex, colIndex) {
 	    var tableData = _tableDataHandler2.default.createTableData($newTable);
@@ -26722,7 +27790,7 @@
 	exports.default = RemoveCol;
 
 /***/ },
-/* 123 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26731,11 +27799,11 @@
 	    value: true
 	});
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26743,7 +27811,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26762,6 +27830,7 @@
 	 * @exports AlignCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AlignCol = _commandManager2.default.command('wysiwyg', /** @lends AlignCol */{
 	    name: 'AlignCol',
@@ -26820,6 +27889,7 @@
 	 * @param {jQuery} $newTable - changed table jQuery element
 	 * @param {jQuery} $startContainer - start container jQuery element of text range
 	 * @returns {HTMLElement}
+	 * @private
 	 */
 	function _findFocusCell($newTable, $startContainer) {
 	    var elementRowIndex = _tableDataHandler2.default.findElementRowIndex($startContainer);
@@ -26831,7 +27901,7 @@
 	exports.default = AlignCol;
 
 /***/ },
-/* 124 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26841,11 +27911,11 @@
 	});
 	exports._mergeCells = _mergeCells;
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26853,7 +27923,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -26910,6 +27980,7 @@
 	 * @param {number} startColIndex - start column index
 	 * @param {number} endColIndex - end column index
 	 * @returns {string}
+	 * @private
 	 */
 	function _pickContent(targetRows, startColIndex, endColIndex) {
 	    var _ref;
@@ -27039,7 +28110,7 @@
 	exports.default = MergeCell;
 
 /***/ },
-/* 125 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27050,11 +28121,11 @@
 	exports._hasMergedCell = _hasMergedCell;
 	exports._unmergeCells = _unmergeCells;
 
-	var _commandManager = __webpack_require__(27);
+	var _commandManager = __webpack_require__(30);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(113);
+	var _tableDataHandler = __webpack_require__(114);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -27062,7 +28133,7 @@
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(112);
+	var _tableRenderer = __webpack_require__(113);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27207,7 +28278,7 @@
 	exports.default = UnmergeCell;
 
 /***/ },
-/* 126 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27216,7 +28287,7 @@
 	    value: true
 	});
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27283,6 +28354,7 @@
 	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
 	 * @param {object} eventManager - event manager instance of editor
 	 * @param {object} selectionManager - table selection manager instance
+	 * @ignore
 	 */
 	function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
 	    _changeContent(popupTableUtils);
@@ -27294,12 +28366,12 @@
 	};
 
 /***/ },
-/* 127 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _i18n = __webpack_require__(32);
+	var _i18n = __webpack_require__(17);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -27307,31 +28379,41 @@
 
 	_i18n2.default.setLang(['ko', 'ko_KR'], {
 	    'Merge cells': '셀 병합',
-	    'Unmerge cells': '셀 병합해제'
+	    'Unmerge cells': '셀 병합해제',
+	    'Cannot change part of merged cell': '병합 된 셀의 일부를 변경할 수 없습니다.',
+	    'Cannot paste row merged cells into the table header': '테이블 헤더에는 행 병합된 셀을 붙여넣을 수 없습니다.'
 	});
 
 	_i18n2.default.setLang(['en', 'en_US'], {
 	    'Merge cells': 'Merge cells',
-	    'Unmerge cells': 'Unmerge cells'
+	    'Unmerge cells': 'Unmerge cells',
+	    'Cannot change part of merged cell': 'Cannot change part of merged cell.',
+	    'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
 	});
 
 	_i18n2.default.setLang(['ja', 'ja_JP'], {
 	    'Merge cells': 'セルの結合',
-	    'Unmerge cells': 'セルの結合を解除'
+	    'Unmerge cells': 'セルの結合を解除',
+	    'Cannot change part of merged cell': '結合されたセルの一部を変更することはできません。',
+	    'Cannot paste row merged cells into the table header': '行にマージされたセルをヘッダーに貼り付けることはできません。'
 	});
 
 	_i18n2.default.setLang(['nl', 'nl_NL'], {
 	    'Merge cells': 'cellen samenvoegen',
-	    'Unmerge cells': 'Samenvoegen cellen ongedaan maken'
+	    'Unmerge cells': 'Samenvoegen cellen ongedaan maken',
+	    'Cannot change part of merged cell': 'Kan geen deel uit van samengevoegde cel te veranderen.',
+	    'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
 	});
 
 	_i18n2.default.setLang(['zh', 'zh_CN'], {
 	    'Merge cells': '合并单元格',
-	    'Unmerge cells': '取消合并单元格'
+	    'Unmerge cells': '取消合并单元格',
+	    'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
+	    'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。'
 	});
 
 /***/ },
-/* 128 */
+/* 129 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27374,11 +28456,12 @@
 	    'Would you like to paste as table?': 'Would you like to paste as table?',
 	    'Text color': 'Text color',
 	    'Auto scroll enabled': 'Auto scroll enabled',
-	    'Auto scroll disabled': 'Auto scroll disabled'
+	    'Auto scroll disabled': 'Auto scroll disabled',
+	    'Cannot paste values ​​other than a table in the cell selection state': 'Cannot paste values ​​other than a table in the cell selection state.'
 	});
 
 /***/ },
-/* 129 */
+/* 130 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27421,11 +28504,12 @@
 	    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
 	    'Text color': '글자 색상',
 	    'Auto scroll enabled': '자동 스크롤 켜짐',
-	    'Auto scroll disabled': '자동 스크롤 꺼짐'
+	    'Auto scroll disabled': '자동 스크롤 꺼짐',
+	    'Cannot paste values ​​other than a table in the cell selection state.': '셀 선택 상태에서는 테이블 이외의 값은 붙여넣을 수 없습니다.'
 	});
 
 /***/ },
-/* 130 */
+/* 131 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27468,11 +28552,12 @@
 	    'Would you like to paste as table?': '你想粘贴表吗?',
 	    'Text color': '文字色相',
 	    'Auto scroll enabled': '自动滚动启用',
-	    'Auto scroll disabled': '自动的滚动作非使用'
+	    'Auto scroll disabled': '自动的滚动作非使用',
+	    'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。'
 	});
 
 /***/ },
-/* 131 */
+/* 132 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27515,11 +28600,12 @@
 	    'Would you like to paste as table?': 'テーブルを貼り付けますか?',
 	    'Text color': '文字色相',
 	    'Auto scroll enabled': '自動スクロールが有効',
-	    'Auto scroll disabled': '自動スクロールを無効に'
+	    'Auto scroll disabled': '自動スクロールを無効に',
+	    'Cannot paste values ​​other than a table in the cell selection state': '表以外の値をセル選択状態に貼り付けることはできません。'
 	});
 
 /***/ },
-/* 132 */
+/* 133 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27562,7 +28648,8 @@
 	    'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
 	    'Text color': 'tekst kleur',
 	    'Auto scroll enabled': 'Auto scroll enabled',
-	    'Auto scroll disabled': 'Auto scroll uitgeschakeld'
+	    'Auto scroll disabled': 'Auto scroll uitgeschakeld',
+	    'Cannot paste values ​​other than a table in the cell selection state': 'Kan niet anders dan een tafel in de cel selectie staat waarden te plakken.'
 	});
 
 /***/ }
