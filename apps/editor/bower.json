@@ -33,7 +33,7 @@
     "highlightjs": "~9.5.0",
     "jquery": "~2.1.4",
     "markdown-it": "^7.0.1",
-    "toMark": "https://github.com/nhnent/toMark.git#0.0.11",
+    "toMark": "https://github.com/nhnent/toMark.git#0.0.12",
     "squire-rte": "1.6.3"
   },
   "devDependencies": {
