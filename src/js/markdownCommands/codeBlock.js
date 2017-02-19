@@ -23,21 +23,23 @@ const CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
     exec(mde) {
         const cm = mde.getEditor();
         const doc = cm.getDoc();
-        let replaceText = '';
-        let rowFix;
-
-        const range = cm.getCursor();
-
-        if (doc.getLine(range.line).length) {
-            replaceText += '\n``` \n\n```\n\n';
-            doc.setCursor(range.line + 1, 0);
-            rowFix = 3;
-        } else {
-            replaceText += '\n``` \n\n```\n';
-            rowFix = 2;
+        const range = mde.getCurrentRange();
+        const replaceText = [
+            '```',
+            doc.getSelection(),
+            '```'
+        ];
+        let cursorOffset = 1;
+        if (range.from.ch !== 0) {
+            replaceText.unshift('');
+            cursorOffset += 1;
         }
-        doc.replaceSelection(replaceText);
-        cm.setCursor(doc.getCursor().line - rowFix, 0);
+        if (doc.getLineHandle(range.to.line).text.length !== range.to.ch) {
+            replaceText.push('');
+        }
+        doc.replaceSelection(replaceText.join('\n'));
+
+        cm.setCursor(range.from.line + cursorOffset, 0);
 
         cm.focus();
     }
