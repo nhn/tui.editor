@@ -29,7 +29,7 @@ describe('CodeBlock', () => {
         $('body').empty();
     });
 
-    it('Add code block into a location', () => {
+    it('Insert a code block into a cursor location', () => {
         doc.setCursor(0, 2);
 
         CodeBlock.exec(mde);
@@ -45,7 +45,7 @@ describe('CodeBlock', () => {
         expect(doc.getCursor().line).toEqual(2);
     });
 
-    it('Add code block with a selection', () => {
+    it('Insert a code block with a selected text', () => {
         doc.setSelection({
             line: 1,
             ch: 2

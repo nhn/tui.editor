@@ -30,11 +30,13 @@ const CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
             '```'
         ];
         let cursorOffset = 1;
+        // insert a line break to the front if the selection starts in the middle of a text
         if (range.from.ch !== 0) {
             replaceText.unshift('');
             cursorOffset += 1;
         }
-        if (doc.getLineHandle(range.to.line).text.length !== range.to.ch) {
+        // insert a line break to the end if the selection has trailing text
+        if (range.to.ch !== doc.getLine(range.to.line).length) {
             replaceText.push('');
         }
         doc.replaceSelection(replaceText.join('\n'));
