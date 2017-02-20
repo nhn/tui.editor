@@ -12,7 +12,7 @@ describe('CodeBlock', () => {
             'mytext2',
             'mytext3'
         ].join('\n');
- 
+
         $('body').append($container);
 
         mde = new MarkdownEditor($container, new EventManager());
