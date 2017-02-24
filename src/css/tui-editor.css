@@ -449,18 +449,33 @@
 }
 
 .te-popup-table-utils {
-    width: 100px;
+    width: 120px;
 }
 
 .te-popup-table-utils .tui-popup-body {
-    padding: 5px;
+    padding: 0px;
 }
 
 .te-popup-table-utils button {
     width: 100%;
     background-color: #fff;
-    border: 1px solid #ccc;
+    border: none;
     outline: 0;
+    padding: 0px 10px 0px 10px;
+    font-size: 12px;
+    line-height: 28px;
+    text-align: left;
+    color: #777;
+}
+
+.te-popup-table-utils button:hover {
+    background-color: #f4f4f4;
+}
+
+.te-popup-table-utils hr {
+    background-color: #cacaca;
+    border-style: none;
+    height: 1px;
 }
 
 .te-heading-add {

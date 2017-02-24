@@ -24,9 +24,11 @@ function PopupTableUtils(options) {
         `<button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>`,
         `<button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>`,
         `<button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>`,
+        '<hr/>',
         `<button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>`,
         `<button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>`,
         `<button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>`,
+        '<hr/>',
         `<button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>`
     ].join('');
 
