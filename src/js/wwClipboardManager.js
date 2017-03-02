@@ -175,23 +175,19 @@ class WwClipboardManager {
      */
     _pasteToTable($clipboardContainer) {
         const tableManager = this.wwe.componentManager.getManager('table');
-        const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+        tableManager.pasteClipboardData($clipboardContainer.first());
+    }
+
+    /**
+     * check whether pasting operation is to table
+     * @returns {boolean} true if paste to table
+     * @memberOf WwClipboardManager
+     */
+    _isPastingToTable() {
+        const tableManager = this.wwe.componentManager.getManager('table');
         const range = this.wwe.getEditor().getSelection();
-        let pasted = false;
 
-        if (tableManager.isInTable(range)) {
-            pasted = true;
-
-            if (this._isPasteOnlyTable($clipboardContainer)) {
-                tableManager.pasteClipboardData($clipboardContainer.first());
-            } else if (tableSelectionManager.getSelectedCells().length) {
-                alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
-            } else {
-                pasted = false;
-            }
-        }
-
-        return pasted;
+        return tableManager.isInTable(range);
     }
 
     /**
@@ -205,14 +201,38 @@ class WwClipboardManager {
     }
 
     /**
+     * Paste a plain text to table
+     * Pasting plain text via {Squire}.insertPlainText() wraps each text by DIV.
+     * In every table, line break should be BR tag instead of DIV.
+     * Hence We need to make TextNodes and BR Elements to prevent breaking the target table.
+     * @param {string} text text to add to table
+     * @memberOf WwClipboardManager
+     * @private
+     */
+    _pastePlainTextToTable(text) {
+        const textLines = text.split('\n');
+        for (let i = 0; i < textLines.length; i += 1) {
+            let nodeToInsert = document.createTextNode(tui.util.encodeHTMLEntity(textLines[i]));
+            this.wwe.getEditor().insertElement(nodeToInsert);
+            if (i < textLines.length - 1) {
+                nodeToInsert = document.createElement('br');
+                this.wwe.getEditor().insertElement(nodeToInsert);
+            }
+        }
+    }
+
+    /**
      * This handler execute paste.
      * @param {Event} ev - clipboard event
      */
     onPaste(ev) {
         const $clipboardContainer = $('<div />');
-        let html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+        const clipboardData = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+        const pastingFromPlainText = isPlainText(clipboardData);
+        const pastingToTable = this._isPastingToTable();
+        let needToPostProcess = false;
 
-        html = this._removeHtmlComments(html).trim();
+        let html = this._removeHtmlComments(clipboardData).trim();
         html = htmlSanitizer(html, true).trim();
 
         if (!html) {
@@ -230,17 +250,36 @@ class WwClipboardManager {
             $lastNode.addClass(PASTE_TABLE_BOOKMARK);
         }
 
-        const pastedTable = this._pasteToTable($clipboardContainer);
-
-        if (pastedTable) {
-            return;
+        if (pastingToTable) { // pasting `TO` `TABLE`
+            if (pastingFromPlainText) { // pasting `PLAIN TEXT` `TO` `TABLE`
+                this._pastePlainTextToTable(clipboardData);
+                needToPostProcess = true;
+            } else { // pasting `HTML` `TO` `TABLE`
+                const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+                if (this._isPasteOnlyTable($clipboardContainer)) { // pasting `HTML TABLE` `TO` `TABLE`
+                    this._pasteToTable($clipboardContainer);
+                } else if (tableSelectionManager.getSelectedCells().length) { // TODO move this alert out of here
+                    alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
+                } else {
+                    this.wwe.getEditor().insertHTML($clipboardContainer.html());
+                    needToPostProcess = true;
+                }
+            }
+        } else { // pasting TO ELSE WHERE
+            if (pastingFromPlainText) { // pasting `PLAIN TEXT`
+                this.wwe.getEditor().insertPlainText(clipboardData);
+            } else { // pasting `HTML`
+                this.wwe.getEditor().insertHTML($clipboardContainer.html());
+            }
+            needToPostProcess = true;
         }
 
-        this.wwe.getEditor().insertHTML($clipboardContainer.html());
-        this.wwe.postProcessForChange();
+        if (needToPostProcess) {
+            this.wwe.postProcessForChange();
 
-        if (isLastNodeTable) {
-            this._focusToAfterTable();
+            if (isLastNodeTable) {
+                this._focusToAfterTable();
+            }
         }
     }
 
@@ -342,6 +381,24 @@ class WwClipboardManager {
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
     }
+}
+
+/**
+ * Check given text is plain text or marked up text
+ * @param {string} text string to test
+ * @returns {boolean}
+ */
+function isPlainText(text) {
+    const a = document.createElement('div');
+    a.innerHTML = text;
+    const childNodes = a.childNodes;
+    for (let i = 0; i < childNodes.length; i += 1) {
+        if (childNodes[i].nodeType === 1) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 module.exports = WwClipboardManager;
