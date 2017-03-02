@@ -170,7 +170,6 @@ class WwClipboardManager {
     /**
      * Paste to table.
      * @param {jQuery} $clipboardContainer - clibpard container
-     * @returns {boolean}
      * @private
      */
     _pasteToTable($clipboardContainer) {
