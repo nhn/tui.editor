@@ -5239,7 +5239,6 @@
 	        /**
 	         * Paste to table.
 	         * @param {jQuery} $clipboardContainer - clibpard container
-	         * @returns {boolean}
 	         * @private
 	         */
 
@@ -5247,23 +5246,22 @@
 	        key: '_pasteToTable',
 	        value: function _pasteToTable($clipboardContainer) {
 	            var tableManager = this.wwe.componentManager.getManager('table');
-	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            tableManager.pasteClipboardData($clipboardContainer.first());
+	        }
+
+	        /**
+	         * check whether pasting operation is to table
+	         * @returns {boolean} true if paste to table
+	         * @memberOf WwClipboardManager
+	         */
+
+	    }, {
+	        key: '_isPastingToTable',
+	        value: function _isPastingToTable() {
+	            var tableManager = this.wwe.componentManager.getManager('table');
 	            var range = this.wwe.getEditor().getSelection();
-	            var pasted = false;
 
-	            if (tableManager.isInTable(range)) {
-	                pasted = true;
-
-	                if (this._isPasteOnlyTable($clipboardContainer)) {
-	                    tableManager.pasteClipboardData($clipboardContainer.first());
-	                } else if (tableSelectionManager.getSelectedCells().length) {
-	                    alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
-	                } else {
-	                    pasted = false;
-	                }
-	            }
-
-	            return pasted;
+	            return tableManager.isInTable(range);
 	        }
 
 	        /**
@@ -5280,6 +5278,30 @@
 	        }
 
 	        /**
+	         * Paste a plain text to table
+	         * Pasting plain text via {Squire}.insertPlainText() wraps each text by DIV.
+	         * In every table, line break should be BR tag instead of DIV.
+	         * Hence We need to make TextNodes and BR Elements to prevent breaking the target table.
+	         * @param {string} text text to add to table
+	         * @memberOf WwClipboardManager
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pastePlainTextToTable',
+	        value: function _pastePlainTextToTable(text) {
+	            var textLines = text.split('\n');
+	            for (var i = 0; i < textLines.length; i += 1) {
+	                var nodeToInsert = document.createTextNode(tui.util.encodeHTMLEntity(textLines[i]));
+	                this.wwe.getEditor().insertElement(nodeToInsert);
+	                if (i < textLines.length - 1) {
+	                    nodeToInsert = document.createElement('br');
+	                    this.wwe.getEditor().insertElement(nodeToInsert);
+	                }
+	            }
+	        }
+
+	        /**
 	         * This handler execute paste.
 	         * @param {Event} ev - clipboard event
 	         */
@@ -5288,9 +5310,12 @@
 	        key: 'onPaste',
 	        value: function onPaste(ev) {
 	            var $clipboardContainer = $('<div />');
-	            var html = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+	            var clipboardData = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
+	            var pastingFromPlainText = isPlainText(clipboardData);
+	            var pastingToTable = this._isPastingToTable();
+	            var needToPostProcess = false;
 
-	            html = this._removeHtmlComments(html).trim();
+	            var html = this._removeHtmlComments(clipboardData).trim();
 	            html = (0, _htmlSanitizer2.default)(html, true).trim();
 
 	            if (!html) {
@@ -5308,17 +5333,44 @@
 	                $lastNode.addClass(PASTE_TABLE_BOOKMARK);
 	            }
 
-	            var pastedTable = this._pasteToTable($clipboardContainer);
-
-	            if (pastedTable) {
-	                return;
+	            if (pastingToTable) {
+	                // pasting `TO` `TABLE`
+	                if (pastingFromPlainText) {
+	                    // pasting `PLAIN TEXT` `TO` `TABLE`
+	                    this._pastePlainTextToTable(clipboardData);
+	                    needToPostProcess = true;
+	                } else {
+	                    // pasting `HTML` `TO` `TABLE`
+	                    var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	                    if (this._isPasteOnlyTable($clipboardContainer)) {
+	                        // pasting `HTML TABLE` `TO` `TABLE`
+	                        this._pasteToTable($clipboardContainer);
+	                    } else if (tableSelectionManager.getSelectedCells().length) {
+	                        // TODO move this alert out of here
+	                        alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
+	                    } else {
+	                        this.wwe.getEditor().insertHTML($clipboardContainer.html());
+	                        needToPostProcess = true;
+	                    }
+	                }
+	            } else {
+	                // pasting TO ELSE WHERE
+	                if (pastingFromPlainText) {
+	                    // pasting `PLAIN TEXT`
+	                    this.wwe.getEditor().insertPlainText(clipboardData);
+	                } else {
+	                    // pasting `HTML`
+	                    this.wwe.getEditor().insertHTML($clipboardContainer.html());
+	                }
+	                needToPostProcess = true;
 	            }
 
-	            this.wwe.getEditor().insertHTML($clipboardContainer.html());
-	            this.wwe.postProcessForChange();
+	            if (needToPostProcess) {
+	                this.wwe.postProcessForChange();
 
-	            if (isLastNodeTable) {
-	                this._focusToAfterTable();
+	                if (isLastNodeTable) {
+	                    this._focusToAfterTable();
+	                }
 	            }
 	        }
 
@@ -5422,6 +5474,26 @@
 
 	    return WwClipboardManager;
 	}();
+
+	/**
+	 * Check given text is plain text or marked up text
+	 * @param {string} text string to test
+	 * @returns {boolean}
+	 */
+
+
+	function isPlainText(text) {
+	    var a = document.createElement('div');
+	    a.innerHTML = text;
+	    var childNodes = a.childNodes;
+	    for (var i = 0; i < childNodes.length; i += 1) {
+	        if (childNodes[i].nodeType === 1) {
+	            return false;
+	        }
+	    }
+
+	    return true;
+	}
 
 	module.exports = WwClipboardManager;
 
@@ -7705,15 +7777,13 @@
 	            var tr = void 0;
 
 	            if (danglingTableCells.length) {
-	                (function () {
-	                    var $wrapperTr = $('<tr></tr>');
+	                var $wrapperTr = $('<tr></tr>');
 
-	                    danglingTableCells.each(function (i, cell) {
-	                        $wrapperTr.append(cell);
-	                    });
+	                danglingTableCells.each(function (i, cell) {
+	                    $wrapperTr.append(cell);
+	                });
 
-	                    tr = $wrapperTr[0];
-	                })();
+	                tr = $wrapperTr[0];
 	            }
 
 	            return tr;
@@ -7745,15 +7815,13 @@
 	            }
 
 	            if (danglingTrs.length) {
-	                (function () {
-	                    var $wrapperTableBody = $('<tbody></tbody>');
+	                var $wrapperTableBody = $('<tbody></tbody>');
 
-	                    danglingTrs.each(function (i, tr) {
-	                        $wrapperTableBody.append(tr);
-	                    });
+	                danglingTrs.each(function (i, tr) {
+	                    $wrapperTableBody.append(tr);
+	                });
 
-	                    tbody = $wrapperTableBody[0];
-	                })();
+	                tbody = $wrapperTableBody[0];
 	            }
 
 	            return tbody;
@@ -16685,21 +16753,21 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-	        var replaceText = '';
-	        var rowFix = void 0;
-
-	        var range = cm.getCursor();
-
-	        if (doc.getLine(range.line).length) {
-	            replaceText += '\n``` \n\n```\n\n';
-	            doc.setCursor(range.line + 1, 0);
-	            rowFix = 3;
-	        } else {
-	            replaceText += '\n``` \n\n```\n';
-	            rowFix = 2;
+	        var range = mde.getCurrentRange();
+	        var replaceText = ['```', doc.getSelection(), '```'];
+	        var cursorOffset = 1;
+	        // insert a line break to the front if the selection starts in the middle of a text
+	        if (range.from.ch !== 0) {
+	            replaceText.unshift('');
+	            cursorOffset += 1;
 	        }
-	        doc.replaceSelection(replaceText);
-	        cm.setCursor(doc.getCursor().line - rowFix, 0);
+	        // insert a line break to the end if the selection has trailing text
+	        if (range.to.ch !== doc.getLine(range.to.line).length) {
+	            replaceText.push('');
+	        }
+	        doc.replaceSelection(replaceText.join('\n'));
+
+	        cm.setCursor(range.from.line + cursorOffset, 0);
 
 	        cm.focus();
 	    }
@@ -17111,33 +17179,31 @@
 	            previousSibling = void 0;
 
 	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            (function () {
-	                currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-	                nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+	            currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
+	            nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
-	                if (!nextBlockNode) {
-	                    nextBlockNode = sq.createDefaultBlock();
-	                    wwe.get$Body().append(nextBlockNode);
-	                }
+	            if (!nextBlockNode) {
+	                nextBlockNode = sq.createDefaultBlock();
+	                wwe.get$Body().append(nextBlockNode);
+	            }
 
-	                var hr = sq.createElement('HR');
+	            var hr = sq.createElement('HR');
 
-	                sq.modifyBlocks(function (frag) {
-	                    frag.appendChild(hr);
+	            sq.modifyBlocks(function (frag) {
+	                frag.appendChild(hr);
 
-	                    return frag;
-	                });
+	                return frag;
+	            });
 
-	                previousSibling = hr.previousSibling;
-	                if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
-	                    hr.parentNode.removeChild(previousSibling);
-	                }
+	            previousSibling = hr.previousSibling;
+	            if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
+	                hr.parentNode.removeChild(previousSibling);
+	            }
 
-	                range.selectNodeContents(nextBlockNode);
-	                range.collapse(true);
+	            range.selectNodeContents(nextBlockNode);
+	            range.collapse(true);
 
-	                sq.setSelection(range);
-	            })();
+	            sq.setSelection(range);
 	        }
 
 	        sq.focus();
@@ -26212,28 +26278,24 @@
 	            var increaseColCount = parseInt(targetColCount / clipboardColCount, 10);
 
 	            if (increaseRowCount > 1) {
-	                (function () {
-	                    var originalData = JSON.parse(JSON.stringify(clipboardTableData));
+	                var originalData = JSON.parse(JSON.stringify(clipboardTableData));
 
-	                    util.range(0, increaseRowCount - 1).forEach(function () {
-	                        var newRows = JSON.parse(JSON.stringify(originalData));
+	                util.range(0, increaseRowCount - 1).forEach(function () {
+	                    var newRows = JSON.parse(JSON.stringify(originalData));
 
-	                        clipboardTableData.push.apply(clipboardTableData, _toConsumableArray(newRows));
-	                    });
-	                })();
+	                    clipboardTableData.push.apply(clipboardTableData, _toConsumableArray(newRows));
+	                });
 	            }
 
 	            if (increaseColCount > 1) {
-	                (function () {
-	                    var originalData = JSON.parse(JSON.stringify(clipboardTableData));
+	                var _originalData = JSON.parse(JSON.stringify(clipboardTableData));
 
-	                    util.range(0, increaseColCount - 1).forEach(function () {
-	                        var newData = JSON.parse(JSON.stringify(originalData));
-	                        clipboardTableData.forEach(function (rowData, rowIndex) {
-	                            rowData.push.apply(rowData, _toConsumableArray(newData[rowIndex]));
-	                        });
+	                util.range(0, increaseColCount - 1).forEach(function () {
+	                    var newData = JSON.parse(JSON.stringify(_originalData));
+	                    clipboardTableData.forEach(function (rowData, rowIndex) {
+	                        rowData.push.apply(rowData, _toConsumableArray(newData[rowIndex]));
 	                    });
-	                })();
+	                });
 	            }
 	        }
 
@@ -26837,23 +26899,21 @@
 	    var tableRange = {};
 
 	    if ($selectedCells.length) {
-	        (function () {
-	            var startRange = _tableDataHandler2.default.findCellIndex(cellIndexData, $selectedCells.first());
-	            var endRange = util.extend({}, startRange);
+	        var startRange = _tableDataHandler2.default.findCellIndex(cellIndexData, $selectedCells.first());
+	        var endRange = util.extend({}, startRange);
 
-	            $selectedCells.each(function (index, cell) {
-	                var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $(cell));
-	                var cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
-	                var lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
-	                var lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
+	        $selectedCells.each(function (index, cell) {
+	            var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $(cell));
+	            var cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
+	            var lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
+	            var lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
 
-	                endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
-	                endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
-	            });
+	            endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
+	            endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
+	        });
 
-	            tableRange.start = startRange;
-	            tableRange.end = endRange;
-	        })();
+	        tableRange.start = startRange;
+	        tableRange.end = endRange;
 	    } else {
 	        var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $startContainer);
 
