@@ -1,3 +1,9 @@
+/*!
+ * tui-editor
+ * @version 0.12.10
+ * @author Sungho Kim <shirenbeat@gmail.com>
+ * @license MIT
+ */
 @charset "UTF-8";
 
 .tui-editor-contents,
@@ -101,7 +107,7 @@
 }
 
 .tui-editor-contents pre * {
-    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
 }
 
 .tui-editor-contents code {
@@ -110,7 +116,7 @@
     border-radius: 0;
     padding: 4px 4px 2px 0;
     letter-spacing: -0.3px;
-    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
 }
 
 .tui-editor-contents pre code {

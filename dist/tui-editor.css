@@ -1,3 +1,9 @@
+/*!
+ * tui-editor
+ * @version 0.12.10
+ * @author Sungho Kim <shirenbeat@gmail.com>
+ * @license MIT
+ */
 @charset "UTF-8";
 
 .tui-editor:after,
@@ -725,149 +731,224 @@
     width: 100px;
     height: 100px;
 }
-/**
- * Toast UI Colorpicker
- * @version 1.0.2
- */
-.tui-colorpicker-clearfix {
-  zoom: 1;
+@charset "UTF-8";
+
+.tui-editor-contents,
+.CodeMirror {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-.tui-colorpicker-clearfix:after {
-  content: '';
-  display: block;
-  clear: both;
+
+.tui-editor-contents *:not(table) {
+    line-height: 160%;
+    box-sizing: content-box;
 }
-.tui-colorpicker-vml {
-  behavior: url("#default#VML");
-  display: block;
+
+.tui-editor-contents i,
+.tui-editor-contents cite,
+.tui-editor-contents em,
+.tui-editor-contents var,
+.tui-editor-contents address,
+.tui-editor-contents dfn {
+    font-style: italic;
 }
-.tui-colorpicker-container {
-  width: 152px;
+
+.tui-editor-contents strong {
+    font-weight: bold;
 }
-.tui-colorpicker-palette-container {
-  width: 152px;
+
+.tui-editor-contents p {
+    margin: 10px 0;
+    color: #555;
 }
-.tui-colorpicker-palette-container ul {
-  width: 152px;
-  margin: 0px;
-  padding: 0px;
+
+.tui-editor-contents > h1:first-of-type,
+.tui-editor-contents > div > div:first-of-type h1 {
+      margin-top: 14px;
 }
-.tui-colorpicker-palette-container li {
-  float: left;
-  margin: 0;
-  padding: 0 3px 3px 0;
-  list-style: none;
+
+.tui-editor-contents h1,
+.tui-editor-contents h2,
+.tui-editor-contents h3,
+.tui-editor-contents h5 {
+    font-weight: bold;
 }
-.tui-colorpicker-palette-button {
-  display: block;
-  border: none;
-  overflow: hidden;
-  outline: none;
-  margin: 0px;
-  padding: 0px;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #ccc;
-  cursor: pointer;
+
+.tui-editor-contents h1 {
+    font-size: 1.6rem;
+    line-height: 28px;
+    border-bottom: 3px double #999;
+    margin: 52px 0 15px 0;
+    padding-bottom: 7px;
+    color: #000;
 }
-.tui-colorpicker-palette-button.tui-colorpicker-selected {
-  border: 2px solid #000;
+
+.tui-editor-contents h2 {
+    font-size: 1.3rem;
+    line-height: 23px;
+    border-bottom: 1px solid #dbdbdb;
+    margin: 30px 0 13px 0;
+    padding-bottom: 7px;
+    color: #333;
 }
-.tui-colorpicker-palette-hex {
-  font-family: monospace;
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  width: 60px;
-  vertical-align: middle;
+
+.tui-editor-contents h3,
+.tui-editor-contents h4 {
+    font-size: 1.2rem;
+    line-height: 18px;
+    margin: 20px 0 2px;
+    color: #333;
 }
-.tui-colorpicker-palette-preview {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  width: 12px;
-  height: 12px;
-  border: 1px solid #ccc;
-  border: 1px solid #ccc;
-  vertical-align: middle;
-  overflow: hidden;
+
+.tui-editor-contents h5,
+.tui-editor-contents h6 {
+    font-size: 1rem;
+    line-height: 17px;
+    margin: 10px 0 -4px;
+    color: #333;
 }
-.tui-colorpicker-palette-toggle-slider {
-  display: inline-block;
-  *display: inline;
-  zoom: 1;
-  vertical-align: middle;
-  float: right;
+
+.tui-editor-contents blockquote {
+    margin: 15px 0;
 }
-.tui-colorpicker-slider-container {
-  margin: 5px 0 0 0;
-  height: 122px;
-  zoom: 1;
+
+.tui-editor-contents blockquote {
+    border-left: 4px solid #dddddd;
+    padding: 0 15px;
+    color: #777777;
 }
-.tui-colorpicker-slider-container:after {
-  content: '';
-  display: block;
-  clear: both;
+
+.tui-editor-contents blockquote > :first-child {
+    margin-top: 0;
 }
-.tui-colorpicker-slider-left {
-  float: left;
-  width: 120px;
-  height: 120px;
+
+.tui-editor-contents  blockquote > :last-child {
+    margin-bottom: 0;
 }
-.tui-colorpicker-slider-right {
-  float: right;
-  width: 32px;
-  height: 120px;
+
+.tui-editor-contents pre {
+    margin: 2px 0 8px;
+    padding: 18px;
+    background-color: #f5f7f8;
+    border: 0;
+    border-radius: 0;
 }
-.tui-colorpicker-svg {
-  display: block;
+
+.tui-editor-contents pre * {
+    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
 }
-.tui-colorpicker-slider-handle {
-  position: absolute;
-  overflow: visible;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  z-index: 2;
-  opacity: 0.9;
+
+.tui-editor-contents code {
+    color: #c1788b;
+    border: 0;
+    border-radius: 0;
+    padding: 4px 4px 2px 0;
+    letter-spacing: -0.3px;
+    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
 }
-.tui-colorpicker-svg-slider {
-  width: 120px;
-  height: 120px;
-  border: 1px solid #ccc;
-  overflow: hidden;
+
+.tui-editor-contents pre code {
+    padding: 0;
+    color: inherit;
+    white-space: pre-wrap;
+    background-color: transparent;
 }
-.tui-colorpicker-vml-slider {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border: 1px solid #ccc;
-  overflow: hidden;
+
+.tui-editor-contents pre.addon {
+    border: 1px solid #e8ebed;
+    background-color: #fff;
 }
-.tui-colorpicker-vml-slider-bg {
-  position: absolute;
-  margin: -1px 0 0 -1px;
-  top: 0;
-  left: 0;
-  width: 122px;
-  height: 122px;
+
+.tui-editor-contents img {
+    margin: 4px 0 10px;
+    box-sizing: border-box;
+    vertical-align: top;
+    max-width: 100%;
 }
-.tui-colorpicker-svg-huebar {
-  float: right;
-  width: 18px;
-  height: 120px;
-  border: 1px solid #ccc;
-  overflow: visible;
+
+.tui-editor-contents table {
+    margin: 2px 0 14px;
+    color: #555;
+    width: auto;
+    border-collapse: collapse;
+    box-sizing: border-box;
 }
-.tui-colorpicker-vml-huebar {
-  width: 32px;
-  position: relative;
+
+.tui-editor-contents table th, 
+.tui-editor-contents table td {
+    height: 32px;
+    padding: 5px 14px 5px 12px;
 }
-.tui-colorpicker-vml-huebar-bg {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 18px;
-  height: 121px;
+
+.tui-editor-contents table td {
+    border: 1px solid #eaeaea;
+}
+
+.tui-editor-contents table th {
+    border: 1px solid #72777b;
+    border-top: 0;
+    background-color: #7b8184;
+    font-weight: 300;
+    color: #fff;
+    padding-top: 6px;
+}
+
+.tui-editor-contents ul,
+.tui-editor-contents menu,
+.tui-editor-contents ol,
+.tui-editor-contents dir {
+    display: block;
+    list-style-type: disc;
+    padding-left: 17px;
+    margin: 6px 0 10px;
+    color: #555;
+}
+
+.tui-editor-contents ol {
+    list-style-type: decimal;
+}
+
+.tui-editor-contents ul ul,
+.tui-editor-contents ul ol,
+.tui-editor-contents ol ol,
+.tui-editor-contents ol ul {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+.tui-editor-contents ul li {
+    position: relative;
+    list-style-type: disc;
+}
+
+.tui-editor-contents ol li {
+    list-style-type: decimal;
+}
+
+.tui-editor-contents ul p, ol p {
+    margin: 0;
+}
+
+.tui-editor-contents ul li.task-list-item:before,
+.tui-editor-contents pre ul li:before {
+    content: "";
+}
+
+.tui-editor-contents hr {
+    border-top: 1px solid #eee;
+    margin: 16px 0;
+}
+
+.tui-editor-contents a {
+    text-decoration: underline;
+    color: #5286bc;
+}
+
+.tui-editor-contents a:hover {
+    color: #007cff;
+}
+
+.tui-editor-contents {
+    font-size: 13px;
+    margin: 0;
+    padding: 0;
 }

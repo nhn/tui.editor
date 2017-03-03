@@ -1,32 +1,100 @@
-'use strict';
+/* eslint max-len: 0, no-process-env: 0, object-shorthand: 0, camelcase: 0 */
 
-var webpackConfig = require('./webpack.config');
-var reportCoverage = process.env.NODE_ENV === 'coverage';
+const pkg = require('./package.json');
+const webpack = require('webpack');
+const webdriverConfig = {
+    hostname: 'fe.nhnent.com',
+    port: 4444,
+    remoteHost: true
+};
+
+function setConfig(defaultConfig, server) {
+    if (server === 'ne') {
+        defaultConfig.customLaunchers = {
+            'IE10': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 10
+            },
+            'IE11': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'internet explorer',
+                version: 11
+            },
+            'Chrome-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'chrome'
+            },
+            'Firefox-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'firefox'
+            }
+        };
+        defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
+    } else if (server === 'sl') {
+        defaultConfig.sauceLabs = {
+            testName: `${pkg.name} ::: ${new Date()}`,
+            username: process.env.SAUCE_USERNAME,
+            accessKey: process.env.SAUCE_ACCESS_KEY,
+            startConnect: true
+        };
+        defaultConfig.customLaunchers = {
+            sl_chrome: {
+                base: 'SauceLabs',
+                browserName: 'chrome',
+                platform: 'Linux',
+                version: '48'
+            },
+            sl_safari: {
+                base: 'SauceLabs',
+                browserName: 'safari',
+                platform: 'OS X 10.11',
+                version: '10'
+            },
+            sl_firefox: {
+                base: 'SauceLabs',
+                browserName: 'firefox',
+                platform: 'OS X 10.11',
+                version: '49'
+            },
+            sl_ie_10: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 8',
+                version: '10'
+            },
+            sl_ie_11: {
+                base: 'SauceLabs',
+                browserName: 'internet explorer',
+                platform: 'Windows 8.1',
+                version: '11'
+            }
+        };
+        defaultConfig.reporters.push('saucelabs');
+        defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
+        defaultConfig.browserNoActivityTimeout = 30000;
+    } else {
+        defaultConfig.browsers = [
+            'Chrome',
+            'Firefox',
+            'Safari'
+        ];
+    }
+}
 
 module.exports = function(config) {
-    config.set({
+    const defaultConfig = {
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
-
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
-
-        plugins: [
-            //common
-            'karma-jasmine',
-            'karma-jasmine-ajax',
-            'karma-jasmine-jquery',
-            'karma-sourcemap-loader',
-            'karma-webpack',
-            'karma-coverage',
-
-            //this config only
-            'karma-chrome-launcher',
-            'karma-narrow-reporter'
-        ],
 
         // list of files / patterns to load in the browser
         files: [
@@ -50,7 +118,7 @@ module.exports = function(config) {
         // list of files to exclude
         exclude: [],
 
-        reporters: reportCoverage ? ['narrow', 'coverage'] : ['narrow'],
+        reporters: ['narrow', 'coverage'],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -62,7 +130,22 @@ module.exports = function(config) {
 
         webpack: {
             devtool: 'inline-source-map',
-            module: webpackConfig.module
+            module: {
+                loaders: [
+                    {
+                        test: /\.js$/,
+                        exclude: /node_modules|lib|dist/,
+                        loader: 'babel'
+                    },
+                    {
+                        test: /\.css/,
+                        loader: 'style!css'
+                    }
+                ]
+            },
+            plugins: [
+                new webpack.HotModuleReplacementPlugin()
+            ]
         },
 
         webpackMiddleware: {
@@ -80,8 +163,15 @@ module.exports = function(config) {
                 {
                     type: 'html',
                     subdir: function(browser) {
-                        return 'report-html/' + browser;
+                        return `report-html/${browser}`;
                     }
+                },
+                {
+                    type: 'cobertura',
+                    subdir: function(browser) {
+                        return `report-cobertura/${browser}`;
+                    },
+                    file: 'cobertura.txt'
                 }
             ]
         },
@@ -107,13 +197,9 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false,
+        singleRun: false
+    };
 
-        // start these browsers
-        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: [
-            'Chrome'
-        ]
-    });
+    setConfig(defaultConfig, process.env.KARMA_SERVER);
+    config.set(defaultConfig);
 };
-

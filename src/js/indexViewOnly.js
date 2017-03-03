@@ -3,37 +3,21 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-// codemirror modes&addons
-require('./codemirror/overlay');
-require('./codemirror/markdown');
-require('./codemirror/gfm');
-require('./codemirror/continuelist');
-require('./codemirror/arrowKeyFunction');
-
 // default extensions
 require('./extensions/taskCounter');
-require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 require('./extensions/table/tableExtension');
 
-import ToastUIEditor from './editor';
+import ToastUIEditorViewOnly from './viewOnly';
 
 window.tui = window.tui || {};
-window.tui.Editor = ToastUIEditor;
+window.tui.EditorViewOnly = ToastUIEditorViewOnly;
 
-// langs
-require('./langs/en_US');
-require('./langs/ko_KR');
-require('./langs/zh_CN');
-require('./langs/ja_JP');
-require('./langs/nl_NL');
-
-require('../css/tui-editor.css');
 require('../css/tui-editor-contents.css');
 
 // for jquery
-$.fn.tuiEditor = function(...args) {
+$.fn.tuiEditorViewOnly = function(...args) {
     let options, instance;
 
     const el = this[0];
@@ -41,7 +25,7 @@ $.fn.tuiEditor = function(...args) {
     if (el) {
         options = args[0] || {};
 
-        instance = $.data(el, 'tuiEditor');
+        instance = $.data(el, 'tuiEditorViewOnly');
 
         if (instance) {
             if (typeof options === 'string') {
@@ -49,8 +33,8 @@ $.fn.tuiEditor = function(...args) {
             }
         } else {
             options.el = el;
-            instance = ToastUIEditor.factory(options);
-            $.data(el, 'tuiEditor', instance);
+            instance = new ToastUIEditorViewOnly(options);
+            $.data(el, 'tuiEditorViewOnly', instance);
         }
     }
 
