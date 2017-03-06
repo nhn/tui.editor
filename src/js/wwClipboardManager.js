@@ -24,7 +24,10 @@ const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 class WwClipboardManager {
     constructor(wwe) {
         const browser = tui.util.browser;
-        const ClipboardHandler = (browser.chrome || browser.safari) ? WwClipboardHandler : WwPseudoClipboardHandler;
+        let ClipboardHandler = WwPseudoClipboardHandler;
+        if (browser.chrome || browser.safari || browser.firefox) {
+            ClipboardHandler = WwClipboardHandler;
+        }
 
         this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
@@ -226,12 +229,13 @@ class WwClipboardManager {
      */
     onPaste(ev) {
         const $clipboardContainer = $('<div />');
-        const clipboardData = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
-        const pastingFromPlainText = isPlainText(clipboardData);
+        const clipboardData = ev.clipboardData;
+        const isPlainText = !(tui.util.inArray('text/html', clipboardData.types) >= 0);
+        const clipboardText = isPlainText ? clipboardData.getData('text/plain') : clipboardData.getData('text/html');
         const pastingToTable = this._isPastingToTable();
         let needToPostProcess = false;
 
-        let html = this._removeHtmlComments(clipboardData).trim();
+        let html = this._removeHtmlComments(clipboardText).trim();
         html = htmlSanitizer(html, true).trim();
 
         if (!html) {
@@ -250,8 +254,8 @@ class WwClipboardManager {
         }
 
         if (pastingToTable) { // pasting `TO` `TABLE`
-            if (pastingFromPlainText) { // pasting `PLAIN TEXT` `TO` `TABLE`
-                this._pastePlainTextToTable(clipboardData);
+            if (isPlainText) { // pasting `PLAIN TEXT` `TO` `TABLE`
+                this._pastePlainTextToTable(clipboardText);
                 needToPostProcess = true;
             } else { // pasting `HTML` `TO` `TABLE`
                 const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
@@ -265,8 +269,8 @@ class WwClipboardManager {
                 }
             }
         } else { // pasting TO ELSE WHERE
-            if (pastingFromPlainText) { // pasting `PLAIN TEXT`
-                this.wwe.getEditor().insertPlainText(clipboardData);
+            if (isPlainText) { // pasting `PLAIN TEXT`
+                this.wwe.getEditor().insertPlainText(clipboardText);
             } else { // pasting `HTML`
                 this.wwe.getEditor().insertHTML($clipboardContainer.html());
             }
@@ -380,24 +384,6 @@ class WwClipboardManager {
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
     }
-}
-
-/**
- * Check given text is plain text or marked up text
- * @param {string} text string to test
- * @returns {boolean}
- */
-function isPlainText(text) {
-    const a = document.createElement('div');
-    a.innerHTML = text;
-    const childNodes = a.childNodes;
-    for (let i = 0; i < childNodes.length; i += 1) {
-        if (childNodes[i].nodeType === 1) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 module.exports = WwClipboardManager;

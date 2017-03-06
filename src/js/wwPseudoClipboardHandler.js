@@ -29,6 +29,7 @@ if (window.getSelection) {
 class PseudoDataTransfer {
     constructor(data) {
         this.html = data.html;
+        this.types = ['text/plain', 'text/html'];
     }
 
     /**
