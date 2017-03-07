@@ -40,7 +40,7 @@ class WwPseudoClipboardHandler {
         this.$editorBody = this.wwEditor.get$Body();
         this.$clipboardBody = $clipboardBody;
 
-        $(document.body).append($clipboardBody);
+        this.wwe.$editorContainerEl.append($clipboardBody);
         this._initEvent(eventHandler);
     }
 
@@ -115,6 +115,13 @@ class WwPseudoClipboardHandler {
         this.$clipboardBody.focus();
 
         selectAllContent(this.$clipboardBody[0]);
+    }
+
+    destroy() {
+        if (this.$clipboardBody) {
+            this.$clipboardBody.remove();
+            this.$clipboardBody = null;
+        }
     }
 }
 

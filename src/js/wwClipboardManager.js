@@ -304,6 +304,10 @@ class WwClipboardManager {
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
     }
+
+    destroy() {
+        this._cbHdr.destroy();
+    }
 }
 
 module.exports = WwClipboardManager;
