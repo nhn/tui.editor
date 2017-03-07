@@ -712,6 +712,14 @@
 .CodeMirror .cm-variable-2 {
     color: inherit;
 }
+
+.tui-editor-pseudo-clipboard {
+    position: fixed;
+    left: -1000px;
+    top: -1000px;
+    width: 100px;
+    height: 100px;
+}
 /**
  * Toast UI Colorpicker
  * @version 1.0.2

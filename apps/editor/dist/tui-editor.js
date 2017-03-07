@@ -5232,7 +5232,7 @@
 
 	            this.wwe.getEditor().insertHTML($clipboardContainer.html());
 
-	            this.wwe.postProcessForChange();
+	            this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
 
 	            this._focusTableBookmark();
 	        }
@@ -5370,6 +5370,11 @@
 	        key: '_isWholeCommonAncestorContainerSelected',
 	        value: function _isWholeCommonAncestorContainerSelected(range) {
 	            return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE && range.commonAncestorContainer !== this.wwe.get$Body()[0] && range.startOffset === 0 && range.endOffset === range.commonAncestorContainer.childNodes.length && range.commonAncestorContainer === range.startContainer && range.commonAncestorContainer === range.endContainer;
+	        }
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            this._cbHdr.destroy();
 	        }
 	    }]);
 
@@ -6059,7 +6064,7 @@
 	        this.$editorBody = this.wwEditor.get$Body();
 	        this.$clipboardBody = $clipboardBody;
 
-	        $(document.body).append($clipboardBody);
+	        this.wwe.$editorContainerEl.append($clipboardBody);
 	        this._initEvent(eventHandler);
 	    }
 
@@ -6148,6 +6153,14 @@
 	            this.$clipboardBody.focus();
 
 	            selectAllContent(this.$clipboardBody[0]);
+	        }
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            if (this.$clipboardBody) {
+	                this.$clipboardBody.remove();
+	                this.$clipboardBody = null;
+	            }
 	        }
 	    }]);
 
@@ -11678,6 +11691,11 @@
 	        key: '_markdownToHtmlWithCodeHighlight',
 	        value: function _markdownToHtmlWithCodeHighlight(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+	            // eslint-disable-next-line
+	            var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+	            while (onerrorStripeRegex.exec(markdown)) {
+	                markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+	            }
 
 	            var renderedHTML = markdownitHighlight.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
@@ -11698,6 +11716,11 @@
 	        key: '_markdownToHtml',
 	        value: function _markdownToHtml(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+	            // eslint-disable-next-line
+	            var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+	            while (onerrorStripeRegex.exec(markdown)) {
+	                markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+	            }
 
 	            var renderedHTML = markdownit.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
