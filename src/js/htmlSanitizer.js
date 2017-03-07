@@ -40,6 +40,8 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
 function htmlSanitizer(html, needHtmlText) {
     const $html = $('<div />');
 
+    html = html.replace(/<!--[\s\S]*?-->/g, '');
+
     $html.append(html);
 
     removeUnnecessaryTags($html);
@@ -54,7 +56,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-    $html.find('script, iframe, textarea, form, button, select, meta, style, link').remove();
+    $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
 }
 
 /**

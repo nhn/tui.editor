@@ -3,6 +3,8 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
  */
 
+import htmlSanitizer from './htmlSanitizer';
+
 const isMac = /Mac/.test(navigator.platform);
 const META_KEY = isMac ? 'META' : 'CTRL';
 let selectAllContent;
@@ -19,28 +21,6 @@ if (window.getSelection) {
     };
 }
 
-/**
- * PseudoDataTransfer
- * Psudo DataTransfer for paste.
- * @constructor
- * @class PseudoDataTransfer
- * @param {object} data - data for initionalizing
- */
-class PseudoDataTransfer {
-    constructor(data) {
-        this.html = data.html;
-        this.types = ['text/plain', 'text/html'];
-    }
-
-    /**
-     * get data.
-     * @returns {string}
-     * @memberOf PseudoDataTransfer
-     */
-    getData() {
-        return this.html;
-    }
-}
 
 /**
  * WwPseudoClipboardHandler
@@ -110,15 +90,15 @@ class WwPseudoClipboardHandler {
 
         this.$clipboardBody.on('paste', () => {
             setTimeout(() => {
-                const html = this.$clipboardBody.html();
-
+                let html = this.$clipboardBody.html();
                 this.$clipboardBody.html('');
+                html = htmlSanitizer(html, true).trim();
+                if (html) {
+                    const $clipboardContainer = $('<div />');
+                    $clipboardContainer.html(html);
+                    onPaste($clipboardContainer);
+                }
 
-                const ev = {
-                    clipboardData: new PseudoDataTransfer({html})
-                };
-
-                onPaste(ev);
                 this.wwEditor.focus();
             }, 0);
         });
