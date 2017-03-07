@@ -64,28 +64,28 @@
 	 */
 
 	// codemirror modes&addons
+	__webpack_require__(93);
 	__webpack_require__(94);
 	__webpack_require__(95);
 	__webpack_require__(96);
 	__webpack_require__(97);
-	__webpack_require__(98);
 
 	// default extensions
+	__webpack_require__(98);
 	__webpack_require__(99);
-	__webpack_require__(100);
+	__webpack_require__(102);
 	__webpack_require__(103);
-	__webpack_require__(104);
-	__webpack_require__(111);
+	__webpack_require__(110);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	// langs
+	__webpack_require__(128);
 	__webpack_require__(129);
 	__webpack_require__(130);
 	__webpack_require__(131);
 	__webpack_require__(132);
-	__webpack_require__(133);
 
 	// for jquery
 	$.fn.tuiEditor = function () {
@@ -148,23 +148,23 @@
 
 	var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-	var _layout = __webpack_require__(28);
+	var _layout = __webpack_require__(27);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _eventManager = __webpack_require__(29);
+	var _eventManager = __webpack_require__(28);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager2 = __webpack_require__(30);
+	var _commandManager2 = __webpack_require__(29);
 
 	var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _importManager = __webpack_require__(33);
+	var _importManager = __webpack_require__(32);
 
 	var _importManager2 = _interopRequireDefault(_importManager);
 
@@ -172,171 +172,171 @@
 
 	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
-	var _convertor = __webpack_require__(34);
+	var _convertor = __webpack_require__(33);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
-	var _viewOnly = __webpack_require__(41);
+	var _viewOnly = __webpack_require__(40);
 
 	var _viewOnly2 = _interopRequireDefault(_viewOnly);
 
-	var _defaultUI = __webpack_require__(42);
+	var _defaultUI = __webpack_require__(41);
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
-	var _bold = __webpack_require__(56);
+	var _bold = __webpack_require__(55);
 
 	var _bold2 = _interopRequireDefault(_bold);
 
-	var _italic = __webpack_require__(57);
+	var _italic = __webpack_require__(56);
 
 	var _italic2 = _interopRequireDefault(_italic);
 
-	var _strike = __webpack_require__(58);
+	var _strike = __webpack_require__(57);
 
 	var _strike2 = _interopRequireDefault(_strike);
 
-	var _blockquote = __webpack_require__(59);
+	var _blockquote = __webpack_require__(58);
 
 	var _blockquote2 = _interopRequireDefault(_blockquote);
 
-	var _heading = __webpack_require__(60);
+	var _heading = __webpack_require__(59);
 
 	var _heading2 = _interopRequireDefault(_heading);
 
-	var _paragraph = __webpack_require__(61);
+	var _paragraph = __webpack_require__(60);
 
 	var _paragraph2 = _interopRequireDefault(_paragraph);
 
-	var _hr = __webpack_require__(62);
+	var _hr = __webpack_require__(61);
 
 	var _hr2 = _interopRequireDefault(_hr);
 
-	var _addLink = __webpack_require__(63);
+	var _addLink = __webpack_require__(62);
 
 	var _addLink2 = _interopRequireDefault(_addLink);
 
-	var _addImage = __webpack_require__(64);
+	var _addImage = __webpack_require__(63);
 
 	var _addImage2 = _interopRequireDefault(_addImage);
 
-	var _ul = __webpack_require__(65);
+	var _ul = __webpack_require__(64);
 
 	var _ul2 = _interopRequireDefault(_ul);
 
-	var _ol = __webpack_require__(66);
+	var _ol = __webpack_require__(65);
 
 	var _ol2 = _interopRequireDefault(_ol);
 
-	var _table = __webpack_require__(67);
+	var _table = __webpack_require__(66);
 
 	var _table2 = _interopRequireDefault(_table);
 
-	var _task = __webpack_require__(68);
+	var _task = __webpack_require__(67);
 
 	var _task2 = _interopRequireDefault(_task);
 
-	var _code = __webpack_require__(69);
+	var _code = __webpack_require__(68);
 
 	var _code2 = _interopRequireDefault(_code);
 
-	var _codeBlock = __webpack_require__(70);
+	var _codeBlock = __webpack_require__(69);
 
 	var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-	var _bold3 = __webpack_require__(71);
+	var _bold3 = __webpack_require__(70);
 
 	var _bold4 = _interopRequireDefault(_bold3);
 
-	var _italic3 = __webpack_require__(72);
+	var _italic3 = __webpack_require__(71);
 
 	var _italic4 = _interopRequireDefault(_italic3);
 
-	var _strike3 = __webpack_require__(73);
+	var _strike3 = __webpack_require__(72);
 
 	var _strike4 = _interopRequireDefault(_strike3);
 
-	var _blockquote3 = __webpack_require__(74);
+	var _blockquote3 = __webpack_require__(73);
 
 	var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-	var _addImage3 = __webpack_require__(75);
+	var _addImage3 = __webpack_require__(74);
 
 	var _addImage4 = _interopRequireDefault(_addImage3);
 
-	var _addLink3 = __webpack_require__(76);
+	var _addLink3 = __webpack_require__(75);
 
 	var _addLink4 = _interopRequireDefault(_addLink3);
 
-	var _hr3 = __webpack_require__(77);
+	var _hr3 = __webpack_require__(76);
 
 	var _hr4 = _interopRequireDefault(_hr3);
 
-	var _heading3 = __webpack_require__(78);
+	var _heading3 = __webpack_require__(77);
 
 	var _heading4 = _interopRequireDefault(_heading3);
 
-	var _paragraph3 = __webpack_require__(79);
+	var _paragraph3 = __webpack_require__(78);
 
 	var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-	var _ul3 = __webpack_require__(80);
+	var _ul3 = __webpack_require__(79);
 
 	var _ul4 = _interopRequireDefault(_ul3);
 
-	var _ol3 = __webpack_require__(81);
+	var _ol3 = __webpack_require__(80);
 
 	var _ol4 = _interopRequireDefault(_ol3);
 
-	var _table3 = __webpack_require__(82);
+	var _table3 = __webpack_require__(81);
 
 	var _table4 = _interopRequireDefault(_table3);
 
-	var _tableAddRow = __webpack_require__(83);
+	var _tableAddRow = __webpack_require__(82);
 
 	var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-	var _tableAddCol = __webpack_require__(84);
+	var _tableAddCol = __webpack_require__(83);
 
 	var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-	var _tableRemoveRow = __webpack_require__(85);
+	var _tableRemoveRow = __webpack_require__(84);
 
 	var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-	var _tableRemoveCol = __webpack_require__(86);
+	var _tableRemoveCol = __webpack_require__(85);
 
 	var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-	var _tableAlignCol = __webpack_require__(87);
+	var _tableAlignCol = __webpack_require__(86);
 
 	var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-	var _tableRemove = __webpack_require__(88);
+	var _tableRemove = __webpack_require__(87);
 
 	var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-	var _increaseDepth = __webpack_require__(89);
+	var _increaseDepth = __webpack_require__(88);
 
 	var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-	var _decreaseDepth = __webpack_require__(90);
+	var _decreaseDepth = __webpack_require__(89);
 
 	var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-	var _task3 = __webpack_require__(91);
+	var _task3 = __webpack_require__(90);
 
 	var _task4 = _interopRequireDefault(_task3);
 
-	var _code3 = __webpack_require__(92);
+	var _code3 = __webpack_require__(91);
 
 	var _code4 = _interopRequireDefault(_code3);
 
-	var _codeBlock3 = __webpack_require__(93);
+	var _codeBlock3 = __webpack_require__(92);
 
 	var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -3245,39 +3245,39 @@
 
 	var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-	var _wwListManager = __webpack_require__(18);
+	var _wwListManager = __webpack_require__(17);
 
 	var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-	var _wwTaskManager = __webpack_require__(19);
+	var _wwTaskManager = __webpack_require__(18);
 
 	var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-	var _wwTableManager = __webpack_require__(20);
+	var _wwTableManager = __webpack_require__(19);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _wwTableSelectionManager = __webpack_require__(21);
+	var _wwTableSelectionManager = __webpack_require__(20);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _wwHrManager = __webpack_require__(22);
+	var _wwHrManager = __webpack_require__(21);
 
 	var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-	var _wwPManager = __webpack_require__(23);
+	var _wwPManager = __webpack_require__(22);
 
 	var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-	var _wwHeadingManager = __webpack_require__(24);
+	var _wwHeadingManager = __webpack_require__(23);
 
 	var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-	var _wwCodeBlockManager = __webpack_require__(25);
+	var _wwCodeBlockManager = __webpack_require__(24);
 
 	var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-	var _squireExt = __webpack_require__(26);
+	var _squireExt = __webpack_require__(25);
 
 	var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -3285,7 +3285,7 @@
 
 	var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-	var _wwTextObject = __webpack_require__(27);
+	var _wwTextObject = __webpack_require__(26);
 
 	var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
@@ -5033,19 +5033,11 @@
 
 	var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
-	var _wwClipboardHandler = __webpack_require__(15);
-
-	var _wwClipboardHandler2 = _interopRequireDefault(_wwClipboardHandler);
-
-	var _wwPseudoClipboardHandler = __webpack_require__(16);
+	var _wwPseudoClipboardHandler = __webpack_require__(15);
 
 	var _wwPseudoClipboardHandler2 = _interopRequireDefault(_wwPseudoClipboardHandler);
 
-	var _htmlSanitizer = __webpack_require__(14);
-
-	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
-
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -5067,12 +5059,9 @@
 	    function WwClipboardManager(wwe) {
 	        _classCallCheck(this, WwClipboardManager);
 
-	        var browser = tui.util.browser;
-	        var ClipboardHandler = browser.chrome || browser.safari ? _wwClipboardHandler2.default : _wwPseudoClipboardHandler2.default;
-
 	        this.wwe = wwe;
 	        this._pch = new _wwPasteContentHelper2.default(this.wwe);
-	        this._cbHdr = new ClipboardHandler(this.wwe, {
+	        this._cbHdr = new _wwPseudoClipboardHandler2.default(this.wwe, {
 	            onCopyBefore: this.onCopyBefore.bind(this),
 	            onCutBefore: this.onCopyBefore.bind(this),
 	            onCut: this.onCut.bind(this),
@@ -5180,6 +5169,33 @@
 	        }
 
 	        /**
+	         * Paste to table.
+	         * @param {jQuery} $clipboardContainer - clibpard container
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pasteToTable',
+	        value: function _pasteToTable($clipboardContainer) {
+	            var tableManager = this.wwe.componentManager.getManager('table');
+	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var range = this.wwe.getEditor().getSelection();
+	            var pastingToTable = tableManager.isInTable(range);
+	            var childNodes = $clipboardContainer[0].childNodes;
+	            var containsOneTableOnly = childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
+
+	            if (pastingToTable) {
+	                if (containsOneTableOnly) {
+	                    tableManager.pasteClipboardData($clipboardContainer.first());
+	                    $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
+	                } else if (tableSelectionManager.getSelectedCells().length) {
+	                    alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
+	                    $clipboardContainer.html(''); // drains clipboard data
+	                }
+	            }
+	        }
+
+	        /**
 	         * Prepare paste.
 	         * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
 	         * @private
@@ -5201,14 +5217,52 @@
 	        }
 
 	        /**
-	         * Focus to after table.
+	         * This handler execute paste.
+	         * @param {jQuery} $clipboardContainer - clipboard html container
+	         */
+
+	    }, {
+	        key: 'onPaste',
+	        value: function onPaste($clipboardContainer) {
+	            this._preparePaste($clipboardContainer);
+
+	            this._setTableBookmark($clipboardContainer);
+
+	            this._pasteToTable($clipboardContainer);
+
+	            this.wwe.getEditor().insertHTML($clipboardContainer.html());
+
+	            this.wwe.postProcessForChange();
+
+	            this._focusTableBookmark();
+	        }
+
+	        /**
+	         * set table bookmark which will gain focus after document modification ends.
+	         * @param {jQuery} $clipboardContainer - clipboard container
+	         * @memberOf WwClipboardManager
+	         */
+
+	    }, {
+	        key: '_setTableBookmark',
+	        value: function _setTableBookmark($clipboardContainer) {
+	            var $lastNode = $($clipboardContainer[0].childNodes).last();
+	            var isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
+
+	            if (isLastNodeTable) {
+	                $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+	            }
+	        }
+
+	        /**
+	         * Focus to table after document modification.
 	         * @param {object} sq - squire editor instance
 	         * @private
 	         */
 
 	    }, {
-	        key: '_focusToAfterTable',
-	        value: function _focusToAfterTable() {
+	        key: '_focusTableBookmark',
+	        value: function _focusTableBookmark() {
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
 	            var $bookmarkedTable = sq.get$Body().find('.' + PASTE_TABLE_BOOKMARK);
@@ -5218,159 +5272,6 @@
 	                range.setEndAfter($bookmarkedTable[0]);
 	                range.collapse(false);
 	                sq.setSelection(range);
-	            }
-	        }
-
-	        /**
-	         * Whether paste only table or not.
-	         * @param {jQuery} $clipboardContainer - clibpard container
-	         * @returns {boolean}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_isPasteOnlyTable',
-	        value: function _isPasteOnlyTable($clipboardContainer) {
-	            var childNodes = $clipboardContainer[0].childNodes;
-
-	            return childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
-	        }
-
-	        /**
-	         * Paste to table.
-	         * @param {jQuery} $clipboardContainer - clibpard container
-	         * @private
-	         */
-
-	    }, {
-	        key: '_pasteToTable',
-	        value: function _pasteToTable($clipboardContainer) {
-	            var tableManager = this.wwe.componentManager.getManager('table');
-	            tableManager.pasteClipboardData($clipboardContainer.first());
-	        }
-
-	        /**
-	         * check whether pasting operation is to table
-	         * @returns {boolean} true if paste to table
-	         * @memberOf WwClipboardManager
-	         */
-
-	    }, {
-	        key: '_isPastingToTable',
-	        value: function _isPastingToTable() {
-	            var tableManager = this.wwe.componentManager.getManager('table');
-	            var range = this.wwe.getEditor().getSelection();
-
-	            return tableManager.isInTable(range);
-	        }
-
-	        /**
-	         * Remove html comments.
-	         * @param {string} html - html
-	         * @returns {string}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_removeHtmlComments',
-	        value: function _removeHtmlComments(html) {
-	            return html.replace(/<!--[\s\S]*?-->/g, '');
-	        }
-
-	        /**
-	         * Paste a plain text to table
-	         * Pasting plain text via {Squire}.insertPlainText() wraps each text by DIV.
-	         * In every table, line break should be BR tag instead of DIV.
-	         * Hence We need to make TextNodes and BR Elements to prevent breaking the target table.
-	         * @param {string} text text to add to table
-	         * @memberOf WwClipboardManager
-	         * @private
-	         */
-
-	    }, {
-	        key: '_pastePlainTextToTable',
-	        value: function _pastePlainTextToTable(text) {
-	            var textLines = text.split('\n');
-	            for (var i = 0; i < textLines.length; i += 1) {
-	                var nodeToInsert = document.createTextNode(tui.util.encodeHTMLEntity(textLines[i]));
-	                this.wwe.getEditor().insertElement(nodeToInsert);
-	                if (i < textLines.length - 1) {
-	                    nodeToInsert = document.createElement('br');
-	                    this.wwe.getEditor().insertElement(nodeToInsert);
-	                }
-	            }
-	        }
-
-	        /**
-	         * This handler execute paste.
-	         * @param {Event} ev - clipboard event
-	         */
-
-	    }, {
-	        key: 'onPaste',
-	        value: function onPaste(ev) {
-	            var $clipboardContainer = $('<div />');
-	            var clipboardData = ev.clipboardData.getData('text/html') || ev.clipboardData.getData('text/plain');
-	            var pastingFromPlainText = isPlainText(clipboardData);
-	            var pastingToTable = this._isPastingToTable();
-	            var needToPostProcess = false;
-
-	            var html = this._removeHtmlComments(clipboardData).trim();
-	            html = (0, _htmlSanitizer2.default)(html, true).trim();
-
-	            if (!html) {
-	                return;
-	            }
-
-	            $clipboardContainer.html(html);
-
-	            this._preparePaste($clipboardContainer);
-
-	            var $lastNode = $($clipboardContainer[0].childNodes).last();
-	            var isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
-
-	            if (isLastNodeTable) {
-	                $lastNode.addClass(PASTE_TABLE_BOOKMARK);
-	            }
-
-	            if (pastingToTable) {
-	                // pasting `TO` `TABLE`
-	                if (pastingFromPlainText) {
-	                    // pasting `PLAIN TEXT` `TO` `TABLE`
-	                    this._pastePlainTextToTable(clipboardData);
-	                    needToPostProcess = true;
-	                } else {
-	                    // pasting `HTML` `TO` `TABLE`
-	                    var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
-	                    if (this._isPasteOnlyTable($clipboardContainer)) {
-	                        // pasting `HTML TABLE` `TO` `TABLE`
-	                        this._pasteToTable($clipboardContainer);
-	                    } else if (tableSelectionManager.getSelectedCells().length) {
-	                        // TODO move this alert out of here
-	                        alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
-	                    } else {
-	                        this.wwe.getEditor().insertHTML($clipboardContainer.html());
-	                        needToPostProcess = true;
-	                    }
-	                }
-	            } else {
-	                // pasting TO ELSE WHERE
-	                if (pastingFromPlainText) {
-	                    // pasting `PLAIN TEXT`
-	                    this.wwe.getEditor().insertPlainText(clipboardData);
-	                } else {
-	                    // pasting `HTML`
-	                    this.wwe.getEditor().insertHTML($clipboardContainer.html());
-	                }
-	                needToPostProcess = true;
-	            }
-
-	            if (needToPostProcess) {
-	                this.wwe.postProcessForChange();
-
-	                if (isLastNodeTable) {
-	                    this._focusToAfterTable();
-	                }
 	            }
 	        }
 
@@ -5474,26 +5375,6 @@
 
 	    return WwClipboardManager;
 	}();
-
-	/**
-	 * Check given text is plain text or marked up text
-	 * @param {string} text string to test
-	 * @returns {boolean}
-	 */
-
-
-	function isPlainText(text) {
-	    var a = document.createElement('div');
-	    a.innerHTML = text;
-	    var childNodes = a.childNodes;
-	    for (var i = 0; i < childNodes.length; i += 1) {
-	        if (childNodes[i].nodeType === 1) {
-	            return false;
-	        }
-	    }
-
-	    return true;
-	}
 
 	module.exports = WwClipboardManager;
 
@@ -5652,7 +5533,7 @@
 
 	            this._unwrapIfNonBlockElementHasBr($container);
 	            this._unwrapNestedBlocks($container, blockTags);
-
+	            this._fixCursor($container, blockTags);
 	            this._removeUnnecessaryBlocks($container, blockTags);
 
 	            $container.html(this._wrapOrphanNodeWithDiv($container));
@@ -5677,6 +5558,24 @@
 	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
 	            codeblockManager.splitCodeblockToEachLine($container);
+	        }
+
+	        /**
+	         * Append BR tags at the end of every block tags if it has none
+	         * @param {any} $container - clipboard container
+	         * @param {any} blockTags - Tag names of block tag
+	         * @memberOf WwPasteContentHelper
+	         */
+
+	    }, {
+	        key: '_fixCursor',
+	        value: function _fixCursor($container, blockTags) {
+	            $container.find(blockTags).each(function (index, blockElement) {
+	                var $blockElement = $(blockElement);
+	                if ($blockElement.children().last().tagName !== 'BR') {
+	                    $blockElement.append($('<br>'));
+	                }
+	            });
 	        }
 
 	        /**
@@ -6033,6 +5932,8 @@
 	function htmlSanitizer(html, needHtmlText) {
 	    var $html = $('<div />');
 
+	    html = html.replace(/<!--[\s\S]*?-->/g, '');
+
 	    $html.append(html);
 
 	    removeUnnecessaryTags($html);
@@ -6047,7 +5948,7 @@
 	 * @param {jQuery} $html jQuery instance
 	 */
 	function removeUnnecessaryTags($html) {
-	    $html.find('script, iframe, textarea, form, button, select, meta, style, link').remove();
+	    $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
 	}
 
 	/**
@@ -6100,7 +6001,7 @@
 
 /***/ },
 /* 15 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -6108,126 +6009,18 @@
 	    value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements fake clipboard handler.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _htmlSanitizer = __webpack_require__(14);
+
+	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements clipboard handler.
-	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	/**
-	 * WwClipboardHandler
-	 * @exports WwClipboardHandler
-	 * @constructor
-	 * @class WwClipboardHandler
-	 * @param {WysiwygEditor} wwe - WysiwygEditor instance
-	 * @param {object} eventHandler - EventHandler instance
-	 */
-	var WwClipboardHandler = function () {
-	    function WwClipboardHandler(wwe, eventHandler) {
-	        _classCallCheck(this, WwClipboardHandler);
-
-	        this.wwe = wwe;
-	        this.eventManager = wwe.eventManager;
-	        this.$editorBody = wwe.getEditor().get$Body();
-
-	        this._initEvent(eventHandler);
-	    }
-
-	    /**
-	     * Initilize event for clipboard.
-	     * @param {function} onCopyBefore  - copy before handler
-	     * @param {function} onCopy - copy handler
-	     * @param {function} onCutBefore - cut before handler
-	     * @param {function} onCut - cut handler
-	     * @param {function} onPaste - paste handler
-	     * @private
-	     * @memberOf WwClipboardHandler
-	     */
-
-
-	    _createClass(WwClipboardHandler, [{
-	        key: '_initEvent',
-	        value: function _initEvent(_ref) {
-	            var onCopyBefore = _ref.onCopyBefore,
-	                onCutBefore = _ref.onCutBefore,
-	                onCut = _ref.onCut,
-	                onPaste = _ref.onPaste;
-
-	            this.$editorBody.on('beforecopy', function ($ev) {
-	                $ev.preventDefault();
-	                $ev.stopPropagation();
-	            });
-
-	            this.$editorBody.on('copy', function ($ev) {
-	                onCopyBefore($ev.originalEvent);
-	            });
-
-	            this.$editorBody.on('beforecut', function ($ev) {
-	                $ev.preventDefault();
-	                $ev.stopPropagation();
-	            });
-
-	            this.$editorBody.on('cut', function ($ev) {
-	                var ev = $ev.originalEvent;
-	                onCutBefore(ev);
-	                onCut(ev);
-	                $ev.preventDefault();
-	                $ev.stopPropagation();
-	            });
-
-	            this.$editorBody.on('paste', function ($ev) {
-	                onPaste($ev.originalEvent);
-	            });
-	        }
-
-	        /**
-	         * Set clipboard data.
-	         * @param {Event} ev - clipboard event like copy, cut
-	         * @param {string} htmlContent - html content
-	         * @param {string} textContent - text content
-	         * @memberOf WwClipboardHandler
-	         */
-
-	    }, {
-	        key: 'setClipboardData',
-	        value: function setClipboardData(ev, htmlContent, textContent) {
-	            if (!htmlContent) {
-	                return;
-	            }
-	            ev.clipboardData.setData('text/html', htmlContent);
-	            ev.clipboardData.setData('text/plain', textContent);
-
-	            ev.preventDefault();
-	            ev.stopPropagation();
-	        }
-	    }]);
-
-	    return WwClipboardHandler;
-	}();
-
-	exports.default = WwClipboardHandler;
-
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements fake clipboard handler.
-	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Team/NHN Ent.
-	 */
 
 	var isMac = /Mac/.test(navigator.platform);
 	var META_KEY = isMac ? 'META' : 'CTRL';
@@ -6246,38 +6039,6 @@
 	}
 
 	/**
-	 * PseudoDataTransfer
-	 * Psudo DataTransfer for paste.
-	 * @constructor
-	 * @class PseudoDataTransfer
-	 * @param {object} data - data for initionalizing
-	 */
-
-	var PseudoDataTransfer = function () {
-	    function PseudoDataTransfer(data) {
-	        _classCallCheck(this, PseudoDataTransfer);
-
-	        this.html = data.html;
-	    }
-
-	    /**
-	     * get data.
-	     * @returns {string}
-	     * @memberOf PseudoDataTransfer
-	     */
-
-
-	    _createClass(PseudoDataTransfer, [{
-	        key: 'getData',
-	        value: function getData() {
-	            return this.html;
-	        }
-	    }]);
-
-	    return PseudoDataTransfer;
-	}();
-
-	/**
 	 * WwPseudoClipboardHandler
 	 * @exports WwPseudoClipboardHandler
 	 * @constructor
@@ -6285,7 +6046,6 @@
 	 * @param {WysiwygEditor} wwe - WysiwygEditor instance
 	 * @param {object} eventHandler - EventHandler instance
 	 */
-
 
 	var WwPseudoClipboardHandler = function () {
 	    function WwPseudoClipboardHandler(wwe, eventHandler) {
@@ -6361,14 +6121,14 @@
 	            this.$clipboardBody.on('paste', function () {
 	                setTimeout(function () {
 	                    var html = _this.$clipboardBody.html();
-
 	                    _this.$clipboardBody.html('');
+	                    html = (0, _htmlSanitizer2.default)(html, true).trim();
+	                    if (html) {
+	                        var $clipboardContainer = $('<div />');
+	                        $clipboardContainer.html(html);
+	                        onPaste($clipboardContainer);
+	                    }
 
-	                    var ev = {
-	                        clipboardData: new PseudoDataTransfer({ html: html })
-	                    };
-
-	                    onPaste(ev);
 	                    _this.wwEditor.focus();
 	                }, 0);
 	            });
@@ -6397,7 +6157,7 @@
 	exports.default = WwPseudoClipboardHandler;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6516,7 +6276,7 @@
 	exports.default = I18n.getSharedInstance();
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6805,7 +6565,7 @@
 	module.exports = WwListManager;
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -7102,7 +6862,7 @@
 	module.exports = WwTaskManager;
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8490,7 +8250,7 @@
 	module.exports = WwTableManager;
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8972,7 +8732,7 @@
 	module.exports = WwTableSelectionManager;
 
 /***/ },
-/* 22 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9281,7 +9041,7 @@
 	module.exports = WwHrManager;
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9436,7 +9196,7 @@
 	module.exports = WwPManager;
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9693,7 +9453,7 @@
 	module.exports = WwHeadingManager;
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10062,7 +9822,7 @@
 	module.exports = WwCodeBlockManager;
 
 /***/ },
-/* 26 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10456,7 +10216,7 @@
 	module.exports = SquireExt;
 
 /***/ },
-/* 27 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10660,7 +10420,7 @@
 	module.exports = WwTextObject;
 
 /***/ },
-/* 28 */
+/* 27 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -10933,7 +10693,7 @@
 	module.exports = Layout;
 
 /***/ },
-/* 29 */
+/* 28 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11169,7 +10929,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11179,7 +10939,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _command = __webpack_require__(31);
+	var _command = __webpack_require__(30);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -11367,7 +11127,7 @@
 	module.exports = CommandManager;
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11543,7 +11303,7 @@
 	module.exports = Command;
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -11618,7 +11378,7 @@
 	module.exports = new ExtManager();
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11810,7 +11570,7 @@
 	module.exports = ImportManager;
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11824,27 +11584,27 @@
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-	var _markdownitTaskPlugin = __webpack_require__(35);
+	var _markdownitTaskPlugin = __webpack_require__(34);
 
 	var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-	var _markdownitCodeBlockPlugin = __webpack_require__(36);
+	var _markdownitCodeBlockPlugin = __webpack_require__(35);
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitCodeRenderer = __webpack_require__(37);
+	var _markdownitCodeRenderer = __webpack_require__(36);
 
 	var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-	var _markdownitBlockQuoteRenderer = __webpack_require__(38);
+	var _markdownitBlockQuoteRenderer = __webpack_require__(37);
 
 	var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-	var _markdownitTableRenderer = __webpack_require__(39);
+	var _markdownitTableRenderer = __webpack_require__(38);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-	var _markdownitHtmlBlockRenderer = __webpack_require__(40);
+	var _markdownitHtmlBlockRenderer = __webpack_require__(39);
 
 	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
 
@@ -12116,7 +11876,7 @@
 	module.exports = Convertor;
 
 /***/ },
-/* 35 */
+/* 34 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12223,7 +11983,7 @@
 	module.exports = MarkdownitTaskRenderer;
 
 /***/ },
-/* 36 */
+/* 35 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12299,7 +12059,7 @@
 	module.exports = MarkdownitCodeBlockRenderer;
 
 /***/ },
-/* 37 */
+/* 36 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12368,7 +12128,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 38 */
+/* 37 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12595,7 +12355,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 39 */
+/* 38 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12810,7 +12570,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports) {
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
@@ -12907,7 +12667,7 @@
 	/* eslint-enable */
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -12921,19 +12681,19 @@
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _eventManager = __webpack_require__(29);
+	var _eventManager = __webpack_require__(28);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _convertor = __webpack_require__(34);
+	var _convertor = __webpack_require__(33);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
@@ -13161,44 +12921,44 @@
 	module.exports = ToastUIEditorViewOnly;
 
 /***/ },
-/* 42 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _toolbar = __webpack_require__(43);
+	var _toolbar = __webpack_require__(42);
 
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 
-	var _tab = __webpack_require__(47);
+	var _tab = __webpack_require__(46);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _modeSwitch = __webpack_require__(50);
+	var _modeSwitch = __webpack_require__(49);
 
 	var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-	var _popupAddLink = __webpack_require__(51);
+	var _popupAddLink = __webpack_require__(50);
 
 	var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-	var _popupAddImage = __webpack_require__(52);
+	var _popupAddImage = __webpack_require__(51);
 
 	var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-	var _popupTableUtils = __webpack_require__(53);
+	var _popupTableUtils = __webpack_require__(52);
 
 	var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-	var _popupAddTable = __webpack_require__(54);
+	var _popupAddTable = __webpack_require__(53);
 
 	var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-	var _popupAddHeading = __webpack_require__(55);
+	var _popupAddHeading = __webpack_require__(54);
 
 	var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
@@ -13386,20 +13146,20 @@
 	module.exports = DefaultUI;
 
 /***/ },
-/* 43 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(44);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _button = __webpack_require__(45);
+	var _button = __webpack_require__(44);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13595,7 +13355,7 @@
 	module.exports = Toolbar;
 
 /***/ },
-/* 44 */
+/* 43 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13840,7 +13600,7 @@
 	module.exports = UIController;
 
 /***/ },
-/* 45 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13850,8 +13610,8 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var UIController = __webpack_require__(44);
-	var Tooltip = __webpack_require__(46);
+	var UIController = __webpack_require__(43);
+	var Tooltip = __webpack_require__(45);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -13941,7 +13701,7 @@
 	module.exports = Button;
 
 /***/ },
-/* 46 */
+/* 45 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13984,16 +13744,16 @@
 	module.exports = Tooltip;
 
 /***/ },
-/* 47 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(44);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _templater = __webpack_require__(48);
+	var _templater = __webpack_require__(47);
 
 	var _templater2 = _interopRequireDefault(_templater);
 
@@ -14186,7 +13946,7 @@
 	module.exports = Tab;
 
 /***/ },
-/* 48 */
+/* 47 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14228,12 +13988,12 @@
 	module.exports = templater;
 
 /***/ },
-/* 49 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(44);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -14481,16 +14241,16 @@
 	module.exports = LayerPopup;
 
 /***/ },
-/* 50 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(44);
+	var _uicontroller = __webpack_require__(43);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14573,16 +14333,16 @@
 	module.exports = ModeSwitch;
 
 /***/ },
-/* 51 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14682,20 +14442,20 @@
 	module.exports = PopupAddLink;
 
 /***/ },
-/* 52 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _tab = __webpack_require__(47);
+	var _tab = __webpack_require__(46);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -14870,16 +14630,16 @@
 	module.exports = PopupAddImage;
 
 /***/ },
-/* 53 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -15001,12 +14761,12 @@
 	module.exports = PopupTableUtils;
 
 /***/ },
-/* 54 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -15354,16 +15114,16 @@
 	module.exports = PopupAddTable;
 
 /***/ },
-/* 55 */
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(49);
+	var _layerpopup = __webpack_require__(48);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -15440,12 +15200,12 @@
 	module.exports = PopupAddHeading;
 
 /***/ },
-/* 56 */
+/* 55 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15567,12 +15327,12 @@
 	module.exports = Bold;
 
 /***/ },
-/* 57 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15776,12 +15536,12 @@
 	module.exports = Italic;
 
 /***/ },
-/* 58 */
+/* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15877,12 +15637,12 @@
 	module.exports = Strike;
 
 /***/ },
-/* 59 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15947,12 +15707,12 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 60 */
+/* 59 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16046,12 +15806,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 61 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16123,12 +15883,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 62 */
+/* 61 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16189,12 +15949,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 63 */
+/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16244,12 +16004,12 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 64 */
+/* 63 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16299,12 +16059,12 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 65 */
+/* 64 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16381,12 +16141,12 @@
 	module.exports = UL;
 
 /***/ },
-/* 66 */
+/* 65 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16466,12 +16226,12 @@
 	module.exports = OL;
 
 /***/ },
-/* 67 */
+/* 66 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16582,12 +16342,12 @@
 	module.exports = Table;
 
 /***/ },
-/* 68 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16668,12 +16428,12 @@
 	module.exports = Task;
 
 /***/ },
-/* 69 */
+/* 68 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16725,12 +16485,12 @@
 	module.exports = Code;
 
 /***/ },
-/* 70 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16779,12 +16539,12 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 71 */
+/* 70 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16853,12 +16613,12 @@
 	module.exports = Bold;
 
 /***/ },
-/* 72 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16927,12 +16687,12 @@
 	module.exports = Italic;
 
 /***/ },
-/* 73 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17000,7 +16760,7 @@
 	module.exports = Strike;
 
 /***/ },
-/* 74 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17011,7 +16771,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(30);
+	var CommandManager = __webpack_require__(29);
 
 	/**
 	 * Blockquote
@@ -17043,7 +16803,7 @@
 	module.exports = Blockquote;
 
 /***/ },
-/* 75 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17054,7 +16814,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(30);
+	var CommandManager = __webpack_require__(29);
 
 	/**
 	 * AddImage
@@ -17085,7 +16845,7 @@
 	module.exports = AddImage;
 
 /***/ },
-/* 76 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17096,7 +16856,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(30);
+	var CommandManager = __webpack_require__(29);
 
 	/**
 	 * AddLink
@@ -17135,12 +16895,12 @@
 	module.exports = AddLink;
 
 /***/ },
-/* 77 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17213,12 +16973,12 @@
 	module.exports = HR;
 
 /***/ },
-/* 78 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17276,12 +17036,12 @@
 	module.exports = Heading;
 
 /***/ },
-/* 79 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17336,12 +17096,12 @@
 	module.exports = Paragraph;
 
 /***/ },
-/* 80 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17421,12 +17181,12 @@
 	module.exports = UL;
 
 /***/ },
-/* 81 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17506,12 +17266,12 @@
 	module.exports = OL;
 
 /***/ },
-/* 82 */
+/* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17644,12 +17404,12 @@
 	module.exports = Table;
 
 /***/ },
-/* 83 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17730,12 +17490,12 @@
 	module.exports = AddRow;
 
 /***/ },
-/* 84 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17839,12 +17599,12 @@
 	module.exports = AddCol;
 
 /***/ },
-/* 85 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -17972,12 +17732,12 @@
 	module.exports = RemoveRow;
 
 /***/ },
-/* 86 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18078,12 +17838,12 @@
 	module.exports = RemoveCol;
 
 /***/ },
-/* 87 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18222,12 +17982,12 @@
 	module.exports = AlignCol;
 
 /***/ },
-/* 88 */
+/* 87 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18269,12 +18029,12 @@
 	module.exports = RemoveTable;
 
 /***/ },
-/* 89 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18335,7 +18095,7 @@
 	module.exports = IncreaseTask;
 
 /***/ },
-/* 90 */
+/* 89 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18346,7 +18106,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(30);
+	var CommandManager = __webpack_require__(29);
 
 	/**
 	 * DecreaseDepth
@@ -18391,12 +18151,12 @@
 	module.exports = DecreaseDepth;
 
 /***/ },
-/* 91 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18480,12 +18240,12 @@
 	module.exports = Task;
 
 /***/ },
-/* 92 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -18577,7 +18337,7 @@
 	module.exports = Code;
 
 /***/ },
-/* 93 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18588,7 +18348,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(30);
+	var CommandManager = __webpack_require__(29);
 
 	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -18673,7 +18433,7 @@
 	module.exports = CodeBlock;
 
 /***/ },
-/* 94 */
+/* 93 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18751,7 +18511,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 95 */
+/* 94 */
 /***/ function(module, exports) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
@@ -19572,7 +19332,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 96 */
+/* 95 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19703,7 +19463,7 @@
 	CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
 /***/ },
-/* 97 */
+/* 96 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19801,7 +19561,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 98 */
+/* 97 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -19948,7 +19708,7 @@
 	/*eslint-enable */
 
 /***/ },
-/* 99 */
+/* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19958,7 +19718,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var extManager = __webpack_require__(32);
+	var extManager = __webpack_require__(31);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -19998,28 +19758,28 @@
 	});
 
 /***/ },
-/* 100 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(101);
+	var _scrollFollow = __webpack_require__(100);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(102);
+	var _scrollFollow3 = __webpack_require__(101);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
-	var _button = __webpack_require__(45);
+	var _button = __webpack_require__(44);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -20120,7 +19880,7 @@
 	     */
 
 /***/ },
-/* 101 */
+/* 100 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20537,7 +20297,7 @@
 	module.exports = ScrollSync;
 
 /***/ },
-/* 102 */
+/* 101 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21022,16 +20782,16 @@
 	module.exports = SectionManager;
 
 /***/ },
-/* 103 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -21278,32 +21038,32 @@
 	}
 
 /***/ },
-/* 104 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(105);
+	var _markerList = __webpack_require__(104);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(106);
+	var _markerManager = __webpack_require__(105);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(108);
+	var _wysiwygMarkerHelper = __webpack_require__(107);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(109);
+	var _viewOnlyMarkerHelper = __webpack_require__(108);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(110);
+	var _markdownMarkerHelper = __webpack_require__(109);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -21558,7 +21318,7 @@
 	});
 
 /***/ },
-/* 105 */
+/* 104 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -21772,7 +21532,7 @@
 	module.exports = Markerlist;
 
 /***/ },
-/* 106 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21786,7 +21546,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(107);
+	var DiffMatchPatch = __webpack_require__(106);
 
 	var util = tui.util;
 
@@ -22015,7 +21775,7 @@
 	module.exports = MarkerManager;
 
 /***/ },
-/* 107 */
+/* 106 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24094,7 +23854,7 @@
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
 /***/ },
-/* 108 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24346,7 +24106,7 @@
 	module.exports = WysiwygMarkerHelper;
 
 /***/ },
-/* 109 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24619,7 +24379,7 @@
 	module.exports = ViewOnlyMarkerHelper;
 
 /***/ },
-/* 110 */
+/* 109 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24900,64 +24660,64 @@
 	module.exports = MarkdownMarkerHelper;
 
 /***/ },
-/* 111 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(32);
+	var _extManager = __webpack_require__(31);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _mergedTableCreator = __webpack_require__(112);
+	var _mergedTableCreator = __webpack_require__(111);
 
 	var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
 
-	var _tableUnmergePreparer = __webpack_require__(115);
+	var _tableUnmergePreparer = __webpack_require__(114);
 
 	var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
 
-	var _toMarkRenderer = __webpack_require__(116);
+	var _toMarkRenderer = __webpack_require__(115);
 
 	var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
 
-	var _wwMergedTableManager = __webpack_require__(117);
+	var _wwMergedTableManager = __webpack_require__(116);
 
 	var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
 
-	var _wwMergedTableSelectionManager = __webpack_require__(119);
+	var _wwMergedTableSelectionManager = __webpack_require__(118);
 
 	var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
 
-	var _mergedTableAddRow = __webpack_require__(120);
+	var _mergedTableAddRow = __webpack_require__(119);
 
 	var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
 
-	var _mergedTableAddCol = __webpack_require__(121);
+	var _mergedTableAddCol = __webpack_require__(120);
 
 	var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
 
-	var _mergedTableRemoveRow = __webpack_require__(122);
+	var _mergedTableRemoveRow = __webpack_require__(121);
 
 	var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
 
-	var _mergedTableRemoveCol = __webpack_require__(123);
+	var _mergedTableRemoveCol = __webpack_require__(122);
 
 	var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
 
-	var _mergedTableAlignCol = __webpack_require__(124);
+	var _mergedTableAlignCol = __webpack_require__(123);
 
 	var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
 
-	var _mergeCell = __webpack_require__(125);
+	var _mergeCell = __webpack_require__(124);
 
 	var _mergeCell2 = _interopRequireDefault(_mergeCell);
 
-	var _unmergeCell = __webpack_require__(126);
+	var _unmergeCell = __webpack_require__(125);
 
 	var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
 
-	var _mergedTableUI = __webpack_require__(127);
+	var _mergedTableUI = __webpack_require__(126);
 
 	var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
 
@@ -24968,7 +24728,7 @@
 	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
-	__webpack_require__(128);
+	__webpack_require__(127);
 
 	_extManager2.default.defineExtension('tableExtension', function (editor) {
 	    var eventManager = editor.eventManager;
@@ -25087,7 +24847,7 @@
 	}
 
 /***/ },
-/* 112 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25110,7 +24870,7 @@
 	exports._mergeByRowspan = _mergeByRowspan;
 	exports.default = createMergedTable;
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -25315,7 +25075,7 @@
 	}
 
 /***/ },
-/* 113 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25324,7 +25084,7 @@
 	    value: true
 	});
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -25424,7 +25184,7 @@
 	};
 
 /***/ },
-/* 114 */
+/* 113 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25845,7 +25605,7 @@
 	};
 
 /***/ },
-/* 115 */
+/* 114 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25896,7 +25656,7 @@
 	}
 
 /***/ },
-/* 116 */
+/* 115 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -26001,30 +25761,30 @@
 	});
 
 /***/ },
-/* 117 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _wwTableManager = __webpack_require__(20);
+	var _wwTableManager = __webpack_require__(19);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -26698,7 +26458,7 @@
 	module.exports = WwMergedTableManager;
 
 /***/ },
-/* 118 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26707,7 +26467,7 @@
 	    value: true
 	});
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
@@ -26930,7 +26690,7 @@
 	};
 
 /***/ },
-/* 119 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26941,15 +26701,15 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _wwTableSelectionManager = __webpack_require__(21);
+	var _wwTableSelectionManager = __webpack_require__(20);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
@@ -27132,7 +26892,7 @@
 	exports.default = WwMergedTableSelectionManager;
 
 /***/ },
-/* 120 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27143,19 +26903,19 @@
 	exports._createNewRow = _createNewRow;
 	exports._addRow = _addRow;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27304,7 +27064,7 @@
 	exports.default = AddRow;
 
 /***/ },
-/* 121 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27315,19 +27075,19 @@
 	exports._createNewColumns = _createNewColumns;
 	exports._addColumns = _addColumns;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27500,7 +27260,7 @@
 	exports.default = AddCol;
 
 /***/ },
-/* 122 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27510,19 +27270,19 @@
 	});
 	exports._removeRow = _removeRow;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27673,7 +27433,7 @@
 	exports.default = RemoveRow;
 
 /***/ },
-/* 123 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27683,19 +27443,19 @@
 	});
 	exports._removeColumns = _removeColumns;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27850,7 +27610,7 @@
 	exports.default = RemoveCol;
 
 /***/ },
-/* 124 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27859,19 +27619,19 @@
 	    value: true
 	});
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -27961,7 +27721,7 @@
 	exports.default = AlignCol;
 
 /***/ },
-/* 125 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27971,19 +27731,19 @@
 	});
 	exports._mergeCells = _mergeCells;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -28170,7 +27930,7 @@
 	exports.default = MergeCell;
 
 /***/ },
-/* 126 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28181,19 +27941,19 @@
 	exports._hasMergedCell = _hasMergedCell;
 	exports._unmergeCells = _unmergeCells;
 
-	var _commandManager = __webpack_require__(30);
+	var _commandManager = __webpack_require__(29);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _tableDataHandler = __webpack_require__(114);
+	var _tableDataHandler = __webpack_require__(113);
 
 	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
 
-	var _tableRangeHandler = __webpack_require__(118);
+	var _tableRangeHandler = __webpack_require__(117);
 
 	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
 
-	var _tableRenderer = __webpack_require__(113);
+	var _tableRenderer = __webpack_require__(112);
 
 	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
 
@@ -28338,7 +28098,7 @@
 	exports.default = UnmergeCell;
 
 /***/ },
-/* 127 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28347,7 +28107,7 @@
 	    value: true
 	});
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -28426,12 +28186,12 @@
 	};
 
 /***/ },
-/* 128 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _i18n = __webpack_require__(17);
+	var _i18n = __webpack_require__(16);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -28473,7 +28233,7 @@
 	});
 
 /***/ },
-/* 129 */
+/* 128 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28521,7 +28281,7 @@
 	});
 
 /***/ },
-/* 130 */
+/* 129 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28569,7 +28329,7 @@
 	});
 
 /***/ },
-/* 131 */
+/* 130 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28617,7 +28377,7 @@
 	});
 
 /***/ },
-/* 132 */
+/* 131 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -28665,7 +28425,7 @@
 	});
 
 /***/ },
-/* 133 */
+/* 132 */
 /***/ function(module, exports) {
 
 	'use strict';
