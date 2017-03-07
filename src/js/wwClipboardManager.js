@@ -169,7 +169,7 @@ class WwClipboardManager {
 
         this.wwe.getEditor().insertHTML($clipboardContainer.html());
 
-        this.wwe.postProcessForChange();
+        this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
 
         this._focusTableBookmark();
     }
@@ -303,6 +303,10 @@ class WwClipboardManager {
             && range.endOffset === range.commonAncestorContainer.childNodes.length
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
+    }
+
+    destroy() {
+        this._cbHdr.destroy();
     }
 }
 
