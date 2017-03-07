@@ -712,3 +712,11 @@
 .CodeMirror .cm-variable-2 {
     color: inherit;
 }
+
+.tui-editor-pseudo-clipboard {
+    position: fixed;
+    left: -1000px;
+    top: -1000px;
+    width: 100px;
+    height: 100px;
+}
