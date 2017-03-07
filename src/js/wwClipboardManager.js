@@ -169,7 +169,7 @@ class WwClipboardManager {
 
         this.wwe.getEditor().insertHTML($clipboardContainer.html());
 
-        this.wwe.postProcessForChange();
+        this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
 
         this._focusTableBookmark();
     }
