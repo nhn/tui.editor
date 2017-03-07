@@ -67,6 +67,11 @@ class Convertor {
      */
     _markdownToHtmlWithCodeHighlight(markdown) {
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+        // eslint-disable-next-line
+        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+        while (onerrorStripeRegex.exec(markdown)) {
+            markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+        }
 
         let renderedHTML = markdownitHighlight.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
@@ -84,6 +89,11 @@ class Convertor {
      */
     _markdownToHtml(markdown) {
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+        // eslint-disable-next-line
+        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+        while (onerrorStripeRegex.exec(markdown)) {
+            markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+        }
 
         let renderedHTML = markdownit.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
