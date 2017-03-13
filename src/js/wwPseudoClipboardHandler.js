@@ -88,7 +88,17 @@ class WwPseudoClipboardHandler {
             this.$clipboardBody.focus();
         });
 
-        this.$clipboardBody.on('paste', () => {
+        this.$clipboardBody.on('paste', $ev => {
+            this.eventManager.emit('paste', {
+                source: 'wysiwyg',
+                data: $ev.originalEvent
+            });
+        });
+
+        this.eventManager.listen('paste', ev => {
+            if (ev.source !== 'wysiwyg' || ev.data.defaultPrevented) {
+                return;
+            }
             setTimeout(() => {
                 let html = this.$clipboardBody.html();
                 this.$clipboardBody.html('');
