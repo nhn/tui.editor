@@ -6123,7 +6123,17 @@
 	                _this.$clipboardBody.focus();
 	            });
 
-	            this.$clipboardBody.on('paste', function () {
+	            this.$clipboardBody.on('paste', function ($ev) {
+	                _this.eventManager.emit('paste', {
+	                    source: 'wysiwyg',
+	                    data: $ev.originalEvent
+	                });
+	            });
+
+	            this.eventManager.listen('paste', function (ev) {
+	                if (ev.source !== 'wysiwyg' || ev.data.defaultPrevented) {
+	                    return;
+	                }
 	                setTimeout(function () {
 	                    var html = _this.$clipboardBody.html();
 	                    _this.$clipboardBody.html('');
@@ -17631,10 +17641,6 @@
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(11);
-
-	var _domUtils2 = _interopRequireDefault(_domUtils);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
@@ -17645,12 +17651,6 @@
 	 * @augments WysiwygCommand
 	 * @ignore
 	 */
-	/**
-	 * @fileoverview Implements WysiwygCommand
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
 	var RemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
 	    name: 'RemoveRow',
 	    /**
@@ -17688,6 +17688,12 @@
 	 * @param {jQuery} $tr jQuery wrapped TR
 	 * @param {object} tableMgr Table manager
 	 */
+	/**
+	 * @fileoverview Implements WysiwygCommand
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
 	function focusToFirstTd(sq, range, $tr, tableMgr) {
 	    var nextFocusCell = $tr.find('td')[0];
 	    range.setStart(nextFocusCell, 0);
@@ -17744,8 +17750,8 @@
 	        var startContainer = range.startContainer;
 	        var endContainer = range.endContainer;
 
-	        startCell = _domUtils2.default.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
-	        endCell = _domUtils2.default.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
+	        startCell = $(startContainer).closest('td,th')[0];
+	        endCell = $(endContainer).closest('td,th')[0];
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
 	        trs = getSelectedRows(startCell, rangeInformation, $table);
 	    }
