@@ -6,7 +6,6 @@
 
 
 import CommandManager from '../commandManager';
-import domUtil from '../domUtils';
 
 /**
  * RemoveRow
