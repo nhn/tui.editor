@@ -167,6 +167,34 @@ describe('Table - RemoveRow', () => {
         expect(wwe.get$Body().find('tbody td').length).toEqual(2);
     });
 
+    it('remove a row which contains a cell having inline tags', () => {
+        const sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td><span>3</span></td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '<tr><td>7</td><td>8</td></tr>',
+            '<tr><td>9</td><td>10</td></tr>',
+            '</tbody>',
+            '</table>'
+        ].join('\n'));
+        range.selectNodeContents(wwe.get$Body().find('tbody td span')[0].firstChild);
+
+        sq.setSelection(range);
+        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+        RemoveRow.exec(wwe);
+
+        expect(wwe.get$Body().find('tbody tr').length).toEqual(3);
+        expect(wwe.get$Body().find('tbody td').length).toEqual(6);
+    });
+
     it('do not remove table header', () => {
         const sq = wwe.getEditor(),
             range = sq.getSelection().cloneRange();

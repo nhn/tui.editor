@@ -107,8 +107,8 @@ function getTrs(range, selectionMgr, $table) {
         const startContainer = range.startContainer;
         const endContainer = range.endContainer;
 
-        startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
-        endCell = domUtil.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
+        startCell = $(startContainer).closest('td,th')[0];
+        endCell = $(endContainer).closest('td,th')[0];
         rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
         trs = getSelectedRows(startCell, rangeInformation, $table);
     }
