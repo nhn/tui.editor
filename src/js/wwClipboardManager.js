@@ -38,9 +38,15 @@ class WwClipboardManager {
      * @memberOf WwClipboardManager
      */
     init() {
-        // squire의 willPaste가 동작하지 않도록 처리
         this.wwe.getEditor().addEventListener('willPaste', pasteData => {
-            pasteData.preventDefault();
+            const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+
+            this._preparePaste($clipboardContainer);
+
+            pasteData.fragment = document.createDocumentFragment();
+            $($clipboardContainer[0].childNodes).each((index, element) => {
+                pasteData.fragment.appendChild(element);
+            });
         });
     }
 
@@ -146,8 +152,6 @@ class WwClipboardManager {
     _preparePaste($clipboardContainer) {
         this._removeEmptyFontElement($clipboardContainer);
 
-        $clipboardContainer.html($clipboardContainer.html().trim());
-
         this._pch.preparePaste($clipboardContainer);
 
         this.wwe.eventManager.emit('pasteBefore', {
@@ -161,13 +165,11 @@ class WwClipboardManager {
      * @param {jQuery} $clipboardContainer - clipboard html container
      */
     onPaste($clipboardContainer) {
-        this._preparePaste($clipboardContainer);
-
         this._setTableBookmark($clipboardContainer);
 
         this._pasteToTable($clipboardContainer);
 
-        this.wwe.getEditor().insertHTML($clipboardContainer.html());
+        this.wwe.getEditor().insertHTML($clipboardContainer.html(), this);
 
         this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
 
