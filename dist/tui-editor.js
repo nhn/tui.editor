@@ -5080,9 +5080,17 @@
 	    _createClass(WwClipboardManager, [{
 	        key: 'init',
 	        value: function init() {
-	            // squire의 willPaste가 동작하지 않도록 처리
+	            var _this = this;
+
 	            this.wwe.getEditor().addEventListener('willPaste', function (pasteData) {
-	                pasteData.preventDefault();
+	                var $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+
+	                _this._preparePaste($clipboardContainer);
+
+	                pasteData.fragment = document.createDocumentFragment();
+	                $($clipboardContainer[0].childNodes).each(function (index, element) {
+	                    pasteData.fragment.appendChild(element);
+	                });
 	            });
 	        }
 
@@ -5206,8 +5214,6 @@
 	        value: function _preparePaste($clipboardContainer) {
 	            this._removeEmptyFontElement($clipboardContainer);
 
-	            $clipboardContainer.html($clipboardContainer.html().trim());
-
 	            this._pch.preparePaste($clipboardContainer);
 
 	            this.wwe.eventManager.emit('pasteBefore', {
@@ -5224,13 +5230,11 @@
 	    }, {
 	        key: 'onPaste',
 	        value: function onPaste($clipboardContainer) {
-	            this._preparePaste($clipboardContainer);
-
 	            this._setTableBookmark($clipboardContainer);
 
 	            this._pasteToTable($clipboardContainer);
 
-	            this.wwe.getEditor().insertHTML($clipboardContainer.html());
+	            this.wwe.getEditor().insertHTML($clipboardContainer.html(), this);
 
 	            this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
 
@@ -5538,7 +5542,6 @@
 
 	            this._unwrapIfNonBlockElementHasBr($container);
 	            this._unwrapNestedBlocks($container, blockTags);
-	            this._fixCursor($container, blockTags);
 	            this._removeUnnecessaryBlocks($container, blockTags);
 
 	            $container.html(this._wrapOrphanNodeWithDiv($container));
@@ -5563,24 +5566,6 @@
 	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
 	            codeblockManager.splitCodeblockToEachLine($container);
-	        }
-
-	        /**
-	         * Append BR tags at the end of every block tags if it has none
-	         * @param {any} $container - clipboard container
-	         * @param {any} blockTags - Tag names of block tag
-	         * @memberOf WwPasteContentHelper
-	         */
-
-	    }, {
-	        key: '_fixCursor',
-	        value: function _fixCursor($container, blockTags) {
-	            $container.find(blockTags).each(function (index, blockElement) {
-	                var $blockElement = $(blockElement);
-	                if ($blockElement.children().last().tagName !== 'BR') {
-	                    $blockElement.append($('<br>'));
-	                }
-	            });
 	        }
 
 	        /**
@@ -11521,7 +11506,9 @@
 	            } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
 	                var $anchor = ev.$clipboardContainer.find('A');
 
-	                $anchor.text(decodeURIComponent($anchor.text()));
+	                $anchor.each(function (index, element) {
+	                    $(element).text(decodeURIComponent($(element).text()));
+	                });
 	            }
 	        }
 
