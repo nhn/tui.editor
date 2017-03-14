@@ -121,7 +121,6 @@ class WwPasteContentHelper {
 
         this._unwrapIfNonBlockElementHasBr($container);
         this._unwrapNestedBlocks($container, blockTags);
-        this._fixCursor($container, blockTags);
         this._removeUnnecessaryBlocks($container, blockTags);
 
         $container.html(this._wrapOrphanNodeWithDiv($container));
@@ -143,21 +142,6 @@ class WwPasteContentHelper {
         const codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
         codeblockManager.splitCodeblockToEachLine($container);
-    }
-
-    /**
-     * Append BR tags at the end of every block tags if it has none
-     * @param {any} $container - clipboard container
-     * @param {any} blockTags - Tag names of block tag
-     * @memberOf WwPasteContentHelper
-     */
-    _fixCursor($container, blockTags) {
-        $container.find(blockTags).each((index, blockElement) => {
-            const $blockElement = $(blockElement);
-            if ($blockElement.children().last().tagName !== 'BR') {
-                $blockElement.append($('<br>'));
-            }
-        });
     }
 
     /**

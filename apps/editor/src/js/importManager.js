@@ -92,7 +92,9 @@ class ImportManager {
         } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
             const $anchor = ev.$clipboardContainer.find('A');
 
-            $anchor.text(decodeURIComponent($anchor.text()));
+            $anchor.each((index, element) => {
+                $(element).text(decodeURIComponent($(element).text()));
+            });
         }
     }
 
