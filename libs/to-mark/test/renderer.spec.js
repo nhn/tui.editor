@@ -268,10 +268,13 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('```` awefwaef')).toEqual(true);
             expect(renderer._isNeedEscape('`awefwaef`')).toEqual(true);
             expect(renderer._isNeedEscape('```')).toEqual(true);
+            expect(renderer._isNeedEscape('~~~')).toEqual(true);
+            expect(renderer._isNeedEscape('~~~ awefwaef')).toEqual(true);
 
             expect(renderer._isNeedEscape('``awefwaef')).toEqual(false);
             expect(renderer._isNeedEscape('`awefwaef')).toEqual(false);
             expect(renderer._isNeedEscape('awefwaef`')).toEqual(false);
+            expect(renderer._isNeedEscape('~awefwaef')).toEqual(false);
         });
 
         it('em, strong', function() {
@@ -287,7 +290,6 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('~~true~~')).toEqual(true);
             expect(renderer._isNeedEscape('~~strike through~~')).toEqual(true);
 
-            expect(renderer._isNeedEscape('~~~~')).toEqual(false);
             expect(renderer._isNeedEscape('~~strike~')).toEqual(false);
             expect(renderer._isNeedEscape('~~strike~through~')).toEqual(false);
             expect(renderer._isNeedEscape('~strike~')).toEqual(false);

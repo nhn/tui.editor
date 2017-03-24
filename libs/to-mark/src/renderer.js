@@ -340,7 +340,8 @@ Renderer.markdownTextToEscapeRx = {
 
     verticalBar: /\u007C/,
 
-    codeblockGfm: /^(`{3,})/
+    codeblockGfm: /^(`{3,})/,
+    codeblockTildes: /^(~{3,})/
 };
 
 Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
