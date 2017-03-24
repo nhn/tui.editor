@@ -431,7 +431,9 @@
 
 	        managedText = this.trim(this.getSpaceCollapsedText(node.nodeValue));
 
-	        if (this._isNeedEscape(managedText)) {
+	        if (this._isNeedEscapeHtml(managedText)) {
+	            managedText = this.escapeTextHtml(managedText);
+	        } else if (this._isNeedEscape(managedText)) {
 	            managedText = this.escapeText(managedText);
 	        }
 
@@ -952,6 +954,20 @@
 	    return text;
 	};
 
+	/**
+	 * Backslash escape to text for html
+	 * Apply backslash escape to text
+	 * @param {string} text text be processed
+	 * @returns {string} processed text
+	 */
+	Renderer.prototype.escapeTextHtml = function(text) {
+	    text = text.replace(Renderer.markdownTextToEscapeHtmlRx, function(matched) {
+	        return '\\' + matched;
+	    });
+
+	    return text;
+	};
+
 	Renderer.markdownTextToEscapeRx = {
 	    codeblock: /(^ {4}[^\n]+\n*)+/,
 	    hr: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
@@ -970,8 +986,11 @@
 
 	    verticalBar: /\u007C/,
 
-	    codeblockGfm: /^(`{3,})/
+	    codeblockGfm: /^(`{3,})/,
+	    codeblockTildes: /^(~{3,})/
 	};
+
+	Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
 
 	Renderer.prototype._isNeedEscape = function(text) {
 	    var res = false;
@@ -986,6 +1005,10 @@
 	    }
 
 	    return res;
+	};
+
+	Renderer.prototype._isNeedEscapeHtml = function(text) {
+	    return Renderer.markdownTextToEscapeHtmlRx.test(text);
 	};
 
 	/**
