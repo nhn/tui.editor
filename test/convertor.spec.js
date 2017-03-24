@@ -68,6 +68,19 @@ describe('Convertor', () => {
             const markdown = '| 1 | 2 | 3 |\n| --- | --- | --- |\n| HELLO WORLD<br><br><br><br><br>! | 4 | 5 |';
             expect(convertor.toMarkdown(html)).toEqual(markdown);
         });
+        it('should escape html in html text', () => {
+            // valid tags
+            expect(convertor.toMarkdown('im &lt;span&gt; text')).toEqual('im \\<span> text');
+            expect(convertor.toMarkdown('im &lt;span attr="value"&gt; text')).toEqual('im \\<span attr="value"> text');
+            expect(convertor.toMarkdown('im &lt;!-- comment --&gt; text')).toEqual('im \\<!-- comment --> text');
+
+            // common mark auto link
+            expect(convertor.toMarkdown('im &lt;http://google.com&gt; text')).toEqual('im \\<http://google.com> text');
+
+            // invalid tags
+            expect(convertor.toMarkdown('im &lt;\\span&gt; text')).toEqual('im <\\span> text');
+            expect(convertor.toMarkdown('im &lt;/span attr="value"&gt; text')).toEqual('im </span attr="value"> text');
+        });
     });
 
     describe('event', () => {
@@ -171,6 +184,25 @@ describe('Convertor', () => {
 
             expect(result).toEqual(html);
             expect(convertor.toMarkdown(convertor.toHTML(markdown))).toEqual(resultMarkdown);
+        });
+
+        it('< & > in codeblock', () => {
+            const markdown = [
+                '```',
+                '<span>',
+                '```'].join('\n');
+            const html = [
+                '<pre><code>&lt;span&gt;',
+                '</code></pre>',
+                ''].join('\n');
+            const resultMarkdown = [
+                '```',
+                '<span>',
+                '',
+                '```'].join('\n');
+
+            expect(convertor.toHTML(markdown)).toEqual(html);
+            expect(convertor.toMarkdown(html)).toEqual(resultMarkdown);
         });
     });
 });
