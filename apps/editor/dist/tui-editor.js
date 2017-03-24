@@ -368,6 +368,7 @@
 	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
 	         * @param {function} options.hooks.addImageBlobHook hook for image upload.
 	    * @param {string} language language
+	    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
 	    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
 	 */
 
@@ -382,14 +383,17 @@
 	            'initialEditType': 'markdown',
 	            'height': 300,
 	            'language': 'en_US',
-	            'useDefaultHTMLSanitizer': true
+	            'useDefaultHTMLSanitizer': true,
+	            'useCommandShortcut': true
 	        }, options);
 
 	        this.eventManager = new _eventManager2.default();
 
 	        this.importManager = new _importManager2.default(this.eventManager);
 
-	        this.commandManager = new _commandManager3.default(this);
+	        this.commandManager = new _commandManager3.default(this, {
+	            useCommandShortcut: this.options.useCommandShortcut
+	        });
 
 	        this.codeBlockManager = _codeBlockManager2.default;
 
@@ -420,7 +424,9 @@
 
 	        this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
 	        this.preview = new _preview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-	        this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+	        this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+	            useCommandShortcut: this.options.useCommandShortcut
+	        });
 	        this.toMarkOptions = null;
 
 	        this.changePreviewStyle(this.options.previewStyle);
@@ -3318,6 +3324,8 @@
 	 * @exports WysiwygEditor
 	 * @param {jQuery} $el element to insert editor
 	 * @param {EventManager} eventManager EventManager instance
+	 * @param {object} [options={}] - option object
+	 *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
 	 * @constructor
 	 * @class WysiwygEditor
 	 */
@@ -3325,6 +3333,8 @@
 	var WysiwygEditor = function () {
 	    function WysiwygEditor($el, eventManager) {
 	        var _this = this;
+
+	        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
 	        _classCallCheck(this, WysiwygEditor);
 
@@ -3338,6 +3348,10 @@
 
 	        this._keyEventHandlers = {};
 	        this._managers = {};
+
+	        this._options = $.extend({
+	            'useCommandShortcut': true
+	        }, options);
 
 	        this._initEvent();
 	        this._initDefaultKeyEventHandler();
@@ -3367,6 +3381,9 @@
 	                    'HR': false
 	                }
 	            });
+	            if (!this._options.useCommandShortcut) {
+	                this.editor.blockCommandShortcuts();
+	            }
 
 	            this._clipboardManager = new _wwClipboardManager2.default(this);
 	            this._initSquireEvent();
@@ -4475,13 +4492,15 @@
 	         * @memberOf WysiwygEditor
 	         * @param {jQuery} $el Container element for editor
 	         * @param {EventManager} eventManager EventManager instance
+	         * @param {object} [options={}] - option object
+	         *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
 	         * @returns {WysiwygEditor} wysiwygEditor
 	         */
 
 	    }], [{
 	        key: 'factory',
-	        value: function factory($el, eventManager) {
-	            var wwe = new WysiwygEditor($el, eventManager);
+	        value: function factory($el, eventManager, options) {
+	            var wwe = new WysiwygEditor($el, eventManager, options);
 
 	            wwe.init();
 
@@ -10216,6 +10235,21 @@
 
 	            return this;
 	        }
+	    }, {
+	        key: 'blockCommandShortcuts',
+	        value: function blockCommandShortcuts() {
+	            var _this3 = this;
+
+	            var isMac = /Mac/.test(navigator.platform);
+	            var meta = isMac ? 'meta' : 'ctrl';
+	            var keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+
+	            keys.forEach(function (key) {
+	                _this3.setKeyHandler(meta + '-' + key, function (editor, keyboardEvent) {
+	                    keyboardEvent.preventDefault();
+	                });
+	            });
+	        }
 	    }]);
 
 	    return SquireExt;
@@ -10969,13 +11003,21 @@
 	var CommandManager = function () {
 	    /**
 	     * @param {ToastUIEditor} base nedInstance
+	     * @param {object} [options={}] - option object
+	     *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
 	     */
 	    function CommandManager(base) {
+	        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
 	        _classCallCheck(this, CommandManager);
 
 	        this._command = new util.Map();
 	        this._mdCommand = new util.Map();
 	        this._wwCommand = new util.Map();
+	        this._options = $.extend({
+	            'useCommandShortcut': true
+	        }, options);
+
 	        this.base = base;
 
 	        this.keyMapCommand = {};
@@ -11060,6 +11102,9 @@
 	            });
 
 	            this.base.eventManager.listen('keyMap', function (ev) {
+	                if (!_this._options.useCommandShortcut) {
+	                    return;
+	                }
 	                var command = _this.keyMapCommand[ev.keyMap];
 
 	                if (command) {
@@ -11812,8 +11857,6 @@
 	            var resultArray = [];
 
 	            html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
-	            // markdown에서 <, > 가 \<, \>로 표시되도록 처리
-	            html = html.replace(/&lt;/g, '\\&lt;').replace(/&gt;/g, '\\&gt;');
 
 	            var markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
 
