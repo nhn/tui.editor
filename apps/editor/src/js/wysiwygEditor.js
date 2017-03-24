@@ -36,11 +36,13 @@ const canObserveMutations = (typeof MutationObserver !== 'undefined');
  * @exports WysiwygEditor
  * @param {jQuery} $el element to insert editor
  * @param {EventManager} eventManager EventManager instance
+ * @param {object} [options={}] - option object
+ *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
  * @constructor
  * @class WysiwygEditor
  */
 class WysiwygEditor {
-    constructor($el, eventManager) {
+    constructor($el, eventManager, options = {}) {
         this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
         this.$editorContainerEl = $el;
@@ -51,6 +53,10 @@ class WysiwygEditor {
 
         this._keyEventHandlers = {};
         this._managers = {};
+
+        this._options = $.extend({
+            'useCommandShortcut': true
+        }, options);
 
         this._initEvent();
         this._initDefaultKeyEventHandler();
@@ -74,6 +80,9 @@ class WysiwygEditor {
                 'HR': false
             }
         });
+        if (!this._options.useCommandShortcut) {
+            this.editor.blockCommandShortcuts();
+        }
 
         this._clipboardManager = new WwClipboardManager(this);
         this._initSquireEvent();
@@ -1042,10 +1051,12 @@ class WysiwygEditor {
      * @memberOf WysiwygEditor
      * @param {jQuery} $el Container element for editor
      * @param {EventManager} eventManager EventManager instance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
      * @returns {WysiwygEditor} wysiwygEditor
      */
-    static factory($el, eventManager) {
-        const wwe = new WysiwygEditor($el, eventManager);
+    static factory($el, eventManager, options) {
+        const wwe = new WysiwygEditor($el, eventManager, options);
 
         wwe.init();
 

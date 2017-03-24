@@ -18,11 +18,17 @@ const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 class CommandManager {
     /**
      * @param {ToastUIEditor} base nedInstance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
      */
-    constructor(base) {
+    constructor(base, options = {}) {
         this._command = new util.Map();
         this._mdCommand = new util.Map();
         this._wwCommand = new util.Map();
+        this._options = $.extend({
+            'useCommandShortcut': true
+        }, options);
+
         this.base = base;
 
         this.keyMapCommand = {};
@@ -91,6 +97,9 @@ class CommandManager {
         });
 
         this.base.eventManager.listen('keyMap', ev => {
+            if (!this._options.useCommandShortcut) {
+                return;
+            }
             const command = this.keyMapCommand[ev.keyMap];
 
             if (command) {
