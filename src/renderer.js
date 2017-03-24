@@ -308,6 +308,20 @@ Renderer.prototype.escapeText = function(text) {
     return text;
 };
 
+/**
+ * Backslash escape to text for html
+ * Apply backslash escape to text
+ * @param {string} text text be processed
+ * @returns {string} processed text
+ */
+Renderer.prototype.escapeTextHtml = function(text) {
+    text = text.replace(Renderer.markdownTextToEscapeHtmlRx, function(matched) {
+        return '\\' + matched;
+    });
+
+    return text;
+};
+
 Renderer.markdownTextToEscapeRx = {
     codeblock: /(^ {4}[^\n]+\n*)+/,
     hr: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
@@ -329,6 +343,8 @@ Renderer.markdownTextToEscapeRx = {
     codeblockGfm: /^(`{3,})/
 };
 
+Renderer.markdownTextToEscapeHtmlRx = /<([a-zA-Z_][a-zA-Z0-9\-\._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-\._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-\.:/]*)>/g;
+
 Renderer.prototype._isNeedEscape = function(text) {
     var res = false;
     var markdownTextToEscapeRx = Renderer.markdownTextToEscapeRx;
@@ -342,6 +358,10 @@ Renderer.prototype._isNeedEscape = function(text) {
     }
 
     return res;
+};
+
+Renderer.prototype._isNeedEscapeHtml = function(text) {
+    return Renderer.markdownTextToEscapeHtmlRx.test(text);
 };
 
 /**

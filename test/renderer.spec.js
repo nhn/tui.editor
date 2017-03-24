@@ -194,6 +194,32 @@ describe('renderer', function() {
         expect(renderer.escapeText('im ` text')).toEqual('im \\` text');
     });
 
+    it('escapeTextHtml() can process html text node for markdown text', function() {
+        var renderer = Renderer.factory();
+
+        expect(renderer.escapeTextHtml('im <span> text')).toEqual('im \\<span> text');
+        expect(renderer.escapeTextHtml('im <span > text')).toEqual('im \\<span > text');
+        expect(renderer.escapeTextHtml('im <span /> text')).toEqual('im \\<span /> text');
+        expect(renderer.escapeTextHtml('im <SPAN> text')).toEqual('im \\<SPAN> text');
+        expect(renderer.escapeTextHtml('im </span> text')).toEqual('im \\</span> text');
+        expect(renderer.escapeTextHtml('im <span-custom> text')).toEqual('im \\<span-custom> text');
+        expect(renderer.escapeTextHtml('im <span attr="value"> text')).toEqual('im \\<span attr="value"> text');
+        expect(renderer.escapeTextHtml('im <prefix:span> text')).toEqual('im \\<prefix:span> text');
+        expect(renderer.escapeTextHtml('im <span.dot> text')).toEqual('im \\<span.dot> text');
+        expect(renderer.escapeTextHtml('im <!-- comment --> text')).toEqual('im \\<!-- comment --> text');
+
+        expect(renderer.escapeTextHtml('im <http://google.com> text')).toEqual('im \\<http://google.com> text');
+        expect(renderer.escapeTextHtml('im <mailto:foo@bar.baz> text')).toEqual('im \\<mailto:foo@bar.baz> text');
+
+        expect(renderer.escapeTextHtml('im <\\span> text')).toEqual('im <\\span> text');
+        expect(renderer.escapeTextHtml('im </ span> text')).toEqual('im </ span> text');
+        expect(renderer.escapeTextHtml('im </span attr="value"> text')).toEqual('im </span attr="value"> text');
+        expect(renderer.escapeTextHtml('im < span> text')).toEqual('im < span> text');
+        expect(renderer.escapeTextHtml('im <span/ > text')).toEqual('im <span/ > text');
+        expect(renderer.escapeTextHtml('im <http://foo.bar/baz bim> text')).toEqual('im <http://foo.bar/baz bim> text');
+        expect(renderer.escapeTextHtml('im <http://example.com/\\[> text')).toEqual('im <http://example.com/\\[> text');
+    });
+
     describe('_isNeedEscape() can check passed text is needed escape or not', function() {
         var renderer;
 
@@ -276,6 +302,42 @@ describe('renderer', function() {
             expect(renderer._isNeedEscape('[]!(#)')).toEqual(false);
             expect(renderer._isNeedEscape('[avafwef]wae(fweflll!(#)')).toEqual(false);
             expect(renderer._isNeedEscape('[#awefawefwae]! (awefwaef)[waefawef]')).toEqual(false);
+        });
+    });
+
+    it('_isNeedEscapeHtml() can check passed text is needed escape or not', function() {
+        var renderer;
+
+        beforeEach(function() {
+            renderer = Renderer.factory();
+        });
+
+        it('valid html', function() {
+            expect(renderer._isNeedEscapeHtml('<span>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<span >')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<span />')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<SPAN>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('</span>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<span-custom>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<span attr="value">')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<prefix:span>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<span.dot>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<!-- comment -->')).toEqual(true);
+        });
+
+        it('valid common-mark autolink', function() {
+            expect(renderer._isNeedEscapeHtml('<http://google.com>')).toEqual(true);
+            expect(renderer._isNeedEscapeHtml('<mailto:foo@bar.baz>')).toEqual(true);
+        });
+
+        it('invalid html or autolink', function() {
+            expect(renderer._isNeedEscapeHtml('<\\span>')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('</ span>')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('</span attr="value">')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('< span>')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('<span/ >')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('<http://foo.bar/baz bim>')).toEqual(false);
+            expect(renderer._isNeedEscapeHtml('<http://example.com/\\[>')).toEqual(false);
         });
     });
 
