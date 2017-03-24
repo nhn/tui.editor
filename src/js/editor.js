@@ -83,6 +83,7 @@ const __nedInstance = [];
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
          * @param {function} options.hooks.addImageBlobHook hook for image upload.
     * @param {string} language language
+    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
     * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
  */
 class ToastUIEditor {
@@ -94,14 +95,17 @@ class ToastUIEditor {
             'initialEditType': 'markdown',
             'height': 300,
             'language': 'en_US',
-            'useDefaultHTMLSanitizer': true
+            'useDefaultHTMLSanitizer': true,
+            'useCommandShortcut': true
         }, options);
 
         this.eventManager = new EventManager();
 
         this.importManager = new ImportManager(this.eventManager);
 
-        this.commandManager = new CommandManager(this);
+        this.commandManager = new CommandManager(this, {
+            useCommandShortcut: this.options.useCommandShortcut
+        });
 
         this.codeBlockManager = codeBlockManager;
 
@@ -132,7 +136,9 @@ class ToastUIEditor {
 
         this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
         this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+            useCommandShortcut: this.options.useCommandShortcut
+        });
         this.toMarkOptions = null;
 
         this.changePreviewStyle(this.options.previewStyle);

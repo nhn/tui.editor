@@ -329,6 +329,18 @@ class SquireExt extends Squire {
 
         return this;
     }
+
+    blockCommandShortcuts() {
+        const isMac = /Mac/.test(navigator.platform);
+        const meta = isMac ? 'meta' : 'ctrl';
+        const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+
+        keys.forEach(key => {
+            this.setKeyHandler(`${meta}-${key}`, (editor, keyboardEvent) => {
+                keyboardEvent.preventDefault();
+            });
+        });
+    }
 }
 
 module.exports = SquireExt;

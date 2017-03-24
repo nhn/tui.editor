@@ -149,9 +149,9 @@ describe('CommandManager', function() {
         });
     });
 
-    describe('keyMap', function() {
-        it('when command added with keymap, it can be invoked by keyMap', function() {
-            var command = new Command('mycommand', Command.TYPE.WW),
+    describe('command added with keyMap', () => {
+        it('can be invoked by keyMap event', () => {
+            const command = new Command('mycommand', Command.TYPE.WW),
                 execSpy = jasmine.createSpy('spy'),
                 preventDefault = jasmine.createSpy('preventDefault');
 
@@ -172,6 +172,31 @@ describe('CommandManager', function() {
 
             expect(execSpy).toHaveBeenCalled();
             expect(preventDefault).toHaveBeenCalled();
+        });
+
+        it('can not be invoked by keyMap event if useCommandShortcut option is false', () => {
+            const command = new Command('mycommand', Command.TYPE.WW),
+                execSpy = jasmine.createSpy('spy'),
+                preventDefault = jasmine.createSpy('preventDefault');
+            cmgr._options.useCommandShortcut = false;
+
+            command.setKeyMap('CTRL+B', 'CTRL+B');
+            command.exec = execSpy;
+            cmgr.addCommand(command);
+
+            mockupBase.isMarkdownMode = function() {
+                return false;
+            };
+
+            mockupBase.eventManager.emit('keyMap', {
+                keyMap: 'CTRL+B',
+                data: {
+                    preventDefault: preventDefault
+                }
+            });
+
+            expect(execSpy).not.toHaveBeenCalled();
+            expect(preventDefault).not.toHaveBeenCalled();
         });
     });
 });
