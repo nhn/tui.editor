@@ -255,9 +255,13 @@
       3
     ],
     "max-len": [
-      2,
-      120,
-      4
+      2, {
+        "code": 120,
+        "tabWidth": 4,
+        "ignoreStrings": true,
+        "ignoreComments": true,
+        "ignoreRegExpLiterals": true
+      }
     ],
     "max-nested-callbacks": [
       2,
