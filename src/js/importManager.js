@@ -6,6 +6,23 @@
 const util = tui.util;
 
 /**
+ * graceful decode uri component
+ * @param {string} uri - string to be decoded
+ * @returns {string} decoded string
+ * @ignore
+ */
+function decodeURIComponentGraceful(uri) {
+    let decodedURI;
+    try {
+        decodedURI = decodeURIComponent(uri);
+    } catch (e) {
+        decodedURI = uri;
+    }
+
+    return decodedURI;
+}
+
+/**
  * ImportManager
  * @exports ImportManager
  * @constructor
@@ -88,12 +105,12 @@ class ImportManager {
             && ev.data.text.length === 1
             && ev.data.text[0].match(/https?:\/\//g)
         ) {
-            ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
+            ev.data.update(null, null, [decodeURIComponentGraceful(ev.data.text[0])]);
         } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
             const $anchor = ev.$clipboardContainer.find('A');
 
             $anchor.each((index, element) => {
-                $(element).text(decodeURIComponent($(element).text()));
+                $(element).text(decodeURIComponentGraceful($(element).text()));
             });
         }
     }
