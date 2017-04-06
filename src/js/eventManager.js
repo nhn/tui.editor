@@ -59,7 +59,9 @@ const eventList = [
     'paste',
     'copy',
     'copyBefore',
+    'copyAfter',
     'cut',
+    'cutAfter',
     'drop',
     'show',
     'hide'
