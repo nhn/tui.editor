@@ -28,6 +28,8 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
          * @private
          */
         this._tableData = null;
+
+        this.mergedTableSelectionManager = true;
     }
 
     /**
@@ -116,13 +118,15 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
 
         $table.find('tr').get().forEach(tr => {
             const cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
+            const firstSelectedCell = cells.first()[0];
+            const lastSelectedCell = cells.last()[0];
 
             if (!cells.length) {
                 return;
             }
 
-            range.setStart(cells.first()[0], 0);
-            range.setEnd(cells.last()[0], 1);
+            range.setStart(firstSelectedCell, 0);
+            range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
             sq.setSelection(range);
             onStyle(sq);
         });

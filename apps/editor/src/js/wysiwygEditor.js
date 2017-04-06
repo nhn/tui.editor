@@ -193,6 +193,32 @@ class WysiwygEditor {
         const self = this;
         let isNeedFirePostProcessForRangeChange = false;
 
+        this.getEditor().addEventListener('copy', clipboardEvent => {
+            self.eventManager.emit('copy', {
+                source: 'wysiwyg',
+                data: clipboardEvent
+            });
+            util.debounce(() => {
+                self.eventManager.emit('copyAfter', {
+                    source: 'wysiwyg',
+                    data: clipboardEvent
+                });
+            })();
+        });
+
+        this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
+            self.eventManager.emit('cut', {
+                source: 'wysiwyg',
+                data: clipboardEvent
+            });
+            util.debounce(() => {
+                self.eventManager.emit('cutAfter', {
+                    source: 'wysiwyg',
+                    data: clipboardEvent
+                });
+            })();
+        });
+
         this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
             self.eventManager.emit('paste', {
                 source: 'wysiwyg',

@@ -11,6 +11,7 @@ import i18n from '../../i18n';
 
 const util = tui.util;
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * WwMergedTableManager
@@ -299,14 +300,13 @@ class WwMergedTableManager extends WwTableManager {
     }
 
     /**
-     * Focus last td.
+     * bookmark last td.
      * @param {number} endRowIndex - end row index
      * @param {number} endColIndex - end col index
      * @private
      */
-    _focusLastTd({rowIndex: endRowIndex, colIndex: endColIndex}) {
+    _bookmarkLastTd({rowIndex: endRowIndex, colIndex: endColIndex}) {
         const sq = this.wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
         const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
         const tableData = tableDataHandler.createTableData($bookmarkedTable);
         const lastCellData = tableData[endRowIndex][endColIndex];
@@ -318,9 +318,7 @@ class WwMergedTableManager extends WwTableManager {
         const lastTd = $bookmarkedTable.find('tr').eq(lastCellIndex.rowIndex).children()[lastCellIndex.colIndex];
 
         $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
-        range.selectNodeContents(lastTd);
-        range.collapse(false);
-        sq.setSelection(range);
+        $(lastTd).addClass(PASTE_TABLE_CELL_BOOKMARK);
     }
 
     /**
@@ -409,7 +407,7 @@ class WwMergedTableManager extends WwTableManager {
         if (updated) {
             tableData.className += ` ${PASTE_TABLE_BOOKMARK}`;
             tableRenderer.replaceTable($table, tableData);
-            this._focusLastTd(endCellIndex);
+            this._bookmarkLastTd(endCellIndex);
         } else {
             alert(alertMessage);
             this.wwe.getEditor().focus();
@@ -501,6 +499,7 @@ class WwMergedTableManager extends WwTableManager {
         if (this._hasRowMergedHeader(clipboardTableData, tableData, startCellIndex)) {
             alert(i18n.get('Cannot paste row merged cells into the table header'));
             this.wwe.getEditor().focus();
+
             return;
         }
 
@@ -510,7 +509,7 @@ class WwMergedTableManager extends WwTableManager {
             this._updateTableDataByClipboardData(clipboardTableData, tableData, startCellIndex);
             tableData.className += ` ${PASTE_TABLE_BOOKMARK}`;
             tableRenderer.replaceTable($table, tableData);
-            this._focusLastTd(endCellIndex);
+            this._bookmarkLastTd(endCellIndex);
         } else {
             alert(i18n.get('Cannot change part of merged cell'));
             this.wwe.getEditor().focus();

@@ -7,10 +7,10 @@
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
-import WwClipboardHandler from './wwPseudoClipboardHandler';
 import i18n from './i18n';
 
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
  * WwClipboardManager
@@ -23,12 +23,8 @@ class WwClipboardManager {
     constructor(wwe) {
         this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
-        this._cbHdr = new WwClipboardHandler(this.wwe, {
-            onCopyBefore: this.onCopyBefore.bind(this),
-            onCutBefore: this.onCopyBefore.bind(this),
-            onCut: this.onCut.bind(this),
-            onPaste: this.onPaste.bind(this)
-        });
+        this._selectedSellCount = 0;
+        this._$clipboardArea = null;
     }
 
     /**
@@ -38,16 +34,108 @@ class WwClipboardManager {
      * @memberOf WwClipboardManager
      */
     init() {
-        this.wwe.getEditor().addEventListener('willPaste', pasteData => {
-            const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+        this.wwe.getEditor().addEventListener('willPaste', this._onWillPaste.bind(this));
+        this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
+        this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
+        this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
+        this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
+    }
 
+    _onCopyCut(event) {
+        const tableManager = this.wwe.componentManager.getManager('tableSelection');
+        const selectedCellCount = tableManager.getSelectedCells().length;
+        if (!selectedCellCount) {
+            // preserve selection range in a cell, let squire do the job
+            return;
+        }
+        if (!tableManager.mergedTableSelectionManager) {
+            // set selection range to all contents in selected cells, then squire
+            tableManager.createRangeBySelectedCells();
+            tableManager.removeClassAttrbuteFromAllCellsIfNeed();
+
+            return;
+        }
+        const editor = this.wwe.getEditor();
+        const clipboardEvent = event.data;
+        const range = editor.getSelection().cloneRange();
+        const $clipboardContainer = $('<div />');
+
+        this._extendRange(range);
+        $clipboardContainer.append(range.cloneContents());
+        this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
+        this.wwe.eventManager.emit('copyBefore', {
+            source: 'wysiwyg',
+            $clipboardContainer
+        });
+
+        this._setClipboardData(clipboardEvent, $clipboardContainer.html(), $clipboardContainer.text());
+    }
+
+    _clearClipboardArea() {
+        if (this._$clipboardArea) {
+            this._$clipboardArea.remove();
+            this._$clipboardArea = null;
+        }
+    }
+
+    _onCopyAfter() {
+        this.wwe.getEditor().get$Body().focus();
+        this._clearClipboardArea();
+    }
+
+    _onCutAfter() {
+        const range = this.wwe.getEditor().getSelection();
+        range.deleteContents();
+        this.wwe.getEditor().focus();
+        this._clearClipboardArea();
+    }
+
+    _onWillPaste(pasteData) {
+        const $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+
+        this._setTableBookmark($clipboardContainer);
+
+        if (this._pasteToTable($clipboardContainer)) {
+            pasteData.preventDefault();
+        } else {
             this._preparePaste($clipboardContainer);
+            this._setTableBookmark($clipboardContainer);
 
             pasteData.fragment = document.createDocumentFragment();
             $($clipboardContainer[0].childNodes).each((index, element) => {
                 pasteData.fragment.appendChild(element);
             });
-        });
+        }
+
+        // once right after the squire insertHTML DOM.
+        const handler = () => {
+            this.wwe.getEditor().removeEventListener('input', handler);
+            this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
+            this._focusTableBookmark();
+        };
+        this.wwe.getEditor().addEventListener('input', handler);
+    }
+
+    _setClipboardData(clipboardEvent, htmlContent, textContent) {
+        if (tui.util.browser.msie) {
+            clipboardEvent.squirePrevented = true;
+            this._$clipboardArea = this._createClipboardArea();
+            this._$clipboardArea.html(htmlContent);
+            this._$clipboardArea.focus();
+            window.getSelection().selectAllChildren(this._$clipboardArea[0]);
+        } else {
+            clipboardEvent.preventDefault();
+            clipboardEvent.stopPropagation();
+            clipboardEvent.clipboardData.setData('text/html', htmlContent);
+            clipboardEvent.clipboardData.setData('text/plain', textContent);
+        }
+    }
+
+    _createClipboardArea() {
+        return $('<DIV>').attr({
+            contenteditable: 'true',
+            style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
+        }).appendTo(document.body);
     }
 
     /**
@@ -68,44 +156,6 @@ class WwClipboardManager {
     }
 
     /**
-     * This handler execute before copy.
-     * @param {Event} ev - clipboard event
-     */
-    onCopyBefore(ev) {
-        const editor = this.wwe.getEditor();
-
-        editor.focus();
-
-        const range = editor.getSelection().cloneRange();
-        const $clipboardContainer = $('<div />');
-
-        this._extendRange(range);
-
-        $clipboardContainer.append(range.cloneContents());
-
-        this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
-
-        this.wwe.eventManager.emit('copyBefore', {
-            source: 'wysiwyg',
-            $clipboardContainer
-        });
-
-        this._cbHdr.setClipboardData(ev, $clipboardContainer.html(), $clipboardContainer.text());
-    }
-
-    /**
-     * This handler execute cut.
-     * @param {Event} ev - clipboard event
-     */
-    onCut(ev) {
-        this.wwe.eventManager.emit('cut', {
-            source: 'wysiwyg',
-            data: ev
-        });
-        this.wwe.debouncedPostProcessForChange();
-    }
-
-    /**
      * Remove empty font elements.
      * @param {jQuery} $clipboardContainer - cliboard jQuery container
      */
@@ -123,6 +173,7 @@ class WwClipboardManager {
     /**
      * Paste to table.
      * @param {jQuery} $clipboardContainer - clibpard container
+     * @returns {boolean} whether processed or not
      * @private
      */
     _pasteToTable($clipboardContainer) {
@@ -132,16 +183,21 @@ class WwClipboardManager {
         const pastingToTable = tableManager.isInTable(range);
         const childNodes = $clipboardContainer[0].childNodes;
         const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
+        let processed = false;
 
         if (pastingToTable) {
             if (containsOneTableOnly) {
                 tableManager.pasteClipboardData($clipboardContainer.first());
                 $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
+                processed = true;
             } else if (tableSelectionManager.getSelectedCells().length) {
                 alert(i18n.get('Cannot paste values ​​other than a table in the cell selection state'));
                 $clipboardContainer.html(''); // drains clipboard data
+                processed = true;
             }
         }
+
+        return processed;
     }
 
     /**
@@ -158,22 +214,6 @@ class WwClipboardManager {
             source: 'wysiwyg',
             $clipboardContainer
         });
-    }
-
-    /**
-     * This handler execute paste.
-     * @param {jQuery} $clipboardContainer - clipboard html container
-     */
-    onPaste($clipboardContainer) {
-        this._setTableBookmark($clipboardContainer);
-
-        this._pasteToTable($clipboardContainer);
-
-        this.wwe.getEditor().insertHTML($clipboardContainer.html(), this);
-
-        this.wwe.eventManager.emit('wysiwygRangeChangeAfter', this);
-
-        this._focusTableBookmark();
     }
 
     /**
@@ -199,10 +239,17 @@ class WwClipboardManager {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
         const $bookmarkedTable = sq.get$Body().find(`.${PASTE_TABLE_BOOKMARK}`);
+        const $bookmarkedCell = sq.get$Body().find(`.${PASTE_TABLE_CELL_BOOKMARK}`);
 
         if ($bookmarkedTable.length) {
             $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
             range.setEndAfter($bookmarkedTable[0]);
+            range.collapse(false);
+            sq.setSelection(range);
+        }
+        if ($bookmarkedCell.length) {
+            $bookmarkedCell.removeClass(PASTE_TABLE_CELL_BOOKMARK);
+            range.selectNodeContents($bookmarkedCell[0]);
             range.collapse(false);
             sq.setSelection(range);
         }
@@ -305,10 +352,6 @@ class WwClipboardManager {
             && range.endOffset === range.commonAncestorContainer.childNodes.length
             && range.commonAncestorContainer === range.startContainer
             && range.commonAncestorContainer === range.endContainer;
-    }
-
-    destroy() {
-        this._cbHdr.destroy();
     }
 }
 

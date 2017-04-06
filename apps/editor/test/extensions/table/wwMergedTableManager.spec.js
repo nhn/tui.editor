@@ -52,7 +52,7 @@ describe('WwMergedTableManager', () => {
             $table = $(basicTableHtml);
 
             $container.append($table);
-            spyOn(mgr, '_focusLastTd');
+            spyOn(mgr, '_bookmarkLastTd');
         });
 
         it('Paste to selected area, when exactly fit table selection by clipboard table data.', () => {
@@ -75,7 +75,7 @@ describe('WwMergedTableManager', () => {
             expect($trs.eq(1).html()).toBe('<td>3</td><td>4</td><td>3</td><td>4</td>');
             expect($trs.eq(2).html()).toBe('<td>1</td><td>2</td><td>1</td><td>2</td>');
             expect($trs.eq(3).html()).toBe('<td>3</td><td>4</td><td>3</td><td>4</td>');
-            expect(mgr._focusLastTd).toHaveBeenCalledWith({
+            expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 4,
                 colIndex: 3
             });
@@ -101,7 +101,7 @@ describe('WwMergedTableManager', () => {
             expect($trs.eq(1).html()).toBe('<td>1</td><td>2</td><td>c</td><td>d</td>');
             expect($trs.eq(2).html()).toBe('<td>3</td><td>4</td><td>g</td><td>h</td>');
             expect($trs.eq(3).html()).toBe('<td>i</td><td>j</td><td>k</td><td>l</td>');
-            expect(mgr._focusLastTd).toHaveBeenCalledWith({
+            expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 2,
                 colIndex: 1 
             });
@@ -131,7 +131,7 @@ describe('WwMergedTableManager', () => {
 
             expect(window.alert).toHaveBeenCalled();
             expect(editor.focus).toHaveBeenCalled();
-            expect(mgr._focusLastTd).not.toHaveBeenCalled();
+            expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
         });
 
         it('Paste to selected area, when selection is smaller than clipboard tata.', () => {
@@ -154,7 +154,7 @@ describe('WwMergedTableManager', () => {
             expect($trs.eq(1).html()).toBe('<td>a</td><td>1</td><td>c</td><td>d</td>');
             expect($trs.eq(2).html()).toBe('<td>e</td><td>3</td><td>g</td><td>h</td>');
             expect($trs.eq(3).html()).toBe('<td>i</td><td>j</td><td>k</td><td>l</td>');
-            expect(mgr._focusLastTd).toHaveBeenCalledWith({
+            expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 2,
                 colIndex: 1
             });
@@ -181,7 +181,7 @@ describe('WwMergedTableManager', () => {
 
             expect(window.alert).toHaveBeenCalled();
             expect(editor.focus).toHaveBeenCalled();
-            expect(mgr._focusLastTd).not.toHaveBeenCalled();
+            expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
         });
     });
 
@@ -193,7 +193,7 @@ describe('WwMergedTableManager', () => {
             $table = $(basicTableHtml);
 
             $container.append($table);
-            spyOn(mgr, '_focusLastTd');
+            spyOn(mgr, '_bookmarkLastTd');
         });
 
         it('Paste all clipboard table data.', () => {
@@ -223,7 +223,7 @@ describe('WwMergedTableManager', () => {
             expect($trs.eq(0).children().length).toBe(5);
             expect($trs.eq(4).html()).toBe('<td>m</td><td>n</td><td>o</td><td>1</td><td>2</td>');
             expect($trs.eq(5).html()).toBe(`<td>${cellContent}</td><td>${cellContent}</td><td>${cellContent}</td><td>3</td><td>4</td>`);
-            expect(mgr._focusLastTd).toHaveBeenCalledWith({
+            expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 5,
                 colIndex: 4
             });
@@ -252,7 +252,7 @@ describe('WwMergedTableManager', () => {
             mgr._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
 
             expect(window.alert).toHaveBeenCalled();
-            expect(mgr._focusLastTd).not.toHaveBeenCalled();
+            expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
         });
     });
 });

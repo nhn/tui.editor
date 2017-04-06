@@ -125,8 +125,14 @@ class WwTableSelectionManager {
 
                     range = this.wwe.getEditor().getSelection();
                     range.setStart(selectionEnd, 0);
-                    range.setEnd(selectionEnd, 0);
-                    range.collapse(true);
+                    // IE wont fire copy/cut event if there is no selected range.
+                    // trick IE to fire the event
+                    if (tui.util.browser.msie) {
+                        range.setEnd(selectionEnd, 1);
+                    } else {
+                        range.setEnd(selectionEnd, 0);
+                        range.collapse(false);
+                    }
                     this.wwe.getEditor().setSelection(range);
                 }
                 if (this.onDragEnd) {
@@ -386,17 +392,18 @@ class WwTableSelectionManager {
 
     /**
      * Create selection by selected cells and collapse that selection to end
-     * @private
      */
     createRangeBySelectedCells() {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
         const selectedCells = this.getSelectedCells();
         const tableManager = this.wwe.componentManager.getManager('table');
+        const firstSelectedCell = selectedCells.first()[0];
+        const lastSelectedCell = selectedCells.last()[0];
 
         if (selectedCells.length && tableManager.isInTable(range)) {
-            range.setStart(selectedCells.first()[0], 0);
-            range.setEnd(selectedCells.last()[0], 1);
+            range.setStart(firstSelectedCell, 0);
+            range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
             sq.setSelection(range);
         }
     }

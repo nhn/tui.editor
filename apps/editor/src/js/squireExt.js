@@ -25,6 +25,7 @@ class SquireExt extends Squire {
         super(...args);
 
         this._decorateHandlerToCancelable('copy');
+        this._decorateHandlerToCancelable(isIElt11 ? 'beforecut' : 'cut');
         this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 
         this.get$Body = () => {
@@ -37,6 +38,8 @@ class SquireExt extends Squire {
     /**
      * _decorateHandlerToCancelable
      * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+     * event.preventDefault() will cancel squire and browser default behavior
+     * event.squirePrevented = true will cancel squire but allow browser default behavior
      * @param {string} eventName event name
      */
     _decorateHandlerToCancelable(eventName) {
@@ -49,7 +52,7 @@ class SquireExt extends Squire {
         const handler = handlers[0].bind(this);
 
         handlers[0] = event => {
-            if (!event.defaultPrevented) {
+            if (!event.defaultPrevented && !event.squirePrevented) {
                 handler(event);
             }
         };
