@@ -292,14 +292,15 @@ describe('SquireExt', () => {
             const meta = isMac ? 'meta' : 'ctrl';
             const spyOriginal = jasmine.createSpy('original');
             const spy = jasmine.createSpy('replace');
+            const keyEvent = {
+                keyCode: 66,
+                preventDefault: spy
+            };
+            keyEvent[`${meta}Key`] = true;
 
             Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;
             sqe.blockCommandShortcuts();
-            sqe.fireEvent('keydown', {
-                keyCode: 66,
-                metaKey: true,
-                preventDefault: spy
-            });
+            sqe.fireEvent('keydown', keyEvent);
 
             setTimeout(() => {
                 expect(spy).toHaveBeenCalled();
