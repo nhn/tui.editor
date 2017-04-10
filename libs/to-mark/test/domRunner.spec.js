@@ -358,4 +358,16 @@ describe('domRunner', function() {
             expect(domRunner.next()).toBeNull();
         });
     });
+
+    describe('normalize text nodes', function() {
+        beforeEach(function() {
+            var dom = toDom('test -');
+            dom.appendChild(document.createTextNode('text'));
+            domRunner = new DomRunner(dom);
+        });
+
+        it('domRunner returns normalized node', function() {
+            expect(domRunner.next().nodeValue).toBe('test -text');
+        });
+    });
 });
