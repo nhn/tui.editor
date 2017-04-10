@@ -331,7 +331,16 @@
 	 * @returns {node} next node
 	 */
 	DomRunner.prototype._getNextNode = function(current) {
-	    return current.firstChild || current.nextSibling;
+	    var node = current.firstChild || current.nextSibling;
+
+	    if (node && node.nodeType === NODE.TEXT_NODE) {
+	        while (node.nextSibling && node.nextSibling.nodeType === NODE.TEXT_NODE) {
+	            node.nodeValue += node.nextSibling.nodeValue;
+	            node.parentNode.removeChild(node.nextSibling);
+	        }
+	    }
+
+	    return node;
 	};
 
 	DomRunner.NODE_TYPE = NODE;
