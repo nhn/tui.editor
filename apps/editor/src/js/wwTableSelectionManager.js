@@ -189,9 +189,7 @@ class WwTableSelectionManager {
         const isTableSelecting = $(selectionStart).parents('table').length;
 
         if (isTableSelecting) {
-            this._tableSelectionTimer = setTimeout(() => {
-                this._isSelectionStarted = true;
-            }, 100);
+            this._isSelectionStarted = true;
         }
     }
 

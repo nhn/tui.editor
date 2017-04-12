@@ -33,19 +33,6 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     }
 
     /**
-     * Set setTimeout and setInterval timer execution if table selecting situation
-     * @param {HTMLElement} selectionStart Start element
-     * @override
-     */
-    setTableSelectionTimerIfNeed(selectionStart) {
-        const isTableSelecting = $(selectionStart).parents('table').length;
-
-        if (isTableSelecting) {
-            this._isSelectionStarted = true;
-        }
-    }
-
-    /**
      * Add css class for selected cells.
      * @param {jQuery} $table - table jQuery element
      * @param {Array.<Array.<object>>} tableData - table data
