@@ -1,5 +1,9 @@
-import {_removeRow} from '../../../src/js/extensions/table/mergedTableRemoveRow';
+import RemoveRow, {_removeRow} from '../../../src/js/extensions/table/mergedTableRemoveRow';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
+import WwMergedTableSelectionManager from '../../../src/js/extensions/table/wwMergedTableSelectionManager';
+import WwMergedTableManager from '../../../src/js/extensions/table/wwMergedTableManager';
+import WysiwygEditor from '../../../src/js/wysiwygEditor';
+import EventManager from '../../../src/js/eventManager';
 
 describe('mergedTableRemoveRow', () => {
     describe('_removeRow()', () => {
@@ -162,6 +166,62 @@ describe('mergedTableRemoveRow', () => {
 
             expect(tableData.length).toBe(4);
             expect(tableData[1][0].rowspan).toBe(3);
+        });
+    });
+
+    describe('RemoveRow command with browser selection', () => {
+        let wwe;
+
+        beforeEach(() => {
+            const $container = $('<div />');
+
+            $('body').append($container);
+
+            wwe = new WysiwygEditor($container, new EventManager());
+
+            wwe.init();
+            wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
+            wwe.componentManager.addManager('table', WwMergedTableManager);
+
+            wwe.getEditor().focus();
+            if (tui.util.browser.firefox) {
+                wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
+            }
+        });
+
+        //we need to wait squire input event process
+        afterEach(done => {
+            setTimeout(() => {
+                $('body').empty();
+                done();
+            });
+        });
+
+        it('remove only one row at start rage even if there are multiple tds in selection range', () => {
+            const sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                '<thead>',
+                '<tr><th>1</th><th>2</th></tr>',
+                '</thead>',
+                '<tbody>',
+                '<tr><td>3</td><td>4</td></tr>',
+                '<tr><td>5</td><td>6</td></tr>',
+                '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
+            sq.setSelection(range);
+            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+
+            RemoveRow.exec(wwe);
+
+            expect(wwe.get$Body().find('tbody tr').length).toEqual(1);
+            expect(wwe.get$Body().find('tbody td').length).toEqual(2);
         });
     });
 });
