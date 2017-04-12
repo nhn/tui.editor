@@ -8380,14 +8380,10 @@
 	    }, {
 	        key: 'setTableSelectionTimerIfNeed',
 	        value: function setTableSelectionTimerIfNeed(selectionStart) {
-	            var _this2 = this;
-
 	            var isTableSelecting = $(selectionStart).parents('table').length;
 
 	            if (isTableSelecting) {
-	                this._tableSelectionTimer = setTimeout(function () {
-	                    _this2._isSelectionStarted = true;
-	                }, 100);
+	                this._isSelectionStarted = true;
 	            }
 	        }
 
@@ -17684,21 +17680,15 @@
 	function getTrs(range, selectionMgr, $table) {
 	    var selectedCells = selectionMgr.getSelectedCells();
 	    var rangeInformation = void 0,
-	        trs = void 0,
-	        startCell = void 0,
-	        endCell = void 0;
+	        trs = void 0;
 
 	    if (selectedCells.length) {
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0], selectedCells.last()[0]);
 	        trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
 	    } else {
-	        var startContainer = range.startContainer;
-	        var endContainer = range.endContainer;
-
-	        startCell = $(startContainer).closest('td,th')[0];
-	        endCell = $(endContainer).closest('td,th')[0];
-	        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
-	        trs = getSelectedRows(startCell, rangeInformation, $table);
+	        var cell = $(range.startContainer).closest('td,th')[0];
+	        rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
+	        trs = getSelectedRows(cell, rangeInformation, $table);
 	    }
 
 	    return trs;
@@ -17748,8 +17738,11 @@
 	        var isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
 	        sq.focus();
+	        // IE 800a025e error on removing part of selection range. collpase
+	        range.collapse(true);
+	        sq.setSelection(range);
 
-	        if (sq.hasFormat('TR') && isAbleToRemoveColumn) {
+	        if (sq.hasFormat('TR', null, range) && isAbleToRemoveColumn) {
 	            sq.saveUndoState(range);
 	            var $cell = getCellByRange(range);
 	            var $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
@@ -26730,34 +26723,18 @@
 	    }
 
 	    /**
-	     * Set setTimeout and setInterval timer execution if table selecting situation
-	     * @param {HTMLElement} selectionStart Start element
-	     * @override
+	     * Add css class for selected cells.
+	     * @param {jQuery} $table - table jQuery element
+	     * @param {Array.<Array.<object>>} tableData - table data
+	     * @param {{
+	     *   start: {rowIndex: number, colIndex: number},
+	     *   end: {rowIndex: number, colIndex: number}
+	     * }} tableRange - table selected range
+	     * @private
 	     */
 
 
 	    _createClass(WwMergedTableSelectionManager, [{
-	        key: 'setTableSelectionTimerIfNeed',
-	        value: function setTableSelectionTimerIfNeed(selectionStart) {
-	            var isTableSelecting = $(selectionStart).parents('table').length;
-
-	            if (isTableSelecting) {
-	                this._isSelectionStarted = true;
-	            }
-	        }
-
-	        /**
-	         * Add css class for selected cells.
-	         * @param {jQuery} $table - table jQuery element
-	         * @param {Array.<Array.<object>>} tableData - table data
-	         * @param {{
-	         *   start: {rowIndex: number, colIndex: number},
-	         *   end: {rowIndex: number, colIndex: number}
-	         * }} tableRange - table selected range
-	         * @private
-	         */
-
-	    }, {
 	        key: '_addClassToSelectedCells',
 	        value: function _addClassToSelectedCells($table, tableData, tableRange) {
 	            var startRange = tableRange.start;
