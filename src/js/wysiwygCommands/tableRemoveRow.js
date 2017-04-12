@@ -96,20 +96,16 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
  */
 function getTrs(range, selectionMgr, $table) {
     const selectedCells = selectionMgr.getSelectedCells();
-    let rangeInformation, trs, startCell, endCell;
+    let rangeInformation, trs;
 
     if (selectedCells.length) {
         rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],
             selectedCells.last()[0]);
         trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
     } else {
-        const startContainer = range.startContainer;
-        const endContainer = range.endContainer;
-
-        startCell = $(startContainer).closest('td,th')[0];
-        endCell = $(endContainer).closest('td,th')[0];
-        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
-        trs = getSelectedRows(startCell, rangeInformation, $table);
+        const cell = $(range.startContainer).closest('td,th')[0];
+        rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
+        trs = getSelectedRows(cell, rangeInformation, $table);
     }
 
     return trs;

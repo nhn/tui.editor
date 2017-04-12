@@ -1,5 +1,9 @@
-import {_removeColumns} from '../../../src/js/extensions/table/mergedTableRemoveCol';
+import RemoveCol, {_removeColumns} from '../../../src/js/extensions/table/mergedTableRemoveCol';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
+import WwMergedTableSelectionManager from '../../../src/js/extensions/table/wwMergedTableSelectionManager';
+import WwMergedTableManager from '../../../src/js/extensions/table/wwMergedTableManager';
+import WysiwygEditor from '../../../src/js/wysiwygEditor';
+import EventManager from '../../../src/js/eventManager';
 
 describe('mergedTableRemoveCol', () => {
     describe('_removeColumns()', () => {
@@ -161,6 +165,61 @@ describe('mergedTableRemoveCol', () => {
 
             expect(tableData[0].length).toBe(3);
             expect(tableData[1][0].colspan).toBe(3);
+        });
+    });
+
+    describe('RemoveCol command with browser selection', () => {
+        let wwe;
+
+        beforeEach(() => {
+            const $container = $('<div />');
+
+            $('body').append($container);
+
+            wwe = new WysiwygEditor($container, new EventManager());
+
+            wwe.init();
+            wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
+            wwe.componentManager.addManager('table', WwMergedTableManager);
+
+            wwe.getEditor().focus();
+            if (tui.util.browser.firefox) {
+                wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
+            }
+        });
+
+        //we need to wait squire input event process
+        afterEach(done => {
+            setTimeout(() => {
+                $('body').empty();
+                done();
+            });
+        });
+
+        it('remove only one column at start range even if there are multiple tds in range', () => {
+            const sq = wwe.getEditor(),
+                range = sq.getSelection().cloneRange();
+
+            sq.setHTML([
+                '<table>',
+                    '<thead>',
+                        '<tr><th>1</th><th>2</th></tr>',
+                    '</thead>',
+                    '<tbody>',
+                        '<tr><td>3</td><td>4</td></tr>',
+                        '<tr><td>5</td><td>6</td></tr>',
+                    '</tbody>',
+                '</table>'
+            ].join('\n'));
+
+            range.setStartBefore(wwe.get$Body().find('tbody tr:nth-child(1) td:nth-child(1)')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody tr:nth-child(2) td:nth-child(1)')[0].firstChild);
+            sq.setSelection(range);
+
+            RemoveCol.exec(wwe);
+
+            expect(wwe.get$Body().find('thead th').length).toEqual(1);
+            expect(wwe.get$Body().find('tbody td').length).toEqual(2);
         });
     });
 });

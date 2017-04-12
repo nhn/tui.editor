@@ -29,8 +29,11 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
         sq.focus();
+        // IE 800a025e error on removing part of selection range. collpase
+        range.collapse(true);
+        sq.setSelection(range);
 
-        if (sq.hasFormat('TR') && isAbleToRemoveColumn) {
+        if (sq.hasFormat('TR', null, range) && isAbleToRemoveColumn) {
             sq.saveUndoState(range);
             const $cell = getCellByRange(range);
             const $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
