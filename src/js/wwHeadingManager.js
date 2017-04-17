@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 const FIND_HEADING_RX = /h[\d]/i;
 
@@ -145,11 +144,10 @@ class WwHeadingManager {
         let isHandled = false;
 
         if (range.collapsed && range.startOffset === 0) {
-            const startContainer = range.startContainer;
+            const {startContainer} = range;
             const prevTopNode = domUtils.getTopPrevNodeUnder(startContainer, this.wwe.get$Body()[0]);
             const isPrevTopNodeEmpty = prevTopNode && prevTopNode.textContent.length === 0;
             const sq = this.wwe.getEditor();
-
 
             if (startContainer.textContent.length === 0) {
                 isHandled = this._removeHedingAndChangeSelection(event, range, prevTopNode);
@@ -174,7 +172,7 @@ class WwHeadingManager {
      * @private
      */
     _removeHedingAndChangeSelection(event, range, prevTopNode) {
-        const startContainer = range.startContainer;
+        const {startContainer} = range;
         const sq = this.wwe.getEditor();
         const $Body = this.wwe.get$Body();
         const isHeading = FIND_HEADING_RX.test(domUtils.getNodeName(startContainer));
@@ -190,14 +188,13 @@ class WwHeadingManager {
         $(headingElement).remove();
 
         if (!prevTopNode) {
-            targetNode = $Body.children('div').first()[0];
+            targetNode = $Body.children('div').first().get(0);
             offset = 0;
         }
 
         range.setStart(targetNode, offset);
         range.collapse(true);
         sq.setSelection(range);
-
 
         return true;
     }

@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const util = tui.util;
+const {util} = tui;
 
 /**
  * 템플릿데이터에 객체의 데이터를 삽입해 스트링을 리턴한다.

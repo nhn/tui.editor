@@ -3,10 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 
-const util = tui.util;
+const {util} = tui;
 
 const tagEntities = {
     '&': '&amp;',

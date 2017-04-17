@@ -20,7 +20,7 @@ require('../css/tui-editor-contents.css');
 $.fn.tuiEditorViewOnly = function(...args) {
     let options, instance;
 
-    const el = this[0];
+    const el = this.get(0);
 
     if (el) {
         options = args[0] || {};
@@ -40,5 +40,3 @@ $.fn.tuiEditorViewOnly = function(...args) {
 
     return this;
 };
-
-

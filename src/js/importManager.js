@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * graceful decode uri component
@@ -124,7 +124,7 @@ class ImportManager {
     _processClipboard(evData) {
         const cbData = evData.clipboardData || window.clipboardData;
         const blobItems = cbData && cbData.items;
-        const types = cbData.types;
+        const {types} = cbData;
 
         if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
             this._processBlobItems(blobItems, evData);

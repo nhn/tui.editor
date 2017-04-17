@@ -7,7 +7,7 @@ import LayerPopup from './layerpopup';
 import Tab from './tab';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * PopupAddImage

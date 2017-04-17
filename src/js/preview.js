@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import LazyRunner from './lazyRunner';
 import codeBlockManager from './codeBlockManager';
 
@@ -95,7 +94,7 @@ class Preview {
         const processedDataByHook = this.eventManager.emit('previewBeforeHook', html);
 
         if (processedDataByHook) {
-            finalHtml = processedDataByHook[0];
+            [finalHtml] = processedDataByHook;
         }
 
         this.$previewContent.empty();

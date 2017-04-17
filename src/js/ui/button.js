@@ -6,7 +6,7 @@
 const UIController = require('./uicontroller');
 const Tooltip = require('./tooltip');
 
-const util = tui.util;
+const {util} = tui;
 const tooltip = new Tooltip();
 
 /**

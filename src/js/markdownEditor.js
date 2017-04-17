@@ -3,13 +3,12 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import KeyMapper from './keyMapper';
 import MdTextObject from './mdTextObject';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
 
-const CodeMirror = window.CodeMirror;
+const {CodeMirror} = window;
 const keyMapper = KeyMapper.getSharedInstance();
 
 /**
@@ -168,8 +167,7 @@ class MarkdownEditor {
         this.cm.on('cursorActivity', () => {
             const token = this.cm.getTokenAt(this.cm.getCursor());
 
-            const base = token.state.base;
-            const overlay = token.state.overlay;
+            const {base, overlay} = token.state;
 
             const state = {
                 bold: !!base.strong,

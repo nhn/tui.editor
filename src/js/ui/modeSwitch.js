@@ -6,7 +6,7 @@
 import UIController from './uicontroller';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 const TYPE = {
     MARKDOWN: 'markdown',

@@ -5,7 +5,7 @@
 
 import LayerPopup from './layerpopup';
 
-const util = tui.util;
+const {util} = tui;
 
 /* eslint-disable indent */
 const POPUP_CONTENT = [

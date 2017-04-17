@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -81,7 +80,7 @@ function removeColByCell($cell) {
  * @param {object} tableMgr Table manager instance
  */
 function focusToCell(sq, $cell, tableMgr) {
-    const nextFocusCell = $cell[0];
+    const nextFocusCell = $cell.get(0);
 
     if ($cell.length) {
         const range = sq.getSelection();

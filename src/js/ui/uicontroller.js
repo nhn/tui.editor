@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const util = tui.util;
+const {util} = tui;
 let _id = 0;
 /**
  * UIController 클래스
@@ -64,9 +63,7 @@ UIController.prototype.on = function(aType, aFn) {
  * @private
  */
 UIController.prototype._addEvent = function(type, fn) {
-    const parsedType = this._parseEventType(type),
-        event = parsedType[0],
-        selector = parsedType[1];
+    const {event, selector} = this._parseEventType(type);
 
     if (selector) {
         this.$el.on(event, selector, fn);
@@ -84,9 +81,7 @@ UIController.prototype._addEvent = function(type, fn) {
  */
 UIController.prototype.off = function(type, fn) {
     if (type) {
-        const parsedType = this._parseEventType(type);
-        const event = parsedType[0];
-        const selector = parsedType[1];
+        const {event, selector} = this._parseEventType(type);
 
         if (selector) {
             this.$el.off(event, selector, fn);
@@ -102,14 +97,17 @@ UIController.prototype.off = function(type, fn) {
  * 이벤트 바안딩 텍스트를 전달받아 이벤트 명과 셀렉터로 분리해준다.
  * 'click td' => ['click', 'td]
  * @param {string} type 이벤트쿼리 스트링
- * @returns {array} Event, Selector
+ * @returns {Object} event, selector
  */
 UIController.prototype._parseEventType = function(type) {
     const splitType = type.split(' '),
         event = splitType.shift(),
         selector = splitType.join(' ');
 
-    return [event, selector];
+    return {
+        event,
+        selector
+    };
 };
 
 /**
@@ -146,8 +144,8 @@ UIController.prototype.detachEvents = function() {
  * @param {jQuery} $el 설정할 엘리먼트
  */
 UIController.prototype.setRootElement = function($el) {
-    let className = this.className;
-    const tagName = this.tagName;
+    const {tagName} = this;
+    let {className} = this;
 
     if (!$el) {
         className = className || (`uic${this.id}`);

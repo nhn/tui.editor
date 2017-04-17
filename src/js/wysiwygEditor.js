@@ -21,7 +21,7 @@ import codeBlockManager from './codeBlockManager';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const util = tui.util;
+const {util} = tui;
 
 const FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
@@ -278,7 +278,7 @@ class WysiwygEditor {
 
         if (util.browser.firefox) {
             this.getEditor().addEventListener('keypress', keyboardEvent => {
-                const keyCode = keyboardEvent.keyCode;
+                const {keyCode} = keyboardEvent;
 
                 if (keyCode === 13 || keyCode === 9) {
                     const range = self.getEditor().getSelection();
@@ -415,7 +415,7 @@ class WysiwygEditor {
         let result;
 
         if (foundedListItem) {
-            result = foundedListItem[0];
+            [result] = foundedListItem;
         } else {
             result = '';
         }
@@ -1006,7 +1006,7 @@ class WysiwygEditor {
      */
     _correctRangeAfterMoveCursor(direction) {
         const range = this.getEditor().getSelection().cloneRange();
-        let cursorContainer = this.get$Body()[0];
+        let cursorContainer = this.get$Body().get(0);
 
         if (direction === 'start') {
             while (cursorContainer.firstChild) {

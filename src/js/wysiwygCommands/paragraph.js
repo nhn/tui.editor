@@ -5,7 +5,6 @@
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 /**
  * Paragraph

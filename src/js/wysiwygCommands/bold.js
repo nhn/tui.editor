@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -34,7 +33,6 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
         } else {
             styleBold(sq);
         }
-
 
         const range = sq.getSelection();
         if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {

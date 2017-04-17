@@ -101,7 +101,7 @@ class WwTaskManager {
         ) {
             li = range.startContainer;
         } else {
-            li = $(range.startContainer).parents('li')[0];
+            li = $(range.startContainer).parents('li').get(0);
         }
 
         return $(li).hasClass(TASK_CLASS_NAME);
@@ -185,13 +185,12 @@ class WwTaskManager {
         let nextLine;
 
         if (domUtils.isTextNode(start)) {
-            start = $(start).parents('div').first()[0];
+            start = $(start).parents('div').first().get(0);
         }
 
         if (domUtils.isTextNode(end)) {
-            end = $(end).parents('div').first()[0];
+            end = $(end).parents('div').first().get(0);
         }
-
 
         for (let line = start; needNext; line = nextLine) {
             if ($(line).is(divOrLi)) {
@@ -226,14 +225,14 @@ class WwTaskManager {
         if (isStartInList && line.parentNode.tagName === 'LI') {
             const $nextLI = $(line).parent().next();
 
-            nextLine = $nextLI.children('div').first()[0];
+            nextLine = $nextLI.children('div').first().get(0);
 
             const hasNextLiHaveDivChild = $nextLI[0] && !nextLine;
             const isLastLiInList = !$nextLI[0] && !nextLine;
             if (hasNextLiHaveDivChild) {
-                nextLine = $nextLI[0];
+                nextLine = $nextLI.get(0);
             } else if (isLastLiInList && !isEndPassed) {
-                nextLine = $(line).parents('ol,ul').first().next()[0];
+                nextLine = $(line).parents('ol,ul').first().next().get(0);
             }
         } else {
             nextLine = line.nextElementSibling;

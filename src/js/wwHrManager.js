@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 
 /**
@@ -206,7 +205,7 @@ class WwHrManager {
      * @private
      */
     _unwrapDivOnHr() {
-        const editorContentBody = this.wwe.get$Body()[0];
+        const editorContentBody = this.wwe.get$Body().get(0);
         this.wwe.get$Body().find('hr').each((index, node) => {
             const parentDiv = $(node).parent('div');
             if (parentDiv[0] !== editorContentBody) {
@@ -231,7 +230,6 @@ class WwHrManager {
         });
     }
 }
-
 
 /**
  * findTextNodeFilter

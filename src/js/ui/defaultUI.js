@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import Toolbar from './toolbar';
 import Tab from './tab';
 import Layerpopup from './layerpopup';
@@ -109,7 +108,7 @@ DefaultUI.prototype.markdownTabControl = function() {
 };
 
 DefaultUI.prototype._initMarkdownTab = function() {
-    const editor = this.editor;
+    const {editor} = this;
 
     this.markdownTab = new Tab({
         items: ['Editor', 'Preview'],

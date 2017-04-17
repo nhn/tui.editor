@@ -6,7 +6,7 @@
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * WwPasteContentHelper
@@ -46,7 +46,7 @@ class WwPasteContentHelper {
         }
 
         while (childNodes.length) {
-            node = childNodes[0];
+            [node] = childNodes;
             nodeName = domUtils.getNodeName(node);
             isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
@@ -196,7 +196,7 @@ class WwPasteContentHelper {
     _removeUnnecessaryBlocks($container, blockTags) {
         $container.find(blockTags).each((index, blockElement) => {
             const $blockElement = $(blockElement);
-            const tagName = blockElement.tagName;
+            const {tagName} = blockElement;
             const isDivElement = tagName === 'DIV';
             const isInListItem = $blockElement.parent('li').length !== 0;
             const isInBlockquote = $blockElement.parent('blockquote').length !== 0;

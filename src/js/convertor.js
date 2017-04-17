@@ -12,10 +12,12 @@ import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBlockManager from './codeBlockManager';
 
-const markdownIt = window.markdownit,
-    toMark = window.toMark;
+const {
+    toMark,
+    markdownit: MarkdownIt
+} = window;
 
-const markdownitHighlight = markdownIt({
+const markdownitHighlight = new MarkdownIt({
     html: true,
     breaks: true,
     quotes: '“”‘’',
@@ -24,7 +26,7 @@ const markdownitHighlight = markdownIt({
         return codeBlockManager.createCodeBlockHtml(type, codeText);
     }
 });
-const markdownit = markdownIt({
+const markdownit = new MarkdownIt({
     html: true,
     breaks: true,
     quotes: '“”‘’',
@@ -235,7 +237,7 @@ class Convertor {
 
     /**
      * Return markdown-it highlight renderer
-     * @returns {markdownIt}
+     * @returns {MarkdownIt}
      */
     static getMarkdownHighlightRenderer() {
         return markdownitHighlight;

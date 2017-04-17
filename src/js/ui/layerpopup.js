@@ -3,10 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import UIController from './uicontroller';
 
-const util = tui.util;
+const {util} = tui;
 const CLASS_PREFIX = 'tui-popup-';
 let _id = 0;
 

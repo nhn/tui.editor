@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import Preview from './preview';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
@@ -11,7 +10,7 @@ import extManager from './extManager';
 import Convertor from './convertor';
 import codeBlockManager from './codeBlockManager';
 
-const util = tui.util;
+const {util} = tui;
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';

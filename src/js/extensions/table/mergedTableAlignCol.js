@@ -8,7 +8,7 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * AlignCol

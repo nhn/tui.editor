@@ -6,7 +6,7 @@
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * PopupHeading

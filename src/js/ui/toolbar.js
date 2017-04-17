@@ -7,7 +7,7 @@ import UIController from './uicontroller';
 import Button from './button';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * Toolbar

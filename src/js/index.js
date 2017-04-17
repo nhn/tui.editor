@@ -36,7 +36,7 @@ require('../css/tui-editor-contents.css');
 $.fn.tuiEditor = function(...args) {
     let options, instance;
 
-    const el = this[0];
+    const el = this.get(0);
 
     if (el) {
         options = args[0] || {};
@@ -56,5 +56,3 @@ $.fn.tuiEditor = function(...args) {
 
     return this;
 };
-
-

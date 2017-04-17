@@ -6,10 +6,10 @@
 import UIController from './uicontroller';
 import templater from './templater';
 
-const util = tui.util;
-/*eslint-disable*/
+const {util} = tui;
+
+// eslint-disable-next-line
 const buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
-/*eslint-enable*/
 
 /**
  * Tab

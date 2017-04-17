@@ -3,8 +3,8 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-const util = tui.util;
-const hljs = window.hljs;
+const {util} = tui;
+const {hljs} = window;
 
 const CUSTOM_CODE_BLOCK_CLASS_NAME = 'tui-editor-custom-code-block';
 
@@ -117,7 +117,7 @@ class CodeBlockManager {
      */
     replaceElements($container, isViewOnly, isWysiwygMode) {
         const $codeBlocks = $container.find(`.${CUSTOM_CODE_BLOCK_CLASS_NAME}`);
-        const containerElement = $container[0];
+        const containerElement = $container.get(0);
         const viewMode = this._getViewMode(isViewOnly, isWysiwygMode);
         const replaceElement = $.proxy(this._replaceElement, this);
         const timestamp = (new Date()).getTime();
@@ -191,7 +191,6 @@ class CodeBlockManager {
         return sharedInstance;
     }
 }
-
 
 /**
  * escape code from markdown-it

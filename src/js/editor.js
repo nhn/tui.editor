@@ -59,7 +59,7 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-const util = tui.util;
+const {util} = tui;
 
 const __nedInstance = [];
 
