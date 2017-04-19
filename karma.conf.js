@@ -8,6 +8,11 @@ const webdriverConfig = {
 };
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+/**
+ * manipulate config by server
+ * @param {Object} defaultConfig - base configuration
+ * @param {('ne'|'sl'|null|undefined)} server - ne: team selenium grid, sl: saucelabs, null or undefined: local machine
+ */
 function setConfig(defaultConfig, server) {
     if (server === 'ne') {
         defaultConfig.customLaunchers = {
@@ -35,13 +40,15 @@ function setConfig(defaultConfig, server) {
             }
         };
         defaultConfig.concurrency = 1;
+        defaultConfig.reporters = ['narrow', 'junit', 'coverage'];
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {
-            testName: `${pkg.name} ::: ${new Date()}`,
+            testName: `${pkg.name} ::: ${pkg.version} ::: ${new Date()}`,
             username: process.env.SAUCE_USERNAME,
             accessKey: process.env.SAUCE_ACCESS_KEY,
-            startConnect: true
+            startConnect: true,
+            tags: [pkg.name, pkg.version]
         };
         defaultConfig.customLaunchers = {
             sl_chrome: {
@@ -113,7 +120,6 @@ module.exports = function(config) {
             'test/fixtures/*.*',
             'test/test.bundle.js'
         ],
-
 
         // list of files to exclude
         exclude: [],
@@ -191,16 +197,13 @@ module.exports = function(config) {
         // web server port
         port: 9876,
 
-
         // enable / disable colors in the output (reporters and logs)
         colors: true,
-
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR ||
         // config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
-
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
