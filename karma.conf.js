@@ -1,12 +1,12 @@
 /* eslint max-len: 0, no-process-env: 0, object-shorthand: 0, camelcase: 0 */
 
 const pkg = require('./package.json');
-const webpack = require('webpack');
 const webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 function setConfig(defaultConfig, server) {
     if (server === 'ne') {
@@ -34,6 +34,7 @@ function setConfig(defaultConfig, server) {
                 browserName: 'firefox'
             }
         };
+        defaultConfig.concurrency = 1;
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {
@@ -49,12 +50,12 @@ function setConfig(defaultConfig, server) {
                 platform: 'Linux',
                 version: '48'
             },
-            sl_safari: {
-                base: 'SauceLabs',
-                browserName: 'safari',
-                platform: 'OS X 10.11',
-                version: '10'
-            },
+            // sl_safari: {
+            //     base: 'SauceLabs',
+            //     browserName: 'safari',
+            //     platform: 'OS X 10.11',
+            //     version: '10'
+            // },
             sl_firefox: {
                 base: 'SauceLabs',
                 browserName: 'firefox',
@@ -79,10 +80,9 @@ function setConfig(defaultConfig, server) {
         defaultConfig.browserNoActivityTimeout = 30000;
     } else {
         defaultConfig.browsers = [
-            'Chrome',
-            'Firefox',
-            'Safari'
+            'Chrome'
         ];
+        defaultConfig.singleRun = false;
     }
 }
 
@@ -118,7 +118,7 @@ module.exports = function(config) {
         // list of files to exclude
         exclude: [],
 
-        reporters: ['narrow', 'coverage'],
+        reporters: ['progress', 'junit', 'coverage'],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -131,20 +131,26 @@ module.exports = function(config) {
         webpack: {
             devtool: 'inline-source-map',
             module: {
-                loaders: [
+                rules: [
                     {
                         test: /\.js$/,
                         exclude: /node_modules|lib|dist/,
-                        loader: 'babel'
+                        loader: 'babel-loader',
+                        options: {
+                            babelrc: true
+                        }
                     },
                     {
-                        test: /\.css/,
-                        loader: 'style!css'
+                        test: /\.css$/,
+                        loader: ExtractTextPlugin.extract({
+                            fallback: 'style-loader',
+                            use: 'css-loader'
+                        })
                     }
                 ]
             },
             plugins: [
-                new webpack.HotModuleReplacementPlugin()
+                new ExtractTextPlugin(`[name].css`)
             ]
         },
 
@@ -176,6 +182,12 @@ module.exports = function(config) {
             ]
         },
 
+        junitReporter: {
+            outputFile: 'report/junit-result.xml',
+            outputDir: 'report',
+            suite: ''
+        },
+
         // web server port
         port: 9876,
 
@@ -197,7 +209,7 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     };
 
     setConfig(defaultConfig, process.env.KARMA_SERVER);

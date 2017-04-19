@@ -1,15 +1,18 @@
 /* eslint max-len: 0, no-process-env: 0, strict: 0 */
-'use strict';
 
 const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const Visualizer = require('webpack-visualizer-plugin');
 
+const IS_DEV_SERVER = process.argv[1].indexOf('webpack-dev-server') >= 0;
+const IS_HMR = process.argv.indexOf('--hot') >= 0 || process.argv.indexOf('--hotOnly') >= 0;
 const IS_PRODUCTION = process.argv.indexOf('-p') >= 0;
 const ENTRY_MAIN = './src/js/index.js';
 const ENTRY_VIEWONLY = './src/js/indexViewOnly.js';
-const DIST_PATH = path.join(__dirname, 'dist');
+const DIST_DIR_NAME = 'dist';
+const DIST_PATH = path.join(__dirname, DIST_DIR_NAME);
 const DIST_FILE = `[name]${IS_PRODUCTION ? '.min' : ''}.js`;
 const BANNER = [
     pkg.name,
@@ -17,6 +20,7 @@ const BANNER = [
     `@author ${pkg.author}`,
     `@license ${pkg.license}`
 ].join('\n');
+const PUBLIC_PATH = `http://localhost:8080/${DIST_DIR_NAME}/`;
 
 const config = {
     cache: false,
@@ -31,47 +35,65 @@ const config = {
         filename: DIST_FILE
     },
     module: {
-        preLoaders: [
+        rules: [
             {
                 test: /\.js$/,
                 exclude: /node_modules|lib|dist/,
-                loader: 'eslint'
-            }
-        ],
-        loaders: [
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                options: {
+                    configFile: './.eslintrc',
+                    failOnWarning: false,
+                    failOnError: false
+                }
+            },
             {
                 test: /\.js$/,
                 exclude: /node_modules|lib|dist/,
-                loader: 'babel'
+                loader: 'babel-loader',
+                options: {
+                    babelrc: true
+                }
             },
             {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract('style-loader', ['css-loader'])
+                loader: ExtractTextPlugin.extract({
+                    fallback: 'style-loader',
+                    use: 'css-loader'
+                })
             }
         ]
     },
-    eslint: {
-        configFile: './.eslintrc',
-        failOnWarning: false,
-        failOnError: false
-    },
     plugins: [
-        new webpack.BannerPlugin(BANNER),
-        new ExtractTextPlugin(`[name]${IS_PRODUCTION ? '.min' : ''}.css`)
-    ],
-    devServer: {
-        host: '0.0.0.0',
+        new webpack.BannerPlugin({
+            banner: BANNER,
+            raw: false,
+            entryOnly: true
+        }),
+        new ExtractTextPlugin(`[name]${IS_PRODUCTION ? '.min' : ''}.css`),
+        new Visualizer({filename: '../report/webpack/statistics.html'})
+    ]
+};
+if (IS_DEV_SERVER) {
+    config.entry = {
+        'tui-editor': [ENTRY_MAIN, 'webpack-dev-server/client?http://localhost:8080'],
+        'tui-editor-viewonly': [ENTRY_VIEWONLY, 'webpack-dev-server/client?http://localhost:8080']
+    };
+    config.output.publicPath = PUBLIC_PATH;
+    config.devServer = {
         port: 8080,
-        progress: true,
-        cache: true,
-        contentBase: __dirname,
+        publicPath: PUBLIC_PATH,
         noInfo: true,
         inline: true,
-        devtool: '#inline-source-map',
         stats: {
             colors: true
         }
+    };
+    config.devtool = 'inline-source-map';
+
+    if (IS_HMR) {
+        config.plugins.push(new webpack.HotModuleReplacementPlugin());
     }
-};
+}
 
 module.exports = config;
