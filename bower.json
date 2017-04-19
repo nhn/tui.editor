@@ -1,6 +1,5 @@
 {
   "name": "tui-editor",
-  "version": "0.12.10",
   "description": "private",
   "authors": [
     {
@@ -13,9 +12,7 @@
   ],
   "main": [
     "dist/tui-editor.js",
-    "dist/tui-editor.min.js",
-    "dist/tui-editor.css",
-    "dist/tui-editor-contents.css"
+    "dist/tui-editor.css"
   ],
   "license": "MIT",
   "ignore": [
@@ -28,16 +25,19 @@
   ],
   "keywords": [],
   "dependencies": {
-    "tui-code-snippet": "1.2.1",
-    "codemirror": "~5.19.0",
-    "highlightjs": "~9.5.0",
+    "tui-code-snippet": "^1.2.4",
+    "codemirror": "^5.25.0",
+    "highlightjs": "^9.10.0",
     "jquery": "~2.1.4",
-    "markdown-it": "^7.0.1",
+    "markdown-it": "^8.3.1",
     "toMark": "https://github.com/nhnent/toMark.git#0.0.14",
     "squire-rte": "https://github.com/kyuwoo-choi/Squire.git#9a080e7d2ef8ea08d885ee3a1cbc28965f097eb3"
   },
   "devDependencies": {
-    "tui-component-colorpicker": "~1.0.2"
+    "tui-component-colorpicker": "~1.0.2",
+    "tui-code-snippet": "^1.2.4",
+    "codemirror": "5.25.0",
+    "highlightjs": "9.10.0"
   },
   "resolutions": {
     "jquery": "~2.1.4",

@@ -106,7 +106,7 @@ module.exports = function(config) {
         // list of files / patterns to load in the browser
         files: [
             'lib/jquery/dist/jquery.js',
-            'lib/tui-code-snippet/code-snippet.js',
+            'lib/tui-code-snippet/dist/code-snippet.js',
             'lib/tui-component-colorpicker/dist/colorpicker.js',
             'lib/toMark/dist/toMark.js',
             'lib/highlightjs/highlight.pack.js',
