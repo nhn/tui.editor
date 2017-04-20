@@ -34,7 +34,7 @@
     "jquery": "~2.1.4",
     "markdown-it": "^7.0.1",
     "toMark": "https://github.com/nhnent/toMark.git#0.0.14",
-    "squire-rte": "https://github.com/kyuwoo-choi/Squire.git#9a080e7d2ef8ea08d885ee3a1cbc28965f097eb3"
+    "squire-rte": "kyuwoo-choi/Squire#tui-editor-release"
   },
   "devDependencies": {
     "tui-component-colorpicker": "~1.0.2"
