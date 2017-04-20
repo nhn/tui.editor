@@ -1749,6 +1749,14 @@ proto.insertHTML = function ( html, isPaste ) {
         }
         // Parse HTML into DOM tree
         div = this.createElement( 'DIV' );
+        // wrap with tr if html contains dangling td tags
+        if (html.match(/<\/td>((?!<\/tr>)[\s\S])*$/i)) {
+            html = '<TR>' + html + '</TR>';
+        }
+        // wrap with table if html contains dangling tr tags
+        if (html.match(/<\/tr>((?!<\/table>)[\s\S])*$/i)) {
+            html = '<TABLE>' + html + '</TABLE>';
+        } 
         div.innerHTML = html;
         frag = doc.createDocumentFragment();
         frag.appendChild( empty( div ) );

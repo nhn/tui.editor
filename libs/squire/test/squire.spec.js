@@ -351,6 +351,18 @@ describe('Squire RTE', function () {
       })
     });
 
+    describe('insertHTML', function() {
+        it('fix CF_HTML incomplete table', function() {
+            editor.insertHTML('<table><tbody><tr><!--StartFragment--><td>text</td><!--EndFragment--></tr></tbody></table>');
+            expect(editor.getHTML(), 'to contain', '<table><tbody><tr><td>text<br></td></tr></tbody></table>');
+
+            editor.setHTML('');
+
+            editor.insertHTML('<table><tbody><!--StartFragment--><tr><td>text1</td><td>text2</td></tr><!--EndFragment--></tbody></table>');
+            expect(editor.getHTML(), 'to contain', '<table><tbody><tr><td>text1<br></td><td>text2<br></td></tr></tbody></table>');
+        });
+    });
+
     afterEach(function () {
         editor = null;
         var iframe = document.getElementById('testFrame');
