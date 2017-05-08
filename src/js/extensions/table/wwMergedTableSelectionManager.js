@@ -67,7 +67,7 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
      * @param {HTMLElement} selectionStart - start element
      */
     onDragStart(selectionStart) {
-        const $table = $(selectionStart).closest('table');
+        const $table = $(selectionStart).closest('[contenteditable=true] table');
         this._tableData = tableDataHandler.createTableData($table);
     }
 
@@ -87,7 +87,7 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     highlightTableCellsBy(selectionStart, selectionEnd) {
         const $start = $(selectionStart);
         const $end = $(selectionEnd);
-        const $table = $start.closest('table');
+        const $table = $start.closest('[contenteditable=true] table');
         const tableRange = tableRangeHandler.findSelectionRange(this._tableData, $start, $end);
 
         this.removeClassAttrbuteFromAllCellsIfNeed();
@@ -101,7 +101,7 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
     styleToSelectedCells(onStyle) {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const $table = $(range.startContainer).closest('table');
+        const $table = $(range.startContainer).closest('[contenteditable=true] table');
 
         $table.find('tr').get().forEach(tr => {
             const cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
