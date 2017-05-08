@@ -233,10 +233,11 @@ class WwTableManager {
 
         if (range.collapsed) {
             target = range.startContainer;
-            result = !!$(target).closest('table').length;
+            result = !!$(target).closest('[contenteditable=true] table').length;
         } else {
             target = range.commonAncestorContainer;
-            result = !!$(target).closest('table').length || !!$(range.cloneContents()).find('table').length;
+            result = (!!$(target).closest('[contenteditable=true] table').length
+                || !!$(range.cloneContents()).find('table').length);
         }
 
         return result;
