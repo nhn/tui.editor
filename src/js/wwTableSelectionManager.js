@@ -75,10 +75,10 @@ class WwTableSelectionManager {
         this._isSelectionStarted = false;
 
         const onMouseover = ev => {
-            selectionEnd = $(ev.data.target).closest('td,th').get(0);
+            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
 
             const range = this.wwe.getEditor().getSelection();
-            const isEndsInTable = $(selectionEnd).parents('table').get(0);
+            const isEndsInTable = $(selectionEnd).parents('[contenteditable=true] table').get(0);
             const isSameCell = selectionStart === selectionEnd;
             const isTextSelect = this._isTextSelect(range, isSameCell) &&
                   !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
@@ -105,7 +105,7 @@ class WwTableSelectionManager {
         };
 
         const onMouseup = ev => {
-            selectionEnd = $(ev.data.target).closest('td,th').get(0);
+            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
 
             let range = this.wwe.getEditor().getSelection();
             const isSameCell = selectionStart === selectionEnd;
@@ -144,7 +144,7 @@ class WwTableSelectionManager {
 
         const onMousedown = ev => {
             const MOUSE_RIGHT_BUTTON = 2;
-            selectionStart = $(ev.data.target).closest('td,th').get(0);
+            selectionStart = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
             const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
             selectionEnd = null;
 
@@ -184,7 +184,7 @@ class WwTableSelectionManager {
      * @param {HTMLElement} selectionStart Start element
      */
     setTableSelectionTimerIfNeed(selectionStart) {
-        const isTableSelecting = $(selectionStart).parents('table').length;
+        const isTableSelecting = $(selectionStart).parents('[contenteditable=true] table').length;
 
         if (isTableSelecting) {
             this._isSelectionStarted = true;
@@ -212,15 +212,15 @@ class WwTableSelectionManager {
      * @private
      */
     _reArrangeSelectionIfneed(selectionStart, selectionEnd) {
-        const isRangeStartInTable = $(selectionStart).parents('table').length;
-        const isRangeEndInTable = $(selectionEnd).parents('table').length;
+        const isRangeStartInTable = $(selectionStart).parents('[contenteditable=true] table').length;
+        const isRangeEndInTable = $(selectionEnd).parents('[contenteditable=true] table').length;
         const isStartRangeOut = isRangeEndInTable && !isRangeStartInTable;
         const isEndRangeOut = !isRangeEndInTable && isRangeStartInTable;
 
         if (isStartRangeOut) {
-            selectionStart = $(selectionEnd).parents('table').find('th').first().get(0);
+            selectionStart = $(selectionEnd).parents('[contenteditable=true] table').find('th').first().get(0);
         } else if (isEndRangeOut) {
-            selectionEnd = $(selectionStart).parents('table').find('td').last().get(0);
+            selectionEnd = $(selectionStart).parents('[contenteditable=true] table').find('td').last().get(0);
         }
 
         return {
@@ -241,8 +241,8 @@ class WwTableSelectionManager {
         const nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
         const selectionStart = selectionInformation.startContainer;
         const selectionEnd = selectionInformation.endContainer;
-        const rowDirection = nodeOffsetOfParent($(selectionStart).closest('tr')[0])
-            - nodeOffsetOfParent($(selectionEnd).closest('tr')[0]);
+        const rowDirection = nodeOffsetOfParent($(selectionStart).closest('[contenteditable=true] tr')[0])
+            - nodeOffsetOfParent($(selectionEnd).closest('[contenteditable=true] tr')[0]);
         const cellDirection = nodeOffsetOfParent(selectionStart) - nodeOffsetOfParent(selectionEnd);
         const isSameRow = (rowDirection === 0);
         const isRowIncreases = (rowDirection < 0);
@@ -265,16 +265,6 @@ class WwTableSelectionManager {
         }
 
         return range;
-    }
-
-    /**
-     * Get table cell element
-     * @param {Node | HTMLElement} node textNode or table cell element
-     * @returns {HTMLElement}
-     * @private
-     */
-    _getTableCell(node) {
-        return node.nodeType === 3 ? $(node).parent('td,th')[0] : node;
     }
 
     /**
@@ -338,7 +328,7 @@ class WwTableSelectionManager {
      * @param {HTMLElement} selectionEnd end element
      */
     highlightTableCellsBy(selectionStart, selectionEnd) {
-        const trs = $(selectionStart).parents('table').find('tr');
+        const trs = $(selectionStart).parents('[contenteditable=true] table').find('tr');
         const selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
         const rowFrom = selection.from.row;
         const cellFrom = selection.from.cell;
