@@ -22,7 +22,7 @@ describe('WwTableSelectionManager', () => {
         wwe.componentManager.addManager(WwTableManager);
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -166,16 +166,6 @@ describe('WwTableSelectionManager', () => {
 
             expect(newRange.startContainer).toBe($ths[0]);
             expect(newRange.endContainer).toBe($tds[2]);
-        });
-    });
-    describe('_getTableCell', () => {
-        it('should return td when td element passed', () => {
-            const result = mgr._getTableCell($('<td></td>')[0]);
-            expect(result.nodeName).toBe('TD');
-        });
-        it('should return td when td element passed', () => {
-            const result = mgr._getTableCell($('<td>hi</td>')[0].firstChild);
-            expect(result.nodeName).toBe('TD');
         });
     });
     describe('getSelectionRangeFromTable', () => {
