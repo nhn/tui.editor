@@ -4201,6 +4201,14 @@ proto.insertHTML = function ( html, isPaste ) {
                 html = html.slice( startFragmentIndex + 20, endFragmentIndex );
             }
         }
+        // Wrap with <tr> if html contains dangling <td> tags
+        if ( /<\/td>((?!<\/tr>)[\s\S])*$/i.test( html ) ) {
+            html = '<TR>' + html + '</TR>';
+        }
+        // Wrap with <table> if html contains dangling <tr> tags
+        if ( /<\/tr>((?!<\/table>)[\s\S])*$/i.test( html ) ) {
+            html = '<TABLE>' + html + '</TABLE>';
+        }
         // Parse HTML into DOM tree
         div = this.createElement( 'DIV' );
         div.innerHTML = html;
