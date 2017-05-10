@@ -255,7 +255,7 @@ proto.fireEvent = function ( type, event ) {
     // focus event to fire after the blur event, which can cause an infinite
     // loop. So we detect whether we're actually focused/blurred before firing.
     if ( /^(?:focus|blur)/.test( type ) ) {
-        isFocused = isOrContains( this._root, this._doc.activeElement );
+        isFocused = this._root === this._doc.activeElement;
         if ( type === 'focus' ) {
             if ( !isFocused || this._isFocused ) {
                 return this;
