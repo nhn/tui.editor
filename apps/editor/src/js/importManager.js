@@ -82,18 +82,19 @@ class ImportManager {
     /**
      * Emit add image blob hook
      * @memberOf ImportManager
-     * @param {object} item item
+     * @param {object} item - item
+     * @param {string} type - type of an event the item belongs to. paste or drop
      * @private
      */
-    _emitAddImageBlobHook(item) {
+    _emitAddImageBlobHook(item, type) {
         const blob = item.name ? item : item.getAsFile(); // Blob or File
 
-        this.eventManager.emit('addImageBlobHook', blob, url => {
+        this.eventManager.emit('addImageBlobHook', blob, (imageUrl, altText) => {
             this.eventManager.emit('command', 'AddImage', {
-                imageUrl: url,
-                altText: blob.name || 'image'
+                imageUrl,
+                altText: altText || blob.name || 'image'
             });
-        });
+        }, type);
     }
 
     /**
@@ -144,7 +145,7 @@ class ImportManager {
                 if (item.type.indexOf('image') !== -1) {
                     evData.preventDefault();
                     evData.codemirrorIgnore = true;
-                    this._emitAddImageBlobHook(item);
+                    this._emitAddImageBlobHook(item, evData.type);
 
                     return false;
                 }

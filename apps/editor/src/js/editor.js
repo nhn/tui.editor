@@ -64,6 +64,13 @@ const util = tui.util;
 const __nedInstance = [];
 
 /**
+ * @callback addImageBlobHook
+ * @param  {File} blob - image blob
+ * @param  {callback} callback - callback function to be called after
+ * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+ */
+
+/**
  * ToastUI Editor
  * @exports ToastUIEditor
  * @constructor
@@ -81,7 +88,7 @@ const __nedInstance = [];
          * @param {function} options.events.blur It would be emitted when editor loose focus
      * @param {object} options.hooks Hook list
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-         * @param {function} options.hooks.addImageBlobHook hook for image upload.
+         * @param {addImageBlobHook} options.hooks.addImageBlobHook hook for image upload.
     * @param {string} language language
     * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
     * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
