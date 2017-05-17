@@ -54,7 +54,7 @@ function PopupAddImage(options) {
 
     this._bindContentEvent();
     this._linkWithEventManager();
-    this._initApplyImageBindContext();
+    // this._initApplyImageBindContext();
 }
 
 PopupAddImage.prototype = util.extend(
@@ -94,52 +94,40 @@ PopupAddImage.prototype._bindContentEvent = function() {
 };
 
 PopupAddImage.prototype._linkWithEventManager = function() {
-    const self = this;
-
     this.eventManager.listen('focus', () => {
-        self.hide();
+        this.hide();
     });
 
     this.eventManager.listen('openPopupAddImage', () => {
-        self.eventManager.emit('closeAllPopup');
-        self.show();
+        this.eventManager.emit('closeAllPopup');
+        this.show();
     });
 
     this.eventManager.listen('closeAllPopup', () => {
-        self.hide();
+        this.hide();
     });
 
     this.on('okButtonClicked', () => {
-        if (self._isUrlType()) {
-            self.applyImage();
+        const imageUrl = this.$el.find('.te-image-url-input').val();
+        const altText = this.$el.find('.te-alt-text-input').val();
+
+        if (imageUrl) {
+            this.applyImage(imageUrl, altText);
         } else {
-            self._preAltValue = self.$el.find('.te-alt-text-input').val();
-            self.eventManager.emit('addImageBlobHook',
-                                    self.$el.find('.te-image-file-input')[0].files[0],
-                                    self.applyImage);
+            this.eventManager.emit('addImageBlobHook',
+                this.$el.find('.te-image-file-input')[0].files[0],
+                (url, text) => this.applyImage(url, altText || text),
+                'ui');
         }
     });
 };
 
-PopupAddImage.prototype._initApplyImageBindContext = function() {
-    const self = this;
-
-    this.applyImage = function(url) {
-        let info;
-
-        if (url) {
-            info = self._getImageInfoWithGivenUrl(url);
-        } else {
-            info = self._getImageInfo();
-        }
-
-        self.eventManager.emit('command', 'AddImage', info);
-        self.hide();
-    };
-};
-
-PopupAddImage.prototype._isUrlType = function() {
-    return !!this.$el.find('.te-image-url-input').val();
+PopupAddImage.prototype.applyImage = function(imageUrl, altText) {
+    this.eventManager.emit('command', 'AddImage', {
+        imageUrl,
+        altText: altText || 'image'
+    });
+    this.hide();
 };
 
 /**
@@ -158,27 +146,6 @@ PopupAddImage.prototype._renderContent = function() {
     });
 
     this.$body.find('.te-tab-section').append(this.tab.$el);
-};
-
-PopupAddImage.prototype._getImageInfoWithGivenUrl = function(imageUrl) {
-    const altText = this._preAltValue;
-    this._preAltValue = '';
-
-    return this._makeImageInfo(imageUrl, altText);
-};
-
-PopupAddImage.prototype._getImageInfo = function() {
-    const imageUrl = this.$el.find('.te-image-url-input').val(),
-        altText = this.$el.find('.te-alt-text-input').val();
-
-    return this._makeImageInfo(imageUrl, altText);
-};
-
-PopupAddImage.prototype._makeImageInfo = function(url, alt) {
-    return {
-        imageUrl: url,
-        altText: alt
-    };
 };
 
 PopupAddImage.prototype._getImageFileForm = function() {
