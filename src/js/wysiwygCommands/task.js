@@ -32,7 +32,7 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
             endOffset
          } = range;
 
-        sq.focus();
+        wwe.focus();
 
         sq.saveUndoState(range);
 

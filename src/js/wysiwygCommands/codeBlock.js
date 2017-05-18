@@ -44,7 +44,7 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
             codeBlockID += 1;
         }
 
-        sq.focus();
+        wwe.focus();
     }
 });
 

@@ -24,7 +24,7 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             wwe.unwrapBlockTag();

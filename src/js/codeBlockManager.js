@@ -180,6 +180,15 @@ class CodeBlockManager {
     }
 
     /**
+     * gets supported languages by highlight.js
+     * @returns {string[]} - list of supportedLanguages
+     * @memberof CodeBlockManager
+     */
+    get supportedLanguages() {
+        return hljs.listLanguages();
+    }
+
+    /**
      * Get shared instance to CodeBlockManager.
      * @returns {CodeBlockManager}
      */

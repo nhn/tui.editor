@@ -32,7 +32,7 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
             endOffset
         } = range;
 
-        sq.focus();
+        wwe.focus();
         sq.saveUndoState(range);
 
         const lines = listManager.getLinesOfSelection(startContainer, endContainer);

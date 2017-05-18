@@ -26,7 +26,7 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
         const sq = wwe.getEditor();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
             tableSelectionManager.styleToSelectedCells(styleBold);

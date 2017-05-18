@@ -26,7 +26,7 @@ const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
         const range = sq.getSelection().cloneRange();
         let $cell;
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);

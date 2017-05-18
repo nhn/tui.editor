@@ -29,7 +29,7 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

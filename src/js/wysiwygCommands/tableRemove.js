@@ -31,7 +31,7 @@ const RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
             $table.remove();
         }
 
-        sq.focus();
+        wwe.focus();
     }
 });
 

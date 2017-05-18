@@ -27,7 +27,7 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
         const range = sq.getSelection();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
             tableSelectionManager.styleToSelectedCells(styleItalic);

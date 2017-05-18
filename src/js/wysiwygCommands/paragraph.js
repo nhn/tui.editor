@@ -23,7 +23,7 @@ const Paragraph = CommandManager.command('wysiwyg', /** @lends Paragraph */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             sq.modifyBlocks(fragment => {

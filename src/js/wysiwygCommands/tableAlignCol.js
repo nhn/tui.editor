@@ -28,7 +28,7 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         const selectionMgr = wwe.componentManager.getManager('tableSelection');
         const rangeInformation = getRangeInformation(range, selectionMgr);
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);

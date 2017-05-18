@@ -27,7 +27,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const tableMgr = wwe.componentManager.getManager('table');
         const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
-        sq.focus();
+        wwe.focus();
         // IE 800a025e error on removing part of selection range. collpase
         range.collapse(true);
         sq.setSelection(range);

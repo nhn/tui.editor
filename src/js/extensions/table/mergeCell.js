@@ -20,7 +20,7 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

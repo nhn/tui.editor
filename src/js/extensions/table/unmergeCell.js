@@ -20,7 +20,7 @@ const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;
