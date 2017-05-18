@@ -410,7 +410,7 @@ class WwMergedTableManager extends WwTableManager {
             this._bookmarkLastTd(endCellIndex);
         } else {
             alert(alertMessage);
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
         }
     }
 
@@ -498,7 +498,7 @@ class WwMergedTableManager extends WwTableManager {
 
         if (this._hasRowMergedHeader(clipboardTableData, tableData, startCellIndex)) {
             alert(i18n.get('Cannot paste row merged cells into the table header'));
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
 
             return;
         }
@@ -512,7 +512,7 @@ class WwMergedTableManager extends WwTableManager {
             this._bookmarkLastTd(endCellIndex);
         } else {
             alert(i18n.get('Cannot change part of merged cell'));
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
         }
     }
 

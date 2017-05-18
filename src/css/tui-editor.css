@@ -740,3 +740,69 @@
     width: 100px;
     height: 100px;
 }
+
+.tui-editor-contents pre code::before,
+.tui-editor-contents pre[data-te-codeblock]::before {
+    content: ' ' attr(data-language);
+    display: block;
+    height: 20px;
+    padding: 5px 0px 5px 0px;
+    margin: -18px -18px 18px -18px;
+    background-color: #777777;
+    color: #f5f7f8;
+}
+
+.te-ww-block-overlay.code-block-header input[type=text] {
+    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-size: 13px;
+    padding: 4px 5px;
+    border: none;
+    box-sizing: border-box;
+    height: 24px;
+    width: 200px;
+    background-color: #777777;
+    color: #f5f7f8;
+    outline: none;
+    margin-left: 2px;
+    margin-top: 2px;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-webkit-input-placeholder {
+    color: #aaaaaa;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-moz-placeholder {
+   color: #aaaaaa;
+   opacity: 1;
+}
+.te-ww-block-overlay.code-block-header input[type=text]:-ms-input-placeholder {
+   color: #aaaaaa;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-ms-input-placeholder {
+   color: #aaaaaa;
+}
+
+.te-popup-code-block-languages {
+    position: absolute;
+    width: 180px;
+}
+
+.te-popup-code-block-languages .tui-popup-body {
+    max-height: 169px;
+    overflow: auto;
+    padding: 0px 5px;
+}
+
+.te-popup-code-block-languages button {
+    width: 100%;
+    background-color: #fff;
+    border: none;
+    outline: 0;
+    padding: 0px 10px 0px 10px;
+    font-size: 12px;
+    line-height: 24px;
+    text-align: left;
+    color: #777;
+}
+
+.te-popup-code-block-languages button.active {
+    background-color: #f4f4f4;
+}

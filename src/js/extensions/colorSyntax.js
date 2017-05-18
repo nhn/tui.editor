@@ -89,7 +89,7 @@ extManager.defineExtension('colorSyntax', editor => {
                     }
                 }
 
-                sq.focus();
+                wwe.focus();
             }
         });
 

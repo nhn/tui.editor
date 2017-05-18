@@ -177,7 +177,7 @@
         "lines-around-comment": 0,
         "lines-around-directive": 2,
         "max-depth": [2, 3],
-        "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreStrings": true, "ignoreComments": true, "ignoreRegExpLiterals": true}],
+        "max-len": [2, {"code": 120, "tabWidth": 4, "ignoreStrings": true, "ignoreComments": true, "ignoreRegExpLiterals": true, "ignoreTemplateLiterals": true}],
         "max-nested-callbacks": [2, 3],
         "max-params": [2, 5],
         "max-statements": 0,

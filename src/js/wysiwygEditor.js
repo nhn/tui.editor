@@ -18,6 +18,7 @@ import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
 import codeBlockManager from './codeBlockManager';
+import CodeBlockGadget from './ui/codeBlockGadget';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -90,6 +91,12 @@ class WysiwygEditor {
 
         this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
         this.$editorContainerEl.css('position', 'relative');
+
+        this.codeBlockGadget = new CodeBlockGadget({
+            eventManager: this.eventManager,
+            container: this.$editorContainerEl,
+            languages: this._options.codeBlockLanguages
+        });
     }
 
     /**
@@ -110,11 +117,8 @@ class WysiwygEditor {
      * @private
      */
     _initEvent() {
-        const self = this;
-
-        this.eventManager.listen('wysiwygSetValueBefore', html => self._preprocessForInlineElement(html));
-
-        this.eventManager.listen('wysiwygKeyEvent', ev => self._runKeyEventHandlers(ev.data, ev.keyMap));
+        this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
+        this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
     }
 
     /**
@@ -190,16 +194,15 @@ class WysiwygEditor {
      * @private
      */
     _initSquireEvent() {
-        const self = this;
         let isNeedFirePostProcessForRangeChange = false;
 
         this.getEditor().addEventListener('copy', clipboardEvent => {
-            self.eventManager.emit('copy', {
+            this.eventManager.emit('copy', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
-                self.eventManager.emit('copyAfter', {
+                this.eventManager.emit('copyAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
@@ -207,12 +210,12 @@ class WysiwygEditor {
         });
 
         this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
-            self.eventManager.emit('cut', {
+            this.eventManager.emit('cut', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
-                self.eventManager.emit('cutAfter', {
+                this.eventManager.emit('cutAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
@@ -220,7 +223,7 @@ class WysiwygEditor {
         });
 
         this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
-            self.eventManager.emit('paste', {
+            this.eventManager.emit('paste', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
@@ -235,7 +238,7 @@ class WysiwygEditor {
         this.getEditor().addEventListener('drop', ev => {
             ev.preventDefault();
 
-            self.eventManager.emit('drop', {
+            this.eventManager.emit('drop', {
                 source: 'wysiwyg',
                 data: ev
             });
@@ -246,34 +249,34 @@ class WysiwygEditor {
         // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
         // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
         this.getEditor().addEventListener('input', util.debounce(() => {
-            if (!self._silentChange && self.isEditorValid()) {
+            if (!this._silentChange && this.isEditorValid()) {
                 const eventObj = {
                     source: 'wysiwyg'
                 };
 
-                self.eventManager.emit('changeFromWysiwyg', eventObj);
-                self.eventManager.emit('change', eventObj);
-                self.eventManager.emit('contentChangedFromWysiwyg', self);
+                this.eventManager.emit('changeFromWysiwyg', eventObj);
+                this.eventManager.emit('change', eventObj);
+                this.eventManager.emit('contentChangedFromWysiwyg', this);
             } else {
-                self._silentChange = false;
+                this._silentChange = false;
             }
 
-            self.getEditor().preserveLastLine();
+            this.getEditor().preserveLastLine();
         }, 0));
 
         this.getEditor().addEventListener('keydown', keyboardEvent => {
-            const range = self.getEditor().getSelection();
+            const range = this.getEditor().getSelection();
 
             if (!range.collapsed) {
                 isNeedFirePostProcessForRangeChange = true;
             }
 
-            self.eventManager.emit('keydown', {
+            this.eventManager.emit('keydown', {
                 source: 'wysiwyg',
                 data: keyboardEvent
             });
 
-            self._onKeyDown(keyboardEvent);
+            this._onKeyDown(keyboardEvent);
         });
 
         if (util.browser.firefox) {
@@ -281,25 +284,25 @@ class WysiwygEditor {
                 const {keyCode} = keyboardEvent;
 
                 if (keyCode === 13 || keyCode === 9) {
-                    const range = self.getEditor().getSelection();
+                    const range = this.getEditor().getSelection();
 
                     if (!range.collapsed) {
                         isNeedFirePostProcessForRangeChange = true;
                     }
 
-                    self.eventManager.emit('keydown', {
+                    this.eventManager.emit('keydown', {
                         source: 'wysiwyg',
                         data: keyboardEvent
                     });
 
-                    self._onKeyDown(keyboardEvent);
+                    this._onKeyDown(keyboardEvent);
                 }
             });
 
             // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
             // 이렇게 하지 않으면 textObject에 문제가 생긴다.
-            self.getEditor().addEventListener('keyup', () => {
-                const range = self.getRange();
+            this.getEditor().addEventListener('keyup', () => {
+                const range = this.getRange();
 
                 if (domUtils.isTextNode(range.commonAncestorContainer)
                     && domUtils.isTextNode(range.commonAncestorContainer.previousSibling)) {
@@ -314,7 +317,7 @@ class WysiwygEditor {
 
                     curEl.parentNode.removeChild(curEl);
 
-                    self.getEditor().setSelection(range);
+                    this.getEditor().setSelection(range);
                     range.detach();
                 }
             });
@@ -322,66 +325,73 @@ class WysiwygEditor {
 
         this.getEditor().addEventListener('keyup', keyboardEvent => {
             if (isNeedFirePostProcessForRangeChange) {
-                self.debouncedPostProcessForChange();
+                this.debouncedPostProcessForChange();
                 isNeedFirePostProcessForRangeChange = false;
             }
 
-            self.eventManager.emit('keyup', {
+            this.eventManager.emit('keyup', {
                 source: 'wysiwyg',
                 data: keyboardEvent
             });
         });
 
-        this.getEditor().addEventListener('scroll', ev => {
-            self.eventManager.emit('scroll', {
+        this.$editorContainerEl.on('scroll', ev => {
+            this.eventManager.emit('scroll', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('click', ev => {
-            self.eventManager.emit('click', {
+            this.eventManager.emit('click', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mousedown', ev => {
-            self.eventManager.emit('mousedown', {
+            this.eventManager.emit('mousedown', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mouseover', ev => {
-            self.eventManager.emit('mouseover', {
+            this.eventManager.emit('mouseover', {
+                source: 'wysiwyg',
+                data: ev
+            });
+        });
+
+        this.getEditor().addEventListener('mouseout', ev => {
+            this.eventManager.emit('mouseout', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mouseup', ev => {
-            self.eventManager.emit('mouseup', {
+            this.eventManager.emit('mouseup', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('contextmenu', ev => {
-            self.eventManager.emit('contextmenu', {
+            this.eventManager.emit('contextmenu', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('focus', () => {
-            self.eventManager.emit('focus', {
+            this.eventManager.emit('focus', {
                 source: 'wysiwyg'
             });
         });
 
         this.getEditor().addEventListener('blur', () => {
-            self.eventManager.emit('blur', {
+            this.eventManager.emit('blur', {
                 source: 'wysiwyg'
             });
         });
@@ -395,12 +405,12 @@ class WysiwygEditor {
                 code: /CODE/.test(data.path),
                 codeBlock: /PRE/.test(data.path),
                 quote: /BLOCKQUOTE/.test(data.path),
-                list: /LI(?!.task-list-item)/.test(self._getLastLiString(data.path)),
-                task: /LI.task-list-item/.test(self._getLastLiString(data.path)),
+                list: /LI(?!.task-list-item)/.test(this._getLastLiString(data.path)),
+                task: /LI.task-list-item/.test(this._getLastLiString(data.path)),
                 source: 'wysiwyg'
             };
 
-            self.eventManager.emit('stateChange', state);
+            this.eventManager.emit('stateChange', state);
         });
     }
 
@@ -454,26 +464,24 @@ class WysiwygEditor {
      * @private
      */
     _initDefaultKeyEventHandler() {
-        const self = this;
-
         this.addKeyEventHandler('ENTER', (ev, range) => {
-            if (self._isInOrphanText(range)) {
+            if (this._isInOrphanText(range)) {
                 // We need this cuz input text right after table make orphan text in webkit
-                self.defer(() => {
-                    self._wrapDefaultBlockToOrphanTexts();
-                    self.breakToNewDefaultBlock(range, 'before');
+                this.defer(() => {
+                    this._wrapDefaultBlockToOrphanTexts();
+                    this.breakToNewDefaultBlock(range, 'before');
                 });
             }
 
-            self.defer(() => {
-                self._scrollToRangeIfNeed();
+            this.defer(() => {
+                this._scrollToRangeIfNeed();
             });
         });
 
         this.addKeyEventHandler('TAB', ev => {
-            const sq = self.getEditor();
+            const sq = this.getEditor();
             const range = sq.getSelection();
-            const isAbleToInput4Spaces = range.collapsed && self._isCursorNotInRestrictedAreaOfTabAction(sq);
+            const isAbleToInput4Spaces = range.collapsed && this._isCursorNotInRestrictedAreaOfTabAction(sq);
             const isTextSelection = !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
 
             ev.preventDefault();
@@ -654,11 +662,9 @@ class WysiwygEditor {
      * @memberOf WysiwygEditor
      */
     makeEmptyBlockCurrentSelection() {
-        const self = this;
-
         this.getEditor().modifyBlocks(frag => {
             if (!frag.textContent) {
-                frag = self.getEditor().createDefaultBlock();
+                frag = this.getEditor().createDefaultBlock();
             }
 
             return frag;
@@ -672,7 +678,15 @@ class WysiwygEditor {
      * @memberOf WysiwygEditor
      */
     focus() {
+        const scrollTop = this.scrollTop();
+
         this.editor.focus();
+
+        // In webkit, if contenteditable element focus method have been invoked when another input element has focus,
+        // contenteditable scroll to top automatically so we need scroll it back
+        if (scrollTop !== this.scrollTop()) {
+            this.scrollTop(scrollTop);
+        }
     }
 
     /**
@@ -709,12 +723,17 @@ class WysiwygEditor {
         this._height = height;
 
         if (height === 'auto') {
-            this.get$Body().css('overflow', 'visible');
-            this.get$Body().css('height', 'auto');
+            this.$editorContainerEl.css('overflow', 'visible');
+            this.$editorContainerEl.css('height', 'auto');
+            this.get$Body().css('min-height', 0);
         } else {
-            this.get$Body().css('overflow', 'auto');
-            this.get$Body().css('height', '100%');
-            this.$editorContainerEl.height(height);
+            this.$editorContainerEl.css('overflow', 'auto');
+            this.$editorContainerEl.css('height', '100%');
+            this.$editorContainerEl.parent().height(height);
+
+            const paddingHeight = parseInt(this.$editorContainerEl.css('padding-top'), 10) - parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
+            const marginHeight = parseInt(this.get$Body().css('margin-top'), 10) - parseInt(this.get$Body().css('margin-bottom'), 10);
+            this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
         }
     }
 
@@ -793,14 +812,13 @@ class WysiwygEditor {
      * @private
      */
     _prepareGetHTML() {
-        const self = this;
         // for ensure to fire change event
-        self.get$Body().attr('lastGetValue', Date.now());
+        this.get$Body().attr('lastGetValue', Date.now());
 
-        self._joinSplitedTextNodes();
+        this._joinSplitedTextNodes();
 
-        self.getEditor().modifyDocument(() => {
-            self.eventManager.emit('wysiwygGetValueBefore', self);
+        this.getEditor().modifyDocument(() => {
+            this.eventManager.emit('wysiwygGetValueBefore', this);
         });
     }
 
@@ -810,9 +828,8 @@ class WysiwygEditor {
      * @memberOf WysiwygEditor
      */
     postProcessForChange() {
-        const self = this;
-        self.getEditor().modifyDocument(() => {
-            self.eventManager.emit('wysiwygRangeChangeAfter', self);
+        this.getEditor().modifyDocument(() => {
+            this.eventManager.emit('wysiwygRangeChangeAfter', this);
         });
     }
 
@@ -972,7 +989,7 @@ class WysiwygEditor {
      */
     moveCursorToEnd() {
         this.getEditor().moveCursorToEnd();
-        this.getEditor().scrollTop(this.get$Body().height());
+        this.scrollTop(this.$editorContainerEl.height());
         this._correctRangeAfterMoveCursor('end');
     }
 
@@ -983,7 +1000,7 @@ class WysiwygEditor {
      */
     moveCursorToStart() {
         this.getEditor().moveCursorToStart();
-        this.getEditor().scrollTop(0);
+        this.scrollTop(0);
     }
 
     /**
@@ -994,7 +1011,11 @@ class WysiwygEditor {
      * @returns {boolean}
      */
     scrollTop(value) {
-        return this.getEditor().scrollTop(value);
+        if (util.isUndefined(value)) {
+            return this.$editorContainerEl.scrollTop();
+        }
+
+        return this.$editorContainerEl.scrollTop(value);
     }
 
     /**
@@ -1052,12 +1073,11 @@ class WysiwygEditor {
     }
 
     defer(callback, delayOffset) {
-        const self = this;
         const delay = delayOffset ? delayOffset : 0;
 
         setTimeout(() => {
-            if (self.isEditorValid()) {
-                callback(self);
+            if (this.isEditorValid()) {
+                callback(this);
             }
         }, delay);
     }

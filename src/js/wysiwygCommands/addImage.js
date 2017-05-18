@@ -24,7 +24,7 @@ const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
     exec(wwe, data) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('PRE')) {
             sq.insertImage(data.imageUrl, {'alt': data.altText});

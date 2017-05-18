@@ -28,7 +28,7 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

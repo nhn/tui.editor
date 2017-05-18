@@ -85,6 +85,7 @@ const __nedInstance = [];
     * @param {string} language language
     * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
     * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
+    * @param {string[]} options.codeBlockLanguages supported code block languages to be listed
  */
 class ToastUIEditor {
     constructor(options) {
@@ -96,7 +97,8 @@ class ToastUIEditor {
             'height': 300,
             'language': 'en_US',
             'useDefaultHTMLSanitizer': true,
-            'useCommandShortcut': true
+            'useCommandShortcut': true,
+            'codeBlockLanguages': codeBlockManager.supportedLanguages
         }, options);
 
         this.eventManager = new EventManager();

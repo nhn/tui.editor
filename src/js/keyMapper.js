@@ -354,6 +354,17 @@ class KeyMapper {
 
         return sharedInstance;
     }
+
+    /**
+     * get key code for a character
+     * @static
+     * @param {string} char - a character to be converted
+     * @returns {number} key code for the char
+     * @memberof KeyMapper
+     */
+    static keyCode(char) {
+        return KEYBOARD_MAP.indexOf(char);
+    }
 }
 
 module.exports = KeyMapper;

@@ -24,7 +24,7 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
     exec(wwe, data) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('PRE')) {
             sq.removeAllFormatting();

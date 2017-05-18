@@ -26,7 +26,7 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
         const range = sq.getSelection();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
             tableSelectionManager.styleToSelectedCells(styleStrike);

@@ -29,7 +29,7 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const $tr = getTrs(range, selectionMgr, $table);
         const tbodyRowLength = $table.find('tbody tr').length;
 
-        sq.focus();
+        wwe.focus();
 
         if ((sq.hasFormat('TD') || sq.hasFormat('TABLE')) && tbodyRowLength > 1) {
             sq.saveUndoState(range);

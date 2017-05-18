@@ -28,7 +28,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

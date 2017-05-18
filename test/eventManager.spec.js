@@ -170,5 +170,15 @@ describe('eventManager', function() {
             expect(handlerBeRemoved).not.toHaveBeenCalled();
             expect(handlerBeRemained).toHaveBeenCalled();
         });
+
+        it('remove specific event handler by name and handler', () => {
+            em.listen('myEvent', handlerBeRemoved);
+
+            em.removeEventHandler('myEvent', handlerBeRemoved);
+
+            em.emit('myEvent');
+
+            expect(handlerBeRemoved).not.toHaveBeenCalled();
+        });
     });
 });

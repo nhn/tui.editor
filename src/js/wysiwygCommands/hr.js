@@ -58,7 +58,7 @@ const HR = CommandManager.command('wysiwyg', /** @lends HR */{
             sq.setSelection(range);
         }
 
-        sq.focus();
+        wwe.focus();
     }
 });
 
