@@ -350,6 +350,13 @@
 	var __nedInstance = [];
 
 	/**
+	 * @callback addImageBlobHook
+	 * @param  {File} blob - image blob
+	 * @param  {callback} callback - callback function to be called after
+	 * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+	 */
+
+	/**
 	 * ToastUI Editor
 	 * @exports ToastUIEditor
 	 * @constructor
@@ -367,7 +374,7 @@
 	         * @param {function} options.events.blur It would be emitted when editor loose focus
 	     * @param {object} options.hooks Hook list
 	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-	         * @param {function} options.hooks.addImageBlobHook hook for image upload.
+	         * @param {addImageBlobHook} options.hooks.addImageBlobHook hook for image upload.
 	    * @param {string} language language
 	    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
 	    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
@@ -11418,23 +11425,24 @@
 	        /**
 	         * Emit add image blob hook
 	         * @memberOf ImportManager
-	         * @param {object} item item
+	         * @param {object} item - item
+	         * @param {string} type - type of an event the item belongs to. paste or drop
 	         * @private
 	         */
 
 	    }, {
 	        key: '_emitAddImageBlobHook',
-	        value: function _emitAddImageBlobHook(item) {
+	        value: function _emitAddImageBlobHook(item, type) {
 	            var _this2 = this;
 
 	            var blob = item.name ? item : item.getAsFile(); // Blob or File
 
-	            this.eventManager.emit('addImageBlobHook', blob, function (url) {
+	            this.eventManager.emit('addImageBlobHook', blob, function (imageUrl, altText) {
 	                _this2.eventManager.emit('command', 'AddImage', {
-	                    imageUrl: url,
-	                    altText: blob.name || 'image'
+	                    imageUrl: imageUrl,
+	                    altText: altText || blob.name || 'image'
 	                });
-	            });
+	            }, type);
 	        }
 
 	        /**
@@ -11493,7 +11501,7 @@
 	                    if (item.type.indexOf('image') !== -1) {
 	                        evData.preventDefault();
 	                        evData.codemirrorIgnore = true;
-	                        _this3._emitAddImageBlobHook(item);
+	                        _this3._emitAddImageBlobHook(item, evData.type);
 
 	                        return false;
 	                    }
@@ -14459,7 +14467,7 @@
 
 	    this._bindContentEvent();
 	    this._linkWithEventManager();
-	    this._initApplyImageBindContext();
+	    // this._initApplyImageBindContext();
 	}
 
 	PopupAddImage.prototype = util.extend({}, _layerpopup2.default.prototype);
@@ -14496,50 +14504,41 @@
 	};
 
 	PopupAddImage.prototype._linkWithEventManager = function () {
-	    var self = this;
+	    var _this = this;
 
 	    this.eventManager.listen('focus', function () {
-	        self.hide();
+	        _this.hide();
 	    });
 
 	    this.eventManager.listen('openPopupAddImage', function () {
-	        self.eventManager.emit('closeAllPopup');
-	        self.show();
+	        _this.eventManager.emit('closeAllPopup');
+	        _this.show();
 	    });
 
 	    this.eventManager.listen('closeAllPopup', function () {
-	        self.hide();
+	        _this.hide();
 	    });
 
 	    this.on('okButtonClicked', function () {
-	        if (self._isUrlType()) {
-	            self.applyImage();
+	        var imageUrl = _this.$el.find('.te-image-url-input').val();
+	        var altText = _this.$el.find('.te-alt-text-input').val();
+
+	        if (imageUrl) {
+	            _this.applyImage(imageUrl, altText);
 	        } else {
-	            self._preAltValue = self.$el.find('.te-alt-text-input').val();
-	            self.eventManager.emit('addImageBlobHook', self.$el.find('.te-image-file-input')[0].files[0], self.applyImage);
+	            _this.eventManager.emit('addImageBlobHook', _this.$el.find('.te-image-file-input')[0].files[0], function (url, text) {
+	                return _this.applyImage(url, altText || text);
+	            }, 'ui');
 	        }
 	    });
 	};
 
-	PopupAddImage.prototype._initApplyImageBindContext = function () {
-	    var self = this;
-
-	    this.applyImage = function (url) {
-	        var info = void 0;
-
-	        if (url) {
-	            info = self._getImageInfoWithGivenUrl(url);
-	        } else {
-	            info = self._getImageInfo();
-	        }
-
-	        self.eventManager.emit('command', 'AddImage', info);
-	        self.hide();
-	    };
-	};
-
-	PopupAddImage.prototype._isUrlType = function () {
-	    return !!this.$el.find('.te-image-url-input').val();
+	PopupAddImage.prototype.applyImage = function (imageUrl, altText) {
+	    this.eventManager.emit('command', 'AddImage', {
+	        imageUrl: imageUrl,
+	        altText: altText || 'image'
+	    });
+	    this.hide();
 	};
 
 	/**
@@ -14558,27 +14557,6 @@
 	    });
 
 	    this.$body.find('.te-tab-section').append(this.tab.$el);
-	};
-
-	PopupAddImage.prototype._getImageInfoWithGivenUrl = function (imageUrl) {
-	    var altText = this._preAltValue;
-	    this._preAltValue = '';
-
-	    return this._makeImageInfo(imageUrl, altText);
-	};
-
-	PopupAddImage.prototype._getImageInfo = function () {
-	    var imageUrl = this.$el.find('.te-image-url-input').val(),
-	        altText = this.$el.find('.te-alt-text-input').val();
-
-	    return this._makeImageInfo(imageUrl, altText);
-	};
-
-	PopupAddImage.prototype._makeImageInfo = function (url, alt) {
-	    return {
-	        imageUrl: url,
-	        altText: alt
-	    };
 	};
 
 	PopupAddImage.prototype._getImageFileForm = function () {
@@ -28372,7 +28350,6 @@
 
 	'use strict';
 
-	/* eslint-disable max-len */
 	tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
 	    'Markdown': 'Markdown',
 	    'WYSIWYG': 'WYSIWYG',
