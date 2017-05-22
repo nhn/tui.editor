@@ -5,6 +5,7 @@
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
+import ImportManager from '../importManager';
 
 const util = tui.util;
 
@@ -94,9 +95,12 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 };
 
 PopupAddLink.prototype.getValue = function() {
+    const linkText = ImportManager.decodeURIGraceful(this.$el.find('.te-link-text-input').val(), decodeURIComponent);
+    const url = ImportManager.decodeURIGraceful(this.$el.find('.te-url-input').val(), decodeURI);
+
     return {
-        linkText: this.$el.find('.te-link-text-input').val(),
-        url: this.$el.find('.te-url-input').val().replace(/\(/g, '%28').replace(/\)/g, '%29')
+        linkText,
+        url
     };
 };
 
