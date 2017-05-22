@@ -2,7 +2,7 @@
 const PopupAddImage = require('../../src/js/ui/popupAddImage'),
     EventManager = require('../../src/js/eventManager');
 
-fdescribe('PopupAddImage', () => {
+describe('PopupAddImage', () => {
     let popup,
         em;
 
@@ -143,8 +143,6 @@ fdescribe('PopupAddImage', () => {
                     };
 
                 em.listen('command', (type, imageValue) => {
-                    alert(type);
-                    alert(imageValue);
                     addImage(imageValue);
                 });
 
@@ -157,7 +155,6 @@ fdescribe('PopupAddImage', () => {
                         done();
                     }, 0);
                 });
-                alert(`value.altText = ${value.altText}`);
                 $('.te-alt-text-input').val(value.altText);
 
                 $('.te-ok-button').trigger('click');
