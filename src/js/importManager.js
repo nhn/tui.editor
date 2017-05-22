@@ -4,23 +4,7 @@
  */
 
 const util = tui.util;
-
-/**
- * graceful decode uri component
- * @param {string} uri - string to be decoded
- * @returns {string} decoded string
- * @ignore
- */
-function decodeURIComponentGraceful(uri) {
-    let decodedURI;
-    try {
-        decodedURI = decodeURIComponent(uri);
-    } catch (e) {
-        decodedURI = uri;
-    }
-
-    return decodedURI;
-}
+const URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
 
 /**
  * ImportManager
@@ -36,6 +20,32 @@ class ImportManager {
 
         this._initEvent();
         this._initDefaultImageImporter();
+    }
+
+    /**
+     * graceful decode uri component
+     * @param {string} uri - string to be decoded
+     * @param {Function} decodeFunction - function to be used to decode
+     * @returns {string} decoded string
+     * @memberof ImportManager
+     * @static
+     */
+    static decodeURIGraceful(uri, decodeFunction = decodeURI) {
+        let decodedURI;
+        try {
+            decodedURI = decodeFunction(uri);
+            decodedURI = decodedURI.replace(/ /g, '%20')
+                .replace(/\(/g, '%28')
+                .replace(/\)/g, '%29')
+                .replace(/\[/g, '%5B')
+                .replace(/\]/g, '%5D')
+                .replace(/</g, '%3C')
+                .replace(/>/g, '%3E');
+        } catch (e) {
+            decodedURI = uri;
+        }
+
+        return decodedURI;
     }
 
     /**
@@ -103,15 +113,23 @@ class ImportManager {
      */
     _decodeURL(ev) {
         if (ev.source === 'markdown'
-            && ev.data.text.length === 1
-            && ev.data.text[0].match(/https?:\/\//g)
+            && ev.data.text
         ) {
-            ev.data.update(null, null, [decodeURIComponentGraceful(ev.data.text[0])]);
+            const newTexts = [];
+
+            ev.data.text.forEach(text => {
+                text = text.replace(URLRegex, match => ImportManager.decodeURIGraceful(match));
+                newTexts.push(text);
+            });
+
+            ev.data.update(null, null, newTexts);
         } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
             const $anchor = ev.$clipboardContainer.find('A');
 
             $anchor.each((index, element) => {
-                $(element).text(decodeURIComponentGraceful($(element).text()));
+                const text = $(element).text();
+                const decodeFunction = text.match(URLRegex) ? decodeURI : decodeURIComponent;
+                $(element).text(ImportManager.decodeURIGraceful(text, decodeFunction));
             });
         }
     }
