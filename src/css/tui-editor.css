@@ -725,3 +725,13 @@
     width: 100px;
     height: 100px;
 }
+
+@media screen and (max-width: 480px) {
+    .tui-popup-wrapper {
+        max-width: 300px;
+    }
+
+    .tui-editor-popup {
+        margin-left: -150px;
+    }
+}
