@@ -12,82 +12,121 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
  * manipulate config by server
  * @param {Object} defaultConfig - base configuration
  * @param {('ne'|'sl'|null|undefined)} server - ne: team selenium grid, sl: saucelabs, null or undefined: local machine
+ * @param {('Chrome'|'Safari'|'IE10'|'IE11'|'Edge'|'Firefox'|null|undefined)} browser - specify browser to run
  */
-function setConfig(defaultConfig, server) {
+function setConfig(defaultConfig, server, browser) {
     if (server === 'ne') {
-        defaultConfig.customLaunchers = {
-            'IE10': {
+        defaultConfig.customLaunchers = {};
+        if (browser === 'IE10' || !browser) {
+            defaultConfig.customLaunchers.IE10 = {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 10
-            },
-            'IE11': {
+            };
+        }
+        if (browser === 'IE11' || !browser) {
+            defaultConfig.customLaunchers.IE11 = {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
                 version: 11
-            },
-            'Chrome-WebDriver': {
+            };
+        }
+        if (browser === 'Edge') {
+            defaultConfig.customLaunchers.Edge = {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
+            };
+        }
+        if (browser === 'Chrome' || !browser) {
+            defaultConfig.customLaunchers['Chrome-WebDriver'] = {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'chrome'
-            },
-            'Firefox-WebDriver': {
+            };
+        }
+        if (browser === 'Firefox' || !browser) {
+            defaultConfig.customLaunchers['Firefox-WebDriver'] = {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'firefox'
-            }
-        };
-        defaultConfig.concurrency = 1;
+            };
+        }
+        defaultConfig.concurrency = 5;
         defaultConfig.reporters = ['narrow', 'junit', 'coverage'];
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {
-            testName: `${pkg.name} ::: ${pkg.version} ::: ${new Date()}`,
+            testName: `${pkg.name} ::: ${pkg.version} ::: ${new Date().toLocaleDateString('en-US')}`,
             username: process.env.SAUCE_USERNAME,
             accessKey: process.env.SAUCE_ACCESS_KEY,
             startConnect: true,
-            tags: [pkg.name, pkg.version]
+            tags: [pkg.name, pkg.version],
+            build: pkg.version,
+            passed: true,
+            recordVideo: true,
+            recordScreenshots: true,
+            recordLogs: true,
+            webdriverRemoteQuietExceptions: true
         };
-        defaultConfig.customLaunchers = {
-            sl_chrome: {
+        defaultConfig.customLaunchers = {};
+        if (browser === 'Chrome' || !browser) {
+            defaultConfig.customLaunchers.sl_chrome = {
                 base: 'SauceLabs',
                 browserName: 'chrome',
                 platform: 'Linux',
                 version: '48'
-            },
-            // sl_safari: {
-            //     base: 'SauceLabs',
-            //     browserName: 'safari',
-            //     platform: 'OS X 10.11',
-            //     version: '10'
-            // },
-            sl_firefox: {
+            };
+        }
+        if (browser === 'Firefox' || !browser) {
+            defaultConfig.customLaunchers.sl_firefox = {
                 base: 'SauceLabs',
                 browserName: 'firefox',
                 platform: 'OS X 10.11',
                 version: '49'
-            },
-            sl_ie_10: {
+            };
+        }
+        if (browser === 'IE10' || !browser) {
+            defaultConfig.customLaunchers.sl_ie_10 = {
                 base: 'SauceLabs',
                 browserName: 'internet explorer',
                 platform: 'Windows 8',
                 version: '10'
-            },
-            sl_ie_11: {
+            };
+        }
+        if (browser === 'IE11' || !browser) {
+            defaultConfig.customLaunchers.sl_ie_11 = {
                 base: 'SauceLabs',
                 browserName: 'internet explorer',
                 platform: 'Windows 8.1',
                 version: '11'
-            }
-        };
+            };
+        }
+        if (browser === 'Edge') {
+            defaultConfig.customLaunchers.sl_edge_14 = {
+                base: 'SauceLabs',
+                browserName: 'MicrosoftEdge',
+                platform: 'Windows 10',
+                version: '14'
+            };
+        }
+        if (browser === 'Safari') {
+            defaultConfig.customLaunchers.sl_safari = {
+                base: 'SauceLabs',
+                browserName: 'safari',
+                platform: 'OS X 10.11',
+                version: '10'
+            };
+        }
         defaultConfig.reporters.push('saucelabs');
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
         defaultConfig.browserNoActivityTimeout = 30000;
     } else {
+        browser = browser || 'Chrome';
         defaultConfig.browsers = [
-            'Chrome'
+            browser
         ];
         defaultConfig.singleRun = false;
     }
@@ -117,6 +156,7 @@ module.exports = function(config) {
             'lib/codemirror/mode/markdown/markdown.js',
             'lib/codemirror/mode/gfm/gfm.js',
             'lib/squire-rte/build/squire-raw.js',
+            'src/css/tui-editor.css',
             'test/fixtures/*.*',
             'test/test.bundle.js'
         ],
@@ -215,6 +255,6 @@ module.exports = function(config) {
         singleRun: true
     };
 
-    setConfig(defaultConfig, process.env.KARMA_SERVER);
+    setConfig(defaultConfig, process.env.SERVER, process.env.BROWSER);
     config.set(defaultConfig);
 };
