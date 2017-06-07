@@ -63,6 +63,7 @@ describe('Editor', () => {
                 expect(editor.preview.$el.text()).toEqual('1\n2\n');
             });
         });
+
         describe('insertText()', () => {
             it('insert text on markdown mode', () => {
                 editor.changeMode('markdown');
@@ -74,6 +75,37 @@ describe('Editor', () => {
                 editor.changeMode('wysiwyg');
                 editor.insertText('text');
                 expect(editor.getValue()).toEqual('text');
+            });
+        });
+
+        describe('getSelectedText()', () => {
+            it('retrieve selected text on markdown', () => {
+                editor.changeMode('markdown');
+                editor.setValue('selected text');
+
+                editor.mdEditor.cm.setSelection({
+                    line: 0,
+                    ch: 9
+                }, {
+                    line: 0,
+                    ch: 13
+                });
+
+                expect(editor.getSelectedText()).toEqual('text');
+            });
+
+            it('retrieve selected text on wysiwyg', () => {
+                editor.changeMode('wysiwyg');
+                editor.setValue('selected text');
+
+                const wwEditor = editor.wwEditor;
+                const selection = wwEditor.editor.getSelection().cloneRange();
+                const textElement = wwEditor.get$Body().find('div')[0].firstChild;
+                selection.setStart(textElement, 9);
+                selection.setEnd(textElement, 13);
+                wwEditor.editor.setSelection(selection);
+
+                expect(editor.getSelectedText()).toEqual('text');
             });
         });
     });
