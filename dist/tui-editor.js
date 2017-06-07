@@ -739,6 +739,22 @@
 	        }
 
 	        /**
+	         * insert text
+	         * @param {string} text - text string to insert
+	         * @memberof ToastUIEditor
+	         */
+
+	    }, {
+	        key: 'insertText',
+	        value: function insertText(text) {
+	            if (this.isMarkdownMode()) {
+	                this.mdEditor.replaceSelection(text);
+	            } else {
+	                this.wwEditor.insertText(text);
+	            }
+	        }
+
+	        /**
 	         * Add widget to selection
 	         * @api
 	         * @memberOf ToastUIEditor
@@ -1020,6 +1036,21 @@
 	        key: 'getTextObject',
 	        value: function getTextObject(range) {
 	            return this.getCurrentModeEditor().getTextObject(range);
+	        }
+
+	        /**
+	         * get selected text
+	         * @returns {string} - selected text
+	         * @memberof ToastUIEditor
+	         */
+
+	    }, {
+	        key: 'getSelectedText',
+	        value: function getSelectedText() {
+	            var range = this.getRange();
+	            var textObject = this.getTextObject(range);
+
+	            return textObject.getTextContent() || '';
 	        }
 
 	        /**
@@ -4130,6 +4161,18 @@
 
 	            this.getEditor().removeLastUndoStack();
 	            this.getEditor().saveUndoState();
+	        }
+
+	        /**
+	         * insert given text to cursor position or selected area
+	         * @param {string} text - text string to insert
+	         * @memberof WysiwygEditor
+	         */
+
+	    }, {
+	        key: 'insertText',
+	        value: function insertText(text) {
+	            this.editor.insertPlainText(text);
 	        }
 
 	        /**
@@ -11335,23 +11378,7 @@
 	 */
 
 	var util = tui.util;
-
-	/**
-	 * graceful decode uri component
-	 * @param {string} uri - string to be decoded
-	 * @returns {string} decoded string
-	 * @ignore
-	 */
-	function decodeURIComponentGraceful(uri) {
-	    var decodedURI = void 0;
-	    try {
-	        decodedURI = decodeURIComponent(uri);
-	    } catch (e) {
-	        decodedURI = uri;
-	    }
-
-	    return decodedURI;
-	}
+	var URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
 
 	/**
 	 * ImportManager
@@ -11373,14 +11400,24 @@
 	    }
 
 	    /**
-	     * Initialize event handler
-	     * @memberOf ImportManager
-	     * @private
+	     * graceful decode uri component
+	     * @param {string} uri - string to be decoded
+	     * @param {Function} decodeFunction - function to be used to decode
+	     * @returns {string} decoded string
+	     * @memberof ImportManager
+	     * @static
 	     */
 
 
 	    _createClass(ImportManager, [{
 	        key: '_initEvent',
+
+
+	        /**
+	         * Initialize event handler
+	         * @memberOf ImportManager
+	         * @private
+	         */
 	        value: function _initEvent() {
 	            var _this = this;
 
@@ -11453,13 +11490,24 @@
 	    }, {
 	        key: '_decodeURL',
 	        value: function _decodeURL(ev) {
-	            if (ev.source === 'markdown' && ev.data.text.length === 1 && ev.data.text[0].match(/https?:\/\//g)) {
-	                ev.data.update(null, null, [decodeURIComponentGraceful(ev.data.text[0])]);
+	            if (ev.source === 'markdown' && ev.data.text) {
+	                var newTexts = [];
+
+	                ev.data.text.forEach(function (text) {
+	                    text = text.replace(URLRegex, function (match) {
+	                        return ImportManager.decodeURIGraceful(match);
+	                    });
+	                    newTexts.push(text);
+	                });
+
+	                ev.data.update(null, null, newTexts);
 	            } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
 	                var $anchor = ev.$clipboardContainer.find('A');
 
 	                $anchor.each(function (index, element) {
-	                    $(element).text(decodeURIComponentGraceful($(element).text()));
+	                    var text = $(element).text();
+	                    var decodeFunction = text.match(URLRegex) ? decodeURI : decodeURIComponent;
+	                    $(element).text(ImportManager.decodeURIGraceful(text, decodeFunction));
 	                });
 	            }
 	        }
@@ -11523,6 +11571,21 @@
 	            var state = this._lastState;
 
 	            return state && (state.codeBlock || state.list || state.task || state.code);
+	        }
+	    }], [{
+	        key: 'decodeURIGraceful',
+	        value: function decodeURIGraceful(uri) {
+	            var decodeFunction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : decodeURI;
+
+	            var decodedURI = void 0;
+	            try {
+	                decodedURI = decodeFunction(uri);
+	                decodedURI = decodedURI.replace(/ /g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\[/g, '%5B').replace(/\]/g, '%5D').replace(/</g, '%3C').replace(/>/g, '%3E');
+	            } catch (e) {
+	                decodedURI = uri;
+	            }
+
+	            return decodedURI;
 	        }
 	    }]);
 
@@ -12140,7 +12203,7 @@
 
 	    // check the block quote marker
 	    // Add condition by Junghwan Park
-	    if (currentLine.match(FIND_LIST_RX) /*&& !currentLine.match(/^ {0,6}>/)*/ || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
+	    if (currentLine.match(FIND_LIST_RX /*&& !currentLine.match(/^ {0,6}>/)*/) || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
 	        return false;
 	    }
 
@@ -13048,7 +13111,7 @@
 	DefaultUI.prototype._initPopupAddLink = function () {
 	    this.popupAddLink = new _popupAddLink2.default({
 	        $target: this.$el,
-	        eventManager: this.editor.eventManager
+	        editor: this.editor
 	    });
 	};
 
@@ -14316,14 +14379,18 @@
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
+	var _importManager = __webpack_require__(31);
+
+	var _importManager2 = _interopRequireDefault(_importManager);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	/**
-	 * @fileoverview Implements PopupAddLink
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
+	var util = tui.util; /**
+	                      * @fileoverview Implements PopupAddLink
+	                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                      */
 
-	var util = tui.util;
+	var URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 
 	/**
 	 * PopupAddLink
@@ -14337,7 +14404,7 @@
 	 */
 	function PopupAddLink(options) {
 	    /* eslint-disable indent */
-	    var POPUP_CONTENT = ['<label for="linkText">' + _i18n2.default.get('Link text') + '</label>', '<input type="text" class="te-link-text-input" />', '<label for="url">' + _i18n2.default.get('URL') + '</label>', '<input type="text" class="te-url-input" />', '<div class="te-button-section">', '<button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>', '<button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>', '</div>'].join('');
+	    var POPUP_CONTENT = '<label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n        <input type="text" class="te-link-text-input" />\n        <label for="url">' + _i18n2.default.get('URL') + '</label>\n        <input type="text" class="te-url-input" />\n        <div class="te-button-section">\n            <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n            <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n        </div>';
 	    /* eslint-enable indent */
 
 	    options = util.extend({
@@ -14348,65 +14415,93 @@
 
 	    _layerpopup2.default.call(this, options);
 
+	    this._editor = options.editor;
+
 	    this.render();
+	    this._initDOM();
 	    this._bindContentEvent();
-	    this._linkWithEventManager(options.eventManager);
+	    this._linkWithEventManager(options.editor.eventManager);
 	}
 
 	PopupAddLink.prototype = util.extend({}, _layerpopup2.default.prototype);
 
+	PopupAddLink.prototype._initDOM = function () {
+	    var el = this.$el.get(0);
+	    this._inputText = el.querySelector('.te-link-text-input');
+	    this._inputURL = el.querySelector('.te-url-input');
+	};
+
 	PopupAddLink.prototype._bindContentEvent = function () {
-	    var self = this;
+	    var _this = this;
 
 	    this.on('click .te-ok-button', function () {
-	        self.trigger('okButtonClicked', self);
-	        self.hide();
+	        _this.trigger('okButtonClicked', _this);
+	        _this.hide();
 	    });
 
 	    this.on('click .te-close-button', function () {
-	        self.trigger('closeButtonClicked', self);
-	        self.hide();
+	        _this.trigger('closeButtonClicked', _this);
+	        _this.hide();
 	    });
 
 	    this.on('shown', function () {
-	        self.$el.find('.te-link-text-input').focus();
+	        var inputText = _this._inputText;
+	        var inputURL = _this._inputURL;
+
+	        var selectedText = _this._editor.getSelectedText().trim();
+
+	        inputText.value = selectedText;
+	        if (URL_REGEX.exec(selectedText)) {
+	            inputURL.value = selectedText;
+	        }
+
+	        if (selectedText.length > 0 && inputURL.value.length < 1) {
+	            inputURL.focus();
+	        } else {
+	            inputText.focus();
+	            inputText.setSelectionRange(0, selectedText.length);
+	        }
 	    });
 
 	    this.on('hidden', function () {
-	        self.resetInputs();
+	        _this.resetInputs();
 	    });
 	};
 
 	PopupAddLink.prototype._linkWithEventManager = function (eventManager) {
-	    var self = this;
+	    var _this2 = this;
 
 	    eventManager.listen('focus', function () {
-	        self.hide();
+	        _this2.hide();
 	    });
 
 	    eventManager.listen('openPopupAddLink', function () {
 	        eventManager.emit('closeAllPopup');
-	        self.show();
+	        _this2.show();
 	    });
 
 	    eventManager.listen('closeAllPopup', function () {
-	        self.hide();
+	        _this2.hide();
 	    });
 
 	    this.on('okButtonClicked', function () {
-	        eventManager.emit('command', 'AddLink', self.getValue());
+	        eventManager.emit('command', 'AddLink', _this2.getValue());
 	    });
 	};
 
 	PopupAddLink.prototype.getValue = function () {
+	    var linkText = _importManager2.default.decodeURIGraceful(this._inputText.value, decodeURIComponent);
+	    var url = _importManager2.default.decodeURIGraceful(this._inputURL.value, decodeURI);
+
 	    return {
-	        linkText: this.$el.find('.te-link-text-input').val(),
-	        url: this.$el.find('.te-url-input').val().replace(/\(/g, '%28').replace(/\)/g, '%29')
+	        linkText: linkText,
+	        url: url
 	    };
 	};
 
 	PopupAddLink.prototype.resetInputs = function () {
-	    this.$el.find('input').val('');
+	    this._inputText.value = '';
+	    this._inputURL.value = '';
 	};
 
 	module.exports = PopupAddLink;
