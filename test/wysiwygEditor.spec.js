@@ -1,3 +1,5 @@
+/* eslint-disable max-len, max-nested-callbacks */
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import ListManager from '../src/js/wwListManager';
@@ -18,7 +20,7 @@ describe('WysiwygEditor', () => {
         wwe.editor.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -148,7 +150,7 @@ describe('WysiwygEditor', () => {
 
     describe('Event', () => {
         beforeEach(done => {
-            //스콰이어가 셋팅된 프레임에 입력된 데이터들에 대한 이벤트는 발생하지 않아 프레임지연
+            // 스콰이어가 셋팅된 프레임에 입력된 데이터들에 대한 이벤트는 발생하지 않아 프레임지연
             setTimeout(() => {
                 done();
             }, 0);
@@ -164,7 +166,7 @@ describe('WysiwygEditor', () => {
         });
 
         it('when something changed in editor Emit change.wysiwygEditor event', done => {
-            //events of squire are asynchronous
+            // events of squire are asynchronous
             em.listen('changeFromWysiwyg', () => {
                 done();
             });
@@ -173,7 +175,7 @@ describe('WysiwygEditor', () => {
         });
 
         it('when something changed in editor Emit change event', done => {
-            //squire event fire asynchronous
+            // squire event fire asynchronous
             em.listen('change', ev => {
                 expect(ev.source).toEqual('wysiwyg');
                 done();
@@ -190,7 +192,7 @@ describe('WysiwygEditor', () => {
 
             wwe.getEditor().setHTML('TEST');
 
-            //이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
+            // 이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
             setTimeout(() => {
                 wwe.getValue();
                 setTimeout(() => {
@@ -298,6 +300,42 @@ describe('WysiwygEditor', () => {
         });
     });
 
+    describe('insertText()', () => {
+        let sqe,
+            selection,
+            $body;
+
+        beforeEach(() => {
+            sqe = wwe.getEditor();
+            selection = sqe.getSelection().cloneRange();
+            $body = sqe.get$Body();
+        });
+
+        it('to cursor position', () => {
+            sqe.setHTML('<div>text  here<br/></div>');
+
+            selection.setStart($body.find('div')[0].firstChild, 5);
+            selection.collapse(true);
+            sqe.setSelection(selection);
+
+            wwe.insertText('insert');
+
+            expect($body[0].textContent).toEqual('text insert here');
+        });
+
+        it('to selected area', () => {
+            sqe.setHTML('<div>text here<br/></div>');
+
+            selection.setStart($body.find('div')[0].firstChild, 5);
+            selection.setEnd($body.find('div')[0].firstChild, 9);
+            sqe.setSelection(selection);
+
+            wwe.insertText('replaced');
+
+            expect($body[0].textContent).toEqual('text replaced');
+        });
+    });
+
     it('get$Body() get current wysiwyg iframe body that wrapped jquery', () => {
         expect(wwe.get$Body().length).toEqual(1);
         expect(wwe.get$Body().prop('tagName')).toEqual('DIV');
@@ -344,7 +382,7 @@ describe('WysiwygEditor', () => {
 
             const range = wwe.getEditor().getSelection().cloneRange();
 
-            //select text node
+            // select text node
             range.setStart(wwe.get$Body().find('div')[0], 0);
             range.collapse(true);
             wwe.breakToNewDefaultBlock(range);

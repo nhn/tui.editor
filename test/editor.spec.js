@@ -1,3 +1,5 @@
+/* eslint-disable max-len, max-nested-callbacks */
+
 import Editor from '../src/js/editor';
 
 describe('Editor', () => {
@@ -12,7 +14,7 @@ describe('Editor', () => {
             });
         });
 
-        //we need to wait squire input event process
+        // we need to wait squire input event process
         afterEach(done => {
             setTimeout(() => {
                 $('body').empty();
@@ -33,7 +35,7 @@ describe('Editor', () => {
             });
 
             it('set content height "auto" to fit contents height of wysiwyg', () => {
-                let height = $('.te-ww-container .te-editor').height();
+                const height = $('.te-ww-container .te-editor').height();
                 editor.contentHeight('auto');
                 editor.changeMode('wysiwyg');
                 editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
@@ -41,7 +43,7 @@ describe('Editor', () => {
             });
 
             it('set content height "auto" to fit contents height of markdown', () => {
-                let height = $('.te-md-container .te-editor').height();
+                const height = $('.te-md-container .te-editor').height();
                 editor.contentHeight('auto');
                 editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-md-container .te-editor').height()).not.toEqual(height);
@@ -59,6 +61,19 @@ describe('Editor', () => {
                 editor.setMarkdown('1\n2');
                 editor.changePreviewStyle('vertical');
                 expect(editor.preview.$el.text()).toEqual('1\n2\n');
+            });
+        });
+        describe('insertText()', () => {
+            it('insert text on markdown mode', () => {
+                editor.changeMode('markdown');
+                editor.insertText('text');
+                expect(editor.getValue()).toEqual('text');
+            });
+
+            it('insert text on wysiwyg mode', () => {
+                editor.changeMode('wysiwyg');
+                editor.insertText('text');
+                expect(editor.getValue()).toEqual('text');
             });
         });
     });
