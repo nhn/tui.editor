@@ -130,7 +130,7 @@ DefaultUI.prototype._initMarkdownTab = function() {
 DefaultUI.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
         $target: this.$el,
-        eventManager: this.editor.eventManager
+        editor: this.editor
     });
 };
 

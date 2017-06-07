@@ -635,6 +635,18 @@ class ToastUIEditor {
     }
 
     /**
+     * get selected text
+     * @returns {string} - selected text
+     * @memberof ToastUIEditor
+     */
+    getSelectedText() {
+        const range = this.getRange();
+        const textObject = this.getTextObject(range);
+
+        return textObject.getTextContent() || '';
+    }
+
+    /**
      * Get instance of TUIEditor
      * @api
      * @memberOf ToastUIEditor

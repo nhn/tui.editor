@@ -8,6 +8,7 @@ import i18n from '../i18n';
 import ImportManager from '../importManager';
 
 const util = tui.util;
+const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 
 /**
  * PopupAddLink
@@ -21,16 +22,15 @@ const util = tui.util;
  */
 function PopupAddLink(options) {
     /* eslint-disable indent */
-    const POPUP_CONTENT = [
-        `<label for="linkText">${i18n.get('Link text')}</label>`,
-        '<input type="text" class="te-link-text-input" />',
-        `<label for="url">${i18n.get('URL')}</label>`,
-        '<input type="text" class="te-url-input" />',
-        '<div class="te-button-section">',
-        `<button type="button" class="te-ok-button">${i18n.get('OK')}</button>`,
-        `<button type="button" class="te-close-button">${i18n.get('Cancel')}</button>`,
-        '</div>'
-    ].join('');
+    const POPUP_CONTENT =
+        `<label for="linkText">${i18n.get('Link text')}</label>
+        <input type="text" class="te-link-text-input" />
+        <label for="url">${i18n.get('URL')}</label>
+        <input type="text" class="te-url-input" />
+        <div class="te-button-section">
+            <button type="button" class="te-ok-button">${i18n.get('OK')}</button>
+            <button type="button" class="te-close-button">${i18n.get('Cancel')}</button>
+        </div>`;
     /* eslint-enable indent */
 
     options = util.extend({
@@ -41,9 +41,12 @@ function PopupAddLink(options) {
 
     LayerPopup.call(this, options);
 
+    this._editor = options.editor;
+
     this.render();
+    this._initDOM();
     this._bindContentEvent();
-    this._linkWithEventManager(options.eventManager);
+    this._linkWithEventManager(options.editor.eventManager);
 }
 
 PopupAddLink.prototype = util.extend(
@@ -51,52 +54,69 @@ PopupAddLink.prototype = util.extend(
     LayerPopup.prototype
 );
 
-PopupAddLink.prototype._bindContentEvent = function() {
-    const self = this;
+PopupAddLink.prototype._initDOM = function() {
+    const el = this.$el.get(0);
+    this._inputText = el.querySelector('.te-link-text-input');
+    this._inputURL = el.querySelector('.te-url-input');
+};
 
+PopupAddLink.prototype._bindContentEvent = function() {
     this.on('click .te-ok-button', () => {
-        self.trigger('okButtonClicked', self);
-        self.hide();
+        this.trigger('okButtonClicked', this);
+        this.hide();
     });
 
     this.on('click .te-close-button', () => {
-        self.trigger('closeButtonClicked', self);
-        self.hide();
+        this.trigger('closeButtonClicked', this);
+        this.hide();
     });
 
     this.on('shown', () => {
-        self.$el.find('.te-link-text-input').focus();
+        const inputText = this._inputText;
+        const inputURL = this._inputURL;
+
+        const selectedText = this._editor.getSelectedText().trim();
+
+        inputText.value = selectedText;
+        if (URL_REGEX.exec(selectedText)) {
+            inputURL.value = selectedText;
+        }
+
+        if (selectedText.length > 0 && inputURL.value.length < 1) {
+            inputURL.focus();
+        } else {
+            inputText.focus();
+            inputText.setSelectionRange(0, selectedText.length);
+        }
     });
 
     this.on('hidden', () => {
-        self.resetInputs();
+        this.resetInputs();
     });
 };
 
 PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
-    const self = this;
-
     eventManager.listen('focus', () => {
-        self.hide();
+        this.hide();
     });
 
     eventManager.listen('openPopupAddLink', () => {
         eventManager.emit('closeAllPopup');
-        self.show();
+        this.show();
     });
 
     eventManager.listen('closeAllPopup', () => {
-        self.hide();
+        this.hide();
     });
 
     this.on('okButtonClicked', () => {
-        eventManager.emit('command', 'AddLink', self.getValue());
+        eventManager.emit('command', 'AddLink', this.getValue());
     });
 };
 
 PopupAddLink.prototype.getValue = function() {
-    const linkText = ImportManager.decodeURIGraceful(this.$el.find('.te-link-text-input').val(), decodeURIComponent);
-    const url = ImportManager.decodeURIGraceful(this.$el.find('.te-url-input').val(), decodeURI);
+    const linkText = ImportManager.decodeURIGraceful(this._inputText.value, decodeURIComponent);
+    const url = ImportManager.decodeURIGraceful(this._inputURL.value, decodeURI);
 
     return {
         linkText,
@@ -105,7 +125,8 @@ PopupAddLink.prototype.getValue = function() {
 };
 
 PopupAddLink.prototype.resetInputs = function() {
-    this.$el.find('input').val('');
+    this._inputText.value = '';
+    this._inputURL.value = '';
 };
 
 module.exports = PopupAddLink;
