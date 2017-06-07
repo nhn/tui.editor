@@ -744,6 +744,15 @@ class WysiwygEditor {
     }
 
     /**
+     * insert given text to cursor position or selected area
+     * @param {string} text - text string to insert
+     * @memberof WysiwygEditor
+     */
+    insertText(text) {
+        this.editor.insertPlainText(text);
+    }
+
+    /**
      * getValue
      * Get value of wysiwyg editor
      * @api

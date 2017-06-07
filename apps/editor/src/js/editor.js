@@ -389,6 +389,19 @@ class ToastUIEditor {
     }
 
     /**
+     * insert text
+     * @param {string} text - text string to insert
+     * @memberof ToastUIEditor
+     */
+    insertText(text) {
+        if (this.isMarkdownMode()) {
+            this.mdEditor.replaceSelection(text);
+        } else {
+            this.wwEditor.insertText(text);
+        }
+    }
+
+    /**
      * Add widget to selection
      * @api
      * @memberOf ToastUIEditor
