@@ -4231,14 +4231,11 @@
 	    }, {
 	        key: '_prepareGetHTML',
 	        value: function _prepareGetHTML() {
-	            var self = this;
-	            // for ensure to fire change event
-	            self.get$Body().attr('lastGetValue', Date.now());
+	            var _this2 = this;
 
-	            self._joinSplitedTextNodes();
-
-	            self.getEditor().modifyDocument(function () {
-	                self.eventManager.emit('wysiwygGetValueBefore', self);
+	            this.getEditor().modifyDocument(function () {
+	                _this2._joinSplitedTextNodes();
+	                _this2.eventManager.emit('wysiwygGetValueBefore', self);
 	            });
 	        }
 
