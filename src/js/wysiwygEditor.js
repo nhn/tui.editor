@@ -802,14 +802,9 @@ class WysiwygEditor {
      * @private
      */
     _prepareGetHTML() {
-        const self = this;
-        // for ensure to fire change event
-        self.get$Body().attr('lastGetValue', Date.now());
-
-        self._joinSplitedTextNodes();
-
-        self.getEditor().modifyDocument(() => {
-            self.eventManager.emit('wysiwygGetValueBefore', self);
+        this.getEditor().modifyDocument(() => {
+            this._joinSplitedTextNodes();
+            this.eventManager.emit('wysiwygGetValueBefore', self);
         });
     }
 

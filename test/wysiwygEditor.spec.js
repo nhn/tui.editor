@@ -184,21 +184,10 @@ describe('WysiwygEditor', () => {
             wwe.editor.insertHTML('t');
         });
 
-        it('fire change event when getValue after', done => {
-            em.listen('change', ev => {
-                expect(ev.source).toEqual('wysiwyg');
-                done();
-            });
-
-            wwe.getEditor().setHTML('TEST');
-
-            // 이벤트가 한프레임 뒤에 발생해 각 단계별로 한프레임씩 지연실행
-            setTimeout(() => {
-                wwe.getValue();
-                setTimeout(() => {
-                    wwe.getEditor().insertHTML('TEST2');
-                }, 1000);
-            }, 0);
+        it('should not fire change event when getValue', done => {
+            em.listen('change', fail);
+            wwe.getValue();
+            setTimeout(done, 100);
         });
 
         it('when editor gain focus, emit focus event', () => {
