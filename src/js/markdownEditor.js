@@ -2,6 +2,7 @@ import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
 import ComponentManager from './componentManager';
+import MdTextObject from './mdTextObject';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -163,13 +164,23 @@ class MarkdownEditor extends CodeMirrorExt {
 
     /**
      * Set Editor value
-     * @memberof CodeMirrorExt
+     * @memberof MarkdownEditor
      * @override
      * @param {string} markdown - Markdown syntax text
      */
     setValue(markdown) {
         super.setValue(markdown);
         this._emitMarkdownEditorContentChangedEvent();
+    }
+
+    /**
+     * Get text object of current range
+     * @memberof MarkdownEditor
+     * @param {{start, end}} range Range object of each editor
+     * @returns {object}
+     */
+    getTextObject(range) {
+        return new MdTextObject(this, range);
     }
 
     /**
