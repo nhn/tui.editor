@@ -1,5 +1,6 @@
 /* eslint max-nested-callbacks:0 new-cap:0 */
 
+import WysiwygEditor from '../../src/js/wysiwygEditor';
 import CodeBlockGadget from '../../src/js/ui/codeBlockGadget';
 import EventManager from '../../src/js/eventManager';
 import KeyMapper from '../../src/js/keyMapper';
@@ -7,16 +8,19 @@ import KeyMapper from '../../src/js/keyMapper';
 describe('code block gadget', () => {
     let gadget,
         $container,
+        $wysiwygContainer,
         $targetElement,
         em;
 
     beforeEach(() => {
-        $('body').attr('contenteditable', true);
         $container = $('<div>');
         $container.css('position', 'relative');
+        $wysiwygContainer = $('<div>');
         $('body').append($container);
+        $('body').append($wysiwygContainer);
 
         $targetElement = $('<pre data-te-codeblock data-language="javascript">');
+        $targetElement.append($('<div>'));
         $targetElement.css({
             position: 'absolute',
             left: '1px',
@@ -27,7 +31,11 @@ describe('code block gadget', () => {
         $('body').append($targetElement);
 
         em = new EventManager();
+        const wysiwygEditor = new WysiwygEditor($wysiwygContainer, em);
+        wysiwygEditor.init();
+        wysiwygEditor.focus();
         gadget = new CodeBlockGadget({
+            wysiwygEditor,
             eventManager: em,
             container: $container[0],
             languages: ['java', 'javascript', 'cs']
@@ -37,7 +45,8 @@ describe('code block gadget', () => {
     });
 
     afterEach(() => {
-        $('body').empty();
+        $container.remove();
+        $wysiwygContainer.remove();
     });
 
     it('language accessor should get/set language on code block', () => {

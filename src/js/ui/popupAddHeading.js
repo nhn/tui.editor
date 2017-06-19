@@ -15,7 +15,7 @@ const {util} = tui;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupAddHeading(options) {
@@ -34,7 +34,7 @@ function PopupAddHeading(options) {
     /* eslint-enable indent */
 
     options = util.extend({
-        title: false,
+        header: false,
         className: 'te-heading-add',
         content: POPUP_CONTENT
     }, options);

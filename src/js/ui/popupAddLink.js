@@ -17,7 +17,7 @@ const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupAddLink(options) {
@@ -34,6 +34,7 @@ function PopupAddLink(options) {
     /* eslint-enable indent */
 
     options = util.extend({
+        header: true,
         title: i18n.get('Insert link'),
         className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT

@@ -5,31 +5,34 @@ const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
 /**
  * Popup code block languages select list
- * @param {object} options options
  * @class PopupCodeBlockLanguages
  * @extends {LayerPopup}
  */
 class PopupCodeBlockLanguages extends LayerPopup {
+    /**
+     * Creates an instance of PopupCodeBlockLanguages.
+     * @param {LayerPopupOption} options - layer popup option
+     * @memberof PopupCodeBlockLanguages
+     */
     constructor(options) {
-        super();
-
-        this._onSelectedLanguage = null;
-        this._onDismissed = null;
-        this._currentButton = null;
-        this._$buttons = null;
-        this._languages = options.languages;
-
         const popupButtonsHTML = [];
         options.languages.forEach(lang => {
             popupButtonsHTML.push(`<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`);
         });
 
         options = util.extend({
-            title: false,
+            header: false,
             className: 'te-popup-code-block-languages',
             content: popupButtonsHTML.join('')
         }, options);
-        LayerPopup.call(this, options);
+
+        super(options);
+
+        this._onSelectedLanguage = null;
+        this._onDismissed = null;
+        this._currentButton = null;
+        this._$buttons = null;
+        this._languages = options.languages;
 
         this.eventManager = options.eventManager;
 

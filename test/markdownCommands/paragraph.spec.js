@@ -12,8 +12,6 @@ describe('Paragraph', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
     });
 

@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-import Preview from './preview';
+import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
@@ -53,7 +53,7 @@ class ToastUIEditorViewOnly {
             });
         }
 
-        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor, true);
+        this.preview = new MarkdownPreview($(this.options.el), this.eventManager, this.convertor, true);
 
         this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 

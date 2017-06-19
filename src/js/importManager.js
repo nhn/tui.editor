@@ -112,9 +112,7 @@ class ImportManager {
      * @param {object} ev event object
      */
     _decodeURL(ev) {
-        if (ev.source === 'markdown'
-            && ev.data.text
-        ) {
+        if (ev.source === 'markdown' && ev.data.text) {
             const newTexts = [];
 
             ev.data.text.forEach(text => {

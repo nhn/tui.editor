@@ -8,15 +8,17 @@ import codeBlockManager from './codeBlockManager';
 
 /**
  * Preview
- * @exports Preview
  * @class Preview
- * @constructor
- * @param {jQuery} $el Container element for preview
- * @param {EventManager} eventManager Event manager instance
- * @param {Convertor} convertor Convertor instance
- * @param {boolean} isViewOnly - whether viewOnly mode or not
  **/
 class Preview {
+    /**
+     * Creates an instance of Preview.
+     * @param {jQuery} $el Container element for preview
+     * @param {EventManager} eventManager Event manager instance
+     * @param {Convertor} convertor Convertor instance
+     * @param {boolean} isViewOnly - whether viewOnly mode or not
+     * @memberof Preview
+     */
     constructor($el, eventManager, convertor, isViewOnly) {
         this.eventManager = eventManager;
         this.convertor = convertor;
@@ -33,35 +35,6 @@ class Preview {
             800,
             this
         );
-
-        this._initEvent();
-    }
-
-    /**
-     * Initialize event
-     * @private
-     */
-    _initEvent() {
-        let latestMarkdownValue = '';
-
-        this.eventManager.listen('contentChangedFromMarkdown', markdownEditor => {
-            latestMarkdownValue = markdownEditor.getValue();
-
-            if (this.isVisible()) {
-                this.lazyRunner.run('refresh',
-                    markdownEditor.getValue().replace(/<br>\n/g, '<br>'));
-            }
-        });
-
-        this.eventManager.listen('previewNeedsRefresh', value => {
-            this.refresh(value || latestMarkdownValue);
-        });
-        this.$el.on('scroll', event => {
-            this.eventManager.emit('scroll', {
-                source: 'preview',
-                data: event
-            });
-        });
     }
 
     /**
@@ -69,14 +42,13 @@ class Preview {
      * @private
      */
     _initContentSection() {
-        this.$previewContent = $('<div class="tui-editor-contents" />');
-        this.$el.append(this.$previewContent);
+        this._$previewContent = $('<div class="tui-editor-contents" />');
+        this.$el.append(this._$previewContent);
     }
 
     /**
      * Refresh rendering
-     * @api
-     * @memberOf Preview
+     * @memberof Preview
      * @param {string} markdown Markdown text
      */
     refresh(markdown) {
@@ -84,32 +56,43 @@ class Preview {
     }
 
     /**
+     * get html string
+     * @returns {string} - html preview string
+     * @memberof Preview
+     */
+    getHTML() {
+        return this._$previewContent.html();
+    }
+
+    /**
+     * set html string
+     * @param {string} html - html preview string
+     * @memberof Preview
+     */
+    setHTML(html) {
+        this._$previewContent.html(html);
+    }
+
+    /**
      * Render HTML on preview
-     * @api
-     * @memberOf Preview
+     * @memberof Preview
      * @param {string} html HTML string
+     * @protected
      */
     render(html) {
-        let finalHtml = html;
-        const processedDataByHook = this.eventManager.emit('previewBeforeHook', html);
+        const {_$previewContent} = this;
+        html = this.eventManager.emit('previewBeforeHook', html) || html;
 
-        if (processedDataByHook) {
-            [finalHtml] = processedDataByHook;
-        }
-
-        this.$previewContent.empty();
-        this.$previewContent.html(finalHtml);
+        _$previewContent.empty();
+        _$previewContent.html(html);
 
         this.eventManager.emit('replaceCodeBlockElementsBefore');
-        codeBlockManager.replaceElements(this.$previewContent, this.isViewOnly);
-
-        this.eventManager.emit('previewRenderAfter', this);
+        codeBlockManager.replaceElements(_$previewContent, this.isViewOnly);
     }
 
     /**
      * Set preview height
-     * @api
-     * @memberOf Preview
+     * @memberof Preview
      * @param {number} height Height for preview container
      */
     setHeight(height) {

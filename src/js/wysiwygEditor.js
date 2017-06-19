@@ -67,8 +67,7 @@ class WysiwygEditor {
 
     /**
      * init
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     init() {
         const $editorBody = $('<div />');
@@ -95,7 +94,8 @@ class WysiwygEditor {
         this.codeBlockGadget = new CodeBlockGadget({
             eventManager: this.eventManager,
             container: this.$editorContainerEl,
-            languages: this._options.codeBlockLanguages
+            languages: this._options.codeBlockLanguages,
+            wysiwygEditor: this
         });
     }
 
@@ -104,7 +104,7 @@ class WysiwygEditor {
      * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
      * @param {string} html Inner html of content editable
      * @returns {string}
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _preprocessForInlineElement(html) {
@@ -113,7 +113,7 @@ class WysiwygEditor {
     /**
      * _initEvent
      * Initialize EventManager event handler
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _initEvent() {
@@ -124,8 +124,7 @@ class WysiwygEditor {
     /**
      * addKeyEventHandler
      * Add key event handler
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} keyMap keyMap string
      * @param {function} handler handler
      */
@@ -317,7 +316,7 @@ class WysiwygEditor {
 
                     curEl.parentNode.removeChild(curEl);
 
-                    this.getEditor().setSelection(range);
+                    this.setRange(range);
                     range.detach();
                 }
             });
@@ -512,7 +511,7 @@ class WysiwygEditor {
      * @private
      */
     _scrollToRangeIfNeed() {
-        const range = this.getEditor().getSelection().cloneRange();
+        const range = this.getRange();
         const cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
 
         if (cursorTop >= this.get$Body().height()) {
@@ -543,7 +542,7 @@ class WysiwygEditor {
         this._joinSplitedTextNodes();
         this.restoreSavedSelection();
 
-        range = this.getEditor().getSelection().cloneRange();
+        range = this.getRange();
 
         const textElem = range.startContainer;
         const cursorOffset = range.startOffset;
@@ -569,7 +568,7 @@ class WysiwygEditor {
         range.setStart(textElem, cursorOffset);
         range.collapse(true);
 
-        this.getEditor().setSelection(range);
+        this.setRange(range);
     }
 
     /**
@@ -608,15 +607,12 @@ class WysiwygEditor {
     /**
      * saveSelection
      * Save current selection before modification
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      */
     saveSelection(range) {
-        const sq = this.getEditor();
-
         if (!range) {
-            range = sq.getSelection().cloneRange();
+            range = this.getRange();
         }
 
         this.getEditor()._saveRangeToBookmark(range);
@@ -625,19 +621,16 @@ class WysiwygEditor {
     /**
      * restoreSavedSelection
      * Restore saved selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     restoreSavedSelection() {
-        const sq = this.getEditor();
-        sq.setSelection(sq._getRangeAndRemoveBookmark());
+        this.setRange(this.getEditor()._getRangeAndRemoveBookmark());
     }
 
     /**
      * reset
      * Reset wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     reset() {
         this.setValue('');
@@ -646,8 +639,7 @@ class WysiwygEditor {
     /**
      * changeBlockFormatTo
      * Change current range block format to passed tag
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} targetTagName Target element tag name
      */
     changeBlockFormatTo(targetTagName) {
@@ -658,8 +650,7 @@ class WysiwygEditor {
     /**
      * makeEmptyBlockCurrentSelection
      * Make empty block to current selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     makeEmptyBlockCurrentSelection() {
         this.getEditor().modifyBlocks(frag => {
@@ -674,8 +665,7 @@ class WysiwygEditor {
     /**
      * focus
      * Focus to editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     focus() {
         const scrollTop = this.scrollTop();
@@ -692,8 +682,7 @@ class WysiwygEditor {
     /**
      * blur
      * Remove focus of editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     blur() {
         this.editor.blur();
@@ -702,8 +691,7 @@ class WysiwygEditor {
     /**
      * remove
      * Remove wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     remove() {
         this.getEditor().destroy();
@@ -715,8 +703,7 @@ class WysiwygEditor {
     /**
      * setHeight
      * Set editor height
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {number|string} height pixel of height or "auto"
      */
     setHeight(height) {
@@ -740,8 +727,7 @@ class WysiwygEditor {
     /**
      * setValue
      * Set value to wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} html HTML text
      */
     setValue(html) {
@@ -774,8 +760,7 @@ class WysiwygEditor {
     /**
      * getValue
      * Get value of wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {string} html
      */
     getValue() {
@@ -817,7 +802,7 @@ class WysiwygEditor {
     /**
      * _prepareGetHTML
      * Prepare before get html
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _prepareGetHTML() {
@@ -833,8 +818,7 @@ class WysiwygEditor {
 
     /**
      * postProcessForChange
-     * Post process for change
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     postProcessForChange() {
         this.getEditor().modifyDocument(() => {
@@ -845,8 +829,7 @@ class WysiwygEditor {
     /**
      * readySilentChange
      * Ready to silent change
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     readySilentChange() {
         if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
@@ -857,8 +840,7 @@ class WysiwygEditor {
     /**
      * getEditor
      * Get squire
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {SquireExt} squire
      */
     getEditor() {
@@ -868,8 +850,7 @@ class WysiwygEditor {
     /**
      * replaceSelection
      * Replace text of passed range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {Range} range range
      */
@@ -880,8 +861,7 @@ class WysiwygEditor {
     /**
      * replaceRelativeOffset
      * Replace content by relative offset
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {number} offset Offset of current range
      * @param {number} overwriteLength Length to overwrite content
@@ -893,8 +873,7 @@ class WysiwygEditor {
     /**
      * addWidget
      * Add widget to selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {Node} node Widget node
      * @param {string} style Adding style "over" or "bottom"
@@ -916,8 +895,7 @@ class WysiwygEditor {
     /**
      * get$Body
      * Get jQuery wrapped body container of Squire
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {JQuery} jquery body
      */
     get$Body() {
@@ -927,8 +905,7 @@ class WysiwygEditor {
     /**
      * hasFormatWithRx
      * Check with given regexp whether current path has some format or not
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {RegExp} rx Regexp
      * @returns {boolean} Match result
      */
@@ -939,8 +916,7 @@ class WysiwygEditor {
     /**
      * breakToNewDefaultBlock
      * Break line to new default block from passed range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {string} [where] "before" or not
      */
@@ -958,14 +934,13 @@ class WysiwygEditor {
 
         range.setStart(div, 0);
         range.collapse(true);
-        this.editor.setSelection(range);
+        this.setRange(range);
     }
 
     /**
      * replaceContentText
      * Replace textContet of node
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Node} container Container node
      * @param {string} from Target text to change
      * @param {string} to Replacement text
@@ -978,8 +953,7 @@ class WysiwygEditor {
     /**
      * unwrapBlockTag
      * Unwrap Block tag of current range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {function} [condition] iterate with tagName
      */
     unwrapBlockTag(condition) {
@@ -993,8 +967,7 @@ class WysiwygEditor {
 
     /**
      * Set cursor position to end
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     moveCursorToEnd() {
         this.getEditor().moveCursorToEnd();
@@ -1004,8 +977,7 @@ class WysiwygEditor {
 
     /**
      * Set cursor position to start
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     moveCursorToStart() {
         this.getEditor().moveCursorToStart();
@@ -1014,8 +986,7 @@ class WysiwygEditor {
 
     /**
      * Set cursor position to start
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {number} value Scroll amount
      * @returns {boolean}
      */
@@ -1030,12 +1001,12 @@ class WysiwygEditor {
     /**
      * _correctRangeAfterMoveCursor
      * For arrange Range after moveCursorToEnd api invocation. Squire has bug in Firefox, IE.
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} direction Direction of cursor move
      * @private
      */
     _correctRangeAfterMoveCursor(direction) {
-        const range = this.getEditor().getSelection().cloneRange();
+        const range = this.getRange();
         let cursorContainer = this.get$Body().get(0);
 
         if (direction === 'start') {
@@ -1057,13 +1028,12 @@ class WysiwygEditor {
 
         range.collapse(true);
 
-        this.getEditor().setSelection(range);
+        this.setRange(range);
     }
 
     /**
      * Get current Range object
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {Range}
      */
     getRange() {
@@ -1071,9 +1041,17 @@ class WysiwygEditor {
     }
 
     /**
+     * set range
+     * @param {Range} range - range to set
+     * @memberof WysiwygEditor
+     */
+    setRange(range) {
+        this.getEditor().setSelection(range);
+    }
+
+    /**
      * Get text object of current range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @returns {WwTextObject}
      */
@@ -1102,8 +1080,7 @@ class WysiwygEditor {
 
     /**
      * WysiwygEditor factory method
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {jQuery} $el Container element for editor
      * @param {EventManager} eventManager EventManager instance
      * @param {object} [options={}] - option object

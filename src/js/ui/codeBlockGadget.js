@@ -7,13 +7,14 @@ import i18n from '../i18n';
  * @class CodeBlockGadget
  */
 class CodeBlockGadget extends BlockOverlay {
-    constructor({eventManager, container, languages}) {
+    constructor({eventManager, container, languages, wysiwygEditor}) {
         super({
             eventManager,
             container,
             attachedSelector: 'pre'
         });
 
+        this._wysiwygEditor = wysiwygEditor;
         this._languages = languages;
         this._popupCodeBlockLanguages = null;
 
@@ -24,7 +25,10 @@ class CodeBlockGadget extends BlockOverlay {
     _initDOM() {
         this.$el.addClass('code-block-header');
         this._$inputLanguage = $(`<input type="text" class="te-input-language" maxlength="20" placeholder="${i18n.get('Choose language')}">`);
+        this._$buttonOpenModalEditor = $(`<button type="button">edit</button>`);
+
         this.$el.append(this._$inputLanguage);
+        this.$el.append(this._$buttonOpenModalEditor);
     }
 
     _initDOMEvent() {
@@ -60,6 +64,10 @@ class CodeBlockGadget extends BlockOverlay {
                 this._storeInputLanguage();
                 event.preventDefault();
             }
+        });
+
+        this._$buttonOpenModalEditor.on('click', () => {
+            this._eventManager.emit('openPopupCodeBlockEditor', this.getAttachedElement());
         });
     }
 
@@ -128,6 +136,19 @@ class CodeBlockGadget extends BlockOverlay {
         }
     }
 
+    _focusCodeBlock() {
+        const codeBlockLine = this.getAttachedElement().querySelector('div');
+        const wysiwygEditor = this._wysiwygEditor;
+        const range = wysiwygEditor.getRange();
+
+        window.setTimeout(() => {
+            wysiwygEditor.focus();
+            range.setStart(codeBlockLine, 0);
+            range.collapse(true);
+            wysiwygEditor.setRange(range);
+        }, 0);
+    }
+
     /**
      * store selection & hide popup
      * @private
@@ -135,6 +156,7 @@ class CodeBlockGadget extends BlockOverlay {
      */
     _storeInputLanguage() {
         this._setLanguage(this._$inputLanguage.val());
+        this._focusCodeBlock();
         this._hidePopupCodeBlockLanguages();
     }
 

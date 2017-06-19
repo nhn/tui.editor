@@ -13,6 +13,7 @@ import PopupTableUtils from './popupTableUtils';
 import PopupAddTable from './popupAddTable';
 import PopupAddHeading from './popupAddHeading';
 import PopupCodeBlockLanguages from './popupCodeBlockLanguages';
+import PopupCodeBlockEditor from './popupCodeBlockEditor';
 
 /* eslint-disable indent */
 const containerTmpl = [
@@ -58,6 +59,7 @@ DefaultUI.prototype.init = function($container) {
     this._initPopupAddHeading();
     this._initPopupTableUtils();
     this._initPopupCodeBlockLanguages();
+    this._initPopupCodeBlockEditor();
 
     this._initMarkdownTab();
 };
@@ -184,6 +186,15 @@ DefaultUI.prototype._initPopupCodeBlockLanguages = function() {
     this.popupCodeBlockLanguages = new PopupCodeBlockLanguages({
         $target: this.$el,
         eventManager: this.editor.eventManager,
+        languages: this.editor.options.codeBlockLanguages
+    });
+};
+
+DefaultUI.prototype._initPopupCodeBlockEditor = function() {
+    this.popupCodeBlockEditor = new PopupCodeBlockEditor({
+        $target: this.$el,
+        eventManager: this.editor.eventManager,
+        convertor: this.editor.convertor,
         languages: this.editor.options.codeBlockLanguages
     });
 };

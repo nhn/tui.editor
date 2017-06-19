@@ -15,7 +15,7 @@ const {util} = tui;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupTableUtils(options) {
@@ -33,7 +33,7 @@ function PopupTableUtils(options) {
     ].join('');
 
     options = util.extend({
-        title: false,
+        header: false,
         className: 'te-popup-table-utils',
         content: POPUP_CONTENT
     }, options);

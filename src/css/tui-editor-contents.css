@@ -92,22 +92,23 @@
     margin-bottom: 0;
 }
 
-.tui-editor-contents pre {
+.tui-editor-contents pre,
+.tui-editor-contents code {
     font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
-    margin: 2px 0 8px;
-    padding: 18px;
-    background-color: #f5f7f8;
     border: 0;
     border-radius: 0;
 }
 
+.tui-editor-contents pre {
+    margin: 2px 0 8px;
+    padding: 18px;
+    background-color: #f5f7f8;
+}
+
 .tui-editor-contents code {
     color: #c1788b;
-    border: 0;
-    border-radius: 0;
     padding: 4px 4px 2px 0;
     letter-spacing: -0.3px;
-    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
 }
 
 .tui-editor-contents pre code {
