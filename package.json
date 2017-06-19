@@ -41,8 +41,8 @@
     "lint": "eslint src/js",
     "doc": "jsdoc -c jsdoc-conf.json",
     "test": "karma start",
-    "test:ne": "KARMA_SERVER=ne karma start",
-    "test:sl": "KARMA_SERVER=sl karma start",
+    "test:ne": "SERVER=ne karma start",
+    "test:sl": "SERVER=sl karma start",
     "serve": "webpack-dev-server --progress --inline",
     "bundle": "webpack && webpack -p"
   }

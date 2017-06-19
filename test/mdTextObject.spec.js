@@ -12,8 +12,6 @@ describe('MdTextObject', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         cm.setValue('test textObject');
@@ -32,7 +30,10 @@ describe('MdTextObject', () => {
         });
 
         it('set start and set end', () => {
-            const cursor = {line: 1, ch: 1};
+            const cursor = {
+                line: 1,
+                ch: 1
+            };
 
             to._setStart(cursor);
             to._setEnd(cursor);

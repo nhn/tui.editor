@@ -16,7 +16,7 @@ const {util} = tui;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupAddImage(options) {
@@ -41,6 +41,7 @@ function PopupAddImage(options) {
     /* eslint-enable indent */
 
     options = util.extend({
+        header: true,
         title: i18n.get('Insert image'),
         className: 'te-popup-add-image tui-editor-popup',
         content: POPUP_CONTENT

@@ -36,12 +36,12 @@ const CELL_WIDTH = 25,
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupAddTable(options) {
     options = util.extend({
-        title: false,
+        header: false,
         className: 'te-popup-add-table',
         content: POPUP_CONTENT
     }, options);

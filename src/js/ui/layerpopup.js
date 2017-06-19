@@ -7,17 +7,41 @@ import UIController from './uicontroller';
 
 const {util} = tui;
 const CLASS_PREFIX = 'tui-popup-';
+const CLASS_FIT_WINDOW = 'fit-window';
 let _id = 0;
 
-/* eslint-disable indent */
-const LAYOUT_TEMPLATE = [
-    `<div class="${CLASS_PREFIX}header">`,
-        `<span class="${CLASS_PREFIX}title"></span>`,
-        `<button type="button" class="${CLASS_PREFIX}close-button">x</button>`,
-    '</div>',
-    `<div class="${CLASS_PREFIX}body"></div>`
-].join('');
-/* eslint-enable indent */
+const LAYOUT_TEMPLATE_MODELESS =
+    `<div class="${CLASS_PREFIX}header">
+        <span class="${CLASS_PREFIX}title"></span>
+        <div class="${CLASS_PREFIX}header-buttons"></div>
+        <button type="button" class="${CLASS_PREFIX}close-button">x</button>
+    </div>
+    <div class="${CLASS_PREFIX}body"></div>`;
+
+const LAYOUT_TEMPLATE_MODAL =
+    `<div class="${CLASS_PREFIX}wrapper">
+        <div class="${CLASS_PREFIX}header">
+            <span class="${CLASS_PREFIX}title"></span>
+            <div class="${CLASS_PREFIX}header-buttons"></div>
+            <button type="button" class="${CLASS_PREFIX}close-button">x</button>
+        </div>
+        <div class="${CLASS_PREFIX}body"></div>
+    </div>`;
+
+/**
+ * A number, or a string containing a number.
+ * @typedef {Object} LayerPopupOption
+    * @property {string[]} openerCssQuery - Css Query list to bind clickevent that open popup
+    * @property {string[]} closerCssQuery - Css Query list to bind clickevent that close popup
+    * @property {jQuery} $el - popup root element
+    * @property {jQuery|string} content - popup content that html string or jQuery element
+    * @property {string} textContent - popup text content
+    * @property {string} title - popup title
+    * @property {boolean} header - whether to draw header
+    * @property {jQuery} $target - element to append popup
+    * @property {boolean} modal - true: modal, false: modeless
+    * @property {string} headerButtons - replace header(close) button
+ */
 
 /**
  * LayerPopup
@@ -25,26 +49,18 @@ const LAYOUT_TEMPLATE = [
  * @augments UIController
  * @constructor
  * @class
- * @param {object} options 옵션
- * @param {string[]} options.openerCssQuery Css Query list to bind clickevent that open popup
- * @param {string[]} options.closerCssQuery Css Query list to bind clickevent that close popup
- * @param {jQuery} options.$el popup root element
- * @param {jQuery|string} options.content popup content that html string or jQuery element
- * @param {string} options.textContent popup text content
- * @param {string} options.title popup title
- * @param {jQuery} options.$target element to append popup
+ * @param {LayerPopupOption} options - popup option
  * @ignore
  */
 function LayerPopup(options) {
-    options = util.extend({}, options);
+    this.options = options = util.extend({}, options);
+    const wrapperClass = options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`;
 
     UIController.call(this, {
         tagName: 'div',
-        className: `${CLASS_PREFIX}wrapper`,
+        className: wrapperClass,
         rootElement: options.$el
     });
-
-    options = util.extend({}, options);
 
     this._setId();
     this._initTarget(options);
@@ -52,6 +68,7 @@ function LayerPopup(options) {
     this._initCloserOpener(options);
     this._initContent(options);
     this._initTitle(options);
+    this._initHeader(options);
     this._initClassName(options);
     this._initCssStyles(options);
 }
@@ -89,6 +106,10 @@ LayerPopup.prototype._initTitle = function(options) {
     this.title = options.title;
 };
 
+LayerPopup.prototype._initHeader = function({header = true}) {
+    this.header = header;
+};
+
 LayerPopup.prototype._initClassName = function(options) {
     if (options.className) {
         this.className = options.className;
@@ -99,20 +120,25 @@ LayerPopup.prototype.render = function() {
     this._renderLayout();
     this._renderTitle();
     this._renderContent();
+    this._renderHeaderButtons();
 
     this._attachPopupEvent();
 };
 
 LayerPopup.prototype._renderLayout = function() {
     if (!this._isExternalHtmlUse) {
-        this.$el.html(LAYOUT_TEMPLATE);
+        const layout = this.options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
+        this.$el.html(layout);
         this.$el.addClass(this.className);
         this.hide();
         this.$target.append(this.$el);
-        this.$body = this.$el.find(this._getFullClassName('body'));
+        this.$body = this.$el.find(`.${CLASS_PREFIX}body`);
 
-        if (this.title === false) {
-            this.$el.find(this._getFullClassName('header')).remove();
+        if (!this.header) {
+            this.$el.find(`.${CLASS_PREFIX}header`).remove();
+        }
+        if (this.options.headerButtons) {
+            this.$el.find(`.${CLASS_PREFIX}close-button`).remove();
         }
     } else {
         this.hide();
@@ -123,6 +149,14 @@ LayerPopup.prototype._renderLayout = function() {
     }
 };
 
+LayerPopup.prototype._renderHeaderButtons = function() {
+    const buttons = this.options.headerButtons;
+    if (buttons) {
+        const $buttonWrapper = this.$el.find(`.${CLASS_PREFIX}header-buttons`);
+        $buttonWrapper.append($(buttons));
+    }
+};
+
 LayerPopup.prototype._renderContent = function() {
     if (!this._isExternalHtmlUse) {
         this.setContent(this.$content);
@@ -130,13 +164,9 @@ LayerPopup.prototype._renderContent = function() {
 };
 
 LayerPopup.prototype._renderTitle = function() {
-    if (!this._isExternalHtmlUse && this.title !== false) {
+    if (!this._isExternalHtmlUse && util.isExisty(this.title)) {
         this.setTitle(this.title);
     }
-};
-
-LayerPopup.prototype._getFullClassName = function(lastName) {
-    return `.${CLASS_PREFIX}${lastName}`;
 };
 
 LayerPopup.prototype._attachOpenerCloserEvent = function() {
@@ -168,7 +198,7 @@ LayerPopup.prototype._detachOpenerCloserEvent = function() {
 LayerPopup.prototype._attachPopupControlEvent = function() {
     const self = this;
 
-    this.on(`click ${this._getFullClassName('close-button')}`, () => {
+    this.on(`click .${CLASS_PREFIX}close-button`, () => {
         self.hide();
     });
 };
@@ -198,7 +228,7 @@ LayerPopup.prototype.setContent = function($content) {
 };
 
 LayerPopup.prototype.setTitle = function(title) {
-    const $title = this.$el.find(this._getFullClassName('title'));
+    const $title = this.$el.find(`.${CLASS_PREFIX}title`);
 
     $title.empty();
     $title.append(title);
@@ -236,6 +266,39 @@ LayerPopup.prototype._initCssStyles = function(options) {
     if (options.css) {
         this.css(options.css);
     }
+};
+
+/**
+ * make popup size fit to window
+ * @param {boolean} fit - true to make popup fit to window
+ * @memberof LayerPopup
+ * @protected
+ */
+LayerPopup.prototype.setFitToWindow = function(fit) {
+    this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
+};
+
+/**
+ * make popup size fit to window
+ * @memberof LayerPopup
+ * @protected
+ * @returns {boolean} - true for fit to window
+ */
+LayerPopup.prototype.isFitToWindow = function() {
+    return this.$el.hasClass(CLASS_FIT_WINDOW);
+};
+
+/**
+ * toggle size fit to window
+ * @memberof LayerPopup
+ * @protected
+ * @returns {boolean} - true for fit to window
+ */
+LayerPopup.prototype.toggleFitToWindow = function() {
+    const fitToWindow = !this.isFitToWindow();
+    this.setFitToWindow(fitToWindow);
+
+    return fitToWindow;
 };
 
 LayerPopup.factory = function(options) {

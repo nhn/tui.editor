@@ -4,7 +4,7 @@
  */
 
 import MarkdownEditor from './markdownEditor';
-import Preview from './preview';
+import MarkdownPreview from './mdPreview';
 import WysiwygEditor from './wysiwygEditor';
 import Layout from './layout';
 import EventManager from './eventManager';
@@ -144,7 +144,7 @@ class ToastUIEditor {
         this.setUI(this.options.UI || new DefaultUI(this));
 
         this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
-        this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+        this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
         this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
             useCommandShortcut: this.options.useCommandShortcut
         });

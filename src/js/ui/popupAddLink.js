@@ -5,6 +5,7 @@
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
+import ImportManager from '../importManager';
 
 const {util} = tui;
 
@@ -15,7 +16,7 @@ const {util} = tui;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
 function PopupAddLink(options) {
@@ -33,6 +34,7 @@ function PopupAddLink(options) {
     /* eslint-enable indent */
 
     options = util.extend({
+        header: true,
         title: i18n.get('Insert link'),
         className: 'te-popup-add-link tui-editor-popup',
         content: POPUP_CONTENT
@@ -94,9 +96,12 @@ PopupAddLink.prototype._linkWithEventManager = function(eventManager) {
 };
 
 PopupAddLink.prototype.getValue = function() {
+    const linkText = ImportManager.decodeURIGraceful(this.$el.find('.te-link-text-input').val(), decodeURIComponent);
+    const url = ImportManager.decodeURIGraceful(this.$el.find('.te-url-input').val(), decodeURI);
+
     return {
-        linkText: this.$el.find('.te-link-text-input').val(),
-        url: this.$el.find('.te-url-input').val().replace(/\(/g, '%28').replace(/\)/g, '%29')
+        linkText,
+        url
     };
 };
 
