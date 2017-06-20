@@ -19,10 +19,10 @@ describe('WwTableSelectionManager', () => {
 
         mgr = new WwTableSelectionManager(wwe);
         wwe.focus();
-        wwe.addManager(WwTableManager);
+        wwe.componentManager.addManager(WwTableManager);
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -168,16 +168,6 @@ describe('WwTableSelectionManager', () => {
             expect(newRange.endContainer).toBe($tds[2]);
         });
     });
-    describe('_getTableCell', () => {
-        it('should return td when td element passed', () => {
-            const result = mgr._getTableCell($('<td></td>')[0]);
-            expect(result.nodeName).toBe('TD');
-        });
-        it('should return td when td element passed', () => {
-            const result = mgr._getTableCell($('<td>hi</td>')[0].firstChild);
-            expect(result.nodeName).toBe('TD');
-        });
-    });
     describe('getSelectionRangeFromTable', () => {
         it('should increase endRowOffset by 1 when thead and tbody selected', () => {
             const sq = wwe.getEditor();
@@ -259,7 +249,7 @@ describe('WwTableSelectionManager', () => {
         });
     });
 
-    describe('__highlightTableCellsBy', () => {
+    describe('highlightTableCellsBy', () => {
         it('should add \'.te-cell-selected\' class to selected cells', () => {
             const sq = wwe.getEditor();
 
@@ -273,7 +263,7 @@ describe('WwTableSelectionManager', () => {
                 '</tbody>' +
                 '</table>');
 
-            mgr._highlightTableCellsBy($('th')[0], $('td')[3]);
+            mgr.highlightTableCellsBy($('th')[0], $('td')[3]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(6);
@@ -299,7 +289,7 @@ describe('WwTableSelectionManager', () => {
                 '</table>');
             const $tds = $('td');
 
-            mgr._highlightTableCellsBy($tds[0], $tds[3]);
+            mgr.highlightTableCellsBy($tds[0], $tds[3]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);
@@ -321,7 +311,7 @@ describe('WwTableSelectionManager', () => {
                 '</tbody>' +
                 '</table>');
 
-            mgr._highlightTableCellsBy($('th')[1], $('td')[2]);
+            mgr.highlightTableCellsBy($('th')[1], $('td')[2]);
 
             const selectedCells = $('.te-cell-selected');
             expect(selectedCells.length).toBe(4);

@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "0.10.11",
+  "version": "0.12.14",
   "description": "private",
   "authors": [
     {
@@ -33,8 +33,8 @@
     "highlightjs": "~9.5.0",
     "jquery": "~2.1.4",
     "markdown-it": "^7.0.1",
-    "toMark": "https://github.com/shiren/toMark.git#0.0.10",
-    "squire-rte": "1.6.3"
+    "toMark": "https://github.com/nhnent/toMark.git#0.0.14",
+    "squire-rte": "kyuwoo-choi/Squire#tui-editor-release"
   },
   "devDependencies": {
     "tui-component-colorpicker": "~1.0.2"

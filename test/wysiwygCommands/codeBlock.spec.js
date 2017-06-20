@@ -14,7 +14,7 @@ describe('CodeBlock', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager('codeblock', CodeBlockManager);
+        wwe.componentManager.addManager('codeblock', CodeBlockManager);
 
         sq = wwe.getEditor();
         $body = wwe.get$Body();

@@ -6,7 +6,6 @@
 
 
 import CommandManager from '../commandManager';
-import domUtil from '../domUtils';
 
 /**
  * RemoveRow
@@ -14,6 +13,7 @@ import domUtil from '../domUtils';
  * @exports RemoveRow
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     name: 'RemoveRow',
@@ -25,8 +25,8 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
         const $table = $(range.startContainer).parents('table');
-        const selectionMgr = wwe.getManager('tableSelection');
-        const tableMgr = wwe.getManager('table');
+        const selectionMgr = wwe.componentManager.getManager('tableSelection');
+        const tableMgr = wwe.componentManager.getManager('table');
         const $tr = getTrs(range, selectionMgr, $table);
         const tbodyRowLength = $table.find('tbody tr').length;
 
@@ -96,20 +96,16 @@ function getSelectedRows(firstSelectedCell, rangeInformation, $table) {
  */
 function getTrs(range, selectionMgr, $table) {
     const selectedCells = selectionMgr.getSelectedCells();
-    let rangeInformation, trs, startCell, endCell;
+    let rangeInformation, trs;
 
     if (selectedCells.length) {
         rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],
             selectedCells.last()[0]);
         trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
     } else {
-        const startContainer = range.startContainer;
-        const endContainer = range.endContainer;
-
-        startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
-        endCell = domUtil.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
-        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
-        trs = getSelectedRows(startCell, rangeInformation, $table);
+        const cell = $(range.startContainer).closest('td,th')[0];
+        rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
+        trs = getSelectedRows(cell, rangeInformation, $table);
     }
 
     return trs;

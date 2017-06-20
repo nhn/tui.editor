@@ -285,5 +285,28 @@ describe('SquireExt', () => {
             expect(sqe.scrollTop()).toEqual(scrollTop);
         });
     });
+
+    describe('blockCommandShortcut()', () => {
+        it('blocks key handlers', () => {
+            const isMac = /Mac/.test(navigator.platform);
+            const meta = isMac ? 'meta' : 'ctrl';
+            const spyOriginal = jasmine.createSpy('original');
+            const spy = jasmine.createSpy('replace');
+            const keyEvent = {
+                keyCode: 66,
+                preventDefault: spy
+            };
+            keyEvent[`${meta}Key`] = true;
+
+            Object.getPrototypeOf(sqe._keyHandlers)[`${meta}-b`] = spyOriginal;
+            sqe.blockCommandShortcuts();
+            sqe.fireEvent('keydown', keyEvent);
+
+            setTimeout(() => {
+                expect(spy).toHaveBeenCalled();
+                expect(spyOriginal).not.toHaveBeenCalled();
+            }, 1);
+        });
+    });
 });
 

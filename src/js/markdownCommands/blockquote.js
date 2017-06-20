@@ -11,6 +11,7 @@ import CommandManager from '../commandManager';
  * Add blockquote markdown syntax to markdown editor
  * @exports Blockquote
  * @augments Command
+ * @ignore
  */
 const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     name: 'Blockquote',

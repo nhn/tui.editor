@@ -32,6 +32,7 @@ const containerTmpl = [
  * @constructor
  * @class
  * @param {ToastUIEditor} editor editor
+ * @ignore
  */
 function DefaultUI(editor) {
     this.name = 'default';
@@ -129,7 +130,7 @@ DefaultUI.prototype._initMarkdownTab = function() {
 DefaultUI.prototype._initPopupAddLink = function() {
     this.popupAddLink = new PopupAddLink({
         $target: this.$el,
-        eventManager: this.editor.eventManager
+        editor: this.editor
     });
 };
 
@@ -166,7 +167,7 @@ DefaultUI.prototype._initPopupTableUtils = function() {
     const self = this;
 
     this.editor.eventManager.listen('contextmenu', ev => {
-        if ($(ev.data.target).parents('table').length > 0) {
+        if ($(ev.data.target).parents('[contenteditable=true] table').length > 0) {
             ev.data.preventDefault();
             self.editor.eventManager.emit('openPopupTableUtils', ev.data);
         }

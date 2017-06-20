@@ -16,6 +16,7 @@ const util = tui.util;
  * @constructor
  * @class
  * @param {EventManager} eventManager 이벤트 매니저
+ * @ignore
  */
 function Toolbar(eventManager) {
     UIController.call(this, {
@@ -119,7 +120,8 @@ Toolbar.prototype._initButton = function() {
             className: 'tui-strike',
             command: 'Strike',
             text: '~',
-            tooltip: i18n.get('Strike')
+            tooltip: i18n.get('Strike'),
+            state: 'strike'
         })
     ]);
 

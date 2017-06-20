@@ -37,6 +37,7 @@ const CELL_WIDTH = 25,
  * @constructor
  * @class
  * @param {object} options options
+ * @ignore
  */
 function PopupAddTable(options) {
     options = util.extend({

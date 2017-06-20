@@ -10,6 +10,7 @@ import CommandManager from '../commandManager';
  * Add HR markdown syntax to markdown editor
  * @exports HR
  * @augments Command
+ * @ignore
  */
 const HR = CommandManager.command('markdown', /** @lends HR */{
     name: 'HR',

@@ -14,7 +14,7 @@ let _id = 0;
 const LAYOUT_TEMPLATE = [
     `<div class="${CLASS_PREFIX}header">`,
         `<span class="${CLASS_PREFIX}title"></span>`,
-        `<button class="${CLASS_PREFIX}close-button">x</button>`,
+        `<button type="button" class="${CLASS_PREFIX}close-button">x</button>`,
     '</div>',
     `<div class="${CLASS_PREFIX}body"></div>`
 ].join('');
@@ -34,6 +34,7 @@ const LAYOUT_TEMPLATE = [
  * @param {string} options.textContent popup text content
  * @param {string} options.title popup title
  * @param {jQuery} options.$target element to append popup
+ * @ignore
  */
 function LayerPopup(options) {
     options = util.extend({}, options);

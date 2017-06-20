@@ -11,6 +11,7 @@ import CommandManager from '../commandManager';
  * Add table markdown syntax to markdown editor
  * @exports Table
  * @augments Command
+ * @ignore
  */
 const Table = CommandManager.command('markdown', /** @lends Table */{
     name: 'Table',

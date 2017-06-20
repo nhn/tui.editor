@@ -16,6 +16,8 @@ import WwCodeBlockManager from './wwCodeBlockManager';
 import SquireExt from './squireExt';
 import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
+import ComponentManager from './componentManager';
+import codeBlockManager from './codeBlockManager';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -34,11 +36,14 @@ const canObserveMutations = (typeof MutationObserver !== 'undefined');
  * @exports WysiwygEditor
  * @param {jQuery} $el element to insert editor
  * @param {EventManager} eventManager EventManager instance
+ * @param {object} [options={}] - option object
+ *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
  * @constructor
  * @class WysiwygEditor
  */
 class WysiwygEditor {
-    constructor($el, eventManager) {
+    constructor($el, eventManager, options = {}) {
+        this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
         this.$editorContainerEl = $el;
 
@@ -49,10 +54,14 @@ class WysiwygEditor {
         this._keyEventHandlers = {};
         this._managers = {};
 
+        this._options = $.extend({
+            'useCommandShortcut': true
+        }, options);
+
         this._initEvent();
         this._initDefaultKeyEventHandler();
 
-        this.postProcessForChange = util.debounce(() => this._postProcessForChange(), 0);
+        this.debouncedPostProcessForChange = util.debounce(() => this.postProcessForChange(), 0);
     }
 
     /**
@@ -71,6 +80,9 @@ class WysiwygEditor {
                 'HR': false
             }
         });
+        if (!this._options.useCommandShortcut) {
+            this.editor.blockCommandShortcuts();
+        }
 
         this._clipboardManager = new WwClipboardManager(this);
         this._initSquireEvent();
@@ -127,6 +139,24 @@ class WysiwygEditor {
     }
 
     /**
+     * REmove key event handler.
+     * @param {string} keyMap keyMap string
+     * @param {function} handler handler
+     */
+    removeKeyEventHandler(keyMap, handler) {
+        if (!handler) {
+            handler = keyMap;
+            keyMap = 'DEFAULT';
+        }
+
+        const handlers = this._keyEventHandlers[keyMap];
+
+        if (handlers) {
+            this._keyEventHandlers[keyMap] = handlers.filter(_handler => _handler !== handler);
+        }
+    }
+
+    /**
      * _runKeyEventHandlers
      * Run key event handler
      * @param {Event} event event object
@@ -162,6 +192,32 @@ class WysiwygEditor {
     _initSquireEvent() {
         const self = this;
         let isNeedFirePostProcessForRangeChange = false;
+
+        this.getEditor().addEventListener('copy', clipboardEvent => {
+            self.eventManager.emit('copy', {
+                source: 'wysiwyg',
+                data: clipboardEvent
+            });
+            util.debounce(() => {
+                self.eventManager.emit('copyAfter', {
+                    source: 'wysiwyg',
+                    data: clipboardEvent
+                });
+            })();
+        });
+
+        this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
+            self.eventManager.emit('cut', {
+                source: 'wysiwyg',
+                data: clipboardEvent
+            });
+            util.debounce(() => {
+                self.eventManager.emit('cutAfter', {
+                    source: 'wysiwyg',
+                    data: clipboardEvent
+                });
+            })();
+        });
 
         this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
             self.eventManager.emit('paste', {
@@ -266,7 +322,7 @@ class WysiwygEditor {
 
         this.getEditor().addEventListener('keyup', keyboardEvent => {
             if (isNeedFirePostProcessForRangeChange) {
-                self.postProcessForChange();
+                self.debouncedPostProcessForChange();
                 isNeedFirePostProcessForRangeChange = false;
             }
 
@@ -330,10 +386,12 @@ class WysiwygEditor {
             });
         });
 
+        // Toolbar status active/inactive
         this.getEditor().addEventListener('pathChange', data => {
             const state = {
                 bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
                 italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
+                strike: /(^S>|>S$|>S>|^S$)/.test(data.path),
                 code: /CODE/.test(data.path),
                 codeBlock: /PRE/.test(data.path),
                 quote: /BLOCKQUOTE/.test(data.path),
@@ -672,6 +730,8 @@ class WysiwygEditor {
 
         this.editor.setHTML(html);
 
+        codeBlockManager.replaceElements(this.$editorContainerEl, false, true);
+
         this.eventManager.emit('wysiwygSetValueAfter', this);
         this.eventManager.emit('contentChangedFromWysiwyg', this);
 
@@ -684,6 +744,15 @@ class WysiwygEditor {
     }
 
     /**
+     * insert given text to cursor position or selected area
+     * @param {string} text - text string to insert
+     * @memberof WysiwygEditor
+     */
+    insertText(text) {
+        this.editor.insertPlainText(text);
+    }
+
+    /**
      * getValue
      * Get value of wysiwyg editor
      * @api
@@ -691,6 +760,8 @@ class WysiwygEditor {
      * @returns {string} html
      */
     getValue() {
+        codeBlockManager.restoreElements(this.$editorContainerEl, false, true);
+
         this._prepareGetHTML();
 
         let html = this.editor.getHTML();
@@ -731,24 +802,18 @@ class WysiwygEditor {
      * @private
      */
     _prepareGetHTML() {
-        const self = this;
-        // for ensure to fire change event
-        self.get$Body().attr('lastGetValue', Date.now());
-
-        self._joinSplitedTextNodes();
-
-        self.getEditor().modifyDocument(() => {
-            self.eventManager.emit('wysiwygGetValueBefore', self);
+        this.getEditor().modifyDocument(() => {
+            this._joinSplitedTextNodes();
+            this.eventManager.emit('wysiwygGetValueBefore', self);
         });
     }
 
     /**
-     * _postProcessForChange
+     * postProcessForChange
      * Post process for change
-     * @private
      * @memberOf WysiwygEditor
      */
-    _postProcessForChange() {
+    postProcessForChange() {
         const self = this;
         self.getEditor().modifyDocument(() => {
             self.eventManager.emit('wysiwygRangeChangeAfter', self);
@@ -905,36 +970,6 @@ class WysiwygEditor {
     }
 
     /**
-     * addManager
-     * Add manager
-     * @api
-     * @memberOf WysiwygEditor
-     * @param {string} name Manager name
-     * @param {function} Manager Constructor
-     */
-    addManager(name, Manager) {
-        if (!Manager) {
-            Manager = name;
-            name = null;
-        }
-
-        const instance = new Manager(this);
-        this._managers[name || instance.name] = instance;
-    }
-
-    /**
-     * getManager
-     * Get manager by manager name
-     * @api
-     * @memberOf WysiwygEditor
-     * @param {string} name Manager name
-     * @returns {object} manager
-     */
-    getManager(name) {
-        return this._managers[name];
-    }
-
-    /**
      * Set cursor position to end
      * @api
      * @memberOf WysiwygEditor
@@ -1046,21 +1081,23 @@ class WysiwygEditor {
      * @memberOf WysiwygEditor
      * @param {jQuery} $el Container element for editor
      * @param {EventManager} eventManager EventManager instance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
      * @returns {WysiwygEditor} wysiwygEditor
      */
-    static factory($el, eventManager) {
-        const wwe = new WysiwygEditor($el, eventManager);
+    static factory($el, eventManager, options) {
+        const wwe = new WysiwygEditor($el, eventManager, options);
 
         wwe.init();
 
-        wwe.addManager(WwListManager);
-        wwe.addManager(WwTaskManager);
-        wwe.addManager(WwTableSelectionManager);
-        wwe.addManager(WwTableManager);
-        wwe.addManager(WwHrManager);
-        wwe.addManager(WwPManager);
-        wwe.addManager(WwHeadingManager);
-        wwe.addManager(WwCodeBlockManager);
+        wwe.componentManager.addManager(WwListManager);
+        wwe.componentManager.addManager(WwTaskManager);
+        wwe.componentManager.addManager(WwTableSelectionManager);
+        wwe.componentManager.addManager(WwTableManager);
+        wwe.componentManager.addManager(WwHrManager);
+        wwe.componentManager.addManager(WwPManager);
+        wwe.componentManager.addManager(WwHeadingManager);
+        wwe.componentManager.addManager(WwCodeBlockManager);
 
         return wwe;
     }

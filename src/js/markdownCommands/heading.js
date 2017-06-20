@@ -16,6 +16,7 @@ const FIND_HEADING_RX = /^#+\s/g;
  * Add heading markdown syntax to markdown editor
  * @exports Heading
  * @augments Command
+ * @ignore
  */
 const Heading = CommandManager.command('markdown', /** @lends Heading */{
     name: 'Heading',

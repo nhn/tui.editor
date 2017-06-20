@@ -13,6 +13,7 @@ import domUtils from '../domUtils';
  * @exports Strike
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     name: 'Strike',
@@ -24,21 +25,14 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     exec(wwe) {
         const sq = wwe.getEditor();
         const range = sq.getSelection();
-        const tableSelectionManager = wwe.getManager('tableSelection');
+        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
         sq.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-            tableSelectionManager.createRangeBySelectedCells();
-        }
-
-        if (sq.hasFormat('S')) {
-            sq.changeFormat(null, {tag: 'S'});
-        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-            if (sq.hasFormat('code')) {
-                sq.changeFormat(null, {tag: 'code'});
-            }
-            sq.strikethrough();
+            tableSelectionManager.styleToSelectedCells(styleStrike);
+        } else {
+            styleStrike(sq);
         }
 
         if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
@@ -48,4 +42,20 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
     }
 });
 
+/**
+ * Style strike.
+ * @param {object} sq - squire editor instance
+ */
+function styleStrike(sq) {
+    if (sq.hasFormat('S')) {
+        sq.changeFormat(null, {tag: 'S'});
+    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+        if (sq.hasFormat('code')) {
+            sq.changeFormat(null, {tag: 'code'});
+        }
+        sq.strikethrough();
+    }
+}
+
 module.exports = Strike;
+

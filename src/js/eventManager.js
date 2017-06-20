@@ -9,7 +9,7 @@ const eventList = [
     'previewRenderAfter',
     'previewNeedsRefresh',
     'addImageBlobHook',
-    'setValueAfter',
+    'setMarkdownAfter',
     'contentChangedFromWysiwyg',
     'changeFromWysiwyg',
     'contentChangedFromMarkdown',
@@ -27,11 +27,13 @@ const eventList = [
     'openHeadingSelect',
     'closeAllPopup',
     'command',
+    'addCommandBefore',
     'htmlUpdate',
     'markdownUpdate',
     'renderedHtmlUpdated',
     'removeEditor',
     'convertorAfterMarkdownToHtmlConverted',
+    'convertorBeforeHtmlToMarkdownConverted',
     'convertorAfterHtmlToMarkdownConverted',
     'stateChange',
     'wysiwygSetValueAfter',
@@ -40,6 +42,7 @@ const eventList = [
     'wysiwygProcessHTMLText',
     'wysiwygRangeChangeAfter',
     'wysiwygKeyEvent',
+    'replaceCodeBlockElementsBefore',
     'pasteBefore',
     'scroll',
     'click',
@@ -55,7 +58,10 @@ const eventList = [
     'blur',
     'paste',
     'copy',
+    'copyBefore',
+    'copyAfter',
     'cut',
+    'cutAfter',
     'drop',
     'show',
     'hide'
@@ -219,6 +225,10 @@ class EventManager {
     _removeEventHandlerWithTypeInfo(type, namespace) {
         const handlersToSurvive = [];
         const eventHandlers = this.events.get(type);
+
+        if (!eventHandlers) {
+            return;
+        }
 
         eventHandlers.map(handler => {
             if (handler.namespace !== namespace) {

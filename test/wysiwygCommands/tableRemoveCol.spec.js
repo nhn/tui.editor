@@ -14,7 +14,7 @@ describe('Table - RemoveCol', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.addManager('table', WwTableManager);
+        wwe.componentManager.addManager('table', WwTableManager);
 
         wwe.getEditor().focus();
     });
@@ -72,6 +72,33 @@ describe('Table - RemoveCol', () => {
 
         range.setStartBefore(wwe.get$Body().find('tbody td')[0].firstChild);
         range.collapse(true);
+
+        sq.setSelection(range);
+
+        RemoveCol.exec(wwe);
+
+        expect(wwe.get$Body().find('thead th').length).toEqual(1);
+        expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+    });
+
+    it('remove only one column at start range even if there are multiple tds in range', () => {
+        const sq = wwe.getEditor(),
+            range = sq.getSelection().cloneRange();
+
+        sq.setHTML([
+            '<table>',
+                '<thead>',
+                    '<tr><th>1</th><th>2</th></tr>',
+                '</thead>',
+                '<tbody>',
+                    '<tr><td>3</td><td>4</td></tr>',
+                    '<tr><td>5</td><td>6</td></tr>',
+                '</tbody>',
+            '</table>'
+        ].join('\n'));
+
+        range.setStartBefore(wwe.get$Body().find('tbody tr:nth-child(1) td:nth-child(1)')[0].firstChild);
+        range.setEndAfter(wwe.get$Body().find('tbody tr:nth-child(2) td:nth-child(1)')[0].firstChild);
 
         sq.setSelection(range);
 

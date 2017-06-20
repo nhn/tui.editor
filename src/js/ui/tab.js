@@ -26,6 +26,7 @@ const buttonTmpl = '<button type="button" data-index="${index}">${name}</button>
  *     items: ['Editor', 'Preview'],
  *     sections: [this.$mdEditorContainerEl, this.$previewEl]
  * });
+ * @ignore
  */
 function Tab(options) {
     UIController.call(this, {

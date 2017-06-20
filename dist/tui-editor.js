@@ -2,7 +2,8 @@
  * Toast UI Colorpicker
  * @version 1.0.2
  */
-!function e(t,o,n){function i(s,l){if(!o[s]){if(!t[s]){var a="function"==typeof require&&require;if(!l&&a)return a(s,!0);if(r)return r(s,!0);var c=new Error("Cannot find module '"+s+"'");throw c.code="MODULE_NOT_FOUND",c}var u=o[s]={exports:{}};t[s][0].call(u.exports,function(e){var o=t[s][1][e];return i(o?o:e)},u,u.exports,e,t,o,n)}return o[s].exports}for(var r="function"==typeof require&&require,s=0;s<n.length;s++)i(n[s]);return i}({1:[function(e,t,o){"use strict";tui.util.defineNamespace("tui.component.colorpicker",{domutil:e("./src/js/core/domutil"),domevent:e("./src/js/core/domevent"),Collection:e("./src/js/core/collection"),View:e("./src/js/core/view"),Drag:e("./src/js/core/drag"),create:e("./src/js/factory"),Palette:e("./src/js/palette"),Slider:e("./src/js/slider"),colorutil:e("./src/js/colorutil"),svgvml:e("./src/js/svgvml")})},{"./src/js/colorutil":2,"./src/js/core/collection":3,"./src/js/core/domevent":4,"./src/js/core/domutil":5,"./src/js/core/drag":6,"./src/js/core/view":7,"./src/js/factory":8,"./src/js/palette":10,"./src/js/slider":11,"./src/js/svgvml":12}],2:[function(e,t,o){"use strict";var n=/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,i={leadingZero:function(e,t){var o="",n=0;if((e+"").length>t)return e+"";for(;n<t-1;n+=1)o+="0";return(o+e).slice(t*-1)},isValidRGB:function(e){return n.test(e)},hexToRGB:function(e){var t,o,n;return!!i.isValidRGB(e)&&(e=e.substring(1),t=parseInt(e.substr(0,2),16),o=parseInt(e.substr(2,2),16),n=parseInt(e.substr(4,2),16),[t,o,n])},rgbToHEX:function(e,t,o){var n="#"+i.leadingZero(e.toString(16),2)+i.leadingZero(t.toString(16),2)+i.leadingZero(o.toString(16),2);return!!i.isValidRGB(n)&&n},rgbToHSV:function(e,t,o){var n,i,r,s,l,a;if(e/=255,t/=255,o/=255,n=Math.max(e,t,o),i=Math.min(e,t,o),l=n,a=n-i,s=0===n?0:a/n,n===i)r=0;else{switch(n){case e:r=(t-o)/a+(t<o?6:0);break;case t:r=(o-e)/a+2;break;case o:r=(e-t)/a+4}r/=6}return[Math.round(360*r),Math.round(100*s),Math.round(100*l)]},hsvToRGB:function(e,t,o){var n,i,r,s,l,a,c,u;if(e=Math.max(0,Math.min(360,e)),t=Math.max(0,Math.min(100,t)),o=Math.max(0,Math.min(100,o)),t/=100,o/=100,0===t)return n=i=r=o,[Math.round(255*n),Math.round(255*i),Math.round(255*r)];switch(e/=60,s=Math.floor(e),l=e-s,a=o*(1-t),c=o*(1-t*l),u=o*(1-t*(1-l)),s){case 0:n=o,i=u,r=a;break;case 1:n=c,i=o,r=a;break;case 2:n=a,i=o,r=u;break;case 3:n=a,i=c,r=o;break;case 4:n=u,i=a,r=o;break;default:n=o,i=a,r=c}return[Math.round(255*n),Math.round(255*i),Math.round(255*r)]}};t.exports=i},{}],3:[function(e,t,o){(function(e){"use strict";function o(e){this.items={},this.length=0,s(e)&&(this.getItemID=e)}var n=e.tui.util,i=n.forEachOwnProperties,r=n.forEachArray,s=n.isFunction,l=n.isObject,a=Array.prototype.slice;o.and=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=0;n<t;n+=1)if(!e[n].call(null,o))return!1;return!0}},o.or=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=1,i=e[0].call(null,o);n<t;n+=1)i=i||e[n].call(null,o);return i}},o.merge=function(e){var t=a.call(arguments),i={},s=new o(t[0].getItemID),l=n.extend;return r(t,function(e){l(i,e.items)}),s.items=i,s.length=n.keys(s.items).length,s},o.prototype.getItemID=function(e){return e._id+""},o.prototype.add=function(e){var t,o;return arguments.length>1?void r(a.call(arguments),function(e){this.add(e)},this):(t=this.getItemID(e),o=this.items,o[t]||(this.length+=1),void(o[t]=e))},o.prototype.remove=function(e){var t,o,i=[];return this.length?arguments.length>1?i=n.map(a.call(arguments),function(e){return this.remove(e)},this):(t=this.items,l(e)&&(e=this.getItemID(e)),t[e]?(this.length-=1,o=t[e],delete t[e],o):i):i},o.prototype.clear=function(){this.items={},this.length=0},o.prototype.has=function(e){var t,o;return!!this.length&&(t=s(e),o=!1,t?this.each(function(t){if(e(t)===!0)return o=!0,!1}):(e=l(e)?this.getItemID(e):e,o=n.isExisty(this.items[e])),o)},o.prototype.doWhenHas=function(e,t,o){var i=this.items[e];n.isExisty(i)&&t.call(o||this,i)},o.prototype.find=function(e){var t=new o;return this.hasOwnProperty("getItemID")&&(t.getItemID=this.getItemID),this.each(function(o){e(o)===!0&&t.add(o)}),t},o.prototype.groupBy=function(e,t){var i,r,s={},l=n.isFunction,a=l(e),c=this.getItemID;if(n.isArray(e)){if(n.forEachArray(e,function(e){s[e+""]=new o(c)}),!t)return s;e=t,a=!0}return this.each(function(t){a?r=e(t):(r=t[e],l(r)&&(r=r.apply(t))),i=s[r],i||(i=s[r]=new o(c)),i.add(t)}),s},o.prototype.single=function(){var e;return this.each(function(t){return e=t,!1},this),e},o.prototype.sort=function(e){var t=[];return this.each(function(e){t.push(e)}),s(e)&&(t=t.sort(e)),t},o.prototype.each=function(e,t){i(this.items,e,t||this)},o.prototype.toArray=function(){return this.length?n.map(this.items,function(e){return e}):[]},t.exports=o}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],4:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=o.browser,i="_evt",r={START:["touchstart","mousedown"],END:{mousedown:"mouseup",touchstart:"touchend",pointerdown:"touchend",MSPointerDown:"touchend"},MOVE:{mousedown:"mousemove",touchstart:"touchmove",pointerdown:"touchmove",MSPointerDown:"touchmove"}},s={on:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._on(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._on(e,o,t,n)})},_on:function(e,t,n,r){var l,a,c;l=t+o.stamp(n)+(r?"_"+o.stamp(r):""),e[i]&&e[i][l]||(a=function(t){n.call(r||e,t||window.event)},c=a,"addEventListener"in e?"mouseenter"===t||"mouseleave"===t?(a=function(t){t=t||window.event,s._checkMouse(e,t)&&c(t)},e.addEventListener("mouseenter"===t?"mouseover":"mouseout",a,!1)):("mousewheel"===t&&e.addEventListener("DOMMouseScroll",a,!1),e.addEventListener(t,a,!1)):"attachEvent"in e&&e.attachEvent("on"+t,a),e[i]=e[i]||{},e[i][l]=a)},off:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._off(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._off(e,o,t,n)})},_off:function(e,t,n,r){var s=t+o.stamp(n)+(r?"_"+o.stamp(r):""),l=e[i]&&e[i][s];if(l){if("removeEventListener"in e)"mouseenter"===t||"mouseleave"===t?e.removeEventListener("mouseenter"===t?"mouseover":"mouseout",l,!1):("mousewheel"===t&&e.removeEventListener("DOMMouseScroll",l,!1),e.removeEventListener(t,l,!1));else if("detachEvent"in e)try{e.detachEvent("on"+t,l)}catch(a){}if(delete e[i][s],!o.keys(e[i]).length)return o.browser.msie&&o.browser.version<9?void(e[i]=null):void delete e[i]}},once:function(e,t,n,i){function r(){n.apply(i||e,arguments),l._off(e,t,r,i)}var l=this;return o.isObject(t)?void o.forEachOwnProperties(t,function(t,o){s.once(e,o,t,n)}):void s.on(e,t,r,i)},stopPropagation:function(e){e.stopPropagation?e.stopPropagation():e.cancelBubble=!0},preventDefault:function(e){e.preventDefault?e.preventDefault():e.returnValue=!1},stop:function(e){s.preventDefault(e),s.stopPropagation(e)},disableScrollPropagation:function(e){s.on(e,"mousewheel MozMousePixelScroll",s.stopPropagation)},disableClickPropagation:function(e){s.on(e,r.START.join(" ")+" click dblclick",s.stopPropagation)},getMousePosition:function(e,t){var o;return t?(o=t.getBoundingClientRect(),[e.clientX-o.left-t.clientLeft,e.clientY-o.top-t.clientTop]):[e.clientX,e.clientY]},getWheelDelta:function(e){var t=0;return e.wheelDelta&&(t=e.wheelDelta/120),e.detail&&(t=-e.detail/3),t},_checkMouse:function(e,t){var o=t.relatedTarget;if(!o)return!0;try{for(;o&&o!==e;)o=o.parentNode}catch(n){return!1}return o!==e},trigger:function(e,t,n){var i=/(mouse|click)/;o.isUndefined(n)&&i.exec(t)&&(n=s.mouseEvent(t)),e.dispatchEvent?e.dispatchEvent(n):e.fireEvent&&e.fireEvent("on"+t,n)},mouseEvent:function(e,t){var i,r;return r=o.extend({bubbles:!0,cancelable:"mousemove"!==e,view:window,wheelDelta:0,detail:0,screenX:0,screenY:0,clientX:0,clientY:0,ctrlKey:!1,altKey:!1,shiftKey:!1,metaKey:!1,button:0,relatedTarget:void 0},t),n.msie&&n.version<9&&delete r.wheelDelta,"function"==typeof document.createEvent?(i=document.createEvent("MouseEvents"),i.initMouseEvent(e,r.bubbles,r.cancelable,r.view,r.detail,r.screenX,r.screenY,r.clientX,r.clientY,r.ctrlKey,r.altKey,r.shiftKey,r.metaKey,r.button,document.body.parentNode)):document.createEventObject&&(i=document.createEventObject(),o.forEach(r,function(e,t){i[t]=e},this),i.button={0:1,1:4,2:2}[i.button]||i.button),i},getMouseButton:function(e){var t,o="0,1,3,5,7",n="2,6",i="4";return document.implementation.hasFeature("MouseEvents","2.0")?e.button:(t=e.button+"",~o.indexOf(t)?0:~n.indexOf(t)?2:~i.indexOf(t)?1:void 0)}};t.exports=s}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],5:[function(e,t,o){(function(o){"use strict";function n(e){return e.replace(/^\s\s*/,"").replace(/\s\s*$/,"")}var i,r=e("./domevent"),s=e("./collection"),l=o.tui.util,a="_pos",c=/^auto$|^$|%/;i={appendHTMLElement:function(e,t,o){var n;return o=o||"",n=document.createElement(e),n.className=o,t?t.appendChild(n):document.body.appendChild(n),n},remove:function(e){e&&e.parentNode&&e.parentNode.removeChild(e)},get:function(e){return document.getElementById(e)},_matcher:function(e,t){var o=/^\./,n=/^#/;return o.test(t)?i.hasClass(e,t.replace(".","")):n.test(t)?e.id===t.replace("#",""):e.nodeName.toLowerCase()===t.toLowerCase()},find:function(e,t,o){function n(e,t){for(var l,u=e.childNodes,d=0,f=u.length;d<f;d+=1)if(l=u[d],"#text"!==l.nodeName)if(i._matcher(l,t)){if((c&&o(l)||!c)&&r.push(l),a){s=!0;break}}else if(l.childNodes.length>0&&(n(l,t),s))break}var r=[],s=!1,a=l.isUndefined(o)||o===!1,c=l.isFunction(o);return l.isString(t)&&(t=i.get(t)),t=t||window.document.body,n(t,e),a?r[0]||null:r},closest:function(e,t){var o=e.parentNode;if(i._matcher(e,t))return e;for(;o&&o!==window.document.body;){if(i._matcher(o,t))return o;o=o.parentNode}},text:function(e){var t="",o=0,n=e.nodeType;if(n){if(1===n||9===n||11===n){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)t+=i.text(e)}else if(3===n||4===n)return e.nodeValue}else for(;e[o];o+=1)t+=i.text(e[o]);return t},setData:function(e,t,o){return"dataset"in e?void(e.dataset[t]=o):void e.setAttribute("data-"+t,o)},getData:function(e,t){return"dataset"in e?e.dataset[t]:e.getAttribute("data-"+t)},hasClass:function(e,t){var o;return l.isUndefined(e.classList)?(o=i.getClass(e),o.length>0&&new RegExp("(^|\\s)"+t+"(\\s|$)").test(o)):e.classList.contains(t)},addClass:function(e,t){var o;l.isUndefined(e.classList)?i.hasClass(e,t)||(o=i.getClass(e),i.setClass(e,(o?o+" ":"")+t)):l.forEachArray(t.split(" "),function(t){e.classList.add(t)})},setClass:function(e,t){l.isUndefined(e.className.baseVal)?e.className=t:e.className.baseVal=t},removeClass:function(e,t){var o="";l.isUndefined(e.classList)?(o=(" "+i.getClass(e)+" ").replace(" "+t+" "," "),i.setClass(e,n(o))):e.classList.remove(t)},getClass:function(e){return e&&e.className?l.isUndefined(e.className.baseVal)?e.className:e.className.baseVal:""},getStyle:function(e,t){var o,n=e.style[t]||e.currentStyle&&e.currentStyle[t];return n&&"auto"!==n||!document.defaultView||(o=document.defaultView.getComputedStyle(e,null),n=o?o[t]:null),"auto"===n?null:n},getComputedStyle:function(e){var t=document.defaultView;return t&&t.getComputedStyle?document.defaultView.getComputedStyle(e):{getPropertyValue:function(t){var o=/(\-([a-z]){1})/g;return"float"===t&&(t="styleFloat"),o.test(t)&&(t=t.replace(o,function(){return arguments[2].toUpperCase()})),e.currentStyle[t]?e.currentStyle[t]:null}}},setPosition:function(e,t,o){t=l.isUndefined(t)?0:t,o=l.isUndefined(o)?0:o,e[a]=[t,o],e.style.left=t+"px",e.style.top=o+"px"},getPosition:function(e,t){var o,n,i;return t&&(e[a]=null),e[a]?e[a]:(o=0,n=0,(c.test(e.style.left)||c.test(e.style.top))&&"getBoundingClientRect"in e?(i=e.getBoundingClientRect(),o=i.left,n=i.top):(o=parseFloat(e.style.left||0),n=parseFloat(e.style.top||0)),[o,n])},getSize:function(e){var t,o=i.getStyle(e,"width"),n=i.getStyle(e,"height");return(c.test(o)||c.test(n))&&"getBoundingClientRect"in e?(t=e.getBoundingClientRect(),o=t.width,n=t.height):(o=parseFloat(o||0),n=parseFloat(n||0)),[o,n]},testProp:function(e){for(var t=document.documentElement.style,o=0,n=e.length;o<n;o+=1)if(e[o]in t)return e[o];return!1},getFormData:function(e){var t=new s(function(){return this.length}),o=function(e){return!e.disabled},n={};return t.add.apply(t,i.find("input",e,o).concat(i.find("select",e,o)).concat(i.find("textarea",e,o))),t=t.groupBy(function(e){return e&&e.getAttribute("name")||"_other"}),l.forEach(t,function(e,t){"_other"!==t&&e.each(function(o){var r=o.nodeName.toLowerCase(),s=o.type,a=[];"radio"===s?a=[e.find(function(e){return e.checked}).toArray().pop()]:"checkbox"===s?a=e.find(function(e){return e.checked}).toArray():"select"===r?e.find(function(e){return!!e.childNodes.length}).each(function(e){a=a.concat(i.find("option",e,function(e){return e.selected}))}):a=e.find(function(e){return""!==e.value}).toArray(),a=l.map(a,function(e){return e.value}),a.length?1===a.length&&(a=a[0]):a="",n[t]=a})}),n}};var u=i.testProp(["userSelect","WebkitUserSelect","OUserSelect","MozUserSelect","msUserSelect"]),d="onselectstart"in document,f="";i.disableTextSelection=function(){return d?function(){r.on(window,"selectstart",r.preventDefault)}:function(){var e=document.documentElement.style;f=e[u],e[u]="none"}}(),i.enableTextSelection=function(){return d?function(){r.off(window,"selectstart",r.preventDefault)}:function(){document.documentElement.style[u]=f}}(),i.disableImageDrag=function(){r.on(window,"dragstart",r.preventDefault)},i.enableImageDrag=function(){r.off(window,"dragstart",r.preventDefault)},t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domevent":4}],6:[function(e,t,o){(function(o){"use strict";function n(e,t){s.on(t,"mousedown",this._onMouseDown,this),this.options=i.extend({distance:10},e),this.container=t,this._isMoved=!1,this._distance=0,this._dragStartFired=!1,this._dragStartEventData=null}var i=o.tui.util,r=e("./domutil"),s=e("./domevent");n.prototype.destroy=function(){s.off(this.container,"mousedown",this._onMouseDown,this),this.options=this.container=this._isMoved=this._distance=this._dragStartFired=this._dragStartEventData=null},n.prototype._toggleDragEvent=function(e){var t,n,i=this.container;e?(t="on",n="disable"):(t="off",n="enable"),r[n+"TextSelection"](i),r[n+"ImageDrag"](i),s[t](o.document,{mousemove:this._onMouseMove,mouseup:this._onMouseUp},this)},n.prototype._getEventData=function(e){return{target:e.target||e.srcElement,originEvent:e}},n.prototype._onMouseDown=function(e){0===s.getMouseButton(e)&&(this._distance=0,this._dragStartFired=!1,this._dragStartEventData=this._getEventData(e),this._toggleDragEvent(!0))},n.prototype._onMouseMove=function(e){var t=this.options.distance;return s.preventDefault(e),this._isMoved=!0,this._distance<t?void(this._distance+=1):this._dragStartFired||(this._dragStartFired=!0,this.invoke("dragStart",this._dragStartEventData))?void this.fire("drag",this._getEventData(e)):void this._toggleDragEvent(!1)},n.prototype._onMouseUp=function(e){return this._toggleDragEvent(!1),this._isMoved?(this._isMoved=!1,void this.fire("dragEnd",this._getEventData(e))):void this.fire("click",this._getEventData(e))},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./domevent":4,"./domutil":5}],7:[function(e,t,o){(function(o){"use strict";function n(e,t){var o=i.stamp(this);e=e||{},i.isUndefined(t)&&(t=r.appendHTMLElement("div")),r.addClass(t,"tui-view-"+o),this.id=o,this.container=t,this.childs=new s(function(e){return i.stamp(e)}),this.parent=null}var i=o.tui.util,r=e("./domutil"),s=e("./collection");n.prototype.addChild=function(e,t){t&&t.call(e,this),e.parent=this,this.childs.add(e)},n.prototype.removeChild=function(e,t){var o=i.isNumber(e)?this.childs.items[e]:e;e=i.stamp(o),t&&t.call(o,this),this.childs.remove(e)},n.prototype.render=function(){this.childs.each(function(e){e.render()})},n.prototype.recursive=function(e,t){i.isFunction(e)&&(t||e(this),this.childs.each(function(t){t.recursive(e)}))},n.prototype.resize=function(){for(var e=Array.prototype.slice.call(arguments),t=this.parent;t;)i.isFunction(t._onResize)&&t._onResize.apply(t,e),t=t.parent},n.prototype._beforeDestroy=function(){},n.prototype._destroy=function(){this._beforeDestroy(),this.childs.clear(),this.container.innerHTML="",this.id=this.parent=this.childs=this.container=null},n.prototype.destroy=function(e){this.childs.each(function(e){e.destroy(!0),e._destroy()}),e||this._destroy()},n.prototype.getViewBound=function(){var e=this.container,t=r.getPosition(e),o=r.getSize(e);return{x:t[0],y:t[1],width:o[0],height:o[1]}},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domutil":5}],8:[function(e,t,o){(function(o){"use strict";function n(e){alert(e)}function i(e){var t;return this instanceof i?(e=this.options=r.extend({container:null,color:"#f8f8f8",preset:["#181818","#282828","#383838","#585858","#b8b8b8","#d8d8d8","#e8e8e8","#f8f8f8","#ab4642","#dc9656","#f7ca88","#a1b56c","#86c1b9","#7cafc2","#ba8baf","#a16946"],cssPrefix:"tui-colorpicker-",detailTxt:"Detail"},e),e.container?(t=this.layout=new l(e,e.container),this.palette=new a(e,t.container),this.palette.on({_selectColor:this._onSelectColorInPalette,_toggleSlider:this._onToggleSlider},this),this.slider=new c(e,t.container),this.slider.on("_selectColor",this._onSelectColorInSlider,this),t.addChild(this.palette),t.addChild(this.slider),void this.render(e.color)):void n("Colorpicker(): need container option.")):new i(e)}var r=o.tui.util,s=e("./colorutil"),l=e("./layout"),a=e("./palette"),c=e("./slider");i.prototype._onSelectColorInPalette=function(e){var t=e.color,o=this.options;return s.isValidRGB(t)?(this.fire("selectColor",{color:t,origin:"palette"}),void(o.color!==t&&(o.color=t,this.render(t)))):void this.render()},i.prototype._onToggleSlider=function(){this.slider.toggle(!this.slider.isVisible())},i.prototype._onSelectColorInSlider=function(e){var t=e.color,o=this.options;this.fire("selectColor",{color:t,origin:"slider"}),o.color!==t&&(o.color=t,this.palette.render(t))},i.prototype.setColor=function(e){s.isValidRGB(e)||n("Colorpicker#setColor(): need valid hex string color value"),this.options.color=e,this.render(e)},i.prototype.getColor=function(){return this.options.color},i.prototype.toggle=function(e){this.layout.container.style.display=e?"block":"none"},i.prototype.render=function(e){this.layout.render(e||this.options.color)},i.prototype.destroy=function(){this.layout.destroy(),this.options.container.innerHTML="",this.layout=this.slider=this.palette=this.options=null},r.CustomEvents.mixin(i),t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./colorutil":2,"./layout":9,"./palette":10,"./slider":11}],9:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"container"),s.call(this,e,t),this.render()}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/view");i.inherit(n,s),n.prototype.render=function(e){this.recursive(function(t){t.render(e)},!0)},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./core/domutil":5,"./core/view":7}],10:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-",preset:["#181818","#282828","#383838","#585858","#B8B8B8","#D8D8D8","#E8E8E8","#F8F8F8","#AB4642","#DC9656","#F7CA88","#A1B56C","#86C1B9","#7CAFC2","#BA8BAF","#A16946"],detailTxt:"Detail"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"palette-container"),l.call(this,e,t)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./core/view"),a=e("../template/palette");i.inherit(n,l),n.prototype._onClick=function(e){var t=this.options,o=e.srcElement||e.target,n={};return r.hasClass(o,t.cssPrefix+"palette-button")?(n.color=o.value,void this.fire("_selectColor",n)):void(r.hasClass(o,t.cssPrefix+"palette-toggle-slider")&&this.fire("_toggleSlider"))},n.prototype._onChange=function(e){var t=this.options,o=e.srcElement||e.target,n={};if(r.hasClass(o,t.cssPrefix+"palette-hex"))return n.color=o.value,void this.fire("_selectColor",n)},n.prototype._beforeDestroy=function(){this._toggleEvent(!1)},n.prototype._toggleEvent=function(e){var t,o=this.options,n=this.container,i=s[e?"on":"off"];i(n,"click",this._onClick,this),t=r.find("."+o.cssPrefix+"palette-hex",n),t&&i(t,"change",this._onChange,this)},n.prototype.render=function(e){var t=this.options,o="";this._toggleEvent(!1),o=a.layout.replace("{{colorList}}",i.map(t.preset,function(o){var n=a.item.replace(/{{color}}/g,o);return n=n.replace("{{selected}}",o===e?" "+t.cssPrefix+"selected":"")}).join("")),o=o.replace(/{{cssPrefix}}/g,t.cssPrefix).replace("{{detailTxt}}",t.detailTxt).replace(/{{color}}/g,e),this.container.innerHTML=o,this._toggleEvent(!0)},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/palette":13,"./core/domevent":4,"./core/domutil":5,"./core/view":7}],11:[function(e,t,o){(function(o){"use strict";function n(e,t){t=r.appendHTMLElement("div",t,e.cssPrefix+"slider-container"),t.style.display="none",c.call(this,e,t),this.options=i.extend({color:"#f8f8f8",cssPrefix:"tui-colorpicker-"},e),this._dragDataCache={},this.sliderHandleElement=null,this.huebarHandleElement=null,this.baseColorElement=null,this.drag=new u({distance:0},t),this.drag.on({dragStart:this._onDragStart,drag:this._onDrag,dragEnd:this._onDragEnd,click:this._onClick},this)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./svgvml"),a=e("./colorutil"),c=e("./core/view"),u=e("./core/drag"),d=e("../template/slider"),f=[-7,112],p=[-3,115],h=359.99;i.inherit(n,c),n.prototype._beforeDestroy=function(){this.drag.off(),this.drag=this.options=this._dragDataCache=this.sliderHandleElement=this.huebarHandleElement=this.baseColorElement=null},n.prototype.toggle=function(e){this.container.style.display=e?"block":"none"},n.prototype.isVisible=function(){return"block"===this.container.style.display},n.prototype.render=function(e){var t,o,n=this,i=n.container,s=n.options,l=d.layout;l=l.replace(/{{slider}}/,d.slider),l=l.replace(/{{huebar}}/,d.huebar),l=l.replace(/{{cssPrefix}}/g,s.cssPrefix),n.container.innerHTML=l,n.sliderHandleElement=r.find("."+s.cssPrefix+"slider-handle",i),n.huebarHandleElement=r.find("."+s.cssPrefix+"huebar-handle",i),n.baseColorElement=r.find("."+s.cssPrefix+"slider-basecolor",i),t=a.hexToRGB(e),o=a.rgbToHSV.apply(null,t),this.moveHue(o[0],!0),this.moveSaturationAndValue(o[1],o[2],!0)},n.prototype._moveColorSliderHandle=function(e,t,o){var n,i=this.sliderHandleElement;t=Math.max(f[0],t),t=Math.min(f[1],t),e=Math.max(f[0],e),e=Math.min(f[1],e),l.setTranslateXY(i,e,t),n=t>50?"white":"black",l.setStrokeColor(i,n),o||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveSaturationAndValue=function(e,t,o){var n,i,r,s;e=e||0,t=t||0,n=Math.abs(f[0]),i=f[1],r=e*i/100-n,s=i-t*i/100-n,this._moveColorSliderHandle(r,s,o)},n.prototype._moveColorSliderByPosition=function(e,t){var o=f[0];this._moveColorSliderHandle(e+o,t+o)},n.prototype.getSaturationAndValue=function(){var e,t,o=Math.abs(f[0]),n=o+f[1],i=l.getTranslateXY(this.sliderHandleElement);return e=(i[1]+o)/n*100,t=100-(i[0]+o)/n*100,[e,t]},n.prototype._moveHueHandle=function(e,t){var o,n,i=this.huebarHandleElement,r=this.baseColorElement;e=Math.max(p[0],e),e=Math.min(p[1],e),l.setTranslateY(i,e),o=a.hsvToRGB(this.getHue(),100,100),n=a.rgbToHEX.apply(null,o),l.setGradientColorStop(r,n),t||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveHue=function(e,t){var o,n,i=0;o=Math.abs(p[0]),n=o+p[1],e=e||0,i=n*e/h-o,this._moveHueHandle(i,t)},n.prototype._moveHueByPosition=function(e){var t=p[0];this._moveHueHandle(e+t)},n.prototype.getHue=function(){var e,t,o=this.huebarHandleElement,n=l.getTranslateXY(o);return e=Math.abs(p[0]),t=e+p[1],(n[0]+e)*h/t},n.prototype.getHSV=function(){var e=this.getSaturationAndValue(),t=this.getHue();return[t].concat(e)},n.prototype.getRGB=function(){return a.hsvToRGB.apply(null,this.getHSV())},n.prototype._prepareColorSliderForMouseEvent=function(e){var t,o=this.options,n=r.closest(e.target,"."+o.cssPrefix+"slider-part");return t=this._dragDataCache={isColorSlider:r.hasClass(n,o.cssPrefix+"slider-left"),parentElement:n}},n.prototype._onClick=function(e){var t=this._prepareColorSliderForMouseEvent(e),o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1]),this._dragDataCache=null},n.prototype._onDragStart=function(e){this._prepareColorSliderForMouseEvent(e)},n.prototype._onDrag=function(e){var t=this._dragDataCache,o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1])},n.prototype._onDragEnd=function(){this._dragDataCache=null},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/slider":14,"./colorutil":2,"./core/domevent":4,"./core/domutil":5,"./core/drag":6,"./core/view":7,"./svgvml":12}],12:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=/[\.\-0-9]+/g,i=-6,r={isOldBrowser:function(){var e=r._isOldBrowser;return o.isExisty(e)||(r._isOldBrowser=e=o.browser.msie&&o.browser.version<9),e},getTranslateXY:function(e){var t;return r.isOldBrowser()?(t=e.style,[parseFloat(t.top),parseFloat(t.left)]):(t=e.getAttribute("transform"))?(t=t.match(n),[parseFloat(t[1]),parseFloat(t[0])]):[0,0]},setTranslateXY:function(e,t,o){r.isOldBrowser()?(e.style.left=t+"px",e.style.top=o+"px"):e.setAttribute("transform","translate("+t+","+o+")")},setTranslateY:function(e,t){r.isOldBrowser()?e.style.top=t+"px":e.setAttribute("transform","translate("+i+","+t+")")},setStrokeColor:function(e,t){r.isOldBrowser()?e.strokecolor=t:e.setAttribute("stroke",t)},setGradientColorStop:function(e,t){r.isOldBrowser()?e.color=t:e.setAttribute("stop-color",t)}};t.exports=r}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],13:[function(e,t,o){"use strict";var n=['<ul class="{{cssPrefix}}clearfix">{{colorList}}</ul>','<div class="{{cssPrefix}}clearfix" style="overflow:hidden">','<input type="button" class="{{cssPrefix}}palette-toggle-slider" value="{{detailTxt}}" />','<input type="text" class="{{cssPrefix}}palette-hex" value="{{color}}" maxlength="7" />','<span class="{{cssPrefix}}palette-preview" style="background-color:{{color}};color:{{color}}">{{color}}</span>',"</div>"].join("\n"),i='<li><input class="{{cssPrefix}}palette-button{{selected}}" type="button" style="background-color:{{color}};color:{{color}}" title="{{color}}" value="{{color}}" /></li>';t.exports={layout:n,item:i}},{}],14:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=['<div class="{{cssPrefix}}slider-left {{cssPrefix}}slider-part">{{slider}}</div>','<div class="{{cssPrefix}}slider-right {{cssPrefix}}slider-part">{{huebar}}</div>'].join("\n"),i=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-slider">',"<defs>",'<linearGradient id="{{cssPrefix}}svg-fill-color" x1="0%" y1="0%" x2="100%" y2="0%">','<stop offset="0%" stop-color="rgb(255,255,255)" />','<stop class="{{cssPrefix}}slider-basecolor" offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>",'<linearGradient id="{{cssPrefix}}svn-fill-black" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:0" />','<stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:1" />',"</linearGradient>","</defs>",'<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svg-fill-color)"></rect>','<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svn-fill-black)"></rect>','<path transform="translate(0,0)" class="{{cssPrefix}}slider-handle" d="M0 7.5 L15 7.5 M7.5 15 L7.5 0 M2 7 a5.5 5.5 0 1 1 0 1 Z" stroke="black" stroke-width="0.75" fill="none" />',"</svg>"].join("\n"),r=['<div class="{{cssPrefix}}vml-slider">','<v:rect strokecolor="none" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill class="{{cssPrefix}}vml {{cssPrefix}}slider-basecolor" type="gradient" method="none" color="#ff0000" color2="#fff" angle="90" />',"</v:rect>",'<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill type="gradient" method="none" color="black" color2="white" o:opacity2="0%" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}slider-handle" coordsize="1 1" style="width:1px;height:1px;"path="m 0,7 l 14,7 m 7,14 l 7,0 ar 12,12 2,2 z" filled="false" stroked="true" />',"</div>"].join("\n"),s=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-huebar">',"<defs>",'<linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" stop-color="rgb(255,0,0)" />','<stop offset="16.666%" stop-color="rgb(255,255,0)" />','<stop offset="33.333%" stop-color="rgb(0,255,0)" />','<stop offset="50%" stop-color="rgb(0,255,255)" />','<stop offset="66.666%" stop-color="rgb(0,0,255)" />','<stop offset="83.333%" stop-color="rgb(255,0,255)" />','<stop offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>","</defs>",'<rect width="18px" height="100%" fill="url(#g)"></rect>','<path transform="translate(-6,-3)" class="{{cssPrefix}}huebar-handle" d="M0 0 L4 4 L0 8 L0 0 Z" fill="black" stroke="none" />',"</svg>"].join("\n"),l=['<div class="{{cssPrefix}}vml-huebar">','<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-huebar-bg">','<v:fill type="gradient" method="none" colors="0% rgb(255,0,0), 16.666% rgb(255,255,0), 33.333% rgb(0,255,0), 50% rgb(0,255,255), 66.666% rgb(0,0,255), 83.333% rgb(255,0,255), 100% rgb(255,0,0)" angle="180" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}huebar-handle" coordsize="1 1" style="width:1px;height:1px;position:absolute;z-index:1;right:22px;top:-3px;"path="m 0,0 l 4,4 l 0,8 l 0,0 z" filled="true" fillcolor="black" stroked="false" />',"</div>"].join("\n"),a=o.browser.msie&&o.browser.version<9;a&&e.document.namespaces.add("v","urn:schemas-microsoft-com:vml"),t.exports={layout:n,slider:a?r:i,huebar:a?l:s}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1]);/******/ (function(modules) { // webpackBootstrap
+!function e(t,o,n){function i(s,l){if(!o[s]){if(!t[s]){var a="function"==typeof require&&require;if(!l&&a)return a(s,!0);if(r)return r(s,!0);var c=new Error("Cannot find module '"+s+"'");throw c.code="MODULE_NOT_FOUND",c}var u=o[s]={exports:{}};t[s][0].call(u.exports,function(e){var o=t[s][1][e];return i(o?o:e)},u,u.exports,e,t,o,n)}return o[s].exports}for(var r="function"==typeof require&&require,s=0;s<n.length;s++)i(n[s]);return i}({1:[function(e,t,o){"use strict";tui.util.defineNamespace("tui.component.colorpicker",{domutil:e("./src/js/core/domutil"),domevent:e("./src/js/core/domevent"),Collection:e("./src/js/core/collection"),View:e("./src/js/core/view"),Drag:e("./src/js/core/drag"),create:e("./src/js/factory"),Palette:e("./src/js/palette"),Slider:e("./src/js/slider"),colorutil:e("./src/js/colorutil"),svgvml:e("./src/js/svgvml")})},{"./src/js/colorutil":2,"./src/js/core/collection":3,"./src/js/core/domevent":4,"./src/js/core/domutil":5,"./src/js/core/drag":6,"./src/js/core/view":7,"./src/js/factory":8,"./src/js/palette":10,"./src/js/slider":11,"./src/js/svgvml":12}],2:[function(e,t,o){"use strict";var n=/(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i,i={leadingZero:function(e,t){var o="",n=0;if((e+"").length>t)return e+"";for(;n<t-1;n+=1)o+="0";return(o+e).slice(t*-1)},isValidRGB:function(e){return n.test(e)},hexToRGB:function(e){var t,o,n;return!!i.isValidRGB(e)&&(e=e.substring(1),t=parseInt(e.substr(0,2),16),o=parseInt(e.substr(2,2),16),n=parseInt(e.substr(4,2),16),[t,o,n])},rgbToHEX:function(e,t,o){var n="#"+i.leadingZero(e.toString(16),2)+i.leadingZero(t.toString(16),2)+i.leadingZero(o.toString(16),2);return!!i.isValidRGB(n)&&n},rgbToHSV:function(e,t,o){var n,i,r,s,l,a;if(e/=255,t/=255,o/=255,n=Math.max(e,t,o),i=Math.min(e,t,o),l=n,a=n-i,s=0===n?0:a/n,n===i)r=0;else{switch(n){case e:r=(t-o)/a+(t<o?6:0);break;case t:r=(o-e)/a+2;break;case o:r=(e-t)/a+4}r/=6}return[Math.round(360*r),Math.round(100*s),Math.round(100*l)]},hsvToRGB:function(e,t,o){var n,i,r,s,l,a,c,u;if(e=Math.max(0,Math.min(360,e)),t=Math.max(0,Math.min(100,t)),o=Math.max(0,Math.min(100,o)),t/=100,o/=100,0===t)return n=i=r=o,[Math.round(255*n),Math.round(255*i),Math.round(255*r)];switch(e/=60,s=Math.floor(e),l=e-s,a=o*(1-t),c=o*(1-t*l),u=o*(1-t*(1-l)),s){case 0:n=o,i=u,r=a;break;case 1:n=c,i=o,r=a;break;case 2:n=a,i=o,r=u;break;case 3:n=a,i=c,r=o;break;case 4:n=u,i=a,r=o;break;default:n=o,i=a,r=c}return[Math.round(255*n),Math.round(255*i),Math.round(255*r)]}};t.exports=i},{}],3:[function(e,t,o){(function(e){"use strict";function o(e){this.items={},this.length=0,s(e)&&(this.getItemID=e)}var n=e.tui.util,i=n.forEachOwnProperties,r=n.forEachArray,s=n.isFunction,l=n.isObject,a=Array.prototype.slice;o.and=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=0;n<t;n+=1)if(!e[n].call(null,o))return!1;return!0}},o.or=function(e){var t;return e=a.call(arguments),t=e.length,function(o){for(var n=1,i=e[0].call(null,o);n<t;n+=1)i=i||e[n].call(null,o);return i}},o.merge=function(e){var t=a.call(arguments),i={},s=new o(t[0].getItemID),l=n.extend;return r(t,function(e){l(i,e.items)}),s.items=i,s.length=n.keys(s.items).length,s},o.prototype.getItemID=function(e){return e._id+""},o.prototype.add=function(e){var t,o;return arguments.length>1?void r(a.call(arguments),function(e){this.add(e)},this):(t=this.getItemID(e),o=this.items,o[t]||(this.length+=1),void(o[t]=e))},o.prototype.remove=function(e){var t,o,i=[];return this.length?arguments.length>1?i=n.map(a.call(arguments),function(e){return this.remove(e)},this):(t=this.items,l(e)&&(e=this.getItemID(e)),t[e]?(this.length-=1,o=t[e],delete t[e],o):i):i},o.prototype.clear=function(){this.items={},this.length=0},o.prototype.has=function(e){var t,o;return!!this.length&&(t=s(e),o=!1,t?this.each(function(t){if(e(t)===!0)return o=!0,!1}):(e=l(e)?this.getItemID(e):e,o=n.isExisty(this.items[e])),o)},o.prototype.doWhenHas=function(e,t,o){var i=this.items[e];n.isExisty(i)&&t.call(o||this,i)},o.prototype.find=function(e){var t=new o;return this.hasOwnProperty("getItemID")&&(t.getItemID=this.getItemID),this.each(function(o){e(o)===!0&&t.add(o)}),t},o.prototype.groupBy=function(e,t){var i,r,s={},l=n.isFunction,a=l(e),c=this.getItemID;if(n.isArray(e)){if(n.forEachArray(e,function(e){s[e+""]=new o(c)}),!t)return s;e=t,a=!0}return this.each(function(t){a?r=e(t):(r=t[e],l(r)&&(r=r.apply(t))),i=s[r],i||(i=s[r]=new o(c)),i.add(t)}),s},o.prototype.single=function(){var e;return this.each(function(t){return e=t,!1},this),e},o.prototype.sort=function(e){var t=[];return this.each(function(e){t.push(e)}),s(e)&&(t=t.sort(e)),t},o.prototype.each=function(e,t){i(this.items,e,t||this)},o.prototype.toArray=function(){return this.length?n.map(this.items,function(e){return e}):[]},t.exports=o}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],4:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=o.browser,i="_evt",r={START:["touchstart","mousedown"],END:{mousedown:"mouseup",touchstart:"touchend",pointerdown:"touchend",MSPointerDown:"touchend"},MOVE:{mousedown:"mousemove",touchstart:"touchmove",pointerdown:"touchmove",MSPointerDown:"touchmove"}},s={on:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._on(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._on(e,o,t,n)})},_on:function(e,t,n,r){var l,a,c;l=t+o.stamp(n)+(r?"_"+o.stamp(r):""),e[i]&&e[i][l]||(a=function(t){n.call(r||e,t||window.event)},c=a,"addEventListener"in e?"mouseenter"===t||"mouseleave"===t?(a=function(t){t=t||window.event,s._checkMouse(e,t)&&c(t)},e.addEventListener("mouseenter"===t?"mouseover":"mouseout",a,!1)):("mousewheel"===t&&e.addEventListener("DOMMouseScroll",a,!1),e.addEventListener(t,a,!1)):"attachEvent"in e&&e.attachEvent("on"+t,a),e[i]=e[i]||{},e[i][l]=a)},off:function(e,t,n,i){return o.isString(t)?void o.forEach(t.split(" "),function(t){s._off(e,t,n,i)}):void o.forEachOwnProperties(t,function(t,o){s._off(e,o,t,n)})},_off:function(e,t,n,r){var s=t+o.stamp(n)+(r?"_"+o.stamp(r):""),l=e[i]&&e[i][s];if(l){if("removeEventListener"in e)"mouseenter"===t||"mouseleave"===t?e.removeEventListener("mouseenter"===t?"mouseover":"mouseout",l,!1):("mousewheel"===t&&e.removeEventListener("DOMMouseScroll",l,!1),e.removeEventListener(t,l,!1));else if("detachEvent"in e)try{e.detachEvent("on"+t,l)}catch(a){}if(delete e[i][s],!o.keys(e[i]).length)return o.browser.msie&&o.browser.version<9?void(e[i]=null):void delete e[i]}},once:function(e,t,n,i){function r(){n.apply(i||e,arguments),l._off(e,t,r,i)}var l=this;return o.isObject(t)?void o.forEachOwnProperties(t,function(t,o){s.once(e,o,t,n)}):void s.on(e,t,r,i)},stopPropagation:function(e){e.stopPropagation?e.stopPropagation():e.cancelBubble=!0},preventDefault:function(e){e.preventDefault?e.preventDefault():e.returnValue=!1},stop:function(e){s.preventDefault(e),s.stopPropagation(e)},disableScrollPropagation:function(e){s.on(e,"mousewheel MozMousePixelScroll",s.stopPropagation)},disableClickPropagation:function(e){s.on(e,r.START.join(" ")+" click dblclick",s.stopPropagation)},getMousePosition:function(e,t){var o;return t?(o=t.getBoundingClientRect(),[e.clientX-o.left-t.clientLeft,e.clientY-o.top-t.clientTop]):[e.clientX,e.clientY]},getWheelDelta:function(e){var t=0;return e.wheelDelta&&(t=e.wheelDelta/120),e.detail&&(t=-e.detail/3),t},_checkMouse:function(e,t){var o=t.relatedTarget;if(!o)return!0;try{for(;o&&o!==e;)o=o.parentNode}catch(n){return!1}return o!==e},trigger:function(e,t,n){var i=/(mouse|click)/;o.isUndefined(n)&&i.exec(t)&&(n=s.mouseEvent(t)),e.dispatchEvent?e.dispatchEvent(n):e.fireEvent&&e.fireEvent("on"+t,n)},mouseEvent:function(e,t){var i,r;return r=o.extend({bubbles:!0,cancelable:"mousemove"!==e,view:window,wheelDelta:0,detail:0,screenX:0,screenY:0,clientX:0,clientY:0,ctrlKey:!1,altKey:!1,shiftKey:!1,metaKey:!1,button:0,relatedTarget:void 0},t),n.msie&&n.version<9&&delete r.wheelDelta,"function"==typeof document.createEvent?(i=document.createEvent("MouseEvents"),i.initMouseEvent(e,r.bubbles,r.cancelable,r.view,r.detail,r.screenX,r.screenY,r.clientX,r.clientY,r.ctrlKey,r.altKey,r.shiftKey,r.metaKey,r.button,document.body.parentNode)):document.createEventObject&&(i=document.createEventObject(),o.forEach(r,function(e,t){i[t]=e},this),i.button={0:1,1:4,2:2}[i.button]||i.button),i},getMouseButton:function(e){var t,o="0,1,3,5,7",n="2,6",i="4";return document.implementation.hasFeature("MouseEvents","2.0")?e.button:(t=e.button+"",~o.indexOf(t)?0:~n.indexOf(t)?2:~i.indexOf(t)?1:void 0)}};t.exports=s}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],5:[function(e,t,o){(function(o){"use strict";function n(e){return e.replace(/^\s\s*/,"").replace(/\s\s*$/,"")}var i,r=e("./domevent"),s=e("./collection"),l=o.tui.util,a="_pos",c=/^auto$|^$|%/;i={appendHTMLElement:function(e,t,o){var n;return o=o||"",n=document.createElement(e),n.className=o,t?t.appendChild(n):document.body.appendChild(n),n},remove:function(e){e&&e.parentNode&&e.parentNode.removeChild(e)},get:function(e){return document.getElementById(e)},_matcher:function(e,t){var o=/^\./,n=/^#/;return o.test(t)?i.hasClass(e,t.replace(".","")):n.test(t)?e.id===t.replace("#",""):e.nodeName.toLowerCase()===t.toLowerCase()},find:function(e,t,o){function n(e,t){for(var l,u=e.childNodes,d=0,f=u.length;d<f;d+=1)if(l=u[d],"#text"!==l.nodeName)if(i._matcher(l,t)){if((c&&o(l)||!c)&&r.push(l),a){s=!0;break}}else if(l.childNodes.length>0&&(n(l,t),s))break}var r=[],s=!1,a=l.isUndefined(o)||o===!1,c=l.isFunction(o);return l.isString(t)&&(t=i.get(t)),t=t||window.document.body,n(t,e),a?r[0]||null:r},closest:function(e,t){var o=e.parentNode;if(i._matcher(e,t))return e;for(;o&&o!==window.document.body;){if(i._matcher(o,t))return o;o=o.parentNode}},text:function(e){var t="",o=0,n=e.nodeType;if(n){if(1===n||9===n||11===n){if("string"==typeof e.textContent)return e.textContent;for(e=e.firstChild;e;e=e.nextSibling)t+=i.text(e)}else if(3===n||4===n)return e.nodeValue}else for(;e[o];o+=1)t+=i.text(e[o]);return t},setData:function(e,t,o){return"dataset"in e?void(e.dataset[t]=o):void e.setAttribute("data-"+t,o)},getData:function(e,t){return"dataset"in e?e.dataset[t]:e.getAttribute("data-"+t)},hasClass:function(e,t){var o;return l.isUndefined(e.classList)?(o=i.getClass(e),o.length>0&&new RegExp("(^|\\s)"+t+"(\\s|$)").test(o)):e.classList.contains(t)},addClass:function(e,t){var o;l.isUndefined(e.classList)?i.hasClass(e,t)||(o=i.getClass(e),i.setClass(e,(o?o+" ":"")+t)):l.forEachArray(t.split(" "),function(t){e.classList.add(t)})},setClass:function(e,t){l.isUndefined(e.className.baseVal)?e.className=t:e.className.baseVal=t},removeClass:function(e,t){var o="";l.isUndefined(e.classList)?(o=(" "+i.getClass(e)+" ").replace(" "+t+" "," "),i.setClass(e,n(o))):e.classList.remove(t)},getClass:function(e){return e&&e.className?l.isUndefined(e.className.baseVal)?e.className:e.className.baseVal:""},getStyle:function(e,t){var o,n=e.style[t]||e.currentStyle&&e.currentStyle[t];return n&&"auto"!==n||!document.defaultView||(o=document.defaultView.getComputedStyle(e,null),n=o?o[t]:null),"auto"===n?null:n},getComputedStyle:function(e){var t=document.defaultView;return t&&t.getComputedStyle?document.defaultView.getComputedStyle(e):{getPropertyValue:function(t){var o=/(\-([a-z]){1})/g;return"float"===t&&(t="styleFloat"),o.test(t)&&(t=t.replace(o,function(){return arguments[2].toUpperCase()})),e.currentStyle[t]?e.currentStyle[t]:null}}},setPosition:function(e,t,o){t=l.isUndefined(t)?0:t,o=l.isUndefined(o)?0:o,e[a]=[t,o],e.style.left=t+"px",e.style.top=o+"px"},getPosition:function(e,t){var o,n,i;return t&&(e[a]=null),e[a]?e[a]:(o=0,n=0,(c.test(e.style.left)||c.test(e.style.top))&&"getBoundingClientRect"in e?(i=e.getBoundingClientRect(),o=i.left,n=i.top):(o=parseFloat(e.style.left||0),n=parseFloat(e.style.top||0)),[o,n])},getSize:function(e){var t,o=i.getStyle(e,"width"),n=i.getStyle(e,"height");return(c.test(o)||c.test(n))&&"getBoundingClientRect"in e?(t=e.getBoundingClientRect(),o=t.width,n=t.height):(o=parseFloat(o||0),n=parseFloat(n||0)),[o,n]},testProp:function(e){for(var t=document.documentElement.style,o=0,n=e.length;o<n;o+=1)if(e[o]in t)return e[o];return!1},getFormData:function(e){var t=new s(function(){return this.length}),o=function(e){return!e.disabled},n={};return t.add.apply(t,i.find("input",e,o).concat(i.find("select",e,o)).concat(i.find("textarea",e,o))),t=t.groupBy(function(e){return e&&e.getAttribute("name")||"_other"}),l.forEach(t,function(e,t){"_other"!==t&&e.each(function(o){var r=o.nodeName.toLowerCase(),s=o.type,a=[];"radio"===s?a=[e.find(function(e){return e.checked}).toArray().pop()]:"checkbox"===s?a=e.find(function(e){return e.checked}).toArray():"select"===r?e.find(function(e){return!!e.childNodes.length}).each(function(e){a=a.concat(i.find("option",e,function(e){return e.selected}))}):a=e.find(function(e){return""!==e.value}).toArray(),a=l.map(a,function(e){return e.value}),a.length?1===a.length&&(a=a[0]):a="",n[t]=a})}),n}};var u=i.testProp(["userSelect","WebkitUserSelect","OUserSelect","MozUserSelect","msUserSelect"]),d="onselectstart"in document,f="";i.disableTextSelection=function(){return d?function(){r.on(window,"selectstart",r.preventDefault)}:function(){var e=document.documentElement.style;f=e[u],e[u]="none"}}(),i.enableTextSelection=function(){return d?function(){r.off(window,"selectstart",r.preventDefault)}:function(){document.documentElement.style[u]=f}}(),i.disableImageDrag=function(){r.on(window,"dragstart",r.preventDefault)},i.enableImageDrag=function(){r.off(window,"dragstart",r.preventDefault)},t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domevent":4}],6:[function(e,t,o){(function(o){"use strict";function n(e,t){s.on(t,"mousedown",this._onMouseDown,this),this.options=i.extend({distance:10},e),this.container=t,this._isMoved=!1,this._distance=0,this._dragStartFired=!1,this._dragStartEventData=null}var i=o.tui.util,r=e("./domutil"),s=e("./domevent");n.prototype.destroy=function(){s.off(this.container,"mousedown",this._onMouseDown,this),this.options=this.container=this._isMoved=this._distance=this._dragStartFired=this._dragStartEventData=null},n.prototype._toggleDragEvent=function(e){var t,n,i=this.container;e?(t="on",n="disable"):(t="off",n="enable"),r[n+"TextSelection"](i),r[n+"ImageDrag"](i),s[t](o.document,{mousemove:this._onMouseMove,mouseup:this._onMouseUp},this)},n.prototype._getEventData=function(e){return{target:e.target||e.srcElement,originEvent:e}},n.prototype._onMouseDown=function(e){0===s.getMouseButton(e)&&(this._distance=0,this._dragStartFired=!1,this._dragStartEventData=this._getEventData(e),this._toggleDragEvent(!0))},n.prototype._onMouseMove=function(e){var t=this.options.distance;return s.preventDefault(e),this._isMoved=!0,this._distance<t?void(this._distance+=1):this._dragStartFired||(this._dragStartFired=!0,this.invoke("dragStart",this._dragStartEventData))?void this.fire("drag",this._getEventData(e)):void this._toggleDragEvent(!1)},n.prototype._onMouseUp=function(e){return this._toggleDragEvent(!1),this._isMoved?(this._isMoved=!1,void this.fire("dragEnd",this._getEventData(e))):void this.fire("click",this._getEventData(e))},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./domevent":4,"./domutil":5}],7:[function(e,t,o){(function(o){"use strict";function n(e,t){var o=i.stamp(this);e=e||{},i.isUndefined(t)&&(t=r.appendHTMLElement("div")),r.addClass(t,"tui-view-"+o),this.id=o,this.container=t,this.childs=new s(function(e){return i.stamp(e)}),this.parent=null}var i=o.tui.util,r=e("./domutil"),s=e("./collection");n.prototype.addChild=function(e,t){t&&t.call(e,this),e.parent=this,this.childs.add(e)},n.prototype.removeChild=function(e,t){var o=i.isNumber(e)?this.childs.items[e]:e;e=i.stamp(o),t&&t.call(o,this),this.childs.remove(e)},n.prototype.render=function(){this.childs.each(function(e){e.render()})},n.prototype.recursive=function(e,t){i.isFunction(e)&&(t||e(this),this.childs.each(function(t){t.recursive(e)}))},n.prototype.resize=function(){for(var e=Array.prototype.slice.call(arguments),t=this.parent;t;)i.isFunction(t._onResize)&&t._onResize.apply(t,e),t=t.parent},n.prototype._beforeDestroy=function(){},n.prototype._destroy=function(){this._beforeDestroy(),this.childs.clear(),this.container.innerHTML="",this.id=this.parent=this.childs=this.container=null},n.prototype.destroy=function(e){this.childs.each(function(e){e.destroy(!0),e._destroy()}),e||this._destroy()},n.prototype.getViewBound=function(){var e=this.container,t=r.getPosition(e),o=r.getSize(e);return{x:t[0],y:t[1],width:o[0],height:o[1]}},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./collection":3,"./domutil":5}],8:[function(e,t,o){(function(o){"use strict";function n(e){alert(e)}function i(e){var t;return this instanceof i?(e=this.options=r.extend({container:null,color:"#f8f8f8",preset:["#181818","#282828","#383838","#585858","#b8b8b8","#d8d8d8","#e8e8e8","#f8f8f8","#ab4642","#dc9656","#f7ca88","#a1b56c","#86c1b9","#7cafc2","#ba8baf","#a16946"],cssPrefix:"tui-colorpicker-",detailTxt:"Detail"},e),e.container?(t=this.layout=new l(e,e.container),this.palette=new a(e,t.container),this.palette.on({_selectColor:this._onSelectColorInPalette,_toggleSlider:this._onToggleSlider},this),this.slider=new c(e,t.container),this.slider.on("_selectColor",this._onSelectColorInSlider,this),t.addChild(this.palette),t.addChild(this.slider),void this.render(e.color)):void n("Colorpicker(): need container option.")):new i(e)}var r=o.tui.util,s=e("./colorutil"),l=e("./layout"),a=e("./palette"),c=e("./slider");i.prototype._onSelectColorInPalette=function(e){var t=e.color,o=this.options;return s.isValidRGB(t)?(this.fire("selectColor",{color:t,origin:"palette"}),void(o.color!==t&&(o.color=t,this.render(t)))):void this.render()},i.prototype._onToggleSlider=function(){this.slider.toggle(!this.slider.isVisible())},i.prototype._onSelectColorInSlider=function(e){var t=e.color,o=this.options;this.fire("selectColor",{color:t,origin:"slider"}),o.color!==t&&(o.color=t,this.palette.render(t))},i.prototype.setColor=function(e){s.isValidRGB(e)||n("Colorpicker#setColor(): need valid hex string color value"),this.options.color=e,this.render(e)},i.prototype.getColor=function(){return this.options.color},i.prototype.toggle=function(e){this.layout.container.style.display=e?"block":"none"},i.prototype.render=function(e){this.layout.render(e||this.options.color)},i.prototype.destroy=function(){this.layout.destroy(),this.options.container.innerHTML="",this.layout=this.slider=this.palette=this.options=null},r.CustomEvents.mixin(i),t.exports=i}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./colorutil":2,"./layout":9,"./palette":10,"./slider":11}],9:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"container"),s.call(this,e,t),this.render()}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/view");i.inherit(n,s),n.prototype.render=function(e){this.recursive(function(t){t.render(e)},!0)},t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"./core/domutil":5,"./core/view":7}],10:[function(e,t,o){(function(o){"use strict";function n(e,t){this.options=i.extend({cssPrefix:"tui-colorpicker-",preset:["#181818","#282828","#383838","#585858","#B8B8B8","#D8D8D8","#E8E8E8","#F8F8F8","#AB4642","#DC9656","#F7CA88","#A1B56C","#86C1B9","#7CAFC2","#BA8BAF","#A16946"],detailTxt:"Detail"},e),t=r.appendHTMLElement("div",t,this.options.cssPrefix+"palette-container"),l.call(this,e,t)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./core/view"),a=e("../template/palette");i.inherit(n,l),n.prototype._onClick=function(e){var t=this.options,o=e.srcElement||e.target,n={};return r.hasClass(o,t.cssPrefix+"palette-button")?(n.color=o.value,void this.fire("_selectColor",n)):void(r.hasClass(o,t.cssPrefix+"palette-toggle-slider")&&this.fire("_toggleSlider"))},n.prototype._onChange=function(e){var t=this.options,o=e.srcElement||e.target,n={};if(r.hasClass(o,t.cssPrefix+"palette-hex"))return n.color=o.value,void this.fire("_selectColor",n)},n.prototype._beforeDestroy=function(){this._toggleEvent(!1)},n.prototype._toggleEvent=function(e){var t,o=this.options,n=this.container,i=s[e?"on":"off"];i(n,"click",this._onClick,this),t=r.find("."+o.cssPrefix+"palette-hex",n),t&&i(t,"change",this._onChange,this)},n.prototype.render=function(e){var t=this.options,o="";this._toggleEvent(!1),o=a.layout.replace("{{colorList}}",i.map(t.preset,function(o){var n=a.item.replace(/{{color}}/g,o);return n=n.replace("{{selected}}",o===e?" "+t.cssPrefix+"selected":"")}).join("")),o=o.replace(/{{cssPrefix}}/g,t.cssPrefix).replace("{{detailTxt}}",t.detailTxt).replace(/{{color}}/g,e),this.container.innerHTML=o,this._toggleEvent(!0)},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/palette":13,"./core/domevent":4,"./core/domutil":5,"./core/view":7}],11:[function(e,t,o){(function(o){"use strict";function n(e,t){t=r.appendHTMLElement("div",t,e.cssPrefix+"slider-container"),t.style.display="none",c.call(this,e,t),this.options=i.extend({color:"#f8f8f8",cssPrefix:"tui-colorpicker-"},e),this._dragDataCache={},this.sliderHandleElement=null,this.huebarHandleElement=null,this.baseColorElement=null,this.drag=new u({distance:0},t),this.drag.on({dragStart:this._onDragStart,drag:this._onDrag,dragEnd:this._onDragEnd,click:this._onClick},this)}var i=o.tui.util,r=e("./core/domutil"),s=e("./core/domevent"),l=e("./svgvml"),a=e("./colorutil"),c=e("./core/view"),u=e("./core/drag"),d=e("../template/slider"),f=[-7,112],p=[-3,115],h=359.99;i.inherit(n,c),n.prototype._beforeDestroy=function(){this.drag.off(),this.drag=this.options=this._dragDataCache=this.sliderHandleElement=this.huebarHandleElement=this.baseColorElement=null},n.prototype.toggle=function(e){this.container.style.display=e?"block":"none"},n.prototype.isVisible=function(){return"block"===this.container.style.display},n.prototype.render=function(e){var t,o,n=this,i=n.container,s=n.options,l=d.layout;l=l.replace(/{{slider}}/,d.slider),l=l.replace(/{{huebar}}/,d.huebar),l=l.replace(/{{cssPrefix}}/g,s.cssPrefix),n.container.innerHTML=l,n.sliderHandleElement=r.find("."+s.cssPrefix+"slider-handle",i),n.huebarHandleElement=r.find("."+s.cssPrefix+"huebar-handle",i),n.baseColorElement=r.find("."+s.cssPrefix+"slider-basecolor",i),t=a.hexToRGB(e),o=a.rgbToHSV.apply(null,t),this.moveHue(o[0],!0),this.moveSaturationAndValue(o[1],o[2],!0)},n.prototype._moveColorSliderHandle=function(e,t,o){var n,i=this.sliderHandleElement;t=Math.max(f[0],t),t=Math.min(f[1],t),e=Math.max(f[0],e),e=Math.min(f[1],e),l.setTranslateXY(i,e,t),n=t>50?"white":"black",l.setStrokeColor(i,n),o||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveSaturationAndValue=function(e,t,o){var n,i,r,s;e=e||0,t=t||0,n=Math.abs(f[0]),i=f[1],r=e*i/100-n,s=i-t*i/100-n,this._moveColorSliderHandle(r,s,o)},n.prototype._moveColorSliderByPosition=function(e,t){var o=f[0];this._moveColorSliderHandle(e+o,t+o)},n.prototype.getSaturationAndValue=function(){var e,t,o=Math.abs(f[0]),n=o+f[1],i=l.getTranslateXY(this.sliderHandleElement);return e=(i[1]+o)/n*100,t=100-(i[0]+o)/n*100,[e,t]},n.prototype._moveHueHandle=function(e,t){var o,n,i=this.huebarHandleElement,r=this.baseColorElement;e=Math.max(p[0],e),e=Math.min(p[1],e),l.setTranslateY(i,e),o=a.hsvToRGB(this.getHue(),100,100),n=a.rgbToHEX.apply(null,o),l.setGradientColorStop(r,n),t||this.fire("_selectColor",{color:a.rgbToHEX.apply(null,this.getRGB())})},n.prototype.moveHue=function(e,t){var o,n,i=0;o=Math.abs(p[0]),n=o+p[1],e=e||0,i=n*e/h-o,this._moveHueHandle(i,t)},n.prototype._moveHueByPosition=function(e){var t=p[0];this._moveHueHandle(e+t)},n.prototype.getHue=function(){var e,t,o=this.huebarHandleElement,n=l.getTranslateXY(o);return e=Math.abs(p[0]),t=e+p[1],(n[0]+e)*h/t},n.prototype.getHSV=function(){var e=this.getSaturationAndValue(),t=this.getHue();return[t].concat(e)},n.prototype.getRGB=function(){return a.hsvToRGB.apply(null,this.getHSV())},n.prototype._prepareColorSliderForMouseEvent=function(e){var t,o=this.options,n=r.closest(e.target,"."+o.cssPrefix+"slider-part");return t=this._dragDataCache={isColorSlider:r.hasClass(n,o.cssPrefix+"slider-left"),parentElement:n}},n.prototype._onClick=function(e){var t=this._prepareColorSliderForMouseEvent(e),o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1]),this._dragDataCache=null},n.prototype._onDragStart=function(e){this._prepareColorSliderForMouseEvent(e)},n.prototype._onDrag=function(e){var t=this._dragDataCache,o=s.getMousePosition(e.originEvent,t.parentElement);t.isColorSlider?this._moveColorSliderByPosition(o[0],o[1]):this._moveHueByPosition(o[1])},n.prototype._onDragEnd=function(){this._dragDataCache=null},i.CustomEvents.mixin(n),t.exports=n}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{"../template/slider":14,"./colorutil":2,"./core/domevent":4,"./core/domutil":5,"./core/drag":6,"./core/view":7,"./svgvml":12}],12:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=/[\.\-0-9]+/g,i=-6,r={isOldBrowser:function(){var e=r._isOldBrowser;return o.isExisty(e)||(r._isOldBrowser=e=o.browser.msie&&o.browser.version<9),e},getTranslateXY:function(e){var t;return r.isOldBrowser()?(t=e.style,[parseFloat(t.top),parseFloat(t.left)]):(t=e.getAttribute("transform"))?(t=t.match(n),[parseFloat(t[1]),parseFloat(t[0])]):[0,0]},setTranslateXY:function(e,t,o){r.isOldBrowser()?(e.style.left=t+"px",e.style.top=o+"px"):e.setAttribute("transform","translate("+t+","+o+")")},setTranslateY:function(e,t){r.isOldBrowser()?e.style.top=t+"px":e.setAttribute("transform","translate("+i+","+t+")")},setStrokeColor:function(e,t){r.isOldBrowser()?e.strokecolor=t:e.setAttribute("stroke",t)},setGradientColorStop:function(e,t){r.isOldBrowser()?e.color=t:e.setAttribute("stop-color",t)}};t.exports=r}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],13:[function(e,t,o){"use strict";var n=['<ul class="{{cssPrefix}}clearfix">{{colorList}}</ul>','<div class="{{cssPrefix}}clearfix" style="overflow:hidden">','<input type="button" class="{{cssPrefix}}palette-toggle-slider" value="{{detailTxt}}" />','<input type="text" class="{{cssPrefix}}palette-hex" value="{{color}}" maxlength="7" />','<span class="{{cssPrefix}}palette-preview" style="background-color:{{color}};color:{{color}}">{{color}}</span>',"</div>"].join("\n"),i='<li><input class="{{cssPrefix}}palette-button{{selected}}" type="button" style="background-color:{{color}};color:{{color}}" title="{{color}}" value="{{color}}" /></li>';t.exports={layout:n,item:i}},{}],14:[function(e,t,o){(function(e){"use strict";var o=e.tui.util,n=['<div class="{{cssPrefix}}slider-left {{cssPrefix}}slider-part">{{slider}}</div>','<div class="{{cssPrefix}}slider-right {{cssPrefix}}slider-part">{{huebar}}</div>'].join("\n"),i=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-slider">',"<defs>",'<linearGradient id="{{cssPrefix}}svg-fill-color" x1="0%" y1="0%" x2="100%" y2="0%">','<stop offset="0%" stop-color="rgb(255,255,255)" />','<stop class="{{cssPrefix}}slider-basecolor" offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>",'<linearGradient id="{{cssPrefix}}svn-fill-black" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:0" />','<stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:1" />',"</linearGradient>","</defs>",'<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svg-fill-color)"></rect>','<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svn-fill-black)"></rect>','<path transform="translate(0,0)" class="{{cssPrefix}}slider-handle" d="M0 7.5 L15 7.5 M7.5 15 L7.5 0 M2 7 a5.5 5.5 0 1 1 0 1 Z" stroke="black" stroke-width="0.75" fill="none" />',"</svg>"].join("\n"),r=['<div class="{{cssPrefix}}vml-slider">','<v:rect strokecolor="none" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill class="{{cssPrefix}}vml {{cssPrefix}}slider-basecolor" type="gradient" method="none" color="#ff0000" color2="#fff" angle="90" />',"</v:rect>",'<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">','<v:fill type="gradient" method="none" color="black" color2="white" o:opacity2="0%" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}slider-handle" coordsize="1 1" style="width:1px;height:1px;"path="m 0,7 l 14,7 m 7,14 l 7,0 ar 12,12 2,2 z" filled="false" stroked="true" />',"</div>"].join("\n"),s=['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-huebar">',"<defs>",'<linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">','<stop offset="0%" stop-color="rgb(255,0,0)" />','<stop offset="16.666%" stop-color="rgb(255,255,0)" />','<stop offset="33.333%" stop-color="rgb(0,255,0)" />','<stop offset="50%" stop-color="rgb(0,255,255)" />','<stop offset="66.666%" stop-color="rgb(0,0,255)" />','<stop offset="83.333%" stop-color="rgb(255,0,255)" />','<stop offset="100%" stop-color="rgb(255,0,0)" />',"</linearGradient>","</defs>",'<rect width="18px" height="100%" fill="url(#g)"></rect>','<path transform="translate(-6,-3)" class="{{cssPrefix}}huebar-handle" d="M0 0 L4 4 L0 8 L0 0 Z" fill="black" stroke="none" />',"</svg>"].join("\n"),l=['<div class="{{cssPrefix}}vml-huebar">','<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-huebar-bg">','<v:fill type="gradient" method="none" colors="0% rgb(255,0,0), 16.666% rgb(255,255,0), 33.333% rgb(0,255,0), 50% rgb(0,255,255), 66.666% rgb(0,0,255), 83.333% rgb(255,0,255), 100% rgb(255,0,0)" angle="180" class="{{cssPrefix}}vml" />',"</v:rect>",'<v:shape class="{{cssPrefix}}vml {{cssPrefix}}huebar-handle" coordsize="1 1" style="width:1px;height:1px;position:absolute;z-index:1;right:22px;top:-3px;"path="m 0,0 l 4,4 l 0,8 l 0,0 z" filled="true" fillcolor="black" stroked="false" />',"</div>"].join("\n"),a=o.browser.msie&&o.browser.version<9;a&&e.document.namespaces.add("v","urn:schemas-microsoft-com:vml"),t.exports={layout:n,slider:a?r:i,huebar:a?l:s}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[1]);
+/******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 
@@ -46,7 +47,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -64,27 +65,28 @@
 	 */
 
 	// codemirror modes&addons
-	__webpack_require__(90);
-	__webpack_require__(91);
 	__webpack_require__(92);
 	__webpack_require__(93);
 	__webpack_require__(94);
-
-	// default extensions
 	__webpack_require__(95);
 	__webpack_require__(96);
-	__webpack_require__(99);
-	__webpack_require__(100);
+
+	// default extensions
+	__webpack_require__(97);
+	__webpack_require__(98);
+	__webpack_require__(101);
+	__webpack_require__(102);
+	__webpack_require__(109);
 
 	window.tui = window.tui || {};
 	window.tui.Editor = _editor2.default;
 
 	// langs
-	__webpack_require__(107);
-	__webpack_require__(108);
-	__webpack_require__(109);
-	__webpack_require__(110);
-	__webpack_require__(111);
+	__webpack_require__(127);
+	__webpack_require__(128);
+	__webpack_require__(129);
+	__webpack_require__(130);
+	__webpack_require__(131);
 
 	// for jquery
 	$.fn.tuiEditor = function () {
@@ -118,9 +120,9 @@
 	    return this;
 	};
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -139,199 +141,203 @@
 
 	var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-	var _preview = __webpack_require__(5);
+	var _preview = __webpack_require__(7);
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _wysiwygEditor = __webpack_require__(7);
+	var _wysiwygEditor = __webpack_require__(10);
 
 	var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-	var _layout = __webpack_require__(22);
+	var _layout = __webpack_require__(26);
 
 	var _layout2 = _interopRequireDefault(_layout);
 
-	var _eventManager = __webpack_require__(23);
+	var _eventManager = __webpack_require__(27);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager2 = __webpack_require__(24);
+	var _commandManager2 = __webpack_require__(28);
 
 	var _commandManager3 = _interopRequireDefault(_commandManager2);
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(30);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _importManager = __webpack_require__(27);
+	var _importManager = __webpack_require__(31);
 
 	var _importManager2 = _interopRequireDefault(_importManager);
 
-	var _convertor = __webpack_require__(30);
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
+
+	var _convertor = __webpack_require__(32);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
 
-	var _viewOnly = __webpack_require__(37);
+	var _viewOnly = __webpack_require__(39);
 
 	var _viewOnly2 = _interopRequireDefault(_viewOnly);
 
-	var _defaultUI = __webpack_require__(38);
+	var _defaultUI = __webpack_require__(40);
 
 	var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
-	var _bold = __webpack_require__(52);
+	var _bold = __webpack_require__(54);
 
 	var _bold2 = _interopRequireDefault(_bold);
 
-	var _italic = __webpack_require__(53);
+	var _italic = __webpack_require__(55);
 
 	var _italic2 = _interopRequireDefault(_italic);
 
-	var _strike = __webpack_require__(54);
+	var _strike = __webpack_require__(56);
 
 	var _strike2 = _interopRequireDefault(_strike);
 
-	var _blockquote = __webpack_require__(55);
+	var _blockquote = __webpack_require__(57);
 
 	var _blockquote2 = _interopRequireDefault(_blockquote);
 
-	var _heading = __webpack_require__(56);
+	var _heading = __webpack_require__(58);
 
 	var _heading2 = _interopRequireDefault(_heading);
 
-	var _paragraph = __webpack_require__(57);
+	var _paragraph = __webpack_require__(59);
 
 	var _paragraph2 = _interopRequireDefault(_paragraph);
 
-	var _hr = __webpack_require__(58);
+	var _hr = __webpack_require__(60);
 
 	var _hr2 = _interopRequireDefault(_hr);
 
-	var _addLink = __webpack_require__(59);
+	var _addLink = __webpack_require__(61);
 
 	var _addLink2 = _interopRequireDefault(_addLink);
 
-	var _addImage = __webpack_require__(60);
+	var _addImage = __webpack_require__(62);
 
 	var _addImage2 = _interopRequireDefault(_addImage);
 
-	var _ul = __webpack_require__(61);
+	var _ul = __webpack_require__(63);
 
 	var _ul2 = _interopRequireDefault(_ul);
 
-	var _ol = __webpack_require__(62);
+	var _ol = __webpack_require__(64);
 
 	var _ol2 = _interopRequireDefault(_ol);
 
-	var _table = __webpack_require__(63);
+	var _table = __webpack_require__(65);
 
 	var _table2 = _interopRequireDefault(_table);
 
-	var _task = __webpack_require__(64);
+	var _task = __webpack_require__(66);
 
 	var _task2 = _interopRequireDefault(_task);
 
-	var _code = __webpack_require__(65);
+	var _code = __webpack_require__(67);
 
 	var _code2 = _interopRequireDefault(_code);
 
-	var _codeBlock = __webpack_require__(66);
+	var _codeBlock = __webpack_require__(68);
 
 	var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-	var _bold3 = __webpack_require__(67);
+	var _bold3 = __webpack_require__(69);
 
 	var _bold4 = _interopRequireDefault(_bold3);
 
-	var _italic3 = __webpack_require__(68);
+	var _italic3 = __webpack_require__(70);
 
 	var _italic4 = _interopRequireDefault(_italic3);
 
-	var _strike3 = __webpack_require__(69);
+	var _strike3 = __webpack_require__(71);
 
 	var _strike4 = _interopRequireDefault(_strike3);
 
-	var _blockquote3 = __webpack_require__(70);
+	var _blockquote3 = __webpack_require__(72);
 
 	var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-	var _addImage3 = __webpack_require__(71);
+	var _addImage3 = __webpack_require__(73);
 
 	var _addImage4 = _interopRequireDefault(_addImage3);
 
-	var _addLink3 = __webpack_require__(72);
+	var _addLink3 = __webpack_require__(74);
 
 	var _addLink4 = _interopRequireDefault(_addLink3);
 
-	var _hr3 = __webpack_require__(73);
+	var _hr3 = __webpack_require__(75);
 
 	var _hr4 = _interopRequireDefault(_hr3);
 
-	var _heading3 = __webpack_require__(74);
+	var _heading3 = __webpack_require__(76);
 
 	var _heading4 = _interopRequireDefault(_heading3);
 
-	var _paragraph3 = __webpack_require__(75);
+	var _paragraph3 = __webpack_require__(77);
 
 	var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-	var _ul3 = __webpack_require__(76);
+	var _ul3 = __webpack_require__(78);
 
 	var _ul4 = _interopRequireDefault(_ul3);
 
-	var _ol3 = __webpack_require__(77);
+	var _ol3 = __webpack_require__(79);
 
 	var _ol4 = _interopRequireDefault(_ol3);
 
-	var _table3 = __webpack_require__(78);
+	var _table3 = __webpack_require__(80);
 
 	var _table4 = _interopRequireDefault(_table3);
 
-	var _tableAddRow = __webpack_require__(79);
+	var _tableAddRow = __webpack_require__(81);
 
 	var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-	var _tableAddCol = __webpack_require__(80);
+	var _tableAddCol = __webpack_require__(82);
 
 	var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-	var _tableRemoveRow = __webpack_require__(81);
+	var _tableRemoveRow = __webpack_require__(83);
 
 	var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-	var _tableRemoveCol = __webpack_require__(82);
+	var _tableRemoveCol = __webpack_require__(84);
 
 	var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-	var _tableAlignCol = __webpack_require__(83);
+	var _tableAlignCol = __webpack_require__(85);
 
 	var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-	var _tableRemove = __webpack_require__(84);
+	var _tableRemove = __webpack_require__(86);
 
 	var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-	var _increaseDepth = __webpack_require__(85);
+	var _increaseDepth = __webpack_require__(87);
 
 	var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-	var _decreaseDepth = __webpack_require__(86);
+	var _decreaseDepth = __webpack_require__(88);
 
 	var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-	var _task3 = __webpack_require__(87);
+	var _task3 = __webpack_require__(89);
 
 	var _task4 = _interopRequireDefault(_task3);
 
-	var _code3 = __webpack_require__(88);
+	var _code3 = __webpack_require__(90);
 
 	var _code4 = _interopRequireDefault(_code3);
 
-	var _codeBlock3 = __webpack_require__(89);
+	var _codeBlock3 = __webpack_require__(91);
 
 	var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -342,6 +348,13 @@
 	var util = tui.util;
 
 	var __nedInstance = [];
+
+	/**
+	 * @callback addImageBlobHook
+	 * @param  {File} blob - image blob
+	 * @param  {callback} callback - callback function to be called after
+	 * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+	 */
 
 	/**
 	 * ToastUI Editor
@@ -361,8 +374,9 @@
 	         * @param {function} options.events.blur It would be emitted when editor loose focus
 	     * @param {object} options.hooks Hook list
 	         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-	         * @param {function} options.hooks.addImageBlobHook hook for image upload.
+	         * @param {addImageBlobHook} options.hooks.addImageBlobHook hook for image upload.
 	    * @param {string} language language
+	    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
 	    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
 	 */
 
@@ -377,14 +391,20 @@
 	            'initialEditType': 'markdown',
 	            'height': 300,
 	            'language': 'en_US',
-	            'useDefaultHTMLSanitizer': true
+	            'useDefaultHTMLSanitizer': true,
+	            'useCommandShortcut': true
 	        }, options);
 
 	        this.eventManager = new _eventManager2.default();
 
 	        this.importManager = new _importManager2.default(this.eventManager);
 
-	        this.commandManager = new _commandManager3.default(this);
+	        this.commandManager = new _commandManager3.default(this, {
+	            useCommandShortcut: this.options.useCommandShortcut
+	        });
+
+	        this.codeBlockManager = _codeBlockManager2.default;
+
 	        this.convertor = new _convertor2.default(this.eventManager);
 
 	        if (this.options.useDefaultHTMLSanitizer) {
@@ -410,13 +430,14 @@
 
 	        this.setUI(this.options.UI || new _defaultUI2.default(this));
 
-	        this.mdEditor = new _markdownEditor2.default(this.layout.getMdEditorContainerEl(), this.eventManager);
+	        this.mdEditor = _markdownEditor2.default.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
 	        this.preview = new _preview2.default(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-	        this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+	        this.wwEditor = _wysiwygEditor2.default.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+	            useCommandShortcut: this.options.useCommandShortcut
+	        });
+	        this.toMarkOptions = null;
 
 	        this.changePreviewStyle(this.options.previewStyle);
-
-	        this.mdEditor.init();
 
 	        this.changeMode(self.options.initialEditType, true);
 
@@ -469,6 +490,16 @@
 	            } else {
 	                this.commandManager.addCommand(_commandManager3.default.command(type, props));
 	            }
+	        }
+
+	        /**
+	         * After added command.
+	         */
+
+	    }, {
+	        key: 'afterAddedCommand',
+	        value: function afterAddedCommand() {
+	            this.eventManager.emit('afterAddedCommand', this);
 	        }
 
 	        /**
@@ -601,15 +632,15 @@
 	        }
 
 	        /**
-	         * Set Editor value
+	         * Set markdown syntax text.
 	         * @api
 	         * @memberOf ToastUIEditor
-	         * @param {string} markdown Markdown syntax text
+	         * @param {string} markdown - markdown syntax text.
 	         */
 
 	    }, {
-	        key: 'setValue',
-	        value: function setValue(markdown) {
+	        key: 'setMarkdown',
+	        value: function setMarkdown(markdown) {
 	            markdown = markdown || '';
 
 	            if (this.isMarkdownMode()) {
@@ -618,28 +649,109 @@
 	                this.wwEditor.setValue(this.convertor.toHTML(markdown));
 	            }
 
-	            this.eventManager.emit('setValueAfter', markdown);
+	            this.eventManager.emit('setMarkdownAfter', markdown);
 	        }
 
 	        /**
-	         * Get editor value
+	         * Set html value.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @param {string} html - html syntax text
+	         */
+
+	    }, {
+	        key: 'setHtml',
+	        value: function setHtml(html) {
+	            html = html || '';
+	            this.wwEditor.setValue(html);
+
+	            if (this.isMarkdownMode()) {
+	                var markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+	                this.mdEditor.setValue(markdown);
+	                this.eventManager.emit('setMarkdownAfter', markdown);
+	            }
+	        }
+
+	        /**
+	         * Set markdown syntax text.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @param {string} value - markdown syntax text
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'setValue',
+	        value: function setValue(value) {
+	            this.setMarkdown(value);
+	        }
+
+	        /**
+	         * Get markdown syntax text.
 	         * @api
 	         * @memberOf ToastUIEditor
 	         * @returns {string}
 	         */
 
 	    }, {
-	        key: 'getValue',
-	        value: function getValue() {
+	        key: 'getMarkdown',
+	        value: function getMarkdown() {
 	            var markdown = void 0;
 
 	            if (this.isMarkdownMode()) {
 	                markdown = this.mdEditor.getValue();
 	            } else {
-	                markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+	                markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
 	            }
 
 	            return markdown;
+	        }
+
+	        /**
+	         * Get html syntax text.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'getHtml',
+	        value: function getHtml() {
+	            if (this.isWysiwygMode()) {
+	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+	            }
+
+	            return this.convertor.toHTML(this.mdEditor.getValue());
+	        }
+
+	        /**
+	         * Get editor value.
+	         * @api
+	         * @memberOf ToastUIEditor
+	         * @returns {string}
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'getValue',
+	        value: function getValue() {
+	            return this.getMarkdown();
+	        }
+
+	        /**
+	         * insert text
+	         * @param {string} text - text string to insert
+	         * @memberof ToastUIEditor
+	         */
+
+	    }, {
+	        key: 'insertText',
+	        value: function insertText(text) {
+	            if (this.isMarkdownMode()) {
+	                this.mdEditor.replaceSelection(text);
+	            } else {
+	                this.wwEditor.insertText(text);
+	            }
 	        }
 
 	        /**
@@ -777,7 +889,7 @@
 	                this.eventManager.emit('changeModeToWysiwyg');
 	            } else {
 	                this.layout.switchToMarkdown();
-	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+	                this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
 	                this.getCodeMirror().refresh();
 	                this.eventManager.emit('changeModeToMarkdown');
 	            }
@@ -927,6 +1039,21 @@
 	        }
 
 	        /**
+	         * get selected text
+	         * @returns {string} - selected text
+	         * @memberof ToastUIEditor
+	         */
+
+	    }, {
+	        key: 'getSelectedText',
+	        value: function getSelectedText() {
+	            var range = this.getRange();
+	            var textObject = this.getTextObject(range);
+
+	            return textObject.getTextContent() || '';
+	        }
+
+	        /**
 	         * Get instance of TUIEditor
 	         * @api
 	         * @memberOf ToastUIEditor
@@ -1034,9 +1161,9 @@
 
 	module.exports = ToastUIEditor;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -1052,6 +1179,14 @@
 	var _mdTextObject = __webpack_require__(4);
 
 	var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
+
+	var _mdListManager = __webpack_require__(5);
+
+	var _mdListManager2 = _interopRequireDefault(_mdListManager);
+
+	var _componentManager = __webpack_require__(6);
+
+	var _componentManager2 = _interopRequireDefault(_componentManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1073,6 +1208,7 @@
 	    function MarkdownEditor($el, eventManager) {
 	        _classCallCheck(this, MarkdownEditor);
 
+	        this.componentManager = new _componentManager2.default(this);
 	        this.eventManager = eventManager;
 	        this.$editorContainerEl = $el;
 
@@ -1087,7 +1223,7 @@
 	     * init
 	     * @api
 	     * @memberOf WysiwygEditor
-	     * @param {string} initialValue Editor's initial content
+	     * @param {string} [initialValue] Editor's initial content
 	     */
 
 
@@ -1233,6 +1369,7 @@
 	                var state = {
 	                    bold: !!base.strong,
 	                    italic: !!base.em,
+	                    strike: !!base.strikethrough,
 	                    code: !!overlay.code,
 	                    codeBlock: !!overlay.codeBlock,
 	                    quote: !!base.quote,
@@ -1619,6 +1756,27 @@
 
 	            return result;
 	        }
+
+	        /**
+	         * MarkdownEditor factory method
+	         * @api
+	         * @memberOf MarkdownEditor
+	         * @param {jQuery} $el Container element for editor
+	         * @param {EventManager} eventManager EventManager instance
+	         * @returns {MarkdownEditor} MarkdownEditor
+	         */
+
+	    }], [{
+	        key: 'factory',
+	        value: function factory($el, eventManager) {
+	            var mde = new MarkdownEditor($el, eventManager);
+
+	            mde.init();
+
+	            mde.componentManager.addManager(_mdListManager2.default);
+
+	            return mde;
+	        }
 	    }]);
 
 	    return MarkdownEditor;
@@ -1626,9 +1784,9 @@
 
 	module.exports = MarkdownEditor;
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -1644,6 +1802,7 @@
 	/**
 	 * Constant of key mapping
 	 * @type {string[]}
+	 * @ignore
 	 */
 	var KEYBOARD_MAP = ['', // [0]
 	'', // [1]
@@ -2013,9 +2172,9 @@
 
 	module.exports = KeyMapper;
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -2035,6 +2194,7 @@
 	 * @class mdTextObject
 	 * @param {MarkdownEditor} mde MarkdownEditor instance
 	 * @param {object} range range
+	 * @ignore
 	 */
 	var mdTextObject = function () {
 	    function mdTextObject(mde, range) {
@@ -2195,9 +2355,9 @@
 
 	module.exports = mdTextObject;
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -2206,11 +2366,411 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
-	 * @fileoverview
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @fileoverview Implements wysiwyg p manager
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	 */
 
-	var LazyRunner = __webpack_require__(6);
+	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+	var FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\\/'";: \r\[\]]*\|+)+/i;
+	var FIND_HEADING_RX = /^#+\s/;
+	var FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
+
+	/**
+	 * MdListManager
+	 * @exports MdListManager
+	 * @class MdListManager
+	 * @constructor
+	 * @param {MarkdownEditor} mde MarkdownEditor instance
+	 */
+
+	var MdListManager = function () {
+	    function MdListManager(mde) {
+	        _classCallCheck(this, MdListManager);
+
+	        this.mde = mde;
+	        this.eventManager = mde.eventManager;
+
+	        /**
+	         * Name property
+	         * @api
+	         * @memberOf MdListManager
+	         * @type {string}
+	         */
+	        this.name = 'list';
+	    }
+
+	    /**
+	     * Return whether passed line is list or paragraph or not
+	     * @param {string} line line text
+	     * @api
+	     * @returns {boolean}
+	     */
+
+
+	    _createClass(MdListManager, [{
+	        key: 'isListOrParagraph',
+	        value: function isListOrParagraph(line) {
+	            return !FIND_BLOCK_RX.test(line) && !FIND_TABLE_RX.test(line) && !FIND_HEADING_RX.test(line);
+	        }
+
+	        /**
+	         * Append blank line at list top or bottom if needed
+	         * @param {CodeMirror} cm CodeMirror instance
+	         * @param {number} index index number
+	         * @param {number} endLineNumber end line index number
+	         * @param {number} startLineNumber start line index number
+	         * @api
+	         */
+
+	    }, {
+	        key: 'appendBlankLineIfNeed',
+	        value: function appendBlankLineIfNeed(cm, index, endLineNumber, startLineNumber) {
+	            var doc = cm.getDoc();
+	            var cursorPositionFactor = 0;
+	            var isMultiLineSelection = startLineNumber !== endLineNumber;
+	            var nextLineOfLastIndex = doc.getLine(this._getEndLineNumberOfList(doc, endLineNumber) + 1);
+	            var previousLineOfFirstIndex = doc.getLine(this._getStartLineNumberOfList(doc, startLineNumber) - 1);
+
+	            var nextLine = doc.getLine(index + 1);
+	            if (isMultiLineSelection && this._isNeedAppendBlankLine(nextLineOfLastIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(nextLine)) {
+	                doc.replaceRange('\n', {
+	                    line: index,
+	                    ch: doc.getLine(index).length
+	                });
+	            }
+
+	            var previousLine = doc.getLine(index - 1);
+	            if (isMultiLineSelection && this._isNeedAppendBlankLine(previousLineOfFirstIndex) || !isMultiLineSelection && this._isNeedAppendBlankLine(previousLine)) {
+	                doc.replaceRange('\n', {
+	                    line: startLineNumber,
+	                    ch: 0
+	                });
+	                cursorPositionFactor += 1;
+	            }
+	            if (!isMultiLineSelection) {
+	                var currentLineNumber = index + cursorPositionFactor;
+	                cm.setCursor(currentLineNumber, doc.getLine(currentLineNumber).length);
+	            }
+	        }
+
+	        /**
+	         * Return whether need to append blank line or not
+	         * @param {string} line Line text
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isNeedAppendBlankLine',
+	        value: function _isNeedAppendBlankLine(line) {
+	            return line && line.length !== 0 && !this._isAList(line);
+	        }
+
+	        /**
+	         * Sort line number of selection descending
+	         * @param {{from, to}} range start, end CodeMirror range information
+	         * @api
+	         * @returns {{start: {number}, end: {number}}}
+	         */
+
+	    }, {
+	        key: 'createSortedLineRange',
+	        value: function createSortedLineRange(range) {
+	            var isReversed = range.from.line > range.to.line;
+	            var rangeStart = {
+	                line: isReversed ? range.to.line : range.from.line,
+	                ch: 0
+	            };
+	            var rangeEnd = {
+	                line: isReversed ? range.from.line : range.to.line,
+	                ch: 0
+	            };
+
+	            return {
+	                start: rangeStart.line,
+	                end: rangeEnd.line
+	            };
+	        }
+
+	        /**
+	         * Expand line range if need
+	         * @param {object} doc doc instance
+	         * @param {{from, to}} range CodeMirror range information
+	         * @param {function} comparator comparator function
+	         * @api
+	         * @returns {{start: number, end: number}}
+	         */
+
+	    }, {
+	        key: 'expandLineRangeIfNeed',
+	        value: function expandLineRangeIfNeed(doc, range, comparator) {
+	            var lineRange = this.createSortedLineRange(range);
+	            var start = lineRange.start;
+	            var end = lineRange.end;
+
+	            var isRangeStartInUlOrTask = this._isDifferentListType(comparator, doc.getLine(start));
+	            var isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));
+
+	            if (isRangeStartInUlOrTask) {
+	                start = this._getStartLineNumberOfList(doc, start);
+	            }
+
+	            if (isRangeEndInUlOrTask) {
+	                end = this._getEndLineNumberOfList(doc, end);
+	            }
+
+	            return {
+	                start: start,
+	                end: end
+	            };
+	        }
+
+	        /**
+	         * Replace list syntax
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} lineNumber Line number
+	         * @param {RegExp} regexp Regexp for find list syntax
+	         * @param {string} replacePattern Replacement string
+	         * @api
+	         */
+
+	    }, {
+	        key: 'replaceLineText',
+	        value: function replaceLineText(doc, lineNumber, regexp, replacePattern) {
+	            var line = doc.getLine(lineNumber);
+	            var currentLineStart = {
+	                line: lineNumber,
+	                ch: 0
+	            };
+	            var currentLineEnd = {
+	                line: lineNumber,
+	                ch: line.length
+	            };
+
+	            line = line.replace(regexp, replacePattern);
+
+	            doc.replaceRange(line, currentLineStart, currentLineEnd);
+	        }
+
+	        /**
+	         * Return whether is a different list type or not
+	         * @param {function} comparator comparator function
+	         * @param {string} line line string
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isDifferentListType',
+	        value: function _isDifferentListType(comparator, line) {
+	            return line && line.length !== 0 && comparator.call(this, line);
+	        }
+
+	        /**
+	         * Return whether is a list or not
+	         * @param {string} line line string
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isAList',
+	        value: function _isAList(line) {
+	            return line && line.length !== 0 && this._isListLine(line);
+	        }
+
+	        /**
+	         * Return whether passed line is list or not
+	         * @param {string} line Line text
+	         * @returns {Boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isListLine',
+	        value: function _isListLine(line) {
+	            return !!(line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX));
+	        }
+
+	        /**
+	         * Get start line number of current list
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} startLineNumber start line number of selection
+	         * @returns {number|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getStartLineNumberOfList',
+	        value: function _getStartLineNumberOfList(doc, startLineNumber) {
+	            var lineNumber = void 0;
+
+	            for (lineNumber = startLineNumber; lineNumber > 0; lineNumber -= 1) {
+	                var previousLine = doc.getLine(lineNumber - 1);
+	                if (!previousLine || !this._isListLine(previousLine)) {
+	                    break;
+	                }
+	            }
+
+	            return lineNumber;
+	        }
+
+	        /**
+	         * Get end line number of current list
+	         * @param {object} doc CodeMirror doc instance
+	         * @param {number} endLineNumber end line number of selection
+	         * @returns {number|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getEndLineNumberOfList',
+	        value: function _getEndLineNumberOfList(doc, endLineNumber) {
+	            var lineCount = doc.lineCount();
+	            var lineNumber = void 0;
+
+	            for (lineNumber = endLineNumber; lineNumber < lineCount; lineNumber += 1) {
+	                var nextLine = doc.getLine(lineNumber + 1);
+	                if (!nextLine || !this._isListLine(nextLine)) {
+	                    break;
+	                }
+	            }
+
+	            return lineNumber;
+	        }
+	    }]);
+
+	    return MdListManager;
+	}();
+
+	module.exports = MdListManager;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements ComponentManager
+	 * @author Junghwan Park(junghwan.parkm@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/**
+	 * ComponentManager
+	 * @exports ComponentManager
+	 * @class
+	 */
+	var ComponentManager = function () {
+	    /**
+	     * Constructor
+	     * @param {MarkdownEditor|WysiwygEditor} editor Editor instance
+	     */
+	    function ComponentManager(editor) {
+	        _classCallCheck(this, ComponentManager);
+
+	        /**
+	         * private
+	         * @type {object}
+	         * @private
+	         */
+	        this._managers = {};
+	        this._editor = editor;
+	    }
+
+	    /**
+	     * addManager
+	     * Add manager
+	     * @api
+	     * @memberOf ComponentManager
+	     * @param {string|function} nameOrConstructor Manager name or constructor
+	     * @param {function} [ManagerConstructor] Constructor
+	     */
+
+
+	    _createClass(ComponentManager, [{
+	        key: "addManager",
+	        value: function addManager(nameOrConstructor, ManagerConstructor) {
+	            if (!ManagerConstructor) {
+	                ManagerConstructor = nameOrConstructor;
+	                nameOrConstructor = null;
+	            }
+
+	            var instance = new ManagerConstructor(this._editor);
+
+	            this._managers[nameOrConstructor || instance.name] = instance;
+	        }
+
+	        /**
+	         * getManager
+	         * Get manager by manager name
+	         * @api
+	         * @memberOf ComponentManager
+	         * @param {string} name Manager name
+	         * @returns {object} manager
+	         */
+
+	    }, {
+	        key: "getManager",
+	        value: function getManager(name) {
+	            return this._managers[name];
+	        }
+
+	        /**
+	         * Remove Manager.
+	         * @param {string} name - manager name
+	         */
+
+	    }, {
+	        key: "removeManager",
+	        value: function removeManager(name) {
+	            var manager = this.getManager(name);
+
+	            if (!manager) {
+	                return;
+	            }
+
+	            if (manager.destroy) {
+	                manager.destroy();
+	            }
+
+	            delete this._managers[name];
+	        }
+	    }]);
+
+	    return ComponentManager;
+	}();
+
+	module.exports = ComponentManager;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _lazyRunner = __webpack_require__(8);
+
+	var _lazyRunner2 = _interopRequireDefault(_lazyRunner);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
 	 * Preview
@@ -2219,20 +2779,21 @@
 	 * @constructor
 	 * @param {jQuery} $el Container element for preview
 	 * @param {EventManager} eventManager Event manager instance
-	 * @param {Convertor} converter Convertor instance
+	 * @param {Convertor} convertor Convertor instance
+	 * @param {boolean} isViewOnly - whether viewOnly mode or not
 	 **/
-
 	var Preview = function () {
-	    function Preview($el, eventManager, converter) {
+	    function Preview($el, eventManager, convertor, isViewOnly) {
 	        _classCallCheck(this, Preview);
 
 	        this.eventManager = eventManager;
-	        this.converter = converter;
+	        this.convertor = convertor;
 	        this.$el = $el;
+	        this.isViewOnly = !!isViewOnly;
 
 	        this._initContentSection();
 
-	        this.lazyRunner = new LazyRunner();
+	        this.lazyRunner = new _lazyRunner2.default();
 
 	        this.lazyRunner.registerLazyRunFunction('refresh', this.refresh, 800, this);
 
@@ -2293,7 +2854,7 @@
 	    }, {
 	        key: 'refresh',
 	        value: function refresh(markdown) {
-	            this.render(this.converter.toHTMLWithCodeHightlight(markdown));
+	            this.render(this.convertor.toHTMLWithCodeHightlight(markdown));
 	        }
 
 	        /**
@@ -2315,6 +2876,9 @@
 
 	            this.$previewContent.empty();
 	            this.$previewContent.html(finalHtml);
+
+	            this.eventManager.emit('replaceCodeBlockElementsBefore');
+	            _codeBlockManager2.default.replaceElements(this.$previewContent, this.isViewOnly);
 
 	            this.eventManager.emit('previewRenderAfter', this);
 	        }
@@ -2349,9 +2913,9 @@
 
 	module.exports = Preview;
 
-/***/ },
-/* 6 */
-/***/ function(module, exports) {
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -2371,6 +2935,7 @@
 	 * @exports LazyRunner
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var LazyRunner = function () {
@@ -2446,9 +3011,269 @@
 
 	module.exports = LazyRunner;
 
-/***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * @fileoverview Implements CodeBlockManager
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+	var hljs = window.hljs;
+
+	var CUSTOM_CODE_BLOCK_CLASS_NAME = 'tui-editor-custom-code-block';
+
+	var sharedInstance = void 0;
+
+	/**
+	 * CodeBlockManager
+	 * @exports CodeBlockManager
+	 * @class
+	 */
+
+	var CodeBlockManager = function () {
+	    function CodeBlockManager() {
+	        _classCallCheck(this, CodeBlockManager);
+
+	        this._elementReplacer = new util.Map();
+	    }
+
+	    /**
+	     * Set replacer for code block element.
+	     * @param {string} type - code block type
+	     * @param {{viewOnly: ?function, wysiwyg: ?function, preview: ?function}} replacer - replacer to code block element
+	     */
+
+
+	    _createClass(CodeBlockManager, [{
+	        key: 'setElementReplacer',
+	        value: function setElementReplacer(type, replacer) {
+	            this._elementReplacer.set(type, replacer);
+	        }
+
+	        /**
+	         * Create code block html.
+	         * @param {string} type - code block type or language type
+	         * @param {string} codeText - code text
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'createCodeBlockHtml',
+	        value: function createCodeBlockHtml(type, codeText) {
+	            var replacer = this._elementReplacer.get(type);
+	            var className = CUSTOM_CODE_BLOCK_CLASS_NAME;
+	            var html = void 0;
+
+	            if (replacer) {
+	                codeText = encodeURIComponent(codeText).replace(/(%0A)+$/, '');
+	                html = '<pre class="' + className + '" data-language="' + type + '" data-code-text="' + codeText + '">' + type + '</pre>';
+	            } else {
+	                html = hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+	            }
+
+	            return html;
+	        }
+
+	        /**
+	         * Get view mode for replace.
+	         * @param {boolean} isViewOnly - whether view only or not
+	         * @param {boolean} isWysiwygMode - whether wysiwyg mode or not
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getViewMode',
+	        value: function _getViewMode(isViewOnly, isWysiwygMode) {
+	            var replaceMode = void 0;
+
+	            if (isViewOnly) {
+	                replaceMode = 'viewOnly';
+	            } else if (isWysiwygMode) {
+	                replaceMode = 'wysiwyg';
+	            } else {
+	                replaceMode = 'preview';
+	            }
+
+	            return replaceMode;
+	        }
+
+	        /**
+	         * Replace the code block element.
+	         * @param {HTMLElement} containerElement - container element by view mode like viewOnly, wysiwyg, preview.
+	         * @param {HTMLElement} codeBlockElement - target code block element
+	         * @param {function} replace - function for replacing block element
+	         * @param {string} id - code block id
+	         * @private
+	         */
+
+	    }, {
+	        key: '_replaceElement',
+	        value: function _replaceElement(containerElement, codeBlockElement, replace, id) {
+	            var $codeBlock = $(codeBlockElement);
+	            var type = $codeBlock.data('language');
+	            var beforeParentNode = codeBlockElement.parentNode;
+	            var codeText = $codeBlock.data('code-text');
+	            var $newCodeBlock = $(replace({
+	                id: id,
+	                containerElement: containerElement,
+	                codeBlockElement: codeBlockElement,
+	                type: type,
+	                codeText: decodeURIComponent(codeText)
+	            }));
+
+	            if ($newCodeBlock.length) {
+	                if (codeBlockElement !== $newCodeBlock[0] && beforeParentNode === codeBlockElement.parentNode) {
+	                    $codeBlock.replaceWith($newCodeBlock);
+	                }
+
+	                $newCodeBlock[0].id = id;
+	                $newCodeBlock.data('language', type);
+	                $newCodeBlock.addClass(CUSTOM_CODE_BLOCK_CLASS_NAME);
+
+	                if (tui.util.isEmpty($newCodeBlock.data('code-text'))) {
+	                    $newCodeBlock.data('code-text', codeText);
+	                }
+	            } else {
+	                codeBlockElement.id = id;
+	            }
+	        }
+
+	        /**
+	         * Replace code block elements.
+	         * @param {jQuery} $container - jQuery element container by view mode like viewOnly, wysiwyg, preview
+	         * @param {boolean} isViewOnly - whether view only or not
+	         * @param {boolean} isWysiwygMode - whether wysiwyg mode or not
+	         */
+
+	    }, {
+	        key: 'replaceElements',
+	        value: function replaceElements($container, isViewOnly, isWysiwygMode) {
+	            var _this = this;
+
+	            var $codeBlocks = $container.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+	            var containerElement = $container[0];
+	            var viewMode = this._getViewMode(isViewOnly, isWysiwygMode);
+	            var replaceElement = $.proxy(this._replaceElement, this);
+	            var timestamp = new Date().getTime();
+
+	            $codeBlocks.each(function (index, codeBlockElement) {
+	                var id = CUSTOM_CODE_BLOCK_CLASS_NAME + '-' + timestamp + '-' + index;
+	                var replacer = _this._elementReplacer.get($(codeBlockElement).data('language'));
+	                var replace = replacer ? replacer[viewMode] : null;
+
+	                if (replace) {
+	                    replaceElement(containerElement, codeBlockElement, replace, id);
+	                } else {
+	                    codeBlockElement.id = id;
+	                }
+	            });
+	        }
+
+	        /**
+	         * Restore code block element to markdown-it style.
+	         * @param {HTMLElement} codeBlockElement - replaced code block element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_restoreElement',
+	        value: function _restoreElement(codeBlockElement) {
+	            var $codeBlock = $(codeBlockElement);
+	            var type = $codeBlock.data('language');
+	            var codeText = decodeURIComponent($codeBlock.data('code-text'));
+	            var $pre = $('<pre data-language="' + type + '" class="lang-' + type + '"></pre>');
+
+	            if (codeText) {
+	                $pre.html('<div>' + escape(codeText, false).replace(/\n/g, '<br>') + '</div>');
+	            }
+
+	            $codeBlock.replaceWith($pre);
+	        }
+
+	        /**
+	         * Restore code block elements to markdown-it style.
+	         * @param {jQuery} $wweContainer - jQuery element container for wysiwyg editor
+	         * @private
+	         */
+
+	    }, {
+	        key: 'restoreElements',
+	        value: function restoreElements($wweContainer) {
+	            var $codeBlocks = $wweContainer.find('.' + CUSTOM_CODE_BLOCK_CLASS_NAME);
+	            var restoreElement = $.proxy(this._restoreElement, this);
+
+	            $codeBlocks.each(function (index, codeBlockElement) {
+	                restoreElement(codeBlockElement);
+	            });
+	        }
+
+	        /**
+	         * Update code text by code block id and container element.
+	         * @param {HTMLElement} containerElement - container element by view mode like viewOnly, wysiwyg, preview.
+	         * @param {string} id - code block id
+	         * @param {string} codeText - code text for updating
+	         */
+
+	    }, {
+	        key: 'updateCodeTextById',
+	        value: function updateCodeTextById(containerElement, id, codeText) {
+	            var $codeBlock = $(containerElement).find('#' + id);
+
+	            $codeBlock.data('code-text', encodeURIComponent(codeText));
+	        }
+
+	        /**
+	         * Get shared instance to CodeBlockManager.
+	         * @returns {CodeBlockManager}
+	         */
+
+	    }], [{
+	        key: 'getSharedInstance',
+	        value: function getSharedInstance() {
+	            if (!sharedInstance) {
+	                sharedInstance = new CodeBlockManager();
+	            }
+
+	            return sharedInstance;
+	        }
+	    }]);
+
+	    return CodeBlockManager;
+	}();
+
+	/**
+	 * escape code from markdown-it
+	 * @param {string} html HTML string
+	 * @param {string} encode Boolean value of whether encode or not
+	 * @returns {string}
+	 * @ignore
+	 */
+
+
+	function escape(html, encode) {
+	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+	}
+
+	exports.CodeBlockManager = CodeBlockManager;
+	exports.default = CodeBlockManager.getSharedInstance();
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -2457,47 +3282,47 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _wwClipboardManager = __webpack_require__(9);
+	var _wwClipboardManager = __webpack_require__(12);
 
 	var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-	var _wwListManager = __webpack_require__(12);
+	var _wwListManager = __webpack_require__(16);
 
 	var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-	var _wwTaskManager = __webpack_require__(13);
+	var _wwTaskManager = __webpack_require__(17);
 
 	var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
-	var _wwTableManager = __webpack_require__(14);
+	var _wwTableManager = __webpack_require__(18);
 
 	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
 
-	var _wwTableSelectionManager = __webpack_require__(15);
+	var _wwTableSelectionManager = __webpack_require__(19);
 
 	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-	var _wwHrManager = __webpack_require__(16);
+	var _wwHrManager = __webpack_require__(20);
 
 	var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-	var _wwPManager = __webpack_require__(17);
+	var _wwPManager = __webpack_require__(21);
 
 	var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-	var _wwHeadingManager = __webpack_require__(18);
+	var _wwHeadingManager = __webpack_require__(22);
 
 	var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-	var _wwCodeBlockManager = __webpack_require__(19);
+	var _wwCodeBlockManager = __webpack_require__(23);
 
 	var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-	var _squireExt = __webpack_require__(20);
+	var _squireExt = __webpack_require__(24);
 
 	var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -2505,9 +3330,17 @@
 
 	var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-	var _wwTextObject = __webpack_require__(21);
+	var _wwTextObject = __webpack_require__(25);
 
 	var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
+
+	var _componentManager = __webpack_require__(6);
+
+	var _componentManager2 = _interopRequireDefault(_componentManager);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2530,6 +3363,8 @@
 	 * @exports WysiwygEditor
 	 * @param {jQuery} $el element to insert editor
 	 * @param {EventManager} eventManager EventManager instance
+	 * @param {object} [options={}] - option object
+	 *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
 	 * @constructor
 	 * @class WysiwygEditor
 	 */
@@ -2538,8 +3373,11 @@
 	    function WysiwygEditor($el, eventManager) {
 	        var _this = this;
 
+	        var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
 	        _classCallCheck(this, WysiwygEditor);
 
+	        this.componentManager = new _componentManager2.default(this);
 	        this.eventManager = eventManager;
 	        this.$editorContainerEl = $el;
 
@@ -2550,11 +3388,15 @@
 	        this._keyEventHandlers = {};
 	        this._managers = {};
 
+	        this._options = $.extend({
+	            'useCommandShortcut': true
+	        }, options);
+
 	        this._initEvent();
 	        this._initDefaultKeyEventHandler();
 
-	        this.postProcessForChange = util.debounce(function () {
-	            return _this._postProcessForChange();
+	        this.debouncedPostProcessForChange = util.debounce(function () {
+	            return _this.postProcessForChange();
 	        }, 0);
 	    }
 
@@ -2578,6 +3420,9 @@
 	                    'HR': false
 	                }
 	            });
+	            if (!this._options.useCommandShortcut) {
+	                this.editor.blockCommandShortcuts();
+	            }
 
 	            this._clipboardManager = new _wwClipboardManager2.default(this);
 	            this._initSquireEvent();
@@ -2647,6 +3492,29 @@
 	        }
 
 	        /**
+	         * REmove key event handler.
+	         * @param {string} keyMap keyMap string
+	         * @param {function} handler handler
+	         */
+
+	    }, {
+	        key: 'removeKeyEventHandler',
+	        value: function removeKeyEventHandler(keyMap, handler) {
+	            if (!handler) {
+	                handler = keyMap;
+	                keyMap = 'DEFAULT';
+	            }
+
+	            var handlers = this._keyEventHandlers[keyMap];
+
+	            if (handlers) {
+	                this._keyEventHandlers[keyMap] = handlers.filter(function (_handler) {
+	                    return _handler !== handler;
+	                });
+	            }
+	        }
+
+	        /**
 	         * _runKeyEventHandlers
 	         * Run key event handler
 	         * @param {Event} event event object
@@ -2691,6 +3559,32 @@
 	        value: function _initSquireEvent() {
 	            var self = this;
 	            var isNeedFirePostProcessForRangeChange = false;
+
+	            this.getEditor().addEventListener('copy', function (clipboardEvent) {
+	                self.eventManager.emit('copy', {
+	                    source: 'wysiwyg',
+	                    data: clipboardEvent
+	                });
+	                util.debounce(function () {
+	                    self.eventManager.emit('copyAfter', {
+	                        source: 'wysiwyg',
+	                        data: clipboardEvent
+	                    });
+	                })();
+	            });
+
+	            this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', function (clipboardEvent) {
+	                self.eventManager.emit('cut', {
+	                    source: 'wysiwyg',
+	                    data: clipboardEvent
+	                });
+	                util.debounce(function () {
+	                    self.eventManager.emit('cutAfter', {
+	                        source: 'wysiwyg',
+	                        data: clipboardEvent
+	                    });
+	                })();
+	            });
 
 	            this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', function (clipboardEvent) {
 	                self.eventManager.emit('paste', {
@@ -2793,7 +3687,7 @@
 
 	            this.getEditor().addEventListener('keyup', function (keyboardEvent) {
 	                if (isNeedFirePostProcessForRangeChange) {
-	                    self.postProcessForChange();
+	                    self.debouncedPostProcessForChange();
 	                    isNeedFirePostProcessForRangeChange = false;
 	                }
 
@@ -2857,10 +3751,12 @@
 	                });
 	            });
 
+	            // Toolbar status active/inactive
 	            this.getEditor().addEventListener('pathChange', function (data) {
 	                var state = {
 	                    bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
 	                    italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
+	                    strike: /(^S>|>S$|>S>|^S$)/.test(data.path),
 	                    code: /CODE/.test(data.path),
 	                    codeBlock: /PRE/.test(data.path),
 	                    quote: /BLOCKQUOTE/.test(data.path),
@@ -3254,6 +4150,8 @@
 
 	            this.editor.setHTML(html);
 
+	            _codeBlockManager2.default.replaceElements(this.$editorContainerEl, false, true);
+
 	            this.eventManager.emit('wysiwygSetValueAfter', this);
 	            this.eventManager.emit('contentChangedFromWysiwyg', this);
 
@@ -3263,6 +4161,18 @@
 
 	            this.getEditor().removeLastUndoStack();
 	            this.getEditor().saveUndoState();
+	        }
+
+	        /**
+	         * insert given text to cursor position or selected area
+	         * @param {string} text - text string to insert
+	         * @memberof WysiwygEditor
+	         */
+
+	    }, {
+	        key: 'insertText',
+	        value: function insertText(text) {
+	            this.editor.insertPlainText(text);
 	        }
 
 	        /**
@@ -3276,6 +4186,8 @@
 	    }, {
 	        key: 'getValue',
 	        value: function getValue() {
+	            _codeBlockManager2.default.restoreElements(this.$editorContainerEl, false, true);
+
 	            this._prepareGetHTML();
 
 	            var html = this.editor.getHTML();
@@ -3319,27 +4231,23 @@
 	    }, {
 	        key: '_prepareGetHTML',
 	        value: function _prepareGetHTML() {
-	            var self = this;
-	            // for ensure to fire change event
-	            self.get$Body().attr('lastGetValue', Date.now());
+	            var _this2 = this;
 
-	            self._joinSplitedTextNodes();
-
-	            self.getEditor().modifyDocument(function () {
-	                self.eventManager.emit('wysiwygGetValueBefore', self);
+	            this.getEditor().modifyDocument(function () {
+	                _this2._joinSplitedTextNodes();
+	                _this2.eventManager.emit('wysiwygGetValueBefore', self);
 	            });
 	        }
 
 	        /**
-	         * _postProcessForChange
+	         * postProcessForChange
 	         * Post process for change
-	         * @private
 	         * @memberOf WysiwygEditor
 	         */
 
 	    }, {
-	        key: '_postProcessForChange',
-	        value: function _postProcessForChange() {
+	        key: 'postProcessForChange',
+	        value: function postProcessForChange() {
 	            var self = this;
 	            self.getEditor().modifyDocument(function () {
 	                self.eventManager.emit('wysiwygRangeChangeAfter', self);
@@ -3527,42 +4435,6 @@
 	        }
 
 	        /**
-	         * addManager
-	         * Add manager
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @param {string} name Manager name
-	         * @param {function} Manager Constructor
-	         */
-
-	    }, {
-	        key: 'addManager',
-	        value: function addManager(name, Manager) {
-	            if (!Manager) {
-	                Manager = name;
-	                name = null;
-	            }
-
-	            var instance = new Manager(this);
-	            this._managers[name || instance.name] = instance;
-	        }
-
-	        /**
-	         * getManager
-	         * Get manager by manager name
-	         * @api
-	         * @memberOf WysiwygEditor
-	         * @param {string} name Manager name
-	         * @returns {object} manager
-	         */
-
-	    }, {
-	        key: 'getManager',
-	        value: function getManager(name) {
-	            return this._managers[name];
-	        }
-
-	        /**
 	         * Set cursor position to end
 	         * @api
 	         * @memberOf WysiwygEditor
@@ -3694,24 +4566,26 @@
 	         * @memberOf WysiwygEditor
 	         * @param {jQuery} $el Container element for editor
 	         * @param {EventManager} eventManager EventManager instance
+	         * @param {object} [options={}] - option object
+	         *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
 	         * @returns {WysiwygEditor} wysiwygEditor
 	         */
 
 	    }], [{
 	        key: 'factory',
-	        value: function factory($el, eventManager) {
-	            var wwe = new WysiwygEditor($el, eventManager);
+	        value: function factory($el, eventManager, options) {
+	            var wwe = new WysiwygEditor($el, eventManager, options);
 
 	            wwe.init();
 
-	            wwe.addManager(_wwListManager2.default);
-	            wwe.addManager(_wwTaskManager2.default);
-	            wwe.addManager(_wwTableSelectionManager2.default);
-	            wwe.addManager(_wwTableManager2.default);
-	            wwe.addManager(_wwHrManager2.default);
-	            wwe.addManager(_wwPManager2.default);
-	            wwe.addManager(_wwHeadingManager2.default);
-	            wwe.addManager(_wwCodeBlockManager2.default);
+	            wwe.componentManager.addManager(_wwListManager2.default);
+	            wwe.componentManager.addManager(_wwTaskManager2.default);
+	            wwe.componentManager.addManager(_wwTableSelectionManager2.default);
+	            wwe.componentManager.addManager(_wwTableManager2.default);
+	            wwe.componentManager.addManager(_wwHrManager2.default);
+	            wwe.componentManager.addManager(_wwPManager2.default);
+	            wwe.componentManager.addManager(_wwHeadingManager2.default);
+	            wwe.componentManager.addManager(_wwCodeBlockManager2.default);
 
 	            return wwe;
 	        }
@@ -3722,9 +4596,9 @@
 
 	module.exports = WysiwygEditor;
 
-/***/ },
-/* 8 */
-/***/ function(module, exports) {
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -3742,6 +4616,7 @@
 	 * Check if node is text node
 	 * @param {Node} node node to check
 	 * @returns {boolean} result
+	 * @ignore
 	 */
 	var isTextNode = function isTextNode(node) {
 	    return node && node.nodeType === Node.TEXT_NODE;
@@ -3752,6 +4627,7 @@
 	 * Check if node is element node
 	 * @param {Node} node node to check
 	 * @returns {boolean} result
+	 * @ignore
 	 */
 	var isElemNode = function isElemNode(node) {
 	    return node && node.nodeType === Node.ELEMENT_NODE;
@@ -3762,6 +4638,7 @@
 	 * Get node name of node
 	 * @param {Node} node node
 	 * @returns {string} node name
+	 * @ignore
 	 */
 	var getNodeName = function getNodeName(node) {
 	    if (isElemNode(node)) {
@@ -3776,6 +4653,7 @@
 	 * Get node offset length of node(for Range API)
 	 * @param {Node} node node
 	 * @returns {number} length
+	 * @ignore
 	 */
 	var getTextLength = function getTextLength(node) {
 	    var len = void 0;
@@ -3794,6 +4672,7 @@
 	 * Get node offset length of node(for Range API)
 	 * @param {Node} node node
 	 * @returns {number} length
+	 * @ignore
 	 */
 	var getOffsetLength = function getOffsetLength(node) {
 	    var len = void 0;
@@ -3812,6 +4691,7 @@
 	 * get node offset between parent's childnodes
 	 * @param {Node} node node
 	 * @returns {number} offset(index)
+	 * @ignore
 	 */
 	var getNodeOffsetOfParent = function getNodeOffsetOfParent(node) {
 	    var childNodesOfParent = node.parentNode.childNodes;
@@ -3835,6 +4715,7 @@
 	 * @param {Node} node node
 	 * @param {number} index offset index
 	 * @returns {Node} foudned node
+	 * @ignore
 	 */
 	var getChildNodeByOffset = function getChildNodeByOffset(node, index) {
 	    var currentNode = void 0;
@@ -3857,6 +4738,7 @@
 	 * @param {Node} node node
 	 * @param {string} untilNodeName parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getNodeWithDirectionUntil = function getNodeWithDirectionUntil(direction, node, untilNodeName) {
 	    var directionKey = direction + 'Sibling';
@@ -3888,6 +4770,7 @@
 	 * @param {number} index offset index
 	 * @param {string} untilNodeName parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getPrevOffsetNodeUntil = function getPrevOffsetNodeUntil(node, index, untilNodeName) {
 	    var prevNode = void 0;
@@ -3922,6 +4805,7 @@
 	 * @param {Node} node node
 	 * @param {string|HTMLNode} untilNode node name or node to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getParentUntil = function getParentUntil(node, untilNode) {
 	    var foundedNode = void 0;
@@ -3947,6 +4831,7 @@
 	 * @param {Node} node node
 	 * @param {string|Node} underNode parent node name to limit
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getNodeWithDirectionUnderParent = function getNodeWithDirectionUnderParent(direction, node, underNode) {
 	    var directionKey = direction + 'Sibling';
@@ -3967,6 +4852,7 @@
 	 * @param {Node} node node
 	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getTopPrevNodeUnder = function getTopPrevNodeUnder(node, underNode) {
 	    return getNodeWithDirectionUnderParent('previous', node, underNode);
@@ -3978,6 +4864,7 @@
 	 * @param {Node} node node
 	 * @param {Node} underNode underNode
 	 * @returns {Node} founded node
+	 * @ignore
 	 */
 	var getTopNextNodeUnder = function getTopNextNodeUnder(node, underNode) {
 	    return getNodeWithDirectionUnderParent('next', node, underNode);
@@ -3987,6 +4874,7 @@
 	 * Get parent element the body element
 	 * @param {Node} node Node for start searching
 	 * @returns {Node}
+	 * @ignore
 	 */
 	var getTopBlockNode = function getTopBlockNode(node) {
 	    return getParentUntil(node, 'BODY');
@@ -3996,6 +4884,7 @@
 	 * Get previous text node
 	 * @param {Node} node Node for start searching
 	 * @returns {Node}
+	 * @ignore
 	 */
 	var getPrevTextNode = function getPrevTextNode(node) {
 	    node = node.previousSibling || node.parentNode;
@@ -4025,6 +4914,7 @@
 	 * @param {Array.<number>} offsetList offset list
 	 * @param {function} textNodeFilter Text node filter
 	 * @returns {Array}
+	 * @ignore
 	 */
 	var findOffsetNode = function findOffsetNode(root, offsetList, textNodeFilter) {
 	    var result = [];
@@ -4114,6 +5004,7 @@
 	 * @param {HTMLElement} node TD element
 	 * @param {string} direction Boolean value for direction true is find next cell
 	 * @returns {HTMLElement|null}
+	 * @ignore
 	 */
 	var getTableCellByDirection = function getTableCellByDirection(node, direction) {
 	    var isForward = true;
@@ -4140,6 +5031,7 @@
 	 * @param {string} direction Boolean value for find first TD in next line
 	 * @param {boolean} [needEdgeCell=false] Boolean value for find first TD in next line
 	 * @returns {HTMLElement|null}
+	 * @ignore
 	 */
 	var getSiblingRowCellByDirection = function getSiblingRowCellByDirection(node, direction, needEdgeCell) {
 	    var isForward = true;
@@ -4213,30 +5105,37 @@
 	    getSiblingRowCellByDirection: getSiblingRowCellByDirection
 	};
 
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg editor clipboard manager
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com),
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *         Jiung Kang(jiung.kang@nhnent.com)
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *         FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _wwPasteContentHelper = __webpack_require__(10);
+	var _wwPasteContentHelper = __webpack_require__(13);
 
 	var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
+
+	var _i18n = __webpack_require__(15);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var SET_SELECTION_DELAY = 50;
+	var PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+	var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 	/**
 	 * WwClipboardManager
@@ -4251,8 +5150,9 @@
 	        _classCallCheck(this, WwClipboardManager);
 
 	        this.wwe = wwe;
-
 	        this._pch = new _wwPasteContentHelper2.default(this.wwe);
+	        this._selectedSellCount = 0;
+	        this._$clipboardArea = null;
 	    }
 
 	    /**
@@ -4266,124 +5166,252 @@
 	    _createClass(WwClipboardManager, [{
 	        key: 'init',
 	        value: function init() {
-	            this._initSquireEvent();
+	            this.wwe.getEditor().addEventListener('willPaste', this._onWillPaste.bind(this));
+	            this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
+	            this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
+	            this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
+	            this.wwe.eventManager.listen('cutAfter', this._onCutAfter.bind(this));
 	        }
-
-	        /**
-	         * _initSquireEvent
-	         * initialize squire events
-	         * @private
-	         * @memberOf WwClipboardManager
-	         */
-
 	    }, {
-	        key: '_initSquireEvent',
-	        value: function _initSquireEvent() {
+	        key: '_onCopyCut',
+	        value: function _onCopyCut(event) {
+	            var tableManager = this.wwe.componentManager.getManager('tableSelection');
+	            var selectedCellCount = tableManager.getSelectedCells().length;
+	            if (!selectedCellCount) {
+	                // preserve selection range in a cell, let squire do the job
+	                return;
+	            }
+	            if (!tableManager.mergedTableSelectionManager) {
+	                // set selection range to all contents in selected cells, then squire
+	                tableManager.createRangeBySelectedCells();
+	                tableManager.removeClassAttrbuteFromAllCellsIfNeed();
+
+	                return;
+	            }
+	            var editor = this.wwe.getEditor();
+	            var clipboardEvent = event.data;
+	            var range = editor.getSelection().cloneRange();
+	            var $clipboardContainer = $('<div />');
+
+	            this._extendRange(range);
+	            $clipboardContainer.append(range.cloneContents());
+	            this._updateCopyDataForListTypeIfNeed(range, $clipboardContainer);
+	            this.wwe.eventManager.emit('copyBefore', {
+	                source: 'wysiwyg',
+	                $clipboardContainer: $clipboardContainer
+	            });
+
+	            this._setClipboardData(clipboardEvent, $clipboardContainer.html(), $clipboardContainer.text());
+	        }
+	    }, {
+	        key: '_clearClipboardArea',
+	        value: function _clearClipboardArea() {
+	            if (this._$clipboardArea) {
+	                this._$clipboardArea.remove();
+	                this._$clipboardArea = null;
+	            }
+	        }
+	    }, {
+	        key: '_onCopyAfter',
+	        value: function _onCopyAfter() {
+	            this.wwe.getEditor().get$Body().focus();
+	            this._clearClipboardArea();
+	        }
+	    }, {
+	        key: '_onCutAfter',
+	        value: function _onCutAfter() {
+	            var range = this.wwe.getEditor().getSelection();
+	            range.deleteContents();
+	            this.wwe.getEditor().focus();
+	            this._clearClipboardArea();
+	        }
+	    }, {
+	        key: '_onWillPaste',
+	        value: function _onWillPaste(pasteData) {
 	            var _this = this;
 
-	            this.wwe.getEditor().addEventListener('copy', function (ev) {
-	                _this.wwe.eventManager.emit('copy', {
-	                    source: 'wysiwyg',
-	                    data: ev
+	            var $clipboardContainer = $('<div>').append(pasteData.fragment.cloneNode(true));
+
+	            this._setTableBookmark($clipboardContainer);
+
+	            if (this._pasteToTable($clipboardContainer)) {
+	                pasteData.preventDefault();
+	            } else {
+	                this._preparePaste($clipboardContainer);
+	                this._setTableBookmark($clipboardContainer);
+
+	                pasteData.fragment = document.createDocumentFragment();
+	                $($clipboardContainer[0].childNodes).each(function (index, element) {
+	                    pasteData.fragment.appendChild(element);
 	                });
+	            }
 
-	                _this._executeActionFor('copy');
-	            });
+	            // once right after the squire insertHTML DOM.
+	            var handler = function handler() {
+	                _this.wwe.getEditor().removeEventListener('input', handler);
+	                _this.wwe.eventManager.emit('wysiwygRangeChangeAfter', _this);
+	                _this._focusTableBookmark();
+	            };
+	            this.wwe.getEditor().addEventListener('input', handler);
+	        }
+	    }, {
+	        key: '_setClipboardData',
+	        value: function _setClipboardData(clipboardEvent, htmlContent, textContent) {
+	            if (tui.util.browser.msie) {
+	                clipboardEvent.squirePrevented = true;
+	                this._$clipboardArea = this._createClipboardArea();
+	                this._$clipboardArea.html(htmlContent);
+	                this._$clipboardArea.focus();
+	                window.getSelection().selectAllChildren(this._$clipboardArea[0]);
+	            } else {
+	                clipboardEvent.preventDefault();
+	                clipboardEvent.stopPropagation();
+	                clipboardEvent.clipboardData.setData('text/html', htmlContent);
+	                clipboardEvent.clipboardData.setData('text/plain', textContent);
+	            }
+	        }
+	    }, {
+	        key: '_createClipboardArea',
+	        value: function _createClipboardArea() {
+	            return $('<DIV>').attr({
+	                contenteditable: 'true',
+	                style: 'position:fixed; overflow:hidden; top:0; right:100%; width:1px; height:1px;'
+	            }).appendTo(document.body);
+	        }
 
-	            this.wwe.getEditor().addEventListener('cut', function (ev) {
-	                _this.wwe.eventManager.emit('cut', {
-	                    source: 'wysiwyg',
-	                    data: ev
-	                });
+	        /**
+	         * Update copy data, when commonAncestorContainer nodeName is list type like UL or OL.
+	         * @param {object} range - text range
+	         * @param {jQuery} $clipboardContainer - clibpard container jQuery element
+	         */
 
-	                _this._executeActionFor('cut');
-	            });
+	    }, {
+	        key: '_updateCopyDataForListTypeIfNeed',
+	        value: function _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
+	            var commonAncestorNodeName = range.commonAncestorContainer.nodeName;
+	            if (commonAncestorNodeName !== 'UL' && commonAncestorNodeName !== 'OL') {
+	                return;
+	            }
 
-	            this.wwe.getEditor().addEventListener('willPaste', function (pasteData) {
-	                _this._addRangeInfoAndReplaceFragmentIfNeed(pasteData);
+	            var $newParent = $('<' + commonAncestorNodeName + ' />');
+	            $newParent.append($clipboardContainer.html());
+	            $clipboardContainer.html('');
+	            $clipboardContainer.append($newParent);
+	        }
 
-	                _this._pch.preparePaste(pasteData);
+	        /**
+	         * Remove empty font elements.
+	         * @param {jQuery} $clipboardContainer - cliboard jQuery container
+	         */
 
-	                _this.wwe.eventManager.emit('pasteBefore', {
-	                    source: 'wysiwyg',
-	                    data: pasteData
-	                });
+	    }, {
+	        key: '_removeEmptyFontElement',
+	        value: function _removeEmptyFontElement($clipboardContainer) {
+	            // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
+	            $clipboardContainer.children('font').each(function (index, element) {
+	                var $element = $(element);
 
-	                _this._refineCursorWithPasteContentsIfNeed(pasteData.fragment);
-	                _this.wwe.postProcessForChange();
+	                if (!$element.text().trim()) {
+	                    $element.remove();
+	                }
 	            });
 	        }
+
 	        /**
-	         * Refine cursor position with paste contents
-	         * @memberOf WwClipboardManager
-	         * @param {DocumentFragment} fragment Copied contents
+	         * Paste to table.
+	         * @param {jQuery} $clipboardContainer - clibpard container
+	         * @returns {boolean} whether processed or not
 	         * @private
 	         */
 
 	    }, {
-	        key: '_refineCursorWithPasteContentsIfNeed',
-	        value: function _refineCursorWithPasteContentsIfNeed(fragment) {
-	            var node = fragment;
+	        key: '_pasteToTable',
+	        value: function _pasteToTable($clipboardContainer) {
+	            var tableManager = this.wwe.componentManager.getManager('table');
+	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var range = this.wwe.getEditor().getSelection();
+	            var pastingToTable = tableManager.isInTable(range);
+	            var childNodes = $clipboardContainer[0].childNodes;
+	            var containsOneTableOnly = childNodes.length === 1 && childNodes[0].nodeName === 'TABLE';
+	            var processed = false;
+
+	            if (pastingToTable) {
+	                if (containsOneTableOnly) {
+	                    tableManager.pasteClipboardData($clipboardContainer.first());
+	                    $clipboardContainer.html(''); // drains clipboard data as we've pasted everything here.
+	                    processed = true;
+	                } else if (tableSelectionManager.getSelectedCells().length) {
+	                    alert(_i18n2.default.get('Cannot paste values ​​other than a table in the cell selection state'));
+	                    $clipboardContainer.html(''); // drains clipboard data
+	                    processed = true;
+	                }
+	            }
+
+	            return processed;
+	        }
+
+	        /**
+	         * Prepare paste.
+	         * @param {jQuery} $clipboardContainer - temporary jQuery container for clipboard contents
+	         * @private
+	         */
+
+	    }, {
+	        key: '_preparePaste',
+	        value: function _preparePaste($clipboardContainer) {
+	            this._removeEmptyFontElement($clipboardContainer);
+
+	            this._pch.preparePaste($clipboardContainer);
+
+	            this.wwe.eventManager.emit('pasteBefore', {
+	                source: 'wysiwyg',
+	                $clipboardContainer: $clipboardContainer
+	            });
+	        }
+
+	        /**
+	         * set table bookmark which will gain focus after document modification ends.
+	         * @param {jQuery} $clipboardContainer - clipboard container
+	         * @memberOf WwClipboardManager
+	         */
+
+	    }, {
+	        key: '_setTableBookmark',
+	        value: function _setTableBookmark($clipboardContainer) {
+	            var $lastNode = $($clipboardContainer[0].childNodes).last();
+	            var isLastNodeTable = $lastNode[0] && $lastNode[0].nodeName === 'TABLE';
+
+	            if (isLastNodeTable) {
+	                $lastNode.addClass(PASTE_TABLE_BOOKMARK);
+	            }
+	        }
+
+	        /**
+	         * Focus to table after document modification.
+	         * @param {object} sq - squire editor instance
+	         * @private
+	         */
+
+	    }, {
+	        key: '_focusTableBookmark',
+	        value: function _focusTableBookmark() {
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
+	            var $bookmarkedTable = sq.get$Body().find('.' + PASTE_TABLE_BOOKMARK);
+	            var $bookmarkedCell = sq.get$Body().find('.' + PASTE_TABLE_CELL_BOOKMARK);
 
-	            if (fragment.childNodes.length !== 0 && !_domUtils2.default.isTextNode(node.firstChild)) {
-	                while (node.lastChild) {
-	                    node = node.lastChild;
-	                }
-
-	                this.wwe.defer(function () {
-	                    sq.focus();
-
-	                    range.setStartAfter(node);
-	                    range.collapse(true);
-	                    sq.setSelection(range);
-	                }, SET_SELECTION_DELAY);
+	            if ($bookmarkedTable.length) {
+	                $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+	                range.setEndAfter($bookmarkedTable[0]);
+	                range.collapse(false);
+	                sq.setSelection(range);
 	            }
-	        }
-
-	        /**
-	         * Check whether copied content from editor or not
-	         * @memberOf WwClipboardManager
-	         * @param {DocumentFragment} pasteData Copied contents
-	         * @returns {boolean}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_isCopyFromEditor',
-	        value: function _isCopyFromEditor(pasteData) {
-	            if (!this._latestClipboardRangeInfo) {
-	                return false;
+	            if ($bookmarkedCell.length) {
+	                $bookmarkedCell.removeClass(PASTE_TABLE_CELL_BOOKMARK);
+	                range.selectNodeContents($bookmarkedCell[0]);
+	                range.collapse(false);
+	                sq.setSelection(range);
 	            }
-
-	            var lastestClipboardContents = this._latestClipboardRangeInfo.contents.textContent;
-
-	            return lastestClipboardContents.replace(/\s/g, '') === pasteData.fragment.textContent.replace(/\s/g, '');
-	        }
-	        /**
-	         * Save latest clipboard range information to _latestClipboardRangeInfo
-	         * @memberOf WwClipboardManager
-	         * @private
-	         */
-
-	    }, {
-	        key: '_saveLastestClipboardRangeInfo',
-	        value: function _saveLastestClipboardRangeInfo() {
-	            var commonAncestorName = void 0;
-	            var range = this.wwe.getEditor().getSelection().cloneRange();
-	            this._extendRange(range);
-
-	            if (range.commonAncestorContainer === this.wwe.get$Body()[0]) {
-	                commonAncestorName = 'BODY';
-	            } else {
-	                commonAncestorName = range.commonAncestorContainer.tagName;
-	            }
-
-	            this._latestClipboardRangeInfo = {
-	                contents: range.cloneContents(),
-	                commonAncestorName: commonAncestorName
-	            };
 	        }
 
 	        /**
@@ -4482,43 +5510,6 @@
 	        value: function _isWholeCommonAncestorContainerSelected(range) {
 	            return range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE && range.commonAncestorContainer !== this.wwe.get$Body()[0] && range.startOffset === 0 && range.endOffset === range.commonAncestorContainer.childNodes.length && range.commonAncestorContainer === range.startContainer && range.commonAncestorContainer === range.endContainer;
 	        }
-
-	        /**
-	         * Table cut and copy action helper for safari and IE's
-	         * @param {string} [action] Boolean value for cut action
-	         * @private
-	         */
-
-	    }, {
-	        key: '_executeActionFor',
-	        value: function _executeActionFor(action) {
-	            this._saveLastestClipboardRangeInfo();
-	            if (action === 'cut') {
-	                this.wwe.postProcessForChange();
-	            }
-	        }
-
-	        /**
-	         * Replace pasteData to lastClipboardRangeInfo's data
-	         * @param {object} pasteData Clipboard data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addRangeInfoAndReplaceFragmentIfNeed',
-	        value: function _addRangeInfoAndReplaceFragmentIfNeed(pasteData) {
-	            var hasRangeInfo = !!this._latestClipboardRangeInfo;
-	            var savedContents = hasRangeInfo && this._latestClipboardRangeInfo.contents;
-	            var isSameContents = savedContents.textContent === pasteData.fragment.textContent;
-
-	            if (hasRangeInfo) {
-	                pasteData.rangeInfo = this._latestClipboardRangeInfo;
-
-	                if (isSameContents) {
-	                    pasteData.fragment = $(savedContents).clone()[0];
-	                }
-	            }
-	        }
 	    }]);
 
 	    return WwClipboardManager;
@@ -4526,9 +5517,9 @@
 
 	module.exports = WwClipboardManager;
 
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -4537,11 +5528,11 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
-	var _htmlSanitizer = __webpack_require__(11);
+	var _htmlSanitizer = __webpack_require__(14);
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
@@ -4570,30 +5561,30 @@
 	     * Process paste data before paste
 	     * @api
 	     * @memberOf WwPasteContentHelper
-	     * @param {object} pasteData Pasting data
+	     * @param {jQuery} $container - clipboard container
 	     */
 
 
 	    _createClass(WwPasteContentHelper, [{
 	        key: 'preparePaste',
-	        value: function preparePaste(pasteData) {
+	        value: function preparePaste($container) {
 	            var range = this.wwe.getEditor().getSelection().cloneRange();
-	            var codeblockManager = this.wwe.getManager('codeblock');
-	            var tableManager = this.wwe.getManager('table');
+	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 	            var firstBlockIsTaken = false;
-	            var newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
+	            var $tempContainer = $('<div />');
+
 	            var nodeName = void 0,
 	                node = void 0,
 	                isPastingList = void 0;
 
-	            pasteData.fragment = this._pasteFirstAid(pasteData.fragment);
+	            this._pasteFirstAid($container);
 
-	            var childNodes = util.toArray(pasteData.fragment.childNodes);
+	            var childNodes = util.toArray($container[0].childNodes);
 
 	            // prepare to paste as inline of first node if possible
 	            // 앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
 	            if (childNodes.length && childNodes[0].tagName === 'DIV') {
-	                $(newFragment).append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
+	                $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
 	                childNodes.shift();
 	            }
 
@@ -4603,25 +5594,22 @@
 	                isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
 	                if (codeblockManager.isInCodeBlock(range)) {
-	                    newFragment.appendChild(codeblockManager.prepareToPasteOnCodeblock(childNodes));
-	                } else if (tableManager.isInTable(range)) {
-	                    newFragment = tableManager.prepareToPasteOnTable(pasteData, node);
-	                    childNodes.shift();
+	                    $tempContainer.append(codeblockManager.prepareToPasteOnCodeblock(childNodes));
 	                } else if (isPastingList) {
-	                    newFragment.appendChild(this._prepareToPasteList(childNodes, pasteData.rangeInfo, firstBlockIsTaken));
+	                    $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
 	                    // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
 	                    firstBlockIsTaken = true;
 	                } else {
-	                    newFragment.appendChild(childNodes.shift());
+	                    $tempContainer.append(childNodes.shift());
 	                }
 	            }
 
-	            pasteData.fragment = newFragment;
+	            $container.html($tempContainer.html());
 	        }
 
 	        /**
 	         * Wrap orphan node(inline, text) with div element
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @returns {DocumentFragment}
 	         * @private
@@ -4629,9 +5617,9 @@
 
 	    }, {
 	        key: '_wrapOrphanNodeWithDiv',
-	        value: function _wrapOrphanNodeWithDiv(fragment) {
-	            var newFrag = document.createDocumentFragment();
-	            var array = util.toArray(fragment.childNodes);
+	        value: function _wrapOrphanNodeWithDiv($container) {
+	            var $tempContainer = $('<div />');
+	            var array = util.toArray($container[0].childNodes);
 	            var currentDiv = void 0;
 
 	            util.forEachArray(array, function (node) {
@@ -4643,7 +5631,8 @@
 	                if (isTextNode || isInlineNode) {
 	                    if (!currentDiv) {
 	                        currentDiv = document.createElement('div');
-	                        newFrag.appendChild(currentDiv);
+	                        $tempContainer.append(currentDiv);
+	                        // newFrag.appendChild(currentDiv);
 	                    }
 
 	                    currentDiv.appendChild(node);
@@ -4653,77 +5642,73 @@
 	                    }
 
 	                    currentDiv = null;
-	                    newFrag.appendChild(node);
+	                    $tempContainer.append(node);
+	                    // newFrag.appendChild(node);
 	                }
 	            });
 
-	            return newFrag;
+	            return $tempContainer.html();
 	        }
 
 	        /**
 	         * Processing paste data after paste
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
-	         * @returns {DocumentFragment}
 	         * @private
 	         */
 
 	    }, {
 	        key: '_pasteFirstAid',
-	        value: function _pasteFirstAid(fragment) {
+	        value: function _pasteFirstAid($container) {
 	            var _this = this;
 
 	            var blockTags = 'div, section, article, aside, nav, menus, p';
 
-	            fragment = (0, _htmlSanitizer2.default)(fragment);
+	            $container.html((0, _htmlSanitizer2.default)($container.html(), true));
 
-	            $(fragment).find('*').each(function (i, node) {
+	            $container.find('*').each(function (i, node) {
 	                _this._removeStyles(node);
 	            });
 
-	            this._unwrapIfNonBlockElementHasBr(fragment);
-	            this._unwrapNestedBlocks(fragment, blockTags);
+	            this._unwrapIfNonBlockElementHasBr($container);
+	            this._unwrapNestedBlocks($container, blockTags);
+	            this._removeUnnecessaryBlocks($container, blockTags);
 
-	            this._removeUnnecessaryBlocks(fragment, blockTags);
-	            this._removeStyles(fragment);
+	            $container.html(this._wrapOrphanNodeWithDiv($container));
 
-	            fragment = this._wrapOrphanNodeWithDiv(fragment);
+	            this._preElementAid($container);
 
-	            this._preElementAid(fragment);
+	            this._tableElementAid($container);
 
-	            this._tableElementAid(fragment);
-
-	            $(fragment).children('br').remove();
-
-	            return fragment;
+	            $container.children('br').remove();
 	        }
 
 	        /**
 	         * PRE tag formatting
 	         * @memberOf WwPasteContentHelper
 	         * @private
-	         * @param {DocumentFragment} nodes Pasting DocumentFragment
+	         * @param {jQuery} $container - clipboard container
 	         */
 
 	    }, {
 	        key: '_preElementAid',
-	        value: function _preElementAid(nodes) {
-	            var codeblockManager = this.wwe.getManager('codeblock');
+	        value: function _preElementAid($container) {
+	            var codeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-	            codeblockManager.splitCodeblockToEachLine(nodes);
+	            codeblockManager.splitCodeblockToEachLine($container);
 	        }
 
 	        /**
 	         * Unwrap span children of document fragment with div element
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @private
 	         */
 
 	    }, {
 	        key: '_unwrapIfNonBlockElementHasBr',
-	        value: function _unwrapIfNonBlockElementHasBr(fragment) {
-	            var nonBlockElements = $(fragment).find('span, a, b, em, i, s');
+	        value: function _unwrapIfNonBlockElementHasBr($container) {
+	            var nonBlockElements = $container.find('span, a, b, em, i, s');
 
 	            nonBlockElements.each(function (i, node) {
 	                var brChildren = $(node).children('br');
@@ -4736,24 +5721,23 @@
 
 	        /**
 	         * Unwrap nested block elements
-	         * @param {DocumentFragment} fragment - Fragment of paste data
+	         * @param {jQuery} $container - clipboard container
 	         * @param {string} blockTags - Tag names of block tag
 	         * @private
 	         */
 
 	    }, {
 	        key: '_unwrapNestedBlocks',
-	        value: function _unwrapNestedBlocks(fragment, blockTags) {
-	            var leafElements = $(fragment).find(':not(:has(*))').not('b,s,i,em,code,span');
+	        value: function _unwrapNestedBlocks($container, blockTags) {
+	            var $leafElements = $container.find(':not(:has(*))').not('b,s,i,em,code,span');
 
-	            leafElements.each(function (i, node) {
+	            $leafElements.each(function (i, node) {
 	                var leafElement = node.nodeName === 'BR' ? $(node.parentNode) : $(node);
-	                var parent = void 0;
 
 	                while (leafElement.parents(blockTags).length) {
-	                    parent = leafElement.parent(blockTags);
+	                    var $parent = leafElement.parent(blockTags);
 
-	                    if (parent.length) {
+	                    if ($parent.length && $parent[0] !== $container[0]) {
 	                        leafElement.unwrap();
 	                    } else {
 	                        leafElement = leafElement.parent();
@@ -4764,7 +5748,7 @@
 
 	        /**
 	         * Remove unnecessary block element in pasting data
-	         * @param {DocumentFragment} fragment Pasting DocumentFragment
+	         * @param {jQuery} $container - clipboard container
 	         * @param {string} blockTags - Tag names of block tag
 	         * @memberOf WwPasteContentHelper
 	         * @private
@@ -4772,8 +5756,8 @@
 
 	    }, {
 	        key: '_removeUnnecessaryBlocks',
-	        value: function _removeUnnecessaryBlocks(fragment, blockTags) {
-	            $(fragment).find(blockTags).each(function (index, blockElement) {
+	        value: function _removeUnnecessaryBlocks($container, blockTags) {
+	            $container.find(blockTags).each(function (index, blockElement) {
 	                var $blockElement = $(blockElement);
 	                var tagName = blockElement.tagName;
 	                var isDivElement = tagName === 'DIV';
@@ -4970,65 +5954,65 @@
 
 	        /**
 	         * Pasting table element pre-process
-	         * @param {DocumentFragment} fragment pasteData's fragment
+	         * @param {jQuery} $container - clipboard container
 	         * @memberOf WwPasteContentHelper
 	         * @private
 	         */
 
 	    }, {
 	        key: '_tableElementAid',
-	        value: function _tableElementAid(fragment) {
-	            this._completeTableIfNeed(fragment);
-	            this._updateTableIDClassName(fragment);
+	        value: function _tableElementAid($container) {
+	            this._completeTableIfNeed($container);
+	            this._updateTableIDClassName($container);
 	        }
 
 	        /**
 	         * Complete and append table to fragment
-	         * @param {DocumentFragment} fragment Copied data
+	         * @param {jQuery} $container - clipboard container
 	         * @private
 	         */
 
 	    }, {
 	        key: '_completeTableIfNeed',
-	        value: function _completeTableIfNeed(fragment) {
-	            var tableManager = this.wwe.getManager('table');
-	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+	        value: function _completeTableIfNeed($container) {
+	            var tableManager = this.wwe.componentManager.getManager('table');
+	            var wrapperTr = tableManager.wrapDanglingTableCellsIntoTrIfNeed($container);
 
 	            if (wrapperTr) {
-	                $(fragment).append(wrapperTr);
+	                $container.append(wrapperTr);
 	            }
 
-	            var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed(fragment);
+	            var wrapperTbody = tableManager.wrapTrsIntoTbodyIfNeed($container);
 
 	            if (wrapperTbody) {
-	                $(fragment).append(wrapperTbody);
+	                $container.append(wrapperTbody);
 	            }
 
-	            var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+	            var wrapperTable = tableManager.wrapTheadAndTbodyIntoTableIfNeed($container);
 
 	            if (wrapperTable) {
-	                $(fragment).append(wrapperTable);
+	                $container.append(wrapperTable);
 	            }
 	        }
 
 	        /**
 	         * Update table ID class name in fragment
-	         * @param {DocumentFragment} fragment Copied data
+	         * @param {jQuery} $container - clipboard container
 	         * @private
 	         */
 
 	    }, {
 	        key: '_updateTableIDClassName',
-	        value: function _updateTableIDClassName(fragment) {
-	            var tableManager = this.wwe.getManager('table');
+	        value: function _updateTableIDClassName($container) {
+	            var tableManager = this.wwe.componentManager.getManager('table');
 
-	            $(fragment).find('table').each(function (index, table) {
+	            $container.find('table').each(function (index, table) {
 	                $(table).removeClass(function (idx, className) {
 	                    return className.replace(/.*\s*(te-content-table-\d+)\s*.*/, '$1');
 	                });
 	            });
 
-	            $(fragment).find('table').each(function (index, table) {
+	            $container.find('table').each(function (index, table) {
 	                $(table).addClass(tableManager.getTableIDClassName());
 	            });
 	        }
@@ -5039,9 +6023,9 @@
 
 	module.exports = WwPasteContentHelper;
 
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -5052,7 +6036,7 @@
 
 	var util = tui.util;
 
-	var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|colspan|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rowspan|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+	var HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' + 'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' + 'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' + 'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' + 'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' + 'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
 
 	var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' + 'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' + 'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' + 'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' + 'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' + 'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' + 'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' + 'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' + 'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' + 'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' + 'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' + 'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' + 'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' + 'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' + 'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
 
@@ -5063,9 +6047,12 @@
 	 * @param {string|Node} html html or Node
 	 * @param {boolean} [needHtmlText] pass true if need html text
 	 * @returns {string|DocumentFragment} result
+	 * @ignore
 	 */
 	function htmlSanitizer(html, needHtmlText) {
 	    var $html = $('<div />');
+
+	    html = html.replace(/<!--[\s\S]*?-->/g, '');
 
 	    $html.append(html);
 
@@ -5081,7 +6068,7 @@
 	 * @param {jQuery} $html jQuery instance
 	 */
 	function removeUnnecessaryTags($html) {
-	    $html.find('script, iframe, textarea, form, button, select').remove();
+	    $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
 	}
 
 	/**
@@ -5132,20 +6119,143 @@
 
 	module.exports = htmlSanitizer;
 
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
 
 	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
-	 * @fileoverview Implements wysiwyg list manager
-	 * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
+	 * @fileoverview Implements i18n
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
+
+	var util = tui.util;
+
+	var sharedInstance = void 0;
+
+	var DEFAULT_CODE = 'en_US';
+
+	/**
+	 * I18n
+	 * @exports I18n
+	 * @class
+	 */
+
+	var I18n = function () {
+	    function I18n() {
+	        _classCallCheck(this, I18n);
+
+	        this._code = DEFAULT_CODE;
+	        this._langs = new util.Map();
+	    }
+
+	    /**
+	     * Set locale code
+	     * @param {string} code locale code
+	     */
+
+
+	    _createClass(I18n, [{
+	        key: 'setCode',
+	        value: function setCode(code) {
+	            this._code = code;
+	        }
+
+	        /**
+	         * Set language set
+	         * @param {string|string[]} codes locale code
+	         * @param {object} data language set
+	         */
+
+	    }, {
+	        key: 'setLang',
+	        value: function setLang(codes, data) {
+	            var _this = this;
+
+	            codes = [].concat(codes);
+
+	            codes.forEach(function (code) {
+	                if (!_this._langs.has(code)) {
+	                    _this._langs.set(code, data);
+	                } else {
+	                    var langData = _this._langs.get(code);
+	                    _this._langs.set(code, util.extend(langData, data));
+	                }
+	            });
+	        }
+
+	        /**
+	         * Get text of key
+	         * @param {string} key key of text
+	         * @param {string} code locale code
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'get',
+	        value: function get(key, code) {
+	            if (!code) {
+	                code = this._code;
+	            }
+
+	            var langSet = this._langs.get(code);
+
+	            if (!langSet) {
+	                langSet = this._langs.get(DEFAULT_CODE);
+	            }
+
+	            var text = langSet[key];
+
+	            if (!text) {
+	                throw new Error('There is no text key "' + key + '" in ' + code);
+	            }
+
+	            return text;
+	        }
+	    }], [{
+	        key: 'getSharedInstance',
+	        value: function getSharedInstance() {
+	            if (!sharedInstance) {
+	                sharedInstance = new I18n();
+	            }
+
+	            return sharedInstance;
+	        }
+	    }]);
+
+	    return I18n;
+	}();
+
+	exports.I18n = I18n;
+	exports.default = I18n.getSharedInstance();
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg list manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _domUtils = __webpack_require__(11);
+
+	var _domUtils2 = _interopRequireDefault(_domUtils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var FIND_LI_ELEMENT = /<li/i;
 
@@ -5368,6 +6478,48 @@
 	        value: function _prepareInsertBlankToBetweenSameList(html) {
 	            return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
 	        }
+
+	        /**
+	         * Return lines in selection
+	         * @param {Node} start Start element
+	         * @param {Node} end End element
+	         * @param {HTMLElement} body Editor body element
+	         * @returns {Array.<HTMLElement>}
+	         * @private
+	         */
+
+	    }, {
+	        key: 'getLinesOfSelection',
+	        value: function getLinesOfSelection(start, end) {
+	            var lines = [];
+	            var isEndPassed = false;
+	            var needNext = true;
+	            var nextLine = void 0;
+
+	            if (_domUtils2.default.isTextNode(start)) {
+	                start = $(start).parents('div').first()[0];
+	            }
+
+	            if (_domUtils2.default.isTextNode(end)) {
+	                end = $(end).parents('div').first()[0];
+	            }
+
+	            for (var line = start; needNext; line = nextLine) {
+	                if ($(line).is('DIV')) {
+	                    lines.push(line);
+
+	                    if (line === end) {
+	                        isEndPassed = true;
+	                    }
+	                    nextLine = line.nextElementSibling;
+	                } else {
+	                    break;
+	                }
+	                needNext = nextLine && !isEndPassed;
+	            }
+
+	            return lines;
+	        }
 	    }]);
 
 	    return WwListManager;
@@ -5375,20 +6527,24 @@
 
 	module.exports = WwListManager;
 
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implements wysiwyg task manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+	var _domUtils = __webpack_require__(11);
+
+	var _domUtils2 = _interopRequireDefault(_domUtils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements wysiwyg task manager
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
 
 	var TASK_CLASS_NAME = 'task-list-item';
 	var TASK_ATTR_NAME = 'data-te-task';
@@ -5583,6 +6739,84 @@
 	                $(node).removeClass('task-list');
 	            });
 	        }
+
+	        /**
+	         * Return lines in selection
+	         * @param {Node} start Start element
+	         * @param {Node} end End element
+	         * @param {HTMLElement} body Editor body element
+	         * @returns {Array.<HTMLElement>}
+	         * @private
+	         */
+
+	    }, {
+	        key: 'getLinesOfSelection',
+	        value: function getLinesOfSelection(start, end) {
+	            var divOrLi = 'DIV,LI';
+	            var lines = [];
+	            var isEndPassed = false;
+	            var needNext = true;
+	            var nextLine = void 0;
+
+	            if (_domUtils2.default.isTextNode(start)) {
+	                start = $(start).parents('div').first()[0];
+	            }
+
+	            if (_domUtils2.default.isTextNode(end)) {
+	                end = $(end).parents('div').first()[0];
+	            }
+
+	            for (var line = start; needNext; line = nextLine) {
+	                if ($(line).is(divOrLi)) {
+	                    lines.push(line);
+
+	                    if (line === end || line.parentNode === end) {
+	                        isEndPassed = true;
+	                    }
+
+	                    var isStartInList = $(start).is('li') || $(start).parent('li').length !== 0;
+	                    nextLine = this._getNextLine(line, isStartInList, isEndPassed);
+	                } else {
+	                    break;
+	                }
+
+	                needNext = nextLine && !isEndPassed;
+	            }
+
+	            return lines;
+	        }
+
+	        /**
+	         * Get next line element
+	         * @param {HTMLElement} line Current line element
+	         * @param {boolean} isStartInList Boolean value of start in list
+	         * @param {boolean} isEndPassed Boolean value of end element passed
+	         * @returns {HTMLElement|undefined}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getNextLine',
+	        value: function _getNextLine(line, isStartInList, isEndPassed) {
+	            var nextLine = void 0;
+	            if (isStartInList && line.parentNode.tagName === 'LI') {
+	                var $nextLI = $(line).parent().next();
+
+	                nextLine = $nextLI.children('div').first()[0];
+
+	                var hasNextLiHaveDivChild = $nextLI[0] && !nextLine;
+	                var isLastLiInList = !$nextLI[0] && !nextLine;
+	                if (hasNextLiHaveDivChild) {
+	                    nextLine = $nextLI[0];
+	                } else if (isLastLiInList && !isEndPassed) {
+	                    nextLine = $(line).parents('ol,ul').first().next()[0];
+	                }
+	            } else {
+	                nextLine = line.nextElementSibling;
+	            }
+
+	            return nextLine;
+	        }
 	    }]);
 
 	    return WwTaskManager;
@@ -5590,9 +6824,9 @@
 
 	module.exports = WwTaskManager;
 
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -5602,7 +6836,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -5610,11 +6844,12 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var isIE10 = tui.util.browser.msie && tui.util.browser.version === 10;
-	var TABLE_COMPLETION_DELAY = 10;
-	var SET_SELECTION_DELAY = 50;
+	var util = tui.util;
+	var isIE10 = util.browser.msie && util.browser.version === 10;
 	var TABLE_CLASS_PREFIX = 'te-content-table-';
-	var isIE10And11 = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11);
+	var isIE10And11 = util.browser.msie && (util.browser.version === 10 || util.browser.version === 11);
+	var BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 	/**
 	 * WwTableManager
@@ -5671,36 +6906,125 @@
 	        value: function _initEvent() {
 	            var _this = this;
 
-	            this.eventManager.listen('wysiwygRangeChangeAfter', function () {
+	            this.eventManager.listen('wysiwygRangeChangeAfter.table', function () {
+	                var range = _this.wwe.getEditor().getSelection();
+	                var isRangeInTable = _this.isInTable(range);
+
 	                _this._unwrapBlockInTable();
-	                _this.wwe.defer(function () {
-	                    _this._completeTableIfNeed();
-	                }, TABLE_COMPLETION_DELAY);
-	                _this.wwe.getManager('tableSelection').removeClassAttrbuteFromAllCellsIfNeed();
+	                _this._completeTableIfNeed();
+
+	                if (!isRangeInTable) {
+	                    var selectionManager = _this.wwe.componentManager.getManager('tableSelection');
+	                    selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+	                }
+
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
-	            this.eventManager.listen('wysiwygSetValueAfter', function () {
+	            this.eventManager.listen('wysiwygSetValueAfter.table', function () {
 	                _this._unwrapBlockInTable();
 	                _this._insertDefaultBlockBetweenTable();
 	            });
 
 	            // remove last br in td or th
-	            this.eventManager.listen('wysiwygProcessHTMLText', function (html) {
+	            this.eventManager.listen('wysiwygProcessHTMLText.table', function (html) {
 	                return html.replace(/<br \/>(<\/td>|<\/th>)/g, '$1');
 	            });
 
-	            this.wwe.getEditor().addEventListener('paste', function (ev) {
-	                var range = _this.wwe.getEditor().getSelection();
-	                var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
+	            this.eventManager.listen('cut.table', function () {
+	                var selectionManager = _this.wwe.componentManager.getManager('tableSelection');
+	                var $selectedCells = selectionManager.getSelectedCells();
 
-	                if (_this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
-	                    ev.preventDefault();
+	                if ($selectedCells.length) {
+	                    $selectedCells.get().forEach(function (cell) {
+	                        return $(cell).html(BASIC_CELL_CONTENT);
+	                    });
 	                }
-	                _this.wwe.defer(function () {
-	                    _this._completeTableIfNeed();
-	                }, TABLE_COMPLETION_DELAY);
+
+	                selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
 	            });
+
+	            this.eventManager.listen('copyBefore.table', function (_ref) {
+	                var $clipboardContainer = _ref.$clipboardContainer;
+	                return _this.updateTableHtmlOfClipboardIfNeed($clipboardContainer);
+	            });
+
+	            // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
+	            this.onBindedPaste = this._onPaste.bind(this);
+	            this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
+	        }
+
+	        /**
+	         * Update table html of clipboard data, if has selected cells.
+	         * @param {jQuery} $clipboardContainer - jQuery element
+	         */
+
+	    }, {
+	        key: 'updateTableHtmlOfClipboardIfNeed',
+	        value: function updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+	            var _this2 = this;
+
+	            var selectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var $selectedCells = selectionManager.getSelectedCells();
+
+	            if ($selectedCells.length) {
+	                selectionManager.createRangeBySelectedCells();
+
+	                var fragment = this.wwe.getEditor().getSelection().cloneContents();
+
+	                $(fragment).children().each(function (index, node) {
+	                    var $node = $(node);
+
+	                    if (!_this2.isTableOrSubTableElement(node.nodeName)) {
+	                        return;
+	                    } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
+	                        $node.remove();
+	                    } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
+	                        node.previousSibling.appendChild(node);
+	                    } else {
+	                        _this2._completeIncompleteTable(node);
+
+	                        if (node.nodeName !== 'TABLE' && node.nodeName !== 'THEAD') {
+	                            $(node).closest('table').find('thead').remove();
+	                        }
+	                    }
+	                });
+
+	                $clipboardContainer.append(fragment);
+	                $clipboardContainer.find('.' + TABLE_CELL_SELECTED_CLASS_NAME).removeClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	            }
+	        }
+
+	        /**
+	         * Paste clibpard data.
+	         * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+	         */
+
+	    }, {
+	        key: 'pasteClipboardData',
+	        value: function pasteClipboardData($clipboardTable) {
+	            if (this.wwe.componentManager.getManager('tableSelection').getSelectedCells().length) {
+	                return;
+	            }
+
+	            this._expandTableIfNeed($clipboardTable);
+	            this._pasteDataIntoTable($clipboardTable);
+	        }
+
+	        /**
+	         * On paste.
+	         * @param {MouseEvent} ev - event
+	         */
+
+	    }, {
+	        key: '_onPaste',
+	        value: function _onPaste(ev) {
+	            var range = this.wwe.getEditor().getSelection();
+	            var isNotPastingIntoTextNode = !_domUtils2.default.isTextNode(range.commonAncestorContainer);
+
+	            if (this.isInTable(range) && !range.collapsed && isNotPastingIntoTextNode) {
+	                ev.preventDefault();
+	            }
 	        }
 
 	        /**
@@ -5713,69 +7037,69 @@
 	    }, {
 	        key: '_initKeyHandler',
 	        value: function _initKeyHandler() {
-	            var _this2 = this;
+	            var _this3 = this;
 
-	            var selectionManager = this.wwe.getManager('tableSelection');
+	            this.keyEventHandlers = {
+	                'DEFAULT': function DEFAULT(ev, range, keymap) {
+	                    var isRangeInTable = _this3.isInTable(range);
 
-	            this.wwe.addKeyEventHandler(function (ev, range, keymap) {
-	                var isRangeInTable = _this2.isInTable(range);
+	                    if (isRangeInTable && !_this3._isSingleModifierKey(keymap)) {
+	                        _this3._recordUndoStateIfNeed(range);
+	                        _this3._removeBRIfNeed(range);
+	                        _this3._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+	                    } else if (!isRangeInTable && _this3._lastCellNode) {
+	                        _this3._recordUndoStateAndResetCellNode(range);
+	                    }
 
-	                if (isRangeInTable && !_this2._isSingleModifierKey(keymap)) {
-	                    _this2._recordUndoStateIfNeed(range);
-	                    _this2._removeBRIfNeed(range);
-	                    _this2._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
-	                } else if (!isRangeInTable && _this2._lastCellNode) {
-	                    _this2._recordUndoStateAndResetCellNode(range);
+	                    if (isRangeInTable && !_this3._isModifierKeyPushed(ev)) {
+	                        _this3.wwe.getEditor().modifyDocument(function () {
+	                            var selectionManager = _this3.wwe.componentManager.getManager('tableSelection');
+	                            selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
+	                        });
+	                    }
+	                },
+	                'ENTER': function ENTER(ev, range) {
+	                    var isNeedNext = void 0;
+
+	                    if (_this3._isAfterTable(range)) {
+	                        ev.preventDefault();
+	                        range.setStart(range.startContainer, range.startOffset - 1);
+	                        _this3.wwe.breakToNewDefaultBlock(range);
+	                        isNeedNext = false;
+	                    } else if (_this3._isBeforeTable(range)) {
+	                        ev.preventDefault();
+	                        _this3.wwe.breakToNewDefaultBlock(range, 'before');
+	                        isNeedNext = false;
+	                    } else if (_this3.isInTable(range)) {
+	                        _this3._appendBrIfTdOrThNotHaveAsLastChild(range);
+	                        isNeedNext = false;
+	                    }
+
+	                    return isNeedNext;
+	                },
+	                'BACK_SPACE': function BACK_SPACE(ev, range, keymap) {
+	                    return _this3._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
+	                },
+	                'DELETE': function DELETE(ev, range, keymap) {
+	                    return _this3._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
+	                },
+	                'TAB': function TAB() {
+	                    return _this3._moveCursorTo('next', 'cell');
+	                },
+	                'SHIFT+TAB': function SHIFTTAB(ev) {
+	                    return _this3._moveCursorTo('previous', 'cell', ev);
+	                },
+	                'UP': function UP(ev) {
+	                    return _this3._moveCursorTo('previous', 'row', ev);
+	                },
+	                'DOWN': function DOWN(ev) {
+	                    return _this3._moveCursorTo('next', 'row', ev);
 	                }
+	            };
 
-	                if (isRangeInTable && !_this2._isModifierKeyPushed(ev)) {
-	                    _this2.wwe.getEditor().modifyDocument(function () {
-	                        selectionManager.removeClassAttrbuteFromAllCellsIfNeed();
-	                    });
-	                }
+	            util.forEach(this.keyEventHandlers, function (handler, key) {
+	                return _this3.wwe.addKeyEventHandler(key, handler);
 	            });
-
-	            this.wwe.addKeyEventHandler('ENTER', function (ev, range) {
-	                var isNeedNext = void 0;
-
-	                if (_this2._isAfterTable(range)) {
-	                    ev.preventDefault();
-	                    range.setStart(range.startContainer, range.startOffset - 1);
-	                    _this2.wwe.breakToNewDefaultBlock(range);
-	                    isNeedNext = false;
-	                } else if (_this2._isBeforeTable(range)) {
-	                    ev.preventDefault();
-	                    _this2.wwe.breakToNewDefaultBlock(range, 'before');
-	                    isNeedNext = false;
-	                } else if (_this2.isInTable(range)) {
-	                    _this2._appendBrIfTdOrThNotHaveAsLastChild(range);
-	                    isNeedNext = false;
-	                }
-
-	                return isNeedNext;
-	            });
-
-	            this.wwe.addKeyEventHandler('BACK_SPACE', function (ev, range, keymap) {
-	                return _this2._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
-	            });
-	            this.wwe.addKeyEventHandler('DELETE', function (ev, range, keymap) {
-	                return _this2._handleBackspaceAndDeleteKeyEvent(ev, range, keymap);
-	            });
-	            this.wwe.addKeyEventHandler('TAB', function () {
-	                return _this2._moveCursorTo('next', 'cell');
-	            });
-
-	            this.wwe.addKeyEventHandler('SHIFT+TAB', function (ev) {
-	                return _this2._moveCursorTo('previous', 'cell', ev);
-	            });
-	            this.wwe.addKeyEventHandler('UP', function (ev) {
-	                return _this2._moveCursorTo('previous', 'row', ev);
-	            });
-	            this.wwe.addKeyEventHandler('DOWN', function (ev) {
-	                return _this2._moveCursorTo('next', 'row', ev);
-	            });
-
-	            this._bindKeyEventForTableCopyAndCut();
 	        }
 
 	        /**
@@ -5795,10 +7119,10 @@
 
 	            if (range.collapsed) {
 	                target = range.startContainer;
-	                result = !!$(target).closest('table').length;
+	                result = !!$(target).closest('[contenteditable=true] table').length;
 	            } else {
 	                target = range.commonAncestorContainer;
-	                result = !!$(target).closest('table').length || !!$(range.cloneContents()).find('table').length;
+	                result = !!$(target).closest('[contenteditable=true] table').length || !!$(range.cloneContents()).find('table').length;
 	            }
 
 	            return result;
@@ -6043,7 +7367,7 @@
 	        value: function _recordUndoStateIfNeed(range) {
 	            var currentCellNode = _domUtils2.default.getParentUntil(range.startContainer, 'TR');
 
-	            if (range.collapsed && this._lastCellNode !== currentCellNode) {
+	            if (range.collapsed && currentCellNode && this._lastCellNode !== currentCellNode) {
 	                this.wwe.getEditor().saveUndoState(range);
 	                this._lastCellNode = currentCellNode;
 	            }
@@ -6165,26 +7489,24 @@
 
 	        /**
 	         * Wrap dangling table cells with new TR
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapDanglingTableCellsIntoTrIfNeed',
-	        value: function wrapDanglingTableCellsIntoTrIfNeed(fragment) {
-	            var danglingTableCells = $(fragment).children('td,th');
+	        value: function wrapDanglingTableCellsIntoTrIfNeed($container) {
+	            var danglingTableCells = $container.children('td,th');
 	            var tr = void 0;
 
 	            if (danglingTableCells.length) {
-	                (function () {
-	                    var $wrapperTr = $('<tr></tr>');
+	                var $wrapperTr = $('<tr></tr>');
 
-	                    danglingTableCells.each(function (i, cell) {
-	                        $wrapperTr.append(cell);
-	                    });
+	                danglingTableCells.each(function (i, cell) {
+	                    $wrapperTr.append(cell);
+	                });
 
-	                    tr = $wrapperTr[0];
-	                })();
+	                tr = $wrapperTr[0];
 	            }
 
 	            return tr;
@@ -6192,14 +7514,14 @@
 
 	        /**
 	         * Wrap TRs with new TBODY
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapTrsIntoTbodyIfNeed',
-	        value: function wrapTrsIntoTbodyIfNeed(fragment) {
-	            var danglingTrs = $(fragment).children('tr');
+	        value: function wrapTrsIntoTbodyIfNeed($container) {
+	            var danglingTrs = $container.children('tr');
 	            var ths = danglingTrs.find('th');
 	            var tbody = void 0;
 
@@ -6216,15 +7538,13 @@
 	            }
 
 	            if (danglingTrs.length) {
-	                (function () {
-	                    var $wrapperTableBody = $('<tbody></tbody>');
+	                var $wrapperTableBody = $('<tbody></tbody>');
 
-	                    danglingTrs.each(function (i, tr) {
-	                        $wrapperTableBody.append(tr);
-	                    });
+	                danglingTrs.each(function (i, tr) {
+	                    $wrapperTableBody.append(tr);
+	                });
 
-	                    tbody = $wrapperTableBody[0];
-	                })();
+	                tbody = $wrapperTableBody[0];
 	            }
 
 	            return tbody;
@@ -6232,15 +7552,15 @@
 
 	        /**
 	         * Wrap THEAD followed by TBODY both into Table
-	         * @param {DocumentFragment} fragment Pasting data
+	         * @param {jQuery} $container - clipboard container
 	         * @returns {HTMLElement|null}
 	         */
 
 	    }, {
 	        key: 'wrapTheadAndTbodyIntoTableIfNeed',
-	        value: function wrapTheadAndTbodyIntoTableIfNeed(fragment) {
-	            var danglingThead = $(fragment).children('thead');
-	            var danglingTbody = $(fragment).children('tbody');
+	        value: function wrapTheadAndTbodyIntoTableIfNeed($container) {
+	            var danglingThead = $container.children('thead');
+	            var danglingTbody = $container.children('tbody');
 	            var $wrapperTable = $('<table></table>');
 	            var table = void 0;
 
@@ -6260,40 +7580,16 @@
 
 	            return table;
 	        }
-	        /**
-	         * Prepare to paste data on table
-	         * @param {object} pasteData Pasting data
-	         * @param {HTMLElement} node Current pasting element
-	         * @returns {DocumentFragment}
-	         * @memberOf WwTableManager
-	         * @api
-	         */
-
-	    }, {
-	        key: 'prepareToPasteOnTable',
-	        value: function prepareToPasteOnTable(pasteData, node) {
-	            var newFragment = document.createDocumentFragment();
-	            if (this._isTableOrSubTableElement(node.nodeName)) {
-	                this._expandTableIfNeed(pasteData.fragment);
-	                this._pasteDataIntoTable(pasteData.fragment);
-	                pasteData.fragment = newFragment;
-	            } else {
-	                newFragment.textContent = newFragment.textContent + pasteData.fragment.textContent;
-	            }
-
-	            return newFragment;
-	        }
 
 	        /**
 	         * Whether pasting element is table element
 	         * @param {string} pastingNodeName Pasting node name
 	         * @returns {boolean}
-	         * @private
 	         */
 
 	    }, {
-	        key: '_isTableOrSubTableElement',
-	        value: function _isTableOrSubTableElement(pastingNodeName) {
+	        key: 'isTableOrSubTableElement',
+	        value: function isTableOrSubTableElement(pastingNodeName) {
 	            return pastingNodeName === 'TABLE' || pastingNodeName === 'TBODY' || pastingNodeName === 'THEAD' || pastingNodeName === 'TR' || pastingNodeName === 'TD';
 	        }
 
@@ -6323,12 +7619,11 @@
 	         * Prepare to table cell stuffing
 	         * @param {jQuery} $trs jQuery wrapped TRs
 	         * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
-	         * @private
 	         */
 
 	    }, {
-	        key: '_prepareToTableCellStuffing',
-	        value: function _prepareToTableCellStuffing($trs) {
+	        key: 'prepareToTableCellStuffing',
+	        value: function prepareToTableCellStuffing($trs) {
 	            var maximumCellLength = $trs.eq(0).find('th,td').length;
 	            var needTableCellStuffingAid = false;
 
@@ -6352,42 +7647,41 @@
 
 	        /**
 	         * Add TBODY or THEAD if need
-	         * @param {jQuery} table Table element
+	         * @param {jQuery} $table - Table jQuery element
 	         * @private
 	         */
 
 	    }, {
 	        key: '_addTbodyOrTheadIfNeed',
-	        value: function _addTbodyOrTheadIfNeed(table) {
-	            var isTheadNotExists = !table.find('thead').length;
-	            var isTbodyNotExists = !table.find('tbody').length;
+	        value: function _addTbodyOrTheadIfNeed($table) {
+	            var isTheadNotExists = !$table.find('thead').length;
+	            var isTbodyNotExists = !$table.find('tbody').length;
 	            var absentNode = void 0;
 
 	            if (isTheadNotExists) {
 	                absentNode = $('<thead><tr></tr></thead>')[0];
-	                table.prepend(absentNode);
+	                $table.prepend(absentNode);
 	            } else if (isTbodyNotExists) {
 	                absentNode = $('<tbody><tr></tr></tbody>')[0];
-	                table.append(absentNode);
+	                $table.append(absentNode);
 	            }
 	        }
 
 	        /**
 	         * Append table cells
 	         * @param {HTMLElement} node Table element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_tableCellAppendAidForTableElement',
-	        value: function _tableCellAppendAidForTableElement(node) {
-	            var table = $(node);
+	        key: 'tableCellAppendAidForTableElement',
+	        value: function tableCellAppendAidForTableElement(node) {
+	            var $table = $(node);
 
-	            this._addTbodyOrTheadIfNeed(table);
-	            this._addTrIntoContainerIfNeed(table);
+	            this._addTbodyOrTheadIfNeed($table);
+	            this._addTrIntoContainerIfNeed($table);
 
-	            var trs = table.find('tr');
-	            var tableAidInformation = this._prepareToTableCellStuffing(trs);
+	            var trs = $table.find('tr');
+	            var tableAidInformation = this.prepareToTableCellStuffing(trs);
 	            var maximumCellLength = tableAidInformation.maximumCellLength;
 	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
 
@@ -6475,16 +7769,19 @@
 
 	        /**
 	         * Complete passed table
-	         * @param {HTMLElement} node Table inner element
+	         * @param {HTMLElement} node - Table inner element
+	         * @param {?boolean} useHeader - whether use header or not
 	         * @private
 	         */
 
 	    }, {
 	        key: '_completeIncompleteTable',
-	        value: function _completeIncompleteTable(node) {
+	        value: function _completeIncompleteTable(node, useHeader) {
 	            var nodeName = node.tagName;
 	            var table = void 0,
 	                completedTableContents = void 0;
+
+	            useHeader = util.isUndefined(useHeader) ? true : useHeader;
 
 	            if (nodeName === 'TABLE') {
 	                table = node;
@@ -6499,10 +7796,15 @@
 	                } else if (nodeName === 'TR') {
 	                    completedTableContents = this._generateTheadAndTbodyFromTr(node);
 	                }
-	                table.append(completedTableContents.thead);
+
+	                if (useHeader) {
+	                    table.append(completedTableContents.thead);
+	                }
+
 	                table.append(completedTableContents.tbody);
 	            }
-	            this._tableCellAppendAidForTableElement(table);
+
+	            this.tableCellAppendAidForTableElement(table);
 	        }
 
 	        /**
@@ -6513,20 +7815,20 @@
 	    }, {
 	        key: '_completeTableIfNeed',
 	        value: function _completeTableIfNeed() {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            var $body = this.wwe.getEditor().get$Body();
 
 	            $body.children().each(function (index, node) {
 	                var $node = $(node);
 
-	                if (!_this3._isTableOrSubTableElement(node.nodeName)) {
+	                if (!_this4.isTableOrSubTableElement(node.nodeName)) {
 	                    return;
 	                } else if (node.nodeName === 'TABLE' && $node.find('thead').length === 0 && $node.find('tbody').length === 0) {
 	                    $node.remove();
 	                }
 
-	                _this3._completeIncompleteTable(node);
+	                _this4._completeIncompleteTable(node);
 	            });
 	        }
 
@@ -6562,7 +7864,7 @@
 	    }, {
 	        key: '_isSingleModifierKey',
 	        value: function _isSingleModifierKey(keymap) {
-	            return keymap === 'META' && keymap === 'SHIFT' && keymap === 'ALT' && keymap === 'CONTROL';
+	            return keymap === 'META' || keymap === 'SHIFT' || keymap === 'ALT' || keymap === 'CONTROL';
 	        }
 
 	        /**
@@ -6747,26 +8049,6 @@
 	        }
 
 	        /**
-	         * Create selection by selected cells and collapse that selection to end
-	         * @private
-	         */
-
-	    }, {
-	        key: '_collapseRangeToEndContainer',
-	        value: function _collapseRangeToEndContainer() {
-	            var sq = this.wwe.getEditor();
-	            var range = sq.getSelection().cloneRange();
-	            var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
-
-	            if (selectedCells.length && this.isInTable(range)) {
-	                this.wwe.defer(function () {
-	                    range.collapse(false);
-	                    sq.setSelection(range);
-	                }, SET_SELECTION_DELAY);
-	            }
-	        }
-
-	        /**
 	         * Move cursor to given direction by interval formatter
 	         * @param {string} direction 'next' or 'previous'
 	         * @param {string} interval 'row' or 'cell'
@@ -6785,7 +8067,7 @@
 
 	            if (range.collapsed) {
 	                if (this.isInTable(range) && currentCell) {
-	                    if ((direction === 'previous' || interval === 'row') && !tui.util.isUndefined(ev)) {
+	                    if ((direction === 'previous' || interval === 'row') && !util.isUndefined(ev)) {
 	                        ev.preventDefault();
 	                    }
 
@@ -6797,31 +8079,6 @@
 	            }
 
 	            return isNeedNext;
-	        }
-
-	        /**
-	         * Bind pre process for table copy and cut key event
-	         * @private
-	         */
-
-	    }, {
-	        key: '_bindKeyEventForTableCopyAndCut',
-	        value: function _bindKeyEventForTableCopyAndCut() {
-	            var _this4 = this;
-
-	            var isMac = /Mac OS X/.test(navigator.userAgent);
-	            var commandKey = isMac ? 'metaKey' : 'ctrlKey';
-	            var selectionManager = this.wwe.getManager('tableSelection');
-
-	            this.wwe.getEditor().addEventListener('keydown', function (event) {
-	                if (event[commandKey]) {
-	                    selectionManager.createRangeBySelectedCells();
-	                }
-	            });
-
-	            this.wwe.getEditor().addEventListener('keyup', function () {
-	                _this4._collapseRangeToEndContainer();
-	            });
 	        }
 
 	        /**
@@ -6837,7 +8094,7 @@
 	        value: function _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
 	            var isTextInput = keymap.length <= 1;
 	            var isDeleteOperation = keymap === 'BACK_SPACE' || keymap === 'DELETE';
-	            var selectedCells = this.wwe.getManager('tableSelection').getSelectedCells();
+	            var selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
 	            var firstSelectedCell = selectedCells.first()[0];
 
 	            if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && selectedCells.length) {
@@ -6907,6 +8164,26 @@
 	                $currentCell.append('<br>');
 	            }
 	        }
+
+	        /**
+	         * Destroy.
+	         */
+
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            var _this5 = this;
+
+	            this.eventManager.removeEventHandler('wysiwygRangeChangeAfter.table');
+	            this.eventManager.removeEventHandler('wysiwygSetValueAfter.table');
+	            this.eventManager.removeEventHandler('wysiwygProcessHTMLText.table');
+	            this.eventManager.removeEventHandler('cut.table');
+	            this.eventManager.removeEventHandler('copyBefore.table');
+	            this.wwe.getEditor().removeEventListener('paste', this.onBindedPaste);
+	            util.forEach(this.keyEventHandlers, function (handler, key) {
+	                return _this5.wwe.removeKeyEventHandler(key, handler);
+	            });
+	        }
 	    }]);
 
 	    return WwTableManager;
@@ -6932,11 +8209,12 @@
 
 	    return tdString;
 	}
+
 	module.exports = WwTableManager;
 
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -6946,7 +8224,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -7015,7 +8293,8 @@
 	            var _this = this;
 
 	            var selectionStart = void 0,
-	                selectionEnd = void 0;
+	                selectionEnd = void 0,
+	                validSelectionEnd = void 0;
 
 	            /**
 	             * Start table selection timer
@@ -7036,43 +8315,41 @@
 	             */
 	            this._isSelectionStarted = false;
 
-	            this.eventManager.listen('mousedown', function (ev) {
-	                var MOUSE_RIGHT_BUTTON = 2;
-	                selectionStart = $(ev.data.target).closest('td,th')[0];
-	                var isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
-	                selectionEnd = null;
-
-	                if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
-	                    _this.removeClassAttrbuteFromAllCellsIfNeed();
-
-	                    _this._setTableSelectionTimerIfNeed(selectionStart);
-	                }
-	            });
-
-	            this.eventManager.listen('mouseover', function (ev) {
-	                selectionEnd = $(ev.data.target).closest('td,th')[0];
+	            var onMouseover = function onMouseover(ev) {
+	                selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
-	                var isEndsInTable = $(selectionEnd).parents('table')[0];
+	                var isEndsInTable = $(selectionEnd).parents('[contenteditable=true] table')[0];
 	                var isSameCell = selectionStart === selectionEnd;
-	                var isTextSelect = _this._isTextSelect(range, isSameCell);
+	                var isTextSelect = _this._isTextSelect(range, isSameCell) && !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
-	                if (_this._isSelectionStarted && isEndsInTable && (!isTextSelect || isSameCell) && !isTextSelect) {
+	                if (_this._isSelectionStarted && isEndsInTable && !isTextSelect) {
+	                    window.getSelection().removeAllRanges();
 	                    // For disable firefox's native table cell selection
 	                    if (tui.util.browser.firefox && !_this._removeSelectionTimer) {
 	                        _this._removeSelectionTimer = setInterval(function () {
 	                            window.getSelection().removeAllRanges();
 	                        }, 10);
 	                    }
-	                    _this._highlightTableCellsBy(selectionStart, selectionEnd);
+	                    _this.highlightTableCellsBy(selectionStart, selectionEnd);
+	                    validSelectionEnd = selectionEnd;
 	                }
-	            });
-	            this.eventManager.listen('mouseup', function (ev) {
-	                selectionEnd = $(ev.data.target).closest('td,th')[0];
+	            };
+
+	            var finishSelection = function finishSelection() {
+	                if (_this._isSelectionStarted) {
+	                    _this._isSelectionStarted = false;
+	                    _this.eventManager.removeEventHandler('mouseover.tableSelection');
+	                    _this.eventManager.removeEventHandler('mouseup.tableSelection');
+	                }
+	            };
+
+	            var onMouseup = function onMouseup(ev) {
+	                selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
 
 	                var range = _this.wwe.getEditor().getSelection();
 	                var isSameCell = selectionStart === selectionEnd;
-	                var isTextSelect = _this._isTextSelect(range, isSameCell);
+	                var isTextSelect = _this._isTextSelect(range, isSameCell) && !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
 
 	                _this._clearTableSelectionTimerIfNeed();
 
@@ -7080,16 +8357,52 @@
 	                    if (isTextSelect) {
 	                        _this.removeClassAttrbuteFromAllCellsIfNeed();
 	                    } else {
-	                        _this.wwe.getManager('table').resetLastCellNode();
+	                        _this.wwe.componentManager.getManager('table').resetLastCellNode();
+
+	                        selectionEnd = selectionEnd || validSelectionEnd;
 
 	                        range = _this.wwe.getEditor().getSelection();
-	                        range.collapse(true);
+	                        range.setStart(selectionEnd, 0);
+	                        // IE wont fire copy/cut event if there is no selected range.
+	                        // trick IE to fire the event
+	                        if (tui.util.browser.msie) {
+	                            range.setEnd(selectionEnd, 1);
+	                        } else {
+	                            range.setEnd(selectionEnd, 0);
+	                            range.collapse(false);
+	                        }
 	                        _this.wwe.getEditor().setSelection(range);
+	                    }
+	                    if (_this.onDragEnd) {
+	                        _this.onDragEnd();
 	                    }
 	                }
 
-	                _this._isSelectionStarted = false;
-	            });
+	                finishSelection();
+	            };
+
+	            var onMousedown = function onMousedown(ev) {
+	                var MOUSE_RIGHT_BUTTON = 2;
+	                selectionStart = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
+	                var isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	                selectionEnd = null;
+
+	                if (!isSelectedCell || isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON) {
+	                    _this.removeClassAttrbuteFromAllCellsIfNeed();
+	                    _this.setTableSelectionTimerIfNeed(selectionStart);
+	                    _this.eventManager.listen('mouseover.tableSelection', onMouseover);
+	                    _this.eventManager.listen('mouseup.tableSelection', onMouseup);
+	                    if (_this.onDragStart && selectionStart) {
+	                        _this.onDragStart(selectionStart);
+	                    }
+	                } else if (ev.data.button === MOUSE_RIGHT_BUTTON) {
+	                    finishSelection();
+	                }
+	            };
+
+	            this.eventManager.listen('mousedown.tableSelection', onMousedown);
+	            this.eventManager.listen('copyBefore.tableSelection', finishSelection);
+	            this.eventManager.listen('pasteBefore.tableSelection', finishSelection);
 	        }
 
 	        /**
@@ -7110,20 +8423,15 @@
 	        /**
 	         * Set setTimeout and setInterval timer execution if table selecting situation
 	         * @param {HTMLElement} selectionStart Start element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_setTableSelectionTimerIfNeed',
-	        value: function _setTableSelectionTimerIfNeed(selectionStart) {
-	            var _this2 = this;
-
-	            var isTableSelecting = $(selectionStart).parents('table').length;
+	        key: 'setTableSelectionTimerIfNeed',
+	        value: function setTableSelectionTimerIfNeed(selectionStart) {
+	            var isTableSelecting = $(selectionStart).parents('[contenteditable=true] table').length;
 
 	            if (isTableSelecting) {
-	                this._tableSelectionTimer = setTimeout(function () {
-	                    _this2._isSelectionStarted = true;
-	                }, 100);
+	                this._isSelectionStarted = true;
 	            }
 	        }
 
@@ -7154,15 +8462,15 @@
 	    }, {
 	        key: '_reArrangeSelectionIfneed',
 	        value: function _reArrangeSelectionIfneed(selectionStart, selectionEnd) {
-	            var isRangeStartInTable = $(selectionStart).parents('table').length;
-	            var isRangeEndInTable = $(selectionEnd).parents('table').length;
+	            var isRangeStartInTable = $(selectionStart).parents('[contenteditable=true] table').length;
+	            var isRangeEndInTable = $(selectionEnd).parents('[contenteditable=true] table').length;
 	            var isStartRangeOut = isRangeEndInTable && !isRangeStartInTable;
 	            var isEndRangeOut = !isRangeEndInTable && isRangeStartInTable;
 
 	            if (isStartRangeOut) {
-	                selectionStart = $(selectionEnd).parents('table').find('th').first()[0];
+	                selectionStart = $(selectionEnd).parents('[contenteditable=true] table').find('th').first()[0];
 	            } else if (isEndRangeOut) {
-	                selectionEnd = $(selectionStart).parents('table').find('td').last()[0];
+	                selectionEnd = $(selectionStart).parents('[contenteditable=true] table').find('td').last()[0];
 	            }
 
 	            return {
@@ -7186,7 +8494,7 @@
 	            var nodeOffsetOfParent = _domUtils2.default.getNodeOffsetOfParent;
 	            var selectionStart = selectionInformation.startContainer;
 	            var selectionEnd = selectionInformation.endContainer;
-	            var rowDirection = nodeOffsetOfParent($(selectionStart).closest('tr')[0]) - nodeOffsetOfParent($(selectionEnd).closest('tr')[0]);
+	            var rowDirection = nodeOffsetOfParent($(selectionStart).closest('[contenteditable=true] tr')[0]) - nodeOffsetOfParent($(selectionEnd).closest('[contenteditable=true] tr')[0]);
 	            var cellDirection = nodeOffsetOfParent(selectionStart) - nodeOffsetOfParent(selectionEnd);
 	            var isSameRow = rowDirection === 0;
 	            var isRowIncreases = rowDirection < 0;
@@ -7209,19 +8517,6 @@
 	            }
 
 	            return range;
-	        }
-
-	        /**
-	         * Get table cell element
-	         * @param {Node | HTMLElement} node textNode or table cell element
-	         * @returns {HTMLElement}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_getTableCell',
-	        value: function _getTableCell(node) {
-	            return node.nodeType === 3 ? $(node).parent('td,th')[0] : node;
 	        }
 
 	        /**
@@ -7284,13 +8579,12 @@
 	         * Highlight selected table cells
 	         * @param {HTMLElement} selectionStart start element
 	         * @param {HTMLElement} selectionEnd end element
-	         * @private
 	         */
 
 	    }, {
-	        key: '_highlightTableCellsBy',
-	        value: function _highlightTableCellsBy(selectionStart, selectionEnd) {
-	            var trs = $(selectionStart).parents('table').find('tr');
+	        key: 'highlightTableCellsBy',
+	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
+	            var trs = $(selectionStart).parents('[contenteditable=true] table').find('tr');
 	            var selection = this.getSelectionRangeFromTable(selectionStart, selectionEnd);
 	            var rowFrom = selection.from.row;
 	            var cellFrom = selection.from.cell;
@@ -7339,7 +8633,6 @@
 
 	        /**
 	         * Create selection by selected cells and collapse that selection to end
-	         * @private
 	         */
 
 	    }, {
@@ -7348,13 +8641,41 @@
 	            var sq = this.wwe.getEditor();
 	            var range = sq.getSelection().cloneRange();
 	            var selectedCells = this.getSelectedCells();
-	            var tableManager = this.wwe.getManager('table');
+	            var tableManager = this.wwe.componentManager.getManager('table');
+	            var firstSelectedCell = selectedCells.first()[0];
+	            var lastSelectedCell = selectedCells.last()[0];
 
 	            if (selectedCells.length && tableManager.isInTable(range)) {
-	                range.setStart(selectedCells.first()[0], 0);
-	                range.setEnd(selectedCells.last()[0], 1);
+	                range.setStart(firstSelectedCell, 0);
+	                range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
 	                sq.setSelection(range);
 	            }
+	        }
+
+	        /**
+	         * Style to selected cells.
+	         * @param {function} onStyle - function for styling
+	         */
+
+	    }, {
+	        key: 'styleToSelectedCells',
+	        value: function styleToSelectedCells(onStyle) {
+	            this.createRangeBySelectedCells();
+	            onStyle(this.wwe.getEditor());
+	        }
+
+	        /**
+	         * Destroy.
+	         */
+
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            this.eventManager.removeEventHandler('mousedown.tableSelection');
+	            this.eventManager.removeEventHandler('mouseover.tableSelection');
+	            this.eventManager.removeEventHandler('mouseup.tableSelection');
+	            this.eventManager.removeEventHandler('copyBefore.tableSelection');
+	            this.eventManager.removeEventHandler('pasteBefore.tableSelection');
 	        }
 	    }]);
 
@@ -7363,9 +8684,9 @@
 
 	module.exports = WwTableSelectionManager;
 
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -7374,7 +8695,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -7662,6 +8983,7 @@
 	 * @function
 	 * @this Node
 	 * @returns {boolean}
+	 * @ignore
 	 */
 
 
@@ -7671,9 +8993,9 @@
 
 	module.exports = WwHrManager;
 
-/***/ },
-/* 17 */
-/***/ function(module, exports) {
+/***/ }),
+/* 21 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -7743,30 +9065,41 @@
 	    }, {
 	        key: '_splitPtagContentLines',
 	        value: function _splitPtagContentLines(html) {
-	            html = html.replace(/<p>([\s\S]*?)<\/p>/gi, function (whole, content) {
-	                var lines = content.split(/<br>/gi);
-	                var linesLenIndex = lines.length - 1;
-	                var splitedContent = '';
+	            if (html) {
+	                var $wrapper = $('<div />');
 
-	                splitedContent = lines.map(function (line, index) {
-	                    var result = '';
+	                $wrapper.html(html);
+	                $wrapper.find('p').each(function (pIndex, para) {
+	                    var content = para.innerHTML;
+	                    var lines = content.split(/<br>/gi);
+	                    var lastIndex = lines.length - 1;
+	                    // cross browsing: old browser not has nextElementSibling attribute
+	                    var nextElement = para.nextElementSibling || para.nextSibling;
+	                    var splitedContent = '';
 
-	                    if (index > 0 && index < linesLenIndex) {
-	                        line = line ? line : '<br>';
+	                    splitedContent = lines.map(function (line, index) {
+	                        var result = '';
+
+	                        if (index > 0 && index < lastIndex) {
+	                            line = line ? line : '<br>';
+	                        }
+
+	                        if (line) {
+	                            result = '<div>' + line + '</div>';
+	                        }
+
+	                        return result;
+	                    });
+
+	                    // For paragraph, we add empty line
+	                    if (nextElement && nextElement.nodeName === 'P') {
+	                        splitedContent.push('<div><br></div>');
 	                    }
 
-	                    if (line) {
-	                        result = '<div>' + line + '</div>';
-	                    }
-
-	                    return result;
+	                    $(para).replaceWith($(splitedContent.join('')));
 	                });
-
-	                // For paragraph, we add empty line
-	                splitedContent.push('<div><br></div>');
-
-	                return splitedContent.join('');
-	            });
+	                html = $wrapper.html();
+	            }
 
 	            return html;
 	        }
@@ -7815,9 +9148,9 @@
 
 	module.exports = WwPManager;
 
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -7826,7 +9159,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8072,9 +9405,9 @@
 
 	module.exports = WwHeadingManager;
 
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -8083,7 +9416,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8429,6 +9762,7 @@
 	 * Sanitize HTML code
 	 * @param {string} code code string
 	 * @returns {string}
+	 * @ignore
 	 */
 
 
@@ -8440,15 +9774,15 @@
 
 	module.exports = WwCodeBlockManager;
 
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 24 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -8475,6 +9809,7 @@
 	 * @augments Squire
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var SquireExt = function (_Squire) {
@@ -8492,6 +9827,7 @@
 	        var _this = _possibleConstructorReturn(this, (_ref = SquireExt.__proto__ || Object.getPrototypeOf(SquireExt)).call.apply(_ref, [this].concat(args)));
 
 	        _this._decorateHandlerToCancelable('copy');
+	        _this._decorateHandlerToCancelable(isIElt11 ? 'beforecut' : 'cut');
 	        _this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 
 	        _this.get$Body = function () {
@@ -8505,6 +9841,8 @@
 	    /**
 	     * _decorateHandlerToCancelable
 	     * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+	     * event.preventDefault() will cancel squire and browser default behavior
+	     * event.squirePrevented = true will cancel squire but allow browser default behavior
 	     * @param {string} eventName event name
 	     */
 
@@ -8521,7 +9859,7 @@
 	            var handler = handlers[0].bind(this);
 
 	            handlers[0] = function (event) {
-	                if (!event.defaultPrevented) {
+	                if (!event.defaultPrevented && !event.squirePrevented) {
 	                    handler(event);
 	                }
 	            };
@@ -8826,6 +10164,21 @@
 
 	            return this;
 	        }
+	    }, {
+	        key: 'blockCommandShortcuts',
+	        value: function blockCommandShortcuts() {
+	            var _this3 = this;
+
+	            var isMac = /Mac/.test(navigator.platform);
+	            var meta = isMac ? 'meta' : 'ctrl';
+	            var keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+
+	            keys.forEach(function (key) {
+	                _this3.setKeyHandler(meta + '-' + key, function (editor, keyboardEvent) {
+	                    keyboardEvent.preventDefault();
+	                });
+	            });
+	        }
 	    }]);
 
 	    return SquireExt;
@@ -8833,9 +10186,9 @@
 
 	module.exports = SquireExt;
 
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -8844,7 +10197,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -9037,9 +10390,9 @@
 
 	module.exports = WwTextObject;
 
-/***/ },
-/* 22 */
-/***/ function(module, exports) {
+/***/ }),
+/* 26 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -9055,6 +10408,7 @@
 	/**
 	 * Editor container template
 	 * @type {string}
+	 * @ignore
 	 */
 	var containerTmpl = ['<div class="tui-editor">', '<div class="te-md-container">', '<div class="te-editor" />', '<div class="te-md-splitter" />', '<div class="te-preview" />', '</div>', '<div class="te-ww-container">', '<div class="te-editor" />', '</div>', '</div>'].join('');
 
@@ -9309,9 +10663,9 @@
 
 	module.exports = Layout;
 
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
+/***/ }),
+/* 27 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -9325,7 +10679,7 @@
 	 */
 	var util = tui.util;
 
-	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setValueAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'cut', 'drop', 'show', 'hide'];
+	var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'replaceCodeBlockElementsBefore', 'pasteBefore', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
 
 	/**
 	 * EventManager
@@ -9526,6 +10880,10 @@
 	            var handlersToSurvive = [];
 	            var eventHandlers = this.events.get(type);
 
+	            if (!eventHandlers) {
+	                return;
+	            }
+
 	            eventHandlers.map(function (handler) {
 	                if (handler.namespace !== namespace) {
 	                    handlersToSurvive.push(handler);
@@ -9541,9 +10899,9 @@
 
 	module.exports = EventManager;
 
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -9552,7 +10910,7 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _command = __webpack_require__(25);
+	var _command = __webpack_require__(29);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9574,29 +10932,55 @@
 	var CommandManager = function () {
 	    /**
 	     * @param {ToastUIEditor} base nedInstance
+	     * @param {object} [options={}] - option object
+	     *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
 	     */
 	    function CommandManager(base) {
+	        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
 	        _classCallCheck(this, CommandManager);
 
 	        this._command = new util.Map();
 	        this._mdCommand = new util.Map();
 	        this._wwCommand = new util.Map();
+	        this._options = $.extend({
+	            'useCommandShortcut': true
+	        }, options);
+
 	        this.base = base;
 
 	        this.keyMapCommand = {};
 
 	        this._initEvent();
 	    }
+
 	    /**
-	     * Add command
-	     * @api
-	     * @memberOf CommandManager
-	     * @param {Command} command Command instance
-	     * @returns {Command} Command
+	     * You can change command before command addition by addCommandBefore event.
+	     * @param {object} command - command
+	     * @returns {object}
+	     * @private
 	     */
 
 
 	    _createClass(CommandManager, [{
+	        key: '_addCommandBefore',
+	        value: function _addCommandBefore(command) {
+	            var commandWrapper = { command: command };
+
+	            this.base.eventManager.emit('addCommandBefore', commandWrapper);
+
+	            return commandWrapper.command || command;
+	        }
+
+	        /**
+	         * Add command
+	         * @api
+	         * @memberOf CommandManager
+	         * @param {Command} command Command instance
+	         * @returns {Command} Command
+	         */
+
+	    }, {
 	        key: 'addCommand',
 	        value: function addCommand(command) {
 	            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -9606,6 +10990,8 @@
 	            if (args.length) {
 	                command = CommandManager.command.apply(CommandManager, [command].concat(args));
 	            }
+
+	            command = this._addCommandBefore(command);
 
 	            var name = command.getName();
 
@@ -9645,6 +11031,9 @@
 	            });
 
 	            this.base.eventManager.listen('keyMap', function (ev) {
+	                if (!_this._options.useCommandShortcut) {
+	                    return;
+	                }
 	                var command = _this.keyMapCommand[ev.keyMap];
 
 	                if (command) {
@@ -9702,7 +11091,7 @@
 	/**
 	 * Create command by given editor type and property object
 	 * @api
-	 * @memberOf CommandManager
+	 * @memberOf ComponentManager
 	 * @param {string} type Command type
 	 * @param {{name: string, keyMap: object}} props Property
 	 * @returns {*}
@@ -9719,9 +11108,9 @@
 
 	module.exports = CommandManager;
 
-/***/ },
-/* 25 */
-/***/ function(module, exports) {
+/***/ }),
+/* 29 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -9895,9 +11284,9 @@
 
 	module.exports = Command;
 
-/***/ },
-/* 26 */
-/***/ function(module, exports) {
+/***/ }),
+/* 30 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -9970,31 +11359,23 @@
 
 	module.exports = new ExtManager();
 
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Implement Module for managing import external data such as image
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-	var _excelTableParser = __webpack_require__(28);
-
-	var _excelTableParser2 = _interopRequireDefault(_excelTableParser);
-
-	var _i18n = __webpack_require__(29);
-
-	var _i18n2 = _interopRequireDefault(_i18n);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	/**
+	 * @fileoverview Implement Module for managing import external data such as image
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
 	var util = tui.util;
-	var FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
+	var URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
 
 	/**
 	 * ImportManager
@@ -10016,14 +11397,24 @@
 	    }
 
 	    /**
-	     * Initialize event handler
-	     * @memberOf ImportManager
-	     * @private
+	     * graceful decode uri component
+	     * @param {string} uri - string to be decoded
+	     * @param {Function} decodeFunction - function to be used to decode
+	     * @returns {string} decoded string
+	     * @memberof ImportManager
+	     * @static
 	     */
 
 
 	    _createClass(ImportManager, [{
 	        key: '_initEvent',
+
+
+	        /**
+	         * Initialize event handler
+	         * @memberOf ImportManager
+	         * @private
+	         */
 	        value: function _initEvent() {
 	            var _this = this;
 
@@ -10068,23 +11459,24 @@
 	        /**
 	         * Emit add image blob hook
 	         * @memberOf ImportManager
-	         * @param {object} item item
+	         * @param {object} item - item
+	         * @param {string} type - type of an event the item belongs to. paste or drop
 	         * @private
 	         */
 
 	    }, {
 	        key: '_emitAddImageBlobHook',
-	        value: function _emitAddImageBlobHook(item) {
+	        value: function _emitAddImageBlobHook(item, type) {
 	            var _this2 = this;
 
 	            var blob = item.name ? item : item.getAsFile(); // Blob or File
 
-	            this.eventManager.emit('addImageBlobHook', blob, function (url) {
+	            this.eventManager.emit('addImageBlobHook', blob, function (imageUrl, altText) {
 	                _this2.eventManager.emit('command', 'AddImage', {
-	                    imageUrl: url,
-	                    altText: blob.name || 'image'
+	                    imageUrl: imageUrl,
+	                    altText: altText || blob.name || 'image'
 	                });
-	            });
+	            }, type);
 	        }
 
 	        /**
@@ -10095,25 +11487,26 @@
 	    }, {
 	        key: '_decodeURL',
 	        value: function _decodeURL(ev) {
-	            if (ev.source === 'markdown' && ev.data.text.length === 1 && ev.data.text[0].match(/https?:\/\//g)) {
-	                ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
-	            } else if (ev.source === 'wysiwyg' && ev.data.fragment.childNodes.length === 1 && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE && ev.data.fragment.firstChild.tagName === 'A') {
-	                ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
+	            if (ev.source === 'markdown' && ev.data.text) {
+	                var newTexts = [];
+
+	                ev.data.text.forEach(function (text) {
+	                    text = text.replace(URLRegex, function (match) {
+	                        return ImportManager.decodeURIGraceful(match);
+	                    });
+	                    newTexts.push(text);
+	                });
+
+	                ev.data.update(null, null, newTexts);
+	            } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
+	                var $anchor = ev.$clipboardContainer.find('A');
+
+	                $anchor.each(function (index, element) {
+	                    var text = $(element).text();
+	                    var decodeFunction = text.match(URLRegex) ? decodeURI : decodeURIComponent;
+	                    $(element).text(ImportManager.decodeURIGraceful(text, decodeFunction));
+	                });
 	            }
-	        }
-
-	        /**
-	         * Add table with excel style data
-	         * @memberOf ImportManager
-	         * @param {string} content Table data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_addExcelTable',
-	        value: function _addExcelTable(content) {
-	            var tableInfo = (0, _excelTableParser2.default)(content);
-	            this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
 	        }
 
 	        /**
@@ -10132,8 +11525,6 @@
 
 	            if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
 	                this._processBlobItems(blobItems, evData);
-	            } else if (!this._isInBlockFormat()) {
-	                this._precessDataTransfer(cbData, evData);
 	            }
 	        }
 
@@ -10155,33 +11546,13 @@
 	                    if (item.type.indexOf('image') !== -1) {
 	                        evData.preventDefault();
 	                        evData.codemirrorIgnore = true;
-	                        _this3._emitAddImageBlobHook(item);
+	                        _this3._emitAddImageBlobHook(item, evData.type);
 
 	                        return false;
 	                    }
 
 	                    return true;
 	                });
-	            }
-	        }
-
-	        /**
-	         * Process for excel style data
-	         * @memberOf ImportManager
-	         * @param {HTMLElement} cbData Clipboard data
-	         * @param {object} evData Event data
-	         * @private
-	         */
-
-	    }, {
-	        key: '_precessDataTransfer',
-	        value: function _precessDataTransfer(cbData, evData) {
-	            var textContent = cbData.getData('text');
-
-	            if (FIND_EXCEL_DATA.test(textContent) && confirm(_i18n2.default.get('Would you like to paste as table?'))) {
-	                evData.preventDefault();
-	                evData.codemirrorIgnore = true;
-	                this._addExcelTable(textContent);
 	            }
 	        }
 
@@ -10198,6 +11569,21 @@
 
 	            return state && (state.codeBlock || state.list || state.task || state.code);
 	        }
+	    }], [{
+	        key: 'decodeURIGraceful',
+	        value: function decodeURIGraceful(uri) {
+	            var decodeFunction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : decodeURI;
+
+	            var decodedURI = void 0;
+	            try {
+	                decodedURI = decodeFunction(uri);
+	                decodedURI = decodedURI.replace(/ /g, '%20').replace(/\(/g, '%28').replace(/\)/g, '%29').replace(/\[/g, '%5B').replace(/\]/g, '%5D').replace(/</g, '%3C').replace(/>/g, '%3E');
+	            } catch (e) {
+	                decodedURI = uri;
+	            }
+
+	            return decodedURI;
+	        }
 	    }]);
 
 	    return ImportManager;
@@ -10205,192 +11591,9 @@
 
 	module.exports = ImportManager;
 
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	/**
-	 * @fileoverview Implements excelTableParser
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	/**
-	 * excelTableParser
-	 * Parse excel paste data
-	 * @public
-	 * @exports excelTableParser
-	 * @param {string} content excel table content
-	 * @returns {object} result
-	 */
-	function excelTableParser(content) {
-	    var rows = getRows(content);
-	    var rowLength = rows.length;
-	    var data = [];
-	    var colLength = 0;
-
-	    rows.forEach(function (row) {
-	        var cols = row.split('\t');
-
-	        if (!cols) {
-	            return;
-	        } else if (!colLength) {
-	            colLength = cols.length;
-	        }
-
-	        data = data.concat(cols);
-	    });
-
-	    return {
-	        col: colLength,
-	        row: rowLength,
-	        data: data
-	    };
-	}
-	/**
-	 * Get row data from raw text with Regexp
-	 * @public
-	 * @param {string} content Raw copied text data
-	 * @returns {Array}
-	 */
-	function getRows(content) {
-	    content = content.replace(/"([^"]+)"/g, function (match, cell) {
-	        return cell.replace(/(\r\n)|(\r)/g, '<br/>');
-	    });
-
-	    // remove last LF or CR
-	    content = content.replace(/(\r\n$)|(\r$)|(\n$)/, '');
-	    // CR or CR-LF to LF
-	    content = content.replace(/(\r\n)|(\r)/g, '\n');
-
-	    return content.split('\n');
-	}
-
-	module.exports = excelTableParser;
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/**
-	 * @fileoverview Implements i18n
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
-	var util = tui.util;
-
-	var sharedInstance = void 0;
-
-	var DEFAULT_CODE = 'en_US';
-
-	/**
-	 * I18n
-	 * @exports I18n
-	 * @class
-	 */
-
-	var I18n = function () {
-	    function I18n() {
-	        _classCallCheck(this, I18n);
-
-	        this._code = DEFAULT_CODE;
-	        this._langs = new util.Map();
-	    }
-
-	    /**
-	     * Set locale code
-	     * @param {string} code locale code
-	     */
-
-
-	    _createClass(I18n, [{
-	        key: 'setCode',
-	        value: function setCode(code) {
-	            this._code = code;
-	        }
-
-	        /**
-	         * Set language set
-	         * @param {string|string[]} codes locale code
-	         * @param {object} data language set
-	         */
-
-	    }, {
-	        key: 'setLang',
-	        value: function setLang(codes, data) {
-	            var _this = this;
-
-	            codes = [].concat(codes);
-
-	            codes.forEach(function (code) {
-	                if (!_this._langs.has(code)) {
-	                    _this._langs.set(code, data);
-	                } else {
-	                    var langData = _this._langs.get(code);
-	                    _this._langs.set(code, util.extend(langData, data));
-	                }
-	            });
-	        }
-
-	        /**
-	         * Get text of key
-	         * @param {string} key key of text
-	         * @param {string} code locale code
-	         * @returns {string}
-	         */
-
-	    }, {
-	        key: 'get',
-	        value: function get(key, code) {
-	            if (!code) {
-	                code = this._code;
-	            }
-
-	            var langSet = this._langs.get(code);
-
-	            if (!langSet) {
-	                langSet = this._langs.get(DEFAULT_CODE);
-	            }
-
-	            var text = langSet[key];
-
-	            if (!text) {
-	                throw new Error('There is no text key "' + key + '" in ' + code);
-	            }
-
-	            return text;
-	        }
-	    }], [{
-	        key: 'getSharedInstance',
-	        value: function getSharedInstance() {
-	            if (!sharedInstance) {
-	                sharedInstance = new I18n();
-	            }
-
-	            return sharedInstance;
-	        }
-	    }]);
-
-	    return I18n;
-	}();
-
-	exports.I18n = I18n;
-	exports.default = I18n.getSharedInstance();
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -10399,41 +11602,44 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _htmlSanitizer = __webpack_require__(11);
+	var _htmlSanitizer = __webpack_require__(14);
 
 	var _htmlSanitizer2 = _interopRequireDefault(_htmlSanitizer);
 
-	var _markdownitTaskPlugin = __webpack_require__(31);
+	var _markdownitTaskPlugin = __webpack_require__(33);
 
 	var _markdownitTaskPlugin2 = _interopRequireDefault(_markdownitTaskPlugin);
 
-	var _markdownitCodeBlockPlugin = __webpack_require__(32);
+	var _markdownitCodeBlockPlugin = __webpack_require__(34);
 
 	var _markdownitCodeBlockPlugin2 = _interopRequireDefault(_markdownitCodeBlockPlugin);
 
-	var _markdownitCodeRenderer = __webpack_require__(33);
+	var _markdownitCodeRenderer = __webpack_require__(35);
 
 	var _markdownitCodeRenderer2 = _interopRequireDefault(_markdownitCodeRenderer);
 
-	var _markdownitBlockQuoteRenderer = __webpack_require__(34);
+	var _markdownitBlockQuoteRenderer = __webpack_require__(36);
 
 	var _markdownitBlockQuoteRenderer2 = _interopRequireDefault(_markdownitBlockQuoteRenderer);
 
-	var _markdownitTableRenderer = __webpack_require__(35);
+	var _markdownitTableRenderer = __webpack_require__(37);
 
 	var _markdownitTableRenderer2 = _interopRequireDefault(_markdownitTableRenderer);
 
-	var _markdownitHtmlBlockRenderer = __webpack_require__(36);
+	var _markdownitHtmlBlockRenderer = __webpack_require__(38);
 
 	var _markdownitHtmlBlockRenderer2 = _interopRequireDefault(_markdownitHtmlBlockRenderer);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var markdownIt = window.markdownit,
-	    toMark = window.toMark,
-	    hljs = window.hljs;
+	    toMark = window.toMark;
 
 	var markdownitHighlight = markdownIt({
 	    html: true,
@@ -10441,7 +11647,7 @@
 	    quotes: '“”‘’',
 	    langPrefix: 'lang-',
 	    highlight: function highlight(codeText, type) {
-	        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+	        return _codeBlockManager2.default.createCodeBlockHtml(type, codeText);
 	    }
 	});
 	var markdownit = markdownIt({
@@ -10494,6 +11700,11 @@
 	        key: '_markdownToHtmlWithCodeHighlight',
 	        value: function _markdownToHtmlWithCodeHighlight(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+	            // eslint-disable-next-line
+	            var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+	            while (onerrorStripeRegex.exec(markdown)) {
+	                markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+	            }
 
 	            var renderedHTML = markdownitHighlight.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
@@ -10514,8 +11725,13 @@
 	        key: '_markdownToHtml',
 	        value: function _markdownToHtml(markdown) {
 	            markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+	            // eslint-disable-next-line
+	            var onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+	            while (onerrorStripeRegex.exec(markdown)) {
+	                markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+	            }
 
-	            var renderedHTML = markdownitHighlight.render(markdown);
+	            var renderedHTML = markdownit.render(markdown);
 	            renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
 	            return renderedHTML;
@@ -10578,6 +11794,7 @@
 	        key: 'toHTML',
 	        value: function toHTML(markdown) {
 	            var html = this._markdownToHtml(markdown);
+
 	            html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
 	            return html;
@@ -10597,14 +11814,19 @@
 	         * @api
 	         * @memberOf Convertor
 	         * @param {string} html html text
+	         * @param {object | null} toMarkOptions - toMark library options
 	         * @returns {string} markdown text
 	         */
 
 	    }, {
 	        key: 'toMarkdown',
-	        value: function toMarkdown(html) {
+	        value: function toMarkdown(html, toMarkOptions) {
 	            var resultArray = [];
-	            var markdown = toMark(this._appendAttributeForBrIfNeed(html));
+
+	            html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+
+	            var markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+
 	            markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
 	            tui.util.forEach(markdown.split('\n'), function (line, index) {
@@ -10625,7 +11847,9 @@
 	            var FIND_BR_RX = /<br>/ig;
 	            var FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
 	            var FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-	            var FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+	            var FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
+	            var TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
+	            var FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
 
 	            html = html.replace(FIND_BR_RX, '<br />');
 
@@ -10679,22 +11903,11 @@
 	    return Convertor;
 	}();
 
-	/**
-	 * escape code from markdown-it
-	 * @param {string} html HTML string
-	 * @param {string} encode Boolean value of whether encode or not
-	 * @returns {string}
-	 */
-
-
-	function escape(html, encode) {
-	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-	}
 	module.exports = Convertor;
 
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -10711,6 +11924,7 @@
 	/**
 	 * Task list renderer for Markdown-it
 	 * @param {object} markdownit Markdown-it instance
+	 * @ignore
 	 */
 	var MarkdownitTaskRenderer = function MarkdownitTaskRenderer(markdownit) {
 	    markdownit.core.ruler.after('inline', 'tui-task-list', function (state) {
@@ -10741,6 +11955,7 @@
 	/**
 	 * Remove task format text for rendering
 	 * @param {object} token Token object
+	 * @ignore
 	 */
 	function removeMarkdownTaskFormatText(token) {
 	    // '[X] ' length is 4
@@ -10753,6 +11968,7 @@
 	 * Return boolean value whether task checked or not
 	 * @param {object} token Token object
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isChecked(token) {
 	    var checked = false;
@@ -10769,6 +11985,7 @@
 	 * @param {object} token Token object
 	 * @param {string} attributeName Attribute name for set
 	 * @param {string} attributeValue Attribute value for set
+	 * @ignore
 	 */
 	function setTokenAttribute(token, attributeName, attributeValue) {
 	    var index = token.attrIndex(attributeName);
@@ -10786,6 +12003,7 @@
 	 * @param {array} tokens Token object
 	 * @param {number} index Number of token index
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isTaskListItemToken(tokens, index) {
 	    return tokens[index].type === 'inline' && tokens[index - 1].type === 'paragraph_open' && tokens[index - 2].type === 'list_item_open' && (tokens[index].content.indexOf('[ ]') === 0 || tokens[index].content.indexOf('[x]') === 0 || tokens[index].content.indexOf('[X]') === 0);
@@ -10794,9 +12012,9 @@
 
 	module.exports = MarkdownitTaskRenderer;
 
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -10812,6 +12030,7 @@
 	/**
 	 * Code block renderer for Markdown-it
 	 * @param {object} markdownit Markdown-it instance
+	 * @ignore
 	 */
 	var MarkdownitCodeBlockRenderer = function MarkdownitCodeBlockRenderer(markdownit) {
 	    markdownit.core.ruler.after('block', 'tui-code-block', function (state) {
@@ -10833,6 +12052,7 @@
 	 * @param {object} token Token object
 	 * @param {string} attributeName Attribute name for set
 	 * @param {string} attributeValue Attribute value for set
+	 * @ignore
 	 */
 	function setTokenAttribute(token, attributeName, attributeValue) {
 	    var index = token.attrIndex(attributeName);
@@ -10848,6 +12068,7 @@
 	 * Return boolean value whether passed token is code fence or not
 	 * @param {object} token Token object
 	 * @returns {boolean}
+	 * @ignore
 	 */
 	function isCodeFenceToken(token) {
 	    return token.block === true && token.tag === 'code' && token.type === 'fence';
@@ -10858,6 +12079,7 @@
 	 * @param {string} html HTML string
 	 * @param {string} encode Boolean value of whether encode or not
 	 * @returns {string}
+	 * @ignore
 	 */
 	function escape(html, encode) {
 	    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -10866,9 +12088,9 @@
 
 	module.exports = MarkdownitCodeBlockRenderer;
 
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
+/***/ }),
+/* 35 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -10935,9 +12157,9 @@
 	};
 	/* eslint-enable */
 
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
+/***/ }),
+/* 36 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -10978,7 +12200,7 @@
 
 	    // check the block quote marker
 	    // Add condition by Junghwan Park
-	    if (currentLine.match(FIND_LIST_RX) /*&& !currentLine.match(/^ {0,6}>/)*/ || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
+	    if (currentLine.match(FIND_LIST_RX /*&& !currentLine.match(/^ {0,6}>/)*/) || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
 	        return false;
 	    }
 
@@ -11162,9 +12384,9 @@
 	}
 	/* eslint-enable */
 
-/***/ },
-/* 35 */
-/***/ function(module, exports) {
+/***/ }),
+/* 37 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -11228,7 +12450,7 @@
 	}
 
 	module.exports = function table(state, startLine, endLine, silent) {
-	    var ch, lineText, pos, i, nextLine, columns, columnCount, token, aligns, t, tableLines, tbodyLines;
+	    var ch, lineText, pos, i, nextLine, columns, columnCount, token, aligns, alignCount, t, tableLines, tbodyLines;
 
 	    // should have at least three lines
 	    if (startLine + 2 > endLine) {
@@ -11283,6 +12505,7 @@
 	            aligns.push('');
 	        }
 	    }
+	    alignCount = aligns.length;
 
 	    lineText = getLine(state, startLine).trim();
 	    if (lineText.indexOf('|') === -1) {
@@ -11293,8 +12516,13 @@
 	    // header row will define an amount of columns in the entire table,
 	    // and align row shouldn't be smaller than that (the rest of the rows can)
 	    columnCount = columns.length;
-	    if (columnCount > aligns.length) {
+	    if (columnCount > alignCount) {
 	        return false;
+	    } else if (columnCount < alignCount) {
+	        for (i = 0; i < alignCount - columnCount; i += 1) {
+	            columns.push('');
+	        }
+	        columnCount = columns.length;
 	    }
 
 	    if (silent) {
@@ -11310,7 +12538,7 @@
 	    token = state.push('tr_open', 'tr', 1);
 	    token.map = [startLine, startLine + 1];
 
-	    for (i = 0; i < columns.length; i += 1) {
+	    for (i = 0; i < columnCount; i += 1) {
 	        token = state.push('th_open', 'th', 1);
 	        token.map = [startLine, startLine + 1];
 	        if (aligns[i]) {
@@ -11371,9 +12599,9 @@
 	};
 	/*eslint-enable */
 
-/***/ },
-/* 36 */
-/***/ function(module, exports) {
+/***/ }),
+/* 38 */
+/***/ (function(module, exports) {
 
 	// Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
 	// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
@@ -11468,9 +12696,9 @@
 	};
 	/* eslint-enable */
 
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -11479,25 +12707,29 @@
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var _preview = __webpack_require__(5);
+	var _preview = __webpack_require__(7);
 
 	var _preview2 = _interopRequireDefault(_preview);
 
-	var _eventManager = __webpack_require__(23);
+	var _eventManager = __webpack_require__(27);
 
 	var _eventManager2 = _interopRequireDefault(_eventManager);
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(30);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _convertor = __webpack_require__(30);
+	var _convertor = __webpack_require__(32);
 
 	var _convertor2 = _interopRequireDefault(_convertor);
+
+	var _codeBlockManager = __webpack_require__(9);
+
+	var _codeBlockManager2 = _interopRequireDefault(_codeBlockManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11534,9 +12766,10 @@
 	        this.options = options;
 
 	        this.eventManager = new _eventManager2.default();
-
 	        this.commandManager = new _commandManager2.default(this);
 	        this.convertor = new _convertor2.default(this.eventManager);
+	        this.codeBlockManager = _codeBlockManager2.default;
+	        this.toMarkOptions = null;
 
 	        if (this.options.hooks) {
 	            util.forEach(this.options.hooks, function (fn, key) {
@@ -11550,18 +12783,9 @@
 	            });
 	        }
 
-	        this.preview = new _preview2.default($(this.options.el), this.eventManager, this.convertor);
+	        this.preview = new _preview2.default($(this.options.el), this.eventManager, this.convertor, true);
 
-	        this.preview.$el.on('mousedown', function (ev) {
-	            var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-	                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-	                _this.eventManager.emit('change', {
-	                    source: 'viewOnly',
-	                    data: ev
-	                });
-	            }
-	        });
+	        this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
 	        _extManager2.default.applyExtension(this, this.options.exts);
 
@@ -11571,20 +12795,54 @@
 	    }
 
 	    /**
-	     * Set content for preview
-	     * @api
-	     * @memberOf ToastUIEditorViewOnly
-	     * @param {string} markdown Markdown text
+	     * Toggle task by detecting mousedown event.
+	     * @param {MouseEvent} ev - event
+	     * @private
 	     */
 
 
 	    _createClass(ToastUIEditorViewOnly, [{
-	        key: 'setValue',
-	        value: function setValue(markdown) {
+	        key: '_toggleTask',
+	        value: function _toggleTask(ev) {
+	            var isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+
+	            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+	                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+	                this.eventManager.emit('change', {
+	                    source: 'viewOnly',
+	                    data: ev
+	                });
+	            }
+	        }
+
+	        /**
+	         * Set content for preview
+	         * @api
+	         * @memberOf ToastUIEditorViewOnly
+	         * @param {string} markdown Markdown text
+	         */
+
+	    }, {
+	        key: 'setMarkdown',
+	        value: function setMarkdown(markdown) {
 	            this.markdownValue = markdown = markdown || '';
 
 	            this.preview.refresh(this.markdownValue);
-	            this.eventManager.emit('setValueAfter', this.markdownValue);
+	            this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+	        }
+
+	        /**
+	         * Set content for preview
+	         * @api
+	         * @memberOf ToastUIEditorViewOnly
+	         * @param {string} markdown Markdown text
+	         * @deprecated
+	         */
+
+	    }, {
+	        key: 'setValue',
+	        value: function setValue(markdown) {
+	            this.setMarkdown(markdown);
 	        }
 
 	        /**
@@ -11624,6 +12882,7 @@
 	        key: 'remove',
 	        value: function remove() {
 	            this.eventManager.emit('removeEditor');
+	            this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
 	            this.options = null;
 	            this.eventManager = null;
 	            this.commandManager = null;
@@ -11691,45 +12950,45 @@
 
 	module.exports = ToastUIEditorViewOnly;
 
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _toolbar = __webpack_require__(39);
+	var _toolbar = __webpack_require__(41);
 
 	var _toolbar2 = _interopRequireDefault(_toolbar);
 
-	var _tab = __webpack_require__(43);
+	var _tab = __webpack_require__(45);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _modeSwitch = __webpack_require__(46);
+	var _modeSwitch = __webpack_require__(48);
 
 	var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-	var _popupAddLink = __webpack_require__(47);
+	var _popupAddLink = __webpack_require__(49);
 
 	var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-	var _popupAddImage = __webpack_require__(48);
+	var _popupAddImage = __webpack_require__(50);
 
 	var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-	var _popupTableUtils = __webpack_require__(49);
+	var _popupTableUtils = __webpack_require__(51);
 
 	var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-	var _popupAddTable = __webpack_require__(50);
+	var _popupAddTable = __webpack_require__(52);
 
 	var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-	var _popupAddHeading = __webpack_require__(51);
+	var _popupAddHeading = __webpack_require__(53);
 
 	var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
@@ -11746,6 +13005,7 @@
 	 * @constructor
 	 * @class
 	 * @param {ToastUIEditor} editor editor
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -11848,7 +13108,7 @@
 	DefaultUI.prototype._initPopupAddLink = function () {
 	    this.popupAddLink = new _popupAddLink2.default({
 	        $target: this.$el,
-	        eventManager: this.editor.eventManager
+	        editor: this.editor
 	    });
 	};
 
@@ -11885,7 +13145,7 @@
 	    var self = this;
 
 	    this.editor.eventManager.listen('contextmenu', function (ev) {
-	        if ($(ev.data.target).parents('table').length > 0) {
+	        if ($(ev.data.target).parents('[contenteditable=true] table').length > 0) {
 	            ev.data.preventDefault();
 	            self.editor.eventManager.emit('openPopupTableUtils', ev.data);
 	        }
@@ -11915,21 +13175,21 @@
 
 	module.exports = DefaultUI;
 
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(42);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _button = __webpack_require__(41);
+	var _button = __webpack_require__(43);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -11944,6 +13204,7 @@
 	 * @constructor
 	 * @class
 	 * @param {EventManager} eventManager 이벤트 매니저
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -12050,7 +13311,8 @@
 	        className: 'tui-strike',
 	        command: 'Strike',
 	        text: '~',
-	        tooltip: _i18n2.default.get('Strike')
+	        tooltip: _i18n2.default.get('Strike'),
+	        state: 'strike'
 	    })]);
 
 	    this.addButton([new _button2.default({
@@ -12122,9 +13384,9 @@
 
 	module.exports = Toolbar;
 
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -12142,6 +13404,7 @@
 	 * @class
 	 * @param {Object} options 옵션
 	 * @param {jQuery} options.rootElement 이니셜라이즈할때 el에 들어갈 루트 엘리먼트를 셋팅할수있다.
+	 * @ignore
 	 */
 	function UIController(options) {
 	    options = util.extend({
@@ -12366,9 +13629,9 @@
 
 	module.exports = UIController;
 
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 43 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -12377,8 +13640,8 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var UIController = __webpack_require__(40);
-	var Tooltip = __webpack_require__(42);
+	var UIController = __webpack_require__(42);
+	var Tooltip = __webpack_require__(44);
 
 	var util = tui.util;
 	var tooltip = new Tooltip();
@@ -12395,6 +13658,7 @@
 	 * @param {string} options.command 클릭되면 실행될 커맨드명
 	 * @param {string} options.text 버튼안에 들어갈 텍스트
 	 * @param {string} options.style 추가적으로 적용될 CSS스타일
+	 * @ignore
 	 */
 	function Button(options) {
 	    UIController.call(this, {
@@ -12466,9 +13730,9 @@
 
 	module.exports = Button;
 
-/***/ },
-/* 42 */
-/***/ function(module, exports) {
+/***/ }),
+/* 44 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -12483,6 +13747,7 @@
 	 * Tooltip
 	 * @exports Tooltip
 	 * @constructor
+	 * @ignore
 	 */
 	function Tooltip() {
 	    this.$el = $(TOOLTIP_CONTENT);
@@ -12508,17 +13773,17 @@
 
 	module.exports = Tooltip;
 
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 45 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(42);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _templater = __webpack_require__(44);
+	var _templater = __webpack_require__(46);
 
 	var _templater2 = _interopRequireDefault(_templater);
 
@@ -12549,6 +13814,7 @@
 	 *     items: ['Editor', 'Preview'],
 	 *     sections: [this.$mdEditorContainerEl, this.$previewEl]
 	 * });
+	 * @ignore
 	 */
 	function Tab(options) {
 	    _uicontroller2.default.call(this, {
@@ -12709,9 +13975,9 @@
 
 	module.exports = Tab;
 
-/***/ },
-/* 44 */
-/***/ function(module, exports) {
+/***/ }),
+/* 46 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -12728,6 +13994,7 @@
 	 * @param {string} template 템플릿 텍스트
 	 * @param {object|object[]} mapper 템플릿과 합성될 데이터
 	 * @returns {array} rendered text
+	 * @ignore
 	 */
 	function templater(template, mapper) {
 	    var totalReplaced = [];
@@ -12750,13 +14017,13 @@
 
 	module.exports = templater;
 
-/***/ },
-/* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(42);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
@@ -12771,7 +14038,7 @@
 	var _id = 0;
 
 	/* eslint-disable indent */
-	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
+	var LAYOUT_TEMPLATE = ['<div class="' + CLASS_PREFIX + 'header">', '<span class="' + CLASS_PREFIX + 'title"></span>', '<button type="button" class="' + CLASS_PREFIX + 'close-button">x</button>', '</div>', '<div class="' + CLASS_PREFIX + 'body"></div>'].join('');
 	/* eslint-enable indent */
 
 	/**
@@ -12788,6 +14055,7 @@
 	 * @param {string} options.textContent popup text content
 	 * @param {string} options.title popup title
 	 * @param {jQuery} options.$target element to append popup
+	 * @ignore
 	 */
 	function LayerPopup(options) {
 	    options = util.extend({}, options);
@@ -13002,17 +14270,17 @@
 
 	module.exports = LayerPopup;
 
-/***/ },
-/* 46 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 48 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _uicontroller = __webpack_require__(40);
+	var _uicontroller = __webpack_require__(42);
 
 	var _uicontroller2 = _interopRequireDefault(_uicontroller);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13038,6 +14306,7 @@
 	 * @constructor
 	 * @class
 	 * @param {number} initialType initial type of editor
+	 * @ignore
 	 */
 	function ModeSwitch(initialType) {
 	    _uicontroller2.default.call(this, {
@@ -13093,28 +14362,32 @@
 
 	module.exports = ModeSwitch;
 
-/***/ },
-/* 47 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 49 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
+	var _importManager = __webpack_require__(31);
+
+	var _importManager2 = _interopRequireDefault(_importManager);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	/**
-	 * @fileoverview Implements PopupAddLink
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 */
+	var util = tui.util; /**
+	                      * @fileoverview Implements PopupAddLink
+	                      * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                      */
 
-	var util = tui.util;
+	var URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 
 	/**
 	 * PopupAddLink
@@ -13124,10 +14397,11 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddLink(options) {
 	    /* eslint-disable indent */
-	    var POPUP_CONTENT = ['<label for="linkText">' + _i18n2.default.get('Link text') + '</label>', '<input type="text" class="te-link-text-input" />', '<label for="url">' + _i18n2.default.get('URL') + '</label>', '<input type="text" class="te-url-input" />', '<div class="te-button-section">', '<button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>', '<button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>', '</div>'].join('');
+	    var POPUP_CONTENT = '<label for="linkText">' + _i18n2.default.get('Link text') + '</label>\n        <input type="text" class="te-link-text-input" />\n        <label for="url">' + _i18n2.default.get('URL') + '</label>\n        <input type="text" class="te-url-input" />\n        <div class="te-button-section">\n            <button type="button" class="te-ok-button">' + _i18n2.default.get('OK') + '</button>\n            <button type="button" class="te-close-button">' + _i18n2.default.get('Cancel') + '</button>\n        </div>';
 	    /* eslint-enable indent */
 
 	    options = util.extend({
@@ -13138,84 +14412,112 @@
 
 	    _layerpopup2.default.call(this, options);
 
+	    this._editor = options.editor;
+
 	    this.render();
+	    this._initDOM();
 	    this._bindContentEvent();
-	    this._linkWithEventManager(options.eventManager);
+	    this._linkWithEventManager(options.editor.eventManager);
 	}
 
 	PopupAddLink.prototype = util.extend({}, _layerpopup2.default.prototype);
 
+	PopupAddLink.prototype._initDOM = function () {
+	    var el = this.$el.get(0);
+	    this._inputText = el.querySelector('.te-link-text-input');
+	    this._inputURL = el.querySelector('.te-url-input');
+	};
+
 	PopupAddLink.prototype._bindContentEvent = function () {
-	    var self = this;
+	    var _this = this;
 
 	    this.on('click .te-ok-button', function () {
-	        self.trigger('okButtonClicked', self);
-	        self.hide();
+	        _this.trigger('okButtonClicked', _this);
+	        _this.hide();
 	    });
 
 	    this.on('click .te-close-button', function () {
-	        self.trigger('closeButtonClicked', self);
-	        self.hide();
+	        _this.trigger('closeButtonClicked', _this);
+	        _this.hide();
 	    });
 
 	    this.on('shown', function () {
-	        self.$el.find('.te-link-text-input').focus();
+	        var inputText = _this._inputText;
+	        var inputURL = _this._inputURL;
+
+	        var selectedText = _this._editor.getSelectedText().trim();
+
+	        inputText.value = selectedText;
+	        if (URL_REGEX.exec(selectedText)) {
+	            inputURL.value = selectedText;
+	        }
+
+	        if (selectedText.length > 0 && inputURL.value.length < 1) {
+	            inputURL.focus();
+	        } else {
+	            inputText.focus();
+	            inputText.setSelectionRange(0, selectedText.length);
+	        }
 	    });
 
 	    this.on('hidden', function () {
-	        self.resetInputs();
+	        _this.resetInputs();
 	    });
 	};
 
 	PopupAddLink.prototype._linkWithEventManager = function (eventManager) {
-	    var self = this;
+	    var _this2 = this;
 
 	    eventManager.listen('focus', function () {
-	        self.hide();
+	        _this2.hide();
 	    });
 
 	    eventManager.listen('openPopupAddLink', function () {
 	        eventManager.emit('closeAllPopup');
-	        self.show();
+	        _this2.show();
 	    });
 
 	    eventManager.listen('closeAllPopup', function () {
-	        self.hide();
+	        _this2.hide();
 	    });
 
 	    this.on('okButtonClicked', function () {
-	        eventManager.emit('command', 'AddLink', self.getValue());
+	        eventManager.emit('command', 'AddLink', _this2.getValue());
 	    });
 	};
 
 	PopupAddLink.prototype.getValue = function () {
+	    var linkText = _importManager2.default.decodeURIGraceful(this._inputText.value, decodeURIComponent);
+	    var url = _importManager2.default.decodeURIGraceful(this._inputURL.value, decodeURI);
+
 	    return {
-	        linkText: this.$el.find('.te-link-text-input').val(),
-	        url: this.$el.find('.te-url-input').val().replace(/\(/g, '%28').replace(/\)/g, '%29')
+	        linkText: linkText,
+	        url: url
 	    };
 	};
 
 	PopupAddLink.prototype.resetInputs = function () {
-	    this.$el.find('input').val('');
+	    this._inputText.value = '';
+	    this._inputURL.value = '';
 	};
 
 	module.exports = PopupAddLink;
 
-/***/ },
-/* 48 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _tab = __webpack_require__(43);
+	var _tab = __webpack_require__(45);
 
 	var _tab2 = _interopRequireDefault(_tab);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13231,6 +14533,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements PopupAddImage
@@ -13256,7 +14559,7 @@
 
 	    this._bindContentEvent();
 	    this._linkWithEventManager();
-	    this._initApplyImageBindContext();
+	    // this._initApplyImageBindContext();
 	}
 
 	PopupAddImage.prototype = util.extend({}, _layerpopup2.default.prototype);
@@ -13293,50 +14596,41 @@
 	};
 
 	PopupAddImage.prototype._linkWithEventManager = function () {
-	    var self = this;
+	    var _this = this;
 
 	    this.eventManager.listen('focus', function () {
-	        self.hide();
+	        _this.hide();
 	    });
 
 	    this.eventManager.listen('openPopupAddImage', function () {
-	        self.eventManager.emit('closeAllPopup');
-	        self.show();
+	        _this.eventManager.emit('closeAllPopup');
+	        _this.show();
 	    });
 
 	    this.eventManager.listen('closeAllPopup', function () {
-	        self.hide();
+	        _this.hide();
 	    });
 
 	    this.on('okButtonClicked', function () {
-	        if (self._isUrlType()) {
-	            self.applyImage();
+	        var imageUrl = _this.$el.find('.te-image-url-input').val();
+	        var altText = _this.$el.find('.te-alt-text-input').val();
+
+	        if (imageUrl) {
+	            _this.applyImage(imageUrl, altText);
 	        } else {
-	            self._preAltValue = self.$el.find('.te-alt-text-input').val();
-	            self.eventManager.emit('addImageBlobHook', self.$el.find('.te-image-file-input')[0].files[0], self.applyImage);
+	            _this.eventManager.emit('addImageBlobHook', _this.$el.find('.te-image-file-input')[0].files[0], function (url, text) {
+	                return _this.applyImage(url, altText || text);
+	            }, 'ui');
 	        }
 	    });
 	};
 
-	PopupAddImage.prototype._initApplyImageBindContext = function () {
-	    var self = this;
-
-	    this.applyImage = function (url) {
-	        var info = void 0;
-
-	        if (url) {
-	            info = self._getImageInfoWithGivenUrl(url);
-	        } else {
-	            info = self._getImageInfo();
-	        }
-
-	        self.eventManager.emit('command', 'AddImage', info);
-	        self.hide();
-	    };
-	};
-
-	PopupAddImage.prototype._isUrlType = function () {
-	    return !!this.$el.find('.te-image-url-input').val();
+	PopupAddImage.prototype.applyImage = function (imageUrl, altText) {
+	    this.eventManager.emit('command', 'AddImage', {
+	        imageUrl: imageUrl,
+	        altText: altText || 'image'
+	    });
+	    this.hide();
 	};
 
 	/**
@@ -13357,27 +14651,6 @@
 	    this.$body.find('.te-tab-section').append(this.tab.$el);
 	};
 
-	PopupAddImage.prototype._getImageInfoWithGivenUrl = function (imageUrl) {
-	    var altText = this._preAltValue;
-	    this._preAltValue = '';
-
-	    return this._makeImageInfo(imageUrl, altText);
-	};
-
-	PopupAddImage.prototype._getImageInfo = function () {
-	    var imageUrl = this.$el.find('.te-image-url-input').val(),
-	        altText = this.$el.find('.te-alt-text-input').val();
-
-	    return this._makeImageInfo(imageUrl, altText);
-	};
-
-	PopupAddImage.prototype._makeImageInfo = function (url, alt) {
-	    return {
-	        imageUrl: url,
-	        altText: alt
-	    };
-	};
-
 	PopupAddImage.prototype._getImageFileForm = function () {
 	    return this.$el.find('form');
 	};
@@ -13388,17 +14661,17 @@
 
 	module.exports = PopupAddImage;
 
-/***/ },
-/* 49 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 51 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13419,6 +14692,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupTableUtils(options) {
 	    var POPUP_CONTENT = ['<button type="button" class="te-table-add-row">' + _i18n2.default.get('Add row') + '</button>', '<button type="button" class="te-table-add-col">' + _i18n2.default.get('Add col') + '</button>', '<button type="button" class="te-table-remove-row">' + _i18n2.default.get('Remove row') + '</button>', '<button type="button" class="te-table-remove-col">' + _i18n2.default.get('Remove col') + '</button>', '<button type="button" class="te-table-col-align-left">' + _i18n2.default.get('Align left') + '</button>', '<button type="button" class="te-table-col-align-center">' + _i18n2.default.get('Align center') + '</button>', '<button type="button" class="te-table-col-align-right">' + _i18n2.default.get('Align right') + '</button>', '<button type="button" class="te-table-remove">' + _i18n2.default.get('Remove table') + '</button>'].join('');
@@ -13518,13 +14792,13 @@
 
 	module.exports = PopupTableUtils;
 
-/***/ },
-/* 50 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 52 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
@@ -13560,6 +14834,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddTable(options) {
 	    options = util.extend({
@@ -13870,17 +15145,17 @@
 
 	module.exports = PopupAddTable;
 
-/***/ },
-/* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 53 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _layerpopup = __webpack_require__(45);
+	var _layerpopup = __webpack_require__(47);
 
 	var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -13901,6 +15176,7 @@
 	 * @constructor
 	 * @class
 	 * @param {object} options options
+	 * @ignore
 	 */
 	function PopupAddHeading(options) {
 	    /* eslint-disable indent */
@@ -13955,13 +15231,13 @@
 
 	module.exports = PopupAddHeading;
 
-/***/ },
-/* 52 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -13974,6 +15250,7 @@
 	 * Add bold markdown syntax to markdown editor
 	 * @exports Bold
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview
@@ -14081,13 +15358,13 @@
 
 	module.exports = Bold;
 
-/***/ },
-/* 53 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 55 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14105,6 +15382,7 @@
 	 * Add italic markdown syntax to markdown editor
 	 * @exports Italic
 	 * @augments Command
+	 * @ignore
 	 */
 	var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 	    name: 'Italic',
@@ -14289,13 +15567,13 @@
 
 	module.exports = Italic;
 
-/***/ },
-/* 54 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 56 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14308,6 +15586,7 @@
 	 * Add strike markdown syntax to markdown editor
 	 * @exports Strike
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements StrikeThrough markdown command
@@ -14389,13 +15668,13 @@
 
 	module.exports = Strike;
 
-/***/ },
-/* 55 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14406,6 +15685,7 @@
 	 * Add blockquote markdown syntax to markdown editor
 	 * @exports Blockquote
 	 * @augments Command
+	 * @ignore
 	 */
 	var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockquote */{
 	    name: 'Blockquote',
@@ -14458,13 +15738,13 @@
 
 	module.exports = Blockquote;
 
-/***/ },
-/* 56 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14484,6 +15764,7 @@
 	 * Add heading markdown syntax to markdown editor
 	 * @exports Heading
 	 * @augments Command
+	 * @ignore
 	 */
 	var Heading = _commandManager2.default.command('markdown', /** @lends Heading */{
 	    name: 'Heading',
@@ -14556,13 +15837,13 @@
 
 	module.exports = Heading;
 
-/***/ },
-/* 57 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14575,6 +15856,7 @@
 	 * Convert selected lines to paragraph
 	 * @exports Paragraph
 	 * @augments Command
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements Paragraph markdown command
@@ -14632,13 +15914,13 @@
 
 	module.exports = Paragraph;
 
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 60 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14649,6 +15931,7 @@
 	 * Add HR markdown syntax to markdown editor
 	 * @exports HR
 	 * @augments Command
+	 * @ignore
 	 */
 	var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 	    name: 'HR',
@@ -14697,13 +15980,13 @@
 
 	module.exports = HR;
 
-/***/ },
-/* 59 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14714,6 +15997,7 @@
 	 * Add link markdown syntax to markdown editor
 	 * @exports AddLink
 	 * @augments Command
+	 * @ignore
 	 */
 	var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */{
 	    name: 'AddLink',
@@ -14751,13 +16035,13 @@
 
 	module.exports = AddLink;
 
-/***/ },
-/* 60 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14768,6 +16052,7 @@
 	 * Add Image markdown syntax to markdown Editor
 	 * @exports AddImage
 	 * @augments Command
+	 * @ignore
 	 */
 	var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage */{
 	    name: 'AddImage',
@@ -14805,13 +16090,13 @@
 
 	module.exports = AddImage;
 
-/***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14822,13 +16107,15 @@
 	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                          */
 
-	var FIND_MD_UL_RX = /^[ \t]*\* .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 
 	/**
 	 * UL
 	 * Add unordered list markdown syntax to markdown editor
 	 * @exports UL
 	 * @augments Command
+	 * @ignore
 	 */
 	var UL = _commandManager2.default.command('markdown', /** @lends UL */{
 	    name: 'UL',
@@ -14841,42 +16128,57 @@
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: 0
-	        };
-
-	        var line = doc.getLine(from.line);
-
-	        var to = void 0;
-
-	        if (line.match(FIND_MD_OL_RX)) {
-	            line = line.replace(/[\d]+\. /, '* ');
-
-	            to = {
-	                line: from.line,
-	                ch: line.length + 1
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
 	            };
 
-	            doc.replaceRange(line, from, to);
-	        } else if (!line.match(FIND_MD_UL_RX)) {
-	            doc.replaceRange('* ', from);
-	        }
+	            line = doc.getLine(i);
 
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isOlOrTask(line)) {
+	                    listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
+	                } else if (!line.match(FIND_MD_UL_RX)) {
+	                    doc.replaceRange('* ', currentLineStart);
+	                }
+
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
 	});
 
+	/**
+	 * Return whether passed line is OL or TASK or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isOlOrTask(line) {
+	    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
+	}
+
 	module.exports = UL;
 
-/***/ },
-/* 62 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 64 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14887,13 +16189,15 @@
 	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	                                          */
 
-	var FIND_MD_UL_RX = /^[ \t]*\* .*/;
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 
 	/**
 	 * OL
 	 * Add ordered list markdown syntax to markdown editor
 	 * @exports OL
 	 * @augments Command
+	 * @ignore
 	 */
 	var OL = _commandManager2.default.command('markdown', /** @lends OL */{
 	    name: 'OL',
@@ -14905,44 +16209,61 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.expandLineRangeIfNeed(doc, range, isUlOrTask);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var ordinalNumber = 1;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: 0
-	        };
-
-	        var line = doc.getLine(from.line);
-
-	        var to = void 0;
-
-	        if (line.match(FIND_MD_UL_RX)) {
-	            line = line.replace(/\* /, '1. ');
-
-	            to = {
-	                line: from.line,
-	                ch: line.length - 1
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
 	            };
 
-	            doc.replaceRange(line, from, to);
-	        } else if (!line.match(FIND_MD_OL_RX)) {
-	            doc.replaceRange('1. ', from);
-	        }
+	            line = doc.getLine(i);
 
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isUlOrTask(line)) {
+	                    listManager.replaceLineText(doc, i, /[*-] /, ordinalNumber + '. ');
+	                } else if (!line.match(FIND_MD_OL_RX)) {
+	                    doc.replaceRange(ordinalNumber + '. ', currentLineStart);
+	                }
+
+	                ordinalNumber += 1;
+
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
 	});
 
+	/**
+	 * Return whether passed line is UL or TASK or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isUlOrTask(line) {
+	    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX)));
+	}
+
 	module.exports = OL;
 
-/***/ },
-/* 63 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -14953,6 +16274,7 @@
 	 * Add table markdown syntax to markdown editor
 	 * @exports Table
 	 * @augments Command
+	 * @ignore
 	 */
 	var Table = _commandManager2.default.command('markdown', /** @lends Table */{
 	    name: 'Table',
@@ -15051,24 +16373,33 @@
 	}
 	module.exports = Table;
 
-/***/ },
-/* 64 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/; /**
+	                                          * @fileoverview Implements Task markdown command
+	                                          * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	                                          */
+
+	var FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
+	var FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
+	var FIND_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
+
 	/**
 	 * Task
 	 * @exports Task
 	 * @augments Command
+	 * @ignore
 	 */
-
 	var Task = _commandManager2.default.command('markdown', /** @lends Task */{
 	    name: 'Task',
 	    keyMap: ['CTRL+T', 'META+T'],
@@ -15079,39 +16410,62 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-
 	        var range = mde.getCurrentRange();
+	        var listManager = mde.componentManager.getManager('list');
+	        var lineRange = listManager.createSortedLineRange(range);
+	        var startLineNumber = lineRange.start;
+	        var endLineNumber = lineRange.end;
+	        var line = void 0,
+	            currentLineStart = void 0;
 
-	        var from = {
-	            line: range.from.line,
-	            ch: range.from.ch
-	        };
+	        for (var i = startLineNumber; i <= endLineNumber; i += 1) {
+	            currentLineStart = {
+	                line: i,
+	                ch: 0
+	            };
 
-	        var to = {
-	            line: range.to.line,
-	            ch: range.to.ch
-	        };
+	            line = doc.getLine(i);
 
-	        var replaceText = '* [ ] ';
+	            var hasTaskSyntax = !!line.match(FIND_TASK_SYNTAX_RX);
 
-	        doc.replaceRange(replaceText, from, to);
+	            if (listManager.isListOrParagraph(line)) {
+	                if (isOlOrUl(line) && hasTaskSyntax) {
+	                    listManager.replaceLineText(doc, i, FIND_TASK_SYNTAX_RX, '$1');
+	                } else if (isOlOrUl(line) && !hasTaskSyntax) {
+	                    listManager.replaceLineText(doc, i, /([*-] |[\d]+\. )/, '$1[ ] ');
+	                } else if (!line.match(FIND_MD_TASK_RX)) {
+	                    doc.replaceRange('* [ ] ', currentLineStart);
+	                }
 
+	                if (i === endLineNumber) {
+	                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+	                }
+	            } else {
+	                break;
+	            }
+	        }
 	        cm.focus();
 	    }
-	}); /**
-	     * @fileoverview Implements Task markdown command
-	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	     */
+	});
+
+	/**
+	 * Return whether passed line is OL or UL or neither
+	 * @param {string} line Line text
+	 * @returns {boolean}
+	 */
+	function isOlOrUl(line) {
+	    return !!(line && (line.match(FIND_MD_UL_RX) || line.match(FIND_MD_OL_RX)));
+	}
 
 	module.exports = Task;
 
-/***/ },
-/* 65 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 67 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15122,6 +16476,7 @@
 	 * Add code markdown syntax to markdown editor
 	 * @exports Code
 	 * @augments Command
+	 * @ignore
 	 */
 	var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 	  name: 'Code',
@@ -15161,13 +16516,13 @@
 
 	module.exports = Code;
 
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15178,6 +16533,7 @@
 	 * Add CodeBlock markdown syntax to markdown editor
 	 * @exports CodeBlock
 	 * @augments Command
+	 * @ignore
 	 */
 	var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBlock */{
 	    name: 'CodeBlock',
@@ -15189,22 +16545,21 @@
 	    exec: function exec(mde) {
 	        var cm = mde.getEditor();
 	        var doc = cm.getDoc();
-	        var replaceText = '';
-	        var rowFix = void 0;
-
-	        var range = cm.getCursor();
-
-	        if (doc.getLine(range.line).length) {
-	            replaceText += '\n``` \n\n```\n\n';
-	            doc.setCursor(range.line + 1, 0);
-	            rowFix = 3;
-	        } else {
-	            replaceText += '\n``` \n\n```\n';
-	            rowFix = 2;
+	        var range = mde.getCurrentRange();
+	        var replaceText = ['```', doc.getSelection(), '```'];
+	        var cursorOffset = 1;
+	        // insert a line break to the front if the selection starts in the middle of a text
+	        if (range.from.ch !== 0) {
+	            replaceText.unshift('');
+	            cursorOffset += 1;
 	        }
+	        // insert a line break to the end if the selection has trailing text
+	        if (range.to.ch !== doc.getLine(range.to.line).length) {
+	            replaceText.push('');
+	        }
+	        doc.replaceSelection(replaceText.join('\n'));
 
-	        doc.replaceSelection(replaceText);
-	        cm.setCursor(doc.getCursor().line - rowFix, 0);
+	        cm.setCursor(range.from.line + cursorOffset, 0);
 
 	        cm.focus();
 	    }
@@ -15215,17 +16570,17 @@
 
 	module.exports = CodeBlock;
 
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15237,6 +16592,7 @@
 	 * @exports Bold
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -15253,21 +16609,14 @@
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('b') || sq.hasFormat('strong')) {
-	            sq.changeFormat(null, { tag: 'b' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.bold();
+	            tableSelectionManager.styleToSelectedCells(styleBold);
+	        } else {
+	            styleBold(sq);
 	        }
 
 	        var range = sq.getSelection();
@@ -15278,19 +16627,34 @@
 	    }
 	});
 
+	/**
+	 * Style bold.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleBold(sq) {
+	    if (sq.hasFormat('b') || sq.hasFormat('strong')) {
+	        sq.changeFormat(null, { tag: 'b' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.bold();
+	    }
+	}
+
 	module.exports = Bold;
 
-/***/ },
-/* 68 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15302,6 +16666,7 @@
 	 * @exports Italic
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -15319,21 +16684,14 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('i') || sq.hasFormat('em')) {
-	            sq.changeFormat(null, { tag: 'i' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.italic();
+	            tableSelectionManager.styleToSelectedCells(styleItalic);
+	        } else {
+	            styleItalic(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -15343,19 +16701,34 @@
 	    }
 	});
 
+	/**
+	 * Style italic.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleItalic(sq) {
+	    if (sq.hasFormat('i') || sq.hasFormat('em')) {
+	        sq.changeFormat(null, { tag: 'i' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.italic();
+	    }
+	}
+
 	module.exports = Italic;
 
-/***/ },
-/* 69 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15367,6 +16740,7 @@
 	 * @exports Strike
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -15383,21 +16757,14 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (sq.hasFormat('S')) {
-	            sq.changeFormat(null, { tag: 'S' });
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('code')) {
-	                sq.changeFormat(null, { tag: 'code' });
-	            }
-	            sq.strikethrough();
+	            tableSelectionManager.styleToSelectedCells(styleStrike);
+	        } else {
+	            styleStrike(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -15407,11 +16774,26 @@
 	    }
 	});
 
+	/**
+	 * Style strike.
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleStrike(sq) {
+	    if (sq.hasFormat('S')) {
+	        sq.changeFormat(null, { tag: 'S' });
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('code')) {
+	            sq.changeFormat(null, { tag: 'code' });
+	        }
+	        sq.strikethrough();
+	    }
+	}
+
 	module.exports = Strike;
 
-/***/ },
-/* 70 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -15421,7 +16803,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(28);
 
 	/**
 	 * Blockquote
@@ -15429,6 +16811,7 @@
 	 * @exports Blockquote
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
 	  name: 'Blockquote',
@@ -15451,9 +16834,9 @@
 
 	module.exports = Blockquote;
 
-/***/ },
-/* 71 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -15463,7 +16846,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(28);
 
 	/**
 	 * AddImage
@@ -15471,6 +16854,7 @@
 	 * @exports AddImage
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
 	  name: 'AddImage',
@@ -15492,9 +16876,9 @@
 
 	module.exports = AddImage;
 
-/***/ },
-/* 72 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -15504,7 +16888,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(28);
 
 	/**
 	 * AddLink
@@ -15512,6 +16896,7 @@
 	 * @exports AddLink
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
 	    name: 'AddLink',
@@ -15541,17 +16926,17 @@
 
 	module.exports = AddLink;
 
-/***/ },
-/* 73 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -15563,6 +16948,7 @@
 	 * @exports HR
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements HR wysiwyg command
@@ -15585,33 +16971,31 @@
 	            previousSibling = void 0;
 
 	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            (function () {
-	                currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
-	                nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+	            currentNode = _domUtils2.default.getChildNodeByOffset(range.startContainer, range.startOffset);
+	            nextBlockNode = _domUtils2.default.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
-	                if (!nextBlockNode) {
-	                    nextBlockNode = sq.createDefaultBlock();
-	                    wwe.get$Body().append(nextBlockNode);
-	                }
+	            if (!nextBlockNode) {
+	                nextBlockNode = sq.createDefaultBlock();
+	                wwe.get$Body().append(nextBlockNode);
+	            }
 
-	                var hr = sq.createElement('HR');
+	            var hr = sq.createElement('HR');
 
-	                sq.modifyBlocks(function (frag) {
-	                    frag.appendChild(hr);
+	            sq.modifyBlocks(function (frag) {
+	                frag.appendChild(hr);
 
-	                    return frag;
-	                });
+	                return frag;
+	            });
 
-	                previousSibling = hr.previousSibling;
-	                if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
-	                    hr.parentNode.removeChild(previousSibling);
-	                }
+	            previousSibling = hr.previousSibling;
+	            if (previousSibling && _domUtils2.default.isTextNode(previousSibling) && _domUtils2.default.getTextLength(previousSibling) === 0) {
+	                hr.parentNode.removeChild(previousSibling);
+	            }
 
-	                range.selectNodeContents(nextBlockNode);
-	                range.collapse(true);
+	            range.selectNodeContents(nextBlockNode);
+	            range.collapse(true);
 
-	                sq.setSelection(range);
-	            })();
+	            sq.setSelection(range);
 	        }
 
 	        sq.focus();
@@ -15620,13 +17004,13 @@
 
 	module.exports = HR;
 
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15638,6 +17022,7 @@
 	 * @exports Heading
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 	    name: 'Heading',
@@ -15682,13 +17067,13 @@
 
 	module.exports = Heading;
 
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15700,6 +17085,7 @@
 	 * @exports Heading
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph */{
 	    name: 'Paragraph',
@@ -15741,13 +17127,13 @@
 
 	module.exports = Paragraph;
 
-/***/ },
-/* 76 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 78 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15759,33 +17145,63 @@
 	 * @exports UL
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 	    name: 'UL',
 	    keyMap: ['CTRL+U', 'META+U'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
+	        var listManager = wwe.componentManager.getManager('list');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
+	        sq.saveUndoState(range);
 
-	        if (!range.collapsed) {
-	            return;
+	        var lines = listManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
 	        }
 
-	        if (sq.hasFormat('LI')) {
-	            wwe.saveSelection(range);
-	            sq.saveUndoState(range);
-	            wwe.getManager('task').unformatTask(range.startContainer);
-	            sq.replaceParent(range.startContainer, 'ol', 'ul');
-	            wwe.restoreSavedSelection();
-	        } else if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            wwe.unwrapBlockTag();
-	            sq.makeUnorderedList();
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
+
+	    /**
+	     * Change format to unordered list if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToUnorderedListIfNeed: function _changeFormatToUnorderedListIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
+	            if (sq.hasFormat('LI')) {
+	                wwe.saveSelection(range);
+	                sq.replaceParent(range.startContainer, 'ol', 'ul');
+	                wwe.restoreSavedSelection();
+	            } else {
+	                wwe.unwrapBlockTag();
+	                sq.makeUnorderedList();
+	            }
 	        }
 	    }
 	}); /**
@@ -15796,13 +17212,13 @@
 
 	module.exports = UL;
 
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15814,34 +17230,63 @@
 	 * @exports OL
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 	    name: 'OL',
 	    keyMap: ['CTRL+O', 'META+O'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
+	        var listManager = wwe.componentManager.getManager('list');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
+	        sq.saveUndoState(range);
 
-	        if (!range.collapsed) {
-	            return;
+	        var lines = listManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToOrderedListIfNeed(wwe, lines[i]);
 	        }
 
-	        if (sq.hasFormat('LI')) {
-	            sq.saveUndoState(range);
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
 
-	            wwe.saveSelection(range);
-	            wwe.getManager('task').unformatTask(range.startContainer);
-	            sq.replaceParent(range.startContainer, 'ul', 'ol');
-	            wwe.restoreSavedSelection();
-	        } else if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-	            wwe.unwrapBlockTag();
-	            sq.makeOrderedList();
+	    /**
+	     * Change format to unordered list if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToOrderedListIfNeed: function _changeFormatToOrderedListIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
+	            if (sq.hasFormat('LI')) {
+	                wwe.saveSelection(range);
+	                sq.replaceParent(range.startContainer, 'ul', 'ol');
+	                wwe.restoreSavedSelection();
+	            } else {
+	                wwe.unwrapBlockTag();
+	                sq.makeOrderedList();
+	            }
 	        }
 	    }
 	}); /**
@@ -15852,13 +17297,13 @@
 
 	module.exports = OL;
 
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -15870,6 +17315,7 @@
 	 * @exports Table
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Table = _commandManager2.default.command('wysiwyg', /** @lends Table */{
 	    name: 'Table',
@@ -15882,7 +17328,7 @@
 	     */
 	    exec: function exec(wwe, col, row, data) {
 	        var sq = wwe.getEditor();
-	        var tableIDClassName = wwe.getManager('table').getTableIDClassName();
+	        var tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
 	        var tableHTMLString = void 0;
 
 	        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
@@ -15989,13 +17435,13 @@
 
 	module.exports = Table;
 
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16007,6 +17453,7 @@
 	 * @exports AddRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var AddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow */{
 	    name: 'AddRow',
@@ -16074,17 +17521,17 @@
 
 	module.exports = AddRow;
 
-/***/ },
-/* 80 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16096,6 +17543,7 @@
 	 * @exports AddCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16182,19 +17630,15 @@
 
 	module.exports = AddCol;
 
-/***/ },
-/* 81 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
-
-	var _domUtils = __webpack_require__(8);
-
-	var _domUtils2 = _interopRequireDefault(_domUtils);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16204,13 +17648,8 @@
 	 * @exports RemoveRow
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
-	/**
-	 * @fileoverview Implements WysiwygCommand
-	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
-	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
-	 */
-
 	var RemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
 	    name: 'RemoveRow',
 	    /**
@@ -16221,8 +17660,8 @@
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
 	        var $table = $(range.startContainer).parents('table');
-	        var selectionMgr = wwe.getManager('tableSelection');
-	        var tableMgr = wwe.getManager('table');
+	        var selectionMgr = wwe.componentManager.getManager('tableSelection');
+	        var tableMgr = wwe.componentManager.getManager('table');
 	        var $tr = getTrs(range, selectionMgr, $table);
 	        var tbodyRowLength = $table.find('tbody tr').length;
 
@@ -16248,6 +17687,12 @@
 	 * @param {jQuery} $tr jQuery wrapped TR
 	 * @param {object} tableMgr Table manager
 	 */
+	/**
+	 * @fileoverview Implements WysiwygCommand
+	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+	 */
+
 	function focusToFirstTd(sq, range, $tr, tableMgr) {
 	    var nextFocusCell = $tr.find('td')[0];
 	    range.setStart(nextFocusCell, 0);
@@ -16293,38 +17738,32 @@
 	function getTrs(range, selectionMgr, $table) {
 	    var selectedCells = selectionMgr.getSelectedCells();
 	    var rangeInformation = void 0,
-	        trs = void 0,
-	        startCell = void 0,
-	        endCell = void 0;
+	        trs = void 0;
 
 	    if (selectedCells.length) {
 	        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0], selectedCells.last()[0]);
 	        trs = getSelectedRows(selectedCells.first()[0], rangeInformation, $table);
 	    } else {
-	        var startContainer = range.startContainer;
-	        var endContainer = range.endContainer;
-
-	        startCell = _domUtils2.default.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
-	        endCell = _domUtils2.default.isTextNode(endContainer) ? $(endContainer).parent('td,th')[0] : endContainer;
-	        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, endCell);
-	        trs = getSelectedRows(startCell, rangeInformation, $table);
+	        var cell = $(range.startContainer).closest('td,th')[0];
+	        rangeInformation = selectionMgr.getSelectionRangeFromTable(cell, cell);
+	        trs = getSelectedRows(cell, rangeInformation, $table);
 	    }
 
 	    return trs;
 	}
 	module.exports = RemoveRow;
 
-/***/ },
-/* 82 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 84 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16336,6 +17775,7 @@
 	 * @exports RemoveCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16352,12 +17792,15 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
-	        var tableMgr = wwe.getManager('table');
+	        var tableMgr = wwe.componentManager.getManager('table');
 	        var isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
 	        sq.focus();
+	        // IE 800a025e error on removing part of selection range. collpase
+	        range.collapse(true);
+	        sq.setSelection(range);
 
-	        if (sq.hasFormat('TR') && isAbleToRemoveColumn) {
+	        if (sq.hasFormat('TR', null, range) && isAbleToRemoveColumn) {
 	            sq.saveUndoState(range);
 	            var $cell = getCellByRange(range);
 	            var $nextFocus = $cell.next().length ? $cell.next() : $cell.prev();
@@ -16419,17 +17862,17 @@
 
 	module.exports = RemoveCol;
 
-/***/ },
-/* 83 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16441,6 +17884,7 @@
 	 * @exports AlignCol
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16458,7 +17902,7 @@
 	    exec: function exec(wwe, alignDirection) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection().cloneRange();
-	        var selectionMgr = wwe.getManager('tableSelection');
+	        var selectionMgr = wwe.componentManager.getManager('tableSelection');
 	        var rangeInformation = getRangeInformation(range, selectionMgr);
 
 	        sq.focus();
@@ -16562,13 +18006,13 @@
 
 	module.exports = AlignCol;
 
-/***/ },
-/* 84 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16580,6 +18024,7 @@
 	 * @exports RemoveTable
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var RemoveTable = _commandManager2.default.command('wysiwyg', /** @lends RemoveTable */{
 	  name: 'RemoveTable',
@@ -16608,13 +18053,13 @@
 
 	module.exports = RemoveTable;
 
-/***/ },
-/* 85 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16626,6 +18071,7 @@
 	 * @exports IncreaseDepth
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var IncreaseTask = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 	    name: 'IncreaseDepth',
@@ -16673,9 +18119,9 @@
 
 	module.exports = IncreaseTask;
 
-/***/ },
-/* 86 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -16685,14 +18131,15 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(28);
 
 	/**
 	 * DecreaseDepth
 	 * decrease depth of list or task to wysiwyg Editor
-	 * @exports IncreaseDepth
+	 * @exports DecreaseDepth
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 	  name: 'DecreaseDepth',
@@ -16728,13 +18175,13 @@
 
 	module.exports = DecreaseDepth;
 
-/***/ },
-/* 87 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
@@ -16746,30 +18193,67 @@
 	 * @exports Task
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 	    name: 'Task',
 	    keyMap: ['CTRL+T', 'META+T'],
 	    /**
 	     *  커맨드 핸들러
-	     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+	     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
 	     */
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+	        var taskManager = wwe.componentManager.getManager('task');
+	        var start = range.startContainer;
+	        var startOffset = range.startOffset;
+	        var end = range.endContainer;
+	        var endOffset = range.endOffset;
 
 	        sq.focus();
 
-	        var range = sq.getSelection().cloneRange();
+	        sq.saveUndoState(range);
 
-	        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	        var lines = taskManager.getLinesOfSelection(start, end);
+
+	        for (var i = 0; i < lines.length; i += 1) {
+	            this._changeFormatToTaskIfNeed(wwe, lines[i]);
+	        }
+
+	        range = sq.getSelection();
+	        range.setStart(start, startOffset);
+	        range.setEnd(end, endOffset);
+	        sq.setSelection(range);
+	        sq.saveUndoState(range);
+	    },
+
+	    /**
+	     * Change format to unordered list and return current li element if need
+	     * @param {WysiwygEditor} wwe Wysiwyg editor instance
+	     * @param {HTMLElement} target Element target for change
+	     * @private
+	     */
+	    _changeFormatToTaskIfNeed: function _changeFormatToTaskIfNeed(wwe, target) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection();
+	        var taskManager = wwe.componentManager.getManager('task');
+
+	        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+	            range.setStart(target, 0);
+	            range.collapse(true);
+	            sq.setSelection(range);
+
 	            if (!sq.hasFormat('li')) {
 	                wwe.unwrapBlockTag();
 	                sq.makeUnorderedList();
-	                range = sq.getSelection().cloneRange();
 	            }
 
-	            sq.saveUndoState(range);
-	            wwe.getManager('task').formatTask(range.startContainer);
+	            if ($(target).parents('li').first().hasClass('task-list-item')) {
+	                taskManager.unformatTask(target);
+	            } else {
+	                taskManager.formatTask(target);
+	            }
 	        }
 	    }
 	}); /**
@@ -16780,17 +18264,17 @@
 
 	module.exports = Task;
 
-/***/ },
-/* 88 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _commandManager = __webpack_require__(24);
+	var _commandManager = __webpack_require__(28);
 
 	var _commandManager2 = _interopRequireDefault(_commandManager);
 
-	var _domUtils = __webpack_require__(8);
+	var _domUtils = __webpack_require__(11);
 
 	var _domUtils2 = _interopRequireDefault(_domUtils);
 
@@ -16802,6 +18286,7 @@
 	 * @exports Code
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	/**
 	 * @fileoverview Implements WysiwygCommand
@@ -16819,31 +18304,15 @@
 	    exec: function exec(wwe) {
 	        var sq = wwe.getEditor();
 	        var range = sq.getSelection();
-	        var tableSelectionManager = wwe.getManager('tableSelection');
+	        var tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+	        var _styleCode = tui.util.bind(styleCode, null, wwe.getEditor());
 
 	        sq.focus();
 
 	        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-	            tableSelectionManager.createRangeBySelectedCells();
-	        }
-
-	        if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
-	            sq.changeFormat(null, { tag: 'code' });
-	            removeUnnecessaryCodeInNextToRange(wwe.getEditor().getSelection().cloneRange());
-	        } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-	            if (sq.hasFormat('b')) {
-	                sq.removeBold();
-	            } else if (sq.hasFormat('i')) {
-	                sq.removeItalic();
-	            }
-
-	            sq.changeFormat({ tag: 'code' });
-
-	            range = sq.getSelection().cloneRange();
-	            range.setStart(range.endContainer, range.endOffset);
-	            range.collapse(true);
-
-	            sq.setSelection(range);
+	            tableSelectionManager.styleToSelectedCells(_styleCode);
+	        } else {
+	            _styleCode(sq);
 	        }
 
 	        if (sq.hasFormat('table') && !_domUtils2.default.isTextNode(range.commonAncestorContainer)) {
@@ -16864,11 +18333,37 @@
 	    }
 	}
 
+	/**
+	 * Style code.
+	 * @param {object} editor - editor instance
+	 * @param {object} sq - squire editor instance
+	 */
+	function styleCode(editor, sq) {
+	    if (!sq.hasFormat('PRE') && sq.hasFormat('code')) {
+	        sq.changeFormat(null, { tag: 'code' });
+	        removeUnnecessaryCodeInNextToRange(editor.getSelection().cloneRange());
+	    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+	        if (sq.hasFormat('b')) {
+	            sq.removeBold();
+	        } else if (sq.hasFormat('i')) {
+	            sq.removeItalic();
+	        }
+
+	        sq.changeFormat({ tag: 'code' });
+
+	        var range = sq.getSelection().cloneRange();
+	        range.setStart(range.endContainer, range.endOffset);
+	        range.collapse(true);
+
+	        sq.setSelection(range);
+	    }
+	}
+
 	module.exports = Code;
 
-/***/ },
-/* 89 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -16878,7 +18373,7 @@
 	 * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var CommandManager = __webpack_require__(24);
+	var CommandManager = __webpack_require__(28);
 
 	var CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 	var CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -16890,6 +18385,7 @@
 	 * @exports CodeBlock
 	 * @augments Command
 	 * @augments WysiwygCommand
+	 * @ignore
 	 */
 	var CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
 	    name: 'CodeBlock',
@@ -16943,7 +18439,7 @@
 	 * @returns {string}
 	 */
 	function getCodeBlockBody(range, wwe) {
-	    var mgr = wwe.getManager('codeblock');
+	    var mgr = wwe.componentManager.getManager('codeblock');
 	    var contents = void 0,
 	        nodes = void 0;
 
@@ -16961,9 +18457,9 @@
 
 	module.exports = CodeBlock;
 
-/***/ },
-/* 90 */
-/***/ function(module, exports) {
+/***/ }),
+/* 92 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -17039,9 +18535,9 @@
 	};
 	/*eslint-enable */
 
-/***/ },
-/* 91 */
-/***/ function(module, exports) {
+/***/ }),
+/* 93 */
+/***/ (function(module, exports) {
 
 	// CodeMirror, copyright (c) by Marijn Haverbeke and others
 	// Distributed under an MIT license: http://codemirror.net/LICENSE
@@ -17860,9 +19356,9 @@
 	CodeMirror.defineMIME("text/x-markdown", "markdown");
 	/*eslint-enable */
 
-/***/ },
-/* 92 */
-/***/ function(module, exports) {
+/***/ }),
+/* 94 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -17991,9 +19487,9 @@
 
 	CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
-/***/ },
-/* 93 */
-/***/ function(module, exports) {
+/***/ }),
+/* 95 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -18089,9 +19585,9 @@
 	};
 	/*eslint-enable */
 
-/***/ },
-/* 94 */
-/***/ function(module, exports) {
+/***/ }),
+/* 96 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -18236,9 +19732,9 @@
 	}
 	/*eslint-enable */
 
-/***/ },
-/* 95 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -18247,7 +19743,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var extManager = __webpack_require__(26);
+	var extManager = __webpack_require__(30);
 
 	var FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 	var FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -18286,29 +19782,29 @@
 	    };
 	});
 
-/***/ },
-/* 96 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(30);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _scrollFollow = __webpack_require__(97);
+	var _scrollFollow = __webpack_require__(99);
 
 	var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-	var _scrollFollow3 = __webpack_require__(98);
+	var _scrollFollow3 = __webpack_require__(100);
 
 	var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
-	var _button = __webpack_require__(41);
+	var _button = __webpack_require__(43);
 
 	var _button2 = _interopRequireDefault(_button);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -18408,9 +19904,9 @@
 	     * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	     */
 
-/***/ },
-/* 97 */
-/***/ function(module, exports) {
+/***/ }),
+/* 99 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -18436,6 +19932,7 @@
 	 * @param {SectionManager} sectionManager sectionManager
 	 * @param {CodeMirror} cm CodeMirror
 	 * @param {jQuery} $previewContainerEl preview container
+	 * @ignore
 	 */
 
 	var ScrollSync = function () {
@@ -18824,9 +20321,9 @@
 
 	module.exports = ScrollSync;
 
-/***/ },
-/* 98 */
-/***/ function(module, exports) {
+/***/ }),
+/* 100 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -19299,6 +20796,7 @@
 	 * findElementNodeFilter
 	 * @this Node
 	 * @returns {boolean} true or not
+	 * @ignore
 	 */
 
 
@@ -19308,17 +20806,17 @@
 
 	module.exports = SectionManager;
 
-/***/ },
-/* 99 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(30);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _i18n = __webpack_require__(29);
+	var _i18n = __webpack_require__(15);
 
 	var _i18n2 = _interopRequireDefault(_i18n);
 
@@ -19431,6 +20929,7 @@
 	 * Initialize UI
 	 * @param {object} editor Editor instance
 	 * @param {Array.<string>} preset Preset for color palette
+	 * @ignore
 	 */
 	function initUI(editor, preset) {
 	    var className = 'tui-color';
@@ -19518,6 +21017,7 @@
 	 * @param {string} text Text content
 	 * @param {string} color Color value
 	 * @returns {string}
+	 * @ignore
 	 */
 	function makeCustomColorSyntax(text, color) {
 	    return '{color:' + color + '}' + text + '{color}';
@@ -19528,6 +21028,7 @@
 	 * @param {string} text Text content
 	 * @param {string} color Color value
 	 * @returns {string}
+	 * @ignore
 	 */
 	function makeHTMLColorSyntax(text, color) {
 	    return '<span style="color:' + color + '">' + text + '</span>';
@@ -19537,6 +21038,7 @@
 	 * Change decimal color value to hexadecimal color value
 	 * @param {string} color Color value string
 	 * @returns {string}
+	 * @ignore
 	 */
 	function changeDecColorToHex(color) {
 	    return color.replace(decimalColorRx, function (colorValue, r, g, b) {
@@ -19554,38 +21056,39 @@
 	 * Get binary number string
 	 * @param {string} numberStr String to convert binary number
 	 * @returns {string}
+	 * @ignore
 	 */
 	function get2DigitNumberString(numberStr) {
 	    return numberStr === '0' ? '00' : numberStr;
 	}
 
-/***/ },
-/* 100 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _extManager = __webpack_require__(26);
+	var _extManager = __webpack_require__(30);
 
 	var _extManager2 = _interopRequireDefault(_extManager);
 
-	var _markerList = __webpack_require__(101);
+	var _markerList = __webpack_require__(103);
 
 	var _markerList2 = _interopRequireDefault(_markerList);
 
-	var _markerManager = __webpack_require__(102);
+	var _markerManager = __webpack_require__(104);
 
 	var _markerManager2 = _interopRequireDefault(_markerManager);
 
-	var _wysiwygMarkerHelper = __webpack_require__(104);
+	var _wysiwygMarkerHelper = __webpack_require__(106);
 
 	var _wysiwygMarkerHelper2 = _interopRequireDefault(_wysiwygMarkerHelper);
 
-	var _viewOnlyMarkerHelper = __webpack_require__(105);
+	var _viewOnlyMarkerHelper = __webpack_require__(107);
 
 	var _viewOnlyMarkerHelper2 = _interopRequireDefault(_viewOnlyMarkerHelper);
 
-	var _markdownMarkerHelper = __webpack_require__(106);
+	var _markdownMarkerHelper = __webpack_require__(108);
 
 	var _markdownMarkerHelper2 = _interopRequireDefault(_markdownMarkerHelper);
 
@@ -19661,7 +21164,7 @@
 	    });
 
 	    // Reset marker content after set value
-	    editor.on('setValueAfter', function () {
+	    editor.on('setMarkdownAfter', function () {
 	        var helper = getHelper();
 	        mm.resetContent(helper.getTextContent());
 	    });
@@ -19839,9 +21342,9 @@
 	    }
 	});
 
-/***/ },
-/* 101 */
-/***/ function(module, exports) {
+/***/ }),
+/* 103 */
+/***/ (function(module, exports) {
 
 	"use strict";
 
@@ -19861,6 +21364,7 @@
 	 * @exports Markerlist
 	 * @constructor
 	 * @class
+	 * @ignore
 	 */
 
 	var Markerlist = function () {
@@ -20052,9 +21556,9 @@
 
 	module.exports = Markerlist;
 
-/***/ },
-/* 102 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 104 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -20067,7 +21571,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var DiffMatchPatch = __webpack_require__(103);
+	var DiffMatchPatch = __webpack_require__(105);
 
 	var util = tui.util;
 
@@ -20295,9 +21799,9 @@
 
 	module.exports = MarkerManager;
 
-/***/ },
-/* 103 */
-/***/ function(module, exports) {
+/***/ }),
+/* 105 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -20332,6 +21836,7 @@
 	/**
 	 * Class containing the diff, match and patch methods.
 	 * @constructor
+	 * @ignore
 	 */
 	function diff_match_patch() {
 
@@ -20366,6 +21871,7 @@
 	 * The data structure representing a diff is an array of tuples:
 	 * [[DIFF_DELETE, 'Hello'], [DIFF_INSERT, 'Goodbye'], [DIFF_EQUAL, ' world.']]
 	 * which means: delete 'Hello', add 'Goodbye' and keep ' world.'
+	 * @ignore
 	 */
 	var DIFF_DELETE = -1;
 	var DIFF_INSERT = 1;
@@ -22304,6 +23810,7 @@
 	/**
 	 * Class representing one patch operation.
 	 * @constructor
+	 * @ignore
 	 */
 	diff_match_patch.patch_obj = function () {
 	  /** @type {!Array.<!diff_match_patch.Diff>} */
@@ -22371,9 +23878,9 @@
 	//this['DIFF_INSERT'] = DIFF_INSERT;
 	//this['DIFF_EQUAL'] = DIFF_EQUAL;
 
-/***/ },
-/* 104 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -22386,7 +23893,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var domUtils = __webpack_require__(8);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_ZWB_RX = /\u200B/g;
 
@@ -22623,9 +24130,9 @@
 
 	module.exports = WysiwygMarkerHelper;
 
-/***/ },
-/* 105 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -22638,7 +24145,7 @@
 	 * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
 	 */
 
-	var domUtils = __webpack_require__(8);
+	var domUtils = __webpack_require__(11);
 
 	var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
@@ -22648,6 +24155,7 @@
 	 * @constructor
 	 * @class
 	 * @param {Preview} preview preview instance
+	 * @ignore
 	 */
 
 	var ViewOnlyMarkerHelper = function () {
@@ -22874,6 +24382,7 @@
 	 * getRange
 	 * get current range
 	 * @returns {Range}
+	 * @ignore
 	 */
 
 
@@ -22894,9 +24403,9 @@
 
 	module.exports = ViewOnlyMarkerHelper;
 
-/***/ },
-/* 106 */
-/***/ function(module, exports) {
+/***/ }),
+/* 108 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -22920,6 +24429,7 @@
 	 * @constructor
 	 * @class
 	 * @param {CodeMirror} cm codemirror instance
+	 * @ignore
 	 */
 
 	var MarkdownMarkerHelper = function () {
@@ -22977,6 +24487,7 @@
 	         * @param {number} endLine end line
 	         * @param {number} endCh end offset
 	         * @returns {object} information
+	         * @private
 	         */
 
 	    }, {
@@ -23057,6 +24568,7 @@
 	         * _getSelection
 	         * Get selection of CodeMirror, if selection is reversed then correct it
 	         * @returns {object} selection
+	         * @private
 	         */
 
 	    }, {
@@ -23085,6 +24597,7 @@
 	         * Find offset cursor by given offset list
 	         * @param {Array.<number>} offsetlist offset list
 	         * @returns {Array.<object>} offset cursors
+	         * @private
 	         */
 
 	    }, {
@@ -23171,9 +24684,3569 @@
 
 	module.exports = MarkdownMarkerHelper;
 
-/***/ },
-/* 107 */
-/***/ function(module, exports) {
+/***/ }),
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extManager = __webpack_require__(30);
+
+	var _extManager2 = _interopRequireDefault(_extManager);
+
+	var _mergedTableCreator = __webpack_require__(110);
+
+	var _mergedTableCreator2 = _interopRequireDefault(_mergedTableCreator);
+
+	var _tableUnmergePreparer = __webpack_require__(113);
+
+	var _tableUnmergePreparer2 = _interopRequireDefault(_tableUnmergePreparer);
+
+	var _toMarkRenderer = __webpack_require__(114);
+
+	var _toMarkRenderer2 = _interopRequireDefault(_toMarkRenderer);
+
+	var _wwMergedTableManager = __webpack_require__(115);
+
+	var _wwMergedTableManager2 = _interopRequireDefault(_wwMergedTableManager);
+
+	var _wwMergedTableSelectionManager = __webpack_require__(117);
+
+	var _wwMergedTableSelectionManager2 = _interopRequireDefault(_wwMergedTableSelectionManager);
+
+	var _mergedTableAddRow = __webpack_require__(118);
+
+	var _mergedTableAddRow2 = _interopRequireDefault(_mergedTableAddRow);
+
+	var _mergedTableAddCol = __webpack_require__(119);
+
+	var _mergedTableAddCol2 = _interopRequireDefault(_mergedTableAddCol);
+
+	var _mergedTableRemoveRow = __webpack_require__(120);
+
+	var _mergedTableRemoveRow2 = _interopRequireDefault(_mergedTableRemoveRow);
+
+	var _mergedTableRemoveCol = __webpack_require__(121);
+
+	var _mergedTableRemoveCol2 = _interopRequireDefault(_mergedTableRemoveCol);
+
+	var _mergedTableAlignCol = __webpack_require__(122);
+
+	var _mergedTableAlignCol2 = _interopRequireDefault(_mergedTableAlignCol);
+
+	var _mergeCell = __webpack_require__(123);
+
+	var _mergeCell2 = _interopRequireDefault(_mergeCell);
+
+	var _unmergeCell = __webpack_require__(124);
+
+	var _unmergeCell2 = _interopRequireDefault(_unmergeCell);
+
+	var _mergedTableUI = __webpack_require__(125);
+
+	var _mergedTableUI2 = _interopRequireDefault(_mergedTableUI);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements tableExtension.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	__webpack_require__(126);
+
+	_extManager2.default.defineExtension('tableExtension', function (editor) {
+	    var eventManager = editor.eventManager;
+
+	    editor.toMarkOptions = editor.toMarkOptions || {};
+	    editor.toMarkOptions.renderer = _toMarkRenderer2.default;
+	    _bindEvents(eventManager);
+
+	    if (editor.isViewOnly()) {
+	        return;
+	    }
+
+	    var wwComponentManager = editor.wwEditor.componentManager;
+	    var popupTableUtils = editor._ui.popupTableUtils;
+
+	    _addCommands(editor);
+	    _changeWysiwygManagers(wwComponentManager);
+
+	    if (editor._ui.popupTableUtils) {
+	        _mergedTableUI2.default.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
+	    }
+	});
+
+	/**
+	 * Add commands.
+	 * @param {object} editor - editor instance
+	 * @private
+	 */
+	function _addCommands(editor) {
+	    editor.addCommand(_mergeCell2.default);
+	    editor.addCommand(_unmergeCell2.default);
+	}
+
+	/**
+	 * Change wysiwyg component managers.
+	 * @param {object} wwComponentManager - componentMananger instance
+	 * @private
+	 */
+	function _changeWysiwygManagers(wwComponentManager) {
+	    wwComponentManager.removeManager('table');
+	    wwComponentManager.removeManager('tableSelection');
+
+	    wwComponentManager.addManager(_wwMergedTableManager2.default);
+	    wwComponentManager.addManager(_wwMergedTableSelectionManager2.default);
+	}
+
+	/**
+	 * Change html by onChangeTable function.
+	 * @param {string} html - original html
+	 * @param {function} onChangeTable - function for changing html
+	 * @returns {string}
+	 * @private
+	 */
+	function _changeHtml(html, onChangeTable) {
+	    var $tempDiv = $('<div>' + html + '</div>');
+	    var $tables = $tempDiv.find('table');
+
+	    if ($tables.length) {
+	        $tables.get().forEach(function (tableElement) {
+	            var changedTableElement = onChangeTable(tableElement);
+
+	            $(tableElement).replaceWith(changedTableElement);
+	        });
+
+	        html = $tempDiv.html();
+	    }
+
+	    return html;
+	}
+
+	/**
+	 * Snatch wysiwyg command.
+	 * @param {{command: object}} commandWrapper - wysiwyg command wrapper
+	 * @private
+	 */
+	function _snatchWysiwygCommand(commandWrapper) {
+	    var command = commandWrapper.command;
+
+	    if (!command.isWWType()) {
+	        return;
+	    }
+
+	    switch (command.getName()) {
+	        case 'AddRow':
+	            commandWrapper.command = _mergedTableAddRow2.default;
+	            break;
+	        case 'AddCol':
+	            commandWrapper.command = _mergedTableAddCol2.default;
+	            break;
+	        case 'RemoveRow':
+	            commandWrapper.command = _mergedTableRemoveRow2.default;
+	            break;
+	        case 'RemoveCol':
+	            commandWrapper.command = _mergedTableRemoveCol2.default;
+	            break;
+	        case 'AlignCol':
+	            commandWrapper.command = _mergedTableAlignCol2.default;
+	            break;
+	        default:
+	    }
+	}
+
+	/**
+	 * Bind events.
+	 * @param {object} eventManager - eventManager instance
+	 * @private
+	 */
+	function _bindEvents(eventManager) {
+	    eventManager.listen('convertorAfterMarkdownToHtmlConverted', function (html) {
+	        return _changeHtml(html, _mergedTableCreator2.default);
+	    });
+	    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', function (html) {
+	        return _changeHtml(html, _tableUnmergePreparer2.default);
+	    });
+	    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+	}
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @fileoverview Implements mergedTableCreator.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */
+
+	exports._extractPropertiesForMerge = _extractPropertiesForMerge;
+	exports._parseTableCell = _parseTableCell;
+	exports._createTableObjectFrom$Table = _createTableObjectFrom$Table;
+	exports._divideTrs = _divideTrs;
+	exports._mergeByColspan = _mergeByColspan;
+	exports._getRemovalTdCountsByRowspan = _getRemovalTdCountsByRowspan;
+	exports._mergeByRowspan = _mergeByRowspan;
+	exports.default = createMergedTable;
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Extract properties for merge.
+	 * @param {string} value - value
+	 * @param {string} type - merge type like colspan, rowspan
+	 * @param {string} oppossitType - oppossit merge type
+	 *                                if merge type is colspan, opossit merge type is rowspan
+	 * @returns {Array.<number|string>} - returns merge count and value
+	 * @private
+	 */
+	function _extractPropertiesForMerge(value, type, oppossitType) {
+	    var regex = new RegExp('^((?:' + oppossitType + '=[0-9]+:)?)' + type + '=([0-9]+):(.*)');
+	    var regexResult = regex.exec(value);
+	    var mergeCount = 1;
+
+	    if (regexResult) {
+	        mergeCount = parseInt(regexResult[2], 10);
+	        value = regexResult[1] + regexResult[3];
+	    }
+
+	    return [mergeCount, value];
+	}
+
+	/**
+	 * Parse table cell element like td, th.
+	 * @param {HTMLElement} cell - table cell element like td, th
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string,
+	 *   align: string
+	 * }}
+	 * @private
+	 */
+	function _parseTableCell(cell) {
+	    var nodeName = cell.nodeName;
+	    var align = cell.align || '';
+	    var content = cell.innerHTML.trim();
+	    var colspan = null;
+	    var rowspan = null;
+
+	    var _extractPropertiesFor = _extractPropertiesForMerge(content, '@cols', '@rows');
+
+	    var _extractPropertiesFor2 = _slicedToArray(_extractPropertiesFor, 2);
+
+	    colspan = _extractPropertiesFor2[0];
+	    content = _extractPropertiesFor2[1];
+
+	    var _extractPropertiesFor3 = _extractPropertiesForMerge(content, '@rows', '@cols');
+
+	    var _extractPropertiesFor4 = _slicedToArray(_extractPropertiesFor3, 2);
+
+	    rowspan = _extractPropertiesFor4[0];
+	    content = _extractPropertiesFor4[1];
+
+
+	    return {
+	        nodeName: nodeName,
+	        colspan: colspan,
+	        rowspan: rowspan,
+	        content: content,
+	        align: align
+	    };
+	}
+
+	/**
+	 * Create table object from jQuery table.
+	 * @param {jQuery} $table - jQuery table
+	 * @returns {Array.<Array.<object>>}
+	 * @private
+	 */
+	function _createTableObjectFrom$Table($table) {
+	    return $table.find('tr').get().map(function (tr) {
+	        return $(tr).find('td, th').get().map(_parseTableCell);
+	    });
+	}
+
+	/**
+	 * Find index by onFind function.
+	 * @param {Array} arr - target array
+	 * @param {function} onFind - find function
+	 * @returns {number}
+	 * @private
+	 */
+	function _findIndex(arr, onFind) {
+	    var foundIndex = -1;
+
+	    tui.util.forEach(arr, function (item, index) {
+	        var nextFind = true;
+	        if (onFind(item, index)) {
+	            foundIndex = index;
+	            nextFind = false;
+	        }
+
+	        return nextFind;
+	    });
+
+	    return foundIndex;
+	}
+
+	/**
+	 * Separate the trs according to the type of parent, such as thead and tbody.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @returns {Array.<Array.<Array.<object>>>} - returns thead and tbody
+	 * @private
+	 */
+	function _divideTrs(trs) {
+	    var tbodyStartIndex = _findIndex(trs, function (tr) {
+	        return tr[0].nodeName === 'TD';
+	    });
+
+	    return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
+	}
+
+	/**
+	 * Merge by colspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @private
+	 */
+	function _mergeByColspan(trs) {
+	    trs.forEach(function (tr) {
+	        var tdCount = tr.length;
+	        var removalCount = 0;
+
+	        tr.forEach(function (td) {
+	            removalCount += td.colspan - 1;
+	        });
+
+	        tr.splice(tdCount - removalCount);
+	    });
+	}
+
+	/**
+	 * Get removal td counts by rowspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @returns {number}
+	 * @private
+	 */
+	function _getRemovalTdCountsByRowspan(trs) {
+	    var trIndexes = trs.map(function (tr, index) {
+	        return index;
+	    });
+	    var removalCounts = trIndexes.map(function () {
+	        return 0;
+	    });
+
+	    trs.forEach(function (tr, trIndex) {
+	        var rowspanTds = tr.filter(function (td) {
+	            return td.rowspan > 1;
+	        });
+	        var startTrIndexForRemoval = trIndex + 1;
+
+	        rowspanTds.forEach(function (td) {
+	            var removeCount = td.colspan;
+	            var endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
+
+	            trIndexes.slice(startTrIndexForRemoval, endTrIndexForRemoval).forEach(function (removeIndex) {
+	                removalCounts[removeIndex] += removeCount;
+	            });
+	        });
+	    });
+
+	    return removalCounts;
+	}
+
+	/**
+	 * Merge by rowspan.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @private
+	 */
+	function _mergeByRowspan(trs) {
+	    var removalCounts = _getRemovalTdCountsByRowspan(trs);
+
+	    trs.forEach(function (tr, trIndex) {
+	        tr.splice(tr.length - removalCounts[trIndex]);
+	    });
+	}
+
+	/**
+	 * Create merged table by @cols, @rows value in td innerHTML.
+	 * @param {HTMLElement} tableElement - unmerged table
+	 * @returns {HTMLElement}
+	 */
+	function createMergedTable(tableElement) {
+	    var table = _createTableObjectFrom$Table($(tableElement));
+
+	    var _divideTrs2 = _divideTrs(table),
+	        _divideTrs3 = _slicedToArray(_divideTrs2, 2),
+	        thead = _divideTrs3[0],
+	        tbody = _divideTrs3[1];
+
+	    _mergeByColspan(thead);
+	    _mergeByColspan(tbody);
+	    _mergeByRowspan(tbody);
+
+	    return $(_tableRenderer2.default.createTableHtml(table))[0];
+	}
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Create cell html.
+	 * @param {object} cell - cell data of table base data
+	 * @returns {string}
+	 * @private
+	 */
+	function _createCellHtml(cell) {
+	    var attrs = cell.colspan > 1 ? ' colspan="' + cell.colspan + '"' : '';
+	    attrs += cell.rowspan > 1 ? ' rowspan="' + cell.rowspan + '"' : '';
+	    attrs += cell.align ? ' align="' + cell.align + '"' : '';
+
+	    return '<' + cell.nodeName + attrs + '>' + cell.content + '</' + cell.nodeName + '>';
+	}
+
+	/**
+	 * Create html for thead or tbody.
+	 * @param {Array.<Array.<object>>} trs - tr list
+	 * @param {string} wrapperNodeName - wrapper node name like THEAD, TBODY
+	 * @returns {string}
+	 * @private
+	 */
+	/**
+	 * @fileoverview Implements tableRenderer
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
+	    var html = '';
+
+	    if (trs.length) {
+	        html = trs.map(function (tr) {
+	            var tdHtml = tr.map(_createCellHtml).join('');
+
+	            return '<tr>' + tdHtml + '</tr>';
+	        }).join('');
+	        html = '<' + wrapperNodeName + '>' + html + '</' + wrapperNodeName + '>';
+	    }
+
+	    return html;
+	}
+
+	/**
+	 * Create table html.
+	 * @param {Array.<Array.<object>>} renderData - table data for render
+	 * @returns {string}
+	 * @private
+	 */
+	function createTableHtml(renderData) {
+	    var thead = [renderData[0]];
+	    var tbody = renderData.slice(1);
+	    var theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
+	    var tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
+	    var className = renderData.className ? ' class="' + renderData.className + '"' : '';
+
+	    return '<table' + className + '>' + (theadHtml + tbodyHtml) + '</renderData>';
+	}
+
+	/**
+	 * Replace table.
+	 * @param {jQuery} $table - table jQuery element
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {jQuery}
+	 * @ignore
+	 */
+	function replaceTable($table, tableData) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var renderData = _tableDataHandler2.default.createRenderData(tableData, cellIndexData);
+	    var $newTable = $(createTableHtml(renderData));
+
+	    $table.replaceWith($newTable);
+
+	    return $newTable;
+	}
+
+	/**
+	 * Focus to cell.
+	 * @param {squireext} sq - squire instance
+	 * @param {range} range - range object
+	 * @param {HTMLElement} targetCell - cell element for focus
+	 * @ignore
+	 */
+	function focusToCell(sq, range, targetCell) {
+	    range.selectNodeContents(targetCell);
+	    range.collapse(true);
+	    sq.setSelection(range);
+	}
+
+	exports.default = {
+	    createTableHtml: createTableHtml,
+	    replaceTable: replaceTable,
+	    focusToCell: focusToCell
+	};
+
+/***/ }),
+/* 112 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createTableData = createTableData;
+	exports.createCellIndexData = createCellIndexData;
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	/**
+	 * @fileoverview Implements tableDataHandler
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * Parse cell like td or th.
+	 * @param {HTMLElement} cell - cell element like td or th
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string,
+	 *   align: ?string
+	 * }}
+	 * @private
+	 */
+	function _parseCell(cell, rowIndex, colIndex) {
+	    var $cell = $(cell);
+	    var colspan = $cell.attr('colspan');
+	    var rowspan = $cell.attr('rowspan');
+	    var nodeName = cell.nodeName;
+
+	    if (nodeName !== 'TH' && nodeName !== 'TD') {
+	        return null;
+	    }
+
+	    var cellData = {
+	        nodeName: cell.nodeName,
+	        colspan: colspan ? parseInt(colspan, 10) : 1,
+	        rowspan: rowspan ? parseInt(rowspan, 10) : 1,
+	        content: $cell.html(),
+	        elementIndex: {
+	            rowIndex: rowIndex,
+	            colIndex: colIndex
+	        }
+	    };
+
+	    if (cell.nodeName === 'TH' && cell.align) {
+	        cellData.align = cell.align;
+	    }
+
+	    return cellData;
+	}
+
+	/**
+	 * Add merged cell.
+	 * @param {object} base - base table data
+	 * @param {object} cellData - cell data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} startCellIndex - start cell index
+	 * @private
+	 */
+	function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
+	    var colspan = cellData.colspan;
+	    var rowspan = cellData.rowspan;
+	    var colMerged = colspan > 1;
+	    var rowMerged = rowspan > 1;
+	    var nodeName = cellData.nodeName;
+
+	    if (!colMerged && !rowMerged) {
+	        return;
+	    }
+
+	    var limitRowIndex = startRowIndex + rowspan;
+	    var limitCellIndex = startCellIndex + colspan;
+
+	    util.range(startRowIndex, limitRowIndex).forEach(function (rowIndex) {
+	        base[rowIndex] = base[rowIndex] || [];
+
+	        util.range(startCellIndex, limitCellIndex).forEach(function (cellIndex) {
+	            var mergedData = {
+	                nodeName: nodeName
+	            };
+
+	            if (rowIndex === startRowIndex && cellIndex === startCellIndex) {
+	                return;
+	            }
+
+	            if (colMerged) {
+	                mergedData.colMergeWith = startCellIndex;
+	            }
+
+	            if (rowMerged) {
+	                mergedData.rowMergeWith = startRowIndex;
+	            }
+
+	            base[rowIndex][cellIndex] = mergedData;
+	        });
+	    });
+	}
+
+	/**
+	 * Create table data from jQuery table Element.
+	 * @param {jQuery} $table - jQuery table element
+	 * @returns {Array.<Array.<object>>}
+	 * @ignore
+	 */
+	function createTableData($table) {
+	    var tableData = [];
+
+	    $table.find('tr').each(function (rowIndex, tr) {
+	        var stackedColCount = 0;
+
+	        tableData[rowIndex] = tableData[rowIndex] || [];
+
+	        $(tr).children().each(function (colIndex, cell) {
+	            var cellData = _parseCell(cell, rowIndex, colIndex);
+
+	            if (!cellData) {
+	                return;
+	            }
+	            var dataColIndex = colIndex + stackedColCount;
+
+	            while (tableData[rowIndex][dataColIndex]) {
+	                dataColIndex += 1;
+	                stackedColCount += 1;
+	            }
+
+	            tableData[rowIndex][dataColIndex] = cellData;
+	            _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
+	        });
+	    });
+
+	    if ($table[0].className) {
+	        tableData.className = $table[0].className;
+	    }
+
+	    return tableData;
+	}
+
+	/**
+	 * Create cell index data of table data.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {Array.<Array.<object>>}
+	 * @ignore
+	 */
+	function createCellIndexData(tableData) {
+	    var mappingData = [];
+
+	    tableData.forEach(function (row, rowIndex) {
+	        var mappingRow = [];
+
+	        row.forEach(function (cell, colIndex) {
+	            if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
+	                mappingRow.push({
+	                    rowIndex: rowIndex,
+	                    colIndex: colIndex
+	                });
+	            }
+	        });
+	        mappingData.push(mappingRow);
+	    });
+
+	    return mappingData;
+	}
+
+	/**
+	 * Get header aligns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {Array.<?string>}
+	 * @private
+	 */
+	function _getHeaderAligns(tableData) {
+	    var headRowData = tableData[0];
+
+	    return headRowData.map(function (cellData) {
+	        var align = void 0;
+
+	        if (util.isExisty(cellData.colMergeWith)) {
+	            align = headRowData[cellData.colMergeWith].align;
+	        } else {
+	            align = cellData.align;
+	        }
+
+	        return align;
+	    });
+	}
+
+	/**
+	 * Create render data.
+	 * @param {Array.<object>} tableData - table data
+	 * @param {Array.<object>} cellIndexData - cell index data
+	 * @returns {Array.<Array.<object>>}
+	 * @ignore
+	 */
+	function createRenderData(tableData, cellIndexData) {
+	    var headerAligns = _getHeaderAligns(tableData);
+	    var renderData = cellIndexData.map(function (row) {
+	        return row.map(function (_ref) {
+	            var rowIndex = _ref.rowIndex,
+	                colIndex = _ref.colIndex;
+	            return util.extend({
+	                align: headerAligns[colIndex]
+	            }, tableData[rowIndex][colIndex]);
+	        });
+	    });
+
+	    if (tableData.className) {
+	        renderData.className = tableData.className;
+	    }
+
+	    return renderData;
+	}
+
+	var BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+
+	/**
+	 * Create basic cell data.
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @param {string} nodeName - node name
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colspan: number,
+	 *   rowspan: number,
+	 *   content: string
+	 * }}
+	 * @ignore
+	 */
+	function createBasicCell(rowIndex, colIndex, nodeName) {
+	    return {
+	        nodeName: nodeName || 'TD',
+	        colspan: 1,
+	        rowspan: 1,
+	        content: BASIC_CELL_CONTENT,
+	        elementIndex: {
+	            rowIndex: rowIndex,
+	            colIndex: colIndex
+	        }
+	    };
+	}
+
+	/**
+	 * Find element row index.
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {number}
+	 * @ignore
+	 */
+	function findElementRowIndex($cell) {
+	    var $tr = $cell.closest('tr');
+	    var rowIndex = $tr.prevAll().length;
+
+	    if ($tr.parent()[0].nodeName === 'TBODY') {
+	        rowIndex += 1;
+	    }
+
+	    return rowIndex;
+	}
+
+	/**
+	 * Find element col index.
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {number}
+	 * @ignore
+	 */
+	function findElementColIndex($cell) {
+	    return $cell.closest('td, th').prevAll().length;
+	}
+
+	/**
+	 * Find indexes of base table data from mappin data.
+	 * @param {Array.<Array.<object>>} cellIndexData - cell index data
+	 * @param {jQuery} $cell - cell jQuery element like td or th
+	 * @returns {{rowIndex: number, cellIndex: number}}
+	 * @ignore
+	 */
+	function findCellIndex(cellIndexData, $cell) {
+	    var elementRowIndex = findElementRowIndex($cell);
+	    var elementColIndex = findElementColIndex($cell);
+
+	    return cellIndexData[elementRowIndex][elementColIndex];
+	}
+
+	/**
+	 * Find last index of col merged cells.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {number}
+	 * @ignore
+	 */
+	function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+	    var foundRowIndex = rowIndex;
+
+	    if (cellData.rowspan > 1) {
+	        foundRowIndex += cellData.rowspan - 1;
+	    }
+
+	    return foundRowIndex;
+	}
+
+	/**
+	 * Find last index of col merged cells.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {number}
+	 * @ignore
+	 */
+	function findColMergedLastIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+	    var foundColIndex = colIndex;
+
+	    if (cellData.colspan > 1) {
+	        foundColIndex += cellData.colspan - 1;
+	    }
+
+	    return foundColIndex;
+	}
+
+	/**
+	 * Find cell element index.
+	 * @param {Array.<Array.<object>>} tableData - tableData data
+	 * @param {number} rowIndex - row index of base data
+	 * @param {number} colIndex - col index of base data
+	 * @returns {{rowIndex: number, colIndex: number}}
+	 * @ignore
+	 */
+	function findElementIndex(tableData, rowIndex, colIndex) {
+	    var cellData = tableData[rowIndex][colIndex];
+
+	    rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
+	    colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
+
+	    return tableData[rowIndex][colIndex].elementIndex;
+	}
+
+	/**
+	 * Stuff cells into incomplete row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} limitIndex - limit index
+	 * @ignore
+	 */
+	function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
+	    tableData.forEach(function (rowData, rowIndex) {
+	        var startIndex = rowData.length;
+	        var nodeName = rowData[0].nodeName;
+
+	        util.range(startIndex, limitIndex).forEach(function (colIndex) {
+	            rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
+	        });
+	    });
+	}
+
+	/**
+	 * Add tbody or thead of table data if need.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @returns {boolean}
+	 * @ignore
+	 */
+	function addTbodyOrTheadIfNeed(tableData) {
+	    var header = tableData[0];
+	    var cellCount = header.length;
+	    var added = true;
+
+	    if (!cellCount && tableData[1]) {
+	        util.range(0, tableData[1].length).forEach(function (colIndex) {
+	            header.push(createBasicCell(0, colIndex, 'TH'));
+	        });
+	    } else if (tableData[0][0].nodeName !== 'TH') {
+	        var _ref2;
+
+	        var newHeader = util.range(0, cellCount).map(function (colIndex) {
+	            return createBasicCell(0, colIndex, 'TH');
+	        });
+
+	        (_ref2 = []).concat.apply(_ref2, _toConsumableArray(tableData)).forEach(function (cellData) {
+	            if (cellData.elementIndex) {
+	                cellData.elementIndex.rowIndex += 1;
+	            }
+	        });
+
+	        tableData.unshift(newHeader);
+	    } else if (tableData.length === 1) {
+	        var newRow = util.range(0, cellCount).map(function (colIndex) {
+	            return createBasicCell(1, colIndex, 'TD');
+	        });
+
+	        tableData.push(newRow);
+	    } else {
+	        added = false;
+	    }
+
+	    return added;
+	}
+
+	exports.default = {
+	    createTableData: createTableData,
+	    createCellIndexData: createCellIndexData,
+	    createRenderData: createRenderData,
+	    findElementRowIndex: findElementRowIndex,
+	    findElementColIndex: findElementColIndex,
+	    findCellIndex: findCellIndex,
+	    createBasicCell: createBasicCell,
+	    findRowMergedLastIndex: findRowMergedLastIndex,
+	    findColMergedLastIndex: findColMergedLastIndex,
+	    findElementIndex: findElementIndex,
+	    stuffCellsIntoIncompleteRow: stuffCellsIntoIncompleteRow,
+	    addTbodyOrTheadIfNeed: addTbodyOrTheadIfNeed
+	};
+
+/***/ }),
+/* 113 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._prependMergeSyntaxToContent = _prependMergeSyntaxToContent;
+	exports.default = prepareTableUnmerge;
+	/**
+	 * @fileoverview Implements tableUnmergePreparer.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	/**
+	 * Prepend merge syntax to content.
+	 * @param {HTMLElement} cell - td or th
+	 * @private
+	 */
+	function _prependMergeSyntaxToContent(cell) {
+	    var $cell = $(cell);
+	    var colspan = $cell.attr('colspan') || '';
+	    var rowspan = $cell.attr('rowspan') || '';
+	    var content = $cell.html();
+
+	    if (colspan) {
+	        content = '@cols=' + colspan + ':' + content;
+	    }
+
+	    if (rowspan) {
+	        content = '@rows=' + rowspan + ':' + content;
+	    }
+
+	    if (content) {
+	        $cell.html(content);
+	    }
+	}
+
+	/**
+	 * Prepare table unmerge.
+	 * @param {HTMLElement} tableElement - table element
+	 * @returns {HTMLElement}
+	 */
+	function prepareTableUnmerge(tableElement) {
+	    $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
+
+	    return tableElement;
+	}
+
+/***/ }),
+/* 114 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._getAdditionalThCount = _getAdditionalThCount;
+	exports._createTheadMarkdown = _createTheadMarkdown;
+	/**
+	 * @fileoverview Implements toMarkRendererCreator.
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var toMark = window.toMark;
+	var RX_COLS = /@cols=[0-9]+:/g;
+
+	/**
+	 * Create repeat string.
+	 * @param {string} str - target string
+	 * @param {number} count - count
+	 * @returns {string}
+	 * @private
+	 */
+	function _createRepeatString(str, count) {
+	    return tui.util.range(0, count).map(function () {
+	        return str;
+	    }).join('');
+	}
+
+	/**
+	 * Make table head align text.
+	 * Copy from https://github.com/nhnent/toMark/blob/develop/src/renderer.gfm.js
+	 * @param {HTMLElement} thElement - Table head cell element
+	 * @returns {string}
+	 * @private
+	 */
+	function _makeTableHeadAlignText(thElement) {
+	    var align = thElement.align;
+	    var textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
+	    var textLength = textContent.length;
+	    var leftAlignValue = '';
+	    var rightAlignValue = '';
+
+	    if (align) {
+	        if (align === 'left') {
+	            leftAlignValue = ':';
+	            textLength -= 1;
+	        } else if (align === 'right') {
+	            rightAlignValue = ':';
+	            textLength -= 1;
+	        } else if (align === 'center') {
+	            rightAlignValue = ':';
+	            leftAlignValue = ':';
+	            textLength -= 2;
+	        }
+	    }
+
+	    textLength = Math.max(textLength, 3);
+
+	    return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
+	}
+
+	/**
+	 * Get additional th element count.
+	 * @param {Array.<HTMLElement>} ths - th element list
+	 * @private
+	 * @returns {Number}
+	 */
+	function _getAdditionalThCount(ths) {
+	    var additionalThCount = 0;
+
+	    ths.filter(function (th) {
+	        return $(th).attr('colspan');
+	    }).forEach(function (th) {
+	        additionalThCount += parseInt($(th).attr('colspan'), 10) - 1;
+	    });
+
+	    return additionalThCount;
+	}
+
+	/**
+	 * Create thead markdown.
+	 * @param {HTMLElement} theadElement - theadElement element
+	 * @param {string} theadContentMarkdown - thead markdown content
+	 * @returns {string}
+	 * @private
+	 */
+	function _createTheadMarkdown(theadElement, theadContentMarkdown) {
+	    var ths = $(theadElement).find('th').get();
+	    var align = ths.map(function (th) {
+	        return ' ' + _makeTableHeadAlignText(th) + ' |';
+	    }).join('');
+
+	    align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
+
+	    return theadContentMarkdown ? theadContentMarkdown + '|' + align + '\n' : '';
+	}
+
+	exports.default = toMark.Renderer.factory(toMark.gfmRenderer, {
+	    'THEAD': _createTheadMarkdown
+	});
+
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _wwTableManager = __webpack_require__(18);
+
+	var _wwTableManager2 = _interopRequireDefault(_wwTableManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _i18n = __webpack_require__(15);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+	var util = tui.util;
+	var PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
+	var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
+
+	/**
+	 * WwMergedTableManager
+	 * @exports WwMergedTableManager
+	 * @constructor
+	 * @class WwMergedTableManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 * @ignore
+	 */
+
+	var WwMergedTableManager = function (_WwTableManager) {
+	    _inherits(WwMergedTableManager, _WwTableManager);
+
+	    function WwMergedTableManager() {
+	        _classCallCheck(this, WwMergedTableManager);
+
+	        return _possibleConstructorReturn(this, (WwMergedTableManager.__proto__ || Object.getPrototypeOf(WwMergedTableManager)).apply(this, arguments));
+	    }
+
+	    _createClass(WwMergedTableManager, [{
+	        key: '_updateCopyDataMergeWith',
+
+	        /**
+	         * Update mergeWidth property like rowMergeWith, colMergeWith of table data for copy.
+	         * @param {Array.<Array.<object>>} copyTableData - table data for copy
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start range
+	         * @private
+	         */
+	        value: function _updateCopyDataMergeWith(copyTableData, startRange) {
+	            copyTableData.forEach(function (rowData) {
+	                rowData.forEach(function (cellData) {
+	                    if (util.isExisty(cellData.rowMergeWith)) {
+	                        cellData.rowMergeWith -= startRange.rowIndex;
+	                    }
+
+	                    if (util.isExisty(cellData.colMergeWith)) {
+	                        cellData.colMergeWith -= startRange.colIndex;
+	                    }
+	                });
+	            });
+	        }
+
+	        /**
+	         * Create table data for copy.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start range
+	         * @param {{rowIndex: number, colIndex: number}} endRange - end range
+	         * @returns {Array.<Array.<object>>}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createCopyTableData',
+	        value: function _createCopyTableData(tableData, startRange, endRange) {
+	            var copyTableData = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
+
+	            copyTableData = copyTableData.map(function (rowData) {
+	                return rowData.slice(startRange.colIndex, endRange.colIndex + 1);
+	            });
+
+	            this._updateCopyDataMergeWith(copyTableData, startRange);
+
+	            return copyTableData;
+	        }
+
+	        /**
+	         * Update table html of clipboard data, if has selected cells.
+	         * @param {jQuery} $clipboardContainer - jQuery element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'updateTableHtmlOfClipboardIfNeed',
+	        value: function updateTableHtmlOfClipboardIfNeed($clipboardContainer) {
+	            var $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
+
+	            if ($selectedCells.length) {
+	                var tableData = _tableDataHandler2.default.createTableData($($selectedCells[0]).closest('TABLE'));
+
+	                var _tableRangeHandler$ge = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells),
+	                    startRange = _tableRangeHandler$ge.start,
+	                    endRange = _tableRangeHandler$ge.end;
+
+	                var copyTableData = this._createCopyTableData(tableData, startRange, endRange);
+	                var cellIndexData = _tableDataHandler2.default.createCellIndexData(copyTableData);
+	                var renderData = _tableDataHandler2.default.createRenderData(copyTableData, cellIndexData);
+
+	                $clipboardContainer.html(_tableRenderer2.default.createTableHtml(renderData));
+	            }
+	        }
+
+	        /**
+	         * Prepare to table cell stuffing
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @returns {{maximumCellLength: *, needTableCellStuffingAid: boolean}}
+	         * @override
+	         */
+
+	    }, {
+	        key: 'prepareToTableCellStuffing',
+	        value: function prepareToTableCellStuffing(tableData) {
+	            var maximumCellLength = tableData[0].length;
+	            var needTableCellStuffingAid = false;
+
+	            tableData.slice(1).forEach(function (rowData) {
+	                var cellCount = rowData.length;
+
+	                if (maximumCellLength !== cellCount) {
+	                    needTableCellStuffingAid = true;
+
+	                    if (maximumCellLength < cellCount) {
+	                        maximumCellLength = cellCount;
+	                    }
+	                }
+	            });
+
+	            return {
+	                maximumCellLength: maximumCellLength,
+	                needTableCellStuffingAid: needTableCellStuffingAid
+	            };
+	        }
+
+	        /**
+	         * Append table cells.
+	         * @param {HTMLElement} node Table element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'tableCellAppendAidForTableElement',
+	        value: function tableCellAppendAidForTableElement(node) {
+	            var $table = $(node);
+	            var tableData = _tableDataHandler2.default.createTableData($table);
+	            var added = _tableDataHandler2.default.addTbodyOrTheadIfNeed(tableData);
+	            var tableAidInformation = this.prepareToTableCellStuffing(tableData);
+	            var needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+
+	            if (needTableCellStuffingAid) {
+	                _tableDataHandler2.default.stuffCellsIntoIncompleteRow(tableData, tableAidInformation.maximumCellLength);
+	            }
+
+	            if (added || needTableCellStuffingAid) {
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	            }
+	        }
+
+	        /**
+	         * Find start cell.
+	         * @param {jQuery} $selectedCells - jQuery elements like td, th
+	         * @returns {HTMLElement}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findStartCell',
+	        value: function _findStartCell($selectedCells) {
+	            var startCell = void 0;
+
+	            if ($selectedCells.length === 1) {
+	                startCell = $selectedCells[0];
+	            } else {
+	                startCell = this.wwe.getEditor().getSelection().startContainer;
+	            }
+
+	            return startCell;
+	        }
+
+	        /**
+	         * Find start cell index.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {jQuery} $startCell - start jQuery element like td, th
+	         * @returns {{rowIndex: number, colIndex: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findStartCellIndex',
+	        value: function _findStartCellIndex(tableData, $startCell) {
+	            var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+
+	            return _tableDataHandler2.default.findCellIndex(cellIndexData, $startCell);
+	        }
+
+	        /**
+	         * Whether has row merged header in clipboardTableData.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_hasRowMergedHeader',
+	        value: function _hasRowMergedHeader(clipboardTableData, tableData, startCellIndex) {
+	            var isHeader = tableData[startCellIndex.rowIndex][startCellIndex.colIndex].nodeName === 'TH';
+	            var hasHeaderMerge = any(clipboardTableData[0], function (cellData) {
+	                return cellData.rowspan && cellData.rowspan > 1;
+	            });
+
+	            return isHeader && hasHeaderMerge;
+	        }
+
+	        /**
+	         * Whether exactly fit table selection by clipboardTableData.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isExactlyFit',
+	        value: function _isExactlyFit(clipboardTableData, targetRowCount, targetColCount) {
+	            return targetRowCount % clipboardTableData.length === 0 && targetColCount % clipboardTableData[0].length === 0;
+	        }
+
+	        /**
+	         * Update clibpard table data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateClipboardTableData',
+	        value: function _updateClipboardTableData(clipboardTableData, targetRowCount, targetColCount) {
+	            var clipboardRowCount = clipboardTableData.length;
+	            var clipboardColCount = clipboardTableData[0].length;
+	            var increaseRowCount = parseInt(targetRowCount / clipboardRowCount, 10);
+	            var increaseColCount = parseInt(targetColCount / clipboardColCount, 10);
+
+	            if (increaseRowCount > 1) {
+	                var originalData = JSON.parse(JSON.stringify(clipboardTableData));
+
+	                util.range(0, increaseRowCount - 1).forEach(function () {
+	                    var newRows = JSON.parse(JSON.stringify(originalData));
+
+	                    clipboardTableData.push.apply(clipboardTableData, _toConsumableArray(newRows));
+	                });
+	            }
+
+	            if (increaseColCount > 1) {
+	                var _originalData = JSON.parse(JSON.stringify(clipboardTableData));
+
+	                util.range(0, increaseColCount - 1).forEach(function () {
+	                    var newData = JSON.parse(JSON.stringify(_originalData));
+	                    clipboardTableData.forEach(function (rowData, rowIndex) {
+	                        rowData.push.apply(rowData, _toConsumableArray(newData[rowIndex]));
+	                    });
+	                });
+	            }
+	        }
+
+	        /**
+	         * Update table data by cliboard table data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateTableDataByClipboardData',
+	        value: function _updateTableDataByClipboardData(clipboardTableData, tableData, startCellIndex) {
+	            var startRowIndex = startCellIndex.rowIndex;
+	            var startColIndex = startCellIndex.colIndex;
+
+	            clipboardTableData.forEach(function (rowData, rowIndex) {
+	                var updateRowIndex = startRowIndex + rowIndex;
+
+	                rowData.forEach(function (cellData, colIndex) {
+	                    var updateColIndex = startColIndex + colIndex;
+	                    var prevCellData = tableData[updateRowIndex][updateColIndex];
+
+	                    cellData.nodeName = prevCellData.nodeName;
+	                    tableData[updateRowIndex][updateColIndex] = cellData;
+	                });
+	            });
+	        }
+
+	        /**
+	         * Whether possible to paste or not.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @param {{rowIndex: number, colIndex: number}} endCellIndex - end cell index
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isPossibleToPaste',
+	        value: function _isPossibleToPaste(tableData, startCellIndex, endCellIndex) {
+	            var startRowIndex = startCellIndex.rowIndex;
+	            var startColIndex = startCellIndex.colIndex;
+	            var endRowIndex = endCellIndex.rowIndex;
+	            var endColIndex = endCellIndex.colIndex;
+	            var filterdTableData = tableData.slice(startRowIndex, endRowIndex + 1);
+	            var firstRow = filterdTableData[0].slice(startColIndex, endColIndex + 1);
+	            var isPossible = !any(firstRow, function (cellData) {
+	                return util.isExisty(cellData.rowMergeWith);
+	            });
+
+	            if (isPossible) {
+	                var firstCells = util.pluck(filterdTableData, startColIndex);
+
+	                isPossible = !any(firstCells, function (cellData) {
+	                    return util.isExisty(cellData.colMergeWith);
+	                });
+	            }
+
+	            if (isPossible && tableData.length > endRowIndex + 1) {
+	                var nextRow = tableData[endRowIndex + 1].slice(startColIndex, endColIndex + 1);
+
+	                isPossible = !any(nextRow, function (cellData) {
+	                    return util.isExisty(cellData.rowMergeWith);
+	                });
+	            }
+
+	            if (isPossible && tableData[0].length > endColIndex + 1) {
+	                var nextCells = util.pluck(filterdTableData, endColIndex + 1);
+
+	                isPossible = !any(nextCells, function (cellData) {
+	                    return util.isExisty(cellData.colMergeWith);
+	                });
+	            }
+
+	            return isPossible;
+	        }
+
+	        /**
+	         * Splice clipboardTableData by target row count and col count.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_spliceClipboardData',
+	        value: function _spliceClipboardData(clipboardTableData, targetRowCount, targetColCount) {
+	            clipboardTableData.splice(targetRowCount);
+	            clipboardTableData.forEach(function (rowData) {
+	                rowData.splice(targetColCount);
+	            });
+	        }
+
+	        /**
+	         * bookmark last td.
+	         * @param {number} endRowIndex - end row index
+	         * @param {number} endColIndex - end col index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_bookmarkLastTd',
+	        value: function _bookmarkLastTd(_ref) {
+	            var endRowIndex = _ref.rowIndex,
+	                endColIndex = _ref.colIndex;
+
+	            var sq = this.wwe.getEditor();
+	            var $bookmarkedTable = sq.get$Body().find('.' + PASTE_TABLE_BOOKMARK);
+	            var tableData = _tableDataHandler2.default.createTableData($bookmarkedTable);
+	            var lastCellData = tableData[endRowIndex][endColIndex];
+
+	            endRowIndex = util.isExisty(lastCellData.rowMergeWith) ? lastCellData.rowMergeWith : endRowIndex;
+	            endColIndex = util.isExisty(lastCellData.colMergeWith) ? lastCellData.colMergeWith : endColIndex;
+
+	            var lastCellIndex = tableData[endRowIndex][endColIndex].elementIndex;
+	            var lastTd = $bookmarkedTable.find('tr').eq(lastCellIndex.rowIndex).children()[lastCellIndex.colIndex];
+
+	            $bookmarkedTable.removeClass(PASTE_TABLE_BOOKMARK);
+	            $(lastTd).addClass(PASTE_TABLE_CELL_BOOKMARK);
+	        }
+
+	        /**
+	         * Update clipboard data for paste to smaller selection area than clipboard data.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} targetRowCount - target row count
+	         * @param {number} targetColCount - target col count
+	         * @param {{rowIndex: number, colIndex: number}} startRange - start table range
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_updateClipboardDataForPasteToSamllerSelectedArea',
+	        value: function _updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount, targetColCount, startRange) {
+	            var updated = true;
+	            var startCellIndex = {
+	                rowIndex: 0,
+	                colIndex: 0
+	            };
+
+	            var endCellIndex = {
+	                rowIndex: targetRowCount - 1,
+	                colIndex: targetColCount - 1
+	            };
+
+	            if (this._isPossibleToPaste(clipboardTableData, startCellIndex, endCellIndex)) {
+	                this._spliceClipboardData(clipboardTableData, targetRowCount, targetColCount);
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	            } else {
+	                updated = false;
+	            }
+
+	            return updated;
+	        }
+
+	        /**
+	         * Paste to selected area.
+	         * @param {jQuery} $table - target jQuery table element
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {jQuery} $selectedCells - selected jQuery elements like td, th
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pasteToSelectedArea',
+	        value: function _pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells) {
+	            var _tableRangeHandler$ge2 = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells),
+	                startRange = _tableRangeHandler$ge2.start,
+	                endRange = _tableRangeHandler$ge2.end;
+
+	            var targetRowCount = endRange.rowIndex - startRange.rowIndex + 1;
+	            var targetColCount = endRange.colIndex - startRange.colIndex + 1;
+	            var clipboardRowCount = clipboardTableData.length;
+	            var clipboardColCount = clipboardTableData[0].length;
+	            var isSelectionLargerThanData = targetRowCount >= clipboardRowCount && targetColCount >= clipboardColCount;
+	            var alertMessage = _i18n2.default.get('Cannot change part of merged cell');
+	            var updated = true;
+	            var endCellIndex = void 0;
+
+	            if (this._hasRowMergedHeader(clipboardTableData, tableData, startRange)) {
+	                alertMessage = _i18n2.default.get('Cannot paste row merged cells into the table header');
+	                updated = false;
+	            } else if (this._isExactlyFit(clipboardTableData, targetRowCount, targetColCount)) {
+	                // data가 clipboard영역에 딱 맞는 경우(배수 포함)
+
+	                endCellIndex = endRange;
+	                this._updateClipboardTableData(clipboardTableData, targetRowCount, targetColCount);
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	            } else if (isSelectionLargerThanData) {
+	                // selection이 paste 데이터 보다 큰 경우
+	                endCellIndex = {
+	                    rowIndex: startRange.rowIndex + clipboardRowCount - 1,
+	                    colIndex: startRange.colIndex + clipboardColCount - 1
+	                };
+
+	                if (this._isPossibleToPaste(tableData, startRange, endCellIndex)) {
+	                    this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
+	                } else {
+	                    updated = false;
+	                }
+	            } else {
+	                // selection이 paste 데이터 보다 작은 경우
+	                endCellIndex = {
+	                    rowIndex: startRange.rowIndex + targetRowCount - 1,
+	                    colIndex: startRange.colIndex + targetColCount - 1
+	                };
+
+	                updated = this._updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount, targetColCount, startRange);
+	            }
+
+	            if (updated) {
+	                tableData.className += ' ' + PASTE_TABLE_BOOKMARK;
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	                this._bookmarkLastTd(endCellIndex);
+	            } else {
+	                alert(alertMessage);
+	                this.wwe.getEditor().focus();
+	            }
+	        }
+
+	        /**
+	         * Find end cell index.
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {number} startRowIndex - start row index
+	         * @param {number} startColIndex - start col index
+	         * @returns {{rowIndex: number, colIndex: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_findEndCellIndex',
+	        value: function _findEndCellIndex(clipboardTableData, _ref2) {
+	            var startRowIndex = _ref2.rowIndex,
+	                startColIndex = _ref2.colIndex;
+
+	            return {
+	                rowIndex: startRowIndex + clipboardTableData.length - 1,
+	                colIndex: startColIndex + clipboardTableData[0].length - 1
+	            };
+	        }
+
+	        /**
+	         * Expand row.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} expandCount - expand count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandRow',
+	        value: function _expandRow(tableData, expandCount) {
+	            var startRowIndex = tableData.length;
+	            var cellCount = tableData[0].length;
+	            var newRows = util.range(startRowIndex, startRowIndex + expandCount).map(function (rowIndex) {
+	                return util.range(0, cellCount).map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(rowIndex, colIndex);
+	                });
+	            });
+
+	            tableData.push.apply(tableData, _toConsumableArray(newRows));
+	        }
+
+	        /**
+	         * Expand column.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {number} expandCount - expand count
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandCoumn',
+	        value: function _expandCoumn(tableData, expandCount) {
+	            var startCellIndex = tableData[0].length;
+	            var additionalCellRange = util.range(startCellIndex, startCellIndex + expandCount);
+
+	            tableData.forEach(function (rowData, rowIndex) {
+	                var nodeName = rowData[0].nodeName;
+	                var newCells = additionalCellRange.map(function (colIndex) {
+	                    return _tableDataHandler2.default.createBasicCell(rowIndex, colIndex, nodeName);
+	                });
+
+	                rowData.push.apply(rowData, _toConsumableArray(newCells));
+	            });
+	        }
+
+	        /**
+	         * Expand table data, if need.
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @param {{rowIndex: number, colIndex: number}} endCellIndex - end cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_expandTableDataIfNeed',
+	        value: function _expandTableDataIfNeed(tableData, startCellIndex, endCellIndex) {
+	            var expandRowCount = endCellIndex.rowIndex - tableData.length + 1;
+	            var expandCellCount = endCellIndex.colIndex - tableData[0].length + 1;
+
+	            if (expandRowCount > 0) {
+	                this._expandRow(tableData, expandRowCount);
+	            }
+
+	            if (expandCellCount > 0) {
+	                this._expandCoumn(tableData, expandCellCount);
+	            }
+	        }
+
+	        /**
+	         * Paste all clipboard table data.
+	         * @param {jQuery} $table - jQuery table element
+	         * @param {Array.<Array.<object>>} clipboardTableData - table data of clipboard
+	         * @param {Array.<Array.<object>>} tableData - table data
+	         * @param {{rowIndex: number, colIndex: number}} startCellIndex - start cell index
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pasteAllClipboardTableData',
+	        value: function _pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex) {
+	            var endCellIndex = this._findEndCellIndex(clipboardTableData, startCellIndex);
+
+	            if (this._hasRowMergedHeader(clipboardTableData, tableData, startCellIndex)) {
+	                alert(_i18n2.default.get('Cannot paste row merged cells into the table header'));
+	                this.wwe.getEditor().focus();
+
+	                return;
+	            }
+
+	            this._expandTableDataIfNeed(tableData, startCellIndex, endCellIndex);
+
+	            if (this._isPossibleToPaste(tableData, startCellIndex, endCellIndex)) {
+	                this._updateTableDataByClipboardData(clipboardTableData, tableData, startCellIndex);
+	                tableData.className += ' ' + PASTE_TABLE_BOOKMARK;
+	                _tableRenderer2.default.replaceTable($table, tableData);
+	                this._bookmarkLastTd(endCellIndex);
+	            } else {
+	                alert(_i18n2.default.get('Cannot change part of merged cell'));
+	                this.wwe.getEditor().focus();
+	            }
+	        }
+
+	        /**
+	         * Paste clibpard data.
+	         * @param {jQuery} $clipboardTable - jQuery table element of clipboard
+	         */
+
+	    }, {
+	        key: 'pasteClipboardData',
+	        value: function pasteClipboardData($clipboardTable) {
+	            var clipboardTableData = _tableDataHandler2.default.createTableData($clipboardTable);
+	            var tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
+	            var $selectedCells = tableSelectionManager.getSelectedCells();
+	            var $startCell = $(this._findStartCell($selectedCells));
+	            var $table = $startCell.closest('table');
+	            var tableData = _tableDataHandler2.default.createTableData($table);
+	            var startCellIndex = this._findStartCellIndex(tableData, $startCell);
+
+	            if ($selectedCells.length > 1) {
+	                // selection 상태
+	                this._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
+	            } else {
+	                // cursor 상태
+	                this._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
+	            }
+	        }
+	    }]);
+
+	    return WwMergedTableManager;
+	}(_wwTableManager2.default);
+
+	/**
+	 * Whether one of them is true or not.
+	 * @param {Array} arr - target array
+	 * @param {function} contition - condition function
+	 * @returns {boolean}
+	 * @ignore
+	 */
+
+
+	function any(arr, contition) {
+	    var result = false;
+
+	    util.forEach(arr, function (item) {
+	        result = contition(item);
+
+	        return !result;
+	    });
+
+	    return result;
+	}
+
+	module.exports = WwMergedTableManager;
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var util = tui.util;
+
+	/**
+	 * Find unmerged table range.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $start - start talbe cell jQuery element
+	 * @param {jQuery} $end - end table cell jQuery element
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 * @private
+	 */
+	/**
+	 * @fileoverview Implements tableRangeHandler
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	function _findUnmergedRange(tableData, $start, $end) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var startCellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $start);
+	    var endCellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $end);
+	    var startRowIndex = void 0,
+	        endRowIndex = void 0,
+	        startColIndex = void 0,
+	        endColIndex = void 0;
+
+	    if (startCellIndex.rowIndex > endCellIndex.rowIndex) {
+	        startRowIndex = endCellIndex.rowIndex;
+	        endRowIndex = startCellIndex.rowIndex;
+	    } else {
+	        startRowIndex = startCellIndex.rowIndex;
+	        endRowIndex = endCellIndex.rowIndex;
+	    }
+
+	    if (startCellIndex.colIndex > endCellIndex.colIndex) {
+	        startColIndex = endCellIndex.colIndex;
+	        endColIndex = startCellIndex.colIndex;
+	    } else {
+	        startColIndex = startCellIndex.colIndex;
+	        endColIndex = endCellIndex.colIndex;
+	    }
+
+	    return {
+	        start: {
+	            rowIndex: startRowIndex,
+	            colIndex: startColIndex
+	        },
+	        end: {
+	            rowIndex: endRowIndex,
+	            colIndex: endColIndex
+	        }
+	    };
+	}
+
+	/**
+	 * Expand table range by row merge properties like rowspan, rowMergeWith.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @param {string} rangeType - range type like start, end
+	 * @private
+	 */
+	function _expandRowMergedRange(tableData, tableRange, rangeType) {
+	    var rowIndex = tableRange[rangeType].rowIndex;
+	    var rowData = tableData[rowIndex];
+
+	    util.range(tableRange.start.colIndex, tableRange.end.colIndex + 1).forEach(function (colIndex) {
+	        var cellData = rowData[colIndex];
+	        var rowMergeWith = cellData.rowMergeWith;
+	        var lastRowMergedIndex = -1;
+
+	        if (util.isExisty(rowMergeWith)) {
+	            if (rowMergeWith < tableRange.start.rowIndex) {
+	                tableRange.start.rowIndex = rowMergeWith;
+	            }
+
+	            lastRowMergedIndex = rowMergeWith + tableData[rowMergeWith][colIndex].rowspan - 1;
+	        } else if (cellData.rowspan > 1) {
+	            lastRowMergedIndex = rowIndex + cellData.rowspan - 1;
+	        }
+
+	        if (lastRowMergedIndex > tableRange.end.rowIndex) {
+	            tableRange.end.rowIndex = lastRowMergedIndex;
+	        }
+	    });
+	}
+
+	/**
+	 * Expand table range by column merge properties like colspan, colMergeWith.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @param {number} rowIndex - row index
+	 * @param {number} colIndex - column index
+	 * @private
+	 */
+	function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
+	    var rowData = tableData[rowIndex];
+	    var cellData = rowData[colIndex];
+	    var colMergeWith = cellData.colMergeWith;
+	    var lastColMergedIndex = -1;
+
+	    if (util.isExisty(colMergeWith)) {
+	        if (colMergeWith < tableRange.start.colIndex) {
+	            tableRange.start.colIndex = colMergeWith;
+	        }
+
+	        lastColMergedIndex = colMergeWith + rowData[colMergeWith].colspan - 1;
+	    } else if (cellData.colspan > 1) {
+	        lastColMergedIndex = colIndex + cellData.colspan - 1;
+	    }
+
+	    if (lastColMergedIndex > tableRange.end.colIndex) {
+	        tableRange.end.colIndex = lastColMergedIndex;
+	    }
+	}
+
+	/**
+	 * Expand table range by merge properties like colspan, rowspan.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table range
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 * @private
+	 */
+	function _expandMergedRange(tableData, tableRange) {
+	    var rangeStr = '';
+
+	    while (rangeStr !== JSON.stringify(tableRange)) {
+	        rangeStr = JSON.stringify(tableRange);
+
+	        _expandRowMergedRange(tableData, tableRange, 'start');
+	        _expandRowMergedRange(tableData, tableRange, 'end');
+
+	        util.range(tableRange.start.rowIndex, tableRange.end.rowIndex + 1).forEach(function (rowIndex) {
+	            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.start.colIndex);
+	            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.end.colIndex);
+	        });
+	    }
+
+	    return tableRange;
+	}
+
+	/**
+	 * Find table range for selection.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $start - start jQuery element
+	 * @param {jQuery} $end - end jQuery element
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }}
+	 * @ignore
+	 */
+	function findSelectionRange(tableData, $start, $end) {
+	    var unmergedRange = _findUnmergedRange(tableData, $start, $end);
+
+	    return _expandMergedRange(tableData, unmergedRange);
+	}
+
+	/**
+	 * Get table selection range.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {jQuery} $selectedCells - selected cells jQuery elements
+	 * @param {jQuery} $startContainer - start container jQuery element of text range
+	 * @returns {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 *}}
+	 * @ignore
+	 */
+	function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
+	    var cellIndexData = _tableDataHandler2.default.createCellIndexData(tableData);
+	    var tableRange = {};
+
+	    if ($selectedCells.length) {
+	        var startRange = _tableDataHandler2.default.findCellIndex(cellIndexData, $selectedCells.first());
+	        var endRange = util.extend({}, startRange);
+
+	        $selectedCells.each(function (index, cell) {
+	            var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $(cell));
+	            var cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
+	            var lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
+	            var lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
+
+	            endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
+	            endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
+	        });
+
+	        tableRange.start = startRange;
+	        tableRange.end = endRange;
+	    } else {
+	        var cellIndex = _tableDataHandler2.default.findCellIndex(cellIndexData, $startContainer);
+
+	        tableRange.start = cellIndex;
+	        tableRange.end = util.extend({}, cellIndex);
+	    }
+
+	    return tableRange;
+	}
+
+	exports.default = {
+	    findSelectionRange: findSelectionRange,
+	    getTableSelectionRange: getTableSelectionRange
+	};
+
+/***/ }),
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _wwTableSelectionManager = __webpack_require__(19);
+
+	var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Implements wysiwyg merged table selection manager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+	var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
+
+	var util = tui.util;
+
+	/**
+	 * WwMergedTableSelectionManager
+	 * @exports WwMergedTableSelectionManager
+	 * @constructor
+	 * @class WwMergedTableTableSelectionManager
+	 * @param {WysiwygEditor} wwe WysiwygEditor instance
+	 * @ignore
+	 */
+
+	var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
+	    _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
+
+	    function WwMergedTableSelectionManager(wwe) {
+	        _classCallCheck(this, WwMergedTableSelectionManager);
+
+	        /**
+	         * table cache data
+	         * @type {Array.<Array.<Object>>}
+	         * @private
+	         */
+	        var _this = _possibleConstructorReturn(this, (WwMergedTableSelectionManager.__proto__ || Object.getPrototypeOf(WwMergedTableSelectionManager)).call(this, wwe));
+
+	        _this._tableData = null;
+
+	        _this.mergedTableSelectionManager = true;
+	        return _this;
+	    }
+
+	    /**
+	     * Add css class for selected cells.
+	     * @param {jQuery} $table - table jQuery element
+	     * @param {Array.<Array.<object>>} tableData - table data
+	     * @param {{
+	     *   start: {rowIndex: number, colIndex: number},
+	     *   end: {rowIndex: number, colIndex: number}
+	     * }} tableRange - table selected range
+	     * @private
+	     */
+
+
+	    _createClass(WwMergedTableSelectionManager, [{
+	        key: '_addClassToSelectedCells',
+	        value: function _addClassToSelectedCells($table, tableData, tableRange) {
+	            var startRange = tableRange.start;
+	            var endRange = tableRange.end;
+	            var cellIndexRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+	            var $trs = $table.find('tr');
+
+	            util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
+	                var rowData = tableData[rowIndex];
+	                var $cells = $trs.eq(rowIndex).find('td, th');
+
+	                return cellIndexRange.forEach(function (colIndex) {
+	                    var cellData = rowData[colIndex];
+
+	                    if (cellData.elementIndex) {
+	                        $cells.eq(rowData[colIndex].elementIndex.colIndex).addClass(TABLE_CELL_SELECTED_CLASS_NAME);
+	                    }
+	                });
+	            });
+	        }
+
+	        /**
+	         * cache table data on drag start
+	         * @param {HTMLElement} selectionStart - start element
+	         */
+
+	    }, {
+	        key: 'onDragStart',
+	        value: function onDragStart(selectionStart) {
+	            var $table = $(selectionStart).closest('[contenteditable=true] table');
+	            this._tableData = _tableDataHandler2.default.createTableData($table);
+	        }
+
+	        /**
+	         * clear table data in cache on drag end
+	         */
+
+	    }, {
+	        key: 'onDragEnd',
+	        value: function onDragEnd() {
+	            this._tableData = null;
+	        }
+
+	        /**
+	         * Highlight selected table cells
+	         * @param {HTMLElement} selectionStart start element
+	         * @param {HTMLElement} selectionEnd end element
+	         * @override
+	         */
+
+	    }, {
+	        key: 'highlightTableCellsBy',
+	        value: function highlightTableCellsBy(selectionStart, selectionEnd) {
+	            var $start = $(selectionStart);
+	            var $end = $(selectionEnd);
+	            var $table = $start.closest('[contenteditable=true] table');
+	            var tableRange = _tableRangeHandler2.default.findSelectionRange(this._tableData, $start, $end);
+
+	            this.removeClassAttrbuteFromAllCellsIfNeed();
+	            this._addClassToSelectedCells($table, this._tableData, tableRange);
+	        }
+
+	        /**
+	         * Style to selected cells.
+	         * @param {function} onStyle - function for styling
+	         */
+
+	    }, {
+	        key: 'styleToSelectedCells',
+	        value: function styleToSelectedCells(onStyle) {
+	            var sq = this.wwe.getEditor();
+	            var range = sq.getSelection().cloneRange();
+	            var $table = $(range.startContainer).closest('[contenteditable=true] table');
+
+	            $table.find('tr').get().forEach(function (tr) {
+	                var cells = $(tr).find('.' + TABLE_CELL_SELECTED_CLASS_NAME);
+	                var firstSelectedCell = cells.first()[0];
+	                var lastSelectedCell = cells.last()[0];
+
+	                if (!cells.length) {
+	                    return;
+	                }
+
+	                range.setStart(firstSelectedCell, 0);
+	                range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
+	                sq.setSelection(range);
+	                onStyle(sq);
+	            });
+	        }
+
+	        /**
+	         * Whether has selected both TH and TD.
+	         * @param {jQuery} $selectedCells - selected cells jQuery element
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'hasSelectedBothThAndTd',
+	        value: function hasSelectedBothThAndTd($selectedCells) {
+	            $selectedCells = $selectedCells || this.getSelectedCells();
+
+	            return $selectedCells.first()[0].nodeName !== $selectedCells.last()[0].nodeName;
+	        }
+	    }]);
+
+	    return WwMergedTableSelectionManager;
+	}(_wwTableSelectionManager2.default);
+
+	exports.default = WwMergedTableSelectionManager;
+
+/***/ }),
+/* 118 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._createNewRow = _createNewRow;
+	exports._addRow = _addRow;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements mergedTableAddRow
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	/**
+	 * AddRow
+	 * Add Row to selected table
+	 * @exports AddRow
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 * @ignore
+	 */
+	var AddRow = _commandManager2.default.command('wysiwyg', /** @lends AddRow */{
+	    name: 'AddRow',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _addRow(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusTd);
+	    }
+	});
+
+	/**
+	 * Create row merged cell data.
+	 * @param {number} rowMergeWith - row merge with index
+	 * @returns {{
+	 *   nodeName: string,
+	 *   rowMergeWith: number
+	 * }}
+	 * @private
+	 */
+	function _createRowMergedCell(rowMergeWith) {
+	    return {
+	        nodeName: 'TD',
+	        rowMergeWith: rowMergeWith
+	    };
+	}
+
+	/**
+	 * Create new row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} rowIndex - row index of table data
+	 * @returns {object}
+	 * @private
+	 */
+	function _createNewRow(tableData, rowIndex) {
+	    var prevCell = null;
+
+	    return tableData[rowIndex].map(function (cellData, colIndex) {
+	        var newCell = void 0;
+
+	        if (util.isExisty(cellData.rowMergeWith)) {
+	            var rowMergeWith = cellData.rowMergeWith;
+
+	            var merger = tableData[rowMergeWith][colIndex];
+	            var lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
+
+	            if (util.isExisty(merger.colMergeWith) && prevCell) {
+	                newCell = util.extend({}, prevCell);
+	            } else if (lastMergedRowIndex > rowIndex) {
+	                merger.rowspan += 1;
+	                newCell = util.extend({}, cellData);
+	            }
+	        } else if (cellData.rowspan > 1) {
+	            cellData.rowspan += 1;
+	            newCell = _createRowMergedCell(rowIndex);
+	        }
+
+	        if (!newCell) {
+	            newCell = _tableDataHandler2.default.createBasicCell(rowIndex + 1, colIndex);
+	        }
+
+	        prevCell = newCell;
+
+	        return newCell;
+	    });
+	}
+
+	/**
+	 * Add row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @private
+	 */
+	function _addRow(tableData, tableRange) {
+	    var startRowIndex = tableRange.start.rowIndex;
+	    var endRange = tableRange.end;
+	    var endRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var newRows = util.range(startRowIndex, endRowIndex + 1).map(function () {
+	        return _createNewRow(tableData, endRowIndex);
+	    });
+
+	    tableData.splice.apply(tableData, _toConsumableArray([endRowIndex + 1, 0].concat(newRows)));
+	}
+
+	/**
+	 * Find focus td element.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusTd($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var newRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, newRowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+	}
+
+	exports.default = AddRow;
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._createNewColumns = _createNewColumns;
+	exports._addColumns = _addColumns;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements mergedTableAddCol
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	/**
+	 * AddCol
+	 * Add Row to selected table
+	 * @exports AddCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 * @ignore
+	 */
+	var AddCol = _commandManager2.default.command('wysiwyg', /** @lends AddCol */{
+	    name: 'AddCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _addColumns(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Create column merged cell.
+	 * @param {number} colMergeWith - column merge start index
+	 * @param {string} nodeName - node name
+	 * @returns {{
+	 *   nodeName: string,
+	 *   colMerged: boolean,
+	 *   colMergeWith: number
+	 * }}
+	 * @private
+	 */
+	function _createColMergedCell(colMergeWith, nodeName) {
+	    return {
+	        nodeName: nodeName,
+	        colMergeWith: colMergeWith
+	    };
+	}
+
+	/**
+	 * Create new cell data.
+	 * @param {Array.<object>} rowData - row data of table data
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of table data
+	 * @param {object | null} prevCell - previous cell data
+	 * @returns {object}
+	 * @private
+	 */
+	function _createNewCell(rowData, rowIndex, colIndex, prevCell) {
+	    var cellData = rowData[colIndex];
+	    var newCell = void 0;
+
+	    if (util.isExisty(cellData.colMergeWith)) {
+	        var colMergeWith = cellData.colMergeWith;
+
+	        var merger = rowData[colMergeWith];
+	        var lastMergedCellIndex = colMergeWith + merger.colspan - 1;
+
+	        if (util.isExisty(merger.rowMergeWith) && prevCell) {
+	            newCell = util.extend({}, prevCell);
+	        } else if (lastMergedCellIndex > colIndex) {
+	            merger.colspan += 1;
+	            newCell = util.extend({}, cellData);
+	        }
+	    } else if (cellData.colspan > 1) {
+	        cellData.colspan += 1;
+	        newCell = _createColMergedCell(colIndex, cellData.nodeName);
+	    }
+
+	    if (!newCell) {
+	        newCell = _tableDataHandler2.default.createBasicCell(rowIndex, colIndex + 1, cellData.nodeName);
+	    }
+
+	    return newCell;
+	}
+
+	/**
+	 * Create new columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @returns {Array.<Array.<object>>}
+	 * @private
+	 */
+	function _createNewColumns(tableData, startColIndex, endColIndex) {
+	    var colIndexes = util.range(startColIndex, endColIndex + 1);
+	    var newColumns = [];
+	    var prevCells = null;
+
+	    tableData.forEach(function (rowData, rowIndex) {
+	        var newCells = colIndexes.map(function (colIndex, index) {
+	            var prevCell = prevCells ? prevCells[index - 1] : null;
+
+	            return _createNewCell(rowData, rowIndex, endColIndex, prevCell);
+	        });
+
+	        prevCells = newCells;
+	        newColumns.push(newCells);
+	    });
+
+	    return newColumns;
+	}
+
+	/**
+	 * Add columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _addColumns(tableData, tableRange) {
+	    var endRange = tableRange.end;
+	    var endColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var newColumns = _createNewColumns(tableData, tableRange.start.colIndex, endColIndex);
+	    var newColIndex = endColIndex + 1;
+
+	    tableData.forEach(function (rowData, rowIndex) {
+	        rowData.splice.apply(rowData, _toConsumableArray([newColIndex, 0].concat(newColumns[rowIndex])));
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var newColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, rowIndex, colIndex) + 1;
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, newColIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = AddCol;
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._removeRow = _removeRow;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableRemoveRow
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * RemoveRow
+	 * Remove row to selected table
+	 * @exports RemoveRow
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 * @ignore
+	 */
+	var RemoveRow = _commandManager2.default.command('wysiwyg', /** @lends RemoveRow */{
+	    name: 'RemoveRow',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var beforeRowLength = tableData.length;
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _removeRow(tableData, tableRange);
+
+	        if (beforeRowLength === tableData.length) {
+	            return;
+	        }
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusTd);
+	    }
+	});
+
+	/**
+	 * Update rowspan to row merger.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} endRowIndex - end row index
+	 * @private
+	 */
+	function _updateRowspan(tableData, startRowIndex, endRowIndex) {
+	    util.range(startRowIndex, endRowIndex + 1).forEach(function (rowIndex) {
+	        tableData[rowIndex].forEach(function (cell, cellIndex) {
+	            if (util.isExisty(cell.rowMergeWith)) {
+	                var merger = tableData[cell.rowMergeWith][cellIndex];
+
+	                if (merger.rowspan) {
+	                    merger.rowspan -= 1;
+	                }
+	            } else if (cell.rowspan > 1) {
+	                var lastMergedRowIndex = rowIndex + cell.rowspan - 1;
+
+	                cell.rowspan -= endRowIndex - rowIndex + 1;
+
+	                if (lastMergedRowIndex > endRowIndex) {
+	                    tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
+	                }
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Update row merge start index to merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} endRowIndex - end row index
+	 * @private
+	 */
+	function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
+	    tableData.slice(endRowIndex + 1).forEach(function (row) {
+	        row.forEach(function (cell) {
+	            if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
+	                cell.rowMergeWith = endRowIndex + 1;
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Remove row.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _removeRow(tableData, tableRange) {
+	    var startRowIndex = tableRange.start.rowIndex;
+	    var endRange = tableRange.end;
+	    var endRowIndex = _tableDataHandler2.default.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var removeCount = endRowIndex - startRowIndex + 1;
+
+	    if (removeCount === tableData.length - 1) {
+	        return;
+	    }
+
+	    _updateRowspan(tableData, startRowIndex, endRowIndex);
+	    _updateMergeStartIndex(tableData, startRowIndex, endRowIndex);
+
+	    tableData.splice(startRowIndex, removeCount);
+	}
+
+	/**
+	 * Find focus td element.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusTd($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+
+	    if (tableData.length - 1 < rowIndex) {
+	        rowIndex -= 1;
+	    }
+
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+	}
+
+	exports.default = RemoveRow;
+
+/***/ }),
+/* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._removeColumns = _removeColumns;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableRemoveCol
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * RemoveCol
+	 * Remove col to selected table
+	 * @exports RemoveCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 * @ignore
+	 */
+	var RemoveCol = _commandManager2.default.command('wysiwyg', /** @lends RemoveCol */{
+	    name: 'RemoveCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+	        var beforeCellLength = tableData[0].length;
+
+	        _removeColumns(tableData, tableRange);
+
+	        if (beforeCellLength === tableData[0].length) {
+	            return;
+	        }
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Update colspan to col merger.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start col index
+	 * @param {number} endColIndex - end col index
+	 * @private
+	 */
+	function _updateColspan(tableData, startColIndex, endColIndex) {
+	    tableData.forEach(function (rowData) {
+	        util.range(startColIndex, endColIndex + 1).forEach(function (colIndex) {
+	            var cellData = rowData[colIndex];
+
+	            if (util.isExisty(cellData.colMergeWith)) {
+	                var merger = rowData[cellData.colMergeWith];
+
+	                if (merger.colspan) {
+	                    merger.colspan -= 1;
+	                }
+	            } else if (cellData.colspan > 1) {
+	                var lastMergedCellIndex = colIndex + cellData.colspan - 1;
+
+	                cellData.colspan -= endColIndex - colIndex + 1;
+
+	                if (lastMergedCellIndex > endColIndex) {
+	                    rowData[endColIndex + 1] = util.extend({}, cellData);
+	                }
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Update row merge start index to merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startColIndex - start col index
+	 * @param {number} endColIndex - end col index
+	 * @private
+	 */
+	function _updateMergeStartIndex(tableData, startColIndex, endColIndex) {
+	    tableData.forEach(function (rowData) {
+	        rowData.slice(endColIndex + 1).forEach(function (cellData) {
+	            if (util.isExisty(cellData.colMergeWith) && cellData.colMergeWith >= startColIndex) {
+	                cellData.colMergeWith = endColIndex + 1;
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Remove columns.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{
+	 *   start: {rowIndex: number, colIndex: number},
+	 *   end: {rowIndex: number, colIndex: number}
+	 * }} tableRange - table selection range
+	 * @private
+	 */
+	function _removeColumns(tableData, tableRange) {
+	    var startColIndex = tableRange.start.colIndex;
+	    var endRange = tableRange.end;
+	    var endColIndex = _tableDataHandler2.default.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+	    var removeCount = endColIndex - startColIndex + 1;
+
+	    if (removeCount === tableData[0].length) {
+	        return;
+	    }
+
+	    _updateColspan(tableData, startColIndex, endColIndex);
+	    _updateMergeStartIndex(tableData, startColIndex, endColIndex);
+
+	    tableData.forEach(function (row) {
+	        row.splice(startColIndex, removeCount);
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+
+	    if (tableData[0].length - 1 < colIndex) {
+	        colIndex -= 1;
+	    }
+
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = RemoveCol;
+
+/***/ }),
+/* 122 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * @fileoverview Implements mergedTableAlignCol
+	 * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	 */
+
+	var util = tui.util;
+
+	/**
+	 * AlignCol
+	 * Align selected column's text content to given direction
+	 * @exports AlignCol
+	 * @augments Command
+	 * @augments WysiwygCommand
+	 * @ignore
+	 */
+	var AlignCol = _commandManager2.default.command('wysiwyg', /** @lends AlignCol */{
+	    name: 'AlignCol',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     * @param {string} alignDirection - align direction for table header
+	     */
+	    exec: function exec(wwe, alignDirection) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, $startContainer);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Align to table header.
+	 * @param {Array.<object>} headRowData - head row data
+	 * @param {number} startColIndex - start column index for styling align
+	 * @param {number} endColIndex - end column index for styling align
+	 * @param {string} alignDirection - align direction
+	 * @private
+	 */
+	function _align(headRowData, startColIndex, endColIndex, alignDirection) {
+	    util.range(startColIndex, endColIndex + 1).forEach(function (colIndex) {
+	        var headCellData = headRowData[colIndex];
+
+	        if (util.isExisty(headCellData.colMergeWith)) {
+	            headRowData[headCellData.colMergeWith].align = alignDirection;
+	        } else {
+	            headCellData.align = alignDirection;
+	        }
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {jQuery} $startContainer - start container jQuery element of text range
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, $startContainer) {
+	    var elementRowIndex = _tableDataHandler2.default.findElementRowIndex($startContainer);
+	    var elementColIndex = _tableDataHandler2.default.findElementColIndex($startContainer);
+
+	    return $newTable.find('tr').eq(elementRowIndex).find('td, th')[elementColIndex];
+	}
+
+	exports.default = AlignCol;
+
+/***/ }),
+/* 123 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._mergeCells = _mergeCells;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements MergeCell
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+	var BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
+
+	var MergeCell = _commandManager2.default.command('wysiwyg', /** @lends MergeCell */{
+	    name: 'MergeCells',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var selectionManager = wwe.componentManager.getManager('tableSelection');
+	        var $selectedCells = selectionManager.getSelectedCells();
+
+	        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+	            return;
+	        }
+
+	        var range = sq.getSelection().cloneRange();
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        _mergeCells(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Pick merger content from selected cells.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @returns {string}
+	 * @private
+	 */
+	function _pickContent(targetRows, startColIndex, endColIndex) {
+	    var _ref;
+
+	    var limitColIndex = endColIndex + 1;
+	    var cells = (_ref = []).concat.apply(_ref, _toConsumableArray(targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    })));
+	    var foundCellData = cells.filter(function (_ref2) {
+	        var content = _ref2.content;
+	        return content && content !== BASIC_CELL_CONTENT;
+	    });
+
+	    return foundCellData.length ? foundCellData[0].content : BASIC_CELL_CONTENT;
+	}
+
+	/**
+	 * Initialize cell data of target rows.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @private
+	 */
+	function _initCellData(targetRows, startColIndex, endColIndex) {
+	    var _ref3;
+
+	    var limitColIndex = endColIndex + 1;
+	    var targetCells = targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    });
+
+	    (_ref3 = []).concat.apply(_ref3, _toConsumableArray(targetCells)).slice(1).forEach(function (cellData) {
+	        var nodeName = cellData.nodeName;
+
+	        util.forEach(cellData, function (value, name) {
+	            return delete cellData[name];
+	        });
+	        cellData.nodeName = nodeName;
+	    });
+	}
+
+	/**
+	 * Update rowMergeWith property of target rows for row merge.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @param {number} rowMergeWith - index of row merger
+	 * @private
+	 */
+	function _updateRowMergeWith(targetRows, startColIndex, endColIndex, rowMergeWith) {
+	    var limitColIndex = endColIndex + 1;
+
+	    targetRows.forEach(function (rowData) {
+	        rowData.slice(startColIndex, limitColIndex).forEach(function (cellData) {
+	            cellData.rowMergeWith = rowMergeWith;
+	        });
+	    });
+	}
+
+	/**
+	 * Update colMergeWith property of target rows for column merge.
+	 * @param {Array.<Array.<object>>} targetRows - target rows
+	 * @param {number} startColIndex - start column index
+	 * @param {number} endColIndex - end column index
+	 * @param {number} colMergeWith - index of column merger
+	 * @private
+	 */
+	function _updateColMergeWith(targetRows, startColIndex, endColIndex, colMergeWith) {
+	    var limitColIndex = endColIndex + 1;
+
+	    targetRows.forEach(function (rowData) {
+	        rowData.slice(startColIndex, limitColIndex).forEach(function (cellData) {
+	            cellData.colMergeWith = colMergeWith;
+	        });
+	    });
+	}
+
+	/**
+	 * Merge selected cells.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @private
+	 */
+	function _mergeCells(tableData, _ref4) {
+	    var startRange = _ref4.start,
+	        endRange = _ref4.end;
+
+	    var startRowIndex = startRange.rowIndex;
+	    var startColIndex = startRange.colIndex;
+	    var endRowIndex = endRange.rowIndex;
+	    var endColIndex = endRange.colIndex;
+	    var merger = tableData[startRowIndex][startColIndex];
+	    var targetRows = tableData.slice(startRowIndex, endRowIndex + 1);
+	    var rowspan = endRowIndex - startRowIndex + 1;
+	    var colspan = endColIndex - startColIndex + 1;
+
+	    merger.rowspan = rowspan;
+	    merger.colspan = colspan;
+	    merger.content = _pickContent(targetRows, startColIndex, endColIndex);
+	    _initCellData(targetRows, startColIndex, endColIndex);
+
+	    if (rowspan > 1) {
+	        _updateRowMergeWith(targetRows.slice(1), startColIndex, endColIndex, startRowIndex);
+	    }
+
+	    if (colspan > 1) {
+	        _updateColMergeWith(targetRows, startColIndex + 1, endColIndex, startColIndex);
+	    }
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = MergeCell;
+
+/***/ }),
+/* 124 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports._hasMergedCell = _hasMergedCell;
+	exports._unmergeCells = _unmergeCells;
+
+	var _commandManager = __webpack_require__(28);
+
+	var _commandManager2 = _interopRequireDefault(_commandManager);
+
+	var _tableDataHandler = __webpack_require__(112);
+
+	var _tableDataHandler2 = _interopRequireDefault(_tableDataHandler);
+
+	var _tableRangeHandler = __webpack_require__(116);
+
+	var _tableRangeHandler2 = _interopRequireDefault(_tableRangeHandler);
+
+	var _tableRenderer = __webpack_require__(111);
+
+	var _tableRenderer2 = _interopRequireDefault(_tableRenderer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } /**
+	                                                                                                                                                                                                     * @fileoverview Implements UnmergeCell
+	                                                                                                                                                                                                     * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
+	                                                                                                                                                                                                     */
+
+	var util = tui.util;
+
+	var UnmergeCell = _commandManager2.default.command('wysiwyg', /** @lends UnmergeCell */{
+	    name: 'UnmergeCells',
+	    /**
+	     * Command handler.
+	     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+	     */
+	    exec: function exec(wwe) {
+	        var sq = wwe.getEditor();
+	        var range = sq.getSelection().cloneRange();
+
+	        sq.focus();
+
+	        if (!sq.hasFormat('TABLE')) {
+	            return;
+	        }
+
+	        var $startContainer = $(range.startContainer);
+	        var $table = $startContainer.closest('table');
+	        var tableData = _tableDataHandler2.default.createTableData($table);
+	        var $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+	        var tableRange = _tableRangeHandler2.default.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+	        if (!_hasMergedCell(tableData, tableRange)) {
+	            return;
+	        }
+
+	        _unmergeCells(tableData, tableRange);
+
+	        var $newTable = _tableRenderer2.default.replaceTable($table, tableData);
+	        var focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+	        _tableRenderer2.default.focusToCell(sq, range, focusCell);
+	    }
+	});
+
+	/**
+	 * Whether has merged cell.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @returns {boolean}
+	 * @private
+	 */
+	function _hasMergedCell(tableData, _ref) {
+	    var _ref2;
+
+	    var startRange = _ref.start,
+	        endRange = _ref.end;
+
+	    var startColIndex = startRange.colIndex;
+	    var limitColIndex = endRange.colIndex + 1;
+	    var targetRows = tableData.slice(startRange.rowIndex, endRange.rowIndex + 1);
+	    var targetCells = targetRows.map(function (rowData) {
+	        return rowData.slice(startColIndex, limitColIndex);
+	    });
+
+	    return !!(_ref2 = []).concat.apply(_ref2, _toConsumableArray(targetCells)).filter(function (cellData) {
+	        return cellData.colspan > 1 || cellData.rowspan > 1;
+	    }).length;
+	}
+
+	/**
+	 * Update merged cell data to basic cell data.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {number} startRowIndex - start row index
+	 * @param {number} startColIndex - start col index
+	 * @param {number} rowspan - rowspan property of merger cell
+	 * @param {number} colspan - colspan property of merger cell
+	 * @private
+	 */
+	function _updateMergedCells(tableData, startRowIndex, startColIndex, rowspan, colspan) {
+	    var limitRowIndex = startRowIndex + rowspan;
+	    var limitColIndex = startColIndex + colspan;
+	    var colRange = util.range(startColIndex, limitColIndex);
+
+	    util.range(startRowIndex, limitRowIndex).forEach(function (rowIndex) {
+	        var rowData = tableData[rowIndex];
+	        var startIndex = rowIndex === startRowIndex ? 1 : 0;
+
+	        colRange.slice(startIndex).forEach(function (colIndex) {
+	            rowData[colIndex] = _tableDataHandler2.default.createBasicCell(rowIndex, colIndex, rowData[colIndex].nodeName);
+	        });
+	    });
+	}
+
+	/**
+	 * Unmerge selected cells.
+	 * @param {Array.<Array.<object>>} tableData - table data
+	 * @param {{rowIndex: number, colIndex: number}} startRange - start table selection range
+	 * @param {{rowIndex: number, colIndex: number}} endRange - end table selection range
+	 * @private
+	 */
+	function _unmergeCells(tableData, _ref3) {
+	    var startRange = _ref3.start,
+	        endRange = _ref3.end;
+
+	    var colRange = util.range(startRange.colIndex, endRange.colIndex + 1);
+
+	    util.range(startRange.rowIndex, endRange.rowIndex + 1).forEach(function (rowIndex) {
+	        colRange.forEach(function (colIndex) {
+	            var cellData = tableData[rowIndex][colIndex];
+	            var colspan = cellData.colspan,
+	                rowspan = cellData.rowspan;
+
+
+	            if (colspan > 1 || rowspan > 1) {
+	                cellData.colspan = 1;
+	                cellData.rowspan = 1;
+	                _updateMergedCells(tableData, rowIndex, colIndex, rowspan, colspan);
+	            }
+	        });
+	    });
+	}
+
+	/**
+	 * Find focus cell element like td or th.
+	 * @param {jQuery} $newTable - changed table jQuery element
+	 * @param {number} rowIndex - row index of table data
+	 * @param {number} colIndex - column index of tabld data
+	 * @returns {HTMLElement}
+	 * @private
+	 */
+	function _findFocusCell($newTable, rowIndex, colIndex) {
+	    var tableData = _tableDataHandler2.default.createTableData($newTable);
+	    var cellElementIndex = _tableDataHandler2.default.findElementIndex(tableData, rowIndex, colIndex);
+
+	    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td, th')[cellElementIndex.colIndex];
+	}
+
+	exports.default = UnmergeCell;
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _i18n = __webpack_require__(15);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	/**
+	 * Change contextmenu content.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @private
+	 */
+	function _changeContent(popupTableUtils) {
+	    var POPUP_CONTENT = ['<button type="button" class="te-table-add-row">' + _i18n2.default.get('Add row') + '</button>', '<button type="button" class="te-table-add-col">' + _i18n2.default.get('Add col') + '</button>', '<button type="button" class="te-table-remove-row">' + _i18n2.default.get('Remove row') + '</button>', '<button type="button" class="te-table-remove-col">' + _i18n2.default.get('Remove col') + '</button>', '<button type="button" class="te-table-merge">' + _i18n2.default.get('Merge cells') + '</button>', '<button type="button" class="te-table-unmerge">' + _i18n2.default.get('Unmerge cells') + '</button>', '<button type="button" class="te-table-col-align-left">' + _i18n2.default.get('Align left') + '</button>', '<button type="button" class="te-table-col-align-center">' + _i18n2.default.get('Align center') + '</button>', '<button type="button" class="te-table-col-align-right">' + _i18n2.default.get('Align right') + '</button>', '<button type="button" class="te-table-remove">' + _i18n2.default.get('Remove table') + '</button>'].join('');
+	    var $popupContent = $(POPUP_CONTENT);
+
+	    popupTableUtils.$content = $popupContent;
+	    popupTableUtils.setContent($popupContent);
+	}
+
+	/**
+	 * Bind events for merge feature of contextmenu.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @param {object} eventManager - event manager instance of editor
+	 * @param {object} selectionManager - table selection manager instance
+	 * @private
+	 */
+	function _bindEvents(popupTableUtils, eventManager, selectionManager) {
+	    var $popupContent = popupTableUtils.$content;
+	    var $mergeBtn = $($popupContent[4]);
+	    var $unmergeBtn = $($popupContent[5]);
+
+	    popupTableUtils.on('click .te-table-merge', function () {
+	        eventManager.emit('command', 'MergeCells');
+	    });
+
+	    popupTableUtils.on('click .te-table-unmerge', function () {
+	        eventManager.emit('command', 'UnmergeCells');
+	    });
+
+	    eventManager.listen('openPopupTableUtils', function () {
+	        var $selectedCells = selectionManager.getSelectedCells();
+	        var selectedCellCount = $selectedCells.length;
+
+	        if (selectedCellCount) {
+	            if (selectedCellCount < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+	                $mergeBtn.hide();
+	            } else {
+	                $mergeBtn.show();
+	            }
+
+	            if ($selectedCells.is('[rowspan], [colspan]')) {
+	                $unmergeBtn.show();
+	            } else {
+	                $unmergeBtn.hide();
+	            }
+	        } else {
+	            $mergeBtn.hide();
+	            $unmergeBtn.hide();
+	        }
+	    });
+	}
+
+	/**
+	 * Update contextmenu UI.
+	 * @param {object} popupTableUtils - PopupTableUtils instance for managing contextmenu of table
+	 * @param {object} eventManager - event manager instance of editor
+	 * @param {object} selectionManager - table selection manager instance
+	 * @ignore
+	 */
+	function updateContextMenu(popupTableUtils, eventManager, selectionManager) {
+	    _changeContent(popupTableUtils);
+	    _bindEvents(popupTableUtils, eventManager, selectionManager);
+	}
+
+	exports.default = {
+	    updateContextMenu: updateContextMenu
+	};
+
+/***/ }),
+/* 126 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _i18n = __webpack_require__(15);
+
+	var _i18n2 = _interopRequireDefault(_i18n);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	_i18n2.default.setLang(['ko', 'ko_KR'], {
+	    'Merge cells': '셀 병합',
+	    'Unmerge cells': '셀 병합해제',
+	    'Cannot change part of merged cell': '병합 된 셀의 일부를 변경할 수 없습니다.',
+	    'Cannot paste row merged cells into the table header': '테이블 헤더에는 행 병합된 셀을 붙여넣을 수 없습니다.'
+	});
+
+	_i18n2.default.setLang(['en', 'en_US'], {
+	    'Merge cells': 'Merge cells',
+	    'Unmerge cells': 'Unmerge cells',
+	    'Cannot change part of merged cell': 'Cannot change part of merged cell.',
+	    'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
+	});
+
+	_i18n2.default.setLang(['ja', 'ja_JP'], {
+	    'Merge cells': 'セルの結合',
+	    'Unmerge cells': 'セルの結合を解除',
+	    'Cannot change part of merged cell': '結合されたセルの一部を変更することはできません。',
+	    'Cannot paste row merged cells into the table header': '行にマージされたセルをヘッダーに貼り付けることはできません。'
+	});
+
+	_i18n2.default.setLang(['nl', 'nl_NL'], {
+	    'Merge cells': 'cellen samenvoegen',
+	    'Unmerge cells': 'Samenvoegen cellen ongedaan maken',
+	    'Cannot change part of merged cell': 'Kan geen deel uit van samengevoegde cel te veranderen.',
+	    'Cannot paste row merged cells into the table header': 'Kan niet plakken rij samengevoegde cellen in de koptekst. '
+	});
+
+	_i18n2.default.setLang(['zh', 'zh_CN'], {
+	    'Merge cells': '合并单元格',
+	    'Unmerge cells': '取消合并单元格',
+	    'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
+	    'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。'
+	});
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -23215,12 +28288,13 @@
 	    'Would you like to paste as table?': 'Would you like to paste as table?',
 	    'Text color': 'Text color',
 	    'Auto scroll enabled': 'Auto scroll enabled',
-	    'Auto scroll disabled': 'Auto scroll disabled'
+	    'Auto scroll disabled': 'Auto scroll disabled',
+	    'Cannot paste values ​​other than a table in the cell selection state': 'Cannot paste values ​​other than a table in the cell selection state.'
 	});
 
-/***/ },
-/* 108 */
-/***/ function(module, exports) {
+/***/ }),
+/* 128 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -23262,12 +28336,13 @@
 	    'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
 	    'Text color': '글자 색상',
 	    'Auto scroll enabled': '자동 스크롤 켜짐',
-	    'Auto scroll disabled': '자동 스크롤 꺼짐'
+	    'Auto scroll disabled': '자동 스크롤 꺼짐',
+	    'Cannot paste values ​​other than a table in the cell selection state.': '셀 선택 상태에서는 테이블 이외의 값은 붙여넣을 수 없습니다.'
 	});
 
-/***/ },
-/* 109 */
-/***/ function(module, exports) {
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -23309,12 +28384,13 @@
 	    'Would you like to paste as table?': '你想粘贴表吗?',
 	    'Text color': '文字色相',
 	    'Auto scroll enabled': '自动滚动启用',
-	    'Auto scroll disabled': '自动的滚动作非使用'
+	    'Auto scroll disabled': '自动的滚动作非使用',
+	    'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。'
 	});
 
-/***/ },
-/* 110 */
-/***/ function(module, exports) {
+/***/ }),
+/* 130 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -23356,12 +28432,13 @@
 	    'Would you like to paste as table?': 'テーブルを貼り付けますか?',
 	    'Text color': '文字色相',
 	    'Auto scroll enabled': '自動スクロールが有効',
-	    'Auto scroll disabled': '自動スクロールを無効に'
+	    'Auto scroll disabled': '自動スクロールを無効に',
+	    'Cannot paste values ​​other than a table in the cell selection state': '表以外の値をセル選択状態に貼り付けることはできません。'
 	});
 
-/***/ },
-/* 111 */
-/***/ function(module, exports) {
+/***/ }),
+/* 131 */
+/***/ (function(module, exports) {
 
 	'use strict';
 
@@ -23401,10 +28478,11 @@
 	    'Align right': 'Rechts uitlijnen',
 	    'Remove table': 'Verwijder tabel',
 	    'Would you like to paste as table?': 'Wil je dit als tabel plakken?',
-	    'Text color': 'tekst kleur',
-	    'Auto scroll enabled': 'Auto scroll enabled',
-	    'Auto scroll disabled': 'Auto scroll uitgeschakeld'
+	    'Text color': 'Tekstkleur',
+	    'Auto scroll enabled': 'Autoscroll ingeschakeld',
+	    'Auto scroll disabled': 'Autoscroll uitgeschakeld',
+	    'Cannot paste values ​​other than a table in the cell selection state': 'Kan geen waardes anders dan de tabel in de cell plakken'
 	});
 
-/***/ }
+/***/ })
 /******/ ]);

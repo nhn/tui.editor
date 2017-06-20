@@ -10,10 +10,10 @@ import code from './markdownItPlugins/markdownitCodeRenderer';
 import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
+import codeBlockManager from './codeBlockManager';
 
 const markdownIt = window.markdownit,
-    toMark = window.toMark,
-    hljs = window.hljs;
+    toMark = window.toMark;
 
 const markdownitHighlight = markdownIt({
     html: true,
@@ -21,7 +21,7 @@ const markdownitHighlight = markdownIt({
     quotes: '“”‘’',
     langPrefix: 'lang-',
     highlight(codeText, type) {
-        return hljs.getLanguage(type) ? hljs.highlight(type, codeText).value : escape(codeText, false);
+        return codeBlockManager.createCodeBlockHtml(type, codeText);
     }
 });
 const markdownit = markdownIt({
@@ -67,6 +67,11 @@ class Convertor {
      */
     _markdownToHtmlWithCodeHighlight(markdown) {
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+        // eslint-disable-next-line
+        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+        while (onerrorStripeRegex.exec(markdown)) {
+            markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+        }
 
         let renderedHTML = markdownitHighlight.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
@@ -84,8 +89,13 @@ class Convertor {
      */
     _markdownToHtml(markdown) {
         markdown = markdown.replace(/<br>/ig, '<br data-tomark-pass>');
+        // eslint-disable-next-line
+        const onerrorStripeRegex = /(<img[^>]*)(onerror\s*=\s*[\"']?[^\"']*[\"']?)(.*)/i;
+        while (onerrorStripeRegex.exec(markdown)) {
+            markdown = markdown.replace(onerrorStripeRegex, '$1$3');
+        }
 
-        let renderedHTML = markdownitHighlight.render(markdown);
+        let renderedHTML = markdownit.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
         return renderedHTML;
@@ -139,6 +149,7 @@ class Convertor {
      */
     toHTML(markdown) {
         let html = this._markdownToHtml(markdown);
+
         html = this.eventManager.emitReduce('convertorAfterMarkdownToHtmlConverted', html);
 
         return html;
@@ -155,11 +166,16 @@ class Convertor {
      * @api
      * @memberOf Convertor
      * @param {string} html html text
+     * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text
      */
-    toMarkdown(html) {
+    toMarkdown(html, toMarkOptions) {
         const resultArray = [];
-        let markdown = toMark(this._appendAttributeForBrIfNeed(html));
+
+        html = this.eventManager.emitReduce('convertorBeforeHtmlToMarkdownConverted', html);
+
+        let markdown = toMark(this._appendAttributeForBrIfNeed(html), toMarkOptions);
+
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
         tui.util.forEach(markdown.split('\n'), (line, index) => {
@@ -179,7 +195,9 @@ class Convertor {
         const FIND_BR_RX = /<br>/ig;
         const FIND_DOUBLE_BR_RX = /<br \/><br \/>/ig;
         const FIND_PASSING_AND_NORMAL_BR_RX = /<br data-tomark-pass \/><br \/>(.)/ig;
-        const FIND_FIRST_TWO_BRS_RX = /([^>])<br data-tomark-pass \/><br data-tomark-pass \/>/g;
+        const FIRST_TWO_BRS_BEFORE_RX = /([^>]|<\/b>|<\/i>|<\/s>|<img [^>]*>)/;
+        const TWO_BRS_RX = /<br data-tomark-pass \/><br data-tomark-pass \/>/;
+        const FIND_FIRST_TWO_BRS_RX = new RegExp(FIRST_TWO_BRS_BEFORE_RX.source + TWO_BRS_RX.source, 'g');
 
         html = html.replace(FIND_BR_RX, '<br />');
 
@@ -224,14 +242,4 @@ class Convertor {
     }
 }
 
-/**
- * escape code from markdown-it
- * @param {string} html HTML string
- * @param {string} encode Boolean value of whether encode or not
- * @returns {string}
- */
-function escape(html, encode) {
-    return html.replace(!encode ? /&(?!#?\w+;)/g : /&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-}
 module.exports = Convertor;

@@ -36,5 +36,6 @@ tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
     'Would you like to paste as table?': '표형태로 붙여 넣겠습니까?',
     'Text color': '글자 색상',
     'Auto scroll enabled': '자동 스크롤 켜짐',
-    'Auto scroll disabled': '자동 스크롤 꺼짐'
+    'Auto scroll disabled': '자동 스크롤 꺼짐',
+    'Cannot paste values ​​other than a table in the cell selection state.': '셀 선택 상태에서는 테이블 이외의 값은 붙여넣을 수 없습니다.'
 });

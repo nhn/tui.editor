@@ -6,6 +6,7 @@
 /**
  * Editor container template
  * @type {string}
+ * @ignore
  */
 const containerTmpl = [
     '<div class="tui-editor">',

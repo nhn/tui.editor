@@ -9,6 +9,7 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
+import codeBlockManager from './codeBlockManager';
 
 const util = tui.util;
 
@@ -36,9 +37,10 @@ class ToastUIEditorViewOnly {
         this.options = options;
 
         this.eventManager = new EventManager();
-
         this.commandManager = new CommandManager(this);
         this.convertor = new Convertor(this.eventManager);
+        this.codeBlockManager = codeBlockManager;
+        this.toMarkOptions = null;
 
         if (this.options.hooks) {
             util.forEach(this.options.hooks, (fn, key) => {
@@ -52,18 +54,9 @@ class ToastUIEditorViewOnly {
             });
         }
 
-        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor);
+        this.preview = new Preview($(this.options.el), this.eventManager, this.convertor, true);
 
-        this.preview.$el.on('mousedown', ev => {
-            const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-            if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-                $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-                this.eventManager.emit('change', {
-                    source: 'viewOnly',
-                    data: ev
-                });
-            }
-        });
+        this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
         extManager.applyExtension(this, this.options.exts);
 
@@ -73,16 +66,44 @@ class ToastUIEditorViewOnly {
     }
 
     /**
+     * Toggle task by detecting mousedown event.
+     * @param {MouseEvent} ev - event
+     * @private
+     */
+    _toggleTask(ev) {
+        const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
+
+        if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+            this.eventManager.emit('change', {
+                source: 'viewOnly',
+                data: ev
+            });
+        }
+    }
+
+    /**
      * Set content for preview
      * @api
      * @memberOf ToastUIEditorViewOnly
      * @param {string} markdown Markdown text
      */
-    setValue(markdown) {
+    setMarkdown(markdown) {
         this.markdownValue = markdown = markdown || '';
 
         this.preview.refresh(this.markdownValue);
-        this.eventManager.emit('setValueAfter', this.markdownValue);
+        this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+    }
+
+    /**
+     * Set content for preview
+     * @api
+     * @memberOf ToastUIEditorViewOnly
+     * @param {string} markdown Markdown text
+     * @deprecated
+     */
+    setValue(markdown) {
+        this.setMarkdown(markdown);
     }
 
     /**
@@ -113,6 +134,7 @@ class ToastUIEditorViewOnly {
      */
     remove() {
         this.eventManager.emit('removeEditor');
+        this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
         this.options = null;
         this.eventManager = null;
         this.commandManager = null;

@@ -1,42 +1,44 @@
-'use strict';
+const PopupAddLink = require('../../src/js/ui/popupAddLink');
+const EventManager = require('../../src/js/eventManager');
 
-var PopupAddLink = require('../../src/js/ui/popupAddLink'),
-    EventManager = require('../../src/js/eventManager');
+describe('PopupAddLink', () => {
+    let popup,
+        em,
+        selectedText;
 
-describe('PopupAddLink', function() {
-    var popup,
-        em;
-
-    beforeEach(function() {
+    beforeEach(() => {
         em = new EventManager();
 
         popup = new PopupAddLink({
-            eventManager: em
+            editor: {
+                getSelectedText: () => selectedText || '',
+                eventManager: em
+            }
         });
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('생성', function() {
-        it('popupAddLink클래스가 추가되었다', function() {
+    describe('init', () => {
+        it('popupAddLink class added', () => {
             expect(popup.$el.hasClass('te-popup-add-link')).toBe(true);
         });
-        it('버튼들이 생성되었다', function() {
+        it('buttons', () => {
             expect(popup.$el.find('.te-close-button').length).toEqual(1);
             expect(popup.$el.find('.te-ok-button').length).toEqual(1);
         });
     });
 
-    describe('버튼 이벤트', function() {
-        var handler = jasmine.createSpy('buttonClickedHandler');
+    describe('button events', () => {
+        let handler = jasmine.createSpy('buttonClickedHandler');
 
-        beforeEach(function() {
+        beforeEach(() => {
             handler = jasmine.createSpy('buttonClickedHandler');
         });
 
-        it('ok버튼을 누르면 okButtonClicked이벤트가 발생한다', function() {
+        it('ok button fires okButtonClicked event', () => {
             popup.on('okButtonClicked', handler);
 
             $('.te-ok-button').trigger('click');
@@ -44,7 +46,7 @@ describe('PopupAddLink', function() {
             expect(handler).toHaveBeenCalled();
         });
 
-        it('close버튼을 누르면 closeButtonClicked이벤트가 발생한다', function() {
+        it('close button fires closeButtonClicked event', () => {
             popup.on('closeButtonClicked', handler);
 
             $('.te-close-button').trigger('click');
@@ -53,18 +55,18 @@ describe('PopupAddLink', function() {
         });
     });
 
-    describe('eventManager와 연결', function() {
-        var handler;
+    describe('integrates with eventManager', () => {
+        let handler;
 
-        beforeEach(function() {
+        beforeEach(() => {
             handler = jasmine.createSpy('buttonClickedHandler');
         });
 
-        it('okButtonClicked이벤트가 발생하면 eventManager의 command 이벤트가 발생한다', function() {
-            var value = {
-                    linkText: 'linkText',
-                    url: 'urlText'
-                };
+        it('okButtonClicked fires command', () => {
+            const value = {
+                linkText: 'linkText',
+                url: 'urlText'
+            };
 
             em.listen('command', handler);
             $('.te-link-text-input').val(value.linkText);
@@ -75,13 +77,13 @@ describe('PopupAddLink', function() {
             expect(handler).toHaveBeenCalledWith('AddLink', value);
         });
 
-        it('eventManager에서 openPopupAddLink 이벤트가 발생하면 팝업이 보여진다', function() {
+        it('openPopupAddLink event opens popup', () => {
             em.emit('openPopupAddLink');
 
             expect(popup.isShow()).toBe(true);
         });
 
-        it('eventManager에서 closeAllPopup 이벤트가 발생하면 팝업이 닫힌다', function() {
+        it('closeAllPopup event closes popup', () => {
             em.emit('openPopupAddLink');
             em.emit('closeAllPopup');
 
@@ -89,36 +91,47 @@ describe('PopupAddLink', function() {
         });
     });
 
-    describe('url입력 방식', function() {
-        it('getValue()로 입력된 값들을 객체형식으로 받는다', function() {
-            var value;
-
+    describe('url입력 방식', () => {
+        it('getValue() returns text/url values', () => {
             $('.te-link-text-input').val('myLinkText');
             $('.te-url-input').val('myUrl');
 
-            value = popup.getValue();
+            const value = popup.getValue();
 
             expect(value.linkText).toEqual('myLinkText');
             expect(value.url).toEqual('myUrl');
         });
 
-        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 ""로 변경된다', function() {
-            var value;
-
+        it('clear text fields after popup closed', () => {
             $('.te-link-text-input').val('myLinkText');
             $('.te-url-input').val('myUrl');
 
             popup.hide();
-            value = popup.getValue();
+            const value = popup.getValue();
 
             expect(value.linkText).toEqual('');
             expect(value.url).toEqual('');
         });
     });
 
-    describe('file입력 방식', function() {
-        it('', function() {
+    describe('show()', () => {
+        it('load selected text from editor', () => {
+            selectedText = 'text';
+            popup.show();
 
+            const value = popup.getValue();
+
+            expect(value.linkText).toEqual(selectedText);
+        });
+
+        it('load selected url text from editor and fill url too', () => {
+            selectedText = 'http://www.nhnent.com';
+            popup.show();
+
+            const value = popup.getValue();
+
+            expect(value.linkText).toEqual(selectedText);
+            expect(value.url).toEqual(selectedText);
         });
     });
 });

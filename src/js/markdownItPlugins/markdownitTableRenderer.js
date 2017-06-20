@@ -60,7 +60,7 @@ function escapedSplit(str) {
 
 module.exports = function table(state, startLine, endLine, silent) {
     var ch, lineText, pos, i, nextLine, columns, columnCount, token,
-        aligns, t, tableLines, tbodyLines;
+        aligns, alignCount, t, tableLines, tbodyLines;
 
     // should have at least three lines
     if (startLine + 2 > endLine) {
@@ -115,6 +115,7 @@ module.exports = function table(state, startLine, endLine, silent) {
             aligns.push('');
         }
     }
+    alignCount = aligns.length;
 
     lineText = getLine(state, startLine).trim();
     if (lineText.indexOf('|') === -1) {
@@ -125,8 +126,13 @@ module.exports = function table(state, startLine, endLine, silent) {
     // header row will define an amount of columns in the entire table,
     // and align row shouldn't be smaller than that (the rest of the rows can)
     columnCount = columns.length;
-    if (columnCount > aligns.length) {
+    if (columnCount > alignCount) {
         return false;
+    } else if (columnCount < alignCount) {
+        for(i = 0; i < alignCount - columnCount; i +=1) {
+            columns.push('');
+        }
+        columnCount = columns.length;
     }
 
     if (silent) {
@@ -142,7 +148,7 @@ module.exports = function table(state, startLine, endLine, silent) {
     token = state.push('tr_open', 'tr', 1);
     token.map = [startLine, startLine + 1];
 
-    for (i = 0; i < columns.length; i += 1) {
+    for (i = 0; i < columnCount; i += 1) {
         token = state.push('th_open', 'th', 1);
         token.map = [startLine, startLine + 1];
         if (aligns[i]) {

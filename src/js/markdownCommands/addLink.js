@@ -11,6 +11,7 @@ import CommandManager from '../commandManager';
  * Add link markdown syntax to markdown editor
  * @exports AddLink
  * @augments Command
+ * @ignore
  */
 const AddLink = CommandManager.command('markdown', /** @lends AddLink */{
     name: 'AddLink',

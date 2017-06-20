@@ -14,6 +14,7 @@ import domUtil from '../domUtils';
  * @exports AlignCol
  * @augments Command
  * @augments WysiwygCommand
+ * @ignore
  */
 const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     name: 'AlignCol',
@@ -25,7 +26,7 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     exec(wwe, alignDirection) {
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const selectionMgr = wwe.getManager('tableSelection');
+        const selectionMgr = wwe.componentManager.getManager('tableSelection');
         const rangeInformation = getRangeInformation(range, selectionMgr);
 
         sq.focus();

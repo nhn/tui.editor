@@ -15,6 +15,7 @@ const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
  * @constructor
  * @class
  * @param {CodeMirror} cm codemirror instance
+ * @ignore
  */
 class MarkdownMarkerHelper {
     constructor(cm) {
@@ -62,6 +63,7 @@ class MarkdownMarkerHelper {
      * @param {number} endLine end line
      * @param {number} endCh end offset
      * @returns {object} information
+     * @private
      */
     _getExtraInfoOfRange(startLine, startCh, endLine, endCh) {
         let text, rect, top, left, height;
@@ -135,6 +137,7 @@ class MarkdownMarkerHelper {
      * _getSelection
      * Get selection of CodeMirror, if selection is reversed then correct it
      * @returns {object} selection
+     * @private
      */
     _getSelection() {
         const selection = this.cm.getDoc().listSelections()[0];
@@ -160,6 +163,7 @@ class MarkdownMarkerHelper {
      * Find offset cursor by given offset list
      * @param {Array.<number>} offsetlist offset list
      * @returns {Array.<object>} offset cursors
+     * @private
      */
     _findOffsetCursor(offsetlist) {
         const doc = this.cm.getDoc();

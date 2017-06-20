@@ -18,17 +18,38 @@ const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 class CommandManager {
     /**
      * @param {ToastUIEditor} base nedInstance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - execute command with keyMap
      */
-    constructor(base) {
+    constructor(base, options = {}) {
         this._command = new util.Map();
         this._mdCommand = new util.Map();
         this._wwCommand = new util.Map();
+        this._options = $.extend({
+            'useCommandShortcut': true
+        }, options);
+
         this.base = base;
 
         this.keyMapCommand = {};
 
         this._initEvent();
     }
+
+    /**
+     * You can change command before command addition by addCommandBefore event.
+     * @param {object} command - command
+     * @returns {object}
+     * @private
+     */
+    _addCommandBefore(command) {
+        const commandWrapper = {command};
+
+        this.base.eventManager.emit('addCommandBefore', commandWrapper);
+
+        return commandWrapper.command || command;
+    }
+
     /**
      * Add command
      * @api
@@ -40,6 +61,8 @@ class CommandManager {
         if (args.length) {
             command = CommandManager.command(command, ...args);
         }
+
+        command = this._addCommandBefore(command);
 
         const name = command.getName();
 
@@ -74,6 +97,9 @@ class CommandManager {
         });
 
         this.base.eventManager.listen('keyMap', ev => {
+            if (!this._options.useCommandShortcut) {
+                return;
+            }
             const command = this.keyMapCommand[ev.keyMap];
 
             if (command) {
@@ -118,7 +144,7 @@ class CommandManager {
 /**
  * Create command by given editor type and property object
  * @api
- * @memberOf CommandManager
+ * @memberOf ComponentManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: object}} props Property
  * @returns {*}

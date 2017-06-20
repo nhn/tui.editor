@@ -21,6 +21,7 @@ const tooltip = new Tooltip();
  * @param {string} options.command 클릭되면 실행될 커맨드명
  * @param {string} options.text 버튼안에 들어갈 텍스트
  * @param {string} options.style 추가적으로 적용될 CSS스타일
+ * @ignore
  */
 function Button(options) {
     UIController.call(this, {

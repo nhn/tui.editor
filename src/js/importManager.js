@@ -3,11 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-import excelTableParser from './excelTableParser';
-import i18n from './i18n';
-
 const util = tui.util;
-const FIND_EXCEL_DATA = /^(([^\n\r]*|"[^"]+")(\t([^\n\r]*?|"[^"]+")){1,}[\r\n]*){1,}$/;
+const URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
 
 /**
  * ImportManager
@@ -23,6 +20,32 @@ class ImportManager {
 
         this._initEvent();
         this._initDefaultImageImporter();
+    }
+
+    /**
+     * graceful decode uri component
+     * @param {string} uri - string to be decoded
+     * @param {Function} decodeFunction - function to be used to decode
+     * @returns {string} decoded string
+     * @memberof ImportManager
+     * @static
+     */
+    static decodeURIGraceful(uri, decodeFunction = decodeURI) {
+        let decodedURI;
+        try {
+            decodedURI = decodeFunction(uri);
+            decodedURI = decodedURI.replace(/ /g, '%20')
+                .replace(/\(/g, '%28')
+                .replace(/\)/g, '%29')
+                .replace(/\[/g, '%5B')
+                .replace(/\]/g, '%5D')
+                .replace(/</g, '%3C')
+                .replace(/>/g, '%3E');
+        } catch (e) {
+            decodedURI = uri;
+        }
+
+        return decodedURI;
     }
 
     /**
@@ -69,18 +92,19 @@ class ImportManager {
     /**
      * Emit add image blob hook
      * @memberOf ImportManager
-     * @param {object} item item
+     * @param {object} item - item
+     * @param {string} type - type of an event the item belongs to. paste or drop
      * @private
      */
-    _emitAddImageBlobHook(item) {
+    _emitAddImageBlobHook(item, type) {
         const blob = item.name ? item : item.getAsFile(); // Blob or File
 
-        this.eventManager.emit('addImageBlobHook', blob, url => {
+        this.eventManager.emit('addImageBlobHook', blob, (imageUrl, altText) => {
             this.eventManager.emit('command', 'AddImage', {
-                imageUrl: url,
-                altText: blob.name || 'image'
+                imageUrl,
+                altText: altText || blob.name || 'image'
             });
-        });
+        }, type);
     }
 
     /**
@@ -89,29 +113,25 @@ class ImportManager {
      */
     _decodeURL(ev) {
         if (ev.source === 'markdown'
-            && ev.data.text.length === 1
-            && ev.data.text[0].match(/https?:\/\//g)
+            && ev.data.text
         ) {
-            ev.data.update(null, null, [decodeURIComponent(ev.data.text[0])]);
-        } else if (
-            ev.source === 'wysiwyg'
-            && ev.data.fragment.childNodes.length === 1
-            && ev.data.fragment.firstChild.nodeType === Node.ELEMENT_NODE
-            && ev.data.fragment.firstChild.tagName === 'A'
-        ) {
-            ev.data.fragment.firstChild.textContent = decodeURIComponent(ev.data.fragment.firstChild.textContent);
-        }
-    }
+            const newTexts = [];
 
-    /**
-     * Add table with excel style data
-     * @memberOf ImportManager
-     * @param {string} content Table data
-     * @private
-     */
-    _addExcelTable(content) {
-        const tableInfo = excelTableParser(content);
-        this.eventManager.emit('command', 'Table', tableInfo.col, tableInfo.row, tableInfo.data);
+            ev.data.text.forEach(text => {
+                text = text.replace(URLRegex, match => ImportManager.decodeURIGraceful(match));
+                newTexts.push(text);
+            });
+
+            ev.data.update(null, null, newTexts);
+        } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
+            const $anchor = ev.$clipboardContainer.find('A');
+
+            $anchor.each((index, element) => {
+                const text = $(element).text();
+                const decodeFunction = text.match(URLRegex) ? decodeURI : decodeURIComponent;
+                $(element).text(ImportManager.decodeURIGraceful(text, decodeFunction));
+            });
+        }
     }
 
     /**
@@ -127,8 +147,6 @@ class ImportManager {
 
         if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
             this._processBlobItems(blobItems, evData);
-        } else if (!this._isInBlockFormat()) {
-            this._precessDataTransfer(cbData, evData);
         }
     }
 
@@ -145,30 +163,13 @@ class ImportManager {
                 if (item.type.indexOf('image') !== -1) {
                     evData.preventDefault();
                     evData.codemirrorIgnore = true;
-                    this._emitAddImageBlobHook(item);
+                    this._emitAddImageBlobHook(item, evData.type);
 
                     return false;
                 }
 
                 return true;
             });
-        }
-    }
-
-    /**
-     * Process for excel style data
-     * @memberOf ImportManager
-     * @param {HTMLElement} cbData Clipboard data
-     * @param {object} evData Event data
-     * @private
-     */
-    _precessDataTransfer(cbData, evData) {
-        const textContent = cbData.getData('text');
-
-        if (FIND_EXCEL_DATA.test(textContent) && confirm(i18n.get('Would you like to paste as table?'))) {
-            evData.preventDefault();
-            evData.codemirrorIgnore = true;
-            this._addExcelTable(textContent);
         }
     }
 

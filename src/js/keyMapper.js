@@ -7,6 +7,7 @@
 /**
  * Constant of key mapping
  * @type {string[]}
+ * @ignore
  */
 const KEYBOARD_MAP = [
     '', // [0]

@@ -303,6 +303,7 @@ class WwCodeBlockManager {
  * Sanitize HTML code
  * @param {string} code code string
  * @returns {string}
+ * @ignore
  */
 function sanitizeHtmlCode(code) {
     return code.replace(/[<>&]/g, tag => tagEntities[tag] || tag);

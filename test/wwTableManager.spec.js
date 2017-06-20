@@ -18,7 +18,7 @@ describe('WwTableManager', () => {
         wwe.init();
 
         mgr = new WwTableManager(wwe);
-        wwe.addManager('tableSelection', WwTableSelectionManager);
+        wwe.componentManager.addManager('tableSelection', WwTableSelectionManager);
         wwe.focus();
     });
 
@@ -182,171 +182,6 @@ describe('WwTableManager', () => {
 
             expect($body.find('table').text()).toEqual('abcdef');
         });
-
-        it('_pasteDataIntoTable should extends column length and paste data with right position', () => {
-            const table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>';
-            const pastingTable = $('<table>' +
-                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
-                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
-                '</table>')[0];
-            const fragment = document.createDocumentFragment();
-
-            wwe.getEditor().setHTML(table);
-            const $body = wwe.get$Body();
-
-            const range = wwe.getEditor().getSelection();
-            range.selectNode($body.find('th')[1].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            $(fragment).append(pastingTable);
-
-            mgr.prepareToPasteOnTable({
-                fragment
-            }, $body.find('table')[0]);
-
-            const rows = $body.find('table').find('tr');
-            expect(rows.eq(0).text()).toEqual('1ab');
-            expect(rows.eq(1).text()).toEqual('3cd');
-            expect(rows.eq(2).text()).toEqual('5ef');
-            expect(rows.eq(0).children().length).toEqual(3);
-            expect(rows.eq(1).children().length).toEqual(3);
-            expect(rows.eq(2).children().length).toEqual(3);
-            expect(rows.length).toEqual(3);
-        });
-
-
-        it('_pasteDataIntoTable should extends row length and paste data with right position', () => {
-            const table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>';
-            const pastingTable = $('<table>' +
-                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
-                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
-                '</table>')[0];
-            const fragment = document.createDocumentFragment();
-
-            wwe.getEditor().setHTML(table);
-            const $body = wwe.get$Body();
-
-            const range = wwe.getEditor().getSelection();
-            range.selectNode($body.find('td')[2].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            $(fragment).append(pastingTable);
-
-            mgr.prepareToPasteOnTable({
-                fragment
-            }, $body.find('table')[0]);
-
-
-            const rows = $body.find('table').find('tr');
-            expect(rows.eq(0).text()).toEqual('12');
-            expect(rows.eq(1).text()).toEqual('34');
-            expect(rows.eq(2).text()).toEqual('ab');
-            expect(rows.eq(3).text()).toEqual('cd');
-            expect(rows.eq(4).text()).toEqual('ef');
-            expect(rows.eq(0).children().length).toEqual(2);
-            expect(rows.eq(1).children().length).toEqual(2);
-            expect(rows.eq(2).children().length).toEqual(2);
-            expect(rows.eq(3).children().length).toEqual(2);
-            expect(rows.eq(4).children().length).toEqual(2);
-            expect(rows.length).toEqual(5);
-        });
-
-        it('_pasteDataIntoTable should extends column and row length and paste data with right position', () => {
-            const table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>';
-            const pastingTable = $('<table>' +
-                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
-                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
-                '</table>')[0];
-            const fragment = document.createDocumentFragment();
-
-            wwe.getEditor().setHTML(table);
-            const $body = wwe.get$Body();
-
-            const range = wwe.getEditor().getSelection();
-            range.selectNode($body.find('td')[3].firstChild);
-            range.collapse(true);
-            wwe.getEditor().setSelection(range);
-
-            $(fragment).append(pastingTable);
-
-            mgr.prepareToPasteOnTable({
-                fragment
-            }, $body.find('table')[0]);
-
-
-            const rows = $body.find('table').find('tr');
-            expect(rows.eq(0).text()).toEqual('12');
-            expect(rows.eq(1).text()).toEqual('34');
-            expect(rows.eq(2).text()).toEqual('5ab');
-            expect(rows.eq(3).text()).toEqual('cd');
-            expect(rows.eq(4).text()).toEqual('ef');
-            expect(rows.eq(0).children().length).toEqual(3);
-            expect(rows.eq(1).children().length).toEqual(3);
-            expect(rows.eq(2).children().length).toEqual(3);
-            expect(rows.eq(3).children().length).toEqual(3);
-            expect(rows.eq(4).children().length).toEqual(3);
-            expect(rows.length).toEqual(5);
-        });
-
-        it('prepareToPasteOnTable should paste table data into table', () => {
-            const table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>';
-            const pastingTable = $('<table>' +
-                '<thead><tr><th>a</th><th>b</th></tr></thead>' +
-                '<tbody><tr><td>c</td><td>d</td></tr><tr><td>e</td><td>f</td></tr></tbody>' +
-                '</table>')[0];
-            const fragment = document.createDocumentFragment();
-            wwe.getEditor().setHTML(table);
-            const $body = wwe.get$Body();
-
-            const range = wwe.getEditor().getSelection();
-            range.setStart($body.find('th')[0], 0);
-            wwe.getEditor().setSelection(range);
-
-            $(fragment).append(pastingTable);
-
-            mgr.prepareToPasteOnTable({
-                fragment
-            }, $('<table></table>')[0]);
-
-            expect($body.find('table').text()).toEqual('abcdef');
-        });
-
-        it('prepareToPasteOnTable should paste non table data`s textContent into table cell', () => {
-            const table = '<table>' +
-                '<thead><tr><th>1</th><th>2</th></tr></thead>' +
-                '<tbody><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></tbody>' +
-                '</table>';
-            const pastingDiv = $('<div>hello</div>')[0];
-            const fragment = document.createDocumentFragment();
-            wwe.getEditor().setHTML(table);
-            const $body = wwe.get$Body();
-
-            const range = wwe.getEditor().getSelection();
-            range.setStart($body.find('th')[0], 0);
-            wwe.getEditor().setSelection(range);
-
-            $(fragment).append(pastingDiv);
-
-            const result = mgr.prepareToPasteOnTable({
-                fragment
-            }, pastingDiv);
-
-            expect(result.textContent).toEqual('hello');
-        });
     });
     describe('remove', () => {
         it('_removeTableContents should remove current selected table text contents', () => {
@@ -413,14 +248,14 @@ describe('WwTableManager', () => {
     });
     describe('wrap table', () => {
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '<tr><td>7</td><td>8</td></tr>' +
                 '<tr><td>9</td><td>10</td></tr>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -429,11 +264,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tr><th>3</th><th>4</th></tr>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed(fragment);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -442,11 +277,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapDanglingTableCellsIntoTrIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<td>3</td><td>4</td><td>5</td><td>6</td>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed(fragment);
+            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TR');
@@ -454,7 +289,7 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTheadAndTbodyIntoTableIfNeed', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -462,9 +297,9 @@ describe('WwTableManager', () => {
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
@@ -474,14 +309,14 @@ describe('WwTableManager', () => {
             expect($result.find('thead').text()).toBe('12');
         });
         it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', () => {
-            const fragment = document.createDocumentFragment();
+            const $container = $('<div />');
             const html = '<tbody>' +
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $(fragment).append(html);
+            $container.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed(fragment);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
@@ -1054,65 +889,6 @@ describe('WwTableManager', () => {
         });
     });
 
-    describe('_collapseRangeToEndContainer', () => {
-        it('collapse selection to endContainer', done => {
-            const html = '<table>' +
-                '<thead>' +
-                '<tr><th class="te-cell-selected">1</th><th class="te-cell-selected">2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td class="te-cell-selected">3<br>2<br>1</td><td class="te-cell-selected">4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table><div>2</div>';
-
-            wwe.focus();
-            wwe.get$Body().html(html);
-
-            let range = wwe.getEditor().getSelection();
-            range.setStart(wwe.get$Body().find('th')[0], 0);
-            range.setEnd(wwe.get$Body().find('td')[1], 1);
-            wwe.getEditor().setSelection(range);
-
-            mgr._collapseRangeToEndContainer();
-
-            setTimeout(() => {
-                range = wwe.getEditor().getSelection();
-                expect(range.startContainer.textContent).toBe('4');
-                expect(range.collapsed).toBe(true);
-                done();
-            }, 50);
-        });
-        it('do not collapse selection to endContainer when selected cell not exist', done => {
-            const html = '<table>' +
-                '<thead>' +
-                '<tr><th>1</th><th>2</th></tr>' +
-                '</thead>' +
-                '<tbody>' +
-                '<tr><td>3<br>2<br>1</td><td>4</td></tr>' +
-                '<tr><td>5</td><td>6</td></tr>' +
-                '</tbody>' +
-                '</table><div>2</div>';
-
-            wwe.focus();
-            wwe.get$Body().html(html);
-
-            let range = wwe.getEditor().getSelection();
-            range.setStart(wwe.get$Body().find('th')[0], 0);
-            range.setEnd(wwe.get$Body().find('td')[1], 1);
-            wwe.getEditor().setSelection(range);
-
-            mgr._collapseRangeToEndContainer();
-
-            setTimeout(() => {
-                range = wwe.getEditor().getSelection();
-                expect(range.startContainer.textContent).toBe('1');
-                expect(range.endContainer.textContent).toBe('4');
-                expect(range.collapsed).toBe(false);
-                done();
-            }, 50);
-        });
-    });
     describe('_removeContentsAndChangeSelectionIfNeed', () => {
         it('delete contents and collapse selection to startContainer', () => {
             const html = '<table>' +

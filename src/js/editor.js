@@ -11,6 +11,7 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import ImportManager from './importManager';
+import codeBlockManager from './codeBlockManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
 import DefaultUI from './ui/defaultUI';
@@ -63,6 +64,13 @@ const util = tui.util;
 const __nedInstance = [];
 
 /**
+ * @callback addImageBlobHook
+ * @param  {File} blob - image blob
+ * @param  {callback} callback - callback function to be called after
+ * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
+ */
+
+/**
  * ToastUI Editor
  * @exports ToastUIEditor
  * @constructor
@@ -80,8 +88,9 @@ const __nedInstance = [];
          * @param {function} options.events.blur It would be emitted when editor loose focus
      * @param {object} options.hooks Hook list
          * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-         * @param {function} options.hooks.addImageBlobHook hook for image upload.
+         * @param {addImageBlobHook} options.hooks.addImageBlobHook hook for image upload.
     * @param {string} language language
+    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
     * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
  */
 class ToastUIEditor {
@@ -93,14 +102,20 @@ class ToastUIEditor {
             'initialEditType': 'markdown',
             'height': 300,
             'language': 'en_US',
-            'useDefaultHTMLSanitizer': true
+            'useDefaultHTMLSanitizer': true,
+            'useCommandShortcut': true
         }, options);
 
         this.eventManager = new EventManager();
 
         this.importManager = new ImportManager(this.eventManager);
 
-        this.commandManager = new CommandManager(this);
+        this.commandManager = new CommandManager(this, {
+            useCommandShortcut: this.options.useCommandShortcut
+        });
+
+        this.codeBlockManager = codeBlockManager;
+
         this.convertor = new Convertor(this.eventManager);
 
         if (this.options.useDefaultHTMLSanitizer) {
@@ -126,13 +141,14 @@ class ToastUIEditor {
 
         this.setUI(this.options.UI || new DefaultUI(this));
 
-        this.mdEditor = new MarkdownEditor(this.layout.getMdEditorContainerEl(), this.eventManager);
+        this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
         this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
-        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager);
+        this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
+            useCommandShortcut: this.options.useCommandShortcut
+        });
+        this.toMarkOptions = null;
 
         this.changePreviewStyle(this.options.previewStyle);
-
-        this.mdEditor.init();
 
         this.changeMode(self.options.initialEditType, true);
 
@@ -175,6 +191,13 @@ class ToastUIEditor {
         } else {
             this.commandManager.addCommand(CommandManager.command(type, props));
         }
+    }
+
+    /**
+     * After added command.
+     */
+    afterAddedCommand() {
+        this.eventManager.emit('afterAddedCommand', this);
     }
 
     /**
@@ -277,12 +300,12 @@ class ToastUIEditor {
     }
 
     /**
-     * Set Editor value
+     * Set markdown syntax text.
      * @api
      * @memberOf ToastUIEditor
-     * @param {string} markdown Markdown syntax text
+     * @param {string} markdown - markdown syntax text.
      */
-    setValue(markdown) {
+    setMarkdown(markdown) {
         markdown = markdown || '';
 
         if (this.isMarkdownMode()) {
@@ -291,25 +314,91 @@ class ToastUIEditor {
             this.wwEditor.setValue(this.convertor.toHTML(markdown));
         }
 
-        this.eventManager.emit('setValueAfter', markdown);
+        this.eventManager.emit('setMarkdownAfter', markdown);
     }
 
     /**
-     * Get editor value
+     * Set html value.
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {string} html - html syntax text
+     */
+    setHtml(html) {
+        html = html || '';
+        this.wwEditor.setValue(html);
+
+        if (this.isMarkdownMode()) {
+            const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
+            this.mdEditor.setValue(markdown);
+            this.eventManager.emit('setMarkdownAfter', markdown);
+        }
+    }
+
+    /**
+     * Set markdown syntax text.
+     * @api
+     * @memberOf ToastUIEditor
+     * @param {string} value - markdown syntax text
+     * @deprecated
+     */
+    setValue(value) {
+        this.setMarkdown(value);
+    }
+
+    /**
+     * Get markdown syntax text.
      * @api
      * @memberOf ToastUIEditor
      * @returns {string}
      */
-    getValue() {
+    getMarkdown() {
         let markdown;
 
         if (this.isMarkdownMode()) {
             markdown = this.mdEditor.getValue();
         } else {
-            markdown = this.convertor.toMarkdown(this.wwEditor.getValue());
+            markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
         }
 
         return markdown;
+    }
+
+    /**
+     * Get html syntax text.
+     * @api
+     * @memberOf ToastUIEditor
+     * @returns {string}
+     */
+    getHtml() {
+        if (this.isWysiwygMode()) {
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+        }
+
+        return this.convertor.toHTML(this.mdEditor.getValue());
+    }
+
+    /**
+     * Get editor value.
+     * @api
+     * @memberOf ToastUIEditor
+     * @returns {string}
+     * @deprecated
+     */
+    getValue() {
+        return this.getMarkdown();
+    }
+
+    /**
+     * insert text
+     * @param {string} text - text string to insert
+     * @memberof ToastUIEditor
+     */
+    insertText(text) {
+        if (this.isMarkdownMode()) {
+            this.mdEditor.replaceSelection(text);
+        } else {
+            this.wwEditor.insertText(text);
+        }
     }
 
     /**
@@ -423,7 +512,7 @@ class ToastUIEditor {
             this.eventManager.emit('changeModeToWysiwyg');
         } else {
             this.layout.switchToMarkdown();
-            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue()));
+            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
             this.getCodeMirror().refresh();
             this.eventManager.emit('changeModeToMarkdown');
         }
@@ -543,6 +632,18 @@ class ToastUIEditor {
      */
     getTextObject(range) {
         return this.getCurrentModeEditor().getTextObject(range);
+    }
+
+    /**
+     * get selected text
+     * @returns {string} - selected text
+     * @memberof ToastUIEditor
+     */
+    getSelectedText() {
+        const range = this.getRange();
+        const textObject = this.getTextObject(range);
+
+        return textObject.getTextContent() || '';
     }
 
     /**

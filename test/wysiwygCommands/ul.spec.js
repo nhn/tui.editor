@@ -1,5 +1,6 @@
 import UL from '../../src/js/wysiwygCommands/ul';
 import WwTaskManager from '../../src/js/wwTaskManager';
+import WwListManager from '../../src/js/wwListManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
@@ -16,7 +17,8 @@ describe('UL', () => {
         wwe.init();
 
         sq = wwe.getEditor();
-        wwe.addManager('task', WwTaskManager);
+        wwe.componentManager.addManager('task', WwTaskManager);
+        wwe.componentManager.addManager('list', WwListManager);
         sq.focus();
     });
 
@@ -29,26 +31,184 @@ describe('UL', () => {
     });
 
     it('add UL', () => {
+        const range = sq.getSelection().cloneRange();
+        range.setStart(wwe.get$Body().find('div')[0], 0);
+        range.collapse(true);
+        sq.setSelection(range);
         UL.exec(wwe);
 
         expect(wwe.get$Body().find('ul').length).toEqual(1);
         expect(wwe.get$Body().find('li').length).toEqual(1);
     });
 
-    it('if have task in range then remove task and change to ul', () => {
-        const range = sq.getSelection().cloneRange();
+    it('add UL with selection', () => {
+        const $body = sq.get$Body();
+        const $div1 = $('<div>hello</div>');
+        const $div2 = $('<div>world</div>');
+        const $div3 = $('<div>i`m</div>');
+        const $div4 = $('<div>fine</div>');
 
-        sq.setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
+        $body.append($div1);
+        $body.append($div2);
+        $body.append($div3);
+        $body.append($div4);
 
-        range.setStart(wwe.get$Body().find('li')[0], 1);
-        range.collapse(true);
-
+        const range = sq.getSelection();
+        range.setStart($div1[0], 0);
+        range.setEnd($div4[0], 1);
         sq.setSelection(range);
 
         UL.exec(wwe);
 
-        expect(wwe.get$Body().find('ul li.task-list-item[data-te-task]').length).toEqual(0);
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(4);
+    });
+
+    it('add UL with selection OL within', () => {
+        const $body = sq.get$Body();
+        const $div1 = $('<div>hello</div>');
+        const $div2 = $('<div>world</div>');
+        const $div3 = $('<div>i`m</div>');
+        const $ol = $('<ul><li><div>fine</div></li></ul>');
+
+        $body.append($div1);
+        $body.append($div2);
+        $body.append($div3);
+        $body.append($ol);
+
+        const range = sq.getSelection();
+
+        range.setStart($div1[0], 0);
+        range.setEnd($ol.find('li').eq(0)[0], 1);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(4);
+    });
+
+    it('add 1 UL and 1 LI with selection former OL within', () => {
+        const $body = sq.get$Body();
+        const $div1 = $('<div>hello</div>');
+        const $div2 = $('<div>world</div>');
+        const $div3 = $('<div>i`m</div>');
+        const $ol = $('<ol><li><div>fine</div></li></ol>');
+
+        $body.append($ol);
+        $body.append($div1);
+        $body.append($div2);
+        $body.append($div3);
+
+        const range = sq.getSelection();
+
+        range.setEnd($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($div3[0].firstChild, 1);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(2);
+    });
+
+    it('change OL to UL', () => {
+        const $body = sq.get$Body();
+        const $ol = $('<ol><li><div>fine</div></li></ol>');
+
+        $body.append($ol);
+
+        const range = sq.getSelection();
+
+        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.collapse(true);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
         expect(wwe.get$Body().find('li').length).toEqual(1);
-        expect(wwe.get$Body().find('li').text()).toEqual('test');
+    });
+
+    it('change OL to UL with selection', () => {
+        const $body = sq.get$Body();
+        const $ol = $('<ol><li><div>fine</div></li><li><div>thank you</div></li></ol>');
+
+        $body.append($ol);
+
+        const range = sq.getSelection();
+
+        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setEnd($ol[0].firstChild.nextSibling.firstChild, 1);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(2);
+    });
+
+    it('change TASK to UL', () => {
+        const $body = sq.get$Body();
+        const $ol = $('<ol><li class="task-list-item"><div>fine</div></li></ol>');
+
+        $body.append($ol);
+
+        const range = sq.getSelection();
+
+        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.collapse(true);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ol').length).toEqual(0);
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li.task-list-item').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(1);
+    });
+
+    it('change TASK to UL with selection', () => {
+        const $body = sq.get$Body();
+        const $ol = $('<ol><li class="task-list-item"><div>fine</div></li><li class="task-list-item"><div>thank you</div></li></ol>');
+
+        $body.append($ol);
+
+        const range = sq.getSelection();
+
+        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setEnd($ol[0].firstChild.nextSibling.firstChild, 1);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('li.task-list-item').length).toEqual(2);
+        expect(wwe.get$Body().find('li').length).toEqual(2);
+    });
+
+    it('stop changing format to UL when meet PRE, TABLE element', () => {
+        const $body = sq.get$Body();
+        const $div1 = $('<div>fine</div>');
+        const $div2 = $('<div>thank you</div>');
+        const $pre = $('<pre>haha</pre>');
+        const $div3 = $('<div>me too</div>');
+
+        $body.append($div1);
+        $body.append($div2);
+        $body.append($pre);
+        $body.append($div3);
+
+        const range = sq.getSelection();
+
+        range.setStart($div1[0], 0);
+        range.setEnd($div3[0], 1);
+        sq.setSelection(range);
+
+        UL.exec(wwe);
+
+        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().children('pre').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(2);
     });
 });

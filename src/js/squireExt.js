@@ -18,12 +18,14 @@ const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
  * @augments Squire
  * @constructor
  * @class
+ * @ignore
  */
 class SquireExt extends Squire {
     constructor(...args) {
         super(...args);
 
         this._decorateHandlerToCancelable('copy');
+        this._decorateHandlerToCancelable(isIElt11 ? 'beforecut' : 'cut');
         this._decorateHandlerToCancelable(isIElt11 ? 'beforepaste' : 'paste');
 
         this.get$Body = () => {
@@ -36,6 +38,8 @@ class SquireExt extends Squire {
     /**
      * _decorateHandlerToCancelable
      * Decorate squire handler to cancelable cuz sometimes, we dont need squire handler process
+     * event.preventDefault() will cancel squire and browser default behavior
+     * event.squirePrevented = true will cancel squire but allow browser default behavior
      * @param {string} eventName event name
      */
     _decorateHandlerToCancelable(eventName) {
@@ -48,7 +52,7 @@ class SquireExt extends Squire {
         const handler = handlers[0].bind(this);
 
         handlers[0] = event => {
-            if (!event.defaultPrevented) {
+            if (!event.defaultPrevented && !event.squirePrevented) {
                 handler(event);
             }
         };
@@ -327,6 +331,18 @@ class SquireExt extends Squire {
         }
 
         return this;
+    }
+
+    blockCommandShortcuts() {
+        const isMac = /Mac/.test(navigator.platform);
+        const meta = isMac ? 'meta' : 'ctrl';
+        const keys = ['b', 'i', 'u', 'shift-7', 'shift-5', 'shift-6', 'shift-8', 'shift-9', '[', ']'];
+
+        keys.forEach(key => {
+            this.setKeyHandler(`${meta}-${key}`, (editor, keyboardEvent) => {
+                keyboardEvent.preventDefault();
+            });
+        });
     }
 }
 
