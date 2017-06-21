@@ -106,6 +106,8 @@ Attach an event listener to the editor. The handler can be either a function or 
 * **input**: The user inserted, deleted or changed the style of some text; in other words, the result for `editor.getHTML()` will have changed.
 * **pathChange**: The path (see getPath documentation) to the cursor has changed. The new path is available as the `path` property on the event object.
 * **select**: The user selected some text.
+* **cursor**: The user cleared their selection or moved the cursor to a
+  different position.
 * **undoStateChange**: The availability of undo and/or redo has changed. The event object has two boolean properties, `canUndo` and `canRedo` to let you know the new state.
 * **willPaste**: The user is pasting content into the document. The content that will be inserted is available as the `fragment` property on the event object. You can modify this fragment in your event handler to change what will be pasted. You can also call the `preventDefault` on the event object to cancel the paste operation.
 
