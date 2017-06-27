@@ -44,6 +44,6 @@
     "test:ne": "SERVER=ne karma start",
     "test:sl": "SERVER=sl karma start",
     "serve": "webpack-dev-server --progress --inline",
-    "bundle": "webpack && webpack -p"
+    "build": "webpack && webpack -p"
   }
 }
