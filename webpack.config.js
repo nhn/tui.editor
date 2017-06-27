@@ -81,6 +81,8 @@ if (IS_DEV_SERVER) {
     };
     config.output.publicPath = PUBLIC_PATH;
     config.devServer = {
+        host: '0.0.0.0',
+        disableHostCheck: true,
         port: 8080,
         publicPath: PUBLIC_PATH,
         noInfo: true,
