@@ -1,5 +1,6 @@
 /* eslint max-len: 0, no-process-env: 0, object-shorthand: 0, camelcase: 0 */
 
+const path = require('path');
 const pkg = require('./package.json');
 const webdriverConfig = {
     hostname: 'fe.nhnent.com',
@@ -164,13 +165,13 @@ module.exports = function(config) {
         // list of files to exclude
         exclude: [],
 
-        reporters: ['progress', 'junit', 'coverage'],
+        reporters: ['progress', 'junit', 'coverage', 'remap-coverage'],
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 
         preprocessors: {
-            'src/js/**/*.js': ['webpack', 'sourcemap'],
+            'src/js/**/*.js': ['webpack', 'sourcemap', 'coverage'],
             'test/test.bundle.js': ['webpack', 'sourcemap']
         },
 
@@ -185,6 +186,12 @@ module.exports = function(config) {
                         options: {
                             babelrc: true
                         }
+                    },
+                    {
+                        enforce: 'post',
+                        include: path.resolve('src/'),
+                        test: /\.js$/,
+                        loader: 'istanbul-instrumenter-loader'
                     }
                 ]
             }
@@ -200,22 +207,15 @@ module.exports = function(config) {
         },
 
         coverageReporter: {
-            dir: 'report/coverage/',
-            reporters: [
-                {
-                    type: 'html',
-                    subdir: function(browser) {
-                        return `report-html/${browser}`;
-                    }
-                },
-                {
-                    type: 'cobertura',
-                    subdir: function(browser) {
-                        return `report-cobertura/${browser}`;
-                    },
-                    file: 'cobertura.txt'
-                }
-            ]
+            reporters: [{
+                type: 'in-memory'
+            }]
+        },
+
+        remapCoverageReporter: {
+            text: null,
+            html: 'report/coverage/html',
+            cobertura: 'report/coverage/cobertura.xml'
         },
 
         junitReporter: {
