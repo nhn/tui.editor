@@ -3,7 +3,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
 const strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;

@@ -3,16 +3,17 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const util = tui.util;
+const {util} = tui;
 
 /**
  * ExtManager
- * @exports ExtManager
- * @constructor
  * @class ExtManager
  */
 class ExtManager {
+    /**
+     * Creates an instance of ExtManager.
+     * @memberof ExtManager
+     */
     constructor() {
         this.exts = new util.Map();
     }
@@ -31,19 +32,27 @@ class ExtManager {
 
     /**
      * Apply extensions
-     * @api
-     * @memberOf ExtManager
+     * @memberof ExtManager
      * @param {object} context Context
-     * @param {Array.<string>} extNames Extension names
+     * @param {Array.<string|object>} options - options or names array
      */
-    applyExtension(context, extNames) {
-        if (extNames) {
-            extNames.forEach(extName => {
-                if (this.exts.has(extName)) {
-                    this.exts.get(extName)(context);
+    applyExtension(context, options) {
+        if (options) {
+            options.forEach(option => {
+                const hasOption = util.isObject(option);
+                const name = hasOption ? option.name : option;
+
+                if (this.exts.has(name)) {
+                    const ext = this.exts.get(name);
+                    if (hasOption) {
+                        ext(context, option);
+                    } else {
+                        ext(context);
+                    }
                 }
             });
         }
     }
 }
+
 module.exports = new ExtManager();

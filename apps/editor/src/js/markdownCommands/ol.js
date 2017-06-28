@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
 const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;

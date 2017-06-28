@@ -28,13 +28,14 @@
   ],
   "keywords": [],
   "dependencies": {
-    "tui-code-snippet": "1.2.1",
-    "codemirror": "~5.19.0",
-    "highlightjs": "~9.5.0",
+    "tui-code-snippet": "^1.2.4",
+    "codemirror": "^5.25.0",
+    "highlightjs": "^9.10.0",
     "jquery": "~2.1.4",
-    "markdown-it": "^7.0.1",
+    "markdown-it": "^8.3.1",
     "toMark": "https://github.com/nhnent/toMark.git#0.0.14",
-    "squire-rte": "kyuwoo-choi/Squire#tui-editor-release"
+    "squire-rte": "kyuwoo-choi/Squire#tui-editor-release",
+    "plantuml-encoder": "^1.2.4"
   },
   "devDependencies": {
     "tui-component-colorpicker": "~1.0.2"

@@ -6,7 +6,7 @@
 const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
 const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
 const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
-const FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\\/'";: \r\[\]]*\|+)+/i;
+const FIND_TABLE_RX = /^\|([-\s\w\d\t<>?!@#$%^&*()_=+\\/'";: \r[\]]*\|+)+/i;
 const FIND_HEADING_RX = /^#+\s/;
 const FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
 
@@ -125,8 +125,7 @@ class MdListManager {
      */
     expandLineRangeIfNeed(doc, range, comparator) {
         const lineRange = this.createSortedLineRange(range);
-        let start = lineRange.start;
-        let end = lineRange.end;
+        let {start, end} = lineRange;
 
         const isRangeStartInUlOrTask = this._isDifferentListType(comparator, doc.getLine(start));
         const isRangeEndInUlOrTask = this._isDifferentListType(comparator, doc.getLine(end));

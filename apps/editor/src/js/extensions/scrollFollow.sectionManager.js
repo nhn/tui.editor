@@ -3,11 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;
 const FIND_LIST_RX = /^ *(\*|-|\d+\.|[*-] \[[ xX]])\s/;
 const FIND_QUOTE_RX = /^ {0,3}(> ?)+\s/;
-const FIND_IMAGE_RX = /^ {0,3}!\[([^\[\]]*)]\(([^)]*)\)/;
+const FIND_IMAGE_RX = /^ {0,3}!\[([^[\]]*)]\(([^)]*)\)/;
 const FIND_SETEXT_HEADER_RX = /^ *(?:={1,}|-{1,})\s*$/;
 const FIND_CODEBLOCK_END_RX = /^ *(`{3,}|~{3,})[ ]*$/;
 const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ .]*(\S+)? */;
@@ -123,7 +122,6 @@ class SectionManager {
                 onCodeBlock = this._doFollowedLinesHaveCodeBlockEnd(i, lineLength);
                 codeblockStartLineIndex = i;
             }
-
 
             if (isEnsuredSection && lineString.length !== 0) {
                 if (this._isIndependentImage(onCodeBlock, onTable, lineString, prevLineString)) {

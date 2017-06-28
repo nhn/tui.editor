@@ -8,7 +8,7 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const util = tui.util;
+const {util} = tui;
 const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
 const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
@@ -20,7 +20,7 @@ const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;
@@ -76,7 +76,7 @@ function _initCellData(targetRows, startColIndex, endColIndex) {
     const targetCells = targetRows.map(rowData => rowData.slice(startColIndex, limitColIndex));
 
     [].concat(...targetCells).slice(1).forEach(cellData => {
-        const nodeName = cellData.nodeName;
+        const {nodeName} = cellData;
 
         util.forEach(cellData, (value, name) => (delete cellData[name]));
         cellData.nodeName = nodeName;

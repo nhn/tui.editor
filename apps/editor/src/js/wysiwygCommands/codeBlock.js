@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const CommandManager = require('../commandManager');
 
 const CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
@@ -45,7 +44,7 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
             codeBlockID += 1;
         }
 
-        sq.focus();
+        wwe.focus();
     }
 });
 

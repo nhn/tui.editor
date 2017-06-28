@@ -37,5 +37,6 @@ tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
     'Text color': '文字色相',
     'Auto scroll enabled': '自动滚动启用',
     'Auto scroll disabled': '自动的滚动作非使用',
-    'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。'
+    'Cannot paste values ​​other than a table in the cell selection state': '在单元格选择状态下无法粘贴表格以外的值。',
+    'Choose language': '选择语言'
 });

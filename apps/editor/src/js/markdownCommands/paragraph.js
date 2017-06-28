@@ -5,10 +5,9 @@
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * Paragraph

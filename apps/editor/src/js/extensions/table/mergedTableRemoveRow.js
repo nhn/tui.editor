@@ -8,7 +8,7 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * RemoveRow
@@ -28,7 +28,7 @@ const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

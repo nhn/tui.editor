@@ -5,7 +5,7 @@
 
 const DiffMatchPatch = require('../../vendor/diffMatchPatch');
 
-const util = tui.util;
+const {util} = tui;
 
 const CHANGE_NOTHING = 0,
     CHANGE_ADD = 1,
@@ -61,7 +61,7 @@ class MarkerManager {
      * @returns {object} marker diffs
      */
     _makeMarkerDiffs(newContent) {
-        const markerList = this.markerList,
+        const {markerList} = this,
             self = this,
             markerDiffs = {};
 
@@ -99,8 +99,7 @@ class MarkerManager {
         const changes = this._dmp.diff_main(this.oldTextContent, newContent);
 
         changes.forEach(change => {
-            const type = change[0];
-            const text = change[1];
+            const [type, text] = change;
             let diffLen = 0;
 
             const changedLen = text.length;
@@ -184,7 +183,7 @@ class MarkerManager {
      */
     _getUpdateMarkersWithDiffs(markerDiffs) {
         const updatedMarkers = [],
-            markerList = this.markerList;
+            {markerList} = this;
 
         util.forEachOwnProperties(markerDiffs, (markerDiff, id) => {
             const marker = markerList.getMarker(id);

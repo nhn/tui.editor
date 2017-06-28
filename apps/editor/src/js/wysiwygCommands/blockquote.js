@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const CommandManager = require('../commandManager');
 
 /**
@@ -25,7 +24,7 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             wwe.unwrapBlockTag();

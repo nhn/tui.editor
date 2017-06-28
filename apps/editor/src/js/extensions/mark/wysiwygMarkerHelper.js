@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const domUtils = require('../../domUtils');
 
 const FIND_ZWB_RX = /\u200B/g;
@@ -60,8 +59,7 @@ class WysiwygMarkerHelper {
      */
     _getExtraInfoOfRange(range) {
         let top, left, rect, height, node, parentNode, containerOffset;
-        const endContainer = range.endContainer;
-        const endOffset = range.endOffset;
+        const {endContainer, endOffset} = range;
 
         const text = range.cloneContents().textContent.replace(FIND_ZWB_RX, '');
 
@@ -78,7 +76,7 @@ class WysiwygMarkerHelper {
                 node.textContent = '\u200B';
                 range.endContainer.parentNode.insertBefore(node, range.endContainer);
                 rect = node.getBoundingClientRect();
-                parentNode = node.parentNode;
+                ({parentNode} = node);
                 parentNode.removeChild(node);
             });
         }
@@ -87,7 +85,7 @@ class WysiwygMarkerHelper {
             containerOffset = this.sqe.get$Body().parent().offset();
             top = this.sqe.scrollTop() + rect.top - containerOffset.top + $('body').scrollTop();
             left = rect.left - containerOffset.left;
-            height = rect.height;
+            ({height} = rect);
         } else {
             height = top = left = 0;
         }

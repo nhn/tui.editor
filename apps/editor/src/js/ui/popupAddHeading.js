@@ -6,80 +6,95 @@
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * PopupHeading
  * It implements Popup to add headings
- * @exports PopupAddHeading
- * @augments LayerPopup
- * @constructor
- * @class
- * @param {object} options options
- * @ignore
+ * @class PopupAddHeading
+ * @extends {LayerPopup}
  */
-function PopupAddHeading(options) {
-    /* eslint-disable indent */
-    const POPUP_CONTENT = [
-        '<ul>',
-            `<li data-value="1" data-type="Heading"><h1>${i18n.get('Heading')} 1</h1></li>`,
-            `<li data-value="2" data-type="Heading"><h2>${i18n.get('Heading')} 2</h2></li>`,
-            `<li data-value="3" data-type="Heading"><h3>${i18n.get('Heading')} 3</h3></li>`,
-            `<li data-value="4" data-type="Heading"><h4>${i18n.get('Heading')} 4</h4></li>`,
-            `<li data-value="5" data-type="Heading"><h5>${i18n.get('Heading')} 5</h5></li>`,
-            `<li data-value="6" data-type="Heading"><h6>${i18n.get('Heading')} 6</h6></li>`,
-            `<li data-type="Paragraph"><div>${i18n.get('Paragraph')}</div></li>`,
-        '</ul>'
-    ].join('');
-    /* eslint-enable indent */
+class PopupAddHeading extends LayerPopup {
 
-    options = util.extend({
-        title: false,
-        className: 'te-heading-add',
-        content: POPUP_CONTENT
-    }, options);
-    LayerPopup.call(this, options);
-    this.eventManager = options.eventManager;
-    this.$button = options.$button;
-    this.render();
-    this._linkWithEventManager();
-    this._bindEvent();
-}
+    /**
+     * Creates an instance of PopupAddHeading.
+     * @param {LayerPopupOption} options - layer popup option
+     * @memberof PopupAddHeading
+     */
+    constructor(options) {
+        const POPUP_CONTENT = `
+            <ul>
+                <li data-value="1" data-type="Heading"><h1>${i18n.get('Heading')} 1</h1></li>
+                <li data-value="2" data-type="Heading"><h2>${i18n.get('Heading')} 2</h2></li>
+                <li data-value="3" data-type="Heading"><h3>${i18n.get('Heading')} 3</h3></li>
+                <li data-value="4" data-type="Heading"><h4>${i18n.get('Heading')} 4</h4></li>
+                <li data-value="5" data-type="Heading"><h5>${i18n.get('Heading')} 5</h5></li>
+                <li data-value="6" data-type="Heading"><h6>${i18n.get('Heading')} 6</h6></li>
+                <li data-type="Paragraph"><div>${i18n.get('Paragraph')}</div></li>
+            </ul>
+        `;
+        options = util.extend({
+            header: false,
+            className: 'te-heading-add',
+            content: POPUP_CONTENT
+        }, options);
+        super(options);
+    }
 
-PopupAddHeading.prototype = util.extend(
-  {},
-  LayerPopup.prototype
-);
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupAddHeading
+     * @protected
+     * @override
+     */
+    _initInstance(options) {
+        super._initInstance(options);
 
-PopupAddHeading.prototype._linkWithEventManager = function() {
-    const self = this;
+        this._eventManager = options.eventManager;
+        this._$button = options.$button;
+    }
 
-    this.eventManager.listen('focus', () => {
-        self.hide();
-    });
+    /**
+     * bind DOM events
+     * @memberof PopupAddHeading
+     * @protected
+     * @override
+     */
+    _initDOMEvent() {
+        super._initDOMEvent();
 
-    this.eventManager.listen('openHeadingSelect', () => {
-        self.eventManager.emit('closeAllPopup');
-        self.$el.css({
-            'top': self.$button.position().top + self.$button.height() + 5,
-            'left': self.$button.position().left
+        this.on('click li', ev => {
+            const $li = $(ev.target).closest('li');
+            this._eventManager.emit('command', $li.data('type'), $li.data('value'));
         });
-        self.show();
-    });
+    }
 
-    this.eventManager.listen('closeAllPopup', () => {
-        self.hide();
-    });
-};
+    /**
+     * bind editor events
+     * @memberof PopupAddHeading
+     * @protected
+     * @abstract
+     */
+    _initEditorEvent() {
+        super._initEditorEvent();
 
-PopupAddHeading.prototype._bindEvent = function() {
-    const self = this;
+        this._eventManager.listen('focus', this.hide.bind(this));
+        this._eventManager.listen('closeAllPopup', this.hide.bind(this));
+        this._eventManager.listen('openHeadingSelect', () => {
+            this._eventManager.emit('closeAllPopup');
 
-    /* eslint-disable prefer-arrow-callback*/
-    this.on('click li', /** @this Node */function() {
-        self.eventManager.emit('command', $(this).data('type'), $(this).data('value'));
-    });
-    /* eslint-enable prefer-arrow-callback*/
-};
+            const $button = this._$button;
+            const position = $button.position();
+            this.$el.css({
+                top: position.top + $button.height() + 5,
+                left: position.left
+            });
+
+            this.show();
+        });
+    }
+}
 
 module.exports = PopupAddHeading;

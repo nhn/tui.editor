@@ -32,26 +32,20 @@ describe('PopupAddLink', () => {
     });
 
     describe('button events', () => {
-        let handler = jasmine.createSpy('buttonClickedHandler');
-
         beforeEach(() => {
-            handler = jasmine.createSpy('buttonClickedHandler');
+            spyOn(popup, 'hide');
         });
 
         it('ok button fires okButtonClicked event', () => {
-            popup.on('okButtonClicked', handler);
-
             $('.te-ok-button').trigger('click');
 
-            expect(handler).toHaveBeenCalled();
+            expect(popup.hide).toHaveBeenCalled();
         });
 
         it('close button fires closeButtonClicked event', () => {
-            popup.on('closeButtonClicked', handler);
-
             $('.te-close-button').trigger('click');
 
-            expect(handler).toHaveBeenCalled();
+            expect(popup.hide).toHaveBeenCalled();
         });
     });
 
@@ -62,7 +56,7 @@ describe('PopupAddLink', () => {
             handler = jasmine.createSpy('buttonClickedHandler');
         });
 
-        it('okButtonClicked fires command', () => {
+        it('emit command on ok button', () => {
             const value = {
                 linkText: 'linkText',
                 url: 'urlText'
@@ -91,12 +85,12 @@ describe('PopupAddLink', () => {
         });
     });
 
-    describe('url입력 방식', () => {
-        it('getValue() returns text/url values', () => {
+    describe('add link with url', () => {
+        it('_getValue() returns text/url values', () => {
             $('.te-link-text-input').val('myLinkText');
             $('.te-url-input').val('myUrl');
 
-            const value = popup.getValue();
+            const value = popup._getValue();
 
             expect(value.linkText).toEqual('myLinkText');
             expect(value.url).toEqual('myUrl');
@@ -107,7 +101,7 @@ describe('PopupAddLink', () => {
             $('.te-url-input').val('myUrl');
 
             popup.hide();
-            const value = popup.getValue();
+            const value = popup._getValue();
 
             expect(value.linkText).toEqual('');
             expect(value.url).toEqual('');
@@ -119,7 +113,7 @@ describe('PopupAddLink', () => {
             selectedText = 'text';
             popup.show();
 
-            const value = popup.getValue();
+            const value = popup._getValue();
 
             expect(value.linkText).toEqual(selectedText);
         });
@@ -128,7 +122,7 @@ describe('PopupAddLink', () => {
             selectedText = 'http://www.nhnent.com';
             popup.show();
 
-            const value = popup.getValue();
+            const value = popup._getValue();
 
             expect(value.linkText).toEqual(selectedText);
             expect(value.url).toEqual(selectedText);

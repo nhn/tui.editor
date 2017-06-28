@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DEMO</title>
+    <script src="../lib/markdown-it/dist/markdown-it.js"></script>
+    <script src="../lib/toMark/dist/toMark.js"></script>
+    <script src="../lib/jquery/dist/jquery.js"></script>
+    <script src="../lib/tui-code-snippet/dist/code-snippet.js"></script>
+    <script src="../lib/tui-component-colorpicker/dist/colorpicker.js"></script>
+    <script src="../lib/codemirror/lib/codemirror.js"></script>
+    <script src="../lib/highlightjs/highlight.pack.js"></script>
+    <script src="../lib/squire-rte/build/squire-raw.js"></script>
+    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+    <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
+    <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
+    <style type="text/css">
+        #editSection {
+            margin-top: 20px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+<div id="editSection"></div>
+<script src="../dist/tui-editor.js"></script>
+<script>
+    var content = [
+        'uml start',
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+    ].join('\n');
+    $('#editSection').tuiEditor({
+        previewStyle: 'vertical',
+        height: 400,
+        initialEditType: 'markdown',
+        useCommandShortcut: true,
+        initialValue: content,
+        exts: [{
+            name: 'plantUML', // enable plant uml plugin
+            languages: ['uml', 'plantuml'], // which languages you want to be rendered as plant uml. default is 'uml' and 'plantuml'
+            rendererURL: 'http://www.plantuml.com/plantuml/png/'
+        }],
+        codeBlockLanguages: ['javascript', 'java', 'uml', 'plantuml']
+    });
+</script>
+</body>
+</html>

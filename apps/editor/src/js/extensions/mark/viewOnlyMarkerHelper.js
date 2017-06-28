@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const domUtils = require('../../domUtils');
 
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
@@ -75,7 +74,7 @@ class ViewOnlyMarkerHelper {
             node.textContent = '\u200B';
             range.endContainer.parentNode.insertBefore(node, range.endContainer);
             rect = node.getBoundingClientRect();
-            parentNode = node.parentNode;
+            ({parentNode} = node);
             parentNode.removeChild(node);
         }
 
@@ -83,7 +82,7 @@ class ViewOnlyMarkerHelper {
             containerOffset = this.preview.$el.offset();
             top = rect.top + this.preview.$el.scrollTop() - containerOffset.top + $('body').scrollTop();
             left = rect.left - containerOffset.left;
-            height = rect.height;
+            ({height} = rect);
         } else {
             height = top = left = 0;
         }

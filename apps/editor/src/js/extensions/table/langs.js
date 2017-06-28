@@ -14,7 +14,6 @@ i18n.setLang(['en', 'en_US'], {
     'Cannot paste row merged cells into the table header': 'Cannot paste row merged cells into the table header.'
 });
 
-
 i18n.setLang(['ja', 'ja_JP'], {
     'Merge cells': 'セルの結合',
     'Unmerge cells': 'セルの結合を解除',

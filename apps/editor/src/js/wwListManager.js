@@ -211,11 +211,11 @@ class WwListManager {
         let nextLine;
 
         if (domUtils.isTextNode(start)) {
-            start = $(start).parents('div').first()[0];
+            start = $(start).parents('div').first().get(0);
         }
 
         if (domUtils.isTextNode(end)) {
-            end = $(end).parents('div').first()[0];
+            end = $(end).parents('div').first().get(0);
         }
 
         for (let line = start; needNext; line = nextLine) {

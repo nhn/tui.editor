@@ -4,9 +4,8 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
-const util = tui.util;
+const {util} = tui;
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -117,7 +116,9 @@ class WwTableManager {
 
                 if (!this.isTableOrSubTableElement(node.nodeName)) {
                     return;
-                } else if (node.nodeName === 'TABLE'
+                }
+
+                if (node.nodeName === 'TABLE'
                            && $node.find('thead').length === 0
                            && $node.find('tbody').length === 0
                           ) {
@@ -484,10 +485,9 @@ class WwTableManager {
      * @private
      */
     _pasteDataIntoTable(fragment) {
-        const range = this.wwe.getEditor().getSelection();
+        const {startContainer} = this.wwe.getEditor().getSelection();
+        const {parentNode} = startContainer;
         const tableData = this._getTableDataFromTable(fragment);
-        const startContainer = range.startContainer;
-        const parentNode = startContainer.parentNode;
         const isTextInTableCell = (parentNode.tagName === 'TD' || parentNode.tagName === 'TH');
         const isTableCell = (startContainer.tagName === 'TD' || startContainer.tagName === 'TH');
         const isTextNode = startContainer.nodeType === 3;
@@ -499,7 +499,7 @@ class WwTableManager {
         } else if (isTableCell) {
             anchorElement = startContainer;
         } else {
-            anchorElement = $(startContainer).find('th,td')[0];
+            anchorElement = $(startContainer).find('th,td').get(0);
         }
 
         td = anchorElement;
@@ -553,13 +553,13 @@ class WwTableManager {
 
     /**
      * Remove selected table contents
-     * @param {jQuery} selectedCells Selected cells wrapped by jQuery
+     * @param {jQuery} $selectedCells Selected cells wrapped by jQuery
      * @private
      */
-    _removeTableContents(selectedCells) {
+    _removeTableContents($selectedCells) {
         this.wwe.getEditor().saveUndoState();
 
-        selectedCells.each((i, cell) => {
+        $selectedCells.each((i, cell) => {
             const brHTMLString = isIE10 ? '' : '<br />';
             $(cell).html(brHTMLString);
         });
@@ -581,7 +581,7 @@ class WwTableManager {
                 $wrapperTr.append(cell);
             });
 
-            tr = $wrapperTr[0];
+            tr = $wrapperTr.get(0);
         }
 
         return tr;
@@ -616,7 +616,7 @@ class WwTableManager {
                 $wrapperTableBody.append(tr);
             });
 
-            tbody = $wrapperTableBody[0];
+            tbody = $wrapperTableBody.get(0);
         }
 
         return tbody;
@@ -636,15 +636,15 @@ class WwTableManager {
         if (!danglingTbody.length && danglingThead.length) {
             $wrapperTable.append(danglingThead[0]);
             $wrapperTable.append('<tbody><tr></tr></tbody>');
-            table = $wrapperTable[0];
+            table = $wrapperTable.get(0);
         } else if (danglingTbody.length && !danglingThead.length) {
             $wrapperTable.append('<thead><tr></tr></thead>');
             $wrapperTable.append(danglingTbody[0]);
-            table = $wrapperTable[0];
+            table = $wrapperTable.get(0);
         } else if (danglingTbody.length && danglingThead.length) {
             $wrapperTable.append(danglingThead[0]);
             $wrapperTable.append(danglingTbody[0]);
-            table = $wrapperTable[0];
+            table = $wrapperTable.get(0);
         }
 
         return table;
@@ -717,10 +717,10 @@ class WwTableManager {
         let absentNode;
 
         if (isTheadNotExists) {
-            absentNode = $('<thead><tr></tr></thead>')[0];
+            absentNode = $('<thead><tr></tr></thead>').get(0);
             $table.prepend(absentNode);
         } else if (isTbodyNotExists) {
-            absentNode = $('<tbody><tr></tr></tbody>')[0];
+            absentNode = $('<tbody><tr></tr></tbody>').get(0);
             $table.append(absentNode);
         }
     }
@@ -735,13 +735,12 @@ class WwTableManager {
         this._addTbodyOrTheadIfNeed($table);
         this._addTrIntoContainerIfNeed($table);
 
-        const trs = $table.find('tr');
-        const tableAidInformation = this.prepareToTableCellStuffing(trs);
-        const maximumCellLength = tableAidInformation.maximumCellLength;
-        const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+        const $trs = $table.find('tr');
+        const tableAidInformation = this.prepareToTableCellStuffing($trs);
+        const {maximumCellLength, needTableCellStuffingAid} = tableAidInformation;
 
         if (needTableCellStuffingAid) {
-            this._stuffTableCellsIntoIncompleteRow(trs, maximumCellLength);
+            this._stuffTableCellsIntoIncompleteRow($trs, maximumCellLength);
         }
     }
 
@@ -797,9 +796,9 @@ class WwTableManager {
 
         if ($node.children()[0].tagName === 'TH') {
             theadRow = node;
-            tbodyRow = $(`<tr>${tableCellGenerator($node.find('th').length, 'td')}</tr>`)[0];
+            tbodyRow = $(`<tr>${tableCellGenerator($node.find('th').length, 'td')}</tr>`).get(0);
         } else {
-            theadRow = $(`<tr>${tableCellGenerator($node.find('td').length, 'th')}</tr>`)[0];
+            theadRow = $(`<tr>${tableCellGenerator($node.find('td').length, 'th')}</tr>`).get(0);
             tbodyRow = node;
         }
 
@@ -1024,7 +1023,7 @@ class WwTableManager {
      * @param {string} scale 'row' or 'cell'
      */
     _changeSelectionToTargetCell(currentCell, range, direction, scale) {
-        const startContainer = range.startContainer;
+        const {startContainer} = range;
         const isNext = direction === 'next';
         const isRow = scale === 'row';
         let target, textOffset;
@@ -1054,7 +1053,7 @@ class WwTableManager {
             range.setStart(target, 0);
             range.collapse(true);
         } else {
-            target = $(currentCell).parents('table')[0];
+            target = $(currentCell).parents('table').get(0);
             if (isNext) {
                 range.setStart(target.nextElementSibling, 0);
             } else if (target.previousElementSibling && target.previousElementSibling.nodeName !== 'TABLE') {
@@ -1078,7 +1077,7 @@ class WwTableManager {
     _moveCursorTo(direction, interval, ev) {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const currentCell = $(range.startContainer).closest('td,th')[0];
+        const currentCell = $(range.startContainer).closest('td,th').get(0);
         let isNeedNext;
 
         if (range.collapsed) {
@@ -1109,14 +1108,14 @@ class WwTableManager {
     _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
         const isTextInput = keymap.length <= 1;
         const isDeleteOperation = (keymap === 'BACK_SPACE' || keymap === 'DELETE');
-        const selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const firstSelectedCell = selectedCells.first()[0];
+        const $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
+        const firstSelectedCell = $selectedCells.first().get(0);
 
-        if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && selectedCells.length) {
+        if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && $selectedCells.length) {
             if (isDeleteOperation) {
                 this._recordUndoStateIfNeed(range);
             }
-            this._removeTableContents(selectedCells);
+            this._removeTableContents($selectedCells);
 
             this._lastCellNode = firstSelectedCell;
 
@@ -1153,7 +1152,6 @@ class WwTableManager {
             $(startContainer).find('br').remove();
         }
     }
-
 
     /**
      * Insert br when text deleted

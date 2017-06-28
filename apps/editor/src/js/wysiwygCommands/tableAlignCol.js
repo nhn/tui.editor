@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtil from '../domUtils';
 
@@ -29,7 +28,7 @@ const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
         const selectionMgr = wwe.componentManager.getManager('tableSelection');
         const rangeInformation = getRangeInformation(range, selectionMgr);
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);
@@ -81,8 +80,10 @@ function setAlignAttributeToTableCells($table, alignDirection, selectionInformat
  */
 function getSelectionInformation($table, rangeInformation) {
     const columnLength = $table.find('tr').eq(0).find('td,th').length;
-    const from = rangeInformation.from;
-    const to = rangeInformation.to;
+    const {
+        from,
+        to
+     } = rangeInformation;
     let startColumnIndex, endColumnIndex, isDivided;
 
     if (from.row === to.row) {
@@ -113,14 +114,14 @@ function getSelectionInformation($table, rangeInformation) {
  * @returns {object}
  */
 function getRangeInformation(range, selectionMgr) {
-    const selectedCells = selectionMgr.getSelectedCells();
+    const $selectedCells = selectionMgr.getSelectedCells();
     let rangeInformation, startCell;
 
-    if (selectedCells.length) {
-        rangeInformation = selectionMgr.getSelectionRangeFromTable(selectedCells.first()[0],
-            selectedCells.last()[0]);
+    if ($selectedCells.length) {
+        rangeInformation = selectionMgr.getSelectionRangeFromTable($selectedCells.first().get(0),
+            $selectedCells.last().get(0));
     } else {
-        const startContainer = range.startContainer;
+        const {startContainer} = range;
         startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
         rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
     }

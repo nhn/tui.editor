@@ -5,8 +5,8 @@
 
 import CommandManager from '../commandManager';
 
-const boldItalicRegex = /^[\*_]{3,}[^\*_]*[\*_]{3,}$/;
-const italicRegex = /^[\*_][^\*_]*[\*_]$/;
+const boldItalicRegex = /^[*_]{3,}[^*_]*[*_]{3,}$/;
+const italicRegex = /^[*_][^*_]*[*_]$/;
 
 /**
  * Italic

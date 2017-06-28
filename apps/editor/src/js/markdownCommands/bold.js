@@ -3,10 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
-const boldRegex = /^[\*_]{2,}[^\*_]*[\*_]{2,}$/;
+const boldRegex = /^[*_]{2,}[^*_]*[*_]{2,}$/;
 
 /**
  * Bold

@@ -5,343 +5,361 @@
 
 import LayerPopup from './layerpopup';
 
-const util = tui.util;
+const {util} = tui;
 
-/* eslint-disable indent */
-const POPUP_CONTENT = [
-    '<div class="te-table-selection">',
-        '<div class="te-table-header"></div>',
-        '<div class="te-table-body"></div>',
-        '<div class="te-selection-area"></div>',
-    '</div>',
-    '<p class="te-description"></p>'
-].join('');
-/* eslint-enable indent */
+const CLASS_TABLE_SELECTION = 'te-table-selection';
+const CLASS_TABLE_HEADER = 'te-table-header';
+const CLASS_TABLE_BODY = 'te-table-body';
+const CLASS_SELECTION_AREA = 'te-selection-area';
+const CLASS_DESCRIPTION = 'te-description';
 
-const CELL_WIDTH = 25,
-    CELL_HEIGHT = 17,
-    MIN_ROW_INDEX = 7,
-    MAX_ROW_INDEX = 14,
-    MIN_COL_INDEX = 5,
-    MAX_COL_INDEX = 9,
-    MIN_ROW_SELECTION_INDEX = 1,
-    MIN_COL_SELECTION_INDEX = 1,
-    HEADER_ROW_COUNT = 1,
-    LAST_BORDER = 1;
+const POPUP_CONTENT = `
+    <div class="${CLASS_TABLE_SELECTION}">
+        <div class="${CLASS_TABLE_HEADER}"></div>
+        <div class="${CLASS_TABLE_BODY}"></div>
+        <div class="${CLASS_SELECTION_AREA}"></div>
+    </div>
+    <p class="${CLASS_DESCRIPTION}"></p>
+`;
+
+const CELL_WIDTH = 25;
+const CELL_HEIGHT = 17;
+const MIN_ROW_INDEX = 7;
+const MAX_ROW_INDEX = 14;
+const MIN_COL_INDEX = 5;
+const MAX_COL_INDEX = 9;
+const MIN_ROW_SELECTION_INDEX = 1;
+const MIN_COL_SELECTION_INDEX = 1;
+const HEADER_ROW_COUNT = 1;
+const LAST_BORDER = 1;
 
 /**
  * PopupAddTable
  * It implements Popup to add a table
- * @exports PopupAddTable
- * @augments LayerPopup
- * @constructor
- * @class
- * @param {object} options options
- * @ignore
+ * @class PopupAddTable
+ * @extends {LayerPopup}
  */
-function PopupAddTable(options) {
-    options = util.extend({
-        title: false,
-        className: 'te-popup-add-table',
-        content: POPUP_CONTENT
-    }, options);
+class PopupAddTable extends LayerPopup {
+    /**
+     * Creates an instance of PopupAddTable.
+     * @param {LayerPopupOption} options - layer popup option
+     * @memberof PopupAddTable
+     */
+    constructor(options) {
+        options = util.extend({
+            header: false,
+            className: 'te-popup-add-table',
+            content: POPUP_CONTENT
+        }, options);
+        super(options);
+    }
 
-    LayerPopup.call(this, options);
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupAddTable
+     * @protected
+     * @override
+     */
+    _initInstance(options) {
+        super._initInstance(options);
 
-    this._selectedBound = {};
-    this._tableBound = {};
-    this.eventManager = options.eventManager;
-    this.$button = options.$button;
+        this._selectedBound = {};
+        this._tableBound = {};
+        this._eventManager = options.eventManager;
+        this.$button = options.$button;
+    }
 
-    this.render();
-    this._cacheElements();
-    this._bindContentEvent();
-    this._linkWithEventManager();
+    /**
+     * initialize DOM, render popup
+     * @memberof PopupAddTable
+     * @protected
+     * @override
+     */
+    _initDOM() {
+        super._initDOM();
 
-    this._setTableSizeByBound(MIN_COL_INDEX, MIN_ROW_INDEX);
-}
+        this._cacheElements();
+        this._setTableSizeByBound(MIN_COL_INDEX, MIN_ROW_INDEX);
+    }
 
-PopupAddTable.prototype = util.extend(
-    {},
-    LayerPopup.prototype
-);
+    /**
+     * bind DOM events
+     * @memberof PopupAddTable
+     * @protected
+     * @override
+     */
+    _initDOMEvent(options) {
+        super._initDOMEvent(options);
 
-/**
- * _cacheElements
- * Cache elements for use
- */
-PopupAddTable.prototype._cacheElements = function() {
-    this.$header = this.$el.find('.te-table-header');
-    this.$body = this.$el.find('.te-table-body');
-    this.$selection = this.$el.find('.te-selection-area');
-    this.$desc = this.$el.find('.te-description');
-};
+        this.on(`mousemove .${CLASS_TABLE_SELECTION}`, ev => {
+            const x = ev.pageX - this._selectionOffset.left;
+            const y = ev.pageY - this._selectionOffset.top;
+            const bound = this._getSelectionBoundByOffset(x, y);
 
-/**
- * _bindContentEvent
- * Bind element events
- */
-PopupAddTable.prototype._bindContentEvent = function() {
-    const self = this;
+            this._resizeTableBySelectionIfNeed(bound.col, bound.row);
 
-    this.on('mousemove .te-table-selection', ev => {
-        const x = ev.pageX - self._selectionOffset.left;
-        const y = ev.pageY - self._selectionOffset.top;
-        const bound = self._getSelectionBoundByOffset(x, y);
-
-        self._resizeTableBySelectionIfNeed(bound.col, bound.row);
-
-        self._setSelectionAreaByBound(bound.col, bound.row);
-        self._setDisplayText(bound.col, bound.row);
-        self._setSelectedBound(bound.col, bound.row);
-    });
-
-    this.on('click .te-table-selection', () => {
-        const tableSize = self._getSelectedTableSize();
-        self.eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
-    });
-};
-
-/**
- * _linkWithEventManager
- * Bind event manager event
- */
-PopupAddTable.prototype._linkWithEventManager = function() {
-    const self = this;
-
-    this.eventManager.listen('focus', () => {
-        self.hide();
-    });
-
-    this.eventManager.listen('openPopupAddTable', () => {
-        self.eventManager.emit('closeAllPopup');
-        self.$el.css({
-            'top': self.$button.position().top + self.$button.height() + 5,
-            'left': self.$button.position().left
+            this._setSelectionAreaByBound(bound.col, bound.row);
+            this._setDisplayText(bound.col, bound.row);
+            this._setSelectedBound(bound.col, bound.row);
         });
-        self.show();
-        self._selectionOffset = self.$el.find('.te-table-selection').offset();
-    });
 
-    this.eventManager.listen('closeAllPopup', () => {
-        self.hide();
-    });
-};
-
-/**
- * _resizeTableBySelectionIfNeed
- * Resize table if need
- * @param {number} col column index
- * @param {number} row row index
- */
-PopupAddTable.prototype._resizeTableBySelectionIfNeed = function(col, row) {
-    const resizedBound = this._getResizedTableBound(col, row);
-
-    if (resizedBound) {
-        this._setTableSizeByBound(resizedBound.col, resizedBound.row);
-    }
-};
-
-/**
- * _getResizedTableBound
- * Get resized table bound if Need
- * @param {number} col column index
- * @param {number} row row index
- * @returns {object} bound
- */
-PopupAddTable.prototype._getResizedTableBound = function(col, row) {
-    let resizedCol, resizedRow, resizedBound;
-
-    if (col >= MIN_COL_INDEX && col < MAX_COL_INDEX) {
-        resizedCol = col + 1;
-    } else if (col < MIN_COL_INDEX) {
-        resizedCol = MIN_COL_INDEX;
+        this.on(`click .${CLASS_TABLE_SELECTION}`, () => {
+            const tableSize = this._getSelectedTableSize();
+            this._eventManager.emit('command', 'Table', tableSize.col, tableSize.row);
+        });
     }
 
-    if (row >= MIN_ROW_INDEX && row < MAX_ROW_INDEX) {
-        resizedRow = row + 1;
-    } else if (row < MIN_ROW_INDEX) {
-        resizedRow = MIN_ROW_INDEX;
+    /**
+     * bind editor events
+     * @memberof PopupAddTable
+     * @protected
+     * @abstract
+     */
+    _initEditorEvent() {
+        super._initEditorEvent();
+
+        this._eventManager.listen('focus', () => this.hide());
+        this._eventManager.listen('closeAllPopup', () => this.hide());
+
+        this._eventManager.listen('openPopupAddTable', () => {
+            this._eventManager.emit('closeAllPopup');
+            this.$el.css({
+                'top': this.$button.position().top + this.$button.height() + 5,
+                'left': this.$button.position().left
+            });
+            this.show();
+            this._selectionOffset = this.$el.find(`.${CLASS_TABLE_SELECTION}`).offset();
+        });
     }
 
-    if (this._isNeedResizeTable(resizedCol, resizedRow)) {
-        resizedBound = {
-            row: resizedRow || this._tableBound.row,
-            col: resizedCol || this._tableBound.col
+    /**
+     * _cacheElements
+     * Cache elements for use
+     */
+    _cacheElements() {
+        this.$header = this.$el.find(`.${CLASS_TABLE_HEADER}`);
+        this.$body = this.$el.find(`.${CLASS_TABLE_BODY}`);
+        this.$selection = this.$el.find(`.${CLASS_SELECTION_AREA}`);
+        this.$desc = this.$el.find(`.${CLASS_DESCRIPTION}`);
+    }
+
+    /**
+     * _resizeTableBySelectionIfNeed
+     * Resize table if need
+     * @param {number} col column index
+     * @param {number} row row index
+     */
+    _resizeTableBySelectionIfNeed(col, row) {
+        const resizedBound = this._getResizedTableBound(col, row);
+
+        if (resizedBound) {
+            this._setTableSizeByBound(resizedBound.col, resizedBound.row);
+        }
+    }
+
+    /**
+     * _getResizedTableBound
+     * Get resized table bound if Need
+     * @param {number} col column index
+     * @param {number} row row index
+     * @returns {object} bound
+     */
+    _getResizedTableBound(col, row) {
+        let resizedCol, resizedRow, resizedBound;
+
+        if (col >= MIN_COL_INDEX && col < MAX_COL_INDEX) {
+            resizedCol = col + 1;
+        } else if (col < MIN_COL_INDEX) {
+            resizedCol = MIN_COL_INDEX;
+        }
+
+        if (row >= MIN_ROW_INDEX && row < MAX_ROW_INDEX) {
+            resizedRow = row + 1;
+        } else if (row < MIN_ROW_INDEX) {
+            resizedRow = MIN_ROW_INDEX;
+        }
+
+        if (this._isNeedResizeTable(resizedCol, resizedRow)) {
+            resizedBound = {
+                row: resizedRow || this._tableBound.row,
+                col: resizedCol || this._tableBound.col
+            };
+        }
+
+        return resizedBound;
+    }
+
+    /**
+     * _isNeedResizeTable
+     * check if need resize table
+     * @param {number} col column index
+     * @param {number} row row index
+     * @returns {boolean} result
+     */
+    _isNeedResizeTable(col, row) {
+        return (col && col !== this._tableBound.col)
+            || (row && row !== this._tableBound.row);
+    }
+
+    /**
+     * _getBoundByOffset
+     * Get bound by offset
+     * @param {number} x offset
+     * @param {number} y offset
+     * @returns {object} bound
+     */
+    _getBoundByOffset(x, y) {
+        const row = parseInt(y / CELL_HEIGHT, 10);
+        const col = parseInt(x / CELL_WIDTH, 10);
+
+        return {
+            row,
+            col
         };
     }
 
-    return resizedBound;
-};
+    /**
+     * _getOffsetByBound
+     * Get offset by bound
+     * @param {number} col column index
+     * @param {number} row row index
+     * @returns {object} offset
+     */
+    _getOffsetByBound(col, row) {
+        const x = (col * CELL_WIDTH) + CELL_WIDTH,
+            y = (row * CELL_HEIGHT) + CELL_HEIGHT;
 
-/**
- * _isNeedResizeTable
- * check if need resize table
- * @param {number} col column index
- * @param {number} row row index
- * @returns {boolean} result
- */
-PopupAddTable.prototype._isNeedResizeTable = function(col, row) {
-    return (col && col !== this._tableBound.col)
-        || (row && row !== this._tableBound.row);
-};
-
-/**
- * _getBoundByOffset
- * Get bound by offset
- * @param {number} x offset
- * @param {number} y offset
- * @returns {object} bound
- */
-PopupAddTable.prototype._getBoundByOffset = function(x, y) {
-    const rowBound = parseInt(y / CELL_HEIGHT, 10),
-        colBound = parseInt(x / CELL_WIDTH, 10);
-
-    return {
-        row: rowBound,
-        col: colBound
-    };
-};
-
-/**
- * _getOffsetByBound
- * Get offset by bound
- * @param {number} col column index
- * @param {number} row row index
- * @returns {object} offset
- */
-PopupAddTable.prototype._getOffsetByBound = function(col, row) {
-    const x = (col * CELL_WIDTH) + CELL_WIDTH,
-        y = (row * CELL_HEIGHT) + CELL_HEIGHT;
-
-    return {
-        x,
-        y
-    };
-};
-
-/**
- * _setTableSizeByBound
- * Set table size with bound
- * @param {number} col column index
- * @param {number} row row index
- */
-PopupAddTable.prototype._setTableSizeByBound = function(col, row) {
-    const boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
-    this._setTableSize(boundOffset.x, boundOffset.y);
-    this._tableBound.row = row;
-    this._tableBound.col = col;
-};
-
-/**
- * _getSelectionBoundByOffset
- * Get selection bound that process with range by offset
- * @param {number} x offset
- * @param {number} y offset
- * @returns {object} bound
- */
-PopupAddTable.prototype._getSelectionBoundByOffset = function(x, y) {
-    const bound = this._getBoundByOffset(x, y);
-
-    if (bound.row < MIN_ROW_SELECTION_INDEX) {
-        bound.row = MIN_ROW_SELECTION_INDEX;
-    } else if (bound.row > this._tableBound.row) {
-        bound.row = this._tableBound.row;
+        return {
+            x,
+            y
+        };
     }
 
-    if (bound.col < MIN_COL_SELECTION_INDEX) {
-        bound.col = MIN_COL_SELECTION_INDEX;
-    } else if (bound.col > this._tableBound.col) {
-        bound.col = this._tableBound.col;
+    /**
+     * _setTableSizeByBound
+     * Set table size with bound
+     * @param {number} col column index
+     * @param {number} row row index
+     */
+    _setTableSizeByBound(col, row) {
+        const boundOffset = this._getOffsetByBound(col, row - HEADER_ROW_COUNT);
+        this._setTableSize(boundOffset.x, boundOffset.y);
+        this._tableBound.row = row;
+        this._tableBound.col = col;
     }
 
-    return bound;
-};
+    /**
+     * _getSelectionBoundByOffset
+     * Get selection bound that process with range by offset
+     * @param {number} x offset
+     * @param {number} y offset
+     * @returns {object} bound
+     */
+    _getSelectionBoundByOffset(x, y) {
+        const bound = this._getBoundByOffset(x, y);
 
-/**
- * _setSelectionAreaByBound
- * Set selection area with bound
- * @param {number} col column index
- * @param {number} row row index
- */
-PopupAddTable.prototype._setSelectionAreaByBound = function(col, row) {
-    const boundOffset = this._getOffsetByBound(col, row);
-    this._setSelectionArea(boundOffset.x, boundOffset.y);
-};
+        if (bound.row < MIN_ROW_SELECTION_INDEX) {
+            bound.row = MIN_ROW_SELECTION_INDEX;
+        } else if (bound.row > this._tableBound.row) {
+            bound.row = this._tableBound.row;
+        }
 
-/**
- * _setSelectedBound
- * Set selected bound
- * @param {number} col column index
- * @param {number} row row index
- */
-PopupAddTable.prototype._setSelectedBound = function(col, row) {
-    this._selectedBound.col = col;
-    this._selectedBound.row = row;
-};
+        if (bound.col < MIN_COL_SELECTION_INDEX) {
+            bound.col = MIN_COL_SELECTION_INDEX;
+        } else if (bound.col > this._tableBound.col) {
+            bound.col = this._tableBound.col;
+        }
 
-/**
- * _getSelectedTableSize
- * Get selected table size
- * @returns {object} bound
- */
-PopupAddTable.prototype._getSelectedTableSize = function() {
-    return {
-        row: this._selectedBound.row + 1,
-        col: this._selectedBound.col + 1
-    };
-};
+        return bound;
+    }
 
-/**
- * _setDisplayText
- * Set selected table size text for display
- * @param {number} col column index
- * @param {number} row row index
- */
-PopupAddTable.prototype._setDisplayText = function(col, row) {
-    this.$desc.html(`${(col + 1)} x ${(row + 1)}`);
-};
+    /**
+     * _setSelectionAreaByBound
+     * Set selection area with bound
+     * @param {number} col column index
+     * @param {number} row row index
+     */
+    _setSelectionAreaByBound(col, row) {
+        const boundOffset = this._getOffsetByBound(col, row);
+        this._setSelectionArea(boundOffset.x, boundOffset.y);
+    }
 
-/**
- * _setTableSize
- * Set table element size
- * @param {number} x offset
- * @param {number} y offset
- */
-PopupAddTable.prototype._setTableSize = function(x, y) {
-    x += LAST_BORDER;
-    y += LAST_BORDER;
+    /**
+     * _setSelectedBound
+     * Set selected bound
+     * @param {number} col column index
+     * @param {number} row row index
+     */
+    _setSelectedBound(col, row) {
+        this._selectedBound.col = col;
+        this._selectedBound.row = row;
+    }
 
-    this.$header.css({
-        height: CELL_HEIGHT,
-        width: x
-    });
+    /**
+     * _getSelectedTableSize
+     * Get selected table size
+     * @returns {object} bound
+     */
+    _getSelectedTableSize() {
+        return {
+            row: this._selectedBound.row + 1,
+            col: this._selectedBound.col + 1
+        };
+    }
 
-    this.$body.css({
-        height: y,
-        width: x
-    });
+    /**
+     * _setDisplayText
+     * Set selected table size text for display
+     * @param {number} col column index
+     * @param {number} row row index
+     */
+    _setDisplayText(col, row) {
+        this.$desc.html(`${(col + 1)} x ${(row + 1)}`);
+    }
 
-    this.$el.css({
-        width: x + 30
-    });
-};
+    /**
+     * _setTableSize
+     * Set table element size
+     * @param {number} x offset
+     * @param {number} y offset
+     */
+    _setTableSize(x, y) {
+        x += LAST_BORDER;
+        y += LAST_BORDER;
 
-/**
- * _setSelectionArea
- * Set selection element size
- * @param {number} x offset
- * @param {number} y offset
- */
-PopupAddTable.prototype._setSelectionArea = function(x, y) {
-    x += LAST_BORDER;
-    y += LAST_BORDER;
+        this.$header.css({
+            height: CELL_HEIGHT,
+            width: x
+        });
 
-    this.$selection.css({
-        height: y,
-        width: x
-    });
-};
+        this.$body.css({
+            height: y,
+            width: x
+        });
+
+        this.$el.css({
+            width: x + 30
+        });
+    }
+
+    /**
+     * _setSelectionArea
+     * Set selection element size
+     * @param {number} x offset
+     * @param {number} y offset
+     */
+    _setSelectionArea(x, y) {
+        x += LAST_BORDER;
+        y += LAST_BORDER;
+
+        this.$selection.css({
+            height: y,
+            width: x
+        });
+    }
+}
 
 PopupAddTable.CELL_WIDTH = CELL_WIDTH;
 PopupAddTable.CELL_HEIGHT = CELL_HEIGHT;

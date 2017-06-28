@@ -12,8 +12,6 @@ describe('AddLink', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -45,7 +43,13 @@ describe('AddLink', () => {
         });
 
         it('영역선택후 링크가 추가된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 2,
+                ch: 7
+            });
 
             AddLink.exec(mde, data);
 

@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -29,7 +28,7 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
         const _styleCode = tui.util.bind(styleCode, null, wwe.getEditor());
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
             tableSelectionManager.styleToSelectedCells(_styleCode);

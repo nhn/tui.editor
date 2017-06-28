@@ -4,188 +4,104 @@
  */
 
 import UIController from './uicontroller';
-import templater from './templater';
 
-const util = tui.util;
-/*eslint-disable*/
-const buttonTmpl = '<button type="button" data-index="${index}">${name}</button>';
-/*eslint-enable*/
+const CLASS_TAB_ACTIVE = 'te-tab-active';
 
 /**
  * Tab
- * @exports Tab
- * @augments UIController
- * @constructor
- * @class
- * @param {object} options options
- * @param {string[]} options.items Button names to be created
- * @param {DOMElement[]} options.sections Dom elements for tab
- * @param {function} options.onItemClick when button is clicked pass button name to function
- * @example
- * const tab = new Tab({
- *     items: ['Editor', 'Preview'],
- *     sections: [this.$mdEditorContainerEl, this.$previewEl]
- * });
- * @ignore
+ * @class Tab
+ * @extends {UIController}
  */
-function Tab(options) {
-    UIController.call(this, {
-        tagName: 'div',
-        className: 'te-tab'
-    });
+class Tab extends UIController {
 
-    options = util.extend({}, options);
+    /**
+     * Creates an instance of Tab.
+     * @param {object} options - options
+     * @param {string} [options.initName] - name of the default activated button
+     * @param {string[]} options.items - Button names to be created
+     * @param {DOMElement[]} options.sections - Dom elements for tab
+     * @param {function} [options.onItemClick] - when button is clicked pass button name to function
+     * @memberof Tab
+     */
+    constructor(options = {}) {
+        super({
+            tagName: 'div',
+            className: 'te-tab'
+        });
 
-    this.items = options.items;
-    this.sections = options.sections;
+        this.sections = options.sections;
 
-    this._$activeButton = null;
+        this._$activeButton = null;
 
-    this.render();
-    this._initItemClickEvent(options.onItemClick);
+        this._render(options);
+        this._initEvent(options);
+    }
 
-    this._applyInitName(options.initName);
-}
+    _initEvent(options) {
+        const {onItemClick} = options;
+        if (onItemClick) {
+            this.on('itemClick', onItemClick);
+        }
 
-Tab.prototype = util.extend(
-    {},
-    UIController.prototype
-);
+        this.on('click button', this._onTabButton.bind(this));
+    }
 
-/**
- * render
- * render UI
- */
-Tab.prototype.render = function() {
-    const buttonHtml = templater(buttonTmpl, this._getButtonData());
-
-    this.$el.html(buttonHtml);
-
-    this.attachEvents({
-        'click button': '_onButtonClick'
-    });
-};
-
-/**
- * _applyInitName
- * Apply initial section by button item name
- * @param {string} initName Button name to activate
- */
-Tab.prototype._applyInitName = function(initName) {
-    if (initName) {
+    _render(options) {
+        const {items, initName} = options;
+        const tabButtons = [];
+        for (let i = 0, len = items.length; i < len; i += 1) {
+            tabButtons.push(`<button type="button" data-index="${i}">${items[i]}</button>`);
+        }
+        this.$el.html(tabButtons.join(''));
         this.activate(initName);
     }
-};
 
-/**
- * _getButtonData
- * Make button data by this.items
- * @returns {object[]} Button data
- */
-Tab.prototype._getButtonData = function() {
-    const buttonData = [];
-
-    for (let i = 0, len = this.items.length; i < len; i += 1) {
-        buttonData.push({
-            name: this.items[i],
-            index: i
-        });
+    /**
+     * activate
+     * Activate Section & Button
+     * @param {string} name button name to activate
+     */
+    activate(name) {
+        const $button = this.$el.find(`button:contains("${name}")`);
+        this._activateTabByButton($button);
     }
 
-    return buttonData;
-};
+    _onTabButton(ev) {
+        const $button = $(ev.target);
+        this._activateTabByButton($button);
+        this.trigger('itemClick', $button.text());
+    }
 
-/**
- * _onButtonClick
- * Button click handler
- * @param {event} ev Event object
- */
-Tab.prototype._onButtonClick = function(ev) {
-    const $button = $(ev.target);
-    this._activateTabByButton($button);
-    this.trigger('itemClick', $button.text());
-};
+    _activateTabByButton($button) {
+        if (this._isActivatedButton($button)) {
+            return;
+        }
 
-/**
- * _deactivate
- * Deactive active section and button
- */
-Tab.prototype._deactivate = function() {
-    if (this._$activeButton) {
-        this._$activeButton.removeClass('te-tab-active');
+        this._updateClassByButton($button);
+    }
 
+    _updateClassByButton($activeButton) {
+         // deactivate previously activated button
+        if (this._$activeButton) {
+            const sectionIndex = this._$activeButton.attr('data-index');
+            this._$activeButton.removeClass(CLASS_TAB_ACTIVE);
+            if (this.sections) {
+                this.sections[sectionIndex].removeClass(CLASS_TAB_ACTIVE);
+            }
+        }
+
+        // activate new button
+        $activeButton.addClass(CLASS_TAB_ACTIVE);
+        this._$activeButton = $activeButton;
+        const index = $activeButton.attr('data-index');
         if (this.sections) {
-            this.sections[this._$activeButton.attr('data-index')].removeClass('te-tab-active');
+            this.sections[index].addClass(CLASS_TAB_ACTIVE);
         }
     }
-};
 
-/**
- * _activateButton
- * Activate button
- * @param {jQuery} $button button to activate
- */
-Tab.prototype._activateButton = function($button) {
-    this._$activeButton = $button;
-    this._$activeButton.addClass('te-tab-active');
-};
-
-/**
- * _activateSection
- * Activate Section
- * @param {number} index Section index to activate
- */
-Tab.prototype._activateSection = function(index) {
-    if (this.sections) {
-        this.sections[index].addClass('te-tab-active');
+    _isActivatedButton($button) {
+        return this._$activeButton && this._$activeButton.text() === $button.text();
     }
-};
-
-/**
- * activate
- * Activate Section & Button
- * @param {string} name button name to activate
- */
-Tab.prototype.activate = function(name) {
-    const $button = this.$el.find(`button:contains("${name}")`);
-    this._activateTabByButton($button);
-};
-
-/**
- * _activateTabByButton
- * Activate tab section by button
- * @param {jQuery} $button button to activate
- */
-Tab.prototype._activateTabByButton = function($button) {
-    if (this._isActivatedButton($button)) {
-        return;
-    }
-
-    this._deactivate();
-
-    this._activateButton($button);
-    this._activateSection($button.attr('data-index'));
-};
-
-/**
- * _isActivatedButton
- * Check passed button is activated
- * @param {jQuery} $button Button to check
- * @returns {boolean} result
- */
-Tab.prototype._isActivatedButton = function($button) {
-    return this._$activeButton && this._$activeButton.text() === $button.text();
-};
-
-/**
- * _initItemClickEvent
- * Initialize itemClick event handler
- * @param {function} handler Function to invoke when button is clicked
- */
-Tab.prototype._initItemClickEvent = function(handler) {
-    if (handler) {
-        this.on('itemClick', handler);
-    }
-};
+}
 
 module.exports = Tab;

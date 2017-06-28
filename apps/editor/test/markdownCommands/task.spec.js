@@ -14,8 +14,6 @@ describe('task', () => {
         mde = new MarkdownEditor($container, new EventManager());
         mde.componentManager.addManager(mdListManager);
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = [
@@ -76,7 +74,9 @@ describe('task', () => {
         });
 
         it('영역선택후 추가된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
+            doc.setSelection({line: 0,
+                ch: 0}, {line: 2,
+                    ch: 7});
 
             task.exec(mde);
 
@@ -113,7 +113,13 @@ describe('task', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             task.exec(mde);
 
@@ -127,7 +133,13 @@ describe('task', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             task.exec(mde);
 
@@ -141,7 +153,13 @@ describe('task', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             task.exec(mde);
 
@@ -155,7 +173,13 @@ describe('task', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             task.exec(mde);
 
@@ -197,7 +221,13 @@ describe('task', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 1, ch: 0}, {line: 2, ch: 4});
+            doc.setSelection({
+                line: 1,
+                ch: 0
+            }, {
+                line: 2,
+                ch: 4
+            });
             task.exec(mde);
 
             expect(doc.getLine(0)).toEqual('mytext1');
@@ -212,7 +242,13 @@ describe('task', () => {
             const sourceText = ['mytext1', '', '* mytext2', '* mytext3', '', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 2, ch: 0}, {line: 3, ch: 4});
+            doc.setSelection({
+                line: 2,
+                ch: 0
+            }, {
+                line: 3,
+                ch: 4
+            });
             task.exec(mde);
 
             expect(doc.getLine(0)).toEqual('mytext1');

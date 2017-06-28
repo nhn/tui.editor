@@ -6,7 +6,7 @@
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * PopupTableUtils
@@ -15,115 +15,105 @@ const util = tui.util;
  * @augments LayerPopup
  * @constructor
  * @class
- * @param {object} options options
+ * @param {LayerPopupOption} options - layer popup option
  * @ignore
  */
-function PopupTableUtils(options) {
-    const POPUP_CONTENT = [
-        `<button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>`,
-        `<button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>`,
-        `<button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>`,
-        `<button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>`,
-        `<button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>`,
-        `<button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>`,
-        `<button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>`,
-        `<button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>`
-    ].join('');
-
-    options = util.extend({
-        title: false,
-        className: 'te-popup-table-utils',
-        content: POPUP_CONTENT
-    }, options);
-
-    LayerPopup.call(this, options);
-
-    this.eventManager = options.eventManager;
-
-    this.render();
-    this._bindContentEvent();
-    this._linkWithEventManager();
-}
-
-PopupTableUtils.prototype = util.extend(
-    {},
-    LayerPopup.prototype
-);
 
 /**
- * _bindContentEvent
- * Bind element events
+ * PopupTableUtils
+ * It implements table utils popup
+ * @class PopupTableUtils
+ * @extends {LayerPopup}
  */
-PopupTableUtils.prototype._bindContentEvent = function() {
-    const self = this;
+class PopupTableUtils extends LayerPopup {
 
-    this.on('click .te-table-add-row', () => {
-        self.eventManager.emit('command', 'AddRow');
-    });
+    /**
+     * Creates an instance of PopupTableUtils.
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupTableUtils
+     */
+    constructor(options) {
+        const POPUP_CONTENT = `
+            <button type="button" class="te-table-add-row">${i18n.get('Add row')}</button>
+            <button type="button" class="te-table-add-col">${i18n.get('Add col')}</button>
+            <button type="button" class="te-table-remove-row">${i18n.get('Remove row')}</button>
+            <button type="button" class="te-table-remove-col">${i18n.get('Remove col')}</button>
+            <hr/>
+            <button type="button" class="te-table-col-align-left">${i18n.get('Align left')}</button>
+            <button type="button" class="te-table-col-align-center">${i18n.get('Align center')}</button>
+            <button type="button" class="te-table-col-align-right">${i18n.get('Align right')}</button>
+            <hr/>
+            <button type="button" class="te-table-remove">${i18n.get('Remove table')}</button>
+        `;
+        options = util.extend({
+            header: false,
+            className: 'te-popup-table-utils',
+            content: POPUP_CONTENT
+        }, options);
+        super(options);
+    }
 
-    this.on('click .te-table-add-col', () => {
-        self.eventManager.emit('command', 'AddCol');
-    });
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupTableUtils
+     * @protected
+     * @override
+     */
+    _initInstance(options) {
+        super._initInstance(options);
+        this.eventManager = options.eventManager;
+    }
 
-    this.on('click .te-table-remove-row', () => {
-        self.eventManager.emit('command', 'RemoveRow');
-    });
+    /**
+     * bind DOM events
+     * @memberof PopupTableUtils
+     * @protected
+     * @override
+     */
+    _initDOMEvent() {
+        super._initDOMEvent();
 
-    this.on('click .te-table-col-align-left', () => {
-        self.eventManager.emit('command', 'AlignCol', 'left');
-    });
+        this.on('click .te-table-add-row', () => this.eventManager.emit('command', 'AddRow'));
+        this.on('click .te-table-add-col', () => this.eventManager.emit('command', 'AddCol'));
+        this.on('click .te-table-remove-row', () => this.eventManager.emit('command', 'RemoveRow'));
+        this.on('click .te-table-col-align-left', () => this.eventManager.emit('command', 'AlignCol', 'left'));
+        this.on('click .te-table-col-align-center', () => this.eventManager.emit('command', 'AlignCol', 'center'));
+        this.on('click .te-table-col-align-right', () => this.eventManager.emit('command', 'AlignCol', 'right'));
+        this.on('click .te-table-remove-col', () => this.eventManager.emit('command', 'RemoveCol'));
+        this.on('click .te-table-remove', () => this.eventManager.emit('command', 'RemoveTable'));
+    }
 
-    this.on('click .te-table-col-align-center', () => {
-        self.eventManager.emit('command', 'AlignCol', 'center');
-    });
+    /**
+     * bind editor events
+     * @memberof PopupTableUtils
+     * @protected
+     * @abstract
+     */
+    _initEditorEvent() {
+        super._initEditorEvent();
 
-    this.on('click .te-table-col-align-right', () => {
-        self.eventManager.emit('command', 'AlignCol', 'right');
-    });
+        this.eventManager.listen('focus', () => this.hide());
+        this.eventManager.listen('mousedown', () => this.hide());
+        this.eventManager.listen('closeAllPopup', () => this.hide());
 
-    this.on('click .te-table-remove-col', () => {
-        self.eventManager.emit('command', 'RemoveCol');
-    });
+        this.eventManager.listen('openPopupTableUtils', event => {
+            const offset = this.$el.parent().offset();
+            const x = event.clientX - offset.left;
+            const y = event.clientY - offset.top + $(window).scrollTop();
 
-    this.on('click .te-table-remove', () => {
-        self.eventManager.emit('command', 'RemoveTable');
-    });
-};
+            this.eventManager.emit('closeAllPopup');
 
-/**
- * _linkWithEventManager
- * Bind event manager event
- */
-PopupTableUtils.prototype._linkWithEventManager = function() {
-    const self = this;
+            this.$el.css({
+                position: 'absolute',
+                top: y + 5, // beside mouse pointer
+                left: x + 10
+            });
 
-    this.eventManager.listen('focus', () => {
-        self.hide();
-    });
-
-    this.eventManager.listen('mousedown', () => {
-        self.hide();
-    });
-
-    this.eventManager.listen('openPopupTableUtils', event => {
-        const offset = self.$el.parent().offset();
-        const x = event.clientX - offset.left;
-        const y = event.clientY - offset.top + $(window).scrollTop();
-
-        self.eventManager.emit('closeAllPopup');
-
-        self.$el.css({
-            'position': 'absolute',
-            'top': y + 5,
-            'left': x + 10
+            this.show();
         });
-
-        self.show();
-    });
-
-    this.eventManager.listen('closeAllPopup', () => {
-        self.hide();
-    });
-};
+    }
+}
 
 module.exports = PopupTableUtils;

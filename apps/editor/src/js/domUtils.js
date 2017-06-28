@@ -3,10 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 const FIND_ZWB = /\u200B/g;
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * isTextNode

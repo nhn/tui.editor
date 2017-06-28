@@ -9,7 +9,7 @@ import tableRenderer from './tableRenderer';
 import tableRangeHandler from './tableRangeHandler';
 import i18n from '../../i18n';
 
-const util = tui.util;
+const {util} = tui;
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
@@ -118,7 +118,7 @@ class WwMergedTableManager extends WwTableManager {
         const tableData = tableDataHandler.createTableData($table);
         const added = tableDataHandler.addTbodyOrTheadIfNeed(tableData);
         const tableAidInformation = this.prepareToTableCellStuffing(tableData);
-        const needTableCellStuffingAid = tableAidInformation.needTableCellStuffingAid;
+        const {needTableCellStuffingAid} = tableAidInformation;
 
         if (needTableCellStuffingAid) {
             tableDataHandler.stuffCellsIntoIncompleteRow(tableData, tableAidInformation.maximumCellLength);
@@ -139,7 +139,7 @@ class WwMergedTableManager extends WwTableManager {
         let startCell;
 
         if ($selectedCells.length === 1) {
-            startCell = $selectedCells[0];
+            startCell = $selectedCells.get(0);
         } else {
             startCell = this.wwe.getEditor().getSelection().startContainer;
         }
@@ -410,7 +410,7 @@ class WwMergedTableManager extends WwTableManager {
             this._bookmarkLastTd(endCellIndex);
         } else {
             alert(alertMessage);
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
         }
     }
 
@@ -456,7 +456,7 @@ class WwMergedTableManager extends WwTableManager {
         const additionalCellRange = util.range(startCellIndex, startCellIndex + expandCount);
 
         tableData.forEach((rowData, rowIndex) => {
-            const nodeName = rowData[0].nodeName;
+            const [{nodeName}] = rowData;
             const newCells = additionalCellRange.map(colIndex => (
                 tableDataHandler.createBasicCell(rowIndex, colIndex, nodeName)
             ));
@@ -498,7 +498,7 @@ class WwMergedTableManager extends WwTableManager {
 
         if (this._hasRowMergedHeader(clipboardTableData, tableData, startCellIndex)) {
             alert(i18n.get('Cannot paste row merged cells into the table header'));
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
 
             return;
         }
@@ -512,7 +512,7 @@ class WwMergedTableManager extends WwTableManager {
             this._bookmarkLastTd(endCellIndex);
         } else {
             alert(i18n.get('Cannot change part of merged cell'));
-            this.wwe.getEditor().focus();
+            this.wwe.focus();
         }
     }
 

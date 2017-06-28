@@ -12,8 +12,6 @@ describe('Italic', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -46,7 +44,13 @@ describe('Italic', () => {
 
     describe('셀렉션을 지정한상태에서 커맨드를 사용하면 해당 텍스트가 이탤릭 문법으로 감싸진다.', () => {
         it('선택된영역의 텍스트가 이탤릭처리된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 0,
+                ch: 7
+            });
 
             Italic.exec(mde);
 

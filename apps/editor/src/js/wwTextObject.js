@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 const isIE11 = tui.util.browser.msie && tui.util.browser.version === 11;
 const isWindowChrome = (navigator.appVersion.indexOf('Win') !== -1) && tui.util.browser.chrome;
