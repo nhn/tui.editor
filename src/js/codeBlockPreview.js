@@ -1,5 +1,7 @@
 import Preview from './preview';
 
+const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
+
 /**
  * Code block preview
  * @class CodeBlockPreview
@@ -36,6 +38,7 @@ class CodeBlockPreview extends Preview {
         const codeText = this._codeBlockEditor.getEditorCodeText();
 
         super.refresh(`\`\`\`${language}\n${codeText}\n\`\`\``);
+        this.$el.trigger(EVENT_REQUIRE_SCROLL_SYNC);
     }
 
     /**

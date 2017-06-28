@@ -23,7 +23,6 @@ function _changeContent(popupTableUtils) {
     ].join('');
     const $popupContent = $(POPUP_CONTENT);
 
-    popupTableUtils.$content = $popupContent;
     popupTableUtils.setContent($popupContent);
 }
 

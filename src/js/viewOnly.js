@@ -8,7 +8,6 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
-import codeBlockManager from './codeBlockManager';
 
 const {util} = tui;
 
@@ -38,7 +37,6 @@ class ToastUIEditorViewOnly {
         this.eventManager = new EventManager();
         this.commandManager = new CommandManager(this);
         this.convertor = new Convertor(this.eventManager);
-        this.codeBlockManager = codeBlockManager;
         this.toMarkOptions = null;
 
         if (this.options.hooks) {

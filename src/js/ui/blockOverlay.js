@@ -3,6 +3,15 @@
  * @class BlockOverlay
  */
 class BlockOverlay {
+
+    /**
+     * Creates an instance of BlockOverlay.
+     * @param {Object} options - options
+     * @param {EventManager} options.eventManager - event manager instance
+     * @param {HTMLElement} options.container - container element
+     * @param {string} options.attachedSelector - selector string to find attached element
+     * @memberof BlockOverlay
+     */
     constructor({eventManager, container, attachedSelector}) {
         this._eventManager = eventManager;
         this._attachedSelector = `[contenteditable=true] ${attachedSelector}`;

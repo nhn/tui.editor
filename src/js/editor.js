@@ -11,11 +11,11 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import ImportManager from './importManager';
-import codeBlockManager from './codeBlockManager';
+import CodeBlockManager from './codeBlockManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
-import DefaultUI from './ui/defaultUI';
 import i18n from './i18n';
+import DefaultUI from './ui/defaultUI';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -99,13 +99,13 @@ class ToastUIEditor {
         const self = this;
 
         this.options = $.extend({
-            'previewStyle': 'tab',
-            'initialEditType': 'markdown',
-            'height': 300,
-            'language': 'en_US',
-            'useDefaultHTMLSanitizer': true,
-            'useCommandShortcut': true,
-            'codeBlockLanguages': codeBlockManager.supportedLanguages
+            previewStyle: 'tab',
+            initialEditType: 'markdown',
+            height: 300,
+            language: 'en_US',
+            useDefaultHTMLSanitizer: true,
+            useCommandShortcut: true,
+            codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
         }, options);
 
         this.eventManager = new EventManager();
@@ -115,8 +115,6 @@ class ToastUIEditor {
         this.commandManager = new CommandManager(this, {
             useCommandShortcut: this.options.useCommandShortcut
         });
-
-        this.codeBlockManager = codeBlockManager;
 
         this.convertor = new Convertor(this.eventManager);
 
@@ -649,6 +647,24 @@ class ToastUIEditor {
     }
 
     /**
+     * get markdownit with code highlight instance from convertor
+     * @returns {markdownit} - markdownit instance
+     * @memberof ToastUIEditor
+     */
+    getMarkdownHighlightRenderer() {
+        return this.convertor.getMarkdownHighlightRenderer();
+    }
+
+    /**
+     * set markdownit instance
+     * @param {markdownit} markdownitHighlight - markdownit instance
+     * @memberof ToastUIEditor
+     */
+    setMarkdownHighlightRenderer(markdownitHighlight) {
+        this.convertor.setMarkdownHighlightRenderer(markdownitHighlight);
+    }
+
+    /**
      * Get instance of TUIEditor
      * @api
      * @memberOf ToastUIEditor
@@ -734,10 +750,5 @@ class ToastUIEditor {
  * @type {I18n}
  */
 ToastUIEditor.i18n = i18n;
-
-/**
- * MarkdownIt custom renderer with code highlighting
- */
-ToastUIEditor.markdownItRenderer = Convertor.getMarkdownHighlightRenderer();
 
 module.exports = ToastUIEditor;

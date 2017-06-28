@@ -16,17 +16,28 @@ class PopupCodeBlockLanguages extends LayerPopup {
      */
     constructor(options) {
         const popupButtonsHTML = [];
-        options.languages.forEach(lang => {
-            popupButtonsHTML.push(`<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`);
-        });
+        const {languages} = options;
+        languages.forEach(lang =>
+            popupButtonsHTML.push(`<button type="button" class="${BUTTON_CLASS_PREFIX}${lang}" data-lang="${lang}">${lang}</button>`));
 
         options = util.extend({
             header: false,
             className: 'te-popup-code-block-languages',
             content: popupButtonsHTML.join('')
         }, options);
-
         super(options);
+    }
+
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupCodeBlockLanguages
+     * @protected
+     * @override
+     */
+    _initInstance(options) {
+        super._initInstance(options);
 
         this._onSelectedLanguage = null;
         this._onDismissed = null;
@@ -35,25 +46,30 @@ class PopupCodeBlockLanguages extends LayerPopup {
         this._languages = options.languages;
 
         this.eventManager = options.eventManager;
+    }
 
-        this.render();
-        this._initDOMEvent();
-        this._initEditorEvent();
+    /**
+     * initialize DOM, render popup
+     * @memberof PopupCodeBlockLanguages
+     * @protected
+     * @override
+     */
+    _initDOM(options) {
+        super._initDOM(options);
+
+        this._$buttons = this.$el.find('button');
         this._activateButtonByIndex(0);
     }
 
     /**
-     * render
-     * @override
-     * @protected
+     * bind DOM events
      * @memberof PopupCodeBlockLanguages
+     * @protected
+     * @override
      */
-    render() {
-        super.render();
-        this._$buttons = this.$el.find('button');
-    }
-
     _initDOMEvent() {
+        super._initDOMEvent();
+
         const handler = event => {
             const language = $(event.target).data('lang');
             if (this._onSelectedLanguage) {
@@ -61,12 +77,18 @@ class PopupCodeBlockLanguages extends LayerPopup {
             }
             this.hide();
         };
-        this._languages.forEach(lang => {
-            this.on(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, handler);
-        });
+        this._languages.forEach(lang => this.on(`mousedown .${BUTTON_CLASS_PREFIX}${lang}`, handler));
     }
 
+    /**
+     * bind editor events
+     * @memberof PopupCodeBlockLanguages
+     * @protected
+     * @abstract
+     */
     _initEditorEvent() {
+        super._initEditorEvent();
+
         this.eventManager.listen('openPopupCodeBlockLanguages', data => {
             this.eventManager.emit('closeAllPopup');
             this.show(data.callback);

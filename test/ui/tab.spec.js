@@ -1,34 +1,27 @@
-var Tab = require('../../src/js/ui/tab');
+const Tab = require('../../src/js/ui/tab');
 
-describe('Tab', function() {
-    'use strict';
+describe('Tab', () => {
+    let tab;
 
-    var tab;
-
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('매뉴명을 입력받아 버튼을 만든다', function() {
-        it('items옵션으로 매뉴명을 입력받아 매뉴들이 생성된다', function() {
-            var buttons;
-
-            tab = new Tab({
-                items: ['tab1', 'tab2']
-            });
-
-            $('body').append(tab.$el);
-
-            buttons = $('button');
-
-            expect($(buttons[0]).text()).toEqual('tab1');
-            expect($(buttons[1]).text()).toEqual('tab2');
+    it('create tab buttons from items option', () => {
+        tab = new Tab({
+            items: ['tab1', 'tab2']
         });
+        $('body').append(tab.$el);
+
+        const buttons = $('button');
+
+        expect($(buttons[0]).text()).toEqual('tab1');
+        expect($(buttons[1]).text()).toEqual('tab2');
     });
 
-    describe('매뉴명을 기준으로 커스텀이벤트를 걸어 클릭시 이벤트를 받을 수 있다', function() {
-        it('onItemClick 옵션으로 핸들러를 받아서 버튼의 클릭이벤트를 처리할수 있다', function() {
-            var handler = jasmine.createSpy('onItemClick');
+    describe('tab button event', () => {
+        it('onItemClick called on tab button click', () => {
+            const handler = jasmine.createSpy('onItemClick');
 
             tab = new Tab({
                 items: ['tab1', 'tab2'],
@@ -42,8 +35,8 @@ describe('Tab', function() {
             expect(handler).toHaveBeenCalled();
         });
 
-        it('핸들러에 인자로 버튼의 네임 넘어간다', function() {
-            var spy = jasmine.createSpy('onItemClick');
+        it('onItemClick handler gets name of clicked tab button', () => {
+            const spy = jasmine.createSpy('onItemClick');
 
             tab = new Tab({
                 items: ['tab1', 'tab2'],
@@ -58,9 +51,9 @@ describe('Tab', function() {
         });
     });
 
-    describe('버튼이 클릭되면 해당버튼이 활성화 효과를 얻는다', function() {
-        beforeEach(function() {
-            var handler = jasmine.createSpy('onItemClick');
+    describe('onItemClick callback option', () => {
+        beforeEach(() => {
+            const handler = jasmine.createSpy('onItemClick');
 
             tab = new Tab({
                 items: ['tab1', 'tab2'],
@@ -70,22 +63,17 @@ describe('Tab', function() {
             $('body').append(tab.$el);
         });
 
-        it('버튼에 active클래스가 추가된다', function() {
-            var $clickedButton;
-
-            $clickedButton = $('button').eq(1);
+        it('clicked button should have active class', () => {
+            const $clickedButton = $('button').eq(1);
 
             $clickedButton.trigger('click');
 
             expect($clickedButton.hasClass('te-tab-active')).toBe(true);
         });
 
-        it('기존버튼은 active클래스가 사라지고 새로 클릭된 버튼에 active가 존재한다', function() {
-            var $clickedButton1,
-                $clickedButton2;
-
-            $clickedButton1 = $('button').eq(0);
-            $clickedButton2 = $('button').eq(1);
+        it('click on a button should remove active class on the other buttons', () => {
+            const $clickedButton1 = $('button').eq(0);
+            const $clickedButton2 = $('button').eq(1);
 
             $clickedButton1.trigger('click');
             $clickedButton2.trigger('click');
@@ -95,11 +83,11 @@ describe('Tab', function() {
         });
     });
 
-    describe('initName옵션으로 탭명을 입력하면 시작시 그 탭이 활성화되어 시작된다', function() {
-        var tabSection1,
+    describe('initName option', () => {
+        let tabSection1,
             tabSection2;
 
-        beforeEach(function() {
+        beforeEach(() => {
             tabSection1 = $('<div>tab1</div>');
             tabSection2 = $('<div>tab2</div>');
 
@@ -114,23 +102,21 @@ describe('Tab', function() {
 
             $('body').append(tab.$el);
         });
-        it('해당 버튼에 active클래스가 추가되어있다', function() {
-            var buttons;
-
-            buttons = $('button');
+        it('sets initial active tab button', () => {
+            const buttons = $('button');
 
             expect($(buttons[1]).hasClass('te-tab-active')).toBe(true);
         });
 
-        it('해당 섹션에 active클래스가 추가되어있다', function() {
+        it('sets initial active tab section', () => {
             expect($('div').eq(1).hasClass('te-tab-active')).toBe(true);
         });
     });
 
-    describe('섹션의 활성화', function() {
-        var tabSection1,
+    describe('tab section', () => {
+        let tabSection1,
             tabSection2;
-        beforeEach(function() {
+        beforeEach(() => {
             tabSection1 = $('<div>tab1</div>');
             tabSection2 = $('<div>tab2</div>');
 
@@ -138,6 +124,7 @@ describe('Tab', function() {
             $('body').append(tabSection2);
 
             tab = new Tab({
+                initName: 'tab1',
                 items: ['tab1', 'tab2'],
                 sections: [tabSection1, tabSection2]
             });
@@ -145,12 +132,12 @@ describe('Tab', function() {
             $('body').append(tab.$el);
         });
 
-        it('섹션에 .active 클래스가 추가된다', function() {
+        it('click on tab button should result corresponding section activated', () => {
             $('button').eq(1).trigger('click');
             expect(tabSection2.hasClass('te-tab-active')).toBe(true);
         });
 
-        it('기본섹션의  .active 클래스는 삭제되고 새로 선택된 섹션에 추가된다', function() {
+        it('click on the other tab button should result de-activating previously activated section', () => {
             $('button').eq(0).trigger('click');
             $('button').eq(1).trigger('click');
 
@@ -159,8 +146,8 @@ describe('Tab', function() {
         });
     });
 
-    describe('.activate()', function() {
-        beforeEach(function() {
+    describe('.activate()', () => {
+        beforeEach(() => {
             tab = new Tab({
                 items: ['tab1', 'tab2']
             });
@@ -168,7 +155,7 @@ describe('Tab', function() {
             $('body').append(tab.$el);
         });
 
-        it('특정 버튼을 활성화한다', function() {
+        it('activate a button having given name', () => {
             tab.activate('tab1');
 
             expect($('button:contains("tab1")').hasClass('te-tab-active')).toBe(true);

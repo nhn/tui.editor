@@ -7,9 +7,8 @@ const {util} = tui;
 
 const CLASS_PREFIX = 'popup-editor-';
 const TEMPLATE_HEADER_BUTTONS = `
-    <button class="${CLASS_PREFIX}cancel">cancel</button>
-    <button class="${CLASS_PREFIX}save">save</button>
-    <button class="${CLASS_PREFIX}toggle-preview">split</button>
+    <button class="${CLASS_PREFIX}save">close</button>
+    <button class="${CLASS_PREFIX}toggle-preview">preview</button>
     <button class="${CLASS_PREFIX}toggle-fit">max</button>
 `;
 
@@ -33,8 +32,19 @@ class PopupCodeBlockEditor extends LayerPopup {
             headerButtons: TEMPLATE_HEADER_BUTTONS,
             modal: true
         }, options);
-
         super(options);
+    }
+
+    /**
+     * init instance.
+     * store properties & prepare before initialize DOM
+     * @param {LayerPopupOption} options - layer popup options
+     * @memberof PopupCodeBlockEditor
+     * @protected
+     * @override
+     */
+    _initInstance(options) {
+        super._initInstance(options);
 
         this._codeBlockEditor = null;
         this._toggleFitButton = null;
@@ -42,28 +52,66 @@ class PopupCodeBlockEditor extends LayerPopup {
         this._scrollSyncSplit = null;
         this.eventManager = options.eventManager;
         this.convertor = options.convertor;
-
-        this.render();
-        this._initDOMEvent();
-        this._initEditorEvent();
     }
 
     /**
-     * render popup
+     * initialize DOM, render popup
      * @memberof PopupCodeBlockEditor
+     * @protected
      * @override
      */
-    render() {
-        super.render();
+    _initDOM(options) {
+        super._initDOM(options);
 
         const el = this.$el.get(0);
         this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
         this._togglePreviewButton = el.querySelector(`.${CLASS_PREFIX}toggle-preview`);
-        this._updateFitWindowButton();
 
         this._codeMirrorWrapper = this._createCodeBlockEditor();
         this._previewWrapper = this._createPreview();
         this._scrollSyncSplit = new ScrollSyncSplit(this.$body.get(0), this._codeMirrorWrapper, this._previewWrapper);
+
+        this._updateFitWindowButton();
+        this._updatePreviewButton();
+    }
+
+    /**
+     * bind DOM events
+     * @memberof PopupCodeBlockEditor
+     * @protected
+     * @override
+     */
+    _initDOMEvent() {
+        super._initDOMEvent();
+
+        this.on('scroll', ev => ev.preventDefault());
+        this.on(`click .${CLASS_PREFIX}toggle-fit`, this._toggleFitToWindow.bind(this));
+        this.on(`click .${CLASS_PREFIX}toggle-preview`, this._togglePreview.bind(this));
+        this.on(`click .${CLASS_PREFIX}save`, this._save.bind(this));
+        this.on(`click .${CLASS_PREFIX}editor-wrapper`, ev => {
+            if (ev.target === this._codeMirrorWrapper) {
+                this._focusEditor(true);
+            }
+        });
+    }
+
+    /**
+     * bind editor events
+     * @memberof PopupCodeBlockEditor
+     * @protected
+     * @abstract
+     */
+    _initEditorEvent() {
+        super._initEditorEvent();
+
+        this.eventManager.listen('openPopupCodeBlockEditor', codeBlockElement => {
+            this.eventManager.emit('closeAllPopup');
+            this.show(codeBlockElement);
+
+            return this;
+        });
+        this.eventManager.listen('closeAllPopup', this.hide.bind(this));
+        this.eventManager.listen('closePopupCodeBlockEditor', this.hide.bind(this));
     }
 
     _createCodeBlockEditor() {
@@ -88,35 +136,11 @@ class PopupCodeBlockEditor extends LayerPopup {
     }
 
     _updateFitWindowButton() {
-        const buttonClassList = this._toggleFitButton.classList;
-        if (this.isFitToWindow()) {
-            buttonClassList.remove('active');
-        } else {
-            buttonClassList.add('active');
-        }
+        $(this._toggleFitButton).toggleClass('active', this.isFitToWindow());
     }
 
-    _initDOMEvent() {
-        this.on(`click .${CLASS_PREFIX}toggle-fit`, this._toggleFitToWindow.bind(this));
-        this.on(`click .${CLASS_PREFIX}toggle-preview`, this._togglePreview.bind(this));
-        this.on(`click .${CLASS_PREFIX}save`, this._save.bind(this));
-        this.on(`click .${CLASS_PREFIX}cancel`, this.hide.bind(this));
-        this.on(`click .${CLASS_PREFIX}editor-wrapper`, ev => {
-            if (ev.target === this._codeMirrorWrapper) {
-                this._focusEditor(true);
-            }
-        });
-    }
-
-    _initEditorEvent() {
-        this.eventManager.listen('openPopupCodeBlockEditor', codeBlockElement => {
-            this.eventManager.emit('closeAllPopup');
-            this.show(codeBlockElement);
-
-            return this;
-        });
-        this.eventManager.listen('closeAllPopup', this.hide.bind(this));
-        this.eventManager.listen('closePopupCodeBlockEditor', this.hide.bind(this));
+    _updatePreviewButton() {
+        $(this._togglePreviewButton).toggleClass('active', this._scrollSyncSplit.isSplitView());
     }
 
     _focusEditor(cursorToEnd) {
@@ -130,6 +154,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
     _togglePreview() {
         this._scrollSyncSplit.toggleSplitView();
+        this._updatePreviewButton();
         this._codeBlockEditor.refresh();
     }
 
@@ -141,7 +166,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
     /**
      * store code mirror text to wysiwyg code block
-     * @memberof PopupCodeBlockLanguages
+     * @memberof PopupCodeBlockEditor
      * @private
      */
     _save() {
@@ -153,17 +178,13 @@ class PopupCodeBlockEditor extends LayerPopup {
      * load code mirror text from wysiwyg code block
      * @param {HTMLElement} codeBlockElement - code block element instance to load code from
      * @private
-     * @memberof PopupCodeBlockLanguages
+     * @memberof PopupCodeBlockEditor
      */
     _load(codeBlockElement) {
         this._codeBlockElement = codeBlockElement;
         this._codeBlockEditor.load(codeBlockElement);
         this._focusEditor();
         this._codeBlockPreview.refresh();
-    }
-
-    _cancel() {
-        this.hide();
     }
 
     /**

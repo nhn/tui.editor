@@ -24,16 +24,19 @@ class CodeBlockEditor extends CodeMirrorExt {
     }
 
     _initEvent() {
-        this.on('keyup', this._onRequireScrollIntoView.bind(this));
         this.on('cursorActivity', this._onRequireScrollIntoView.bind(this));
     }
 
     _onRequireScrollIntoView() {
         const cursor = this.getCursor();
         const wrapper = this.getWrapperElement();
-        const lineElement = wrapper.querySelector(`pre:nth-child(${cursor.line + 1})`);
 
-        $(lineElement).trigger('requireScrollIntoView');
+        // CodeMirror cursorActivity event fires before actually attach a new line element to DOM
+        // we should proceed at next tick
+        setTimeout(() => {
+            const lineElement = wrapper.querySelector(`pre:nth-child(${cursor.line + 1})`);
+            $(lineElement).trigger('requireScrollIntoView');
+        }, 0);
     }
 
     /**

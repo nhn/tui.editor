@@ -147,6 +147,7 @@ module.exports = function(config) {
             'lib/jquery/dist/jquery.js',
             'lib/tui-code-snippet/dist/code-snippet.js',
             'lib/tui-component-colorpicker/dist/colorpicker.js',
+            'lib/plantuml-encoder/dist/plantuml-encoder.js',
             'lib/toMark/dist/toMark.js',
             'lib/highlightjs/highlight.pack.js',
             'lib/markdown-it/dist/markdown-it.min.js',

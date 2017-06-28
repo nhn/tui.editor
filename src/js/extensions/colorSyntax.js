@@ -134,6 +134,7 @@ function initUI(editor, preset) {
     $colorPickerContainer.append($buttonBar);
 
     const popup = editor.getUI().createPopup({
+        header: false,
         title: false,
         content: $colorPickerContainer,
         className: 'tui-popup-color',

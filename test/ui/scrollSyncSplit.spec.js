@@ -59,11 +59,11 @@ describe('ScrollSyncSplit', () => {
     it('setLeft, setRight trigger sync', () => {
         spyOn(scrollSyncSplit, 'sync');
 
-        scrollSyncSplit.setLeft(leftElement);
+        scrollSyncSplit._setLeft(leftElement);
 
         expect(scrollSyncSplit.sync).toHaveBeenCalled();
 
-        scrollSyncSplit.setRight(rightElement);
+        scrollSyncSplit._setRight(rightElement);
 
         expect(scrollSyncSplit.sync.calls.count()).toEqual(2);
     });

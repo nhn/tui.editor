@@ -4,7 +4,6 @@
  */
 
 import LazyRunner from './lazyRunner';
-import codeBlockManager from './codeBlockManager';
 
 /**
  * Preview
@@ -85,9 +84,6 @@ class Preview {
 
         _$previewContent.empty();
         _$previewContent.html(html);
-
-        this.eventManager.emit('replaceCodeBlockElementsBefore');
-        codeBlockManager.replaceElements(_$previewContent, this.isViewOnly);
     }
 
     /**

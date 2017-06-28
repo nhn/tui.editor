@@ -7,7 +7,16 @@ import i18n from '../i18n';
  * @class CodeBlockGadget
  */
 class CodeBlockGadget extends BlockOverlay {
-    constructor({eventManager, container, languages, wysiwygEditor}) {
+
+    /**
+     * Creates an instance of CodeBlockGadget.
+     * @param {Object} options - options
+     * @param {EventManager} options.eventManager - event manager instance
+     * @param {HTMLElement} options.container - container element
+     * @param {WysiwygEditor} options.wysiwygEditor - wysiwyg editor instance
+     * @memberof CodeBlockGadget
+     */
+    constructor({eventManager, container, wysiwygEditor}) {
         super({
             eventManager,
             container,
@@ -15,7 +24,6 @@ class CodeBlockGadget extends BlockOverlay {
         });
 
         this._wysiwygEditor = wysiwygEditor;
-        this._languages = languages;
         this._popupCodeBlockLanguages = null;
 
         this._initDOM();

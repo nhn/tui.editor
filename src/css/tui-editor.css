@@ -213,7 +213,7 @@
     border: 1px solid #d9d9d9;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow {
+.tui-editor-defaultUI button.tui-scrollfollow {
     position: absolute;
     right: 18px;
     top: 33px;
@@ -227,15 +227,15 @@
     z-index: 101;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow:after {
+.tui-editor-defaultUI button.tui-scrollfollow:after {
     content: "scroll off";
 } 
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active {
+.tui-editor-defaultUI button.tui-scrollfollow.active {
     opacity: 0.5;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active:after {
+.tui-editor-defaultUI button.tui-scrollfollow.active:after {
     content: "scroll on";
 }
 
@@ -910,29 +910,30 @@
     min-height: 100%;
 }
 
+.tui-split-scroll,
 .tui-split-scroll-wrapper {
     width: 100%;
     height: 100%;
     position: relative;
 }
 
-.tui-split-scroll-wrapper .tui-split-content-left,
-.tui-split-scroll-wrapper .tui-split-content-right {
+.tui-split-scroll .tui-split-content-left,
+.tui-split-scroll .tui-split-content-right {
     position: absolute;
     top: 0px;
     width: 50%;
     box-sizing: border-box;
 }
 
-.tui-split-scroll-wrapper .tui-split-content-left {
+.tui-split-scroll .tui-split-content-left {
     left: 0px;
 }
 
-.tui-split-scroll-wrapper .tui-split-content-right {
+.tui-split-scroll .tui-split-content-right {
     left: 50%;
 }
 
-.tui-split-scroll-wrapper .tui-splitter {
+.tui-split-scroll .tui-splitter {
     position: absolute;
     left: 50%;
     top: 0;
@@ -941,23 +942,60 @@
     border-left: 1px solid #cacaca;
 }
 
-.tui-split-scroll-wrapper .tui-split-scroll-content {
+.tui-split-scroll .tui-split-scroll-content {
     width: 100%;
     height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
 }
 
-.tui-split-scroll-wrapper.single-content .tui-splitter {
+.tui-split-scroll .tui-split-content-left,
+.tui-split-scroll .tui-split-content-right {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.tui-split-scroll button.tui-scrollfollow {
+    top: 10px;
+    opacity: 0.2;
+}
+
+.tui-split-scroll button.tui-scrollfollow:after {
+    content: "scroll off";
+}
+
+.tui-split-scroll.scroll-sync button.tui-scrollfollow {
+    opacity: 0.5;
+}
+
+.tui-split-scroll.scroll-sync .tui-split-content-left,
+.tui-split-scroll.scroll-sync .tui-split-content-right {
+    height: auto;
+    overflow: initial;
+}
+
+.tui-split-scroll.scroll-sync button.tui-scrollfollow:after {
+    content: "scroll on";
+}
+
+.tui-split-scroll.scroll-sync .tui-split-scroll-content {
+    overflow-y: auto;
+}
+
+.tui-split-scroll.single-content .tui-splitter {
     display: none;
 }
 
-.tui-split-scroll-wrapper.single-content .tui-split-content-left {
+.tui-split-scroll.single-content .tui-split-content-left {
     width: 100%;
 }
 
-.tui-split-scroll-wrapper.single-content .tui-split-content-right {
+.tui-split-scroll.single-content .tui-split-content-right {
+    display: none;
+}
+
+.tui-split-scroll.single-content button.tui-scrollfollow {
     display: none;
 }
 

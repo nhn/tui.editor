@@ -16,6 +16,7 @@ require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 require('./extensions/table/tableExtension');
+require('./extensions/codeBlockPlantUML');
 
 import ToastUIEditor from './editor';
 

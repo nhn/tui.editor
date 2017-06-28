@@ -1,13 +1,11 @@
-'use strict';
+const PopupAddHeading = require('../../src/js/ui/popupAddHeading');
+const EventManager = require('../../src/js/eventManager');
 
-var PopupAddHeading = require('../../src/js/ui/popupAddHeading'),
-    EventManager = require('../../src/js/eventManager');
-
-describe('PopupAddHeading', function() {
-    var popup,
+describe('PopupAddHeading', () => {
+    let popup,
         em;
 
-    beforeEach(function() {
+    beforeEach(() => {
         $('body').append('<button class="tui-heading"></button>');
 
         em = new EventManager();
@@ -16,29 +14,26 @@ describe('PopupAddHeading', function() {
             eventManager: em,
             $button: $('button.tui-heading')
         });
-
-        popup._bindEvent();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('생성', function() {
-        it('PopupAddHeading클래스 추가되었다', function() {
+    describe('init', () => {
+        it('created element with opupAddHeading class', () => {
             expect(popup.$el.hasClass('te-heading-add')).toBe(true);
         });
     });
 
-    describe('eventManager와 연결', function() {
-        var handler;
+    describe('editor event', () => {
+        let handler;
 
-        beforeEach(function() {
+        beforeEach(() => {
             handler = jasmine.createSpy('buttonClickedHandler');
         });
 
-        it('해딩을 선택하는 li를 클릭하면 이벤트가 발생한다.', function() {
-
+        it('emits event on selecting item', () => {
             em.listen('command', handler);
             popup.$el.find('li').eq(0).trigger('click');
             expect(handler).toHaveBeenCalledWith('Heading', 1);
@@ -47,18 +42,17 @@ describe('PopupAddHeading', function() {
             expect(handler).toHaveBeenCalledWith('Heading', 2);
         });
 
-        it('eventManager에서 openHeadingSelect 이벤트가 발생하면 팝업이 보여진다', function() {
+        it('shows popup on openHeadingSelect event', () => {
             em.emit('openHeadingSelect');
 
             expect(popup.isShow()).toBe(true);
         });
 
-        it('eventManager에서 closeAllPopup 이벤트가 발생하면 팝업이 닫힌다', function() {
+        it('hide popup on closeAllPopup event', () => {
             em.emit('openHeadingSelect');
             em.emit('closeAllPopup');
 
             expect(popup.isShow()).toBe(false);
         });
     });
-
 });

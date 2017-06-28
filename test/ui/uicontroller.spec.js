@@ -1,21 +1,20 @@
-'use strict';
 
-var UIController = require('../../src/js/ui/uicontroller');
+const UIController = require('../../src/js/ui/uicontroller');
 
-describe('UIController', function() {
-    var uic;
+describe('UIController', () => {
+    let uic;
 
-    beforeEach(function() {
+    beforeEach(() => {
         uic = new UIController();
     });
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('on()', function() {
-        it('커스텀 이벤트를 바인드할수있다.', function() {
-            var spy = jasmine.createSpy();
+    describe('on()', () => {
+        it('should bind custom event handler', () => {
+            const spy = jasmine.createSpy();
 
             uic.on('event!', spy);
 
@@ -24,8 +23,8 @@ describe('UIController', function() {
             expect(spy).toHaveBeenCalled();
         });
 
-        it('jQuery 형식으로 el에  이벤트를 바인드할수있다.', function() {
-            var spy = jasmine.createSpy();
+        it('should bind event handler on element', () => {
+            const spy = jasmine.createSpy();
 
             uic.on('click', spy);
 
@@ -34,8 +33,8 @@ describe('UIController', function() {
             expect(spy).toHaveBeenCalled();
         });
 
-        it('객체로 이벤트를 바인드할수있다.', function() {
-            var spy = jasmine.createSpy();
+        it('should bind multiple event handler via object', () => {
+            const spy = jasmine.createSpy();
 
             uic.on({
                 'event!': spy
@@ -47,9 +46,9 @@ describe('UIController', function() {
         });
     });
 
-    describe('off()', function() {
-        it('커스텀 이벤트를 취소한다..', function() {
-            var spy = jasmine.createSpy();
+    describe('off()', () => {
+        it('should unbind custom event handler', () => {
+            const spy = jasmine.createSpy();
 
             uic.on('event!', spy);
 
@@ -60,8 +59,8 @@ describe('UIController', function() {
             expect(spy).not.toHaveBeenCalled();
         });
 
-        it('jQuery 형식으로 el에  이벤트를 언바인드할수있다..', function() {
-            var spy = jasmine.createSpy();
+        it('should unbind event handler on element', () => {
+            const spy = jasmine.createSpy();
 
             uic.on('click', spy);
             uic.off('click');
@@ -70,9 +69,9 @@ describe('UIController', function() {
             expect(spy).not.toHaveBeenCalled();
         });
 
-        it('파라메터를 넘기지않으면 모든 이벤트가 삭제된다', function() {
-            var spy = jasmine.createSpy(),
-                spy2 = jasmine.createSpy();
+        it('should unbind all event handlers if no event specified', () => {
+            const spy = jasmine.createSpy();
+            const spy2 = jasmine.createSpy();
 
             uic.on('click', spy);
             uic.on('event!', spy);
@@ -87,98 +86,27 @@ describe('UIController', function() {
         });
     });
 
-    describe('attachEvents()', function() {
-        var eventlist,
-            handler;
+    describe('_setRootElement()', () => {
+        it('should set root element with given jQuery element', () => {
+            const elem = $('<div />');
 
-        beforeEach(function() {
-            eventlist = {
-                'click .test': 'handler'
-            };
-
-            handler = jasmine.createSpy('handler');
-        });
-
-        it('인자로 이벤트 리스트를 넘겨 이벤트를 걸수있다', function() {
-            uic.handler = handler;
-
-            uic.$el.html('<span class="test">t</span>');
-
-            uic.attachEvents(eventlist);
-
-            uic.$el.find('.test').trigger('click');
-
-            expect(handler).toHaveBeenCalled();
-        });
-
-        it('this.events객체를 이용해 이벤트를 걸수있다', function() {
-            uic.events = eventlist;
-            uic.handler = handler;
-
-            uic.$el.html('<span class="test">t</span>');
-            uic.attachEvents();
-
-            uic.$el.find('.test').trigger('click');
-
-            expect(handler).toHaveBeenCalled();
-        });
-    });
-
-    describe('detachEvents()', function() {
-        var testFlag = false;
-
-        beforeEach(function() {
-            uic.events = {
-                'click .test': '_eventest'
-            };
-
-            uic._eventest = function() {
-                testFlag = true;
-            };
-
-            uic.$el.html('<span class="test">t</span>');
-            uic.attachEvents();
-        });
-
-        it('events의 내응을 이벤트 해제한다.', function() {
-            uic.detachEvents();
-            uic.$el.find('.test').trigger('click');
-
-            expect(testFlag).toEqual(false);
-        });
-    });
-
-    describe('setRootElement()', function() {
-        it('jQuery 엘리먼트를 $el로 셋팅할수있다', function() {
-            var elem = $('<div />');
-
-            uic.setRootElement(elem);
+            uic._setRootElement(elem);
 
             expect(uic.$el).toBe(elem);
         });
 
-        it('인자를 전달하지 않으면 디폴트로 div 엘리먼트를 생성한다', function() {
-            uic.setRootElement();
+        it('should set root element with div element if no parameter provided', () => {
+            uic._setRootElement();
             expect(uic.$el[0].tagName).toBe('DIV');
         });
 
-        it('각종 속성으로 원하는 루트 엘리먼트를 생성할수있다', function() {
+        it('should set root element according to tagName & className properties', () => {
             uic.tagName = 'ol';
             uic.className = 'myclass';
-            uic.setRootElement();
+            uic._setRootElement();
 
             expect(uic.$el[0].tagName).toEqual('OL');
             expect(uic.$el[0].className).toEqual('myclass');
         });
-    });
-
-    describe('addUIC()', function() {
-       it('uic를 dom상에 append한다', function() {
-            var subUic = new UIController();
-
-            uic.addUIC(subUic);
-
-            expect(uic.$el.find('div').length).toEqual(1);
-       });
     });
 });
