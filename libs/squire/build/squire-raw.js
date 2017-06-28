@@ -2606,6 +2606,7 @@ var proto = Squire.prototype;
 var sanitizeToDOMFragment = function ( html, isPaste, self ) {
     var doc = self._doc;
     var frag = html ? DOMPurify.sanitize( html, {
+        ALLOW_UNKNOWN_PROTOCOLS: true,
         WHOLE_DOCUMENT: false,
         RETURN_DOM: true,
         RETURN_DOM_FRAGMENT: true
@@ -3062,9 +3063,9 @@ proto._updatePath = function ( range, force ) {
             this.fireEvent( 'pathChange', { path: newPath } );
         }
     }
-    if ( !range.collapsed ) {
-        this.fireEvent( 'select' );
-    }
+    this.fireEvent( range.collapsed ? 'cursor' : 'select', {
+        range: range
+    });
 };
 
 // selectionchange is fired synchronously in IE when removing current selection
