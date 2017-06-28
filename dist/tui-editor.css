@@ -1,9 +1,3 @@
-/*!
- * tui-editor
- * @version 0.12.10
- * @author Sungho Kim <shirenbeat@gmail.com>
- * @license MIT
- */
 @charset "UTF-8";
 
 .tui-editor:after,
@@ -219,7 +213,7 @@
     border: 1px solid #d9d9d9;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow {
+.tui-editor-defaultUI button.tui-scrollfollow {
     position: absolute;
     right: 18px;
     top: 33px;
@@ -233,15 +227,15 @@
     z-index: 101;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow:after {
+.tui-editor-defaultUI button.tui-scrollfollow:after {
     content: "scroll off";
 } 
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active {
+.tui-editor-defaultUI button.tui-scrollfollow.active {
     opacity: 0.5;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow.active:after {
+.tui-editor-defaultUI button.tui-scrollfollow.active:after {
     content: "scroll on";
 }
 
@@ -316,6 +310,23 @@
     background: #eee;
 }
 
+.tui-popup-modal-background {
+    background-color: rgba(202, 202, 202, 0.6);
+    position: fixed;
+    margin: 0px;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+}
+
+.tui-popup-wrapper.fit-window,
+.tui-popup-modal-background.fit-window .tui-popup-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
 .tui-popup-wrapper {
     width: 500px;
     margin-right: auto;
@@ -326,12 +337,25 @@
     z-index: 9999;
 }
 
+.tui-popup-modal-background .tui-popup-wrapper {
+    position: absolute;
+    margin: auto;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+}
+
 .tui-popup-header {
     padding: 10px;
     height: auto;
     line-height: normal;
     position: relative;
     border-bottom: 1px solid #cacaca;
+}
+
+.tui-popup-header .tui-popup-header-buttons {
+    float: right;
 }
 
 .tui-popup-header .tui-popup-close-button {
@@ -367,6 +391,13 @@
     margin-left: -250px;
 }
 
+.tui-editor-popup.tui-popup-modal-background {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin: 0px;
+}
+
 .tui-editor-popup .tui-popup-body label {
     font-weight: bold;
     color: #666;
@@ -395,6 +426,14 @@
     box-sizing: border-box;
     height: 28px;
     width: 100%;
+}
+
+.te-popup-add-link .tui-popup-wrapper {
+    height: 219px;
+}
+
+.te-popup-add-image .tui-popup-wrapper {
+    height: 243px;
 }
 
 .te-popup-add-image .te-tab {
@@ -455,18 +494,33 @@
 }
 
 .te-popup-table-utils {
-    width: 100px;
+    width: 120px;
 }
 
 .te-popup-table-utils .tui-popup-body {
-    padding: 5px;
+    padding: 0px;
 }
 
 .te-popup-table-utils button {
     width: 100%;
     background-color: #fff;
-    border: 1px solid #ccc;
+    border: none;
     outline: 0;
+    padding: 0px 10px 0px 10px;
+    font-size: 12px;
+    line-height: 28px;
+    text-align: left;
+    color: #777;
+}
+
+.te-popup-table-utils button:hover {
+    background-color: #f4f4f4;
+}
+
+.te-popup-table-utils hr {
+    background-color: #cacaca;
+    border-style: none;
+    height: 1px;
 }
 
 .te-heading-add {
@@ -731,224 +785,240 @@
     width: 100px;
     height: 100px;
 }
-@charset "UTF-8";
 
-.tui-editor-contents,
-.CodeMirror {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+.tui-editor-contents pre code::before,
+.tui-editor-contents pre[data-te-codeblock]::before {
+    content: ' ' attr(data-language);
+    display: block;
+    height: 20px;
+    padding: 5px 0px 5px 0px;
+    margin: -18px -18px 18px -18px;
+    background-color: #777777;
+    color: #f5f7f8;
 }
 
-.tui-editor-contents *:not(table) {
-    line-height: 160%;
-    box-sizing: content-box;
+.te-ww-block-overlay.code-block-header input[type=text] {
+    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-size: 13px;
+    padding: 4px 5px;
+    border: none;
+    box-sizing: border-box;
+    height: 24px;
+    width: 200px;
+    background-color: #777777;
+    color: #f5f7f8;
+    outline: none;
+    margin-left: 2px;
+    margin-top: 2px;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-webkit-input-placeholder {
+    color: #aaaaaa;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-moz-placeholder {
+   color: #aaaaaa;
+   opacity: 1;
+}
+.te-ww-block-overlay.code-block-header input[type=text]:-ms-input-placeholder {
+   color: #aaaaaa;
+}
+.te-ww-block-overlay.code-block-header input[type=text]::-ms-input-placeholder {
+   color: #aaaaaa;
+}
+.te-ww-block-overlay.code-block-header button,
+.tui-popup-code-block-editor button {
+    float: right;
+    background-color: #fff;
+    border: 1px solid #bfbfbf;
+    color: #666;
+    border-radius: 3px;
+    padding: 3px 8px;
 }
 
-.tui-editor-contents i,
-.tui-editor-contents cite,
-.tui-editor-contents em,
-.tui-editor-contents var,
-.tui-editor-contents address,
-.tui-editor-contents dfn {
-    font-style: italic;
+.te-ww-block-overlay.code-block-header button {
+    margin: 4px;
 }
 
-.tui-editor-contents strong {
-    font-weight: bold;
+.te-popup-code-block-languages {
+    position: absolute;
+    width: 180px;
 }
 
-.tui-editor-contents p {
-    margin: 10px 0;
-    color: #555;
+.te-popup-code-block-languages .tui-popup-body {
+    max-height: 169px;
+    overflow: auto;
+    padding: 0px 5px;
 }
 
-.tui-editor-contents > h1:first-of-type,
-.tui-editor-contents > div > div:first-of-type h1 {
-      margin-top: 14px;
+.te-popup-code-block-languages button {
+    width: 100%;
+    background-color: #fff;
+    border: none;
+    outline: 0;
+    padding: 0px 10px 0px 10px;
+    font-size: 12px;
+    line-height: 24px;
+    text-align: left;
+    color: #777;
 }
 
-.tui-editor-contents h1,
-.tui-editor-contents h2,
-.tui-editor-contents h3,
-.tui-editor-contents h5 {
-    font-weight: bold;
+.te-popup-code-block-languages button.active {
+    background-color: #f4f4f4;
 }
 
-.tui-editor-contents h1 {
-    font-size: 1.6rem;
-    line-height: 28px;
-    border-bottom: 3px double #999;
-    margin: 52px 0 15px 0;
-    padding-bottom: 7px;
-    color: #000;
+.tui-popup-code-block-editor .tui-popup-wrapper {
+    width: 70%;
+    height: 70%;
+    margin: auto;
 }
 
-.tui-editor-contents h2 {
-    font-size: 1.3rem;
-    line-height: 23px;
-    border-bottom: 1px solid #dbdbdb;
-    margin: 30px 0 13px 0;
-    padding-bottom: 7px;
-    color: #333;
+.tui-popup-code-block-editor button {
+    margin: -1px 3px;
 }
 
-.tui-editor-contents h3,
-.tui-editor-contents h4 {
-    font-size: 1.2rem;
-    line-height: 18px;
-    margin: 20px 0 2px;
-    color: #333;
+.tui-popup-code-block-editor .tui-popup-body {
+    padding: 39px 0px 0px 0px;
+    margin-top: -39px;
+    height: 100%;
+    z-index: -1;
+    box-sizing: border-box;
 }
 
-.tui-editor-contents h5,
-.tui-editor-contents h6 {
-    font-size: 1rem;
-    line-height: 17px;
-    margin: 10px 0 -4px;
-    color: #333;
-}
-
-.tui-editor-contents blockquote {
-    margin: 15px 0;
-}
-
-.tui-editor-contents blockquote {
-    border-left: 4px solid #dddddd;
-    padding: 0 15px;
-    color: #777777;
-}
-
-.tui-editor-contents blockquote > :first-child {
-    margin-top: 0;
-}
-
-.tui-editor-contents  blockquote > :last-child {
-    margin-bottom: 0;
-}
-
-.tui-editor-contents pre {
-    margin: 2px 0 8px;
-    padding: 18px;
-    background-color: #f5f7f8;
-    border: 0;
-    border-radius: 0;
-}
-
-.tui-editor-contents pre * {
-    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
-}
-
-.tui-editor-contents code {
-    color: #c1788b;
-    border: 0;
-    border-radius: 0;
-    padding: 4px 4px 2px 0;
-    letter-spacing: -0.3px;
-    font-family: Consolas, Courier, "Apple SD \C0B0\B3CC\ACE0\B515   Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "\B9D1\C740   \ACE0\B515", "Malgun Gothic", "Segoe UI", "\B3CB\C6C0", dotum, sans-serif;
-}
-
-.tui-editor-contents pre code {
-    padding: 0;
-    color: inherit;
-    white-space: pre-wrap;
+.tui-popup-code-block-editor .tui-editor-contents pre {
+    margin: 0px;
     background-color: transparent;
 }
 
-.tui-editor-contents pre.addon {
-    border: 1px solid #e8ebed;
-    background-color: #fff;
+.tui-popup-code-block-editor .tui-editor-contents pre code::before {
+    content: '';
+    display: none;
+}
+.tui-popup-code-block-editor .CodeMirror {
+    height: auto;
 }
 
-.tui-editor-contents img {
-    margin: 4px 0 10px;
-    box-sizing: border-box;
-    vertical-align: top;
-    max-width: 100%;
+.tui-popup-code-block-editor .CodeMirror-lines {
+    padding: 18px 8px 18px 8px;
 }
 
-.tui-editor-contents table {
-    margin: 2px 0 14px;
-    color: #555;
-    width: auto;
-    border-collapse: collapse;
-    box-sizing: border-box;
+.tui-popup-code-block-editor .CodeMirror-line {
+    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    line-height: 160%;
+    font-size: 13px
 }
 
-.tui-editor-contents table th, 
-.tui-editor-contents table td {
-    height: 32px;
-    padding: 5px 14px 5px 12px;
+.tui-popup-code-block-editor .popup-editor-editor-wrapper {
+    min-height: 100%;
 }
 
-.tui-editor-contents table td {
-    border: 1px solid #eaeaea;
-}
-
-.tui-editor-contents table th {
-    border: 1px solid #72777b;
-    border-top: 0;
-    background-color: #7b8184;
-    font-weight: 300;
-    color: #fff;
-    padding-top: 6px;
-}
-
-.tui-editor-contents ul,
-.tui-editor-contents menu,
-.tui-editor-contents ol,
-.tui-editor-contents dir {
-    display: block;
-    list-style-type: disc;
-    padding-left: 17px;
-    margin: 6px 0 10px;
-    color: #555;
-}
-
-.tui-editor-contents ol {
-    list-style-type: decimal;
-}
-
-.tui-editor-contents ul ul,
-.tui-editor-contents ul ol,
-.tui-editor-contents ol ol,
-.tui-editor-contents ol ul {
-    margin-top: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-.tui-editor-contents ul li {
+.tui-split-scroll,
+.tui-split-scroll-wrapper {
+    width: 100%;
+    height: 100%;
     position: relative;
-    list-style-type: disc;
 }
 
-.tui-editor-contents ol li {
-    list-style-type: decimal;
+.tui-split-scroll .tui-split-content-left,
+.tui-split-scroll .tui-split-content-right {
+    position: absolute;
+    top: 0px;
+    width: 50%;
+    box-sizing: border-box;
 }
 
-.tui-editor-contents ul p, ol p {
-    margin: 0;
+.tui-split-scroll .tui-split-content-left {
+    left: 0px;
 }
 
-.tui-editor-contents ul li.task-list-item:before,
-.tui-editor-contents pre ul li:before {
-    content: "";
+.tui-split-scroll .tui-split-content-right {
+    left: 50%;
 }
 
-.tui-editor-contents hr {
-    border-top: 1px solid #eee;
-    margin: 16px 0;
+.tui-split-scroll .tui-splitter {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    border-left: 1px solid #cacaca;
 }
 
-.tui-editor-contents a {
-    text-decoration: underline;
-    color: #5286bc;
+.tui-split-scroll .tui-split-scroll-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
 }
 
-.tui-editor-contents a:hover {
-    color: #007cff;
+.tui-split-scroll .tui-split-content-left,
+.tui-split-scroll .tui-split-content-right {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
-.tui-editor-contents {
-    font-size: 13px;
-    margin: 0;
-    padding: 0;
+.tui-split-scroll button.tui-scrollfollow {
+    top: 10px;
+    opacity: 0.2;
+}
+
+.tui-split-scroll button.tui-scrollfollow:after {
+    content: "scroll off";
+}
+
+.tui-split-scroll.scroll-sync button.tui-scrollfollow {
+    opacity: 0.5;
+}
+
+.tui-split-scroll.scroll-sync .tui-split-content-left,
+.tui-split-scroll.scroll-sync .tui-split-content-right {
+    height: auto;
+    overflow: initial;
+}
+
+.tui-split-scroll.scroll-sync button.tui-scrollfollow:after {
+    content: "scroll on";
+}
+
+.tui-split-scroll.scroll-sync .tui-split-scroll-content {
+    overflow-y: auto;
+}
+
+.tui-split-scroll.single-content .tui-splitter {
+    display: none;
+}
+
+.tui-split-scroll.single-content .tui-split-content-left {
+    width: 100%;
+}
+
+.tui-split-scroll.single-content .tui-split-content-right {
+    display: none;
+}
+
+.tui-split-scroll.single-content button.tui-scrollfollow {
+    display: none;
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+     /* IE10+ */
+    .tui-split-scroll-wrapper .tui-splitter {
+        left: calc(50% - 9px);
+    }
+}
+
+@supports (-ms-accelerator:true) {
+    /* IE Edge 12+ CSS styles go here */
+    .tui-split-scroll-wrapper .tui-splitter {
+        left: calc(50% - 9px);
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .tui-popup-wrapper {
+        max-width: 300px;
+    }
+
+    .tui-editor-popup {
+        margin-left: -150px;
+    }
 }

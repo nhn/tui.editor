@@ -6,7 +6,6 @@ const webdriverConfig = {
     port: 4444,
     remoteHost: true
 };
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 /**
  * manipulate config by server
@@ -186,19 +185,9 @@ module.exports = function(config) {
                         options: {
                             babelrc: true
                         }
-                    },
-                    {
-                        test: /\.css$/,
-                        loader: ExtractTextPlugin.extract({
-                            fallback: 'style-loader',
-                            use: 'css-loader'
-                        })
                     }
                 ]
-            },
-            plugins: [
-                new ExtractTextPlugin(`[name].css`)
-            ]
+            }
         },
 
         webpackMiddleware: {

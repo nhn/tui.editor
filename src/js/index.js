@@ -30,9 +30,6 @@ require('./langs/zh_CN');
 require('./langs/ja_JP');
 require('./langs/nl_NL');
 
-require('../css/tui-editor.css');
-require('../css/tui-editor-contents.css');
-
 // for jquery
 $.fn.tuiEditor = function(...args) {
     let options, instance;

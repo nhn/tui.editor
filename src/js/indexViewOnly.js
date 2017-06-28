@@ -15,8 +15,6 @@ import ToastUIEditorViewOnly from './viewOnly';
 window.tui = window.tui || {};
 window.tui.EditorViewOnly = ToastUIEditorViewOnly;
 
-require('../css/tui-editor-contents.css');
-
 // for jquery
 $.fn.tuiEditorViewOnly = function(...args) {
     let options, instance;

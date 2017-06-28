@@ -3,7 +3,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Visualizer = require('webpack-visualizer-plugin');
 
 const IS_DEV_SERVER = process.argv[1].indexOf('webpack-dev-server') >= 0;
@@ -54,13 +54,6 @@ const config = {
                 options: {
                     babelrc: true
                 }
-            },
-            {
-                test: /\.css$/,
-                loader: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: 'css-loader'
-                })
             }
         ]
     },
@@ -70,7 +63,10 @@ const config = {
             raw: false,
             entryOnly: true
         }),
-        new ExtractTextPlugin(`[name]${IS_PRODUCTION ? '.min' : ''}.css`),
+        new CopyWebpackPlugin([
+            {from: 'src/css/tui-editor.css'},
+            {from: 'src/css/tui-editor-contents.css'}
+        ]),
         new Visualizer({filename: '../report/webpack/statistics.html'})
     ]
 };
