@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const util = tui.util;
+const {util} = tui;
 
 /**
  * LazyRunner
@@ -54,14 +53,15 @@ class LazyRunner {
     }
 
     _runRegisteredRun(lazyRunName, params, context, delay) {
-        const fn = this.lazyRunFunctions[lazyRunName].fn;
-        let TOID = this.lazyRunFunctions[lazyRunName].TOID;
-        delay = delay || this.lazyRunFunctions[lazyRunName].delay;
-        context = context || this.lazyRunFunctions[lazyRunName].context;
+        const lazyRunFunction = this.lazyRunFunctions[lazyRunName];
+        const {fn} = lazyRunFunction;
+        let {TOID} = lazyRunFunction;
+        delay = delay || lazyRunFunction.delay;
+        context = context || lazyRunFunction.context;
 
         TOID = this._runSingleRun(fn, params, context, delay, TOID);
 
-        this.lazyRunFunctions[lazyRunName].TOID = TOID;
+        lazyRunFunction.TOID = TOID;
 
         return TOID;
     }

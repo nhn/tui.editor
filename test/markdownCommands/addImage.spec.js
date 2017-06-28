@@ -1,3 +1,5 @@
+/* eslint max-nested-callbacks:0 */
+
 import AddImage from '../../src/js/markdownCommands/addImage';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
@@ -11,8 +13,6 @@ describe('AddImage', () => {
         $('body').append($container);
 
         mde = new MarkdownEditor($container, new EventManager());
-
-        mde.init();
 
         cm = mde.getEditor();
 
@@ -45,7 +45,13 @@ describe('AddImage', () => {
         });
 
         it('영역선택후 이미지가 추가된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 2,
+                ch: 7
+            });
 
             AddImage.exec(mde, data);
 
@@ -59,7 +65,7 @@ describe('AddImage', () => {
             doc.setCursor(1, 0);
 
             cm.on('change', (cmOb, changeObj) => {
-                origin = changeObj.origin;
+                ({origin} = changeObj);
             });
 
             AddImage.exec(mde, data);

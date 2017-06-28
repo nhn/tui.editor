@@ -12,8 +12,6 @@ describe('Table', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         doc = cm.getDoc();

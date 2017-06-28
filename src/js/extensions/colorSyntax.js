@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import extManager from '../extManager';
 import i18n from '../i18n';
 
@@ -15,13 +14,8 @@ const decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 const RESET_COLOR = '#181818';
 
 extManager.defineExtension('colorSyntax', editor => {
-    let useCustomSyntax = false;
-    let preset;
-
-    if (editor.options.colorSyntax) {
-        useCustomSyntax = !!editor.options.colorSyntax.useCustomSyntax;
-        preset = editor.options.colorSyntax.preset;
-    }
+    const {colorSyntax = {}} = editor.options;
+    const {preset, useCustomSyntax = false} = colorSyntax;
 
     editor.eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => {
         let replacement;
@@ -95,7 +89,7 @@ extManager.defineExtension('colorSyntax', editor => {
                     }
                 }
 
-                sq.focus();
+                wwe.focus();
             }
         });
 
@@ -140,6 +134,7 @@ function initUI(editor, preset) {
     $colorPickerContainer.append($buttonBar);
 
     const popup = editor.getUI().createPopup({
+        header: false,
         title: false,
         content: $colorPickerContainer,
         className: 'tui-popup-color',

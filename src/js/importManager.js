@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 const URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
 
 /**
@@ -112,9 +112,7 @@ class ImportManager {
      * @param {object} ev event object
      */
     _decodeURL(ev) {
-        if (ev.source === 'markdown'
-            && ev.data.text
-        ) {
+        if (ev.source === 'markdown' && ev.data.text) {
             const newTexts = [];
 
             ev.data.text.forEach(text => {
@@ -143,7 +141,7 @@ class ImportManager {
     _processClipboard(evData) {
         const cbData = evData.clipboardData || window.clipboardData;
         const blobItems = cbData && cbData.items;
-        const types = cbData.types;
+        const {types} = cbData;
 
         if (blobItems && types && types.length === 1 && util.inArray('Files', types) !== -1) {
             this._processBlobItems(blobItems, evData);

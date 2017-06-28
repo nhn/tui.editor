@@ -44,7 +44,7 @@ const HR = CommandManager.command('wysiwyg', /** @lends HR */{
                 return frag;
             });
 
-            previousSibling = hr.previousSibling;
+            ({previousSibling} = hr);
             if (previousSibling
                 && domUtils.isTextNode(previousSibling)
                 && domUtils.getTextLength(previousSibling) === 0
@@ -58,7 +58,7 @@ const HR = CommandManager.command('wysiwyg', /** @lends HR */{
             sq.setSelection(range);
         }
 
-        sq.focus();
+        wwe.focus();
     }
 });
 

@@ -8,7 +8,7 @@ import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const util = tui.util;
+const {util} = tui;
 
 const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
     name: 'UnmergeCells',
@@ -20,7 +20,7 @@ const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
         const sq = wwe.getEditor();
         const range = sq.getSelection().cloneRange();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE')) {
             return;

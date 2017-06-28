@@ -3,7 +3,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -27,7 +26,7 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
         const range = sq.getSelection();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
             tableSelectionManager.styleToSelectedCells(styleStrike);

@@ -12,8 +12,6 @@ describe('Blockquote', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -46,7 +44,13 @@ describe('Blockquote', () => {
 
     describe('셀렉션을 지정한상태에서 커맨드를 사용하면 해당 텍스트들에 인용마크다운이 추가된다.', () => {
         it('인용구가 정상적으로 추가되었다', () => {
-            doc.setSelection({line: 0, ch: 3}, {line: 2, ch: 2});
+            doc.setSelection({
+                line: 0,
+                ch: 3
+            }, {
+                line: 2,
+                ch: 2
+            });
 
             Blockquote.exec(mde);
 

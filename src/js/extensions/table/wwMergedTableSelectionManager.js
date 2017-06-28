@@ -8,7 +8,7 @@ import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * WwMergedTableSelectionManager
@@ -104,11 +104,11 @@ class WwMergedTableSelectionManager extends WwTableSelectionManager {
         const $table = $(range.startContainer).closest('[contenteditable=true] table');
 
         $table.find('tr').get().forEach(tr => {
-            const cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
-            const firstSelectedCell = cells.first()[0];
-            const lastSelectedCell = cells.last()[0];
+            const $cells = $(tr).find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
+            const firstSelectedCell = $cells.first().get(0);
+            const lastSelectedCell = $cells.last().get(0);
 
-            if (!cells.length) {
+            if (!$cells.length) {
                 return;
             }
 

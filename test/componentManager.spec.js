@@ -2,7 +2,7 @@ import WysiwygEditor from '../src/js/wysiwygEditor';
 import MarkdownEditor from '../src/js/MarkdownEditor';
 import EventManager from '../src/js/eventManager';
 
-describe('WysiwygEditor', () => {
+describe('ComponentManager', () => {
     let $container, $container2, em, wwe, mde;
 
     beforeEach(() => {
@@ -19,7 +19,6 @@ describe('WysiwygEditor', () => {
         mde = new MarkdownEditor($container2, em);
 
         wwe.init();
-        mde.init();
 
         wwe.editor.focus();
     });

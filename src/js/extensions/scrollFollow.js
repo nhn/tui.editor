@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import extManager from '../extManager';
 import ScrollSync from './scrollFollow.scrollSync';
 import SectionManager from './scrollFollow.sectionManager';
@@ -70,6 +69,9 @@ extManager.defineExtension('scrollFollow', editor => {
         sectionManager.makeSectionList();
     });
 
+    /**
+     * change button visiblity state
+     */
     function changeButtonVisiblityStateIfNeed() {
         if (editor.mdPreviewStyle === 'vertical' && editor.currentMode === 'markdown') {
             button.$el.show();

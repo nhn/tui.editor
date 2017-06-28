@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 
 let sharedInstance;
 

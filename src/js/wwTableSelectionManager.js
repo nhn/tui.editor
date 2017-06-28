@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
 import domUtils from './domUtils';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
@@ -76,10 +75,10 @@ class WwTableSelectionManager {
         this._isSelectionStarted = false;
 
         const onMouseover = ev => {
-            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
+            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
 
             const range = this.wwe.getEditor().getSelection();
-            const isEndsInTable = $(selectionEnd).parents('[contenteditable=true] table')[0];
+            const isEndsInTable = $(selectionEnd).parents('[contenteditable=true] table').get(0);
             const isSameCell = selectionStart === selectionEnd;
             const isTextSelect = this._isTextSelect(range, isSameCell) &&
                   !$(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
@@ -106,7 +105,7 @@ class WwTableSelectionManager {
         };
 
         const onMouseup = ev => {
-            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
+            selectionEnd = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
 
             let range = this.wwe.getEditor().getSelection();
             const isSameCell = selectionStart === selectionEnd;
@@ -145,7 +144,7 @@ class WwTableSelectionManager {
 
         const onMousedown = ev => {
             const MOUSE_RIGHT_BUTTON = 2;
-            selectionStart = $(ev.data.target).closest('[contenteditable=true] td,th')[0];
+            selectionStart = $(ev.data.target).closest('[contenteditable=true] td,th').get(0);
             const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
             selectionEnd = null;
 
@@ -163,7 +162,6 @@ class WwTableSelectionManager {
                 finishSelection();
             }
         };
-
 
         this.eventManager.listen('mousedown.tableSelection', onMousedown);
         this.eventManager.listen('copyBefore.tableSelection', finishSelection);
@@ -220,9 +218,9 @@ class WwTableSelectionManager {
         const isEndRangeOut = !isRangeEndInTable && isRangeStartInTable;
 
         if (isStartRangeOut) {
-            selectionStart = $(selectionEnd).parents('[contenteditable=true] table').find('th').first()[0];
+            selectionStart = $(selectionEnd).parents('[contenteditable=true] table').find('th').first().get(0);
         } else if (isEndRangeOut) {
-            selectionEnd = $(selectionStart).parents('[contenteditable=true] table').find('td').last()[0];
+            selectionEnd = $(selectionStart).parents('[contenteditable=true] table').find('td').last().get(0);
         }
 
         return {
@@ -374,6 +372,11 @@ class WwTableSelectionManager {
             });
     }
 
+    /**
+     * gets selected cells
+     * @returns {jQuery} selected cells
+     * @memberOf WwTableSelectionManager
+     */
     getSelectedCells() {
         return this.wwe.get$Body().find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);
     }
@@ -384,12 +387,12 @@ class WwTableSelectionManager {
     createRangeBySelectedCells() {
         const sq = this.wwe.getEditor();
         const range = sq.getSelection().cloneRange();
-        const selectedCells = this.getSelectedCells();
+        const $selectedCells = this.getSelectedCells();
         const tableManager = this.wwe.componentManager.getManager('table');
-        const firstSelectedCell = selectedCells.first()[0];
-        const lastSelectedCell = selectedCells.last()[0];
+        const firstSelectedCell = $selectedCells.first().get(0);
+        const lastSelectedCell = $selectedCells.last().get(0);
 
-        if (selectedCells.length && tableManager.isInTable(range)) {
+        if ($selectedCells.length && tableManager.isInTable(range)) {
             range.setStart(firstSelectedCell, 0);
             range.setEnd(lastSelectedCell, lastSelectedCell.childNodes.length);
             sq.setSelection(range);

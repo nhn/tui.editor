@@ -5,7 +5,7 @@
 
 import tableDataHandler from './tableDataHandler';
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * Find unmerged table range.
@@ -63,12 +63,12 @@ function _findUnmergedRange(tableData, $start, $end) {
  * @private
  */
 function _expandRowMergedRange(tableData, tableRange, rangeType) {
-    const rowIndex = tableRange[rangeType].rowIndex;
+    const {rowIndex} = tableRange[rangeType];
     const rowData = tableData[rowIndex];
 
     util.range(tableRange.start.colIndex, tableRange.end.colIndex + 1).forEach(colIndex => {
         const cellData = rowData[colIndex];
-        const rowMergeWith = cellData.rowMergeWith;
+        const {rowMergeWith} = cellData;
         let lastRowMergedIndex = -1;
 
         if (util.isExisty(rowMergeWith)) {
@@ -101,7 +101,7 @@ function _expandRowMergedRange(tableData, tableRange, rangeType) {
 function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
     const rowData = tableData[rowIndex];
     const cellData = rowData[colIndex];
-    const colMergeWith = cellData.colMergeWith;
+    const {colMergeWith} = cellData;
     let lastColMergedIndex = -1;
 
     if (util.isExisty(colMergeWith)) {

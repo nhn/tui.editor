@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -28,7 +27,7 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const tableMgr = wwe.componentManager.getManager('table');
         const isAbleToRemoveColumn = $(range.startContainer).closest('table').find('thead tr th').length > 1;
 
-        sq.focus();
+        wwe.focus();
         // IE 800a025e error on removing part of selection range. collpase
         range.collapse(true);
         sq.setSelection(range);
@@ -81,7 +80,7 @@ function removeColByCell($cell) {
  * @param {object} tableMgr Table manager instance
  */
 function focusToCell(sq, $cell, tableMgr) {
-    const nextFocusCell = $cell[0];
+    const nextFocusCell = $cell.get(0);
 
     if ($cell.length) {
         const range = sq.getSelection();

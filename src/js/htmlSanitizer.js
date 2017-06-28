@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 
 const HTML_ATTR_LIST_RX = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
@@ -94,7 +94,7 @@ function finalizeHtml($html, needHtmlText) {
     } else {
         const frag = document.createDocumentFragment();
         const childNodes = tui.util.toArray($html[0].childNodes);
-        const length = childNodes.length;
+        const {length} = childNodes;
 
         for (let i = 0; i < length; i += 1) {
             frag.appendChild(childNodes[i]);

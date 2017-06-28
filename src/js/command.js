@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * Command class
@@ -91,7 +91,6 @@ class Command {
         this.keyMap = [win, mac];
     }
 }
-
 
 /**
  * Command factory method

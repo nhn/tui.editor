@@ -1,37 +1,34 @@
-'use strict';
 
-var ViewOnlyMarkerHelper = require('../../../src/js/extensions/mark/viewOnlyMarkerHelper'),
-    Convertor = require('../../../src/js/convertor'),
-    EventManager = require('../../../src/js/eventManager'),
-    Preview = require('../../../src/js/preview');
+import ViewOnlyMarkerHelper from '../../../src/js/extensions/mark/viewOnlyMarkerHelper';
+import Convertor from '../../../src/js/convertor';
+import EventManager from '../../../src/js/eventManager';
+import Preview from '../../../src/js/preview';
 
-describe('ViewOnlyMarkerHelper', function() {
-    var preview, vmh;
+describe('ViewOnlyMarkerHelper', () => {
+    let preview, vmh;
 
-    beforeEach(function() {
-        var el = $('<div></div>'),
-            em;
+    beforeEach(() => {
+        const el = $('<div></div>');
+        const em = new EventManager();
 
         $('body').append(el);
-
-        em = new EventManager();
 
         preview = new Preview(el, em, new Convertor(em));
         vmh = new ViewOnlyMarkerHelper(preview);
         preview.refresh('# TEXT1\n## TEXT2');
     });
 
-    afterEach(function() {
+    afterEach(() => {
         window.getSelection().removeAllRanges();
         $('body').empty();
     });
 
-    it('get current text content and ignore ZWB', function() {
+    it('get current text content and ignore ZWB', () => {
         expect(vmh.getTextContent()).toEqual('TEXT1TEXT2');
     });
 
-    it('update marker with additional info', function() {
-        var marker = vmh.updateMarkerWithExtraInfo({
+    it('update marker with additional info', () => {
+        const marker = vmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 7
         });
@@ -44,8 +41,8 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.text).toEqual('XT1TE');
     });
 
-    it('update collapsed marker with additional info', function() {
-        var marker = vmh.updateMarkerWithExtraInfo({
+    it('update collapsed marker with additional info', () => {
+        const marker = vmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 2
         });
@@ -58,12 +55,10 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.text).toEqual('');
     });
 
-    it('get marker info of current selection', function() {
-        var marker;
-
+    it('get marker info of current selection', () => {
         vmh.selectOffsetRange(0, 3);
 
-        marker = vmh.getMarkerInfoOfCurrentSelection();
+        const marker = vmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(0);
         expect(marker.end).toEqual(3);
@@ -73,48 +68,42 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.text).toEqual('TEX');
     });
 
-    it('get marker of current selection that has start or end container pointed to non textNode', function() {
-        var range, marker;
-
+    it('get marker of current selection that has start or end container pointed to non textNode', () => {
         preview.refresh('# TEXT1\n- - -\n## TEXT2');
 
-        range = document.createRange();
+        const range = document.createRange();
         range.selectNode(preview.$el.find('hr')[0]);
         range.setStart(preview.$el.find('h1')[0].firstChild, 2);
 
         window.getSelection().addRange(range);
 
-        marker = vmh.getMarkerInfoOfCurrentSelection();
+        const marker = vmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(2);
         expect(marker.end).toEqual(5);
         expect(marker.text).toEqual('XT1');
     });
 
-    it('get marker when end range pointed to textNode but end container is not text node', function() {
-        var range, marker;
-
+    it('get marker when end range pointed to textNode but end container is not text node', () => {
         preview.$el.html('<ul><li><input type="checkbox" /> text1</li></ul>');
 
-        range = document.createRange();
+        const range = document.createRange();
         range.setStart(preview.$el.find('li')[0], 1);
         range.setEnd(preview.$el.find('li')[0], 1);
 
         window.getSelection().addRange(range);
 
-        marker = vmh.getMarkerInfoOfCurrentSelection();
+        const marker = vmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(0);
         expect(marker.end).toEqual(0);
         expect(marker.text).toEqual('');
     });
 
-    it('getMarkerInfoOfCurrentSelection() return null if contents not contains range', function() {
-        var range;
-
+    it('getMarkerInfoOfCurrentSelection() return null if contents not contains range', () => {
         $('body').append('<div id="outsider">TEXT</div>');
 
-        range = document.createRange();
+        const range = document.createRange();
         range.selectNodeContents($('#outsider')[0]);
 
         window.getSelection().addRange(range);
@@ -122,12 +111,10 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(vmh.getMarkerInfoOfCurrentSelection()).toBeNull();
     });
 
-    it('No preblem with no text content', function() {
-        var marker;
-
+    it('No preblem with no text content', () => {
         preview.refresh('');
 
-        marker = vmh.updateMarkerWithExtraInfo({
+        const marker = vmh.updateMarkerWithExtraInfo({
             start: 1,
             end: 2,
             id: 'myId'
@@ -137,18 +124,15 @@ describe('ViewOnlyMarkerHelper', function() {
         expect(marker.end).toEqual(2);
     });
 
-
-    it('select range by given offset', function() {
-        var range;
-
+    it('select range by given offset', () => {
         vmh.selectOffsetRange(0, 3);
 
-        range = window.getSelection().getRangeAt(0);
+        const range = window.getSelection().getRangeAt(0);
 
         expect(range.cloneContents().textContent).toEqual('TEX');
     });
 
-    it('clear select', function() {
+    it('clear select', () => {
         vmh.selectOffsetRange(0, 3);
 
         vmh.clearSelect();

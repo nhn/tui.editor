@@ -3,196 +3,234 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import Toolbar from './toolbar';
 import Tab from './tab';
-import Layerpopup from './layerpopup';
+import LayerPopup from './layerpopup';
 import ModeSwitch from './modeSwitch';
 import PopupAddLink from './popupAddLink';
 import PopupAddImage from './popupAddImage';
 import PopupTableUtils from './popupTableUtils';
 import PopupAddTable from './popupAddTable';
 import PopupAddHeading from './popupAddHeading';
+import PopupCodeBlockLanguages from './popupCodeBlockLanguages';
+import PopupCodeBlockEditor from './popupCodeBlockEditor';
 
-/* eslint-disable indent */
-const containerTmpl = [
-    '<div class="tui-editor-defaultUI">',
-        '<div class="te-toolbar-section"></div>',
-        '<div class="te-markdown-tab-section"></div>',
-        '<div class="te-editor-section"></div>',
-        '<div class="te-mode-switch-section"></div>',
-    '</div>'
-].join('');
-/* eslint-enable indent */
+const CLASS_TOOLBAR = 'te-toolbar-section';
+const CLASS_MARKDOWN_TAB = 'te-markdown-tab-section';
+const CLASS_EDITOR = 'te-editor-section';
+const CLASS_MODE_SWITCH = 'te-mode-switch-section';
+const CONTAINER_TEMPLATE = `
+    <div class="tui-editor-defaultUI">
+        <div class="${CLASS_TOOLBAR}"></div>
+        <div class="${CLASS_MARKDOWN_TAB}"></div>
+        <div class="${CLASS_EDITOR}"></div>
+        <div class="${CLASS_MODE_SWITCH}"></div>
+    </div>
+`;
 
 /**
- * DefaultUI
- * @exports DefaultUI
- * @extends {}
- * @constructor
- * @class
- * @param {ToastUIEditor} editor editor
- * @ignore
+ * Default UI
+ * initialize ui instances. toolbar, popups
+ * @class DefaultUI
  */
-function DefaultUI(editor) {
-    this.name = 'default';
+class DefaultUI {
+    /**
+     * Creates an instance of DefaultUI.
+     * @param {ToastUIEditor} editor - editor instance
+     * @memberof DefaultUI
+     */
+    constructor(editor) {
+        /**
+         * UI name
+         * @member {string}
+         */
+        this.name = 'default';
 
-    this.type = editor.options.initialEditType;
-    this.editor = editor;
+        /**
+         * Toolbar instance
+         * @member {Toolbar}
+         */
+        this.toolbar = null;
 
-    this.init(editor.options.el);
-    this._initEvent();
-}
+        /**
+         * Toolbar wrapper element
+         * @member {jQuery}
+         */
+        this.$el = null;
 
-DefaultUI.prototype.init = function($container) {
-    this._renderLayout($container);
+        this._editor = editor;
+        this._initialEditType = editor.options.initialEditType;
 
-    this._initEditorSection();
-
-    this._initToolbar();
-    this._initModeSwitch();
-
-    this._initPopupAddLink();
-    this._initPopupAddImage();
-    this._initPopupAddTable();
-    this._initPopupAddHeading();
-    this._initPopupTableUtils();
-
-    this._initMarkdownTab();
-};
-
-DefaultUI.prototype._initEditorSection = function() {
-    this.$el.find('.te-editor-section').append(this.editor.layout.getEditorEl());
-};
-
-DefaultUI.prototype._initEvent = function() {
-    const self = this;
-
-    this.editor.eventManager.listen('hide', this.hide.bind(this));
-    this.editor.eventManager.listen('show', this.show.bind(this));
-    this.editor.eventManager.listen('changeMode', () => {
-        self.markdownTabControl();
-    });
-
-    this.editor.eventManager.listen('changePreviewStyle', () => {
-        self.markdownTabControl();
-    });
-};
-
-DefaultUI.prototype._renderLayout = function($container) {
-    this.$el = $(containerTmpl).appendTo($container);
-};
-
-DefaultUI.prototype._initToolbar = function() {
-    this.toolbar = new Toolbar(this.editor.eventManager);
-    this.$el.find('.te-toolbar-section').append(this.toolbar.$el);
-};
-
-DefaultUI.prototype._initModeSwitch = function() {
-    const self = this;
-
-    this.modeSwitch = new ModeSwitch(this.type === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
-    this.$el.find('.te-mode-switch-section').append(this.modeSwitch.$el);
-
-    this.modeSwitch.on('modeSwitched', (ev, type) => {
-        self.editor.changeMode(type);
-    });
-};
-
-DefaultUI.prototype.markdownTabControl = function() {
-    if (this.editor.isMarkdownMode() && this.editor.getCurrentPreviewStyle() === 'tab') {
-        this.$el.find('.te-markdown-tab-section').show();
-        this.markdownTab.activate('Editor');
-    } else {
-        this.$el.find('.te-markdown-tab-section').hide();
+        this._init(editor.options.el);
+        this._initEvent();
     }
-};
 
-DefaultUI.prototype._initMarkdownTab = function() {
-    const editor = this.editor;
+    _init(container) {
+        this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
+        this.$el.find(`.${CLASS_EDITOR}`).append(this._editor.layout.getEditorEl());
 
-    this.markdownTab = new Tab({
-        items: ['Editor', 'Preview'],
-        sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
-    });
+        this._initToolbar();
+        this._initModeSwitch();
 
-    this.$el.find('.te-markdown-tab-section').append(this.markdownTab.$el);
+        this._initPopupAddLink();
+        this._initPopupAddImage();
+        this._initPopupAddTable();
+        this._initPopupAddHeading();
+        this._initPopupTableUtils();
+        this._initPopupCodeBlockLanguages();
+        this._initPopupCodeBlockEditor();
 
-    this.markdownTab.on('itemClick', (ev, itemText) => {
-        if (itemText === 'Preview') {
-            editor.eventManager.emit('previewNeedsRefresh');
+        this._initMarkdownTab();
+    }
+
+    _initEvent() {
+        this._editor.eventManager.listen('hide', this.hide.bind(this));
+        this._editor.eventManager.listen('show', this.show.bind(this));
+        this._editor.eventManager.listen('changeMode', this._markdownTabControl.bind(this));
+        this._editor.eventManager.listen('changePreviewStyle', this._markdownTabControl.bind(this));
+    }
+
+    _initToolbar() {
+        this.toolbar = new Toolbar(this._editor.eventManager);
+        this.$el.find(`.${CLASS_TOOLBAR}`).append(this.toolbar.$el);
+    }
+
+    _initModeSwitch() {
+        this._modeSwitch = new ModeSwitch(this._initialEditType === 'markdown' ? ModeSwitch.TYPE.MARKDOWN : ModeSwitch.TYPE.WYSIWYG);
+        this.$el.find(`.${CLASS_MODE_SWITCH}`).append(this._modeSwitch.$el);
+
+        this._modeSwitch.on('modeSwitched', (ev, type) => this._editor.changeMode(type));
+    }
+
+    _initMarkdownTab() {
+        const editor = this._editor;
+
+        this.markdownTab = new Tab({
+            initName: 'Editor',
+            items: ['Editor', 'Preview'],
+            sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
+        });
+        this._$markdownTabSection = this.$el.find(`.${CLASS_MARKDOWN_TAB}`);
+        this._$markdownTabSection.append(this.markdownTab.$el);
+
+        this.markdownTab.on('itemClick', (ev, itemText) => {
+            if (itemText === 'Preview') {
+                editor.eventManager.emit('previewNeedsRefresh');
+            } else {
+                editor.getCodeMirror().focus();
+            }
+        });
+    }
+
+    _markdownTabControl() {
+        if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
+            this._$markdownTabSection.show();
+            this.markdownTab.activate('Editor');
         } else {
-            editor.getCodeMirror().focus();
+            this._$markdownTabSection.hide();
         }
-    });
-};
+    }
 
-DefaultUI.prototype._initPopupAddLink = function() {
-    this.popupAddLink = new PopupAddLink({
-        $target: this.$el,
-        editor: this.editor
-    });
-};
+    _initPopupAddLink() {
+        this.popupAddLink = new PopupAddLink({
+            $target: this.$el,
+            editor: this._editor
+        });
+    }
 
-DefaultUI.prototype._initPopupAddImage = function() {
-    this.popupAddImage = new PopupAddImage({
-        $target: this.$el,
-        eventManager: this.editor.eventManager
-    });
-};
+    _initPopupAddImage() {
+        this.popupAddImage = new PopupAddImage({
+            $target: this.$el,
+            eventManager: this._editor.eventManager
+        });
+    }
 
-DefaultUI.prototype._initPopupAddTable = function() {
-    this.popupAddTable = new PopupAddTable({
-        $target: this.$el,
-        eventManager: this.editor.eventManager,
-        $button: this.$el.find('button.tui-table'),
-        css: {
-            'position': 'absolute'
-        }
-    });
-};
+    _initPopupAddTable() {
+        this.popupAddTable = new PopupAddTable({
+            $target: this.$el,
+            eventManager: this._editor.eventManager,
+            $button: this.$el.find('button.tui-table'),
+            css: {
+                'position': 'absolute'
+            }
+        });
+    }
 
-DefaultUI.prototype._initPopupAddHeading = function() {
-    this.popupAddHeading = new PopupAddHeading({
-        $target: this.$el,
-        eventManager: this.editor.eventManager,
-        $button: this.$el.find('button.tui-heading'),
-        css: {
-            'position': 'absolute'
-        }
-    });
-};
+    _initPopupAddHeading() {
+        this.popupAddHeading = new PopupAddHeading({
+            $target: this.$el,
+            eventManager: this._editor.eventManager,
+            $button: this.$el.find('button.tui-heading'),
+            css: {
+                'position': 'absolute'
+            }
+        });
+    }
 
-DefaultUI.prototype._initPopupTableUtils = function() {
-    const self = this;
+    _initPopupTableUtils() {
+        this._editor.eventManager.listen('contextmenu', ev => {
+            if ($(ev.data.target).parents('[contenteditable=true] table').length > 0) {
+                ev.data.preventDefault();
+                this._editor.eventManager.emit('openPopupTableUtils', ev.data);
+            }
+        });
 
-    this.editor.eventManager.listen('contextmenu', ev => {
-        if ($(ev.data.target).parents('[contenteditable=true] table').length > 0) {
-            ev.data.preventDefault();
-            self.editor.eventManager.emit('openPopupTableUtils', ev.data);
-        }
-    });
+        this.popupTableUtils = new PopupTableUtils({
+            $target: this.$el,
+            eventManager: this._editor.eventManager
+        });
+    }
 
-    this.popupTableUtils = new PopupTableUtils({
-        $target: this.$el,
-        eventManager: this.editor.eventManager
-    });
-};
+    _initPopupCodeBlockLanguages() {
+        const editor = this._editor;
+        this.popupCodeBlockLanguages = new PopupCodeBlockLanguages({
+            $target: this.$el,
+            eventManager: editor.eventManager,
+            languages: editor.convertor.getCodeBlockManager().getSupportedLanguages()
+        });
+    }
 
-DefaultUI.prototype.hide = function() {
-    this.$el.addClass('te-hide');
-};
+    _initPopupCodeBlockEditor() {
+        this.popupCodeBlockEditor = new PopupCodeBlockEditor({
+            $target: this.$el,
+            eventManager: this._editor.eventManager,
+            convertor: this._editor.convertor
+        });
+    }
 
-DefaultUI.prototype.show = function() {
-    this.$el.removeClass('te-hide');
-};
+    /**
+     * hide
+     * @memberof DefaultUI
+     */
+    hide() {
+        this.$el.addClass('te-hide');
+    }
 
-DefaultUI.prototype.remove = function() {
-    this.$el.remove();
-};
+    /**
+     * show
+     * @memberof DefaultUI
+     */
+    show() {
+        this.$el.removeClass('te-hide');
+    }
 
-DefaultUI.prototype.createPopup = function(options) {
-    return Layerpopup.factory(options);
-};
+    /**
+     * remove
+     * @memberof DefaultUI
+     */
+    remove() {
+        this.$el.remove();
+    }
+
+    /**
+     * creates popup
+     * @param {LayerPopupOption} options - layerPopup options
+     * @returns {LayerPopup} - crated layerPopup
+     * @memberof DefaultUI
+     */
+    createPopup(options) {
+        return new LayerPopup(options);
+    }
+}
 
 module.exports = DefaultUI;

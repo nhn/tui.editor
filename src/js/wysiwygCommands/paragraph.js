@@ -5,7 +5,6 @@
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 /**
  * Paragraph
@@ -24,7 +23,7 @@ const Paragraph = CommandManager.command('wysiwyg', /** @lends Paragraph */{
     exec(wwe) {
         const sq = wwe.getEditor();
 
-        sq.focus();
+        wwe.focus();
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             sq.modifyBlocks(fragment => {

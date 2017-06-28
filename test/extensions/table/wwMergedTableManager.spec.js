@@ -36,7 +36,7 @@ describe('WwMergedTableManager', () => {
         wwe.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -45,7 +45,7 @@ describe('WwMergedTableManager', () => {
     });
 
     describe('_pasteToSelectedArea', () => {
-        let $container, $table; 
+        let $table;
 
         beforeEach(() => {
             $container = $('<div />');
@@ -103,7 +103,7 @@ describe('WwMergedTableManager', () => {
             expect($trs.eq(3).html()).toBe('<td>i</td><td>j</td><td>k</td><td>l</td>');
             expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 2,
-                colIndex: 1 
+                colIndex: 1
             });
         });
 
@@ -116,8 +116,7 @@ describe('WwMergedTableManager', () => {
             ].join(''));
 
             spyOn(window, 'alert');
-            const editor = jasmine.createSpyObj('editor', ['focus']);
-            spyOn(wwe, 'getEditor').and.returnValues(editor);
+            spyOn(wwe, 'focus');
 
             $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(2)').attr('colspan', 2);
             $table.find('tbody').find('tr:nth-child(2)').find('td:nth-child(3)').remove();
@@ -130,7 +129,7 @@ describe('WwMergedTableManager', () => {
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
             expect(window.alert).toHaveBeenCalled();
-            expect(editor.focus).toHaveBeenCalled();
+            expect(wwe.focus).toHaveBeenCalled();
             expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
         });
 
@@ -169,8 +168,7 @@ describe('WwMergedTableManager', () => {
             ].join(''));
 
             spyOn(window, 'alert');
-            const editor = jasmine.createSpyObj('editor', ['focus']);
-            spyOn(wwe, 'getEditor').and.returnValues(editor);
+            spyOn(wwe, 'focus');
 
             const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
             const tableData = tableDataHandler.createTableData($table);
@@ -180,13 +178,13 @@ describe('WwMergedTableManager', () => {
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
             expect(window.alert).toHaveBeenCalled();
-            expect(editor.focus).toHaveBeenCalled();
+            expect(wwe.focus).toHaveBeenCalled();
             expect(mgr._bookmarkLastTd).not.toHaveBeenCalled();
         });
     });
 
     describe('_pasteAllClipboardTableData', () => {
-        let $container, $table; 
+        let $table;
 
         beforeEach(() => {
             $container = $('<div />');
@@ -222,7 +220,8 @@ describe('WwMergedTableManager', () => {
             expect($trs.length).toBe(6);
             expect($trs.eq(0).children().length).toBe(5);
             expect($trs.eq(4).html()).toBe('<td>m</td><td>n</td><td>o</td><td>1</td><td>2</td>');
-            expect($trs.eq(5).html()).toBe(`<td>${cellContent}</td><td>${cellContent}</td><td>${cellContent}</td><td>3</td><td>4</td>`);
+            expect($trs.eq(5).html())
+                .toBe(`<td>${cellContent}</td><td>${cellContent}</td><td>${cellContent}</td><td>3</td><td>4</td>`);
             expect(mgr._bookmarkLastTd).toHaveBeenCalledWith({
                 rowIndex: 5,
                 colIndex: 4

@@ -1,3 +1,5 @@
+/* eslint max-nested-callbacks: 0 */
+
 import Convertor from '../src/js/convertor';
 import EventManager from '../src/js/eventManager';
 

@@ -18,48 +18,32 @@ describe('PopupAddImage', () => {
         $('body').empty();
     });
 
-    describe('생성', () => {
-        it('PopupAddImage클래스가 추가되었다', () => {
-            expect(popup.$el.hasClass('te-popup-add-image')).toBe(true);
-        });
-        it('버튼들이 생성되었다', () => {
-            expect(popup.$el.find('.te-close-button').length).toEqual(1);
-            expect(popup.$el.find('.te-ok-button').length).toEqual(1);
-        });
-    });
-
-    describe('이벤트의 발생', () => {
-        let handler;
-
+    describe('button events', () => {
         beforeEach(() => {
-            handler = jasmine.createSpy('buttonClickedHandler');
+            spyOn(popup, 'hide');
         });
 
-        it('ok버튼을 누르면 okButtonClicked이벤트가 발생한다', () => {
-            popup.on('okButtonClicked', handler);
-
+        it('hide on ok button', () => {
             $('.te-ok-button').trigger('click');
 
-            expect(handler).toHaveBeenCalled();
+            expect(popup.hide).toHaveBeenCalled();
         });
 
-        it('close버튼을 누르면 closeButtonClicked이벤트가 발생한다', () => {
-            popup.on('closeButtonClicked', handler);
-
+        it('hide on close button', () => {
             $('.te-close-button').trigger('click');
 
-            expect(handler).toHaveBeenCalled();
+            expect(popup.hide).toHaveBeenCalled();
         });
     });
 
-    describe('eventManager와 연결', () => {
+    describe('eventManager', () => {
         let handler;
 
         beforeEach(() => {
             handler = jasmine.createSpy('buttonClickedHandler');
         });
 
-        it('okButtonClicked이벤트가 발생하면 eventManager의 command 이벤트가 발생한다', () => {
+        it('emit command event on ok button', () => {
             const value = {
                 imageUrl: 'imageUrlText',
                 altText: 'altText'
@@ -75,13 +59,13 @@ describe('PopupAddImage', () => {
             expect(handler).toHaveBeenCalledWith('AddImage', value);
         });
 
-        it('eventManager에서 openPopupAddImage 이벤트가 발생하면 팝업이 보여진다', () => {
+        it('show popup on openPopupAddImage event', () => {
             em.emit('openPopupAddImage');
 
             expect(popup.isShow()).toBe(true);
         });
 
-        it('eventManager에서 closeAllPopup 이벤트가 발생하면 팝업이 닫힌다', () => {
+        it('hide popup on closeAllPopup event', () => {
             em.emit('openPopupAddImage');
             em.emit('closeAllPopup');
 
@@ -89,8 +73,8 @@ describe('PopupAddImage', () => {
         });
     });
 
-    describe('url입력 방식', () => {
-        it('getValue()로 입력된 값들을 객체형식으로 받는다', () => {
+    describe('add image with url', () => {
+        it('getValue() returns imageUrl & altText', () => {
             const value = {
                 imageUrl: 'imageUrlText',
                 altText: 'altText'
@@ -103,7 +87,7 @@ describe('PopupAddImage', () => {
             expect($('.te-alt-text-input').val()).toEqual(value.altText);
         });
 
-        it('팝업이 닫히면 입력된값들이 초기화 인풋의 값들이 리셋된다', () => {
+        it('clear input values on hide', () => {
             $('.te-image-url-input').val('imageUrlText');
             $('.te-alt-text-input').val('altText');
 
@@ -124,41 +108,49 @@ describe('PopupAddImage', () => {
         });
     });
 
-    describe('image입력 방식', () => {
-        describe('ok버튼이 클릭', () => {
-            it('addImageBlobHook을 실행한다.', () => {
-                const hook = jasmine.createSpy('addImageBlobHook');
-                em.listen('addImageBlobHook', hook);
+    describe('add image with selecting image', () => {
+        it('addImageBlobHook on ok button.', () => {
+            const hook = jasmine.createSpy('addImageBlobHook');
+            em.listen('addImageBlobHook', hook);
 
-                $('.te-ok-button').trigger('click');
+            $('.te-ok-button').trigger('click');
 
-                expect(hook).toHaveBeenCalled();
+            expect(hook).toHaveBeenCalled();
+        });
+
+        it('add image via popup should set addImageBlobHook `ui` for from', () => {
+            em.listen('addImageBlobHook', (fileBlob, callback, from) => {
+                expect(from).toEqual('ui');
             });
 
-            it('addImageBlobHook에 전달되는 콜백으로 완성된 url을 비동기로 전달하면 AddImage 커맨드 이벤트가 발생하고 팝업이hide된다', done => {
-                const addImage = jasmine.createSpy('addImage'),
-                    value = {
-                        imageUrl: 'imageUrlText',
-                        altText: 'altText'
-                    };
+            $('.te-alt-text-input').val('image');
 
-                em.listen('command', (type, imageValue) => {
-                    addImage(imageValue);
-                });
+            $('.te-ok-button').trigger('click');
+        });
 
-                em.listen('addImageBlobHook', (fileBlob, callback) => {
-                    setTimeout(() => {
-                        callback(value.imageUrl);
-                        expect(addImage).toHaveBeenCalledWith({imageUrl: value.imageUrl,
-                            altText: value.altText});
-                        expect(popup.isShow()).toBe(false);
-                        done();
-                    }, 0);
-                });
-                $('.te-alt-text-input').val(value.altText);
+        it('image url can be modified on addImageBlobHook callback', done => {
+            const addImage = jasmine.createSpy('addImage');
+            const value = {
+                imageUrl: 'imageUrlText',
+                altText: 'altText'
+            };
 
-                $('.te-ok-button').trigger('click');
+            em.listen('command', (type, imageValue) => addImage(imageValue));
+            em.listen('addImageBlobHook', (fileBlob, callback, from) => {
+                setTimeout(() => {
+                    callback('modifiedURL');
+                    expect(addImage).toHaveBeenCalledWith({
+                        imageUrl: 'modifiedURL',
+                        altText: value.altText
+                    });
+                    expect(from).toEqual('ui');
+                    done();
+                }, 0);
             });
+
+            $('.te-alt-text-input').val(value.altText);
+
+            $('.te-ok-button').trigger('click');
         });
     });
 });

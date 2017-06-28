@@ -21,7 +21,7 @@ import mergedTableUI from './mergedTableUI';
 require('./langs');
 
 extManager.defineExtension('tableExtension', editor => {
-    const eventManager = editor.eventManager;
+    const {eventManager} = editor;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
     editor.toMarkOptions.renderer = toMarkRenderer;
@@ -32,7 +32,7 @@ extManager.defineExtension('tableExtension', editor => {
     }
 
     const wwComponentManager = editor.wwEditor.componentManager;
-    const popupTableUtils = editor._ui.popupTableUtils;
+    const {popupTableUtils} = editor._ui;
 
     _addCommands(editor);
     _changeWysiwygManagers(wwComponentManager);
@@ -95,7 +95,7 @@ function _changeHtml(html, onChangeTable) {
  * @private
  */
 function _snatchWysiwygCommand(commandWrapper) {
-    const command = commandWrapper.command;
+    const {command} = commandWrapper;
 
     if (!command.isWWType()) {
         return;

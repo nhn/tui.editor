@@ -6,15 +6,15 @@
     <script src="../lib/markdown-it/dist/markdown-it.js"></script>
     <script src="../lib/toMark/dist/toMark.js"></script>
     <script src="../lib/jquery/dist/jquery.js"></script>
-    <script src="../lib/tui-code-snippet/code-snippet.js"></script>
+    <script src="../lib/tui-code-snippet/dist/code-snippet.js"></script>
     <script src="../lib/tui-component-colorpicker/dist/colorpicker.js"></script>
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="../src/css/tui-editor.css">
-    <link rel="stylesheet" href="../src/css/tui-editor-contents.css">
+    <link rel="stylesheet" href="../dist/tui-editor.css">
+    <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
     <style type="text/css">
         #editSection {
@@ -25,7 +25,7 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../build/bundle.js"></script>
+<script src="../dist/tui-editor.js"></script>
 <script>
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',

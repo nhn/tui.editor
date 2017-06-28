@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 
@@ -27,7 +26,7 @@ const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
         const range = sq.getSelection().cloneRange();
         let $cell;
 
-        sq.focus();
+        wwe.focus();
 
         if (sq.hasFormat('TR')) {
             sq.saveUndoState(range);

@@ -12,8 +12,6 @@ describe('Code', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -36,7 +34,13 @@ describe('Code', () => {
     });
 
     it('Add code for selection', () => {
-        doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
+        doc.setSelection({
+            line: 0,
+            ch: 0
+        }, {
+            line: 0,
+            ch: 7
+        });
 
         Code.exec(mde);
 

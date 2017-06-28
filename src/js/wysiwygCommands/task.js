@@ -25,24 +25,26 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
         const sq = wwe.getEditor();
         let range = sq.getSelection();
         const taskManager = wwe.componentManager.getManager('task');
-        const start = range.startContainer;
-        const startOffset = range.startOffset;
-        const end = range.endContainer;
-        const endOffset = range.endOffset;
+        const {
+            startContainer,
+            endContainer,
+            startOffset,
+            endOffset
+         } = range;
 
-        sq.focus();
+        wwe.focus();
 
         sq.saveUndoState(range);
 
-        const lines = taskManager.getLinesOfSelection(start, end);
+        const lines = taskManager.getLinesOfSelection(startContainer, endContainer);
 
         for (let i = 0; i < lines.length; i += 1) {
             this._changeFormatToTaskIfNeed(wwe, lines[i]);
         }
 
         range = sq.getSelection();
-        range.setStart(start, startOffset);
-        range.setEnd(end, endOffset);
+        range.setStart(startContainer, startOffset);
+        range.setEnd(endContainer, endOffset);
         sq.setSelection(range);
         sq.saveUndoState(range);
     },

@@ -17,8 +17,6 @@ describe('CodeBlock', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         cm.setValue(sourceText);
