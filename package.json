@@ -11,6 +11,7 @@
     "babel-plugin-istanbul": "^4.1.1",
     "babel-preset-es2015": "^6.24.1",
     "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^5.0.1",
     "css-loader": "^0.28.0",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
@@ -43,9 +44,9 @@
     "lint": "eslint src/js",
     "doc": "jsdoc -c jsdoc-conf.json",
     "test": "karma start",
-    "test:ne": "SERVER=ne karma start",
-    "test:sl": "SERVER=sl karma start",
+    "test:ne": "cross-env SERVER=ne karma start",
+    "test:sl": "cross-env SERVER=sl karma start",
     "serve": "webpack-dev-server --progress --inline",
-    "build": "webpack && webpack -p"
+    "build": "cross-env webpack && webpack -p"
   }
 }
