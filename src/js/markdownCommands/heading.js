@@ -5,10 +5,9 @@
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
-const util = tui.util;
+const {util} = tui;
 const FIND_HEADING_RX = /^#+\s/g;
 
 /**
@@ -81,7 +80,7 @@ function getHeadingMarkdown(text, size) {
     } while (size > 0);
 
     if (foundedHeading) {
-        text = text.split(foundedHeading[0])[1];
+        [, text] = text.split(foundedHeading[0]);
     }
 
     return `${heading} ${text}`;

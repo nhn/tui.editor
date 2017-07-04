@@ -12,8 +12,6 @@ describe('Strike', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -46,19 +44,37 @@ describe('Strike', () => {
 
     describe('셀렉션을 지정한상태에서 커맨드를 사용하면 ', () => {
         it('선택된영역의 텍스트가 스트라이크처리된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 0,
+                ch: 7
+            });
 
             Strike.exec(mde);
 
             expect(cm.getValue()).toEqual(['~~mytext1~~', '', 'mytext2', 'mytext3'].join('\n'));
         });
         it('선택된영역의 스트라이크가 해제된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 0,
+                ch: 7
+            });
 
             Strike.exec(mde);
 
             expect(cm.getValue()).toEqual(['~~mytext1~~', '', 'mytext2', 'mytext3'].join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 0, ch: 11});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 0,
+                ch: 11
+            });
 
             Strike.exec(mde);
 

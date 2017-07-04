@@ -40,7 +40,7 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
  * @private
  */
 export function _parseTableCell(cell) {
-    const nodeName = cell.nodeName;
+    const {nodeName} = cell;
     const align = cell.align || '';
     let content = cell.innerHTML.trim();
     let colspan = null;
@@ -160,7 +160,6 @@ export function _mergeByRowspan(trs) {
         tr.splice(tr.length - removalCounts[trIndex]);
     });
 }
-
 
 /**
  * Create merged table by @cols, @rows value in td innerHTML.

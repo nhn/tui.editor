@@ -3,7 +3,7 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-const toMark = window.toMark;
+const {toMark} = window;
 const RX_COLS = /@cols=[0-9]+:/g;
 
 /**
@@ -25,7 +25,7 @@ function _createRepeatString(str, count) {
  * @private
  */
 function _makeTableHeadAlignText(thElement) {
-    const align = thElement.align;
+    const {align} = thElement;
     const textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
     let textLength = textContent.length;
     let leftAlignValue = '';

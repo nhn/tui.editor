@@ -1,28 +1,28 @@
-'use strict';
+/* eslint-disable max-nested-callbacks */
 
-var Button = require('../../src/js/ui/button');
+const Button = require('../../src/js/ui/button');
 
-describe('Button', function() {
-    var button;
+describe('Button', () => {
+    let button;
 
-    afterEach(function() {
+    afterEach(() => {
         $('body').empty();
     });
 
-    describe('버튼 생성', function() {
-        it('버튼 태그를 만든다.', function() {
+    describe('creation', () => {
+        it('should make button element', () => {
             button = new Button({});
             expect(button.$el.prop('tagName')).toEqual('BUTTON');
         });
 
-        it('옵션으로 전달된 className이 버튼태그에 적용된다.', function() {
+        it('should have an element containing given class on className option', () => {
             button = new Button({
                 className: 'myclass'
             });
             expect(button.$el.hasClass('myclass')).toBe(true);
         });
 
-        it('옵션으로 전달된 text가 버튼태그에 적용된다.', function() {
+        it('should have text given by text option', () => {
             button = new Button({
                 text: 'buttonText'
             });
@@ -30,7 +30,7 @@ describe('Button', function() {
             expect(button.$el.text()).toEqual('buttonText');
         });
 
-        it('옵션으로 전달된 style 버튼태그에 적용된다.', function() {
+        it('should have applied given style on style option', () => {
             button = new Button({
                 style: 'display:none'
             });
@@ -39,15 +39,15 @@ describe('Button', function() {
         });
     });
 
-    describe('이벤트', function() {
-        it('클릭이벤트 발생시 옵션으로 전달된 command를 파라메터로 넘기는 "command"이벤트가 발생한다', function() {
-            var passedCommand;
+    describe('event', () => {
+        it('should emit the command event which name is given by command option when the button is clicked', () => {
+            let passedCommand;
 
             button = new Button({
                 command: 'mycommand'
             });
 
-            button.on('command', function(e, command) {
+            button.on('command', (e, command) => {
                 passedCommand = command;
             });
 
@@ -56,14 +56,14 @@ describe('Button', function() {
             expect(passedCommand).toEqual('mycommand');
         });
 
-        it('클릭이벤트 발생시 옵션으로 전달된 event를 파라메터로 넘기는 "event" 이벤트가 발생한다', function() {
-            var passedEvent;
+        it('should emit the event which name is given by event option when the button is clicked', () => {
+            let passedEvent;
 
             button = new Button({
                 event: 'myevent'
             });
 
-            button.on('event', function(e, event) {
+            button.on('event', (e, event) => {
                 passedEvent = event;
             });
 
@@ -72,9 +72,9 @@ describe('Button', function() {
             expect(passedEvent).toEqual('myevent');
         });
 
-        it('command와 event가 둘다 정의된경우 command이밴트만 발생한다.', function() {
-            var eventHandler = jasmine.createSpy('eventHandler'),
-                commandHandler = jasmine.createSpy('commandHandler');
+        it('should emit only command event prior to event, given event option will be ignored', () => {
+            const eventHandler = jasmine.createSpy('eventHandler');
+            const commandHandler = jasmine.createSpy('commandHandler');
 
             button = new Button({
                 command: 'mycommand',

@@ -6,92 +6,79 @@
 const UIController = require('./uicontroller');
 const Tooltip = require('./tooltip');
 
-const util = tui.util;
 const tooltip = new Tooltip();
 
 /**
- * Button
- * initialize button
- * @exports Button
- * @augments UIController
- * @constructor
- * @class
- * @param {object} options 옵션
- * @param {string} options.className 만들어진 RootElement에 추가할 클래스
- * @param {string} options.command 클릭되면 실행될 커맨드명
- * @param {string} options.text 버튼안에 들어갈 텍스트
- * @param {string} options.style 추가적으로 적용될 CSS스타일
- * @ignore
+ * Button UI
+ * @class Button
+ * @extends {UIController}
  */
-function Button(options) {
-    UIController.call(this, {
-        tagName: 'button',
-        className: `${options.className} tui-toolbar-icons`,
-        rootElement: options.$el
-    });
+class Button extends UIController {
 
-    this._setOptions(options);
-
-    this.render();
-
-    this.attachEvents({
-        'click': '_onClick'
-    });
-
-    if (options.tooltip) {
-        this.attachEvents({
-            'mouseover': '_onOver',
-            'mouseout': '_onOut'
+    /**
+     * Creates an instance of Button.
+     * @param {object} options - button options
+     * @param {string} options.className - button class name
+     * @param {string} options.command - command name to execute on click
+     * @param {string} options.event - event name to trigger on click
+     * @param {string} options.text - text on button
+     * @param {string} options.tooltip - text on tooltip
+     * @param {string} options.style - button style
+     * @param {string} options.state - button state
+     * @memberof Button
+     */
+    constructor(options) {
+        super({
+            tagName: 'button',
+            className: `${options.className} tui-toolbar-icons`,
+            rootElement: options.$el
         });
+
+        this._setOptions(options);
+
+        this._render();
+        this.on('click', this._onClick.bind(this));
+        if (options.tooltip) {
+            this.on('mouseover', this._onOver.bind(this));
+            this.on('mouseout', this._onOut.bind(this));
+        }
+    }
+
+    _setOptions(options) {
+        this._command = options.command;
+        this._event = options.event;
+        this._text = options.text;
+        this._tooltip = options.tooltip;
+        this._style = options.style;
+        this._state = options.state;
+    }
+
+    _render() {
+        this.$el.text(this._text);
+        this.$el.attr('type', 'button');
+
+        if (this._style) {
+            this.$el.attr('style', this._style);
+        }
+    }
+
+    _onClick() {
+        if (this._command) {
+            this.trigger('command', this._command);
+        } else if (this._event) {
+            this.trigger('event', this._event);
+        }
+
+        this.trigger('clicked');
+    }
+
+    _onOver() {
+        tooltip.show(this.$el, this._tooltip);
+    }
+
+    _onOut() {
+        tooltip.hide();
     }
 }
-
-Button.prototype = util.extend(
-    {},
-    UIController.prototype
-);
-
-Button.prototype._setOptions = function(options) {
-    this.command = options.command;
-    this.event = options.event;
-    this.text = options.text;
-    this.tooltip = options.tooltip;
-    this.style = options.style;
-    this.state = options.state;
-};
-
-/**
- * Button의 모습을 그린다
- */
-Button.prototype.render = function() {
-    this.$el.text(this.text);
-    this.$el.attr('type', 'button');
-
-    if (this.style) {
-        this.$el.attr('style', this.style);
-    }
-};
-
-/**
- * _onClick
- * Click event handler
- */
-Button.prototype._onClick = function() {
-    if (this.command) {
-        this.trigger('command', this.command);
-    } else {
-        this.trigger('event', this.event);
-    }
-
-    this.trigger('clicked');
-};
-
-Button.prototype._onOver = function() {
-    tooltip.show(this.$el, this.tooltip);
-};
-
-Button.prototype._onOut = function() {
-    tooltip.hide();
-};
 
 module.exports = Button;

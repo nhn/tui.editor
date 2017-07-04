@@ -3,8 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
-const util = tui.util;
+const {util} = tui;
 
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
@@ -86,8 +85,7 @@ class MarkdownMarkerHelper {
                 ch: endCh
             }, 'local');
 
-            top = rect.top;
-            left = rect.left;
+            ({top, left} = rect);
             height = rect.bottom - rect.top;
         }
 
@@ -140,9 +138,7 @@ class MarkdownMarkerHelper {
      * @private
      */
     _getSelection() {
-        const selection = this.cm.getDoc().listSelections()[0];
-        let anchor = selection.anchor;
-        let head = selection.head;
+        let [{anchor, head}] = this.cm.getDoc().listSelections();
 
         const isReversedSelection = (anchor.line > head.line) || (anchor.line === head.line && anchor.ch > head.ch);
 
@@ -228,7 +224,7 @@ class MarkdownMarkerHelper {
      * Clear selection of CodeMirror
      */
     clearSelect() {
-        const selection = this.cm.getDoc().listSelections()[0];
+        const [selection] = this.cm.getDoc().listSelections();
 
         if (selection) {
             this.cm.setCursor(selection.to());

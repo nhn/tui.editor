@@ -17,11 +17,11 @@ import SquireExt from './squireExt';
 import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
-import codeBlockManager from './codeBlockManager';
+import CodeBlockGadget from './ui/codeBlockGadget';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
-const util = tui.util;
+const {util} = tui;
 
 const FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,
@@ -66,8 +66,7 @@ class WysiwygEditor {
 
     /**
      * init
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     init() {
         const $editorBody = $('<div />');
@@ -90,6 +89,12 @@ class WysiwygEditor {
 
         this.get$Body().addClass(EDITOR_CONTENT_CSS_CLASSNAME);
         this.$editorContainerEl.css('position', 'relative');
+
+        this.codeBlockGadget = new CodeBlockGadget({
+            eventManager: this.eventManager,
+            container: this.$editorContainerEl,
+            wysiwygEditor: this
+        });
     }
 
     /**
@@ -97,7 +102,7 @@ class WysiwygEditor {
      * Seperate anchor tags with \u200B and replace blank space between <br> and <img to <br>$1
      * @param {string} html Inner html of content editable
      * @returns {string}
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _preprocessForInlineElement(html) {
@@ -106,22 +111,18 @@ class WysiwygEditor {
     /**
      * _initEvent
      * Initialize EventManager event handler
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _initEvent() {
-        const self = this;
-
-        this.eventManager.listen('wysiwygSetValueBefore', html => self._preprocessForInlineElement(html));
-
-        this.eventManager.listen('wysiwygKeyEvent', ev => self._runKeyEventHandlers(ev.data, ev.keyMap));
+        this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
+        this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
     }
 
     /**
      * addKeyEventHandler
      * Add key event handler
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} keyMap keyMap string
      * @param {function} handler handler
      */
@@ -190,16 +191,15 @@ class WysiwygEditor {
      * @private
      */
     _initSquireEvent() {
-        const self = this;
         let isNeedFirePostProcessForRangeChange = false;
 
         this.getEditor().addEventListener('copy', clipboardEvent => {
-            self.eventManager.emit('copy', {
+            this.eventManager.emit('copy', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
-                self.eventManager.emit('copyAfter', {
+                this.eventManager.emit('copyAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
@@ -207,12 +207,12 @@ class WysiwygEditor {
         });
 
         this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
-            self.eventManager.emit('cut', {
+            this.eventManager.emit('cut', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
-                self.eventManager.emit('cutAfter', {
+                this.eventManager.emit('cutAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
@@ -220,7 +220,7 @@ class WysiwygEditor {
         });
 
         this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
-            self.eventManager.emit('paste', {
+            this.eventManager.emit('paste', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
@@ -235,7 +235,7 @@ class WysiwygEditor {
         this.getEditor().addEventListener('drop', ev => {
             ev.preventDefault();
 
-            self.eventManager.emit('drop', {
+            this.eventManager.emit('drop', {
                 source: 'wysiwyg',
                 data: ev
             });
@@ -246,60 +246,60 @@ class WysiwygEditor {
         // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
         // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
         this.getEditor().addEventListener('input', util.debounce(() => {
-            if (!self._silentChange && self.isEditorValid()) {
+            if (!this._silentChange && this.isEditorValid()) {
                 const eventObj = {
                     source: 'wysiwyg'
                 };
 
-                self.eventManager.emit('changeFromWysiwyg', eventObj);
-                self.eventManager.emit('change', eventObj);
-                self.eventManager.emit('contentChangedFromWysiwyg', self);
+                this.eventManager.emit('changeFromWysiwyg', eventObj);
+                this.eventManager.emit('change', eventObj);
+                this.eventManager.emit('contentChangedFromWysiwyg', this);
             } else {
-                self._silentChange = false;
+                this._silentChange = false;
             }
 
-            self.getEditor().preserveLastLine();
+            this.getEditor().preserveLastLine();
         }, 0));
 
         this.getEditor().addEventListener('keydown', keyboardEvent => {
-            const range = self.getEditor().getSelection();
+            const range = this.getEditor().getSelection();
 
             if (!range.collapsed) {
                 isNeedFirePostProcessForRangeChange = true;
             }
 
-            self.eventManager.emit('keydown', {
+            this.eventManager.emit('keydown', {
                 source: 'wysiwyg',
                 data: keyboardEvent
             });
 
-            self._onKeyDown(keyboardEvent);
+            this._onKeyDown(keyboardEvent);
         });
 
         if (util.browser.firefox) {
             this.getEditor().addEventListener('keypress', keyboardEvent => {
-                const keyCode = keyboardEvent.keyCode;
+                const {keyCode} = keyboardEvent;
 
                 if (keyCode === 13 || keyCode === 9) {
-                    const range = self.getEditor().getSelection();
+                    const range = this.getEditor().getSelection();
 
                     if (!range.collapsed) {
                         isNeedFirePostProcessForRangeChange = true;
                     }
 
-                    self.eventManager.emit('keydown', {
+                    this.eventManager.emit('keydown', {
                         source: 'wysiwyg',
                         data: keyboardEvent
                     });
 
-                    self._onKeyDown(keyboardEvent);
+                    this._onKeyDown(keyboardEvent);
                 }
             });
 
             // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
             // 이렇게 하지 않으면 textObject에 문제가 생긴다.
-            self.getEditor().addEventListener('keyup', () => {
-                const range = self.getRange();
+            this.getEditor().addEventListener('keyup', () => {
+                const range = this.getRange();
 
                 if (domUtils.isTextNode(range.commonAncestorContainer)
                     && domUtils.isTextNode(range.commonAncestorContainer.previousSibling)) {
@@ -314,7 +314,7 @@ class WysiwygEditor {
 
                     curEl.parentNode.removeChild(curEl);
 
-                    self.getEditor().setSelection(range);
+                    this.setRange(range);
                     range.detach();
                 }
             });
@@ -322,66 +322,73 @@ class WysiwygEditor {
 
         this.getEditor().addEventListener('keyup', keyboardEvent => {
             if (isNeedFirePostProcessForRangeChange) {
-                self.debouncedPostProcessForChange();
+                this.debouncedPostProcessForChange();
                 isNeedFirePostProcessForRangeChange = false;
             }
 
-            self.eventManager.emit('keyup', {
+            this.eventManager.emit('keyup', {
                 source: 'wysiwyg',
                 data: keyboardEvent
             });
         });
 
-        this.getEditor().addEventListener('scroll', ev => {
-            self.eventManager.emit('scroll', {
+        this.$editorContainerEl.on('scroll', ev => {
+            this.eventManager.emit('scroll', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('click', ev => {
-            self.eventManager.emit('click', {
+            this.eventManager.emit('click', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mousedown', ev => {
-            self.eventManager.emit('mousedown', {
+            this.eventManager.emit('mousedown', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mouseover', ev => {
-            self.eventManager.emit('mouseover', {
+            this.eventManager.emit('mouseover', {
+                source: 'wysiwyg',
+                data: ev
+            });
+        });
+
+        this.getEditor().addEventListener('mouseout', ev => {
+            this.eventManager.emit('mouseout', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('mouseup', ev => {
-            self.eventManager.emit('mouseup', {
+            this.eventManager.emit('mouseup', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('contextmenu', ev => {
-            self.eventManager.emit('contextmenu', {
+            this.eventManager.emit('contextmenu', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
         this.getEditor().addEventListener('focus', () => {
-            self.eventManager.emit('focus', {
+            this.eventManager.emit('focus', {
                 source: 'wysiwyg'
             });
         });
 
         this.getEditor().addEventListener('blur', () => {
-            self.eventManager.emit('blur', {
+            this.eventManager.emit('blur', {
                 source: 'wysiwyg'
             });
         });
@@ -395,12 +402,12 @@ class WysiwygEditor {
                 code: /CODE/.test(data.path),
                 codeBlock: /PRE/.test(data.path),
                 quote: /BLOCKQUOTE/.test(data.path),
-                list: /LI(?!.task-list-item)/.test(self._getLastLiString(data.path)),
-                task: /LI.task-list-item/.test(self._getLastLiString(data.path)),
+                list: /LI(?!.task-list-item)/.test(this._getLastLiString(data.path)),
+                task: /LI.task-list-item/.test(this._getLastLiString(data.path)),
                 source: 'wysiwyg'
             };
 
-            self.eventManager.emit('stateChange', state);
+            this.eventManager.emit('stateChange', state);
         });
     }
 
@@ -415,7 +422,7 @@ class WysiwygEditor {
         let result;
 
         if (foundedListItem) {
-            result = foundedListItem[0];
+            [result] = foundedListItem;
         } else {
             result = '';
         }
@@ -454,26 +461,24 @@ class WysiwygEditor {
      * @private
      */
     _initDefaultKeyEventHandler() {
-        const self = this;
-
         this.addKeyEventHandler('ENTER', (ev, range) => {
-            if (self._isInOrphanText(range)) {
+            if (this._isInOrphanText(range)) {
                 // We need this cuz input text right after table make orphan text in webkit
-                self.defer(() => {
-                    self._wrapDefaultBlockToOrphanTexts();
-                    self.breakToNewDefaultBlock(range, 'before');
+                this.defer(() => {
+                    this._wrapDefaultBlockToOrphanTexts();
+                    this.breakToNewDefaultBlock(range, 'before');
                 });
             }
 
-            self.defer(() => {
-                self._scrollToRangeIfNeed();
+            this.defer(() => {
+                this._scrollToRangeIfNeed();
             });
         });
 
         this.addKeyEventHandler('TAB', ev => {
-            const sq = self.getEditor();
+            const sq = this.getEditor();
             const range = sq.getSelection();
-            const isAbleToInput4Spaces = range.collapsed && self._isCursorNotInRestrictedAreaOfTabAction(sq);
+            const isAbleToInput4Spaces = range.collapsed && this._isCursorNotInRestrictedAreaOfTabAction(sq);
             const isTextSelection = !range.collapsed && domUtils.isTextNode(range.commonAncestorContainer);
 
             ev.preventDefault();
@@ -504,7 +509,7 @@ class WysiwygEditor {
      * @private
      */
     _scrollToRangeIfNeed() {
-        const range = this.getEditor().getSelection().cloneRange();
+        const range = this.getRange();
         const cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
 
         if (cursorTop >= this.get$Body().height()) {
@@ -535,7 +540,7 @@ class WysiwygEditor {
         this._joinSplitedTextNodes();
         this.restoreSavedSelection();
 
-        range = this.getEditor().getSelection().cloneRange();
+        range = this.getRange();
 
         const textElem = range.startContainer;
         const cursorOffset = range.startOffset;
@@ -561,7 +566,7 @@ class WysiwygEditor {
         range.setStart(textElem, cursorOffset);
         range.collapse(true);
 
-        this.getEditor().setSelection(range);
+        this.setRange(range);
     }
 
     /**
@@ -600,15 +605,12 @@ class WysiwygEditor {
     /**
      * saveSelection
      * Save current selection before modification
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      */
     saveSelection(range) {
-        const sq = this.getEditor();
-
         if (!range) {
-            range = sq.getSelection().cloneRange();
+            range = this.getRange();
         }
 
         this.getEditor()._saveRangeToBookmark(range);
@@ -617,19 +619,16 @@ class WysiwygEditor {
     /**
      * restoreSavedSelection
      * Restore saved selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     restoreSavedSelection() {
-        const sq = this.getEditor();
-        sq.setSelection(sq._getRangeAndRemoveBookmark());
+        this.setRange(this.getEditor()._getRangeAndRemoveBookmark());
     }
 
     /**
      * reset
      * Reset wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     reset() {
         this.setValue('');
@@ -638,8 +637,7 @@ class WysiwygEditor {
     /**
      * changeBlockFormatTo
      * Change current range block format to passed tag
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} targetTagName Target element tag name
      */
     changeBlockFormatTo(targetTagName) {
@@ -650,15 +648,12 @@ class WysiwygEditor {
     /**
      * makeEmptyBlockCurrentSelection
      * Make empty block to current selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     makeEmptyBlockCurrentSelection() {
-        const self = this;
-
         this.getEditor().modifyBlocks(frag => {
             if (!frag.textContent) {
-                frag = self.getEditor().createDefaultBlock();
+                frag = this.getEditor().createDefaultBlock();
             }
 
             return frag;
@@ -668,18 +663,24 @@ class WysiwygEditor {
     /**
      * focus
      * Focus to editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     focus() {
+        const scrollTop = this.scrollTop();
+
         this.editor.focus();
+
+        // In webkit, if contenteditable element focus method have been invoked when another input element has focus,
+        // contenteditable scroll to top automatically so we need scroll it back
+        if (scrollTop !== this.scrollTop()) {
+            this.scrollTop(scrollTop);
+        }
     }
 
     /**
      * blur
      * Remove focus of editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     blur() {
         this.editor.blur();
@@ -688,8 +689,7 @@ class WysiwygEditor {
     /**
      * remove
      * Remove wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     remove() {
         this.getEditor().destroy();
@@ -701,36 +701,37 @@ class WysiwygEditor {
     /**
      * setHeight
      * Set editor height
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {number|string} height pixel of height or "auto"
      */
     setHeight(height) {
         this._height = height;
 
         if (height === 'auto') {
-            this.get$Body().css('overflow', 'visible');
-            this.get$Body().css('height', 'auto');
+            this.$editorContainerEl.css('overflow', 'visible');
+            this.$editorContainerEl.css('height', 'auto');
+            this.get$Body().css('min-height', 0);
         } else {
-            this.get$Body().css('overflow', 'auto');
-            this.get$Body().css('height', '100%');
-            this.$editorContainerEl.height(height);
+            this.$editorContainerEl.css('overflow', 'auto');
+            this.$editorContainerEl.css('height', '100%');
+            this.$editorContainerEl.parent().height(height);
+
+            const paddingHeight = parseInt(this.$editorContainerEl.css('padding-top'), 10) - parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
+            const marginHeight = parseInt(this.get$Body().css('margin-top'), 10) - parseInt(this.get$Body().css('margin-bottom'), 10);
+            this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
         }
     }
 
     /**
      * setValue
      * Set value to wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} html HTML text
      */
     setValue(html) {
         html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
 
         this.editor.setHTML(html);
-
-        codeBlockManager.replaceElements(this.$editorContainerEl, false, true);
 
         this.eventManager.emit('wysiwygSetValueAfter', this);
         this.eventManager.emit('contentChangedFromWysiwyg', this);
@@ -755,13 +756,10 @@ class WysiwygEditor {
     /**
      * getValue
      * Get value of wysiwyg editor
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {string} html
      */
     getValue() {
-        codeBlockManager.restoreElements(this.$editorContainerEl, false, true);
-
         this._prepareGetHTML();
 
         let html = this.editor.getHTML();
@@ -798,33 +796,30 @@ class WysiwygEditor {
     /**
      * _prepareGetHTML
      * Prepare before get html
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @private
      */
     _prepareGetHTML() {
         this.getEditor().modifyDocument(() => {
             this._joinSplitedTextNodes();
-            this.eventManager.emit('wysiwygGetValueBefore', self);
+            this.eventManager.emit('wysiwygGetValueBefore', this);
         });
     }
 
     /**
      * postProcessForChange
-     * Post process for change
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     postProcessForChange() {
-        const self = this;
-        self.getEditor().modifyDocument(() => {
-            self.eventManager.emit('wysiwygRangeChangeAfter', self);
+        this.getEditor().modifyDocument(() => {
+            this.eventManager.emit('wysiwygRangeChangeAfter', this);
         });
     }
 
     /**
      * readySilentChange
      * Ready to silent change
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     readySilentChange() {
         if (canObserveMutations && !this.getEditor().isIgnoreChange()) {
@@ -835,8 +830,7 @@ class WysiwygEditor {
     /**
      * getEditor
      * Get squire
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {SquireExt} squire
      */
     getEditor() {
@@ -846,8 +840,7 @@ class WysiwygEditor {
     /**
      * replaceSelection
      * Replace text of passed range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {Range} range range
      */
@@ -858,8 +851,7 @@ class WysiwygEditor {
     /**
      * replaceRelativeOffset
      * Replace content by relative offset
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} content Content for change current selection
      * @param {number} offset Offset of current range
      * @param {number} overwriteLength Length to overwrite content
@@ -871,8 +863,7 @@ class WysiwygEditor {
     /**
      * addWidget
      * Add widget to selection
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {Node} node Widget node
      * @param {string} style Adding style "over" or "bottom"
@@ -894,8 +885,7 @@ class WysiwygEditor {
     /**
      * get$Body
      * Get jQuery wrapped body container of Squire
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {JQuery} jquery body
      */
     get$Body() {
@@ -905,8 +895,7 @@ class WysiwygEditor {
     /**
      * hasFormatWithRx
      * Check with given regexp whether current path has some format or not
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {RegExp} rx Regexp
      * @returns {boolean} Match result
      */
@@ -917,8 +906,7 @@ class WysiwygEditor {
     /**
      * breakToNewDefaultBlock
      * Break line to new default block from passed range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @param {string} [where] "before" or not
      */
@@ -936,14 +924,13 @@ class WysiwygEditor {
 
         range.setStart(div, 0);
         range.collapse(true);
-        this.editor.setSelection(range);
+        this.setRange(range);
     }
 
     /**
      * replaceContentText
      * Replace textContet of node
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Node} container Container node
      * @param {string} from Target text to change
      * @param {string} to Replacement text
@@ -956,8 +943,7 @@ class WysiwygEditor {
     /**
      * unwrapBlockTag
      * Unwrap Block tag of current range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {function} [condition] iterate with tagName
      */
     unwrapBlockTag(condition) {
@@ -971,46 +957,47 @@ class WysiwygEditor {
 
     /**
      * Set cursor position to end
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     moveCursorToEnd() {
         this.getEditor().moveCursorToEnd();
-        this.getEditor().scrollTop(this.get$Body().height());
+        this.scrollTop(this.$editorContainerEl.height());
         this._correctRangeAfterMoveCursor('end');
     }
 
     /**
      * Set cursor position to start
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      */
     moveCursorToStart() {
         this.getEditor().moveCursorToStart();
-        this.getEditor().scrollTop(0);
+        this.scrollTop(0);
     }
 
     /**
      * Set cursor position to start
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {number} value Scroll amount
      * @returns {boolean}
      */
     scrollTop(value) {
-        return this.getEditor().scrollTop(value);
+        if (util.isUndefined(value)) {
+            return this.$editorContainerEl.scrollTop();
+        }
+
+        return this.$editorContainerEl.scrollTop(value);
     }
 
     /**
      * _correctRangeAfterMoveCursor
      * For arrange Range after moveCursorToEnd api invocation. Squire has bug in Firefox, IE.
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {string} direction Direction of cursor move
      * @private
      */
     _correctRangeAfterMoveCursor(direction) {
-        const range = this.getEditor().getSelection().cloneRange();
-        let cursorContainer = this.get$Body()[0];
+        const range = this.getRange();
+        let cursorContainer = this.get$Body().get(0);
 
         if (direction === 'start') {
             while (cursorContainer.firstChild) {
@@ -1031,13 +1018,12 @@ class WysiwygEditor {
 
         range.collapse(true);
 
-        this.getEditor().setSelection(range);
+        this.setRange(range);
     }
 
     /**
      * Get current Range object
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @returns {Range}
      */
     getRange() {
@@ -1045,9 +1031,17 @@ class WysiwygEditor {
     }
 
     /**
+     * set range
+     * @param {Range} range - range to set
+     * @memberof WysiwygEditor
+     */
+    setRange(range) {
+        this.getEditor().setSelection(range);
+    }
+
+    /**
      * Get text object of current range
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {Range} range Range object
      * @returns {WwTextObject}
      */
@@ -1056,12 +1050,11 @@ class WysiwygEditor {
     }
 
     defer(callback, delayOffset) {
-        const self = this;
         const delay = delayOffset ? delayOffset : 0;
 
         setTimeout(() => {
-            if (self.isEditorValid()) {
-                callback(self);
+            if (this.isEditorValid()) {
+                callback(this);
             }
         }, delay);
     }
@@ -1077,8 +1070,7 @@ class WysiwygEditor {
 
     /**
      * WysiwygEditor factory method
-     * @api
-     * @memberOf WysiwygEditor
+     * @memberof WysiwygEditor
      * @param {jQuery} $el Container element for editor
      * @param {EventManager} eventManager EventManager instance
      * @param {object} [options={}] - option object

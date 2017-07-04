@@ -91,7 +91,7 @@ class ScrollSync {
      * @returns {object} scroll factors
      */
     _getScrollFactorsOfEditor() {
-        const cm = this.cm;
+        const {cm} = this;
         let scrollInfo = cm.getScrollInfo();
         let topLine, topSection, ratio, factors;
 
@@ -178,14 +178,13 @@ class ScrollSync {
         let scrollTop;
 
         const scrollFactors = this._getScrollFactorsOfEditor();
-        const section = scrollFactors.section;
-        const ratio = scrollFactors.sectionRatio;
+        const {section, sectionRatio} = scrollFactors;
 
         if (scrollFactors.isEditorBottom) {
             scrollTop = this.$contents.height();
         } else if (section.$previewSectionEl) {
             scrollTop = section.$previewSectionEl[0].offsetTop;
-            scrollTop += (section.$previewSectionEl.height() * ratio) - SCROLL_TOP_PADDING;
+            scrollTop += (section.$previewSectionEl.height() * sectionRatio) - SCROLL_TOP_PADDING;
         }
 
         scrollTop = scrollTop && Math.max(scrollTop, 0);
@@ -206,7 +205,7 @@ class ScrollSync {
         if (scrollFactors.isPreviewBottom) {
             scrollTop = this.cm.getScrollInfo().height;
         } else if (scrollFactors.section) {
-            const section = scrollFactors.section;
+            const {section} = scrollFactors;
             const coordsAtStart = this.cm.charCoords({
                 line: section.start,
                 char: 0
@@ -230,7 +229,7 @@ class ScrollSync {
      * sync preview scroll to markdown
      */
     syncPreviewScrollTopToMarkdown() {
-        const $previewContainerEl = this.$previewContainerEl;
+        const {$previewContainerEl} = this;
         const sourceScrollTop = $previewContainerEl.scrollTop();
         const targetScrollTop = this._getScrollTopForPreview();
 

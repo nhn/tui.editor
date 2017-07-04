@@ -4,7 +4,6 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import CommandManager from '../commandManager';
 
 /**
@@ -30,7 +29,7 @@ const Table = CommandManager.command('wysiwyg', /** @lends Table */{
         let tableHTMLString;
 
         if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
-            sq.focus();
+            wwe.focus();
 
             return;
         }
@@ -42,7 +41,7 @@ const Table = CommandManager.command('wysiwyg', /** @lends Table */{
 
         sq.insertHTML(tableHTMLString);
 
-        sq.focus();
+        wwe.focus();
 
         if (!data) {
             focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));

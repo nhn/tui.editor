@@ -12,8 +12,6 @@ describe('HR', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
-
         cm = mde.getEditor();
 
         const sourceText = ['mytext1', '', 'mytext2', 'mytext3'];
@@ -45,7 +43,13 @@ describe('HR', () => {
 
     describe('셀렉션이 있는경우 셀렉션의 내용을 라인으로 대체한다', () => {
         it('셀렉션 영역이 ***로 대체되었다', () => {
-            cm.setSelection({line: 0, ch: 1}, {line: 2, ch: 2});
+            cm.setSelection({
+                line: 0,
+                ch: 1
+            }, {
+                line: 2,
+                ch: 2
+            });
 
             HR.exec(mde);
 

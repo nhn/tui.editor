@@ -16,6 +16,7 @@ require('./extensions/scrollFollow');
 require('./extensions/colorSyntax');
 require('./extensions/mark/mark');
 require('./extensions/table/tableExtension');
+require('./extensions/codeBlockPlantUML');
 
 import ToastUIEditor from './editor';
 
@@ -33,7 +34,7 @@ require('./langs/nl_NL');
 $.fn.tuiEditor = function(...args) {
     let options, instance;
 
-    const el = this[0];
+    const el = this.get(0);
 
     if (el) {
         options = args[0] || {};
@@ -53,5 +54,3 @@ $.fn.tuiEditor = function(...args) {
 
     return this;
 };
-
-

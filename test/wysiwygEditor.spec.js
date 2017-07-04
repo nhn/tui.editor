@@ -1,4 +1,4 @@
-/* eslint-disable max-len, max-nested-callbacks */
+/* eslint-disable max-nested-callbacks */
 
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
@@ -440,7 +440,7 @@ describe('WysiwygEditor', () => {
 
             const range = wwe.getRange();
 
-            expect(wwe.getEditor().scrollTop()).not.toEqual(0);
+            expect(wwe.scrollTop()).not.toEqual(0);
             expect(range.startContainer).toEqual(wwe.get$Body()[0].lastChild);
             expect(range.startOffset).toEqual(1);
         });
@@ -451,7 +451,7 @@ describe('WysiwygEditor', () => {
 
             const range = wwe.getRange();
 
-            expect(wwe.getEditor().scrollTop()).toEqual(0);
+            expect(wwe.scrollTop()).toEqual(0);
             expect(range.startContainer).toEqual(wwe.get$Body().find('div')[0].firstChild);
             expect(range.startOffset).toEqual(0);
         });

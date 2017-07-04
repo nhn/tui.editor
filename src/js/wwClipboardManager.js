@@ -181,7 +181,7 @@ class WwClipboardManager {
         const tableSelectionManager = this.wwe.componentManager.getManager('tableSelection');
         const range = this.wwe.getEditor().getSelection();
         const pastingToTable = tableManager.isInTable(range);
-        const childNodes = $clipboardContainer[0].childNodes;
+        const {childNodes} = $clipboardContainer.get(0);
         const containsOneTableOnly = (childNodes.length === 1 && childNodes[0].nodeName === 'TABLE');
         let processed = false;
 

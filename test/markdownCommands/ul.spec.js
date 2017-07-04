@@ -13,7 +13,6 @@ describe('UL', () => {
 
         mde = new MarkdownEditor($container, new EventManager());
 
-        mde.init();
         mde.componentManager.addManager(mdListManager);
 
         cm = mde.getEditor();
@@ -54,7 +53,13 @@ describe('UL', () => {
         });
 
         it('영역선택후 추가된다', () => {
-            doc.setSelection({line: 0, ch: 0}, {line: 2, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 2,
+                ch: 7
+            });
 
             UL.exec(mde);
 
@@ -99,7 +104,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             UL.exec(mde);
 
@@ -113,7 +124,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '> myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             UL.exec(mde);
 
@@ -127,7 +144,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '```', 'var a = 10;', '```'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             UL.exec(mde);
 
@@ -141,7 +164,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '| hi | hello |', '| --- | --- |', '| bye | bye |'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 0, ch: 0}, {line: 4, ch: 7});
+            doc.setSelection({
+                line: 0,
+                ch: 0
+            }, {
+                line: 4,
+                ch: 7
+            });
 
             UL.exec(mde);
 
@@ -183,7 +212,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', 'mytext2', 'mytext3', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 1, ch: 0}, {line: 2, ch: 4});
+            doc.setSelection({
+                line: 1,
+                ch: 0
+            }, {
+                line: 2,
+                ch: 4
+            });
             UL.exec(mde);
 
             expect(doc.getLine(0)).toEqual('mytext1');
@@ -198,7 +233,13 @@ describe('UL', () => {
             const sourceText = ['mytext1', '', '1. mytext2', '1. mytext3', '', 'mytext4', '# myheading'];
 
             cm.setValue(sourceText.join('\n'));
-            doc.setSelection({line: 2, ch: 0}, {line: 3, ch: 4});
+            doc.setSelection({
+                line: 2,
+                ch: 0
+            }, {
+                line: 3,
+                ch: 4
+            });
             UL.exec(mde);
 
             expect(doc.getLine(0)).toEqual('mytext1');

@@ -40,6 +40,7 @@
   "opts": {
     "recurse": true,
     "name": "Editor",
-    "destination": "api/latest"
+    "destination": "api/latest",
+    "template": "node_modules/tui-jsdoc-template"
   }
 }

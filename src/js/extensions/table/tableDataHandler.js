@@ -3,7 +3,7 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-const util = tui.util;
+const {util} = tui;
 
 /**
  * Parse cell like td or th.
@@ -23,7 +23,7 @@ function _parseCell(cell, rowIndex, colIndex) {
     const $cell = $(cell);
     const colspan = $cell.attr('colspan');
     const rowspan = $cell.attr('rowspan');
-    const nodeName = cell.nodeName;
+    const {nodeName} = cell;
 
     if (nodeName !== 'TH' && nodeName !== 'TD') {
         return null;
@@ -56,11 +56,13 @@ function _parseCell(cell, rowIndex, colIndex) {
  * @private
  */
 function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
-    const colspan = cellData.colspan;
-    const rowspan = cellData.rowspan;
+    const {
+        colspan,
+        rowspan,
+        nodeName
+    } = cellData;
     const colMerged = colspan > 1;
     const rowMerged = rowspan > 1;
-    const nodeName = cellData.nodeName;
 
     if (!colMerged && !rowMerged) {
         return;
@@ -166,15 +168,15 @@ export function createCellIndexData(tableData) {
  * @private
  */
 function _getHeaderAligns(tableData) {
-    const headRowData = tableData[0];
+    const [headRowData] = tableData;
 
     return headRowData.map(cellData => {
         let align;
 
         if (util.isExisty(cellData.colMergeWith)) {
-            align = headRowData[cellData.colMergeWith].align;
+            ({align} = headRowData[cellData.colMergeWith]);
         } else {
-            align = cellData.align;
+            ({align} = cellData);
         }
 
         return align;
@@ -256,7 +258,6 @@ function findElementColIndex($cell) {
     return $cell.closest('td, th').prevAll().length;
 }
 
-
 /**
  * Find indexes of base table data from mappin data.
  * @param {Array.<Array.<object>>} cellIndexData - cell index data
@@ -335,7 +336,7 @@ function findElementIndex(tableData, rowIndex, colIndex) {
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
     tableData.forEach((rowData, rowIndex) => {
         const startIndex = rowData.length;
-        const nodeName = rowData[0].nodeName;
+        const [{nodeName}] = rowData;
 
         util.range(startIndex, limitIndex).forEach(colIndex => {
             rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
@@ -350,7 +351,7 @@ function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
  * @ignore
  */
 function addTbodyOrTheadIfNeed(tableData) {
-    const header = tableData[0];
+    const [header] = tableData;
     const cellCount = header.length;
     let added = true;
 

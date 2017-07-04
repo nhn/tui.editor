@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-
 import extManager from '../../extManager';
 import MarkerList from './markerList';
 import MarkerManager from './markerManager';
@@ -11,7 +10,7 @@ import WysiwygMarkerHelper from './wysiwygMarkerHelper';
 import ViewOnlyMarkerHelper from './viewOnlyMarkerHelper';
 import MarkdownMarkerHelper from './markdownMarkerHelper';
 
-const util = tui.util;
+const {util} = tui;
 
 const MARKER_UPDATE_DELAY = 100;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;

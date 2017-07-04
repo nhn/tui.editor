@@ -102,5 +102,4 @@ function isTaskListItemToken(tokens, index) {
 }
 /* eslint-enable */
 
-
 module.exports = MarkdownitTaskRenderer;

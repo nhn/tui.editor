@@ -4,18 +4,18 @@
  */
 
 import MarkdownEditor from './markdownEditor';
-import Preview from './preview';
+import MarkdownPreview from './mdPreview';
 import WysiwygEditor from './wysiwygEditor';
 import Layout from './layout';
 import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import ImportManager from './importManager';
-import codeBlockManager from './codeBlockManager';
+import CodeBlockManager from './codeBlockManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
-import DefaultUI from './ui/defaultUI';
 import i18n from './i18n';
+import DefaultUI from './ui/defaultUI';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -59,7 +59,7 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
-const util = tui.util;
+const {util} = tui;
 
 const __nedInstance = [];
 
@@ -92,18 +92,20 @@ const __nedInstance = [];
     * @param {string} language language
     * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
     * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
+    * @param {string[]} options.codeBlockLanguages supported code block languages to be listed
  */
 class ToastUIEditor {
     constructor(options) {
         const self = this;
 
         this.options = $.extend({
-            'previewStyle': 'tab',
-            'initialEditType': 'markdown',
-            'height': 300,
-            'language': 'en_US',
-            'useDefaultHTMLSanitizer': true,
-            'useCommandShortcut': true
+            previewStyle: 'tab',
+            initialEditType: 'markdown',
+            height: 300,
+            language: 'en_US',
+            useDefaultHTMLSanitizer: true,
+            useCommandShortcut: true,
+            codeBlockLanguages: CodeBlockManager.getHighlightJSLanguages()
         }, options);
 
         this.eventManager = new EventManager();
@@ -113,8 +115,6 @@ class ToastUIEditor {
         this.commandManager = new CommandManager(this, {
             useCommandShortcut: this.options.useCommandShortcut
         });
-
-        this.codeBlockManager = codeBlockManager;
 
         this.convertor = new Convertor(this.eventManager);
 
@@ -142,7 +142,7 @@ class ToastUIEditor {
         this.setUI(this.options.UI || new DefaultUI(this));
 
         this.mdEditor = MarkdownEditor.factory(this.layout.getMdEditorContainerEl(), this.eventManager);
-        this.preview = new Preview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
+        this.preview = new MarkdownPreview(this.layout.getPreviewEl(), this.eventManager, this.convertor);
         this.wwEditor = WysiwygEditor.factory(this.layout.getWwEditorContainerEl(), this.eventManager, {
             useCommandShortcut: this.options.useCommandShortcut
         });
@@ -647,6 +647,24 @@ class ToastUIEditor {
     }
 
     /**
+     * get markdownit with code highlight instance from convertor
+     * @returns {markdownit} - markdownit instance
+     * @memberof ToastUIEditor
+     */
+    getMarkdownHighlightRenderer() {
+        return this.convertor.getMarkdownHighlightRenderer();
+    }
+
+    /**
+     * set markdownit instance
+     * @param {markdownit} markdownitHighlight - markdownit instance
+     * @memberof ToastUIEditor
+     */
+    setMarkdownHighlightRenderer(markdownitHighlight) {
+        this.convertor.setMarkdownHighlightRenderer(markdownitHighlight);
+    }
+
+    /**
      * Get instance of TUIEditor
      * @api
      * @memberOf ToastUIEditor
@@ -732,10 +750,5 @@ class ToastUIEditor {
  * @type {I18n}
  */
 ToastUIEditor.i18n = i18n;
-
-/**
- * MarkdownIt custom renderer with code highlighting
- */
-ToastUIEditor.markdownItRenderer = Convertor.getMarkdownHighlightRenderer();
 
 module.exports = ToastUIEditor;
