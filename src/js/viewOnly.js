@@ -80,9 +80,26 @@ class ToastUIEditorViewOnly {
     }
 
     /**
+     * get markdownit with code highlight instance from convertor
+     * @returns {markdownit} - markdownit instance
+     * @memberof ToastUIEditorViewOnly
+     */
+    getMarkdownHighlightRenderer() {
+        return this.convertor.getMarkdownHighlightRenderer();
+    }
+
+    /**
+     * set markdownit instance
+     * @param {markdownit} markdownitHighlight - markdownit instance
+     * @memberof ToastUIEditorViewOnly
+     */
+    setMarkdownHighlightRenderer(markdownitHighlight) {
+        this.convertor.setMarkdownHighlightRenderer(markdownitHighlight);
+    }
+
+    /**
      * Set content for preview
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @param {string} markdown Markdown text
      */
     setMarkdown(markdown) {
@@ -94,8 +111,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Set content for preview
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @param {string} markdown Markdown text
      * @deprecated
      */
@@ -105,8 +121,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Bind eventHandler to event type
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -116,8 +131,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Unbind eventHandler from event type
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @param {string} type Event type
      */
     off(type) {
@@ -126,8 +140,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Remove ViewOnly preview from document
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      */
     remove() {
         this.eventManager.emit('removeEditor');
@@ -141,8 +154,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Add hook to ViewOnly preview's event
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -153,8 +165,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Return true
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @returns {boolean}
      */
     isViewOnly() {
@@ -163,8 +174,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Return false
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @returns {boolean}
      */
     isMarkdownMode() {
@@ -173,8 +183,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Return false
-     * @api
-     * @memberOf ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewOnly
      * @returns {boolean}
      */
     isWysiwygMode() {
