@@ -213,7 +213,6 @@ module.exports = function(config) {
         },
 
         remapCoverageReporter: {
-            text: null,
             html: 'report/coverage/html',
             cobertura: 'report/coverage/cobertura.xml'
         },
