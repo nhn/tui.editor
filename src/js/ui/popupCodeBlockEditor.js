@@ -11,6 +11,7 @@ const TEMPLATE_HEADER_BUTTONS = `
     <button class="${CLASS_PREFIX}save">close</button>
     <button class="${CLASS_PREFIX}toggle-preview">preview</button>
     <button class="${CLASS_PREFIX}toggle-fit">max</button>
+    <button class="${CLASS_PREFIX}toggle-scroll">scroll</button>
 `;
 
 /**
@@ -68,6 +69,7 @@ class PopupCodeBlockEditor extends LayerPopup {
         const el = this.$el.get(0);
         this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
         this._togglePreviewButton = el.querySelector(`.${CLASS_PREFIX}toggle-preview`);
+        this._toggleScrollButton = el.querySelector(`.${CLASS_PREFIX}toggle-scroll`);
 
         this._codeMirrorWrapper = this._createCodeBlockEditor();
         this._previewWrapper = this._createPreview();
@@ -75,6 +77,7 @@ class PopupCodeBlockEditor extends LayerPopup {
 
         this._updateFitWindowButton();
         this._updatePreviewButton();
+        this._updateScrollButton();
 
         this._codeBlockLanguagesCombo = this._createCodeBlockLanguagesCombo();
     }
@@ -89,9 +92,10 @@ class PopupCodeBlockEditor extends LayerPopup {
         super._initDOMEvent();
 
         this.on('scroll', ev => ev.preventDefault());
-        this.on(`click .${CLASS_PREFIX}toggle-fit`, this._toggleFitToWindow.bind(this));
-        this.on(`click .${CLASS_PREFIX}toggle-preview`, this._togglePreview.bind(this));
-        this.on(`click .${CLASS_PREFIX}save`, this._save.bind(this));
+        this.on(`click .${CLASS_PREFIX}toggle-fit`, () => this._toggleFitToWindow());
+        this.on(`click .${CLASS_PREFIX}toggle-preview`, () => this._togglePreview());
+        this.on(`click .${CLASS_PREFIX}toggle-scroll`, () => this._toggleScroll());
+        this.on(`click .${CLASS_PREFIX}save`, () => this._save());
         this.on(`click .${CLASS_PREFIX}editor-wrapper`, ev => {
             if (ev.target === this._codeMirrorWrapper) {
                 this._focusEditor(true);
@@ -163,6 +167,10 @@ class PopupCodeBlockEditor extends LayerPopup {
         $(this._togglePreviewButton).toggleClass('active', this._scrollSyncSplit.isSplitView());
     }
 
+    _updateScrollButton() {
+        $(this._toggleScrollButton).toggleClass('active', this._scrollSyncSplit.isScrollSynced());
+    }
+
     _focusEditor(cursorToEnd) {
         this._codeBlockEditor.focus();
         if (cursorToEnd) {
@@ -182,6 +190,11 @@ class PopupCodeBlockEditor extends LayerPopup {
         this.toggleFitToWindow();
         this._updateFitWindowButton();
         this._codeBlockEditor.refresh();
+    }
+
+    _toggleScroll() {
+        this._scrollSyncSplit.toggleScrollSync();
+        this._updateScrollButton();
     }
 
     /**

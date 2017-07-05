@@ -5,7 +5,6 @@ const CLASS_SINGLE_CONTENT = 'single-content';
 const CLASS_SCROLL_SYNC = 'scroll-sync';
 const CLASS_SCROLL_WRAPPER = 'tui-split-scroll-wrapper';
 const CLASS_SCROLL_CONTENT = 'tui-split-scroll-content';
-const CLASS_SCROLL_BUTTON = 'tui-scrollfollow';
 const CLASS_SPLITTER = 'tui-splitter';
 const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 const EVENT_REQUIRE_SCROLL_INTO_VIEW = 'requireScrollIntoView';
@@ -62,16 +61,11 @@ class ScrollSyncSplit {
         contentWrapper.className = CLASS_SCROLL_CONTENT;
         this._contentWrapper = contentWrapper;
 
-        const scrollSyncButton = document.createElement('button');
-        scrollSyncButton.className = CLASS_SCROLL_BUTTON;
-        this._scrollSyncButton = scrollSyncButton;
-
         const splitter = document.createElement('div');
         splitter.className = CLASS_SPLITTER;
 
         this._baseElement.appendChild(el);
         el.appendChild(scrollWrapper);
-        el.appendChild(scrollSyncButton);
         scrollWrapper.appendChild(contentWrapper);
         scrollWrapper.appendChild(splitter);
         this._setLeft(leftElement);
@@ -80,7 +74,6 @@ class ScrollSyncSplit {
 
     _initDomEvent() {
         this._contentWrapper.addEventListener('scroll', this.sync.bind(this));
-        this._scrollSyncButton.addEventListener('click', this._toggleScrollSync.bind(this));
     }
 
     _requireScrollIntoView(element) {
@@ -145,7 +138,7 @@ class ScrollSyncSplit {
      * toggle multi scroll
      * @memberof ScrollSyncSplit
      */
-    _toggleScrollSync() {
+    toggleScrollSync() {
         this._el.classList.toggle(CLASS_SCROLL_SYNC);
     }
 
@@ -162,12 +155,12 @@ class ScrollSyncSplit {
     }
 
     /**
-     * is multi scroll
-     * @returns {boolean} - true for multi scroll, false for single scroll
+     * is scroll synced
+     * @returns {boolean} - true for synced, false for each scroll
      * @memberof ScrollSyncSplit
      */
-    isMultiScroll() {
-        return !this._el.classList.contains(CLASS_SCROLL_SYNC);
+    isScrollSynced() {
+        return this._el.classList.contains(CLASS_SCROLL_SYNC);
     }
 
     /**
