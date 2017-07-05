@@ -120,8 +120,6 @@ class BlockOverlay {
             }
         } else if (!visibility) {
             if (this.getVisibility()) {
-                this.active = false;
-                this._$attachedElement = null;
                 this.$el.css('display', 'none');
                 this.onHide();
             }
@@ -140,9 +138,11 @@ class BlockOverlay {
      * called on hide. you may want to override to get the event
      * @memberof BlockOverlay
      * @protected
-     * @abstract
      */
-    onHide() {}
+    onHide() {
+        this.active = false;
+        this._$attachedElement = null;
+    }
 }
 
 module.exports = BlockOverlay;

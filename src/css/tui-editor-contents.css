@@ -123,22 +123,6 @@
     background-color: #fff;
 }
 
-.tui-editor-contents pre code::before,
-.tui-editor-contents pre[data-te-codeblock]::before {
-    content: ' ' attr(data-language);
-    display: block;
-    height: 20px;
-    padding: 5px 0px 5px 0px;
-    margin: -18px -18px 18px -18px;
-    background-color: #777777;
-    color: #f5f7f8;
-}
-
-.tui-popup-code-block-editor .tui-editor-contents pre code::before {
-    content: '';
-    display: none;
-}
-
 .tui-editor-contents img {
     margin: 4px 0 10px;
     box-sizing: border-box;

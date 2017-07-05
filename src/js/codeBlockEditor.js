@@ -1,5 +1,7 @@
 import CodeMirrorExt from './codeMirrorExt';
 
+const EVENT_LANGUAGE_CHANGED = 'language-changed';
+
 /**
  * Code Block Editor
  * @class CodeBlockEditor
@@ -80,6 +82,7 @@ class CodeBlockEditor extends CodeMirrorExt {
         });
 
         codeBlockElement.setAttribute('data-language', this._language);
+        $(codeBlockElement).trigger(EVENT_LANGUAGE_CHANGED);
     }
 
     /**

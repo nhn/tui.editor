@@ -786,33 +786,10 @@
     height: 100px;
 }
 
-.te-ww-block-overlay.code-block-header input[type=text] {
-    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
-    font-size: 13px;
-    padding: 4px 5px;
-    border: none;
-    box-sizing: border-box;
-    height: 24px;
-    width: 200px;
-    background-color: #777777;
-    color: #f5f7f8;
-    outline: none;
-    margin-left: 2px;
-    margin-top: 2px;
+.te-ww-block-overlay.code-block-header {
+    text-align: right;
 }
-.te-ww-block-overlay.code-block-header input[type=text]::-webkit-input-placeholder {
-    color: #aaaaaa;
-}
-.te-ww-block-overlay.code-block-header input[type=text]::-moz-placeholder {
-   color: #aaaaaa;
-   opacity: 1;
-}
-.te-ww-block-overlay.code-block-header input[type=text]:-ms-input-placeholder {
-   color: #aaaaaa;
-}
-.te-ww-block-overlay.code-block-header input[type=text]::-ms-input-placeholder {
-   color: #aaaaaa;
-}
+
 .te-ww-block-overlay.code-block-header button,
 .tui-popup-code-block-editor button {
     float: right;
@@ -821,6 +798,23 @@
     color: #666;
     border-radius: 3px;
     padding: 3px 8px;
+}
+
+.te-ww-block-overlay.code-block-header span {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 0px 10px;
+    color: #669;
+}
+
+.te-ww-block-overlay.code-block-header span.label {
+    border-right: solid 1px;
+    cursor: default;
+}
+
+.te-ww-block-overlay.code-block-header span.button {
+    cursor: pointer;
 }
 
 .te-ww-block-overlay.code-block-header button {
@@ -858,6 +852,16 @@
     width: 70%;
     height: 70%;
     margin: auto;
+}
+
+.tui-popup-code-block-editor .tui-popup-title input[type=text] {
+    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-size: 13px;
+    padding: 4px 5px;
+    border: none;
+    box-sizing: border-box;
+    width: 200px;
+    outline: none;
 }
 
 .tui-popup-code-block-editor button {

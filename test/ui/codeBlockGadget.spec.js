@@ -4,6 +4,8 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import CodeBlockGadget from '../../src/js/ui/codeBlockGadget';
 import EventManager from '../../src/js/eventManager';
 import KeyMapper from '../../src/js/keyMapper';
+const GADGET_WIDTH = 250;
+const GADGET_HEIGHT = 30;
 
 describe('code block gadget', () => {
     let gadget,
@@ -49,33 +51,53 @@ describe('code block gadget', () => {
         $wysiwygContainer.remove();
     });
 
-    it('language accessor should get/set language on code block', () => {
-        gadget._setLanguage('java');
-        expect($targetElement.attr('data-language')).toBe('java');
+    it('_openPopupCodeBlockEditor() should emit event', done => {
+        em.listen('openPopupCodeBlockEditor', codeBlockElement => {
+            expect(codeBlockElement.tagName).toBe('PRE');
+            done();
+        });
 
-        $targetElement.attr('data-language', 'javascript');
-        expect(gadget._getLanguage()).toBe('javascript');
+        gadget._openPopupCodeBlockEditor();
     });
 
-    it('restore input form on gadget become visible', () => {
-        gadget.setVisibility(true);
-        expect(gadget._$inputLanguage.val()).toBe('javascript');
+    it('_updateLanguage() should update label', () => {
+        $targetElement.removeAttr('data-language');
+        gadget._updateLanguage();
+        expect(gadget._$languageLabel.text()).toBe('unknown');
+
+        $targetElement.attr('data-language', 'changedLang');
+        gadget._updateLanguage();
+        expect(gadget._$languageLabel.text()).toBe('changedLang');
+
+        gadget.onHide();
+        gadget._updateLanguage();
+        expect(gadget._$languageLabel.text()).toBe('unknown');
     });
 
-    it('store typed language on enter, tab key', () => {
-        gadget.setVisibility(true);
-        gadget._$inputLanguage.val('java');
+    describe('language label should be updated', () => {
+        it('on onShow', () => {
+            $targetElement.attr('data-language', 'changedLang');
 
-        const press = $.Event('keydown');
-        press.which = KeyMapper.keyCode('ENTER');
-        gadget._$inputLanguage.trigger(press);
+            gadget.onShow();
 
-        expect($targetElement.attr('data-language')).toBe('java');
+            expect(gadget._$languageLabel.text()).toBe('changedLang');
+        });
 
-        gadget._$inputLanguage.val('php');
-        press.which = KeyMapper.keyCode('TAB');
-        gadget._$inputLanguage.trigger(press);
+        it('on language-changed event', () => {
+            gadget.onShow();
 
-        expect($targetElement.attr('data-language')).toBe('php');
+            $targetElement.attr('data-language', 'changedLang');
+
+            $targetElement.trigger('language-changed');
+
+            expect(gadget._$languageLabel.text()).toBe('changedLang');
+        });
+    });
+
+    it('syncLayout() should fix its size', () => {
+        gadget.syncLayout();
+
+        expect(gadget.$el.height()).toBe(GADGET_HEIGHT);
+        expect(gadget.$el.width()).toBe(GADGET_WIDTH);
     });
 });

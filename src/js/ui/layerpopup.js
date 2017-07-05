@@ -193,6 +193,15 @@ class LayerPopup extends UIController {
     }
 
     /**
+     * get title element
+     * @memberof LayerPopup
+     * @returns {HTMLElement} - title html element
+     */
+    getTitleElement() {
+        return this.$el.find(`.${CLASS_PREFIX}title`).get(0);
+    }
+
+    /**
      * hide popup
      * @memberof LayerPopup
      */
