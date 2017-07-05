@@ -57,6 +57,8 @@ class PopupCodeBlockLanguages extends LayerPopup {
     _initDOM(options) {
         super._initDOM(options);
 
+        this.$el.css('z-index', 10000);
+
         this._$buttons = this.$el.find('button');
         this._activateButtonByIndex(0);
     }
@@ -90,7 +92,6 @@ class PopupCodeBlockLanguages extends LayerPopup {
         super._initEditorEvent();
 
         this.eventManager.listen('openPopupCodeBlockLanguages', data => {
-            this.eventManager.emit('closeAllPopup');
             this.show(data.callback);
             this.$el.offset(data.offset);
             this.setCurrentLanguage(data.language);

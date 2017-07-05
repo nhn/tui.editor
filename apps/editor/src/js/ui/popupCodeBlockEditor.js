@@ -2,6 +2,7 @@ import LayerPopup from './layerpopup';
 import ScrollSyncSplit from './scrollSyncSplit';
 import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
+import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
 
 const {util} = tui;
 
@@ -50,6 +51,7 @@ class PopupCodeBlockEditor extends LayerPopup {
         this._toggleFitButton = null;
         this._togglePreviewButton = null;
         this._scrollSyncSplit = null;
+        this._codeBlockLanguagesCombo = null;
         this.eventManager = options.eventManager;
         this.convertor = options.convertor;
     }
@@ -73,6 +75,8 @@ class PopupCodeBlockEditor extends LayerPopup {
 
         this._updateFitWindowButton();
         this._updatePreviewButton();
+
+        this._codeBlockLanguagesCombo = this._createCodeBlockLanguagesCombo();
     }
 
     /**
@@ -135,6 +139,22 @@ class PopupCodeBlockEditor extends LayerPopup {
         return previewWrapper;
     }
 
+    _createCodeBlockLanguagesCombo() {
+        const titleElement = this.getTitleElement();
+        const codeBlockLanguagesCombo = new CodeBlockLanguagesCombo(this.eventManager);
+
+        codeBlockLanguagesCombo.setOnLanguageSelected(selectedLanguage => {
+            this._codeBlockEditor.setLanguage(selectedLanguage);
+            this._codeBlockEditor.refresh();
+            this._focusEditor();
+        });
+
+        titleElement.innerHTML = '';
+        titleElement.appendChild(codeBlockLanguagesCombo.getElement());
+
+        return codeBlockLanguagesCombo;
+    }
+
     _updateFitWindowButton() {
         $(this._toggleFitButton).toggleClass('active', this.isFitToWindow());
     }
@@ -183,6 +203,7 @@ class PopupCodeBlockEditor extends LayerPopup {
     _load(codeBlockElement) {
         this._codeBlockElement = codeBlockElement;
         this._codeBlockEditor.load(codeBlockElement);
+        this._codeBlockLanguagesCombo.setLanguage(this._codeBlockEditor.getLanguage());
         this._focusEditor();
         this._codeBlockPreview.refresh();
     }
