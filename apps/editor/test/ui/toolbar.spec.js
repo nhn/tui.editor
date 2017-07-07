@@ -1,6 +1,6 @@
 
 const Toolbar = require('../../src/js/ui/toolbar');
-const CommandMangager = require('../../src/js/commandManager');
+const CommandManager = require('../../src/js/commandManager');
 const Command = require('../../src/js/command');
 const EventManager = require('../../src/js/eventManager');
 const Button = require('../../src/js/ui/button');
@@ -13,7 +13,7 @@ describe('Toolbar', () => {
     beforeEach(() => {
         em = new EventManager();
         em.addEventType('test');
-        cm = new CommandMangager({
+        cm = new CommandManager({
             eventManager: em
         });
         toolbar = new Toolbar(em, cm);
@@ -48,6 +48,16 @@ describe('Toolbar', () => {
             expect(toolbar.buttons.length).toBe(len + 1);
         });
 
+        it('addButton with index should insert button into given position', () => {
+             toolbar.addButton({
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            }, 0);
+
+            expect(toolbar.buttons[0].$el.text()).toBe('test');
+        });
+
         it('add multiple buttons via array', () => {
             const len = toolbar.buttons.length;
 
@@ -62,6 +72,21 @@ describe('Toolbar', () => {
             }]);
 
             expect(toolbar.buttons.length).toBe(len + 2);
+        });
+
+        it('add multiple buttons via array with index should insert buttons into given position', () => {
+            toolbar.addButton([{
+                className: 'test',
+                command: 'test',
+                text: 'test'
+            }, {
+                className: 'test2',
+                command: 'test2',
+                text: 'test2'
+            }], 1);
+
+            expect(toolbar.buttons[1].$el.text()).toBe('test');
+            expect(toolbar.buttons[2].$el.text()).toBe('test2');
         });
 
         it('click on added button emits given command', () => {
@@ -101,6 +126,26 @@ describe('Toolbar', () => {
 
             expect(handler).toHaveBeenCalled();
         });
+    });
+
+    it('button state should be (de)activated on stateChange event', () => {
+        toolbar.addButton(new Button({
+            className: 'testButton',
+            event: 'testEvent',
+            text: 'textText',
+            state: 'testState'
+        }), 0);
+        const $buttonEl = toolbar.buttons[0].$el;
+
+        em.emit('stateChange', {
+            testState: true
+        });
+        expect($buttonEl.hasClass('active')).toBe(true);
+
+        em.emit('stateChange', {
+            testState: false
+        });
+        expect($buttonEl.hasClass('active')).toBe(false);
     });
 
     describe('toolbar', () => {

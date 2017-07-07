@@ -27,6 +27,7 @@ extManager.defineExtension('scrollFollow', editor => {
     let isScrollable = false;
     let isActive = true;
     let button;
+    let $divider;
 
     // UI
     if (editor.getUI().name === 'default') {
@@ -38,6 +39,7 @@ extManager.defineExtension('scrollFollow', editor => {
             $el: $(`<button class="active ${className}" type="button"></button>`)
         });
 
+        $divider = editor.getUI().toolbar.addDivider();
         editor.getUI().toolbar.addButton(button);
 
         changeButtonVisiblityStateIfNeed();
@@ -75,8 +77,10 @@ extManager.defineExtension('scrollFollow', editor => {
     function changeButtonVisiblityStateIfNeed() {
         if (editor.mdPreviewStyle === 'vertical' && editor.currentMode === 'markdown') {
             button.$el.show();
+            $divider.show();
         } else {
             button.$el.hide();
+            $divider.hide();
         }
     }
 
