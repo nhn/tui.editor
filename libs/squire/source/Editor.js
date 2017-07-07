@@ -617,9 +617,9 @@ proto._updatePath = function ( range, force ) {
 // selectionchange is fired synchronously in IE when removing current selection
 // and when setting new selection; keyup/mouseup may have processing we want
 // to do first. Either way, send to next event loop.
-proto._updatePathOnEvent = function () {
+proto._updatePathOnEvent = function ( event ) {
     var self = this;
-    if ( !self._willUpdatePath ) {
+    if ( self._isFocused && !self._willUpdatePath ) {
         self._willUpdatePath = true;
         setTimeout( function () {
             self._willUpdatePath = false;
