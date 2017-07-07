@@ -86,10 +86,11 @@ class PopupAddHeading extends LayerPopup {
             this._eventManager.emit('closeAllPopup');
 
             const $button = this._$button;
-            const position = $button.position();
+            const position = $button.offset();
             this.$el.css({
-                top: position.top + $button.height() + 5,
-                left: position.left
+                top: position.top + $button.height(),
+                left: position.left,
+                position: 'fixed'
             });
 
             this.show();

@@ -14,6 +14,8 @@ import PopupAddTable from './popupAddTable';
 import PopupAddHeading from './popupAddHeading';
 import PopupCodeBlockLanguages from './popupCodeBlockLanguages';
 import PopupCodeBlockEditor from './popupCodeBlockEditor';
+import i18n from '../i18n.js';
+import tooltip from './tooltip';
 
 const CLASS_TOOLBAR = 'te-toolbar-section';
 const CLASS_MARKDOWN_TAB = 'te-markdown-tab-section';
@@ -21,8 +23,7 @@ const CLASS_EDITOR = 'te-editor-section';
 const CLASS_MODE_SWITCH = 'te-mode-switch-section';
 const CONTAINER_TEMPLATE = `
     <div class="tui-editor-defaultUI">
-        <div class="${CLASS_TOOLBAR}"></div>
-        <div class="${CLASS_MARKDOWN_TAB}"></div>
+        <div class="${CLASS_TOOLBAR}"><div class="${CLASS_MARKDOWN_TAB}"></div></div>
         <div class="${CLASS_EDITOR}"></div>
         <div class="${CLASS_MODE_SWITCH}"></div>
     </div>
@@ -106,15 +107,15 @@ class DefaultUI {
         const editor = this._editor;
 
         this.markdownTab = new Tab({
-            initName: 'Editor',
-            items: ['Editor', 'Preview'],
+            initName: i18n.get('Write'),
+            items: [i18n.get('Write'), i18n.get('Preview')],
             sections: [editor.layout.getMdEditorContainerEl(), editor.layout.getPreviewEl()]
         });
         this._$markdownTabSection = this.$el.find(`.${CLASS_MARKDOWN_TAB}`);
         this._$markdownTabSection.append(this.markdownTab.$el);
 
         this.markdownTab.on('itemClick', (ev, itemText) => {
-            if (itemText === 'Preview') {
+            if (itemText === i18n.get('Preview')) {
                 editor.eventManager.emit('previewNeedsRefresh');
             } else {
                 editor.getCodeMirror().focus();
@@ -125,7 +126,7 @@ class DefaultUI {
     _markdownTabControl() {
         if (this._editor.isMarkdownMode() && this._editor.getCurrentPreviewStyle() === 'tab') {
             this._$markdownTabSection.show();
-            this.markdownTab.activate('Editor');
+            this.markdownTab.activate(i18n.get('Write'));
         } else {
             this._$markdownTabSection.hide();
         }
@@ -220,6 +221,7 @@ class DefaultUI {
      */
     remove() {
         this.$el.remove();
+        tooltip.hide();
     }
 
     /**

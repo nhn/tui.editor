@@ -1,6 +1,8 @@
 tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
+    'Write': 'Write',
+    'Preview': 'Preview',
     'Headings': 'Koppen',
     'Paragraph': 'tekst',
     'Bold': 'Vet',

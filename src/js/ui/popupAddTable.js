@@ -126,8 +126,9 @@ class PopupAddTable extends LayerPopup {
         this._eventManager.listen('openPopupAddTable', () => {
             this._eventManager.emit('closeAllPopup');
             this.$el.css({
-                'top': this.$button.position().top + this.$button.height() + 5,
-                'left': this.$button.position().left
+                'top': this.$button.offset().top + this.$button.height(),
+                'left': this.$button.offset().left,
+                'position': 'fixed'
             });
             this.show();
             this._selectionOffset = this.$el.find(`.${CLASS_TABLE_SELECTION}`).offset();

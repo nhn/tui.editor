@@ -18,7 +18,7 @@ class Tooltip {
     constructor() {
         this.$el = $(TOOLTIP_CONTENT);
         this.$el.appendTo('body');
-        this.$el.hide();
+        this.hide();
     }
 
     /**
@@ -36,6 +36,10 @@ class Tooltip {
     hide() {
         this.$el.hide();
     }
+
+    remove() {
+        this.$el.remove();
+    }
 }
 
-module.exports = Tooltip;
+module.exports = new Tooltip();

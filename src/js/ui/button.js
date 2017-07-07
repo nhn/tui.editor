@@ -4,9 +4,7 @@
  */
 
 const UIController = require('./uicontroller');
-const Tooltip = require('./tooltip');
-
-const tooltip = new Tooltip();
+const tooltip = require('./tooltip');
 
 /**
  * Button UI

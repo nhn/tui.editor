@@ -112,7 +112,7 @@ function initUI(editor, preset) {
         className,
         event: 'colorButtonClicked',
         tooltip: i18n.get('Text color')
-    }, 2);
+    }, 4);
     const $button = editor.getUI().toolbar.$el.find(`button.${className}`);
 
     const $colorPickerContainer = $('<div />');
@@ -155,8 +155,9 @@ function initUI(editor, preset) {
             popup.hide();
         } else {
             popup.$el.css({
-                'top': $button.position().top + $button.height() + 5,
-                'left': $button.position().left
+                'top': $button.offset().top + $button.height(),
+                'left': $button.offset().left,
+                'position': 'fixed'
             });
             popup.show();
             colorPicker.slider.toggle(true);

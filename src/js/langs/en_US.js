@@ -1,6 +1,8 @@
 tui.Editor.i18n.setLang(['en', 'en_US'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
+    'Write': 'Write',
+    'Preview': 'Preview',
     'Headings': 'Headings',
     'Paragraph': 'Paragraph',
     'Bold': 'Bold',
