@@ -503,20 +503,23 @@ function restoreSelection () {
 }
 
 proto.getSelectedText = function () {
-    var range = this.getSelection(),
-        walker = new TreeWalker(
-            range.commonAncestorContainer,
-            SHOW_TEXT|SHOW_ELEMENT,
-            function ( node ) {
-                return isNodeContainedInRange( range, node, true );
-            }
-        ),
-        startContainer = range.startContainer,
-        endContainer = range.endContainer,
-        node = walker.currentNode = startContainer,
-        textContent = '',
-        addedTextInBlock = false,
-        value;
+    var range = this.getSelection();
+    if ( !range || range.collapsed ) {
+        return '';
+    }
+    var walker = new TreeWalker(
+        range.commonAncestorContainer,
+        SHOW_TEXT|SHOW_ELEMENT,
+        function ( node ) {
+            return isNodeContainedInRange( range, node, true );
+        }
+    );
+    var startContainer = range.startContainer;
+    var endContainer = range.endContainer;
+    var node = walker.currentNode = startContainer;
+    var textContent = '';
+    var addedTextInBlock = false;
+    var value;
 
     if ( !walker.filter( node ) ) {
         node = walker.nextNode();
@@ -595,6 +598,9 @@ proto._removeZWS = function () {
 // --- Path change events ---
 
 proto._updatePath = function ( range, force ) {
+    if ( !range ) {
+        return;
+    }
     var anchor = range.startContainer,
         focus = range.endContainer,
         newPath;
@@ -1639,7 +1645,9 @@ proto.setHTML = function ( html ) {
 };
 
 proto.insertElement = function ( el, range ) {
-    if ( !range ) { range = this.getSelection(); }
+    if ( !range ) {
+        range = this.getSelection();
+    }
     range.collapse( true );
     if ( isInline( el ) ) {
         insertNodeInRange( range, el );
