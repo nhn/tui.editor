@@ -56,7 +56,24 @@ DomRunner.prototype.next = function() {
  * @returns {HTMLElement} current node
  */
 DomRunner.prototype.getNode = function() {
-    return this._current;
+    var childNode, nextNode;
+    var node = this._current;
+    if (!node || node.childNodes.length < 2) {
+        return node;
+    }
+
+    childNode = node.firstChild;
+    while (childNode.nextSibling) {
+        nextNode = childNode.nextSibling;
+        if (childNode.nodeType === NODE.TEXT_NODE && nextNode.nodeType === NODE.TEXT_NODE) {
+            childNode.nodeValue += nextNode.nodeValue;
+            node.removeChild(nextNode);
+        } else {
+            childNode = nextNode;
+        }
+    }
+
+    return node;
 };
 
 /**
@@ -97,19 +114,9 @@ DomRunner.prototype._isNeedNextSearch = function(node, current) {
  * @returns {node} next node
  */
 DomRunner.prototype._getNextNode = function(current) {
-    var node = current.firstChild || current.nextSibling;
-
-    if (node && node.nodeType === NODE.TEXT_NODE) {
-        while (node.nextSibling && node.nextSibling.nodeType === NODE.TEXT_NODE) {
-            node.nodeValue += node.nextSibling.nodeValue;
-            node.parentNode.removeChild(node.nextSibling);
-        }
-    }
-
-    return node;
+    return current.firstChild || current.nextSibling;
 };
 
 DomRunner.NODE_TYPE = NODE;
 
 module.exports = DomRunner;
-
