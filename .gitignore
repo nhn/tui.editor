@@ -44,9 +44,6 @@ Desktop.ini
 # build
 build
 
-# distribution
-dist
-
 # etc
 *.swp
 etc
