@@ -1,12 +1,8 @@
 'use strict';
 
-module.exports = function(config) {
-    var webdriverConfig = {
-        hostname: 'fe.nhnent.com',
-        port: 4444,
-        remoteHost: true
-    };
+var pkg = require('./package.json');
 
+module.exports = function(config) {
     config.set({
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
@@ -14,21 +10,6 @@ module.exports = function(config) {
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
         frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
-
-        plugins: [
-            //common
-            'karma-jasmine',
-            'karma-jasmine-ajax',
-            'karma-jasmine-jquery',
-            'karma-sourcemap-loader',
-            'karma-webpack',
-
-            //this config only
-            'karma-webdriver-launcher',
-            'istanbul-instrumenter-loader',
-            'karma-coverage',
-            'karma-junit-reporter'
-        ],
 
         // list of files / patterns to load in the browser
         files: [
@@ -106,57 +87,86 @@ module.exports = function(config) {
         reporters: [
             'dots',
             'coverage',
-            'junit'
+            'junit',
+            'saucelabs'
         ],
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: true,
 
+        concurrency: 5,
+
+        browserNoActivityTimeout: 60000,
+
+        sauceLabs: {
+            testName: pkg.name + ' ::: ' + pkg.version + ' ::: ' + new Date().toLocaleDateString('en-US'),
+            username: process.env.SAUCE_USERNAME,
+            accessKey: process.env.SAUCE_ACCESS_KEY,
+            startConnect: true,
+            tags: [pkg.name, pkg.version],
+            build: pkg.version,
+            passed: true,
+            recordVideo: true,
+            recordScreenshots: true,
+            recordLogs: true,
+            webdriverRemoteQuietExceptions: true
+        },
+
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: [
-            'IE9',
-            'IE10',
-            'IE11',
-            'Edge',
-            'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            'sl_ie_9',
+            'sl_ie_10',
+            'sl_ie_11',
+            'sl_edge_14',
+            'sl_safari',
+            'sl_chrome',
+            'sl_firefox'
         ],
 
         customLaunchers: {
-            'IE9': {
-                base: 'WebDriver',
-                config: webdriverConfig,
+            'sl_chrome': {
+                base: 'SauceLabs',
+                browserName: 'chrome',
+                platform: 'Linux',
+                version: '48'
+            },
+            'sl_firefox': {
+                base: 'SauceLabs',
+                browserName: 'firefox',
+                platform: 'OS X 10.12',
+                version: '54.0'
+            },
+            'sl_ie_9': {
+                base: 'SauceLabs',
                 browserName: 'internet explorer',
-                version: 9
+                platform: 'Windows 7',
+                version: '9.0'
             },
-            'IE10': {
-                base: 'WebDriver',
-                config: webdriverConfig,
+            'sl_ie_10': {
+                base: 'SauceLabs',
                 browserName: 'internet explorer',
-                version: 10
+                platform: 'Windows 8',
+                version: '10.0'
             },
-            'IE11': {
-                base: 'WebDriver',
-                config: webdriverConfig,
+            'sl_ie_11': {
+                base: 'SauceLabs',
                 browserName: 'internet explorer',
-                version: 11
+                platform: 'Windows 8.1',
+                version: '11.0'
             },
-            'Edge': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'MicrosoftEdge'
+            'sl_edge_14': {
+                base: 'SauceLabs',
+                browserName: 'MicrosoftEdge',
+                platform: 'Windows 10',
+                version: '15.15063'
             },
-            'Chrome-WebDriver': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'chrome'
-            },
-            'Firefox-WebDriver': {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'firefox'
+            'sl_safari': {
+                base: 'SauceLabs',
+                browserName: 'safari',
+                platform: 'OS X 10.12',
+                version: '10.0'
             }
         }
     });

@@ -122,7 +122,6 @@
     "no-octal-escape": 2,
     "no-octal": 2,
     "no-param-reassign": 0,
-    "no-process-env": 2,
     "no-proto": 2,
     "no-redeclare": 2,
     "no-return-assign": [
@@ -245,10 +244,6 @@
       }
     ],
     "keyword-spacing": 2,
-    "linebreak-style": [
-      2,
-      "unix"
-    ],
     "lines-around-comment": 0,
     "max-depth": [
       2,
