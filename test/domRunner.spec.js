@@ -367,9 +367,7 @@ describe('domRunner', function() {
         });
 
         it('domRunner returns normalized node', function() {
-            expect(domRunner.getNode().childNodes.length).toBe(1);
-            domRunner.next();
-            expect(domRunner.getNode().nodeValue).toBe('test -text');
+            expect(domRunner.next().nodeValue).toBe('test -text');
         });
     });
 });
