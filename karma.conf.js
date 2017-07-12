@@ -97,7 +97,12 @@ module.exports = function(config) {
 
         concurrency: 5,
 
-        browserNoActivityTimeout: 60000,
+        browserNoActivityTimeout: 120000,
+
+        // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
+        // 127.0.0.1    tui.dev
+        // https://support.saucelabs.com/hc/en-us/articles/115010079868-Issues-with-Safari-and-Karma-Test-Runner
+        hostname: 'tui.dev',
 
         sauceLabs: {
             testName: pkg.name + ' ::: ' + pkg.version + ' ::: ' + new Date().toLocaleDateString('en-US'),
@@ -119,7 +124,7 @@ module.exports = function(config) {
             'sl_ie_9',
             'sl_ie_10',
             'sl_ie_11',
-            'sl_edge_14',
+            'sl_edge_15',
             'sl_safari',
             'sl_chrome',
             'sl_firefox'
@@ -129,13 +134,13 @@ module.exports = function(config) {
             'sl_chrome': {
                 base: 'SauceLabs',
                 browserName: 'chrome',
-                platform: 'Linux',
-                version: '48'
+                platform: 'Windows 10',
+                version: '59.0'
             },
             'sl_firefox': {
                 base: 'SauceLabs',
                 browserName: 'firefox',
-                platform: 'OS X 10.12',
+                platform: 'macOS 10.12',
                 version: '54.0'
             },
             'sl_ie_9': {
@@ -156,7 +161,7 @@ module.exports = function(config) {
                 platform: 'Windows 8.1',
                 version: '11.0'
             },
-            'sl_edge_14': {
+            'sl_edge_15': {
                 base: 'SauceLabs',
                 browserName: 'MicrosoftEdge',
                 platform: 'Windows 10',
@@ -165,7 +170,7 @@ module.exports = function(config) {
             'sl_safari': {
                 base: 'SauceLabs',
                 browserName: 'safari',
-                platform: 'OS X 10.12',
+                platform: 'macOS 10.12',
                 version: '10.0'
             }
         }
