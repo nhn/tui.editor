@@ -76,16 +76,16 @@ function setConfig(defaultConfig, server, browser) {
             defaultConfig.customLaunchers.sl_chrome = {
                 base: 'SauceLabs',
                 browserName: 'chrome',
-                platform: 'Linux',
-                version: '48'
+                platform: 'Windows 10',
+                version: '59.0'
             };
         }
         if (browser === 'Firefox' || !browser) {
             defaultConfig.customLaunchers.sl_firefox = {
                 base: 'SauceLabs',
                 browserName: 'firefox',
-                platform: 'OS X 10.11',
-                version: '49'
+                platform: 'macOS 10.12',
+                version: '54.0'
             };
         }
         if (browser === 'IE10' || !browser) {
@@ -93,7 +93,7 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'SauceLabs',
                 browserName: 'internet explorer',
                 platform: 'Windows 8',
-                version: '10'
+                version: '10.0'
             };
         }
         if (browser === 'IE11' || !browser) {
@@ -101,7 +101,7 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'SauceLabs',
                 browserName: 'internet explorer',
                 platform: 'Windows 8.1',
-                version: '11'
+                version: '11.0'
             };
         }
         if (browser === 'Edge') {
@@ -109,20 +109,25 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'SauceLabs',
                 browserName: 'MicrosoftEdge',
                 platform: 'Windows 10',
-                version: '14'
+                version: '15.15063'
             };
         }
         if (browser === 'Safari') {
             defaultConfig.customLaunchers.sl_safari = {
                 base: 'SauceLabs',
                 browserName: 'safari',
-                platform: 'OS X 10.11',
-                version: '10'
+                platform: 'macOS 10.12',
+                version: '10.0'
             };
         }
         defaultConfig.reporters.push('saucelabs');
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
-        defaultConfig.browserNoActivityTimeout = 30000;
+        defaultConfig.browserNoActivityTimeout = 120000;
+
+        // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
+        // 127.0.0.1    tui.dev
+        // https://support.saucelabs.com/hc/en-us/articles/115010079868-Issues-with-Safari-and-Karma-Test-Runner
+        defaultConfig.hostname = 'tui.dev';
     } else {
         browser = browser || 'Chrome';
         defaultConfig.browsers = [
