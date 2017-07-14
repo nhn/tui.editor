@@ -191,7 +191,7 @@ class Toolbar extends UIController {
             codeBlock: {
                 className: 'tui-codeblock',
                 command: 'CodeBlock',
-                tooltip: i18n.get('Insert codeblock'),
+                tooltip: i18n.get('Insert CodeBlock'),
                 state: 'codeBlock'
             },
             code: {

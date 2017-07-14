@@ -750,11 +750,11 @@
 }
 
 .tui-toolbar-icons.tui-code {
-    background-position: -70px -70px;
+    background-position: -70px -92px;
 }
 
 .tui-toolbar-icons.tui-codeblock {
-    background-position: -70px -92px;
+    background-position: -70px -70px;
 }
 
 .tui-toolbar-icons.tui-link {
