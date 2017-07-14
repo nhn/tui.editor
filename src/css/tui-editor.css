@@ -306,7 +306,6 @@
     cursor: pointer;
     z-index: 1;
     font-size: 13px;
-    height: 32px;
     background-color: #f9f9f9;
     border: solid 1px #e5e5e5;
     border-top: 0;
@@ -446,7 +445,6 @@
     border-radius: 2px;
     border: 1px solid #bfbfbf;
     box-sizing: border-box;
-    height: 28px;
     width: 100%;
 }
 
@@ -483,6 +481,8 @@
     background: #eee;
     min-width: 100px;
     margin-left: -1px;
+    border-bottom: 0px;
+    border-radius: 3px 3px 0px 0px;
 }
 
 .te-popup-add-image .te-tab button.te-tab-active {
