@@ -1852,11 +1852,8 @@ proto.insertPlainText = function ( plainText, isPaste ) {
     for ( i = 0, l = lines.length; i < l; i += 1 ) {
         line = lines[i];
         line = escapeHTMLFragement( line ).replace( / (?= )/g, '&nbsp;' );
-        // Wrap all but first/last lines in <div></div>
-        if ( i && i + 1 < l ) {
-            line = openBlock + ( line || '<BR>' ) + closeBlock;
-        }
-        lines[i] = line;
+        // Wrap each line in <div></div>
+        lines[i] = openBlock + ( line || '<BR>' ) + closeBlock;
     }
     return this.insertHTML( lines.join( '' ), isPaste );
 };

@@ -85,6 +85,10 @@ function getNextBlock ( node, root ) {
     return node !== root ? node : null;
 }
 
+function isEmptyBlock ( block ) {
+    return !block.textContent && !block.querySelector( 'IMG' );
+}
+
 function areAlike ( node, node2 ) {
     return !isLeaf( node ) && (
         node.nodeType === node2.nodeType &&
@@ -168,7 +172,7 @@ function getPath ( node, root ) {
 
 function getLength ( node ) {
     var nodeType = node.nodeType;
-    return nodeType === ELEMENT_NODE ?
+    return nodeType === ELEMENT_NODE || nodeType === DOCUMENT_FRAGMENT_NODE ?
         node.childNodes.length : node.length || 0;
 }
 
@@ -471,11 +475,14 @@ function mergeInlines ( node, range ) {
     }
 }
 
-function mergeWithBlock ( block, next, range ) {
-    var container = next,
-        last, offset;
-    while ( container.parentNode.childNodes.length === 1 ) {
-        container = container.parentNode;
+function mergeWithBlock ( block, next, range, root ) {
+    var container = next;
+    var parent, last, offset;
+    while ( ( parent = container.parentNode ) &&
+            parent !== root &&
+            parent.nodeType === ELEMENT_NODE &&
+            parent.childNodes.length === 1 ) {
+        container = parent;
     }
     detach( container );
 
