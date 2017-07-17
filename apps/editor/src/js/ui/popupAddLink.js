@@ -5,7 +5,6 @@
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
-import ImportManager from '../importManager';
 
 const {util} = tui;
 const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
@@ -130,8 +129,8 @@ class PopupAddLink extends LayerPopup {
     }
 
     _getValue() {
-        const linkText = ImportManager.decodeURIGraceful(this._inputText.value, decodeURIComponent);
-        const url = ImportManager.decodeURIGraceful(this._inputURL.value, decodeURI);
+        const url = this._inputURL.value;
+        let linkText = this._inputText.value;
 
         return {
             linkText,
