@@ -4,7 +4,7 @@
  */
 
 const {util} = tui;
-const URLRegex = /(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?/g;
+const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**
  * ImportManager
@@ -24,28 +24,60 @@ class ImportManager {
 
     /**
      * graceful decode uri component
-     * @param {string} uri - string to be decoded
-     * @param {Function} decodeFunction - function to be used to decode
+     * @param {string} originalURI - string to be decoded
      * @returns {string} decoded string
      * @memberof ImportManager
      * @static
      */
-    static decodeURIGraceful(uri, decodeFunction = decodeURI) {
+    static decodeURIGraceful(originalURI) {
+        let uris = originalURI.split(' ');
+        const decodedURIs = [];
         let decodedURI;
-        try {
-            decodedURI = decodeFunction(uri);
-            decodedURI = decodedURI.replace(/ /g, '%20')
-                .replace(/\(/g, '%28')
-                .replace(/\)/g, '%29')
-                .replace(/\[/g, '%5B')
-                .replace(/\]/g, '%5D')
-                .replace(/</g, '%3C')
-                .replace(/>/g, '%3E');
-        } catch (e) {
-            decodedURI = uri;
-        }
 
-        return decodedURI;
+        util.forEachArray(uris, uri => {
+            try {
+                decodedURI = decodeURIComponent(uri);
+                decodedURI = decodedURI.replace(/ /g, '%20');
+            } catch (e) {
+                decodedURI = uri;
+            }
+
+            return decodedURIs.push(decodedURI);
+        });
+
+        return decodedURIs.join(' ');
+    }
+
+    /**
+     * encode markdown critical characters
+     * @static
+     * @param {string} text - string to encode
+     * @returns {string} - markdown character encoded string
+     * @memberof ImportManager
+     */
+    static encodeMarkdownCharacters(text) {
+        return text.replace(/\(/g, '%28')
+            .replace(/\)/g, '%29')
+            .replace(/\[/g, '%5B')
+            .replace(/\]/g, '%5D')
+            .replace(/</g, '%3C')
+            .replace(/>/g, '%3E');
+    }
+
+    /**
+     * escape markdown critical characters
+     * @static
+     * @param {string} text - string to escape
+     * @returns {string} - markdown character escaped string
+     * @memberof ImportManager
+     */
+    static escapeMarkdownCharacters(text) {
+        return text.replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)')
+        .replace(/\[/g, '\\[')
+        .replace(/\]/g, '\\]')
+        .replace(/</g, '\\<')
+        .replace(/>/g, '\\>');
     }
 
     /**
@@ -112,23 +144,24 @@ class ImportManager {
      * @param {object} ev event object
      */
     _decodeURL(ev) {
+        const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
+
         if (ev.source === 'markdown' && ev.data.text) {
-            const newTexts = [];
-
-            ev.data.text.forEach(text => {
-                text = text.replace(URLRegex, match => ImportManager.decodeURIGraceful(match));
-                newTexts.push(text);
-            });
-
-            ev.data.update(null, null, newTexts);
-        } else if (ev.source === 'wysiwyg' && ev.$clipboardContainer.find('A')) {
-            const $anchor = ev.$clipboardContainer.find('A');
-
-            $anchor.each((index, element) => {
-                const text = $(element).text();
-                const decodeFunction = text.match(URLRegex) ? decodeURI : decodeURIComponent;
-                $(element).text(ImportManager.decodeURIGraceful(text, decodeFunction));
-            });
+            const texts = ev.data.text;
+            let text = texts[0];
+            if (texts.length === 1 && text.match(URLRegex)) {
+                text = decodeURIGraceful(text);
+                text = encodeMarkdownCharacters(text);
+                ev.data.update(null, null, [text]);
+            }
+        } else if (ev.source === 'wysiwyg') {
+            const container = ev.$clipboardContainer.get(0);
+            const firstChild = container.childNodes[0];
+            let text = firstChild.innerText;
+            if (container.childNodes.length === 1 && firstChild.tagName === 'A' && text.match(URLRegex)) {
+                firstChild.innerText = decodeURIGraceful(text);
+                firstChild.href = encodeMarkdownCharacters(firstChild.href);
+            }
         }
     }
 

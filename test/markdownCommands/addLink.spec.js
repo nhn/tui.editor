@@ -24,7 +24,7 @@ describe('AddLink', () => {
         $('body').empty();
     });
 
-    describe('인자로 들어온 데이터를 이용해 링크구문을 추가한다', () => {
+    describe('should add link in markdown syntax', () => {
         let data;
 
         beforeEach(() => {
@@ -34,7 +34,7 @@ describe('AddLink', () => {
             };
         });
 
-        it('빈라인에서 링크가 추가된다', () => {
+        it('on empty area', () => {
             doc.setCursor(1, 0);
 
             AddLink.exec(mde, data);
@@ -42,7 +42,34 @@ describe('AddLink', () => {
             expect(doc.getLine(1)).toEqual(`[${data.linkText}](${data.url})`);
         });
 
-        it('영역선택후 링크가 추가된다', () => {
+        it('and decode characters in link text', () => {
+            doc.setCursor(1, 0);
+
+            data.linkText = '%ED%95%9C%EA%B8%80%EC%9C%A0%EB%8B%88%EC%BD%94%EB%93%9C';
+            AddLink.exec(mde, data);
+
+            expect(doc.getLine(1)).toEqual(`[한글유니코드](${data.url})`);
+        });
+
+        it('and escape markdown critical characters in link text', () => {
+            doc.setCursor(1, 0);
+
+            data.linkText = 'mylink ()[]<>';
+            AddLink.exec(mde, data);
+
+            expect(doc.getLine(1)).toEqual(`[mylink \\(\\)\\[\\]\\<\\>](${data.url})`);
+        });
+
+        it('and encode markdown critical characters in url', () => {
+            doc.setCursor(1, 0);
+
+            data.url = 'mylink ()[]<>';
+            AddLink.exec(mde, data);
+
+            expect(doc.getLine(1)).toEqual(`[${data.linkText}](mylink %28%29%5B%5D%3C%3E)`);
+        });
+
+        it('on selected area', () => {
             doc.setSelection({
                 line: 0,
                 ch: 0
