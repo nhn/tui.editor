@@ -23,7 +23,8 @@ extManager.defineExtension('colorSyntax', editor => {
         if (!useCustomSyntax) {
             replacement = html;
         } else {
-            replacement = html.replace(colorSyntaxRx, (matched, p1, p2) => makeHTMLColorSyntax(p2, p1));
+            replacement
+                = html.replace(colorSyntaxRx, (matched, p1, p2) => makeHTMLColorSyntaxAndTextRange(p2, p1).result);
         }
 
         return replacement;
@@ -42,7 +43,7 @@ extManager.defineExtension('colorSyntax', editor => {
             if (!useCustomSyntax) {
                 replacement = founded.replace(/ ?class="colour" ?/g, ' ').replace(decimalColorRx, color);
             } else {
-                replacement = makeCustomColorSyntax(text, color);
+                replacement = makeCustomColorSyntaxAndTextRange(text, color).result;
             }
 
             return replacement;
@@ -54,16 +55,32 @@ extManager.defineExtension('colorSyntax', editor => {
             name: 'color',
             exec(mde, color) {
                 const cm = mde.getEditor();
+                const rangeFrom = cm.getCursor('from');
+                const rangeTo = cm.getCursor('to');
+                let replacedText;
+                let replacedFrom;
 
                 if (!color) {
                     return;
                 }
 
                 if (!useCustomSyntax) {
-                    cm.replaceSelection(makeHTMLColorSyntax(cm.getSelection(), color));
+                    ({result: replacedText, from: replacedFrom}
+                        = makeHTMLColorSyntaxAndTextRange(cm.getSelection(), color));
+                    cm.replaceSelection(replacedText);
                 } else {
-                    cm.replaceSelection(makeCustomColorSyntax(cm.getSelection(), color));
+                    ({result: replacedText, from: replacedFrom}
+                        = makeCustomColorSyntaxAndTextRange(cm.getSelection(), color));
+                    cm.replaceSelection(replacedText);
                 }
+
+                cm.setSelection({
+                    line: rangeFrom.line,
+                    ch: rangeFrom.ch + replacedFrom
+                }, {
+                    line: rangeTo.line,
+                    ch: rangeFrom.line === rangeTo.line ? rangeTo.ch + replacedFrom : rangeTo.ch
+                });
 
                 mde.focus();
             }
@@ -187,25 +204,38 @@ function initUI(editor, preset) {
 }
 
 /**
- * Make custom color syntax
- * @param {string} text Text content
- * @param {string} color Color value
- * @returns {string}
- * @ignore
+ * make custom color syntax
+ * @param {string} text - Text content
+ * @param {string} color - Color value
+ * @returns {object} - wrapped text and range(from, to)
  */
-function makeCustomColorSyntax(text, color) {
-    return `{color:${color}}${text}{color}`;
+function makeCustomColorSyntaxAndTextRange(text, color) {
+    return wrapTextAndGetRange(`{color:${color}}`, text, '{color}');
 }
 
 /**
  * Make HTML color syntax by given text content and color value
- * @param {string} text Text content
- * @param {string} color Color value
- * @returns {string}
- * @ignore
+ * @param {string} text Text - content
+ * @param {string} color Color - value
+ * @returns {object} - wrapped text and range(from, to)
  */
-function makeHTMLColorSyntax(text, color) {
-    return `<span style="color:${color}">${text}</span>`;
+function makeHTMLColorSyntaxAndTextRange(text, color) {
+    return wrapTextAndGetRange(`<span style="color:${color}">`, text, '</span>');
+}
+
+/**
+ * wrap text with pre & post and return with text range
+ * @param {string} pre - text pre
+ * @param {string} text - text
+ * @param {string} post - text post
+ * @returns {object} - wrapped text and range(from, to)
+ */
+function wrapTextAndGetRange(pre, text, post) {
+    return {
+        result: `${pre}${text}${post}`,
+        from: pre.length,
+        to: pre.length + text.length
+    };
 }
 
 /**
