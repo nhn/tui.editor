@@ -123,6 +123,7 @@ function setConfig(defaultConfig, server, browser) {
         defaultConfig.reporters.push('saucelabs');
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
         defaultConfig.browserNoActivityTimeout = 120000;
+        defaultConfig.concurrency = 5;
 
         // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
         // 127.0.0.1    tui.dev
