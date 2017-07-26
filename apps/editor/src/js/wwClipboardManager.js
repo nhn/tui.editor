@@ -34,7 +34,7 @@ class WwClipboardManager {
      * @memberOf WwClipboardManager
      */
     init() {
-        this.wwe.getEditor().addEventListener('willPaste', this._onWillPaste.bind(this));
+        this.wwe.eventManager.listen('willPaste', ev => this._onWillPaste(ev.data));
         this.wwe.eventManager.listen('copy', this._onCopyCut.bind(this));
         this.wwe.eventManager.listen('copyAfter', this._onCopyAfter.bind(this));
         this.wwe.eventManager.listen('cut', this._onCopyCut.bind(this));
