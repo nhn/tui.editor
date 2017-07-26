@@ -65,7 +65,7 @@ const __nedInstance = [];
 
 /**
  * @callback addImageBlobHook
- * @param  {File} blob - image blob
+ * @param  {File|Blob} fileOrBlob - image blob
  * @param  {callback} callback - callback function to be called after
  * @param  {string} source - source of an event the item belongs to. 'paste', 'drop', 'ui'
  */

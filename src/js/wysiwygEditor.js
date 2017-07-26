@@ -409,6 +409,13 @@ class WysiwygEditor {
 
             this.eventManager.emit('stateChange', state);
         });
+
+        this.getEditor().addEventListener('willPaste', ev => {
+            this.eventManager.emit('willPaste', {
+                source: 'wysiwyg',
+                data: ev
+            });
+        });
     }
 
     /**

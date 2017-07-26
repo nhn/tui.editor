@@ -95,6 +95,20 @@ class ImportManager {
             this._processBlobItems(items, ev.data);
         });
 
+        this.eventManager.listen('willPaste', ev => {
+            // IE has no interface to handle clipboard image. #976
+            const fragment = ev.data.fragment;
+            const descendant = fragment.querySelectorAll('*');
+            // only if paste event data has one img element and the element has base64 encoded image
+            if (descendant.length !== 1 || descendant[0].tagName !== 'IMG' || !/^data:image/.test(descendant[0].src)) {
+                return;
+            }
+            ev.data.preventDefault();
+
+            const blob = dataURItoBlob(descendant[0].src);
+            this._emitAddImageBlobHook(blob, 'paste');
+        });
+
         this.eventManager.listen('paste', ev => {
             this._processClipboard(ev.data);
         });
@@ -124,13 +138,11 @@ class ImportManager {
     /**
      * Emit add image blob hook
      * @memberOf ImportManager
-     * @param {object} item - item
+     * @param {object} blob - blob or file
      * @param {string} type - type of an event the item belongs to. paste or drop
      * @private
      */
-    _emitAddImageBlobHook(item, type) {
-        const blob = item.name ? item : item.getAsFile(); // Blob or File
-
+    _emitAddImageBlobHook(blob, type) {
         this.eventManager.emit('addImageBlobHook', blob, (imageUrl, altText) => {
             this.eventManager.emit('command', 'AddImage', {
                 imageUrl,
@@ -194,7 +206,9 @@ class ImportManager {
                 if (item.type.indexOf('image') !== -1) {
                     evData.preventDefault();
                     evData.codemirrorIgnore = true;
-                    this._emitAddImageBlobHook(item, evData.type);
+
+                    const blob = item.name ? item : item.getAsFile(); // Blob or File
+                    this._emitAddImageBlobHook(blob, evData.type);
 
                     return false;
                 }
@@ -214,6 +228,24 @@ class ImportManager {
 
         return state && (state.codeBlock || state.list || state.task || state.code);
     }
+}
+
+/**
+ * data URI to Blob
+ * @param {string} dataURI - data URI string
+ * @returns {Blob} - blob data
+ */
+function dataURItoBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i += 1) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], {type: mimeString});
+
+    return blob;
 }
 
 module.exports = ImportManager;
