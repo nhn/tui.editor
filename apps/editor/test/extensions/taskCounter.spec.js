@@ -7,7 +7,7 @@ describe('taskCounter', () => {
         $('body').html('<div id="editSection"></div>');
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -18,7 +18,7 @@ describe('taskCounter', () => {
     describe('viewOnly', () => {
         beforeEach(() => {
             ned = TuiEditor.factory({
-                el: $('#editSection'),
+                el: $('#editSection').get(0),
                 viewOnly: true,
                 exts: ['taskCounter']
             });
@@ -55,9 +55,9 @@ describe('taskCounter', () => {
     describe('wysiwyg', () => {
         beforeEach(() => {
             ned = new TuiEditor({
-                el: $('#editSection'),
+                el: $('#editSection').get(0),
                 previewStyle: 'tab',
-                height: 300,
+                height: '300px',
                 initialEditType: 'wysiwyg',
                 exts: ['taskCounter'],
                 querySplitter: {
@@ -98,9 +98,9 @@ describe('taskCounter', () => {
     describe('markdown', () => {
         beforeEach(() => {
             ned = new TuiEditor({
-                el: $('#editSection'),
+                el: $('#editSection').get(0),
                 previewStyle: 'tab',
-                height: 300,
+                height: '300px',
                 initialEditType: 'markdown',
                 exts: ['taskCounter'],
                 querySplitter: {

@@ -50,8 +50,8 @@ describe('Clipboard', () => {
 
     beforeEach(done => {
         editor = new Editor({
-            el: $('body'),
-            height: 300,
+            el: document.body,
+            height: '300px',
             initialEditType: 'wysiwyg'
         });
         se = editor.wwEditor.editor;

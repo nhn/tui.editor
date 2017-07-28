@@ -12,9 +12,9 @@ describe('scrollFollow.sectionManager', () => {
         $('body').html('<div id="editSection"></div>');
 
         ned = new TuiEditor({
-            el: $('#editSection'),
+            el: $('#editSection').get(0),
             previewStyle: 'vertical',
-            height: 100,
+            height: '100px',
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
@@ -100,7 +100,6 @@ describe('scrollFollow.sectionManager', () => {
             expect(lineType[3]).toEqual(true);
         });
 
-
         it('make section list', () => {
             ned.setValue([
                 'paragraph',
@@ -109,7 +108,6 @@ describe('scrollFollow.sectionManager', () => {
                 '## header2',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 
@@ -125,7 +123,6 @@ describe('scrollFollow.sectionManager', () => {
                 'paragraph'
             ].join('\n'));
 
-
             sectionManager.makeSectionList();
 
             expect(sectionManager.getSectionList().length).toEqual(2);
@@ -137,7 +134,6 @@ describe('scrollFollow.sectionManager', () => {
                 '***',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 
@@ -151,12 +147,10 @@ describe('scrollFollow.sectionManager', () => {
                 'paragraph'
             ].join('\n'));
 
-
             sectionManager.makeSectionList();
 
             expect(sectionManager.getSectionList().length).toEqual(1);
         });
-
 
         it('make section list with setext type header ', () => {
             ned.setValue([
@@ -168,7 +162,6 @@ describe('scrollFollow.sectionManager', () => {
                 '------',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 
@@ -185,7 +178,6 @@ describe('scrollFollow.sectionManager', () => {
                 '------',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 
@@ -204,7 +196,6 @@ describe('scrollFollow.sectionManager', () => {
                 '------',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 
@@ -254,7 +245,6 @@ describe('scrollFollow.sectionManager', () => {
                 '------',
                 'paragraph'
             ].join('\n'));
-
 
             sectionManager.makeSectionList();
 

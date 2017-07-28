@@ -68,6 +68,7 @@ class Layout {
      * @private
      */
     _renderLayout() {
+        this.$el.css('box-sizing', 'border-box');
         this.$containerEl = $(containerTmpl).appendTo(this.$el);
     }
 

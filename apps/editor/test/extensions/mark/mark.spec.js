@@ -1,4 +1,3 @@
-'use strict';
 
 var TuiEditor = require('../../../src/js/editor');
 
@@ -9,9 +8,9 @@ describe('Mark', function() {
         $('body').html('<div id="editSection"></div>');
 
         editor = new TuiEditor({
-            el: $('#editSection'),
+            el: $('#editSection').get(0),
             previewStyle: 'tab',
-            height: 300,
+            height: '300px',
             initialEditType: 'wysiwyg',
             exts: ['mark'],
             querySplitter: {
@@ -114,11 +113,8 @@ describe('Mark', function() {
 
             editor.setValue('# start\n---\n## this is me');
 
-            //for prevent ignore change event
-            //첫번째 체인지 이벤트는 무시되기때문에 프레임을 지연
-            setTimeout(function() {
-                done();
-            });
+            // first event will be ignored? test on next tick
+            setTimeout(done, 0);
         });
 
         it('update marker range when user have edited content', function(done) {

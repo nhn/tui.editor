@@ -1,3 +1,4 @@
+/* eslint max-nested-callbacks:0 */
 import TuiEditor from '../../src/js/editor';
 import ScrollSync from '../../src/js/extensions/scrollFollow.scrollSync';
 import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager';
@@ -9,19 +10,19 @@ describe('scrollFollow.ScrollSync', () => {
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
+        loadStyleFixtures(
+            'lib/codemirror/lib/codemirror.css',
+            'src/css/tui-editor.css'
+        );
         $('body').html('<div id="editSection"></div>');
 
         ned = new TuiEditor({
-            el: $('#editSection'),
+            el: $('#editSection').get(0),
             previewStyle: 'vertical',
-            height: 100,
+            height: '100px',
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
-                    editor.getCodeMirror().setSize(200, 50);
-                    $('.te-preview').css('padding', '0');
-                    $('.te-preview').css('overflow', 'auto');
                     sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
                     scrollSync = new ScrollSync(sectionManager, editor.getCodeMirror(), editor.preview.$el);
                 }
@@ -29,7 +30,7 @@ describe('scrollFollow.ScrollSync', () => {
         });
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

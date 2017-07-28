@@ -11,9 +11,9 @@ describe('scrollFollow', () => {
         $('body').html('<div id="editSection"></div>');
 
         ned = new TuiEditor({
-            el: $('#editSection'),
+            el: $('#editSection').get(0),
             previewStyle: 'vertical',
-            height: 100,
+            height: '100px',
             initialEditType: 'markdown',
             exts: ['scrollFollow'],
             events: {
@@ -26,7 +26,7 @@ describe('scrollFollow', () => {
         });
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

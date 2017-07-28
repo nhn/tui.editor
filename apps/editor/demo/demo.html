@@ -18,8 +18,17 @@
     <link rel="stylesheet" href="../dist/tui-editor.css">
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <style type="text/css">
-      .cm-header { color:blue; }
-      .cm-strong { font-weight:bold; }
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
+        #editSection {
+            padding: 15px;
+            padding-top: 35px;
+        }
+        .cm-header { color:blue; }
+        .cm-strong { font-weight:bold; }
     </style>
 </head>
 <body>
@@ -28,7 +37,7 @@
     $('#editSection').tuiEditor({
         initialEditType: 'markdown',
         previewStyle: 'vertical',
-        height: 300,
+        height: '300px',
         exts: ['colorSyntax', 'tableExtension'],
         contentCSSStyles: [
             '../dist/tui-editor-contents.css'

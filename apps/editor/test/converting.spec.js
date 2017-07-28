@@ -128,19 +128,22 @@ const mdOutput = ['# HELLO\n\n',
 import Editor from '../src/js/editor';
 
 describe('converting', () => {
-    let editor;
+    let editor, el;
     jasmine.getFixtures().fixturesPath = 'base/test/fixtures/';
 
     beforeEach(() => {
+        el = document.createElement('div');
+        document.body.appendChild(el);
+
         editor = new Editor({
-            el: $('body'),
-            height: 300,
+            el,
+            height: '300px',
             initialEditType: 'wysiwyg'
         });
     });
 
     afterEach(() => {
-        $('body').empty();
+        document.body.removeChild(el);
     });
 
     describe('markdown to html', () => {

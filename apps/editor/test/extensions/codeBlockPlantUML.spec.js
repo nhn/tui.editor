@@ -19,9 +19,9 @@ describe('colorSyntax', () => {
 
     it('create plant uml image in markdown preview', () => {
         editor = new TuiEditor({
-            el: $(wrapper),
+            el: wrapper,
             previewStyle: 'vertical',
-            height: 100,
+            height: '100px',
             initialEditType: 'markdown',
             exts: ['plantUML']
         });
@@ -35,9 +35,9 @@ describe('colorSyntax', () => {
 
     it('shows code in html in wysiwyg', () => {
         editor = new TuiEditor({
-            el: $(wrapper),
+            el: wrapper,
             previewStyle: 'vertical',
-            height: 100,
+            height: '100px',
             initialEditType: 'wysiwyg',
             exts: ['plantUML']
         });
