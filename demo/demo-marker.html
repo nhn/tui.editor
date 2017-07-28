@@ -17,9 +17,14 @@
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
     <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
         #editSection {
-            margin-top: 20px;
             padding: 15px;
+            padding-top: 35px;
         }
     </style>
 </head>
@@ -35,7 +40,7 @@
 
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
-        height: 500,
+        height: '500px',
         contentCSSStyles: [
             '../src/css/tui-editor-contents.css'
         ],

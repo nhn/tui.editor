@@ -3,13 +3,16 @@
 import Editor from '../src/js/editor';
 
 describe('Editor', () => {
-    let editor;
+    let editor, container;
 
     describe('Api', () => {
         beforeEach(() => {
+            container = document.createElement('div');
+            document.body.appendChild(container);
+
             editor = new Editor({
-                el: $('body'),
-                height: 300,
+                el: container,
+                height: '300px',
                 initialEditType: 'markdown'
             });
         });
@@ -17,21 +20,19 @@ describe('Editor', () => {
         // we need to wait squire input event process
         afterEach(done => {
             setTimeout(() => {
-                $('body').empty();
+                document.body.removeChild(container);
                 done();
             });
         });
 
         describe('contentHeight()', () => {
             it('set content height', () => {
-                editor.contentHeight(500);
-                expect($('.te-md-container .te-editor').height()).toEqual(500);
-                expect($('.te-preview').height()).toEqual(500);
-                expect($('.te-ww-container .te-editor').height()).toEqual(500);
+                editor.contentHeight('500px');
+                expect(container.offsetHeight).toEqual(500);
             });
 
             it('get content height', () => {
-                expect(editor.contentHeight()).toEqual(300);
+                expect(editor.contentHeight()).toEqual('300px');
             });
 
             it('set content height "auto" to fit contents height of wysiwyg', () => {

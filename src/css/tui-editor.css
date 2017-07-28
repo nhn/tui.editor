@@ -9,18 +9,37 @@
 }
 
 .tui-editor {
-    position: relative;
+    position: absolute;
     line-height: 1;
     border-bottom: 1px solid #e5e5e5;
     color: #181818;
+    width: 100%;
+    height: 100%;
+}
+
+.tui-editor-defaultUI,
+.te-editor-section {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+.te-editor-section {
+    -ms-flex: 1;
+    flex: 1;
+    min-height: 0px;
+    position: relative;
 }
 
 .te-md-container {
     display: none;
     overflow: hidden;
+    height: 100%;
 }
 
 .te-md-container .te-editor {
+    height: 100%;
     line-height: 1.5;
 }
 
@@ -38,6 +57,7 @@
 .te-md-container .te-preview {
     overflow: auto;
     padding: 0 25px;
+    height: 100%;
 }
 
 .te-md-container .te-preview > p:first-child {
@@ -95,7 +115,13 @@
     display: none;
     overflow: hidden;
     z-index: 10;
+    height: 100%;
     background-color: #fff;
+}
+
+.te-ww-container > .te-editor {
+    overflow: auto;
+    height: 100%;
 }
 
 .te-ww-container .tui-editor-contents:focus {
@@ -107,7 +133,10 @@
 }
 
 .te-ww-container .tui-editor-contents:first-child {
-    margin-top: 16px;
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 16px 25px 0px 25px;
+    height: 100%;
 }
 
 .te-ww-container .tui-editor-contents:last-child {
@@ -120,7 +149,6 @@
 }
 
 .te-ww-mode .te-ww-container {
-    background: #fff;
     display: block;
     z-index: 100;
 }
@@ -180,6 +208,7 @@
 .tui-editor-defaultUI {
     position: relative;
     border: 1px solid #e5e5e5;
+    height: 100%;
 }
 
 .tui-editor-defaultUI-toolbar {

@@ -11,15 +11,20 @@
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <style type="text/css">
+        html, body {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+        }
         #editSection {
-            margin-top: 20px;
             padding: 15px;
+            padding-top: 35px;
         }
     </style>
 </head>
 <body style='padding:0;margin:0'>
 <div id="editSection"></div>
-<script src="../dist/tui-editor-viewonly.min.js"></script>
+<script src="../dist/tui-editor-viewonly.js"></script>
 <script>
     var content = '# Heading 1' + '\n'
         + '## Heading 2' + '\n'

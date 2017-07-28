@@ -76,7 +76,7 @@ const __nedInstance = [];
  * @constructor
  * @class ToastUIEditor
  * @param {object} options Option object
-     * @param {number} options.height Editor's height (px)
+     * @param {string} options.height Editor's height style value ex) '300px', '100%'
      * @param {string} options.initialValue Editor's initial value
      * @param {string} options.previewStyle Markdown editor's preview style (tab, vertical)
      * @param {string} options.initialEditType Initial editor type (markdown, wysiwyg)
@@ -101,7 +101,7 @@ class ToastUIEditor {
         this.options = $.extend({
             previewStyle: 'tab',
             initialEditType: 'markdown',
-            height: 300,
+            height: '300px',
             language: 'en_US',
             useDefaultHTMLSanitizer: true,
             useCommandShortcut: true,
@@ -416,17 +416,18 @@ class ToastUIEditor {
 
     /**
      * Set and return content area height
-     * @api
-     * @memberOf ToastUIEditor
-     * @param {number} height Content area height
-     * @returns {number}
+     * @memberof ToastUIEditor
+     * @param {string} height Content area height
+     * @returns {string}
      */
     contentHeight(height) {
-        if (height) {
+        if (util.isExisty(height)) {
+            if (util.isNumber(height)) {
+                height = `${height}px`;
+            }
+
+            this.options.el.style.height = height;
             this._contentHeight = height;
-            this.mdEditor.setHeight(height);
-            this.preview.setHeight(height);
-            this.wwEditor.setHeight(height);
         }
 
         return this._contentHeight;
