@@ -76,32 +76,32 @@ const __nedInstance = [];
  * @constructor
  * @class ToastUIEditor
  * @param {object} options Option object
-     * @param {string} options.height Editor's height style value ex) '300px', '100%'
-     * @param {string} options.initialValue Editor's initial value
-     * @param {string} options.previewStyle Markdown editor's preview style (tab, vertical)
-     * @param {string} options.initialEditType Initial editor type (markdown, wysiwyg)
-     * @param {object} options.events eventlist Event list
-         * @param {function} options.events.load It would be emitted when editor fully load
-         * @param {function} options.events.change It would be emitted when content changed
-         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-         * @param {function} options.events.focus It would be emitted when editor get focus
-         * @param {function} options.events.blur It would be emitted when editor loose focus
-     * @param {object} options.hooks Hook list
-         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
-         * @param {addImageBlobHook} options.hooks.addImageBlobHook hook for image upload.
-    * @param {string} language language
-    * @param {boolean} [options.useCommandShortcut=true] whether use keyboard shortcuts to perform commands
-    * @param {boolean} useDefaultHTMLSanitizer use default htmlSanitizer
-    * @param {string[]} options.codeBlockLanguages supported code block languages to be listed
+     * @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
+     * @param {string} [options.minHeight='200px'] - Editor's min-height style value in pixel ex) '300px'
+     * @param {string} options.initialValue - Editor's initial value
+     * @param {string} options.previewStyle - Markdown editor's preview style (tab, vertical)
+     * @param {string} options.initialEditType - Initial editor type (markdown, wysiwyg)
+     * @param {object} options.events - eventlist Event list
+         * @param {function} options.events.load - It would be emitted when editor fully load
+         * @param {function} options.events.change - It would be emitted when content changed
+         * @param {function} options.events.stateChange - It would be emitted when format change by cursor position
+         * @param {function} options.events.focus - It would be emitted when editor get focus
+         * @param {function} options.events.blur - It would be emitted when editor loose focus
+     * @param {object} options.hooks - Hook list
+         * @param {function} options.hooks.previewBeforeHook - Submit preview to hook URL before preview be shown
+         * @param {addImageBlobHook} options.hooks.addImageBlobHook - hook for image upload.
+    * @param {string} language - language
+    * @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
+    * @param {boolean} useDefaultHTMLSanitizer - use default htmlSanitizer
+    * @param {string[]} options.codeBlockLanguages - supported code block languages to be listed
  */
 class ToastUIEditor {
     constructor(options) {
-        const self = this;
-
         this.options = $.extend({
             previewStyle: 'tab',
             initialEditType: 'markdown',
             height: '300px',
+            minHeight: '200px',
             language: 'en_US',
             useDefaultHTMLSanitizer: true,
             useCommandShortcut: true,
@@ -123,15 +123,11 @@ class ToastUIEditor {
         }
 
         if (this.options.hooks) {
-            util.forEach(this.options.hooks, (fn, key) => {
-                self.addHook(key, fn);
-            });
+            util.forEach(this.options.hooks, (fn, key) => this.addHook(key, fn));
         }
 
         if (this.options.events) {
-            util.forEach(this.options.events, (fn, key) => {
-                self.on(key, fn);
-            });
+            util.forEach(this.options.events, (fn, key) => this.on(key, fn));
         }
 
         this.layout = new Layout(options, this.eventManager);
@@ -150,15 +146,17 @@ class ToastUIEditor {
 
         this.changePreviewStyle(this.options.previewStyle);
 
-        this.changeMode(self.options.initialEditType, true);
+        this.changeMode(this.options.initialEditType, true);
 
-        this.contentHeight(self.options.height);
+        this.minHeight(this.options.minHeight);
 
-        this.setValue(self.options.initialValue);
+        this.height(this.options.height);
 
-        extManager.applyExtension(self, self.options.exts);
+        this.setValue(this.options.initialValue);
 
-        this.eventManager.emit('load', self);
+        extManager.applyExtension(this, this.options.exts);
+
+        this.eventManager.emit('load', this);
 
         __nedInstance.push(this);
     }
@@ -415,22 +413,53 @@ class ToastUIEditor {
     }
 
     /**
-     * Set and return content area height
+     * Set and return edithr height
      * @memberof ToastUIEditor
-     * @param {string} height Content area height
-     * @returns {string}
+     * @param {string} height - editor height
+     * @returns {string} editor height
      */
-    contentHeight(height) {
+    height(height) {
         if (util.isExisty(height)) {
+            if (height === 'auto') {
+                this.options.el.classList.add('auto-height');
+                this.minHeight(this.minHeight());
+            } else {
+                this.options.el.classList.remove('auto-height');
+                this.minHeight(height);
+            }
             if (util.isNumber(height)) {
                 height = `${height}px`;
             }
 
             this.options.el.style.height = height;
-            this._contentHeight = height;
+            this._height = height;
         }
 
-        return this._contentHeight;
+        return this._height;
+    }
+
+    /**
+     * Set / Get min content height
+     * @param {string} minHeight - min content height in pixel
+     * @memberof ToastUIEditor
+     * @returns {string} - min height in pixel
+     */
+    minHeight(minHeight) {
+        if (util.isExisty(minHeight)) {
+            const editorHeight = this._ui.getEditorHeight();
+            const editorSectionHeight = this._ui.getEditorSectionHeight();
+            const diffHeight = editorHeight - editorSectionHeight;
+            this._minHeight = minHeight;
+
+            minHeight = parseInt(minHeight, 10);
+            minHeight = Math.max(minHeight - diffHeight, 0);
+
+            this.wwEditor.setMinHeight(minHeight);
+            this.mdEditor.setMinHeight(minHeight);
+            this.preview.setMinHeight(minHeight);
+        }
+
+        return this._minHeight;
     }
 
     /**

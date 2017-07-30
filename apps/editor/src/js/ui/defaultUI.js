@@ -43,21 +43,40 @@ class DefaultUI {
     constructor(editor) {
         /**
          * UI name
-         * @member {string}
+         * @memberof DefaultUI#
+         * @public
+         * @type {string}
          */
         this.name = 'default';
 
         /**
          * Toolbar instance
-         * @member {Toolbar}
+         * @memberof DefaultUI#
+         * @type {Toolbar}
          */
         this.toolbar = null;
 
         /**
          * Toolbar wrapper element
-         * @member {jQuery}
+         * @memberof DefaultUI#
+         * @type {jQuery}
          */
         this.$el = null;
+
+        /**
+         * @memberof DefaultUI#
+         * @type {HTMLElement}
+         * @private
+         */
+        this._container = null;
+
+        /**
+         * editor section element
+         * @memberof DefaultUI#
+         * @private
+         * @type {HTMLElement}
+         */
+        this._editorSection = null;
 
         this._editor = editor;
         this._initialEditType = editor.options.initialEditType;
@@ -67,8 +86,10 @@ class DefaultUI {
     }
 
     _init(container) {
+        this._container = container;
         this.$el = $(CONTAINER_TEMPLATE).appendTo(container);
-        this.$el.find(`.${CLASS_EDITOR}`).append(this._editor.layout.getEditorEl());
+        this._editorSection = this.$el.find(`.${CLASS_EDITOR}`).get(0);
+        this._editorSection.appendChild(this._editor.layout.getEditorEl().get(0));
 
         this._initToolbar();
         this._initModeSwitch();
@@ -197,6 +218,28 @@ class DefaultUI {
             eventManager: this._editor.eventManager,
             convertor: this._editor.convertor
         });
+    }
+
+    /**
+     * get editor section height
+     * @returns {Number} - height of editor section
+     * @memberof DefaultUI
+     */
+    getEditorSectionHeight() {
+        const clientRect = this._editorSection.getBoundingClientRect();
+
+        return clientRect.bottom - clientRect.top;
+    }
+
+    /**
+     * get editor height
+     * @returns {Number} - height of editor
+     * @memberof DefaultUI
+     */
+    getEditorHeight() {
+        const clientRect = this._container.getBoundingClientRect();
+
+        return clientRect.bottom - clientRect.top;
     }
 
     /**

@@ -430,7 +430,7 @@ describe('WysiwygEditor', () => {
         });
     });
 
-    describe('move cursor to start, end', () => {
+    describe('move cursor to start, and', () => {
         beforeEach(() => {
             wwe.setHeight(30);
         });
