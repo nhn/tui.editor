@@ -1,5 +1,29 @@
 @charset "UTF-8";
 
+/* height */
+.auto-height,
+.auto-height .tui-editor-defaultUI {
+    height: auto;
+}
+
+.auto-height .tui-editor {
+    position: relative;
+}
+
+:not(.auto-height) > .tui-editor-defaultUI,
+:not(.auto-height) > .tui-editor-defaultUI > .te-editor-section {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
+:not(.auto-height) > .tui-editor-defaultUI > .te-editor-section {
+    -ms-flex: 1;
+    flex: 1
+}
+
+/* tui editor */
 .tui-editor:after,
 .tui-editor-defaultUI-toolbar:after {
     content: "";
@@ -11,25 +35,15 @@
 .tui-editor {
     position: absolute;
     line-height: 1;
-    border-bottom: 1px solid #e5e5e5;
     color: #181818;
     width: 100%;
-    height: 100%;
-}
-
-.tui-editor-defaultUI,
-.te-editor-section {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-direction: column;
-    flex-direction: column;
+    height: inherit;
 }
 
 .te-editor-section {
-    -ms-flex: 1;
-    flex: 1;
     min-height: 0px;
     position: relative;
+    height: inherit;
 }
 
 .te-md-container {
@@ -39,7 +53,6 @@
 }
 
 .te-md-container .te-editor {
-    height: 100%;
     line-height: 1.5;
 }
 
@@ -47,11 +60,12 @@
 .te-md-container .te-preview {
     box-sizing: border-box;
     padding: 0;
+    height: inherit;
 }
 
 .te-md-container .CodeMirror {
     font-size: 13px;
-    height: 100%;
+    height: inherit;
 }
 
 .te-md-container .te-preview {
@@ -115,13 +129,13 @@
     display: none;
     overflow: hidden;
     z-index: 10;
-    height: 100%;
+    height: inherit;
     background-color: #fff;
 }
 
 .te-ww-container > .te-editor {
     overflow: auto;
-    height: 100%;
+    height: inherit;
 }
 
 .te-ww-container .tui-editor-contents:focus {
@@ -136,7 +150,7 @@
     box-sizing: border-box;
     margin: 0px;
     padding: 16px 25px 0px 25px;
-    height: 100%;
+    height: inherit;
 }
 
 .te-ww-container .tui-editor-contents:last-child {
@@ -290,6 +304,7 @@
 
 .tui-editor-defaultUI .te-mode-switch-section {
     background-color: #f9f9f9;
+    border-top: 1px solid #e5e5e5;
     height: 20px;
     font-size: 12px;
 }
@@ -804,8 +819,12 @@
     border: 1px solid #ebebeb;
 }
 
+.CodeMirror-sizer {
+    margin-top: 6px;
+}
+
 .CodeMirror-scroll {
-    padding-top: 6px;
+    overflow: auto !important;
 }
 
 .CodeMirror .cm-header {

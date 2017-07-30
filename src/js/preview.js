@@ -89,10 +89,19 @@ class Preview {
     /**
      * Set preview height
      * @memberof Preview
-     * @param {number} height Height for preview container
+     * @param {number} height - Height for preview container
      */
     setHeight(height) {
-        this.$el.height(height);
+        this.$el.get(0).style.height = `${height}px`;
+    }
+
+    /**
+     * set min height
+     * @param {number} minHeight - min height
+     * @memberof Preview
+     */
+    setMinHeight(minHeight) {
+        this.$el.get(0).style.minHeight = `${minHeight}px`;
     }
 
     /**

@@ -714,19 +714,23 @@ class WysiwygEditor {
     setHeight(height) {
         this._height = height;
 
-        if (height === 'auto') {
-            this.$editorContainerEl.css('overflow', 'visible');
-            this.$editorContainerEl.css('height', 'auto');
-            this.get$Body().css('min-height', 0);
-        } else {
-            this.$editorContainerEl.css('overflow', 'auto');
-            this.$editorContainerEl.css('height', '100%');
-            this.$editorContainerEl.parent().height(height);
+        this.$editorContainerEl.css('overflow', 'auto');
+        this.$editorContainerEl.css('height', '100%');
+        this.$editorContainerEl.parent().height(height);
 
-            const paddingHeight = parseInt(this.$editorContainerEl.css('padding-top'), 10) - parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
-            const marginHeight = parseInt(this.get$Body().css('margin-top'), 10) - parseInt(this.get$Body().css('margin-bottom'), 10);
-            this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
-        }
+        const paddingHeight = parseInt(this.$editorContainerEl.css('padding-top'), 10) - parseInt(this.$editorContainerEl.css('padding-bottom'), 10);
+        const marginHeight = parseInt(this.get$Body().css('margin-top'), 10) - parseInt(this.get$Body().css('margin-bottom'), 10);
+        this.get$Body().css('min-height', `${height - marginHeight - paddingHeight}px`);
+    }
+
+    /**
+     * set min height
+     * @param {number} minHeight - min height in px
+     * @memberof WysiwygEditor
+     */
+    setMinHeight(minHeight) {
+        const editorBody = this.get$Body().get(0);
+        editorBody.style.minHeight = `${minHeight}px`;
     }
 
     /**

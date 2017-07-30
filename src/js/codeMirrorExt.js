@@ -195,7 +195,18 @@ class CodeMirrorExt {
     setHeight(height) {
         const contentWrapper = this.getWrapperElement();
 
-        contentWrapper.style.height = tui.util.isNumber(height) ? `${height}px` : height;
+        contentWrapper.style.height = `${height}px`;
+    }
+
+    /**
+     * set min height
+     * @param {number} minHeight - min height
+     * @memberof CodeMirrorExt
+     */
+    setMinHeight(minHeight) {
+        const contentWrapper = this.getWrapperElement();
+
+        contentWrapper.style.minHeight = `${minHeight}px`;
     }
 
     /**

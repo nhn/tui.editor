@@ -7,6 +7,11 @@ describe('Editor', () => {
 
     describe('Api', () => {
         beforeEach(() => {
+            jasmine.getStyleFixtures().fixturesPath = '/base';
+            window.loadStyleFixtures(
+                'lib/codemirror/lib/codemirror.css',
+                'src/css/tui-editor.css'
+            );
             container = document.createElement('div');
             document.body.appendChild(container);
 
@@ -25,37 +30,61 @@ describe('Editor', () => {
             });
         });
 
-        describe('contentHeight()', () => {
-            it('set content height', () => {
-                editor.contentHeight('500px');
+        describe('height(pixel)', () => {
+            it('set editor height', () => {
+                editor.height('500px');
                 expect(container.offsetHeight).toEqual(500);
             });
 
-            it('get content height', () => {
-                expect(editor.contentHeight()).toEqual('300px');
+            it('set editor height as pixel if given argument is a number', () => {
+                editor.height(500);
+                expect(container.offsetHeight).toEqual(500);
             });
 
-            it('set content height "auto" to fit contents height of wysiwyg', () => {
+            it('get editor height', () => {
+                expect(editor.height()).toEqual('300px');
+            });
+        });
+
+        describe('height("auto") and minHeight()', () => {
+            it('set editor height "auto" to fit contents height of wysiwyg', () => {
                 const height = $('.te-ww-container .te-editor').height();
-                editor.contentHeight('auto');
+                editor.height('auto');
                 editor.changeMode('wysiwyg');
                 editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-ww-container .tui-editor-contents').height()).not.toEqual(height);
             });
 
-            it('set content height "auto" to fit contents height of markdown', () => {
+            it('set editor height "auto" to fit contents height of markdown', () => {
                 const height = $('.te-md-container .te-editor').height();
-                editor.contentHeight('auto');
+                editor.height('auto');
                 editor.setMarkdown('1\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n2\n');
                 expect($('.te-md-container .te-editor').height()).not.toEqual(height);
             });
+
+            it('default minHeight should be applied to editor height', () => {
+                editor.height('auto');
+
+                const rect = container.getBoundingClientRect();
+                expect(rect.bottom - rect.top).toBeGreaterThan(100);
+            });
+
+            it('should applied to editor height', () => {
+                editor.height('auto');
+                editor.minHeight('300px');
+
+                const rect = container.getBoundingClientRect();
+                expect(rect.bottom - rect.top).toEqual(300);
+            });
         });
+
         describe('setMarkdown()', () => {
             it('fire setMarkdownAfter evnet after setMarkdown', done => {
                 editor.on('setMarkdownAfter', done);
                 editor.setMarkdown('dd');
             });
         });
+
         describe('changePreviewStyle()', () => {
             it('Preview should refreash after preview style is changed', () => {
                 editor.changePreviewStyle('tab');
