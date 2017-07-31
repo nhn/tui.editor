@@ -81,10 +81,7 @@ class PopupAddLink extends LayerPopup {
         super._initDOMEvent();
 
         this.on('click .te-close-button', () => this.hide());
-        this.on('click .te-ok-button', () => {
-            this._eventManager.emit('command', 'AddLink', this._getValue());
-            this.hide();
-        });
+        this.on('click .te-ok-button', () => this._addLink());
 
         this.on('shown', () => {
             const inputText = this._inputText;
@@ -128,19 +125,48 @@ class PopupAddLink extends LayerPopup {
         });
     }
 
-    _getValue() {
-        const url = this._inputURL.value;
-        let linkText = this._inputText.value;
+    _addLink() {
+        const {url, linkText} = this._getValue();
 
-        return {
+        this._clearValidationStyle();
+
+        if (linkText.length < 1) {
+            this._inputText.classList.add('wrong');
+
+            return;
+        }
+        if (url.length < 1) {
+            this._inputURL.classList.add('wrong');
+
+            return;
+        }
+
+        this._eventManager.emit('command', 'AddLink', {
             linkText,
             url
+        });
+        this.hide();
+    }
+
+    _getValue() {
+        const url = this._inputURL.value;
+        const linkText = this._inputText.value;
+
+        return {
+            url,
+            linkText
         };
+    }
+
+    _clearValidationStyle() {
+        this._inputURL.classList.remove('wrong');
+        this._inputText.classList.remove('wrong');
     }
 
     _resetInputs() {
         this._inputText.value = '';
         this._inputURL.value = '';
+        this._clearValidationStyle();
     }
 }
 
