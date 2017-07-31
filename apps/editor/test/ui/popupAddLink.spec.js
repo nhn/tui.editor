@@ -4,7 +4,11 @@ const EventManager = require('../../src/js/eventManager');
 describe('PopupAddLink', () => {
     let popup,
         em,
-        selectedText;
+        selectedText,
+        okButton,
+        closeButton,
+        linkTextInput,
+        urlInput;
 
     beforeEach(() => {
         em = new EventManager();
@@ -15,20 +19,16 @@ describe('PopupAddLink', () => {
                 eventManager: em
             }
         });
+
+        const el = popup.$el.get(0);
+        okButton = el.querySelector('.te-ok-button');
+        closeButton = el.querySelector('.te-close-button');
+        urlInput = el.querySelector('.te-url-input');
+        linkTextInput = el.querySelector('.te-link-text-input');
     });
 
     afterEach(() => {
         $('body').empty();
-    });
-
-    describe('init', () => {
-        it('popupAddLink class added', () => {
-            expect(popup.$el.hasClass('te-popup-add-link')).toBe(true);
-        });
-        it('buttons', () => {
-            expect(popup.$el.find('.te-close-button').length).toEqual(1);
-            expect(popup.$el.find('.te-ok-button').length).toEqual(1);
-        });
     });
 
     describe('button events', () => {
@@ -37,13 +37,16 @@ describe('PopupAddLink', () => {
         });
 
         it('ok button fires okButtonClicked event', () => {
-            $('.te-ok-button').trigger('click');
+            linkTextInput.value = 'text';
+            urlInput.value = 'link';
+
+            $(okButton).trigger('click');
 
             expect(popup.hide).toHaveBeenCalled();
         });
 
         it('close button fires closeButtonClicked event', () => {
-            $('.te-close-button').trigger('click');
+            $(closeButton).trigger('click');
 
             expect(popup.hide).toHaveBeenCalled();
         });
@@ -63,10 +66,10 @@ describe('PopupAddLink', () => {
             };
 
             em.listen('command', handler);
-            $('.te-link-text-input').val(value.linkText);
-            $('.te-url-input').val(value.url);
+            linkTextInput.value = value.linkText;
+            urlInput.value = value.url;
 
-            $('.te-ok-button').trigger('click');
+            $(okButton).trigger('click');
 
             expect(handler).toHaveBeenCalledWith('AddLink', value);
         });
@@ -87,8 +90,8 @@ describe('PopupAddLink', () => {
 
     describe('add link with url', () => {
         it('_getValue() returns text/url values', () => {
-            $('.te-link-text-input').val('myLinkText');
-            $('.te-url-input').val('myUrl');
+            linkTextInput.value = 'myLinkText';
+            urlInput.value = 'myUrl';
 
             const value = popup._getValue();
 
@@ -97,14 +100,42 @@ describe('PopupAddLink', () => {
         });
 
         it('clear text fields after popup closed', () => {
-            $('.te-link-text-input').val('myLinkText');
-            $('.te-url-input').val('myUrl');
+            linkTextInput.value = 'myLinkText';
+            urlInput.value = 'myUrl';
 
             popup.hide();
             const value = popup._getValue();
 
             expect(value.linkText).toEqual('');
             expect(value.url).toEqual('');
+        });
+    });
+
+    describe('validator', () => {
+        let handler;
+
+        beforeEach(() => {
+            handler = jasmine.createSpy('buttonClickedHandler');
+        });
+
+        it('should not emit AddLink and style input if url not filled', () => {
+            em.listen('command', handler);
+            linkTextInput.value = 'linkText';
+
+            $(okButton).trigger('click');
+
+            expect(handler).not.toHaveBeenCalled();
+            expect(urlInput.classList.contains('wrong')).toBe(true);
+        });
+
+        it('should not emit AddLink and style input if url not filled', () => {
+            em.listen('command', handler);
+            urlInput.value = 'urlText';
+
+            $(okButton).trigger('click');
+
+            expect(handler).not.toHaveBeenCalled();
+            expect(linkTextInput.classList.contains('wrong')).toBe(true);
         });
     });
 

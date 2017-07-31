@@ -492,6 +492,10 @@
     width: 100%;
 }
 
+.tui-editor-popup .tui-popup-body input.wrong {
+    border-color: #ff0000;
+}
+
 .te-popup-add-link .tui-popup-wrapper {
     height: 219px;
 }
