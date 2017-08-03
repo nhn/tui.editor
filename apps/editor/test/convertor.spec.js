@@ -47,6 +47,13 @@ describe('Convertor', () => {
         it('do not add line breaks in list before and after image syntax', () => {
             expect(convertor._markdownToHtmlWithCodeHighlight('\n* asd![nhnent](http://www.nhnent.com/)\n- asd![nhnent](http://www.nhnent.com/)\n1. asd![nhnent](http://www.nhnent.com/)\n* [ ] asd![nhnent](http://www.nhnent.com/)\n').match(/\/p/g)).toBe(null);
         });
+
+        it('should store number of backticks in code to data-backticks attribute', () => {
+            expect(convertor.toHTML('`code span`').trim()).toEqual('<p><code data-backticks="1">code span</code></p>');
+            expect(convertor.toHTML('```code span```').trim()).toEqual('<p><code data-backticks="3">code span</code></p>');
+            expect(convertor.toHTMLWithCodeHightlight('`code span`').trim()).toEqual('<p><code data-backticks="1">code span</code></p>');
+            expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toEqual('<p><code data-backticks="3">code span</code></p>');
+        });
     });
 
     describe('html to markdown', () => {
@@ -82,6 +89,11 @@ describe('Convertor', () => {
             // invalid tags
             expect(convertor.toMarkdown('im &lt;\\span&gt; text')).toEqual('im <\\span> text');
             expect(convertor.toMarkdown('im &lt;/span attr="value"&gt; text')).toEqual('im </span attr="value"> text');
+        });
+
+        it('should print number of backticks for code according to data-backticks attribute', () => {
+            expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
+            expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
         });
     });
 
