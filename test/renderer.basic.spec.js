@@ -104,6 +104,13 @@ describe('basicRenderer', function() {
             expect(getMarkdownText('<code></code>', '')).toEqual('');
             expect(getMarkdownText('<code></code>', ' \n')).toEqual('');
         });
+
+        it('code with data-backtick', function() {
+            expect(getMarkdownText('<code data-backticks="2"></code>', 'imcode')).toEqual('``imcode``');
+            expect(getMarkdownText('<code data-backticks="3"></code>', 'imcode')).toEqual('```imcode```');
+            expect(getMarkdownText('<code data-backticks="4"></code>', 'imcode')).toEqual('````imcode````');
+        });
+
         it('br', function() {
             expect(getMarkdownText('<br />')).toEqual('  \n');
         });
