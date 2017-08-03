@@ -37,7 +37,7 @@ extManager.defineExtension('colorSyntax', editor => {
             let replacement;
 
             if (color.match(decimalColorRx)) {
-                color = changeDecColorToHex(color);
+                color = changeDecColorsToHex(color);
             }
 
             if (!useCustomSyntax) {
@@ -239,31 +239,43 @@ function wrapTextAndGetRange(pre, text, post) {
 }
 
 /**
- * Change decimal color value to hexadecimal color value
+ * Change decimal color values to hexadecimal color value
  * @param {string} color Color value string
  * @returns {string}
  * @ignore
  */
-function changeDecColorToHex(color) {
+function changeDecColorsToHex(color) {
     return color.replace(decimalColorRx, (colorValue, r, g, b) => {
-        r = parseInt(r, 10);
-        g = parseInt(g, 10);
-        b = parseInt(b, 10);
+        const hr = changeDecColorToHex(r);
+        const hg = changeDecColorToHex(g);
+        const hb = changeDecColorToHex(b);
 
-        const colorHexValue = get2DigitNumberString(r.toString(16))
-            + get2DigitNumberString(g.toString(16))
-            + get2DigitNumberString(b.toString(16));
-
-        return `#${colorHexValue}`;
+        return `#${hr}${hg}${hb}`;
     });
 }
 
 /**
- * Get binary number string
- * @param {string} numberStr String to convert binary number
+ * change individual dec color value to hex color
+ * @param {string} color - individual color value
+ * @returns {string} - zero padded color string
+ * @ignore
+ */
+function changeDecColorToHex(color) {
+    let hexColor = parseInt(color, 10);
+    hexColor = hexColor.toString(16);
+    hexColor = doubleZeroPad(hexColor);
+
+    return hexColor;
+}
+
+/**
+ * leading 2 zeros number string
+ * @param {string} numberStr - number string
  * @returns {string}
  * @ignore
  */
-function get2DigitNumberString(numberStr) {
-    return numberStr === '0' ? '00' : numberStr;
+function doubleZeroPad(numberStr) {
+    const padded = ('00' + numberStr);
+
+    return padded.substr(padded.length - 2);
 }
