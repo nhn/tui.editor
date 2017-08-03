@@ -10,6 +10,7 @@ import code from './markdownItPlugins/markdownitCodeRenderer';
 import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
+import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
 import CodeBlockManager from './codeBlockManager';
 
 const {
@@ -55,6 +56,7 @@ class Convertor {
         markdownitHighlight.block.ruler.at('code', code);
         markdownitHighlight.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
         markdownitHighlight.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
         markdownitHighlight.use(taskList);
         markdownitHighlight.use(codeBlock);
         this._markdownitHighlight = markdownitHighlight;
@@ -63,6 +65,7 @@ class Convertor {
         markdownit.block.ruler.at('code', code);
         markdownit.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
         markdownit.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownit.inline.ruler.at('backticks', codeBackticks);
         markdownit.use(taskList);
         markdownit.use(codeBlock);
         this._markdownit = markdownit;
