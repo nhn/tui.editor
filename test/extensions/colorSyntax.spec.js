@@ -1,24 +1,28 @@
 import TuiEditor from '../../src/js/editor';
 
 describe('colorSyntax', () => {
-    let ned;
+    let container, ned;
+
+    beforeEach(() => {
+        container = document.createElement('div');
+        container.setAttribute('id', 'editSection');
+        document.body.appendChild(container);
+    });
 
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });
 
-    describe('conversion - useCustomSyntax', () => {
+    describe('custom syntax conversion', () => {
         let actual, expected;
 
         beforeEach(() => {
-            $('body').html('<div id="editSection"></div>');
-
             ned = new TuiEditor({
-                el: $('#editSection').get(0),
+                el: container,
                 previewStyle: 'vertical',
                 height: '100px',
                 initialEditType: 'markdown',
@@ -66,14 +70,12 @@ describe('colorSyntax', () => {
         });
     });
 
-    describe('conversion - dont useCustomSyntax', () => {
+    describe('html syntax conversion', () => {
         let actual, expected;
 
         beforeEach(() => {
-            $('body').html('<div id="editSection"></div>');
-
             ned = new TuiEditor({
-                el: $('#editSection').get(0),
+                el: container,
                 previewStyle: 'vertical',
                 height: '100px',
                 initialEditType: 'markdown',
@@ -92,21 +94,27 @@ describe('colorSyntax', () => {
             expect(actual).toEqual(expected);
         });
 
-        it('convert html to html when dont use custom syntax', () => {
-            const src = '<span class="colour" style="color:rgb(255,0,255)">test</span>';
+        it('convert rgb color to hex color', () => {
+            const src = '<span class="colour" style="color:rgb(255, 0, 1)">test</span>';
 
             actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
-            expected = '<span style="color:#ff00ff">test</span>';
+            expected = '<span style="color:#ff0001">test</span>';
+            expect(actual).toEqual(expected);
+        });
+
+        it('convert hex color to hex color', () => {
+            const src = '<span class="colour" style="color:#ff0001">test</span>';
+
+            actual = ned.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', src);
+            expected = '<span style="color:#ff0001">test</span>';
             expect(actual).toEqual(expected);
         });
     });
 
     describe('commands', () => {
         beforeEach(() => {
-            $('body').html('<div id="editSection"></div>');
-
             ned = new TuiEditor({
-                el: $('#editSection').get(0),
+                el: container,
                 previewStyle: 'vertical',
                 height: '100px',
                 initialEditType: 'markdown',
