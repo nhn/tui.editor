@@ -63,7 +63,7 @@ describe('code block gadget', () => {
     it('_updateLanguage() should update label', () => {
         $targetElement.removeAttr('data-language');
         gadget._updateLanguage();
-        expect(gadget._$languageLabel.text()).toBe('unknown');
+        expect(gadget._$languageLabel.text()).toBe('text');
 
         $targetElement.attr('data-language', 'changedLang');
         gadget._updateLanguage();
@@ -71,7 +71,7 @@ describe('code block gadget', () => {
 
         gadget.onHide();
         gadget._updateLanguage();
-        expect(gadget._$languageLabel.text()).toBe('unknown');
+        expect(gadget._$languageLabel.text()).toBe('text');
     });
 
     describe('language label should be updated', () => {

@@ -8,9 +8,11 @@ const CLASS_SCROLL_CONTENT = 'tui-split-scroll-content';
 const CLASS_SPLITTER = 'tui-splitter';
 const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 const EVENT_REQUIRE_SCROLL_INTO_VIEW = 'requireScrollIntoView';
+const CLASS_CONTENT_LEFT = 'tui-split-content-left';
+const CLASS_CONTENT_RIGHT = 'tui-split-content-right';
 const CLASS_CONTENT = {
-    'left': 'tui-split-content-left',
-    'right': 'tui-split-content-right'
+    'left': CLASS_CONTENT_LEFT,
+    'right': CLASS_CONTENT_RIGHT
 };
 
 /**
@@ -76,14 +78,26 @@ class ScrollSyncSplit {
         this._contentWrapper.addEventListener('scroll', this.sync.bind(this));
     }
 
-    _requireScrollIntoView(element) {
+    _requireScrollIntoView(event) {
+        const element = event.target;
         const {top: targetTop, bottom: targetBottom} = element.getBoundingClientRect();
-        const {top: wrapperTop, bottom: wrapperBottom} = this._contentWrapper.getBoundingClientRect();
+        let wrapperTop, wrapperBottom, wrapperElement;
+
+        if (this.isScrollSynced()) {
+            wrapperElement = this._contentWrapper;
+        } else if ($(element).parents(this._contentElements.left).length) {
+            wrapperElement = this._contentElements.left;
+        } else if ($(element).parents(this._contentElements.right).length) {
+            wrapperElement = this._contentElements.right;
+        } else {
+            return;
+        }
+        ({top: wrapperTop, bottom: wrapperBottom} = wrapperElement.getBoundingClientRect());
 
         if (targetTop < wrapperTop) {
-            this._contentWrapper.scrollTop = this._contentWrapper.scrollTop + targetTop - wrapperTop;
+            wrapperElement.scrollTop = wrapperElement.scrollTop + targetTop - wrapperTop;
         } else if (targetBottom > wrapperBottom) {
-            this._contentWrapper.scrollTop = this._contentWrapper.scrollTop + targetBottom - wrapperBottom;
+            wrapperElement.scrollTop = wrapperElement.scrollTop + targetBottom - wrapperBottom;
         }
 
         this.sync();
@@ -104,8 +118,8 @@ class ScrollSyncSplit {
         }
         element.classList.add(CLASS_CONTENT[side]);
         this._contentWrapper.appendChild(element);
-        $(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev => this._requireScrollIntoView(ev.target));
-        $(element).on(EVENT_REQUIRE_SCROLL_SYNC, this.sync.bind(this));
+        $(element).on(EVENT_REQUIRE_SCROLL_INTO_VIEW, ev => this._requireScrollIntoView(ev));
+        $(element).on(EVENT_REQUIRE_SCROLL_SYNC, () => this.sync());
 
         this._contentElements[side] = element;
 

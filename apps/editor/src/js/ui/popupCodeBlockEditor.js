@@ -3,15 +3,19 @@ import ScrollSyncSplit from './scrollSyncSplit';
 import CodeBlockEditor from '../codeBlockEditor';
 import CodeBlockPreview from '../codeBlockPreview';
 import CodeBlockLanguagesCombo from './codeBlockLanguagesCombo';
+import i18n from '../i18n';
 
 const {util} = tui;
 
 const CLASS_PREFIX = 'popup-editor-';
+const CLASS_OK_BUTTON = 'te-ok-button';
+const CLASS_CLOSE_BUTTON = 'te-close-button';
+const CLASS_POPUP_CLOSE_BUTTON = 'tui-popup-close-button';
 const TEMPLATE_HEADER_BUTTONS = `
-    <button class="${CLASS_PREFIX}save">close</button>
-    <button class="${CLASS_PREFIX}toggle-preview">preview</button>
-    <button class="${CLASS_PREFIX}toggle-fit">max</button>
-    <button class="${CLASS_PREFIX}toggle-scroll">scroll</button>
+    <button class="${CLASS_PREFIX}toggle-scroll"></button>
+    <button class="${CLASS_PREFIX}toggle-preview"></button>
+    <button class="${CLASS_PREFIX}toggle-fit"></button>
+    <button class="${CLASS_POPUP_CLOSE_BUTTON}"></button>
 `;
 
 /**
@@ -26,10 +30,17 @@ class PopupCodeBlockEditor extends LayerPopup {
      * @memberof PopupCodeBlockEditor
      */
     constructor(options) {
+        const TEMPLATE_CONTENT = `
+            <div class="${CLASS_PREFIX}body"></div>
+            <div class="te-button-section">
+                <button type="button" class="${CLASS_OK_BUTTON}">${i18n.get('OK')}</button>
+                <button type="button" class="${CLASS_CLOSE_BUTTON}">${i18n.get('Cancel')}</button>
+            </div>
+        `;
         options = util.extend({
             header: true,
             title: 'CodeBlock Editor',
-            content: '',
+            content: TEMPLATE_CONTENT,
             className: 'tui-popup-code-block-editor',
             headerButtons: TEMPLATE_HEADER_BUTTONS,
             modal: true
@@ -48,11 +59,6 @@ class PopupCodeBlockEditor extends LayerPopup {
     _initInstance(options) {
         super._initInstance(options);
 
-        this._codeBlockEditor = null;
-        this._toggleFitButton = null;
-        this._togglePreviewButton = null;
-        this._scrollSyncSplit = null;
-        this._codeBlockLanguagesCombo = null;
         this.eventManager = options.eventManager;
         this.convertor = options.convertor;
     }
@@ -67,13 +73,16 @@ class PopupCodeBlockEditor extends LayerPopup {
         super._initDOM(options);
 
         const el = this.$el.get(0);
+        this._body = el.querySelector(`.${CLASS_PREFIX}body`);
         this._toggleFitButton = el.querySelector(`.${CLASS_PREFIX}toggle-fit`);
         this._togglePreviewButton = el.querySelector(`.${CLASS_PREFIX}toggle-preview`);
         this._toggleScrollButton = el.querySelector(`.${CLASS_PREFIX}toggle-scroll`);
+        this._okButton = el.querySelector(`.${CLASS_OK_BUTTON}`);
+        this._closeButton = el.querySelector(`.${CLASS_CLOSE_BUTTON}`);
 
         this._codeMirrorWrapper = this._createCodeBlockEditor();
         this._previewWrapper = this._createPreview();
-        this._scrollSyncSplit = new ScrollSyncSplit(this.$body.get(0), this._codeMirrorWrapper, this._previewWrapper);
+        this._scrollSyncSplit = new ScrollSyncSplit(this._body, this._codeMirrorWrapper, this._previewWrapper);
 
         this._updateFitWindowButton();
         this._updatePreviewButton();
@@ -95,7 +104,9 @@ class PopupCodeBlockEditor extends LayerPopup {
         this.on(`click .${CLASS_PREFIX}toggle-fit`, () => this._toggleFitToWindow());
         this.on(`click .${CLASS_PREFIX}toggle-preview`, () => this._togglePreview());
         this.on(`click .${CLASS_PREFIX}toggle-scroll`, () => this._toggleScroll());
-        this.on(`click .${CLASS_PREFIX}save`, () => this._save());
+        this.on(`click .${CLASS_OK_BUTTON}`, () => this._save());
+        this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
+        this.on(`click .${CLASS_PREFIX}close`, () => this.hide());
         this.on(`click .${CLASS_PREFIX}editor-wrapper`, ev => {
             if (ev.target === this._codeMirrorWrapper) {
                 this._focusEditor(true);
@@ -153,7 +164,7 @@ class PopupCodeBlockEditor extends LayerPopup {
             this._focusEditor();
         });
 
-        titleElement.innerHTML = '';
+        titleElement.innerHTML = 'CodeBlock Editor';
         titleElement.appendChild(codeBlockLanguagesCombo.getElement());
 
         return codeBlockLanguagesCombo;
@@ -168,6 +179,11 @@ class PopupCodeBlockEditor extends LayerPopup {
     }
 
     _updateScrollButton() {
+        if (this._scrollSyncSplit.isSplitView()) {
+            this._toggleScrollButton.style.display = 'inline-block';
+        } else {
+            this._toggleScrollButton.style.display = 'none';
+        }
         $(this._toggleScrollButton).toggleClass('active', this._scrollSyncSplit.isScrollSynced());
     }
 
@@ -183,6 +199,7 @@ class PopupCodeBlockEditor extends LayerPopup {
     _togglePreview() {
         this._scrollSyncSplit.toggleSplitView();
         this._updatePreviewButton();
+        this._updateScrollButton();
         this._codeBlockEditor.refresh();
     }
 
