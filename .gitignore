@@ -56,4 +56,3 @@ karma.conf.local.js
 *.vim
 .\#*
 .vscode/
-dist/
