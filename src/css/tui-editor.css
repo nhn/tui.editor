@@ -172,12 +172,12 @@
     display: none
 }
 
-.tui-editor .CodeMirror-lines {
-    padding-top: 10px;
-    padding-bottom: 10px;
+.tui-editor-defaultUI .CodeMirror-lines {
+    padding-top: 13px;
+    padding-bottom: 13px;
 }
 
-.tui-editor .CodeMirror-line {
+.tui-editor-defaultUI .CodeMirror-line {
     padding-left: 25px;
     padding-right: 25px
 }
@@ -223,6 +223,23 @@
     position: relative;
     border: 1px solid #e5e5e5;
     height: 100%;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.tui-editor-defaultUI button {
+    color: #fff;
+    padding: 0px 14px 0px 15px;
+    height: 28px;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+.tui-editor-defaultUI button.te-ok-button {
+    background-color: #4b96e6;
+}
+.tui-editor-defaultUI button.te-close-button {
+    background-color: #777;
 }
 
 .tui-editor-defaultUI-toolbar {
@@ -423,25 +440,25 @@
     float: right;
 }
 
+.tui-popup-header .tui-popup-header-buttons button {
+    padding: 0px;
+    background-color: transparent;
+    background-size: cover;
+    float: left;
+}
+
 .tui-popup-header .tui-popup-close-button {
-    float: right;
-    margin: 0;
-    padding: 0;
-    border: none;
-    line-height: 1;
-    background: none;
-    font-size: 20px;
-    color: #aaa;
-    position: absolute;
-    top: 7px;
-    right: 10px;
+    margin: 3px;
+    width: 13px;
+    height: 13px;
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMHB4IiBoZWlnaHQ9IjEwcHgiIHZpZXdCb3g9IjAgMCAxMCAxMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5GMjc2Qzc4MC0zM0JBLTQ3MTItQTM3OC04RkQwQUNDOTFDRTk8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImxuYi1mb2xkZXItZGVsIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiM3Nzc3NzciPiAgICAgICAgICAgIDxwYXRoIGQ9Ik01LDMuNTg1Nzg2NDQgTDEuNzA3MTA2NzgsMC4yOTI4OTMyMTkgTDAuMjkyODkzMjE5LDEuNzA3MTA2NzggTDMuNTg1Nzg2NDQsNSBMMC4yOTI4OTMyMTksOC4yOTI4OTMyMiBMMS43MDcxMDY3OCw5LjcwNzEwNjc4IEw1LDYuNDE0MjEzNTYgTDguMjkyODkzMjIsOS43MDcxMDY3OCBMOS43MDcxMDY3OCw4LjI5Mjg5MzIyIEw2LjQxNDIxMzU2LDUgTDkuNzA3MTA2NzgsMS43MDcxMDY3OCBMOC4yOTI4OTMyMiwwLjI5Mjg5MzIxOSBMNSwzLjU4NTc4NjQ0IFoiIGlkPSJDb21iaW5lZC1TaGFwZSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+);
 }
 
 .tui-popup-header .tui-popup-title {
     font-size: 13px;
     font-weight: bold;
     color: #333;
-    vertical-align: baseline;
+    vertical-align: bottom;
 }
 
 .tui-popup-body {
@@ -474,19 +491,9 @@
     margin-top: 15px;
 }
 
-.tui-editor-popup .tui-popup-body button {
-    margin-right: 5px;
-    background-color: #fff;
-    border: 1px solid #bfbfbf;
-    color: #666;
-    border-radius: 3px;
-    padding: 3px 8px;
-}
-
 .tui-editor-popup .tui-popup-body input[type=text],
 .tui-editor-popup .tui-popup-body input[type=file] {
     padding: 4px 10px;
-    border-radius: 2px;
     border: 1px solid #bfbfbf;
     box-sizing: border-box;
     width: 100%;
@@ -874,48 +881,37 @@
 
 .te-ww-block-overlay.code-block-header {
     text-align: right;
-}
-
-.te-ww-block-overlay.code-block-header button,
-.tui-popup-code-block-editor button {
-    float: right;
-    background-color: #fff;
-    border: 1px solid #bfbfbf;
-    color: #666;
-    border-radius: 3px;
-    padding: 3px 8px;
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .te-ww-block-overlay.code-block-header span {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 13px;
+    font-size: 10px;
     font-weight: 600;
     padding: 0px 10px;
-    color: #669;
-}
-
-.te-ww-block-overlay.code-block-header span.label {
-    border-right: solid 1px;
+    color: #333333;
     cursor: default;
 }
 
-.te-ww-block-overlay.code-block-header span.button {
-    cursor: pointer;
-}
-
 .te-ww-block-overlay.code-block-header button {
-    margin: 4px;
+    margin: 8px;
+    font-size: 10px;
+    color: #333333;
+    background-color: #f9f9f9;
+    border: 1px solid #dddddd;
+    padding: 4px;
+    height: auto;
 }
 
 .te-popup-code-block-languages {
     position: absolute;
-    width: 180px;
+    box-sizing: border-box;
+    width: 130px;
 }
 
 .te-popup-code-block-languages .tui-popup-body {
     max-height: 169px;
     overflow: auto;
-    padding: 0px 5px;
+    padding: 0px;
 }
 
 .te-popup-code-block-languages button {
@@ -938,28 +934,114 @@
     width: 70%;
     height: 70%;
     margin: auto;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
 }
 
-.tui-popup-code-block-editor .tui-popup-title input[type=text] {
-    font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
-    font-size: 13px;
-    padding: 4px 5px;
-    border: none;
+.te-input-language {
+    position: relative;
+    margin-left: 15px;
+    cursor: pointer;
+}
+
+.te-input-language input {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10px;
+    padding: 3px 5px;
+    border: 1px solid #dddddd;
+    background-color: #f9f9f9;
     box-sizing: border-box;
-    width: 200px;
+    width: 130px;
     outline: none;
+}
+
+.te-input-language input::-ms-clear {
+    display: none;
+}
+
+.te-input-language::after {
+    content: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMnB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAxMiAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT42Q0NBRDk2QS0yMjYxLTRFNDAtOTk1RC1DRUUyQUREQUQ3NkQ8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImNvbS10cmFuZ2xlLWQtc2lkZSIgZmlsbD0iIzU1NTU1NSI+ICAgICAgICAgICAgPHBvbHlnb24gaWQ9IlJlY3RhbmdsZS03IiBwb2ludHM9IjIgNSAxMCA1IDYgMTAiPjwvcG9seWdvbj4gICAgICAgIDwvZz4gICAgPC9nPjwvc3ZnPg==);
+    position: absolute;
+    top: 1px;
+    right: 3px;
+}
+
+.te-input-language.active::after {
+    content: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMnB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAxMiAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5BNEZDRkIzMy0zNjdBLTREMjAtOEEyNC1DQ0I2ODFBMDZDODg8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImNvbS10cmFuZ2xlLXVwLXNpZGUiIGZpbGw9IiM1NTU1NTUiPiAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJSZWN0YW5nbGUtNyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNi4wMDAwMDAsIDYuNTAwMDAwKSBzY2FsZSgxLCAtMSkgdHJhbnNsYXRlKC02LjAwMDAwMCwgLTYuNTAwMDAwKSAiIHBvaW50cz0iMiA0IDEwIDQgNiA5Ij48L3BvbHlnb24+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=);
 }
 
 .tui-popup-code-block-editor button {
     margin: -1px 3px;
 }
 
+.tui-popup-code-block-editor .tui-popup-header-buttons {
+    height: 20px;
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-preview::after {
+    content: 'Preview off';
+    color: #777;
+    margin-right: 22px;
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-preview.active::after {
+    content: 'Preview on';
+    color: #4b96e6;
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-scroll::after {
+    content: 'Scroll off';
+    color: #777;
+    margin-right: 16px;
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-scroll.active::after {
+    content: 'Scroll on';
+    color: #4b96e6;
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-fit {
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    margin-right: 14px;
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT40OUQ4RTYyMy1GRTAyLTQ1RUUtQkQ5Ri0xMjUyQjEzRTU1MkQ8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImNvbnRlbnRzLWV4cGFuZCIgZmlsbD0iIzU1NTU1NSI+ICAgICAgICAgICAgPHBhdGggZD0iTTMsMyBMOSwzIEw5LDUgTDUsNSBMNSw5IEwzLDkgTDMsMyBaIE0xNSwxNSBMOSwxNSBMOSwxMyBMMTMsMTMgTDEzLDkgTDE1LDkgTDE1LDE1IFoiIGlkPSJDb21iaW5lZC1TaGFwZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoOS4wMDAwMDAsIDkuMDAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC05LjAwMDAwMCwgLTkuMDAwMDAwKSAiPjwvcGF0aD4gICAgICAgICAgICA8cG9seWdvbiBpZD0iTGluZSIgZmlsbC1ydWxlPSJub256ZXJvIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMS41MDAwMDAsIDYuNTAwMDAwKSBzY2FsZSgtMSwgMSkgdHJhbnNsYXRlKC0xMS41MDAwMDAsIC02LjUwMDAwMCkgIiBwb2ludHM9IjkuMDg1Nzg2NDQgNS41IDEyLjUgOC45MTQyMTM1NiAxMy45MTQyMTM2IDcuNSAxMC41IDQuMDg1Nzg2NDQiPjwvcG9seWdvbj4gICAgICAgICAgICA8cG9seWdvbiBpZD0iTGluZS1Db3B5IiBmaWxsLXJ1bGU9Im5vbnplcm8iIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYuNTAwMDAwLCAxMS41MDAwMDApIHNjYWxlKC0xLCAxKSB0cmFuc2xhdGUoLTYuNTAwMDAwLCAtMTEuNTAwMDAwKSAiIHBvaW50cz0iNC4wODU3ODY0NCAxMC41IDcuNSAxMy45MTQyMTM2IDguOTE0MjEzNTYgMTIuNSA1LjUgOS4wODU3ODY0NCI+PC9wb2x5Z29uPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+);
+}
+
+.tui-popup-code-block-editor .popup-editor-toggle-fit.active {
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxOHB4IiBoZWlnaHQ9IjE4cHgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT4wN0Q1MjlCRi1GNTIzLTREN0EtQTlGNi05NTUzNTU5RDNEMUE8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImNvbnRlbnRzLXJlZHVjZSIgZmlsbD0iIzU1NTU1NSI+ICAgICAgICAgICAgPHBvbHlnb24gaWQ9IlBhdGgtMzIiIGZpbGwtcnVsZT0ibm9uemVybyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNS41MDAwMDAsIDEyLjUwMDAwMCkgc2NhbGUoLTEsIDEpIHRyYW5zbGF0ZSgtNS41MDAwMDAsIC0xMi41MDAwMDApICIgcG9pbnRzPSIzLjA4NTc4NjQ0IDExLjUgNi41IDE0LjkxNDIxMzYgNy45MTQyMTM1NiAxMy41IDQuNSAxMC4wODU3ODY0Ij48L3BvbHlnb24+ICAgICAgICAgICAgPHBhdGggZD0iTTksOSBMMTUsOSBMMTUsMTEgTDExLDExIEwxMSwxNSBMOSwxNSBMOSw5IFogTTksOSBMMyw5IEwzLDcgTDcsNyBMNywzIEw5LDMgTDksOSBaIiBpZD0iQ29tYmluZWQtU2hhcGUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDkuMDAwMDAwLCA5LjAwMDAwMCkgc2NhbGUoLTEsIDEpIHRyYW5zbGF0ZSgtOS4wMDAwMDAsIC05LjAwMDAwMCkgIj48L3BhdGg+ICAgICAgICAgICAgPHBvbHlnb24gaWQ9IlBhdGgtMzMiIGZpbGwtcnVsZT0ibm9uemVybyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTIuNTAwMDAwLCA1LjUwMDAwMCkgc2NhbGUoLTEsIDEpIHRyYW5zbGF0ZSgtMTIuNTAwMDAwLCAtNS41MDAwMDApICIgcG9pbnRzPSIxNC45MTQyMTM2IDYuNSAxMS41IDMuMDg1Nzg2NDQgMTAuMDg1Nzg2NCA0LjUgMTMuNSA3LjkxNDIxMzU2Ij48L3BvbHlnb24+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=);
+}
+
+.tui-popup-code-block-editor .tui-popup-close-button {
+    margin-top: 6px;
+}
+
 .tui-popup-code-block-editor .tui-popup-body {
-    padding: 39px 0px 0px 0px;
-    margin-top: -39px;
-    height: 100%;
     z-index: -1;
-    box-sizing: border-box;
+    padding: 0px;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex: 1;
+    flex: 1
+}
+
+.tui-popup-code-block-editor .popup-editor-body {
+    position: relative;
+    -ms-flex: 1;
+    flex: 1;
+    border-bottom: 1px solid #cacaca;
+}
+
+.tui-popup-code-block-editor .te-button-section {
+    padding: 15px;
+}
+
+.tui-popup-code-block-editor .te-button-section button {
+    float: left;
 }
 
 .tui-popup-code-block-editor .tui-editor-contents pre {
@@ -971,25 +1053,29 @@
     height: auto;
 }
 
-.tui-popup-code-block-editor .CodeMirror-lines {
-    padding: 18px 8px 18px 8px;
-}
-
 .tui-popup-code-block-editor .CodeMirror-line {
     font-family: Consolas, Courier, "Apple SD 산돌고딕 Neo", -apple-system, "Lucida Grande", "Apple SD Gothic Neo", "맑은 고딕", "Malgun Gothic", "Segoe UI", "돋움", dotum, sans-serif;
+    font-size: 13px;
     line-height: 160%;
-    font-size: 13px
+    letter-spacing: -0.3px;
 }
 
 .tui-popup-code-block-editor .popup-editor-editor-wrapper {
     min-height: 100%;
 }
 
+.tui-split-scroll-wrapper {
+    position: relative;
+}
+
+.tui-split-scroll {
+    position: absolute;
+}
+
 .tui-split-scroll,
 .tui-split-scroll-wrapper {
     width: 100%;
     height: 100%;
-    position: relative;
 }
 
 .tui-split-scroll .tui-split-content-left,
@@ -1036,7 +1122,7 @@
     opacity: 0.2;
 }
 
-.tui-split-scroll button.tui-scrollfollow:after {
+.tui-split-scroll button.tui-scrollfollow::after {
     content: "scroll off";
 }
 
@@ -1050,7 +1136,7 @@
     overflow: initial;
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollfollow:after {
+.tui-split-scroll.scroll-sync button.tui-scrollfollow::after {
     content: "scroll on";
 }
 

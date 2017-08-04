@@ -1,19 +1,20 @@
 /* eslint-disable max-nested-callbacks */
-/* global readFixtures */
 
 import ScrollSyncSplit from '../../src/js/ui/scrollSyncSplit';
 
 describe('ScrollSyncSplit', () => {
     let scrollSyncSplit,
         leftElement,
-        rightElement;
+        rightElement,
+        container;
 
     beforeEach(done => {
-        const style = readFixtures('../../src/css/tui-editor.css');
-        document.body.innerHTML = `<style>${style}</style>`;
+        jasmine.getStyleFixtures().fixturesPath = '/base';
+        window.loadStyleFixtures('src/css/tui-editor.css');
 
-        const container = document.createElement('div');
-        $('body').append(container);
+        container = document.createElement('div');
+        container.style.position = 'relative';
+        document.body.appendChild(container);
 
         leftElement = document.createElement('div');
         rightElement = document.createElement('div');
@@ -27,7 +28,7 @@ describe('ScrollSyncSplit', () => {
     });
 
     afterEach(() => {
-        $('body').empty();
+        document.body.removeChild(container);
     });
 
     it('sync() adjust style top for elements which height is equal or shorter than wrapper', done => {

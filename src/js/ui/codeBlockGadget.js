@@ -34,9 +34,9 @@ class CodeBlockGadget extends BlockOverlay {
 
     _initDOM() {
         this.$el.addClass('code-block-header');
-        this._$languageLabel = $('<span class="label">unknown</span>');
+        this._$languageLabel = $('<span>text</span>');
         this.$el.append(this._$languageLabel);
-        this._$buttonOpenModalEditor = $(`<span class="button">edit on popup</span>`);
+        this._$buttonOpenModalEditor = $(`<button>Editor</button>`);
         this.$el.append(this._$buttonOpenModalEditor);
     }
 
@@ -52,7 +52,7 @@ class CodeBlockGadget extends BlockOverlay {
         const attachedElement = this.getAttachedElement();
         const language = attachedElement ? attachedElement.getAttribute('data-language') : null;
 
-        this._$languageLabel.text(language ? language : 'unknown');
+        this._$languageLabel.text(language ? language : 'text');
     }
 
     /**

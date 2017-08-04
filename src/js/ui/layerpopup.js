@@ -12,8 +12,9 @@ const CLASS_FIT_WINDOW = 'fit-window';
 const LAYOUT_TEMPLATE_MODELESS =
     `<div class="${CLASS_PREFIX}header">
         <span class="${CLASS_PREFIX}title"></span>
-        <div class="${CLASS_PREFIX}header-buttons"></div>
-        <button type="button" class="${CLASS_PREFIX}close-button">x</button>
+        <div class="${CLASS_PREFIX}header-buttons">
+            <button type="button" class="${CLASS_PREFIX}close-button"></button>
+        </div>
     </div>
     <div class="${CLASS_PREFIX}body"></div>`;
 
@@ -21,8 +22,9 @@ const LAYOUT_TEMPLATE_MODAL =
     `<div class="${CLASS_PREFIX}wrapper">
         <div class="${CLASS_PREFIX}header">
             <span class="${CLASS_PREFIX}title"></span>
-            <div class="${CLASS_PREFIX}header-buttons"></div>
-            <button type="button" class="${CLASS_PREFIX}close-button">x</button>
+            <div class="${CLASS_PREFIX}header-buttons">
+                <button type="button" class="${CLASS_PREFIX}close-button"></button>
+            </div>
         </div>
         <div class="${CLASS_PREFIX}body"></div>
     </div>`;
