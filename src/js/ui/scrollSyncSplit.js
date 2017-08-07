@@ -16,8 +16,7 @@ const CLASS_CONTENT = {
 };
 
 /**
- * ScrollSyncSplit
- * @constructor
+ * Class ScrollSyncSplit
  */
 class ScrollSyncSplit {
     /**
@@ -26,9 +25,9 @@ class ScrollSyncSplit {
      * @param {Element} leftElement - an element to be on left side split view
      * @param {Element} rightElement - an element to be on right side split view
      * @param {object} options - options
-     * @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
-     * @param {boolean} [options.scrollSync=true] - true for enable scroll sync
-     * @param {boolean} [options.splitView=true] - true for split, false for single view
+     *  @param {boolean} [options.showScrollSyncButton=false] - show scroll sync button on top right corner
+     *  @param {boolean} [options.scrollSync=true] - true for enable scroll sync
+     *  @param {boolean} [options.splitView=true] - true for split, false for single view
      * @memberof ScrollSyncSplit
      */
     constructor(baseElement, leftElement, rightElement, options = {}) {
@@ -108,6 +107,7 @@ class ScrollSyncSplit {
      * @param {Element} element - content element
      * @param {string} side - 'left' | 'right'
      * @memberof ScrollSyncSplit
+     * @private
      */
     _setContentElement(element, side) {
         const contentElement = this._contentElements[side];
@@ -130,6 +130,7 @@ class ScrollSyncSplit {
      * set left side element
      * @param {Element} element - an element to be on left side split view
      * @memberof ScrollSyncSplit
+     * @private
      */
     _setLeft(element) {
         this._setContentElement(element, 'left');
@@ -139,6 +140,7 @@ class ScrollSyncSplit {
      * set right side element
      * @param {Element} element - an element to be on right side split view
      * @memberof ScrollSyncSplit
+     * @private
      */
     _setRight(element) {
         this._setContentElement(element, 'right');

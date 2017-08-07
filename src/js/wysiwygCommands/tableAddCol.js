@@ -10,12 +10,11 @@ import domUtils from '../domUtils';
 /**
  * AddCol
  * Add col to selected table
- * @exports AddCol
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableAddCol
  * @ignore
  */
-const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
+const TableAddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
     name: 'AddCol',
     /**
      * 커맨드 핸들러
@@ -92,4 +91,4 @@ function focusToNextCell(sq, $cell) {
     sq.setSelection(range);
 }
 
-module.exports = AddCol;
+module.exports = TableAddCol;

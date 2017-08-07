@@ -270,14 +270,15 @@ const KEYBOARD_MAP = [
 let sharedInstance;
 
 /**
- * KeyMapper
- * @exports KeyMapper
- * @constructor
- * @class KeyMapper
- * @param {object} [options] options
- *    @param {string} options.splitter splitter string default is +
+ * Class KeyMapper
  */
 class KeyMapper {
+    /**
+     * Creates an instance of KeyMapper.
+     * @param {object} [options] options
+     *  @param {string} options.splitter splitter string default is +
+     * @memberof KeyMapper
+     */
     constructor(options) {
         this._setSplitter(options);
     }
@@ -285,7 +286,7 @@ class KeyMapper {
     /**
      * Set key splitter
      * @param {object} options Option object
-     * @memberOf KeyMapper
+     * @memberof KeyMapper
      * @private
      */
     _setSplitter(options) {
@@ -295,8 +296,7 @@ class KeyMapper {
 
     /**
      * Convert event to keyMap
-     * @api
-     * @memberOf KeyMapper
+     * @memberof KeyMapper
      * @param {event} event Event object
      * @returns {string}
      */
@@ -330,7 +330,7 @@ class KeyMapper {
 
     /**
      * Get character from key code
-     * @memberOf KeyMapper
+     * @memberof KeyMapper
      * @param {number} keyCode Key code
      * @returns {string}
      * @private
@@ -343,8 +343,7 @@ class KeyMapper {
 
     /**
      * Get sharedInstance
-     * @api
-     * @memberOf KeyMapper
+     * @memberof KeyMapper
      * @returns {KeyMapper}
      */
     static getSharedInstance() {

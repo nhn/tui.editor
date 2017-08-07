@@ -9,12 +9,11 @@ import CommandManager from '../commandManager';
 /**
  * IncreaseDepth
  * increase depth of list or task to wysiwyg Editor
- * @exports IncreaseDepth
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/IncreaseDepth
  * @ignore
  */
-const IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
+const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'IncreaseDepth',
     /**
      *  커맨드 핸들러
@@ -52,4 +51,4 @@ const IncreaseTask = CommandManager.command('wysiwyg', /** @lends HR */{
     }
 });
 
-module.exports = IncreaseTask;
+module.exports = IncreaseDepth;

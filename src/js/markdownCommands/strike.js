@@ -10,8 +10,8 @@ const strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;
 /**
  * Strike
  * Add strike markdown syntax to markdown editor
- * @exports Strike
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Strike
  * @ignore
  */
 const Strike = CommandManager.command('markdown', /** @lends Strike */{

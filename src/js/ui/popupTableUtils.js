@@ -11,22 +11,9 @@ const {util} = tui;
 /**
  * PopupTableUtils
  * It implements table utils popup
- * @exports PopupTableUtils
- * @augments LayerPopup
- * @constructor
- * @class
- * @param {LayerPopupOption} options - layer popup option
- * @ignore
- */
-
-/**
- * PopupTableUtils
- * It implements table utils popup
- * @class PopupTableUtils
  * @extends {LayerPopup}
  */
 class PopupTableUtils extends LayerPopup {
-
     /**
      * Creates an instance of PopupTableUtils.
      * @param {LayerPopupOption} options - layer popup options

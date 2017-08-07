@@ -9,9 +9,8 @@ import CommandManager from '../commandManager';
 /**
  * UL
  * Add UL to selected wysiwyg editor content
- * @exports UL
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/UL
  * @ignore
  */
 const UL = CommandManager.command('wysiwyg', /** @lends UL */{

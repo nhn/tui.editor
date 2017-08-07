@@ -10,9 +10,8 @@ import domUtils from '../domUtils';
 /**
  * Code
  * Add bold to selected wysiwyg editor content
- * @exports Code
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Code
  * @ignore
  */
 const Code = CommandManager.command('wysiwyg', /** @lends Code */{

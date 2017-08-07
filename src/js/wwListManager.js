@@ -8,22 +8,21 @@ import domUtils from './domUtils';
 const FIND_LI_ELEMENT = /<li/i;
 
 /**
- * WwListManager
- * @exports WwListManager
- * @constructor
- * @class WwListManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwListManager
  */
 class WwListManager {
-
+    /**
+     * Creates an instance of WwListManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwListManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwListManager
+         * @memberof WwListManager#
          * @type {string}
          */
         this.name = 'list';
@@ -34,7 +33,7 @@ class WwListManager {
     /**
      * _init
      * Initialize
-     * @memberOf WwListManager
+     * @memberof WwListManager
      * @private
      */
     _init() {
@@ -45,7 +44,7 @@ class WwListManager {
     /**
      * _initEvent
      * Initialize event
-     * @memberOf WwListManager
+     * @memberof WwListManager
      * @private
      */
     _initEvent() {
@@ -128,7 +127,7 @@ class WwListManager {
 
     /**
      * Find empty list for whole container and remove it.
-     * @memberOf WwListManager
+     * @memberof WwListManager
      * @private
      */
     _findAndRemoveEmptyList() {
@@ -141,7 +140,7 @@ class WwListManager {
 
     /**
      * Remove branch lists all from body
-     * @memberOf WwListManager
+     * @memberof WwListManager
      * @private
      * @param {jQuery|HTMLElement} $root root to remove branch list
      */
@@ -158,7 +157,7 @@ class WwListManager {
 
     /**
      * Remove branch list of passed list(ul, ol)
-     * @memberOf WwListManager
+     * @memberof WwListManager
      * @param {HTMLElement} list list
      * @private
      */

@@ -3,8 +3,7 @@ import Preview from './preview';
 const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';
 
 /**
- * Code block preview
- * @class CodeBlockPreview
+ * Class Code block preview
  * @extends {Preview}
  */
 class CodeBlockPreview extends Preview {

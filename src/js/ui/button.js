@@ -7,8 +7,7 @@ const UIController = require('./uicontroller');
 const tooltip = require('./tooltip');
 
 /**
- * Button UI
- * @class Button
+ * Class Button UI
  * @extends {UIController}
  */
 class Button extends UIController {
@@ -16,13 +15,13 @@ class Button extends UIController {
     /**
      * Creates an instance of Button.
      * @param {object} options - button options
-     * @param {string} options.className - button class name
-     * @param {string} options.command - command name to execute on click
-     * @param {string} options.event - event name to trigger on click
-     * @param {string} options.text - text on button
-     * @param {string} options.tooltip - text on tooltip
-     * @param {string} options.style - button style
-     * @param {string} options.state - button state
+     *  @param {string} options.className - button class name
+     *  @param {string} options.command - command name to execute on click
+     *  @param {string} options.event - event name to trigger on click
+     *  @param {string} options.text - text on button
+     *  @param {string} options.tooltip - text on tooltip
+     *  @param {string} options.style - button style
+     *  @param {string} options.state - button state
      * @memberof Button
      */
     constructor(options) {

@@ -13,7 +13,6 @@ const {util} = tui;
 /**
  * RemoveRow
  * Remove row to selected table
- * @exports RemoveRow
  * @augments Command
  * @augments WysiwygCommand
  * @ignore

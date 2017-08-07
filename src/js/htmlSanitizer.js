@@ -30,8 +30,6 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
 
 /**
  * htmlSanitizer
- * @api
- * @exports htmlSanitizer
  * @param {string|Node} html html or Node
  * @param {boolean} [needHtmlText] pass true if need html text
  * @returns {string|DocumentFragment} result

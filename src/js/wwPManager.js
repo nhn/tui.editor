@@ -4,21 +4,21 @@
  */
 
 /**
- * WwPManager
- * @exports WwPManager
- * @class WwPManager
- * @constructor
- * @param {WysiwygEditor} wwe wysiwygEditor instance
+ * Class WwPManager
  */
 class WwPManager {
+    /**
+     * Creates an instance of WwPManager.
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
+     * @memberof WwPManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwPManager
+         * @memberof WwPManager#
          * @type {string}
          */
         this.name = 'p';
@@ -29,7 +29,7 @@ class WwPManager {
     /**
      * _initEvent
      * Initialize event
-     * @memberOf WwPManager
+     * @memberof WwPManager
      * @private
      */
     _initEvent() {
@@ -45,6 +45,7 @@ class WwPManager {
      * Split multiple line content of p tags
      * @param {string} html html text
      * @returns {string} result
+     * @private
      */
     _splitPtagContentLines(html) {
         if (html) {
@@ -89,7 +90,7 @@ class WwPManager {
     /**
      * _ensurePtagContentWrappedWithDiv
      * Wrap new line inside P tag to DIV, and additional empty line added within too
-     * @memberOf WwPManager
+     * @memberof WwPManager
      * @private
      */
     _ensurePtagContentWrappedWithDiv() {
@@ -107,7 +108,7 @@ class WwPManager {
     /**
      * _unwrapPtags
      * Unwrap P tag
-     * @memberOf WwPManager
+     * @memberof WwPManager
      * @private
      */
     _unwrapPtags() {

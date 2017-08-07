@@ -6,21 +6,21 @@
 import domUtils from './domUtils';
 
 /**
- * WwHrManager
- * @exports WwHrManager
- * @constructor
- * @class WwHrManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwHrManager
  */
 class WwHrManager {
+    /**
+     * Creates an instance of WwHrManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwHrManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwHrManager
+         * @memberof WwHrManager#
          * @type {string}
          */
         this.name = 'hr';
@@ -31,7 +31,7 @@ class WwHrManager {
     /**
      * _init
      * Initialize
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _init() {
@@ -42,7 +42,7 @@ class WwHrManager {
     /**
      * _initEvent
      * Initialize eventmanager event
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _initEvent() {
@@ -58,7 +58,7 @@ class WwHrManager {
     /**
      * _initKeyHandler
      * Initialize key event handler
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _initKeyHandler() {
@@ -86,7 +86,7 @@ class WwHrManager {
      * Check whether passed range is in hr or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _isInHr(range) {
@@ -98,7 +98,7 @@ class WwHrManager {
      * Check whether passed range is near hr or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _isNearHr(range) {
@@ -110,7 +110,7 @@ class WwHrManager {
     /**
      * Handler for delete HR when user typing within
      * @param {Range} range Range object
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _onTypedInHr(range) {
@@ -130,7 +130,7 @@ class WwHrManager {
      * @param {Range} range range
      * @param {Event} ev event
      * @returns {boolean} return true if hr was removed
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _removeHrOnEnter(range, ev) {
@@ -152,7 +152,7 @@ class WwHrManager {
      * @param {Range} range range
      * @param {Event} ev event
      * @returns {boolean} return true if hr was removed
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _removeHrOnBackspace(range, ev) {
@@ -179,7 +179,7 @@ class WwHrManager {
      * @param {Event} ev event
      * @param {strong} newBlockPosition new default block add position
      * @returns {boolean} return true if hr was removed
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _changeHrToNewDefaultBlock(hrSuspect, range, ev, newBlockPosition) {
@@ -201,7 +201,7 @@ class WwHrManager {
     /**
      * _unwrapDivOnHr
      * Unwrap default block on hr
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _unwrapDivOnHr() {
@@ -219,7 +219,7 @@ class WwHrManager {
      * _wrapDefaultBlockToOrphanTexts
      * Wrap default block to orphan texts
      * mainly, this is used for orphan text that made by controlling hr
-     * @memberOf WwHrManager
+     * @memberof WwHrManager
      * @private
      */
     _wrapDefaultBlockToOrphanTexts() {

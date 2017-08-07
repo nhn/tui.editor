@@ -11,14 +11,14 @@ const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 const {util} = tui;
 
 /**
- * WwMergedTableSelectionManager
- * @exports WwMergedTableSelectionManager
- * @constructor
- * @class WwMergedTableTableSelectionManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
- * @ignore
+ * Class WwMergedTableSelectionManager
  */
 class WwMergedTableSelectionManager extends WwTableSelectionManager {
+    /**
+     * Creates an instance of WwMergedTableSelectionManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwMergedTableSelectionManager
+     */
     constructor(wwe) {
         super(wwe);
 

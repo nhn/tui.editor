@@ -73,11 +73,13 @@ const eventList = [
 ];
 
 /**
- * EventManager
- * @exports EventManager
- * @class EventManager
+ * Class EventManager
  */
 class EventManager {
+    /**
+     * Creates an instance of EventManager.
+     * @memberof EventManager
+     */
     constructor() {
         this.events = new util.Map();
         this.TYPE = new util.Enum(eventList);

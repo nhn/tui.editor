@@ -13,7 +13,6 @@ const {util} = tui;
 /**
  * RemoveCol
  * Remove col to selected table
- * @exports RemoveCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore

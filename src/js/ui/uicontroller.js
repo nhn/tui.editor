@@ -5,6 +5,7 @@ let _uiInstanceId = -1;
 /**
  * get ui instance id
  * @returns {number} - new instance id
+ * @ignore
  */
 function makeUIInstanceId() {
     _uiInstanceId += 1;
@@ -13,11 +14,9 @@ function makeUIInstanceId() {
 }
 
 /**
- * UIController
- * @class UIController
+ * Class UIController
  */
 class UIController {
-
     /**
      * Creates an instance of UIController.
      * @param {Object} [options] - options
@@ -70,6 +69,7 @@ class UIController {
      * @param {string} type - event name and selector
      * @param {function} fn - handler function
      * @memberof UIController
+     * @private
      */
     _addEvent(type, fn) {
         const {event, selector} = this._parseEventType(type);
@@ -106,6 +106,7 @@ class UIController {
      * 'click td' => ['click', 'td]
      * @param {string} type - string to be parsed
      * @returns {Object} event, selector
+     * @private
      */
     _parseEventType(type) {
         const splitType = type.split(' ');
@@ -121,6 +122,7 @@ class UIController {
     /**
      * set root element
      * @param {jQuery} $el - root jQuery element
+     * @private
      */
     _setRootElement($el) {
         const {tagName} = this;

@@ -8,8 +8,7 @@ import UIController from './uicontroller';
 const CLASS_TAB_ACTIVE = 'te-tab-active';
 
 /**
- * Tab
- * @class Tab
+ * Class Tab
  * @extends {UIController}
  */
 class Tab extends UIController {
@@ -17,10 +16,10 @@ class Tab extends UIController {
     /**
      * Creates an instance of Tab.
      * @param {object} options - options
-     * @param {string} [options.initName] - name of the default activated button
-     * @param {string[]} options.items - Button names to be created
-     * @param {DOMElement[]} options.sections - Dom elements for tab
-     * @param {function} [options.onItemClick] - when button is clicked pass button name to function
+     *  @param {string} [options.initName] - name of the default activated button
+     *  @param {string[]} options.items - Button names to be created
+     *  @param {DOMElement[]} options.sections - Dom elements for tab
+     *  @param {function} [options.onItemClick] - when button is clicked pass button name to function
      * @memberof Tab
      */
     constructor(options = {}) {

@@ -8,8 +8,8 @@ import CommandManager from '../commandManager';
 /**
  * Table
  * Add table markdown syntax to markdown editor
- * @exports Table
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Table
  * @ignore
  */
 const Table = CommandManager.command('markdown', /** @lends Table */{

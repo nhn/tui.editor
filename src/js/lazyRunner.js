@@ -6,13 +6,13 @@
 const {util} = tui;
 
 /**
- * LazyRunner
- * @exports LazyRunner
- * @constructor
- * @class
- * @ignore
+ * Class LazyRunner
  */
 class LazyRunner {
+    /**
+     * Creates an instance of LazyRunner.
+     * @memberof LazyRunner
+     */
     constructor() {
         this.globalTOID = null;
         this.lazyRunFunctions = {};

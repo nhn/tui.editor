@@ -13,9 +13,8 @@ let codeBlockID = 0;
 /**
  * CodeBlock
  * Add CodeBlock to wysiwygEditor
- * @exports CodeBlock
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Codeblock
  * @ignore
  */
 const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{

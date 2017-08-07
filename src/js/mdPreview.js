@@ -2,8 +2,7 @@
 import Preview from './preview';
 
 /**
- * Markdown Preview
- * @class MarkdownPreview
+ * Class Markdown Preview
  * @extends {Preview}
  */
 class MarkdownPreview extends Preview {

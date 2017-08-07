@@ -7,13 +7,14 @@ const {util} = tui;
 const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**
- * ImportManager
- * @exports ImportManager
- * @constructor
- * @class ImportManager
- * @param {EventManager} eventManager eventManager
+ * Class ImportManager
  */
 class ImportManager {
+    /**
+     * Creates an instance of ImportManager.
+     * @param {EventManager} eventManager - eventManager
+     * @memberof ImportManager
+     */
     constructor(eventManager) {
         this.eventManager = eventManager;
         this._lastState = null;
@@ -82,7 +83,7 @@ class ImportManager {
 
     /**
      * Initialize event handler
-     * @memberOf ImportManager
+     * @memberof ImportManager
      * @private
      */
     _initEvent() {
@@ -120,7 +121,7 @@ class ImportManager {
 
     /**
      * Initialize default image importer
-     * @memberOf ImportManager
+     * @memberof ImportManager
      * @private
      */
     _initDefaultImageImporter() {
@@ -137,7 +138,7 @@ class ImportManager {
 
     /**
      * Emit add image blob hook
-     * @memberOf ImportManager
+     * @memberof ImportManager
      * @param {object} blob - blob or file
      * @param {string} type - type of an event the item belongs to. paste or drop
      * @private
@@ -153,7 +154,8 @@ class ImportManager {
 
     /**
      * Decode url when paste link
-     * @param {object} ev event object
+     * @param {object} ev - event object
+     * @private
      */
     _decodeURL(ev) {
         const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
@@ -179,7 +181,7 @@ class ImportManager {
 
     /**
      * Get blob or excel data from clipboard
-     * @memberOf ImportManager
+     * @memberof ImportManager
      * @param {object} evData Clipboard data
      * @private
      */
@@ -195,7 +197,7 @@ class ImportManager {
 
     /**
      * Process for blob item
-     * @memberOf ImportManager
+     * @memberof ImportManager
      * @param {Array.<string>} items Item array
      * @param {object} evData Event data
      * @private
@@ -234,6 +236,7 @@ class ImportManager {
  * data URI to Blob
  * @param {string} dataURI - data URI string
  * @returns {Blob} - blob data
+ * @ignore
  */
 function dataURItoBlob(dataURI) {
     const byteString = atob(dataURI.split(',')[1]);

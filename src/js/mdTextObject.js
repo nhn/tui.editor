@@ -4,15 +4,15 @@
  */
 
 /**
- * Markdown textObject
- * @exports mdTextObject
- * @constructor
- * @class mdTextObject
- * @param {MarkdownEditor} mde MarkdownEditor instance
- * @param {object} range range
- * @ignore
+ * Class Markdown textObject
  */
 class mdTextObject {
+    /**
+     * Creates an instance of mdTextObject.
+     * @param {MarkdownEditor} mde - MarkdownEditor instance
+     * @param {object} range - range
+     * @memberof mdTextObject
+     */
     constructor(mde, range) {
         this._mde = mde;
 
@@ -21,7 +21,7 @@ class mdTextObject {
 
     /**
      * Set start
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {object} rangeStart Start of range
      * @private
      */
@@ -32,7 +32,7 @@ class mdTextObject {
     /**
      * Set end
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {object} rangeEnd End of range
      * @private
      */
@@ -43,7 +43,7 @@ class mdTextObject {
     /**
      * Set range to given range
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {object} range Range object
      */
     setRange(range) {
@@ -54,7 +54,7 @@ class mdTextObject {
     /**
      * Set start to end
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {object} range Range object
      */
     setEndBeforeRange(range) {
@@ -64,7 +64,7 @@ class mdTextObject {
     /**
      * Expand startOffset by 1
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      */
     expandStartOffset() {
         const start = this._start;
@@ -77,7 +77,7 @@ class mdTextObject {
     /**
      * Expand endOffset by 1
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      */
     expandEndOffset() {
         const end = this._end;
@@ -90,7 +90,7 @@ class mdTextObject {
     /**
      * Get current selection's text content
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
      */
     getTextContent() {
@@ -100,7 +100,7 @@ class mdTextObject {
     /**
      * Replace current selection's content with given text content
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {string} content Replacement content
      */
     replaceContent(content) {
@@ -110,7 +110,7 @@ class mdTextObject {
     /**
      * Delete current selection's content
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      */
     deleteContent() {
         this._mde.getEditor().replaceRange('', this._start, this._end, '+delete');
@@ -119,7 +119,7 @@ class mdTextObject {
     /**
      * peek StartBeforeOffset
      * @private
-     * @memberOf mdTextObject
+     * @memberof mdTextObject
      * @param {number} offset Offset
      * @returns {{start: {line: number, ch: number}, end: {line: number, ch: number}}}
      */

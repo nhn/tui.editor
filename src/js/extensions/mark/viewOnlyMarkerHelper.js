@@ -8,14 +8,14 @@ const domUtils = require('../../domUtils');
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
- * ViewOnlyMarkerHelper
- * @exports ViewOnlyMarkerHelper
- * @constructor
- * @class
- * @param {Preview} preview preview instance
- * @ignore
+ * Class ViewOnlyMarkerHelper
  */
 class ViewOnlyMarkerHelper {
+    /**
+     * Creates an instance of ViewOnlyMarkerHelper.
+     * @param {Preview} preview - preview instance
+     * @memberof ViewOnlyMarkerHelper
+     */
     constructor(preview) {
         this.preview = preview;
     }
@@ -58,6 +58,7 @@ class ViewOnlyMarkerHelper {
      * Get extra info of range
      * @param {Range} range range
      * @returns {object} extra info
+     * @private
      */
     _getExtraInfoOfRange(range) {
         let top, left, rect, containerOffset, height, node, parentNode;
@@ -136,6 +137,7 @@ class ViewOnlyMarkerHelper {
      * Containers of range should be text node
      * @param {Range} range range
      * @returns {boolean} success or fail
+     * @private
      */
     _extendRangeToTextNodeIfHasNone(range) {
         const endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset);
@@ -162,6 +164,7 @@ class ViewOnlyMarkerHelper {
      * Find offset nodes by given offset list
      * @param {Array.<number>} offsetlist offset list
      * @returns {Array.<object>} offset node informations
+     * @private
      */
     _findOffsetNode(offsetlist) {
         return domUtils.findOffsetNode(this.preview.$el[0], offsetlist, text => text.replace(FIND_CRLF_RX, ''));

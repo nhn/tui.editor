@@ -6,8 +6,7 @@
 const {util} = tui;
 
 /**
- * ExtManager
- * @class ExtManager
+ * Class ExtManager
  */
 class ExtManager {
     /**
@@ -21,8 +20,7 @@ class ExtManager {
     /**
      * defineExtension
      * Defined Extension
-     * @api
-     * @memberOf ExtManager
+     * @memberof ExtManager
      * @param {string} name extension name
      * @param {ExtManager~extension} ext extension
      */

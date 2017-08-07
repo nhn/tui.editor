@@ -9,9 +9,8 @@ import CommandManager from '../commandManager';
 /**
  * Task
  * Add Task to selected wysiwyg editor content
- * @exports Task
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Task
  * @ignore
  */
 const Task = CommandManager.command('wysiwyg', /** @lends Task */{
