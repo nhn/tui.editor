@@ -13,7 +13,6 @@ const {util} = tui;
 /**
  * AddCol
  * Add Row to selected table
- * @exports AddCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore

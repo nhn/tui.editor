@@ -9,14 +9,14 @@ const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
  *
- * MarkdownMarkerHelper
- * @exports MarkdownMarkerHelper
- * @constructor
- * @class
- * @param {CodeMirror} cm codemirror instance
- * @ignore
+ * Class MarkdownMarkerHelper
  */
 class MarkdownMarkerHelper {
+    /**
+     * Creates an instance of MarkdownMarkerHelper.
+     * @param {CodeMirror} cm codemirror instance
+     * @memberof MarkdownMarkerHelper
+     */
     constructor(cm) {
         this.cm = cm;
     }

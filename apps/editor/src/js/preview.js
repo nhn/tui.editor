@@ -6,8 +6,7 @@
 import LazyRunner from './lazyRunner';
 
 /**
- * Preview
- * @class Preview
+ * Class Preview
  **/
 class Preview {
     /**

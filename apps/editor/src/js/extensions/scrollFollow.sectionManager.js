@@ -13,15 +13,16 @@ const FIND_CODEBLOCK_START_RX = /^ *(`{3,}|~{3,})[ .]*(\S+)? */;
 const FIND_SPACE = /\s/g;
 
 /**
- * SectionManager
+ * Class SectionManager
  * manage logical markdown content sections
- * @exports SectionManager
- * @constructor
- * @class
- * @param {CodeMirror} cm codemirror
- * @param {Preview} preview preview
  */
 class SectionManager {
+    /**
+     * Creates an instance of SectionManager.
+     * @param {CodeMirror} cm - codemirror
+     * @param {Preview} preview - preview
+     * @memberof SectionManager
+     */
     constructor(cm, preview) {
         this.cm = cm;
         this.preview = preview;
@@ -45,6 +46,7 @@ class SectionManager {
      * add new section
      * @param {number} start initial start line number
      * @param {number} end initial end line number
+     * @private
      */
     _addNewSection(start, end) {
         const newSection = this._makeSectionData(start, end);
@@ -67,6 +69,7 @@ class SectionManager {
      * @param {number} start initial start line number
      * @param {number} end initial end line number
      * @returns {object} section object
+     * @private
      */
     _makeSectionData(start, end) {
         return {
@@ -80,6 +83,7 @@ class SectionManager {
      * _updateCurrentSectionEnd
      * update current section's end line number
      * @param {number} end end value to update
+     * @private
      */
     _updateCurrentSectionEnd(end) {
         this._currentSection.end = end;
@@ -89,6 +93,7 @@ class SectionManager {
      * _eachLineState
      * iterate codemiror lines, callback function parameter pass line type and line number
      * @param {function} iteratee callback function
+     * @private
      */
     _eachLineState(iteratee) {
         let isSection, i, lineString, nextLineString, prevLineString,
@@ -191,6 +196,7 @@ class SectionManager {
      * @param {number} lineIndex current index
      * @param {number} lineLength line length
      * @returns {boolean} result
+     * @private
      */
     _doFollowedLinesHaveCodeBlockEnd(lineIndex, lineLength) {
         let doLineHaveCodeBlockEnd = false;
@@ -210,6 +216,7 @@ class SectionManager {
      * Check if passed string have code block start
      * @param {string} string string to check
      * @returns {boolean} result
+     * @private
      */
     _isCodeBlockStart(string) {
         return FIND_CODEBLOCK_START_RX.test(string);
@@ -220,6 +227,7 @@ class SectionManager {
      * Check if passed string have code block end
      * @param {string} string string to check
      * @returns {boolean} result
+     * @private
      */
     _isCodeBlockEnd(string) {
         return FIND_CODEBLOCK_END_RX.test(string);
@@ -231,6 +239,7 @@ class SectionManager {
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
      * @returns {boolean} result
+     * @private
      */
     _isTable(lineString, nextLineString) {
         return (this._isTableCode(lineString) && this._isTableAligner(nextLineString));
@@ -241,6 +250,7 @@ class SectionManager {
      * Check if passed string have table code
      * @param {string} string string to check
      * @returns {boolean} result
+     * @private
      */
     _isTableCode(string) {
         return /(^\S?.*\|.*)/.test(string);
@@ -251,6 +261,7 @@ class SectionManager {
      * Check if passed string have table align code
      * @param {string} string string to check
      * @returns {boolean} result
+     * @private
      */
     _isTableAligner(string) {
         return /(\s*[-:]+\s*\|)+/.test(string);
@@ -261,6 +272,7 @@ class SectionManager {
      * Check if passed string have atx header
      * @param {string} string string to check
      * @returns {boolean} result
+     * @private
      */
     _isAtxHeader(string) {
         return FIND_HEADER_RX.test(string);
@@ -271,6 +283,7 @@ class SectionManager {
      * @param {string} lineString current line string
      * @param {string} nextLineString next line string
      * @returns {boolean} result
+     * @private
      */
     _isSeTextHeader(lineString, nextLineString) {
         return lineString.replace(FIND_SPACE, '') !== ''
@@ -321,6 +334,7 @@ class SectionManager {
      * _matchPreviewSectionsWithSectionlist
      * match section list with preview section element
      * @param {HTMLNode[]} sections section nodes
+     * @private
      */
     _matchPreviewSectionsWithSectionlist(sections) {
         sections.forEach((childs, index) => {
@@ -335,6 +349,7 @@ class SectionManager {
      * _getPreviewSections
      * get preview html section group to make section
      * @returns {array[]} element node array
+     * @private
      */
     _getPreviewSections() {
         const sections = [];

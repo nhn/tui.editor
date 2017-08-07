@@ -32,16 +32,17 @@ const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 const canObserveMutations = (typeof MutationObserver !== 'undefined');
 
 /**
- * WysiwygEditor
- * @exports WysiwygEditor
- * @param {jQuery} $el element to insert editor
- * @param {EventManager} eventManager EventManager instance
- * @param {object} [options={}] - option object
- *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
- * @constructor
- * @class WysiwygEditor
+ * Class WysiwygEditor
  */
 class WysiwygEditor {
+    /**
+     * Creates an instance of WysiwygEditor.
+     * @param {jQuery} $el element to insert editor
+     * @param {EventManager} eventManager EventManager instance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
+     * @memberof WysiwygEditor
+     */
     constructor($el, eventManager, options = {}) {
         this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;

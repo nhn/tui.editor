@@ -9,9 +9,8 @@ import CommandManager from '../commandManager';
 /**
  * OL
  * Add OL to selected wysiwyg editor content
- * @exports OL
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/OL
  * @ignore
  */
 const OL = CommandManager.command('wysiwyg', /** @lends OL */{

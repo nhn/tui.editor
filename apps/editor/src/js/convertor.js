@@ -19,14 +19,14 @@ const {
 } = window;
 
 /**
- * Convertor
- * @exports Convertor
- * @constructor
- * @class Convertor
- * @param {EventManager} em - EventManager instance
- * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+ * Class Convertor
  */
 class Convertor {
+    /**
+     * Convertor constructor
+     * @param {EventManager} em - EventManager instance
+     * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+     */
     constructor(em) {
         this.eventManager = em;
 
@@ -75,7 +75,7 @@ class Convertor {
      * _markdownToHtmlWithCodeHighlight
      * Convert markdown to html with Codehighlight
      * @private
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -97,7 +97,7 @@ class Convertor {
      * _markdownToHtml
      * Convert markdown to html
      * @private
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -140,8 +140,7 @@ class Convertor {
      * toHTMLWithCodeHightlight
      * Convert markdown to html with Codehighlight
      * emit convertorAfterMarkdownToHtmlConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -156,8 +155,7 @@ class Convertor {
      * toHTML
      * Convert markdown to html
      * emit convertorAfterMarkdownToHtmlConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -177,8 +175,7 @@ class Convertor {
      * toMarkdown
      * Convert html to markdown
      * emit convertorAfterHtmlToMarkdownConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} html html text
      * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text

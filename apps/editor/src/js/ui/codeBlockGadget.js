@@ -5,8 +5,8 @@ const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 
 /**
- * CodeBlockGadget
- * @class CodeBlockGadget
+ * Class CodeBlockGadget
+ * @extends {BlockOverlay}
  */
 class CodeBlockGadget extends BlockOverlay {
 

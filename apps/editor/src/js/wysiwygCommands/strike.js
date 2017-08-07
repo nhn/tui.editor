@@ -9,9 +9,8 @@ import domUtils from '../domUtils';
 /**
  * Strike
  * Add strike to selected wysiwyg editor content
- * @exports Strike
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Strike
  * @ignore
  */
 const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{

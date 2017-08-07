@@ -8,8 +8,8 @@ import CommandManager from '../commandManager';
 /**
  * Blockquote
  * Add blockquote markdown syntax to markdown editor
- * @exports Blockquote
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Blockquote
  * @ignore
  */
 const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{

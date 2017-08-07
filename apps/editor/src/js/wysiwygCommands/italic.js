@@ -10,9 +10,8 @@ import domUtils from '../domUtils';
 /**
  * Italic
  * Add Italic to selected wysiwyg editor content
- * @exports Italic
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Italic
  * @ignore
  */
 const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{

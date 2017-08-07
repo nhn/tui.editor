@@ -22,14 +22,15 @@ const containerTmpl = [
 ].join('');
 
 /**
- * Layout
- * @exports Layout
- * @constructor
- * @class Layout
- * @param {object} options Option object
- * @param {EventManager} eventManager Event manager instance
+ * Class Layout
  */
 class Layout {
+    /**
+     * Creates an instance of Layout.
+     * @param {object} options - Option object
+     * @param {EventManager} eventManager - Event manager instance
+     * @memberof Layout
+     */
     constructor(options, eventManager) {
         this.$el = $(options.el);
         this.height = options.height;
@@ -43,7 +44,7 @@ class Layout {
     /**
      * Initializer
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     init() {
         this._renderLayout();
@@ -54,7 +55,7 @@ class Layout {
 
     /**
      * Initialize show and hide event
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _initEvent() {
@@ -64,7 +65,7 @@ class Layout {
 
     /**
      * Create editor container with template
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _renderLayout() {
@@ -75,7 +76,7 @@ class Layout {
     /**
      * Switch editor mode to WYSIWYG
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     switchToWYSIWYG() {
         this.$containerEl.removeClass('te-md-mode');
@@ -85,7 +86,7 @@ class Layout {
     /**
      * Switch editor mode to Markdown
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     switchToMarkdown() {
         this.$containerEl.removeClass('te-ww-mode');
@@ -94,7 +95,7 @@ class Layout {
 
     /**
      * Initialize editor to Markdown and set preview section
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _initMarkdownAndPreviewSection() {
@@ -104,7 +105,7 @@ class Layout {
 
     /**
      * Initialize editor to WYSIWYG
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _initWysiwygSection() {
@@ -113,7 +114,7 @@ class Layout {
 
     /**
      * Set preview to vertical split style
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _verticalSplitStyle() {
@@ -123,7 +124,7 @@ class Layout {
 
     /**
      * Set tab style preview mode
-     * @memberOf Layout
+     * @memberof Layout
      * @private
      */
     _tabStyle() {
@@ -134,7 +135,7 @@ class Layout {
     /**
      * Toggle preview style between tab and vertical split
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      * @param {string} style Preview style ('tab' or 'vertical')
      */
     changePreviewStyle(style) {
@@ -148,7 +149,7 @@ class Layout {
     /**
      * Hide Editor
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     hide() {
         this.$el.find('.tui-editor').addClass('te-hide');
@@ -157,7 +158,7 @@ class Layout {
     /**
      * Show Editor
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     show() {
         this.$el.find('.tui-editor').removeClass('te-hide');
@@ -166,7 +167,7 @@ class Layout {
     /**
      * Remove Editor
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      */
     remove() {
         this.$el.find('.tui-editor').remove();
@@ -175,7 +176,7 @@ class Layout {
     /**
      * Get jQuery wrapped editor container element
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      * @returns {jQuery}
      */
     getEditorEl() {
@@ -185,7 +186,7 @@ class Layout {
     /**
      * Get jQuery wrapped preview element
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      * @returns {jQuery}
      */
     getPreviewEl() {
@@ -195,7 +196,7 @@ class Layout {
     /**
      * Get jQuery wrapped Markdown editor element
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      * @returns {jQuery}
      */
     getMdEditorContainerEl() {
@@ -205,7 +206,7 @@ class Layout {
     /**
      * Get jQuery wrapped WYSIWYG editor element
      * @api
-     * @memberOf Layout
+     * @memberof Layout
      * @returns {jQuery}
      */
     getWwEditorContainerEl() {

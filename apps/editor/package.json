@@ -38,7 +38,7 @@
     "karma-webdriver-launcher": "git+https://github.com/everedifice/karma-webdriver-launcher.git",
     "karma-webpack": "^2.0.3",
     "style-loader": "^0.16.1",
-    "tui-jsdoc-template": "^1.1.0",
+    "tui-jsdoc-template": "^1.2.2",
     "webpack": "^2.4.1",
     "webpack-dev-server": "^2.4.2",
     "webpack-visualizer-plugin": "^0.1.11"

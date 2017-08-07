@@ -17,21 +17,21 @@ const FIND_ZWS_RX = /\u200B/g;
 const CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
 
 /**
- * WwCodeBlockManager
- * @exports WwCodeBlockManager
- * @class WwCodeBlockManager
- * @constructor
- * @param {WysiwygEditor} wwe wysiwygEditor instance
+ * Class WwCodeBlockManager
  */
 class WwCodeBlockManager {
+    /**
+     * Creates an instance of WwCodeBlockManager.
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
+     * @memberof WwCodeBlockManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwCodeBlockManager
+         * @memberof WwCodeBlockManager#
          * @type {string}
          */
         this.name = 'codeblock';
@@ -41,7 +41,7 @@ class WwCodeBlockManager {
     /**
      * _init
      * Initialize
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @private
      */
     _init() {
@@ -52,7 +52,7 @@ class WwCodeBlockManager {
     /**
      * _initKeyHandler
      * Initialize key event handler
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @private
      */
     _initKeyHandler() {
@@ -62,7 +62,7 @@ class WwCodeBlockManager {
     /**
      * _initEvent
      * Initialize eventmanager event
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @private
      */
     _initEvent() {
@@ -77,8 +77,7 @@ class WwCodeBlockManager {
 
     /**
      * Convert copied nodes to code block if need
-     * @api
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {DocumentFragment}
      */
@@ -97,8 +96,7 @@ class WwCodeBlockManager {
 
     /**
      * Wrap nodes into code block
-     * @api
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {Array.<Node>} nodes Node array
      * @returns {HTMLElement} Code block element
      */
@@ -119,7 +117,7 @@ class WwCodeBlockManager {
 
     /**
      * Copy content with code block style from code block selection
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {HTMLElement} element Copied element
      * @param {Range} range Range object
      * @returns {HTMLElement}
@@ -141,7 +139,7 @@ class WwCodeBlockManager {
 
     /**
      * Merge code block lines
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {string} html HTML string
      * @returns {string}
      * @private
@@ -160,7 +158,7 @@ class WwCodeBlockManager {
 
     /**
      * Split code block to lines
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {HTMLElement} node root node to find pre
      * @private
      */
@@ -209,7 +207,7 @@ class WwCodeBlockManager {
 
     /**
      * Make code HTML text
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {string} lineContent Content text
      * @returns {string}
      * @private
@@ -226,7 +224,7 @@ class WwCodeBlockManager {
 
     /**
      * Remove codeblock if need
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {Event} ev Event object
      * @param {Range} range Range object
      * @returns {boolean}
@@ -270,7 +268,7 @@ class WwCodeBlockManager {
 
     /**
      * Return boolean value of whether current range is in the code block
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {Range} range Range object
      * @returns {boolean}
      */
@@ -288,7 +286,7 @@ class WwCodeBlockManager {
 
     /**
      * Verify given element is code block
-     * @memberOf WwCodeBlockManager
+     * @memberof WwCodeBlockManager
      * @param {HTMLElement} element Element
      * @returns {boolean}
      * @private

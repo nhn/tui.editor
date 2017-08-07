@@ -8,8 +8,8 @@ import CommandManager from '../commandManager';
 /**
  * Code
  * Add code markdown syntax to markdown editor
- * @exports Code
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Code
  * @ignore
  */
 const Code = CommandManager.command('markdown', /** @lends Code */{

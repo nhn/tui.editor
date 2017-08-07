@@ -8,13 +8,14 @@ const domUtils = require('../../domUtils');
 const FIND_ZWB_RX = /\u200B/g;
 
 /**
- * WysiwygMarkerHelper
- * @exports WysiwygMarkerHelper
- * @constructor
- * @class
- * @param {SquireExt} sqe squire instance
+ * Class WysiwygMarkerHelper
  */
 class WysiwygMarkerHelper {
+    /**
+     * Creates an instance of WysiwygMarkerHelper.
+     * @param {SquireExt} sqe - squire instance
+     * @memberof WysiwygMarkerHelper
+     */
     constructor(sqe) {
         this.sqe = sqe;
     }
@@ -56,6 +57,7 @@ class WysiwygMarkerHelper {
      * Get extra info of range
      * @param {Range} range range
      * @returns {object} extra info
+     * @private
      */
     _getExtraInfoOfRange(range) {
         let top, left, rect, height, node, parentNode, containerOffset;
@@ -137,6 +139,7 @@ class WysiwygMarkerHelper {
      * Containers of range should be text node
      * @param {Range} range range
      * @returns {boolean} success or fail
+     * @private
      */
     _extendRangeToTextNodeIfHasNone(range) {
         const endNode = domUtils.getChildNodeByOffset(range.endContainer, range.endOffset);
@@ -163,6 +166,7 @@ class WysiwygMarkerHelper {
      * Find offset nodes by given offset list
      * @param {Array.<number>} offsetlist offset list
      * @returns {Array.<object>} offset node informations
+     * @private
      */
     _findOffsetNode(offsetlist) {
         return domUtils.findOffsetNode(this.sqe.get$Body()[0], offsetlist, text => text.replace(FIND_ZWB_RX, ''));

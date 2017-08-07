@@ -10,21 +10,21 @@ const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
- * WwTaskManager
- * @exports WwTaskManager
- * @class WwTaskManager
- * @constructor
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwTaskManager
  */
 class WwTaskManager {
+    /**
+     * Creates an instance of WwTaskManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwTaskManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwTaskManager
+         * @memberof WwTaskManager#
          * @type {string}
          */
         this.name = 'task';
@@ -35,7 +35,7 @@ class WwTaskManager {
     /**
      * _init
      * Init
-     * @memberOf WwTaskManager
+     * @memberof WwTaskManager
      * @private
      */
     _init() {
@@ -54,7 +54,7 @@ class WwTaskManager {
     /**
      * _initEvent
      * Initialize event
-     * @memberOf WwTaskManager
+     * @memberof WwTaskManager
      * @private
      */
     _initEvent() {
@@ -66,7 +66,7 @@ class WwTaskManager {
     /**
      * _initKeyHandler
      * Initialize key event handler
-     * @memberOf WwTaskManager
+     * @memberof WwTaskManager
      * @private
      */
     _initKeyHandler() {
@@ -86,8 +86,7 @@ class WwTaskManager {
      * Check whether passed range is in task list or not
      * @param {Range} range range
      * @returns {boolean} result
-     * @memberOf WwTaskManager
-     * @api
+     * @memberof WwTaskManager
      */
     isInTaskList(range) {
         let li;
@@ -111,8 +110,7 @@ class WwTaskManager {
      * unformatTask
      * Unforamt task
      * @param {Node} node target
-     * @memberOf WwTaskManager
-     * @api
+     * @memberof WwTaskManager
      */
     unformatTask(node) {
         const $li = $(node).closest('li');
@@ -131,8 +129,7 @@ class WwTaskManager {
      * formatTask
      * Format task
      * @param {Node} node target
-     * @memberOf WwTaskManager
-     * @api
+     * @memberof WwTaskManager
      */
     formatTask(node) {
         const $selected = $(node);
@@ -145,7 +142,7 @@ class WwTaskManager {
     /**
      * _formatTaskIfNeed
      * Format task if current range has task class name
-     * @memberOf WwTaskManager
+     * @memberof WwTaskManager
      * @private
      */
     _formatTaskIfNeed() {
@@ -159,7 +156,7 @@ class WwTaskManager {
     /**
      * _removeTaskListClass
      * Remove tasklist class
-     * @memberOf WwTaskManager
+     * @memberof WwTaskManager
      * @private
      */
     _removeTaskListClass() {

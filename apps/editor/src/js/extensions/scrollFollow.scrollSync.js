@@ -8,17 +8,17 @@ const SCROLL_TOP_PADDING = 20;
 const SCROLL_BOCKING_RESET_DELAY = 15;
 
 /**
- * ScrollSync
+ * Class ScrollSync
  * manage scroll sync between markdown editor and preview
- * @exports ScrollSync
- * @constructor
- * @class
- * @param {SectionManager} sectionManager sectionManager
- * @param {CodeMirror} cm CodeMirror
- * @param {jQuery} $previewContainerEl preview container
- * @ignore
  */
 class ScrollSync {
+    /**
+     * Creates an instance of ScrollSync.
+     * @param {SectionManager} sectionManager - sectionManager
+     * @param {CodeMirror} cm - CodeMirror
+     * @param {jQuery} $previewContainerEl - preview container
+     * @memberof ScrollSync
+     */
     constructor(sectionManager, cm, $previewContainerEl) {
         this.sectionManager = sectionManager;
         this.cm = cm;
@@ -43,6 +43,7 @@ class ScrollSync {
      * Return section height of editor
      * @param {object} section section be calculated height
      * @returns {number} height
+     * @private
      */
     _getEditorSectionHeight(section) {
         let height = this.cm.heightAtLine(section.end, 'local');
@@ -57,6 +58,7 @@ class ScrollSync {
      * @param {object} section section be calculated
      * @param {number} line line number
      * @returns {number} gap
+     * @private
      */
     _getEditorLineHeightGapInSection(section, line) {
         let gap = this.cm.heightAtLine(line, 'local');
@@ -71,6 +73,7 @@ class ScrollSync {
      * @param {object} section section be calculated
      * @param {number} line line number
      * @returns {number} ratio
+     * @private
      */
     _getEditorSectionScrollRatio(section, line) {
         const isOneLine = (section.end === section.start);
@@ -89,6 +92,7 @@ class ScrollSync {
      * _getScrollFactorsOfEditor
      * Return Scroll Information of editor for preview scroll sync
      * @returns {object} scroll factors
+     * @private
      */
     _getScrollFactorsOfEditor() {
         const {cm} = this;
@@ -173,6 +177,7 @@ class ScrollSync {
      * _getScrollTopForPreview
      * Return scrollTop value for preview
      * @returns {number|undefined} scrollTop value, when something wrong then return undefined
+     * @private
      */
     _getScrollTopForPreview() {
         let scrollTop;
@@ -275,6 +280,7 @@ class ScrollSync {
      * @param {number} originValue original value
      * @param {number} targetValue target value
      * @param {function} stepCB callback function
+     * @private
      */
     _animateRun(originValue, targetValue, stepCB) {
         const valueDiff = targetValue - originValue,

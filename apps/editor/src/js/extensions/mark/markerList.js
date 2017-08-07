@@ -6,13 +6,13 @@
 const {util} = tui;
 
 /**
- * Markerlist
- * @exports Markerlist
- * @constructor
- * @class
- * @ignore
+ * Class Markerlist
  */
 class Markerlist {
+    /**
+     * Creates an instance of Markerlist.
+     * @memberof Markerlist
+     */
     constructor() {
         this._sortedMarkers = [];
         this._markersWithId = {};
@@ -105,6 +105,7 @@ class Markerlist {
      * @param {number} start start offset
      * @param {end} end end offset
      * @returns {Array.<object>} markers
+     * @private
      */
     _getMarkersByRangeAffected(start, end) {
         const rangeMarkers = this._sortedMarkers.filter(marker => {

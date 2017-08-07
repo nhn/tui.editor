@@ -30,9 +30,8 @@ const CONTAINER_TEMPLATE = `
 `;
 
 /**
- * Default UI
+ * Class Default UI
  * initialize ui instances. toolbar, popups
- * @class DefaultUI
  */
 class DefaultUI {
     /**

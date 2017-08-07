@@ -8,21 +8,21 @@ import domUtils from './domUtils';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
- * WwTableSelectionManager
- * @exports WwTableSelectionManager
- * @constructor
- * @class WwTableSelectionManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwTableSelectionManager
  */
 class WwTableSelectionManager {
+    /**
+     * Creates an instance of WwTableSelectionManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwTableSelectionManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this.eventManager = wwe.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf WwTableSelectionManager
+         * @memberof WwTableSelectionManager#
          * @type {string}
          */
         this.name = 'tableSelection';
@@ -33,7 +33,7 @@ class WwTableSelectionManager {
     /**
      * _init
      * Initialize
-     * @memberOf WwTableSelectionManager
+     * @memberof WwTableSelectionManager
      * @private
      */
     _init() {
@@ -49,7 +49,7 @@ class WwTableSelectionManager {
     /**
      * _initEvent
      * Initialize event
-     * @memberOf WwTableSelectionManager
+     * @memberof WwTableSelectionManager
      * @private
      */
     _initEvent() {
@@ -272,8 +272,7 @@ class WwTableSelectionManager {
      * @param {HTMLElement} selectionStart start element
      * @param {HTMLElement} selectionEnd end element
      * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
-     * @memberOf WwTableSelectionManager
-     * @api
+     * @memberof WwTableSelectionManager
      */
     getSelectionRangeFromTable(selectionStart, selectionEnd) {
         const nodeOffsetOfParent = domUtils.getNodeOffsetOfParent;
@@ -356,8 +355,7 @@ class WwTableSelectionManager {
 
     /**
      * Remove '.te-cell-selected' class from all of table Cell
-     * @memberOf WwTableSelectionManager
-     * @api
+     * @memberof WwTableSelectionManager
      */
     removeClassAttrbuteFromAllCellsIfNeed() {
         this.wwe.get$Body().find(`td.${TABLE_CELL_SELECTED_CLASS_NAME},th.${TABLE_CELL_SELECTED_CLASS_NAME}`)
@@ -375,7 +373,7 @@ class WwTableSelectionManager {
     /**
      * gets selected cells
      * @returns {jQuery} selected cells
-     * @memberOf WwTableSelectionManager
+     * @memberof WwTableSelectionManager
      */
     getSelectedCells() {
         return this.wwe.get$Body().find(`.${TABLE_CELL_SELECTED_CLASS_NAME}`);

@@ -10,9 +10,8 @@ import domUtils from '../domUtils';
 /**
  * HR
  * Add horizontal line markdown syntax to wysiwyg Editor
- * @exports HR
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/HR
  * @ignore
  */
 const HR = CommandManager.command('wysiwyg', /** @lends HR */{

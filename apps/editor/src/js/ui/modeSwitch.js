@@ -11,13 +11,11 @@ const MARKDOWN = 'markdown';
 const WYSIWYG = 'wysiwyg';
 
 /**
- * ModeSwitch
+ * Class ModeSwitch
  * UI Control for switch between Markdown and WYSIWYG
- * @class ModeSwitch
  * @extends {UIController}
  */
 class ModeSwitch extends UIController {
-
     /**
      * Creates an instance of ModeSwitch.
      * @param {string} initialType - initial type of editor

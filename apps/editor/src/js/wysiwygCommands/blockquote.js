@@ -9,9 +9,8 @@ const CommandManager = require('../commandManager');
 /**
  * Blockquote
  * Add Blockquote to selected wysiwyg editor content
- * @exports Blockquote
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Blockquote
  * @ignore
  */
 const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{

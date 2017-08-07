@@ -10,9 +10,8 @@ import CommandManager from '../commandManager';
 /**
  * Heading
  * Convert selected root level contents to heading with size wysiwyg Editor
- * @exports Heading
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Heading
  * @ignore
  */
 const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{

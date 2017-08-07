@@ -12,8 +12,8 @@ const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
 /**
  * OL
  * Add ordered list markdown syntax to markdown editor
- * @exports OL
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/OL
  * @ignore
  */
 const OL = CommandManager.command('markdown', /** @lends OL */{

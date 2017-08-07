@@ -10,9 +10,8 @@ import {decodeURIGraceful, encodeMarkdownCharacters} from '../importManager';
 /**
  * AddLink
  * Add link markdown syntax to wysiwyg Editor
- * @exports AddLink
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/AddLink
  * @ignore
  */
 const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{

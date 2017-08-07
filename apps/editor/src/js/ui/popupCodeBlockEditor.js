@@ -19,8 +19,7 @@ const TEMPLATE_HEADER_BUTTONS = `
 `;
 
 /**
- * popup code block editor
- * @class PopupCodeBlockEditor
+ * Class popup code block editor
  * @extends {LayerPopup}
  */
 class PopupCodeBlockEditor extends LayerPopup {

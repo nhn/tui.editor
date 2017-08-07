@@ -9,12 +9,11 @@ import CommandManager from '../commandManager';
 /**
  * AddRow
  * Add Row to selected table
- * @exports AddRow
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableAddRow
  * @ignore
  */
-const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
+const TableAddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
     name: 'AddRow',
     /**
      *  커맨드 핸들러
@@ -71,4 +70,4 @@ function focusToFirstTd(sq, $tr) {
     sq.setSelection(range);
 }
 
-module.exports = AddRow;
+module.exports = TableAddRow;

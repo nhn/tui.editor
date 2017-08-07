@@ -6,9 +6,7 @@
 const {hljs} = window;
 
 /**
- * CodeBlockManager
- * @exports CodeBlockManager
- * @class
+ * Class Code Block Manager
  */
 class CodeBlockManager {
 

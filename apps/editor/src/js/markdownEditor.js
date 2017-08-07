@@ -7,8 +7,7 @@ import MdTextObject from './mdTextObject';
 const keyMapper = KeyMapper.getSharedInstance();
 
 /**
- * MarkdownEditor
- * @class MarkdownEditor
+ * Class MarkdownEditor
  */
 class MarkdownEditor extends CodeMirrorExt {
     /**
@@ -44,7 +43,7 @@ class MarkdownEditor extends CodeMirrorExt {
     /**
      * _initEvent
      * Initialize EventManager event handler
-     * @memberOf MarkdownEditor
+     * @memberof MarkdownEditor
      * @private
      */
     _initEvent() {

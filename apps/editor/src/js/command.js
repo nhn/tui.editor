@@ -6,9 +6,7 @@
 const {util} = tui;
 
 /**
- * Command class
- * @exports Command
- * @class
+ * Class Command
  */
 class Command {
     /**
@@ -27,8 +25,7 @@ class Command {
     /**
      * getName
      * returns Name of command
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {string} Command Name
      */
     getName() {
@@ -38,8 +35,7 @@ class Command {
     /**
      * getType
      * returns Type of command
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {number} Command Command type number
      */
     getType() {
@@ -49,8 +45,7 @@ class Command {
     /**
      * isMDType
      * returns whether Command Type is Markdown or not
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {boolean} result
      */
     isMDType() {
@@ -60,8 +55,7 @@ class Command {
     /**
      * isWWType
      * returns whether Command Type is Wysiwyg or not
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {boolean} result
      */
     isWWType() {
@@ -71,8 +65,7 @@ class Command {
     /**
      * isGlobalType
      * returns whether Command Type is Global or not
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {boolean} result
      */
     isGlobalType() {
@@ -82,8 +75,7 @@ class Command {
     /**
      * setKeyMap
      * Set keymap value for each os
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @param {string} win Windows Key(and etc)
      * @param {string} mac Mac osx key
      */
@@ -94,8 +86,7 @@ class Command {
 
 /**
  * Command factory method
- * @api
- * @memberOf Command
+ * @memberof Command
  * @param {string} typeStr Editor type name
  * @param {object} props Property
  *     @param {string} props.name Command name
@@ -125,8 +116,7 @@ Command.factory = function(typeStr, props) {
  * markdown : 0
  * wysiwyg : 1
  * global : 2
- * @api
- * @memberOf Command
+ * @memberof Command
  * @type {object}
  */
 Command.TYPE = {

@@ -11,21 +11,21 @@ const FIND_HEADING_RX = /^#+\s/;
 const FIND_BLOCK_RX = /^ {0,3}(```|\||>)/;
 
 /**
- * MdListManager
- * @exports MdListManager
- * @class MdListManager
- * @constructor
- * @param {MarkdownEditor} mde MarkdownEditor instance
+ * Class MdListManager
  */
 class MdListManager {
+    /**
+     * Creates an instance of MdListManager.
+     * @param {MarkdownEditor} mde - MarkdownEditor instance
+     * @memberof MdListManager
+     */
     constructor(mde) {
         this.mde = mde;
         this.eventManager = mde.eventManager;
 
         /**
          * Name property
-         * @api
-         * @memberOf MdListManager
+         * @memberof MdListManager#
          * @type {string}
          */
         this.name = 'list';
@@ -34,7 +34,6 @@ class MdListManager {
     /**
      * Return whether passed line is list or paragraph or not
      * @param {string} line line text
-     * @api
      * @returns {boolean}
      */
     isListOrParagraph(line) {
@@ -47,7 +46,6 @@ class MdListManager {
      * @param {number} index index number
      * @param {number} endLineNumber end line index number
      * @param {number} startLineNumber start line index number
-     * @api
      */
     appendBlankLineIfNeed(cm, index, endLineNumber, startLineNumber) {
         const doc = cm.getDoc();
@@ -95,7 +93,6 @@ class MdListManager {
     /**
      * Sort line number of selection descending
      * @param {{from, to}} range start, end CodeMirror range information
-     * @api
      * @returns {{start: {number}, end: {number}}}
      */
     createSortedLineRange(range) {
@@ -120,7 +117,6 @@ class MdListManager {
      * @param {object} doc doc instance
      * @param {{from, to}} range CodeMirror range information
      * @param {function} comparator comparator function
-     * @api
      * @returns {{start: number, end: number}}
      */
     expandLineRangeIfNeed(doc, range, comparator) {
@@ -150,7 +146,6 @@ class MdListManager {
      * @param {number} lineNumber Line number
      * @param {RegExp} regexp Regexp for find list syntax
      * @param {string} replacePattern Replacement string
-     * @api
      */
     replaceLineText(doc, lineNumber, regexp, replacePattern) {
         let line = doc.getLine(lineNumber);

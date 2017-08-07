@@ -9,9 +9,8 @@ import CommandManager from '../commandManager';
 /**
  * Table
  * Add table to selected wysiwyg editor content
- * @exports Table
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Table
  * @ignore
  */
 const Table = CommandManager.command('wysiwyg', /** @lends Table */{

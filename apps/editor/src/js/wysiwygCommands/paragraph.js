@@ -9,9 +9,8 @@ import CommandManager from '../commandManager';
 /**
  * Paragraph
  * Convert selected contents to paragraph only heading and list
- * @exports Heading
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/Paragraph
  * @ignore
  */
 const Paragraph = CommandManager.command('wysiwyg', /** @lends Paragraph */{

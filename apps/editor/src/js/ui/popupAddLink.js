@@ -10,13 +10,11 @@ const {util} = tui;
 const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 
 /**
- * PopupAddLink
+ * Class PopupAddLink
  * It implements a link Add Popup
- * @class PopupAddLink
  * @extends {LayerPopup}
  */
 class PopupAddLink extends LayerPopup {
-
     /**
      * Creates an instance of PopupAddLink.
      * @param {LayerPopupOption} options - layer popup options
