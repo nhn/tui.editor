@@ -19,10 +19,10 @@ You can try a demo at [nhnent.github.io/tui.editor](http://nhnent.github.io/tui.
 ## Screenshots
 
 ### Markdown Mode
-![Markdown Mode](https://cloud.githubusercontent.com/assets/389021/16108210/d55d4576-33dc-11e6-943a-66c29ae1ff4d.png)
+![Markdown Mode](https://user-images.githubusercontent.com/1215767/29027322-29e8e326-7bbb-11e7-8eb7-1034947bfafe.png)
 
 ### Wysiwyg Mode
-![WYsiwyg Mode](https://cloud.githubusercontent.com/assets/389021/16108214/d7ac03d0-33dc-11e6-9ab6-06e7734a7fb1.png)
+![WYsiwyg Mode](https://user-images.githubusercontent.com/1215767/29027334-382284c4-7bbb-11e7-99ad-b501ba146e28.png)
 
 ## Documentation
 * **Getting Started** : https://github.com/nhnent/tui.editor/wiki/Getting-Started
