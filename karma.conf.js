@@ -55,7 +55,6 @@ function setConfig(defaultConfig, server, browser) {
             };
         }
         defaultConfig.concurrency = 5;
-        defaultConfig.reporters = ['narrow', 'junit', 'coverage'];
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {
