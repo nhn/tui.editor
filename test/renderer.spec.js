@@ -81,6 +81,19 @@ describe('renderer', function() {
         expect(renderer.convert(runner.getNode(), '**test**').toLowerCase()).toEqual(' <span>**test**</span> ');
     });
 
+    it('should treat $ special characters in content', function() {
+        var renderer = Renderer.factory();
+        // ecma string replace special chars $& $` $' $n $nn
+        // http://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf
+        runner = new DomRunner(toDom('<span><span>$& $` $\' $1 $12</span></span>'));
+        runner.next();
+        expect(renderer.convert(runner.getNode(), '$& $` $\' $1 $12').toLowerCase()).toEqual('<span>$& $` $\' $1 $12</span>');
+
+        runner = new DomRunner(toDom('<span><span>,;:$&+=</span></span>'));
+        runner.next();
+        expect(renderer.convert(runner.getNode(), ',;:$&+=').toLowerCase()).toEqual('<span>,;:$&+=</span>');
+    });
+
     it('rules can be assigned separately with comma', function() {
         var convertedText,
             renderer = Renderer.factory({
