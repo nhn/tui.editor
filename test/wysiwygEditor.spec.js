@@ -457,6 +457,16 @@ describe('WysiwygEditor', () => {
         });
     });
 
+    it('scroll if needed on wysiwygRangeChangeAfter', () => {
+        wwe.setHeight(30);
+        wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+        wwe.scrollTop(0);
+
+        em.emit('wysiwygRangeChangeAfter');
+
+        expect(wwe.scrollTop()).not.toEqual(0);
+    });
+
     describe('get current range', () => {
         it('get range', () => {
             const range = wwe.getEditor().getSelection();

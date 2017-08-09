@@ -118,6 +118,7 @@ class WysiwygEditor {
     _initEvent() {
         this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
         this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
+        this.eventManager.listen('wysiwygRangeChangeAfter', () => this._scrollToRangeIfNeed());
     }
 
     /**
@@ -517,11 +518,16 @@ class WysiwygEditor {
      * @private
      */
     _scrollToRangeIfNeed() {
+        const $editorContainerEl = this.$editorContainerEl;
         const range = this.getRange();
-        const cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
+        const cursorTop = this.getEditor().getCursorPosition(range).top - $editorContainerEl.offset().top;
 
-        if (cursorTop >= this.get$Body().height()) {
-            range.endContainer.scrollIntoView();
+        if (cursorTop >= $editorContainerEl.height()) {
+            let target = range.endContainer;
+            if (!(target instanceof Element)) {
+                target = target.parentNode;
+            }
+            target.scrollIntoView(false);
         }
     }
 
@@ -973,7 +979,10 @@ class WysiwygEditor {
      */
     moveCursorToEnd() {
         this.getEditor().moveCursorToEnd();
-        this.scrollTop(this.$editorContainerEl.height());
+        const contentNodes = this.get$Body().get(0).childNodes;
+        if (contentNodes.length > 0) {
+            contentNodes[contentNodes.length - 1].scrollIntoView(false);
+        }
         this._correctRangeAfterMoveCursor('end');
     }
 
