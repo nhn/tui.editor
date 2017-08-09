@@ -95,6 +95,10 @@ describe('Convertor', () => {
             expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
             expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
         });
+
+        it('should treat $ special characters', () => {
+            expect(convertor.toMarkdown('<span>,;:$&+=</span>').trim()).toEqual('<span>,;:$&+=</span>');
+        });
     });
 
     describe('event', () => {
