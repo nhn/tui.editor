@@ -155,9 +155,11 @@ Renderer.prototype.convert = function(node, subContent) {
 
 Renderer.prototype._getInlineHtml = function(node, subContent) {
     var html = node.outerHTML,
-        tagName = node.tagName;
+        tagName = node.tagName,
+        escapedSubContent = subContent.replace(/\$/g, '$$$$');
+    // escape $: replace all $ char to $$ before we throw this string to replace
 
-    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(</' + tagName + '>)', 'i'), '$1' + subContent + '$2');
+    return html.replace(new RegExp('(<' + tagName + ' ?.*?>).*(</' + tagName + '>)', 'i'), '$1' + escapedSubContent + '$2');
 };
 
 /**
