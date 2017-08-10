@@ -52,19 +52,33 @@ class Convertor {
             langPrefix: 'lang-'
         });
 
-        markdownitHighlight.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+        // markdownitHighlight
         markdownitHighlight.block.ruler.at('code', code);
-        markdownitHighlight.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
-        markdownitHighlight.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownitHighlight.block.ruler.at('table', tableRenderer, {
+            alt: ['paragraph', 'reference']
+        });
+        markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
+            alt: ['paragraph', 'reference', 'blockquote', 'list']
+        });
+        markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
+            alt: ['paragraph', 'reference', 'blockquote']
+        });
         markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
         markdownitHighlight.use(taskList);
         markdownitHighlight.use(codeBlock);
         this._markdownitHighlight = markdownitHighlight;
 
-        markdownit.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+        // markdownit
         markdownit.block.ruler.at('code', code);
-        markdownit.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
-        markdownit.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownit.block.ruler.at('table', tableRenderer, {
+            alt: ['paragraph', 'reference']
+        });
+        markdownit.block.ruler.at('blockquote', blockQuote, {
+            alt: ['paragraph', 'reference', 'blockquote', 'list']
+        });
+        markdownit.block.ruler.at('html_block', htmlBlock, {
+            alt: ['paragraph', 'reference', 'blockquote']
+        });
         markdownit.inline.ruler.at('backticks', codeBackticks);
         markdownit.use(taskList);
         markdownit.use(codeBlock);
