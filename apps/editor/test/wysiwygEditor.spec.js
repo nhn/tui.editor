@@ -238,6 +238,12 @@ describe('WysiwygEditor', () => {
             expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
         });
 
+        it('should remove contentEditable block tag(div) even it has attributes', () => {
+            const html = '<div class="some-class">text</div>';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual('text<br />');
+        });
+
         it('empty line replace to br', () => {
             const html = '<div><br /></div>test';
             wwe.setValue(html);
