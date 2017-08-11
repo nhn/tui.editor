@@ -803,7 +803,7 @@ class WysiwygEditor {
         html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
         // remove contenteditable block, in this case div
-        html = html.replace(/<div>/g, '');
+        html = html.replace(/<div[^>]*>/g, '');
         html = html.replace(/<\/div>/g, '<br />');
 
         html = this.eventManager.emitReduce('wysiwygProcessHTMLText', html);
