@@ -744,9 +744,10 @@ class WysiwygEditor {
      * setValue
      * Set value to wysiwyg editor
      * @memberof WysiwygEditor
-     * @param {string} html HTML text
+     * @param {string} html - HTML text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setValue(html) {
+    setValue(html, cursorToEnd = true) {
         html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
 
         this.editor.setHTML(html);
@@ -754,7 +755,9 @@ class WysiwygEditor {
         this.eventManager.emit('wysiwygSetValueAfter', this);
         this.eventManager.emit('contentChangedFromWysiwyg', this);
 
-        this.moveCursorToEnd();
+        if (cursorToEnd) {
+            this.moveCursorToEnd();
+        }
 
         this.getEditor().preserveLastLine();
 
