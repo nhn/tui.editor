@@ -25,8 +25,55 @@ describe('Editor', () => {
         // we need to wait squire input event process
         afterEach(done => {
             setTimeout(() => {
-                document.body.removeChild(container);
+                container.parentNode.removeChild(container);
                 done();
+            });
+        });
+
+        describe('changeMode()', () => {
+            beforeEach(() => {
+                container.parentNode.removeChild(container);
+                container = document.createElement('div');
+                document.body.appendChild(container);
+                editor = new Editor({
+                    el: container,
+                    height: '300px',
+                    initialEditType: 'markdown',
+                    initialValue: 'text 1\ntext 2'
+                });
+            });
+
+            it('should set focus and set cursor to end', () => {
+                editor.changeMode('wysiwyg');
+
+                const range = editor.wwEditor.getRange();
+                expect(range.startContainer.textContent).toEqual('text 2');
+                expect(range.startOffset).toEqual(1);
+                expect(container.contains(document.activeElement)).toEqual(true);
+
+                document.activeElement.blur();
+                editor.changeMode('markdown');
+
+                const cursor = editor.mdEditor.getCursor();
+                expect(cursor.line).toEqual(1);
+                expect(cursor.ch).toEqual(6);
+                expect(container.contains(document.activeElement)).toEqual(true);
+            });
+
+            it('should not set focus and cursor', () => {
+                editor.changeMode('wysiwyg', true);
+
+                const range = editor.wwEditor.getRange();
+                expect(range.startContainer.textContent).toEqual('text 1');
+                expect(range.startOffset).toEqual(0);
+                expect(container.contains(document.activeElement)).toEqual(false);
+
+                editor.changeMode('markdown', true);
+
+                const cursor = editor.mdEditor.getCursor();
+                expect(cursor.line).toEqual(0);
+                expect(cursor.ch).toEqual(0);
+                expect(container.contains(document.activeElement)).toEqual(false);
             });
         });
 

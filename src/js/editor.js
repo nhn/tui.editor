@@ -148,11 +148,11 @@ class ToastUIEditor {
 
         this.changeMode(this.options.initialEditType, true);
 
+        this.setValue(this.options.initialValue, false);
+
         this.minHeight(this.options.minHeight);
 
         this.height(this.options.height);
-
-        this.setValue(this.options.initialValue);
 
         extManager.applyExtension(this, this.options.exts);
 
@@ -299,17 +299,17 @@ class ToastUIEditor {
 
     /**
      * Set markdown syntax text.
-     * @api
      * @memberof ToastUIEditor
      * @param {string} markdown - markdown syntax text.
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setMarkdown(markdown) {
+    setMarkdown(markdown, cursorToEnd = true) {
         markdown = markdown || '';
 
         if (this.isMarkdownMode()) {
-            this.mdEditor.setValue(markdown);
+            this.mdEditor.setValue(markdown, cursorToEnd);
         } else {
-            this.wwEditor.setValue(this.convertor.toHTML(markdown));
+            this.wwEditor.setValue(this.convertor.toHTML(markdown), cursorToEnd);
         }
 
         this.eventManager.emit('setMarkdownAfter', markdown);
@@ -317,30 +317,30 @@ class ToastUIEditor {
 
     /**
      * Set html value.
-     * @api
      * @memberof ToastUIEditor
      * @param {string} html - html syntax text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setHtml(html) {
+    setHtml(html, cursorToEnd = true) {
         html = html || '';
         this.wwEditor.setValue(html);
 
         if (this.isMarkdownMode()) {
             const markdown = this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions);
-            this.mdEditor.setValue(markdown);
+            this.mdEditor.setValue(markdown, cursorToEnd);
             this.eventManager.emit('setMarkdownAfter', markdown);
         }
     }
 
     /**
      * Set markdown syntax text.
-     * @api
      * @memberof ToastUIEditor
      * @param {string} value - markdown syntax text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      * @deprecated
      */
-    setValue(value) {
-        this.setMarkdown(value);
+    setValue(value, cursorToEnd = true) {
+        this.setMarkdown(value, cursorToEnd);
     }
 
     /**
@@ -522,10 +522,9 @@ class ToastUIEditor {
 
     /**
      * Change editor's mode to given mode string
-     * @api
      * @memberof ToastUIEditor
-     * @param {string} mode Editor mode name of want to change
-     * @param {boolean} isWithoutFocus Change mode without focus
+     * @param {string} mode - Editor mode name of want to change
+     * @param {boolean} isWithoutFocus - Change mode without focus
      */
     changeMode(mode, isWithoutFocus) {
         if (this.currentMode === mode) {
@@ -538,11 +537,13 @@ class ToastUIEditor {
 
         if (this.isWysiwygMode()) {
             this.layout.switchToWYSIWYG();
-            this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()));
+            this.wwEditor.setValue(this.convertor.toHTML(this.mdEditor.getValue()), !isWithoutFocus);
             this.eventManager.emit('changeModeToWysiwyg');
         } else {
             this.layout.switchToMarkdown();
-            this.mdEditor.setValue(this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions));
+            this.mdEditor.setValue(
+                this.convertor.toMarkdown(this.wwEditor.getValue(), this.toMarkOptions), !isWithoutFocus
+            );
             this.getCodeMirror().refresh();
             this.eventManager.emit('changeModeToMarkdown');
         }

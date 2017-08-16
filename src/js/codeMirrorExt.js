@@ -91,10 +91,13 @@ class CodeMirrorExt {
      * Set Editor value
      * @memberof CodeMirrorExt
      * @param {string} markdown - Markdown syntax text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setValue(markdown) {
+    setValue(markdown, cursorToEnd = true) {
         this.cm.setValue(markdown);
-        this.moveCursorToEnd();
+        if (cursorToEnd) {
+            this.moveCursorToEnd();
+        }
         this.cm.refresh();
     }
 
