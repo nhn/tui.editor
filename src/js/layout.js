@@ -43,7 +43,6 @@ class Layout {
 
     /**
      * Initializer
-     * @api
      * @memberof Layout
      */
     init() {
@@ -75,7 +74,6 @@ class Layout {
 
     /**
      * Switch editor mode to WYSIWYG
-     * @api
      * @memberof Layout
      */
     switchToWYSIWYG() {
@@ -85,7 +83,6 @@ class Layout {
 
     /**
      * Switch editor mode to Markdown
-     * @api
      * @memberof Layout
      */
     switchToMarkdown() {
@@ -134,7 +131,6 @@ class Layout {
 
     /**
      * Toggle preview style between tab and vertical split
-     * @api
      * @memberof Layout
      * @param {string} style Preview style ('tab' or 'vertical')
      */
@@ -148,7 +144,6 @@ class Layout {
 
     /**
      * Hide Editor
-     * @api
      * @memberof Layout
      */
     hide() {
@@ -157,7 +152,6 @@ class Layout {
 
     /**
      * Show Editor
-     * @api
      * @memberof Layout
      */
     show() {
@@ -166,7 +160,6 @@ class Layout {
 
     /**
      * Remove Editor
-     * @api
      * @memberof Layout
      */
     remove() {
@@ -175,7 +168,6 @@ class Layout {
 
     /**
      * Get jQuery wrapped editor container element
-     * @api
      * @memberof Layout
      * @returns {jQuery}
      */
@@ -185,7 +177,6 @@ class Layout {
 
     /**
      * Get jQuery wrapped preview element
-     * @api
      * @memberof Layout
      * @returns {jQuery}
      */
@@ -195,7 +186,6 @@ class Layout {
 
     /**
      * Get jQuery wrapped Markdown editor element
-     * @api
      * @memberof Layout
      * @returns {jQuery}
      */
@@ -205,7 +195,6 @@ class Layout {
 
     /**
      * Get jQuery wrapped WYSIWYG editor element
-     * @api
      * @memberof Layout
      * @returns {jQuery}
      */
