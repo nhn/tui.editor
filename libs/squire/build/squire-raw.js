@@ -3919,6 +3919,7 @@ proto.increaseListLevel = function ( range ) {
         return this.focus();
     }
 
+    var root = this._root;
     var listSelection = getListSelection( range, root );
     if ( !listSelection ) {
         return this.focus();
@@ -3949,7 +3950,7 @@ proto.increaseListLevel = function ( range ) {
     } while ( ( startLi = next ) );
     next = newParent.nextSibling;
     if ( next ) {
-        mergeContainers( next, this._root );
+        mergeContainers( next, root );
     }
 
     // Restore selection
