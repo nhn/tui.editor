@@ -163,7 +163,6 @@ class ToastUIEditor {
 
     /**
      * 프리뷰가 보여지는 방식을 변경한다
-     * @api
      * @memberof ToastUIEditor
      * @param {string} style 스타일 이름 tab, vertical
      */
@@ -176,7 +175,6 @@ class ToastUIEditor {
 
     /**
      * call commandManager's exec method
-     * @api
      * @memberof ToastUIEditor
      */
     exec(...args) {
@@ -200,7 +198,6 @@ class ToastUIEditor {
 
     /**
      * Bind eventHandler to event type
-     * @api
      * @memberof ToastUIEditor
      * @param {string} type Event type
      * @param {function} handler Event handler
@@ -211,7 +208,6 @@ class ToastUIEditor {
 
     /**
      * Unbind eventHandler from event type
-     * @api
      * @memberof ToastUIEditor
      * @param {string} type Event type
      */
@@ -221,7 +217,6 @@ class ToastUIEditor {
 
     /**
      * Add hook to TUIEditor event
-     * @api
      * @memberof ToastUIEditor
      * @param {string} type Event type
      * @param {function} handler Event handler
@@ -233,7 +228,6 @@ class ToastUIEditor {
 
     /**
      * Remove hook from TUIEditor event
-     * @api
      * @memberof ToastUIEditor
      * @param {string} type Event type
      */
@@ -243,7 +237,6 @@ class ToastUIEditor {
 
     /**
      * Get CodeMirror instance
-     * @api
      * @memberof ToastUIEditor
      * @returns {CodeMirror}
      */
@@ -253,7 +246,6 @@ class ToastUIEditor {
 
     /**
      * Get SquireExt instance
-     * @api
      * @memberof ToastUIEditor
      * @returns {SquireExt}
      */
@@ -263,7 +255,6 @@ class ToastUIEditor {
 
     /**
      * Set focus to current Editor
-     * @api
      * @memberof ToastUIEditor
      */
     focus() {
@@ -272,7 +263,6 @@ class ToastUIEditor {
 
     /**
      * Remove focus of current Editor
-     * @api
      * @memberof ToastUIEditor
      */
     blur() {
@@ -281,7 +271,6 @@ class ToastUIEditor {
 
     /**
      * Set cursor position to end
-     * @api
      * @memberof ToastUIEditor
      */
     moveCursorToEnd() {
@@ -290,7 +279,6 @@ class ToastUIEditor {
 
     /**
      * Set cursor position to start
-     * @api
      * @memberof ToastUIEditor
      */
     moveCursorToStart() {
@@ -345,7 +333,6 @@ class ToastUIEditor {
 
     /**
      * Get markdown syntax text.
-     * @api
      * @memberof ToastUIEditor
      * @returns {string}
      */
@@ -363,7 +350,6 @@ class ToastUIEditor {
 
     /**
      * Get html syntax text.
-     * @api
      * @memberof ToastUIEditor
      * @returns {string}
      */
@@ -377,7 +363,6 @@ class ToastUIEditor {
 
     /**
      * Get editor value.
-     * @api
      * @memberof ToastUIEditor
      * @returns {string}
      * @deprecated
@@ -401,7 +386,6 @@ class ToastUIEditor {
 
     /**
      * Add widget to selection
-     * @api
      * @memberof ToastUIEditor
      * @param {Range} selection Current selection
      * @param {Node} node widget node
@@ -464,7 +448,6 @@ class ToastUIEditor {
 
     /**
      * Get current editor mode name
-     * @api
      * @memberof ToastUIEditor
      * @returns {string}
      */
@@ -482,7 +465,6 @@ class ToastUIEditor {
 
     /**
      * Return true if current editor mode is Markdown
-     * @api
      * @memberof ToastUIEditor
      * @returns {boolean}
      */
@@ -492,7 +474,6 @@ class ToastUIEditor {
 
     /**
      * Return true if current editor mode is WYSIWYG
-     * @api
      * @memberof ToastUIEditor
      * @returns {boolean}
      */
@@ -502,7 +483,6 @@ class ToastUIEditor {
 
     /**
      * Return false
-     * @api
      * @memberof ToastUIEditor
      * @returns {boolean}
      */
@@ -512,7 +492,6 @@ class ToastUIEditor {
 
     /**
      * Get current Markdown editor's preview style
-     * @api
      * @memberof ToastUIEditor
      * @returns {string}
      */
@@ -557,7 +536,6 @@ class ToastUIEditor {
 
     /**
      * Remove TUIEditor from document
-     * @api
      * @memberof ToastUIEditor
      */
     remove() {
@@ -586,7 +564,6 @@ class ToastUIEditor {
 
     /**
      * Hide TUIEditor
-     * @api
      * @memberof ToastUIEditor
      */
     hide() {
@@ -595,7 +572,6 @@ class ToastUIEditor {
 
     /**
      * Show TUIEditor
-     * @api
      * @memberof ToastUIEditor
      */
     show() {
@@ -605,7 +581,6 @@ class ToastUIEditor {
 
     /**
      * Scroll Editor content to Top
-     * @api
      * @memberof ToastUIEditor
      * @param {number} value Scroll amount
      * @returns {number}
@@ -616,7 +591,6 @@ class ToastUIEditor {
 
     /**
      * Set UI to private UI property
-     * @api
      * @memberof ToastUIEditor
      * @param {UI} UI UI instance
      */
@@ -626,7 +600,6 @@ class ToastUIEditor {
 
     /**
      * Get _ui property
-     * @api
      * @memberof ToastUIEditor
      * @returns {UI}
      */
@@ -636,7 +609,6 @@ class ToastUIEditor {
 
     /**
      * Reset TUIEditor
-     * @api
      * @memberof ToastUIEditor
      */
     reset() {
@@ -646,7 +618,6 @@ class ToastUIEditor {
 
     /**
      * Get current range
-     * @api
      * @memberof ToastUIEditor
      * @returns {{start, end}|Range}
      */
@@ -656,7 +627,6 @@ class ToastUIEditor {
 
     /**
      * Get text object of current range
-     * @api
      * @memberof ToastUIEditor
      * @param {{start, end}|Range} range Range object of each editor
      * @returns {object} TextObject class
@@ -697,7 +667,6 @@ class ToastUIEditor {
 
     /**
      * Get instance of TUIEditor
-     * @api
      * @memberof ToastUIEditor
      * @returns {Array}
      */
@@ -707,7 +676,6 @@ class ToastUIEditor {
 
     /**
      * Define extension
-     * @api
      * @memberof ToastUIEditor
      * @param {string} name Extension name
      * @param {ExtManager~extension} ext extension
@@ -718,7 +686,6 @@ class ToastUIEditor {
 
     /**
      * Factory method for Editor
-     * @api
      * @memberof ToastUIEditor
      * @param {object} options Option for initialize TUIEditor
      * @returns {ToastUIEditor}
