@@ -3,8 +3,7 @@ import CodeMirrorExt from './codeMirrorExt';
 const EVENT_LANGUAGE_CHANGED = 'language-changed';
 
 /**
- * Code Block Editor
- * @class CodeBlockEditor
+ * Class Code Block Editor
  * @extends {CodeMirrorExt}
  */
 class CodeBlockEditor extends CodeMirrorExt {

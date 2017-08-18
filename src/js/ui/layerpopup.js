@@ -45,12 +45,10 @@ const LAYOUT_TEMPLATE_MODAL =
  */
 
 /**
- * LayerPopup
- * @class LayerPopup
+ * Class LayerPopup
  * @extends {UIController}
  */
 class LayerPopup extends UIController {
-
     /**
      * Creates an instance of LayerPopup.
      * @param {LayerPopupOption} options - popup option

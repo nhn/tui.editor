@@ -92,6 +92,12 @@ describe('CodeMirrorExt', () => {
             expect(codeMirrorExt.getEditor().getCursor().line).toEqual(3);
             expect(codeMirrorExt.getEditor().getCursor().ch).toEqual(0);
         });
+
+        it('should not move cursor to end after setValue if false to `cursorToEnd` param', () => {
+            codeMirrorExt.setValue('test\ntest\ntest\n', false);
+
+            expect(codeMirrorExt.getEditor().getCursor().line).not.toEqual(3);
+        });
     });
 
     it('getRange() returns current selection range', () => {

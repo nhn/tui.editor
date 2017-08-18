@@ -32,12 +32,10 @@
     "highlightjs": "^9.10.0",
     "jquery": "~2.1.4",
     "markdown-it": "^8.3.1",
-    "toMark": "https://github.com/nhnent/toMark.git#0.0.17",
+    "toMark": "https://github.com/nhnent/toMark.git#0.0.18",
+    "tui-component-colorpicker": "~1.0.2",
     "squire-rte": "kyuwoo-choi/Squire#tui-editor-release",
     "plantuml-encoder": "^1.2.4"
-  },
-  "devDependencies": {
-    "tui-component-colorpicker": "~1.0.2"
   },
   "resolutions": {
     "jquery": "~2.1.4",

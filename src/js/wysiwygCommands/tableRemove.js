@@ -9,12 +9,11 @@ import CommandManager from '../commandManager';
 /**
  * RemoveTable
  * Remove selected table
- * @exports RemoveTable
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableRemove
  * @ignore
  */
-const RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
+const TableRemove = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
     name: 'RemoveTable',
     /**
      *  커맨드 핸들러
@@ -35,4 +34,4 @@ const RemoveTable = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
     }
 });
 
-module.exports = RemoveTable;
+module.exports = TableRemove;

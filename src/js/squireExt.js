@@ -12,14 +12,15 @@ const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);
 
 /**
- * SquireExt
- * @exports SquireExt
- * @augments Squire
- * @constructor
- * @class
- * @ignore
+ * Class SquireExt
+ * @extends {Squire}
  */
 class SquireExt extends Squire {
+    /**
+     * Creates an instance of SquireExt.
+     * @augments Squire
+     * @memberof SquireExt
+     */
     constructor(...args) {
         super(...args);
 
@@ -40,6 +41,7 @@ class SquireExt extends Squire {
      * event.preventDefault() will cancel squire and browser default behavior
      * event.squirePrevented = true will cancel squire but allow browser default behavior
      * @param {string} eventName event name
+     * @private
      */
     _decorateHandlerToCancelable(eventName) {
         const handlers = this._events[eventName];

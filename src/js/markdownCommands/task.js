@@ -12,8 +12,8 @@ const FIND_TASK_SYNTAX_RX = /([*-] |[\d]+\. )(\[[ xX]] )/;
 
 /**
  * Task
- * @exports Task
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Task
  * @ignore
  */
 const Task = CommandManager.command('markdown', /** @lends Task */{

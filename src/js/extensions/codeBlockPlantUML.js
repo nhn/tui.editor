@@ -10,6 +10,7 @@ const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url
  * @param {Array<string>} options.languages - language names to map
+ * @ignore
  */
 function plantUMLPlugin(editor, options = {}) {
     const codeBlockManager = editor.convertor.getCodeBlockManager();

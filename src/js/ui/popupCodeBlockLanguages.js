@@ -4,8 +4,7 @@ const {util} = tui;
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
 /**
- * Popup code block languages select list
- * @class PopupCodeBlockLanguages
+ * Class Popup code block languages select list
  * @extends {LayerPopup}
  */
 class PopupCodeBlockLanguages extends LayerPopup {

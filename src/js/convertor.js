@@ -19,14 +19,14 @@ const {
 } = window;
 
 /**
- * Convertor
- * @exports Convertor
- * @constructor
- * @class Convertor
- * @param {EventManager} em - EventManager instance
- * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+ * Class Convertor
  */
 class Convertor {
+    /**
+     * Convertor constructor
+     * @param {EventManager} em - EventManager instance
+     * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+     */
     constructor(em) {
         this.eventManager = em;
 
@@ -52,19 +52,33 @@ class Convertor {
             langPrefix: 'lang-'
         });
 
-        markdownitHighlight.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+        // markdownitHighlight
         markdownitHighlight.block.ruler.at('code', code);
-        markdownitHighlight.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
-        markdownitHighlight.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownitHighlight.block.ruler.at('table', tableRenderer, {
+            alt: ['paragraph', 'reference']
+        });
+        markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
+            alt: ['paragraph', 'reference', 'blockquote', 'list']
+        });
+        markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
+            alt: ['paragraph', 'reference', 'blockquote']
+        });
         markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
         markdownitHighlight.use(taskList);
         markdownitHighlight.use(codeBlock);
         this._markdownitHighlight = markdownitHighlight;
 
-        markdownit.block.ruler.at('table', tableRenderer, ['paragraph', 'reference']);
+        // markdownit
         markdownit.block.ruler.at('code', code);
-        markdownit.block.ruler.at('blockquote', blockQuote, ['paragraph', 'reference', 'list']);
-        markdownit.block.ruler.at('html_block', htmlBlock, ['paragraph', 'reference', 'blockquote']);
+        markdownit.block.ruler.at('table', tableRenderer, {
+            alt: ['paragraph', 'reference']
+        });
+        markdownit.block.ruler.at('blockquote', blockQuote, {
+            alt: ['paragraph', 'reference', 'blockquote', 'list']
+        });
+        markdownit.block.ruler.at('html_block', htmlBlock, {
+            alt: ['paragraph', 'reference', 'blockquote']
+        });
         markdownit.inline.ruler.at('backticks', codeBackticks);
         markdownit.use(taskList);
         markdownit.use(codeBlock);
@@ -75,7 +89,7 @@ class Convertor {
      * _markdownToHtmlWithCodeHighlight
      * Convert markdown to html with Codehighlight
      * @private
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -97,7 +111,7 @@ class Convertor {
      * _markdownToHtml
      * Convert markdown to html
      * @private
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -140,8 +154,7 @@ class Convertor {
      * toHTMLWithCodeHightlight
      * Convert markdown to html with Codehighlight
      * emit convertorAfterMarkdownToHtmlConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -156,8 +169,7 @@ class Convertor {
      * toHTML
      * Convert markdown to html
      * emit convertorAfterMarkdownToHtmlConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} markdown markdown text
      * @returns {string} html text
      */
@@ -177,8 +189,7 @@ class Convertor {
      * toMarkdown
      * Convert html to markdown
      * emit convertorAfterHtmlToMarkdownConverted
-     * @api
-     * @memberOf Convertor
+     * @memberof Convertor
      * @param {string} html html text
      * @param {object | null} toMarkOptions - toMark library options
      * @returns {string} markdown text

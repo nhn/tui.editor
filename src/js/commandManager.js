@@ -11,9 +11,7 @@ const isMac = /Mac/.test(navigator.platform);
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
 /**
- * CommandManager
- * @exports CommandManager
- * @class
+ * Class CommandManager
  */
 class CommandManager {
     /**
@@ -52,8 +50,7 @@ class CommandManager {
 
     /**
      * Add command
-     * @api
-     * @memberOf CommandManager
+     * @memberof CommandManager
      * @param {Command} command Command instance
      * @returns {Command} Command
      */
@@ -89,7 +86,7 @@ class CommandManager {
      * _initEvent
      * Bind event handler to eventManager
      * @private
-     * @memberOf CommandManager
+     * @memberof CommandManager
      */
     _initEvent() {
         this.base.eventManager.listen('command', (...args) => {
@@ -111,8 +108,7 @@ class CommandManager {
 
     /**
      * Execute command
-     * @api
-     * @memberOf CommandManager
+     * @memberof CommandManager
      * @param {String} name Command name
      * @returns {*}
      */
@@ -143,8 +139,7 @@ class CommandManager {
 
 /**
  * Create command by given editor type and property object
- * @api
- * @memberOf ComponentManager
+ * @memberof ComponentManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: object}} props Property
  * @returns {*}

@@ -13,13 +13,14 @@ const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
- * WwClipboardManager
- * @exports WwClipboardManager
- * @constructor
- * @class WwClipboardManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwClipboardManager
  */
 class WwClipboardManager {
+    /**
+     * Creates an instance of WwClipboardManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwClipboardManager
+     */
     constructor(wwe) {
         this.wwe = wwe;
         this._pch = new WwPasteContentHelper(this.wwe);
@@ -30,8 +31,7 @@ class WwClipboardManager {
     /**
      * init
      * initialize
-     * @api
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
      */
     init() {
         this.wwe.eventManager.listen('willPaste', ev => this._onWillPaste(ev.data));
@@ -142,6 +142,7 @@ class WwClipboardManager {
      * Update copy data, when commonAncestorContainer nodeName is list type like UL or OL.
      * @param {object} range - text range
      * @param {jQuery} $clipboardContainer - clibpard container jQuery element
+     * @private
      */
     _updateCopyDataForListTypeIfNeed(range, $clipboardContainer) {
         const commonAncestorNodeName = range.commonAncestorContainer.nodeName;
@@ -158,6 +159,7 @@ class WwClipboardManager {
     /**
      * Remove empty font elements.
      * @param {jQuery} $clipboardContainer - cliboard jQuery container
+     * @private
      */
     _removeEmptyFontElement($clipboardContainer) {
         // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
@@ -219,7 +221,8 @@ class WwClipboardManager {
     /**
      * set table bookmark which will gain focus after document modification ends.
      * @param {jQuery} $clipboardContainer - clipboard container
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
+     * @private
      */
     _setTableBookmark($clipboardContainer) {
         const $lastNode = $($clipboardContainer[0].childNodes).last();
@@ -258,7 +261,7 @@ class WwClipboardManager {
     /**
      * _extendRange
      * extend range if need
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
      * @param {Range} range to extend
      * @private
      */
@@ -288,7 +291,7 @@ class WwClipboardManager {
 
     /**
      * Extends current range's startContainer
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {Range}
      * @private
@@ -312,7 +315,7 @@ class WwClipboardManager {
 
     /**
      * Extends current range's endContainer
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {Range}
      * @private
@@ -340,7 +343,7 @@ class WwClipboardManager {
      * _isWholeCommonAncestorContainerSelected
      * Check whether whole commonAncestorContainter textContent selected or not
      * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
-     * @memberOf WwClipboardManager
+     * @memberof WwClipboardManager
      * @param {Range} range Range object
      * @returns {boolean} result
      * @private

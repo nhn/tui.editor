@@ -9,21 +9,21 @@ import htmlSanitizer from './htmlSanitizer';
 const {util} = tui;
 
 /**
- * WwPasteContentHelper
- * @exports WwPasteContentHelper
- * @class WwPasteContentHelper
- * @constructor
- * @param {WysiwygEditor} wwe wysiwygEditor instance
+ * Class WwPasteContentHelper
  */
 class WwPasteContentHelper {
+    /**
+     * Creates an instance of WwPasteContentHelper.
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
+     * @memberof WwPasteContentHelper
+     */
     constructor(wwe) {
         this.wwe = wwe;
     }
 
     /**
      * Process paste data before paste
-     * @api
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @param {jQuery} $container - clipboard container
      */
     preparePaste($container) {
@@ -67,7 +67,7 @@ class WwPasteContentHelper {
     /**
      * Wrap orphan node(inline, text) with div element
      * @param {jQuery} $container - clipboard container
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @returns {DocumentFragment}
      * @private
      */
@@ -107,7 +107,7 @@ class WwPasteContentHelper {
     /**
      * Processing paste data after paste
      * @param {jQuery} $container - clipboard container
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _pasteFirstAid($container) {
@@ -134,7 +134,7 @@ class WwPasteContentHelper {
 
     /**
      * PRE tag formatting
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      * @param {jQuery} $container - clipboard container
      */
@@ -147,7 +147,7 @@ class WwPasteContentHelper {
     /**
      * Unwrap span children of document fragment with div element
      * @param {jQuery} $container - clipboard container
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _unwrapIfNonBlockElementHasBr($container) {
@@ -190,7 +190,7 @@ class WwPasteContentHelper {
      * Remove unnecessary block element in pasting data
      * @param {jQuery} $container - clipboard container
      * @param {string} blockTags - Tag names of block tag
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _removeUnnecessaryBlocks($container, blockTags) {
@@ -215,7 +215,7 @@ class WwPasteContentHelper {
     /**
      * Remove inline style
      * @param {Node} node Node for remove style attribute
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _removeStyles(node) {
@@ -246,7 +246,7 @@ class WwPasteContentHelper {
      * @param {object} rangeInfo Range information
      * @param {boolean} firstBlockIsTaken Whether first block element taken or not
      * @returns {DocumentFragment}
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _prepareToPasteList(nodes, rangeInfo, firstBlockIsTaken) {
@@ -303,7 +303,7 @@ class WwPasteContentHelper {
 
     /**
      * Unwrap fragment first child for pasting node inline
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      * @param {Node} node Pasting DocumentFragment
      * @returns {NodeList}
@@ -355,7 +355,7 @@ class WwPasteContentHelper {
      * @param {HTMLElement} pathInfo HTMLElement to make
      * @param {HTMLElement} content Nodes to append
      * @returns {HTMLElement} node
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _makeNodeAndAppend(pathInfo, content) {
@@ -377,7 +377,7 @@ class WwPasteContentHelper {
     /**
      * Pasting table element pre-process
      * @param {jQuery} $container - clipboard container
-     * @memberOf WwPasteContentHelper
+     * @memberof WwPasteContentHelper
      * @private
      */
     _tableElementAid($container) {

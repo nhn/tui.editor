@@ -9,14 +9,15 @@ const isWindowChrome = (navigator.appVersion.indexOf('Win') !== -1) && tui.util.
 const isNeedOffsetFix = isIE11 || isWindowChrome;
 
 /**
- * WwTextObject
- * @exports WwTextObject
- * @class WwTextObject
- * @constructor
- * @param {WysiwygEditor} wwe wysiwygEditor
- * @param {Range} range Range object
+ * Class WwTextObject
  */
 class WwTextObject {
+    /**
+     * Creates an instance of WwTextObject.
+     * @param {WysiwygEditor} wwe - wysiwygEditor
+     * @param {Range} range - Range object
+     * @memberof WwTextObject
+     */
     constructor(wwe, range) {
         this._wwe = wwe;
 
@@ -32,7 +33,7 @@ class WwTextObject {
 
     /**
      * Initialize composition event
-     * @memberOf WwTextObject
+     * @memberof WwTextObject
      * @private
      */
     _initCompositionEvent() {
@@ -48,8 +49,7 @@ class WwTextObject {
     /**
      * Set _range object to given range object
      * @param {Range} range Range object
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     setRange(range) {
         if (this._range) {
@@ -61,8 +61,7 @@ class WwTextObject {
 
     /**
      * Expand start offset by one
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     expandStartOffset() {
         const range = this._range;
@@ -74,8 +73,7 @@ class WwTextObject {
 
     /**
      * Expand end offset by one
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     expandEndOffset() {
         const range = this._range;
@@ -88,8 +86,7 @@ class WwTextObject {
     /**
      * setEnd range on start
      * @param {Range} range Range object
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     setEndBeforeRange(range) {
         let offset = range.startOffset;
@@ -104,8 +101,7 @@ class WwTextObject {
     /**
      * Get text content
      * @returns {string}
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     getTextContent() {
         return this._range.cloneContents().textContent;
@@ -114,8 +110,7 @@ class WwTextObject {
     /**
      * Replace current selection content to given text
      * @param {string} content Text content
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     replaceContent(content) {
         this._wwe.getEditor().setSelection(this._range);
@@ -125,8 +120,7 @@ class WwTextObject {
 
     /**
      * Delete current selection content
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     deleteContent() {
         this._wwe.getEditor().setSelection(this._range);
@@ -138,8 +132,7 @@ class WwTextObject {
      * Peek previous element's content
      * @param {number} offset Offset to peek
      * @returns {string}
-     * @memberOf WwTextObject
-     * @api
+     * @memberof WwTextObject
      */
     peekStartBeforeOffset(offset) {
         const range = this._range.cloneRange();

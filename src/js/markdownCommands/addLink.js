@@ -9,8 +9,8 @@ import {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} f
 /**
  * AddLink
  * Add link markdown syntax to markdown editor
- * @exports AddLink
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/AddLink
  * @ignore
  */
 const AddLink = CommandManager.command('markdown', /** @lends AddLink */{

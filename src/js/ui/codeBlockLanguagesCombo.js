@@ -2,7 +2,15 @@
 import i18n from '../i18n';
 import KeyMapper from '../keyMapper';
 
+/**
+ * Class CodeBlockLanguagesCombo
+ */
 class CodeBlockLanguagesCombo {
+    /**
+     * Creates an instance of CodeBlockLanguagesCombo.
+     * @param {EventManager} eventManager - event manager instance
+     * @memberof CodeBlockLanguagesCombo
+     */
     constructor(eventManager) {
         this._eventManager = eventManager;
 

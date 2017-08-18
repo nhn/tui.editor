@@ -10,12 +10,11 @@ import domUtil from '../domUtils';
 /**
  * AlignCol
  * Align selected column's text content to given direction
- * @exports AlignCol
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableAlignCol
  * @ignore
  */
-const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
+const TableAlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
     name: 'AlignCol',
     /**
      * 커맨드 핸들러
@@ -129,4 +128,4 @@ function getRangeInformation(range, selectionMgr) {
     return rangeInformation;
 }
 
-module.exports = AlignCol;
+module.exports = TableAlignCol;

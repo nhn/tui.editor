@@ -13,7 +13,6 @@ const {util} = tui;
 /**
  * AlignCol
  * Align selected column's text content to given direction
- * @exports AlignCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore

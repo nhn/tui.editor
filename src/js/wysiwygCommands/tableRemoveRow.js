@@ -9,12 +9,11 @@ import CommandManager from '../commandManager';
 /**
  * RemoveRow
  * remove Row to selected table
- * @exports RemoveRow
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableRemoveRow
  * @ignore
  */
-const RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
+const TableRemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
     name: 'RemoveRow',
     /**
      *  커맨드 핸들러
@@ -109,4 +108,4 @@ function getTrs(range, selectionMgr, $table) {
 
     return trs;
 }
-module.exports = RemoveRow;
+module.exports = TableRemoveRow;

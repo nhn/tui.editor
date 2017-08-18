@@ -14,12 +14,8 @@ const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
- * WwMergedTableManager
- * @exports WwMergedTableManager
- * @constructor
- * @class WwMergedTableManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
- * @ignore
+ * Class WwMergedTableManager
+ * @extends {WwTableManager}
  */
 class WwMergedTableManager extends WwTableManager {
     /**

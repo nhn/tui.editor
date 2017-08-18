@@ -12,12 +12,10 @@ const TOOLBAR_BUTTON_CLASS_NAME = 'tui-toolbar-icons';
 const TOOLBAR_DIVIDER_CLASS_NAME = 'tui-toolbar-divider';
 
 /**
- * Toolbar
- * @class Toolbar
+ * Class Toolbar
  * @extends {UIController}
  */
 class Toolbar extends UIController {
-
     /**
      * Creates an instance of Toolbar.
      * @param {EventManager} eventManager - event manager
@@ -53,6 +51,7 @@ class Toolbar extends UIController {
     /**
      * render
      * Render toolbar
+     * @private
      */
     _render() {
         this.$buttonContainer = this.$el;
@@ -121,6 +120,7 @@ class Toolbar extends UIController {
     /**
      * init button
      * @param {Array} buttonList using button list
+     * @private
      */
     _initButton(buttonList) {
         this.buttonOptions = {

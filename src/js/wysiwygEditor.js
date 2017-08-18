@@ -32,16 +32,17 @@ const EDITOR_CONTENT_CSS_CLASSNAME = 'tui-editor-contents';
 const canObserveMutations = (typeof MutationObserver !== 'undefined');
 
 /**
- * WysiwygEditor
- * @exports WysiwygEditor
- * @param {jQuery} $el element to insert editor
- * @param {EventManager} eventManager EventManager instance
- * @param {object} [options={}] - option object
- *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
- * @constructor
- * @class WysiwygEditor
+ * Class WysiwygEditor
  */
 class WysiwygEditor {
+    /**
+     * Creates an instance of WysiwygEditor.
+     * @param {jQuery} $el element to insert editor
+     * @param {EventManager} eventManager EventManager instance
+     * @param {object} [options={}] - option object
+     *  @param {boolean} [options.useCommandShortcut=true] - whether to use squire command shortcuts
+     * @memberof WysiwygEditor
+     */
     constructor($el, eventManager, options = {}) {
         this.componentManager = new ComponentManager(this);
         this.eventManager = eventManager;
@@ -117,6 +118,7 @@ class WysiwygEditor {
     _initEvent() {
         this.eventManager.listen('wysiwygSetValueBefore', html => this._preprocessForInlineElement(html));
         this.eventManager.listen('wysiwygKeyEvent', ev => this._runKeyEventHandlers(ev.data, ev.keyMap));
+        this.eventManager.listen('wysiwygRangeChangeAfter', () => this._scrollToRangeIfNeed());
     }
 
     /**
@@ -516,11 +518,16 @@ class WysiwygEditor {
      * @private
      */
     _scrollToRangeIfNeed() {
+        const $editorContainerEl = this.$editorContainerEl;
         const range = this.getRange();
-        const cursorTop = this.getEditor().getCursorPosition(range).top - this.$editorContainerEl.offset().top;
+        const cursorTop = this.getEditor().getCursorPosition(range).top - $editorContainerEl.offset().top;
 
-        if (cursorTop >= this.get$Body().height()) {
-            range.endContainer.scrollIntoView();
+        if (cursorTop >= $editorContainerEl.height()) {
+            let target = range.endContainer;
+            if (!(target instanceof Element)) {
+                target = target.parentNode;
+            }
+            target.scrollIntoView(false);
         }
     }
 
@@ -737,9 +744,10 @@ class WysiwygEditor {
      * setValue
      * Set value to wysiwyg editor
      * @memberof WysiwygEditor
-     * @param {string} html HTML text
+     * @param {string} html - HTML text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setValue(html) {
+    setValue(html, cursorToEnd = true) {
         html = this.eventManager.emitReduce('wysiwygSetValueBefore', html);
 
         this.editor.setHTML(html);
@@ -747,7 +755,9 @@ class WysiwygEditor {
         this.eventManager.emit('wysiwygSetValueAfter', this);
         this.eventManager.emit('contentChangedFromWysiwyg', this);
 
-        this.moveCursorToEnd();
+        if (cursorToEnd) {
+            this.moveCursorToEnd();
+        }
 
         this.getEditor().preserveLastLine();
 
@@ -796,7 +806,7 @@ class WysiwygEditor {
         html = html.replace(FIND_UNNECESSARY_BR, '</$1>');
 
         // remove contenteditable block, in this case div
-        html = html.replace(/<div>/g, '');
+        html = html.replace(/<div[^>]*>/g, '');
         html = html.replace(/<\/div>/g, '<br />');
 
         html = this.eventManager.emitReduce('wysiwygProcessHTMLText', html);
@@ -972,7 +982,10 @@ class WysiwygEditor {
      */
     moveCursorToEnd() {
         this.getEditor().moveCursorToEnd();
-        this.scrollTop(this.$editorContainerEl.height());
+        const contentNodes = this.get$Body().get(0).childNodes;
+        if (contentNodes.length > 0) {
+            contentNodes[contentNodes.length - 1].scrollIntoView(false);
+        }
         this._correctRangeAfterMoveCursor('end');
     }
 

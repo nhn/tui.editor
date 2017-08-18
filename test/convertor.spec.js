@@ -54,6 +54,10 @@ describe('Convertor', () => {
             expect(convertor.toHTMLWithCodeHightlight('`code span`').trim()).toEqual('<p><code data-backticks="1">code span</code></p>');
             expect(convertor.toHTMLWithCodeHightlight('```code span```').trim()).toEqual('<p><code data-backticks="3">code span</code></p>');
         });
+
+        it('should convert blockquote even if there is a line above it (ref #989)', () => {
+            expect(convertor.toHTML('text above\n> quote').replace(/\n/g, '')).toEqual('<p>text above</p><blockquote><p>quote</p></blockquote>');
+        });
     });
 
     describe('html to markdown', () => {
@@ -95,6 +99,10 @@ describe('Convertor', () => {
             expect(convertor.toMarkdown('<code data-backticks="1">code span</code>').trim()).toEqual('`code span`');
             expect(convertor.toMarkdown('<code data-backticks="3">code span</code>').trim()).toEqual('```code span```');
         });
+
+        it('should treat $ special characters', () => {
+            expect(convertor.toMarkdown('<span>,;:$&+=</span>').trim()).toEqual('<span>,;:$&+=</span>');
+        });
     });
 
     describe('event', () => {
@@ -122,6 +130,7 @@ describe('Convertor', () => {
             expect(param).toEqual('# HELLO WORLD');
         });
     });
+
     describe('should not convert to', () => {
         it('code in list', () => {
             const markdown = [

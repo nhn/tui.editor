@@ -9,9 +9,8 @@ const CommandManager = require('../commandManager');
 /**
  * AddImage
  * Add Image markdown syntax to wysiwyg Editor
- * @exports AddImage
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/AddImage
  * @ignore
  */
 const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{

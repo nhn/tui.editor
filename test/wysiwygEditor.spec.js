@@ -238,6 +238,12 @@ describe('WysiwygEditor', () => {
             expect(wwe.getValue()).toEqual('abcde<br />efg<br />');
         });
 
+        it('should remove contentEditable block tag(div) even it has attributes', () => {
+            const html = '<div class="some-class">text</div>';
+            wwe.setValue(html);
+            expect(wwe.getValue()).toEqual('text<br />');
+        });
+
         it('empty line replace to br', () => {
             const html = '<div><br /></div>test';
             wwe.setValue(html);
@@ -282,10 +288,18 @@ describe('WysiwygEditor', () => {
 
         it('move cursor to end after setValue() cuz we need new range after whole conntent changed', () => {
             wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>');
-            const range = wwe.getEditor().getSelection();
+            const range = wwe.getRange();
 
             expect(range.startContainer).toBe(wwe.get$Body().find('div')[1]);
             expect(range.startOffset).toEqual(1);
+        });
+
+        it('should not move cursor to end after setValue() if `cursorToEnd` param is set to false', () => {
+            wwe.setValue('<ul><li><div>test</div></li></ul><div>test2<br></div>', false);
+            const range = wwe.getRange();
+
+            expect(range.startContainer).not.toBe(wwe.get$Body().find('div')[1]);
+            expect(range.startOffset).not.toEqual(1);
         });
     });
 
@@ -455,6 +469,16 @@ describe('WysiwygEditor', () => {
             expect(range.startContainer).toEqual(wwe.get$Body().find('div')[0].firstChild);
             expect(range.startOffset).toEqual(0);
         });
+    });
+
+    it('scroll if needed on wysiwygRangeChangeAfter', () => {
+        wwe.setHeight(30);
+        wwe.setValue('a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>a<br>');
+        wwe.scrollTop(0);
+
+        em.emit('wysiwygRangeChangeAfter');
+
+        expect(wwe.scrollTop()).not.toEqual(0);
     });
 
     describe('get current range', () => {

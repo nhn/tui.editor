@@ -1,8 +1,7 @@
 const {CodeMirror} = window;
 
 /**
- * CodeMirrorExt
- * @class CodeMirrorExt
+ * Class CodeMirrorExt
  */
 class CodeMirrorExt {
     /**
@@ -10,7 +9,6 @@ class CodeMirrorExt {
      * @param {HTMLElement} el - container jquery element
      * @param {Object} [options={}] - codeMirror options
      * @memberof CodeMirrorExt
-     * @constructor
      */
     constructor(el, options = {}) {
         this.editorContainerEl = el;
@@ -18,6 +16,7 @@ class CodeMirrorExt {
         /**
          * @memberof CodeMirrorExt
          * @protected
+         * @member
          */
         this.cm = null;
 
@@ -28,6 +27,7 @@ class CodeMirrorExt {
      * init
      * @param {Object} options - codeMirror option
      * @memberof CodeMirrorExt
+     * @private
      */
     _init(options) {
         const cmTextarea = document.createElement('textarea');
@@ -91,10 +91,13 @@ class CodeMirrorExt {
      * Set Editor value
      * @memberof CodeMirrorExt
      * @param {string} markdown - Markdown syntax text
+     * @param {boolean} [cursorToEnd=true] - move cursor to contents end
      */
-    setValue(markdown) {
+    setValue(markdown, cursorToEnd = true) {
         this.cm.setValue(markdown);
-        this.moveCursorToEnd();
+        if (cursorToEnd) {
+            this.moveCursorToEnd();
+        }
         this.cm.refresh();
     }
 

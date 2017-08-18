@@ -20,13 +20,11 @@ const CLASS_TAB_SECTION = 'te-tab-section';
 const TYPE_UI = 'ui';
 
 /**
- * PopupAddImage
+ * Class PopupAddImage
  * It implements a Image Add Popup
- * @class PopupAddImage
  * @extends {LayerPopup}
  */
 class PopupAddImage extends LayerPopup {
-
     /**
      * Creates an instance of PopupAddImage.
      * @param {LayerPopupOption} options - layer popup option

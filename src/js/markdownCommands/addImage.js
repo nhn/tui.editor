@@ -8,8 +8,8 @@ import CommandManager from '../commandManager';
 /**
  * AddImage
  * Add Image markdown syntax to markdown Editor
- * @exports AddImage
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/AddImage
  * @ignore
  */
 const AddImage = CommandManager.command('markdown', /** @lends AddImage */ {

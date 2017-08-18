@@ -11,8 +11,8 @@ const italicRegex = /^[*_][^*_]*[*_]$/;
 /**
  * Italic
  * Add italic markdown syntax to markdown editor
- * @exports Italic
- * @augments Command
+ * @extends Command
+ * @module markdownCommands/Italic
  * @ignore
  */
 const Italic = CommandManager.command('markdown', /** @lends Italic */{

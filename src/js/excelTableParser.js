@@ -6,8 +6,6 @@
 /**
  * excelTableParser
  * Parse excel paste data
- * @public
- * @exports excelTableParser
  * @param {string} content excel table content
  * @returns {object} result
  * @ignore
@@ -38,9 +36,9 @@ function excelTableParser(content) {
 }
 /**
  * Get row data from raw text with Regexp
- * @public
  * @param {string} content Raw copied text data
  * @returns {Array}
+ * @ignore
  */
 function getRows(content) {
     content = content.replace(/"([^"]+)"/g, (match, cell) => cell.replace(/(\r\n)|(\r)/g, '<br/>'));

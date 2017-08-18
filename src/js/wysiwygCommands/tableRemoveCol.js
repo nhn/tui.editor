@@ -10,12 +10,11 @@ import domUtils from '../domUtils';
 /**
  * RemoveCol
  * remove Row to selected table
- * @exports RemoveCol
- * @augments Command
- * @augments WysiwygCommand
+ * @extends Command
+ * @module wysiwygCommands/TableRemoveCol
  * @ignore
  */
-const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
+const TableRemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
     name: 'RemoveCol',
     /**
      *  커맨드 핸들러
@@ -92,4 +91,4 @@ function focusToCell(sq, $cell, tableMgr) {
     }
 }
 
-module.exports = RemoveCol;
+module.exports = TableRemoveCol;
