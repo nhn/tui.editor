@@ -1027,6 +1027,40 @@ describe('WwTableManager', () => {
             expect(wwe.get$Body().find('td').eq(1).text()).toBe('4');
             expect(range.collapsed).toBe(false);
         });
+
+        it('_removeContentsAndChangeSelectionIfNeed() should return false if nothing has been processed', () => {
+            const result = mgr._removeContentsAndChangeSelectionIfNeed(null, 'SOMETHING_ELSE', null);
+            expect(result).toEqual(false);
+        });
+
+        it('_handleBackspaceAndDeleteKeyEvent() should not delete if no cells are selected', () => {
+            const html = `
+                <table>
+                    <thead>
+                        <tr><th>1</th><th>2</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>3<br>2<br>1</td><td>4</td></tr>
+                        <tr><td>5</td><td>6</td></tr>
+                    </tbody>
+                </table><div>2</div>`;
+            const ev = {
+                preventDefault: () => {}
+            };
+            spyOn(ev, 'preventDefault');
+
+            wwe.focus();
+            wwe.get$Body().html(html);
+
+            let range = wwe.getEditor().getSelection();
+            range.setStart(wwe.get$Body().find('td')[0], 0);
+            range.setEnd(wwe.get$Body().find('td')[0], 1);
+            wwe.getEditor().setSelection(range);
+
+            const result = mgr._handleBackspaceAndDeleteKeyEvent(ev, range, 'BACK_SPACE');
+            expect(result).toEqual(true);
+            expect(ev.preventDefault).not.toHaveBeenCalled();
+        });
     });
 
     describe('_removeBRIfNeed', () => {

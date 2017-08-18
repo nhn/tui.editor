@@ -272,17 +272,17 @@ class WwTableManager {
 
     /**
      * Handle backspace and delete key event
-     * @param {object} ev Event object
-     * @param {Range} range Range Object
-     * @param {string} keymap keymap
-     * @returns {boolean|null}
+     * @param {object} ev - Event object
+     * @param {Range} range - Range Object
+     * @param {string} keymap - keymap
+     * @returns {boolean} - need next
      * @private
      */
     _handleBackspaceAndDeleteKeyEvent(ev, range, keymap) {
         const isBackspace = keymap === 'BACK_SPACE';
-        const isTextOrElementDelete = range.commonAncestorContainer.nodeType !== 3
-            && range.commonAncestorContainer !== this.wwe.get$Body()[0];
-        let isNeedNext;
+        const selectionManager = this.wwe.componentManager.getManager('tableSelection');
+        const $selectedCells = selectionManager.getSelectedCells();
+        let isNeedNext = true;
 
         if (range.collapsed) {
             if (this.isInTable(range)) {
@@ -304,10 +304,12 @@ class WwTableManager {
                 isNeedNext = false;
             }
         } else if (this.isInTable(range)) {
-            if (isTextOrElementDelete) {
-                ev.preventDefault();
-                this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
-                isNeedNext = false;
+            if ($selectedCells.length > 0) {
+                const removed = this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+                if (removed) {
+                    ev.preventDefault();
+                    isNeedNext = false;
+                }
             }
         }
 
@@ -1101,9 +1103,10 @@ class WwTableManager {
 
     /**
      * Remove contents and change selection if need
-     * @param {Range} range Range object
-     * @param {string} keymap keymap
-     * @param {object} ev Event object
+     * @param {Range} range - Range object
+     * @param {string} keymap - keymap
+     * @param {object} ev - Event object
+     * @returns {boolean} - true if contents has been removed
      * @private
      */
     _removeContentsAndChangeSelectionIfNeed(range, keymap, ev) {
@@ -1111,6 +1114,7 @@ class WwTableManager {
         const isDeleteOperation = (keymap === 'BACK_SPACE' || keymap === 'DELETE');
         const $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const firstSelectedCell = $selectedCells.first().get(0);
+        let processed = false;
 
         if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && $selectedCells.length) {
             if (isDeleteOperation) {
@@ -1123,7 +1127,10 @@ class WwTableManager {
             range.setStart(firstSelectedCell, 0);
             range.collapse(true);
             this.wwe.getEditor().setSelection(range);
+            processed = true;
         }
+
+        return processed;
     }
 
     /**
