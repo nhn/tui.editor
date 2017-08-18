@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.13.0
+ * @version 0.13.1
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -100,9 +100,7 @@ var isMac = /Mac/.test(navigator.platform);
 var KEYMAP_OS_INDEX = isMac ? 1 : 0;
 
 /**
- * CommandManager
- * @exports CommandManager
- * @class
+ * Class CommandManager
  */
 
 var CommandManager = function () {
@@ -150,8 +148,7 @@ var CommandManager = function () {
 
         /**
          * Add command
-         * @api
-         * @memberOf CommandManager
+         * @memberof CommandManager
          * @param {Command} command Command instance
          * @returns {Command} Command
          */
@@ -194,7 +191,7 @@ var CommandManager = function () {
          * _initEvent
          * Bind event handler to eventManager
          * @private
-         * @memberOf CommandManager
+         * @memberof CommandManager
          */
 
     }, {
@@ -221,8 +218,7 @@ var CommandManager = function () {
 
         /**
          * Execute command
-         * @api
-         * @memberOf CommandManager
+         * @memberof CommandManager
          * @param {String} name Command name
          * @returns {*}
          */
@@ -266,8 +262,7 @@ var CommandManager = function () {
 
 /**
  * Create command by given editor type and property object
- * @api
- * @memberOf ComponentManager
+ * @memberof ComponentManager
  * @param {string} type Command type
  * @param {{name: string, keyMap: object}} props Property
  * @returns {*}
@@ -1259,12 +1254,14 @@ var sharedInstance = void 0;
 var DEFAULT_CODE = 'en_US';
 
 /**
- * I18n
- * @exports I18n
- * @class
+ * Class I18n
  */
 
 var I18n = function () {
+    /**
+     * Creates an instance of I18n.
+     * @memberof I18n
+     */
     function I18n() {
         _classCallCheck(this, I18n);
 
@@ -1719,8 +1716,7 @@ var _tui = tui,
     util = _tui.util;
 
 /**
- * ExtManager
- * @class ExtManager
+ * Class ExtManager
  */
 
 var ExtManager = function () {
@@ -1737,8 +1733,7 @@ var ExtManager = function () {
     /**
      * defineExtension
      * Defined Extension
-     * @api
-     * @memberOf ExtManager
+     * @memberof ExtManager
      * @param {string} name extension name
      * @param {ExtManager~extension} ext extension
      */
@@ -1808,6 +1803,7 @@ var DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url
  * @param {Array<string>} options.languages - language names to map
+ * @ignore
  */
 /* globals plantumlEncoder */
 
@@ -2083,6 +2079,7 @@ function initUI(editor, preset) {
  * @param {string} text - Text content
  * @param {string} color - Color value
  * @returns {object} - wrapped text and range(from, to)
+ * @ignore
  */
 function makeCustomColorSyntaxAndTextRange(text, color) {
     return wrapTextAndGetRange('{color:' + color + '}', text, '{color}');
@@ -2093,6 +2090,7 @@ function makeCustomColorSyntaxAndTextRange(text, color) {
  * @param {string} text Text - content
  * @param {string} color Color - value
  * @returns {object} - wrapped text and range(from, to)
+ * @ignore
  */
 function makeHTMLColorSyntaxAndTextRange(text, color) {
     return wrapTextAndGetRange('<span style="color:' + color + '">', text, '</span>');
@@ -2104,6 +2102,7 @@ function makeHTMLColorSyntaxAndTextRange(text, color) {
  * @param {string} text - text
  * @param {string} post - text post
  * @returns {object} - wrapped text and range(from, to)
+ * @ignore
  */
 function wrapTextAndGetRange(pre, text, post) {
     return {
@@ -2704,9 +2703,7 @@ var _window = window,
     hljs = _window.hljs;
 
 /**
- * CodeBlockManager
- * @exports CodeBlockManager
- * @class
+ * Class Code Block Manager
  */
 
 var CodeBlockManager = function () {
@@ -2894,15 +2891,15 @@ var _window = window,
     MarkdownIt = _window.markdownit;
 
 /**
- * Convertor
- * @exports Convertor
- * @constructor
- * @class Convertor
- * @param {EventManager} em - EventManager instance
- * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+ * Class Convertor
  */
 
 var Convertor = function () {
+    /**
+     * Convertor constructor
+     * @param {EventManager} em - EventManager instance
+     * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
+     */
     function Convertor(em) {
         _classCallCheck(this, Convertor);
 
@@ -2932,19 +2929,33 @@ var Convertor = function () {
                 langPrefix: 'lang-'
             });
 
-            markdownitHighlight.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+            // markdownitHighlight
             markdownitHighlight.block.ruler.at('code', _markdownitCodeRenderer2.default);
-            markdownitHighlight.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, ['paragraph', 'reference', 'list']);
-            markdownitHighlight.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
+            markdownitHighlight.block.ruler.at('table', _markdownitTableRenderer2.default, {
+                alt: ['paragraph', 'reference']
+            });
+            markdownitHighlight.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, {
+                alt: ['paragraph', 'reference', 'blockquote', 'list']
+            });
+            markdownitHighlight.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, {
+                alt: ['paragraph', 'reference', 'blockquote']
+            });
             markdownitHighlight.inline.ruler.at('backticks', _markdownitBackticksRenderer2.default);
             markdownitHighlight.use(_markdownitTaskPlugin2.default);
             markdownitHighlight.use(_markdownitCodeBlockPlugin2.default);
             this._markdownitHighlight = markdownitHighlight;
 
-            markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, ['paragraph', 'reference']);
+            // markdownit
             markdownit.block.ruler.at('code', _markdownitCodeRenderer2.default);
-            markdownit.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, ['paragraph', 'reference', 'list']);
-            markdownit.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, ['paragraph', 'reference', 'blockquote']);
+            markdownit.block.ruler.at('table', _markdownitTableRenderer2.default, {
+                alt: ['paragraph', 'reference']
+            });
+            markdownit.block.ruler.at('blockquote', _markdownitBlockQuoteRenderer2.default, {
+                alt: ['paragraph', 'reference', 'blockquote', 'list']
+            });
+            markdownit.block.ruler.at('html_block', _markdownitHtmlBlockRenderer2.default, {
+                alt: ['paragraph', 'reference', 'blockquote']
+            });
             markdownit.inline.ruler.at('backticks', _markdownitBackticksRenderer2.default);
             markdownit.use(_markdownitTaskPlugin2.default);
             markdownit.use(_markdownitCodeBlockPlugin2.default);
@@ -2955,7 +2966,7 @@ var Convertor = function () {
          * _markdownToHtmlWithCodeHighlight
          * Convert markdown to html with Codehighlight
          * @private
-         * @memberOf Convertor
+         * @memberof Convertor
          * @param {string} markdown markdown text
          * @returns {string} html text
          */
@@ -2980,7 +2991,7 @@ var Convertor = function () {
          * _markdownToHtml
          * Convert markdown to html
          * @private
-         * @memberOf Convertor
+         * @memberof Convertor
          * @param {string} markdown markdown text
          * @returns {string} html text
          */
@@ -3029,8 +3040,7 @@ var Convertor = function () {
          * toHTMLWithCodeHightlight
          * Convert markdown to html with Codehighlight
          * emit convertorAfterMarkdownToHtmlConverted
-         * @api
-         * @memberOf Convertor
+         * @memberof Convertor
          * @param {string} markdown markdown text
          * @returns {string} html text
          */
@@ -3048,8 +3058,7 @@ var Convertor = function () {
          * toHTML
          * Convert markdown to html
          * emit convertorAfterMarkdownToHtmlConverted
-         * @api
-         * @memberOf Convertor
+         * @memberof Convertor
          * @param {string} markdown markdown text
          * @returns {string} html text
          */
@@ -3075,8 +3084,7 @@ var Convertor = function () {
          * toMarkdown
          * Convert html to markdown
          * emit convertorAfterHtmlToMarkdownConverted
-         * @api
-         * @memberOf Convertor
+         * @memberof Convertor
          * @param {string} html html text
          * @param {object | null} toMarkOptions - toMark library options
          * @returns {string} markdown text
@@ -3207,12 +3215,14 @@ var _tui = tui,
 var eventList = ['previewBeforeHook', 'previewRenderAfter', 'previewNeedsRefresh', 'addImageBlobHook', 'setMarkdownAfter', 'contentChangedFromWysiwyg', 'changeFromWysiwyg', 'contentChangedFromMarkdown', 'changeFromMarkdown', 'change', 'changeModeToWysiwyg', 'changeModeToMarkdown', 'changeModeBefore', 'changeMode', 'changePreviewStyle', 'openPopupAddLink', 'openPopupAddImage', 'openPopupAddTable', 'openPopupTableUtils', 'openHeadingSelect', 'openPopupCodeBlockLanguages', 'openPopupCodeBlockEditor', 'closePopupCodeBlockLanguages', 'closePopupCodeBlockEditor', 'closeAllPopup', 'command', 'addCommandBefore', 'htmlUpdate', 'markdownUpdate', 'renderedHtmlUpdated', 'removeEditor', 'convertorAfterMarkdownToHtmlConverted', 'convertorBeforeHtmlToMarkdownConverted', 'convertorAfterHtmlToMarkdownConverted', 'stateChange', 'wysiwygSetValueAfter', 'wysiwygSetValueBefore', 'wysiwygGetValueBefore', 'wysiwygProcessHTMLText', 'wysiwygRangeChangeAfter', 'wysiwygKeyEvent', 'scroll', 'click', 'mousedown', 'mouseover', 'mouseout', 'mouseup', 'contextmenu', 'keydown', 'keyup', 'keyMap', 'load', 'focus', 'blur', 'paste', 'pasteBefore', 'willPaste', 'copy', 'copyBefore', 'copyAfter', 'cut', 'cutAfter', 'drop', 'show', 'hide'];
 
 /**
- * EventManager
- * @exports EventManager
- * @class EventManager
+ * Class EventManager
  */
 
 var EventManager = function () {
+    /**
+     * Creates an instance of EventManager.
+     * @memberof EventManager
+     */
     function EventManager() {
         _classCallCheck(this, EventManager);
 
@@ -3462,8 +3472,6 @@ var SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabeti
 
 /**
  * htmlSanitizer
- * @api
- * @exports htmlSanitizer
  * @param {string|Node} html html or Node
  * @param {boolean} [needHtmlText] pass true if need html text
  * @returns {string|DocumentFragment} result
@@ -3568,8 +3576,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * Markdown Preview
- * @class MarkdownPreview
+ * Class Markdown Preview
  * @extends {Preview}
  */
 var MarkdownPreview = function (_Preview) {
@@ -3667,8 +3674,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * Preview
- * @class Preview
+ * Class Preview
  **/
 var Preview = function () {
     /**
@@ -3833,14 +3839,15 @@ var BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
- * WwTableManager
- * @exports WwTableManager
- * @constructor
- * @class WwTableManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwTableManager
  */
 
 var WwTableManager = function () {
+    /**
+     * Creates an instance of WwTableManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwTableManager
+     */
     function WwTableManager(wwe) {
         _classCallCheck(this, WwTableManager);
 
@@ -3849,8 +3856,7 @@ var WwTableManager = function () {
 
         /**
          * Name property
-         * @api
-         * @memberOf WwTableManager
+         * @memberof WwTableManager#
          * @type {string}
          */
         this.name = 'table';
@@ -3862,7 +3868,7 @@ var WwTableManager = function () {
     /**
      * _init
      * Initialize
-     * @memberOf WwTableManager
+     * @memberof WwTableManager
      * @private
      */
 
@@ -3878,7 +3884,7 @@ var WwTableManager = function () {
         /**
          * _initEvent
          * Initialize event
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -3997,6 +4003,7 @@ var WwTableManager = function () {
         /**
          * On paste.
          * @param {MouseEvent} ev - event
+         * @private
          */
 
     }, {
@@ -4013,7 +4020,7 @@ var WwTableManager = function () {
         /**
          * _initKeyHandler
          * Initialize key event handler
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4090,8 +4097,7 @@ var WwTableManager = function () {
          * Check whether passed range is in table or not
          * @param {Range} range range
          * @returns {boolean} result
-         * @memberOf WwTableManager
-         * @api
+         * @memberof WwTableManager
          */
 
     }, {
@@ -4116,7 +4122,7 @@ var WwTableManager = function () {
          * Check whether passed range is right before table or not
          * @param {Range} range range
          * @returns {boolean} result
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4131,7 +4137,7 @@ var WwTableManager = function () {
          * Check whether passed range is right after table or not
          * @param {Range} range range
          * @returns {boolean} result
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4145,10 +4151,10 @@ var WwTableManager = function () {
 
         /**
          * Handle backspace and delete key event
-         * @param {object} ev Event object
-         * @param {Range} range Range Object
-         * @param {string} keymap keymap
-         * @returns {boolean|null}
+         * @param {object} ev - Event object
+         * @param {Range} range - Range Object
+         * @param {string} keymap - keymap
+         * @returns {boolean} - need next
          * @private
          */
 
@@ -4156,8 +4162,9 @@ var WwTableManager = function () {
         key: '_handleBackspaceAndDeleteKeyEvent',
         value: function _handleBackspaceAndDeleteKeyEvent(ev, range, keymap) {
             var isBackspace = keymap === 'BACK_SPACE';
-            var isTextOrElementDelete = range.commonAncestorContainer.nodeType !== 3 && range.commonAncestorContainer !== this.wwe.get$Body()[0];
-            var isNeedNext = void 0;
+            var selectionManager = this.wwe.componentManager.getManager('tableSelection');
+            var $selectedCells = selectionManager.getSelectedCells();
+            var isNeedNext = true;
 
             if (range.collapsed) {
                 if (this.isInTable(range)) {
@@ -4177,10 +4184,12 @@ var WwTableManager = function () {
                     isNeedNext = false;
                 }
             } else if (this.isInTable(range)) {
-                if (isTextOrElementDelete) {
-                    ev.preventDefault();
-                    this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
-                    isNeedNext = false;
+                if ($selectedCells.length > 0) {
+                    var removed = this._removeContentsAndChangeSelectionIfNeed(range, keymap, ev);
+                    if (removed) {
+                        ev.preventDefault();
+                        isNeedNext = false;
+                    }
                 }
             }
 
@@ -4192,7 +4201,7 @@ var WwTableManager = function () {
          * Backspace handler in table
          * @param {Range} range range
          * @param {Event} event event
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4234,7 +4243,7 @@ var WwTableManager = function () {
          * Delete handler in table
          * @param {Range} range range
          * @param {Event} event event
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4253,7 +4262,7 @@ var WwTableManager = function () {
          * _appendBrIfTdOrThNotHaveAsLastChild
          * Append br if td or th doesn't have br as last child
          * @param {Range} range range
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4279,7 +4288,7 @@ var WwTableManager = function () {
          * _unwrapBlockInTable
          * Unwrap default block tag in table
          * For Squire default action making abnormal behavior, remove default blocks in Table after setValue() called
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4322,7 +4331,7 @@ var WwTableManager = function () {
          * Remove table
          * @param {Range} range range
          * @param {Node} table table
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4341,7 +4350,7 @@ var WwTableManager = function () {
          * _recordUndoStateIfNeed
          * record undo state if need
          * @param {Range} range range
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4360,7 +4369,7 @@ var WwTableManager = function () {
          * _recordUndoStateAndResetCellNode
          * record undo state and reset last cell node
          * @param {Range} range range
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          * @private
          */
 
@@ -4820,7 +4829,7 @@ var WwTableManager = function () {
 
         /**
          * Reset _lastCellNode to null
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          */
 
     }, {
@@ -4831,7 +4840,7 @@ var WwTableManager = function () {
         /**
          * Set _lastCellNode to given node
          * @param {HTMLElement} node Table cell
-         * @memberOf WwTableManager
+         * @memberof WwTableManager
          */
 
     }, {
@@ -4985,6 +4994,7 @@ var WwTableManager = function () {
          * @param {Range} range Range object
          * @param {string} direction 'next' or 'previous'
          * @param {string} scale 'row' or 'cell'
+         * @private
          */
 
     }, {
@@ -5070,9 +5080,10 @@ var WwTableManager = function () {
 
         /**
          * Remove contents and change selection if need
-         * @param {Range} range Range object
-         * @param {string} keymap keymap
-         * @param {object} ev Event object
+         * @param {Range} range - Range object
+         * @param {string} keymap - keymap
+         * @param {object} ev - Event object
+         * @returns {boolean} - true if contents has been removed
          * @private
          */
 
@@ -5083,6 +5094,7 @@ var WwTableManager = function () {
             var isDeleteOperation = keymap === 'BACK_SPACE' || keymap === 'DELETE';
             var $selectedCells = this.wwe.componentManager.getManager('tableSelection').getSelectedCells();
             var firstSelectedCell = $selectedCells.first().get(0);
+            var processed = false;
 
             if ((isTextInput || isDeleteOperation) && !this._isModifierKeyPushed(ev) && $selectedCells.length) {
                 if (isDeleteOperation) {
@@ -5095,14 +5107,16 @@ var WwTableManager = function () {
                 range.setStart(firstSelectedCell, 0);
                 range.collapse(true);
                 this.wwe.getEditor().setSelection(range);
+                processed = true;
             }
+
+            return processed;
         }
 
         /**
          * Return new table ID class name string
          * @returns {string}
-         * @memberOf WwTableManager
-         * @api
+         * @memberof WwTableManager
          */
 
     }, {
@@ -5223,14 +5237,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 /**
- * WwTableSelectionManager
- * @exports WwTableSelectionManager
- * @constructor
- * @class WwTableSelectionManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
+ * Class WwTableSelectionManager
  */
 
 var WwTableSelectionManager = function () {
+    /**
+     * Creates an instance of WwTableSelectionManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwTableSelectionManager
+     */
     function WwTableSelectionManager(wwe) {
         _classCallCheck(this, WwTableSelectionManager);
 
@@ -5239,8 +5254,7 @@ var WwTableSelectionManager = function () {
 
         /**
          * Name property
-         * @api
-         * @memberOf WwTableSelectionManager
+         * @memberof WwTableSelectionManager#
          * @type {string}
          */
         this.name = 'tableSelection';
@@ -5251,7 +5265,7 @@ var WwTableSelectionManager = function () {
     /**
      * _init
      * Initialize
-     * @memberOf WwTableSelectionManager
+     * @memberof WwTableSelectionManager
      * @private
      */
 
@@ -5271,7 +5285,7 @@ var WwTableSelectionManager = function () {
         /**
          * _initEvent
          * Initialize event
-         * @memberOf WwTableSelectionManager
+         * @memberof WwTableSelectionManager
          * @private
          */
 
@@ -5512,8 +5526,7 @@ var WwTableSelectionManager = function () {
          * @param {HTMLElement} selectionStart start element
          * @param {HTMLElement} selectionEnd end element
          * @returns {{from: {row: number, cell: number}, to: {row: number, cell: number}}}
-         * @memberOf WwTableSelectionManager
-         * @api
+         * @memberof WwTableSelectionManager
          */
 
     }, {
@@ -5596,8 +5609,7 @@ var WwTableSelectionManager = function () {
 
         /**
          * Remove '.te-cell-selected' class from all of table Cell
-         * @memberOf WwTableSelectionManager
-         * @api
+         * @memberof WwTableSelectionManager
          */
 
     }, {
@@ -5617,7 +5629,7 @@ var WwTableSelectionManager = function () {
         /**
          * gets selected cells
          * @returns {jQuery} selected cells
-         * @memberOf WwTableSelectionManager
+         * @memberof WwTableSelectionManager
          */
 
     }, {
@@ -5723,23 +5735,23 @@ var TASK_ATTR_NAME = 'data-te-task';
 var TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
- * ViewOnly
- * @exports ToastUIEditorViewOnly
- * @constructor
- * @class ToastUIEditorViewOnly
- * @param {object} options Option object
-    * @param {string} options.initialValue Editor's initial value
-    * @param {object} options.events eventlist Event list
-         * @param {function} options.events.load It would be emitted when editor fully load
-         * @param {function} options.events.change It would be emitted when content changed
-         * @param {function} options.events.stateChange It would be emitted when format change by cursor position
-         * @param {function} options.events.focus It would be emitted when editor get focus
-         * @param {function} options.events.blur It would be emitted when editor loose focus
-     * @param {object} options.hooks Hook list
-         * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+ * Class ToastUIEditorViewOnly
  */
 
 var ToastUIEditorViewOnly = function () {
+    /**
+     * ViewOnly
+     * @param {object} options Option object
+        * @param {string} options.initialValue Editor's initial value
+        * @param {object} options.events eventlist Event list
+            * @param {function} options.events.load It would be emitted when editor fully load
+            * @param {function} options.events.change It would be emitted when content changed
+            * @param {function} options.events.stateChange It would be emitted when format change by cursor position
+            * @param {function} options.events.focus It would be emitted when editor get focus
+            * @param {function} options.events.blur It would be emitted when editor loose focus
+        * @param {object} options.hooks Hook list
+            * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
+    */
     function ToastUIEditorViewOnly(options) {
         var _this = this;
 
@@ -5966,9 +5978,7 @@ var _tui = tui,
     util = _tui.util;
 
 /**
- * Command class
- * @exports Command
- * @class
+ * Class Command
  */
 
 var Command = function () {
@@ -5990,8 +6000,7 @@ var Command = function () {
     /**
      * getName
      * returns Name of command
-     * @api
-     * @memberOf Command
+     * @memberof Command
      * @returns {string} Command Name
      */
 
@@ -6005,8 +6014,7 @@ var Command = function () {
         /**
          * getType
          * returns Type of command
-         * @api
-         * @memberOf Command
+         * @memberof Command
          * @returns {number} Command Command type number
          */
 
@@ -6019,8 +6027,7 @@ var Command = function () {
         /**
          * isMDType
          * returns whether Command Type is Markdown or not
-         * @api
-         * @memberOf Command
+         * @memberof Command
          * @returns {boolean} result
          */
 
@@ -6033,8 +6040,7 @@ var Command = function () {
         /**
          * isWWType
          * returns whether Command Type is Wysiwyg or not
-         * @api
-         * @memberOf Command
+         * @memberof Command
          * @returns {boolean} result
          */
 
@@ -6047,8 +6053,7 @@ var Command = function () {
         /**
          * isGlobalType
          * returns whether Command Type is Global or not
-         * @api
-         * @memberOf Command
+         * @memberof Command
          * @returns {boolean} result
          */
 
@@ -6061,8 +6066,7 @@ var Command = function () {
         /**
          * setKeyMap
          * Set keymap value for each os
-         * @api
-         * @memberOf Command
+         * @memberof Command
          * @param {string} win Windows Key(and etc)
          * @param {string} mac Mac osx key
          */
@@ -6079,8 +6083,7 @@ var Command = function () {
 
 /**
  * Command factory method
- * @api
- * @memberOf Command
+ * @memberof Command
  * @param {string} typeStr Editor type name
  * @param {object} props Property
  *     @param {string} props.name Command name
@@ -6112,8 +6115,7 @@ Command.factory = function (typeStr, props) {
  * markdown : 0
  * wysiwyg : 1
  * global : 2
- * @api
- * @memberOf Command
+ * @memberof Command
  * @type {object}
  */
 Command.TYPE = {
@@ -6150,15 +6152,15 @@ var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
  *
- * MarkdownMarkerHelper
- * @exports MarkdownMarkerHelper
- * @constructor
- * @class
- * @param {CodeMirror} cm codemirror instance
- * @ignore
+ * Class MarkdownMarkerHelper
  */
 
 var MarkdownMarkerHelper = function () {
+    /**
+     * Creates an instance of MarkdownMarkerHelper.
+     * @param {CodeMirror} cm codemirror instance
+     * @memberof MarkdownMarkerHelper
+     */
     function MarkdownMarkerHelper(cm) {
         _classCallCheck(this, MarkdownMarkerHelper);
 
@@ -6436,14 +6438,14 @@ var _tui = tui,
     util = _tui.util;
 
 /**
- * Markerlist
- * @exports Markerlist
- * @constructor
- * @class
- * @ignore
+ * Class Markerlist
  */
 
 var Markerlist = function () {
+    /**
+     * Creates an instance of Markerlist.
+     * @memberof Markerlist
+     */
     function Markerlist() {
         _classCallCheck(this, Markerlist);
 
@@ -6554,6 +6556,7 @@ var Markerlist = function () {
          * @param {number} start start offset
          * @param {end} end end offset
          * @returns {Array.<object>} markers
+         * @private
          */
 
     }, {
@@ -6661,14 +6664,15 @@ var CHANGE_NOTHING = 0,
     CHANGE_MINUS = -1;
 
 /**
- * MarkerManager
- * @exports MarkerManager
- * @constructor
- * @class
- * @param {MarkerList} markerList MarkerList object
+ * Class MarkerManager
  */
 
 var MarkerManager = function () {
+    /**
+     * Creates an instance of MarkerManager.
+     * @param {MarkerList} markerList - MarkerList object
+     * @memberof MarkerManager
+     */
     function MarkerManager(markerList) {
         _classCallCheck(this, MarkerManager);
 
@@ -6718,6 +6722,7 @@ var MarkerManager = function () {
          * Make diffs of marker by updated content
          * @param {string} newContent updated content
          * @returns {object} marker diffs
+         * @private
          */
 
     }, {
@@ -6755,6 +6760,7 @@ var MarkerManager = function () {
          * Iterate each change of updated content
          * @param {string} newContent updated content
          * @param {function} iteratee iteratee
+         * @private
          */
 
     }, {
@@ -6802,6 +6808,7 @@ var MarkerManager = function () {
          * @param {number} diff diff count of change
          * @param {object} marker marker to calculate diff
          * @returns {number} start diff of marker
+         * @private
          */
 
     }, {
@@ -6830,6 +6837,7 @@ var MarkerManager = function () {
          * @param {number} diff diff count of change
          * @param {object} marker marker to calculate diff
          * @returns {number} end diff of marker
+         * @private
          */
 
     }, {
@@ -6855,6 +6863,7 @@ var MarkerManager = function () {
          * Get updated markers with diffs
          * @param {object} markerDiffs marker diff object that contains diff info of specific marker
          * @returns {Array.<object>} updated markers
+         * @private
          */
 
     }, {
@@ -6905,15 +6914,15 @@ var domUtils = __webpack_require__(1);
 var FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
- * ViewOnlyMarkerHelper
- * @exports ViewOnlyMarkerHelper
- * @constructor
- * @class
- * @param {Preview} preview preview instance
- * @ignore
+ * Class ViewOnlyMarkerHelper
  */
 
 var ViewOnlyMarkerHelper = function () {
+    /**
+     * Creates an instance of ViewOnlyMarkerHelper.
+     * @param {Preview} preview - preview instance
+     * @memberof ViewOnlyMarkerHelper
+     */
     function ViewOnlyMarkerHelper(preview) {
         _classCallCheck(this, ViewOnlyMarkerHelper);
 
@@ -6965,6 +6974,7 @@ var ViewOnlyMarkerHelper = function () {
          * Get extra info of range
          * @param {Range} range range
          * @returns {object} extra info
+         * @private
          */
 
     }, {
@@ -7061,6 +7071,7 @@ var ViewOnlyMarkerHelper = function () {
          * Containers of range should be text node
          * @param {Range} range range
          * @returns {boolean} success or fail
+         * @private
          */
 
     }, {
@@ -7090,6 +7101,7 @@ var ViewOnlyMarkerHelper = function () {
          * Find offset nodes by given offset list
          * @param {Array.<number>} offsetlist offset list
          * @returns {Array.<object>} offset node informations
+         * @private
          */
 
     }, {
@@ -7182,14 +7194,15 @@ var domUtils = __webpack_require__(1);
 var FIND_ZWB_RX = /\u200B/g;
 
 /**
- * WysiwygMarkerHelper
- * @exports WysiwygMarkerHelper
- * @constructor
- * @class
- * @param {SquireExt} sqe squire instance
+ * Class WysiwygMarkerHelper
  */
 
 var WysiwygMarkerHelper = function () {
+    /**
+     * Creates an instance of WysiwygMarkerHelper.
+     * @param {SquireExt} sqe - squire instance
+     * @memberof WysiwygMarkerHelper
+     */
     function WysiwygMarkerHelper(sqe) {
         _classCallCheck(this, WysiwygMarkerHelper);
 
@@ -7240,6 +7253,7 @@ var WysiwygMarkerHelper = function () {
          * Get extra info of range
          * @param {Range} range range
          * @returns {object} extra info
+         * @private
          */
 
     }, {
@@ -7341,6 +7355,7 @@ var WysiwygMarkerHelper = function () {
          * Containers of range should be text node
          * @param {Range} range range
          * @returns {boolean} success or fail
+         * @private
          */
 
     }, {
@@ -7370,6 +7385,7 @@ var WysiwygMarkerHelper = function () {
          * Find offset nodes by given offset list
          * @param {Array.<number>} offsetlist offset list
          * @returns {Array.<object>} offset node informations
+         * @private
          */
 
     }, {
@@ -7721,7 +7737,6 @@ var _tui = tui,
 /**
  * AddCol
  * Add Row to selected table
- * @exports AddCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore
@@ -7920,7 +7935,6 @@ var _tui = tui,
 /**
  * AddRow
  * Add Row to selected table
- * @exports AddRow
  * @augments Command
  * @augments WysiwygCommand
  * @ignore
@@ -8093,7 +8107,6 @@ var _tui = tui,
 /**
  * AlignCol
  * Align selected column's text content to given direction
- * @exports AlignCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore
@@ -8438,7 +8451,6 @@ var _tui = tui,
 /**
  * RemoveCol
  * Remove col to selected table
- * @exports RemoveCol
  * @augments Command
  * @augments WysiwygCommand
  * @ignore
@@ -8618,7 +8630,6 @@ var _tui = tui,
 /**
  * RemoveRow
  * Remove row to selected table
- * @exports RemoveRow
  * @augments Command
  * @augments WysiwygCommand
  * @ignore
@@ -9227,12 +9238,8 @@ var PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 var PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
 /**
- * WwMergedTableManager
- * @exports WwMergedTableManager
- * @constructor
- * @class WwMergedTableManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
- * @ignore
+ * Class WwMergedTableManager
+ * @extends {WwTableManager}
  */
 
 var WwMergedTableManager = function (_WwTableManager) {
@@ -9922,17 +9929,17 @@ var _tui = tui,
     util = _tui.util;
 
 /**
- * WwMergedTableSelectionManager
- * @exports WwMergedTableSelectionManager
- * @constructor
- * @class WwMergedTableTableSelectionManager
- * @param {WysiwygEditor} wwe WysiwygEditor instance
- * @ignore
+ * Class WwMergedTableSelectionManager
  */
 
 var WwMergedTableSelectionManager = function (_WwTableSelectionMana) {
     _inherits(WwMergedTableSelectionManager, _WwTableSelectionMana);
 
+    /**
+     * Creates an instance of WwMergedTableSelectionManager.
+     * @param {WysiwygEditor} wwe - WysiwygEditor instance
+     * @memberof WwMergedTableSelectionManager
+     */
     function WwMergedTableSelectionManager(wwe) {
         _classCallCheck(this, WwMergedTableSelectionManager);
 
@@ -10094,14 +10101,14 @@ var _tui = tui,
     util = _tui.util;
 
 /**
- * LazyRunner
- * @exports LazyRunner
- * @constructor
- * @class
- * @ignore
+ * Class LazyRunner
  */
 
 var LazyRunner = function () {
+    /**
+     * Creates an instance of LazyRunner.
+     * @memberof LazyRunner
+     */
     function LazyRunner() {
         _classCallCheck(this, LazyRunner);
 
@@ -10250,228 +10257,328 @@ module.exports = function backtick(state, silent) {
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
-
 // Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
-// Distributed under an ISC license: https://github.com/markdown-it/markdown-it/
-/**
- * @fileoverview Implements MarkdownItBlockQuoteRenderer
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
- */
+// Distributed under MIT license: https://github.com/markdown-it/markdown-it/
 
 /* eslint-disable */
+
+// Block quotes
+
+
+
+// prevent quote, pre in list #811
+// ref: #989
+// #811 START
+// var isSpace = require('../common/utils').isSpace;
+
+function isSpace(code) {
+  switch (code) {
+    case 0x09:
+    case 0x20:
+      return true;
+  }
+  return false;
+}
+// #811 END
+
 module.exports = function blockquote(state, startLine, endLine, silent) {
-    // Added by Junghwan Park
-    var FIND_LIST_RX = /(?:-|\*|\d+\.) {1,4}(?:> {0,3})[^>]*$/;
-    var sourceLines = state.src.split('\n');
-    var currentLine = sourceLines[startLine];
-    // Added by Junghwan Park
+  var adjustTab,
+      ch,
+      i,
+      initial,
+      l,
+      lastLineEmpty,
+      lines,
+      nextLine,
+      offset,
+      oldBMarks,
+      oldBSCount,
+      oldIndent,
+      oldParentType,
+      oldSCount,
+      oldTShift,
+      spaceAfterMarker,
+      terminate,
+      terminatorRules,
+      token,
+      wasOutdented,
+      oldLineMax = state.lineMax,
+      pos = state.bMarks[startLine] + state.tShift[startLine],
+      max = state.eMarks[startLine];
 
-    var nextLine,
-        lastLineEmpty,
-        oldTShift,
-        oldSCount,
-        oldBMarks,
-        oldIndent,
-        oldParentType,
-        lines,
-        initial,
-        offset,
-        ch,
-        terminatorRules,
-        token,
-        i,
-        l,
-        terminate,
-        pos = state.bMarks[startLine] + state.tShift[startLine],
-        max = state.eMarks[startLine];
+  // #811 START
+  var FIND_LIST_RX = /(?:-|\*|\d+\.) {1,4}(?:> {0,3})[^>]*$/;
+  var sourceLines = state.src.split('\n');
+  var currentLine = sourceLines[startLine];
+  // #811 END
 
-    // check the block quote marker
-    // Add condition by Junghwan Park
-    if (currentLine.match(FIND_LIST_RX /*&& !currentLine.match(/^ {0,6}>/)*/) || state.src.charCodeAt(pos++) !== 0x3E /* > */) {
-        return false;
+  // if it's indented more than 3 spaces, it should be a code block
+  if (state.sCount[startLine] - state.blkIndent >= 4) {
+    return false;
+  }
+
+  // check the block quote marker
+  if (state.src.charCodeAt(pos++) !== 0x3E /* > */) {
+      return false;
     }
+  // #811 START
+  // check block quote in list
+  if (currentLine.match(FIND_LIST_RX /*&& !currentLine.match(/^ {0,6}>/)*/)) {
+    return false;
+  }
+  // #811 END
 
-    // we know that it's going to be a valid blockquote,
-    // so no point trying to find the end of it in silent mode
-    if (silent) {
-        return true;
-    }
+  // we know that it's going to be a valid blockquote,
+  // so no point trying to find the end of it in silent mode
+  if (silent) {
+    return true;
+  }
 
-    // skip one optional space (but not tab, check cmark impl) after '>'
-    if (state.src.charCodeAt(pos) === 0x20) {
+  // skip spaces after ">" and re-calculate offset
+  initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+
+  // skip one optional space after '>'
+  if (state.src.charCodeAt(pos) === 0x20 /* space */) {
+      // ' >   test '
+      //     ^ -- position start of line here:
+      pos++;
+      initial++;
+      offset++;
+      adjustTab = false;
+      spaceAfterMarker = true;
+    } else if (state.src.charCodeAt(pos) === 0x09 /* tab */) {
+      spaceAfterMarker = true;
+
+      if ((state.bsCount[startLine] + offset) % 4 === 3) {
+        // '  >\t  test '
+        //       ^ -- position start of line here (tab has width===1)
         pos++;
+        initial++;
+        offset++;
+        adjustTab = false;
+      } else {
+        // ' >\t  test '
+        //    ^ -- position start of line here + shift bsCount slightly
+        //         to make extra space appear
+        adjustTab = true;
+      }
+    } else {
+    spaceAfterMarker = false;
+  }
+
+  oldBMarks = [state.bMarks[startLine]];
+  state.bMarks[startLine] = pos;
+
+  while (pos < max) {
+    ch = state.src.charCodeAt(pos);
+
+    if (isSpace(ch)) {
+      if (ch === 0x09) {
+        offset += 4 - (offset + state.bsCount[startLine] + (adjustTab ? 1 : 0)) % 4;
+      } else {
+        offset++;
+      }
+    } else {
+      break;
     }
 
-    oldIndent = state.blkIndent;
-    state.blkIndent = 0;
+    pos++;
+  }
 
-    // skip spaces after ">" and re-calculate offset
-    initial = offset = state.sCount[startLine] + pos - (state.bMarks[startLine] + state.tShift[startLine]);
+  oldBSCount = [state.bsCount[startLine]];
+  state.bsCount[startLine] = state.sCount[startLine] + 1 + (spaceAfterMarker ? 1 : 0);
 
-    oldBMarks = [state.bMarks[startLine]];
-    state.bMarks[startLine] = pos;
+  lastLineEmpty = pos >= max;
 
-    while (pos < max) {
+  oldSCount = [state.sCount[startLine]];
+  state.sCount[startLine] = offset - initial;
+
+  oldTShift = [state.tShift[startLine]];
+  state.tShift[startLine] = pos - state.bMarks[startLine];
+
+  terminatorRules = state.md.block.ruler.getRules('blockquote');
+
+  oldParentType = state.parentType;
+  state.parentType = 'blockquote';
+  wasOutdented = false;
+
+  // Search the end of the block
+  //
+  // Block ends with either:
+  //  1. an empty line outside:
+  //     ```
+  //     > test
+  //
+  //     ```
+  //  2. an empty line inside:
+  //     ```
+  //     >
+  //     test
+  //     ```
+  //  3. another tag:
+  //     ```
+  //     > test
+  //      - - -
+  //     ```
+  for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
+    // check if it's outdented, i.e. it's inside list item and indented
+    // less than said list item:
+    //
+    // ```
+    // 1. anything
+    //    > current blockquote
+    // 2. checking this line
+    // ```
+    if (state.sCount[nextLine] < state.blkIndent) wasOutdented = true;
+
+    pos = state.bMarks[nextLine] + state.tShift[nextLine];
+    max = state.eMarks[nextLine];
+
+    if (pos >= max) {
+      // Case 1: line is not inside the blockquote, and this line is empty.
+      break;
+    }
+
+    if (state.src.charCodeAt(pos++) === 0x3E /* > */ && !wasOutdented) {
+      // This line is inside the blockquote.
+
+      // skip spaces after ">" and re-calculate offset
+      initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
+
+      // skip one optional space after '>'
+      if (state.src.charCodeAt(pos) === 0x20 /* space */) {
+          // ' >   test '
+          //     ^ -- position start of line here:
+          pos++;
+          initial++;
+          offset++;
+          adjustTab = false;
+          spaceAfterMarker = true;
+        } else if (state.src.charCodeAt(pos) === 0x09 /* tab */) {
+          spaceAfterMarker = true;
+
+          if ((state.bsCount[nextLine] + offset) % 4 === 3) {
+            // '  >\t  test '
+            //       ^ -- position start of line here (tab has width===1)
+            pos++;
+            initial++;
+            offset++;
+            adjustTab = false;
+          } else {
+            // ' >\t  test '
+            //    ^ -- position start of line here + shift bsCount slightly
+            //         to make extra space appear
+            adjustTab = true;
+          }
+        } else {
+        spaceAfterMarker = false;
+      }
+
+      oldBMarks.push(state.bMarks[nextLine]);
+      state.bMarks[nextLine] = pos;
+
+      while (pos < max) {
         ch = state.src.charCodeAt(pos);
 
         if (isSpace(ch)) {
-            if (ch === 0x09) {
-                offset += 4 - offset % 4;
-            } else {
-                offset++;
-            }
+          if (ch === 0x09) {
+            offset += 4 - (offset + state.bsCount[nextLine] + (adjustTab ? 1 : 0)) % 4;
+          } else {
+            offset++;
+          }
         } else {
-            break;
+          break;
         }
 
         pos++;
+      }
+
+      lastLineEmpty = pos >= max;
+
+      oldBSCount.push(state.bsCount[nextLine]);
+      state.bsCount[nextLine] = state.sCount[nextLine] + 1 + (spaceAfterMarker ? 1 : 0);
+
+      oldSCount.push(state.sCount[nextLine]);
+      state.sCount[nextLine] = offset - initial;
+
+      oldTShift.push(state.tShift[nextLine]);
+      state.tShift[nextLine] = pos - state.bMarks[nextLine];
+      continue;
     }
 
-    lastLineEmpty = pos >= max;
+    // Case 2: line is not inside the blockquote, and the last line was empty.
+    if (lastLineEmpty) {
+      break;
+    }
 
-    oldSCount = [state.sCount[startLine]];
-    state.sCount[startLine] = offset - initial;
+    // Case 3: another tag found.
+    terminate = false;
+    for (i = 0, l = terminatorRules.length; i < l; i++) {
+      if (terminatorRules[i](state, nextLine, endLine, true)) {
+        terminate = true;
+        break;
+      }
+    }
 
-    oldTShift = [state.tShift[startLine]];
-    state.tShift[startLine] = pos - state.bMarks[startLine];
+    if (terminate) {
+      // Quirk to enforce "hard termination mode" for paragraphs;
+      // normally if you call `tokenize(state, startLine, nextLine)`,
+      // paragraphs will look below nextLine for paragraph continuation,
+      // but if blockquote is terminated by another tag, they shouldn't
+      state.lineMax = nextLine;
 
-    terminatorRules = state.md.block.ruler.getRules('blockquote');
-
-    // Search the end of the block
-    //
-    // Block ends with either:
-    //  1. an empty line outside:
-    //     ```
-    //     > test
-    //
-    //     ```
-    //  2. an empty line inside:
-    //     ```
-    //     >
-    //     test
-    //     ```
-    //  3. another tag
-    //     ```
-    //     > test
-    //      - - -
-    //     ```
-    for (nextLine = startLine + 1; nextLine < endLine; nextLine++) {
-        if (state.sCount[nextLine] < oldIndent) {
-            break;
-        }
-
-        pos = state.bMarks[nextLine] + state.tShift[nextLine];
-        max = state.eMarks[nextLine];
-
-        if (pos >= max) {
-            // Case 1: line is not inside the blockquote, and this line is empty.
-            break;
-        }
-
-        if (state.src.charCodeAt(pos++) === 0x3E /* > */) {
-                // This line is inside the blockquote.
-
-                // skip one optional space (but not tab, check cmark impl) after '>'
-                if (state.src.charCodeAt(pos) === 0x20) {
-                    pos++;
-                }
-
-                // skip spaces after ">" and re-calculate offset
-                initial = offset = state.sCount[nextLine] + pos - (state.bMarks[nextLine] + state.tShift[nextLine]);
-
-                oldBMarks.push(state.bMarks[nextLine]);
-                state.bMarks[nextLine] = pos;
-
-                while (pos < max) {
-                    ch = state.src.charCodeAt(pos);
-
-                    if (isSpace(ch)) {
-                        if (ch === 0x09) {
-                            offset += 4 - offset % 4;
-                        } else {
-                            offset++;
-                        }
-                    } else {
-                        break;
-                    }
-
-                    pos++;
-                }
-
-                lastLineEmpty = pos >= max;
-
-                oldSCount.push(state.sCount[nextLine]);
-                state.sCount[nextLine] = offset - initial;
-
-                oldTShift.push(state.tShift[nextLine]);
-                state.tShift[nextLine] = pos - state.bMarks[nextLine];
-                continue;
-            }
-
-        // Case 2: line is not inside the blockquote, and the last line was empty.
-        if (lastLineEmpty) {
-            break;
-        }
-
-        // Case 3: another tag found.
-        terminate = false;
-        for (i = 0, l = terminatorRules.length; i < l; i++) {
-            if (terminatorRules[i](state, nextLine, endLine, true)) {
-                terminate = true;
-                break;
-            }
-        }
-        if (terminate) {
-            break;
-        }
-
+      if (state.blkIndent !== 0) {
+        // state.blkIndent was non-zero, we now set it to zero,
+        // so we need to re-calculate all offsets to appear as
+        // if indent wasn't changed
         oldBMarks.push(state.bMarks[nextLine]);
+        oldBSCount.push(state.bsCount[nextLine]);
         oldTShift.push(state.tShift[nextLine]);
         oldSCount.push(state.sCount[nextLine]);
+        state.sCount[nextLine] -= state.blkIndent;
+      }
 
-        // A negative indentation means that this is a paragraph continuation
-        //
-        state.sCount[nextLine] = -1;
+      break;
     }
 
-    oldParentType = state.parentType;
-    state.parentType = 'blockquote';
+    oldBMarks.push(state.bMarks[nextLine]);
+    oldBSCount.push(state.bsCount[nextLine]);
+    oldTShift.push(state.tShift[nextLine]);
+    oldSCount.push(state.sCount[nextLine]);
 
-    token = state.push('blockquote_open', 'blockquote', 1);
-    token.markup = '>';
-    token.map = lines = [startLine, 0];
+    // A negative indentation means that this is a paragraph continuation
+    //
+    state.sCount[nextLine] = -1;
+  }
 
-    state.md.block.tokenize(state, startLine, nextLine);
+  oldIndent = state.blkIndent;
+  state.blkIndent = 0;
 
-    token = state.push('blockquote_close', 'blockquote', -1);
-    token.markup = '>';
+  token = state.push('blockquote_open', 'blockquote', 1);
+  token.markup = '>';
+  token.map = lines = [startLine, 0];
 
-    state.parentType = oldParentType;
-    lines[1] = state.line;
+  state.md.block.tokenize(state, startLine, nextLine);
 
-    // Restore original tShift; this might not be necessary since the parser
-    // has already been here, but just to make sure we can do that.
-    for (i = 0; i < oldTShift.length; i++) {
-        state.bMarks[i + startLine] = oldBMarks[i];
-        state.tShift[i + startLine] = oldTShift[i];
-        state.sCount[i + startLine] = oldSCount[i];
-    }
-    state.blkIndent = oldIndent;
+  token = state.push('blockquote_close', 'blockquote', -1);
+  token.markup = '>';
 
-    return true;
+  state.lineMax = oldLineMax;
+  state.parentType = oldParentType;
+  lines[1] = state.line;
+
+  // Restore original tShift; this might not be necessary since the parser
+  // has already been here, but just to make sure we can do that.
+  for (i = 0; i < oldTShift.length; i++) {
+    state.bMarks[i + startLine] = oldBMarks[i];
+    state.tShift[i + startLine] = oldTShift[i];
+    state.sCount[i + startLine] = oldSCount[i];
+    state.bsCount[i + startLine] = oldBSCount[i];
+  }
+  state.blkIndent = oldIndent;
+
+  return true;
 };
-
-function isSpace(code) {
-    switch (code) {
-        case 0x09:
-        case 0x20:
-            return true;
-    }
-    return false;
-}
-/* eslint-enable */
 
 /***/ }),
 /* 48 */
