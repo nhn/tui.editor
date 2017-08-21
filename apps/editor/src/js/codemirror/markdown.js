@@ -1,5 +1,6 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
+// based on https://github.com/codemirror/CodeMirror/blob/ff04f127ba8a736b97d06c505fb85d976e3f2980/mode/markdown/markdown.js
 
 /*eslint-disable */
 "use strict";
@@ -32,10 +33,16 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   if (modeCfg.underscoresBreakWords === undefined)
     modeCfg.underscoresBreakWords = true;
 
-  // Use `fencedCodeBlocks` to configure fenced code blocks. false to
-  // disable, string to specify a precise regexp that the fence should
-  // match, and true to allow three or more backticks or tildes (as
-  // per CommonMark).
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+// Use `fencedCodeBlocks` to configure fenced code blocks. false to
+// disable, string to specify a precise regexp that the fence should
+// match, and true to allow three or more backticks or tildes (as
+// per CommonMark).
+  // Turn on fenced code blocks? ("```" to start/end)
+  // if (modeCfg.fencedCodeBlocks === undefined) modeCfg.fencedCodeBlocks = false;
+// TUI.EDITOR MODIFICATION END
 
   // Turn on task lists? ("- [ ] " and "- [x] ")
   if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
@@ -67,11 +74,18 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   ,   ulRE = /^[*\-+]\s+/
   ,   olRE = /^[0-9]+([.)])\s+/
   ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
   ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
   ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/
   ,   fencedCodeRE = new RegExp("^(" + (modeCfg.fencedCodeBlocks === true ? "~~~+|```+" : modeCfg.fencedCodeBlocks) +
                                 ")[ \\t]*([\\w+#]*)");
+  // ,   atxHeaderRE = /^(#+)(?: |$)/
+  // ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
+  // ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/;
+// TUI.EDITOR MODIFICATION END
 
   function switchInline(stream, state, f) {
     state.f = state.inline = f;
@@ -83,9 +97,13 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     return f(stream, state);
   }
 
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   function lineIsEmpty(line) {
     return !line || !/\S/.test(line.string)
   }
+// TUI.EDITOR MODIFICATION END
 
   // Blocks
 
@@ -109,9 +127,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     // Reset state.trailingSpace
     state.trailingSpace = 0;
     state.trailingSpaceNewLine = false;
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     // Mark this line as blank
     state.prevLine = state.thisLine
     state.thisLine = null
+    // state.thisLineHasContent = false;
+// TUI.EDITOR MODIFICATION END
     return null;
   }
 
@@ -130,10 +153,17 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
           state.indentation -= state.indentationDiff;
         }
         state.list = null;
+// TUI.EDITOR MODIFICATION START
+// list 에서 하이라이팅이 제대로 안되는 버그
+// https://github.nhnent.com/fe/tui.editor/commit/d42c37639942633ccaf755c0c0d20f460c0b2441
       }
       if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4) + 1;
+      // } else if (state.indentation > 0) {
+      //   state.list = null;
+      //   state.listDepth = Math.floor(state.indentation / 4);
+// TUI.EDITOR MODIFICATION END
       } else { // No longer a list
         state.list = false;
         state.listDepth = 0;
@@ -143,7 +173,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     var match = null;
     if (state.indentationDiff >= 4) {
       stream.skipToEnd();
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
+      // if (prevLineIsIndentedCode || !state.prevLineHasContent) {
+// TUI.EDITOR MODIFICATION END
         state.indentation -= 4;
         state.indentedCode = true;
         return code;
@@ -157,8 +192,13 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
       return getType(state);
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList &&
                !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
+    // } else if (state.prevLineHasContent && !state.quote && !prevLineIsList && !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
+// TUI.EDITOR MODIFICATION END
       state.header = match[0].charAt(0) == '=' ? 1 : 2;
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
@@ -173,7 +213,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     } else if (stream.match(hrRE, true)) {
       state.hr = true;
       return hr;
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if ((lineIsEmpty(state.prevLine) || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+    // } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+// TUI.EDITOR MODIFICATION END
       var listType = null;
       if (stream.match(ulRE, true)) {
         listType = 'ul';
@@ -181,20 +226,36 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         stream.match(olRE, true);
         listType = 'ol';
       }
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       state.indentation = stream.column() + stream.current().length;
+      // state.indentation += 4;
+// TUI.EDITOR MODIFICATION END
       state.list = true;
       state.listDepth++;
       if (modeCfg.taskLists && stream.match(taskListRE, false)) {
         state.taskList = true;
+// TUI.EDITOR MODIFICATION START
+// Do not show table format pasting confirm on paste event where in Bloc... (#720)
+// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         state.task = true; // task state 관리를 위해 추가
+// TUI.EDITOR MODIFICATION END
       }
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
       return getType(state);
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
       state.fencedChars = match[1]
       // try switching mode
       state.localMode = getMode(match[2]);
+    // } else if (modeCfg.fencedCodeBlocks && stream.match(/^```[ \t]*([\w+#]*)/, true)) {
+    //   // try switching mode
+    //   state.localMode = getMode(RegExp.$1);
+// TUI.EDITOR MODIFICATION END
       if (state.localMode) state.localState = state.localMode.startState();
       state.f = state.block = local;
       if (modeCfg.highlightFormatting) state.formatting = "code-block";
@@ -218,7 +279,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     if (stream.sol() && state.fencedChars && stream.match(state.fencedChars, false)) {
+    // if (stream.sol() && stream.match("```", false)) {
+// TUI.EDITOR MODIFICATION END
       state.localMode = state.localState = null;
       state.f = state.block = leavingLocal;
       return null;
@@ -231,10 +297,17 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
   function leavingLocal(stream, state) {
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     stream.match(state.fencedChars);
     state.block = blockNormal;
     state.f = inlineNormal;
     state.fencedChars = null;
+    // stream.match("```");
+    // state.block = blockNormal;
+    // state.f = inlineNormal;
+// TUI.EDITOR MODIFICATION END
     if (modeCfg.highlightFormatting) state.formatting = "code-block";
     state.code = true;
     var returnType = getType(state);
@@ -411,8 +484,12 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
     if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
       stream.match(/\[[^\]]*\]/);
-      //현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
-      //state.inline = state.f = linkHref;
+// TUI.EDITOR MODIFICATION START
+// 이미지문법 code mirror에서 hightlight 제거
+// https://github.nhnent.com/fe/tui.editor/commit/d2160b8c16f392372569dc2a22f12957afd7d9f2
+      // 현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
+      // state.inline = state.f = linkHref;
+// TUI.EDITOR MODIFICATION END
       return image;
     }
 
@@ -453,9 +530,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       }
       return type + linkemail;
     }
-/*
-// modified
+// TUI.EDITOR MODIFICATION START
+// codemirror markdown mode fix to prevent htmlBlock
+// https://github.nhnent.com/fe/tui.editor/commit/35910adb507646b6129fd4d349c65bbe28832211
 // we dont need html Block it ruin markdown blocks
+/*
     if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
       var end = stream.string.indexOf(">", stream.pos);
       if (end != -1) {
@@ -472,6 +551,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return "tag";
     }
 */
+// TUI.EDITOR MODIFICATION END
 
     var ignoreUnderscore = false;
     if (!modeCfg.underscoresBreakWords) {
@@ -665,9 +745,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     startState: function() {
       return {
         f: blockNormal,
-
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: null,
         thisLine: null,
+        // prevLineHasContent: false,
+        // thisLineHasContent: false,
+// TUI.EDITOR MODIFICATION END
 
         block: blockNormal,
         htmlState: null,
@@ -684,7 +769,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         strong: false,
         header: 0,
         hr: false,
+// TUI.EDITOR MODIFICATION START
+// Do not show table format pasting confirm on paste event where in Bloc... (#720)
+// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         task: false,
+// TUI.EDITOR MODIFICATION END
         taskList: false,
         list: false,
         listDepth: 0,
@@ -692,7 +781,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpace: 0,
         trailingSpaceNewLine: false,
         strikethrough: false,
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: null
+// TUI.EDITOR MODIFICATION END
       };
     },
 
@@ -700,8 +793,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {
         f: s.f,
 
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: s.prevLine,
         thisLine: s.this,
+        // prevLineHasContent: s.prevLineHasContent,
+        // thisLineHasContent: s.thisLineHasContent,
+// TUI.EDITOR MODIFICATION END
 
         block: s.block,
         htmlState: s.htmlState && CodeMirror.copyState(htmlMode, s.htmlState),
@@ -714,14 +813,22 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         text: s.text,
         formatting: false,
         linkTitle: s.linkTitle,
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         code: s.code,
+// TUI.EDITOR MODIFICATION END
         em: s.em,
         strong: s.strong,
         strikethrough: s.strikethrough,
         header: s.header,
         hr: s.hr,
         taskList: s.taskList,
+// TUI.EDITOR MODIFICATION START
+// Do not show table format pasting confirm on paste event where in Bloc... (#720)
+// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         task: s.task, // task state 관리를 위해 추가
+// TUI.EDITOR MODIFICATION END
         list: s.list,
         listDepth: s.listDepth,
         quote: s.quote,
@@ -729,7 +836,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpace: s.trailingSpace,
         trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside,
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: s.fencedChars
+// TUI.EDITOR MODIFICATION END
       };
     },
 
@@ -738,14 +849,23 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       // Reset state.formatting
       state.formatting = false;
 
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (stream != state.thisLine) {
         var forceBlankLine = state.header || state.hr;
+      // if (stream.sol()) {
+      //   var forceBlankLine = !!state.header || state.hr;
+// TUI.EDITOR MODIFICATION END
 
         // Reset state.header and state.hr
         state.header = 0;
         state.hr = false;
 
         if (stream.match(/^\s*$/, true) || forceBlankLine) {
+// TUI.EDITOR MODIFICATION START
+// scrollFollow prototype
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
           blankLine(state);
           if (!forceBlankLine) return null
           state.prevLine = null
@@ -753,10 +873,24 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
         state.prevLine = state.thisLine
         state.thisLine = stream
+        //   state.prevLineHasContent = false;
+        //   blankLine(state);
+        //   return forceBlankLine ? this.token(stream, state) : null;
+        // } else {
+        //   state.prevLineHasContent = state.thisLineHasContent;
+        //   state.thisLineHasContent = true;
+        // }
+// TUI.EDITOR MODIFICATION END
 
         // Reset state.taskList
         state.taskList = false;
+// TUI.EDITOR MODIFICATION START
+// Do not show table format pasting confirm on paste event where in Bloc... (#720)
+// https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         state.task = false; // task state 관리를 위해 추가
+        // Reset state.code
+        // state.code = false;
+// TUI.EDITOR MODIFICATION END
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;
@@ -783,7 +917,11 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     blankLine: blankLine,
 
     getType: getType,
+// TUI.EDITOR MODIFICATION START
+// Exclude closing tags highlighting fixes #789 (#801)
+// https://github.nhnent.com/fe/tui.editor/commit/815b271cd426c6939413136a0532846a58cd36ab
     closeBrackets: "()[]{}''\"\"``",
+// TUI.EDITOR MODIFICATION END
     fold: "markdown"
   };
   return mode;
