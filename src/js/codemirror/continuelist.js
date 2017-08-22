@@ -27,6 +27,11 @@ CodeMirror.commands.subListIndentTab = function (cm) {
             else cm.execCommand("insertSoftTab");
         }
     }
+// TUI.EDITOR MODIFICATION START
+// 
+// https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+    cm.execCommand('fixOrderedListNumber');
+/// TUI.EDITOR MODIFICATION END
 };
 
 CodeMirror.commands.newlineAndIndentContinue = function(cm) {
