@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.13.1
+ * @version 0.13.2
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -69,7 +69,7 @@
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 76);
+/******/ 	return __webpack_require__(__webpack_require__.s = 77);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -13252,7 +13252,8 @@ module.exports = diff_match_patch;
 /* 73 */,
 /* 74 */,
 /* 75 */,
-/* 76 */
+/* 76 */,
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

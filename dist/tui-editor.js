@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.13.1
+ * @version 0.13.2
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -69,7 +69,7 @@
 /******/ 	__webpack_require__.p = "dist/";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 75);
+/******/ 	return __webpack_require__(__webpack_require__.s = 76);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -15538,6 +15538,11 @@ CodeMirror.commands.subListIndentTab = function (cm) {
             if (cm.somethingSelected()) cm.indentSelection("add");else cm.execCommand("insertSoftTab");
         }
     }
+    // TUI.EDITOR MODIFICATION START
+    // 
+    // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
+    cm.execCommand('fixOrderedListNumber');
+    /// TUI.EDITOR MODIFICATION END
 };
 
 CodeMirror.commands.newlineAndIndentContinue = function (cm) {
@@ -15604,6 +15609,143 @@ CodeMirror.commands.newlineAndIndentContinue = function (cm) {
 
 /***/ }),
 /* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+/* global CodeMirror */
+var listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
+
+/**
+ * simple wrapper for indentLess command
+ * to run fixOrderedListNumber on Shift-Tab
+ * @param {CodeMirror} cm - CodeMirror instance
+ * @returns {CodeMirror.Pass|null} - next command
+ * @ignore
+ */
+CodeMirror.commands.indentLessOrderedList = function (cm) {
+    if (cm.getOption('disableInput')) {
+        return CodeMirror.Pass;
+    }
+    cm.execCommand('indentLess');
+    cm.execCommand('fixOrderedListNumber');
+
+    return null;
+};
+
+/**
+ * fix ordered list number
+ * @param {CodeMirror} cm - CodeMirror instance
+ * @returns {CodeMirror.Pass|null} - next command
+ * @ignore
+ */
+CodeMirror.commands.fixOrderedListNumber = function (cm) {
+    if (cm.getOption('disableInput')) {
+        return CodeMirror.Pass;
+    }
+
+    var ranges = cm.listSelections();
+    for (var i = 0; i < ranges.length; i += 1) {
+        var pos = ranges[i].head;
+        var lineNumber = findFirstListItem(pos.line, cm);
+
+        if (lineNumber >= 0) {
+            var lineText = cm.getLine(lineNumber);
+
+            var _listRE$exec = listRE.exec(lineText),
+                _listRE$exec2 = _slicedToArray(_listRE$exec, 4),
+                indent = _listRE$exec2[1],
+                index = _listRE$exec2[3];
+
+            fixNumber(lineNumber, indent.length, parseInt(index, 10), cm);
+        }
+    }
+
+    return null;
+};
+
+/**
+ * fix list numbers
+ * @param {number} lineNumber - line number of list item to be normalized
+ * @param {number} prevIndentLength - previous indent length
+ * @param {number} startIndex - start index
+ * @param {CodeMirror} cm - CodeMirror instance
+ * @returns {number} - next line number
+ */
+function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
+    var indent = void 0,
+        delimiter = void 0,
+        text = void 0,
+        indentLength = void 0;
+    var index = startIndex;
+    var lineText = cm.getLine(lineNumber);
+
+    do {
+        var _listRE$exec3 = listRE.exec(lineText);
+
+        var _listRE$exec4 = _slicedToArray(_listRE$exec3, 6);
+
+        indent = _listRE$exec4[1];
+        delimiter = _listRE$exec4[4];
+        text = _listRE$exec4[5];
+
+        indentLength = indent.length;
+
+        if (indentLength === prevIndentLength) {
+            // fix number
+            cm.replaceRange('' + indent + index + delimiter + text, {
+                line: lineNumber,
+                ch: 0
+            }, {
+                line: lineNumber,
+                ch: lineText.length
+            });
+            index += 1;
+            lineNumber += 1;
+        } else if (indentLength > prevIndentLength) {
+            // nested list start
+            lineNumber = fixNumber(lineNumber, indentLength, 1, cm);
+        } else {
+            // nested list end
+            return lineNumber;
+        }
+
+        lineText = cm.getLine(lineNumber);
+    } while (listRE.test(lineText));
+
+    return lineNumber;
+}
+
+/**
+ * find line number of list item which contains given lineNumber
+ * @param {number} lineNumber - line number of list item
+ * @param {CodeMirror} cm - CodeMirror instance
+ * @returns {number} - line number of first list item
+ * @ignore
+ */
+function findFirstListItem(lineNumber, cm) {
+    var nextLineNumber = lineNumber;
+    var lineText = cm.getLine(lineNumber);
+
+    while (listRE.test(lineText)) {
+        nextLineNumber -= 1;
+        lineText = cm.getLine(nextLineNumber);
+    }
+
+    if (lineNumber === nextLineNumber) {
+        nextLineNumber = -1;
+    } else {
+        nextLineNumber += 1;
+    }
+
+    return nextLineNumber;
+}
+
+/***/ }),
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15734,12 +15876,13 @@ CodeMirror.defineMode("gfm", function (config, modeConfig) {
 CodeMirror.defineMIME("text/x-gfm", "gfm"); /*eslint-enable */
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
+// based on https://github.com/codemirror/CodeMirror/blob/ff04f127ba8a736b97d06c505fb85d976e3f2980/mode/markdown/markdown.js
 
 /*eslint-disable */
 
@@ -15769,10 +15912,16 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
   // Should underscores in words open/close em/strong?
   if (modeCfg.underscoresBreakWords === undefined) modeCfg.underscoresBreakWords = true;
 
+  // TUI.EDITOR MODIFICATION START
+  // scrollFollow prototype
+  // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   // Use `fencedCodeBlocks` to configure fenced code blocks. false to
   // disable, string to specify a precise regexp that the fence should
   // match, and true to allow three or more backticks or tildes (as
   // per CommonMark).
+  // Turn on fenced code blocks? ("```" to start/end)
+  // if (modeCfg.fencedCodeBlocks === undefined) modeCfg.fencedCodeBlocks = false;
+  // TUI.EDITOR MODIFICATION END
 
   // Turn on task lists? ("- [ ] " and "- [x] ")
   if (modeCfg.taskLists === undefined) modeCfg.taskLists = false;
@@ -15803,11 +15952,18 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
       ulRE = /^[*\-+]\s+/,
       olRE = /^[0-9]+([.)])\s+/,
       taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
+  // TUI.EDITOR MODIFICATION START
+  // scrollFollow prototype
+  // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   ,
       atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/,
       setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/,
       textRE = /^[^#!\[\]*_\\<>` "'(~]+/,
       fencedCodeRE = new RegExp("^(" + (modeCfg.fencedCodeBlocks === true ? "~~~+|```+" : modeCfg.fencedCodeBlocks) + ")[ \\t]*([\\w+#]*)");
+  // ,   atxHeaderRE = /^(#+)(?: |$)/
+  // ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
+  // ,   textRE = /^[^#!\[\]*_\\<>` "'(~]+/;
+  // TUI.EDITOR MODIFICATION END
 
   function switchInline(stream, state, f) {
     state.f = state.inline = f;
@@ -15819,9 +15975,13 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     return f(stream, state);
   }
 
+  // TUI.EDITOR MODIFICATION START
+  // scrollFollow prototype
+  // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   function lineIsEmpty(line) {
     return !line || !/\S/.test(line.string);
   }
+  // TUI.EDITOR MODIFICATION END
 
   // Blocks
 
@@ -15845,9 +16005,14 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     // Reset state.trailingSpace
     state.trailingSpace = 0;
     state.trailingSpaceNewLine = false;
+    // TUI.EDITOR MODIFICATION START
+    // scrollFollow prototype
+    // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     // Mark this line as blank
     state.prevLine = state.thisLine;
     state.thisLine = null;
+    // state.thisLineHasContent = false;
+    // TUI.EDITOR MODIFICATION END
     return null;
   }
 
@@ -15868,10 +16033,17 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
           state.indentation -= state.indentationDiff;
         }
         state.list = null;
+        // TUI.EDITOR MODIFICATION START
+        // list 에서 하이라이팅이 제대로 안되는 버그
+        // https://github.nhnent.com/fe/tui.editor/commit/d42c37639942633ccaf755c0c0d20f460c0b2441
       }
       if (state.indentation > 0) {
         state.list = null;
         state.listDepth = Math.floor(state.indentation / 4) + 1;
+        // } else if (state.indentation > 0) {
+        //   state.list = null;
+        //   state.listDepth = Math.floor(state.indentation / 4);
+        // TUI.EDITOR MODIFICATION END
       } else {
         // No longer a list
         state.list = false;
@@ -15882,7 +16054,12 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     var match = null;
     if (state.indentationDiff >= 4) {
       stream.skipToEnd();
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
+        // if (prevLineIsIndentedCode || !state.prevLineHasContent) {
+        // TUI.EDITOR MODIFICATION END
         state.indentation -= 4;
         state.indentedCode = true;
         return code;
@@ -15896,7 +16073,12 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
       return getType(state);
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList && !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
+      // } else if (state.prevLineHasContent && !state.quote && !prevLineIsList && !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
+      // TUI.EDITOR MODIFICATION END
       state.header = match[0].charAt(0) == '=' ? 1 : 2;
       if (modeCfg.highlightFormatting) state.formatting = "header";
       state.f = state.inline;
@@ -15911,7 +16093,12 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     } else if (stream.match(hrRE, true)) {
       state.hr = true;
       return hr;
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if ((lineIsEmpty(state.prevLine) || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+      // } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
+      // TUI.EDITOR MODIFICATION END
       var listType = null;
       if (stream.match(ulRE, true)) {
         listType = 'ul';
@@ -15919,20 +16106,36 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
         stream.match(olRE, true);
         listType = 'ol';
       }
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       state.indentation = stream.column() + stream.current().length;
+      // state.indentation += 4;
+      // TUI.EDITOR MODIFICATION END
       state.list = true;
       state.listDepth++;
       if (modeCfg.taskLists && stream.match(taskListRE, false)) {
         state.taskList = true;
+        // TUI.EDITOR MODIFICATION START
+        // Do not show table format pasting confirm on paste event where in Bloc... (#720)
+        // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         state.task = true; // task state 관리를 위해 추가
+        // TUI.EDITOR MODIFICATION END
       }
       state.f = state.inline;
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
       return getType(state);
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
       state.fencedChars = match[1];
       // try switching mode
       state.localMode = getMode(match[2]);
+      // } else if (modeCfg.fencedCodeBlocks && stream.match(/^```[ \t]*([\w+#]*)/, true)) {
+      //   // try switching mode
+      //   state.localMode = getMode(RegExp.$1);
+      // TUI.EDITOR MODIFICATION END
       if (state.localMode) state.localState = state.localMode.startState();
       state.f = state.block = local;
       if (modeCfg.highlightFormatting) state.formatting = "code-block";
@@ -15954,7 +16157,12 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
   }
 
   function local(stream, state) {
+    // TUI.EDITOR MODIFICATION START
+    // scrollFollow prototype
+    // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     if (stream.sol() && state.fencedChars && stream.match(state.fencedChars, false)) {
+      // if (stream.sol() && stream.match("```", false)) {
+      // TUI.EDITOR MODIFICATION END
       state.localMode = state.localState = null;
       state.f = state.block = leavingLocal;
       return null;
@@ -15967,10 +16175,17 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
   }
 
   function leavingLocal(stream, state) {
+    // TUI.EDITOR MODIFICATION START
+    // scrollFollow prototype
+    // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     stream.match(state.fencedChars);
     state.block = blockNormal;
     state.f = inlineNormal;
     state.fencedChars = null;
+    // stream.match("```");
+    // state.block = blockNormal;
+    // state.f = inlineNormal;
+    // TUI.EDITOR MODIFICATION END
     if (modeCfg.highlightFormatting) state.formatting = "code-block";
     state.code = true;
     var returnType = getType(state);
@@ -16160,8 +16375,12 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
 
     if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
       stream.match(/\[[^\]]*\]/);
-      //현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
-      //state.inline = state.f = linkHref;
+      // TUI.EDITOR MODIFICATION START
+      // 이미지문법 code mirror에서 hightlight 제거
+      // https://github.nhnent.com/fe/tui.editor/commit/d2160b8c16f392372569dc2a22f12957afd7d9f2
+      // 현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
+      // state.inline = state.f = linkHref;
+      // TUI.EDITOR MODIFICATION END
       return image;
     }
 
@@ -16202,9 +16421,11 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
       }
       return type + linkemail;
     }
-    /*
-    // modified
+    // TUI.EDITOR MODIFICATION START
+    // codemirror markdown mode fix to prevent htmlBlock
+    // https://github.nhnent.com/fe/tui.editor/commit/35910adb507646b6129fd4d349c65bbe28832211
     // we dont need html Block it ruin markdown blocks
+    /*
         if (ch === '<' && stream.match(/^(!--|\w)/, false)) {
           var end = stream.string.indexOf(">", stream.pos);
           if (end != -1) {
@@ -16221,6 +16442,7 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
           return "tag";
         }
     */
+    // TUI.EDITOR MODIFICATION END
 
     var ignoreUnderscore = false;
     if (!modeCfg.underscoresBreakWords) {
@@ -16428,9 +16650,14 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     startState: function startState() {
       return {
         f: blockNormal,
-
+        // TUI.EDITOR MODIFICATION START
+        // scrollFollow prototype
+        // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: null,
         thisLine: null,
+        // prevLineHasContent: false,
+        // thisLineHasContent: false,
+        // TUI.EDITOR MODIFICATION END
 
         block: blockNormal,
         htmlState: null,
@@ -16447,7 +16674,11 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
         strong: false,
         header: 0,
         hr: false,
+        // TUI.EDITOR MODIFICATION START
+        // Do not show table format pasting confirm on paste event where in Bloc... (#720)
+        // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         task: false,
+        // TUI.EDITOR MODIFICATION END
         taskList: false,
         list: false,
         listDepth: 0,
@@ -16455,7 +16686,11 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
         trailingSpace: 0,
         trailingSpaceNewLine: false,
         strikethrough: false,
+        // TUI.EDITOR MODIFICATION START
+        // scrollFollow prototype
+        // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: null
+        // TUI.EDITOR MODIFICATION END
       };
     },
 
@@ -16463,8 +16698,14 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
       return {
         f: s.f,
 
+        // TUI.EDITOR MODIFICATION START
+        // scrollFollow prototype
+        // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: s.prevLine,
         thisLine: s.this,
+        // prevLineHasContent: s.prevLineHasContent,
+        // thisLineHasContent: s.thisLineHasContent,
+        // TUI.EDITOR MODIFICATION END
 
         block: s.block,
         htmlState: s.htmlState && CodeMirror.copyState(htmlMode, s.htmlState),
@@ -16477,14 +16718,22 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
         text: s.text,
         formatting: false,
         linkTitle: s.linkTitle,
+        // TUI.EDITOR MODIFICATION START
+        // scrollFollow prototype
+        // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         code: s.code,
+        // TUI.EDITOR MODIFICATION END
         em: s.em,
         strong: s.strong,
         strikethrough: s.strikethrough,
         header: s.header,
         hr: s.hr,
         taskList: s.taskList,
+        // TUI.EDITOR MODIFICATION START
+        // Do not show table format pasting confirm on paste event where in Bloc... (#720)
+        // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         task: s.task, // task state 관리를 위해 추가
+        // TUI.EDITOR MODIFICATION END
         list: s.list,
         listDepth: s.listDepth,
         quote: s.quote,
@@ -16492,7 +16741,11 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
         trailingSpace: s.trailingSpace,
         trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside,
+        // TUI.EDITOR MODIFICATION START
+        // scrollFollow prototype
+        // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: s.fencedChars
+        // TUI.EDITOR MODIFICATION END
       };
     },
 
@@ -16501,14 +16754,23 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
       // Reset state.formatting
       state.formatting = false;
 
+      // TUI.EDITOR MODIFICATION START
+      // scrollFollow prototype
+      // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (stream != state.thisLine) {
         var forceBlankLine = state.header || state.hr;
+        // if (stream.sol()) {
+        //   var forceBlankLine = !!state.header || state.hr;
+        // TUI.EDITOR MODIFICATION END
 
         // Reset state.header and state.hr
         state.header = 0;
         state.hr = false;
 
         if (stream.match(/^\s*$/, true) || forceBlankLine) {
+          // TUI.EDITOR MODIFICATION START
+          // scrollFollow prototype
+          // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
           blankLine(state);
           if (!forceBlankLine) return null;
           state.prevLine = null;
@@ -16516,10 +16778,24 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
 
         state.prevLine = state.thisLine;
         state.thisLine = stream;
+        //   state.prevLineHasContent = false;
+        //   blankLine(state);
+        //   return forceBlankLine ? this.token(stream, state) : null;
+        // } else {
+        //   state.prevLineHasContent = state.thisLineHasContent;
+        //   state.thisLineHasContent = true;
+        // }
+        // TUI.EDITOR MODIFICATION END
 
         // Reset state.taskList
         state.taskList = false;
+        // TUI.EDITOR MODIFICATION START
+        // Do not show table format pasting confirm on paste event where in Bloc... (#720)
+        // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
         state.task = false; // task state 관리를 위해 추가
+        // Reset state.code
+        // state.code = false;
+        // TUI.EDITOR MODIFICATION END
 
         // Reset state.trailingSpace
         state.trailingSpace = 0;
@@ -16546,7 +16822,11 @@ CodeMirror.defineMode("markdown", function (cmCfg, modeCfg) {
     blankLine: blankLine,
 
     getType: getType,
+    // TUI.EDITOR MODIFICATION START
+    // Exclude closing tags highlighting fixes #789 (#801)
+    // https://github.nhnent.com/fe/tui.editor/commit/815b271cd426c6939413136a0532846a58cd36ab
     closeBrackets: "()[]{}''\"\"``",
+    // TUI.EDITOR MODIFICATION END
     fold: "markdown"
   };
   return mode;
@@ -16556,7 +16836,7 @@ CodeMirror.defineMIME("text/x-markdown", "markdown");
 /*eslint-enable */
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16635,7 +16915,7 @@ CodeMirror.overlayMode = function (base, overlay, combine) {
 /*eslint-enable */
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16652,7 +16932,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 // wysiwyg Commands
 
 
-var _markdownEditor = __webpack_require__(93);
+var _markdownEditor = __webpack_require__(94);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
@@ -16660,11 +16940,11 @@ var _mdPreview = __webpack_require__(18);
 
 var _mdPreview2 = _interopRequireDefault(_mdPreview);
 
-var _wysiwygEditor = __webpack_require__(143);
+var _wysiwygEditor = __webpack_require__(144);
 
 var _wysiwygEditor2 = _interopRequireDefault(_wysiwygEditor);
 
-var _layout = __webpack_require__(77);
+var _layout = __webpack_require__(78);
 
 var _layout2 = _interopRequireDefault(_layout);
 
@@ -16700,159 +16980,159 @@ var _i18n = __webpack_require__(3);
 
 var _i18n2 = _interopRequireDefault(_i18n);
 
-var _defaultUI = __webpack_require__(100);
+var _defaultUI = __webpack_require__(101);
 
 var _defaultUI2 = _interopRequireDefault(_defaultUI);
 
-var _bold = __webpack_require__(81);
+var _bold = __webpack_require__(82);
 
 var _bold2 = _interopRequireDefault(_bold);
 
-var _italic = __webpack_require__(86);
+var _italic = __webpack_require__(87);
 
 var _italic2 = _interopRequireDefault(_italic);
 
-var _strike = __webpack_require__(89);
+var _strike = __webpack_require__(90);
 
 var _strike2 = _interopRequireDefault(_strike);
 
-var _blockquote = __webpack_require__(80);
+var _blockquote = __webpack_require__(81);
 
 var _blockquote2 = _interopRequireDefault(_blockquote);
 
-var _heading = __webpack_require__(84);
+var _heading = __webpack_require__(85);
 
 var _heading2 = _interopRequireDefault(_heading);
 
-var _paragraph = __webpack_require__(88);
+var _paragraph = __webpack_require__(89);
 
 var _paragraph2 = _interopRequireDefault(_paragraph);
 
-var _hr = __webpack_require__(85);
+var _hr = __webpack_require__(86);
 
 var _hr2 = _interopRequireDefault(_hr);
 
-var _addLink = __webpack_require__(79);
+var _addLink = __webpack_require__(80);
 
 var _addLink2 = _interopRequireDefault(_addLink);
 
-var _addImage = __webpack_require__(78);
+var _addImage = __webpack_require__(79);
 
 var _addImage2 = _interopRequireDefault(_addImage);
 
-var _ul = __webpack_require__(92);
+var _ul = __webpack_require__(93);
 
 var _ul2 = _interopRequireDefault(_ul);
 
-var _ol = __webpack_require__(87);
+var _ol = __webpack_require__(88);
 
 var _ol2 = _interopRequireDefault(_ol);
 
-var _table = __webpack_require__(90);
+var _table = __webpack_require__(91);
 
 var _table2 = _interopRequireDefault(_table);
 
-var _task = __webpack_require__(91);
+var _task = __webpack_require__(92);
 
 var _task2 = _interopRequireDefault(_task);
 
-var _code = __webpack_require__(82);
+var _code = __webpack_require__(83);
 
 var _code2 = _interopRequireDefault(_code);
 
-var _codeBlock = __webpack_require__(83);
+var _codeBlock = __webpack_require__(84);
 
 var _codeBlock2 = _interopRequireDefault(_codeBlock);
 
-var _bold3 = __webpack_require__(123);
+var _bold3 = __webpack_require__(124);
 
 var _bold4 = _interopRequireDefault(_bold3);
 
-var _italic3 = __webpack_require__(130);
+var _italic3 = __webpack_require__(131);
 
 var _italic4 = _interopRequireDefault(_italic3);
 
-var _strike3 = __webpack_require__(133);
+var _strike3 = __webpack_require__(134);
 
 var _strike4 = _interopRequireDefault(_strike3);
 
-var _blockquote3 = __webpack_require__(122);
+var _blockquote3 = __webpack_require__(123);
 
 var _blockquote4 = _interopRequireDefault(_blockquote3);
 
-var _addImage3 = __webpack_require__(120);
+var _addImage3 = __webpack_require__(121);
 
 var _addImage4 = _interopRequireDefault(_addImage3);
 
-var _addLink3 = __webpack_require__(121);
+var _addLink3 = __webpack_require__(122);
 
 var _addLink4 = _interopRequireDefault(_addLink3);
 
-var _hr3 = __webpack_require__(128);
+var _hr3 = __webpack_require__(129);
 
 var _hr4 = _interopRequireDefault(_hr3);
 
-var _heading3 = __webpack_require__(127);
+var _heading3 = __webpack_require__(128);
 
 var _heading4 = _interopRequireDefault(_heading3);
 
-var _paragraph3 = __webpack_require__(132);
+var _paragraph3 = __webpack_require__(133);
 
 var _paragraph4 = _interopRequireDefault(_paragraph3);
 
-var _ul3 = __webpack_require__(142);
+var _ul3 = __webpack_require__(143);
 
 var _ul4 = _interopRequireDefault(_ul3);
 
-var _ol3 = __webpack_require__(131);
+var _ol3 = __webpack_require__(132);
 
 var _ol4 = _interopRequireDefault(_ol3);
 
-var _table3 = __webpack_require__(134);
+var _table3 = __webpack_require__(135);
 
 var _table4 = _interopRequireDefault(_table3);
 
-var _tableAddRow = __webpack_require__(136);
+var _tableAddRow = __webpack_require__(137);
 
 var _tableAddRow2 = _interopRequireDefault(_tableAddRow);
 
-var _tableAddCol = __webpack_require__(135);
+var _tableAddCol = __webpack_require__(136);
 
 var _tableAddCol2 = _interopRequireDefault(_tableAddCol);
 
-var _tableRemoveRow = __webpack_require__(140);
+var _tableRemoveRow = __webpack_require__(141);
 
 var _tableRemoveRow2 = _interopRequireDefault(_tableRemoveRow);
 
-var _tableRemoveCol = __webpack_require__(139);
+var _tableRemoveCol = __webpack_require__(140);
 
 var _tableRemoveCol2 = _interopRequireDefault(_tableRemoveCol);
 
-var _tableAlignCol = __webpack_require__(137);
+var _tableAlignCol = __webpack_require__(138);
 
 var _tableAlignCol2 = _interopRequireDefault(_tableAlignCol);
 
-var _tableRemove = __webpack_require__(138);
+var _tableRemove = __webpack_require__(139);
 
 var _tableRemove2 = _interopRequireDefault(_tableRemove);
 
-var _increaseDepth = __webpack_require__(129);
+var _increaseDepth = __webpack_require__(130);
 
 var _increaseDepth2 = _interopRequireDefault(_increaseDepth);
 
-var _decreaseDepth = __webpack_require__(126);
+var _decreaseDepth = __webpack_require__(127);
 
 var _decreaseDepth2 = _interopRequireDefault(_decreaseDepth);
 
-var _task3 = __webpack_require__(141);
+var _task3 = __webpack_require__(142);
 
 var _task4 = _interopRequireDefault(_task3);
 
-var _code3 = __webpack_require__(124);
+var _code3 = __webpack_require__(125);
 
 var _code4 = _interopRequireDefault(_code3);
 
-var _codeBlock3 = __webpack_require__(125);
+var _codeBlock3 = __webpack_require__(126);
 
 var _codeBlock4 = _interopRequireDefault(_codeBlock3);
 
@@ -17709,7 +17989,7 @@ ToastUIEditor.i18n = _i18n2.default;
 module.exports = ToastUIEditor;
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17719,11 +17999,11 @@ var _extManager = __webpack_require__(6);
 
 var _extManager2 = _interopRequireDefault(_extManager);
 
-var _scrollFollow = __webpack_require__(73);
+var _scrollFollow = __webpack_require__(74);
 
 var _scrollFollow2 = _interopRequireDefault(_scrollFollow);
 
-var _scrollFollow3 = __webpack_require__(74);
+var _scrollFollow3 = __webpack_require__(75);
 
 var _scrollFollow4 = _interopRequireDefault(_scrollFollow3);
 
@@ -17839,7 +18119,7 @@ _extManager2.default.defineExtension('scrollFollow', function (editor) {
      */
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17891,7 +18171,7 @@ tui.Editor.i18n.setLang(['en', 'en_US'], {
 });
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17943,7 +18223,7 @@ tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
 });
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17995,7 +18275,7 @@ tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
 });
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18047,7 +18327,7 @@ tui.Editor.i18n.setLang(['nl', 'nl_NL'], {
 });
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18099,7 +18379,7 @@ tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
 });
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18304,7 +18584,7 @@ var CodeBlockEditor = function (_CodeMirrorExt) {
 exports.default = CodeBlockEditor;
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18403,7 +18683,7 @@ var CodeBlockPreview = function (_Preview) {
 exports.default = CodeBlockPreview;
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18831,7 +19111,7 @@ var ScrollSync = function () {
 module.exports = ScrollSync;
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19332,13 +19612,13 @@ function findElementNodeFilter() {
 module.exports = SectionManager;
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _editor = __webpack_require__(64);
+var _editor = __webpack_require__(65);
 
 var _editor2 = _interopRequireDefault(_editor);
 
@@ -19352,15 +19632,16 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
  */
 
 // codemirror modes&addons
+__webpack_require__(61);
+__webpack_require__(64);
 __webpack_require__(63);
 __webpack_require__(62);
-__webpack_require__(61);
 __webpack_require__(60);
 __webpack_require__(59);
 
 // default extensions
 __webpack_require__(13);
-__webpack_require__(65);
+__webpack_require__(66);
 __webpack_require__(10);
 __webpack_require__(11);
 __webpack_require__(12);
@@ -19370,11 +19651,11 @@ window.tui = window.tui || {};
 window.tui.Editor = _editor2.default;
 
 // langs
-__webpack_require__(66);
-__webpack_require__(68);
-__webpack_require__(70);
 __webpack_require__(67);
 __webpack_require__(69);
+__webpack_require__(71);
+__webpack_require__(68);
+__webpack_require__(70);
 
 // for jquery
 $.fn.tuiEditor = function () {
@@ -19409,8 +19690,8 @@ $.fn.tuiEditor = function () {
 };
 
 /***/ }),
-/* 76 */,
-/* 77 */
+/* 77 */,
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19675,7 +19956,7 @@ var Layout = function () {
 module.exports = Layout;
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19731,7 +20012,7 @@ var AddImage = _commandManager2.default.command('markdown', /** @lends AddImage 
 module.exports = AddImage;
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19798,7 +20079,7 @@ var AddLink = _commandManager2.default.command('markdown', /** @lends AddLink */
 module.exports = AddLink;
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19869,7 +20150,7 @@ var Blockquote = _commandManager2.default.command('markdown', /** @lends Blockqu
 module.exports = Blockquote;
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19997,7 +20278,7 @@ var Bold = _commandManager2.default.command('markdown', /** @lends Bold */{
 module.exports = Bold;
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20055,7 +20336,7 @@ var Code = _commandManager2.default.command('markdown', /** @lends Code */{
 module.exports = Code;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20110,7 +20391,7 @@ var CodeBlock = _commandManager2.default.command('markdown', /** @lends CodeBloc
 module.exports = CodeBlock;
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20217,7 +20498,7 @@ function getHeadingMarkdown(text, size) {
 module.exports = Heading;
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20284,7 +20565,7 @@ var HR = _commandManager2.default.command('markdown', /** @lends HR */{
 module.exports = HR;
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20494,7 +20775,7 @@ var Italic = _commandManager2.default.command('markdown', /** @lends Italic */{
 module.exports = Italic;
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20580,7 +20861,7 @@ function isUlOrTask(line) {
 module.exports = OL;
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20659,7 +20940,7 @@ function getParagraphMarkdown(lineText) {
 module.exports = Paragraph;
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20761,7 +21042,7 @@ var Strike = _commandManager2.default.command('markdown', /** @lends Strike */{
 module.exports = Strike;
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20878,7 +21159,7 @@ function makeBody(col, row, data) {
 module.exports = Table;
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20965,7 +21246,7 @@ function isOlOrUl(line) {
 module.exports = Task;
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21048,7 +21329,7 @@ function isOlOrTask(line) {
 module.exports = UL;
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21066,7 +21347,7 @@ var _keyMapper = __webpack_require__(44);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _mdListManager = __webpack_require__(94);
+var _mdListManager = __webpack_require__(95);
 
 var _mdListManager2 = _interopRequireDefault(_mdListManager);
 
@@ -21074,7 +21355,7 @@ var _componentManager = __webpack_require__(55);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _mdTextObject = __webpack_require__(95);
+var _mdTextObject = __webpack_require__(96);
 
 var _mdTextObject2 = _interopRequireDefault(_mdTextObject);
 
@@ -21110,7 +21391,8 @@ var MarkdownEditor = function (_CodeMirrorExt) {
             allowDropFileTypes: ['image'],
             extraKeys: {
                 'Enter': 'newlineAndIndentContinue',
-                'Tab': 'subListIndentTab'
+                'Tab': 'subListIndentTab',
+                'Shift-Tab': 'indentLessOrderedList'
             }
         }));
 
@@ -21365,7 +21647,7 @@ var MarkdownEditor = function (_CodeMirrorExt) {
 module.exports = MarkdownEditor;
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21654,7 +21936,7 @@ var MdListManager = function () {
 module.exports = MdListManager;
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21838,7 +22120,7 @@ var mdTextObject = function () {
 module.exports = mdTextObject;
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22248,7 +22530,7 @@ var SquireExt = function (_Squire) {
 module.exports = SquireExt;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22441,7 +22723,7 @@ var BlockOverlay = function () {
 module.exports = BlockOverlay;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22451,7 +22733,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _blockOverlay = __webpack_require__(97);
+var _blockOverlay = __webpack_require__(98);
 
 var _blockOverlay2 = _interopRequireDefault(_blockOverlay);
 
@@ -22600,7 +22882,7 @@ var CodeBlockGadget = function (_BlockOverlay) {
 module.exports = CodeBlockGadget;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22836,7 +23118,7 @@ var CodeBlockLanguagesCombo = function () {
 exports.default = CodeBlockLanguagesCombo;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22847,7 +23129,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _toolbar = __webpack_require__(110);
+var _toolbar = __webpack_require__(111);
 
 var _toolbar2 = _interopRequireDefault(_toolbar);
 
@@ -22859,35 +23141,35 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _modeSwitch = __webpack_require__(101);
+var _modeSwitch = __webpack_require__(102);
 
 var _modeSwitch2 = _interopRequireDefault(_modeSwitch);
 
-var _popupAddLink = __webpack_require__(104);
+var _popupAddLink = __webpack_require__(105);
 
 var _popupAddLink2 = _interopRequireDefault(_popupAddLink);
 
-var _popupAddImage = __webpack_require__(103);
+var _popupAddImage = __webpack_require__(104);
 
 var _popupAddImage2 = _interopRequireDefault(_popupAddImage);
 
-var _popupTableUtils = __webpack_require__(108);
+var _popupTableUtils = __webpack_require__(109);
 
 var _popupTableUtils2 = _interopRequireDefault(_popupTableUtils);
 
-var _popupAddTable = __webpack_require__(105);
+var _popupAddTable = __webpack_require__(106);
 
 var _popupAddTable2 = _interopRequireDefault(_popupAddTable);
 
-var _popupAddHeading = __webpack_require__(102);
+var _popupAddHeading = __webpack_require__(103);
 
 var _popupAddHeading2 = _interopRequireDefault(_popupAddHeading);
 
-var _popupCodeBlockLanguages = __webpack_require__(107);
+var _popupCodeBlockLanguages = __webpack_require__(108);
 
 var _popupCodeBlockLanguages2 = _interopRequireDefault(_popupCodeBlockLanguages);
 
-var _popupCodeBlockEditor = __webpack_require__(106);
+var _popupCodeBlockEditor = __webpack_require__(107);
 
 var _popupCodeBlockEditor2 = _interopRequireDefault(_popupCodeBlockEditor);
 
@@ -23204,7 +23486,7 @@ var DefaultUI = function () {
 module.exports = DefaultUI;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23325,7 +23607,7 @@ ModeSwitch.TYPE = {
 module.exports = ModeSwitch;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23460,7 +23742,7 @@ var PopupAddHeading = function (_LayerPopup) {
 module.exports = PopupAddHeading;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23681,7 +23963,7 @@ var PopupAddImage = function (_LayerPopup) {
 module.exports = PopupAddImage;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23907,7 +24189,7 @@ var PopupAddLink = function (_LayerPopup) {
 module.exports = PopupAddLink;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24377,7 +24659,7 @@ PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 module.exports = PopupAddTable;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24391,19 +24673,19 @@ var _layerpopup = __webpack_require__(7);
 
 var _layerpopup2 = _interopRequireDefault(_layerpopup);
 
-var _scrollSyncSplit = __webpack_require__(109);
+var _scrollSyncSplit = __webpack_require__(110);
 
 var _scrollSyncSplit2 = _interopRequireDefault(_scrollSyncSplit);
 
-var _codeBlockEditor = __webpack_require__(71);
+var _codeBlockEditor = __webpack_require__(72);
 
 var _codeBlockEditor2 = _interopRequireDefault(_codeBlockEditor);
 
-var _codeBlockPreview = __webpack_require__(72);
+var _codeBlockPreview = __webpack_require__(73);
 
 var _codeBlockPreview2 = _interopRequireDefault(_codeBlockPreview);
 
-var _codeBlockLanguagesCombo = __webpack_require__(99);
+var _codeBlockLanguagesCombo = __webpack_require__(100);
 
 var _codeBlockLanguagesCombo2 = _interopRequireDefault(_codeBlockLanguagesCombo);
 
@@ -24738,7 +25020,7 @@ var PopupCodeBlockEditor = function (_LayerPopup) {
 module.exports = PopupCodeBlockEditor;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25021,7 +25303,7 @@ var PopupCodeBlockLanguages = function (_LayerPopup) {
 module.exports = PopupCodeBlockLanguages;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25184,7 +25466,7 @@ var PopupTableUtils = function (_LayerPopup) {
 module.exports = PopupTableUtils;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25488,7 +25770,7 @@ var ScrollSyncSplit = function () {
 exports.default = ScrollSyncSplit;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25758,7 +26040,7 @@ var Toolbar = function (_UIController) {
 module.exports = Toolbar;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25775,7 +26057,7 @@ var _domUtils = __webpack_require__(1);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwPasteContentHelper = __webpack_require__(117);
+var _wwPasteContentHelper = __webpack_require__(118);
 
 var _wwPasteContentHelper2 = _interopRequireDefault(_wwPasteContentHelper);
 
@@ -26181,7 +26463,7 @@ var WwClipboardManager = function () {
 module.exports = WwClipboardManager;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26551,7 +26833,7 @@ function sanitizeHtmlCode(code) {
 module.exports = WwCodeBlockManager;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26810,7 +27092,7 @@ var WwHeadingManager = function () {
 module.exports = WwHeadingManager;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27120,7 +27402,7 @@ function findTextNodeFilter() {
 module.exports = WwHrManager;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27410,7 +27692,7 @@ var WwListManager = function () {
 module.exports = WwListManager;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27567,7 +27849,7 @@ var WwPManager = function () {
 module.exports = WwPManager;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28081,7 +28363,7 @@ var WwPasteContentHelper = function () {
 module.exports = WwPasteContentHelper;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28376,7 +28658,7 @@ var WwTaskManager = function () {
 module.exports = WwTaskManager;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28574,7 +28856,7 @@ var WwTextObject = function () {
 module.exports = WwTextObject;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28616,7 +28898,7 @@ var AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
 module.exports = AddImage;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28674,7 +28956,7 @@ var AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
 module.exports = AddLink;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28717,7 +28999,7 @@ var Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
 module.exports = Blockquote;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28791,7 +29073,7 @@ function styleBold(sq) {
 module.exports = Bold;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28888,7 +29170,7 @@ function styleCode(editor, sq) {
 module.exports = Code;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28984,7 +29266,7 @@ function getCodeBlockBody(range, wwe) {
 module.exports = CodeBlock;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29040,7 +29322,7 @@ function getCurrent$Li(wwe) {
 module.exports = DecreaseDepth;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29103,7 +29385,7 @@ var Heading = _commandManager2.default.command('wysiwyg', /** @lends Heading */{
 module.exports = Heading;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29182,7 +29464,7 @@ var HR = _commandManager2.default.command('wysiwyg', /** @lends HR */{
 module.exports = HR;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29248,7 +29530,7 @@ var IncreaseDepth = _commandManager2.default.command('wysiwyg', /** @lends HR */
 module.exports = IncreaseDepth;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29322,7 +29604,7 @@ function styleItalic(sq) {
 module.exports = Italic;
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29409,7 +29691,7 @@ var OL = _commandManager2.default.command('wysiwyg', /** @lends OL */{
 module.exports = OL;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29469,7 +29751,7 @@ var Paragraph = _commandManager2.default.command('wysiwyg', /** @lends Paragraph
 module.exports = Paragraph;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29542,7 +29824,7 @@ function styleStrike(sq) {
 module.exports = Strike;
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29680,7 +29962,7 @@ function makeBody(col, row, data) {
 module.exports = Table;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29789,7 +30071,7 @@ function focusToNextCell(sq, $cell) {
 module.exports = TableAddCol;
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29875,7 +30157,7 @@ function focusToFirstTd(sq, $tr) {
 module.exports = TableAddRow;
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30021,7 +30303,7 @@ function getRangeInformation(range, selectionMgr) {
 module.exports = TableAlignCol;
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30068,7 +30350,7 @@ var TableRemove = _commandManager2.default.command('wysiwyg', /** @lends RemoveT
 module.exports = TableRemove;
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30177,7 +30459,7 @@ function focusToCell(sq, $cell, tableMgr) {
 module.exports = TableRemoveCol;
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30300,7 +30582,7 @@ function getTrs(range, selectionMgr, $table) {
 module.exports = TableRemoveRow;
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30391,7 +30673,7 @@ var Task = _commandManager2.default.command('wysiwyg', /** @lends Task */{
 module.exports = Task;
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30478,7 +30760,7 @@ var UL = _commandManager2.default.command('wysiwyg', /** @lends UL */{
 module.exports = UL;
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30495,15 +30777,15 @@ var _domUtils = __webpack_require__(1);
 
 var _domUtils2 = _interopRequireDefault(_domUtils);
 
-var _wwClipboardManager = __webpack_require__(111);
+var _wwClipboardManager = __webpack_require__(112);
 
 var _wwClipboardManager2 = _interopRequireDefault(_wwClipboardManager);
 
-var _wwListManager = __webpack_require__(115);
+var _wwListManager = __webpack_require__(116);
 
 var _wwListManager2 = _interopRequireDefault(_wwListManager);
 
-var _wwTaskManager = __webpack_require__(118);
+var _wwTaskManager = __webpack_require__(119);
 
 var _wwTaskManager2 = _interopRequireDefault(_wwTaskManager);
 
@@ -30515,23 +30797,23 @@ var _wwTableSelectionManager = __webpack_require__(21);
 
 var _wwTableSelectionManager2 = _interopRequireDefault(_wwTableSelectionManager);
 
-var _wwHrManager = __webpack_require__(114);
+var _wwHrManager = __webpack_require__(115);
 
 var _wwHrManager2 = _interopRequireDefault(_wwHrManager);
 
-var _wwPManager = __webpack_require__(116);
+var _wwPManager = __webpack_require__(117);
 
 var _wwPManager2 = _interopRequireDefault(_wwPManager);
 
-var _wwHeadingManager = __webpack_require__(113);
+var _wwHeadingManager = __webpack_require__(114);
 
 var _wwHeadingManager2 = _interopRequireDefault(_wwHeadingManager);
 
-var _wwCodeBlockManager = __webpack_require__(112);
+var _wwCodeBlockManager = __webpack_require__(113);
 
 var _wwCodeBlockManager2 = _interopRequireDefault(_wwCodeBlockManager);
 
-var _squireExt = __webpack_require__(96);
+var _squireExt = __webpack_require__(97);
 
 var _squireExt2 = _interopRequireDefault(_squireExt);
 
@@ -30539,7 +30821,7 @@ var _keyMapper = __webpack_require__(44);
 
 var _keyMapper2 = _interopRequireDefault(_keyMapper);
 
-var _wwTextObject = __webpack_require__(119);
+var _wwTextObject = __webpack_require__(120);
 
 var _wwTextObject2 = _interopRequireDefault(_wwTextObject);
 
@@ -30547,7 +30829,7 @@ var _componentManager = __webpack_require__(55);
 
 var _componentManager2 = _interopRequireDefault(_componentManager);
 
-var _codeBlockGadget = __webpack_require__(98);
+var _codeBlockGadget = __webpack_require__(99);
 
 var _codeBlockGadget2 = _interopRequireDefault(_codeBlockGadget);
 
