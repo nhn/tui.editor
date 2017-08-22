@@ -4,6 +4,7 @@
  */
 
 // codemirror modes&addons
+require('./codemirror/fixOrderedListNumber');
 require('./codemirror/overlay');
 require('./codemirror/markdown');
 require('./codemirror/gfm');
