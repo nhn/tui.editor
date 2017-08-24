@@ -182,11 +182,6 @@
 
 .tui-editor-contents ul li {
     position: relative;
-    list-style-type: disc;
-}
-
-.tui-editor-contents ol li {
-    list-style-type: decimal;
 }
 
 .tui-editor-contents ul p, ol p {
