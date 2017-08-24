@@ -156,13 +156,14 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 // TUI.EDITOR MODIFICATION START
 // list 에서 하이라이팅이 제대로 안되는 버그
 // https://github.nhnent.com/fe/tui.editor/commit/d42c37639942633ccaf755c0c0d20f460c0b2441
+// https://github.nhnent.com/fe/tui.editor/issues/1002
       }
       if (state.indentation > 0) {
         state.list = null;
-        state.listDepth = Math.floor(state.indentation / 4) + 1;
+        // state.listDepth = Math.floor(state.indentation / 4) + 1;
       // } else if (state.indentation > 0) {
       //   state.list = null;
-      //   state.listDepth = Math.floor(state.indentation / 4);
+        state.listDepth = Math.floor(state.indentation / 4);
 // TUI.EDITOR MODIFICATION END
       } else { // No longer a list
         state.list = false;
@@ -229,8 +230,10 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 // TUI.EDITOR MODIFICATION START
 // scrollFollow prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
-      state.indentation = stream.column() + stream.current().length;
-      // state.indentation += 4;
+// Roll back to original #1002
+// https://github.nhnent.com/fe/tui.editor/issues/1002
+      // state.indentation = stream.column() + stream.current().length;
+      state.indentation += 4;
 // TUI.EDITOR MODIFICATION END
       state.list = true;
       state.listDepth++;
