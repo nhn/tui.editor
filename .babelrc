@@ -1,10 +1,17 @@
 {
   "presets": ["es2015"],
+  "plugins": [[
+    "transform-es2015-destructuring", {"loose": true}
+  ], [
+    "transform-es2015-for-of", {"loose": true}
+  ], [
+    "transform-es2015-spread", {"loose": true}
+  ]],
   "env": {
-      "modules": false,
-      "loose": true,
-      "coverage": {
-          "plugins": ["istanbul"]
-      }
+    "modules": false,
+    "loose": true,
+    "coverage": {
+      "plugins": ["istanbul"]
+    }
   }
 }
