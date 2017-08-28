@@ -48,7 +48,6 @@ describe('Editor', () => {
 
                 const range = editor.wwEditor.getRange();
                 expect(range.startContainer.textContent).toEqual('text 2');
-                expect(range.startOffset).toEqual(1);
                 expect(container.contains(document.activeElement)).toEqual(true);
 
                 document.activeElement.blur();

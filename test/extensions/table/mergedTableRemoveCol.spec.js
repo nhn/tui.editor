@@ -1,3 +1,5 @@
+/* eslint max-nested-callbacks:0 */
+
 import RemoveCol, {_removeColumns} from '../../../src/js/extensions/table/mergedTableRemoveCol';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 import WwMergedTableSelectionManager from '../../../src/js/extensions/table/wwMergedTableSelectionManager';
@@ -7,17 +9,16 @@ import EventManager from '../../../src/js/eventManager';
 
 describe('mergedTableRemoveCol', () => {
     describe('_removeColumns()', () => {
-        const tableHtml = [
-            '<table>',
-            '<thead>',
-            '<tr><th>title1</th><th>title2</th><th>title3</th></tr>',
-            '</thead>',
-            '<tbody>',
-            '<tr><td colspan="3">content1-1</td></tr>',
-            '<tr><td>content2-1</td><td>content2-2</td><td>content2-3</td></tr>',
-            '<tbody>',
-            '</table>'
-        ].join('');
+        const tableHtml = `
+            <table>
+                <thead>
+                    <tr><th>title1</th><th>title2</th><th>title3</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="3">content1-1</td></tr>
+                    <tr><td>content2-1</td><td>content2-2</td><td>content2-3</td></tr>
+                <tbody>
+            </table>`;
         const $table = $(tableHtml);
         let tableData;
 
@@ -36,7 +37,7 @@ describe('mergedTableRemoveCol', () => {
                     colIndex: 0
                 }
             };
-            const actual = _removeColumns(tableData, tableRange);
+            _removeColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(2);
             expect(tableData[1][0]).toEqual({
@@ -72,7 +73,7 @@ describe('mergedTableRemoveCol', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeColumns(tableData, tableRange);
+            _removeColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(2);
             expect(tableData[1][0].colspan).toBe(2);
@@ -103,7 +104,7 @@ describe('mergedTableRemoveCol', () => {
                     colIndex: 2
                 }
             };
-            const actual = _removeColumns(tableData, tableRange);
+            _removeColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(2);
             expect(tableData[1][0].colspan).toBe(2);
@@ -134,7 +135,7 @@ describe('mergedTableRemoveCol', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeColumns(tableData, tableRange);
+            _removeColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(1);
             expect(tableData[1][0].colspan).toBe(1);
@@ -149,34 +150,17 @@ describe('mergedTableRemoveCol', () => {
                 }
             });
         });
-
-        it('If removed all cells, cells will not remove.', () => {
-            const tableRange = {
-                start: {
-                    rowIndex: 1,
-                    colIndex: 0
-                },
-                end: {
-                    rowIndex: 1,
-                    colIndex: 0
-                }
-            };
-            const actual = _removeColumns(tableData, tableRange);
-
-            expect(tableData[0].length).toBe(3);
-            expect(tableData[1][0].colspan).toBe(3);
-        });
     });
 
     describe('RemoveCol command with browser selection', () => {
-        let wwe;
+        let wwe, container;
 
         beforeEach(() => {
-            const $container = $('<div />');
+            container = document.createElement('div');
 
-            $('body').append($container);
+            document.body.appendChild(container);
 
-            wwe = new WysiwygEditor($container, new EventManager());
+            wwe = new WysiwygEditor($(container), new EventManager());
 
             wwe.init();
             wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
@@ -188,38 +172,38 @@ describe('mergedTableRemoveCol', () => {
             }
         });
 
-        //we need to wait squire input event process
+        // we need to wait squire input event process
         afterEach(done => {
             setTimeout(() => {
-                $('body').empty();
+                container.parentNode.removeChild(container);
                 done();
             });
         });
 
-        it('remove only one column at start range even if there are multiple tds in range', () => {
-            const sq = wwe.getEditor(),
-                range = sq.getSelection().cloneRange();
+        it('should remove all cells if there are multiple tds in range', () => {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection().cloneRange();
 
-            sq.setHTML([
-                '<table>',
-                    '<thead>',
-                        '<tr><th>1</th><th>2</th></tr>',
-                    '</thead>',
-                    '<tbody>',
-                        '<tr><td>3</td><td>4</td></tr>',
-                        '<tr><td>5</td><td>6</td></tr>',
-                    '</tbody>',
-                '</table>'
-            ].join('\n'));
+            sq.setHTML(
+                `<table>
+                    <thead>
+                        <tr><th>1</th><th>2</th><th>3</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="te-cell-selected">4</td><td class="te-cell-selected">5</td><td>6</td></tr>
+                        <tr><td>7</td><td>8</td><td>9</td></tr>
+                    </tbody>
+                </table>`
+            );
 
-            range.setStartBefore(wwe.get$Body().find('tbody tr:nth-child(1) td:nth-child(1)')[0].firstChild);
-            range.setEndAfter(wwe.get$Body().find('tbody tr:nth-child(2) td:nth-child(1)')[0].firstChild);
+            range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
+            range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
             sq.setSelection(range);
 
             RemoveCol.exec(wwe);
 
-            expect(wwe.get$Body().find('thead th').length).toEqual(1);
-            expect(wwe.get$Body().find('tbody td').length).toEqual(2);
+            expect(wwe.get$Body().find('thead th').length).toBe(1);
+            expect(wwe.get$Body().find('tbody td').length).toBe(2);
         });
     });
 });
