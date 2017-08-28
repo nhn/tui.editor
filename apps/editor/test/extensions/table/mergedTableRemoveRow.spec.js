@@ -1,3 +1,5 @@
+/* eslint max-nested-callbacks:0 */
+
 import RemoveRow, {_removeRow} from '../../../src/js/extensions/table/mergedTableRemoveRow';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 import WwMergedTableSelectionManager from '../../../src/js/extensions/table/wwMergedTableSelectionManager';
@@ -7,18 +9,18 @@ import EventManager from '../../../src/js/eventManager';
 
 describe('mergedTableRemoveRow', () => {
     describe('_removeRow()', () => {
-        const tableHtml = [
-            '<table>',
-            '<thead>',
-            '<tr><th>title1</th><th>title2</th></tr>',
-            '</thead>',
-            '<tbody>',
-            '<tr><td rowspan="3">content1-1</td><td>content1-2</td></tr>',
-            '<tr><td>content2-2</td></tr>',
-            '<tr><td>content3-2</td></tr>',
-            '<tbody>',
-            '</table>'
-        ].join('');
+        const tableHtml = `
+            <table>
+                <thead>
+                    <tr><th>title1</th><th>title2</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td rowspan="3">content1-1</td><td>content1-2</td></tr>
+                    <tr><td>content2-2</td></tr>
+                    <tr><td>content3-2</td></tr>
+                <tbody>
+            </table>
+        `;
         const $table = $(tableHtml);
         let tableData;
 
@@ -37,7 +39,7 @@ describe('mergedTableRemoveRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeRow(tableData, tableRange);
+            _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0]).toEqual({
@@ -73,7 +75,7 @@ describe('mergedTableRemoveRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeRow(tableData, tableRange);
+            _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0].rowspan).toBe(2);
@@ -104,7 +106,7 @@ describe('mergedTableRemoveRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeRow(tableData, tableRange);
+            _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(3);
             expect(tableData[1][0].rowspan).toBe(2);
@@ -135,7 +137,7 @@ describe('mergedTableRemoveRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _removeRow(tableData, tableRange);
+            _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(2);
             expect(tableData[1][0].rowspan).toBe(1);
@@ -151,7 +153,7 @@ describe('mergedTableRemoveRow', () => {
             });
         });
 
-        it('If removed after remain only header, rows will not remove.', () => {
+        it('should remove the table if no table body but header', () => {
             const tableRange = {
                 start: {
                     rowIndex: 1,
@@ -162,22 +164,52 @@ describe('mergedTableRemoveRow', () => {
                     colIndex: 0
                 }
             };
-            const actual = _removeRow(tableData, tableRange);
+            _removeRow(tableData, tableRange);
+
+            expect(tableData.length).toBe(0);
+        });
+
+        it('should not remove THs', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 0,
+                    colIndex: 0
+                },
+                end: {
+                    rowIndex: 0,
+                    colIndex: 0
+                }
+            };
+            _removeRow(tableData, tableRange);
 
             expect(tableData.length).toBe(4);
-            expect(tableData[1][0].rowspan).toBe(3);
+        });
+
+        it('should remove only TDs even if THs are in selection', () => {
+            const tableRange = {
+                start: {
+                    rowIndex: 0,
+                    colIndex: 1
+                },
+                end: {
+                    rowIndex: 1,
+                    colIndex: 1
+                }
+            };
+            _removeRow(tableData, tableRange);
+
+            expect(tableData.length).toBe(3);
         });
     });
 
     describe('RemoveRow command with browser selection', () => {
-        let wwe;
+        let wwe, container;
 
         beforeEach(() => {
-            const $container = $('<div />');
+            container = document.createElement('div');
+            document.body.appendChild(container);
 
-            $('body').append($container);
-
-            wwe = new WysiwygEditor($container, new EventManager());
+            wwe = new WysiwygEditor($(container), new EventManager());
 
             wwe.init();
             wwe.componentManager.addManager('tableSelection', WwMergedTableSelectionManager);
@@ -189,10 +221,10 @@ describe('mergedTableRemoveRow', () => {
             }
         });
 
-        //we need to wait squire input event process
+        // we need to wait squire input event process
         afterEach(done => {
             setTimeout(() => {
-                $('body').empty();
+                container.parentNode.removeChild(container);
                 done();
             });
         });
@@ -201,22 +233,22 @@ describe('mergedTableRemoveRow', () => {
             const sq = wwe.getEditor(),
                 range = sq.getSelection().cloneRange();
 
-            sq.setHTML([
-                '<table>',
-                '<thead>',
-                '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                '<tr><td>3</td><td>4</td></tr>',
-                '<tr><td>5</td><td>6</td></tr>',
-                '</tbody>',
-                '</table>'
-            ].join('\n'));
+            sq.setHTML(`
+                <table>
+                    <thead>
+                        <tr><th>1</th><th>2</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>3</td><td>4</td></tr>
+                        <tr><td>5</td><td>6</td></tr>
+                    </tbody>
+                </table>
+            `);
 
             range.setStartAfter(wwe.get$Body().find('tbody td')[0].firstChild);
             range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             RemoveRow.exec(wwe);
 
