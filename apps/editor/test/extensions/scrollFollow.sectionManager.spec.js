@@ -4,17 +4,18 @@ import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager'
 const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('scrollFollow.sectionManager', () => {
-    let ned, sectionManager;
+    let ned, sectionManager, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
-        $('body').html('<div id="editSection"></div>');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         ned = new TuiEditor({
-            el: $('#editSection').get(0),
+            el: container,
             previewStyle: 'vertical',
-            height: '100px',
+            height: '150px',
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
@@ -30,12 +31,24 @@ describe('scrollFollow.sectionManager', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            container.parentNode.removeChild(container);
             done();
         });
     });
 
     describe('sectionManager', () => {
+        describe('getSectionList()', () => {
+            it('should make section list if it has not been made', () => {
+                sectionManager._sectionList = null;
+
+                ned.setValue('text 1\ntext 2');
+
+                const sectionList = sectionManager.getSectionList();
+
+                expect(sectionList).not.toBeNull();
+            });
+        });
+
         it('make new section', () => {
             sectionManager._sectionList = [];
 
