@@ -1,28 +1,24 @@
 /* eslint-disable max-nested-callbacks */
-/* global readFixtures */
-
 import CodeMirrorExt from '../src/js/codeMirrorExt';
 
+const loadStyleFixtures = window.loadStyleFixtures;
+
 describe('CodeMirrorExt', () => {
-    let codeMirrorExt;
+    let codeMirrorExt, container;
 
     beforeEach(() => {
-        const styleEditor = readFixtures('../../src/css/tui-editor.css');
-        const styleCodeMirror = readFixtures('../../lib/codemirror/lib/codemirror.css');
-        document.body.innerHTML = `
-            <style>${styleCodeMirror}</style>
-            <style>${styleEditor}</style>
-        `;
+        jasmine.getStyleFixtures().fixturesPath = '/base';
+        loadStyleFixtures('src/css/tui-editor.css');
+        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
 
-        const container = document.createElement('div');
-
+        container = document.createElement('div');
         document.body.appendChild(container);
 
         codeMirrorExt = new CodeMirrorExt(container);
     });
 
     afterEach(() => {
-        $('body').empty();
+        container.parentNode.removeChild(container);
     });
 
     describe('Initialize', () => {

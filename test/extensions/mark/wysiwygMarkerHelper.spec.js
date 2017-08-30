@@ -1,17 +1,14 @@
-'use strict';
-
-var WysiwygMarkerHelper = require('../../../src/js/extensions/mark/wysiwygMarkerHelper'),
-    SquireExt = require('../../../src/js/squireExt');
+const WysiwygMarkerHelper = require('../../../src/js/extensions/mark/wysiwygMarkerHelper');
+const SquireExt = require('../../../src/js/squireExt');
 
 describe('WysiwygMarkerHelper', function() {
-    var sqe, wmh;
+    let sqe, wmh, container;
 
     beforeEach(function() {
-        var $container = $('<div />');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
-        $('body').append($container);
-
-        sqe = new SquireExt($container[0], {
+        sqe = new SquireExt(container, {
             blockTag: 'DIV'
         });
 
@@ -21,7 +18,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     afterEach(function() {
-        $('body').empty();
+        document.body.removeChild(container);
         sqe = null;
     });
 
@@ -30,7 +27,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('update marker with additional info', function() {
-        var marker = wmh.updateMarkerWithExtraInfo({
+        let marker = wmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 7
         });
@@ -44,7 +41,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('update collapsed marker with additional info', function() {
-        var marker = wmh.updateMarkerWithExtraInfo({
+        let marker = wmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 2
         });
@@ -58,7 +55,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker info of current selection', function() {
-        var marker, range;
+        let marker, range;
 
         range = sqe.getSelection().cloneRange();
 
@@ -78,7 +75,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker of current selection that has start or end container pointed to non textNode', function() {
-        var range, marker;
+        let range, marker;
 
         range = sqe.getSelection().cloneRange();
         range.setStart(sqe.get$Body().find('h1')[0], 1);
@@ -94,7 +91,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker when end range pointed to textNode but end container is not text node', function() {
-        var range, marker;
+        let range, marker;
 
         sqe.setHTML('<ul><li><input type="checkbox" /> text1</li></ul>');
 
@@ -112,7 +109,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker if some range of current selection have only ZWB text node', function() {
-        var range, marker;
+        let range, marker;
 
         sqe.setHTML('<div>text1</div><div>&#8203</div>');
 
@@ -130,7 +127,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('No preblem with no text content', function() {
-        var marker;
+        let marker;
 
         sqe.setHTML('');
 
@@ -145,7 +142,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('select range by given offset', function() {
-        var range;
+        let range;
 
         wmh.selectOffsetRange(0, 3);
 
@@ -155,7 +152,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('clear select', function() {
-        var range;
+        let range;
 
         wmh.selectOffsetRange(0, 3);
 

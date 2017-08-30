@@ -3,15 +3,16 @@ import TuiEditor from '../../src/js/editor';
 const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('scrollFollow', () => {
-    let ned;
+    let ned, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
-        $('body').html('<div id="editSection"></div>');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         ned = new TuiEditor({
-            el: $('#editSection').get(0),
+            el: container,
             previewStyle: 'vertical',
             height: '100px',
             initialEditType: 'markdown',
@@ -29,7 +30,7 @@ describe('scrollFollow', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });
