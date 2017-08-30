@@ -3,20 +3,19 @@ import MarkdownEditor from '../src/js/markdownEditor';
 import EventManager from '../src/js/eventManager';
 
 describe('ComponentManager', () => {
-    let $container, $container2, em, wwe, mde;
+    let container, container2, em, wwe, mde;
 
     beforeEach(() => {
-        const $body = $('body');
-        $container = $('<div />');
-        $container2 = $('<div />');
+        container = document.createElement('div');
+        container2 = document.createElement('div');
 
-        $body.append($container);
-        $body.append($container2);
+        document.body.appendChild(container);
+        document.body.appendChild(container2);
 
         em = new EventManager();
 
-        wwe = new WysiwygEditor($container, em);
-        mde = new MarkdownEditor($container2, em);
+        wwe = new WysiwygEditor($(container), em);
+        mde = new MarkdownEditor($(container2), em);
 
         wwe.init();
 
@@ -26,7 +25,8 @@ describe('ComponentManager', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            container.parentNode.removeChild(container);
+            container2.parentNode.removeChild(container2);
             done();
         });
     });

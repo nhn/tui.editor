@@ -1,18 +1,15 @@
-'use strict';
+let MarkdownMarkerHelper = require('../../../src/js/extensions/mark/markdownMarkerHelper');
 
-var MarkdownMarkerHelper = require('../../../src/js/extensions/mark/markdownMarkerHelper');
-
-var CodeMirror = window.CodeMirror;
+let CodeMirror = window.CodeMirror;
 
 describe('MarkdownMarkerHelper', function() {
-    var cm, mmh;
+    let cm, mmh, cmTextarea;
 
     beforeEach(function() {
-        var cmTextarea = $('<textarea />');
+        cmTextarea = document.createElement('textarea');
+        document.body.appendChild(cmTextarea);
 
-        cmTextarea.appendTo('body');
-
-        cm = CodeMirror.fromTextArea(cmTextarea[0], {
+        cm = CodeMirror.fromTextArea(cmTextarea, {
             lineWrapping: true,
             theme: 'default'
         });
@@ -23,8 +20,9 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     afterEach(function() {
-        $('body').empty();
+        cm.toTextArea();
         cm = null;
+        document.body.removeChild(cmTextarea);
     });
 
     it('get current text content', function() {
@@ -32,7 +30,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('update marker with additional info', function() {
-        var marker = mmh.updateMarkerWithExtraInfo({
+        let marker = mmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 8
         });
@@ -46,7 +44,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('update collapsed marker with additional info', function() {
-        var marker = mmh.updateMarkerWithExtraInfo({
+        let marker = mmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 2
         });
@@ -60,7 +58,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('get marker info of current selection', function() {
-        var marker;
+        let marker;
 
         cm.setSelection({
             line: 0,
@@ -81,7 +79,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('if current selection range have empty line then ignore emplty line', function() {
-        var marker;
+        let marker;
 
         cm.setValue('# TEXT1\n\n## TEXT2');
 
@@ -104,7 +102,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('if current selection is backward then make it forward', function() {
-        var marker;
+        let marker;
 
         cm.setValue('# TEXT1\n\n## TEXT2');
 
@@ -127,7 +125,7 @@ describe('MarkdownMarkerHelper', function() {
     });
 
     it('get zero top and left when there is no text content', function() {
-        var marker;
+        let marker;
 
         cm.setValue('');
 

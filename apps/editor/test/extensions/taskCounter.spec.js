@@ -1,7 +1,7 @@
 import TuiEditor from '../../src/js/editor';
 
 describe('taskCounter', () => {
-    let ned;
+    let ned, container;
 
     beforeEach(() => {
         $('body').html('<div id="editSection"></div>');

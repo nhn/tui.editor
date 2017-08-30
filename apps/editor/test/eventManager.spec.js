@@ -1,14 +1,12 @@
+/* eslint max-nested-callbacks: 0 */
+
 import EventManager from '../src/js/eventManager';
 
 describe('eventManager', function() {
-    var em;
+    let em;
 
     beforeEach(function() {
         em = new EventManager();
-    });
-
-    afterEach(function() {
-        $('body').empty();
     });
 
     describe('Event registration', function() {
@@ -34,7 +32,7 @@ describe('eventManager', function() {
         });
 
         it('should emit and listen event', function() {
-            var handler = jasmine.createSpy('handler');
+            let handler = jasmine.createSpy('handler');
 
             em.listen('testEvent', handler);
             em.emit('testEvent');
@@ -43,8 +41,8 @@ describe('eventManager', function() {
         });
 
         it('emit should return value that returned by listener', function() {
-            var result,
-            count = 0;
+            let result;
+            let count = 0;
 
             em.listen('testEventHook', function() {
                 return count;
@@ -61,8 +59,8 @@ describe('eventManager', function() {
         });
 
         it('emit should return undefined if listener have not return value', function() {
-            var handler = jasmine.createSpy('handler'),
-            result;
+            let result;
+            let handler = jasmine.createSpy('handler');
 
             em.listen('testEvent', handler);
             result = em.emit('testEvent');
@@ -71,7 +69,7 @@ describe('eventManager', function() {
         });
 
         it('emit event handler added with namespace', function() {
-            var handler = jasmine.createSpy('handler');
+            let handler = jasmine.createSpy('handler');
 
             em.listen('testEvent.ns', handler);
             em.emit('testEvent');
@@ -112,7 +110,6 @@ describe('eventManager', function() {
 
         it('emitReduce pass handler return value if return value is falsy', function() {
             em.listen('reduceTest', function() {
-                return;
             });
 
             em.listen('reduceTest', function(data, addition) {
@@ -124,7 +121,7 @@ describe('eventManager', function() {
     });
 
     describe('remove handler', function() {
-        var handlerBeRemoved, handlerBeRemained;
+        let handlerBeRemoved, handlerBeRemained;
         beforeEach(function() {
             handlerBeRemoved = jasmine.createSpy('handlerBeRemoved');
             handlerBeRemained = jasmine.createSpy('handlerBeRemained');

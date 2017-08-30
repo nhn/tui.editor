@@ -12,10 +12,6 @@ describe('Convertor', () => {
         convertor.initHtmlSanitizer();
     });
 
-    afterEach(() => {
-        $('body').empty();
-    });
-
     describe('markdown to html', () => {
         it('converting markdown to html', () => {
             expect(convertor.toHTML('# HELLO WORLD')).toEqual('<h1>HELLO WORLD</h1>\n');
