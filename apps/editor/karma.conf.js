@@ -61,7 +61,7 @@ function setConfig(defaultConfig, server, browser) {
                 browserName: 'safari'
             };
         }
-        defaultConfig.concurrency = 5;
+        defaultConfig.concurrency = 1;
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {
