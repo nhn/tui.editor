@@ -5,6 +5,7 @@
   "author": "Sungho Kim / FE Development Team / NHN Entertainment.",
   "license": "MIT",
   "devDependencies": {
+    "cross-env": "^5.0.5",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-concat-css": "^2.2.0",
@@ -16,11 +17,12 @@
     "gulp-sync": "^0.1.4",
     "gulp-uglify": "^1.4.1",
     "gulp-util": "^3.0.6",
-    "istanbul-instrumenter-loader": "^0.2.0",
+    "istanbul-instrumenter-loader": "^3.0.0",
     "jasmine-core": "^2.4.1",
     "karma": "^1.1.1",
     "karma-chrome-launcher": "^1.0.1",
     "karma-coverage": "^1.1.0",
+    "karma-edge-launcher": "^0.4.1",
     "karma-firefox-launcher": "^1.0.0",
     "karma-ie-launcher": "^1.0.0",
     "karma-jasmine": "^1.0.2",
@@ -28,6 +30,8 @@
     "karma-jasmine-jquery": "^0.1.1",
     "karma-junit-reporter": "^1.1.0",
     "karma-narrow-reporter": "^1.1.1",
+    "karma-remap-coverage": "^0.1.4",
+    "karma-safari-launcher": "^1.0.0",
     "karma-sauce-launcher": "^1.1.0",
     "karma-sourcemap-loader": "^0.3.6",
     "karma-webdriver-launcher": "https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
@@ -38,6 +42,8 @@
   "scripts": {
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json -t ./node_modules/fedoc-template/",
     "build": "gulp build",
-    "test": "karma start"
+    "test": "karma start",
+    "test:ne": "cross-env SERVER=ne karma start",
+    "test:sl": "cross-env SERVER=sl karma start"
   }
 }
