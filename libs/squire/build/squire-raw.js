@@ -912,7 +912,7 @@ var deleteContentsOfRange = function ( range, root ) {
 // After method, range will be around inserted content
 var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     var node, block, blockContentsAfterSplit, stopPoint, container, offset;
-    var nodeAfterSplit, nodeBeforeSplit, tempRange;
+    var firstBlockInFrag, nodeAfterSplit, nodeBeforeSplit, tempRange;
 
     // Fixup content: ensure no top-level inline, and add cursor fix elements.
     fixContainer( frag, root );
@@ -936,8 +936,11 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     // Merge the contents of the first block in the frag with the focused block.
     // If there are contents in the block after the focus point, collect this
     // up to insert in the last block later
-    block = getStartBlockOfRange( range );
-    if ( block ) {
+    block = getStartBlockOfRange( range, root );
+    firstBlockInFrag = getNextBlock( frag, frag );
+    if ( block && firstBlockInFrag &&
+            // Don't merge table cell into block
+            !getNearest( firstBlockInFrag, frag, 'TABLE' ) ) {
         moveRangeBoundariesUpTree( range, block, block, root );
         range.collapse( true ); // collapse to start
         container = range.endContainer;
@@ -961,7 +964,7 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
             }
         }
         // And merge the first block in.
-        mergeWithBlock( container, getNextBlock( frag, frag ), range, root );
+        mergeWithBlock( container, firstBlockInFrag, range, root );
 
         // And where we will insert
         offset = indexOf.call( container.parentNode.childNodes, container ) + 1;
