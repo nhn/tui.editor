@@ -207,7 +207,8 @@ var insertTreeFragmentIntoRange = function ( range, frag, root ) {
     block = getStartBlockOfRange( range, root );
     firstBlockInFrag = getNextBlock( frag, frag );
     if ( block && firstBlockInFrag &&
-            // Don't merge table cell into block
+            // Don't merge table cells or PRE elements into block
+            !getNearest( firstBlockInFrag, frag, 'PRE' ) &&
             !getNearest( firstBlockInFrag, frag, 'TABLE' ) ) {
         moveRangeBoundariesUpTree( range, block, block, root );
         range.collapse( true ); // collapse to start
