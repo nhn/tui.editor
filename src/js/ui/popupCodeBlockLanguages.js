@@ -92,7 +92,9 @@ class PopupCodeBlockLanguages extends LayerPopup {
 
         this.eventManager.listen('openPopupCodeBlockLanguages', data => {
             this.show(data.callback);
-            this.$el.offset(data.offset);
+            const elementStyle = this.$el.get(0).style;
+            elementStyle.top = `${data.offset.top}px`;
+            elementStyle.left = `${data.offset.left}px`;
             this.setCurrentLanguage(data.language);
 
             return this;

@@ -171,10 +171,10 @@ function initUI(editor, preset) {
         if (popup.isShow()) {
             popup.hide();
         } else {
+            const position = $button.position();
             popup.$el.css({
-                'top': $button.offset().top + $button.height(),
-                'left': $button.offset().left,
-                'position': 'fixed'
+                top: position.top + $button.outerHeight(true),
+                left: position.left
             });
             popup.show();
             colorPicker.slider.toggle(true);
