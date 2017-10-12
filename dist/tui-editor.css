@@ -413,7 +413,6 @@
 .tui-popup-wrapper {
     width: 500px;
     margin-right: auto;
-    margin-top: 7px;
     border: 1px solid #cacaca;
     background: white;
     z-index: 9999;
@@ -903,7 +902,7 @@
 }
 
 .te-popup-code-block-languages {
-    position: absolute;
+    position: fixed;
     box-sizing: border-box;
     width: 130px;
 }
