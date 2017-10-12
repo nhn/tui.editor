@@ -47,15 +47,11 @@ class CodeBlockLanguagesCombo {
         this._wrapper.classList.toggle('active', true);
         this.active = true;
 
-        const offset = {
-            left: clientRect.left,
-            top: clientRect.bottom + document.body.scrollTop
-        };
         this._popupCodeBlockLanguages = this._eventManager.emitReduce('openPopupCodeBlockLanguages', {
             language: this._prevStoredLanguage,
             offset: {
-                left: offset.left,
-                top: offset.top
+                left: clientRect.left,
+                top: clientRect.bottom
             },
             callback: {
                 selected: selectedLanguage => this._onLanguageSelectedFromList(selectedLanguage),

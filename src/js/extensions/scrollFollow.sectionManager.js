@@ -60,6 +60,9 @@ class SectionManager {
      * @returns {object[]} section object list
      */
     getSectionList() {
+        if (!this._sectionList) {
+            this.makeSectionList();
+        }
         return this._sectionList;
     }
 
@@ -324,7 +327,7 @@ class SectionManager {
      * make preview sections then match section list with preview section element
      */
     sectionMatch() {
-        if (this._sectionList) {
+        if (this.getSectionList()) {
             const sections = this._getPreviewSections();
             this._matchPreviewSectionsWithSectionlist(sections);
         }
@@ -337,10 +340,12 @@ class SectionManager {
      * @private
      */
     _matchPreviewSectionsWithSectionlist(sections) {
+        const sectionList = this.getSectionList();
         sections.forEach((childs, index) => {
-            if (this._sectionList[index]) {
+            const section = sectionList[index];
+            if (section) {
                 const $sectionDiv = $(`<div class='content-id-${index}'></div>`);
-                this._sectionList[index].$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
+                section.$previewSectionEl = $(childs).wrapAll($sectionDiv).parent();
             }
         });
     }
@@ -389,7 +394,7 @@ class SectionManager {
      */
     sectionByLine(line) {
         let sectionIndex;
-        const sectionList = this._sectionList;
+        const sectionList = this.getSectionList();
         const sectionLength = sectionList.length;
 
         for (sectionIndex = 0; sectionIndex < sectionLength; sectionIndex += 1) {

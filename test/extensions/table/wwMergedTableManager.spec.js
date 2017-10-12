@@ -5,7 +5,7 @@ import WwTableMergedSelectionManager from '../../../src/js/extensions/table/wwMe
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('WwMergedTableManager', () => {
-    let $container, em, wwe, mgr;
+    let container, em, wwe, mgr;
     const basicTableHtml = [
         '<table>',
         '<thead>',
@@ -21,13 +21,12 @@ describe('WwMergedTableManager', () => {
     ].join('');
 
     beforeEach(() => {
-        $container = $('<div />');
-
-        $('body').append($container);
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         em = new EventManager();
 
-        wwe = new WysiwygEditor($container, em);
+        wwe = new WysiwygEditor($(container), em);
 
         wwe.init();
 
@@ -39,7 +38,9 @@ describe('WwMergedTableManager', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            if (container.parentNode) {
+                document.body.removeChild(container);
+            }
             done();
         });
     });
@@ -48,10 +49,11 @@ describe('WwMergedTableManager', () => {
         let $table;
 
         beforeEach(() => {
-            $container = $('<div />');
+            document.body.removeChild(container);
+            container = document.createElement('div');
             $table = $(basicTableHtml);
 
-            $container.append($table);
+            $(container).append($table);
             spyOn(mgr, '_bookmarkLastTd');
         });
 
@@ -69,7 +71,7 @@ describe('WwMergedTableManager', () => {
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
-            const $trs = $container.find('tbody tr');
+            const $trs = $(container).find('tbody tr');
 
             expect($trs.eq(0).html()).toBe('<td>1</td><td>2</td><td>1</td><td>2</td>');
             expect($trs.eq(1).html()).toBe('<td>3</td><td>4</td><td>3</td><td>4</td>');
@@ -96,7 +98,7 @@ describe('WwMergedTableManager', () => {
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
-            const $trs = $container.first().find('tr');
+            const $trs = $(container).first().find('tr');
 
             expect($trs.eq(1).html()).toBe('<td>1</td><td>2</td><td>c</td><td>d</td>');
             expect($trs.eq(2).html()).toBe('<td>3</td><td>4</td><td>g</td><td>h</td>');
@@ -148,7 +150,7 @@ describe('WwMergedTableManager', () => {
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
-            const $trs = $container.first().find('tr');
+            const $trs = $(container).first().find('tr');
 
             expect($trs.eq(1).html()).toBe('<td>a</td><td>1</td><td>c</td><td>d</td>');
             expect($trs.eq(2).html()).toBe('<td>e</td><td>3</td><td>g</td><td>h</td>');
@@ -187,10 +189,11 @@ describe('WwMergedTableManager', () => {
         let $table;
 
         beforeEach(() => {
-            $container = $('<div />');
+            document.body.removeChild(container);
+            container = document.createElement('div');
             $table = $(basicTableHtml);
 
-            $container.append($table);
+            $(container).append($table);
             spyOn(mgr, '_bookmarkLastTd');
         });
 
@@ -214,7 +217,7 @@ describe('WwMergedTableManager', () => {
 
             mgr._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
 
-            const $trs = $container.first().find('tr');
+            const $trs = $(container).first().find('tr');
             const cellContent = tui.util.browser.msie ? '' : '<br>';
 
             expect($trs.length).toBe(6);

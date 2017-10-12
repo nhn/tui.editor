@@ -5,22 +5,21 @@ import EventManager from '../../../src/js/eventManager';
 import Preview from '../../../src/js/preview';
 
 describe('ViewOnlyMarkerHelper', () => {
-    let preview, vmh;
+    let preview, vmh, container;
 
     beforeEach(() => {
-        const el = $('<div></div>');
+        container = document.createElement('div');
+        document.body.appendChild(container);
         const em = new EventManager();
 
-        $('body').append(el);
-
-        preview = new Preview(el, em, new Convertor(em));
+        preview = new Preview($(container), em, new Convertor(em));
         vmh = new ViewOnlyMarkerHelper(preview);
         preview.refresh('# TEXT1\n## TEXT2');
     });
 
     afterEach(() => {
         window.getSelection().removeAllRanges();
-        $('body').empty();
+        document.body.removeChild(container);
     });
 
     it('get current text content and ignore ZWB', () => {
@@ -101,7 +100,8 @@ describe('ViewOnlyMarkerHelper', () => {
     });
 
     it('getMarkerInfoOfCurrentSelection() return null if contents not contains range', () => {
-        $('body').append('<div id="outsider">TEXT</div>');
+        const $div = $('<div id="outsider">TEXT</div>');
+        $('body').append($div);
 
         const range = document.createRange();
         range.selectNodeContents($('#outsider')[0]);
@@ -109,6 +109,7 @@ describe('ViewOnlyMarkerHelper', () => {
         window.getSelection().addRange(range);
 
         expect(vmh.getMarkerInfoOfCurrentSelection()).toBeNull();
+        $div.remove();
     });
 
     it('No preblem with no text content', () => {

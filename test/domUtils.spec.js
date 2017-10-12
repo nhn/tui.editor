@@ -1,8 +1,15 @@
 import domUtils from '../src/js/domUtils.js';
 
 describe('domUtils', () => {
+    let container;
+
+    beforeEach(() => {
+        container = document.createElement('div');
+        document.body.appendChild(container);
+    });
+
     afterEach(() => {
-        $('body').empty();
+        container.parentNode.removeChild(container);
     });
 
     describe('getNodeName', () => {
@@ -101,25 +108,15 @@ describe('domUtils', () => {
             expect(domUtils.getChildNodeByOffset(node[0].childNodes[0], 1)).toBe(node[0].childNodes[0]);
         });
         it('returns childNodes at index', () => {
-            $('body').html([
-                '<ul>',
-                '<li>0</li>',
-                '<li>1</li>',
-                '</ul>'
-            ].join(''));
+            container.innerHTML = '<ul><li>0</li><li>1</li></ul>';
 
-            const result = domUtils.getChildNodeByOffset($('ul')[0], 1);
+            const result = domUtils.getChildNodeByOffset(container.childNodes[0], 1);
 
-            expect(result).toEqual($('li')[1]);
+            expect(result).toBe(container.querySelectorAll('li')[1]);
         });
 
         it('returns undefined if theres no result', () => {
-            $('body').html([
-                '<ul>',
-                '<li>0</li>',
-                '<li>1</li>',
-                '</ul>'
-            ].join(''));
+            container.innerHTML = '<ul><li>0</li><li>1</li></ul>';
 
             const result = domUtils.getChildNodeByOffset($('ul')[0], 2);
 
@@ -127,7 +124,7 @@ describe('domUtils', () => {
         });
 
         it('returns undefined if there is no child', () => {
-            $('body').html('<ul></ul>');
+            container.innerHTML = '<ul></ul>';
 
             const result = domUtils.getChildNodeByOffset($('ul')[0], 2);
 
@@ -135,12 +132,7 @@ describe('domUtils', () => {
         });
 
         it('returns childNodes if index >= 0', () => {
-            $('body').html([
-                '<ul>',
-                '<li>0</li>',
-                '<li>1</li>',
-                '</ul>'
-            ].join(''));
+            container.innerHTML = '<ul><li>0</li><li>1</li></ul>';
 
             const result = domUtils.getChildNodeByOffset($('ul')[0], -1);
 
@@ -150,62 +142,56 @@ describe('domUtils', () => {
 
     describe('getTopPrevNodeUnder ', () => {
         it('return previous block element of passed node', () => {
-            $('body').append('<div>text1</div><p>text2</p>');
-            expect(domUtils.getTopPrevNodeUnder($('p')[0].firstChild, $('body')[0])).toBe($('div')[0]);
+            container.innerHTML = '<div>text1</div><p>text2</p>';
+            expect(domUtils.getTopPrevNodeUnder(container.querySelector('p').firstChild, container)).toBe(container.querySelector('div'));
         });
     });
 
     describe('getTopNextNodeUnder', () => {
         it('return next block element of passed node', () => {
-            $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
-            expect(domUtils.getTopNextNodeUnder($('em')[0].firstChild, $('body')[0])).toBe($('p')[0]);
+            container.innerHTML = '<div><i>awef</i><em>text1</em></div><p>text2</p>';
+            expect(domUtils.getTopNextNodeUnder($('em')[0].firstChild, container)).toBe($('p')[0]);
         });
     });
 
     describe('getTopBlockNode', () => {
         it('return top block element of passed node', () => {
-            $('body').append('<div><i>awef</i><em>text1</em></div><p>text2</p>');
-            expect(domUtils.getTopBlockNode($('em')[0].firstChild)).toBe($('div')[0]);
+            container.innerHTML = '<div><i>awef</i><em>text1</em></div><p>text2</p>';
+            expect(domUtils.getTopBlockNode($('em')[0].firstChild)).toBe(container);
         });
     });
 
     describe('getParentUntil', () => {
         it('get parent until specific node that have given tag name', () => {
-            $('body').append('<div><p>awef<em>text1</em></p></div>');
+            container.innerHTML = '<div><p>awef<em>text1</em></p></div>';
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'DIV')).toBe($('p')[0]);
         });
 
         it('get parent until specific node that have given tag name #2', () => {
-            $('body').append('<div><p>awef<em>text1</em></p></div>');
+            container.innerHTML = '<div><p>awef<em>text1</em></p></div>';
             expect(domUtils.getParentUntil($('em')[0].firstChild, 'P')).toBe($('EM')[0]);
         });
 
         it('get parent until specific node that same as given node', () => {
-            $('body').append('<div><p>awef<em>text1</em></p></div>');
-            expect(domUtils.getParentUntil($('em')[0].firstChild, $('div')[0])).toBe($('p')[0]);
+            container.innerHTML = '<div><p>awef<em>text1</em></p></div>';
+            expect(domUtils.getParentUntil($('em')[0].firstChild, container.querySelector('div'))).toBe($('p')[0]);
         });
     });
 
     describe('getPrevTextNode', () => {
         it('get prev text node of given node #1', () => {
-            $('body').append('<div class="test"><div>text1<em>text2</em></div><div>text3</div></div>');
+            container.innerHTML = '<div class="test"><div>text1<em>text2</em></div><div>text3</div></div>';
             expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
         });
 
         it('get prev text node of given node #2', () => {
-            $('body').append('<div class="test"><div>text1</div><div><br></div><div>text3</div></div>');
+            container.innerHTML = '<div class="test"><div>text1</div><div><br></div><div>text3</div></div>';
             expect(domUtils.getPrevTextNode($('.test div')[2].lastChild)).toBe($('.test div')[0].firstChild);
         });
 
         it('get prev text node of given node #3', () => {
-            $('body').append('<div class="test"><ul><li><em>text1</em></li></ul><div><p><br></p></div><div>text3</div></div>');
+            container.innerHTML = '<div class="test"><ul><li><em>text1</em></li></ul><div><p><br></p></div><div>text3</div></div>';
             expect(domUtils.getPrevTextNode($('.test div')[1].lastChild)).toBe($('.test em')[0].firstChild);
-        });
-
-        it('if cant find any prev text node then return null', () => {
-            $('body').empty();
-            $('body').append('<div class="test"><div><p><br></p></div><div>text3</div></div>');
-            expect(domUtils.getPrevTextNode($('.test div')[1].firstChild)).toBe(null);
         });
     });
 

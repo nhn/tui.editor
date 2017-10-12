@@ -29,10 +29,6 @@ describe('CommandManager', function() {
         };
     });
 
-    afterEach(function() {
-        $('body').empty();
-    });
-
     describe('addCommand', function() {
         it('마크다운타입으로 등록하게되면 _mdCommand에 등록된다.', function() {
             var command = new Command('mycommand', Command.TYPE.MD);
@@ -46,8 +42,8 @@ describe('CommandManager', function() {
         });
     });
 
-    describe('커맨드를 실행한다', function() {
-        it('일반 커맨드를 실행', function() {
+    describe('exec()', function() {
+        it('should execute command', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');
@@ -58,7 +54,7 @@ describe('CommandManager', function() {
             expect(command.exec).toHaveBeenCalled();
         });
 
-        it('마크다운 커맨드(코드미러)를 실행', function() {
+        it('should execute markdown command', function() {
             var command = new Command('mycommand', Command.TYPE.MD),
                 execSpy = jasmine.createSpy('spy');
 
@@ -71,7 +67,7 @@ describe('CommandManager', function() {
             expect(execSpy).toHaveBeenCalled();
         });
 
-        it('WYSIWYG 커맨드를 실행', function() {
+        it('should execute wysiwyg command', function() {
             var command = new Command('mycommand', Command.TYPE.WW),
                 execSpy = jasmine.createSpy('spy');
 
@@ -88,7 +84,7 @@ describe('CommandManager', function() {
             expect(execSpy).toHaveBeenCalled();
         });
 
-        it('커맨드에 인자를 전달할 수 있다', function() {
+        it('should execute command with params', function() {
             var command = new Command('mycommand', Command.TYPE.GB),
                 execSpy = jasmine.createSpy('spy');
 
@@ -102,7 +98,7 @@ describe('CommandManager', function() {
             expect(execSpy).toHaveBeenCalledWith(mockupBase, 'arg', 'arg2');
         });
 
-        it('이벤트매니저를 이용해 커맨드를 실행', function() {
+        it('should execute command via event manager', function() {
             var command = new Command('mycommand', Command.TYPE.GB);
 
             command.exec = jasmine.createSpy('글로벌 커맨드');

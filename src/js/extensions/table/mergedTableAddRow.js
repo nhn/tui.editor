@@ -39,6 +39,7 @@ const AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
         const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
+        sq.saveUndoState(range);
         _addRow(tableData, tableRange);
 
         const $newTable = tableRenderer.replaceTable($table, tableData);

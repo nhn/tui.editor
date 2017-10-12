@@ -22,7 +22,7 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 10
+                version: '10'
             };
         }
         if (browser === 'IE11' || !browser) {
@@ -30,7 +30,7 @@ function setConfig(defaultConfig, server, browser) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 11
+                version: '11'
             };
         }
         if (browser === 'Edge') {
@@ -54,7 +54,14 @@ function setConfig(defaultConfig, server, browser) {
                 browserName: 'firefox'
             };
         }
-        defaultConfig.concurrency = 5;
+        if (browser === 'Safari' || !browser) {
+            defaultConfig.customLaunchers['Safari-WebDriver'] = {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'safari'
+            };
+        }
+        defaultConfig.concurrency = 1;
         defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
     } else if (server === 'sl') {
         defaultConfig.sauceLabs = {

@@ -6,7 +6,7 @@ import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager'
 const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('scrollFollow.ScrollSync', () => {
-    let ned, sectionManager, scrollSync;
+    let ned, sectionManager, scrollSync, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
@@ -14,10 +14,12 @@ describe('scrollFollow.ScrollSync', () => {
             'lib/codemirror/lib/codemirror.css',
             'src/css/tui-editor.css'
         );
-        $('body').html('<div id="editSection"></div>');
+
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         ned = new TuiEditor({
-            el: $('#editSection').get(0),
+            el: container,
             previewStyle: 'vertical',
             height: '100px',
             initialEditType: 'markdown',
@@ -33,7 +35,7 @@ describe('scrollFollow.ScrollSync', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });

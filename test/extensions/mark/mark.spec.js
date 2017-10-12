@@ -1,14 +1,16 @@
+/* eslint max-nested-callbacks: 0 */
 
-var TuiEditor = require('../../../src/js/editor');
+const TuiEditor = require('../../../src/js/editor');
 
 describe('Mark', function() {
-    var editor;
+    let editor, container;
 
     beforeEach(function() {
-        $('body').html('<div id="editSection"></div>');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         editor = new TuiEditor({
-            el: $('#editSection').get(0),
+            el: container,
             previewStyle: 'tab',
             height: '300px',
             initialEditType: 'wysiwyg',
@@ -22,13 +24,13 @@ describe('Mark', function() {
 
     afterEach(function(done) {
         setTimeout(function() {
-            $('body').empty();
+            container.parentNode.removeChild(container);
             done();
         });
     });
 
     describe('add, delete, get marker', function() {
-        var sq;
+        let sq;
 
         beforeEach(function() {
             sq = editor.getSquire();
@@ -37,7 +39,7 @@ describe('Mark', function() {
         });
 
         it('add marker with current selection in wysiwyg', function() {
-            var marker, range;
+            let marker, range;
 
             range = sq.getSelection().cloneRange();
             range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
@@ -57,7 +59,7 @@ describe('Mark', function() {
         });
 
         it('add marker with offset', function() {
-            var marker;
+            let marker;
 
             marker = editor.addMarker(6, 9, 'myId');
 
@@ -71,7 +73,7 @@ describe('Mark', function() {
         });
 
         it('add marker if there has no text content', function() {
-            var marker;
+            let marker;
 
             editor.setValue('');
 
@@ -83,7 +85,7 @@ describe('Mark', function() {
         });
 
         it('get marker', function() {
-            var marker;
+            let marker;
 
             editor.addMarker(6, 9, 'myId');
             marker = editor.getMarker('myId');
@@ -93,7 +95,7 @@ describe('Mark', function() {
         });
 
         it('remove marker', function() {
-            var marker;
+            let marker;
 
             marker = editor.addMarker(6, 9, 'myId');
 
@@ -106,7 +108,7 @@ describe('Mark', function() {
     });
 
     describe('update marker by editing', function() {
-        var sq;
+        let sq;
 
         beforeEach(function(done) {
             sq = editor.getSquire();
@@ -118,7 +120,7 @@ describe('Mark', function() {
         });
 
         it('update marker range when user have edited content', function(done) {
-            var range, marker;
+            let range, marker;
 
             range = sq.getSelection().cloneRange();
             range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
@@ -143,7 +145,7 @@ describe('Mark', function() {
         });
 
         it('update marker when content is removed marker start range area', function(done) {
-            var range, marker;
+            let range, marker;
 
             range = sq.getSelection().cloneRange();
             range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
@@ -168,7 +170,7 @@ describe('Mark', function() {
         });
 
         it('update marker when content is removed marker end range area', function(done) {
-            var range, marker;
+            let range, marker;
 
             range = sq.getSelection().cloneRange();
             range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
@@ -194,7 +196,7 @@ describe('Mark', function() {
         });
 
         it('update marker when content inserted inside marker range', function(done) {
-            var range, marker;
+            let range, marker;
 
             range = sq.getSelection().cloneRange();
             range.setStart(sq.get$Body().find('h2 div')[0].firstChild, 1);
@@ -220,7 +222,7 @@ describe('Mark', function() {
         });
 
         it('udpate marker when content has been removed completely', function(done) {
-            var marker = editor.addMarker(6, 9, 'myId');
+            let marker = editor.addMarker(6, 9, 'myId');
 
             editor.setValue('');
 
@@ -241,7 +243,7 @@ describe('Mark', function() {
 
     describe('persistence of marker data', function() {
         it('restore markers', function() {
-            var markers;
+            let markers;
 
             markers = editor.setValueWithMarkers('# start\n---\n## this is me', [
                 {
@@ -260,7 +262,7 @@ describe('Mark', function() {
         });
 
         it('remove current markers when restore markers', function() {
-            var markers;
+            let markers;
 
             editor.setValue('# start\n---\n## this is me');
 
@@ -279,7 +281,7 @@ describe('Mark', function() {
         });
 
         it('get current markers data', function() {
-            var markersData;
+            let markersData;
 
             editor.setValue('# start\n---\n## this is me');
             editor.addMarker(0, 2, 'test');
@@ -292,7 +294,7 @@ describe('Mark', function() {
         });
 
         it('export and restore', function() {
-            var markersData, markers;
+            let markersData, markers;
 
             editor.setValue('# start\n---\n## this is me');
             editor.addMarker(0, 2, 'test');
@@ -310,7 +312,7 @@ describe('Mark', function() {
 
     describe('conversion marker between markdown and wysiwyg', function() {
         it('wysiwyg to markdown', function() {
-            var marker;
+            let marker;
             editor.setValue('# start\n---\n## this is me');
             marker = editor.addMarker(2, 7, 'myId1');
             editor.changeMode('markdown');
@@ -321,7 +323,7 @@ describe('Mark', function() {
         });
 
         it('markdown to wysiwyg', function() {
-            var marker;
+            let marker;
 
             editor.changeMode('markdown');
             editor.setValue('# start\n---\n## this is me');

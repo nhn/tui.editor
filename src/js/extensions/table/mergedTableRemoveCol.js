@@ -40,16 +40,19 @@ const RemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */{
         const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
         const beforeCellLength = tableData[0].length;
 
+        sq.saveUndoState(range);
         _removeColumns(tableData, tableRange);
 
-        if (beforeCellLength === tableData[0].length) {
-            return;
+        if (tableData[0].length === 0) {
+            $table.remove();
+        } else if (beforeCellLength !== tableData[0].length) {
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+
+            const startColIndex = tableRange.start.colIndex;
+            const focusColIndex = startColIndex >= tableData[0].length ? startColIndex - 1 : startColIndex;
+            const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, focusColIndex);
+            tableRenderer.focusToCell(sq, range, focusCell);
         }
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
     }
 });
 
@@ -115,10 +118,6 @@ export function _removeColumns(tableData, tableRange) {
     const endRange = tableRange.end;
     const endColIndex = dataHandler.findColMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
     const removeCount = endColIndex - startColIndex + 1;
-
-    if (removeCount === tableData[0].length) {
-        return;
-    }
 
     _updateColspan(tableData, startColIndex, endColIndex);
     _updateMergeStartIndex(tableData, startColIndex, endColIndex);

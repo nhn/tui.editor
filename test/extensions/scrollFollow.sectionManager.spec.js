@@ -4,17 +4,18 @@ import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager'
 const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('scrollFollow.sectionManager', () => {
-    let ned, sectionManager;
+    let ned, sectionManager, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('lib/codemirror/lib/codemirror.css');
-        $('body').html('<div id="editSection"></div>');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         ned = new TuiEditor({
-            el: $('#editSection').get(0),
+            el: container,
             previewStyle: 'vertical',
-            height: '100px',
+            height: '150px',
             initialEditType: 'markdown',
             events: {
                 'load': function(editor) {
@@ -30,12 +31,24 @@ describe('scrollFollow.sectionManager', () => {
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            container.parentNode.removeChild(container);
             done();
         });
     });
 
     describe('sectionManager', () => {
+        describe('getSectionList()', () => {
+            it('should make section list if it has not been made', () => {
+                sectionManager._sectionList = null;
+
+                ned.setValue('text 1\ntext 2');
+
+                const sectionList = sectionManager.getSectionList();
+
+                expect(sectionList).not.toBeNull();
+            });
+        });
+
         it('make new section', () => {
             sectionManager._sectionList = [];
 
@@ -43,9 +56,9 @@ describe('scrollFollow.sectionManager', () => {
 
             const sectionList = sectionManager.getSectionList();
 
-            expect(sectionList.length).toEqual(1);
-            expect(sectionList[0].start).toEqual(0);
-            expect(sectionList[0].end).toEqual(1);
+            expect(sectionList.length).toBe(1);
+            expect(sectionList[0].start).toBe(0);
+            expect(sectionList[0].end).toBe(1);
         });
 
         it('update current section', () => {
@@ -53,7 +66,7 @@ describe('scrollFollow.sectionManager', () => {
             sectionManager._addNewSection(0, 1);
             sectionManager._updateCurrentSectionEnd(3);
 
-            expect(sectionManager.getSectionList()[0].end).toEqual(3);
+            expect(sectionManager.getSectionList()[0].end).toBe(3);
         });
 
         it('iterate each line with info', () => {
@@ -72,8 +85,8 @@ describe('scrollFollow.sectionManager', () => {
                 lineType[lineNumber] = isSection;
             });
 
-            expect(lineType[0]).toEqual(false);
-            expect(lineType[1]).toEqual(true);
+            expect(lineType[0]).toBe(false);
+            expect(lineType[1]).toBe(true);
         });
 
         it('trimming top lines while _eachLineState', () => {
@@ -96,8 +109,8 @@ describe('scrollFollow.sectionManager', () => {
 
             expect(lineType[0]).toBeUndefined();
             expect(lineType[1]).toBeUndefined();
-            expect(lineType[2]).toEqual(false);
-            expect(lineType[3]).toEqual(true);
+            expect(lineType[2]).toBe(false);
+            expect(lineType[3]).toBe(true);
         });
 
         it('make section list', () => {
@@ -111,7 +124,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(3);
+            expect(sectionManager.getSectionList().length).toBe(3);
         });
 
         it('dont make section with only #', () => {
@@ -125,7 +138,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('make section list with default section ', () => {
@@ -137,7 +150,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(1);
+            expect(sectionManager.getSectionList().length).toBe(1);
         });
 
         it('make section list use default section if first contents is header ', () => {
@@ -149,7 +162,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(1);
+            expect(sectionManager.getSectionList().length).toBe(1);
         });
 
         it('make section list with setext type header ', () => {
@@ -165,7 +178,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(3);
+            expect(sectionManager.getSectionList().length).toBe(3);
         });
 
         it('dont make section with line', () => {
@@ -181,7 +194,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('dont make section with line followed by table', () => {
@@ -199,7 +212,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('any problem with table in bottom', () => {
@@ -215,7 +228,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('any problem with table with space', () => {
@@ -231,7 +244,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('dont make section with line followed by codeBlock', () => {
@@ -248,7 +261,7 @@ describe('scrollFollow.sectionManager', () => {
 
             sectionManager.makeSectionList();
 
-            expect(sectionManager.getSectionList().length).toEqual(2);
+            expect(sectionManager.getSectionList().length).toBe(2);
         });
 
         it('section list have line info', () => {
@@ -265,12 +278,12 @@ describe('scrollFollow.sectionManager', () => {
 
             const sectionList = sectionManager.getSectionList();
 
-            expect(sectionList[0].start).toEqual(0);
-            expect(sectionList[0].end).toEqual(0);
-            expect(sectionList[1].start).toEqual(1);
-            expect(sectionList[1].end).toEqual(3);
-            expect(sectionList[2].start).toEqual(4);
-            expect(sectionList[2].end).toEqual(5);
+            expect(sectionList[0].start).toBe(0);
+            expect(sectionList[0].end).toBe(0);
+            expect(sectionList[1].start).toBe(1);
+            expect(sectionList[1].end).toBe(3);
+            expect(sectionList[2].start).toBe(4);
+            expect(sectionList[2].end).toBe(5);
         });
 
         it('section match with preview', done => {
@@ -289,7 +302,7 @@ describe('scrollFollow.sectionManager', () => {
                 sectionManager.sectionMatch();
                 const sectionList = sectionManager.getSectionList();
 
-                expect(sectionList.length).toEqual(3);
+                expect(sectionList.length).toBe(3);
                 expect(sectionList[0].$previewSectionEl.hasClass('content-id-0')).toBe(true);
                 expect(sectionList[1].$previewSectionEl.hasClass('content-id-1')).toBe(true);
                 expect(sectionList[2].$previewSectionEl.hasClass('content-id-2')).toBe(true);
