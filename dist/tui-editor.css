@@ -833,10 +833,6 @@
     margin-top: 6px;
 }
 
-.CodeMirror-scroll {
-    overflow: auto !important;
-}
-
 .CodeMirror .cm-header {
     font-weight: bold;
     color: inherit;

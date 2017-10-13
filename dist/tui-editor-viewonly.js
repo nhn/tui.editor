@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.0-beta
+ * @version 0.14.0
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
