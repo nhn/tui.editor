@@ -3,6 +3,7 @@
   "version": "0.14.0",
   "private": true,
   "author": "Sungho Kim <shirenbeat@gmail.com>",
+  "repository": "https://github.com/nhnent/tui.editor.git",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -36,6 +37,7 @@
     "karma-sauce-launcher": "^1.1.0",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webdriver-launcher": "https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
+    "tui-release-notes": "https://github.com/nhnent/tui.release-notes.git",
     "karma-webpack": "^2.0.3",
     "style-loader": "^0.16.1",
     "tui-jsdoc-template": "^1.2.2",
@@ -50,6 +52,7 @@
     "test:ne": "cross-env SERVER=ne karma start",
     "test:sl": "cross-env SERVER=sl karma start",
     "serve": "webpack-dev-server --progress --inline",
-    "build": "cross-env webpack && webpack -p"
+    "build": "cross-env webpack && webpack -p",
+    "note": "tuie --tag=$(git describe --tags)"
   }
 }
