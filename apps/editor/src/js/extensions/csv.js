@@ -28,6 +28,7 @@
     /**
      * @name CSV
      * @namespace
+     * @ignore
      */
     // implemented as a singleton because JS is single threaded
     var CSV = {};
@@ -204,6 +205,7 @@
      * @description stream a CSV file
      * @example
      * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.stream.json()).pipe(process.stdout)"
+     * @ignore
      */
     CSV.stream = function () {
         var stream = require('stream');
