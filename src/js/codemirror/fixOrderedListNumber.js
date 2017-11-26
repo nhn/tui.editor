@@ -51,6 +51,7 @@ CodeMirror.commands.fixOrderedListNumber = cm => {
  * @param {number} startIndex - start index
  * @param {CodeMirror} cm - CodeMirror instance
  * @returns {number} - next line number
+ * @ignore
  */
 function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
     let indent, delimiter, text, indentLength;
