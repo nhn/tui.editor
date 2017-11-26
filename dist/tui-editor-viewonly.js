@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.0
+ * @version 0.14.1
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -6527,6 +6527,7 @@ var CATEGORY_CHART_TYPES = ['lineChart', 'areaChart'];
  * options format is colon separated keys & values
  * @param {string} code - plain text format data & options
  * @param {Function} callback - callback which provides json format data & options
+ * @ignore
  */
 function parseCode2DataAndOptions(code, callback) {
     code = trimKeepingTabs(code);
@@ -6568,6 +6569,7 @@ function parseCode2DataAndOptions(code, callback) {
  * @param {string} optionCode - code block containing chart options
  * @returns {Object} - tui.chart data & options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function _parseCode2DataAndOptions(dataCode, optionCode) {
     var data = parseDSV2ChartData(dataCode);
@@ -6583,6 +6585,7 @@ function _parseCode2DataAndOptions(dataCode, optionCode) {
  * detect delimiter the comma, tab, regex
  * @param {string} code - code to detect delimiter
  * @returns {string|RegExp} - detected delimiter
+ * @ignore
  */
 function detectDelimiter(code) {
     code = trimKeepingTabs(code);
@@ -6607,6 +6610,7 @@ function detectDelimiter(code) {
  * @param {string} code - code to be test
  * @param {string|RegExp} delimiter - delimiter to test
  * @returns {number} delta value for code
+ * @ignore
  */
 function calcDSVDelta(code, delimiter) {
     var rows = void 0,
@@ -6646,6 +6650,7 @@ function calcDSVDelta(code, delimiter) {
  * @param {string|RegExp} delimiter - delimiter
  * @returns {Object} - tui.chart data
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function parseDSV2ChartData(code, delimiter) {
     // trim all heading/trailing blank lines
@@ -6710,6 +6715,7 @@ function parseDSV2ChartData(code, delimiter) {
  * parse code from url
  * @param {string} url - remote csv/tsv file url
  * @param {Function} callback - callback function
+ * @ignore
  */
 function parseURL2ChartData(url, callback) {
     var success = function success(code) {
@@ -6729,6 +6735,7 @@ function parseURL2ChartData(url, callback) {
  * @param {string} optionCode - option code
  * @returns {Object} - tui.chart option string
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function parseCode2ChartOption(optionCode) {
     var reservedKeys = ['type', 'url'];
@@ -6788,6 +6795,7 @@ function parseCode2ChartOption(optionCode) {
  * it should not trim \t in tsv
  * @param {string} code - code to trim
  * @returns {string} - trimmed code
+ * @ignore
  */
 function trimKeepingTabs(code) {
     return code.replace(/(^(\s*[\n\r])+)|([\n\r]+\s*$)/g, '');
@@ -6797,6 +6805,7 @@ function trimKeepingTabs(code) {
  * test given string is numeric
  * @param {string} str - string to be tested
  * @returns {boolean} - true for numeric string
+ * @ignore
  */
 function isNumeric(str) {
     return !isNaN(str) && isFinite(str);
@@ -6808,6 +6817,7 @@ function isNumeric(str) {
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function setDefaultOptions(options, chartContainer) {
     options = util.extend({
@@ -6841,6 +6851,7 @@ function setDefaultOptions(options, chartContainer) {
  * replace html from chart data
  * @param {string} codeBlockChartDataAndOptions - chart data text
  * @returns {string} - rendered html
+ * @ignore
  */
 function chartReplacer(codeBlockChartDataAndOptions) {
     var randomId = 'chart-' + Math.random().toString(36).substr(2, 10);
@@ -6874,8 +6885,8 @@ function chartReplacer(codeBlockChartDataAndOptions) {
 
 /**
  * reduce 2D array to TSV rows
- * @param {[][]} arr - 2d array
- * @returns {[]} - TSV row array
+ * @param {Array.<Array.<string>>} arr - 2d array
+ * @returns {Array.<string>} - TSV row array
  * @ignore
  */
 function _reduceToTSV(arr) {
@@ -11789,6 +11800,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     /**
      * @name CSV
      * @namespace
+     * @ignore
      */
     // implemented as a singleton because JS is single threaded
 
@@ -11952,6 +11964,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      * @description stream a CSV file
      * @example
      * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.stream.json()).pipe(process.stdout)"
+     * @ignore
      */
     CSV.stream = function () {
         var stream = __webpack_require__(25);

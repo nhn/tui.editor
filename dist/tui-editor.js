@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.0
+ * @version 0.14.1
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -7118,6 +7118,7 @@ var CATEGORY_CHART_TYPES = ['lineChart', 'areaChart'];
  * options format is colon separated keys & values
  * @param {string} code - plain text format data & options
  * @param {Function} callback - callback which provides json format data & options
+ * @ignore
  */
 function parseCode2DataAndOptions(code, callback) {
     code = trimKeepingTabs(code);
@@ -7159,6 +7160,7 @@ function parseCode2DataAndOptions(code, callback) {
  * @param {string} optionCode - code block containing chart options
  * @returns {Object} - tui.chart data & options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function _parseCode2DataAndOptions(dataCode, optionCode) {
     var data = parseDSV2ChartData(dataCode);
@@ -7174,6 +7176,7 @@ function _parseCode2DataAndOptions(dataCode, optionCode) {
  * detect delimiter the comma, tab, regex
  * @param {string} code - code to detect delimiter
  * @returns {string|RegExp} - detected delimiter
+ * @ignore
  */
 function detectDelimiter(code) {
     code = trimKeepingTabs(code);
@@ -7198,6 +7201,7 @@ function detectDelimiter(code) {
  * @param {string} code - code to be test
  * @param {string|RegExp} delimiter - delimiter to test
  * @returns {number} delta value for code
+ * @ignore
  */
 function calcDSVDelta(code, delimiter) {
     var rows = void 0,
@@ -7237,6 +7241,7 @@ function calcDSVDelta(code, delimiter) {
  * @param {string|RegExp} delimiter - delimiter
  * @returns {Object} - tui.chart data
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function parseDSV2ChartData(code, delimiter) {
     // trim all heading/trailing blank lines
@@ -7301,6 +7306,7 @@ function parseDSV2ChartData(code, delimiter) {
  * parse code from url
  * @param {string} url - remote csv/tsv file url
  * @param {Function} callback - callback function
+ * @ignore
  */
 function parseURL2ChartData(url, callback) {
     var success = function success(code) {
@@ -7320,6 +7326,7 @@ function parseURL2ChartData(url, callback) {
  * @param {string} optionCode - option code
  * @returns {Object} - tui.chart option string
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function parseCode2ChartOption(optionCode) {
     var reservedKeys = ['type', 'url'];
@@ -7379,6 +7386,7 @@ function parseCode2ChartOption(optionCode) {
  * it should not trim \t in tsv
  * @param {string} code - code to trim
  * @returns {string} - trimmed code
+ * @ignore
  */
 function trimKeepingTabs(code) {
     return code.replace(/(^(\s*[\n\r])+)|([\n\r]+\s*$)/g, '');
@@ -7388,6 +7396,7 @@ function trimKeepingTabs(code) {
  * test given string is numeric
  * @param {string} str - string to be tested
  * @returns {boolean} - true for numeric string
+ * @ignore
  */
 function isNumeric(str) {
     return !isNaN(str) && isFinite(str);
@@ -7399,6 +7408,7 @@ function isNumeric(str) {
  * @param {HTMLElement} chartContainer - chart container
  * @returns {Object} - options
  * @see https://nhnent.github.io/tui.chart/latest/tui.chart.html
+ * @ignore
  */
 function setDefaultOptions(options, chartContainer) {
     options = util.extend({
@@ -7432,6 +7442,7 @@ function setDefaultOptions(options, chartContainer) {
  * replace html from chart data
  * @param {string} codeBlockChartDataAndOptions - chart data text
  * @returns {string} - rendered html
+ * @ignore
  */
 function chartReplacer(codeBlockChartDataAndOptions) {
     var randomId = 'chart-' + Math.random().toString(36).substr(2, 10);
@@ -7465,8 +7476,8 @@ function chartReplacer(codeBlockChartDataAndOptions) {
 
 /**
  * reduce 2D array to TSV rows
- * @param {[][]} arr - 2d array
- * @returns {[]} - TSV row array
+ * @param {Array.<Array.<string>>} arr - 2d array
+ * @returns {Array.<string>} - TSV row array
  * @ignore
  */
 function _reduceToTSV(arr) {
@@ -12380,6 +12391,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     /**
      * @name CSV
      * @namespace
+     * @ignore
      */
     // implemented as a singleton because JS is single threaded
 
@@ -12543,6 +12555,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      * @description stream a CSV file
      * @example
      * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.stream.json()).pipe(process.stdout)"
+     * @ignore
      */
     CSV.stream = function () {
         var stream = __webpack_require__(25);
@@ -22393,6 +22406,7 @@ CodeMirror.commands.fixOrderedListNumber = function (cm) {
  * @param {number} startIndex - start index
  * @param {CodeMirror} cm - CodeMirror instance
  * @returns {number} - next line number
+ * @ignore
  */
 function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
     var indent = void 0,
@@ -37496,14 +37510,19 @@ var WysiwygEditor = function () {
         value: function _initSquireEvent() {
             var _this3 = this;
 
+            var squire = this.getEditor();
             var isNeedFirePostProcessForRangeChange = false;
 
-            this.getEditor().addEventListener('copy', function (clipboardEvent) {
+            squire.addEventListener('copy', function (clipboardEvent) {
                 _this3.eventManager.emit('copy', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
                 util.debounce(function () {
+                    if (!_this3.isEditorValid()) {
+                        return;
+                    }
+
                     _this3.eventManager.emit('copyAfter', {
                         source: 'wysiwyg',
                         data: clipboardEvent
@@ -37511,12 +37530,16 @@ var WysiwygEditor = function () {
                 })();
             });
 
-            this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', function (clipboardEvent) {
+            squire.addEventListener(util.browser.msie ? 'beforecut' : 'cut', function (clipboardEvent) {
                 _this3.eventManager.emit('cut', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
                 util.debounce(function () {
+                    if (!_this3.isEditorValid()) {
+                        return;
+                    }
+
                     _this3.eventManager.emit('cutAfter', {
                         source: 'wysiwyg',
                         data: clipboardEvent
@@ -37524,20 +37547,20 @@ var WysiwygEditor = function () {
                 })();
             });
 
-            this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', function (clipboardEvent) {
+            squire.addEventListener(util.browser.msie ? 'beforepaste' : 'paste', function (clipboardEvent) {
                 _this3.eventManager.emit('paste', {
                     source: 'wysiwyg',
                     data: clipboardEvent
                 });
             });
 
-            this.getEditor().addEventListener('dragover', function (ev) {
+            squire.addEventListener('dragover', function (ev) {
                 ev.preventDefault();
 
                 return false;
             });
 
-            this.getEditor().addEventListener('drop', function (ev) {
+            squire.addEventListener('drop', function (ev) {
                 ev.preventDefault();
 
                 _this3.eventManager.emit('drop', {
@@ -37550,8 +37573,12 @@ var WysiwygEditor = function () {
 
             // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
             // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
-            this.getEditor().addEventListener('input', util.debounce(function () {
-                if (!_this3._silentChange && _this3.isEditorValid()) {
+            squire.addEventListener('input', util.debounce(function () {
+                if (!_this3.isEditorValid()) {
+                    return;
+                }
+
+                if (!_this3._silentChange) {
                     var eventObj = {
                         source: 'wysiwyg'
                     };
@@ -37566,7 +37593,7 @@ var WysiwygEditor = function () {
                 _this3.getEditor().preserveLastLine();
             }, 0));
 
-            this.getEditor().addEventListener('keydown', function (keyboardEvent) {
+            squire.addEventListener('keydown', function (keyboardEvent) {
                 var range = _this3.getEditor().getSelection();
 
                 if (!range.collapsed) {
@@ -37582,7 +37609,7 @@ var WysiwygEditor = function () {
             });
 
             if (util.browser.firefox) {
-                this.getEditor().addEventListener('keypress', function (keyboardEvent) {
+                squire.addEventListener('keypress', function (keyboardEvent) {
                     var keyCode = keyboardEvent.keyCode;
 
 
@@ -37604,7 +37631,7 @@ var WysiwygEditor = function () {
 
                 // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
                 // 이렇게 하지 않으면 textObject에 문제가 생긴다.
-                this.getEditor().addEventListener('keyup', function () {
+                squire.addEventListener('keyup', function () {
                     var range = _this3.getRange();
 
                     if (_domUtils2.default.isTextNode(range.commonAncestorContainer) && _domUtils2.default.isTextNode(range.commonAncestorContainer.previousSibling)) {
@@ -37624,7 +37651,7 @@ var WysiwygEditor = function () {
                 });
             }
 
-            this.getEditor().addEventListener('keyup', function (keyboardEvent) {
+            squire.addEventListener('keyup', function (keyboardEvent) {
                 if (isNeedFirePostProcessForRangeChange) {
                     _this3.debouncedPostProcessForChange();
                     isNeedFirePostProcessForRangeChange = false;
@@ -37643,62 +37670,62 @@ var WysiwygEditor = function () {
                 });
             });
 
-            this.getEditor().addEventListener('click', function (ev) {
+            squire.addEventListener('click', function (ev) {
                 _this3.eventManager.emit('click', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('mousedown', function (ev) {
+            squire.addEventListener('mousedown', function (ev) {
                 _this3.eventManager.emit('mousedown', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('mouseover', function (ev) {
+            squire.addEventListener('mouseover', function (ev) {
                 _this3.eventManager.emit('mouseover', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('mouseout', function (ev) {
+            squire.addEventListener('mouseout', function (ev) {
                 _this3.eventManager.emit('mouseout', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('mouseup', function (ev) {
+            squire.addEventListener('mouseup', function (ev) {
                 _this3.eventManager.emit('mouseup', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('contextmenu', function (ev) {
+            squire.addEventListener('contextmenu', function (ev) {
                 _this3.eventManager.emit('contextmenu', {
                     source: 'wysiwyg',
                     data: ev
                 });
             });
 
-            this.getEditor().addEventListener('focus', function () {
+            squire.addEventListener('focus', function () {
                 _this3.eventManager.emit('focus', {
                     source: 'wysiwyg'
                 });
             });
 
-            this.getEditor().addEventListener('blur', function () {
+            squire.addEventListener('blur', function () {
                 _this3.eventManager.emit('blur', {
                     source: 'wysiwyg'
                 });
             });
 
             // Toolbar status active/inactive
-            this.getEditor().addEventListener('pathChange', function (data) {
+            squire.addEventListener('pathChange', function (data) {
                 var state = {
                     bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
                     italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
@@ -37714,7 +37741,7 @@ var WysiwygEditor = function () {
                 _this3.eventManager.emit('stateChange', state);
             });
 
-            this.getEditor().addEventListener('willPaste', function (ev) {
+            squire.addEventListener('willPaste', function (ev) {
                 _this3.eventManager.emit('willPaste', {
                     source: 'wysiwyg',
                     data: ev
@@ -38065,6 +38092,7 @@ var WysiwygEditor = function () {
 
             this.editor = null;
             this.$body = null;
+            this.eventManager = null;
         }
 
         /**
@@ -38213,6 +38241,10 @@ var WysiwygEditor = function () {
         key: 'postProcessForChange',
         value: function postProcessForChange() {
             var _this7 = this;
+
+            if (!this.isEditorValid()) {
+                return;
+            }
 
             this.getEditor().modifyDocument(function () {
                 _this7.eventManager.emit('wysiwygRangeChangeAfter', _this7);
