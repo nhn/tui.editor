@@ -193,14 +193,19 @@ class WysiwygEditor {
      * @private
      */
     _initSquireEvent() {
+        const squire = this.getEditor();
         let isNeedFirePostProcessForRangeChange = false;
 
-        this.getEditor().addEventListener('copy', clipboardEvent => {
+        squire.addEventListener('copy', clipboardEvent => {
             this.eventManager.emit('copy', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
+                if (!this.isEditorValid()) {
+                    return;
+                }
+
                 this.eventManager.emit('copyAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
@@ -208,12 +213,16 @@ class WysiwygEditor {
             })();
         });
 
-        this.getEditor().addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
+        squire.addEventListener(util.browser.msie ? 'beforecut' : 'cut', clipboardEvent => {
             this.eventManager.emit('cut', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
             util.debounce(() => {
+                if (!this.isEditorValid()) {
+                    return;
+                }
+
                 this.eventManager.emit('cutAfter', {
                     source: 'wysiwyg',
                     data: clipboardEvent
@@ -221,20 +230,20 @@ class WysiwygEditor {
             })();
         });
 
-        this.getEditor().addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
+        squire.addEventListener(util.browser.msie ? 'beforepaste' : 'paste', clipboardEvent => {
             this.eventManager.emit('paste', {
                 source: 'wysiwyg',
                 data: clipboardEvent
             });
         });
 
-        this.getEditor().addEventListener('dragover', ev => {
+        squire.addEventListener('dragover', ev => {
             ev.preventDefault();
 
             return false;
         });
 
-        this.getEditor().addEventListener('drop', ev => {
+        squire.addEventListener('drop', ev => {
             ev.preventDefault();
 
             this.eventManager.emit('drop', {
@@ -247,8 +256,12 @@ class WysiwygEditor {
 
         // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
         // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
-        this.getEditor().addEventListener('input', util.debounce(() => {
-            if (!this._silentChange && this.isEditorValid()) {
+        squire.addEventListener('input', util.debounce(() => {
+            if (!this.isEditorValid()) {
+                return;
+            }
+
+            if (!this._silentChange) {
                 const eventObj = {
                     source: 'wysiwyg'
                 };
@@ -263,7 +276,7 @@ class WysiwygEditor {
             this.getEditor().preserveLastLine();
         }, 0));
 
-        this.getEditor().addEventListener('keydown', keyboardEvent => {
+        squire.addEventListener('keydown', keyboardEvent => {
             const range = this.getEditor().getSelection();
 
             if (!range.collapsed) {
@@ -279,7 +292,7 @@ class WysiwygEditor {
         });
 
         if (util.browser.firefox) {
-            this.getEditor().addEventListener('keypress', keyboardEvent => {
+            squire.addEventListener('keypress', keyboardEvent => {
                 const {keyCode} = keyboardEvent;
 
                 if (keyCode === 13 || keyCode === 9) {
@@ -300,7 +313,7 @@ class WysiwygEditor {
 
             // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
             // 이렇게 하지 않으면 textObject에 문제가 생긴다.
-            this.getEditor().addEventListener('keyup', () => {
+            squire.addEventListener('keyup', () => {
                 const range = this.getRange();
 
                 if (domUtils.isTextNode(range.commonAncestorContainer)
@@ -322,7 +335,7 @@ class WysiwygEditor {
             });
         }
 
-        this.getEditor().addEventListener('keyup', keyboardEvent => {
+        squire.addEventListener('keyup', keyboardEvent => {
             if (isNeedFirePostProcessForRangeChange) {
                 this.debouncedPostProcessForChange();
                 isNeedFirePostProcessForRangeChange = false;
@@ -341,62 +354,62 @@ class WysiwygEditor {
             });
         });
 
-        this.getEditor().addEventListener('click', ev => {
+        squire.addEventListener('click', ev => {
             this.eventManager.emit('click', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('mousedown', ev => {
+        squire.addEventListener('mousedown', ev => {
             this.eventManager.emit('mousedown', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('mouseover', ev => {
+        squire.addEventListener('mouseover', ev => {
             this.eventManager.emit('mouseover', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('mouseout', ev => {
+        squire.addEventListener('mouseout', ev => {
             this.eventManager.emit('mouseout', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('mouseup', ev => {
+        squire.addEventListener('mouseup', ev => {
             this.eventManager.emit('mouseup', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('contextmenu', ev => {
+        squire.addEventListener('contextmenu', ev => {
             this.eventManager.emit('contextmenu', {
                 source: 'wysiwyg',
                 data: ev
             });
         });
 
-        this.getEditor().addEventListener('focus', () => {
+        squire.addEventListener('focus', () => {
             this.eventManager.emit('focus', {
                 source: 'wysiwyg'
             });
         });
 
-        this.getEditor().addEventListener('blur', () => {
+        squire.addEventListener('blur', () => {
             this.eventManager.emit('blur', {
                 source: 'wysiwyg'
             });
         });
 
         // Toolbar status active/inactive
-        this.getEditor().addEventListener('pathChange', data => {
+        squire.addEventListener('pathChange', data => {
             const state = {
                 bold: /(>B|>STRONG|^B$|^STRONG$)/.test(data.path),
                 italic: /(>I|>EM|^I$|^EM$)/.test(data.path),
@@ -412,7 +425,7 @@ class WysiwygEditor {
             this.eventManager.emit('stateChange', state);
         });
 
-        this.getEditor().addEventListener('willPaste', ev => {
+        squire.addEventListener('willPaste', ev => {
             this.eventManager.emit('willPaste', {
                 source: 'wysiwyg',
                 data: ev
@@ -710,6 +723,7 @@ class WysiwygEditor {
 
         this.editor = null;
         this.$body = null;
+        this.eventManager = null;
     }
 
     /**
@@ -832,6 +846,10 @@ class WysiwygEditor {
      * @memberof WysiwygEditor
      */
     postProcessForChange() {
+        if (!this.isEditorValid()) {
+            return;
+        }
+
         this.getEditor().modifyDocument(() => {
             this.eventManager.emit('wysiwygRangeChangeAfter', this);
         });
