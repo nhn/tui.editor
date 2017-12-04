@@ -1,6 +1,13 @@
 /* eslint-disable max-nested-callbacks */
 import Editor from '../../src/js/editor';
 
+/**
+ * make fake clipboard event
+ * @param {string} text - clipboard text
+ * @param {string} html - clipboard html
+ * @param {array} fileType - supported file types
+ * @returns {Event} - clipboard event
+ */
 function pasteClipboardEvent(text, html, fileType) {
     const event = document.createEvent('Event', false, true);
     const clipboardData = {};
@@ -136,9 +143,9 @@ describe('Clipboard', () => {
 
                 setTimeout(() => {
                     const outputDOM = se._root;
-                    expect(outputDOM.firstChild.tagName).toEqual('TABLE');
-                    expect(outputDOM.firstChild.children[0].tagName).toEqual('THEAD');
-                    expect(outputDOM.firstChild.children[1].tagName).toEqual('TBODY');
+                    expect(outputDOM.querySelector('table')).toBeDefined();
+                    expect(outputDOM.querySelector('table thead')).toBeDefined();
+                    expect(outputDOM.querySelector('table tbody')).toBeDefined();
                     done();
                 }, 0);
             });

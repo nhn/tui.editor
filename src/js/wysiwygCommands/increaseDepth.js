@@ -16,10 +16,11 @@ import CommandManager from '../commandManager';
 const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'IncreaseDepth',
     /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+     * Command Handler
+     * @param {WysiwygEditor} wwe WYsiwygEditor instance
      */
     exec(wwe) {
+        const listManager = wwe.componentManager.getManager('list');
         const range = wwe.getEditor().getSelection();
         const $node = $(range.startContainer).closest('li');
         let prevClasses, nodeClasses, nextClasses;
@@ -43,6 +44,7 @@ const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
             }
 
             wwe.getEditor().increaseListLevel();
+            listManager.mergeList($node.get(0));
 
             $node.attr('class', nodeClasses);
             $prev.attr('class', prevClasses);

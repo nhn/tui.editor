@@ -6,6 +6,8 @@
 import domUtils from './domUtils';
 
 const FIND_LI_ELEMENT = /<li/i;
+const DIV_OR_LI = 'DIV,LI';
+const UL_OR_OL = 'OL,UL';
 
 /**
  * Class WwListManager
@@ -48,18 +50,23 @@ class WwListManager {
      * @private
      */
     _initEvent() {
+        this.eventManager.listen('wysiwygSetValueBefore', html => this._convertToArbitraryNestingList(html));
+
         this.eventManager.listen('wysiwygRangeChangeAfter', () => {
             this._findAndRemoveEmptyList();
             this._removeBranchListAll();
-            this._wrapDefaultBlockToListInner();
         });
 
         this.eventManager.listen('wysiwygSetValueAfter', () => {
             this._removeBranchListAll();
-            this._wrapDefaultBlockToListInner();
         });
 
-        this.eventManager.listen('wysiwygProcessHTMLText', html => this._prepareInsertBlankToBetweenSameList(html));
+        this.eventManager.listen('wysiwygProcessHTMLText', html => {
+            html = this._insertBlankToBetweenSameList(html);
+            html = this._convertFromArbitraryNestingList(html);
+
+            return html;
+        });
 
         this.eventManager.listen('convertorAfterHtmlToMarkdownConverted',
             markdown => markdown.replace(/:BLANK_LINE:\n/g, ''));
@@ -87,7 +94,7 @@ class WwListManager {
             if (range.collapsed) {
                 if (this.wwe.getEditor().hasFormat('LI')) {
                     ev.preventDefault();
-                    const $ul = $(range.startContainer).closest('li').children('ul, ol');
+                    const $ul = $(range.startContainer).closest('li').children(UL_OR_OL);
 
                     this.eventManager.emit('command', 'DecreaseDepth');
 
@@ -131,7 +138,7 @@ class WwListManager {
      * @private
      */
     _findAndRemoveEmptyList() {
-        this.wwe.get$Body().find('ul,ol').each((index, node) => {
+        this.wwe.get$Body().find(UL_OR_OL).each((index, node) => {
             if (!(FIND_LI_ELEMENT.test(node.innerHTML))) {
                 $(node).remove();
             }
@@ -177,22 +184,62 @@ class WwListManager {
         $firstLi.remove();
     }
 
-    /**
-     * _wrapDefaultBlockToListInner
-     * Wrap default block to list inner contents
-     * @private
-     */
-    _wrapDefaultBlockToListInner() {
-        this.wwe.get$Body().find('li').each((index, node) => {
-            if ($(node).children('div, p').length <= 0) {
-                $(node).wrapInner('<div />');
-                $(node).find('div').children('ul, ol').appendTo(node);
-            }
-        });
+    _insertBlankToBetweenSameList(html) {
+        return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
     }
 
-    _prepareInsertBlankToBetweenSameList(html) {
-        return html.replace(/<\/(ul|ol)>(<br \/>|<br>){0,}<\1>/g, '</$1>:BLANK_LINE:<$1>');
+    /**
+     * make arbitrary nesting list out of standard list
+     * `<ul><li>text<ul><li>text2</li></ul></li></ul>` to
+     * `<ul><li>text</li><ul><li>text2</li></ul></ul>`
+     * @param {string} html string to convert
+     * @returns {string} converted HTML text
+     * @private
+     */
+    _convertToArbitraryNestingList(html) {
+        const NESTED_LIST_QUERY = 'li > ul, li > ol';
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = html;
+
+        let nestedList = wrapper.querySelector(NESTED_LIST_QUERY);
+        while (nestedList !== null) {
+            const parentLI = nestedList.parentNode;
+            const parentList = parentLI.parentNode;
+
+            parentList.insertBefore(nestedList, parentLI.nextElementSibling);
+
+            nestedList = wrapper.querySelector(NESTED_LIST_QUERY);
+        }
+
+        return wrapper.innerHTML;
+    }
+
+    /**
+     * make standard list out of arbitrary nesting list
+     * `<ul><li>text<ul><li>text2</li></ul></li></ul>` from
+     * `<ul><li>text</li><ul><li>text2</li></ul></ul>`
+     * @param {string} html string to convert
+     * @returns {string} converted HTML text
+     * @private
+     */
+    _convertFromArbitraryNestingList(html) {
+        const NESTED_LIST_QUERY = 'ol > ol, ol > ul, ul > ol, ul > ul';
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.innerHTML = html;
+
+        let nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
+        while (nestedList !== null) {
+            let prevLI = nestedList.previousElementSibling;
+            while (prevLI.tagName !== 'LI') {
+                prevLI = prevLI.previousElementSibling;
+            }
+
+            prevLI.appendChild(nestedList);
+
+            nestedList = wrapperDiv.querySelector(NESTED_LIST_QUERY);
+        }
+
+        return wrapperDiv.innerHTML;
     }
 
     /**
@@ -205,33 +252,105 @@ class WwListManager {
      */
     getLinesOfSelection(start, end) {
         const lines = [];
-        let isEndPassed = false;
+        let isLastLine = false;
         let needNext = true;
         let nextLine;
 
         if (domUtils.isTextNode(start)) {
-            start = $(start).parents('div').first().get(0);
+            start = $(start).parents(DIV_OR_LI).first().get(0);
         }
 
         if (domUtils.isTextNode(end)) {
-            end = $(end).parents('div').first().get(0);
+            end = $(end).parents(DIV_OR_LI).first().get(0);
         }
 
         for (let line = start; needNext; line = nextLine) {
-            if ($(line).is('DIV')) {
+            if ($(line).is(DIV_OR_LI)) {
                 lines.push(line);
 
                 if (line === end) {
-                    isEndPassed = true;
+                    isLastLine = true;
+                } else {
+                    nextLine = this._getNextLine(line, end);
                 }
-                nextLine = line.nextElementSibling;
             } else {
                 break;
             }
-            needNext = nextLine && !isEndPassed;
+            needNext = nextLine && !isLastLine;
         }
 
         return lines;
+    }
+
+    /**
+     * get next line
+     * @param {Node} currentLine - current line node
+     * @param {Node} end - last node in selection
+     * @returns {Node} - next line node
+     * @private
+     */
+    _getNextLine(currentLine, end) {
+        let nextLine = currentLine.nextElementSibling;
+
+        if (!nextLine) {
+            // current line was the last line in ul/ol
+            // while we have lines those has not been processed yet.
+            nextLine = currentLine.parentNode.nextElementSibling;
+        } else if ($(nextLine).is(UL_OR_OL)) {
+            // we don't sure firstChild is LI. arbtrary list can have another ol/ul
+            nextLine = nextLine.querySelector('li');
+        }
+
+        if ($(nextLine).is(DIV_OR_LI) || nextLine === end) {
+            return nextLine;
+        }
+
+        return this._getNextLine(nextLine);
+    }
+
+    /**
+     * merge to previous list
+     * consider remove this function when https://github.com/neilj/Squire/issues/294 resolved
+     * @param {HTMLLIElement} currentLine - current li element
+     * @ignore
+     */
+    mergeList(currentLine) {
+        let currentList = currentLine.parentNode;
+        const prevList = currentList.previousElementSibling;
+        const nextList = currentList.nextElementSibling;
+
+        if (currentList.firstElementChild === currentLine) {
+            if (prevList && $(prevList).is(UL_OR_OL)) {
+                this._mergeList(currentList, prevList);
+                currentList = prevList;
+            }
+        }
+
+        if (currentList.lastElementChild === currentLine) {
+            if (nextList && $(nextList).is(UL_OR_OL)) {
+                this._mergeList(nextList, currentList);
+            }
+        }
+    }
+
+    /**
+     * merge list to targetList
+     * @param {HTMLOListElement|HTMLUListElement} list - list to merge
+     * @param {HTMLOListElement|HTMLUListElement} targetList - target list
+     * @ignore
+     */
+    _mergeList(list, targetList) {
+        let listItem = list.firstElementChild;
+
+        if (targetList && $(targetList).is(UL_OR_OL)) {
+            while (listItem) {
+                const temp = listItem.nextElementSibling;
+                targetList.appendChild(listItem);
+                listItem = temp;
+            }
+
+            list.parentNode.removeChild(list);
+        }
     }
 }
 

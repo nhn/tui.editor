@@ -15,14 +15,15 @@ const CommandManager = require('../commandManager');
  */
 const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
     name: 'DecreaseDepth',
+
     /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WysiwygEditor instance
+     * Command Handler
+     * @param {WysiwygEditor} wwe WysiwygEditor instance
      */
     exec(wwe) {
         let $node = getCurrent$Li(wwe);
 
-        if ($node.length) {
+        if ($node.length && isExecutable($node)) {
             wwe.getEditor().saveUndoState();
 
             const nodeClasses = $node.attr('class');
@@ -35,9 +36,22 @@ const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
 });
 
 /**
+ * test if decrease the depth of given list item
+ * arbitrary list allows list item to be in any position
+ * while markdown spec does not
+ * @param {jQuery} $currentLiNode - jQuery list item element
+ * @returns {boolean} - true to executable
+ * @ignore
+ */
+function isExecutable($currentLiNode) {
+    return !($currentLiNode.next().is('OL,UL'));
+}
+
+/**
  * Get list item element of current selection
  * @param {object} wwe Wysiwyg editor instance
  * @returns {jQuery}
+ * @ignore
  */
 function getCurrent$Li(wwe) {
     const range = wwe.getEditor().getSelection();

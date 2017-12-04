@@ -5,14 +5,13 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('OL', () => {
-    let wwe, sq;
+    let wwe, sq, container;
 
     beforeEach(() => {
-        const $container = $('<div />');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
-        $('body').append($container);
-
-        wwe = new WysiwygEditor($container, new EventManager());
+        wwe = new WysiwygEditor($(container), new EventManager());
 
         wwe.init();
 
@@ -22,10 +21,10 @@ describe('OL', () => {
         sq.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });
@@ -44,9 +43,9 @@ describe('OL', () => {
     it('if have task in range then remove task and change to ul', () => {
         const range = sq.getSelection().cloneRange();
 
-        sq.setHTML('<ul><li data-te-task class="task-list-item"><div>test</div></li></ul>');
+        sq.setHTML('<ul><li data-te-task class="task-list-item">test</li></ul>');
 
-        range.setStart(wwe.get$Body().find('li div')[0].firstChild, 1);
+        range.setStart(wwe.get$Body().find('li')[0].firstChild, 1);
         range.collapse(true);
 
         sq.setSelection(range);
@@ -88,7 +87,7 @@ describe('OL', () => {
         const $div1 = $('<div>hello</div>');
         const $div2 = $('<div>world</div>');
         const $div3 = $('<div>i`m</div>');
-        const $ol = $('<ol><li><div>fine</div></li></ol>');
+        const $ol = $('<ol><li>fine</li></ol>');
 
         $body.append($div1);
         $body.append($div2);
@@ -107,12 +106,12 @@ describe('OL', () => {
         expect(wwe.get$Body().find('li').length).toEqual(4);
     });
 
-    it('do not convert next element of OL with selection start ol within', () => {
+    it('convert next element of OL with selection start ol within', () => {
         const $body = sq.get$Body();
         const $div1 = $('<div>hello</div>');
         const $div2 = $('<div>world</div>');
         const $div3 = $('<div>i`m</div>');
-        const $ol = $('<ol><li><div>fine</div></li></ol>');
+        const $ol = $('<ol><li>fine</li></ol>');
 
         $body.append($ol);
         $body.append($div1);
@@ -121,25 +120,25 @@ describe('OL', () => {
 
         const range = sq.getSelection();
 
-        range.setStart($ol.find('li div')[0].firstChild, 0);
+        range.setStart($ol.find('li')[0].firstChild, 0);
         range.setEnd($div3[0], 1);
         sq.setSelection(range);
 
         OL.exec(wwe);
 
         expect(wwe.get$Body().find('ol').length).toEqual(1);
-        expect(wwe.get$Body().find('li').length).toEqual(1);
+        expect(wwe.get$Body().find('li').length).toEqual(4);
     });
 
     it('change UL to OL', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li><div>fine</div></li></ul>');
+        const $ul = $('<ul><li>fine</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($ul[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ul[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -151,14 +150,14 @@ describe('OL', () => {
 
     it('change UL to OL with selection', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li><div>fine</div></li><li><div>thank you</div></li></ul>');
+        const $ul = $('<ul><li>fine</li><li>thank you</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($ul.find('li div')[0].firstChild, 1);
-        range.setEnd($ul.find('li div')[0].firstChild, 1);
+        range.setStart($ul.find('li')[0].firstChild, 1);
+        range.setEnd($ul.find('li')[0].firstChild, 1);
         sq.setSelection(range);
 
         OL.exec(wwe);
@@ -169,13 +168,13 @@ describe('OL', () => {
 
     it('change TASK to OL', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li class="task-list-item"><div>fine</div></li></ul>');
+        const $ul = $('<ul><li class="task-list-item">fine</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($ul[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ul[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -188,14 +187,14 @@ describe('OL', () => {
 
     it('change TASK to OL with selection', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li class="task-list-item"><div>fine</div></li><li class="task-list-item"><div>thank you</div></li></ul>');
+        const $ul = $('<ul><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($body.find('ul>li>div').eq(0)[0], 0);
-        range.setEnd($body.find('ul>li>div').eq(1)[0], 1);
+        range.setStart($body.find('ul>li').eq(0)[0], 0);
+        range.setEnd($body.find('ul>li').eq(1)[0], 1);
         sq.setSelection(range);
 
         OL.exec(wwe);
@@ -205,7 +204,7 @@ describe('OL', () => {
         expect(wwe.get$Body().find('li').length).toEqual(2);
     });
 
-    it('stop changing format to OL when meet PRE, TABLE element', () => {
+    it('skip changing format to OL from PRE, TABLE element', () => {
         const $body = sq.get$Body();
         const $div1 = $('<div>fine</div>');
         const $div2 = $('<div>thank you</div>');
@@ -225,8 +224,8 @@ describe('OL', () => {
 
         OL.exec(wwe);
 
-        expect(wwe.get$Body().find('ol').length).toEqual(1);
+        expect(wwe.get$Body().find('ol').length).toEqual(2);
         expect(wwe.get$Body().children('pre').length).toEqual(1);
-        expect(wwe.get$Body().find('li').length).toEqual(2);
+        expect(wwe.get$Body().find('li').length).toEqual(3);
     });
 });
