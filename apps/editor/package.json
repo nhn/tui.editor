@@ -1,6 +1,6 @@
 {
   "name": "tui-editor",
-  "version": "0.14.1",
+  "version": "0.14.2",
   "private": true,
   "author": "Sungho Kim <shirenbeat@gmail.com>",
   "repository": "https://github.com/nhnent/tui.editor.git",
