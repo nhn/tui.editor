@@ -49,8 +49,9 @@
     "lint": "eslint src/js",
     "doc": "jsdoc -c jsdoc-conf.json",
     "test": "karma start",
-    "test:ne": "cross-env SERVER=ne karma start",
-    "test:sl": "cross-env SERVER=sl karma start",
+    "test:ne": "cross-env SERVER=nhnent karma start",
+    "test:sl": "cross-env SERVER=saucelabs karma start",
+    "test:lh": "cross-env SERVER=localhost karma start",
     "serve": "webpack-dev-server --progress --inline",
     "build": "cross-env webpack && webpack -p",
     "note": "tuie --tag=$(git describe --tags)"
