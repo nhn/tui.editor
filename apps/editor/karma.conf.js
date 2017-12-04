@@ -2,147 +2,142 @@
 
 const path = require('path');
 const pkg = require('./package.json');
-const webdriverConfig = {
+const nhnentWebDriver = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
 };
+const localhostWebDriver = {
+    hostname: 'localhost',
+    port: 4444,
+    remoteHost: true
+};
+const configurator = {};
+// {('nhnent'|'saucelabs'|'localhost'|'noserver')}
+const SERVER = process.env.SERVER || 'noserver';
+// {('Chrome'|'Safari'|'IE10'|'IE11'|'Edge'|'Firefox'|undefined)}
+const BROWSER = process.env.BROWSER;
 
 /**
- * manipulate config by server
- * @param {Object} defaultConfig - base configuration
- * @param {('ne'|'sl'|null|undefined)} server - ne: team selenium grid, sl: saucelabs, null or undefined: local machine
- * @param {('Chrome'|'Safari'|'IE10'|'IE11'|'Edge'|'Firefox'|null|undefined)} browser - specify browser to run
+ * make customLauncher format object
+ * @param {string} base - 'SauceLabs' || 'WebDriver'
+ * @param {string} browserName - browser name
+ * @param {string} version - browser version
+ * @returns {object} - custom launcher format object
  */
-function setConfig(defaultConfig, server, browser) {
-    if (server === 'ne') {
-        defaultConfig.customLaunchers = {};
-        if (browser === 'IE10' || !browser) {
-            defaultConfig.customLaunchers.IE10 = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: '10'
-            };
-        }
-        if (browser === 'IE11' || !browser) {
-            defaultConfig.customLaunchers.IE11 = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'internet explorer',
-                version: '11'
-            };
-        }
-        if (browser === 'Edge') {
-            defaultConfig.customLaunchers.Edge = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'MicrosoftEdge'
-            };
-        }
-        if (browser === 'Chrome' || !browser) {
-            defaultConfig.customLaunchers['Chrome-WebDriver'] = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'chrome'
-            };
-        }
-        if (browser === 'Firefox' || !browser) {
-            defaultConfig.customLaunchers['Firefox-WebDriver'] = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'firefox'
-            };
-        }
-        if (browser === 'Safari' || !browser) {
-            defaultConfig.customLaunchers['Safari-WebDriver'] = {
-                base: 'WebDriver',
-                config: webdriverConfig,
-                browserName: 'safari'
-            };
-        }
-        defaultConfig.concurrency = 1;
-        defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
-    } else if (server === 'sl') {
-        defaultConfig.sauceLabs = {
-            testName: `${pkg.name} ::: ${pkg.version} ::: ${new Date().toLocaleDateString('en-US')}`,
-            username: process.env.SAUCE_USERNAME,
-            accessKey: process.env.SAUCE_ACCESS_KEY,
-            startConnect: true,
-            tags: [pkg.name, pkg.version],
-            build: pkg.version,
-            passed: true,
-            recordVideo: true,
-            recordScreenshots: true,
-            recordLogs: true,
-            webdriverRemoteQuietExceptions: true
-        };
-        defaultConfig.customLaunchers = {};
-        if (browser === 'Chrome' || !browser) {
-            defaultConfig.customLaunchers.sl_chrome = {
-                base: 'SauceLabs',
-                browserName: 'chrome',
-                platform: 'Windows 10',
-                version: '59.0'
-            };
-        }
-        if (browser === 'Firefox' || !browser) {
-            defaultConfig.customLaunchers.sl_firefox = {
-                base: 'SauceLabs',
-                browserName: 'firefox',
-                platform: 'macOS 10.12',
-                version: '54.0'
-            };
-        }
-        if (browser === 'IE10' || !browser) {
-            defaultConfig.customLaunchers.sl_ie_10 = {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                platform: 'Windows 8',
-                version: '10.0'
-            };
-        }
-        if (browser === 'IE11' || !browser) {
-            defaultConfig.customLaunchers.sl_ie_11 = {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                platform: 'Windows 8.1',
-                version: '11.0'
-            };
-        }
-        if (browser === 'Edge') {
-            defaultConfig.customLaunchers.sl_edge_14 = {
-                base: 'SauceLabs',
-                browserName: 'MicrosoftEdge',
-                platform: 'Windows 10',
-                version: '15.15063'
-            };
-        }
-        if (browser === 'Safari') {
-            defaultConfig.customLaunchers.sl_safari = {
-                base: 'SauceLabs',
-                browserName: 'safari',
-                platform: 'macOS 10.12',
-                version: '10.0'
-            };
-        }
-        defaultConfig.reporters.push('saucelabs');
-        defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
-        defaultConfig.browserNoActivityTimeout = 120000;
-        defaultConfig.concurrency = 5;
-
-        // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
-        // 127.0.0.1    tui.dev
-        // https://support.saucelabs.com/hc/en-us/articles/115010079868-Issues-with-Safari-and-Karma-Test-Runner
-        defaultConfig.hostname = 'tui.dev';
-    } else {
-        browser = browser || 'Chrome';
-        defaultConfig.browsers = [
-            browser
-        ];
-        defaultConfig.singleRun = false;
-    }
+function nhnentLauncher(base, browserName, version) {
+    return {
+        base,
+        browserName,
+        version,
+        config: nhnentWebDriver
+    };
 }
+
+/**
+ * make customLauncher format object
+ * @param {string} base - 'SauceLabs' || 'WebDriver'
+ * @param {string} browserName - browser name
+ * @param {string} platform - os
+ * @param {string} version - browser version
+ * @returns {object} - custom launcher format object
+ */
+function saucelabsLauncher(base, browserName, platform, version) {
+    return {
+        base,
+        browserName,
+        platform,
+        version
+    };
+}
+
+configurator.nhnent = function(defaultConfig) {
+    const customLaunchers = defaultConfig.customLaunchers = {};
+    if (BROWSER === 'IE10' || !BROWSER) {
+        customLaunchers.IE10 = nhnentLauncher('WebDriver', 'internet explorer', '10');
+    }
+    if (BROWSER === 'IE11' || !BROWSER) {
+        customLaunchers.IE11 = nhnentLauncher('WebDriver', 'internet explorer', '11');
+    }
+    if (BROWSER === 'Edge') {
+        customLaunchers.Edge = nhnentLauncher('WebDriver', 'MicrosoftEdge');
+    }
+    if (BROWSER === 'Chrome' || !BROWSER) {
+        customLaunchers['Chrome-WebDriver'] = nhnentLauncher('WebDriver', 'chrome');
+    }
+    if (BROWSER === 'Firefox' || !BROWSER) {
+        customLaunchers['Firefox-WebDriver'] = nhnentLauncher('WebDriver', 'firefox');
+    }
+    if (BROWSER === 'Safari' || !BROWSER) {
+        customLaunchers['Safari-WebDriver'] = nhnentLauncher('WebDriver', 'safari');
+    }
+    defaultConfig.concurrency = 1;
+    defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
+};
+
+configurator.saucelabs = function(defaultConfig) {
+    defaultConfig.sauceLabs = {
+        testName: `${pkg.name} ::: ${pkg.version} ::: ${new Date().toLocaleDateString('en-US')}`,
+        username: process.env.SAUCE_USERNAME,
+        accessKey: process.env.SAUCE_ACCESS_KEY,
+        startConnect: true,
+        tags: [pkg.name, pkg.version],
+        build: pkg.version,
+        passed: true,
+        recordVideo: true,
+        recordScreenshots: true,
+        recordLogs: true,
+        webdriverRemoteQuietExceptions: true
+    };
+    const customLaunchers = defaultConfig.customLaunchers = {};
+    if (BROWSER === 'Chrome' || !BROWSER) {
+        customLaunchers.sl_chrome = saucelabsLauncher('SauceLabs', 'chrome', 'Windows 10', '59.0');
+    }
+    if (BROWSER === 'Firefox' || !BROWSER) {
+        customLaunchers.sl_firefox = saucelabsLauncher('SauceLabs', 'firefox', 'macOS 10.12', '54.0');
+    }
+    if (BROWSER === 'IE10' || !BROWSER) {
+        customLaunchers.sl_ie_10 = saucelabsLauncher('SauceLabs', 'internet explorer', 'Windows 8', '10.0');
+    }
+    if (BROWSER === 'IE11' || !BROWSER) {
+        customLaunchers.sl_ie_11 = saucelabsLauncher('SauceLabs', 'internet explorer', 'Windows 8.1', '11.0');
+    }
+    if (BROWSER === 'Edge') {
+        customLaunchers.sl_edge_14 = saucelabsLauncher('SauceLabs', 'MicrosoftEdge', 'Windows 10', '15.15063');
+    }
+    if (BROWSER === 'Safari') {
+        defaultConfig.customLaunchers.sl_safari = saucelabsLauncher('SauceLabs', 'safari', 'macOS 10.12', '10.0');
+    }
+    defaultConfig.reporters.push('saucelabs');
+    defaultConfig.browsers = Object.keys(defaultConfig.customLaunchers);
+    defaultConfig.browserNoActivityTimeout = 120000;
+    defaultConfig.concurrency = 5;
+
+    // safari & edge browsers can't run TC on localhost. the hostname below should be added to your system too
+    // 127.0.0.1    tui.dev
+    // https://support.saucelabs.com/hc/en-us/articles/115010079868-Issues-with-Safari-and-Karma-Test-Runner
+    defaultConfig.hostname = 'tui.dev';
+};
+
+configurator.localhost = function(defaultConfig) {
+    defaultConfig.customLaunchers = {};
+    defaultConfig.customLaunchers.Chrome = {
+        base: 'WebDriver',
+        config: localhostWebDriver,
+        browserName: 'Chrome'
+    };
+    defaultConfig.browsers = [
+        BROWSER || 'Chrome'
+    ];
+    defaultConfig.singleRun = false;
+};
+
+configurator.noserver = function(defaultConfig) {
+    defaultConfig.browsers = [
+        BROWSER || 'Chrome'
+    ];
+    defaultConfig.singleRun = false;
+};
 
 module.exports = function(config) {
     const defaultConfig = {
@@ -256,6 +251,6 @@ module.exports = function(config) {
         singleRun: true
     };
 
-    setConfig(defaultConfig, process.env.SERVER, process.env.BROWSER);
+    configurator[SERVER](defaultConfig);
     config.set(defaultConfig);
 };
