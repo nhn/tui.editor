@@ -17,8 +17,8 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     name: 'UL',
     keyMap: ['CTRL+U', 'META+U'],
     /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYSIWYGEditor instance
+     * Command Handler
+     * @param {WysiwygEditor} wwe WYSIWYGEditor instance
      */
     exec(wwe) {
         const sq = wwe.getEditor();
@@ -29,32 +29,37 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
             endContainer,
             startOffset,
             endOffset
-         } = range;
+        } = range;
 
         wwe.focus();
         sq.saveUndoState(range);
 
         const lines = listManager.getLinesOfSelection(startContainer, endContainer);
 
+        const newLIs = [];
         for (let i = 0; i < lines.length; i += 1) {
-            this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
+            const newLI = this._changeFormatToUnorderedListIfNeed(wwe, lines[i]);
+            newLIs.push(newLI);
         }
 
         range = sq.getSelection();
-        range.setStart(startContainer, startOffset);
-        range.setEnd(endContainer, endOffset);
+        range.setStart(newLIs[0].firstChild, startOffset);
+        range.setEnd(newLIs[newLIs.length - 1].firstChild, endOffset);
         sq.setSelection(range);
         sq.saveUndoState(range);
     },
+
     /**
      * Change format to unordered list if need
      * @param {WysiwygEditor} wwe Wysiwyg editor instance
      * @param {HTMLElement} target Element target for change
+     * @returns {HTMLElement} newly created list
      * @private
      */
     _changeFormatToUnorderedListIfNeed(wwe, target) {
         const sq = wwe.getEditor();
         const range = sq.getSelection();
+        let newLI = range.startContainer;
 
         if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
             range.setStart(target, 0);
@@ -69,8 +74,13 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
                 wwe.unwrapBlockTag();
                 sq.makeUnorderedList();
             }
+
+            newLI = sq.getSelection().startContainer;
         }
+
+        return newLI;
     }
 });
 
 module.exports = UL;
+

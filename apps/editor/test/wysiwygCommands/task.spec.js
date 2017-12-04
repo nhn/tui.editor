@@ -5,14 +5,13 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('Task', () => {
-    let wwe, sq;
+    let wwe, sq, container;
 
     beforeEach(() => {
-        const $container = $('<div />');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
-        $('body').append($container);
-
-        wwe = new WysiwygEditor($container, new EventManager());
+        wwe = new WysiwygEditor($(container), new EventManager());
 
         wwe.init();
 
@@ -22,10 +21,10 @@ describe('Task', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });
@@ -62,9 +61,9 @@ describe('Task', () => {
     it('add input too if there is nested task list', () => {
         const range = sq.getSelection().cloneRange();
 
-        sq.setHTML('<ul><li><div><br></div><ul><li data-te-task class="task-list-item"></li></ul>');
+        sq.setHTML('<ul><li><br><ul><li data-te-task class="task-list-item"></li></ul>');
 
-        range.setStart(wwe.get$Body().find('ul div')[0], 0);
+        range.setStart(wwe.get$Body().find('ul li')[0], 0);
         range.collapse(true);
 
         sq.setSelection(range);
@@ -103,7 +102,7 @@ describe('Task', () => {
         const $div1 = $('<div>hello</div>');
         const $div2 = $('<div>world</div>');
         const $div3 = $('<div>i`m</div>');
-        const $ol = $('<ul><li><div>fine</div></li></ul>');
+        const $ol = $('<ul><li>fine</li></ul>');
 
         $body.append($ol);
         $body.append($div1);
@@ -112,7 +111,7 @@ describe('Task', () => {
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 0);
+        range.setStart($ol[0].firstChild.firstChild, 0);
         range.setEnd($div3[0], 1);
         sq.setSelection(range);
 
@@ -125,13 +124,13 @@ describe('Task', () => {
 
     it('change UL to Task', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li><div>fine</div></li></ul>');
+        const $ul = $('<ul><li>fine</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($ul[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ul[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -144,13 +143,13 @@ describe('Task', () => {
 
     it('change OL to Task', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li><div>fine</div></li></ol>');
+        const $ol = $('<ol><li>fine</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -163,13 +162,13 @@ describe('Task', () => {
 
     it('change UL to Task with selection', () => {
         const $body = sq.get$Body();
-        const $ul = $('<ul><li><div>fine</div></li><li><div>thank you</div></li></ul>');
+        const $ul = $('<ul><li>fine</li><li>thank you</li></ul>');
 
         $body.append($ul);
 
         const range = sq.getSelection();
 
-        range.setStart($ul[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ul[0].firstChild.firstChild, 1);
         range.setEnd($ul[0].firstChild.nextSibling.firstChild, 1);
         sq.setSelection(range);
 
@@ -182,13 +181,13 @@ describe('Task', () => {
 
     it('change OL to Task with selection', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li><div>fine</div></li><li><div>thank you</div></li></ol>');
+        const $ol = $('<ol><li>fine</li><li>thank you</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
         range.setEnd($ol[0].firstChild.nextSibling.firstChild, 1);
         sq.setSelection(range);
 
@@ -199,7 +198,7 @@ describe('Task', () => {
         expect(wwe.get$Body().find('li').length).toEqual(2);
     });
 
-    it('stop changing format to Task when meet PRE, TABLE element', () => {
+    it('skip changing format to Task from PRE, TABLE element', () => {
         const $body = sq.get$Body();
         const $div1 = $('<div>fine</div>');
         const $div2 = $('<div>thank you</div>');
@@ -219,9 +218,9 @@ describe('Task', () => {
 
         Task.exec(wwe);
 
-        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('ul').length).toEqual(2);
         expect(wwe.get$Body().children('pre').length).toEqual(1);
-        expect(wwe.get$Body().find('li.task-list-item').length).toEqual(2);
-        expect(wwe.get$Body().find('li').length).toEqual(2);
+        expect(wwe.get$Body().find('li.task-list-item').length).toEqual(3);
     });
 });
+

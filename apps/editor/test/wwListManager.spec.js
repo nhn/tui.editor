@@ -3,37 +3,26 @@ import EventManager from '../src/js/eventManager';
 import WwListManager from '../src/js/wwListManager';
 
 describe('WwListManager', () => {
-    let $container, em, wwe, mgr;
+    let container, em, wwe, mgr;
 
     beforeEach(() => {
-        $container = $('<div />');
-
-        $('body').append($container);
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
         em = new EventManager();
 
-        wwe = new WysiwygEditor($container, em);
+        wwe = new WysiwygEditor($(container), em);
 
         wwe.init();
 
         mgr = new WwListManager(wwe);
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
-        });
-    });
-
-    describe('Event', () => {
-        it('wysiwygSetValueAfter: wrap list inner to div after setValue', () => {
-            const html = '<ul><li>test</li></ul>';
-            wwe.setValue(html);
-
-            expect(wwe.get$Body().find('li div').length).toEqual(1);
-            expect(wwe.get$Body().find('li div').text()).toEqual('test');
         });
     });
 
@@ -67,6 +56,34 @@ describe('WwListManager', () => {
             expect(wwe.get$Body().find('ul').length).toEqual(1);
             expect(wwe.get$Body().find('ul li').text()).toEqual('survived!');
             expect(wwe.get$Body().find('ol li').text()).toEqual('me too!');
+        });
+    });
+
+    describe('convert from/to arbitrary nesting list', () => {
+        it('_convertToArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
+            expect(mgr._convertToArbitraryNestingList('<ul><li>text<ul><li>text2</li></ul></li></ul>'))
+                .toBe('<ul><li>text</li><ul><li>text2</li></ul></ul>');
+        });
+
+        it('_convertFromArbitraryNestingList should convert nested ul to arbitrary nested ul', () => {
+            expect(mgr._convertFromArbitraryNestingList('<ul><li>text</li><ul><li>text2</li></ul></ul>'))
+                .toBe('<ul><li>text<ul><li>text2</li></ul></li></ul>');
+        });
+
+        it('should be called _convertToArbitraryNestingList on wysiwygSetValueBefore', () => {
+            const standardList = '<ul><li>text<ul><li>text2</li></ul></li></ul>';
+
+            const arbitraryList = em.emitReduce('wysiwygSetValueBefore', standardList);
+
+            expect(arbitraryList).toBe('<ul><li>text</li><ul><li>text2</li></ul></ul>');
+        });
+
+        it('should be called _convertFromArbitraryNestingList on wysiwygProcessHTMLText', () => {
+            const standardList = '<ul><li>text</li><ul><li>text2</li></ul></ul>';
+
+            const arbitraryList = em.emitReduce('wysiwygProcessHTMLText', standardList);
+
+            expect(arbitraryList).toBe('<ul><li>text<ul><li>text2</li></ul></li></ul>');
         });
     });
 
@@ -154,7 +171,7 @@ describe('WwListManager', () => {
                 '</ul>'
             ].join('');
 
-            const result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._insertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
@@ -172,7 +189,7 @@ describe('WwListManager', () => {
                 '</ul>'
             ].join('');
 
-            const result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._insertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
@@ -188,27 +205,135 @@ describe('WwListManager', () => {
                 '</ul>'
             ].join('');
 
-            const result = mgr._prepareInsertBlankToBetweenSameList(html);
+            const result = mgr._insertBlankToBetweenSameList(html);
 
             expect(result.indexOf(':BLANK_LINE:')).not.toBe(-1);
             expect(result.indexOf('<br />')).toBe(-1);
         });
     });
-    describe('_wrapDefaultBlockToListInner', () => {
-        it('Wrap default blocks to list top inline nodes', () => {
-            wwe.getEditor().setHTML([
-                '<ul>',
-                '<li>',
-                't1<br>',
-                '<ul><li>t2<br></li></ul>',
-                '</li>',
-                '</ul>'].join(''));
 
-            mgr._wrapDefaultBlockToListInner();
+    describe('mergeList', () => {
+        it('should merge list to previous list', () => {
+            const list = $(`
+                <ol>
+                    <li>1</li>
+                    <ul>
+                        <li>2</li>
+                    </ul>
+                    <ol>
+                        <li id="target">3</li>
+                        <li>4</li>
+                    </ol>
+                </ol>
+            `)[0];
 
-            expect(wwe.get$Body().find('div').length).toEqual(2);
-            expect(wwe.get$Body().find('div').eq(0).text()).toEqual('t1');
-            expect(wwe.get$Body().find('div').eq(1).text()).toEqual('t2');
+            mgr.mergeList(list.querySelector('#target'));
+
+            // <ol>
+            //   <li>1</li>
+            //   <ul>
+            //     <li>2</li>
+            //     <li id="target">3</li>
+            //     <li>4</li>
+            //   </ul>
+            // </ol>
+            expect(list.querySelectorAll('ol > ul > li').length).toBe(3);
+            expect(list.querySelectorAll('ol > ol').length).toBe(0);
+        });
+
+        it('should not merge list to previous list if target is not the first list item', () => {
+            const list = $(`
+                <ol>
+                    <li>1</li>
+                    <ul>
+                        <li>2</li>
+                    </ul>
+                    <ol>
+                        <li>3</li>
+                        <li id="target">4</li>
+                    </ol>
+                </ol>
+            `)[0];
+
+            mgr.mergeList(list.querySelector('#target'));
+
+            // <ol>
+            //   <li>1</li>
+            //   <ul>
+            //     <li>2</li>
+            //   </ul>
+            //   <ol>
+            //     <li>3</li>
+            //     <li id="target">4</li>
+            //   </ol>
+            // </ol>
+            expect(list.querySelectorAll('ol > ul > li').length).toBe(1);
+            expect(list.querySelectorAll('ol > ol > li').length).toBe(2);
+        });
+
+        it('should merge next list', () => {
+            // merge rule: merge to previous list
+            const list = $(`
+                <ol>
+                    <li>1</li>
+                    <ol>
+                        <li id="target">2</li>
+                    </ol>
+                    <ul>
+                        <li>3</li>
+                        <li>4</li>
+                    </ul>
+                </ol>
+            `)[0];
+
+            mgr.mergeList(list.querySelector('#target'));
+
+            // <ol>
+            //   <li>1</li>
+            //   <ol>
+            //     <li id="target">2</li>
+            //     <li>3</li>
+            //     <li>4</li>
+            //   </ol>
+            // </ol>
+            expect(list.querySelectorAll('ol > ol > li').length).toBe(3);
+            expect(list.querySelectorAll('ol > ul').length).toBe(0);
+        });
+
+        it('should merge prev/next list', () => {
+            // merge rule: merge to previous list
+            const list = $(`
+                <ol>
+                    <li>1</li>
+                    <ul>
+                        <li>2</li>
+                        <li>3</li>
+                    </ul>
+                    <ol>
+                        <li id="target">4</li>
+                    </ol>
+                    <ul>
+                        <li>5</li>
+                        <li>6</li>
+                    </ul>
+                </ol>
+            `)[0];
+
+            mgr.mergeList(list.querySelector('#target'));
+
+            // <ol>
+            //   <li>1</li>
+            //   <ul>
+            //     <li>2</li>
+            //     <li>3</li>
+            //     <li id="target">4</li>
+            //     <li>5</li>
+            //     <li>6</li>
+            //   </ul>
+            // </ol>
+            expect(list.querySelectorAll('ol > ul > li').length).toBe(5);
+            expect(list.querySelectorAll('ol > ul').length).toBe(1);
+            expect(list.querySelectorAll('ol > ol').length).toBe(0);
         });
     });
 });

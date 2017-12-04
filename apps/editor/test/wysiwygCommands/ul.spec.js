@@ -5,14 +5,13 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('UL', () => {
-    let wwe, sq;
+    let wwe, sq, container;
 
     beforeEach(() => {
-        const $container = $('<div />');
+        container = document.createElement('div');
+        document.body.appendChild(container);
 
-        $('body').append($container);
-
-        wwe = new WysiwygEditor($container, new EventManager());
+        wwe = new WysiwygEditor($(container), new EventManager());
 
         wwe.init();
 
@@ -22,10 +21,10 @@ describe('UL', () => {
         sq.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            document.body.removeChild(container);
             done();
         });
     });
@@ -69,7 +68,7 @@ describe('UL', () => {
         const $div1 = $('<div>hello</div>');
         const $div2 = $('<div>world</div>');
         const $div3 = $('<div>i`m</div>');
-        const $ol = $('<ul><li><div>fine</div></li></ul>');
+        const $ol = $('<ul><li>fine</li></ul>');
 
         $body.append($div1);
         $body.append($div2);
@@ -93,7 +92,7 @@ describe('UL', () => {
         const $div1 = $('<div>hello</div>');
         const $div2 = $('<div>world</div>');
         const $div3 = $('<div>i`m</div>');
-        const $ol = $('<ol><li><div>fine</div></li></ol>');
+        const $ol = $('<ol><li>fine</li></ol>');
 
         $body.append($ol);
         $body.append($div1);
@@ -102,7 +101,7 @@ describe('UL', () => {
 
         const range = sq.getSelection();
 
-        range.setEnd($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setEnd($ol[0].firstChild.firstChild, 1);
         range.setStart($div3[0].firstChild, 1);
         sq.setSelection(range);
 
@@ -114,13 +113,13 @@ describe('UL', () => {
 
     it('change OL to UL', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li><div>fine</div></li></ol>');
+        const $ol = $('<ol><li>fine</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -132,14 +131,14 @@ describe('UL', () => {
 
     it('change OL to UL with selection', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li><div>fine</div></li><li><div>thank you</div></li></ol>');
+        const $ol = $('<ol><li>fine</li><li>thank you</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
-        range.setEnd($ol[0].firstChild.nextSibling.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
+        range.setEnd($ol[0].firstChild.nextSibling, 1);
         sq.setSelection(range);
 
         UL.exec(wwe);
@@ -150,13 +149,13 @@ describe('UL', () => {
 
     it('change TASK to UL', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li class="task-list-item"><div>fine</div></li></ol>');
+        const $ol = $('<ol><li class="task-list-item">fine</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
         range.collapse(true);
         sq.setSelection(range);
 
@@ -170,13 +169,13 @@ describe('UL', () => {
 
     it('change TASK to UL with selection', () => {
         const $body = sq.get$Body();
-        const $ol = $('<ol><li class="task-list-item"><div>fine</div></li><li class="task-list-item"><div>thank you</div></li></ol>');
+        const $ol = $('<ol><li class="task-list-item">fine</li><li class="task-list-item">thank you</li></ol>');
 
         $body.append($ol);
 
         const range = sq.getSelection();
 
-        range.setStart($ol[0].firstChild.firstChild.firstChild, 1);
+        range.setStart($ol[0].firstChild.firstChild, 1);
         range.setEnd($ol[0].firstChild.nextSibling.firstChild, 1);
         sq.setSelection(range);
 
@@ -187,7 +186,7 @@ describe('UL', () => {
         expect(wwe.get$Body().find('li').length).toEqual(2);
     });
 
-    it('stop changing format to UL when meet PRE, TABLE element', () => {
+    it('skip changing format to UL from TABLE/PRE element', () => {
         const $body = sq.get$Body();
         const $div1 = $('<div>fine</div>');
         const $div2 = $('<div>thank you</div>');
@@ -207,8 +206,8 @@ describe('UL', () => {
 
         UL.exec(wwe);
 
-        expect(wwe.get$Body().find('ul').length).toEqual(1);
+        expect(wwe.get$Body().find('ul').length).toEqual(2);
         expect(wwe.get$Body().children('pre').length).toEqual(1);
-        expect(wwe.get$Body().find('li').length).toEqual(2);
+        expect(wwe.get$Body().find('li').length).toEqual(3);
     });
 });
