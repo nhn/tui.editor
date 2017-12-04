@@ -1,6 +1,6 @@
 /*!
  * tui-editor
- * @version 0.14.1
+ * @version 0.14.2
  * @author Sungho Kim <shirenbeat@gmail.com>
  * @license MIT
  */
@@ -16863,7 +16863,7 @@ var ImportManager = function () {
             var types = cbData.types;
 
 
-            if (blobItems && types && types.length === 1 && util.inArray('Files', [].slice.call(types)) !== -1) {
+            if (blobItems && types && util.inArray('Files', [].slice.call(types)) !== -1) {
                 this._processBlobItems(blobItems, evData);
             }
         }
