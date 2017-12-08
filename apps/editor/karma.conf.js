@@ -13,10 +13,12 @@ const localhostWebDriver = {
     remoteHost: true
 };
 const configurator = {};
-// {('nhnent'|'saucelabs'|'localhost'|'noserver')}
+// 'nhnent'|'saucelabs'|'localhost'|'noserver'
 const SERVER = process.env.SERVER || 'noserver';
-// {('Chrome'|'Safari'|'IE10'|'IE11'|'Edge'|'Firefox'|undefined)}
+// 'Chrome'|'Safari'|'IE10'|'IE11'|'Edge'|'Firefox'
 const BROWSER = process.env.BROWSER;
+// 'true'|'false'
+const SINGLE_RUN = process.env.SINGLE_RUN === 'true';
 
 /**
  * make customLauncher format object
@@ -129,14 +131,14 @@ configurator.localhost = function(defaultConfig) {
     defaultConfig.browsers = [
         BROWSER || 'Chrome'
     ];
-    defaultConfig.singleRun = false;
+    defaultConfig.singleRun = SINGLE_RUN || false;
 };
 
 configurator.noserver = function(defaultConfig) {
     defaultConfig.browsers = [
         BROWSER || 'Chrome'
     ];
-    defaultConfig.singleRun = false;
+    defaultConfig.singleRun = SINGLE_RUN || false;
 };
 
 module.exports = function(config) {
@@ -248,7 +250,7 @@ module.exports = function(config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: true
+        singleRun: SINGLE_RUN || true
     };
 
     configurator[SERVER](defaultConfig);
