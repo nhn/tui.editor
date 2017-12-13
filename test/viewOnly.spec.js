@@ -1,37 +1,17 @@
 
 import ToastUIEditorViewOnly from '../src/js/viewOnly';
+import {CodeBlockManager} from '../src/js/codeBlockManager';
 
 const MarkDownIt = window.markdownit;
 
-describe('Editor', () => {
-    let wrapper, viewOnly;
-
-    beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
-        viewOnly = new ToastUIEditorViewOnly({
-            el: $(wrapper)
-        });
+describe('ViewOnly', () => {
+    it('markdownitHighlight should be MarkDownIt instance', () => {
+        expect(ToastUIEditorViewOnly.markdownitHighlight instanceof MarkDownIt).toBe(true);
     });
-
-    // we need to wait squire input event process
-    afterEach(()=> {
-        document.body.removeChild(wrapper);
+    it('domUtils should have it\' functions', () => {
+        expect(typeof ToastUIEditorViewOnly.domUtils.getNodeName).toBe('function');
     });
-
-    it('getMarkdownHighlightRenderer() should get MarkDownIt instance', () => {
-        expect(viewOnly.getMarkdownHighlightRenderer() instanceof MarkDownIt).toBe(true);
-    });
-
-    it('setMarkdownHighlightRenderer() should set MarkDownIt instance', () => {
-        const markdownitHighlight = new markdownit({
-            highlight() {
-                return 'changed';
-            }
-        });
-        viewOnly.setMarkdownHighlightRenderer(markdownitHighlight);
-        viewOnly.setMarkdown('```\nbefore changed\n```');
-
-        expect(wrapper.querySelector('code').innerText).toBe('changed');
+    it('codeBlockManager should be CodeBlockManager instance', () => {
+        expect(ToastUIEditorViewOnly.codeBlockManager instanceof CodeBlockManager).toBe(true);
     });
 });

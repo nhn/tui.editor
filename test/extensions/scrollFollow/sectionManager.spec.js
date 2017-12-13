@@ -1,9 +1,9 @@
-import TuiEditor from '../../src/js/editor';
-import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager';
+import TuiEditor from '../../../src/js/editor';
+import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
 
 const loadStyleFixtures = window.loadStyleFixtures;
 
-describe('scrollFollow.sectionManager', () => {
+describe('sectionManager', () => {
     let ned, sectionManager, container;
 
     beforeEach(() => {

@@ -35,7 +35,7 @@ class I18n {
      * @param {string|string[]} codes locale code
      * @param {object} data language set
      */
-    setLang(codes, data) {
+    setLanguage(codes, data) {
         codes = [].concat(codes);
 
         codes.forEach(code => {
@@ -84,4 +84,4 @@ class I18n {
 }
 
 export {I18n};
-export default I18n.getSharedInstance();
+export default new I18n();

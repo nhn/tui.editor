@@ -6,7 +6,7 @@ import {
     parseURL2ChartData,
     parseCode2DataAndOptions,
     detectDelimiter
-} from '../../src/js/extensions/codeBlockChart';
+} from '../../src/js/extensions/chart/chart';
 
 describe('CodeBlockChart', () => {
     let wrapper;

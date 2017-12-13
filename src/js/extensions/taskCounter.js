@@ -3,12 +3,18 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const extManager = require('../extManager');
+import Editor from '../editor';
+import EditorViewOnly from '../viewOnly';
 
 const FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 const FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
 
-extManager.defineExtension('taskCounter', editor => {
+/**
+ * task counter extension
+ * @param {Editor} editor - editor instance
+ * @ignore
+ */
+function taskCounterExtension(editor) {
     editor.getTaskCount = () => {
         let found, count;
 
@@ -38,4 +44,6 @@ extManager.defineExtension('taskCounter', editor => {
 
         return count;
     };
-});
+}
+
+(Editor || EditorViewOnly).defineExtension('taskCounter', taskCounterExtension);

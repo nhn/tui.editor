@@ -11,7 +11,9 @@
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <script src="../lib/tui-component-colorpicker/dist/colorpicker.js"></script>
-    <script src="../dist/tui-editor.js"></script>
+    <script src="../dist/tui-editor-Editor.js"></script>
+    <script src="../dist/tui-editor-extTable.js"></script>
+    <script src="../dist/tui-editor-extColorSyntax.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
@@ -38,7 +40,7 @@
         initialEditType: 'markdown',
         previewStyle: 'vertical',
         height: '300px',
-        exts: ['colorSyntax', 'tableExtension'],
+        exts: ['colorSyntax', 'table'],
         contentCSSStyles: [
             '../dist/tui-editor-contents.css'
         ],

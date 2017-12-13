@@ -1,4 +1,5 @@
-import i18n from '../../i18n';
+import Editor from '../../editor';
+const i18n = Editor ? Editor.i18n : null;
 
 /**
  * Change contextmenu content.

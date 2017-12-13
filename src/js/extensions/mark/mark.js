@@ -2,8 +2,9 @@
  * @fileoverview Implements mark extension for making text marker
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import Editor from '../../editor';
+import EditorViewOnly from '../../viewOnly';
 
-import extManager from '../../extManager';
 import MarkerList from './markerList';
 import MarkerManager from './markerManager';
 import WysiwygMarkerHelper from './wysiwygMarkerHelper';
@@ -16,10 +17,11 @@ const MARKER_UPDATE_DELAY = 100;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
- * Mark Extension
- * Define marker extension
+ * mark extension
+ * @param {Editor} editor - editor instance
+ * @ignore
  */
-extManager.defineExtension('mark', editor => {
+function markExtension(editor) {
     const ml = new MarkerList();
     const mm = new MarkerManager(ml);
     let wmh, mmh, vmh;
@@ -243,4 +245,6 @@ extManager.defineExtension('mark', editor => {
             editor.eventManager.emit('markerUpdated', ml.getAll());
         };
     }
-});
+}
+
+(Editor || EditorViewOnly).defineExtension('mark', markExtension);

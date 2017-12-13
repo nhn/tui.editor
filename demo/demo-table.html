@@ -30,7 +30,8 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor.js"></script>
+<script src="../dist/tui-editor-Editor.js"></script>
+<script src="../dist/tui-editor-extTable.js"></script>
 <script>
     var content = '# Heading 1' + '\n'
         + '## Heading 2' + '\n'
@@ -60,7 +61,7 @@
         viewOnly: false,
         height: '400px',
         initialValue: content,
-        exts: ['tableExtension']
+        exts: ['table']
     });
 </script>
 </body>

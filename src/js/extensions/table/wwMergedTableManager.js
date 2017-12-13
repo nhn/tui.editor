@@ -2,14 +2,14 @@
  * @fileoverview Implements wysiwyg merged table manager
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
-
-import WwTableManager from '../../wwTableManager';
+import Editor from '../../editor';
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 import tableRangeHandler from './tableRangeHandler';
-import i18n from '../../i18n';
 
 const {util} = tui;
+const WwTableManager = Editor ? Editor.WwTableManager : null;
+const i18n = Editor ? Editor.i18n : {};
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 
@@ -328,7 +328,7 @@ class WwMergedTableManager extends WwTableManager {
      * @private
      */
     _updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData, tableData, targetRowCount,
-                                                      targetColCount, startRange) {
+        targetColCount, startRange) {
         let updated = true;
         const startCellIndex = {
             rowIndex: 0,
@@ -397,7 +397,7 @@ class WwMergedTableManager extends WwTableManager {
             };
 
             updated = this._updateClipboardDataForPasteToSamllerSelectedArea(clipboardTableData,
-                                                       tableData, targetRowCount, targetColCount, startRange);
+                tableData, targetRowCount, targetColCount, startRange);
         }
 
         if (updated) {

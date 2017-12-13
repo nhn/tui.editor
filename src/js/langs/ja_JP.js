@@ -1,4 +1,6 @@
-tui.Editor.i18n.setLang(['ja', 'ja_JP'], {
+import Editor from '../editor';
+
+Editor.i18n.setLanguage(['ja', 'ja_JP'], {
     'Markdown': 'マークダウン',
     'WYSIWYG': 'WYSIWYG',
     'Write': '編集する',

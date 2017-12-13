@@ -31,7 +31,8 @@
 <body style='padding:0;margin:0'>
 <button id="addMarker">ADD MARKER</button>
 <div id="editSection"></div>
-<script src="../dist/tui-editor.js"></script>
+<script src="../dist/tui-editor-Editor.js"></script>
+<script src="../dist/tui-editor-extMark.js"></script>
 <script>
     if (!window.console || !console.log) {
         window.console = {};
@@ -40,7 +41,7 @@
     $('#editSection').tuiEditor({
         viewOnly: true,
         initialValue: '# Hello\n## this is world\n\nfirst view mode',
-        exts: ['mark', 'colorSyntax'],
+        exts: ['mark'],
         events: {
             load: function(editor) {
                 editor.setValueWithMarkers('### ab[cdee(wf\n* a**bd)**efg\n\n123]4\nmse\n1\n3\n4\n5\nmse\n1\n3\n4\n5mse\n1\n3\n4\n5\nmse\n1\n3\n4\n5\n* [ ] test\n    * [ ] test\n    * [ ] test\n    * [ ] test\n    * [ ] test\n* [x] test2', [

@@ -1,53 +1,52 @@
 /**
- * @fileoverview Implements mergedTableAlignCol
+ * @fileoverview Implements mergedTableAlignCol. Align selected column's text content to given direction
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import CommandManager from '../../commandManager';
+import Editor from '../../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const {util} = tui;
 
-/**
- * AlignCol
- * Align selected column's text content to given direction
- * @augments Command
- * @augments WysiwygCommand
- * @ignore
- */
-const AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
-    name: 'AlignCol',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-     * @param {string} alignDirection - align direction for table header
-     */
-    exec(wwe, alignDirection) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+let AlignCol;
 
-        wwe.focus();
+if (Editor) {
+    const {CommandManager} = Editor;
 
-        if (!sq.hasFormat('TABLE')) {
-            return;
+    AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
+        name: 'AlignCol',
+        /**
+        * Command handler.
+        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+        * @param {string} alignDirection - align direction for table header
+        */
+        exec(wwe, alignDirection) {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection().cloneRange();
+
+            wwe.focus();
+
+            if (!sq.hasFormat('TABLE')) {
+                return;
+            }
+
+            const $startContainer = $(range.startContainer);
+            const $table = $startContainer.closest('table');
+            const tableData = dataHandler.createTableData($table);
+            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+            _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
+
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+            const focusCell = _findFocusCell($newTable, $startContainer);
+
+            tableRenderer.focusToCell(sq, range, focusCell);
         }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-        _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, $startContainer);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-    }
-});
+    });
+}
 
 /**
  * Align to table header.

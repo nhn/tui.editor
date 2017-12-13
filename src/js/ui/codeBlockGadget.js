@@ -9,7 +9,6 @@ const GADGET_HEIGHT = 30;
  * @extends {BlockOverlay}
  */
 class CodeBlockGadget extends BlockOverlay {
-
     /**
      * Creates an instance of CodeBlockGadget.
      * @param {Object} options - options

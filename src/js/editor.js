@@ -3,6 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
+import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
 import MarkdownPreview from './mdPreview';
 import WysiwygEditor from './wysiwygEditor';
@@ -11,11 +12,16 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import ImportManager from './importManager';
-import CodeBlockManager from './codeBlockManager';
+import WwCodeBlockManager from './wwCodeBlockManager';
 import Convertor from './convertor';
 import ViewOnly from './viewOnly';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
+import domUtils from './domUtils';
+import WwTablemanager from './wwTableManager';
+import WwTableSelectionManager from './wwTableSelectionManager';
+import {CodeBlockManager} from './codeBlockManager';
+import codeBlockManager from './codeBlockManager';
 
 // markdown commands
 import mdBold from './markdownCommands/bold';
@@ -648,24 +654,6 @@ class ToastUIEditor {
     }
 
     /**
-     * get markdownit with code highlight instance from convertor
-     * @returns {markdownit} - markdownit instance
-     * @memberof ToastUIEditor
-     */
-    getMarkdownHighlightRenderer() {
-        return this.convertor.getMarkdownHighlightRenderer();
-    }
-
-    /**
-     * set markdownit instance
-     * @param {markdownit} markdownitHighlight - markdownit instance
-     * @memberof ToastUIEditor
-     */
-    setMarkdownHighlightRenderer(markdownitHighlight) {
-        this.convertor.setMarkdownHighlightRenderer(markdownitHighlight);
-    }
-
-    /**
      * Get instance of TUIEditor
      * @memberof ToastUIEditor
      * @returns {Array}
@@ -744,9 +732,57 @@ class ToastUIEditor {
 }
 
 /**
- * Export i18n instance
+ * I18n instance
  * @type {I18n}
  */
 ToastUIEditor.i18n = i18n;
+
+/**
+ * domUtil instance
+ * @type {DomUtil}
+ */
+ToastUIEditor.domUtils = domUtils;
+
+/**
+ * CodeBlockManager instance
+ * @type {CodeBlockManager}
+ */
+ToastUIEditor.codeBlockManager = codeBlockManager;
+
+/**
+ * Button Class
+ * @type (typeof Button)
+ */
+ToastUIEditor.Button = Button;
+
+/**
+ * WwCodeBlockManager class
+ * @type {typeof WwCodeBlockManager}
+ */
+ToastUIEditor.WwCodeBlockManager = WwCodeBlockManager;
+
+/**
+ * WwTableManager class
+ * @type {typeof WwTablemanager}
+ */
+ToastUIEditor.WwTableManager = WwTablemanager;
+
+/**
+ * WwTableManager class
+ * @type {typeof WwTablemanager}
+ */
+ToastUIEditor.WwTableSelectionManager = WwTableSelectionManager;
+
+/**
+ * CommandManager class
+ * @type {typeof WwTablemanager}
+ */
+ToastUIEditor.CommandManager = CommandManager;
+
+/**
+ * MarkdownIt hightlight instance
+ * @type {typeof MarkdownIt}
+ */
+ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
 module.exports = ToastUIEditor;

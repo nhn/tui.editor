@@ -1,6 +1,6 @@
-let MarkdownMarkerHelper = require('../../../src/js/extensions/mark/markdownMarkerHelper');
+import MarkdownMarkerHelper from '../../../src/js/extensions/mark/markdownMarkerHelper';
 
-let CodeMirror = window.CodeMirror;
+const CodeMirror = window.CodeMirror;
 
 describe('MarkdownMarkerHelper', function() {
     let cm, mmh, cmTextarea;

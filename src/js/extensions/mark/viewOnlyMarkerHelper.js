@@ -2,8 +2,10 @@
  * @fileoverview Implements viewOnly marker helper for additional information
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import Editor from '../../editor';
+import EditorViewOnly from '../../viewOnly';
 
-const domUtils = require('../../domUtils');
+const domUtils = (Editor || EditorViewOnly).domUtils;
 
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 

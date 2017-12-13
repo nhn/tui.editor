@@ -1,4 +1,6 @@
-tui.Editor.i18n.setLang(['zh', 'zh_CN'], {
+import Editor from '../editor';
+
+Editor.i18n.setLanguage(['zh', 'zh_CN'], {
     'Markdown': 'Markdown',
     'WYSIWYG': '所见即所得',
     'Write': '编辑',

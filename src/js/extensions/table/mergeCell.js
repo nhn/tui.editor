@@ -3,7 +3,7 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import CommandManager from '../../commandManager';
+import Editor from '../../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
@@ -11,42 +11,47 @@ import tableRenderer from './tableRenderer';
 const {util} = tui;
 const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
-const MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
-    name: 'MergeCells',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
+let MergeCell;
 
-        wwe.focus();
+if (Editor) {
+    const {CommandManager} = Editor;
+    MergeCell = CommandManager.command('wysiwyg', /** @lends MergeCell */{
+        name: 'MergeCells',
+        /**
+        * Command handler.
+        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+        */
+        exec(wwe) {
+            const sq = wwe.getEditor();
 
-        if (!sq.hasFormat('TABLE')) {
-            return;
+            wwe.focus();
+
+            if (!sq.hasFormat('TABLE')) {
+                return;
+            }
+
+            const selectionManager = wwe.componentManager.getManager('tableSelection');
+            const $selectedCells = selectionManager.getSelectedCells();
+
+            if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
+                return;
+            }
+
+            const range = sq.getSelection().cloneRange();
+            const $startContainer = $(range.startContainer);
+            const $table = $startContainer.closest('table');
+            const tableData = dataHandler.createTableData($table);
+            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+            _mergeCells(tableData, tableRange);
+
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+            const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+            tableRenderer.focusToCell(sq, range, focusCell);
         }
-
-        const selectionManager = wwe.componentManager.getManager('tableSelection');
-        const $selectedCells = selectionManager.getSelectedCells();
-
-        if ($selectedCells.length < 2 || selectionManager.hasSelectedBothThAndTd($selectedCells)) {
-            return;
-        }
-
-        const range = sq.getSelection().cloneRange();
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-        _mergeCells(tableData, tableRange);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-    }
-});
+    });
+}
 
 /**
  * Pick merger content from selected cells.

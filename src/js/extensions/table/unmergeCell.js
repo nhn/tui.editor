@@ -3,47 +3,52 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import CommandManager from '../../commandManager';
+import Editor from '../../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const {util} = tui;
 
-const UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
-    name: 'UnmergeCells',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+let UnmergeCell;
 
-        wwe.focus();
+if (Editor) {
+    const {CommandManager} = Editor;
+    UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
+        name: 'UnmergeCells',
+        /**
+        * Command handler.
+        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+        */
+        exec(wwe) {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection().cloneRange();
 
-        if (!sq.hasFormat('TABLE')) {
-            return;
+            wwe.focus();
+
+            if (!sq.hasFormat('TABLE')) {
+                return;
+            }
+
+            const $startContainer = $(range.startContainer);
+            const $table = $startContainer.closest('table');
+            const tableData = dataHandler.createTableData($table);
+            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+            if (!_hasMergedCell(tableData, tableRange)) {
+                return;
+            }
+
+            _unmergeCells(tableData, tableRange);
+
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+            const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
+
+            tableRenderer.focusToCell(sq, range, focusCell);
         }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-        if (!_hasMergedCell(tableData, tableRange)) {
-            return;
-        }
-
-        _unmergeCells(tableData, tableRange);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.start.colIndex);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-    }
-});
+    });
+}
 
 /**
  * Whether has merged cell.

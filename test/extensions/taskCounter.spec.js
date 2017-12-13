@@ -1,16 +1,18 @@
 import TuiEditor from '../../src/js/editor';
+import '../../src/js/extensions/taskCounter';
 
 describe('taskCounter', () => {
-    let ned, container;
+    let ned, wrapper;
 
     beforeEach(() => {
-        $('body').html('<div id="editSection"></div>');
+        wrapper = document.createElement('div');
+        document.body.appendChild(wrapper);
     });
 
     // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
-            $('body').empty();
+            wrapper.parentNode.removeChild(wrapper);
             done();
         });
     });
@@ -18,7 +20,7 @@ describe('taskCounter', () => {
     describe('viewOnly', () => {
         beforeEach(() => {
             ned = TuiEditor.factory({
-                el: $('#editSection').get(0),
+                el: wrapper,
                 viewOnly: true,
                 exts: ['taskCounter']
             });
@@ -55,7 +57,7 @@ describe('taskCounter', () => {
     describe('wysiwyg', () => {
         beforeEach(() => {
             ned = new TuiEditor({
-                el: $('#editSection').get(0),
+                el: wrapper,
                 previewStyle: 'tab',
                 height: '300px',
                 initialEditType: 'wysiwyg',
@@ -98,7 +100,7 @@ describe('taskCounter', () => {
     describe('markdown', () => {
         beforeEach(() => {
             ned = new TuiEditor({
-                el: $('#editSection').get(0),
+                el: wrapper,
                 previewStyle: 'tab',
                 height: '300px',
                 initialEditType: 'markdown',

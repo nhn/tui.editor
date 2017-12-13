@@ -35,7 +35,7 @@
     "toMark": "https://github.com/nhnent/toMark.git#0.0.18",
     "tui-component-colorpicker": "~1.0.2",
     "squire-rte": "https://github.com/neilj/Squire.git#306230d0df9b38047cd06204476ddc0582569cfd",
-    "plantuml-encoder": "^1.2.4",
+    "plantuml-encoder": "https://github.com/aleung/plantuml-encoder.git#156729063bfa62da6fa5f577627ebab57ae98c95",
     "tui-chart": "^2.9.4"
   },
   "resolutions": {

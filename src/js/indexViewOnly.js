@@ -3,18 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-// default extensions
-require('./extensions/taskCounter');
-require('./extensions/colorSyntax');
-require('./extensions/mark/mark');
-require('./extensions/table/tableExtension');
-require('./extensions/codeBlockPlantUML');
-require('./extensions/codeBlockChart');
-
 import ToastUIEditorViewOnly from './viewOnly';
-
-window.tui = window.tui || {};
-window.tui.EditorViewOnly = ToastUIEditorViewOnly;
 
 // for jquery
 $.fn.tuiEditorViewOnly = function(...args) {
@@ -40,3 +29,5 @@ $.fn.tuiEditorViewOnly = function(...args) {
 
     return this;
 };
+
+module.exports = ToastUIEditorViewOnly;

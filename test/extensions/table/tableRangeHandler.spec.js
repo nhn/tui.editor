@@ -1,4 +1,3 @@
-import {createTableData, createCellIndexData} from '../../../src/js/extensions/table/tableRangeHandler';
 import tableRangeHandler from '../../../src/js/extensions/table/tableRangeHandler';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
@@ -19,7 +18,7 @@ describe('tableRangeHandler', () => {
         const $table = $(tableHtml);
         const $trs = $table.find('tr');
         const tableData = tableDataHandler.createTableData($table);
-        
+
         it('Find table range for selection, when has row merge.', () => {
             const $tds = $trs.eq(1).find('td');
             const $start = $tds.eq(0);

@@ -4,33 +4,21 @@
  */
 
 // codemirror modes&addons
-require('./codemirror/fixOrderedListNumber');
-require('./codemirror/overlay');
-require('./codemirror/markdown');
-require('./codemirror/gfm');
-require('./codemirror/continuelist');
-require('./codemirror/arrowKeyFunction');
-
-// default extensions
-require('./extensions/taskCounter');
-require('./extensions/scrollFollow');
-require('./extensions/colorSyntax');
-require('./extensions/mark/mark');
-require('./extensions/table/tableExtension');
-require('./extensions/codeBlockPlantUML');
-require('./extensions/codeBlockChart');
+import './codemirror/fixOrderedListNumber';
+import './codemirror/overlay';
+import './codemirror/markdown';
+import './codemirror/gfm';
+import './codemirror/continuelist';
+import './codemirror/arrowKeyFunction';
 
 import ToastUIEditor from './editor';
 
-window.tui = window.tui || {};
-window.tui.Editor = ToastUIEditor;
-
 // langs
-require('./langs/en_US');
-require('./langs/ko_KR');
-require('./langs/zh_CN');
-require('./langs/ja_JP');
-require('./langs/nl_NL');
+import './langs/en_US';
+import './langs/ko_KR';
+import './langs/zh_CN';
+import './langs/ja_JP';
+import './langs/nl_NL';
 
 // for jquery
 $.fn.tuiEditor = function(...args) {
@@ -56,3 +44,5 @@ $.fn.tuiEditor = function(...args) {
 
     return this;
 };
+
+module.exports = ToastUIEditor;

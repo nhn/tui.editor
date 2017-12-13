@@ -17,7 +17,6 @@ describe('mergedTableCreator', () => {
             const oppossitType = '@rows';
             const actual = _extractPropertiesForMerge(value, type, oppossitType);
 
-
             expect(actual.length).toBe(2);
             expect(actual[0]).toBe(3);
             expect(actual[1]).toBe('@rows=3:value');
@@ -40,7 +39,6 @@ describe('mergedTableCreator', () => {
             const oppossitType = '@cols';
             const actual = _extractPropertiesForMerge(value, type, oppossitType);
 
-
             expect(actual.length).toBe(2);
             expect(actual[0]).toBe(3);
             expect(actual[1]).toBe('@cols=3:value');
@@ -51,7 +49,6 @@ describe('mergedTableCreator', () => {
             const type = '@rows';
             const oppossitType = '@cols';
             const actual = _extractPropertiesForMerge(value, type, oppossitType);
-
 
             expect(actual.length).toBe(2);
             expect(actual[0]).toBe(3);
@@ -149,7 +146,7 @@ describe('mergedTableCreator', () => {
                 colspan: 1,
                 rowspan: 1,
                 content: 'content1-1',
-                align: '',
+                align: ''
             });
             expect(actual[1][1]).toEqual({
                 nodeName: 'TD',
@@ -171,7 +168,7 @@ describe('mergedTableCreator', () => {
                 colspan: 1,
                 rowspan: 1,
                 content: '',
-                align:''
+                align: ''
             });
         });
     });
@@ -342,7 +339,7 @@ describe('mergedTableCreator', () => {
             expect(actual.length).toBe(3);
             expect(actual[0]).toBe(0);
             expect(actual[1]).toBe(2);
-            expect(actual[2]).toBe(0);           
+            expect(actual[2]).toBe(0);
         });
     });
 
@@ -458,4 +455,3 @@ describe('mergedTableCreator', () => {
         });
     });
 });
- 

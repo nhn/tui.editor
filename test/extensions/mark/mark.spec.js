@@ -1,6 +1,7 @@
 /* eslint max-nested-callbacks: 0 */
 
 const TuiEditor = require('../../../src/js/editor');
+import '../../../src/js/extensions/mark/mark';
 
 describe('Mark', function() {
     let editor, container;

@@ -1,5 +1,5 @@
-const WysiwygMarkerHelper = require('../../../src/js/extensions/mark/wysiwygMarkerHelper');
-const SquireExt = require('../../../src/js/squireExt');
+import WysiwygMarkerHelper from '../../../src/js/extensions/mark/wysiwygMarkerHelper';
+import SquireExt from '../../../src/js/squireExt';
 
 describe('WysiwygMarkerHelper', function() {
     let sqe, wmh, container;
@@ -27,7 +27,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('update marker with additional info', function() {
-        let marker = wmh.updateMarkerWithExtraInfo({
+        const marker = wmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 7
         });
@@ -41,7 +41,7 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('update collapsed marker with additional info', function() {
-        let marker = wmh.updateMarkerWithExtraInfo({
+        const marker = wmh.updateMarkerWithExtraInfo({
             start: 2,
             end: 2
         });
@@ -55,16 +55,14 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker info of current selection', function() {
-        let marker, range;
-
-        range = sqe.getSelection().cloneRange();
+        const range = sqe.getSelection().cloneRange();
 
         range.setStart(sqe.get$Body().find('h1')[0].firstChild, 2);
         range.setEnd(sqe.get$Body().find('h2')[0].firstChild, 2);
 
         sqe.setSelection(range);
 
-        marker = wmh.getMarkerInfoOfCurrentSelection();
+        const marker = wmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(2);
         expect(marker.end).toEqual(11);
@@ -75,15 +73,13 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker of current selection that has start or end container pointed to non textNode', function() {
-        let range, marker;
-
-        range = sqe.getSelection().cloneRange();
+        const range = sqe.getSelection().cloneRange();
         range.setStart(sqe.get$Body().find('h1')[0], 1);
         range.setEnd(sqe.get$Body().find('h2')[0], 1);
 
         sqe.setSelection(range);
 
-        marker = wmh.getMarkerInfoOfCurrentSelection();
+        const marker = wmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(6);
         expect(marker.end).toEqual(15);
@@ -91,17 +87,15 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker when end range pointed to textNode but end container is not text node', function() {
-        let range, marker;
-
         sqe.setHTML('<ul><li><input type="checkbox" /> text1</li></ul>');
 
-        range = sqe.getSelection().cloneRange();
+        const range = sqe.getSelection().cloneRange();
         range.setStart(sqe.get$Body().find('li')[0], 1);
         range.setEnd(sqe.get$Body().find('li')[0], 1);
 
         sqe.setSelection(range);
 
-        marker = wmh.getMarkerInfoOfCurrentSelection();
+        const marker = wmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(0);
         expect(marker.end).toEqual(0);
@@ -109,17 +103,15 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('get marker if some range of current selection have only ZWB text node', function() {
-        let range, marker;
-
         sqe.setHTML('<div>text1</div><div>&#8203</div>');
 
-        range = sqe.getSelection().cloneRange();
+        const range = sqe.getSelection().cloneRange();
         range.setStart(sqe.get$Body().find('div')[1].firstChild, 1);
         range.setEnd(sqe.get$Body().find('div')[1].firstChild, 1);
 
         sqe.setSelection(range);
 
-        marker = wmh.getMarkerInfoOfCurrentSelection();
+        const marker = wmh.getMarkerInfoOfCurrentSelection();
 
         expect(marker.start).toEqual(5);
         expect(marker.end).toEqual(5);
@@ -127,11 +119,9 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('No preblem with no text content', function() {
-        let marker;
-
         sqe.setHTML('');
 
-        marker = wmh.updateMarkerWithExtraInfo({
+        const marker = wmh.updateMarkerWithExtraInfo({
             start: 1,
             end: 2,
             id: 'myId'
@@ -142,23 +132,19 @@ describe('WysiwygMarkerHelper', function() {
     });
 
     it('select range by given offset', function() {
-        let range;
-
         wmh.selectOffsetRange(0, 3);
 
-        range = sqe.getSelection();
+        const range = sqe.getSelection();
 
         expect(range.cloneContents().textContent).toEqual('TEX');
     });
 
     it('clear select', function() {
-        let range;
-
         wmh.selectOffsetRange(0, 3);
 
         wmh.clearSelect();
 
-        range = sqe.getSelection();
+        const range = sqe.getSelection();
 
         expect(range.cloneContents().textContent).not.toEqual('TEX');
     });

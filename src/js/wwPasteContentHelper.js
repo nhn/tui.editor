@@ -28,7 +28,7 @@ class WwPasteContentHelper {
      */
     preparePaste($container) {
         const range = this.wwe.getEditor().getSelection().cloneRange();
-        const codeblockManager = this.wwe.componentManager.getManager('codeblock');
+        const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
         let firstBlockIsTaken = false;
         const $tempContainer = $('<div />');
 
@@ -50,8 +50,8 @@ class WwPasteContentHelper {
             nodeName = domUtils.getNodeName(node);
             isPastingList = nodeName === 'LI' || nodeName === 'UL' || nodeName === 'OL';
 
-            if (codeblockManager.isInCodeBlock(range)) {
-                $tempContainer.append(codeblockManager.prepareToPasteOnCodeblock(childNodes));
+            if (wwCodeblockManager.isInCodeBlock(range)) {
+                $tempContainer.append(wwCodeblockManager.prepareToPasteOnCodeblock(childNodes));
             } else if (isPastingList) {
                 $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
                 // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
@@ -139,9 +139,9 @@ class WwPasteContentHelper {
      * @param {jQuery} $container - clipboard container
      */
     _preElementAid($container) {
-        const codeblockManager = this.wwe.componentManager.getManager('codeblock');
+        const wwCodeblockManager = this.wwe.componentManager.getManager('codeblock');
 
-        codeblockManager.splitCodeblockToEachLine($container);
+        wwCodeblockManager.splitCodeblockToEachLine($container);
     }
 
     /**

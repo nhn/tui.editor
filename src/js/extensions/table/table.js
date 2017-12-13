@@ -2,8 +2,10 @@
  * @fileoverview Implements tableExtension.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import Editor from '../../editor';
+import EditorViewOnly from '../../viewOnly';
 
-import extManager from '../../extManager';
+import './langs';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';
 import toMarkRenderer from './toMarkRenderer';
@@ -18,9 +20,12 @@ import wwMergeCell from './mergeCell';
 import wwUnergeCell from './unmergeCell';
 import mergedTableUI from './mergedTableUI';
 
-require('./langs');
-
-extManager.defineExtension('tableExtension', editor => {
+/**
+ * table extension
+ * @param {Editor} editor - editor instance
+ * @ignore
+ */
+function tableExtension(editor) {
     const {eventManager} = editor;
 
     editor.toMarkOptions = editor.toMarkOptions || {};
@@ -40,7 +45,7 @@ extManager.defineExtension('tableExtension', editor => {
     if (editor._ui.popupTableUtils) {
         mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
     }
-});
+}
 
 /**
  * Add commands.
@@ -132,3 +137,4 @@ function _bindEvents(eventManager) {
     eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 }
 
+(Editor || EditorViewOnly).defineExtension('table', tableExtension);

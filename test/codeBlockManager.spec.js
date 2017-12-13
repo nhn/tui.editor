@@ -1,4 +1,4 @@
-import CodeBlockManager from '../src/js/codeBlockManager';
+import {CodeBlockManager} from '../src/js/codeBlockManager';
 
 describe('CodeBlockManager', () => {
     let codeBlockManager;

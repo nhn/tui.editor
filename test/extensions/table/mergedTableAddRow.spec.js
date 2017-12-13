@@ -4,7 +4,7 @@ import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler'
 describe('mergedTableAddRow', () => {
     const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
 
-    describe('_createNewRow()',  () => {
+    describe('_createNewRow()', () => {
         let tableData;
 
         beforeEach(function() {
@@ -174,7 +174,8 @@ describe('mergedTableAddRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addRow(tableData, tableRange);
+
+            _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(4);
@@ -205,7 +206,8 @@ describe('mergedTableAddRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addRow(tableData, tableRange);
+
+            _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(4);
@@ -236,7 +238,8 @@ describe('mergedTableAddRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addRow(tableData, tableRange);
+
+            _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(5);
             expect(tableData[1][0].rowspan).toBe(3);
@@ -273,7 +276,8 @@ describe('mergedTableAddRow', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addRow(tableData, tableRange);
+
+            _addRow(tableData, tableRange);
 
             expect(tableData.length).toBe(6);
             expect(tableData[1][0].rowspan).toBe(3);

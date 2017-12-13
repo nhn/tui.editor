@@ -2,15 +2,15 @@
  * @fileoverview Implements Scroll Follow Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import Editor from '../../editor';
+import ScrollSync from './scrollSync';
+import SectionManager from './sectionManager';
 
-import extManager from '../extManager';
-import ScrollSync from './scrollFollow.scrollSync';
-import SectionManager from './scrollFollow.sectionManager';
-import Button from '../ui/button';
-import i18n from '../i18n';
+const Button = Editor.Button;
 
-extManager.defineExtension('scrollFollow', editor => {
+function scrollFollowExtension(editor) {
     const className = 'tui-scrollfollow';
+    const i18n = editor.i18n;
     const TOOL_TIP = {
         active: i18n.get('Auto scroll enabled'),
         inActive: i18n.get('Auto scroll disabled')
@@ -105,4 +105,8 @@ extManager.defineExtension('scrollFollow', editor => {
             scrollSync.saveScrollInfo();
         }
     });
-});
+}
+
+Editor.defineExtension('scrollFollow', scrollFollowExtension);
+
+export default scrollFollowExtension;

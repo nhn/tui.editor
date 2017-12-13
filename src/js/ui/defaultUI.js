@@ -207,7 +207,7 @@ class DefaultUI {
         this.popupCodeBlockLanguages = new PopupCodeBlockLanguages({
             $target: this.$el,
             eventManager: editor.eventManager,
-            languages: editor.convertor.getCodeBlockManager().getSupportedLanguages()
+            languages: editor.options.codeBlockLanguages
         });
     }
 

@@ -3,8 +3,11 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-import extManager from '../extManager';
-import i18n from '../i18n';
+import Editor from '../editor';
+import EditorViewOnly from '../viewOnly';
+
+const {component} = tui;
+const {colorpicker: ColorPicker} = component;
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
@@ -13,7 +16,12 @@ const decimalColorRx = /rgb\((\d+)[, ]+(\d+)[, ]+(\d+)\)/g;
 
 const RESET_COLOR = '#181818';
 
-extManager.defineExtension('colorSyntax', editor => {
+/**
+ * color syntax extension
+ * @param {editor} editor - editor
+ * @ignore
+ */
+function colorSyntaxExtension(editor) {
     const {colorSyntax = {}} = editor.options;
     const {preset, useCustomSyntax = false} = colorSyntax;
 
@@ -112,7 +120,7 @@ extManager.defineExtension('colorSyntax', editor => {
 
         initUI(editor, preset);
     }
-});
+}
 
 /**
  * Initialize UI
@@ -122,6 +130,7 @@ extManager.defineExtension('colorSyntax', editor => {
  */
 function initUI(editor, preset) {
     const className = 'tui-color';
+    const i18n = editor.i18n;
 
     editor.eventManager.addEventType('colorButtonClicked');
 
@@ -144,7 +153,7 @@ function initUI(editor, preset) {
         cpOptions.preset = preset;
     }
 
-    const colorPicker = tui.component.colorpicker.create(cpOptions);
+    const colorPicker = ColorPicker.create(cpOptions);
 
     let selectedColor = colorPicker.getColor();
 
@@ -282,3 +291,7 @@ function doubleZeroPad(numberStr) {
 
     return padded.substr(padded.length - 2);
 }
+
+(Editor || EditorViewOnly).defineExtension('colorSyntax', colorSyntaxExtension);
+
+export default colorSyntaxExtension;
