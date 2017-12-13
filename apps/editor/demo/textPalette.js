@@ -1,6 +1,6 @@
 'use strict';
 
-tui.Editor.defineExtension('textPalette', function(editor) {
+tui.editor.Editor.defineExtension('textPalette', function(editor) {
     var $layer = $('<div style="z-index:9999;border:1px solid #f00;width:200px"></div>');
     var isTextPaleltteActive = false;
     var to;

@@ -3,7 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const DiffMatchPatch = require('../../vendor/diffMatchPatch');
+import DiffMatchPatch from './diffMatchPatch';
 
 const {util} = tui;
 

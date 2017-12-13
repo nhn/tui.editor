@@ -1,11 +1,11 @@
 /* eslint max-nested-callbacks:0 */
-import TuiEditor from '../../src/js/editor';
-import ScrollSync from '../../src/js/extensions/scrollFollow.scrollSync';
-import SectionManager from '../../src/js/extensions/scrollFollow.sectionManager';
+import TuiEditor from '../../../src/js/editor';
+import ScrollSync from '../../../src/js/extensions/scrollFollow/scrollSync';
+import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
 
 const loadStyleFixtures = window.loadStyleFixtures;
 
-describe('scrollFollow.ScrollSync', () => {
+describe('ScrollSync', () => {
     let ned, sectionManager, scrollSync, container;
 
     beforeEach(() => {

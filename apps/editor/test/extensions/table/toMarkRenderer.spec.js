@@ -1,5 +1,4 @@
 import {_getAdditionalThCount, _createTheadMarkdown} from '../../../src/js/extensions/table/toMarkRenderer';
-import getToMarkRenderer from '../../../src/js/extensions/table/toMarkRenderer';
 
 describe('toMarkRendererCreator', () => {
     describe('_getAdditionalThCount()', () => {
@@ -44,7 +43,6 @@ describe('toMarkRendererCreator', () => {
 
             expect(actual).toBe('|@cols=2:title1|title2|\n| ------ | ------ | --- |\n');
         });
-
 
         it('Create thead markdown, when all th has not colspan.', () => {
             const theadHtml = [

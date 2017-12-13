@@ -1,4 +1,3 @@
-
 import ViewOnlyMarkerHelper from '../../../src/js/extensions/mark/viewOnlyMarkerHelper';
 import Convertor from '../../../src/js/convertor';
 import EventManager from '../../../src/js/eventManager';

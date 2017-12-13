@@ -94,7 +94,7 @@ describe('WwMergedTableManager', () => {
             const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
             const tableData = tableDataHandler.createTableData($table);
             const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
-                  .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
+                .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
@@ -126,7 +126,7 @@ describe('WwMergedTableManager', () => {
             const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
             const tableData = tableDataHandler.createTableData($table);
             const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2), tr:nth-child(3)')
-                  .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
+                .find('td:nth-child(1), td:nth-child(2), td:nth-child(3)');
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
@@ -146,7 +146,7 @@ describe('WwMergedTableManager', () => {
             const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
             const tableData = tableDataHandler.createTableData($table);
             const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2)')
-                  .find('td:nth-child(2)');
+                .find('td:nth-child(2)');
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 
@@ -175,7 +175,7 @@ describe('WwMergedTableManager', () => {
             const clipboardTableData = tableDataHandler.createTableData($clipboardTable);
             const tableData = tableDataHandler.createTableData($table);
             const $selectedCells = $table.find('tbody').find('tr:nth-child(1), tr:nth-child(2)')
-                  .find('td:nth-child(2)');
+                .find('td:nth-child(2)');
 
             mgr._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
 

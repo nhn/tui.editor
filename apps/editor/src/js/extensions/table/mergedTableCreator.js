@@ -5,6 +5,8 @@
 
 import tableRenderer from './tableRenderer';
 
+const util = tui.util;
+
 /**
  * Extract properties for merge.
  * @param {string} value - value
@@ -78,7 +80,7 @@ export function _createTableObjectFrom$Table($table) {
 function _findIndex(arr, onFind) {
     let foundIndex = -1;
 
-    tui.util.forEach(arr, (item, index) => {
+    util.forEach(arr, (item, index) => {
         let nextFind = true;
         if (onFind(item, index)) {
             foundIndex = index;

@@ -8,6 +8,8 @@ import EventManager from './eventManager';
 import CommandManager from './commandManager';
 import extManager from './extManager';
 import Convertor from './convertor';
+import domUtils from './domUtils';
+import codeBlockManager from './codeBlockManager';
 
 const {util} = tui;
 
@@ -77,24 +79,6 @@ class ToastUIEditorViewOnly {
                 data: ev
             });
         }
-    }
-
-    /**
-     * get markdownit with code highlight instance from convertor
-     * @returns {markdownit} - markdownit instance
-     * @memberof ToastUIEditorViewOnly
-     */
-    getMarkdownHighlightRenderer() {
-        return this.convertor.getMarkdownHighlightRenderer();
-    }
-
-    /**
-     * set markdownit instance
-     * @param {markdownit} markdownitHighlight - markdownit instance
-     * @memberof ToastUIEditorViewOnly
-     */
-    setMarkdownHighlightRenderer(markdownitHighlight) {
-        this.convertor.setMarkdownHighlightRenderer(markdownitHighlight);
     }
 
     /**
@@ -189,5 +173,34 @@ class ToastUIEditorViewOnly {
     isWysiwygMode() {
         return false;
     }
+
+    /**
+     * Define extension
+     * @memberof ToastUIEditorViewOnly
+     * @param {string} name Extension name
+     * @param {ExtManager~extension} ext extension
+     */
+    static defineExtension(name, ext) {
+        extManager.defineExtension(name, ext);
+    }
 }
+
+/**
+ * domUtil instance
+ * @type {DomUtil}
+ */
+ToastUIEditorViewOnly.domUtils = domUtils;
+
+/**
+ * CodeBlockManager instance
+ * @type {CodeBlockManager}
+ */
+ToastUIEditorViewOnly.codeBlockManager = codeBlockManager;
+
+/**
+ * MarkdownIt hightlight instance
+ * @type {typeof MarkdownIt}
+ */
+ToastUIEditorViewOnly.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
+
 module.exports = ToastUIEditorViewOnly;

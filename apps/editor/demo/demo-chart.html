@@ -34,14 +34,32 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor.js"></script>
+<script src="../dist/tui-editor-Editor.js"></script>
+<script src="../dist/tui-editor-extChart.js"></script>
 <script>
+    var content = [
+        '```chart',
+        ',category1,category2',
+        'Jan,21,23',
+        'Feb,31,17',
+        '',
+        'type: column',
+        'width: 700',
+        'height: 300',
+        'title: Monthly Revenue',
+        'x.title: Amount',
+        'y.title: Month',
+        'y.min: 1',
+        'y.max: 40',
+        'y.suffix: $'
+    ].join('\n');
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: '100%',
-        initialEditType: 'wysiwyg',
+        initialEditType: 'markdown',
         useCommandShortcut: true,
-        exts: ['scrollFollow', 'colorSyntax', 'chart']
+        initialValue: content,
+        exts: ['chart']
     });
 </script>
 </body>

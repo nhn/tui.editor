@@ -1,53 +1,52 @@
 /**
- * @fileoverview Implements mergedTableAddCol
+ * @fileoverview Implements mergedTableAddCol. Add Row to selected table.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import CommandManager from '../../commandManager';
+import Editor from '../../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
 const {util} = tui;
 
-/**
- * AddCol
- * Add Row to selected table
- * @augments Command
- * @augments WysiwygCommand
- * @ignore
- */
-const AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
-    name: 'AddCol',
-    /**
-     * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
+let AddCol;
 
-        wwe.focus();
+if (Editor) {
+    const {CommandManager} = Editor;
 
-        if (!sq.hasFormat('TABLE')) {
-            return;
+    AddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
+        name: 'AddCol',
+        /**
+        * Command handler.
+        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+        */
+        exec(wwe) {
+            const sq = wwe.getEditor();
+            const range = sq.getSelection().cloneRange();
+
+            wwe.focus();
+
+            if (!sq.hasFormat('TABLE')) {
+                return;
+            }
+
+            const $startContainer = $(range.startContainer);
+            const $table = $startContainer.closest('table');
+            const tableData = dataHandler.createTableData($table);
+            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+
+            sq.saveUndoState(range);
+            _addColumns(tableData, tableRange);
+
+            const $newTable = tableRenderer.replaceTable($table, tableData);
+            const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
+
+            tableRenderer.focusToCell(sq, range, focusCell);
         }
-
-        const $startContainer = $(range.startContainer);
-        const $table = $startContainer.closest('table');
-        const tableData = dataHandler.createTableData($table);
-        const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-        const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
-
-        sq.saveUndoState(range);
-        _addColumns(tableData, tableRange);
-
-        const $newTable = tableRenderer.replaceTable($table, tableData);
-        const focusCell = _findFocusCell($newTable, tableRange.start.rowIndex, tableRange.end.colIndex);
-
-        tableRenderer.focusToCell(sq, range, focusCell);
-    }
-});
+    });
+}
 
 /**
  * Create column merged cell.

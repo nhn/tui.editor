@@ -11,12 +11,58 @@ import blockQuote from './markdownItPlugins/markdownitBlockQuoteRenderer';
 import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
-import CodeBlockManager from './codeBlockManager';
+import codeBlockManager from './codeBlockManager';
 
 const {
     toMark,
     markdownit: MarkdownIt
 } = window;
+
+const markdownitHighlight = new MarkdownIt({
+    html: true,
+    breaks: true,
+    quotes: '“”‘’',
+    langPrefix: 'lang-',
+    highlight(codeText, type) {
+        return codeBlockManager.createCodeBlockHtml(type, codeText);
+    }
+});
+const markdownit = new MarkdownIt({
+    html: true,
+    breaks: true,
+    quotes: '“”‘’',
+    langPrefix: 'lang-'
+});
+
+// markdownitHighlight
+markdownitHighlight.block.ruler.at('code', code);
+markdownitHighlight.block.ruler.at('table', tableRenderer, {
+    alt: ['paragraph', 'reference']
+});
+markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
+    alt: ['paragraph', 'reference', 'blockquote', 'list']
+});
+markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
+    alt: ['paragraph', 'reference', 'blockquote']
+});
+markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
+markdownitHighlight.use(taskList);
+markdownitHighlight.use(codeBlock);
+
+// markdownit
+markdownit.block.ruler.at('code', code);
+markdownit.block.ruler.at('table', tableRenderer, {
+    alt: ['paragraph', 'reference']
+});
+markdownit.block.ruler.at('blockquote', blockQuote, {
+    alt: ['paragraph', 'reference', 'blockquote', 'list']
+});
+markdownit.block.ruler.at('html_block', htmlBlock, {
+    alt: ['paragraph', 'reference', 'blockquote']
+});
+markdownit.inline.ruler.at('backticks', codeBackticks);
+markdownit.use(taskList);
+markdownit.use(codeBlock);
 
 /**
  * Class Convertor
@@ -25,64 +71,9 @@ class Convertor {
     /**
      * Convertor constructor
      * @param {EventManager} em - EventManager instance
-     * @param {CodeBlockManager} codeBlockManager - CodeBlockManager instance
      */
     constructor(em) {
         this.eventManager = em;
-
-        this._initMarkdownIt();
-    }
-
-    _initMarkdownIt() {
-        const codeBlockManager = new CodeBlockManager();
-        this._codeBlockManager = codeBlockManager;
-        const markdownitHighlight = new MarkdownIt({
-            html: true,
-            breaks: true,
-            quotes: '“”‘’',
-            langPrefix: 'lang-',
-            highlight(codeText, type) {
-                return codeBlockManager.createCodeBlockHtml(type, codeText);
-            }
-        });
-        const markdownit = new MarkdownIt({
-            html: true,
-            breaks: true,
-            quotes: '“”‘’',
-            langPrefix: 'lang-'
-        });
-
-        // markdownitHighlight
-        markdownitHighlight.block.ruler.at('code', code);
-        markdownitHighlight.block.ruler.at('table', tableRenderer, {
-            alt: ['paragraph', 'reference']
-        });
-        markdownitHighlight.block.ruler.at('blockquote', blockQuote, {
-            alt: ['paragraph', 'reference', 'blockquote', 'list']
-        });
-        markdownitHighlight.block.ruler.at('html_block', htmlBlock, {
-            alt: ['paragraph', 'reference', 'blockquote']
-        });
-        markdownitHighlight.inline.ruler.at('backticks', codeBackticks);
-        markdownitHighlight.use(taskList);
-        markdownitHighlight.use(codeBlock);
-        this._markdownitHighlight = markdownitHighlight;
-
-        // markdownit
-        markdownit.block.ruler.at('code', code);
-        markdownit.block.ruler.at('table', tableRenderer, {
-            alt: ['paragraph', 'reference']
-        });
-        markdownit.block.ruler.at('blockquote', blockQuote, {
-            alt: ['paragraph', 'reference', 'blockquote', 'list']
-        });
-        markdownit.block.ruler.at('html_block', htmlBlock, {
-            alt: ['paragraph', 'reference', 'blockquote']
-        });
-        markdownit.inline.ruler.at('backticks', codeBackticks);
-        markdownit.use(taskList);
-        markdownit.use(codeBlock);
-        this._markdownit = markdownit;
     }
 
     /**
@@ -101,7 +92,7 @@ class Convertor {
             markdown = markdown.replace(onerrorStripeRegex, '$1$3');
         }
 
-        let renderedHTML = this._markdownitHighlight.render(markdown);
+        let renderedHTML = markdownitHighlight.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
         return renderedHTML;
@@ -123,7 +114,7 @@ class Convertor {
             markdown = markdown.replace(onerrorStripeRegex, '$1$3');
         }
 
-        let renderedHTML = this._markdownit.render(markdown);
+        let renderedHTML = markdownit.render(markdown);
         renderedHTML = this._removeBrToMarkPassAttributeInCode(renderedHTML);
 
         return renderedHTML;
@@ -250,33 +241,10 @@ class Convertor {
      * get markdownit with code highlight
      * @returns {markdownit} - markdownit instance
      * @memberof Convertor
+     * @static
      */
-    getMarkdownHighlightRenderer() {
-        return this._markdownitHighlight;
-    }
-
-    /**
-     * set markdownit instance
-     * @param {markdownit} markdownitHighlight - markdownit instance
-     * @memberof Convertor
-     */
-    setMarkdownHighlightRenderer(markdownitHighlight) {
-        markdownitHighlight.set({
-            html: true,
-            breaks: true,
-            quotes: '“”‘’',
-            langPrefix: 'lang-'
-        });
-        this._markdownitHighlight = markdownitHighlight;
-    }
-
-    /**
-     * get CodeBlockManager
-     * @returns {CodeBlockManager} - CodeBlockManager instance
-     * @memberof Convertor
-     */
-    getCodeBlockManager() {
-        return this._codeBlockManager;
+    static getMarkdownitHighlightRenderer() {
+        return markdownitHighlight;
     }
 }
 

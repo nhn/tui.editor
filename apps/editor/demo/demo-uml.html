@@ -11,6 +11,7 @@
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
+    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <link rel="stylesheet" href="../dist/tui-editor.css">
@@ -31,13 +32,44 @@
 <body>
 <div id="editSection"></div>
 <script src="../dist/tui-editor-Editor.js"></script>
-<script src="../dist/tui-editor-extScrollFollow.js"></script>
+<script src="../dist/tui-editor-extUML.js"></script>
 <script>
+    var content = [
+        'uml start',
+        '```uml',
+        'partition Conductor {',
+        '  (*) --> "Climbs on Platform"',
+        '  --> === S1 ===',
+        '  --> Bows',
+        '}',
+        '',
+        'partition Audience #LightSkyBlue {',
+        '  === S1 === --> Applauds',
+        '}',
+        '',
+        'partition Conductor {',
+        '  Bows --> === S2 ===',
+        '  --> WavesArmes',
+        '  Applauds --> === S2 ===',
+        '}',
+        '',
+        'partition Orchestra #CCCCEE {',
+        '  WavesArmes --> Introduction',
+        '  --> "Play music"',
+        '}',
+        '```'
+    ].join('\n');
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: '400px',
-        initialEditType: 'wysiwyg',
-        exts: ['scrollFollow']
+        initialEditType: 'markdown',
+        useCommandShortcut: true,
+        initialValue: content,
+        exts: [{
+            name: 'uml', // enable plant uml plugin
+            rendererURL: 'http://www.plantuml.com/plantuml/png/'
+        }],
+        codeBlockLanguages: ['javascript', 'java', 'uml', 'plantuml']
     });
 </script>
 </body>

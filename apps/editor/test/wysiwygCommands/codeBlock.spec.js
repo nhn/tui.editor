@@ -1,5 +1,5 @@
 import CodeBlock from '../../src/js/wysiwygCommands/codeBlock';
-import CodeBlockManager from '../../src/js/wwCodeBlockManager';
+import WwCodeBlockManager from '../../src/js/wwCodeBlockManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
@@ -14,7 +14,7 @@ describe('CodeBlock', () => {
         wwe = new WysiwygEditor($container, new EventManager());
 
         wwe.init();
-        wwe.componentManager.addManager('codeblock', CodeBlockManager);
+        wwe.componentManager.addManager('codeblock', WwCodeBlockManager);
 
         sq = wwe.getEditor();
         $body = wwe.get$Body();

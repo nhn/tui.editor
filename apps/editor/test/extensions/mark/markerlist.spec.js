@@ -1,6 +1,4 @@
-'use strict';
-
-var MarkerList = require('../../../src/js/extensions/mark/markerList');
+import MarkerList from '../../../src/js/extensions/mark/markerList';
 
 describe('MarkerList', function() {
     var ml;
@@ -28,7 +26,7 @@ describe('MarkerList', function() {
         });
 
         it('Get marks all', function() {
-            var markers;
+            let markers;
 
             ml.addMarker(0, 10, 'myId');
             ml.addMarker(0, 10, 'myId2');
@@ -43,7 +41,7 @@ describe('MarkerList', function() {
         });
 
         it('add marker with markerData', function() {
-            var markerData = {
+            const markerData = {
                 id: 'myId',
                 start: 0,
                 end: 10,
@@ -67,8 +65,8 @@ describe('MarkerList', function() {
 
     describe('update marker', function() {
         it('update marker with id', function() {
-            var marker = ml.addMarker(0, 10, 'myId'),
-                returnedMarker;
+            const marker = ml.addMarker(0, 10, 'myId');
+            let returnedMarker;
 
             ml.updateMarker('myId', {
                 end: 20,
@@ -87,8 +85,8 @@ describe('MarkerList', function() {
         });
 
         it('return updated marker after update', function() {
-            var marker = ml.addMarker(0, 10, 'myId'),
-                returnedMarker;
+            const marker = ml.addMarker(0, 10, 'myId');
+            let returnedMarker;
 
             returnedMarker = ml.updateMarker('myId', {
                 end: 20,
@@ -107,27 +105,23 @@ describe('MarkerList', function() {
 
     describe('sort markers', function() {
         it('sort markers with start', function() {
-            var markers;
-
             ml.addMarker(2, 10, 'myId1');
             ml.addMarker(1, 10, 'myId2');
             ml.sortBy('start');
 
-            markers = ml.getAll();
+            const markers = ml.getAll();
 
             expect(markers[0].start).toEqual(1);
             expect(markers[1].start).toEqual(2);
         });
 
         it('sort markers with end', function() {
-            var markers;
-
             ml.addMarker(2, 15, 'myId1');
             ml.addMarker(1, 20, 'myId2');
             ml.addMarker(1, 10, 'myId3');
             ml.sortBy('end');
 
-            markers = ml.getAll();
+            const markers = ml.getAll();
 
             expect(markers[0].end).toEqual(10);
             expect(markers[1].end).toEqual(15);
@@ -137,7 +131,7 @@ describe('MarkerList', function() {
 
     describe('get markers with range', function() {
         it('get markers that affected by range', function() {
-            var iteratee = jasmine.createSpy('forEachByRangeIteratee');
+            const iteratee = jasmine.createSpy('forEachByRangeIteratee');
             ml.addMarker(0, 10, 'myId1');
             ml.addMarker(5, 20, 'myId2');
 
@@ -149,7 +143,7 @@ describe('MarkerList', function() {
         });
 
         it('dont get markers that not affected by range', function() {
-            var iteratee = jasmine.createSpy('forEachByRangeIteratee');
+            const iteratee = jasmine.createSpy('forEachByRangeIteratee');
             ml.addMarker(0, 10, 'myId1');
             ml.addMarker(5, 20, 'myId2');
 
@@ -160,7 +154,7 @@ describe('MarkerList', function() {
         });
 
         it('dont get marker that change range boundaries equals with marker boundaries', function() {
-            var iteratee = jasmine.createSpy('forEachByRangeIteratee');
+            const iteratee = jasmine.createSpy('forEachByRangeIteratee');
 
             ml.addMarker(5, 20, 'myId1');
 
@@ -172,8 +166,6 @@ describe('MarkerList', function() {
 
     describe('get clean markers data of all markers', function() {
         it('get markers data for persistance', function() {
-            var markersData;
-
             ml.addMarker(0, 10, 'myId1');
             ml.addMarker(5, 20, 'myId2');
 
@@ -181,7 +173,7 @@ describe('MarkerList', function() {
                 extra: 'extraInfo'
             });
 
-            markersData = ml.getMarkersData();
+            const markersData = ml.getMarkersData();
 
             expect(markersData.length).toEqual(2);
             expect(markersData[0]).toEqual({

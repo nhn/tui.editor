@@ -1,4 +1,7 @@
 import TuiEditor from '../../src/js/editor';
+import colorSyntaxExtension from '../../src/js/extensions/colorSyntax';
+
+TuiEditor.defineExtension('colorSyntax', colorSyntaxExtension);
 
 describe('colorSyntax', () => {
     let container, ned;

@@ -14,7 +14,6 @@
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
-    <link rel="stylesheet" href="../dist/tui-editor.css">
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-component-colorpicker/dist/colorpicker.css">
     <style type="text/css">
@@ -31,7 +30,8 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor.js"></script>
+<script src="../dist/tui-editor-ViewOnly.js"></script>
+<script src="../dist/tui-editor-extUML.js"></script>
 <script>
     var content = [
         'uml start',
@@ -58,18 +58,12 @@
         '}',
         '```'
     ].join('\n');
-    $('#editSection').tuiEditor({
-        previewStyle: 'vertical',
-        height: '400px',
-        initialEditType: 'markdown',
-        useCommandShortcut: true,
+    $('#editSection').tuiEditorViewOnly({
         initialValue: content,
-        exts: [{
-            name: 'plantUML', // enable plant uml plugin
-            languages: ['uml', 'plantuml'], // which languages you want to be rendered as plant uml. default is 'uml' and 'plantuml'
+        exts: ['scrollFollow', {
+            name: 'uml', // enable plant uml plugin
             rendererURL: 'http://www.plantuml.com/plantuml/png/'
-        }],
-        codeBlockLanguages: ['javascript', 'java', 'uml', 'plantuml']
+        }]
     });
 </script>
 </body>

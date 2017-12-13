@@ -1,4 +1,6 @@
-tui.Editor.i18n.setLang(['en', 'en_US'], {
+import Editor from '../editor';
+
+Editor.i18n.setLanguage(['en', 'en_US'], {
     'Markdown': 'Markdown',
     'WYSIWYG': 'WYSIWYG',
     'Write': 'Write',

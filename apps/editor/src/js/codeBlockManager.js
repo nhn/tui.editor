@@ -9,13 +9,11 @@ const {hljs} = window;
  * Class Code Block Manager
  */
 class CodeBlockManager {
-
     /**
      * Creates an instance of CodeBlockManager.
      * @memberof CodeBlockManager
      */
     constructor() {
-        this._supportedLanguages = hljs.listLanguages();
         this._replacers = {};
     }
 
@@ -26,9 +24,6 @@ class CodeBlockManager {
      */
     setReplacer(language, replacer) {
         this._replacers[language] = replacer;
-        if (this._supportedLanguages.indexOf(language) < 0) {
-            this._supportedLanguages.push(language);
-        }
     }
 
     /**
@@ -40,33 +35,6 @@ class CodeBlockManager {
     getReplacer(language) {
         return this._replacers[language];
     }
-
-    /**
-     * sets supported languages options
-     * default value is what highlight js supports
-     * @param {string[]} supportedLanguages - user set supported languages via options
-     * @memberof CodeBlockManager
-     */
-    setSupportedLanguages(supportedLanguages) {
-        this._supportedLanguages = supportedLanguages;
-    }
-
-    /**
-     * gets supported languages
-     * default value is what highlight js supports
-     * supported languages by replacers will be added
-     * @returns {string[]} - list of supportedLanguages
-     * @memberof CodeBlockManager
-     */
-    getSupportedLanguages() {
-        return this._supportedLanguages;
-    }
-
-    /**
-     * get supported languages by highlight-js
-     * @returns {Array<string>} - supported languages by highlight-js
-     * @memberof CodeBlockManager
-     */
 
     /**
      * Create code block html.
@@ -112,4 +80,7 @@ function escape(html, encode) {
         .replace(/'/g, '&#39;');
 }
 
-export default CodeBlockManager;
+export {
+    CodeBlockManager
+};
+export default new CodeBlockManager();

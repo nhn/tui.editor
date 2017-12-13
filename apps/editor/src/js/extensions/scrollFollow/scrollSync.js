@@ -2,6 +2,7 @@
  * @fileoverview Implements Scroll Follow Extension ScrollSync Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+const {util} = tui;
 
 const PREVIEW_MARGIN_TOP = 57;
 const SCROLL_TOP_PADDING = 20;
@@ -137,7 +138,7 @@ class ScrollSync {
         const sectionList = this.sectionManager.getSectionList();
         let factors;
 
-        tui.util.forEachArray(sectionList, section => {
+        util.forEachArray(sectionList, section => {
             const $div = section.$previewSectionEl;
             const $preview = $div.parent().parent();
             const isPreviewBottom = ($preview[0].clientHeight - $preview.scrollTop()) <= $preview[0].height;
@@ -348,6 +349,6 @@ class ScrollSync {
 
         return isSectionBegin && !isSectionEnd;
     }
-
 }
+
 module.exports = ScrollSync;

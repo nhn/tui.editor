@@ -63,6 +63,7 @@ class SectionManager {
         if (!this._sectionList) {
             this.makeSectionList();
         }
+
         return this._sectionList;
     }
 

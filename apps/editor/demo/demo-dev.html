@@ -31,14 +31,16 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor.js"></script>
+<script src="../dist/tui-editor-Editor.js"></script>
+<script src="../dist/tui-editor-extScrollFollow.js"></script>
+<script src="../dist/tui-editor-extColorSyntax.js"></script>
 <script>
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: '100%',
         initialEditType: 'wysiwyg',
         useCommandShortcut: true,
-        exts: ['scrollFollow', 'colorSyntax', 'plantUML']
+        exts: ['scrollFollow', 'colorSyntax', 'uml']
     });
 </script>
 </body>

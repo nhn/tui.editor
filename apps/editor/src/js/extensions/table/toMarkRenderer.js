@@ -4,6 +4,7 @@
  */
 
 const {toMark} = window;
+const util = tui.util;
 const RX_COLS = /@cols=[0-9]+:/g;
 
 /**
@@ -14,7 +15,7 @@ const RX_COLS = /@cols=[0-9]+:/g;
  * @private
  */
 function _createRepeatString(str, count) {
-    return tui.util.range(0, count).map(() => str).join('');
+    return util.range(0, count).map(() => str).join('');
 }
 
 /**

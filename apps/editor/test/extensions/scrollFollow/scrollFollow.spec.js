@@ -1,4 +1,5 @@
-import TuiEditor from '../../src/js/editor';
+import TuiEditor from '../../../src/js/editor';
+import '../../../src/js/extensions/scrollFollow/scrollFollow';
 
 const loadStyleFixtures = window.loadStyleFixtures;
 

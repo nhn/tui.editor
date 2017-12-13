@@ -1,9 +1,51 @@
 /* eslint-disable max-len, max-nested-callbacks */
 
 import Editor from '../src/js/editor';
+import {CodeBlockManager} from '../src/js/codeBlockManager';
+import {I18n} from '../src/js/i18n';
+import Button from '../src/js/ui/button';
+import WwCodeBlockManager from '../src/js/wwCodeBlockManager';
+import WwTableManager from '../src/js/wwTableManager';
+import WwTableSelectionManager from '../src/js/wwTableSelectionManager';
+import CommandManager from '../src/js/commandManager';
+
+const MarkDownIt = window.markdownit;
 
 describe('Editor', () => {
     let editor, container;
+
+    describe('module export', () => {
+        it('getMarkdownHighlightRenderer() should get MarkDownIt instance', () => {
+            expect(Editor.markdownitHighlight instanceof MarkDownIt).toBe(true);
+        });
+        it('markdownitHighlight should be MarkDownIt instance', () => {
+            expect(Editor.markdownitHighlight instanceof MarkDownIt).toBe(true);
+        });
+        it('domUtils should have it\' functions', () => {
+            expect(typeof Editor.domUtils.getNodeName).toBe('function');
+        });
+        it('codeBlockManager should be CodeBlockManager instance', () => {
+            expect(Editor.codeBlockManager instanceof CodeBlockManager).toBe(true);
+        });
+        it('i18n should be I18n instance', () => {
+            expect(Editor.i18n instanceof I18n).toBe(true);
+        });
+        it('Button should be Button class', () => {
+            expect(Editor.Button).toBe(Button);
+        });
+        it('WwCodeBlockManager should be WwCodeBlockManager class', () => {
+            expect(Editor.WwCodeBlockManager).toBe(WwCodeBlockManager);
+        });
+        it('WwTableManager should be WwTableManager class', () => {
+            expect(Editor.WwTableManager).toBe(WwTableManager);
+        });
+        it('CommandManager should be CommandManager class', () => {
+            expect(Editor.CommandManager).toBe(CommandManager);
+        });
+        it('WwTableSelectionManager should be WwTableSelectionManager class', () => {
+            expect(Editor.WwTableSelectionManager).toBe(WwTableSelectionManager);
+        });
+    });
 
     describe('Api', () => {
         beforeEach(() => {

@@ -24,7 +24,8 @@
 </head>
 <body style='padding:0;margin:0'>
 <div id="editSection"></div>
-<script src="../dist/tui-editor-viewonly.js"></script>
+<script src="../dist/tui-editor-ViewOnly.js"></script>
+<script src="../dist/tui-editor-extTable.js"></script>
 <script>
     var content = '# Heading 1' + '\n'
         + '## Heading 2' + '\n'
@@ -53,7 +54,7 @@
     $('#editSection').tuiEditorViewOnly({
         viewOnly: true,
         initialValue: content,
-        exts: ['tableExtension']
+        exts: ['table']
     });
 </script>
 </body>

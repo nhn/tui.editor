@@ -1,4 +1,6 @@
-tui.Editor.i18n.setLang(['ko', 'ko_KR'], {
+import Editor from '../editor';
+
+Editor.i18n.setLanguage(['ko', 'ko_KR'], {
     'Markdown': '마크다운',
     'WYSIWYG': '위지윅',
     'Write': '편집하기',

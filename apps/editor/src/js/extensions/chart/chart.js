@@ -22,15 +22,20 @@
  * ```
  */
 
-import extManager from '../extManager';
 import csv from './csv';
-import WwCodeBlockManager from '../wwCodeBlockManager';
+import Editor from '../../editor';
+import EditorViewOnly from '../../viewOnly';
 
+const {util, chart} = tui;
+const EditorLoaded = Editor || EditorViewOnly;
+const WwCodeBlockManager = EditorLoaded.WwCodeBlockManager;
+const codeBlockManager = EditorLoaded.codeBlockManager;
+const LANG = 'chart';
+
+// csv configuration
 csv.IGNORE_QUOTE_WHITESPACE = false;
 csv.IGNORE_RECORD_LENGTH = true;
 csv.DETECT_TYPES = false;
-
-const {util, chart} = tui;
 
 const REGEX_LINE_ENDING = /[\n\r]/;
 const DSV_DELIMITERS = [',', '\t', /\s+/];
@@ -450,7 +455,7 @@ function _isFromCodeBlockInCodeMirror(cm, source, eventData) {
  * @param {Object} data - event data
  * @ignore
  */
-function _onPasteBefore(cm, {source, data: eventData}) {
+function _onMDPasteBefore(cm, {source, data: eventData}) {
     if (!_isFromCodeBlockInCodeMirror(cm, source, eventData)) {
         return;
     }
@@ -468,26 +473,25 @@ function _onPasteBefore(cm, {source, data: eventData}) {
 /**
  * chart plugin
  * @param {Editor} editor - editor
- * @param {Object} [pluginOptions={}] - plugin options
- * @param {Array<string>} pluginOptions.languages - language names to map
  * @ignore
  */
-function chartPlugin(editor, pluginOptions = {}) {
-    const codeBlockManager = editor.convertor.getCodeBlockManager();
-    const {
-        languages = ['chart']
-    } = pluginOptions;
+function chartExtension(editor) {
+    const optionLanguages = editor.options.codeBlockLanguages;
+    if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
+        optionLanguages.push(LANG);
+    }
+    codeBlockManager.setReplacer(LANG, chartReplacer);
 
-    languages.forEach(language => codeBlockManager.setReplacer(language, chartReplacer));
+    if (!editor.isViewOnly()) {
+        // treat wysiwyg paste event
+        _setWwCodeBlockManagerForChart(editor);
 
-    // treat wysiwyg paste event
-    _setWwCodeBlockManagerForChart(editor);
-
-    // treat markdown paste event
-    editor.eventManager.listen('pasteBefore', ev => _onPasteBefore(editor.mdEditor.cm, ev));
+        // treat markdown paste event
+        editor.eventManager.listen('pasteBefore', ev => _onMDPasteBefore(editor.mdEditor.cm, ev));
+    }
 }
 
-extManager.defineExtension('chart', chartPlugin);
+(Editor || EditorViewOnly).defineExtension('chart', chartExtension);
 
 export {
     parseCode2DataAndOptions,

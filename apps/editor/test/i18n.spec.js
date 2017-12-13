@@ -7,26 +7,26 @@ describe('I18n', () => {
         i18n = new I18n();
     });
     it('should add lang set', () => {
-        i18n.setLang('ko_KR', {
+        i18n.setLanguage('ko_KR', {
             'Hello': '안녕하세요'
         });
 
         expect(i18n.get('Hello', 'ko_KR')).toEqual('안녕하세요');
     });
     it('should add lang set with array locale code', () => {
-        i18n.setLang(['ko', 'ko_KR'], {
+        i18n.setLanguage(['ko', 'ko_KR'], {
             'Hello': '안녕하세요'
         });
         expect(i18n.get('Hello', 'ko_KR')).toEqual('안녕하세요');
         expect(i18n.get('Hello', 'ko')).toEqual('안녕하세요');
     });
     it('should update lang data', () => {
-        i18n.setLang('ko_KR', {
+        i18n.setLanguage('ko_KR', {
             'Hello': '안녕하세요',
             'Bye': '안녕히가세요'
         });
 
-        i18n.setLang('ko_KR', {
+        i18n.setLanguage('ko_KR', {
             'Bye': '잘가'
         });
 
@@ -34,19 +34,19 @@ describe('I18n', () => {
         expect(i18n.get('Bye', 'ko_KR')).toEqual('잘가');
     });
     it('can use default locale code as en_US', () => {
-        i18n.setLang('en_US', {
+        i18n.setLanguage('en_US', {
             'Hello': 'Hello',
             'Bye': 'Hello'
         });
         expect(i18n.get('Hello')).toEqual('Hello');
     });
     it('should set locale code', () => {
-        i18n.setLang('en_US', {
+        i18n.setLanguage('en_US', {
             'Hello': 'Hello',
             'Bye': 'Hello'
         });
 
-        i18n.setLang('ko_KR', {
+        i18n.setLanguage('ko_KR', {
             'Hello': '안녕하세요',
             'Bye': '안녕히가세요'
         });
@@ -56,7 +56,7 @@ describe('I18n', () => {
         expect(i18n.get('Hello')).toEqual('안녕하세요');
     });
     it('should use default lang data if dont have current lang set', () => {
-        i18n.setLang('en_US', {
+        i18n.setLanguage('en_US', {
             'Hello': 'Hello',
             'Bye': 'Hello'
         });

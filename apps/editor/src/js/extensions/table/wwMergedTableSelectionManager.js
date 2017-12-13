@@ -3,9 +3,12 @@
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
 
-import WwTableSelectionManager from '../../wwTableSelectionManager';
+import Editor from '../../editor';
 import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
+
+const WwTableSelectionManager = Editor ? Editor.WwTableSelectionManager : null;
+
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 
 const {util} = tui;

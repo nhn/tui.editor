@@ -1,22 +1,22 @@
-/* globals plantumlEncoder */
+import Editor from '../editor';
+import EditorViewOnly from '../viewOnly';
 
-import extManager from '../extManager';
-
+const {plantumlEncoder} = window;
+const EditorLoaded = Editor || EditorViewOnly;
+const codeBlockManager = EditorLoaded.codeBlockManager;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
+const LANG = 'uml';
 
 /**
  * plant uml plugin
  * @param {Editor} editor - editor
  * @param {object} [options={}] - plugin options
  * @param {string} options.rendererURL - plant uml renderer url
- * @param {Array<string>} options.languages - language names to map
  * @ignore
  */
-function plantUMLPlugin(editor, options = {}) {
-    const codeBlockManager = editor.convertor.getCodeBlockManager();
+function umlExtension(editor, options = {}) {
     const {
-        rendererURL = DEFAULT_RENDERER_URL,
-        languages = ['plantuml', 'uml']
+        rendererURL = DEFAULT_RENDERER_URL
     } = options;
 
     /**
@@ -39,7 +39,13 @@ function plantUMLPlugin(editor, options = {}) {
         return renderedHTML;
     }
 
-    languages.forEach(language => codeBlockManager.setReplacer(language, plantUMLReplacer));
+    const optionLanguages = editor.options.codeBlockLanguages;
+    if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
+        optionLanguages.push(LANG);
+    }
+    codeBlockManager.setReplacer(LANG, plantUMLReplacer);
 }
 
-extManager.defineExtension('plantUML', plantUMLPlugin);
+EditorLoaded.defineExtension('uml', umlExtension);
+
+export default umlExtension;
