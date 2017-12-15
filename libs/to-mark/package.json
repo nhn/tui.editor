@@ -4,6 +4,7 @@
   "private": true,
   "author": "Sungho Kim / FE Development Team / NHN Entertainment.",
   "license": "MIT",
+  "main": "dist/toMark.js",
   "devDependencies": {
     "cross-env": "^5.0.5",
     "gulp": "^3.9.0",

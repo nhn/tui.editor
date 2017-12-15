@@ -38,7 +38,9 @@ gulp.task('bundle', function(callback) {
         output: {
             path: WEBPACK_DIST_PATH,
             pathinfo: false,
-            filename: WEBPACK_DIST_FILE
+            filename: WEBPACK_DIST_FILE,
+            library: 'toMark',
+            libraryTarget: 'umd'
         }
     }, function(err, stats) {
         if (err) {
