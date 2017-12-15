@@ -2,11 +2,11 @@
  * @fileoverview Implements PopupAddTable
  * @author Minho choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
-
-const {util} = tui;
 
 /**
  * Class PopupHeading

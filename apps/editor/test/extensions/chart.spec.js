@@ -1,5 +1,3 @@
-/* eslint max-nested-callbacks:0 */
-
 import {
     parseCode2ChartOption,
     parseDSV2ChartData,

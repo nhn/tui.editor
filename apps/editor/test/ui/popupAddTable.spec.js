@@ -1,3 +1,4 @@
+import $ from 'jquery';
 
 const PopupAddTable = require('../../src/js/ui/popupAddTable');
 const EventManager = require('../../src/js/eventManager');

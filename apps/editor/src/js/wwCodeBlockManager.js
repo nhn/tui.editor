@@ -2,10 +2,10 @@
  * @fileoverview Implements wysiwyg p manager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
-
-const {util} = tui;
 
 const tagEntities = {
     '&': '&amp;',

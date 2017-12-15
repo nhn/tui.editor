@@ -2,10 +2,11 @@
  * @fileoverview Implements LayerPopup
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import UIController from './uicontroller';
 
-const {util} = tui;
 const CLASS_PREFIX = 'tui-popup-';
 const CLASS_FIT_WINDOW = 'fit-window';
 

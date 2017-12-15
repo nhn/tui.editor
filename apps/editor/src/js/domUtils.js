@@ -2,10 +2,10 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 const FIND_ZWB = /\u200B/g;
-
-const {util} = tui;
 
 /**
  * isTextNode
@@ -401,7 +401,7 @@ const getTableCellByDirection = function(node, direction) {
     let isForward = true;
     let targetElement = null;
 
-    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
+    if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
         return null;
     } else if (direction === 'previous') {
         isForward = false;
@@ -429,7 +429,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
     let tableCellElement = null;
     let $node, index, $targetRowElement, $currentContainer, $siblingContainer, isSiblingContainerExists;
 
-    if (tui.util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
+    if (util.isUndefined(direction) || (direction !== 'next' && direction !== 'previous')) {
         return null;
     } else if (direction === 'previous') {
         isForward = false;
@@ -454,7 +454,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
             index = node.parentNode.childNodes.length - 1;
         }
 
-        if (tui.util.isUndefined(needEdgeCell) || !needEdgeCell) {
+        if (util.isUndefined(needEdgeCell) || !needEdgeCell) {
             index = getNodeOffsetOfParent(node);
         }
 

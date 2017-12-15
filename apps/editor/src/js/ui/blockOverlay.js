@@ -1,8 +1,9 @@
+import $ from 'jquery';
+
 /**
  * Class BlockOverlay
  */
 class BlockOverlay {
-
     /**
      * Creates an instance of BlockOverlay.
      * @param {Object} options - options

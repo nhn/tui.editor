@@ -1,3 +1,7 @@
+
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwCodeBlockManager from '../src/js/wwCodeBlockManager';
@@ -20,7 +24,7 @@ describe('WwCodeBlockManager', () => {
         wwe.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -127,7 +131,7 @@ describe('WwCodeBlockManager', () => {
             const fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            const resultFragment = mgr.prepareToPasteOnCodeblock(tui.util.toArray(fragment.childNodes));
+            const resultFragment = mgr.prepareToPasteOnCodeblock(util.toArray(fragment.childNodes));
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
@@ -138,7 +142,7 @@ describe('WwCodeBlockManager', () => {
             const fragment = wwe.getEditor().getDocument().createDocumentFragment();
             $(fragment).append(codeblock);
 
-            const resultFragment = mgr.prepareToPasteOnCodeblock(tui.util.toArray(fragment.childNodes));
+            const resultFragment = mgr.prepareToPasteOnCodeblock(util.toArray(fragment.childNodes));
 
             expect($(resultFragment).find('pre').attr('class')).toEqual('lang-javascript');
             expect($(resultFragment).find('pre').attr('data-language')).toEqual('javascript');
@@ -213,8 +217,7 @@ describe('WwCodeBlockManager', () => {
             const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
-                         + 'test</code></pre>');
-
+                + 'test</code></pre>');
 
             mgr.splitCodeblockToEachLine(frag);
 
@@ -229,8 +232,7 @@ describe('WwCodeBlockManager', () => {
             const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
-                         + 'test\n\ntest\n\n\n</code></pre>');
-
+                + 'test\n\ntest\n\n\n</code></pre>');
 
             mgr.splitCodeblockToEachLine(frag);
 
@@ -243,8 +245,7 @@ describe('WwCodeBlockManager', () => {
             const frag = document.createDocumentFragment();
 
             $(frag).append('<pre><code class="lang-javascript" data-language="javascript">'
-                         + 'test\ntest2\n\ntest3\n</code></pre>');
-
+                + 'test\ntest2\n\ntest3\n</code></pre>');
 
             mgr.splitCodeblockToEachLine(frag);
 
@@ -257,11 +258,10 @@ describe('WwCodeBlockManager', () => {
             const frag = document.createDocumentFragment();
 
             $(frag).append('<pre>'
-                         + '<div>test</div>'
-                         + '<div>test2</div>'
-                         + '<div>test3</div>'
-                         + '</pre>');
-
+                + '<div>test</div>'
+                + '<div>test2</div>'
+                + '<div>test3</div>'
+                + '</pre>');
 
             mgr.splitCodeblockToEachLine(frag);
 

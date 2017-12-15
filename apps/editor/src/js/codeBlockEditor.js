@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import CodeMirrorExt from './codeMirrorExt';
 
 const EVENT_LANGUAGE_CHANGED = 'language-changed';

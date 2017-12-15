@@ -1,5 +1,3 @@
-/* eslint max-nested-callbacks: 0 */
-
 import EventManager from '../src/js/eventManager';
 
 describe('eventManager', function() {
@@ -50,6 +48,7 @@ describe('eventManager', function() {
 
             em.listen('testEventHook', function() {
                 count += 1;
+
                 return count;
             });
 
@@ -84,11 +83,13 @@ describe('eventManager', function() {
         it('emit handlers reduce style return value', function() {
             em.listen('reduceTest', function(data) {
                 data += 1;
+
                 return data;
             });
 
             em.listen('reduceTest', function(data) {
                 data += 2;
+
                 return data;
             });
 
@@ -98,11 +99,13 @@ describe('eventManager', function() {
         it('emitReduce can have additional parameter', function() {
             em.listen('reduceTest', function(data, addition) {
                 data += addition;
+
                 return data;
             });
 
             em.listen('reduceTest', function(data, addition) {
                 data += (addition + 1);
+
                 return data;
             });
             expect(em.emitReduce('reduceTest', 1, 2)).toEqual(6);
@@ -114,6 +117,7 @@ describe('eventManager', function() {
 
             em.listen('reduceTest', function(data, addition) {
                 data += (addition + 1);
+
                 return data;
             });
             expect(em.emitReduce('reduceTest', 1, 2)).toEqual(4);

@@ -2,10 +2,10 @@
  * @fileoverview Implements mergedTableCreator.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import tableRenderer from './tableRenderer';
-
-const util = tui.util;
 
 /**
  * Extract properties for merge.

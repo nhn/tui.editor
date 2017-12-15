@@ -1,3 +1,6 @@
+
+import $ from 'jquery';
+
 import SquireExt from '../src/js/squireExt';
 
 describe('SquireExt', () => {

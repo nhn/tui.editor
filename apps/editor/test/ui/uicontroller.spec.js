@@ -1,3 +1,4 @@
+import $ from 'jquery';
 
 const UIController = require('../../src/js/ui/uicontroller');
 

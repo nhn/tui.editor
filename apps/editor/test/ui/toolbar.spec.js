@@ -1,3 +1,4 @@
+import $ from 'jquery';
 
 const Toolbar = require('../../src/js/ui/toolbar');
 const CommandManager = require('../../src/js/commandManager');
@@ -49,7 +50,7 @@ describe('Toolbar', () => {
         });
 
         it('addButton with index should insert button into given position', () => {
-             toolbar.addButton({
+            toolbar.addButton({
                 className: 'test',
                 command: 'test',
                 text: 'test'

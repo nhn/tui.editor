@@ -2,14 +2,7 @@
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
-// codemirror modes&addons
-import './codemirror/fixOrderedListNumber';
-import './codemirror/overlay';
-import './codemirror/markdown';
-import './codemirror/gfm';
-import './codemirror/continuelist';
-import './codemirror/arrowKeyFunction';
+import $ from 'jquery';
 
 import ToastUIEditor from './editor';
 

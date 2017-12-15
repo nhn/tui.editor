@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import HR from '../../src/js/wysiwygCommands/hr';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
@@ -20,7 +22,7 @@ describe('HR', () => {
         sq.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

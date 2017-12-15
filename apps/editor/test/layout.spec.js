@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Layout from '../src/js/layout';
 import EventManager from '../src/js/eventManager';
 

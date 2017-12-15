@@ -1,4 +1,4 @@
-/* eslint max-nested-callbacks:0 new-cap:0 */
+/* eslint new-cap:0 */
 
 import CodeBlockEditor from '../src/js/codeBlockEditor';
 

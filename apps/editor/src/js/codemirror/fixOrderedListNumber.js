@@ -1,4 +1,5 @@
-/* global CodeMirror */
+import CodeMirror from 'codemirror';
+
 const listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 
 /**

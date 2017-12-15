@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 const PopupAddLink = require('../../src/js/ui/popupAddLink');
 const EventManager = require('../../src/js/eventManager');
 

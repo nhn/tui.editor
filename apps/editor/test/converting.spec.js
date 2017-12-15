@@ -1,3 +1,4 @@
+/* global readFixtures */
 const mdInput = ['# HELLO\n\n',
     '## HELLO\n\n',
     '### HELLO\n\n',
@@ -165,6 +166,12 @@ describe('converting', () => {
     });
 });
 
+/**
+ * compare string
+ * @param {string} resultString - result string
+ * @param {string} expectedString - expected string
+ * @returns {boolean} true if match
+ */
 function compare(resultString, expectedString) {
     const length = expectedString.length;
     let i = 0;
@@ -177,11 +184,13 @@ function compare(resultString, expectedString) {
         for (; i < length; i += 1) {
             flag = resultString.charAt(i) !== expectedString.charAt(i);
             if (flag) {
+                /* eslint-disable */
                 console.log(
                     `"${expectedString.substring(i - 4, i)}^${expectedString.charAt(i)}^${expectedString.substring(i + 1, i + 5)}"`
                     + ' expected but '
                     + `"${resultString.substring(i - 4, i)}^${resultString.charAt(i)}^${resultString.substring(i + 1, i + 5)}"`);
                 console.log(`at -> ${row}:${col}`);
+                /* eslint-enable */
                 result = false;
                 break;
             }

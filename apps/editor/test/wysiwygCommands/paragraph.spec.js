@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Paragraph from '../../src/js/wysiwygCommands/paragraph';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
@@ -16,7 +18,7 @@ describe('Paragraph', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -122,5 +124,4 @@ describe('Paragraph', () => {
         expect(wwe.get$Body().find('ul').length).toBe(0);
         expect(wwe.get$Body().find('li').length).toBe(0);
     });
-
 });

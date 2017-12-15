@@ -2,10 +2,9 @@
  * @fileoverview Implements markdown marker helper for additional information
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import util from 'tui-code-snippet';
 
 import DiffMatchPatch from './diffMatchPatch';
-
-const {util} = tui;
 
 const CHANGE_NOTHING = 0,
     CHANGE_ADD = 1,

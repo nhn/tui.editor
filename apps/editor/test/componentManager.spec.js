@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import MarkdownEditor from '../src/js/markdownEditor';
 import EventManager from '../src/js/eventManager';

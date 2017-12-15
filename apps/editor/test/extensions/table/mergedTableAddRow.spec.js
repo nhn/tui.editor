@@ -1,8 +1,11 @@
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import {_createNewRow, _addRow} from '../../../src/js/extensions/table/mergedTableAddRow';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddRow', () => {
-    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+    const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
     describe('_createNewRow()', () => {
         let tableData;

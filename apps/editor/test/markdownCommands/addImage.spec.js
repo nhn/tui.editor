@@ -1,4 +1,5 @@
-/* eslint max-nested-callbacks:0 */
+
+import $ from 'jquery';
 
 import AddImage from '../../src/js/markdownCommands/addImage';
 import MarkdownEditor from '../../src/js/markdownEditor';

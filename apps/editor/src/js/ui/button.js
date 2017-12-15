@@ -2,7 +2,6 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
 const UIController = require('./uicontroller');
 const tooltip = require('./tooltip');
 
@@ -11,7 +10,6 @@ const tooltip = require('./tooltip');
  * @extends {UIController}
  */
 class Button extends UIController {
-
     /**
      * Creates an instance of Button.
      * @param {object} options - button options

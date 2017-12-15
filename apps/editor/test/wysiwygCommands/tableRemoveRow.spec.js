@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import RemoveRow from '../../src/js/wysiwygCommands/tableRemoveRow';
 import WwTableManager from '../../src/js/wwTableManager';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
@@ -20,7 +22,7 @@ describe('Table - RemoveRow', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -34,13 +36,13 @@ describe('Table - RemoveRow', () => {
 
         sq.setHTML([
             '<table>',
-                '<thead>',
-                    '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-                    '<tr><td>5</td><td>6</td></tr>',
-                '</tbody>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '</tbody>',
             '</table>'
         ].join('\n'));
 
@@ -48,7 +50,7 @@ describe('Table - RemoveRow', () => {
         range.collapse(true);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -62,12 +64,12 @@ describe('Table - RemoveRow', () => {
 
         sq.setHTML([
             '<table>',
-                '<thead>',
-                    '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-                '</tbody>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+            '</tbody>',
             '</table>'
         ].join('\n'));
 
@@ -75,7 +77,7 @@ describe('Table - RemoveRow', () => {
         range.collapse(true);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -89,13 +91,13 @@ describe('Table - RemoveRow', () => {
 
         sq.setHTML([
             '<table>',
-                '<thead>',
-                    '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                    '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
-                    '<tr><td>5</td><td>6</td></tr>',
-                '</tbody>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td class="te-cell-selected">3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '</tbody>',
             '</table>'
         ].join('\n'));
 
@@ -103,7 +105,7 @@ describe('Table - RemoveRow', () => {
         range.collapse(true);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -116,13 +118,13 @@ describe('Table - RemoveRow', () => {
 
         sq.setHTML([
             '<table>',
-                '<thead>',
-                    '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                    '<tr><td>3</td><td>4</td></tr>',
-                    '<tr><td class="te-cell-selected">5</td><td>6</td></tr>',
-                '</tbody>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '<tr><td class="te-cell-selected">5</td><td>6</td></tr>',
+            '</tbody>',
             '</table>'
         ].join('\n'));
 
@@ -130,7 +132,7 @@ describe('Table - RemoveRow', () => {
         range.collapse(true);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -158,7 +160,7 @@ describe('Table - RemoveRow', () => {
         range.collapse(true);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -186,7 +188,7 @@ describe('Table - RemoveRow', () => {
         range.setEndAfter(wwe.get$Body().find('tbody td')[3].firstChild);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -214,7 +216,7 @@ describe('Table - RemoveRow', () => {
         range.selectNodeContents(wwe.get$Body().find('tbody td span')[0].firstChild);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -244,7 +246,7 @@ describe('Table - RemoveRow', () => {
         range.setEndAfter(wwe.get$Body().find('thead th')[1].firstChild);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 
@@ -274,7 +276,7 @@ describe('Table - RemoveRow', () => {
         range.setEndAfter(wwe.get$Body().find('tbody td')[7].firstChild);
 
         sq.setSelection(range);
-        sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+        sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
         RemoveRow.exec(wwe);
 

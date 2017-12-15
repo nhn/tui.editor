@@ -2,11 +2,11 @@
  * @fileoverview Implements
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+import Squire from 'squire-rte';
 
 import domUtils from './domUtils';
-
-const {Squire} = window;
-const {util} = tui;
 
 const FIND_BLOCK_TAGNAME_RX = /\b(H[\d]|LI|P|BLOCKQUOTE|TD)\b/;
 const isIElt11 = /Trident\/[456]\./.test(navigator.userAgent);

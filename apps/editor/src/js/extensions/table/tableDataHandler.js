@@ -2,8 +2,8 @@
  * @fileoverview Implements tableDataHandler
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
-
-const {util} = tui;
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 /**
  * Parse cell like td or th.
@@ -203,7 +203,7 @@ function createRenderData(tableData, cellIndexData) {
     return renderData;
 }
 
-const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
 /**
  * Create basic cell data.

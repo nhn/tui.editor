@@ -207,4 +207,3 @@ module.exports = function table(state, startLine, endLine, silent) {
     state.line = nextLine;
     return true;
 };
-/*eslint-enable */

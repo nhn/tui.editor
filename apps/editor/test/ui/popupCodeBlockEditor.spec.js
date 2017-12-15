@@ -1,4 +1,4 @@
-/* eslint max-nested-callbacks:0 new-cap:0 */
+import $ from 'jquery';
 
 import PopupCodeBlockEditor from '../../src/js/ui/popupCodeBlockEditor';
 import EventManager from '../../src/js/eventManager';

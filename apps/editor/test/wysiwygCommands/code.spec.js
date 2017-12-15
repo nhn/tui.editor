@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Code from '../../src/js/wysiwygCommands/code';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';

@@ -21,12 +21,14 @@
  * y.title: Month           => yAxis.title
  * ```
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+const chart = window.tui.chart;
 
 import csv from './csv';
 import Editor from '../../editor';
 import EditorViewOnly from '../../viewOnly';
 
-const {util, chart} = tui;
 const EditorLoaded = Editor || EditorViewOnly;
 const WwCodeBlockManager = EditorLoaded.WwCodeBlockManager;
 const codeBlockManager = EditorLoaded.codeBlockManager;
@@ -337,7 +339,7 @@ function chartReplacer(codeBlockChartDataAndOptions) {
     const randomId = `chart-${Math.random().toString(36).substr(2, 10)}`;
     let renderedHTML = `<div id="${randomId}" class="chart" />`;
 
-    window.setTimeout(() => {
+    setTimeout(() => {
         const chartContainer = document.querySelector(`#${randomId}`);
         try {
             parseCode2DataAndOptions(codeBlockChartDataAndOptions, ({data, options}) => {

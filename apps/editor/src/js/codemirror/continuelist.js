@@ -1,5 +1,6 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
+import CodeMirror from 'codemirror';
 
 /*eslint-disable */
 var listRE = /^(\s*)(>[> ]*|[*+-]\s(?:\[(?:x|\s)\]\s)?|(\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(\s*)/,
@@ -91,4 +92,3 @@ CodeMirror.commands.newlineAndIndentContinue = function(cm) {
         cm.setCursor(pos.line + 1, 0);
     }
 };
-/*eslint-enable */

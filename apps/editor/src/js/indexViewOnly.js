@@ -2,6 +2,7 @@
  * @fileoverview entry point
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 import ToastUIEditorViewOnly from './viewOnly';
 

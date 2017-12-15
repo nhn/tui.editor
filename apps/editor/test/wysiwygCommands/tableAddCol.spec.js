@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import AddCol from '../../src/js/wysiwygCommands/tableAddCol';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';

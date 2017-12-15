@@ -1,6 +1,6 @@
-import MarkdownMarkerHelper from '../../../src/js/extensions/mark/markdownMarkerHelper';
+import CodeMirror from 'codemirror';
 
-const CodeMirror = window.CodeMirror;
+import MarkdownMarkerHelper from '../../../src/js/extensions/mark/markdownMarkerHelper';
 
 describe('MarkdownMarkerHelper', function() {
     let cm, mmh, cmTextarea;

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import RemoveCol from '../../src/js/wysiwygCommands/tableRemoveCol';
 import WwTableManager from '../../src/js/wwTableManager';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';

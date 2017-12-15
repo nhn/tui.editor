@@ -1,10 +1,13 @@
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import {_createNewColumns, _addColumns} from '../../../src/js/extensions/table/mergedTableAddCol';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 
 describe('mergedTableAddCol', () => {
-    const BASIC_CELL_CONTENT = tui.util.browser.msie ? '' : '<br>';
+    const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
-    describe('_createNewColumns()',  () => {
+    describe('_createNewColumns()', () => {
         let tableData;
 
         beforeEach(function() {
@@ -275,7 +278,7 @@ describe('mergedTableAddCol', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addColumns(tableData, tableRange);
+            _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(4);
@@ -306,7 +309,7 @@ describe('mergedTableAddCol', () => {
                     colIndex: 0
                 }
             };
-            const actual = _addColumns(tableData, tableRange);
+            _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(4);
@@ -337,7 +340,7 @@ describe('mergedTableAddCol', () => {
                     colIndex: 2
                 }
             };
-            const actual = _addColumns(tableData, tableRange);
+            _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(4);
             expect(tableData[1][0].colspan).toBe(3);
@@ -374,7 +377,7 @@ describe('mergedTableAddCol', () => {
                     colIndex: 1
                 }
             };
-            const actual = _addColumns(tableData, tableRange);
+            _addColumns(tableData, tableRange);
 
             expect(tableData[0].length).toBe(5);
             expect(tableData[1][0].colspan).toBe(5);

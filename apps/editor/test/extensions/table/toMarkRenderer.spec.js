@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import {_getAdditionalThCount, _createTheadMarkdown} from '../../../src/js/extensions/table/toMarkRenderer';
 
 describe('toMarkRendererCreator', () => {

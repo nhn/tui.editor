@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Bold from '../../src/js/wysiwygCommands/bold';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
@@ -19,7 +21,7 @@ describe('Bold', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

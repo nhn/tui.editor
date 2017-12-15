@@ -1,6 +1,7 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 // based on https://github.com/codemirror/CodeMirror/blob/ff04f127ba8a736b97d06c505fb85d976e3f2980/mode/markdown/markdown.js
+import CodeMirror from 'codemirror';
 
 /*eslint-disable */
 "use strict";
@@ -931,4 +932,3 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 }, "xml");
 
 CodeMirror.defineMIME("text/x-markdown", "markdown");
-/*eslint-enable */

@@ -2,10 +2,9 @@
  * @fileoverview Implements PopupAddTable
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import util from 'tui-code-snippet';
 
 import LayerPopup from './layerpopup';
-
-const {util} = tui;
 
 const CLASS_TABLE_SELECTION = 'te-table-selection';
 const CLASS_TABLE_HEADER = 'te-table-header';

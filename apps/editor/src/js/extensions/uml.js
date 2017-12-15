@@ -1,7 +1,7 @@
 import Editor from '../editor';
 import EditorViewOnly from '../viewOnly';
 
-const {plantumlEncoder} = window;
+import plantumlEncoder from 'plantuml-encoder';
 const EditorLoaded = Editor || EditorViewOnly;
 const codeBlockManager = EditorLoaded.codeBlockManager;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';

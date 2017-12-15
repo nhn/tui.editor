@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwTableSelectionManager from '../src/js/wwTableSelectionManager';

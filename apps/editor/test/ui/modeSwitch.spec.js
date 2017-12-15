@@ -1,3 +1,4 @@
+import $ from 'jquery';
 
 const ModeSwitch = require('../../src/js/ui/modeSwitch');
 

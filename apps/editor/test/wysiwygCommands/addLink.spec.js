@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import AddLink from '../../src/js/wysiwygCommands/addLink';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';

@@ -2,6 +2,8 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import MarkdownPreview from './mdPreview';
 import EventManager from './eventManager';
@@ -10,8 +12,6 @@ import extManager from './extManager';
 import Convertor from './convertor';
 import domUtils from './domUtils';
 import codeBlockManager from './codeBlockManager';
-
-const {util} = tui;
 
 const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';

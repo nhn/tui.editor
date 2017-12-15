@@ -2,7 +2,6 @@
  * @fileoverview Implements Task counter
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
 import Editor from '../editor';
 import EditorViewOnly from '../viewOnly';
 

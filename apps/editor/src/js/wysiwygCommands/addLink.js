@@ -3,6 +3,7 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 const CommandManager = require('../commandManager');
 import {decodeURIGraceful, encodeMarkdownCharacters} from '../importManager';

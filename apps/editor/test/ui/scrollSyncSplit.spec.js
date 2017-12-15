@@ -1,5 +1,3 @@
-/* eslint-disable max-nested-callbacks */
-
 import ScrollSyncSplit from '../../src/js/ui/scrollSyncSplit';
 
 describe('ScrollSyncSplit', () => {
@@ -10,7 +8,7 @@ describe('ScrollSyncSplit', () => {
 
     beforeEach(done => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        window.loadStyleFixtures('src/css/tui-editor.css');
+        loadStyleFixtures('src/css/tui-editor.css');
 
         container = document.createElement('div');
         container.style.position = 'relative';

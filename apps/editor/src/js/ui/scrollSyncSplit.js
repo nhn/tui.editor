@@ -1,4 +1,5 @@
-const {util} = tui;
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 const CLASS_SPLIT_SCROLL = 'tui-split-scroll';
 const CLASS_SINGLE_CONTENT = 'single-content';

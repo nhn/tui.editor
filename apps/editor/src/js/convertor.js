@@ -2,6 +2,10 @@
  * @fileoverview Convertor have responsible to convert markdown and html
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+import MarkdownIt from 'markdown-it';
+import toMark from 'toMark';
 
 import htmlSanitizer from './htmlSanitizer';
 import taskList from './markdownItPlugins/markdownitTaskPlugin';
@@ -12,11 +16,6 @@ import tableRenderer from './markdownItPlugins/markdownitTableRenderer';
 import htmlBlock from './markdownItPlugins/markdownitHtmlBlockRenderer';
 import codeBackticks from './markdownItPlugins/markdownitBackticksRenderer';
 import codeBlockManager from './codeBlockManager';
-
-const {
-    toMark,
-    markdownit: MarkdownIt
-} = window;
 
 const markdownitHighlight = new MarkdownIt({
     html: true,
@@ -194,7 +193,7 @@ class Convertor {
 
         markdown = this.eventManager.emitReduce('convertorAfterHtmlToMarkdownConverted', markdown);
 
-        tui.util.forEach(markdown.split('\n'), (line, index) => {
+        util.forEach(markdown.split('\n'), (line, index) => {
             const FIND_TABLE_RX = /^\|[^|]*\|/ig;
             const FIND_CODE_RX = /`[^`]*<br>[^`]*`/ig;
 

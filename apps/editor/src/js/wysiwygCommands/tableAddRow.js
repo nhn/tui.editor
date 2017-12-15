@@ -3,6 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 
@@ -78,7 +80,7 @@ function getSelectedRowsLength(wwe) {
  */
 function getNewRow($tr) {
     const cloned = $tr.clone();
-    const htmlString = tui.util.browser.msie ? '' : '<br />';
+    const htmlString = util.browser.msie ? '' : '<br />';
 
     cloned.find('td').html(htmlString);
 

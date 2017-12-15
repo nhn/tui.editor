@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwHrManager from '../src/js/wwHrManager';
@@ -21,7 +23,7 @@ describe('WwHrManager', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -30,7 +32,7 @@ describe('WwHrManager', () => {
     });
 
     describe('_removeHrOnEnter', () => {
-        //현재커서가 hr을 가르키는 경우
+        // 현재커서가 hr을 가르키는 경우
         it('remove hr current selection is hr', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -52,8 +54,8 @@ describe('WwHrManager', () => {
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
-        //크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
-        //그런 상황에서 적용되는 케이스
+        // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+        // 그런 상황에서 적용되는 케이스
         it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -66,7 +68,7 @@ describe('WwHrManager', () => {
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
-        //hr이후의 엘리먼트가 없을때
+        // hr이후의 엘리먼트가 없을때
         it('remove hr then set cursor to new block when nextSibling is not exists', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -132,9 +134,8 @@ describe('WwHrManager', () => {
         });
     });
 
-
     describe('_removeHrOnBackspace()', () => {
-        //현재커서가 hr을 가르키는 경우
+        // 현재커서가 hr을 가르키는 경우
         it('remove hr current selection is hr', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -154,7 +155,7 @@ describe('WwHrManager', () => {
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
-        //현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
+        // 현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
         it('remove hr current selection\'s parentNode previousSibling is hr when offset 0', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
@@ -168,8 +169,8 @@ describe('WwHrManager', () => {
             expect(wwe.get$Body().find('hr').length).toEqual(0);
         });
 
-        //크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
-        //그런 상황에서 적용되는 케이스
+        // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+        // 그런 상황에서 적용되는 케이스
         it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 

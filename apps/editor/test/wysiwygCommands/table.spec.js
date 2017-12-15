@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Table from '../../src/js/wysiwygCommands/table';
 import tableManager from '../../src/js/wwTableManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
@@ -18,7 +20,7 @@ describe('Table', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

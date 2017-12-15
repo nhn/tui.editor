@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwTaskManager from '../src/js/wwTaskManager';
@@ -19,7 +21,7 @@ describe('WwTaskManager', () => {
         mgr = new WwTaskManager(wwe);
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -87,8 +89,8 @@ describe('WwTaskManager', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
 
             wwe.getEditor()
-            .setHTML(['<ul><li data-te-task class="task-list-item"><div>test1</div>',
-                     '<ul><li data-te-task class="task-list-item"><div>test2</div></li></ul></li></ul>'].join(''));
+                .setHTML(['<ul><li data-te-task class="task-list-item"><div>test1</div>',
+                    '<ul><li data-te-task class="task-list-item"><div>test2</div></li></ul></li></ul>'].join(''));
 
             range.setStart(wwe.get$Body().find('li')[0], 0);
             range.collapse(true);

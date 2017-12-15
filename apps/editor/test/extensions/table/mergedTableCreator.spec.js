@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import {
     _extractPropertiesForMerge,
     _parseTableCell,

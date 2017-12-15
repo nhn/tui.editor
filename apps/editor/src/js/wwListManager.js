@@ -2,6 +2,7 @@
  * @fileoverview Implements wysiwyg list manager
  * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 import domUtils from './domUtils';
 

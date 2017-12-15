@@ -2,6 +2,7 @@
  * @fileoverview Implements tableRenderer
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
 
 import tableDataHandler from './tableDataHandler';
 

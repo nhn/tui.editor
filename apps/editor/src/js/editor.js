@@ -2,6 +2,8 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import Button from './ui/button';
 import MarkdownEditor from './markdownEditor';
@@ -64,8 +66,6 @@ import wwDecreaseDepth from './wysiwygCommands/decreaseDepth';
 import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
-
-const {util} = tui;
 
 const __nedInstance = [];
 

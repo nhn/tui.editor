@@ -1,4 +1,5 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
 
 const Button = require('../../src/js/ui/button');
 

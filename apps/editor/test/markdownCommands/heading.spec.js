@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Heading from '../../src/js/markdownCommands/heading';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';

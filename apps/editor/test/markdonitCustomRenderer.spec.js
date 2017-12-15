@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Convertor from '../src/js/convertor';
 import EventManager from '../src/js/eventManager';
 

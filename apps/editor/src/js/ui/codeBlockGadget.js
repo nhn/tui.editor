@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import BlockOverlay from './blockOverlay';
 
 const EVENT_LANGUAGE_CHANGED = 'language-changed';

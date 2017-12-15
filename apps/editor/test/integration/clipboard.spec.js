@@ -1,4 +1,7 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import Editor from '../../src/js/editor';
 
 /**
@@ -51,7 +54,7 @@ function pasteClipboardEvent(text, html, fileType) {
 describe('Clipboard', () => {
     let editor, se;
     // We can't simulate browser paste. skip IE browsers
-    if (tui.util.browser.msie) {
+    if (util.browser.msie) {
         pending();
     }
 

@@ -2,11 +2,12 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import UIController from './uicontroller';
 import i18n from '../i18n';
 
-const {util} = tui;
 const MARKDOWN = 'markdown';
 const WYSIWYG = 'wysiwyg';
 

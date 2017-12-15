@@ -1,3 +1,6 @@
+/* eslint new-cap:0 */
+import $ from 'jquery';
+
 import CodeBlockLanguagesCombo from '../../src/js/ui/codeBlockLanguagesCombo';
 import PopupCodeBlockLanguages from '../../src/js/ui/popupCodeBlockLanguages';
 import EventManager from '../../src/js/eventManager';
@@ -136,7 +139,7 @@ describe('CodeBlockLanguagesCombo', () => {
     it('should hide PopupCodeBlockLanguages on focusOut', () => {
         spyOn(popupLanguages, 'hide');
         combo._onFocusOut();
-        
+
         expect(popupLanguages.hide).toHaveBeenCalled();
     });
 });

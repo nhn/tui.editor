@@ -1,4 +1,5 @@
-/* eslint-disable max-len, max-nested-callbacks */
+import $ from 'jquery';
+import MarkdownIt from 'markdown-it';
 
 import Editor from '../src/js/editor';
 import {CodeBlockManager} from '../src/js/codeBlockManager';
@@ -9,17 +10,15 @@ import WwTableManager from '../src/js/wwTableManager';
 import WwTableSelectionManager from '../src/js/wwTableSelectionManager';
 import CommandManager from '../src/js/commandManager';
 
-const MarkDownIt = window.markdownit;
-
 describe('Editor', () => {
     let editor, container;
 
     describe('module export', () => {
-        it('getMarkdownHighlightRenderer() should get MarkDownIt instance', () => {
-            expect(Editor.markdownitHighlight instanceof MarkDownIt).toBe(true);
+        it('getMarkdownHighlightRenderer() should get MarkdownIt instance', () => {
+            expect(Editor.markdownitHighlight instanceof MarkdownIt).toBe(true);
         });
-        it('markdownitHighlight should be MarkDownIt instance', () => {
-            expect(Editor.markdownitHighlight instanceof MarkDownIt).toBe(true);
+        it('markdownitHighlight should be MarkdownIt instance', () => {
+            expect(Editor.markdownitHighlight instanceof MarkdownIt).toBe(true);
         });
         it('domUtils should have it\' functions', () => {
             expect(typeof Editor.domUtils.getNodeName).toBe('function');
@@ -50,8 +49,8 @@ describe('Editor', () => {
     describe('Api', () => {
         beforeEach(() => {
             jasmine.getStyleFixtures().fixturesPath = '/base';
-            window.loadStyleFixtures(
-                'lib/codemirror/lib/codemirror.css',
+            loadStyleFixtures(
+                'node_modules/codemirror/lib/codemirror.css',
                 'src/css/tui-editor.css'
             );
             container = document.createElement('div');

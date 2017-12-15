@@ -2,6 +2,7 @@
  * @fileoverview Implements Scroll Follow Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 import Editor from '../../editor';
 import ScrollSync from './scrollSync';
 import SectionManager from './sectionManager';

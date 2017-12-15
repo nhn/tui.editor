@@ -2,11 +2,11 @@
  * @fileoverview Implements WwPasteContentHelper
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 import htmlSanitizer from './htmlSanitizer';
-
-const {util} = tui;
 
 /**
  * Class WwPasteContentHelper

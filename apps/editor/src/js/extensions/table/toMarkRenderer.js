@@ -2,9 +2,10 @@
  * @fileoverview Implements toMarkRendererCreator.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+import toMark from 'toMark';
 
-const {toMark} = window;
-const util = tui.util;
 const RX_COLS = /@cols=[0-9]+:/g;
 
 /**

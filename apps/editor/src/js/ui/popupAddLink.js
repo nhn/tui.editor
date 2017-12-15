@@ -2,11 +2,11 @@
  * @fileoverview Implements PopupAddLink
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import util from 'tui-code-snippet';
 
 import LayerPopup from './layerpopup';
 import i18n from '../i18n';
 
-const {util} = tui;
 const URL_REGEX = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/;
 
 /**

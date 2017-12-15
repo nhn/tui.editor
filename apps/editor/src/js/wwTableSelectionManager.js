@@ -3,6 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
@@ -40,7 +42,7 @@ class WwTableSelectionManager {
         this._initEvent();
 
         // For disable firefox's table tool UI and table resize handler
-        if (tui.util.browser.firefox) {
+        if (util.browser.firefox) {
             document.execCommand('enableObjectResizing', false, 'false');
             document.execCommand('enableInlineTableEditing', false, 'false');
         }
@@ -86,7 +88,7 @@ class WwTableSelectionManager {
             if (this._isSelectionStarted && isEndsInTable && !isTextSelect) {
                 window.getSelection().removeAllRanges();
                 // For disable firefox's native table cell selection
-                if (tui.util.browser.firefox && !this._removeSelectionTimer) {
+                if (util.browser.firefox && !this._removeSelectionTimer) {
                     this._removeSelectionTimer = setInterval(() => {
                         window.getSelection().removeAllRanges();
                     }, 10);
@@ -126,7 +128,7 @@ class WwTableSelectionManager {
                     range.setStart(selectionEnd, 0);
                     // IE wont fire copy/cut event if there is no selected range.
                     // trick IE to fire the event
-                    if (tui.util.browser.msie) {
+                    if (util.browser.msie) {
                         range.setEnd(selectionEnd, 1);
                     } else {
                         range.setEnd(selectionEnd, 0);
@@ -148,9 +150,7 @@ class WwTableSelectionManager {
             const isSelectedCell = $(selectionStart).hasClass(TABLE_CELL_SELECTED_CLASS_NAME);
             selectionEnd = null;
 
-            if (!isSelectedCell
-                || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)
-               ) {
+            if (!isSelectedCell || (isSelectedCell && ev.data.button !== MOUSE_RIGHT_BUTTON)) {
                 this.removeClassAttrbuteFromAllCellsIfNeed();
                 this.setTableSelectionTimerIfNeed(selectionStart);
                 this.eventManager.listen('mouseover.tableSelection', onMouseover);
@@ -198,7 +198,7 @@ class WwTableSelectionManager {
     _clearTableSelectionTimerIfNeed() {
         clearTimeout(this._tableSelectionTimer);
         // For disable firefox's native table selection
-        if (tui.util.browser.firefox && this._removeSelectionTimer) {
+        if (util.browser.firefox && this._removeSelectionTimer) {
             clearTimeout(this._removeSelectionTimer);
             this._removeSelectionTimer = null;
         }

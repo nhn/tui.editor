@@ -1,4 +1,5 @@
-/* eslint max-nested-callbacks:0 */
+
+import $ from 'jquery';
 
 import Preview from '../src/js/preview';
 import EventManager from '../src/js/eventManager';

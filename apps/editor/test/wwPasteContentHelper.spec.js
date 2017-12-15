@@ -1,3 +1,6 @@
+
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwPasteContentHelper from '../src/js/wwPasteContentHelper';
@@ -5,7 +8,7 @@ import WwCodeBlockManager from '../src/js/wwCodeBlockManager';
 import WwTableManager from '../src/js/wwTableManager';
 
 describe('WwPasteContentHelper', () => {
-    let wwe, pch, contentFrag, pasteData;
+    let wwe, pch;
 
     beforeEach(() => {
         const $container = $('<div />');
@@ -22,8 +25,6 @@ describe('WwPasteContentHelper', () => {
         wwe.componentManager.addManager(WwTableManager);
 
         pch = new WwPasteContentHelper(wwe);
-
-        contentFrag = wwe.getEditor().getDocument().createDocumentFragment();
     });
 
     afterEach(() => {
@@ -314,10 +315,6 @@ describe('WwPasteContentHelper', () => {
 
             $container.html('<div>text<b>text2</b><br></div>');
 
-            pasteData = {
-                fragment: contentFrag
-            };
-
             pch.preparePaste($container);
 
             expect($container[0].childNodes.length).toEqual(2);
@@ -395,7 +392,6 @@ describe('WwPasteContentHelper', () => {
                 expect($container[0].childNodes[0].childNodes.length).toEqual(2);
             });
 
-
             it('if content have complete list and hasnt format li then do nothing', () => {
                 const $container = $('<div />');
 
@@ -417,7 +413,7 @@ describe('WwPasteContentHelper', () => {
                 expect($container[0].childNodes[0].childNodes.length).toEqual(2);
             });
 
-            //리스트의 끝부분의 뎊스가 루츠쪽으로 들어간경우
+            // 리스트의 끝부분의 뎊스가 루츠쪽으로 들어간경우
             it('paste data have backward depth list then limit list depth level', () => {
                 const $container = $('<div />');
                 $container.html('<ul><li><div>text<br></div></li><li>' +

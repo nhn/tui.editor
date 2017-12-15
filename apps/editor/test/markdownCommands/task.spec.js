@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import task from '../../src/js/markdownCommands/task';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
@@ -76,7 +78,7 @@ describe('task', () => {
         it('영역선택후 추가된다', () => {
             doc.setSelection({line: 0,
                 ch: 0}, {line: 2,
-                    ch: 7});
+                ch: 7});
 
             task.exec(mde);
 

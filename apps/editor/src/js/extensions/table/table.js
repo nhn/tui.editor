@@ -2,6 +2,8 @@
  * @fileoverview Implements tableExtension.
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+
 import Editor from '../../editor';
 import EditorViewOnly from '../../viewOnly';
 

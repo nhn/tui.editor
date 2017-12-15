@@ -2,8 +2,7 @@
  * @fileoverview Implements Command
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
-const {util} = tui;
+import util from 'tui-code-snippet';
 
 /**
  * Class Command

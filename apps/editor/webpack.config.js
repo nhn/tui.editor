@@ -91,28 +91,60 @@ const config = {
         ]),
         new Visualizer({filename: VISUALIZER_FILE_PATH})
     ],
-    externals: [function(context, request, callback) {
-        const dir = path.relative(__dirname, context);
-        if (dir.includes('extensions')) {
-            if (request.match(/editor$/)) {
-                callback(null, {
-                    commonjs: 'tui-editor',
-                    commonjs2: 'tui-editor',
-                    amd: 'tui-editor',
-                    root: ['tui', 'editor', 'Editor']
-                });
-            } else if (request.match(/viewOnly$/)) {
-                callback(null, {
-                    commonjs: 'tui-editor/tui-editor-viewonly',
-                    commonjs2: 'tui-editor/tui-editor-viewonly',
-                    amd: 'tui-editor/tui-editor-viewonly',
-                    root: ['tui', 'editor', 'ViewOnly']
-                });
-            } else {
-                callback();
-            }
-        } else {
-            callback();
+    externals: [{
+        'tui-color-picker': {
+            commonjs: 'tui-color-picker',
+            commonjs2: 'tui-color-picker',
+            amd: 'tui-color-picker',
+            root: ['tui', 'colorPicker']
+        },
+        'jquery': {
+            commonjs: 'jquery',
+            commonjs2: 'jquery',
+            amd: 'jquery',
+            root: ['$']
+        },
+        'tui-code-snippet': {
+            commonjs: 'tui-code-snippet',
+            commonjs2: 'tui-code-snippet',
+            amd: 'tui-code-snippet',
+            root: ['tui', 'util']
+        },
+        'plantuml-encoder': {
+            commonjs: 'plantuml-encoder',
+            commonjs2: 'plantuml-encoder',
+            amd: 'plantuml-encoder',
+            root: ['plantumlEncoder']
+        },
+        'highlight.js': {
+            commonjs: 'highlight.js',
+            commonjs2: 'highlight.js',
+            amd: 'highlight.js',
+            root: ['hljs']
+        },
+        'markdown-it': {
+            commonjs: 'markdown-it',
+            commonjs2: 'markdown-it',
+            amd: 'markdown-it',
+            root: ['markdownit']
+        },
+        'squire-rte': {
+            commonjs: 'squire-rte',
+            commonjs2: 'squire-rte',
+            amd: 'squire-rte',
+            root: ['Squire']
+        },
+        'codemirror': {
+            commonjs: 'codemirror',
+            commonjs2: 'codemirror',
+            amd: 'codemirror',
+            root: ['CodeMirror']
+        },
+        'toMark': {
+            commonjs: 'toMark',
+            commonjs2: 'toMark',
+            amd: 'toMark',
+            root: ['toMark']
         }
     }]
 };
@@ -146,6 +178,31 @@ if (isDevServer) {
     if (isHMR) {
         config.plugins.push(new webpack.HotModuleReplacementPlugin());
     }
+} else {
+    config.externals.push(function(context, request, callback) {
+        const dir = path.relative(__dirname, context);
+        if (dir.includes('extensions')) {
+            if (request.match(/editor$/)) {
+                callback(null, {
+                    commonjs: 'tui-editor',
+                    commonjs2: 'tui-editor',
+                    amd: 'tui-editor',
+                    root: ['tui', 'editor', 'Editor']
+                });
+            } else if (request.match(/viewOnly$/)) {
+                callback(null, {
+                    commonjs: 'tui-editor/tui-editor-viewonly',
+                    commonjs2: 'tui-editor/tui-editor-viewonly',
+                    amd: 'tui-editor/tui-editor-viewonly',
+                    root: ['tui', 'editor', 'ViewOnly']
+                });
+            } else {
+                callback();
+            }
+        } else {
+            callback();
+        }
+    });
 }
 
 if (isBuildAll) {

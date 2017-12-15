@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import htmlSanitizer from '../src/js/htmlSanitizer';
 
 describe('htmlSanitizer', function() {

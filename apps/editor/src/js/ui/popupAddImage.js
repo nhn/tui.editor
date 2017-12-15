@@ -2,12 +2,11 @@
  * @fileoverview Implements PopupAddImage
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import util from 'tui-code-snippet';
 
 import LayerPopup from './layerpopup';
 import Tab from './tab';
 import i18n from '../i18n';
-
-const {util} = tui;
 
 const CLASS_IMAGE_URL_INPUT = 'te-image-url-input';
 const CLASS_IMAGE_FILE_INPUT = 'te-image-file-input';

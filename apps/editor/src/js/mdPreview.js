@@ -1,4 +1,3 @@
-
 import Preview from './preview';
 
 /**
