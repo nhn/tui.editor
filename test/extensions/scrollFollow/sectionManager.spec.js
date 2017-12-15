@@ -1,14 +1,14 @@
+import $ from 'jquery';
+
 import TuiEditor from '../../../src/js/editor';
 import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
-
-const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('sectionManager', () => {
     let ned, sectionManager, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
+        loadStyleFixtures('node_modules/codemirror/lib/codemirror.css');
         container = document.createElement('div');
         document.body.appendChild(container);
 

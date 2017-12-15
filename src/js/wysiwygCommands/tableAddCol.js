@@ -3,6 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
@@ -88,7 +90,7 @@ function addColToCellAfter($cell, numberOfCols = 1) {
 
     $cell.parents('table').find('tr').each((n, tr) => {
         const isTBody = domUtils.getNodeName(tr.parentNode) === 'TBODY';
-        const isMSIE = tui.util.browser.msie;
+        const isMSIE = util.browser.msie;
         const cell = tr.children[index];
         for (let i = 0; i < numberOfCols; i += 1) {
             if (isTBody) {

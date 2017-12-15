@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Blockquote from '../../src/js/markdownCommands/blockquote';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';

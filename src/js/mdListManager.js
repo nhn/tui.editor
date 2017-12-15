@@ -234,7 +234,6 @@ class MdListManager {
 
         return lineNumber;
     }
-
 }
 
 module.exports = MdListManager;

@@ -2,13 +2,14 @@
  * @fileoverview Implements MergeCell
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import Editor from '../../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-const {util} = tui;
 const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
 
 let MergeCell;

@@ -1,4 +1,5 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
 
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
@@ -257,9 +258,7 @@ describe('WysiwygEditor', () => {
         });
 
         it('prevent text, image merge', () => {
-            /* eslint-disable */
             const html = '<p>test<br><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAFCAYAAABirU3bAAAAXklEQVQIHWM8OeXvfwaW/wx/fjMwsHMwMjD9BLH+MDIwMTIy/PnJwMDMI87aIMiswCDMx89w98UNBpZX/48zbLx7h0H/TTjDo18nGZjYWVkZOLm5GU587mb4wvCcAQACuB2BMklKxwAAAABJRU5ErkJggg==" alt="image"></p>';
-            /* eslint-enable */
             wwe.setValue(html);
             expect(wwe.get$Body().find('div').length).toEqual(3);
             expect(wwe.get$Body().find('div').eq(0).text()).toEqual('test');

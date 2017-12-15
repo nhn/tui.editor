@@ -2,12 +2,14 @@
  * @fileoverview Implements wysiwyg merged table manager
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import Editor from '../../editor';
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 import tableRangeHandler from './tableRangeHandler';
 
-const {util} = tui;
 const WwTableManager = Editor ? Editor.WwTableManager : null;
 const i18n = Editor ? Editor.i18n : {};
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';

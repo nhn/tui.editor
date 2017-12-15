@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import MdTextObject from '../src/js/mdTextObject';
 import MarkdownEditor from '../src/js/markdownEditor';
 import EventManager from '../src/js/eventManager';

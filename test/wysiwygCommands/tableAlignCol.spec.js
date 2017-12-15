@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import AlignCol from '../../src/js/wysiwygCommands/tableAlignCol';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
@@ -18,7 +20,7 @@ describe('Table - AlignCol', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -46,7 +48,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'center');
 
@@ -76,7 +78,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'center');
 
@@ -107,7 +109,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'center');
 
@@ -142,7 +144,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'center');
 
@@ -177,7 +179,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'center');
 
@@ -213,7 +215,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -243,7 +245,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -273,7 +275,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[1].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -304,7 +306,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -339,7 +341,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -374,7 +376,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'left');
 
@@ -410,7 +412,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'right');
 
@@ -440,7 +442,7 @@ describe('Table - AlignCol', () => {
             range.collapse(true);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'right');
 
@@ -471,7 +473,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'right');
 
@@ -506,7 +508,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[2].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'right');
 
@@ -541,7 +543,7 @@ describe('Table - AlignCol', () => {
             range.setEndAfter(wwe.get$Body().find('tbody td')[4].firstChild);
 
             sq.setSelection(range);
-            sq._updatePathOnEvent(); //squire need update path for hasFormatWithRx
+            sq._updatePathOnEvent(); // squire need update path for hasFormatWithRx
 
             AlignCol.exec(wwe, 'right');
 

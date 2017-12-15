@@ -2,6 +2,7 @@
  * @fileoverview
  * @author Minho Choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 const TOOLTIP_CONTENT = '<div class="tui-tooltip"><div class="arrow"></div><span class="text"></span></span></div>';
 

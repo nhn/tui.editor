@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import {createTableData, createCellIndexData} from '../../../src/js/extensions/table/tableDataHandler';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 

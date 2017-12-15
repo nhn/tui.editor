@@ -1,3 +1,5 @@
+import util from 'tui-code-snippet';
+
 import CodeMirrorExt from './codeMirrorExt';
 import KeyMapper from './keyMapper';
 import MdListManager from './mdListManager';
@@ -221,7 +223,7 @@ class MarkdownEditor extends CodeMirrorExt {
     _isStateChanged(previousState, currentState) {
         let result = false;
 
-        tui.util.forEach(currentState, (currentStateTypeValue, stateType) => {
+        util.forEach(currentState, (currentStateTypeValue, stateType) => {
             result = previousState[stateType] !== currentStateTypeValue;
 
             return !result;

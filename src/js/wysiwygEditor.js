@@ -2,6 +2,8 @@
  * @fileoverview Implments wysiwygEditor
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 import WwClipboardManager from './wwClipboardManager';
@@ -20,8 +22,6 @@ import ComponentManager from './componentManager';
 import CodeBlockGadget from './ui/codeBlockGadget';
 
 const keyMapper = KeyMapper.getSharedInstance();
-
-const {util} = tui;
 
 const FIND_EMPTY_LINE = /<(.+)>(<br>|<br \/>|<BR>|<BR \/>)<\/\1>/g,
     FIND_UNNECESSARY_BR = /(?:<br>|<br \/>|<BR>|<BR \/>)<\/(.+?)>/g,

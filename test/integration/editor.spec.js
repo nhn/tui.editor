@@ -1,5 +1,3 @@
-/* eslint-disable max-len, max-nested-callbacks */
-
 import Editor from '../../src/js/editor';
 
 describe('Editor', () => {
@@ -7,8 +5,8 @@ describe('Editor', () => {
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        window.loadStyleFixtures(
-            'lib/codemirror/lib/codemirror.css',
+        loadStyleFixtures(
+            'node_modules/codemirror/lib/codemirror.css',
             'src/css/tui-editor.css'
         );
         container = document.createElement('div');

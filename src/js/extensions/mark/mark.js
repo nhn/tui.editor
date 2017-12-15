@@ -2,6 +2,9 @@
  * @fileoverview Implements mark extension for making text marker
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import Editor from '../../editor';
 import EditorViewOnly from '../../viewOnly';
 
@@ -10,8 +13,6 @@ import MarkerManager from './markerManager';
 import WysiwygMarkerHelper from './wysiwygMarkerHelper';
 import ViewOnlyMarkerHelper from './viewOnlyMarkerHelper';
 import MarkdownMarkerHelper from './markdownMarkerHelper';
-
-const {util} = tui;
 
 const MARKER_UPDATE_DELAY = 100;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;

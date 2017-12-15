@@ -1,4 +1,5 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
 
 import BlockOverlay from '../../src/js/ui/blockOverlay';
 import EventManager from '../../src/js/eventManager';

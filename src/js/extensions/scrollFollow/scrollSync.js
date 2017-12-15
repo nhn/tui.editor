@@ -2,7 +2,7 @@
  * @fileoverview Implements Scroll Follow Extension ScrollSync Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-const {util} = tui;
+import util from 'tui-code-snippet';
 
 const PREVIEW_MARGIN_TOP = 57;
 const SCROLL_TOP_PADDING = 20;

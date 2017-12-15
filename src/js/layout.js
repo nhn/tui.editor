@@ -2,6 +2,7 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 /**
  * Editor container template

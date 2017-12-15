@@ -4,6 +4,8 @@
  *         Jiung Kang(jiung.kang@nhnent.com)
  *         FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
 import WwPasteContentHelper from './wwPasteContentHelper';
@@ -117,7 +119,7 @@ class WwClipboardManager {
     }
 
     _setClipboardData(clipboardEvent, htmlContent, textContent) {
-        if (tui.util.browser.msie) {
+        if (util.browser.msie) {
             clipboardEvent.squirePrevented = true;
             this._$clipboardArea = this._createClipboardArea();
             this._$clipboardArea.html(htmlContent);
@@ -303,7 +305,7 @@ class WwClipboardManager {
         while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
         && !newBound.previousSibling
-            ) {
+        ) {
             newBound = newBound.parentNode;
         }
 
@@ -327,8 +329,7 @@ class WwClipboardManager {
         // 레인지 확장
         while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
-        && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))
-            ) {
+        && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))) {
             newBound = newBound.parentNode;
             boundNext = newBound.nextSibling;
         }

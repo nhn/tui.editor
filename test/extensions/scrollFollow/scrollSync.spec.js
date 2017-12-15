@@ -1,9 +1,7 @@
-/* eslint max-nested-callbacks:0 */
+
 import TuiEditor from '../../../src/js/editor';
 import ScrollSync from '../../../src/js/extensions/scrollFollow/scrollSync';
 import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
-
-const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('ScrollSync', () => {
     let ned, sectionManager, scrollSync, container;
@@ -11,7 +9,7 @@ describe('ScrollSync', () => {
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures(
-            'lib/codemirror/lib/codemirror.css',
+            'node_modules/codemirror/lib/codemirror.css',
             'src/css/tui-editor.css'
         );
 

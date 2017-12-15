@@ -2,6 +2,7 @@
  * @fileoverview Implements wysiwyg marker helper for additional information
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 import Editor from '../../editor';
 import EditorViewOnly from '../../viewOnly';
 

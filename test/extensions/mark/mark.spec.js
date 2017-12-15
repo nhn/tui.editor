@@ -1,4 +1,5 @@
-/* eslint max-nested-callbacks: 0 */
+
+import util from 'tui-code-snippet';
 
 const TuiEditor = require('../../../src/js/editor');
 import '../../../src/js/extensions/mark/mark';
@@ -230,7 +231,7 @@ describe('Mark', function() {
             editor.getSquire()._ignoreChange = false;
             editor.wwEditor._silentChange = false;
 
-            if (tui.util.browser.msie && tui.util.browser.version === 10) {
+            if (util.browser.msie && util.browser.version === 10) {
                 editor.eventManager.emit('change');
             }
 

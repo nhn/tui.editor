@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import RemoveTable from '../../src/js/wysiwygCommands/tableRemove';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
@@ -16,7 +18,7 @@ describe('Table - Remove', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -30,13 +32,13 @@ describe('Table - Remove', () => {
 
         sq.setHTML([
             '<table>',
-                '<thead>',
-                    '<tr><th>1</th><th>2</th></tr>',
-                '</thead>',
-                '<tbody>',
-                    '<tr><td>3</td><td>4</td></tr>',
-                    '<tr><td>5</td><td>6</td></tr>',
-                '</tbody>',
+            '<thead>',
+            '<tr><th>1</th><th>2</th></tr>',
+            '</thead>',
+            '<tbody>',
+            '<tr><td>3</td><td>4</td></tr>',
+            '<tr><td>5</td><td>6</td></tr>',
+            '</tbody>',
             '</table>'
         ].join('\n'));
 

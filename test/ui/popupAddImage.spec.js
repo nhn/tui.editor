@@ -1,4 +1,6 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
+
 const PopupAddImage = require('../../src/js/ui/popupAddImage'),
     EventManager = require('../../src/js/eventManager');
 

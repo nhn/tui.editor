@@ -1,3 +1,6 @@
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import WysiwygEditor from '../../../src/js/wysiwygEditor';
 import EventManager from '../../../src/js/eventManager';
 import WwMergedTableManager from '../../../src/js/extensions/table/wwMergedTableManager';
@@ -218,7 +221,7 @@ describe('WwMergedTableManager', () => {
             mgr._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
 
             const $trs = $(container).first().find('tr');
-            const cellContent = tui.util.browser.msie ? '' : '<br>';
+            const cellContent = util.browser.msie ? '' : '<br>';
 
             expect($trs.length).toBe(6);
             expect($trs.eq(0).children().length).toBe(5);

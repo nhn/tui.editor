@@ -1,14 +1,14 @@
+import $ from 'jquery';
+
 import TuiEditor from '../../../src/js/editor';
 import '../../../src/js/extensions/scrollFollow/scrollFollow';
-
-const loadStyleFixtures = window.loadStyleFixtures;
 
 describe('scrollFollow', () => {
     let ned, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
+        loadStyleFixtures('node_modules/codemirror/lib/codemirror.css');
         container = document.createElement('div');
         document.body.appendChild(container);
 

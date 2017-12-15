@@ -2,8 +2,7 @@
  * @fileoverview Implement Module for managing import external data such as image
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-
-const {util} = tui;
+import util from 'tui-code-snippet';
 const URLRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
 
 /**

@@ -1,4 +1,5 @@
-/* eslint-disable max-nested-callbacks */
+
+import $ from 'jquery';
 
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';

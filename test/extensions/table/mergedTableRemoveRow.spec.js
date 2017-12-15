@@ -1,4 +1,6 @@
-/* eslint max-nested-callbacks:0 */
+
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import RemoveRow, {_removeRow} from '../../../src/js/extensions/table/mergedTableRemoveRow';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
@@ -216,7 +218,7 @@ describe('mergedTableRemoveRow', () => {
             wwe.componentManager.addManager('table', WwMergedTableManager);
 
             wwe.getEditor().focus();
-            if (tui.util.browser.firefox) {
+            if (util.browser.firefox) {
                 wwe.getEditor().fireEvent('focus'); // focus() does not work on firefox here. wired.
             }
         });

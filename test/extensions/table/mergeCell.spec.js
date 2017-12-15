@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import {_mergeCells} from '../../../src/js/extensions/table/mergeCell';
 import tableDataHandler from '../../../src/js/extensions/table/tableDataHandler';
 

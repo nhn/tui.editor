@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import LayerPopup from '../../src/js/ui/layerpopup';
 
 const CLASS_PREFIX = 'tui-popup-';

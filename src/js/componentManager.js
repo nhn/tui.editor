@@ -67,7 +67,6 @@ class ComponentManager {
 
         delete this._managers[name];
     }
-
 }
 
 module.exports = ComponentManager;

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import domUtils from '../src/js/domUtils.js';
 
 describe('domUtils', () => {

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import {_prependMergeSyntaxToContent} from '../../../src/js/extensions/table/tableUnmergePreparer';
 import prepareTableUnmerge from '../../../src/js/extensions/table/tableUnmergePreparer';
 

@@ -152,20 +152,13 @@ module.exports = function(config) {
         frameworks: ['jasmine-ajax', 'jasmine-jquery', 'jasmine'],
 
         // list of files / patterns to load in the browser
+        // chart is not npm package and it needs global code snippet.
+        // remove chart and code snippet from here once chart is on npm
         files: [
-            'lib/jquery/dist/jquery.js',
-            'lib/tui-code-snippet/dist/tui-code-snippet.js',
-            'lib/tui-component-colorpicker/dist/colorpicker.js',
-            'lib/plantuml-encoder/dist/plantuml-encoder.js',
-            'lib/toMark/dist/toMark.js',
-            'lib/highlightjs/highlight.pack.js',
-            'lib/markdown-it/dist/markdown-it.min.js',
-            'lib/codemirror/lib/codemirror.js',
-            'lib/codemirror/lib/codemirror.css',
-            'lib/codemirror/addon/mode/overlay.js',
-            'lib/codemirror/mode/markdown/markdown.js',
-            'lib/codemirror/mode/gfm/gfm.js',
-            'lib/squire-rte/build/squire-raw.js',
+            'node_modules/tui-code-snippet/dist/tui-code-snippet.js',
+            'node_modules/tui.chart/dist/chart.js',
+            'node_modules/tui.chart/dist/chart.css',
+            'node_modules/codemirror/lib/codemirror.css',
             'src/css/tui-editor.css',
             'test/fixtures/*.*',
             'test/test.bundle.js'

@@ -2,10 +2,10 @@
  * @fileoverview Implements CommandManager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import Command from './command';
-
-const {util} = tui;
 
 const isMac = /Mac/.test(navigator.platform);
 const KEYMAP_OS_INDEX = isMac ? 1 : 0;

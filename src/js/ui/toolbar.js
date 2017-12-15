@@ -2,12 +2,13 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import UIController from './uicontroller';
 import Button from './button';
 import i18n from '../i18n';
 
-const {util} = tui;
 const TOOLBAR_BUTTON_CLASS_NAME = 'tui-toolbar-icons';
 const TOOLBAR_DIVIDER_CLASS_NAME = 'tui-toolbar-divider';
 
@@ -106,8 +107,8 @@ class Toolbar extends UIController {
             button = new Button(button);
         }
 
-        button.on('command', ($, commandName) => ev.emit('command', commandName));
-        button.on('event', ($, eventName) => ev.emit(eventName));
+        button.on('command', (e, commandName) => ev.emit('command', commandName));
+        button.on('event', (e, eventName) => ev.emit(eventName));
         if (util.isNumber(index)) {
             this.buttons.splice(index, 0, button);
         } else {

@@ -1,9 +1,8 @@
-/* eslint max-nested-callbacks:0 new-cap:0 */
+import $ from 'jquery';
 
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import CodeBlockGadget from '../../src/js/ui/codeBlockGadget';
 import EventManager from '../../src/js/eventManager';
-import KeyMapper from '../../src/js/keyMapper';
 const GADGET_WIDTH = 250;
 const GADGET_HEIGHT = 30;
 

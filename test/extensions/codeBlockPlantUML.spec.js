@@ -1,7 +1,7 @@
 import TuiEditor from '../../src/js/editor';
 import umlExtension from '../../src/js/extensions/uml';
 
-TuiEditor.defineExtension('plantUML', umlExtension);
+TuiEditor.defineExtension('uml', umlExtension);
 
 describe('uml extension', () => {
     let editor, wrapper;
@@ -26,7 +26,7 @@ describe('uml extension', () => {
             previewStyle: 'vertical',
             height: '100px',
             initialEditType: 'markdown',
-            exts: ['plantUML']
+            exts: ['uml']
         });
 
         editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
@@ -42,7 +42,7 @@ describe('uml extension', () => {
             previewStyle: 'vertical',
             height: '100px',
             initialEditType: 'wysiwyg',
-            exts: ['plantUML']
+            exts: ['uml']
         });
 
         editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);

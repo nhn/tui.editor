@@ -2,8 +2,7 @@
  * @fileoverview Implements CodeBlockManager
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
-
-const {hljs} = window;
+import hljs from 'highlight.js';
 
 /**
  * Class Code Block Manager

@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import IncreaseDepth from '../../src/js/wysiwygCommands/increaseDepth';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WwListManager from '../../src/js/wwListManager';

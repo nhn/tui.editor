@@ -45,22 +45,22 @@ describe('excelTableParser', () => {
         });
 
         it('3 x 2 has cell contains a space', () => {
-            content = 'a\sb\tc\td\ne\sf\tg\ti';
+            content = 'a b\tc\td\ne f\tg\ti';
 
             expect(excelTableParser(content)).toEqual({
                 col: 3,
                 row: 2,
-                data: ['a\sb', 'c', 'd', 'e\sf', 'g', 'i']
+                data: ['a b', 'c', 'd', 'e f', 'g', 'i']
             });
         });
 
         it('3 x 2 has cell contains a blocking content', () => {
-            content = 'a\tb\t"this is \r\nblocking content"\na\sb\te\tf';
+            content = 'a\tb\t"this is \r\nblocking content"\na b\te\tf';
 
             expect(excelTableParser(content)).toEqual({
                 col: 3,
                 row: 2,
-                data: ['a', 'b', 'this is <br/>blocking content', 'a\sb', 'e', 'f']
+                data: ['a', 'b', 'this is <br/>blocking content', 'a b', 'e', 'f']
             });
         });
     });

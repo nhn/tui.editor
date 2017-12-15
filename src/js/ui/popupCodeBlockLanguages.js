@@ -1,6 +1,8 @@
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import LayerPopup from './layerpopup';
 
-const {util} = tui;
 const BUTTON_CLASS_PREFIX = 'te-popup-code-block-lang-';
 
 /**

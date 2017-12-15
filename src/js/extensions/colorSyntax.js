@@ -2,12 +2,11 @@
  * @fileoverview Implements Color syntax Extension
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import ColorPicker from 'tui-color-picker';
 
 import Editor from '../editor';
 import EditorViewOnly from '../viewOnly';
-
-const {component} = tui;
-const {colorpicker: ColorPicker} = component;
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;

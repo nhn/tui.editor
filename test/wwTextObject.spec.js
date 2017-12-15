@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WwTextObject from '../src/js/wwTextObject';
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
@@ -21,7 +23,7 @@ describe('WwTextObject', () => {
         sq.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

@@ -2,6 +2,7 @@
  * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 import UIController from './uicontroller';
 
@@ -12,7 +13,6 @@ const CLASS_TAB_ACTIVE = 'te-tab-active';
  * @extends {UIController}
  */
 class Tab extends UIController {
-
     /**
      * Creates an instance of Tab.
      * @param {object} options - options
@@ -80,7 +80,7 @@ class Tab extends UIController {
     }
 
     _updateClassByButton($activeButton) {
-         // deactivate previously activated button
+        // deactivate previously activated button
         if (this._$activeButton) {
             const sectionIndex = this._$activeButton.attr('data-index');
             this._$activeButton.removeClass(CLASS_TAB_ACTIVE);

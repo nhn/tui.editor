@@ -2,10 +2,10 @@
  * @fileoverview Implements tableRangeHandler
  * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import tableDataHandler from './tableDataHandler';
-
-const {util} = tui;
 
 /**
  * Find unmerged table range.

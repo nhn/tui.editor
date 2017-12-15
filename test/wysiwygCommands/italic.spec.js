@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Italic from '../../src/js/wysiwygCommands/italic';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
@@ -19,7 +21,7 @@ describe('Italic', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

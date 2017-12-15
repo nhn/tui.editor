@@ -3,9 +3,10 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import domUtils from './domUtils';
-const {util} = tui;
 const isIE10 = util.browser.msie && util.browser.version === 10;
 const TABLE_CLASS_PREFIX = 'te-content-table-';
 const isIE10And11 = util.browser.msie
@@ -91,7 +92,7 @@ class WwTableManager {
         });
 
         this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
-                                 this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
+            this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
 
         // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
         this.onBindedPaste = this._onPaste.bind(this);
@@ -119,9 +120,9 @@ class WwTableManager {
                 }
 
                 if (node.nodeName === 'TABLE'
-                           && $node.find('thead').length === 0
-                           && $node.find('tbody').length === 0
-                          ) {
+                    && $node.find('thead').length === 0
+                    && $node.find('tbody').length === 0
+                ) {
                     $node.remove();
                 } else if (node.previousSibling && node.previousSibling.nodeName === 'TABLE') {
                     node.previousSibling.appendChild(node);

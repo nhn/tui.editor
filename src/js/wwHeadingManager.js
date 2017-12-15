@@ -2,6 +2,7 @@
  * @fileoverview Implements wysiwyg heading manager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 import domUtils from './domUtils';
 const FIND_HEADING_RX = /h[\d]/i;

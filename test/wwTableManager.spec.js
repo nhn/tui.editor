@@ -1,3 +1,7 @@
+
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwTableManager from '../src/js/wwTableManager';
@@ -22,7 +26,7 @@ describe('WwTableManager', () => {
         wwe.focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();
@@ -46,7 +50,8 @@ describe('WwTableManager', () => {
                 '<tbody><tr><td>1123</td></tr></tbody></table>');
             wwe.get$Body().find('br').remove();
         });
-        const expectation = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11) ? 0 : 1;
+        const expectation =
+            util.browser.msie && (util.browser.version === 10 || util.browser.version === 11) ? 0 : 1;
 
         it('append br if td or th does not have br as lastchild, td case', () => {
             const range = wwe.getEditor().getSelection().cloneRange();
@@ -70,9 +75,9 @@ describe('WwTableManager', () => {
     });
 
     describe('undo', () => {
-        //스콰이어에서 컨텐츠를 변화를 인지해서 컨텐츠에 변화가 일어나면 다음프레임에서  undo와 관련된 프로세스를 통해야하는데
-        //이를 지원하지않는(mutationObserver)에서는 keydown이벤트로 처리한다 억지로 keydown이벤트를 발생시키는것보다는
-        //그냥 단순하게 스파이콜로 테스트함
+        // 스콰이어에서 컨텐츠를 변화를 인지해서 컨텐츠에 변화가 일어나면 다음프레임에서  undo와 관련된 프로세스를 통해야하는데
+        // 이를 지원하지않는(mutationObserver)에서는 keydown이벤트로 처리한다 억지로 keydown이벤트를 발생시키는것보다는
+        // 그냥 단순하게 스파이콜로 테스트함
         beforeEach(() => {
             wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
                 '<tbody><tr><td>1123</td></tr></tbody></table>');
@@ -248,14 +253,14 @@ describe('WwTableManager', () => {
     });
     describe('wrap table', () => {
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const $container = $('<div />');
+            const $tableContainer = $('<div />');
             const html = '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '<tr><td>7</td><td>8</td></tr>' +
                 '<tr><td>9</td><td>10</td></tr>';
-            $container.html(html);
+            $tableContainer.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -264,11 +269,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTrsIntoTbodyIfNeed', () => {
-            const $container = $('<div />');
+            const $tableContainer = $('<div />');
             const html = '<tr><th>3</th><th>4</th></tr>';
-            $container.html(html);
+            $tableContainer.html(html);
 
-            const result = mgr.wrapTrsIntoTbodyIfNeed($container);
+            const result = mgr.wrapTrsIntoTbodyIfNeed($tableContainer);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TBODY');
@@ -277,11 +282,11 @@ describe('WwTableManager', () => {
         });
 
         it('wrapDanglingTableCellsIntoTrIfNeed', () => {
-            const $container = $('<div />');
+            const $tableContainer = $('<div />');
             const html = '<td>3</td><td>4</td><td>5</td><td>6</td>';
-            $container.html(html);
+            $tableContainer.html(html);
 
-            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($container);
+            const result = mgr.wrapDanglingTableCellsIntoTrIfNeed($tableContainer);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TR');
@@ -289,7 +294,7 @@ describe('WwTableManager', () => {
         });
 
         it('wrapTheadAndTbodyIntoTableIfNeed', () => {
-            const $container = $('<div />');
+            const $tableContainer = $('<div />');
             const html = '<thead>' +
                 '<tr><th>1</th><th>2</th></tr>' +
                 '</thead>' +
@@ -297,9 +302,9 @@ describe('WwTableManager', () => {
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $container.html(html);
+            $tableContainer.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
@@ -309,14 +314,14 @@ describe('WwTableManager', () => {
             expect($result.find('thead').text()).toBe('12');
         });
         it('wrapTheadAndTbodyIntoTableIfNeed when only tbody exist ', () => {
-            const $container = $('<div />');
+            const $tableContainer = $('<div />');
             const html = '<tbody>' +
                 '<tr><td>3</td><td>4</td></tr>' +
                 '<tr><td>5</td><td>6</td></tr>' +
                 '</tbody>';
-            $container.html(html);
+            $tableContainer.html(html);
 
-            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($container);
+            const result = mgr.wrapTheadAndTbodyIntoTableIfNeed($tableContainer);
             const $result = $(result);
 
             expect(result.nodeName).toBe('TABLE');
@@ -1087,8 +1092,8 @@ describe('WwTableManager', () => {
                 '<tbody><tr><td></td></tr></tbody></table>');
             wwe.get$Body().find('br').remove();
         });
-        const expectation = tui.util.browser.msie && (tui.util.browser.version === 10 || tui.util.browser.version === 11)
-            ? 0 : 1;
+        const expectation =
+            util.browser.msie && (util.browser.version === 10 || util.browser.version === 11) ? 0 : 1;
 
         it('should insert BR when text content length is 0', () => {
             const range = wwe.getEditor().getSelection().cloneRange();

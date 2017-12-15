@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import Heading from '../../src/js/wysiwygCommands/heading';
 import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
@@ -16,7 +18,7 @@ describe('Heading', () => {
         wwe.getEditor().focus();
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

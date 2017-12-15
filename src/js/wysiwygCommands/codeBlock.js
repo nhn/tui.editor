@@ -3,6 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 const CommandManager = require('../commandManager');
 
@@ -76,7 +78,7 @@ function getCodeBlockBody(range, wwe) {
         nodes = [$('<div><br></div>')[0]];
     } else {
         contents = range.extractContents();
-        nodes = tui.util.toArray(contents.childNodes);
+        nodes = util.toArray(contents.childNodes);
     }
 
     const codeBlock = mgr.convertToCodeblock(nodes).innerHTML;

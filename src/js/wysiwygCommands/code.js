@@ -3,6 +3,8 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
@@ -25,7 +27,7 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
         const sq = wwe.getEditor();
         const range = sq.getSelection();
         const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
-        const _styleCode = tui.util.bind(styleCode, null, wwe.getEditor());
+        const _styleCode = util.bind(styleCode, null, wwe.getEditor());
 
         wwe.focus();
 

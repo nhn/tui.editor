@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import WysiwygEditor from '../src/js/wysiwygEditor';
 import EventManager from '../src/js/eventManager';
 import WwPManager from '../src/js/wwPManager';
@@ -19,7 +21,7 @@ describe('WwPManager', () => {
         wwe._pMgr = new WwPManager(wwe);
     });
 
-    //we need to wait squire input event process
+    // we need to wait squire input event process
     afterEach(done => {
         setTimeout(() => {
             $('body').empty();

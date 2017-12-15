@@ -1,8 +1,8 @@
-/* eslint-disable max-len, max-nested-callbacks */
+import $ from 'jquery';
+import util from 'tui-code-snippet';
+
 import EventManager from '../src/js/eventManager';
 import ImportManager from '../src/js/importManager';
-
-const {util} = tui;
 
 function createMDTextClipboardEvent(texts) {
     const ev = {

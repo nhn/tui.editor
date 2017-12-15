@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import CodeBlock from '../../src/js/wysiwygCommands/codeBlock';
 import WwCodeBlockManager from '../../src/js/wwCodeBlockManager';
 import WysiwygEditor from '../../src/js/wysiwygEditor';

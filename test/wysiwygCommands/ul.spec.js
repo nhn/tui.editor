@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import UL from '../../src/js/wysiwygCommands/ul';
 import WwTaskManager from '../../src/js/wwTaskManager';
 import WwListManager from '../../src/js/wwListManager';

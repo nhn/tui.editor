@@ -1,4 +1,5 @@
-/* eslint max-nested-callbacks:0 */
+
+import $ from 'jquery';
 
 import CodeBlockPreview from '../src/js/codeBlockPreview';
 import EventManager from '../src/js/eventManager';

@@ -4,6 +4,7 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import $ from 'jquery';
 
 import CommandManager from '../commandManager';
 

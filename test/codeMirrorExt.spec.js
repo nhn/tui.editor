@@ -1,7 +1,7 @@
-/* eslint-disable max-nested-callbacks */
-import CodeMirrorExt from '../src/js/codeMirrorExt';
 
-const loadStyleFixtures = window.loadStyleFixtures;
+import $ from 'jquery';
+
+import CodeMirrorExt from '../src/js/codeMirrorExt';
 
 describe('CodeMirrorExt', () => {
     let codeMirrorExt, container;
@@ -9,7 +9,7 @@ describe('CodeMirrorExt', () => {
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
         loadStyleFixtures('src/css/tui-editor.css');
-        loadStyleFixtures('lib/codemirror/lib/codemirror.css');
+        loadStyleFixtures('node_modules/codemirror/lib/codemirror.css');
 
         container = document.createElement('div');
         document.body.appendChild(container);

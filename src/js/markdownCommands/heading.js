@@ -4,10 +4,10 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
  * @author Jiung Kang(jiung-kang@nhnent.com) FE Development Lab/NHN Ent.
  */
+import util from 'tui-code-snippet';
 
 import CommandManager from '../commandManager';
 
-const {util} = tui;
 const FIND_HEADING_RX = /^#+\s/g;
 
 /**

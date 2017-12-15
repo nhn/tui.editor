@@ -2,6 +2,7 @@
  * @fileoverview Implements wysiwyg task manager
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
+import $ from 'jquery';
 
 const TASK_CLASS_NAME = 'task-list-item';
 const TASK_ATTR_NAME = 'data-te-task';

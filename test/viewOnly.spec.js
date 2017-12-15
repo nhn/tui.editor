@@ -1,12 +1,11 @@
+import MarkdownIt from 'markdown-it';
 
 import ToastUIEditorViewOnly from '../src/js/viewOnly';
 import {CodeBlockManager} from '../src/js/codeBlockManager';
 
-const MarkDownIt = window.markdownit;
-
 describe('ViewOnly', () => {
-    it('markdownitHighlight should be MarkDownIt instance', () => {
-        expect(ToastUIEditorViewOnly.markdownitHighlight instanceof MarkDownIt).toBe(true);
+    it('markdownitHighlight should be MarkdownIt instance', () => {
+        expect(ToastUIEditorViewOnly.markdownitHighlight instanceof MarkdownIt).toBe(true);
     });
     it('domUtils should have it\' functions', () => {
         expect(typeof ToastUIEditorViewOnly.domUtils.getNodeName).toBe('function');

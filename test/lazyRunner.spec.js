@@ -1,3 +1,5 @@
+import $ from 'jquery';
+
 import LazyRunner from '../src/js/lazyRunner';
 
 describe('LazyRunner', () => {

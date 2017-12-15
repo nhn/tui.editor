@@ -1,5 +1,5 @@
-
-const {util} = tui;
+import $ from 'jquery';
+import util from 'tui-code-snippet';
 
 let _uiInstanceId = -1;
 /**
