@@ -1,7 +1,6 @@
 {
   "name": "toMark",
   "version": "0.0.19",
-  "private": true,
   "author": "Sungho Kim / FE Development Team / NHN Entertainment.",
   "license": "MIT",
   "main": "dist/toMark.js",
