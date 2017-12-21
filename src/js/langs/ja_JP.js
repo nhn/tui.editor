@@ -1,6 +1,6 @@
-import Editor from '../editor';
+import i18n from '../i18n';
 
-Editor.i18n.setLanguage(['ja', 'ja_JP'], {
+i18n.setLanguage(['ja', 'ja_JP'], {
     'Markdown': 'マークダウン',
     'WYSIWYG': 'WYSIWYG',
     'Write': '編集する',

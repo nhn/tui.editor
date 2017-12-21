@@ -6,13 +6,6 @@ import $ from 'jquery';
 
 import ToastUIEditor from './editor';
 
-// langs
-import './langs/en_US';
-import './langs/ko_KR';
-import './langs/zh_CN';
-import './langs/ja_JP';
-import './langs/nl_NL';
-
 // for jquery
 $.fn.tuiEditor = function(...args) {
     let options, instance;

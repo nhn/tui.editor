@@ -1,6 +1,6 @@
-import Editor from '../editor';
+import i18n from '../i18n';
 
-Editor.i18n.setLanguage(['ko', 'ko_KR'], {
+i18n.setLanguage(['ko', 'ko_KR'], {
     'Markdown': '마크다운',
     'WYSIWYG': '위지윅',
     'Write': '편집하기',
