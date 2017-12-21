@@ -11,7 +11,7 @@ describe('CodeBlockManager', () => {
         it('set replacer for code block element', () => {
             const type = 'tui.grid';
             const replacer = {
-                viewOnly: true
+                viewer: true
             };
 
             expect(codeBlockManager.getReplacer(type)).toBeUndefined();

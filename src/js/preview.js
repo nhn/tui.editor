@@ -15,14 +15,14 @@ class Preview {
      * @param {jQuery} $el Container element for preview
      * @param {EventManager} eventManager Event manager instance
      * @param {Convertor} convertor Convertor instance
-     * @param {boolean} isViewOnly - whether viewOnly mode or not
+     * @param {boolean} isViewer - whether viewer mode or not
      * @memberof Preview
      */
-    constructor($el, eventManager, convertor, isViewOnly) {
+    constructor($el, eventManager, convertor, isViewer) {
         this.eventManager = eventManager;
         this.convertor = convertor;
         this.$el = $el;
-        this.isViewOnly = !!isViewOnly;
+        this.isViewer = !!isViewer;
 
         this._initContentSection();
 

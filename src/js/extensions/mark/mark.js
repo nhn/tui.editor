@@ -9,7 +9,7 @@ import Editor from '../editor';
 import MarkerList from './markerList';
 import MarkerManager from './markerManager';
 import WysiwygMarkerHelper from './wysiwygMarkerHelper';
-import ViewOnlyMarkerHelper from './viewOnlyMarkerHelper';
+import ViewerMarkerHelper from './viewerMarkerHelper';
 import MarkdownMarkerHelper from './markdownMarkerHelper';
 
 const MARKER_UPDATE_DELAY = 100;
@@ -27,8 +27,8 @@ function markExtension(editor) {
 
     editor.eventManager.addEventType('markerUpdated');
 
-    if (editor.isViewOnly()) {
-        vmh = new ViewOnlyMarkerHelper(editor.preview);
+    if (editor.isViewer()) {
+        vmh = new ViewerMarkerHelper(editor.preview);
     } else {
         wmh = new WysiwygMarkerHelper(editor.getSquire());
         mmh = new MarkdownMarkerHelper(editor.getCodeMirror());
@@ -42,7 +42,7 @@ function markExtension(editor) {
     function getHelper() {
         let helper;
 
-        if (editor.isViewOnly()) {
+        if (editor.isViewer()) {
             helper = vmh;
         } else if (editor.isWysiwygMode()) {
             helper = wmh;
@@ -99,7 +99,7 @@ function markExtension(editor) {
 
         mm.resetContent(value.replace(FIND_CRLF_RX, ''));
 
-        if (editor.isViewOnly() || editor.isWysiwygMode()) {
+        if (editor.isViewer() || editor.isWysiwygMode()) {
             helper = getHelper();
             mm.updateMarkersByContent(helper.getTextContent());
         } else {
@@ -148,7 +148,7 @@ function markExtension(editor) {
 
         if (editor.isMarkdownMode()) {
             markersData = ml.getMarkersData();
-        } else if (editor.isViewOnly() || editor.isWysiwygMode()) {
+        } else if (editor.isViewer() || editor.isWysiwygMode()) {
             mm.updateMarkersByContent(editor.getValue().replace(FIND_CRLF_RX, ''));
             markersData = ml.getMarkersData();
             mm.updateMarkersByContent(getHelper().getTextContent());
@@ -215,7 +215,7 @@ function markExtension(editor) {
         getHelper().clearSelect();
     };
 
-    if (!editor.isViewOnly()) {
+    if (!editor.isViewer()) {
         editor.on('changeMode', () => {
             editor._updateMarkers();
         });

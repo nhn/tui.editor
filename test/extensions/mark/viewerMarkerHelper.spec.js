@@ -1,11 +1,11 @@
 import $ from 'jquery';
 
-import ViewOnlyMarkerHelper from '../../../src/js/extensions/mark/viewOnlyMarkerHelper';
+import ViewerMarkerHelper from '../../../src/js/extensions/mark/viewerMarkerHelper';
 import Convertor from '../../../src/js/convertor';
 import EventManager from '../../../src/js/eventManager';
 import Preview from '../../../src/js/preview';
 
-describe('ViewOnlyMarkerHelper', () => {
+describe('ViewerMarkerHelper', () => {
     let preview, vmh, container;
 
     beforeEach(() => {
@@ -14,7 +14,7 @@ describe('ViewOnlyMarkerHelper', () => {
         const em = new EventManager();
 
         preview = new Preview($(container), em, new Convertor(em));
-        vmh = new ViewOnlyMarkerHelper(preview);
+        vmh = new ViewerMarkerHelper(preview);
         preview.refresh('# TEXT1\n## TEXT2');
     });
 

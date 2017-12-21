@@ -56,7 +56,7 @@ function colorSyntaxExtension(editor) {
         });
     });
 
-    if (!editor.isViewOnly() && editor.getUI().name === 'default') {
+    if (!editor.isViewer() && editor.getUI().name === 'default') {
         editor.addCommand('markdown', {
             name: 'color',
             exec(mde, color) {

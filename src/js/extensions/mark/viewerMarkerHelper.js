@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements viewOnly marker helper for additional information
+ * @fileoverview Implements viewer marker helper for additional information
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 import $ from 'jquery';
@@ -9,13 +9,13 @@ const {domUtils} = Editor;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**
- * Class ViewOnlyMarkerHelper
+ * Class ViewerMarkerHelper
  */
-class ViewOnlyMarkerHelper {
+class ViewerMarkerHelper {
     /**
-     * Creates an instance of ViewOnlyMarkerHelper.
+     * Creates an instance of ViewerMarkerHelper.
      * @param {Preview} preview - preview instance
-     * @memberof ViewOnlyMarkerHelper
+     * @memberof ViewerMarkerHelper
      */
     constructor(preview) {
         this.preview = preview;
@@ -219,4 +219,4 @@ function getRange() {
     return range;
 }
 
-export default ViewOnlyMarkerHelper;
+export default ViewerMarkerHelper;

@@ -33,7 +33,7 @@ function tableExtension(editor) {
     editor.toMarkOptions.renderer = toMarkRenderer;
     _bindEvents(eventManager);
 
-    if (editor.isViewOnly()) {
+    if (editor.isViewer()) {
         return;
     }
 

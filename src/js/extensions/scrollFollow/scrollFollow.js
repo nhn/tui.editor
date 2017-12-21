@@ -17,7 +17,7 @@ function scrollFollowExtension(editor) {
         inActive: i18n.get('Auto scroll disabled')
     };
 
-    if (editor.isViewOnly()) {
+    if (editor.isViewer()) {
         return;
     }
 
