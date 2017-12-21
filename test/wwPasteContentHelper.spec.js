@@ -416,7 +416,6 @@ describe('WwPasteContentHelper', () => {
         expect($container[0].childNodes[0].childNodes.length).toEqual(2);
       });
 
-      // 리스트의 끝부분의 뎊스가 루츠쪽으로 들어간경우
       it('paste data have backward depth list then limit list depth level', () => {
         const $container = $('<div />');
         $container.html('<ul><li><div>text<br></div></li><li>' +

@@ -17,7 +17,7 @@ const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
   name: 'IncreaseDepth',
   /**
    * Command Handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const listManager = wwe.componentManager.getManager('list');

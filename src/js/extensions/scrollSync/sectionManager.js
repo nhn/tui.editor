@@ -164,8 +164,7 @@ class SectionManager {
         isEnsuredSection = true;
       }
 
-      // 빈공간으로 시작되다다가 헤더를 만난경우 섹션은 두개가 생성되는데
-      // 프리뷰에서는 빈공간이 트리밍되어 섹션 한개 밖에 생성되지 않아 매칭이 되지 않는 문제 해결
+      // resolve wrong number of sections mismatch compare to preview
       if (isTrimming) {
         trimCapture += lineString.trim();
 

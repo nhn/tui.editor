@@ -18,7 +18,7 @@ if (CommandManager) {
     name: 'AlignCol',
     /**
      * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
      * @param {string} alignDirection - align direction for table header
      */
     exec(wwe, alignDirection) {

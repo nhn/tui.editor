@@ -17,8 +17,8 @@ import domUtil from '../domUtils';
 const TableAlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
   name: 'AlignCol',
   /**
-   * 커맨드 핸들러
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    * @param {string} alignDirection Align direction
    */
   exec(wwe, alignDirection) {

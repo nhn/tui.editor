@@ -71,7 +71,7 @@ describe('task', () => {
 
       expect(doc.getLine(0)).toEqual('* mytext1');
     });
-    it('빈라인에서 추가된다', () => {
+    it('to a blank line', () => {
       doc.setCursor(1, 0);
 
       task.exec(mde);
@@ -79,7 +79,7 @@ describe('task', () => {
       expect(doc.getLine(2)).toEqual('* [ ] ');
     });
 
-    it('영역선택후 추가된다', () => {
+    it('around selected area', () => {
       doc.setSelection({line: 0,
         ch: 0}, {line: 2,
         ch: 7});

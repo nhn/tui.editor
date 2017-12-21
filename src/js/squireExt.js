@@ -63,8 +63,8 @@ class SquireExt extends Squire {
     this.modifyBlocks(frag => {
       let current, newFrag, newBlock, nextBlock, tagName, lastNodeOfNextBlock, appendChidToNextBlock;
 
-      // HR은 Block으로 치지 않아서 frag에나타나지 않는다
-      // 디폴트 블럭을 만들어준다.
+      // HR is non-block element, so frag don't have it
+      // make a default block
       if (frag.childNodes.length) {
         current = frag.childNodes.item(0);
       } else {

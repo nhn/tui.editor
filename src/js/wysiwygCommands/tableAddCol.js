@@ -19,7 +19,7 @@ const TableAddCol = CommandManager.command('wysiwyg', /** @lends AddCol */{
   name: 'AddCol',
   /**
    * command handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

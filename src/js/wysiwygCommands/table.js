@@ -15,7 +15,7 @@ const Table = CommandManager.command('wysiwyg', /** @lends Table */{
   name: 'Table',
   /**
    * Command Handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    * @param {number} col column count
    * @param {number} row row count
    * @param {Array} data initial table data

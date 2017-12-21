@@ -19,8 +19,8 @@ const Code = CommandManager.command('wysiwyg', /** @lends Code */{
   name: 'Code',
   keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

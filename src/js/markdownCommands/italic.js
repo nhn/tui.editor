@@ -62,39 +62,40 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
 
     cm.focus();
   },
+
   /**
    * isNeedRemove
-   * 이미 텍스트에 이탤릭이나 볼드가 적용되어 있는지 판단한다
-   * @param {string} text 텍스트
-   * @returns {boolean} 적용 여부
+   * test given text has italic or bold
+   * @param {string} text - text to test
+   * @returns {boolean} - true if it has italic or bold
    */
   isNeedRemove(text) {
     return italicRegex.test(text) || boldItalicRegex.test(text);
   },
+
   /**
-   * append
-   * 텍스트에 이탤릭을 적용한다
-   * @param {string} text 적용할 텍스트
-   * @returns {string} 이탤릭이 적용된 텍스트
+   * apply italic
+   * @param {string} text - text to apply
+   * @returns {string} - italic text
    */
   append(text) {
     return `_${text}_`;
   },
+
   /**
-   * remove
-   * 텍스트에서 이탤릭을 제거한다
-   * @param {string} text 제거할 텍스트
-   * @returns {string} 제거된 텍스트
+   * remove italic
+   * @param {string} text - text to remove italic syntax
+   * @returns {string} - italic syntax revmoed text
    */
   remove(text) {
     return text.substr(1, text.length - 2);
   },
+
   /**
-   * expendWithBoldSelection
-   * 볼드와 함께 적용된 셀렉션 영역을 확장한다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트
-   * @param {object} cursor 커서객체
-   * @returns {string} 확장된 영역의 텍스트
+   * expand selected area
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @returns {string} - text in range after it has been expaneded
    */
   expendWithBoldSelection(doc, cursor) {
     const tmpSelection = doc.getSelection();
@@ -118,12 +119,12 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
 
     return result;
   },
+
   /**
-   * expendOnlyBoldSelection
-   * 볼드만 적용된 셀렉션 영역을 확장한다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트
-   * @param {object} cursor 커서객체
-   * @returns {string} 확장된 영역의 텍스트
+   * expand only bold selection
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @returns {string} - text in area after it has been expaneded
    */
   expendOnlyBoldSelection(doc, cursor) {
     const tmpSelection = doc.getSelection();
@@ -146,12 +147,12 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
 
     return result;
   },
+
   /**
-   * expendSelection
-   * 이탤릭이 적용된 셀렉션 영역을 확장한다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트
-   * @param {object} cursor 커서객체
-   * @returns {string} 확장된 영역의 텍스트
+   * expand only italic selection
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @returns {string} - text in area after it has been expaneded
    */
   expendSelection(doc, cursor) {
     const tmpSelection = doc.getSelection();
@@ -176,11 +177,10 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     return result;
   },
   /**
-   * setCursorToCenter
-   * 커서를 중앙으로 이동시킨다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트
-   * @param {object} cursor 커서객체
-   * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
+   * move cursor to center
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @param {boolean} isRemoved - whether it involes deletion
    */
   setCursorToCenter(doc, cursor, isRemoved) {
     const pos = isRemoved ? -1 : 1;

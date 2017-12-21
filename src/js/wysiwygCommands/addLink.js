@@ -18,9 +18,9 @@ const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
 const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
   name: 'AddLink',
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-   *  @param {object} data data for image
+   * command handler
+   * @param {WysiwygEditor} wwe - wysiwygEditor instance
+   * @param {object} data - data for image
    */
   exec(wwe, data) {
     const sq = wwe.getEditor();

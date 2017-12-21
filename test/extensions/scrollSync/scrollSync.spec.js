@@ -40,7 +40,7 @@ describe('scrollSync', () => {
     });
   });
 
-  describe('disable/enable, 어찌테스트해야할지 고민중', () => {
+  describe('disable/enable, build tc later', () => {
     beforeEach(() => {
       ned.setValue([
         'paragraph',

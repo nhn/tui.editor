@@ -14,9 +14,9 @@ import CommandManager from '../commandManager';
 const AddImage = CommandManager.command('wysiwyg', /** @lends AddImage */{
   name: 'AddImage',
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-   *  @param {object} data data for image
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
+   * @param {object} data data for image
    */
   exec(wwe, data) {
     const sq = wwe.getEditor();

@@ -16,8 +16,8 @@ const Bold = CommandManager.command('wysiwyg', /** @lends Bold */{
   name: 'Bold',
   keyMap: ['CTRL+B', 'META+B'],
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

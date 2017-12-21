@@ -45,6 +45,7 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
 
     cm.focus();
   },
+
   /**
    * hasStrikeSyntax
    * @param {string} text Source text
@@ -53,28 +54,30 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
   hasStrikeSyntax(text) {
     return strikeRegex.test(text);
   },
+
   /**
-   * append
-   * @param {string} text 적용할 텍스트
-   * @returns {string} strikeThrough text
+   * append strike
+   * @param {string} text - text to apply
+   * @returns {string} - strike through text
    */
   append(text) {
     return `~~${text}~~`;
   },
+
   /**
-   * remove
-   * @param {string} text 제거할 텍스트
-   * @returns {string} 제거된 텍스트
+   * remove strike
+   * @param {string} text - text to remove
+   * @returns {string} - strike removed text
    */
   remove(text) {
     return text.substr(2, text.length - 4);
   },
+
   /**
-   * setCursorToCenter
-   * 커서를 중앙으로 이동시킨다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트
-   * @param {object} cursor 커서객체
-   * @param {boolean} isRemoved 변경사항이 지우는 변경이었는지 여부
+   * set cursor to center
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @param {boolean} isRemoved - whether it involes deletion
    */
   setCursorToCenter(doc, cursor, isRemoved) {
     const pos = isRemoved ? -2 : 2;

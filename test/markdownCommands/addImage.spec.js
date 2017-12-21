@@ -30,7 +30,7 @@ describe('AddImage', () => {
     $('body').empty();
   });
 
-  describe('인자로 들어온 데이터를 이용해 이미지구문을 추가한다', () => {
+  describe('add image syntax with param', () => {
     let data;
 
     beforeEach(() => {
@@ -40,7 +40,7 @@ describe('AddImage', () => {
       };
     });
 
-    it('빈라인에서 이미지가 추가된다', () => {
+    it('to blank line', () => {
       doc.setCursor(1, 0);
 
       AddImage.exec(mde, data);
@@ -48,7 +48,7 @@ describe('AddImage', () => {
       expect(doc.getLine(1)).toEqual(`![${data.altText}](${data.imageUrl})`);
     });
 
-    it('영역선택후 이미지가 추가된다', () => {
+    it('to selected area', () => {
       doc.setSelection({
         line: 0,
         ch: 0
@@ -63,7 +63,7 @@ describe('AddImage', () => {
       expect(doc.getLine(1)).toEqual('mytext3');
     });
 
-    it('change 이벤트에 +addImage origin이 추가됨', () => {
+    it('trigger change event with origin', () => {
       let origin;
 
       doc.setCursor(1, 0);

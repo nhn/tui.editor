@@ -30,8 +30,8 @@ describe('Strike', () => {
     $('body').empty();
   });
 
-  describe('특정라인의 문자 위치에서 커맨드실행시 해당위치에 스트라이크문법이 추가된다.', () => {
-    it('텍스트 중간에서 실행시 ~~~~가 삽입된다 ', () => {
+  describe('add strike', () => {
+    it('in a middle of text', () => {
       doc.setCursor(2, 3);
 
       Strike.exec(mde);
@@ -39,17 +39,15 @@ describe('Strike', () => {
       expect(cm.getValue()).toEqual(['mytext1', '', 'myt~~~~ext2', 'mytext3'].join('\n'));
     });
 
-    it('빈 라인시작에 ~~~~가 추가되었다', () => {
+    it('to a blank line', () => {
       doc.setCursor(1, 0);
 
       Strike.exec(mde);
 
       expect(cm.getValue()).toEqual(['mytext1', '~~~~', 'mytext2', 'mytext3'].join('\n'));
     });
-  });
 
-  describe('셀렉션을 지정한상태에서 커맨드를 사용하면 ', () => {
-    it('선택된영역의 텍스트가 스트라이크처리된다', () => {
+    it('around selected area', () => {
       doc.setSelection({
         line: 0,
         ch: 0
@@ -62,7 +60,10 @@ describe('Strike', () => {
 
       expect(cm.getValue()).toEqual(['~~mytext1~~', '', 'mytext2', 'mytext3'].join('\n'));
     });
-    it('선택된영역의 스트라이크가 해제된다', () => {
+  });
+
+  describe('remove strike', () => {
+    it('selected area', () => {
       doc.setSelection({
         line: 0,
         ch: 0

@@ -115,7 +115,7 @@ class WwHrManager {
    * @private
    */
   _onTypedInHr(range) {
-    // HR위에서 테스트 컨텐츠 입력을 시도한경우에 대한 대비
+    // in case user try to input above hr
     if (this._isInHr(range) || this._isNearHr(range)) {
       this.wwe.defer(wwe => {
         wwe.saveSelection();

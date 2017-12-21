@@ -26,7 +26,6 @@ const Heading = CommandManager.command('markdown', /** @lends Heading */{
     const cm = mde.getEditor();
     const doc = cm.getDoc();
 
-    // 선택된 영역을 가공함
     const range = mde.getCurrentRange();
 
     const from = {
@@ -40,18 +39,13 @@ const Heading = CommandManager.command('markdown', /** @lends Heading */{
     };
 
     const lengthOfCurrentLineBefore = doc.getLine(to.line).length;
-
-    // 영역의 텍스트를 가저오고
     const textToModify = doc.getRange(from, to);
-
-    // 원하는 대로 가공한다
     const textLinesToModify = textToModify.split('\n');
 
     util.forEachArray(textLinesToModify, (line, index) => {
       textLinesToModify[index] = getHeadingMarkdown(line, size);
     });
 
-    // 해당 에디터의 내용을 변경한다
     doc.replaceRange(textLinesToModify.join('\n'), from, to);
 
     range.to.ch += doc.getLine(to.line).length - lengthOfCurrentLineBefore;

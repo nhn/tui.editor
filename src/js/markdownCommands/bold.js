@@ -45,35 +45,39 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
 
     cm.focus();
   },
+
   /**
-   * 이미 Bold가 적용이 되어있는지 확인
-   * @param {string} text 셀렉션텍스트
-   * @returns {boolean} 볼드 적용 여부
+   * test it has bold
+   * @param {string} text - text selected
+   * @returns {boolean} - true if it has bold
    */
   isNeedRemove(text) {
     return boldRegex.test(text);
   },
+
   /**
-   * Bold를 적용한다
-   * @param {string} text 셀렉션텍스트
-   * @returns {string} 볼드가 적용된 텍스트
+   * apply bold
+   * @param {string} text - text selected
+   * @returns {string} - bold text
    */
   append(text) {
     return `**${text}**`;
   },
+
   /**
-   * Bold를 제거한다
-   * @param {string} text 셀렉션텍스트
-   * @returns {string} 볼드가 제거된 텍스트
+   * remove bold
+   * @param {string} text - text selected
+   * @returns {string} - un-bold text
    */
   remove(text) {
     return text.substr(2, text.length - 4);
   },
+
   /**
-   * 셀렉션영역을 확장한다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
-   * @param {object} cursor 코드미러 커서 객체
-   * @returns {string} 셀렉션의 텍스트
+   * expand selection
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
+   * @returns {string} - text selected
    */
   expendSelection(doc, cursor) {
     const tmpSelection = doc.getSelection();
@@ -97,10 +101,11 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
 
     return result;
   },
+
   /**
-   * 커서를 센터로 이동시킨다
-   * @param {CodeMirror.doc} doc 코드미러 도큐먼트 객체
-   * @param {object} cursor 코드미러 커서 객체
+   * move cursor to center
+   * @param {CodeMirror.doc} doc - codemirror document
+   * @param {object} cursor - codemirror cursor
    */
   setCursorToCenter(doc, cursor) {
     doc.setCursor(cursor.line, cursor.ch + 2);

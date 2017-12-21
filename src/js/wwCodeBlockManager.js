@@ -174,7 +174,7 @@ class WwCodeBlockManager {
       const lang = $pre.find('code').attr('data-language');
       let textLines;
 
-      // pre태그 밑에 라인으로 의심되는 요소들이 있다면
+      // if this pre can have lines
       if ($pre.children().length > 1) {
         textLines = [];
 
@@ -241,7 +241,7 @@ class WwCodeBlockManager {
     const $div = $(pre).find('div').eq(0);
     const codeContent = $div.text().replace(FIND_ZWS_RX, '');
 
-    // 코드블럭이 code한줄 밖에 없을때
+    // only one code
     if ((range.startOffset === 0 || codeContent.length === 0)
             && $(pre).find('div').length <= 1
     ) {

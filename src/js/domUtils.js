@@ -126,8 +126,6 @@ const getChildNodeByOffset = function(node, index) {
 /**
  * getNodeWithDirectionUntil
  * find next node from passed node
- * 노드의 다음 노드를 찾는다 sibling노드가 없으면 부모레벨까지 올라가서 찾는다.
- * 부모노드를 따라 올라가며 방향에 맞는 노드를 찾는다.
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string} untilNodeName parent node name to limit
@@ -160,7 +158,6 @@ const getNodeWithDirectionUntil = function(direction, node, untilNodeName) {
 /**
  * getPrevOffsetNodeUntil
  * get prev node of childnode pointed with index
- * 인덱스에 해당하는 차일드 노드의 이전 노드를 찾는다.
  * @param {Node} node node
  * @param {number} index offset index
  * @param {string} untilNodeName parent node name to limit
@@ -196,7 +193,6 @@ const getParentUntilBy = function(node, condition) {
 /**
  * getParentUntil
  * get parent node until paseed node name
- * 특정 노드이전의 부모 노드를 찾는다
  * @param {Node} node node
  * @param {string|HTMLNode} untilNode node name or node to limit
  * @returns {Node} founded node
@@ -216,8 +212,7 @@ const getParentUntil = function(node, untilNode) {
 
 /**
  * getNodeWithDirectionUnderParent
- * get node of direction before passed parent
- * 주어진 노드 이전까지 찾아올라가서 방향에 맞는 노드를 찾는다.
+ * get node on the given direction under given parent
  * @param {strong} direction previous or next
  * @param {Node} node node
  * @param {string|Node} underNode parent node name to limit
@@ -344,8 +339,7 @@ const findOffsetNode = function(root, offsetList, textNodeFilter) {
     walkerOffset = newWalkerOffset;
   }
 
-  // 오프셋에 해당하는 컨텐츠가 없는경우 컨텐츠 맨마지막으로 통일
-  // 중간에 return으로 빠져나가지 않고 여기까지 왔다는것은 남은 offset이 있는것임
+  // there should be offset left
   do {
     result.push({
       container: walker.currentNode,

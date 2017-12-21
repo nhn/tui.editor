@@ -29,8 +29,8 @@ describe('HR', () => {
     $('body').empty();
   });
 
-  describe('현재라인 바로 밑에 HR 라인을 추가한다', () => {
-    it('현재라인 밑에 ***가 추가되었다', () => {
+  describe('add HR line', () => {
+    it('below the current line', () => {
       cm.setCursor(2, 3);
 
       HR.exec(mde);
@@ -38,7 +38,7 @@ describe('HR', () => {
       expect(cm.getValue()).toEqual(['mytext1', '', 'mytext2', '\n* * *\n', '', 'mytext3'].join('\n'));
     });
 
-    it('add hr empty line', () => {
+    it('to a blank line', () => {
       cm.setCursor(1, 0);
 
       HR.exec(mde);
@@ -47,8 +47,8 @@ describe('HR', () => {
     });
   });
 
-  describe('셀렉션이 있는경우 셀렉션의 내용을 라인으로 대체한다', () => {
-    it('셀렉션 영역이 ***로 대체되었다', () => {
+  describe('replace to hr', () => {
+    it('from selected content', () => {
       cm.setSelection({
         line: 0,
         ch: 1

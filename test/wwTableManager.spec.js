@@ -78,9 +78,6 @@ describe('WwTableManager', () => {
   });
 
   describe('undo', () => {
-    // 스콰이어에서 컨텐츠를 변화를 인지해서 컨텐츠에 변화가 일어나면 다음프레임에서  undo와 관련된 프로세스를 통해야하는데
-    // 이를 지원하지않는(mutationObserver)에서는 keydown이벤트로 처리한다 억지로 keydown이벤트를 발생시키는것보다는
-    // 그냥 단순하게 스파이콜로 테스트함
     beforeEach(() => {
       wwe.getEditor().setHTML('<table><thead><tr><th>1234</th></tr></thead>' +
                 '<tbody><tr><td>1123</td></tr></tbody></table>');

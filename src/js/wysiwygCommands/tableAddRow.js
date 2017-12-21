@@ -18,7 +18,7 @@ const TableAddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
   name: 'AddRow',
   /**
    * command handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();
@@ -52,7 +52,7 @@ const TableAddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
 
 /**
  * get number of selected rows
- * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+ * @param {WysiwygEditor} wwe - wysiwygEditor instance
  * @returns {number} - number of selected rows
  * @ignore
  */

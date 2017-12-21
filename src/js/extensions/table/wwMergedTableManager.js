@@ -375,12 +375,10 @@ class WwMergedTableManager extends WwTableManager {
       alertMessage = i18n.get('Cannot paste row merged cells into the table header');
       updated = false;
     } else if (this._isExactlyFit(clipboardTableData, targetRowCount, targetColCount)) {
-      // data가 clipboard영역에 딱 맞는 경우(배수 포함)
-
       endCellIndex = endRange;
       this._updateClipboardTableData(clipboardTableData, targetRowCount, targetColCount);
       this._updateTableDataByClipboardData(clipboardTableData, tableData, startRange);
-    } else if (isSelectionLargerThanData) { // selection이 paste 데이터 보다 큰 경우
+    } else if (isSelectionLargerThanData) {
       endCellIndex = {
         rowIndex: startRange.rowIndex + clipboardRowCount - 1,
         colIndex: startRange.colIndex + clipboardColCount - 1
@@ -391,7 +389,7 @@ class WwMergedTableManager extends WwTableManager {
       } else {
         updated = false;
       }
-    } else { // selection이 paste 데이터 보다 작은 경우
+    } else { // selected area is smaller then paste data
       endCellIndex = {
         rowIndex: startRange.rowIndex + targetRowCount - 1,
         colIndex: startRange.colIndex + targetColCount - 1
@@ -526,9 +524,9 @@ class WwMergedTableManager extends WwTableManager {
     const tableData = tableDataHandler.createTableData($table);
     const startCellIndex = this._findStartCellIndex(tableData, $startCell);
 
-    if ($selectedCells.length > 1) { // selection 상태
+    if ($selectedCells.length > 1) { // selection
       this._pasteToSelectedArea($table, clipboardTableData, tableData, $selectedCells);
-    } else { // cursor 상태
+    } else { // cursor
       this._pasteAllClipboardTableData($table, clipboardTableData, tableData, startCellIndex);
     }
   }

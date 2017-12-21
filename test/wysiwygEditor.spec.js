@@ -154,7 +154,7 @@ describe('WysiwygEditor', () => {
 
   describe('Event', () => {
     beforeEach(done => {
-      // 스콰이어가 셋팅된 프레임에 입력된 데이터들에 대한 이벤트는 발생하지 않아 프레임지연
+      // wait for squire events routine
       setTimeout(() => {
         done();
       }, 0);
