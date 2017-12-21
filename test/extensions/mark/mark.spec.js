@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test marker
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import util from 'tui-code-snippet';
 
 import TuiEditor from '../../../src/js/editor';

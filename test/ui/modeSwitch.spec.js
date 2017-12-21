@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui mode switch
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import ModeSwitch from '../../src/js/ui/modeSwitch';

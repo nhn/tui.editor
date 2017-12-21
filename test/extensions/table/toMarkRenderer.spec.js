@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test toMark renderer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import {_getAdditionalThCount, _createTheadMarkdown} from '../../../src/js/extensions/table/toMarkRenderer';

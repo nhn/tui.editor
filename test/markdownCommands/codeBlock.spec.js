@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown code block
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import CodeBlock from '../../src/js/markdownCommands/codeBlock';

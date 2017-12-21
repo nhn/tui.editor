@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg heading command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Heading from '../../src/js/wysiwygCommands/heading';

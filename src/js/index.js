@@ -1,6 +1,6 @@
 /**
- * @fileoverview entry point
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview entry point for editor
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 

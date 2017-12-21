@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test key mapper
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import KeyMapper from '../src/js/keyMapper';
 
 describe('KeyMapper', () => {

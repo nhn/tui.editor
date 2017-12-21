@@ -1,6 +1,6 @@
 /**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements UI Button
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import UIController from './uicontroller';
 import tooltip from './tooltip';

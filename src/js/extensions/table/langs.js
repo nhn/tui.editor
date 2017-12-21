@@ -1,3 +1,7 @@
+/**
+* @fileoverview i18n for table extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import Editor from '../editor';
 
 const {i18n} = Editor;

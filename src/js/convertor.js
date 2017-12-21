@@ -1,6 +1,6 @@
 /**
  * @fileoverview Convertor have responsible to convert markdown and html
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

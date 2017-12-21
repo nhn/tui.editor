@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test viewer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import MarkdownIt from 'markdown-it';
 
 import ToastUIEditorViewer from '../src/js/viewer';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test merged table creator
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import {

@@ -1,14 +1,12 @@
 {
   "name": "tui-editor",
   "description": "private",
-  "authors": [
-    {
-      "name": "Sungho Kim",
-      "email": "shirenbeat@gmail.com"
-    }
-  ],
+  "authors": ["NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)"],
   "moduleType": [
-    "globals"
+    "globals",
+    "es6",
+    "amd",
+    "node"
   ],
   "main": "dist/tui-editor-Editor.js",
   "license": "MIT",

@@ -1,6 +1,6 @@
 /**
- * @fileoverview Implements WysiwygCommand
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements strike WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 import CommandManager from '../commandManager';

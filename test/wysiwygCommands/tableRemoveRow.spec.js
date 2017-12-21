@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg table remove row command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import RemoveRow from '../../src/js/wysiwygCommands/tableRemoveRow';

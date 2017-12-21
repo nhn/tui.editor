@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Implements CodeBlockExt
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 import CodeMirror from 'codemirror';
 

@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements Task counter
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
+* @fileoverview Implements Task counter
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import Editor from '../editor';
 
 const FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;

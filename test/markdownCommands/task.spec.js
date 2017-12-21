@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown task
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import task from '../../src/js/markdownCommands/task';

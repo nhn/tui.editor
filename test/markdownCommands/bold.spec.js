@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown bold
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Bold from '../../src/js/markdownCommands/bold';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui popup add link
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import PopupAddLink from '../../src/js/ui/popupAddLink';

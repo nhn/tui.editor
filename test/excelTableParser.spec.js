@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test excel table parser
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import excelTableParser from '../src/js/excelTableParser';
 
 describe('excelTableParser', () => {

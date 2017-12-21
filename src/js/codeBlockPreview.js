@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Implements CodeBlockPreview
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import Preview from './preview';
 
 const EVENT_REQUIRE_SCROLL_SYNC = 'requireScrollSync';

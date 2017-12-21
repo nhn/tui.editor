@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test command manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import CommandManager from '../src/js/commandManager';
 import Command from '../src/js/command';
 import EventManager from '../src/js/eventManager';

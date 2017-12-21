@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test viewer marker helper
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import ViewerMarkerHelper from '../../../src/js/extensions/mark/viewerMarkerHelper';

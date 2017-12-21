@@ -1,7 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg table manager
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

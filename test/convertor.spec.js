@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test convertor
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import Convertor from '../src/js/convertor';
 import EventManager from '../src/js/eventManager';
 

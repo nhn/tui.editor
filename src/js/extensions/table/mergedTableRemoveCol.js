@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements mergedTableRemoveCol. Remove col to selected table
- * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
- */
+* @fileoverview Implements mergedTableRemoveCol. Remove col to selected table
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 

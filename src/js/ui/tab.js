@@ -1,6 +1,6 @@
 /**
- * @fileoverview tab버튼 UI를 그리는 객체가 정의되어 있다
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements tab button ui
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 

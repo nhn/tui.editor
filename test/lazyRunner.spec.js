@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test lazy runner
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import LazyRunner from '../src/js/lazyRunner';

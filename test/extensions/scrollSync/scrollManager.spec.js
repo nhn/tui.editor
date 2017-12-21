@@ -1,4 +1,7 @@
-
+/**
+ * @fileoverview test scroll manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import TuiEditor from '../../../src/js/editor';
 import ScrollManager from '../../../src/js/extensions/scrollSync/scrollManager';
 import SectionManager from '../../../src/js/extensions/scrollSync/sectionManager';

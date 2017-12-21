@@ -1,3 +1,8 @@
+/**
+* @fileoverview codemirror extension for fix ordered list number
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+
 import CodeMirror from 'codemirror';
 
 const listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;

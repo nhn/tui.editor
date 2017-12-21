@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg decrease depth command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import DecreaseDepth from '../../src/js/wysiwygCommands/decreaseDepth';

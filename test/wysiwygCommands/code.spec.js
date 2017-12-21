@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg code command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Code from '../../src/js/wysiwygCommands/code';

@@ -1,7 +1,6 @@
 /**
- * @fileoverview Implements incease depth wysiwyg command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements decrease depth wysiwyg command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Implements StrikeThrough markdown command
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import CommandManager from '../commandManager';
 
 const strikeRegex = /^[~~](.*[\s\n]*.*)*[~~]$/;

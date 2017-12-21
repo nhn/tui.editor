@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Implements markdown preview
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import Preview from './preview';
 
 /**

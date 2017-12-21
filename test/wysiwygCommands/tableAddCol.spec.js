@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg table add column command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import AddCol from '../../src/js/wysiwygCommands/tableAddCol';

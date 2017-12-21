@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui popup code block languages
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import PopupCodeBlockLanguages from '../../src/js/ui/popupCodeBlockLanguages';

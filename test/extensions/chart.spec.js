@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test chart extension
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import {
   parseCode2ChartOption,
   parseDSV2ChartData,

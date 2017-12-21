@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown add image
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import AddImage from '../../src/js/markdownCommands/addImage';

@@ -1,6 +1,6 @@
 /**
- * @fileoverview Implements
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements squire extension
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

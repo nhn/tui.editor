@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown block quote
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Blockquote from '../../src/js/markdownCommands/blockquote';

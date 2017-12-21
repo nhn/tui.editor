@@ -1,5 +1,11 @@
 /**
- * @overview
+* @fileoverview tsv, csv format tui.chart plugin
+* consumes tab separated values and make data/options for tui chart
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+
+/**
+ * @example
  * tsv, csv format tui.chart plugin
  * consumes tab separated values and make data/options for tui chart
  *
@@ -395,11 +401,11 @@ function _setWwCodeBlockManagerForChart(editor) {
   componentManager.removeManager('codeblock');
   componentManager.addManager(class extends WwCodeBlockManager {
     /**
-         * Wrap table nodes into code block as TSV
-         * @memberof WwCodeBlockManager
-         * @param {Array.<Node>} nodes Node array
-         * @returns {HTMLElement} Code block element
-         */
+     * Wrap table nodes into code block as TSV
+     * @memberof WwCodeBlockManager
+     * @param {Array.<Node>} nodes Node array
+     * @returns {HTMLElement} Code block element
+     */
     convertToCodeblock(nodes) {
       if (nodes.length !== 1 || nodes[0].tagName !== 'TABLE') {
         return super.convertToCodeblock(nodes);

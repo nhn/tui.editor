@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg add link command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import AddLink from '../../src/js/wysiwygCommands/addLink';

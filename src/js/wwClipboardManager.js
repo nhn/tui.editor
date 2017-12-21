@@ -1,8 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg editor clipboard manager
- * @author Sungho Kim(sungho-kim@nhnent.com),
- *         Jiung Kang(jiung.kang@nhnent.com)
- *         FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

@@ -1,8 +1,7 @@
 /**
  * @fileoverview Implements Italic markdown command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import CommandManager from '../commandManager';
 
 const boldItalicRegex = /^[*_]{3,}[^*_]*[*_]{3,}$/;

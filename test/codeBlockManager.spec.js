@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test code block manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import {CodeBlockManager} from '../src/js/codeBlockManager';
 
 describe('CodeBlockManager', () => {

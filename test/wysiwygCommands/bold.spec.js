@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg bold command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Bold from '../../src/js/wysiwygCommands/bold';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui tab
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Tab from '../../src/js/ui/tab';

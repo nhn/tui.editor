@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown italic
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Italic from '../../src/js/markdownCommands/italic';

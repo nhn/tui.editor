@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test color syntax extension
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import TuiEditor from '../../src/js/editor';
 import colorSyntaxExtension from '../../src/js/extensions/colorSyntax';
 
