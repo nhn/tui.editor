@@ -199,4 +199,4 @@ class PopupCodeBlockLanguages extends LayerPopup {
     }
 }
 
-module.exports = PopupCodeBlockLanguages;
+export default PopupCodeBlockLanguages;

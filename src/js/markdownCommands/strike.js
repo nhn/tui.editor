@@ -83,4 +83,4 @@ const Strike = CommandManager.command('markdown', /** @lends Strike */{
     }
 });
 
-module.exports = Strike;
+export default Strike;

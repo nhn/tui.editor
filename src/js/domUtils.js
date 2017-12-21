@@ -470,7 +470,7 @@ const getSiblingRowCellByDirection = function(node, direction, needEdgeCell) {
     return null;
 };
 
-module.exports = {
+export default {
     getNodeName,
     isTextNode,
     isElemNode,

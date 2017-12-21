@@ -44,4 +44,4 @@ const Code = CommandManager.command('markdown', /** @lends Code */{
     }
 });
 
-module.exports = Code;
+export default Code;

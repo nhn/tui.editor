@@ -81,4 +81,4 @@ ModeSwitch.TYPE = {
     WYSIWYG
 };
 
-module.exports = ModeSwitch;
+export default ModeSwitch;

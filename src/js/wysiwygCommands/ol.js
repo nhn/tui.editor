@@ -82,4 +82,4 @@ const OL = CommandManager.command('wysiwyg', /** @lends OL */{
     }
 });
 
-module.exports = OL;
+export default OL;

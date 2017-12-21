@@ -230,4 +230,4 @@ class MarkdownMarkerHelper {
         }
     }
 }
-module.exports = MarkdownMarkerHelper;
+export default MarkdownMarkerHelper;

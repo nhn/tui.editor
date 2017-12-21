@@ -41,4 +41,4 @@ class Tooltip {
     }
 }
 
-module.exports = new Tooltip();
+export default new Tooltip();

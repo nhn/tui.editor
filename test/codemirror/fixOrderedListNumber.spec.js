@@ -4,7 +4,7 @@ import $ from 'jquery';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
 
-require('../../src/js/codemirror/fixOrderedListNumber');
+import '../../src/js/codemirror/fixOrderedListNumber';
 
 describe('fixOrderedListNumber', () => {
     let mde, em, container;

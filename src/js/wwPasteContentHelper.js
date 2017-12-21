@@ -430,4 +430,4 @@ class WwPasteContentHelper {
     }
 }
 
-module.exports = WwPasteContentHelper;
+export default WwPasteContentHelper;

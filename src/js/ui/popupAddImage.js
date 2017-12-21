@@ -170,4 +170,4 @@ class PopupAddImage extends LayerPopup {
     }
 }
 
-module.exports = PopupAddImage;
+export default PopupAddImage;

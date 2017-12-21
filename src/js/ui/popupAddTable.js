@@ -380,4 +380,4 @@ PopupAddTable.CELL_HEIGHT = CELL_HEIGHT;
 PopupAddTable.MIN_ROW_SELECTION_INDEX = MIN_ROW_SELECTION_INDEX;
 PopupAddTable.MIN_COL_SELECTION_INDEX = MIN_COL_SELECTION_INDEX;
 
-module.exports = PopupAddTable;
+export default PopupAddTable;

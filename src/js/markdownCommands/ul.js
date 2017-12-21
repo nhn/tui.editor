@@ -68,4 +68,4 @@ function isOlOrTask(line) {
     return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
 }
 
-module.exports = UL;
+export default UL;

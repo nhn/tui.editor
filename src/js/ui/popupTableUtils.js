@@ -103,4 +103,4 @@ class PopupTableUtils extends LayerPopup {
     }
 }
 
-module.exports = PopupTableUtils;
+export default PopupTableUtils;

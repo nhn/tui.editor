@@ -109,4 +109,4 @@ function getTrs(range, selectionMgr, $table) {
 
     return trs;
 }
-module.exports = TableRemoveRow;
+export default TableRemoveRow;

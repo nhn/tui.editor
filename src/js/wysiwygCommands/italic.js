@@ -56,5 +56,5 @@ function styleItalic(sq) {
     }
 }
 
-module.exports = Italic;
+export default Italic;
 

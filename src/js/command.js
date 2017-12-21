@@ -124,4 +124,4 @@ Command.TYPE = {
     GB: 2
 };
 
-module.exports = Command;
+export default Command;

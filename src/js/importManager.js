@@ -250,4 +250,4 @@ function dataURItoBlob(dataURI) {
     return blob;
 }
 
-module.exports = ImportManager;
+export default ImportManager;

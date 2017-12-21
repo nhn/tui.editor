@@ -47,4 +47,4 @@ const Paragraph = CommandManager.command('wysiwyg', /** @lends Paragraph */{
     }
 });
 
-module.exports = Paragraph;
+export default Paragraph;

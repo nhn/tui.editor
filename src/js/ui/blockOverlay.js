@@ -145,4 +145,4 @@ class BlockOverlay {
     }
 }
 
-module.exports = BlockOverlay;
+export default BlockOverlay;

@@ -133,4 +133,4 @@ class mdTextObject {
     }
 }
 
-module.exports = mdTextObject;
+export default mdTextObject;

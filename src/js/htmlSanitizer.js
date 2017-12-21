@@ -103,4 +103,4 @@ function finalizeHtml($html, needHtmlText) {
     return returnValue;
 }
 
-module.exports = htmlSanitizer;
+export default htmlSanitizer;

@@ -95,4 +95,4 @@ class PopupAddHeading extends LayerPopup {
     }
 }
 
-module.exports = PopupAddHeading;
+export default PopupAddHeading;

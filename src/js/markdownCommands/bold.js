@@ -108,4 +108,4 @@ const Bold = CommandManager.command('markdown', /** @lends Bold */{
     }
 });
 
-module.exports = Bold;
+export default Bold;

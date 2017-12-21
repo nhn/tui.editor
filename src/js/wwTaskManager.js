@@ -166,4 +166,4 @@ class WwTaskManager {
     }
 }
 
-module.exports = WwTaskManager;
+export default WwTaskManager;

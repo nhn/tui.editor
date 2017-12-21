@@ -200,4 +200,4 @@ class WwHeadingManager {
     }
 }
 
-module.exports = WwHeadingManager;
+export default WwHeadingManager;

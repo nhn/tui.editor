@@ -58,4 +58,4 @@ const Blockquote = CommandManager.command('markdown', /** @lends Blockquote */{
     }
 });
 
-module.exports = Blockquote;
+export default Blockquote;

@@ -46,4 +46,4 @@ const CodeBlock = CommandManager.command('markdown', /** @lends CodeBlock */{
     }
 });
 
-module.exports = CodeBlock;
+export default CodeBlock;

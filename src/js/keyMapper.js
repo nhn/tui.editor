@@ -366,4 +366,4 @@ class KeyMapper {
     }
 }
 
-module.exports = KeyMapper;
+export default KeyMapper;

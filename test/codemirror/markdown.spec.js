@@ -4,7 +4,7 @@ import $ from 'jquery';
 import MarkdownEditor from '../../src/js/markdownEditor';
 import EventManager from '../../src/js/eventManager';
 
-require('../../src/js/codemirror/markdown');
+import '../../src/js/codemirror/markdown';
 
 describe('codemirror addon markdown', () => {
     let mde, em, container;

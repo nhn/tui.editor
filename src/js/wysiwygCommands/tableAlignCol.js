@@ -129,4 +129,4 @@ function getRangeInformation(range, selectionMgr) {
     return rangeInformation;
 }
 
-module.exports = TableAlignCol;
+export default TableAlignCol;

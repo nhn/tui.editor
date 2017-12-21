@@ -418,4 +418,4 @@ class WwTableSelectionManager {
     }
 }
 
-module.exports = WwTableSelectionManager;
+export default WwTableSelectionManager;

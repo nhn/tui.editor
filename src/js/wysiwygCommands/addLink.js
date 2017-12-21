@@ -5,8 +5,9 @@
  */
 import $ from 'jquery';
 
-const CommandManager = require('../commandManager');
-import {decodeURIGraceful, encodeMarkdownCharacters} from '../importManager';
+import CommandManager from '../commandManager';
+import ImportManager from '../importManager';
+const {decodeURIGraceful, encodeMarkdownCharacters} = ImportManager;
 
 /**
  * AddLink
@@ -44,4 +45,4 @@ const AddLink = CommandManager.command('wysiwyg', /** @lends AddLink */{
     }
 });
 
-module.exports = AddLink;
+export default AddLink;

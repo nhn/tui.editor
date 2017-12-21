@@ -1,8 +1,8 @@
 
 import $ from 'jquery';
 
-const PopupAddImage = require('../../src/js/ui/popupAddImage'),
-    EventManager = require('../../src/js/eventManager');
+import PopupAddImage from '../../src/js/ui/popupAddImage';
+import EventManager from '../../src/js/eventManager';
 
 describe('PopupAddImage', () => {
     let popup,

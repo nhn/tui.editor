@@ -6,7 +6,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-const CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 const CODEBLOCK_CLASS_PREFIX = 'te-content-codeblock-';
 const CODEBLOCK_ATTR_NAME = 'data-te-codeblock';
@@ -86,4 +86,4 @@ function getCodeBlockBody(range, wwe) {
     return codeBlock;
 }
 
-module.exports = CodeBlock;
+export default CodeBlock;

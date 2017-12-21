@@ -122,4 +122,4 @@ function makeBody(col, row, data) {
     return body;
 }
 
-module.exports = Table;
+export default Table;

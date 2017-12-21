@@ -35,4 +35,4 @@ const TableRemove = CommandManager.command('wysiwyg', /** @lends RemoveTable */{
     }
 });
 
-module.exports = TableRemove;
+export default TableRemove;

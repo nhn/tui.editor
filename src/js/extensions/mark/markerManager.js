@@ -204,4 +204,4 @@ class MarkerManager {
         return updatedMarkers;
     }
 }
-module.exports = MarkerManager;
+export default MarkerManager;

@@ -337,5 +337,5 @@ class SquireExt extends Squire {
     }
 }
 
-module.exports = SquireExt;
+export default SquireExt;
 

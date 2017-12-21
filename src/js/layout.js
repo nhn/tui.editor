@@ -204,4 +204,4 @@ class Layout {
     }
 }
 
-module.exports = Layout;
+export default Layout;

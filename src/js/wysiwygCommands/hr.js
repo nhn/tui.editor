@@ -60,4 +60,4 @@ const HR = CommandManager.command('wysiwyg', /** @lends HR */{
     }
 });
 
-module.exports = HR;
+export default HR;

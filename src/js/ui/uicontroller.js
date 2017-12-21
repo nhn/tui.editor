@@ -172,4 +172,4 @@ class UIController {
     }
 }
 
-module.exports = UIController;
+export default UIController;

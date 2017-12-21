@@ -113,4 +113,4 @@ class Preview {
     }
 }
 
-module.exports = Preview;
+export default Preview;

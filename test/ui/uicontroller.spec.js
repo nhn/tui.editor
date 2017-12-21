@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-const UIController = require('../../src/js/ui/uicontroller');
+import UIController from '../../src/js/ui/uicontroller';
 
 describe('UIController', () => {
     let uic;

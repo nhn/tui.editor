@@ -52,4 +52,4 @@ class ExtManager {
     }
 }
 
-module.exports = new ExtManager();
+export default new ExtManager();
