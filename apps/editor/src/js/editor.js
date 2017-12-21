@@ -67,6 +67,13 @@ import wwTask from './wysiwygCommands/task';
 import wwCode from './wysiwygCommands/code';
 import wwCodeBlock from './wysiwygCommands/codeBlock';
 
+// langs
+import './langs/en_US';
+import './langs/ko_KR';
+import './langs/zh_CN';
+import './langs/ja_JP';
+import './langs/nl_NL';
+
 const __nedInstance = [];
 
 /**
@@ -165,6 +172,8 @@ class ToastUIEditor {
         this.eventManager.emit('load', this);
 
         __nedInstance.push(this);
+
+        this._addDefaultCommands();
     }
 
     /**
@@ -185,6 +194,53 @@ class ToastUIEditor {
      */
     exec(...args) {
         this.commandManager.exec(...args);
+    }
+
+    /**
+     * add default commands
+     * @memberof ToastUIEditor
+     * @private
+     */
+    _addDefaultCommands() {
+        this.addCommand(mdBold);
+        this.addCommand(mdItalic);
+        this.addCommand(mdBlockquote);
+        this.addCommand(mdHeading);
+        this.addCommand(mdParagraph);
+        this.addCommand(mdHR);
+        this.addCommand(mdAddLink);
+        this.addCommand(mdAddImage);
+        this.addCommand(mdUL);
+        this.addCommand(mdOL);
+        this.addCommand(mdTable);
+        this.addCommand(mdTask);
+        this.addCommand(mdCode);
+        this.addCommand(mdCodeBlock);
+        this.addCommand(mdStrike);
+
+        this.addCommand(wwBold);
+        this.addCommand(wwItalic);
+        this.addCommand(wwBlockquote);
+        this.addCommand(wwUL);
+        this.addCommand(wwOL);
+        this.addCommand(wwAddImage);
+        this.addCommand(wwAddLink);
+        this.addCommand(wwHR);
+        this.addCommand(wwHeading);
+        this.addCommand(wwParagraph);
+        this.addCommand(wwIncreaseDepth);
+        this.addCommand(wwDecreaseDepth);
+        this.addCommand(wwTask);
+        this.addCommand(wwTable);
+        this.addCommand(wwTableAddRow);
+        this.addCommand(wwTableAddCol);
+        this.addCommand(wwTableRemoveRow);
+        this.addCommand(wwTableRemoveCol);
+        this.addCommand(wwTableAlignCol);
+        this.addCommand(wwTableRemove);
+        this.addCommand(wwCode);
+        this.addCommand(wwCodeBlock);
+        this.addCommand(wwStrike);
     }
 
     addCommand(type, props) {
@@ -685,46 +741,6 @@ class ToastUIEditor {
             tuiEditor = new ViewOnly(options);
         } else {
             tuiEditor = new ToastUIEditor(options);
-
-            tuiEditor.addCommand(mdBold);
-            tuiEditor.addCommand(mdItalic);
-            tuiEditor.addCommand(mdBlockquote);
-            tuiEditor.addCommand(mdHeading);
-            tuiEditor.addCommand(mdParagraph);
-            tuiEditor.addCommand(mdHR);
-            tuiEditor.addCommand(mdAddLink);
-            tuiEditor.addCommand(mdAddImage);
-            tuiEditor.addCommand(mdUL);
-            tuiEditor.addCommand(mdOL);
-            tuiEditor.addCommand(mdTable);
-            tuiEditor.addCommand(mdTask);
-            tuiEditor.addCommand(mdCode);
-            tuiEditor.addCommand(mdCodeBlock);
-            tuiEditor.addCommand(mdStrike);
-
-            tuiEditor.addCommand(wwBold);
-            tuiEditor.addCommand(wwItalic);
-            tuiEditor.addCommand(wwBlockquote);
-            tuiEditor.addCommand(wwUL);
-            tuiEditor.addCommand(wwOL);
-            tuiEditor.addCommand(wwAddImage);
-            tuiEditor.addCommand(wwAddLink);
-            tuiEditor.addCommand(wwHR);
-            tuiEditor.addCommand(wwHeading);
-            tuiEditor.addCommand(wwParagraph);
-            tuiEditor.addCommand(wwIncreaseDepth);
-            tuiEditor.addCommand(wwDecreaseDepth);
-            tuiEditor.addCommand(wwTask);
-            tuiEditor.addCommand(wwTable);
-            tuiEditor.addCommand(wwTableAddRow);
-            tuiEditor.addCommand(wwTableAddCol);
-            tuiEditor.addCommand(wwTableRemoveRow);
-            tuiEditor.addCommand(wwTableRemoveCol);
-            tuiEditor.addCommand(wwTableAlignCol);
-            tuiEditor.addCommand(wwTableRemove);
-            tuiEditor.addCommand(wwCode);
-            tuiEditor.addCommand(wwCodeBlock);
-            tuiEditor.addCommand(wwStrike);
         }
 
         return tuiEditor;

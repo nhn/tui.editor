@@ -36,20 +36,18 @@
 <body>
 <div id="editSection"></div>
 <script>
-    $('#editSection').tuiEditor({
-        initialEditType: 'markdown',
-        previewStyle: 'vertical',
-        height: '300px',
-        exts: ['colorSyntax', 'table'],
-        contentCSSStyles: [
-            '../dist/tui-editor-contents.css'
-        ],
-        events: {
-            'load': function() {
-                console.log('editor Loaded');
-            }
+var editor = new tui.Editor({
+    el: document.querySelector('#editSection'),
+    initialEditType: 'markdown',
+    previewStyle: 'vertical',
+    height: '300px',
+    exts: ['colorSyntax', 'table'],
+    events: {
+        'load': function() {
+            console.log('yes');
         }
-    });
+    }
+});
 </script>
 </body>
 </html>

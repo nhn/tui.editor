@@ -1,6 +1,6 @@
-import Editor from '../editor';
+import i18n from '../i18n';
 
-Editor.i18n.setLanguage(['zh', 'zh_CN'], {
+i18n.setLanguage(['zh', 'zh_CN'], {
     'Markdown': 'Markdown',
     'WYSIWYG': '所见即所得',
     'Write': '编辑',
