@@ -5,9 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../editor';
-import EditorViewOnly from '../../viewOnly';
-
+import Editor from '../editor';
 import MarkerList from './markerList';
 import MarkerManager from './markerManager';
 import WysiwygMarkerHelper from './wysiwygMarkerHelper';
@@ -248,4 +246,4 @@ function markExtension(editor) {
     }
 }
 
-(Editor || EditorViewOnly).defineExtension('mark', markExtension);
+Editor.defineExtension('mark', markExtension);

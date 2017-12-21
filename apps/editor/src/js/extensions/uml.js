@@ -1,9 +1,8 @@
-import Editor from '../editor';
-import EditorViewOnly from '../viewOnly';
-
 import plantumlEncoder from 'plantuml-encoder';
-const EditorLoaded = Editor || EditorViewOnly;
-const codeBlockManager = EditorLoaded.codeBlockManager;
+
+import Editor from '../editor';
+
+const {codeBlockManager} = Editor;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
 const LANG = 'uml';
 
@@ -46,6 +45,6 @@ function umlExtension(editor, options = {}) {
     codeBlockManager.setReplacer(LANG, plantUMLReplacer);
 }
 
-EditorLoaded.defineExtension('uml', umlExtension);
+Editor.defineExtension('uml', umlExtension);
 
 export default umlExtension;

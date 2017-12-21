@@ -3,11 +3,9 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 import $ from 'jquery';
-import Editor from '../../editor';
-import EditorViewOnly from '../../viewOnly';
+import Editor from '../editor';
 
-const domUtils = (Editor || EditorViewOnly).domUtils;
-
+const {domUtils} = Editor;
 const FIND_CRLF_RX = /(\n)|(\r\n)|(\r)/g;
 
 /**

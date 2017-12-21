@@ -12,11 +12,14 @@
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
     <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+    <script src="../lib/raphael/raphael.min.js"></script>
+    <script src="../lib/tui-chart/dist/chart.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
     <link rel="stylesheet" href="../dist/tui-editor.css">
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
+    <link rel="stylesheet" href="../lib/tui-chart/dist/chart.css">
     <style type="text/css">
         html, body {
             padding: 0;
@@ -31,16 +34,14 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor-Editor.js"></script>
-<script src="../dist/tui-editor-extScrollFollow.js"></script>
-<script src="../dist/tui-editor-extColorSyntax.js"></script>
+<script src="../dist/tui-editor-Editor-all.js"></script>
 <script>
     $('#editSection').tuiEditor({
         previewStyle: 'vertical',
         height: '100%',
         initialEditType: 'wysiwyg',
         useCommandShortcut: true,
-        exts: ['scrollFollow', 'colorSyntax', 'uml']
+        exts: ['scrollFollow', 'colorSyntax', 'uml', 'chart', 'mark', 'table', 'taskCounter']
     });
 </script>
 </body>

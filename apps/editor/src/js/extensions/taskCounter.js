@@ -3,7 +3,6 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 import Editor from '../editor';
-import EditorViewOnly from '../viewOnly';
 
 const FIND_TASK_RX = /^\s*\* \[[xX ]\] [^\n]*/mg;
 const FIND_CHECKED_TASK_RX = /^\s*\* \[[xX]\] [^\n]*/mg;
@@ -45,4 +44,4 @@ function taskCounterExtension(editor) {
     };
 }
 
-(Editor || EditorViewOnly).defineExtension('taskCounter', taskCounterExtension);
+Editor.defineExtension('taskCounter', taskCounterExtension);

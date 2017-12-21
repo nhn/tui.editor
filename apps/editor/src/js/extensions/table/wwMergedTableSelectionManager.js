@@ -5,11 +5,11 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../editor';
+import Editor from '../editor';
 import tableDataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 
-const WwTableSelectionManager = Editor ? Editor.WwTableSelectionManager : null;
+const {WwTableSelectionManager} = Editor;
 
 const TABLE_CELL_SELECTED_CLASS_NAME = 'te-cell-selected';
 

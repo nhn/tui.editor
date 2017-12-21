@@ -54,7 +54,9 @@
     "test:sl": "cross-env SERVER=saucelabs karma start",
     "test:lh": "cross-env SERVER=localhost karma start",
     "serve": "webpack-dev-server --progress --inline",
-    "build": "cross-env webpack & webpack -p & BUILD_ALL=true webpack & BUILD_ALL=true webpack -p",
+    "build": "npm run build:prod & npm run build:dev",
+    "build:dev": "cross-env BUILD_ALL=true webpack & webpack & BUILD_EXT=true webpack",
+    "build:prod": "cross-env BUILD_ALL=true webpack -p & webpack -p & BUILD_EXT=true webpack -p",
     "note": "tuie --tag=$(git describe --tags)"
   },
   "dependencies": {

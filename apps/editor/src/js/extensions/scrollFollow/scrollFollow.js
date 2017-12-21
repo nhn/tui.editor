@@ -3,11 +3,11 @@
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 import $ from 'jquery';
-import Editor from '../../editor';
+import Editor from '../editor';
 import ScrollSync from './scrollSync';
 import SectionManager from './sectionManager';
 
-const Button = Editor.Button;
+const {Button} = Editor;
 
 function scrollFollowExtension(editor) {
     const className = 'tui-scrollfollow';
