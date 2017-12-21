@@ -1,3 +1,7 @@
+/**
+* @fileoverview Implements UML extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import plantumlEncoder from 'plantuml-encoder';
 
 import Editor from '../editor';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown marker helper
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import CodeMirror from 'codemirror';
 
 import MarkdownMarkerHelper from '../../../src/js/extensions/mark/markdownMarkerHelper';

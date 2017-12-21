@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg task command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Task from '../../src/js/wysiwygCommands/task';

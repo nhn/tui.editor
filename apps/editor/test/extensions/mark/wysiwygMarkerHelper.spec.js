@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg marker helper
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import WysiwygMarkerHelper from '../../../src/js/extensions/mark/wysiwygMarkerHelper';
 import SquireExt from '../../../src/js/squireExt';
 

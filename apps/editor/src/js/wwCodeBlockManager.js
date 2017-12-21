@@ -1,6 +1,6 @@
 /**
- * @fileoverview Implements wysiwyg p manager
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements wysiwyg code block manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';

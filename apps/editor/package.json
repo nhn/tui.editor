@@ -2,7 +2,7 @@
   "name": "tui-editor",
   "version": "0.14.2",
   "private": true,
-  "author": "Sungho Kim <shirenbeat@gmail.com>",
+  "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com> (https://nhnent.github.io/tui.editor/)",
   "repository": "https://github.com/nhnent/tui.editor.git",
   "license": "MIT",
   "main": "dist/tui-editor-Editor.js",

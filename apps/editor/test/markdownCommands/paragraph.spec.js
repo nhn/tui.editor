@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown paragraph
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Paragraph from '../../src/js/markdownCommands/paragraph';

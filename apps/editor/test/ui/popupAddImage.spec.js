@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test popup add image
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import PopupAddImage from '../../src/js/ui/popupAddImage';

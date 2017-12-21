@@ -1,4 +1,7 @@
-
+/**
+ * @fileoverview test fix ordered list number
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import MarkdownEditor from '../../src/js/markdownEditor';

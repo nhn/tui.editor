@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown strike
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Strike from '../../src/js/markdownCommands/strike';

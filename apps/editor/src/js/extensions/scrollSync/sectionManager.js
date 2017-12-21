@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements Scroll Follow Extension SectionManager Module
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
+* @fileoverview Implements Scroll Sync Extension SectionManager Module
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import $ from 'jquery';
 
 const FIND_HEADER_RX = /^ *(#{1,6}) +([^\n]+?) *#* *(?:\n+|$)/;

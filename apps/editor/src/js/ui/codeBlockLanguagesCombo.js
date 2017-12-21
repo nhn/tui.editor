@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Implements UI code block languages combo
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import i18n from '../i18n';

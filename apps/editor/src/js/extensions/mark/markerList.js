@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements markdown marker helper for additional information
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
+* @fileoverview Implements markdown marker helper for additional information
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import util from 'tui-code-snippet';
 
 /**

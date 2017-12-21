@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test editor md to html converting
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 const mdInput = ['# HELLO\n\n',
   '## HELLO\n\n',
   '### HELLO\n\n',

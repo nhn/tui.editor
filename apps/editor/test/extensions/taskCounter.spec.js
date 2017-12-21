@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test task counter extension
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import TuiEditor from '../../src/js/editor';
 import '../../src/js/extensions/taskCounter';
 

@@ -1,5 +1,8 @@
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: http://codemirror.net/LICENSE
+/**
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import CodeMirror from 'codemirror';
 
 /*eslint-disable */

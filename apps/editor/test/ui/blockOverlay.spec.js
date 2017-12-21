@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui block overlay
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import BlockOverlay from '../../src/js/ui/blockOverlay';

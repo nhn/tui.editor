@@ -1,3 +1,7 @@
+/**
+* @fileoverview I18N for Dutch
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import i18n from '../i18n';
 
 i18n.setLanguage(['nl', 'nl_NL'], {

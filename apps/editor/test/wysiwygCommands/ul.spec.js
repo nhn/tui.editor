@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg ul command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import UL from '../../src/js/wysiwygCommands/ul';

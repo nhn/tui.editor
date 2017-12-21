@@ -1,3 +1,7 @@
+/**
+* @fileoverview I18N for English
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import i18n from '../i18n';
 
 i18n.setLanguage(['en', 'en_US'], {

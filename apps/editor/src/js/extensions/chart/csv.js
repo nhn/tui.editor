@@ -1,5 +1,4 @@
 /* eslint-disable */
-/* imported from http://github.com/kyuwoo-choi/csv-js */
 /*
  CSV-JS - A Comma-Separated Values parser for JS
 
@@ -21,6 +20,9 @@
  all copies or substantial portions of the Software.
 
  Author Greg Kindel (twitter @gkindel), 2014
+ */
+/**
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 (function (global) {

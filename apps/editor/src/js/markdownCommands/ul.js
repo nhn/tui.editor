@@ -1,8 +1,7 @@
 /**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements UL markdown command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import CommandManager from '../commandManager';
 
 const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;

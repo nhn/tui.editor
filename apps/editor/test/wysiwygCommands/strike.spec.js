@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg strike command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Strike from '../../src/js/wysiwygCommands/strike';

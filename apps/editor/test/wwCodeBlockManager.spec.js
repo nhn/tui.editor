@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg code block manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 

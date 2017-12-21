@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test preview
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Preview from '../src/js/preview';

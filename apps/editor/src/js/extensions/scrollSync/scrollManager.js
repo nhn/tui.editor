@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements Scroll Follow Extension ScrollManager Module
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
+* @fileoverview Implements Scroll Sync Extension ScrollManager Module
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import util from 'tui-code-snippet';
 
 const PREVIEW_MARGIN_TOP = 57;

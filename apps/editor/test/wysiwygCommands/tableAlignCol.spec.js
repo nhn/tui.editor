@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg table align column command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import AlignCol from '../../src/js/wysiwygCommands/tableAlignCol';

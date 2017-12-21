@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg table remove column command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import RemoveCol from '../../src/js/wysiwygCommands/tableRemoveCol';

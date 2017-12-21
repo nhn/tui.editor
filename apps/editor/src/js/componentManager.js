@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements ComponentManager
- * @author Junghwan Park(junghwan.parkm@nhnent.com) FE Development Lab/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 /**

@@ -1,6 +1,6 @@
 /**
- * @fileoverview HR markdown command
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements HR markdown command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 
 import CommandManager from '../commandManager';

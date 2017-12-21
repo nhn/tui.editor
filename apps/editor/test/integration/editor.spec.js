@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test editor integration
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import Editor from '../../src/js/editor';
 
 describe('Editor', () => {

@@ -1,6 +1,9 @@
 // Copyright (c) 2014 Vitaly Puzrin, Alex Kocharin.
 // Distributed under MIT license: https://github.com/markdown-it/markdown-it/
-
+/**
+ * @fileoverview Implements markdownitBackticksRenderer
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 /* eslint-disable */
 
 // Parse backticks

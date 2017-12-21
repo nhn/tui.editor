@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test marker list
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import MarkerList from '../../../src/js/extensions/mark/markerList';
 
 describe('MarkerList', function() {

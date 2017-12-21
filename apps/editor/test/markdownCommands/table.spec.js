@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown table
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Table from '../../src/js/markdownCommands/table';

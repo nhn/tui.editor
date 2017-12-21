@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg table remove command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import RemoveTable from '../../src/js/wysiwygCommands/tableRemove';

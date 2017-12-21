@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test merge cell
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import {_mergeCells} from '../../../src/js/extensions/table/mergeCell';

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg paste content helper
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import WysiwygEditor from '../src/js/wysiwygEditor';

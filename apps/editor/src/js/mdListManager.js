@@ -1,8 +1,7 @@
 /**
- * @fileoverview Implements wysiwyg p manager
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @fileoverview Implements markdown list manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 const FIND_MD_OL_RX = /^[ \t]*[\d]+\. .*/;
 const FIND_MD_UL_RX = /^[ \t]*[-*] .*/;
 const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;

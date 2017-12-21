@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test scroll sync manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import TuiEditor from '../../../src/js/editor';

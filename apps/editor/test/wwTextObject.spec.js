@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg text object
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import WwTextObject from '../src/js/wwTextObject';

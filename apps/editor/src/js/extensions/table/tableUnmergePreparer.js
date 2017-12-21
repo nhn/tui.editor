@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements tableUnmergePreparer.
- * @author Jiung Kang(jiung.kang@nhnent.com) FE Development Lab/NHN Ent.
- */
+* @fileoverview Implements tableUnmergePreparer.
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import $ from 'jquery';
 
 /**

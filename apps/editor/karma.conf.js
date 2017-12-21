@@ -1,3 +1,8 @@
+/*
+* @fileoverview configs file for testing
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
+
 /* eslint max-len: 0, no-process-env: 0, object-shorthand: 0, camelcase: 0 */
 
 const path = require('path');

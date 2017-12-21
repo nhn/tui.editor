@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test html sanitizer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import htmlSanitizer from '../src/js/htmlSanitizer';

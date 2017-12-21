@@ -1,7 +1,7 @@
 /**
- * @fileoverview Implements Scroll Follow Extension
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- */
+* @fileoverview Implements Scroll Sync Extension
+* @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+*/
 import $ from 'jquery';
 import Editor from '../editor';
 import ScrollManager from './scrollManager';

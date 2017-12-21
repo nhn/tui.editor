@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui layer popup
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import LayerPopup from '../../src/js/ui/layerpopup';

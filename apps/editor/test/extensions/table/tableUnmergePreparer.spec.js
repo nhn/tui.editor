@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test unmerge preparer
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import {_prependMergeSyntaxToContent} from '../../../src/js/extensions/table/tableUnmergePreparer';

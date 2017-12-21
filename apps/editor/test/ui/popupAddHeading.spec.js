@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test ui popup add heading
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import PopupAddHeading from '../../src/js/ui/popupAddHeading';

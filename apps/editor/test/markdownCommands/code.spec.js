@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test markdown code
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import Code from '../../src/js/markdownCommands/code';

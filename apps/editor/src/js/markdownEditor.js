@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Implements markdown editor
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import util from 'tui-code-snippet';
 
 import CodeMirrorExt from './codeMirrorExt';

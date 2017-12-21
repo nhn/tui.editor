@@ -1,6 +1,6 @@
 /**
- * @fileoverview
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview extension manager
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import util from 'tui-code-snippet';
 

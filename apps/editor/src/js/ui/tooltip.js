@@ -1,6 +1,6 @@
 /**
- * @fileoverview
- * @author Minho Choi(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements tooltip
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 

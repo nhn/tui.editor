@@ -1,9 +1,7 @@
 /**
- * @fileoverview Implements WysiwygCommand
- * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
- * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
+ * @fileoverview Implements bold WysiwygCommand
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
-
 import CommandManager from '../commandManager';
 import domUtils from '../domUtils';
 

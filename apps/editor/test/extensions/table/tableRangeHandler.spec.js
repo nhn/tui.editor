@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test table range handler
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import tableRangeHandler from '../../../src/js/extensions/table/tableRangeHandler';

@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements wysiwyg list manager
- * @author Junghwan Park(junghwan.pakr@nhnent.com) FE Development Team/NHN Ent.
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 import $ from 'jquery';
 

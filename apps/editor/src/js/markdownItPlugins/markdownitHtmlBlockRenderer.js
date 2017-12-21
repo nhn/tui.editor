@@ -3,8 +3,7 @@
 
 /**
  * @fileoverview Implements markdownitHtmlBlockRenderer
- * @modifier Sungho Kim(sungho-kim@nhnent.com) FE Development Lab/NHN Ent.
- * @modifier Junghwan Park(junghwan.park@nhnent.com) FE Development Lab/NHN Ent.
+ * @modifier NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
  */
 /* eslint-disable */
 // HTML block

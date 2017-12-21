@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test editor
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 import MarkdownIt from 'markdown-it';
 

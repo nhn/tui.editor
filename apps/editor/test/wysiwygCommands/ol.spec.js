@@ -1,3 +1,7 @@
+/**
+ * @fileoverview test wysiwyg ol command
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ */
 import $ from 'jquery';
 
 import OL from '../../src/js/wysiwygCommands/ol';
