@@ -1,9 +1,9 @@
 import $ from 'jquery';
 
 import TuiEditor from '../../../src/js/editor';
-import '../../../src/js/extensions/scrollFollow/scrollFollow';
+import '../../../src/js/extensions/scrollSync/scrollSync';
 
-describe('scrollFollow', () => {
+describe('scrollSync', () => {
     let ned, container;
 
     beforeEach(() => {
@@ -17,7 +17,7 @@ describe('scrollFollow', () => {
             previewStyle: 'vertical',
             height: '100px',
             initialEditType: 'markdown',
-            exts: ['scrollFollow'],
+            exts: ['scrollSync'],
             events: {
                 'load': editor => {
                     editor.getCodeMirror().setSize(200, 50);
@@ -48,8 +48,8 @@ describe('scrollFollow', () => {
             ].join('\n'));
         });
 
-        it('disable scrollFollow', () => {
-            ned.exec('scrollFollow.diasable');
+        it('disable scrollSync', () => {
+            ned.exec('scrollSync.diasable');
         });
     });
 });

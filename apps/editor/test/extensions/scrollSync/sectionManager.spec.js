@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 import TuiEditor from '../../../src/js/editor';
-import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
+import SectionManager from '../../../src/js/extensions/scrollSync/sectionManager';
 
 describe('sectionManager', () => {
     let ned, sectionManager, container;
@@ -197,7 +197,7 @@ describe('sectionManager', () => {
             expect(sectionManager.getSectionList().length).toBe(2);
         });
 
-        it('dont make section with line followed by table', () => {
+        it('dont make section with line synced by table', () => {
             ned.setValue([
                 'paragraph',
                 'header1',
@@ -247,7 +247,7 @@ describe('sectionManager', () => {
             expect(sectionManager.getSectionList().length).toBe(2);
         });
 
-        it('dont make section with line followed by codeBlock', () => {
+        it('dont make section with line synced by codeBlock', () => {
             ned.setValue([
                 'paragraph',
                 'header1',

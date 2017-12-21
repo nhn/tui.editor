@@ -300,22 +300,22 @@
     margin-right: 0;
 }
 
-.tui-editor-defaultUI-toolbar button.tui-scrollfollow {
+.tui-editor-defaultUI-toolbar button.tui-scrollsync {
     width: auto;
     color: #777777;
     border: 0;
 }
 
-.tui-editor-defaultUI button.tui-scrollfollow:after {
+.tui-editor-defaultUI button.tui-scrollsync:after {
     content: "Scroll off";
 } 
 
-.tui-editor-defaultUI button.tui-scrollfollow.active {
+.tui-editor-defaultUI button.tui-scrollsync.active {
     color: #125de6;
     font-weight: bold;
 }
 
-.tui-editor-defaultUI button.tui-scrollfollow.active:after {
+.tui-editor-defaultUI button.tui-scrollsync.active:after {
     content: "Scroll on";
 }
 
@@ -1112,16 +1112,16 @@
     overflow-y: auto;
 }
 
-.tui-split-scroll button.tui-scrollfollow {
+.tui-split-scroll button.tui-scrollsync {
     top: 10px;
     opacity: 0.2;
 }
 
-.tui-split-scroll button.tui-scrollfollow::after {
+.tui-split-scroll button.tui-scrollsync::after {
     content: "scroll off";
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollfollow {
+.tui-split-scroll.scroll-sync button.tui-scrollsync {
     opacity: 0.5;
 }
 
@@ -1131,7 +1131,7 @@
     overflow: initial;
 }
 
-.tui-split-scroll.scroll-sync button.tui-scrollfollow::after {
+.tui-split-scroll.scroll-sync button.tui-scrollsync::after {
     content: "scroll on";
 }
 
@@ -1151,7 +1151,7 @@
     display: none;
 }
 
-.tui-split-scroll.single-content button.tui-scrollfollow {
+.tui-split-scroll.single-content button.tui-scrollsync {
     display: none;
 }
 

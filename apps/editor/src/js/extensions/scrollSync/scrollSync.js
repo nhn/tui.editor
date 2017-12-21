@@ -4,13 +4,13 @@
  */
 import $ from 'jquery';
 import Editor from '../editor';
-import ScrollSync from './scrollSync';
+import ScrollManager from './scrollManager';
 import SectionManager from './sectionManager';
 
 const {Button} = Editor;
 
-function scrollFollowExtension(editor) {
-    const className = 'tui-scrollfollow';
+function scrollSyncExtension(editor) {
+    const className = 'tui-scrollsync';
     const i18n = editor.i18n;
     const TOOL_TIP = {
         active: i18n.get('Auto scroll enabled'),
@@ -23,7 +23,7 @@ function scrollFollowExtension(editor) {
 
     const cm = editor.getCodeMirror();
     const sectionManager = new SectionManager(cm, editor.preview);
-    const scrollSync = new ScrollSync(sectionManager, cm, editor.preview.$el);
+    const scrollManager = new ScrollManager(sectionManager, cm, editor.preview.$el);
 
     let isScrollable = false;
     let isActive = true;
@@ -35,7 +35,7 @@ function scrollFollowExtension(editor) {
         // init button
         button = new Button({
             className,
-            command: 'scrollFollowToggle',
+            command: 'scrollSyncToggle',
             tooltip: TOOL_TIP.active,
             $el: $(`<button class="active ${className}" type="button"></button>`)
         });
@@ -50,7 +50,7 @@ function scrollFollowExtension(editor) {
 
         // Commands
         editor.addCommand('markdown', {
-            name: 'scrollFollowToggle',
+            name: 'scrollSyncToggle',
             exec() {
                 isActive = !isActive;
                 button._onOut();
@@ -87,7 +87,7 @@ function scrollFollowExtension(editor) {
 
     editor.on('previewRenderAfter', () => {
         sectionManager.sectionMatch();
-        scrollSync.syncPreviewScrollTopToMarkdown();
+        scrollManager.syncPreviewScrollTopToMarkdown();
         isScrollable = true;
     });
 
@@ -97,17 +97,17 @@ function scrollFollowExtension(editor) {
         }
 
         if (isScrollable && editor.preview.isVisible()) {
-            if (event.source === 'markdown' && !scrollSync.isMarkdownScrollEventBlocked) {
-                scrollSync.syncPreviewScrollTopToMarkdown();
-            } else if (event.source === 'preview' && !scrollSync.isPreviewScrollEventBlocked) {
-                scrollSync.syncMarkdownScrollTopToPreview();
+            if (event.source === 'markdown' && !scrollManager.isMarkdownScrollEventBlocked) {
+                scrollManager.syncPreviewScrollTopToMarkdown();
+            } else if (event.source === 'preview' && !scrollManager.isPreviewScrollEventBlocked) {
+                scrollManager.syncMarkdownScrollTopToPreview();
             }
         } else {
-            scrollSync.saveScrollInfo();
+            scrollManager.saveScrollInfo();
         }
     });
 }
 
-Editor.defineExtension('scrollFollow', scrollFollowExtension);
+Editor.defineExtension('scrollSync', scrollSyncExtension);
 
-export default scrollFollowExtension;
+export default scrollSyncExtension;

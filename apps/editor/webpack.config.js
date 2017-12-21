@@ -14,7 +14,7 @@ const ENTRY_VIEWER_ALL = './src/js/indexViewerAll.js';
 const ENTRY_EXT_CHART = './src/js/extensions/chart/chart.js';
 const ENTRY_EXT_UML = './src/js/extensions/uml.js';
 const ENTRY_EXT_COLOR_SYNTAX = './src/js/extensions/colorSyntax.js';
-const ENTRY_EXT_SCROLL_FOLLOW = './src/js/extensions/scrollFollow/scrollFollow.js';
+const ENTRY_EXT_SCROLL_SYNC = './src/js/extensions/scrollSync/scrollSync.js';
 const ENTRY_EXT_TASK_COUNTER = './src/js/extensions/taskCounter.js';
 const ENTRY_EXT_MARK = './src/js/extensions/mark/mark.js';
 const ENTRY_EXT_TABLE = './src/js/extensions/table/table.js';
@@ -172,7 +172,7 @@ if (isDevServer) {
         'extChart': ENTRY_EXT_CHART,
         'extUML': ENTRY_EXT_UML,
         'extColorSyntax': ENTRY_EXT_COLOR_SYNTAX,
-        'extScrollFollow': ENTRY_EXT_SCROLL_FOLLOW,
+        'extScrollSync': ENTRY_EXT_SCROLL_SYNC,
         'extTaskCounter': ENTRY_EXT_TASK_COUNTER,
         'extMark': ENTRY_EXT_MARK,
         'extTable': ENTRY_EXT_TABLE
