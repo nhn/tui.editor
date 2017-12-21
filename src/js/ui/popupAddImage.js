@@ -24,13 +24,13 @@ const TYPE_UI = 'ui';
  * @extends {LayerPopup}
  */
 class PopupAddImage extends LayerPopup {
-    /**
-     * Creates an instance of PopupAddImage.
-     * @param {LayerPopupOption} options - layer popup option
-     * @memberof PopupAddImage
-     */
-    constructor(options) {
-        const POPUP_CONTENT = `
+  /**
+   * Creates an instance of PopupAddImage.
+   * @param {LayerPopupOption} options - layer popup option
+   * @memberof PopupAddImage
+   */
+  constructor(options) {
+    const POPUP_CONTENT = `
             <div class="${CLASS_TAB_SECTION}"></div>
             <div class="${CLASS_URL_TYPE}">
                 <label for="">${i18n.get('Image URL')}</label>
@@ -47,127 +47,127 @@ class PopupAddImage extends LayerPopup {
                 <button type="button" class="${CLASS_CLOSE_BUTTON}">${i18n.get('Cancel')}</button>
             </div>
         `;
-        options = util.extend({
-            header: true,
-            title: i18n.get('Insert image'),
-            className: 'te-popup-add-image tui-editor-popup',
-            content: POPUP_CONTENT
-        }, options);
-        super(options);
-    }
+    options = util.extend({
+      header: true,
+      title: i18n.get('Insert image'),
+      className: 'te-popup-add-image tui-editor-popup',
+      content: POPUP_CONTENT
+    }, options);
+    super(options);
+  }
 
-    /**
-     * init instance.
-     * store properties & prepare before initialize DOM
-     * @param {LayerPopupOption} options - layer popup options
-     * @memberof PopupAddImage
-     * @protected
-     * @override
-     */
-    _initInstance(options) {
-        super._initInstance(options);
+  /**
+   * init instance.
+   * store properties & prepare before initialize DOM
+   * @param {LayerPopupOption} options - layer popup options
+   * @memberof PopupAddImage
+   * @protected
+   * @override
+   */
+  _initInstance(options) {
+    super._initInstance(options);
 
-        this.eventManager = options.eventManager;
-    }
+    this.eventManager = options.eventManager;
+  }
 
-    /**
-     * initialize DOM, render popup
-     * @memberof PopupAddImage
-     * @protected
-     * @override
-     */
-    _initDOM() {
-        super._initDOM();
+  /**
+   * initialize DOM, render popup
+   * @memberof PopupAddImage
+   * @protected
+   * @override
+   */
+  _initDOM() {
+    super._initDOM();
 
-        const $popup = this.$el;
+    const $popup = this.$el;
 
-        this._$imageUrlInput = $popup.find(`.${CLASS_IMAGE_URL_INPUT}`);
-        this._$imageFileInput = $popup.find(`.${CLASS_IMAGE_FILE_INPUT}`);
-        this._$altTextInput = $popup.find(`.${CLASS_ALT_TEXT_INPUT}`);
+    this._$imageUrlInput = $popup.find(`.${CLASS_IMAGE_URL_INPUT}`);
+    this._$imageFileInput = $popup.find(`.${CLASS_IMAGE_FILE_INPUT}`);
+    this._$altTextInput = $popup.find(`.${CLASS_ALT_TEXT_INPUT}`);
 
-        const $fileTypeSection = $popup.find(`.${CLASS_FILE_TYPE}`);
-        const $urlTypeSection = $popup.find(`.${CLASS_URL_TYPE}`);
-        const $tabSection = this.$body.find(`.${CLASS_TAB_SECTION}`);
-        this.tab = new Tab({
-            initName: i18n.get('File'),
-            items: [
-                i18n.get('File'),
-                i18n.get('URL')
-            ],
-            sections: [
-                $fileTypeSection,
-                $urlTypeSection
-            ]
-        });
-        $tabSection.append(this.tab.$el);
-    }
+    const $fileTypeSection = $popup.find(`.${CLASS_FILE_TYPE}`);
+    const $urlTypeSection = $popup.find(`.${CLASS_URL_TYPE}`);
+    const $tabSection = this.$body.find(`.${CLASS_TAB_SECTION}`);
+    this.tab = new Tab({
+      initName: i18n.get('File'),
+      items: [
+        i18n.get('File'),
+        i18n.get('URL')
+      ],
+      sections: [
+        $fileTypeSection,
+        $urlTypeSection
+      ]
+    });
+    $tabSection.append(this.tab.$el);
+  }
 
-    /**
-     * bind DOM events
-     * @memberof PopupAddImage
-     * @protected
-     * @override
-     */
-    _initDOMEvent() {
-        super._initDOMEvent();
+  /**
+   * bind DOM events
+   * @memberof PopupAddImage
+   * @protected
+   * @override
+   */
+  _initDOMEvent() {
+    super._initDOMEvent();
 
-        this.on('shown', () => this._$imageUrlInput.focus());
-        this.on('hidden', () => this._resetInputs());
+    this.on('shown', () => this._$imageUrlInput.focus());
+    this.on('hidden', () => this._resetInputs());
 
-        this.on(`change .${CLASS_IMAGE_FILE_INPUT}`, () => {
-            const filename = this._$imageFileInput.val().split('\\').pop();
-            this._$altTextInput.val(filename);
-        });
+    this.on(`change .${CLASS_IMAGE_FILE_INPUT}`, () => {
+      const filename = this._$imageFileInput.val().split('\\').pop();
+      this._$altTextInput.val(filename);
+    });
 
-        this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
-        this.on(`click .${CLASS_OK_BUTTON}`, () => {
-            const imageUrl = this._$imageUrlInput.val();
-            const altText = this._$altTextInput.val();
+    this.on(`click .${CLASS_CLOSE_BUTTON}`, () => this.hide());
+    this.on(`click .${CLASS_OK_BUTTON}`, () => {
+      const imageUrl = this._$imageUrlInput.val();
+      const altText = this._$altTextInput.val();
 
-            if (imageUrl) {
-                this._applyImage(imageUrl, altText);
-            } else {
-                const imageFile = this._$imageFileInput.get(0).files.item(0);
-                const hookCallback = (url, text) => this._applyImage(url, altText || text);
+      if (imageUrl) {
+        this._applyImage(imageUrl, altText);
+      } else {
+        const imageFile = this._$imageFileInput.get(0).files.item(0);
+        const hookCallback = (url, text) => this._applyImage(url, altText || text);
 
-                this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
-            }
+        this.eventManager.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+      }
 
-            this.hide();
-        });
+      this.hide();
+    });
 
-        this.tab.on('itemClick', () => this._resetInputs());
-    }
+    this.tab.on('itemClick', () => this._resetInputs());
+  }
 
-    /**
-     * bind editor events
-     * @memberof PopupAddImage
-     * @protected
-     * @abstract
-     */
-    _initEditorEvent() {
-        super._initEditorEvent();
+  /**
+   * bind editor events
+   * @memberof PopupAddImage
+   * @protected
+   * @abstract
+   */
+  _initEditorEvent() {
+    super._initEditorEvent();
 
-        this.eventManager.listen('focus', () => this.hide());
-        this.eventManager.listen('closeAllPopup', () => this.hide());
+    this.eventManager.listen('focus', () => this.hide());
+    this.eventManager.listen('closeAllPopup', () => this.hide());
 
-        this.eventManager.listen('openPopupAddImage', () => {
-            this.eventManager.emit('closeAllPopup');
-            this.show();
-        });
-    }
+    this.eventManager.listen('openPopupAddImage', () => {
+      this.eventManager.emit('closeAllPopup');
+      this.show();
+    });
+  }
 
-    _applyImage(imageUrl, altText) {
-        this.eventManager.emit('command', 'AddImage', {
-            imageUrl,
-            altText: altText || 'image'
-        });
-        this.hide();
-    }
+  _applyImage(imageUrl, altText) {
+    this.eventManager.emit('command', 'AddImage', {
+      imageUrl,
+      altText: altText || 'image'
+    });
+    this.hide();
+  }
 
-    _resetInputs() {
-        this.$el.find('input').val('');
-    }
+  _resetInputs() {
+    this.$el.find('input').val('');
+  }
 }
 
 export default PopupAddImage;

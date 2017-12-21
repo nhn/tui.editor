@@ -20,31 +20,31 @@ import util from 'tui-code-snippet';
  * @private
  */
 function _parseCell(cell, rowIndex, colIndex) {
-    const $cell = $(cell);
-    const colspan = $cell.attr('colspan');
-    const rowspan = $cell.attr('rowspan');
-    const {nodeName} = cell;
+  const $cell = $(cell);
+  const colspan = $cell.attr('colspan');
+  const rowspan = $cell.attr('rowspan');
+  const {nodeName} = cell;
 
-    if (nodeName !== 'TH' && nodeName !== 'TD') {
-        return null;
+  if (nodeName !== 'TH' && nodeName !== 'TD') {
+    return null;
+  }
+
+  const cellData = {
+    nodeName: cell.nodeName,
+    colspan: colspan ? parseInt(colspan, 10) : 1,
+    rowspan: rowspan ? parseInt(rowspan, 10) : 1,
+    content: $cell.html(),
+    elementIndex: {
+      rowIndex,
+      colIndex
     }
+  };
 
-    const cellData = {
-        nodeName: cell.nodeName,
-        colspan: colspan ? parseInt(colspan, 10) : 1,
-        rowspan: rowspan ? parseInt(rowspan, 10) : 1,
-        content: $cell.html(),
-        elementIndex: {
-            rowIndex,
-            colIndex
-        }
-    };
+  if (cell.nodeName === 'TH' && cell.align) {
+    cellData.align = cell.align;
+  }
 
-    if (cell.nodeName === 'TH' && cell.align) {
-        cellData.align = cell.align;
-    }
-
-    return cellData;
+  return cellData;
 }
 
 /**
@@ -56,44 +56,44 @@ function _parseCell(cell, rowIndex, colIndex) {
  * @private
  */
 function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
-    const {
-        colspan,
-        rowspan,
+  const {
+    colspan,
+    rowspan,
+    nodeName
+  } = cellData;
+  const colMerged = colspan > 1;
+  const rowMerged = rowspan > 1;
+
+  if (!colMerged && !rowMerged) {
+    return;
+  }
+
+  const limitRowIndex = startRowIndex + rowspan;
+  const limitCellIndex = startCellIndex + colspan;
+
+  util.range(startRowIndex, limitRowIndex).forEach(rowIndex => {
+    base[rowIndex] = base[rowIndex] || [];
+
+    util.range(startCellIndex, limitCellIndex).forEach(cellIndex => {
+      const mergedData = {
         nodeName
-    } = cellData;
-    const colMerged = colspan > 1;
-    const rowMerged = rowspan > 1;
+      };
 
-    if (!colMerged && !rowMerged) {
+      if (rowIndex === startRowIndex && cellIndex === startCellIndex) {
         return;
-    }
+      }
 
-    const limitRowIndex = startRowIndex + rowspan;
-    const limitCellIndex = startCellIndex + colspan;
+      if (colMerged) {
+        mergedData.colMergeWith = startCellIndex;
+      }
 
-    util.range(startRowIndex, limitRowIndex).forEach(rowIndex => {
-        base[rowIndex] = base[rowIndex] || [];
+      if (rowMerged) {
+        mergedData.rowMergeWith = startRowIndex;
+      }
 
-        util.range(startCellIndex, limitCellIndex).forEach(cellIndex => {
-            const mergedData = {
-                nodeName
-            };
-
-            if (rowIndex === startRowIndex && cellIndex === startCellIndex) {
-                return;
-            }
-
-            if (colMerged) {
-                mergedData.colMergeWith = startCellIndex;
-            }
-
-            if (rowMerged) {
-                mergedData.rowMergeWith = startRowIndex;
-            }
-
-            base[rowIndex][cellIndex] = mergedData;
-        });
+      base[rowIndex][cellIndex] = mergedData;
     });
+  });
 }
 
 /**
@@ -103,36 +103,36 @@ function _addMergedCell(base, cellData, startRowIndex, startCellIndex) {
  * @ignore
  */
 export function createTableData($table) {
-    const tableData = [];
+  const tableData = [];
 
-    $table.find('tr').each((rowIndex, tr) => {
-        let stackedColCount = 0;
+  $table.find('tr').each((rowIndex, tr) => {
+    let stackedColCount = 0;
 
-        tableData[rowIndex] = tableData[rowIndex] || [];
+    tableData[rowIndex] = tableData[rowIndex] || [];
 
-        $(tr).children().each((colIndex, cell) => {
-            const cellData = _parseCell(cell, rowIndex, colIndex);
+    $(tr).children().each((colIndex, cell) => {
+      const cellData = _parseCell(cell, rowIndex, colIndex);
 
-            if (!cellData) {
-                return;
-            }
-            let dataColIndex = colIndex + stackedColCount;
+      if (!cellData) {
+        return;
+      }
+      let dataColIndex = colIndex + stackedColCount;
 
-            while (tableData[rowIndex][dataColIndex]) {
-                dataColIndex += 1;
-                stackedColCount += 1;
-            }
+      while (tableData[rowIndex][dataColIndex]) {
+        dataColIndex += 1;
+        stackedColCount += 1;
+      }
 
-            tableData[rowIndex][dataColIndex] = cellData;
-            _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
-        });
+      tableData[rowIndex][dataColIndex] = cellData;
+      _addMergedCell(tableData, cellData, rowIndex, dataColIndex);
     });
+  });
 
-    if ($table[0].className) {
-        tableData.className = $table[0].className;
-    }
+  if ($table[0].className) {
+    tableData.className = $table[0].className;
+  }
 
-    return tableData;
+  return tableData;
 }
 
 /**
@@ -142,23 +142,23 @@ export function createTableData($table) {
  * @ignore
  */
 export function createCellIndexData(tableData) {
-    const mappingData = [];
+  const mappingData = [];
 
-    tableData.forEach((row, rowIndex) => {
-        const mappingRow = [];
+  tableData.forEach((row, rowIndex) => {
+    const mappingRow = [];
 
-        row.forEach((cell, colIndex) => {
-            if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
-                mappingRow.push({
-                    rowIndex,
-                    colIndex
-                });
-            }
+    row.forEach((cell, colIndex) => {
+      if (util.isUndefined(cell.colMergeWith) && util.isUndefined(cell.rowMergeWith)) {
+        mappingRow.push({
+          rowIndex,
+          colIndex
         });
-        mappingData.push(mappingRow);
+      }
     });
+    mappingData.push(mappingRow);
+  });
 
-    return mappingData;
+  return mappingData;
 }
 
 /**
@@ -168,19 +168,19 @@ export function createCellIndexData(tableData) {
  * @private
  */
 function _getHeaderAligns(tableData) {
-    const [headRowData] = tableData;
+  const [headRowData] = tableData;
 
-    return headRowData.map(cellData => {
-        let align;
+  return headRowData.map(cellData => {
+    let align;
 
-        if (util.isExisty(cellData.colMergeWith)) {
-            ({align} = headRowData[cellData.colMergeWith]);
-        } else {
-            ({align} = cellData);
-        }
+    if (util.isExisty(cellData.colMergeWith)) {
+      ({align} = headRowData[cellData.colMergeWith]);
+    } else {
+      ({align} = cellData);
+    }
 
-        return align;
-    });
+    return align;
+  });
 }
 
 /**
@@ -191,16 +191,16 @@ function _getHeaderAligns(tableData) {
  * @ignore
  */
 function createRenderData(tableData, cellIndexData) {
-    const headerAligns = _getHeaderAligns(tableData);
-    const renderData = cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
-        align: headerAligns[colIndex]
-    }, tableData[rowIndex][colIndex]))));
+  const headerAligns = _getHeaderAligns(tableData);
+  const renderData = cellIndexData.map(row => row.map(({rowIndex, colIndex}) => (util.extend({
+    align: headerAligns[colIndex]
+  }, tableData[rowIndex][colIndex]))));
 
-    if (tableData.className) {
-        renderData.className = tableData.className;
-    }
+  if (tableData.className) {
+    renderData.className = tableData.className;
+  }
 
-    return renderData;
+  return renderData;
 }
 
 const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
@@ -219,16 +219,16 @@ const BASIC_CELL_CONTENT = util.browser.msie ? '' : '<br>';
  * @ignore
  */
 function createBasicCell(rowIndex, colIndex, nodeName) {
-    return {
-        nodeName: nodeName || 'TD',
-        colspan: 1,
-        rowspan: 1,
-        content: BASIC_CELL_CONTENT,
-        elementIndex: {
-            rowIndex,
-            colIndex
-        }
-    };
+  return {
+    nodeName: nodeName || 'TD',
+    colspan: 1,
+    rowspan: 1,
+    content: BASIC_CELL_CONTENT,
+    elementIndex: {
+      rowIndex,
+      colIndex
+    }
+  };
 }
 
 /**
@@ -238,14 +238,14 @@ function createBasicCell(rowIndex, colIndex, nodeName) {
  * @ignore
  */
 function findElementRowIndex($cell) {
-    const $tr = $cell.closest('tr');
-    let rowIndex = $tr.prevAll().length;
+  const $tr = $cell.closest('tr');
+  let rowIndex = $tr.prevAll().length;
 
-    if ($tr.parent()[0].nodeName === 'TBODY') {
-        rowIndex += 1;
-    }
+  if ($tr.parent()[0].nodeName === 'TBODY') {
+    rowIndex += 1;
+  }
 
-    return rowIndex;
+  return rowIndex;
 }
 
 /**
@@ -255,7 +255,7 @@ function findElementRowIndex($cell) {
  * @ignore
  */
 function findElementColIndex($cell) {
-    return $cell.closest('td, th').prevAll().length;
+  return $cell.closest('td, th').prevAll().length;
 }
 
 /**
@@ -266,10 +266,10 @@ function findElementColIndex($cell) {
  * @ignore
  */
 function findCellIndex(cellIndexData, $cell) {
-    const elementRowIndex = findElementRowIndex($cell);
-    const elementColIndex = findElementColIndex($cell);
+  const elementRowIndex = findElementRowIndex($cell);
+  const elementColIndex = findElementColIndex($cell);
 
-    return cellIndexData[elementRowIndex][elementColIndex];
+  return cellIndexData[elementRowIndex][elementColIndex];
 }
 
 /**
@@ -281,14 +281,14 @@ function findCellIndex(cellIndexData, $cell) {
  * @ignore
  */
 function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
-    let foundRowIndex = rowIndex;
+  const cellData = tableData[rowIndex][colIndex];
+  let foundRowIndex = rowIndex;
 
-    if (cellData.rowspan > 1) {
-        foundRowIndex += cellData.rowspan - 1;
-    }
+  if (cellData.rowspan > 1) {
+    foundRowIndex += cellData.rowspan - 1;
+  }
 
-    return foundRowIndex;
+  return foundRowIndex;
 }
 
 /**
@@ -300,14 +300,14 @@ function findRowMergedLastIndex(tableData, rowIndex, colIndex) {
  * @ignore
  */
 function findColMergedLastIndex(tableData, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
-    let foundColIndex = colIndex;
+  const cellData = tableData[rowIndex][colIndex];
+  let foundColIndex = colIndex;
 
-    if (cellData.colspan > 1) {
-        foundColIndex += cellData.colspan - 1;
-    }
+  if (cellData.colspan > 1) {
+    foundColIndex += cellData.colspan - 1;
+  }
 
-    return foundColIndex;
+  return foundColIndex;
 }
 
 /**
@@ -319,12 +319,12 @@ function findColMergedLastIndex(tableData, rowIndex, colIndex) {
  * @ignore
  */
 function findElementIndex(tableData, rowIndex, colIndex) {
-    const cellData = tableData[rowIndex][colIndex];
+  const cellData = tableData[rowIndex][colIndex];
 
-    rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
-    colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
+  rowIndex = util.isExisty(cellData.rowMergeWith) ? cellData.rowMergeWith : rowIndex;
+  colIndex = util.isExisty(cellData.colMergeWith) ? cellData.colMergeWith : colIndex;
 
-    return tableData[rowIndex][colIndex].elementIndex;
+  return tableData[rowIndex][colIndex].elementIndex;
 }
 
 /**
@@ -334,14 +334,14 @@ function findElementIndex(tableData, rowIndex, colIndex) {
  * @ignore
  */
 function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
-    tableData.forEach((rowData, rowIndex) => {
-        const startIndex = rowData.length;
-        const [{nodeName}] = rowData;
+  tableData.forEach((rowData, rowIndex) => {
+    const startIndex = rowData.length;
+    const [{nodeName}] = rowData;
 
-        util.range(startIndex, limitIndex).forEach(colIndex => {
-            rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
-        });
+    util.range(startIndex, limitIndex).forEach(colIndex => {
+      rowData.push(createBasicCell(rowIndex, colIndex, nodeName));
     });
+  });
 }
 
 /**
@@ -351,48 +351,48 @@ function stuffCellsIntoIncompleteRow(tableData, limitIndex) {
  * @ignore
  */
 function addTbodyOrTheadIfNeed(tableData) {
-    const [header] = tableData;
-    const cellCount = header.length;
-    let added = true;
+  const [header] = tableData;
+  const cellCount = header.length;
+  let added = true;
 
-    if (!cellCount && tableData[1]) {
-        util.range(0, tableData[1].length).forEach(colIndex => {
-            header.push(createBasicCell(0, colIndex, 'TH'));
-        });
-    } else if (tableData[0][0].nodeName !== 'TH') {
-        const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
+  if (!cellCount && tableData[1]) {
+    util.range(0, tableData[1].length).forEach(colIndex => {
+      header.push(createBasicCell(0, colIndex, 'TH'));
+    });
+  } else if (tableData[0][0].nodeName !== 'TH') {
+    const newHeader = util.range(0, cellCount).map(colIndex => createBasicCell(0, colIndex, 'TH'));
 
-        [].concat(...tableData).forEach(cellData => {
-            if (cellData.elementIndex) {
-                cellData.elementIndex.rowIndex += 1;
-            }
-        });
+    [].concat(...tableData).forEach(cellData => {
+      if (cellData.elementIndex) {
+        cellData.elementIndex.rowIndex += 1;
+      }
+    });
 
-        tableData.unshift(newHeader);
-    } else if (tableData.length === 1) {
-        const newRow = util.range(0, cellCount).map(colIndex => (
-            createBasicCell(1, colIndex, 'TD')
-        ));
+    tableData.unshift(newHeader);
+  } else if (tableData.length === 1) {
+    const newRow = util.range(0, cellCount).map(colIndex => (
+      createBasicCell(1, colIndex, 'TD')
+    ));
 
-        tableData.push(newRow);
-    } else {
-        added = false;
-    }
+    tableData.push(newRow);
+  } else {
+    added = false;
+  }
 
-    return added;
+  return added;
 }
 
 export default {
-    createTableData,
-    createCellIndexData,
-    createRenderData,
-    findElementRowIndex,
-    findElementColIndex,
-    findCellIndex,
-    createBasicCell,
-    findRowMergedLastIndex,
-    findColMergedLastIndex,
-    findElementIndex,
-    stuffCellsIntoIncompleteRow,
-    addTbodyOrTheadIfNeed
+  createTableData,
+  createCellIndexData,
+  createRenderData,
+  findElementRowIndex,
+  findElementColIndex,
+  findCellIndex,
+  createBasicCell,
+  findRowMergedLastIndex,
+  findColMergedLastIndex,
+  findElementIndex,
+  stuffCellsIntoIncompleteRow,
+  addTbodyOrTheadIfNeed
 };

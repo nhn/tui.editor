@@ -6,107 +6,107 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('Bold', () => {
-    let wwe;
+  let wwe;
 
-    beforeEach(() => {
-        const $container = $('<div />');
+  beforeEach(() => {
+    const $container = $('<div />');
 
-        $('body').append($container);
+    $('body').append($container);
 
-        wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor($container, new EventManager());
 
-        wwe.init();
+    wwe.init();
 
-        wwe.componentManager.addManager(WwTableSelectionManager);
-        wwe.getEditor().focus();
+    wwe.componentManager.addManager(WwTableSelectionManager);
+    wwe.getEditor().focus();
+  });
+
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      $('body').empty();
+      done();
     });
+  });
 
-    // we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
-    });
+  it('add bold to current selection', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('add bold to current selection', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('line1<br />line2');
 
-        wwe.setValue('line1<br />line2');
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
 
-        Bold.exec(wwe);
+    expect(wwe.getValue()).toEqual('<b>line1</b><br />line2<br />');
+  });
 
-        expect(wwe.getValue()).toEqual('<b>line1</b><br />line2<br />');
-    });
+  it('dont add bold in Achor tag', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('dont add bold in Achor tag', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('<a href="#">line1</a>');
 
-        wwe.setValue('<a href="#">line1</a>');
+    range.selectNodeContents(wwe.get$Body().find('a')[0]);
+    wwe.getEditor().setSelection(range);
 
-        range.selectNodeContents(wwe.get$Body().find('a')[0]);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
 
-        Bold.exec(wwe);
+    expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
+  });
 
-        expect(wwe.getValue()).toEqual('<a href="#">line1</a><br />');
-    });
+  it('if there have bold already remove format', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('if there have bold already remove format', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('line1<br />line2');
 
-        wwe.setValue('line1<br />line2');
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
+    Bold.exec(wwe);
 
-        Bold.exec(wwe);
-        Bold.exec(wwe);
+    expect(wwe.getValue()).toEqual('line1<br />line2<br />');
+  });
 
-        expect(wwe.getValue()).toEqual('line1<br />line2<br />');
-    });
+  it('if there have bold already remove format in colappsed selection', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('if there have bold already remove format in colappsed selection', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('<b>line</b>');
 
-        wwe.setValue('<b>line</b>');
+    range.setStart(wwe.get$Body().find('b')[0].firstChild, 4);
+    range.collapse(true);
+    wwe.getEditor().setSelection(range);
 
-        range.setStart(wwe.get$Body().find('b')[0].firstChild, 4);
-        range.collapse(true);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
+    wwe.getEditor().insertPlainText('a');
 
-        Bold.exec(wwe);
-        wwe.getEditor().insertPlainText('a');
+    expect(wwe.getValue()).toEqual('<b>line</b>a<br />');
+  });
 
-        expect(wwe.getValue()).toEqual('<b>line</b>a<br />');
-    });
+  it('if there have italic apply bold into italic', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('if there have italic apply bold into italic', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('<i>line</i>');
 
-        wwe.setValue('<i>line</i>');
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
 
-        Bold.exec(wwe);
+    expect(wwe.getValue()).toEqual('<i><b>line</b></i><br />');
+  });
 
-        expect(wwe.getValue()).toEqual('<i><b>line</b></i><br />');
-    });
+  it('if there have code remove and add bold', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-    it('if there have code remove and add bold', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+    wwe.setValue('<code>line</code>');
 
-        wwe.setValue('<code>line</code>');
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    Bold.exec(wwe);
 
-        Bold.exec(wwe);
-
-        expect(wwe.getValue()).toEqual('<b>line</b><br />');
-    });
+    expect(wwe.getValue()).toEqual('<b>line</b><br />');
+  });
 });

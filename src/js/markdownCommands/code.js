@@ -13,35 +13,35 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const Code = CommandManager.command('markdown', /** @lends Code */{
-    name: 'Code',
-    keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
-    /**
-     * Command Handler
-     * @param {MarkdownEditor} mde MarkdownEditor instance
-     */
-    exec(mde) {
-        const cm = mde.getEditor();
-        const doc = cm.getDoc();
+  name: 'Code',
+  keyMap: ['SHIFT+CTRL+C', 'SHIFT+META+C'],
+  /**
+   * Command Handler
+   * @param {MarkdownEditor} mde MarkdownEditor instance
+   */
+  exec(mde) {
+    const cm = mde.getEditor();
+    const doc = cm.getDoc();
 
-        const selection = doc.getSelection();
-        const range = cm.getCursor();
+    const selection = doc.getSelection();
+    const range = cm.getCursor();
 
-        doc.replaceSelection(this.append(selection), 'around');
+    doc.replaceSelection(this.append(selection), 'around');
 
-        if (!selection) {
-            doc.setCursor(range.line, range.ch + 1);
-        }
-
-        cm.focus();
-    },
-    /**
-     * Code를 적용한다
-     * @param {string} text 셀렉션텍스트
-     * @returns {string} 가 적용된 텍스트
-     */
-    append(text) {
-        return `\`${text}\``;
+    if (!selection) {
+      doc.setCursor(range.line, range.ch + 1);
     }
+
+    cm.focus();
+  },
+  /**
+   * Code를 적용한다
+   * @param {string} text 셀렉션텍스트
+   * @returns {string} 가 적용된 텍스트
+   */
+  append(text) {
+    return `\`${text}\``;
+  }
 });
 
 export default Code;

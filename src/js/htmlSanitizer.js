@@ -36,16 +36,16 @@ const SVG_ATTR_LIST_RX = new RegExp('^(accent-height|accumulate|additive|alphabe
  * @ignore
  */
 function htmlSanitizer(html, needHtmlText) {
-    const $html = $('<div />');
+  const $html = $('<div />');
 
-    html = html.replace(/<!--[\s\S]*?-->/g, '');
+  html = html.replace(/<!--[\s\S]*?-->/g, '');
 
-    $html.append(html);
+  $html.append(html);
 
-    removeUnnecessaryTags($html);
-    leaveOnlyWhitelistAttribute($html);
+  removeUnnecessaryTags($html);
+  leaveOnlyWhitelistAttribute($html);
 
-    return finalizeHtml($html, needHtmlText);
+  return finalizeHtml($html, needHtmlText);
 }
 
 /**
@@ -54,7 +54,7 @@ function htmlSanitizer(html, needHtmlText) {
  * @param {jQuery} $html jQuery instance
  */
 function removeUnnecessaryTags($html) {
-    $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
+  $html.find('script, iframe, textarea, form, button, select, meta, style, link, title').remove();
 }
 
 /**
@@ -63,18 +63,18 @@ function removeUnnecessaryTags($html) {
  * @param {jQuery} $html jQuery instance
  */
 function leaveOnlyWhitelistAttribute($html) {
-    $html.find('*').each((index, node) => {
-        const blacklist = util.toArray(node.attributes).filter(attr => {
-            const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
-            const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
+  $html.find('*').each((index, node) => {
+    const blacklist = util.toArray(node.attributes).filter(attr => {
+      const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
+      const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
 
-            return !isHTMLAttr && !isSVGAttr;
-        });
-
-        util.forEachArray(blacklist, attr => {
-            node.attributes.removeNamedItem(attr.name);
-        });
+      return !isHTMLAttr && !isSVGAttr;
     });
+
+    util.forEachArray(blacklist, attr => {
+      node.attributes.removeNamedItem(attr.name);
+    });
+  });
 }
 
 /**
@@ -85,22 +85,22 @@ function leaveOnlyWhitelistAttribute($html) {
  * @returns {string|DocumentFragment} result
  */
 function finalizeHtml($html, needHtmlText) {
-    let returnValue;
+  let returnValue;
 
-    if (needHtmlText) {
-        returnValue = $html[0].innerHTML;
-    } else {
-        const frag = document.createDocumentFragment();
-        const childNodes = util.toArray($html[0].childNodes);
-        const {length} = childNodes;
+  if (needHtmlText) {
+    returnValue = $html[0].innerHTML;
+  } else {
+    const frag = document.createDocumentFragment();
+    const childNodes = util.toArray($html[0].childNodes);
+    const {length} = childNodes;
 
-        for (let i = 0; i < length; i += 1) {
-            frag.appendChild(childNodes[i]);
-        }
-        returnValue = frag;
+    for (let i = 0; i < length; i += 1) {
+      frag.appendChild(childNodes[i]);
     }
+    returnValue = frag;
+  }
 
-    return returnValue;
+  return returnValue;
 }
 
 export default htmlSanitizer;

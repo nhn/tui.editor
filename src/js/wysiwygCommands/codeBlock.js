@@ -20,33 +20,33 @@ let codeBlockID = 0;
  * @ignore
  */
 const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
-    name: 'CodeBlock',
-    keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
-    /**
-     * Command handler
-     * @param {WysiwygEditor} wwe WYsiwygEditor instance
-     * @param {string} type of language
-     */
-    exec(wwe, type) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-        if (!sq.hasFormat('PRE') && !sq.hasFormat('TABLE')) {
-            let attr = `${CODEBLOCK_ATTR_NAME} class = "${CODEBLOCK_CLASS_PREFIX}${codeBlockID}"`;
+  name: 'CodeBlock',
+  keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
+  /**
+   * Command handler
+   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {string} type of language
+   */
+  exec(wwe, type) {
+    const sq = wwe.getEditor();
+    const range = sq.getSelection().cloneRange();
+    if (!sq.hasFormat('PRE') && !sq.hasFormat('TABLE')) {
+      let attr = `${CODEBLOCK_ATTR_NAME} class = "${CODEBLOCK_CLASS_PREFIX}${codeBlockID}"`;
 
-            if (type) {
-                attr += ` data-language="${type}"`;
-            }
+      if (type) {
+        attr += ` data-language="${type}"`;
+      }
 
-            const codeBlockBody = getCodeBlockBody(range, wwe);
-            sq.insertHTML(`<pre ${attr}>${codeBlockBody}</pre>`);
+      const codeBlockBody = getCodeBlockBody(range, wwe);
+      sq.insertHTML(`<pre ${attr}>${codeBlockBody}</pre>`);
 
-            focusToFirstCode(wwe.get$Body().find(`.${CODEBLOCK_CLASS_PREFIX}${codeBlockID}`), wwe);
+      focusToFirstCode(wwe.get$Body().find(`.${CODEBLOCK_CLASS_PREFIX}${codeBlockID}`), wwe);
 
-            codeBlockID += 1;
-        }
-
-        wwe.focus();
+      codeBlockID += 1;
     }
+
+    wwe.focus();
+  }
 });
 
 /**
@@ -56,12 +56,12 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
  * @param {WysiwygEditor} wwe wysiwygEditor
  */
 function focusToFirstCode($pre, wwe) {
-    const range = wwe.getEditor().getSelection().cloneRange();
+  const range = wwe.getEditor().getSelection().cloneRange();
 
-    range.setStartBefore($pre.find('div')[0].firstChild);
-    range.collapse(true);
+  range.setStartBefore($pre.find('div')[0].firstChild);
+  range.collapse(true);
 
-    wwe.getEditor().setSelection(range);
+  wwe.getEditor().setSelection(range);
 }
 /**
  * getCodeBlockBody
@@ -71,19 +71,19 @@ function focusToFirstCode($pre, wwe) {
  * @returns {string}
  */
 function getCodeBlockBody(range, wwe) {
-    const mgr = wwe.componentManager.getManager('codeblock');
-    let contents, nodes;
+  const mgr = wwe.componentManager.getManager('codeblock');
+  let contents, nodes;
 
-    if (range.collapsed) {
-        nodes = [$('<div><br></div>')[0]];
-    } else {
-        contents = range.extractContents();
-        nodes = util.toArray(contents.childNodes);
-    }
+  if (range.collapsed) {
+    nodes = [$('<div><br></div>')[0]];
+  } else {
+    contents = range.extractContents();
+    nodes = util.toArray(contents.childNodes);
+  }
 
-    const codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
+  const codeBlock = mgr.convertToCodeblock(nodes).innerHTML;
 
-    return codeBlock;
+  return codeBlock;
 }
 
 export default CodeBlock;

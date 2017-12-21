@@ -17,46 +17,46 @@ const FIND_MD_TASK_RX = /^[ \t]*[-*]( \[[ xX]])? .*/;
  * @ignore
  */
 const UL = CommandManager.command('markdown', /** @lends UL */{
-    name: 'UL',
-    keyMap: ['CTRL+U', 'META+U'],
-    /**
-     * Command handler
-     * @param {MarkdownEditor} mde MarkdownEditor instance
-     */
-    exec(mde) {
-        const cm = mde.getEditor();
-        const doc = cm.getDoc();
-        const range = mde.getCurrentRange();
-        const listManager = mde.componentManager.getManager('list');
-        const lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
-        const startLineNumber = lineRange.start;
-        const endLineNumber = lineRange.end;
-        let line, currentLineStart;
+  name: 'UL',
+  keyMap: ['CTRL+U', 'META+U'],
+  /**
+   * Command handler
+   * @param {MarkdownEditor} mde MarkdownEditor instance
+   */
+  exec(mde) {
+    const cm = mde.getEditor();
+    const doc = cm.getDoc();
+    const range = mde.getCurrentRange();
+    const listManager = mde.componentManager.getManager('list');
+    const lineRange = listManager.expandLineRangeIfNeed(doc, range, isOlOrTask);
+    const startLineNumber = lineRange.start;
+    const endLineNumber = lineRange.end;
+    let line, currentLineStart;
 
-        for (let i = startLineNumber; i <= endLineNumber; i += 1) {
-            currentLineStart = {
-                line: i,
-                ch: 0
-            };
+    for (let i = startLineNumber; i <= endLineNumber; i += 1) {
+      currentLineStart = {
+        line: i,
+        ch: 0
+      };
 
-            line = doc.getLine(i);
+      line = doc.getLine(i);
 
-            if (listManager.isListOrParagraph(line)) {
-                if (isOlOrTask(line)) {
-                    listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
-                } else if (!line.match(FIND_MD_UL_RX)) {
-                    doc.replaceRange('* ', currentLineStart);
-                }
-
-                if (i === endLineNumber) {
-                    listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
-                }
-            } else {
-                break;
-            }
+      if (listManager.isListOrParagraph(line)) {
+        if (isOlOrTask(line)) {
+          listManager.replaceLineText(doc, i, /[\d]+\. /, '* ');
+        } else if (!line.match(FIND_MD_UL_RX)) {
+          doc.replaceRange('* ', currentLineStart);
         }
-        cm.focus();
+
+        if (i === endLineNumber) {
+          listManager.appendBlankLineIfNeed(cm, i, endLineNumber, startLineNumber);
+        }
+      } else {
+        break;
+      }
     }
+    cm.focus();
+  }
 });
 
 /**
@@ -65,7 +65,7 @@ const UL = CommandManager.command('markdown', /** @lends UL */{
  * @returns {boolean}
  */
 function isOlOrTask(line) {
-    return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
+  return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_OL_RX)));
 }
 
 export default UL;

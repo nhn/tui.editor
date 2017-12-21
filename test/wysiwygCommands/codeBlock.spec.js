@@ -6,58 +6,58 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('CodeBlock', () => {
-    let wwe, sq, $body;
+  let wwe, sq, $body;
 
-    beforeEach(() => {
-        const $container = $('<div />');
+  beforeEach(() => {
+    const $container = $('<div />');
 
-        $('body').append($container);
+    $('body').append($container);
 
-        wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor($container, new EventManager());
 
-        wwe.init();
-        wwe.componentManager.addManager('codeblock', WwCodeBlockManager);
+    wwe.init();
+    wwe.componentManager.addManager('codeblock', WwCodeBlockManager);
 
-        sq = wwe.getEditor();
-        $body = wwe.get$Body();
-        sq.focus();
+    sq = wwe.getEditor();
+    $body = wwe.get$Body();
+    sq.focus();
+  });
+
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      $('body').empty();
+      done();
     });
+  });
 
-    // we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
-    });
+  it('add CodeBlock', () => {
+    CodeBlock.exec(wwe);
 
-    it('add CodeBlock', () => {
-        CodeBlock.exec(wwe);
+    expect($body.find('pre').length).toBe(1);
+    expect($body.find('pre div').length).toBe(1);
+    expect($body.find('pre').attr('data-te-codeblock')).toBeDefined();
+  });
+  it('add CodeBlock with language', () => {
+    CodeBlock.exec(wwe, 'javascript');
 
-        expect($body.find('pre').length).toBe(1);
-        expect($body.find('pre div').length).toBe(1);
-        expect($body.find('pre').attr('data-te-codeblock')).toBeDefined();
-    });
-    it('add CodeBlock with language', () => {
-        CodeBlock.exec(wwe, 'javascript');
+    expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
+    expect($body.find('pre').attr('data-language')).toBe('javascript');
+  });
+  it('add CodeBlock with selection', () => {
+    wwe.setValue('<div>hello, my name is code</div>');
 
-        expect($body.find('pre').hasClass('te-content-codeblock-1')).toBe(true);
-        expect($body.find('pre').attr('data-language')).toBe('javascript');
-    });
-    it('add CodeBlock with selection', () => {
-        wwe.setValue('<div>hello, my name is code</div>');
+    const range = wwe.getEditor().getSelection();
+    range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
+    range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
 
-        const range = wwe.getEditor().getSelection();
-        range.setStart(wwe.get$Body().children().eq(0)[0].firstChild, 0);
-        range.setEnd(wwe.get$Body().children().eq(0)[0].firstChild, 5);
+    sq.setSelection(range);
 
-        sq.setSelection(range);
+    CodeBlock.exec(wwe);
 
-        CodeBlock.exec(wwe);
-
-        expect($body.find('pre').length).toBe(1);
-        expect($body.find('pre div').length).toBe(1);
-        expect($body.find('pre div').eq(0).text()).toBe('hello');
-        expect($body.find('pre + div').eq(0).text()).toBe(', my name is code');
-    });
+    expect($body.find('pre').length).toBe(1);
+    expect($body.find('pre div').length).toBe(1);
+    expect($body.find('pre div').eq(0).text()).toBe('hello');
+    expect($body.find('pre + div').eq(0).text()).toBe(', my name is code');
+  });
 });

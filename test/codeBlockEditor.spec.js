@@ -1,45 +1,44 @@
 /* eslint new-cap:0 */
-
 import CodeBlockEditor from '../src/js/codeBlockEditor';
 
 describe('CodeBlockEditor', () => {
-    let codeBlockEditor, pre;
+  let codeBlockEditor, pre;
 
-    beforeEach(() => {
-        pre = document.createElement('pre');
-        const container = document.createElement('div');
-        codeBlockEditor = new CodeBlockEditor(container);
-    });
+  beforeEach(() => {
+    pre = document.createElement('pre');
+    const container = document.createElement('div');
+    codeBlockEditor = new CodeBlockEditor(container);
+  });
 
-    it('should load code from given code block element', () => {
-        pre.innerHTML = '<div>a<br/></div><div>code</div><div>block<br/></div>';
+  it('should load code from given code block element', () => {
+    pre.innerHTML = '<div>a<br/></div><div>code</div><div>block<br/></div>';
 
-        codeBlockEditor.load(pre);
+    codeBlockEditor.load(pre);
 
-        expect(codeBlockEditor.getEditorCodeText()).toEqual('a\ncode\nblock');
-    });
+    expect(codeBlockEditor.getEditorCodeText()).toEqual('a\ncode\nblock');
+  });
 
-    it('should save code to given code block element', () => {
-        codeBlockEditor.setEditorCodeText('some\ncode');
+  it('should save code to given code block element', () => {
+    codeBlockEditor.setEditorCodeText('some\ncode');
 
-        codeBlockEditor.save(pre);
+    codeBlockEditor.save(pre);
 
-        expect(pre.innerHTML).toEqual('<div>some</div><div>code</div>');
-    });
+    expect(pre.innerHTML).toEqual('<div>some</div><div>code</div>');
+  });
 
-    it('should load language from given code block element', () => {
-        pre.setAttribute('data-language', 'javascript');
+  it('should load language from given code block element', () => {
+    pre.setAttribute('data-language', 'javascript');
 
-        codeBlockEditor.load(pre);
+    codeBlockEditor.load(pre);
 
-        expect(codeBlockEditor.getLanguage()).toEqual('javascript');
-    });
+    expect(codeBlockEditor.getLanguage()).toEqual('javascript');
+  });
 
-    it('should save language to given code block element', () => {
-        codeBlockEditor.setLanguage('java');
+  it('should save language to given code block element', () => {
+    codeBlockEditor.setLanguage('java');
 
-        codeBlockEditor.save(pre);
+    codeBlockEditor.save(pre);
 
-        expect(pre.getAttribute('data-language')).toEqual('java');
-    });
+    expect(pre.getAttribute('data-language')).toEqual('java');
+  });
 });

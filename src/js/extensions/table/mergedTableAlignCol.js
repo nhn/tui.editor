@@ -14,37 +14,37 @@ const {CommandManager} = Editor;
 
 let AlignCol;
 if (CommandManager) {
-    AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
-        name: 'AlignCol',
-        /**
-        * Command handler.
-        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-        * @param {string} alignDirection - align direction for table header
-        */
-        exec(wwe, alignDirection) {
-            const sq = wwe.getEditor();
-            const range = sq.getSelection().cloneRange();
+  AlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
+    name: 'AlignCol',
+    /**
+     * Command handler.
+     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+     * @param {string} alignDirection - align direction for table header
+     */
+    exec(wwe, alignDirection) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
 
-            wwe.focus();
+      wwe.focus();
 
-            if (!sq.hasFormat('TABLE')) {
-                return;
-            }
+      if (!sq.hasFormat('TABLE')) {
+        return;
+      }
 
-            const $startContainer = $(range.startContainer);
-            const $table = $startContainer.closest('table');
-            const tableData = dataHandler.createTableData($table);
-            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+      const $startContainer = $(range.startContainer);
+      const $table = $startContainer.closest('table');
+      const tableData = dataHandler.createTableData($table);
+      const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
-            _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
+      _align(tableData[0], tableRange.start.colIndex, tableRange.end.colIndex, alignDirection);
 
-            const $newTable = tableRenderer.replaceTable($table, tableData);
-            const focusCell = _findFocusCell($newTable, $startContainer);
+      const $newTable = tableRenderer.replaceTable($table, tableData);
+      const focusCell = _findFocusCell($newTable, $startContainer);
 
-            tableRenderer.focusToCell(sq, range, focusCell);
-        }
-    });
+      tableRenderer.focusToCell(sq, range, focusCell);
+    }
+  });
 }
 
 /**
@@ -56,15 +56,15 @@ if (CommandManager) {
  * @private
  */
 function _align(headRowData, startColIndex, endColIndex, alignDirection) {
-    util.range(startColIndex, endColIndex + 1).forEach(colIndex => {
-        const headCellData = headRowData[colIndex];
+  util.range(startColIndex, endColIndex + 1).forEach(colIndex => {
+    const headCellData = headRowData[colIndex];
 
-        if (util.isExisty(headCellData.colMergeWith)) {
-            headRowData[headCellData.colMergeWith].align = alignDirection;
-        } else {
-            headCellData.align = alignDirection;
-        }
-    });
+    if (util.isExisty(headCellData.colMergeWith)) {
+      headRowData[headCellData.colMergeWith].align = alignDirection;
+    } else {
+      headCellData.align = alignDirection;
+    }
+  });
 }
 
 /**
@@ -75,10 +75,10 @@ function _align(headRowData, startColIndex, endColIndex, alignDirection) {
  * @private
  */
 function _findFocusCell($newTable, $startContainer) {
-    const elementRowIndex = dataHandler.findElementRowIndex($startContainer);
-    const elementColIndex = dataHandler.findElementColIndex($startContainer);
+  const elementRowIndex = dataHandler.findElementRowIndex($startContainer);
+  const elementColIndex = dataHandler.findElementColIndex($startContainer);
 
-    return $newTable.find('tr').eq(elementRowIndex).find('td, th')[elementColIndex];
+  return $newTable.find('tr').eq(elementRowIndex).find('td, th')[elementColIndex];
 }
 
 export default AlignCol;

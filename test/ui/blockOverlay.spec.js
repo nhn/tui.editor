@@ -1,117 +1,116 @@
-
 import $ from 'jquery';
 
 import BlockOverlay from '../../src/js/ui/blockOverlay';
 import EventManager from '../../src/js/eventManager';
 
 describe('BlockOverlay', () => {
-    let blockOverlay,
-        $container,
-        $targetElement,
-        $targetElement2,
-        em;
+  let blockOverlay,
+    $container,
+    $targetElement,
+    $targetElement2,
+    em;
 
-    beforeEach(() => {
-        $('body').attr('contenteditable', true);
-        $container = $('<div>');
-        $container.css('position', 'relative');
+  beforeEach(() => {
+    $('body').attr('contenteditable', true);
+    $container = $('<div>');
+    $container.css('position', 'relative');
 
-        $targetElement = $('<pre>');
-        $targetElement.css({
-            position: 'absolute',
-            left: '1px',
-            top: '2px',
-            width: '3px',
-            height: '4px'
-        });
-
-        $targetElement2 = $('<pre>');
-        $targetElement2.css({
-            position: 'absolute',
-            left: '2px',
-            top: '3px',
-            width: '4px',
-            height: '5px'
-        });
-
-        $('body').append($targetElement);
-        $('body').append($container);
-
-        em = new EventManager();
-        blockOverlay = new BlockOverlay({
-            eventManager: em,
-            container: $container[0],
-            attachedSelector: 'pre'
-        });
+    $targetElement = $('<pre>');
+    $targetElement.css({
+      position: 'absolute',
+      left: '1px',
+      top: '2px',
+      width: '3px',
+      height: '4px'
     });
 
-    afterEach(() => {
-        $('body').empty();
+    $targetElement2 = $('<pre>');
+    $targetElement2.css({
+      position: 'absolute',
+      left: '2px',
+      top: '3px',
+      width: '4px',
+      height: '5px'
     });
 
-    it('should match position & size to attachedElement on change event', () => {
-        blockOverlay._$attachedElement = $targetElement;
-        blockOverlay.setVisibility(true);
+    $('body').append($targetElement);
+    $('body').append($container);
 
-        $targetElement.css('top', '1px');
-        $targetElement.css('left', '2px');
+    em = new EventManager();
+    blockOverlay = new BlockOverlay({
+      eventManager: em,
+      container: $container[0],
+      attachedSelector: 'pre'
+    });
+  });
 
-        em.emit('change', {
-            source: 'wysiwyg'
-        });
+  afterEach(() => {
+    $('body').empty();
+  });
 
-        expect(blockOverlay.$el.offset()).toEqual($targetElement.offset());
+  it('should match position & size to attachedElement on change event', () => {
+    blockOverlay._$attachedElement = $targetElement;
+    blockOverlay.setVisibility(true);
 
-        $targetElement.width('10px');
-        $targetElement.height('10px');
+    $targetElement.css('top', '1px');
+    $targetElement.css('left', '2px');
 
-        em.emit('change', {
-            source: 'wysiwyg'
-        });
-
-        expect(blockOverlay.$el.width()).toBe($targetElement.width());
-        expect(blockOverlay.$el.height()).toBe($targetElement.height());
+    em.emit('change', {
+      source: 'wysiwyg'
     });
 
-    it('show on mouseover', () => {
-        em.emit('mouseover', {
-            source: 'wysiwyg',
-            data: {
-                target: $targetElement[0]
-            }
-        });
-        expect(blockOverlay.getVisibility()).toBe(true);
+    expect(blockOverlay.$el.offset()).toEqual($targetElement.offset());
 
-        blockOverlay.setVisibility(false);
-        blockOverlay._$attachedElement = $targetElement;
-        em.emit('mouseover', {
-            source: 'wysiwyg',
-            data: {
-                target: blockOverlay.$el.get(0)
-            }
-        });
+    $targetElement.width('10px');
+    $targetElement.height('10px');
 
-        expect(blockOverlay.getVisibility()).toBe(true);
+    em.emit('change', {
+      source: 'wysiwyg'
     });
 
-    it('hide on mouseover the other elements than target nor blockOverlay', () => {
-        em.emit('mouseout', {
-            source: 'wysiwyg',
-            data: {
-                target: $targetElement2[0]
-            }
-        });
+    expect(blockOverlay.$el.width()).toBe($targetElement.width());
+    expect(blockOverlay.$el.height()).toBe($targetElement.height());
+  });
 
-        expect(blockOverlay.getVisibility()).toBe(false);
+  it('show on mouseover', () => {
+    em.emit('mouseover', {
+      source: 'wysiwyg',
+      data: {
+        target: $targetElement[0]
+      }
+    });
+    expect(blockOverlay.getVisibility()).toBe(true);
+
+    blockOverlay.setVisibility(false);
+    blockOverlay._$attachedElement = $targetElement;
+    em.emit('mouseover', {
+      source: 'wysiwyg',
+      data: {
+        target: blockOverlay.$el.get(0)
+      }
     });
 
-    it('hide on attached element destroyed', () => {
-        blockOverlay._$attachedElement = $targetElement;
-        blockOverlay.setVisibility(true);
-        $targetElement.remove();
+    expect(blockOverlay.getVisibility()).toBe(true);
+  });
 
-        em.emit('change');
-
-        expect(blockOverlay.getVisibility()).toBe(false);
+  it('hide on mouseover the other elements than target nor blockOverlay', () => {
+    em.emit('mouseout', {
+      source: 'wysiwyg',
+      data: {
+        target: $targetElement2[0]
+      }
     });
+
+    expect(blockOverlay.getVisibility()).toBe(false);
+  });
+
+  it('hide on attached element destroyed', () => {
+    blockOverlay._$attachedElement = $targetElement;
+    blockOverlay.setVisibility(true);
+    $targetElement.remove();
+
+    em.emit('change');
+
+    expect(blockOverlay.getVisibility()).toBe(false);
+  });
 });

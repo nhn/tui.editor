@@ -8,27 +8,27 @@ import ToastUIEditorViewer from './viewer';
 
 // for jquery
 $.fn.tuiEditorViewer = function(...args) {
-    let options, instance;
+  let options, instance;
 
-    const el = this.get(0);
+  const el = this.get(0);
 
-    if (el) {
-        options = args[0] || {};
+  if (el) {
+    options = args[0] || {};
 
-        instance = $.data(el, 'tuiEditorViewer');
+    instance = $.data(el, 'tuiEditorViewer');
 
-        if (instance) {
-            if (typeof options === 'string') {
-                return instance[options](...args.slice(1));
-            }
-        } else {
-            options.el = el;
-            instance = new ToastUIEditorViewer(options);
-            $.data(el, 'tuiEditorViewer', instance);
-        }
+    if (instance) {
+      if (typeof options === 'string') {
+        return instance[options](...args.slice(1));
+      }
+    } else {
+      options.el = el;
+      instance = new ToastUIEditorViewer(options);
+      $.data(el, 'tuiEditorViewer', instance);
     }
+  }
 
-    return this;
+  return this;
 };
 
 module.exports = ToastUIEditorViewer;

@@ -3,49 +3,49 @@ import $ from 'jquery';
 import ModeSwitch from '../../src/js/ui/modeSwitch';
 
 describe('ModeSwitch', () => {
-    afterEach(() => {
-        $('body').empty();
+  afterEach(() => {
+    $('body').empty();
+  });
+
+  it('editorTypeControl should be exist', () => {
+    const modeSwitch = new ModeSwitch();
+    $('body').append(modeSwitch.$el);
+
+    expect($('.te-mode-switch').length).toEqual(1);
+  });
+
+  describe('should apply button type on option', () => {
+    it('markdown', () => {
+      const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.MARKDOWN);
+      $('body').append(modeSwitch.$el);
+
+      expect($('button.te-switch-button.active').length).toEqual(1);
+      expect($('button.te-switch-button.wysiwyg.active').length).toEqual(0);
+      expect($('button.te-switch-button.markdown.active').length).toEqual(1);
+      expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
     });
+    it('wysiwyg', () => {
+      const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.WYSIWYG);
+      $('body').append(modeSwitch.$el);
 
-    it('editorTypeControl should be exist', () => {
-        const modeSwitch = new ModeSwitch();
-        $('body').append(modeSwitch.$el);
-
-        expect($('.te-mode-switch').length).toEqual(1);
+      expect($('button.te-switch-button.active').length).toEqual(1);
+      expect($('button.te-switch-button.markdown.active').length).toEqual(0);
+      expect($('button.te-switch-button.wysiwyg.active').length).toEqual(1);
+      expect($('button.te-switch-button.wysiwyg.active').text()).toEqual('WYSIWYG');
     });
+  });
 
-    describe('should apply button type on option', () => {
-        it('markdown', () => {
-            const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.MARKDOWN);
-            $('body').append(modeSwitch.$el);
+  it('should add `active` class on click button', () => {
+    const modeSwitch = new ModeSwitch();
 
-            expect($('button.te-switch-button.active').length).toEqual(1);
-            expect($('button.te-switch-button.wysiwyg.active').length).toEqual(0);
-            expect($('button.te-switch-button.markdown.active').length).toEqual(1);
-            expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
-        });
-        it('wysiwyg', () => {
-            const modeSwitch = new ModeSwitch(ModeSwitch.TYPE.WYSIWYG);
-            $('body').append(modeSwitch.$el);
+    $('body').append(modeSwitch.$el);
 
-            expect($('button.te-switch-button.active').length).toEqual(1);
-            expect($('button.te-switch-button.markdown.active').length).toEqual(0);
-            expect($('button.te-switch-button.wysiwyg.active').length).toEqual(1);
-            expect($('button.te-switch-button.wysiwyg.active').text()).toEqual('WYSIWYG');
-        });
-    });
+    expect($('button.te-switch-button.wysiwyg').text()).toEqual('WYSIWYG');
+    expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
 
-    it('should add `active` class on click button', () => {
-        const modeSwitch = new ModeSwitch();
+    $('button').trigger('click');
 
-        $('body').append(modeSwitch.$el);
-
-        expect($('button.te-switch-button.wysiwyg').text()).toEqual('WYSIWYG');
-        expect($('button.te-switch-button.markdown.active').text()).toEqual('Markdown');
-
-        $('button').trigger('click');
-
-        expect($('button.te-switch-button.wysiwyg.active').text()).toEqual('WYSIWYG');
-        expect($('button.te-switch-button.markdown').text()).toEqual('Markdown');
-    });
+    expect($('button.te-switch-button.wysiwyg.active').text()).toEqual('WYSIWYG');
+    expect($('button.te-switch-button.markdown').text()).toEqual('Markdown');
+  });
 });

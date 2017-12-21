@@ -19,37 +19,37 @@ import tableDataHandler from './tableDataHandler';
  * @private
  */
 function _findUnmergedRange(tableData, $start, $end) {
-    const cellIndexData = tableDataHandler.createCellIndexData(tableData);
-    const startCellIndex = tableDataHandler.findCellIndex(cellIndexData, $start);
-    const endCellIndex = tableDataHandler.findCellIndex(cellIndexData, $end);
-    let startRowIndex, endRowIndex, startColIndex, endColIndex;
+  const cellIndexData = tableDataHandler.createCellIndexData(tableData);
+  const startCellIndex = tableDataHandler.findCellIndex(cellIndexData, $start);
+  const endCellIndex = tableDataHandler.findCellIndex(cellIndexData, $end);
+  let startRowIndex, endRowIndex, startColIndex, endColIndex;
 
-    if (startCellIndex.rowIndex > endCellIndex.rowIndex) {
-        startRowIndex = endCellIndex.rowIndex;
-        endRowIndex = startCellIndex.rowIndex;
-    } else {
-        startRowIndex = startCellIndex.rowIndex;
-        endRowIndex = endCellIndex.rowIndex;
+  if (startCellIndex.rowIndex > endCellIndex.rowIndex) {
+    startRowIndex = endCellIndex.rowIndex;
+    endRowIndex = startCellIndex.rowIndex;
+  } else {
+    startRowIndex = startCellIndex.rowIndex;
+    endRowIndex = endCellIndex.rowIndex;
+  }
+
+  if (startCellIndex.colIndex > endCellIndex.colIndex) {
+    startColIndex = endCellIndex.colIndex;
+    endColIndex = startCellIndex.colIndex;
+  } else {
+    startColIndex = startCellIndex.colIndex;
+    endColIndex = endCellIndex.colIndex;
+  }
+
+  return {
+    start: {
+      rowIndex: startRowIndex,
+      colIndex: startColIndex
+    },
+    end: {
+      rowIndex: endRowIndex,
+      colIndex: endColIndex
     }
-
-    if (startCellIndex.colIndex > endCellIndex.colIndex) {
-        startColIndex = endCellIndex.colIndex;
-        endColIndex = startCellIndex.colIndex;
-    } else {
-        startColIndex = startCellIndex.colIndex;
-        endColIndex = endCellIndex.colIndex;
-    }
-
-    return {
-        start: {
-            rowIndex: startRowIndex,
-            colIndex: startColIndex
-        },
-        end: {
-            rowIndex: endRowIndex,
-            colIndex: endColIndex
-        }
-    };
+  };
 }
 
 /**
@@ -63,28 +63,28 @@ function _findUnmergedRange(tableData, $start, $end) {
  * @private
  */
 function _expandRowMergedRange(tableData, tableRange, rangeType) {
-    const {rowIndex} = tableRange[rangeType];
-    const rowData = tableData[rowIndex];
+  const {rowIndex} = tableRange[rangeType];
+  const rowData = tableData[rowIndex];
 
-    util.range(tableRange.start.colIndex, tableRange.end.colIndex + 1).forEach(colIndex => {
-        const cellData = rowData[colIndex];
-        const {rowMergeWith} = cellData;
-        let lastRowMergedIndex = -1;
+  util.range(tableRange.start.colIndex, tableRange.end.colIndex + 1).forEach(colIndex => {
+    const cellData = rowData[colIndex];
+    const {rowMergeWith} = cellData;
+    let lastRowMergedIndex = -1;
 
-        if (util.isExisty(rowMergeWith)) {
-            if (rowMergeWith < tableRange.start.rowIndex) {
-                tableRange.start.rowIndex = rowMergeWith;
-            }
+    if (util.isExisty(rowMergeWith)) {
+      if (rowMergeWith < tableRange.start.rowIndex) {
+        tableRange.start.rowIndex = rowMergeWith;
+      }
 
-            lastRowMergedIndex = rowMergeWith + tableData[rowMergeWith][colIndex].rowspan - 1;
-        } else if (cellData.rowspan > 1) {
-            lastRowMergedIndex = rowIndex + cellData.rowspan - 1;
-        }
+      lastRowMergedIndex = rowMergeWith + tableData[rowMergeWith][colIndex].rowspan - 1;
+    } else if (cellData.rowspan > 1) {
+      lastRowMergedIndex = rowIndex + cellData.rowspan - 1;
+    }
 
-        if (lastRowMergedIndex > tableRange.end.rowIndex) {
-            tableRange.end.rowIndex = lastRowMergedIndex;
-        }
-    });
+    if (lastRowMergedIndex > tableRange.end.rowIndex) {
+      tableRange.end.rowIndex = lastRowMergedIndex;
+    }
+  });
 }
 
 /**
@@ -99,24 +99,24 @@ function _expandRowMergedRange(tableData, tableRange, rangeType) {
  * @private
  */
 function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
-    const rowData = tableData[rowIndex];
-    const cellData = rowData[colIndex];
-    const {colMergeWith} = cellData;
-    let lastColMergedIndex = -1;
+  const rowData = tableData[rowIndex];
+  const cellData = rowData[colIndex];
+  const {colMergeWith} = cellData;
+  let lastColMergedIndex = -1;
 
-    if (util.isExisty(colMergeWith)) {
-        if (colMergeWith < tableRange.start.colIndex) {
-            tableRange.start.colIndex = colMergeWith;
-        }
-
-        lastColMergedIndex = colMergeWith + rowData[colMergeWith].colspan - 1;
-    } else if (cellData.colspan > 1) {
-        lastColMergedIndex = colIndex + cellData.colspan - 1;
+  if (util.isExisty(colMergeWith)) {
+    if (colMergeWith < tableRange.start.colIndex) {
+      tableRange.start.colIndex = colMergeWith;
     }
 
-    if (lastColMergedIndex > tableRange.end.colIndex) {
-        tableRange.end.colIndex = lastColMergedIndex;
-    }
+    lastColMergedIndex = colMergeWith + rowData[colMergeWith].colspan - 1;
+  } else if (cellData.colspan > 1) {
+    lastColMergedIndex = colIndex + cellData.colspan - 1;
+  }
+
+  if (lastColMergedIndex > tableRange.end.colIndex) {
+    tableRange.end.colIndex = lastColMergedIndex;
+  }
 }
 
 /**
@@ -133,21 +133,21 @@ function _expandColMergedRange(tableData, tableRange, rowIndex, colIndex) {
  * @private
  */
 function _expandMergedRange(tableData, tableRange) {
-    let rangeStr = '';
+  let rangeStr = '';
 
-    while (rangeStr !== JSON.stringify(tableRange)) {
-        rangeStr = JSON.stringify(tableRange);
+  while (rangeStr !== JSON.stringify(tableRange)) {
+    rangeStr = JSON.stringify(tableRange);
 
-        _expandRowMergedRange(tableData, tableRange, 'start');
-        _expandRowMergedRange(tableData, tableRange, 'end');
+    _expandRowMergedRange(tableData, tableRange, 'start');
+    _expandRowMergedRange(tableData, tableRange, 'end');
 
-        util.range(tableRange.start.rowIndex, tableRange.end.rowIndex + 1).forEach(rowIndex => {
-            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.start.colIndex);
-            _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.end.colIndex);
-        });
-    }
+    util.range(tableRange.start.rowIndex, tableRange.end.rowIndex + 1).forEach(rowIndex => {
+      _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.start.colIndex);
+      _expandColMergedRange(tableData, tableRange, rowIndex, tableRange.end.colIndex);
+    });
+  }
 
-    return tableRange;
+  return tableRange;
 }
 
 /**
@@ -162,9 +162,9 @@ function _expandMergedRange(tableData, tableRange) {
  * @ignore
  */
 function findSelectionRange(tableData, $start, $end) {
-    const unmergedRange = _findUnmergedRange(tableData, $start, $end);
+  const unmergedRange = _findUnmergedRange(tableData, $start, $end);
 
-    return _expandMergedRange(tableData, unmergedRange);
+  return _expandMergedRange(tableData, unmergedRange);
 }
 
 /**
@@ -179,36 +179,36 @@ function findSelectionRange(tableData, $start, $end) {
  * @ignore
  */
 function getTableSelectionRange(tableData, $selectedCells, $startContainer) {
-    const cellIndexData = tableDataHandler.createCellIndexData(tableData);
-    const tableRange = {};
+  const cellIndexData = tableDataHandler.createCellIndexData(tableData);
+  const tableRange = {};
 
-    if ($selectedCells.length) {
-        const startRange = tableDataHandler.findCellIndex(cellIndexData, $selectedCells.first());
-        const endRange = util.extend({}, startRange);
+  if ($selectedCells.length) {
+    const startRange = tableDataHandler.findCellIndex(cellIndexData, $selectedCells.first());
+    const endRange = util.extend({}, startRange);
 
-        $selectedCells.each((index, cell) => {
-            const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $(cell));
-            const cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
-            const lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
-            const lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
+    $selectedCells.each((index, cell) => {
+      const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $(cell));
+      const cellData = tableData[cellIndex.rowIndex][cellIndex.colIndex];
+      const lastRowMergedIndex = cellIndex.rowIndex + cellData.rowspan - 1;
+      const lastColMergedIndex = cellIndex.colIndex + cellData.colspan - 1;
 
-            endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
-            endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
-        });
+      endRange.rowIndex = Math.max(endRange.rowIndex, lastRowMergedIndex);
+      endRange.colIndex = Math.max(endRange.colIndex, lastColMergedIndex);
+    });
 
-        tableRange.start = startRange;
-        tableRange.end = endRange;
-    } else {
-        const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $startContainer);
+    tableRange.start = startRange;
+    tableRange.end = endRange;
+  } else {
+    const cellIndex = tableDataHandler.findCellIndex(cellIndexData, $startContainer);
 
-        tableRange.start = cellIndex;
-        tableRange.end = util.extend({}, cellIndex);
-    }
+    tableRange.start = cellIndex;
+    tableRange.end = util.extend({}, cellIndex);
+  }
 
-    return tableRange;
+  return tableRange;
 }
 
 export default {
-    findSelectionRange,
-    getTableSelectionRange
+  findSelectionRange,
+  getTableSelectionRange
 };

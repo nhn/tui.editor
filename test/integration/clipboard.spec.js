@@ -1,4 +1,3 @@
-
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
@@ -12,156 +11,156 @@ import Editor from '../../src/js/editor';
  * @returns {Event} - clipboard event
  */
 function pasteClipboardEvent(text, html, fileType) {
-    const event = document.createEvent('Event', false, true);
-    const clipboardData = {};
-    const items = [];
-    const types = [];
+  const event = document.createEvent('Event', false, true);
+  const clipboardData = {};
+  const items = [];
+  const types = [];
 
-    event.initEvent('paste', false, true);
+  event.initEvent('paste', false, true);
 
-    event.clipboardData = clipboardData;
-    clipboardData.items = items;
-    clipboardData.types = types;
+  event.clipboardData = clipboardData;
+  clipboardData.items = items;
+  clipboardData.types = types;
 
-    if (text) {
-        items.push({
-            type: 'text/plain',
-            getAsString: cb => cb(text)
-        });
-        types.push('text/plain');
-    }
-    if (html) {
-        items.push({
-            type: 'text/html',
-            getAsString: cb => cb(html)
-        });
-        types.push('text/html');
-    }
-    if (fileType) {
-        items.push({
-            type: fileType,
-            getAsFile: () => ({
-                size: 0,
-                type: fileType
-            })
-        });
-        types.push('Files');
-    }
+  if (text) {
+    items.push({
+      type: 'text/plain',
+      getAsString: cb => cb(text)
+    });
+    types.push('text/plain');
+  }
+  if (html) {
+    items.push({
+      type: 'text/html',
+      getAsString: cb => cb(html)
+    });
+    types.push('text/html');
+  }
+  if (fileType) {
+    items.push({
+      type: fileType,
+      getAsFile: () => ({
+        size: 0,
+        type: fileType
+      })
+    });
+    types.push('Files');
+  }
 
-    return event;
+  return event;
 }
 
 describe('Clipboard', () => {
-    let editor, se;
-    // We can't simulate browser paste. skip IE browsers
-    if (util.browser.msie) {
-        pending();
-    }
+  let editor, se;
+  // We can't simulate browser paste. skip IE browsers
+  if (util.browser.msie) {
+    pending();
+  }
 
-    beforeEach(done => {
-        editor = new Editor({
-            el: document.body,
-            height: '300px',
-            initialEditType: 'wysiwyg'
-        });
-        se = editor.wwEditor.editor;
-        setTimeout(done, 0);
+  beforeEach(done => {
+    editor = new Editor({
+      el: document.body,
+      height: '300px',
+      initialEditType: 'wysiwyg'
     });
+    se = editor.wwEditor.editor;
+    setTimeout(done, 0);
+  });
 
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
+  afterEach(done => {
+    setTimeout(() => {
+      $('body').empty();
+      done();
     });
+  });
 
-    describe('paste', () => {
-        describe('plain text', () => {
-            it('line breaks should be wrapped with div', () => {
-                const pasteText = [
-                    'text',
-                    'text',
-                    'text'
-                ].join('\n');
-                const pastedHtml =
+  describe('paste', () => {
+    describe('plain text', () => {
+      it('line breaks should be wrapped with div', () => {
+        const pasteText = [
+          'text',
+          'text',
+          'text'
+        ].join('\n');
+        const pastedHtml =
                     '<div>text<br></div>' +
                     '<div>text<br></div>' +
                     '<div>text<br></div>';
 
-                se.fireEvent('paste', pasteClipboardEvent(pasteText));
+        se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
-                expect(se.getHTML()).toEqual(pastedHtml);
-            });
+        expect(se.getHTML()).toEqual(pastedHtml);
+      });
 
-            it('multiple line breaks should be preserved', () => {
-                const pasteText = [
-                    'text',
-                    '',
-                    '',
-                    'text'
-                ].join('\n');
-                const pastedHtml =
+      it('multiple line breaks should be preserved', () => {
+        const pasteText = [
+          'text',
+          '',
+          '',
+          'text'
+        ].join('\n');
+        const pastedHtml =
                     '<div>text<br></div>' +
                     '<div><br></div>' +
                     '<div><br></div>' +
                     '<div>text<br></div>';
 
-                se.fireEvent('paste', pasteClipboardEvent(pasteText));
+        se.fireEvent('paste', pasteClipboardEvent(pasteText));
 
-                expect(se.getHTML()).toEqual(pastedHtml);
-            });
-        });
+        expect(se.getHTML()).toEqual(pastedHtml);
+      });
+    });
 
-        describe('html', () => {
-            it('multiple links should be pasted right', () => {
-                const inputHtml =
+    describe('html', () => {
+      it('multiple links should be pasted right', () => {
+        const inputHtml =
                     '<a href="">a</a>' +
                     '<a href="">b</a>';
-                const outputHtml = `<div>${inputHtml}<br></div>`;
+        const outputHtml = `<div>${inputHtml}<br></div>`;
 
-                se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-                expect(se.getHTML()).toEqual(outputHtml);
-            });
+        expect(se.getHTML()).toEqual(outputHtml);
+      });
 
-            it('comment tags should be stripped', () => {
-                const inputHtml =
+      it('comment tags should be stripped', () => {
+        const inputHtml =
                     '<!-- comment -->' +
                     'text' +
                     '<!-- comment -->';
-                const outputHtml = '<div>text<br></div>';
+        const outputHtml = '<div>text<br></div>';
 
-                se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-                expect(se.getHTML()).toEqual(outputHtml);
-            });
+        expect(se.getHTML()).toEqual(outputHtml);
+      });
 
-            it('danggling TD should become a table', done => {
-                const inputHtml =
+      it('danggling TD should become a table', done => {
+        const inputHtml =
                     '<td>' +
                     'table' +
                     '</td>';
 
-                se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-                setTimeout(() => {
-                    const outputDOM = se._root;
-                    expect(outputDOM.querySelector('table')).toBeDefined();
-                    expect(outputDOM.querySelector('table thead')).toBeDefined();
-                    expect(outputDOM.querySelector('table tbody')).toBeDefined();
-                    done();
-                }, 0);
-            });
+        setTimeout(() => {
+          const outputDOM = se._root;
+          expect(outputDOM.querySelector('table')).toBeDefined();
+          expect(outputDOM.querySelector('table thead')).toBeDefined();
+          expect(outputDOM.querySelector('table tbody')).toBeDefined();
+          done();
+        }, 0);
+      });
 
-            it('all block tags should be changed to div', () => {
-                const inputHtml =
+      it('all block tags should be changed to div', () => {
+        const inputHtml =
                     '<p>text</p>' +
                     '<article>text</article>' +
                     '<aside>text</aside>' +
                     '<nav>text</nav>' +
                     '<div>text</div>' +
                     '<section>text</section>';
-                const outputHtml =
+        const outputHtml =
                     '<div>text<br></div>' +
                     '<div>text<br></div>' +
                     '<div>text<br></div>' +
@@ -169,21 +168,21 @@ describe('Clipboard', () => {
                     '<div>text<br></div>' +
                     '<div>text<br></div>';
 
-                se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
+        se.fireEvent('paste', pasteClipboardEvent(null, inputHtml));
 
-                expect(se.getHTML()).toEqual(outputHtml);
-            });
-        });
-
-        describe('image', () => {
-            it('should execute addImageBlobHook', () => {
-                const spy = jasmine.createSpy();
-                editor.addHook('addImageBlobHook', spy);
-
-                se.fireEvent('paste', pasteClipboardEvent(null, null, 'image/png'));
-
-                expect(spy).toHaveBeenCalled();
-            });
-        });
+        expect(se.getHTML()).toEqual(outputHtml);
+      });
     });
+
+    describe('image', () => {
+      it('should execute addImageBlobHook', () => {
+        const spy = jasmine.createSpy();
+        editor.addHook('addImageBlobHook', spy);
+
+        se.fireEvent('paste', pasteClipboardEvent(null, null, 'image/png'));
+
+        expect(spy).toHaveBeenCalled();
+      });
+    });
+  });
 });

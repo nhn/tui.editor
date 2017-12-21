@@ -17,16 +17,16 @@ import tableRenderer from './tableRenderer';
  * @private
  */
 export function _extractPropertiesForMerge(value, type, oppossitType) {
-    const regex = new RegExp(`^((?:${oppossitType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
-    const regexResult = regex.exec(value);
-    let mergeCount = 1;
+  const regex = new RegExp(`^((?:${oppossitType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
+  const regexResult = regex.exec(value);
+  let mergeCount = 1;
 
-    if (regexResult) {
-        mergeCount = parseInt(regexResult[2], 10);
-        value = regexResult[1] + regexResult[3];
-    }
+  if (regexResult) {
+    mergeCount = parseInt(regexResult[2], 10);
+    value = regexResult[1] + regexResult[3];
+  }
 
-    return [mergeCount, value];
+  return [mergeCount, value];
 }
 
 /**
@@ -42,22 +42,22 @@ export function _extractPropertiesForMerge(value, type, oppossitType) {
  * @private
  */
 export function _parseTableCell(cell) {
-    const {nodeName} = cell;
-    const align = cell.align || '';
-    let content = cell.innerHTML.trim();
-    let colspan = null;
-    let rowspan = null;
+  const {nodeName} = cell;
+  const align = cell.align || '';
+  let content = cell.innerHTML.trim();
+  let colspan = null;
+  let rowspan = null;
 
-    [colspan, content] = _extractPropertiesForMerge(content, '@cols', '@rows');
-    [rowspan, content] = _extractPropertiesForMerge(content, '@rows', '@cols');
+  [colspan, content] = _extractPropertiesForMerge(content, '@cols', '@rows');
+  [rowspan, content] = _extractPropertiesForMerge(content, '@rows', '@cols');
 
-    return {
-        nodeName,
-        colspan,
-        rowspan,
-        content,
-        align
-    };
+  return {
+    nodeName,
+    colspan,
+    rowspan,
+    content,
+    align
+  };
 }
 
 /**
@@ -67,7 +67,7 @@ export function _parseTableCell(cell) {
  * @private
  */
 export function _createTableObjectFrom$Table($table) {
-    return $table.find('tr').get().map(tr => $(tr).find('td, th').get().map(_parseTableCell));
+  return $table.find('tr').get().map(tr => $(tr).find('td, th').get().map(_parseTableCell));
 }
 
 /**
@@ -78,19 +78,19 @@ export function _createTableObjectFrom$Table($table) {
  * @private
  */
 function _findIndex(arr, onFind) {
-    let foundIndex = -1;
+  let foundIndex = -1;
 
-    util.forEach(arr, (item, index) => {
-        let nextFind = true;
-        if (onFind(item, index)) {
-            foundIndex = index;
-            nextFind = false;
-        }
+  util.forEach(arr, (item, index) => {
+    let nextFind = true;
+    if (onFind(item, index)) {
+      foundIndex = index;
+      nextFind = false;
+    }
 
-        return nextFind;
-    });
+    return nextFind;
+  });
 
-    return foundIndex;
+  return foundIndex;
 }
 
 /**
@@ -100,9 +100,9 @@ function _findIndex(arr, onFind) {
  * @private
  */
 export function _divideTrs(trs) {
-    const tbodyStartIndex = _findIndex(trs, tr => (tr[0].nodeName === 'TD'));
+  const tbodyStartIndex = _findIndex(trs, tr => (tr[0].nodeName === 'TD'));
 
-    return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
+  return [trs.slice(0, tbodyStartIndex), trs.slice(tbodyStartIndex)];
 }
 
 /**
@@ -111,16 +111,16 @@ export function _divideTrs(trs) {
  * @private
  */
 export function _mergeByColspan(trs) {
-    trs.forEach(tr => {
-        const tdCount = tr.length;
-        let removalCount = 0;
+  trs.forEach(tr => {
+    const tdCount = tr.length;
+    let removalCount = 0;
 
-        tr.forEach(td => {
-            removalCount += (td.colspan - 1);
-        });
-
-        tr.splice(tdCount - removalCount);
+    tr.forEach(td => {
+      removalCount += (td.colspan - 1);
     });
+
+    tr.splice(tdCount - removalCount);
+  });
 }
 
 /**
@@ -130,24 +130,24 @@ export function _mergeByColspan(trs) {
  * @private
  */
 export function _getRemovalTdCountsByRowspan(trs) {
-    const trIndexes = trs.map((tr, index) => index);
-    const removalCounts = trIndexes.map(() => 0);
+  const trIndexes = trs.map((tr, index) => index);
+  const removalCounts = trIndexes.map(() => 0);
 
-    trs.forEach((tr, trIndex) => {
-        const rowspanTds = tr.filter(td => (td.rowspan > 1));
-        const startTrIndexForRemoval = trIndex + 1;
+  trs.forEach((tr, trIndex) => {
+    const rowspanTds = tr.filter(td => (td.rowspan > 1));
+    const startTrIndexForRemoval = trIndex + 1;
 
-        rowspanTds.forEach(td => {
-            const removeCount = td.colspan;
-            const endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
+    rowspanTds.forEach(td => {
+      const removeCount = td.colspan;
+      const endTrIndexForRemoval = startTrIndexForRemoval + (td.rowspan - 1);
 
-            trIndexes.slice(startTrIndexForRemoval, endTrIndexForRemoval).forEach(removeIndex => {
-                removalCounts[removeIndex] += removeCount;
-            });
-        });
+      trIndexes.slice(startTrIndexForRemoval, endTrIndexForRemoval).forEach(removeIndex => {
+        removalCounts[removeIndex] += removeCount;
+      });
     });
+  });
 
-    return removalCounts;
+  return removalCounts;
 }
 
 /**
@@ -156,11 +156,11 @@ export function _getRemovalTdCountsByRowspan(trs) {
  * @private
  */
 export function _mergeByRowspan(trs) {
-    const removalCounts = _getRemovalTdCountsByRowspan(trs);
+  const removalCounts = _getRemovalTdCountsByRowspan(trs);
 
-    trs.forEach((tr, trIndex) => {
-        tr.splice(tr.length - removalCounts[trIndex]);
-    });
+  trs.forEach((tr, trIndex) => {
+    tr.splice(tr.length - removalCounts[trIndex]);
+  });
 }
 
 /**
@@ -169,13 +169,13 @@ export function _mergeByRowspan(trs) {
  * @returns {HTMLElement}
  */
 export default function createMergedTable(tableElement) {
-    const table = _createTableObjectFrom$Table($(tableElement));
-    const [thead, tbody] = _divideTrs(table);
+  const table = _createTableObjectFrom$Table($(tableElement));
+  const [thead, tbody] = _divideTrs(table);
 
-    _mergeByColspan(thead);
-    _mergeByColspan(tbody);
-    _mergeByRowspan(tbody);
+  _mergeByColspan(thead);
+  _mergeByColspan(tbody);
+  _mergeByRowspan(tbody);
 
-    return $(tableRenderer.createTableHtml(table))[0];
+  return $(tableRenderer.createTableHtml(table))[0];
 }
 

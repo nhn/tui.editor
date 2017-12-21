@@ -6,90 +6,90 @@ import WwTableSelectionManager from '../../src/js/wwTableSelectionManager';
 import EventManager from '../../src/js/eventManager';
 
 describe('Code', () => {
-    let wwe;
+  let wwe;
 
-    beforeEach(() => {
-        const $container = $('<div />');
+  beforeEach(() => {
+    const $container = $('<div />');
 
-        $('body').append($container);
+    $('body').append($container);
 
-        wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor($container, new EventManager());
 
-        wwe.init();
+    wwe.init();
 
-        wwe.componentManager.addManager(WwTableSelectionManager);
-        wwe.getEditor().focus();
-    });
+    wwe.componentManager.addManager(WwTableSelectionManager);
+    wwe.getEditor().focus();
+  });
 
-    afterEach(() => {
-        $('body').empty();
-    });
+  afterEach(() => {
+    $('body').empty();
+  });
 
-    it('add code', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+  it('add code', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-        wwe.setValue('line');
+    wwe.setValue('line');
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        Code.exec(wwe);
+    Code.exec(wwe);
 
-        expect(wwe.getValue()).toEqual('<code>line</code><br />');
-    });
+    expect(wwe.getValue()).toEqual('<code>line</code><br />');
+  });
 
-    it('collapse range after code added', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+  it('collapse range after code added', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-        wwe.setValue('line');
+    wwe.setValue('line');
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        Code.exec(wwe);
+    Code.exec(wwe);
 
-        expect(wwe.getEditor().getSelection().collapsed)
-            .toBe(true);
-    });
+    expect(wwe.getEditor().getSelection().collapsed)
+      .toBe(true);
+  });
 
-    it('if there have bold remove and add code', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+  it('if there have bold remove and add code', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-        wwe.setValue('<b>line</b>');
+    wwe.setValue('<b>line</b>');
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        Code.exec(wwe);
+    Code.exec(wwe);
 
-        expect(wwe.getValue()).toEqual('<code>line</code><br />');
-    });
+    expect(wwe.getValue()).toEqual('<code>line</code><br />');
+  });
 
-    it('if there have italic remove and add code', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+  it('if there have italic remove and add code', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-        wwe.setValue('<i>line</i>');
+    wwe.setValue('<i>line</i>');
 
-        range.selectNodeContents(wwe.get$Body().children()[0]);
-        wwe.getEditor().setSelection(range);
+    range.selectNodeContents(wwe.get$Body().children()[0]);
+    wwe.getEditor().setSelection(range);
 
-        Code.exec(wwe);
+    Code.exec(wwe);
 
-        expect(wwe.getValue()).toEqual('<code>line</code><br />');
-    });
+    expect(wwe.getValue()).toEqual('<code>line</code><br />');
+  });
 
-    it('if there have code already stop code tag', () => {
-        const range = wwe.getEditor().getSelection().cloneRange();
+  it('if there have code already stop code tag', () => {
+    const range = wwe.getEditor().getSelection().cloneRange();
 
-        wwe.setValue('<code>line&#8203;</code>');
+    wwe.setValue('<code>line&#8203;</code>');
 
-        range.setStart(wwe.get$Body().find('code')[0].firstChild, 4);
-        range.collapse(true);
+    range.setStart(wwe.get$Body().find('code')[0].firstChild, 4);
+    range.collapse(true);
 
-        wwe.getEditor().setSelection(range);
+    wwe.getEditor().setSelection(range);
 
-        Code.exec(wwe);
+    Code.exec(wwe);
 
-        expect(wwe.getEditor().getSelection().startContainer.parentNode.tagName).toEqual('DIV');
-    });
+    expect(wwe.getEditor().getSelection().startContainer.parentNode.tagName).toEqual('DIV');
+  });
 });

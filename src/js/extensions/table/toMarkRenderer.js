@@ -16,7 +16,7 @@ const RX_COLS = /@cols=[0-9]+:/g;
  * @private
  */
 function _createRepeatString(str, count) {
-    return util.range(0, count).map(() => str).join('');
+  return util.range(0, count).map(() => str).join('');
 }
 
 /**
@@ -27,29 +27,29 @@ function _createRepeatString(str, count) {
  * @private
  */
 function _makeTableHeadAlignText(thElement) {
-    const {align} = thElement;
-    const textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
-    let textLength = textContent.length;
-    let leftAlignValue = '';
-    let rightAlignValue = '';
+  const {align} = thElement;
+  const textContent = (thElement.textContent || thElement.innerText).replace(RX_COLS, '');
+  let textLength = textContent.length;
+  let leftAlignValue = '';
+  let rightAlignValue = '';
 
-    if (align) {
-        if (align === 'left') {
-            leftAlignValue = ':';
-            textLength -= 1;
-        } else if (align === 'right') {
-            rightAlignValue = ':';
-            textLength -= 1;
-        } else if (align === 'center') {
-            rightAlignValue = ':';
-            leftAlignValue = ':';
-            textLength -= 2;
-        }
+  if (align) {
+    if (align === 'left') {
+      leftAlignValue = ':';
+      textLength -= 1;
+    } else if (align === 'right') {
+      rightAlignValue = ':';
+      textLength -= 1;
+    } else if (align === 'center') {
+      rightAlignValue = ':';
+      leftAlignValue = ':';
+      textLength -= 2;
     }
+  }
 
-    textLength = Math.max(textLength, 3);
+  textLength = Math.max(textLength, 3);
 
-    return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
+  return leftAlignValue + _createRepeatString('-', textLength) + rightAlignValue;
 }
 
 /**
@@ -59,13 +59,13 @@ function _makeTableHeadAlignText(thElement) {
  * @returns {Number}
  */
 export function _getAdditionalThCount(ths) {
-    let additionalThCount = 0;
+  let additionalThCount = 0;
 
-    ths.filter(th => $(th).attr('colspan')).forEach(th => {
-        additionalThCount += (parseInt($(th).attr('colspan'), 10) - 1);
-    });
+  ths.filter(th => $(th).attr('colspan')).forEach(th => {
+    additionalThCount += (parseInt($(th).attr('colspan'), 10) - 1);
+  });
 
-    return additionalThCount;
+  return additionalThCount;
 }
 
 /**
@@ -76,15 +76,15 @@ export function _getAdditionalThCount(ths) {
  * @private
  */
 export function _createTheadMarkdown(theadElement, theadContentMarkdown) {
-    const ths = $(theadElement).find('th').get();
-    let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
+  const ths = $(theadElement).find('th').get();
+  let align = ths.map(th => ` ${_makeTableHeadAlignText(th)} |`).join('');
 
-    align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
+  align += _createRepeatString(' --- |', _getAdditionalThCount(ths));
 
-    return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
+  return theadContentMarkdown ? `${theadContentMarkdown}|${align}\n` : '';
 }
 
 export default toMark.Renderer.factory(toMark.gfmRenderer, {
-    'THEAD': _createTheadMarkdown
+  'THEAD': _createTheadMarkdown
 });
 

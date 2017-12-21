@@ -10,13 +10,13 @@ const listRE = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
  * @ignore
  */
 CodeMirror.commands.indentLessOrderedList = cm => {
-    if (cm.getOption('disableInput')) {
-        return CodeMirror.Pass;
-    }
-    cm.execCommand('indentLess');
-    cm.execCommand('fixOrderedListNumber');
+  if (cm.getOption('disableInput')) {
+    return CodeMirror.Pass;
+  }
+  cm.execCommand('indentLess');
+  cm.execCommand('fixOrderedListNumber');
 
-    return null;
+  return null;
 };
 
 /**
@@ -26,23 +26,23 @@ CodeMirror.commands.indentLessOrderedList = cm => {
  * @ignore
  */
 CodeMirror.commands.fixOrderedListNumber = cm => {
-    if (cm.getOption('disableInput')) {
-        return CodeMirror.Pass;
+  if (cm.getOption('disableInput')) {
+    return CodeMirror.Pass;
+  }
+
+  const ranges = cm.listSelections();
+  for (let i = 0; i < ranges.length; i += 1) {
+    const pos = ranges[i].head;
+    const lineNumber = findFirstListItem(pos.line, cm);
+
+    if (lineNumber >= 0) {
+      const lineText = cm.getLine(lineNumber);
+      const [, indent, , index] = listRE.exec(lineText);
+      fixNumber(lineNumber, indent.length, parseInt(index, 10), cm);
     }
+  }
 
-    const ranges = cm.listSelections();
-    for (let i = 0; i < ranges.length; i += 1) {
-        const pos = ranges[i].head;
-        const lineNumber = findFirstListItem(pos.line, cm);
-
-        if (lineNumber >= 0) {
-            const lineText = cm.getLine(lineNumber);
-            const [, indent, , index] = listRE.exec(lineText);
-            fixNumber(lineNumber, indent.length, parseInt(index, 10), cm);
-        }
-    }
-
-    return null;
+  return null;
 };
 
 /**
@@ -55,37 +55,37 @@ CodeMirror.commands.fixOrderedListNumber = cm => {
  * @ignore
  */
 function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
-    let indent, delimiter, text, indentLength;
-    let index = startIndex;
-    let lineText = cm.getLine(lineNumber);
+  let indent, delimiter, text, indentLength;
+  let index = startIndex;
+  let lineText = cm.getLine(lineNumber);
 
-    do {
-        [, indent, , , delimiter, text] = listRE.exec(lineText);
-        indentLength = indent.length;
+  do {
+    [, indent, , , delimiter, text] = listRE.exec(lineText);
+    indentLength = indent.length;
 
-        if (indentLength === prevIndentLength) {
-            // fix number
-            cm.replaceRange(`${indent}${index}${delimiter}${text}`, {
-                line: lineNumber,
-                ch: 0
-            }, {
-                line: lineNumber,
-                ch: lineText.length
-            });
-            index += 1;
-            lineNumber += 1;
-        } else if (indentLength > prevIndentLength) {
-            // nested list start
-            lineNumber = fixNumber(lineNumber, indentLength, 1, cm);
-        } else {
-            // nested list end
-            return lineNumber;
-        }
+    if (indentLength === prevIndentLength) {
+      // fix number
+      cm.replaceRange(`${indent}${index}${delimiter}${text}`, {
+        line: lineNumber,
+        ch: 0
+      }, {
+        line: lineNumber,
+        ch: lineText.length
+      });
+      index += 1;
+      lineNumber += 1;
+    } else if (indentLength > prevIndentLength) {
+      // nested list start
+      lineNumber = fixNumber(lineNumber, indentLength, 1, cm);
+    } else {
+      // nested list end
+      return lineNumber;
+    }
 
-        lineText = cm.getLine(lineNumber);
-    } while (listRE.test(lineText));
+    lineText = cm.getLine(lineNumber);
+  } while (listRE.test(lineText));
 
-    return lineNumber;
+  return lineNumber;
 }
 
 /**
@@ -96,19 +96,19 @@ function fixNumber(lineNumber, prevIndentLength, startIndex, cm) {
  * @ignore
  */
 function findFirstListItem(lineNumber, cm) {
-    let nextLineNumber = lineNumber;
-    let lineText = cm.getLine(lineNumber);
+  let nextLineNumber = lineNumber;
+  let lineText = cm.getLine(lineNumber);
 
-    while (listRE.test(lineText)) {
-        nextLineNumber -= 1;
-        lineText = cm.getLine(nextLineNumber);
-    }
+  while (listRE.test(lineText)) {
+    nextLineNumber -= 1;
+    lineText = cm.getLine(nextLineNumber);
+  }
 
-    if (lineNumber === nextLineNumber) {
-        nextLineNumber = -1;
-    } else {
-        nextLineNumber += 1;
-    }
+  if (lineNumber === nextLineNumber) {
+    nextLineNumber = -1;
+  } else {
+    nextLineNumber += 1;
+  }
 
-    return nextLineNumber;
+  return nextLineNumber;
 }

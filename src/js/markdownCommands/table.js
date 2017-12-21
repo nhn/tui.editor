@@ -13,34 +13,34 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const Table = CommandManager.command('markdown', /** @lends Table */{
-    name: 'Table',
-    /**
-     * Command handler
-     * @param {MarkdownEditor} mde MarkdownEditor instance
-     * @param {number} col column count
-     * @param {number} row row count
-     * @param {Array} data initial table data
-     */
-    exec(mde, col, row, data) {
-        const cm = mde.getEditor();
-        const doc = cm.getDoc();
-        let table = '\n';
+  name: 'Table',
+  /**
+   * Command handler
+   * @param {MarkdownEditor} mde MarkdownEditor instance
+   * @param {number} col column count
+   * @param {number} row row count
+   * @param {Array} data initial table data
+   */
+  exec(mde, col, row, data) {
+    const cm = mde.getEditor();
+    const doc = cm.getDoc();
+    let table = '\n';
 
-        if (cm.getCursor().ch > 0) {
-            table += '\n';
-        }
-
-        table += makeHeader(col, data);
-        table += makeBody(col, row - 1, data);
-
-        doc.replaceSelection(table);
-
-        if (!data) {
-            cm.setCursor(cm.getCursor().line - row, 2);
-        }
-
-        mde.focus();
+    if (cm.getCursor().ch > 0) {
+      table += '\n';
     }
+
+    table += makeHeader(col, data);
+    table += makeBody(col, row - 1, data);
+
+    doc.replaceSelection(table);
+
+    if (!data) {
+      cm.setCursor(cm.getCursor().line - row, 2);
+    }
+
+    mde.focus();
+  }
 });
 
 /**
@@ -51,24 +51,24 @@ const Table = CommandManager.command('markdown', /** @lends Table */{
  * @returns {string} markdown string
  */
 function makeHeader(col, data) {
-    let header = '|';
-    let border = '|';
-    let index = 0;
+  let header = '|';
+  let border = '|';
+  let index = 0;
 
-    while (col) {
-        if (data) {
-            header += ` ${data[index]} |`;
-            index += 1;
-        } else {
-            header += '  |';
-        }
-
-        border += ' --- |';
-
-        col -= 1;
+  while (col) {
+    if (data) {
+      header += ` ${data[index]} |`;
+      index += 1;
+    } else {
+      header += '  |';
     }
 
-    return `${header}\n${border}\n`;
+    border += ' --- |';
+
+    col -= 1;
+  }
+
+  return `${header}\n${border}\n`;
 }
 
 /**
@@ -80,26 +80,26 @@ function makeHeader(col, data) {
  * @returns {string} html string
  */
 function makeBody(col, row, data) {
-    let body = '';
-    let index = col;
+  let body = '';
+  let index = col;
 
-    for (let irow = 0; irow < row; irow += 1) {
-        body += '|';
+  for (let irow = 0; irow < row; irow += 1) {
+    body += '|';
 
-        for (let icol = 0; icol < col; icol += 1) {
-            if (data) {
-                body += ` ${data[index]} |`;
-                index += 1;
-            } else {
-                body += '  |';
-            }
-        }
-
-        body += '\n';
+    for (let icol = 0; icol < col; icol += 1) {
+      if (data) {
+        body += ` ${data[index]} |`;
+        index += 1;
+      } else {
+        body += '  |';
+      }
     }
 
-    body = body.replace(/\n$/g, '');
+    body += '\n';
+  }
 
-    return body;
+  body = body.replace(/\n$/g, '');
+
+  return body;
 }
 export default Table;

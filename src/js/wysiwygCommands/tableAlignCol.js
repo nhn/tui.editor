@@ -16,31 +16,31 @@ import domUtil from '../domUtils';
  * @ignore
  */
 const TableAlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
-    name: 'AlignCol',
-    /**
-     * 커맨드 핸들러
-     * @param {WysiwygEditor} wwe WYsiwygEditor instance
-     * @param {string} alignDirection Align direction
-     */
-    exec(wwe, alignDirection) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection().cloneRange();
-        const selectionMgr = wwe.componentManager.getManager('tableSelection');
-        const rangeInformation = getRangeInformation(range, selectionMgr);
+  name: 'AlignCol',
+  /**
+   * 커맨드 핸들러
+   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {string} alignDirection Align direction
+   */
+  exec(wwe, alignDirection) {
+    const sq = wwe.getEditor();
+    const range = sq.getSelection().cloneRange();
+    const selectionMgr = wwe.componentManager.getManager('tableSelection');
+    const rangeInformation = getRangeInformation(range, selectionMgr);
 
-        wwe.focus();
+    wwe.focus();
 
-        if (sq.hasFormat('TR')) {
-            sq.saveUndoState(range);
+    if (sq.hasFormat('TR')) {
+      sq.saveUndoState(range);
 
-            const $table = $(range.startContainer).parents('table');
+      const $table = $(range.startContainer).parents('table');
 
-            const selectionInformation = getSelectionInformation($table, rangeInformation);
+      const selectionInformation = getSelectionInformation($table, rangeInformation);
 
-            setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
-        }
-        selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
+      setAlignAttributeToTableCells($table, alignDirection, selectionInformation);
     }
+    selectionMgr.removeClassAttrbuteFromAllCellsIfNeed();
+  }
 });
 
 /**
@@ -54,22 +54,22 @@ const TableAlignCol = CommandManager.command('wysiwyg', /** @lends AlignCol */{
  *     }} selectionInformation start, end column index and boolean value for whether range divided or not
  */
 function setAlignAttributeToTableCells($table, alignDirection, selectionInformation) {
-    const isDivided = selectionInformation.isDivided || false;
-    const start = selectionInformation.startColumnIndex;
-    const end = selectionInformation.endColumnIndex;
-    const columnLength = $table.find('tr').eq(0).find('td,th').length;
+  const isDivided = selectionInformation.isDivided || false;
+  const start = selectionInformation.startColumnIndex;
+  const end = selectionInformation.endColumnIndex;
+  const columnLength = $table.find('tr').eq(0).find('td,th').length;
 
-    $table.find('tr').each((n, tr) => {
-        $(tr).children('td,th').each((index, cell) => {
-            if (isDivided &&
+  $table.find('tr').each((n, tr) => {
+    $(tr).children('td,th').each((index, cell) => {
+      if (isDivided &&
                 ((start <= index && index <= columnLength) || (index <= end))
-            ) {
-                $(cell).attr('align', alignDirection);
-            } else if ((start <= index && index <= end)) {
-                $(cell).attr('align', alignDirection);
-            }
-        });
+      ) {
+        $(cell).attr('align', alignDirection);
+      } else if ((start <= index && index <= end)) {
+        $(cell).attr('align', alignDirection);
+      }
     });
+  });
 }
 
 /**
@@ -79,32 +79,32 @@ function setAlignAttributeToTableCells($table, alignDirection, selectionInformat
  * @returns {{startColumnIndex: number, endColumnIndex: number, isDivided: boolean}}
  */
 function getSelectionInformation($table, rangeInformation) {
-    const columnLength = $table.find('tr').eq(0).find('td,th').length;
-    const {
-        from,
-        to
-    } = rangeInformation;
-    let startColumnIndex, endColumnIndex, isDivided;
+  const columnLength = $table.find('tr').eq(0).find('td,th').length;
+  const {
+    from,
+    to
+  } = rangeInformation;
+  let startColumnIndex, endColumnIndex, isDivided;
 
-    if (from.row === to.row) {
-        startColumnIndex = from.cell;
-        endColumnIndex = to.cell;
-    } else if (from.row < to.row) {
-        if (from.cell <= to.cell) {
-            startColumnIndex = 0;
-            endColumnIndex = columnLength - 1;
-        } else {
-            startColumnIndex = from.cell;
-            endColumnIndex = to.cell;
-            isDivided = true;
-        }
+  if (from.row === to.row) {
+    startColumnIndex = from.cell;
+    endColumnIndex = to.cell;
+  } else if (from.row < to.row) {
+    if (from.cell <= to.cell) {
+      startColumnIndex = 0;
+      endColumnIndex = columnLength - 1;
+    } else {
+      startColumnIndex = from.cell;
+      endColumnIndex = to.cell;
+      isDivided = true;
     }
+  }
 
-    return {
-        startColumnIndex,
-        endColumnIndex,
-        isDivided
-    };
+  return {
+    startColumnIndex,
+    endColumnIndex,
+    isDivided
+  };
 }
 
 /**
@@ -114,19 +114,19 @@ function getSelectionInformation($table, rangeInformation) {
  * @returns {object}
  */
 function getRangeInformation(range, selectionMgr) {
-    const $selectedCells = selectionMgr.getSelectedCells();
-    let rangeInformation, startCell;
+  const $selectedCells = selectionMgr.getSelectedCells();
+  let rangeInformation, startCell;
 
-    if ($selectedCells.length) {
-        rangeInformation = selectionMgr.getSelectionRangeFromTable($selectedCells.first().get(0),
-            $selectedCells.last().get(0));
-    } else {
-        const {startContainer} = range;
-        startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
-        rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
-    }
+  if ($selectedCells.length) {
+    rangeInformation = selectionMgr.getSelectionRangeFromTable($selectedCells.first().get(0),
+      $selectedCells.last().get(0));
+  } else {
+    const {startContainer} = range;
+    startCell = domUtil.isTextNode(startContainer) ? $(startContainer).parent('td,th')[0] : startContainer;
+    rangeInformation = selectionMgr.getSelectionRangeFromTable(startCell, startCell);
+  }
 
-    return rangeInformation;
+  return rangeInformation;
 }
 
 export default TableAlignCol;

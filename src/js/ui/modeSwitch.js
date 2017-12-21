@@ -17,57 +17,57 @@ const WYSIWYG = 'wysiwyg';
  * @extends {UIController}
  */
 class ModeSwitch extends UIController {
-    /**
-     * Creates an instance of ModeSwitch.
-     * @param {string} initialType - initial type of editor
-     * @memberof ModeSwitch
-     */
-    constructor(initialType) {
-        super({
-            tagName: 'div',
-            className: 'te-mode-switch'
-        });
+  /**
+   * Creates an instance of ModeSwitch.
+   * @param {string} initialType - initial type of editor
+   * @memberof ModeSwitch
+   */
+  constructor(initialType) {
+    super({
+      tagName: 'div',
+      className: 'te-mode-switch'
+    });
 
-        this._render();
-        this._switchType(util.isExisty(initialType) ? initialType : MARKDOWN);
-    }
+    this._render();
+    this._switchType(util.isExisty(initialType) ? initialType : MARKDOWN);
+  }
 
-    _render() {
-        this.buttons = {};
-        this.buttons.$markdown
+  _render() {
+    this.buttons = {};
+    this.buttons.$markdown
             = $(`<button class="te-switch-button markdown" type="button">${i18n.get('Markdown')}</button>`);
-        this.buttons.$wysiwyg
+    this.buttons.$wysiwyg
             = $(`<button class="te-switch-button wysiwyg" type="button">${i18n.get('WYSIWYG')}</button>`);
-        this.$el.append(this.buttons.$markdown);
-        this.$el.append(this.buttons.$wysiwyg);
+    this.$el.append(this.buttons.$markdown);
+    this.$el.append(this.buttons.$wysiwyg);
 
-        this.on('click .markdown', this._changeMarkdown.bind(this));
-        this.on('click .wysiwyg', this._changeWysiwyg.bind(this));
+    this.on('click .markdown', this._changeMarkdown.bind(this));
+    this.on('click .wysiwyg', this._changeWysiwyg.bind(this));
+  }
+
+  _changeMarkdown() {
+    this._switchType(MARKDOWN);
+  }
+
+  _changeWysiwyg() {
+    this._switchType(WYSIWYG);
+  }
+
+  _setActiveButton(type) {
+    this.buttons.$markdown.removeClass('active');
+    this.buttons.$wysiwyg.removeClass('active');
+    this.buttons[`$${type}`].addClass('active');
+  }
+
+  _switchType(type) {
+    if (this.type === type) {
+      return;
     }
 
-    _changeMarkdown() {
-        this._switchType(MARKDOWN);
-    }
-
-    _changeWysiwyg() {
-        this._switchType(WYSIWYG);
-    }
-
-    _setActiveButton(type) {
-        this.buttons.$markdown.removeClass('active');
-        this.buttons.$wysiwyg.removeClass('active');
-        this.buttons[`$${type}`].addClass('active');
-    }
-
-    _switchType(type) {
-        if (this.type === type) {
-            return;
-        }
-
-        this.type = type;
-        this._setActiveButton(type);
-        this.trigger('modeSwitched', this.type);
-    }
+    this.type = type;
+    this._setActiveButton(type);
+    this.trigger('modeSwitched', this.type);
+  }
 }
 
 /**
@@ -77,8 +77,8 @@ class ModeSwitch extends UIController {
  * @property {string} WYSIWYG - wysiwyg
  */
 ModeSwitch.TYPE = {
-    MARKDOWN,
-    WYSIWYG
+  MARKDOWN,
+  WYSIWYG
 };
 
 export default ModeSwitch;

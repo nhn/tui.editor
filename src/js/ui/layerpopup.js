@@ -50,239 +50,239 @@ const LAYOUT_TEMPLATE_MODAL =
  * @extends {UIController}
  */
 class LayerPopup extends UIController {
-    /**
-     * Creates an instance of LayerPopup.
-     * @param {LayerPopupOption} options - popup option
-     * @memberof LayerPopup
-     */
-    constructor(options) {
-        options = util.extend({
-            header: true,
-            $target: $('body'),
-            textContent: ''
-        }, options);
-        super({
-            tagName: 'div',
-            className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
-            rootElement: options.$el
-        });
+  /**
+   * Creates an instance of LayerPopup.
+   * @param {LayerPopupOption} options - popup option
+   * @memberof LayerPopup
+   */
+  constructor(options) {
+    options = util.extend({
+      header: true,
+      $target: $('body'),
+      textContent: ''
+    }, options);
+    super({
+      tagName: 'div',
+      className: options.modal ? `${CLASS_PREFIX}modal-background` : `${CLASS_PREFIX}wrapper`,
+      rootElement: options.$el
+    });
 
-        this._initInstance(options);
-        this._initDOM(options);
-        this._initDOMEvent(options);
-        this._initEditorEvent(options);
+    this._initInstance(options);
+    this._initDOM(options);
+    this._initDOMEvent(options);
+    this._initEditorEvent(options);
+  }
+
+  /**
+   * init instance.
+   * store properties & prepare before initialize DOM
+   * @param {LayerPopupOption} options - layer popup options
+   * @memberof LayerPopup
+   * @protected
+   */
+  _initInstance(options) {
+    this._$target = options.$target;
+
+    if (options.$el) {
+      this.$el = options.$el;
+      this._isExternalHtmlUse = true;
     }
 
-    /**
-     * init instance.
-     * store properties & prepare before initialize DOM
-     * @param {LayerPopupOption} options - layer popup options
-     * @memberof LayerPopup
-     * @protected
-     */
-    _initInstance(options) {
-        this._$target = options.$target;
-
-        if (options.$el) {
-            this.$el = options.$el;
-            this._isExternalHtmlUse = true;
-        }
-
-        if (options.content) {
-            this.$content = $(options.content);
-        } else {
-            this.$content = options.textContent;
-        }
-
-        this.options = options;
+    if (options.content) {
+      this.$content = $(options.content);
+    } else {
+      this.$content = options.textContent;
     }
 
-    /**
-     * initialize DOM, render popup
-     * @memberof LayerPopup
-     * @protected
-     */
-    _initDOM() {
-        this._initLayout();
+    this.options = options;
+  }
 
-        if (!this._isExternalHtmlUse) {
-            if (util.isExisty(this.options.title)) {
-                this.setTitle(this.options.title);
-            }
-            this.setContent(this.$content);
-        }
+  /**
+   * initialize DOM, render popup
+   * @memberof LayerPopup
+   * @protected
+   */
+  _initDOM() {
+    this._initLayout();
 
-        const buttons = this.options.headerButtons;
-        if (buttons) {
-            this.$el.find(`.${CLASS_PREFIX}close-button`).remove();
-
-            const $buttonWrapper = this.$el.find(`.${CLASS_PREFIX}header-buttons`);
-            $buttonWrapper.empty();
-            $buttonWrapper.append($(buttons));
-        }
-
-        if (this.options.css) {
-            this.$el.css(this.options.css);
-        }
+    if (!this._isExternalHtmlUse) {
+      if (util.isExisty(this.options.title)) {
+        this.setTitle(this.options.title);
+      }
+      this.setContent(this.$content);
     }
 
-    /**
-     * bind DOM events
-     * @memberof LayerPopup
-     * @protected
-     */
-    _initDOMEvent() {
-        const {openerCssQuery, closerCssQuery} = this.options;
-        if (openerCssQuery) {
-            $(openerCssQuery).on(`click.${this._id}`, () => this.show());
-        }
-        if (closerCssQuery) {
-            $(closerCssQuery).on(`click.${this._id}`, () => this.hide());
-        }
+    const buttons = this.options.headerButtons;
+    if (buttons) {
+      this.$el.find(`.${CLASS_PREFIX}close-button`).remove();
 
-        this.on(`click .${CLASS_PREFIX}close-button`, () => this.hide());
+      const $buttonWrapper = this.$el.find(`.${CLASS_PREFIX}header-buttons`);
+      $buttonWrapper.empty();
+      $buttonWrapper.append($(buttons));
     }
 
-    /**
-     * bind editor events
-     * @memberof LayerPopup
-     * @protected
-     * @abstract
-     */
-    _initEditorEvent() {}
+    if (this.options.css) {
+      this.$el.css(this.options.css);
+    }
+  }
 
-    _initLayout() {
-        const {options} = this;
-
-        if (!this._isExternalHtmlUse) {
-            const layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
-            this.$el.html(layout);
-            this.$el.addClass(options.className);
-            this.hide();
-            this._$target.append(this.$el);
-            this.$body = this.$el.find(`.${CLASS_PREFIX}body`);
-
-            if (!options.header) {
-                this.$el.find(`.${CLASS_PREFIX}header`).remove();
-            }
-        } else {
-            this.hide();
-            this._$target.append(this.$el);
-        }
+  /**
+   * bind DOM events
+   * @memberof LayerPopup
+   * @protected
+   */
+  _initDOMEvent() {
+    const {openerCssQuery, closerCssQuery} = this.options;
+    if (openerCssQuery) {
+      $(openerCssQuery).on(`click.${this._id}`, () => this.show());
+    }
+    if (closerCssQuery) {
+      $(closerCssQuery).on(`click.${this._id}`, () => this.hide());
     }
 
-    /**
-     * set popup content
-     * @param {jQuery|HTMLElement|string} $content - content
-     * @memberof LayerPopup
-     */
-    setContent($content) {
-        this.$body.empty();
-        this.$body.append($content);
+    this.on(`click .${CLASS_PREFIX}close-button`, () => this.hide());
+  }
+
+  /**
+   * bind editor events
+   * @memberof LayerPopup
+   * @protected
+   * @abstract
+   */
+  _initEditorEvent() {}
+
+  _initLayout() {
+    const {options} = this;
+
+    if (!this._isExternalHtmlUse) {
+      const layout = options.modal ? LAYOUT_TEMPLATE_MODAL : LAYOUT_TEMPLATE_MODELESS;
+      this.$el.html(layout);
+      this.$el.addClass(options.className);
+      this.hide();
+      this._$target.append(this.$el);
+      this.$body = this.$el.find(`.${CLASS_PREFIX}body`);
+
+      if (!options.header) {
+        this.$el.find(`.${CLASS_PREFIX}header`).remove();
+      }
+    } else {
+      this.hide();
+      this._$target.append(this.$el);
+    }
+  }
+
+  /**
+   * set popup content
+   * @param {jQuery|HTMLElement|string} $content - content
+   * @memberof LayerPopup
+   */
+  setContent($content) {
+    this.$body.empty();
+    this.$body.append($content);
+  }
+
+  /**
+   * set title
+   * @param {string} title - title text
+   * @memberof LayerPopup
+   */
+  setTitle(title) {
+    const $title = this.$el.find(`.${CLASS_PREFIX}title`);
+
+    $title.empty();
+    $title.append(title);
+  }
+
+  /**
+   * get title element
+   * @memberof LayerPopup
+   * @returns {HTMLElement} - title html element
+   */
+  getTitleElement() {
+    return this.$el.find(`.${CLASS_PREFIX}title`).get(0);
+  }
+
+  /**
+   * hide popup
+   * @memberof LayerPopup
+   */
+  hide() {
+    this.$el.css('display', 'none');
+    this._isShow = false;
+    this.trigger('hidden', this);
+  }
+
+  /**
+   * show popup
+   * @memberof LayerPopup
+   */
+  show() {
+    this.$el.css('display', 'block');
+    this._isShow = true;
+    this.trigger('shown', this);
+  }
+
+  /**
+   * whether this popup is visible
+   * @returns {boolean} - true: shown, false: hidden
+   * @memberof LayerPopup
+   */
+  isShow() {
+    return this._isShow;
+  }
+
+  /**
+   * remove popup content
+   * @memberof LayerPopup
+   */
+  remove() {
+    const {openerCssQuery, closerCssQuery} = this.options;
+
+    this.trigger('remove', this);
+    this.off();
+
+    if (openerCssQuery) {
+      $(openerCssQuery).off(`.${this._id}`);
+    }
+    if (closerCssQuery) {
+      $(closerCssQuery).off(`.${this._id}`);
     }
 
-    /**
-     * set title
-     * @param {string} title - title text
-     * @memberof LayerPopup
-     */
-    setTitle(title) {
-        const $title = this.$el.find(`.${CLASS_PREFIX}title`);
+    this.$el.remove();
+  }
 
-        $title.empty();
-        $title.append(title);
-    }
+  /**
+   * make popup size fit to window
+   * @param {boolean} fit - true to make popup fit to window
+   * @memberof LayerPopup
+   * @protected
+   */
+  setFitToWindow(fit) {
+    this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
+  }
 
-    /**
-     * get title element
-     * @memberof LayerPopup
-     * @returns {HTMLElement} - title html element
-     */
-    getTitleElement() {
-        return this.$el.find(`.${CLASS_PREFIX}title`).get(0);
-    }
+  /**
+   * make popup size fit to window
+   * @memberof LayerPopup
+   * @protected
+   * @returns {boolean} - true for fit to window
+   */
+  isFitToWindow() {
+    return this.$el.hasClass(CLASS_FIT_WINDOW);
+  }
 
-    /**
-     * hide popup
-     * @memberof LayerPopup
-     */
-    hide() {
-        this.$el.css('display', 'none');
-        this._isShow = false;
-        this.trigger('hidden', this);
-    }
+  /**
+   * toggle size fit to window
+   * @memberof LayerPopup
+   * @protected
+   * @returns {boolean} - true for fit to window
+   */
+  toggleFitToWindow() {
+    const fitToWindow = !this.isFitToWindow();
+    this.setFitToWindow(fitToWindow);
 
-    /**
-     * show popup
-     * @memberof LayerPopup
-     */
-    show() {
-        this.$el.css('display', 'block');
-        this._isShow = true;
-        this.trigger('shown', this);
-    }
-
-    /**
-     * whether this popup is visible
-     * @returns {boolean} - true: shown, false: hidden
-     * @memberof LayerPopup
-     */
-    isShow() {
-        return this._isShow;
-    }
-
-    /**
-     * remove popup content
-     * @memberof LayerPopup
-     */
-    remove() {
-        const {openerCssQuery, closerCssQuery} = this.options;
-
-        this.trigger('remove', this);
-        this.off();
-
-        if (openerCssQuery) {
-            $(openerCssQuery).off(`.${this._id}`);
-        }
-        if (closerCssQuery) {
-            $(closerCssQuery).off(`.${this._id}`);
-        }
-
-        this.$el.remove();
-    }
-
-    /**
-     * make popup size fit to window
-     * @param {boolean} fit - true to make popup fit to window
-     * @memberof LayerPopup
-     * @protected
-     */
-    setFitToWindow(fit) {
-        this.$el.toggleClass(CLASS_FIT_WINDOW, fit);
-    }
-
-    /**
-     * make popup size fit to window
-     * @memberof LayerPopup
-     * @protected
-     * @returns {boolean} - true for fit to window
-     */
-    isFitToWindow() {
-        return this.$el.hasClass(CLASS_FIT_WINDOW);
-    }
-
-    /**
-     * toggle size fit to window
-     * @memberof LayerPopup
-     * @protected
-     * @returns {boolean} - true for fit to window
-     */
-    toggleFitToWindow() {
-        const fitToWindow = !this.isFitToWindow();
-        this.setFitToWindow(fitToWindow);
-
-        return fitToWindow;
-    }
+    return fitToWindow;
+  }
 }
 
 export default LayerPopup;

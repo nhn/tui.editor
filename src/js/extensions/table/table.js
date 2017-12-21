@@ -27,25 +27,25 @@ import mergedTableUI from './mergedTableUI';
  * @ignore
  */
 function tableExtension(editor) {
-    const {eventManager} = editor;
+  const {eventManager} = editor;
 
-    editor.toMarkOptions = editor.toMarkOptions || {};
-    editor.toMarkOptions.renderer = toMarkRenderer;
-    _bindEvents(eventManager);
+  editor.toMarkOptions = editor.toMarkOptions || {};
+  editor.toMarkOptions.renderer = toMarkRenderer;
+  _bindEvents(eventManager);
 
-    if (editor.isViewer()) {
-        return;
-    }
+  if (editor.isViewer()) {
+    return;
+  }
 
-    const wwComponentManager = editor.wwEditor.componentManager;
-    const {popupTableUtils} = editor._ui;
+  const wwComponentManager = editor.wwEditor.componentManager;
+  const {popupTableUtils} = editor._ui;
 
-    _addCommands(editor);
-    _changeWysiwygManagers(wwComponentManager);
+  _addCommands(editor);
+  _changeWysiwygManagers(wwComponentManager);
 
-    if (editor._ui.popupTableUtils) {
-        mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
-    }
+  if (editor._ui.popupTableUtils) {
+    mergedTableUI.updateContextMenu(popupTableUtils, eventManager, wwComponentManager.getManager('tableSelection'));
+  }
 }
 
 /**
@@ -54,8 +54,8 @@ function tableExtension(editor) {
  * @private
  */
 function _addCommands(editor) {
-    editor.addCommand(wwMergeCell);
-    editor.addCommand(wwUnergeCell);
+  editor.addCommand(wwMergeCell);
+  editor.addCommand(wwUnergeCell);
 }
 
 /**
@@ -64,11 +64,11 @@ function _addCommands(editor) {
  * @private
  */
 function _changeWysiwygManagers(wwComponentManager) {
-    wwComponentManager.removeManager('table');
-    wwComponentManager.removeManager('tableSelection');
+  wwComponentManager.removeManager('table');
+  wwComponentManager.removeManager('tableSelection');
 
-    wwComponentManager.addManager(WwMergedTableManager);
-    wwComponentManager.addManager(WwMergedTableSelectionManager);
+  wwComponentManager.addManager(WwMergedTableManager);
+  wwComponentManager.addManager(WwMergedTableSelectionManager);
 }
 
 /**
@@ -79,20 +79,20 @@ function _changeWysiwygManagers(wwComponentManager) {
  * @private
  */
 function _changeHtml(html, onChangeTable) {
-    const $tempDiv = $(`<div>${html}</div>`);
-    const $tables = $tempDiv.find('table');
+  const $tempDiv = $(`<div>${html}</div>`);
+  const $tables = $tempDiv.find('table');
 
-    if ($tables.length) {
-        $tables.get().forEach(tableElement => {
-            const changedTableElement = onChangeTable(tableElement);
+  if ($tables.length) {
+    $tables.get().forEach(tableElement => {
+      const changedTableElement = onChangeTable(tableElement);
 
-            $(tableElement).replaceWith(changedTableElement);
-        });
+      $(tableElement).replaceWith(changedTableElement);
+    });
 
-        html = $tempDiv.html();
-    }
+    html = $tempDiv.html();
+  }
 
-    return html;
+  return html;
 }
 
 /**
@@ -101,30 +101,30 @@ function _changeHtml(html, onChangeTable) {
  * @private
  */
 function _snatchWysiwygCommand(commandWrapper) {
-    const {command} = commandWrapper;
+  const {command} = commandWrapper;
 
-    if (!command.isWWType()) {
-        return;
-    }
+  if (!command.isWWType()) {
+    return;
+  }
 
-    switch (command.getName()) {
-        case 'AddRow':
-            commandWrapper.command = wwAddRow;
-            break;
-        case 'AddCol':
-            commandWrapper.command = wwAddCol;
-            break;
-        case 'RemoveRow':
-            commandWrapper.command = wwRemoveRow;
-            break;
-        case 'RemoveCol':
-            commandWrapper.command = wwRemoveCol;
-            break;
-        case 'AlignCol':
-            commandWrapper.command = wwAlignCol;
-            break;
-        default:
-    }
+  switch (command.getName()) {
+  case 'AddRow':
+    commandWrapper.command = wwAddRow;
+    break;
+  case 'AddCol':
+    commandWrapper.command = wwAddCol;
+    break;
+  case 'RemoveRow':
+    commandWrapper.command = wwRemoveRow;
+    break;
+  case 'RemoveCol':
+    commandWrapper.command = wwRemoveCol;
+    break;
+  case 'AlignCol':
+    commandWrapper.command = wwAlignCol;
+    break;
+  default:
+  }
 }
 
 /**
@@ -133,9 +133,9 @@ function _snatchWysiwygCommand(commandWrapper) {
  * @private
  */
 function _bindEvents(eventManager) {
-    eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
-    eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
-    eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
+  eventManager.listen('convertorAfterMarkdownToHtmlConverted', html => _changeHtml(html, createMergedTable));
+  eventManager.listen('convertorBeforeHtmlToMarkdownConverted', html => _changeHtml(html, prepareTableUnmerge));
+  eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 }
 
 Editor.defineExtension('table', tableExtension);
