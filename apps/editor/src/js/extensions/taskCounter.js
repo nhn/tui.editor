@@ -16,7 +16,7 @@ function taskCounterExtension(editor) {
     editor.getTaskCount = () => {
         let found, count;
 
-        if (editor.isViewOnly()) {
+        if (editor.isViewer()) {
             count = editor.preview.$el.find('.task-list-item').length;
         } else if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_TASK_RX);
@@ -31,7 +31,7 @@ function taskCounterExtension(editor) {
     editor.getCheckedTaskCount = () => {
         let found, count;
 
-        if (editor.isViewOnly()) {
+        if (editor.isViewer()) {
             count = editor.preview.$el.find('.task-list-item.checked').length;
         } else if (editor.isMarkdownMode()) {
             found = editor.mdEditor.getValue().match(FIND_CHECKED_TASK_RX);

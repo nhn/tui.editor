@@ -17,11 +17,11 @@ describe('taskCounter', () => {
         });
     });
 
-    describe('viewOnly', () => {
+    describe('viewer', () => {
         beforeEach(() => {
             ned = TuiEditor.factory({
                 el: wrapper,
-                viewOnly: true,
+                viewer: true,
                 exts: ['taskCounter']
             });
         });

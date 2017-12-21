@@ -481,7 +481,7 @@ function chartExtension(editor) {
     }
     codeBlockManager.setReplacer(LANG, chartReplacer);
 
-    if (!editor.isViewOnly()) {
+    if (!editor.isViewer()) {
         // treat wysiwyg paste event
         _setWwCodeBlockManagerForChart(editor);
 

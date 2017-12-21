@@ -24,7 +24,7 @@
 </head>
 <body style='padding:0;margin:0'>
 <div id="editSection"></div>
-<script src="../dist/tui-editor-ViewOnly.js"></script>
+<script src="../dist/tui-editor-Viewer.js"></script>
 <script src="../dist/tui-editor-extTable.js"></script>
 <script>
     var content = '# Heading 1' + '\n'
@@ -51,8 +51,8 @@
         + 'console.log("code block");' + '\n'
         + '```' + '\n'
         + '`inline code`' + '\n';
-    $('#editSection').tuiEditorViewOnly({
-        viewOnly: true,
+    $('#editSection').tuiEditorViewer({
+        viewer: true,
         initialValue: content,
         exts: ['table']
     });

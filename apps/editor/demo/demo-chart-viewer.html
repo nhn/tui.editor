@@ -11,11 +11,15 @@
     <script src="../lib/codemirror/lib/codemirror.js"></script>
     <script src="../lib/highlightjs/highlight.pack.js"></script>
     <script src="../lib/squire-rte/build/squire-raw.js"></script>
-    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.min.js"></script>
+    <script src="../lib/plantuml-encoder/dist/plantuml-encoder.js"></script>
+    <script src="../lib/raphael/raphael.min.js"></script>
+    <script src="../lib/tui-chart/dist/chart.js"></script>
     <link rel="stylesheet" href="../lib/codemirror/lib/codemirror.css">
     <link rel="stylesheet" href="../lib/highlightjs/styles/github.css">
+    <link rel="stylesheet" href="../dist/tui-editor.css">
     <link rel="stylesheet" href="../dist/tui-editor-contents.css">
     <link rel="stylesheet" href="../lib/tui-color-picker/dist/tui-color-picker.css">
+    <link rel="stylesheet" href="../lib/tui-chart/dist/chart.css">
     <style type="text/css">
         html, body {
             padding: 0;
@@ -30,40 +34,30 @@
 </head>
 <body>
 <div id="editSection"></div>
-<script src="../dist/tui-editor-ViewOnly.js"></script>
-<script src="../dist/tui-editor-extUML.js"></script>
+<script src="../dist/tui-editor-Viewer.js"></script>
+<script src="../dist/tui-editor-extChart.js"></script>
 <script>
     var content = [
-        'uml start',
-        '```uml',
-        'partition Conductor {',
-        '  (*) --> "Climbs on Platform"',
-        '  --> === S1 ===',
-        '  --> Bows',
-        '}',
+        '```chart',
+        ',category1,category2',
+        'Jan,21,23',
+        'Feb,31,17',
         '',
-        'partition Audience #LightSkyBlue {',
-        '  === S1 === --> Applauds',
-        '}',
-        '',
-        'partition Conductor {',
-        '  Bows --> === S2 ===',
-        '  --> WavesArmes',
-        '  Applauds --> === S2 ===',
-        '}',
-        '',
-        'partition Orchestra #CCCCEE {',
-        '  WavesArmes --> Introduction',
-        '  --> "Play music"',
-        '}',
-        '```'
+        'type: column',
+        'width: 700',
+        'height: 300',
+        'title: Monthly Revenue',
+        'x.title: Amount',
+        'y.title: Month',
+        'y.min: 1',
+        'y.max: 40',
+        'y.suffix: $'
     ].join('\n');
-    $('#editSection').tuiEditorViewOnly({
+    $('#editSection').tuiEditorViewer({
+        previewStyle: 'vertical',
+        height: '100%',
         initialValue: content,
-        exts: ['scrollFollow', {
-            name: 'uml', // enable plant uml plugin
-            rendererURL: 'http://www.plantuml.com/plantuml/png/'
-        }]
+        exts: ['chart']
     });
 </script>
 </body>

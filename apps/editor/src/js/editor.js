@@ -16,7 +16,7 @@ import extManager from './extManager';
 import ImportManager from './importManager';
 import WwCodeBlockManager from './wwCodeBlockManager';
 import Convertor from './convertor';
-import ViewOnly from './viewOnly';
+import Viewer from './viewer';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
 import domUtils from './domUtils';
@@ -548,7 +548,7 @@ class ToastUIEditor {
      * @memberof ToastUIEditor
      * @returns {boolean}
      */
-    isViewOnly() {
+    isViewer() {
         return false;
     }
 
@@ -737,8 +737,8 @@ class ToastUIEditor {
     static factory(options) {
         let tuiEditor;
 
-        if (options.viewOnly) {
-            tuiEditor = new ViewOnly(options);
+        if (options.viewer) {
+            tuiEditor = new Viewer(options);
         } else {
             tuiEditor = new ToastUIEditor(options);
         }

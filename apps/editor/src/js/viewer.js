@@ -17,11 +17,11 @@ const TASK_ATTR_NAME = 'data-te-task';
 const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
- * Class ToastUIEditorViewOnly
+ * Class ToastUIEditorViewer
  */
-class ToastUIEditorViewOnly {
+class ToastUIEditorViewer {
     /**
-     * ViewOnly
+     * Viewer
      * @param {object} options Option object
         * @param {string} options.initialValue Editor's initial value
         * @param {object} options.events eventlist Event list
@@ -75,7 +75,7 @@ class ToastUIEditorViewOnly {
         if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
             $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
             this.eventManager.emit('change', {
-                source: 'viewOnly',
+                source: 'viewer',
                 data: ev
             });
         }
@@ -83,7 +83,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      */
     setMarkdown(markdown) {
@@ -95,7 +95,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Set content for preview
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @param {string} markdown Markdown text
      * @deprecated
      */
@@ -105,7 +105,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Bind eventHandler to event type
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -115,7 +115,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Unbind eventHandler from event type
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      */
     off(type) {
@@ -123,8 +123,8 @@ class ToastUIEditorViewOnly {
     }
 
     /**
-     * Remove ViewOnly preview from document
-     * @memberof ToastUIEditorViewOnly
+     * Remove Viewer preview from document
+     * @memberof ToastUIEditorViewer
      */
     remove() {
         this.eventManager.emit('removeEditor');
@@ -137,8 +137,8 @@ class ToastUIEditorViewOnly {
     }
 
     /**
-     * Add hook to ViewOnly preview's event
-     * @memberof ToastUIEditorViewOnly
+     * Add hook to Viewer preview's event
+     * @memberof ToastUIEditorViewer
      * @param {string} type Event type
      * @param {function} handler Event handler
      */
@@ -149,16 +149,16 @@ class ToastUIEditorViewOnly {
 
     /**
      * Return true
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
-    isViewOnly() {
+    isViewer() {
         return true;
     }
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
     isMarkdownMode() {
@@ -167,7 +167,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Return false
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @returns {boolean}
      */
     isWysiwygMode() {
@@ -176,7 +176,7 @@ class ToastUIEditorViewOnly {
 
     /**
      * Define extension
-     * @memberof ToastUIEditorViewOnly
+     * @memberof ToastUIEditorViewer
      * @param {string} name Extension name
      * @param {ExtManager~extension} ext extension
      */
@@ -189,54 +189,54 @@ class ToastUIEditorViewOnly {
  * check whther is viewer
  * @type {boolean}
  */
-ToastUIEditorViewOnly.isViewer = true;
+ToastUIEditorViewer.isViewer = true;
 
 /**
  * domUtil instance
  * @type {DomUtil}
  */
-ToastUIEditorViewOnly.domUtils = domUtils;
+ToastUIEditorViewer.domUtils = domUtils;
 
 /**
  * CodeBlockManager instance
  * @type {CodeBlockManager}
  */
-ToastUIEditorViewOnly.codeBlockManager = codeBlockManager;
+ToastUIEditorViewer.codeBlockManager = codeBlockManager;
 
 /**
  * MarkdownIt hightlight instance
  * @type {typeof MarkdownIt}
  */
-ToastUIEditorViewOnly.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
+ToastUIEditorViewer.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
 /**
  * null
  * @type (typeof null)
  */
-ToastUIEditorViewOnly.i18n = null;
+ToastUIEditorViewer.i18n = null;
 
 /**
  * null
  * @type (typeof null)
  */
-ToastUIEditorViewOnly.Button = null;
+ToastUIEditorViewer.Button = null;
 
 /**
  * null
  * @type {typeof null}
  */
-ToastUIEditorViewOnly.WwCodeBlockManager = null;
+ToastUIEditorViewer.WwCodeBlockManager = null;
 
 /**
  * null
  * @type {typeof null}
  */
-ToastUIEditorViewOnly.WwTableManager = null;
+ToastUIEditorViewer.WwTableManager = null;
 
 /**
  * null
  * @type {typeof null}
  */
-ToastUIEditorViewOnly.WwTableSelectionManager = null;
+ToastUIEditorViewer.WwTableSelectionManager = null;
 
-export default ToastUIEditorViewOnly;
+export default ToastUIEditorViewer;

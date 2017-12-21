@@ -10,11 +10,11 @@ class MarkdownPreview extends Preview {
      * @param {jQuery} $el - base jQuery element
      * @param {EventManager} eventManager - event manager
      * @param {Convertor} convertor - convertor
-     * @param {boolean} isViewOnly - true for view only mode
+     * @param {boolean} isViewer - true for view only mode
      * @memberof MarkdownPreview
      */
-    constructor($el, eventManager, convertor, isViewOnly) {
-        super($el, eventManager, convertor, isViewOnly);
+    constructor($el, eventManager, convertor, isViewer) {
+        super($el, eventManager, convertor, isViewer);
 
         this._initEvent();
     }

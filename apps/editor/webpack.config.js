@@ -8,9 +8,9 @@ const Visualizer = require('webpack-visualizer-plugin');
 
 const NAME_SPACE = ['tui', 'Editor'];
 const ENTRY_MAIN = './src/js/index.js';
-const ENTRY_VIEWONLY = './src/js/indexViewOnly.js';
+const ENTRY_VIEWER = './src/js/indexViewer.js';
 const ENTRY_MAIN_ALL = './src/js/indexAll.js';
-const ENTRY_VIEWONLY_ALL = './src/js/indexViewOnlyAll.js';
+const ENTRY_VIEWER_ALL = './src/js/indexViewerAll.js';
 const ENTRY_EXT_CHART = './src/js/extensions/chart/chart.js';
 const ENTRY_EXT_UML = './src/js/extensions/uml.js';
 const ENTRY_EXT_COLOR_SYNTAX = './src/js/extensions/colorSyntax.js';
@@ -139,7 +139,7 @@ const defaultConfig = {
 if (isDevServer) {
     defaultConfig.entry = {
         'Editor-all': [ENTRY_MAIN_ALL, 'webpack-dev-server/client?http://localhost:8080'],
-        'ViewOnly-all': [ENTRY_VIEWONLY_ALL, 'webpack-dev-server/client?http://localhost:8080']
+        'Viewer-all': [ENTRY_VIEWER_ALL, 'webpack-dev-server/client?http://localhost:8080']
     };
     defaultConfig.output.publicPath = PUBLIC_PATH;
     defaultConfig.output.library = NAME_SPACE;
@@ -163,7 +163,7 @@ if (isDevServer) {
 } else if (isBuildAll) {
     defaultConfig.entry = {
         'Editor-all': ENTRY_MAIN_ALL,
-        'ViewOnly-all': ENTRY_VIEWONLY_ALL
+        'Viewer-all': ENTRY_VIEWER_ALL
     };
     defaultConfig.output.library = NAME_SPACE;
     defaultConfig.output.libraryTarget = 'umd';
@@ -188,11 +188,11 @@ if (isDevServer) {
                     amd: 'tui-editor',
                     root: ['tui', 'Editor']
                 });
-            } else if (request.match(/viewOnly$/)) {
+            } else if (request.match(/viewer$/)) {
                 callback(null, {
-                    commonjs: 'tui-editor/dist/tui-editor-ViewOnly',
-                    commonjs2: 'tui-editor/dist/tui-editor-ViewOnly',
-                    amd: 'tui-editor/dist/tui-editor-ViewOnly',
+                    commonjs: 'tui-editor/dist/tui-editor-Viewer',
+                    commonjs2: 'tui-editor/dist/tui-editor-Viewer',
+                    amd: 'tui-editor/dist/tui-editor-Viewer',
                     root: ['tui', 'Editor']
                 });
             } else {
@@ -205,7 +205,7 @@ if (isDevServer) {
 } else {
     defaultConfig.entry = {
         'Editor': ENTRY_MAIN,
-        'ViewOnly': ENTRY_VIEWONLY
+        'Viewer': ENTRY_VIEWER
     };
     defaultConfig.output.library = NAME_SPACE;
     defaultConfig.output.libraryTarget = 'umd';
