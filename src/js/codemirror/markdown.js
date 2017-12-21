@@ -35,7 +35,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     modeCfg.underscoresBreakWords = true;
 
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
 // Use `fencedCodeBlocks` to configure fenced code blocks. false to
 // disable, string to specify a precise regexp that the fence should
@@ -76,7 +76,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   ,   olRE = /^[0-9]+([.)])\s+/
   ,   taskListRE = /^\[(x| )\](?=\s)/ // Must follow ulRE or olRE
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   ,   atxHeaderRE = modeCfg.allowAtxHeaderWithoutSpace ? /^(#+)/ : /^(#+)(?: |$)/
   ,   setextHeaderRE = /^ *(?:\={1,}|-{1,})\s*$/
@@ -99,7 +99,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
   }
 
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
   function lineIsEmpty(line) {
     return !line || !/\S/.test(line.string)
@@ -129,7 +129,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     state.trailingSpace = 0;
     state.trailingSpaceNewLine = false;
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     // Mark this line as blank
     state.prevLine = state.thisLine
@@ -176,7 +176,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     if (state.indentationDiff >= 4) {
       stream.skipToEnd();
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (prevLineIsIndentedCode || lineIsEmpty(state.prevLine)) {
       // if (prevLineIsIndentedCode || !state.prevLineHasContent) {
@@ -195,7 +195,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.f = state.inline;
       return getType(state);
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (!lineIsEmpty(state.prevLine) && !state.quote && !prevLineIsList &&
                !prevLineIsIndentedCode && (match = stream.match(setextHeaderRE))) {
@@ -216,7 +216,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.hr = true;
       return hr;
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if ((lineIsEmpty(state.prevLine) || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
     // } else if ((!state.prevLineHasContent || prevLineIsList) && (stream.match(ulRE, false) || stream.match(olRE, false))) {
@@ -229,7 +229,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         listType = 'ol';
       }
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
 // Roll back to original #1002
 // https://github.nhnent.com/fe/tui.editor/issues/1002
@@ -250,7 +250,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       if (modeCfg.highlightFormatting) state.formatting = ["list", "list-" + listType];
       return getType(state);
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     } else if (modeCfg.fencedCodeBlocks && (match = stream.match(fencedCodeRE, true))) {
       state.fencedChars = match[1]
@@ -284,7 +284,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function local(stream, state) {
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     if (stream.sol() && state.fencedChars && stream.match(state.fencedChars, false)) {
     // if (stream.sol() && stream.match("```", false)) {
@@ -302,7 +302,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
   function leavingLocal(stream, state) {
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
     stream.match(state.fencedChars);
     state.block = blockNormal;
@@ -750,7 +750,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       return {
         f: blockNormal,
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: null,
         thisLine: null,
@@ -786,7 +786,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpaceNewLine: false,
         strikethrough: false,
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: null
 // TUI.EDITOR MODIFICATION END
@@ -798,7 +798,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         f: s.f,
 
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         prevLine: s.prevLine,
         thisLine: s.this,
@@ -818,7 +818,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         formatting: false,
         linkTitle: s.linkTitle,
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         code: s.code,
 // TUI.EDITOR MODIFICATION END
@@ -841,7 +841,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         trailingSpaceNewLine: s.trailingSpaceNewLine,
         md_inside: s.md_inside,
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
         fencedChars: s.fencedChars
 // TUI.EDITOR MODIFICATION END
@@ -854,7 +854,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
       state.formatting = false;
 
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
       if (stream != state.thisLine) {
         var forceBlankLine = state.header || state.hr;
@@ -868,7 +868,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 
         if (stream.match(/^\s*$/, true) || forceBlankLine) {
 // TUI.EDITOR MODIFICATION START
-// scrollFollow prototype
+// scrollSync prototype
 // https://github.nhnent.com/fe/tui.editor/commit/f63d6ae79078923d369e6c170d07485f05c42fd7
           blankLine(state);
           if (!forceBlankLine) return null

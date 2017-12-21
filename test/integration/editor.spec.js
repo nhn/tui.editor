@@ -32,7 +32,7 @@ describe('Editor', () => {
         document.body.style.paddingTop = '0px';
     });
 
-    it('should not throw exception on initializing with long content in case of markdown type vertical scrollFollow enabled', done => {
+    it('should not throw exception on initializing with long content in case of markdown type vertical scrollSync enabled', done => {
         // the exception will be thrown from async, we can't no.toThrow() here
         // just wait and see if uncaught exception has been thrown or not
         const editor = new Editor({ // eslint-disable-line
@@ -41,7 +41,7 @@ describe('Editor', () => {
             initialValue: 'a\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\n',
             initialEditType: 'markdown',
             previewStyle: 'vertical',
-            exts: ['scrollFollow']
+            exts: ['scrollSync']
         });
 
         setTimeout(done, 1000);

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Implements Scroll Follow Extension ScrollSync Module
+ * @fileoverview Implements Scroll Follow Extension ScrollManager Module
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
 import util from 'tui-code-snippet';
@@ -9,16 +9,16 @@ const SCROLL_TOP_PADDING = 20;
 const SCROLL_BOCKING_RESET_DELAY = 15;
 
 /**
- * Class ScrollSync
+ * Class ScrollManager
  * manage scroll sync between markdown editor and preview
  */
-class ScrollSync {
+class ScrollManager {
     /**
-     * Creates an instance of ScrollSync.
+     * Creates an instance of ScrollManager.
      * @param {SectionManager} sectionManager - sectionManager
      * @param {CodeMirror} cm - CodeMirror
      * @param {jQuery} $previewContainerEl - preview container
-     * @memberof ScrollSync
+     * @memberof ScrollManager
      */
     constructor(sectionManager, cm, $previewContainerEl) {
         this.sectionManager = sectionManager;
@@ -327,7 +327,7 @@ class ScrollSync {
 
     /**
      * Save Codemirror's scrollInfo for alternative use
-     * memberOf ScrollSync
+     * memberOf ScrollManager
      */
     saveScrollInfo() {
         this._savedScrollInfo = this.cm.getScrollInfo();
@@ -351,4 +351,4 @@ class ScrollSync {
     }
 }
 
-export default ScrollSync;
+export default ScrollManager;

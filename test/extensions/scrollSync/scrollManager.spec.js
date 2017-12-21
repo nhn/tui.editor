@@ -1,10 +1,10 @@
 
 import TuiEditor from '../../../src/js/editor';
-import ScrollSync from '../../../src/js/extensions/scrollFollow/scrollSync';
-import SectionManager from '../../../src/js/extensions/scrollFollow/sectionManager';
+import ScrollManager from '../../../src/js/extensions/scrollSync/scrollManager';
+import SectionManager from '../../../src/js/extensions/scrollSync/sectionManager';
 
-describe('ScrollSync', () => {
-    let ned, sectionManager, scrollSync, container;
+describe('ScrollManager', () => {
+    let ned, sectionManager, scrollManager, container;
 
     beforeEach(() => {
         jasmine.getStyleFixtures().fixturesPath = '/base';
@@ -24,7 +24,7 @@ describe('ScrollSync', () => {
             events: {
                 'load': function(editor) {
                     sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
-                    scrollSync = new ScrollSync(sectionManager, editor.getCodeMirror(), editor.preview.$el);
+                    scrollManager = new ScrollManager(sectionManager, editor.getCodeMirror(), editor.preview.$el);
                 }
             }
         });
@@ -63,7 +63,7 @@ describe('ScrollSync', () => {
             const cm = ned.getCodeMirror();
             cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
 
-            const scrollFactors = scrollSync._getScrollFactorsOfEditor();
+            const scrollFactors = scrollManager._getScrollFactorsOfEditor();
 
             expect(scrollFactors.section.end).toEqual(4);
             expect(scrollFactors.sectionRatio).not.toEqual(0);
@@ -73,7 +73,7 @@ describe('ScrollSync', () => {
             const cm = ned.getCodeMirror();
             cm.scrollTo(0, cm.heightAtLine(12, 'local'));
 
-            const scrollFactors = scrollSync._getScrollFactorsOfEditor();
+            const scrollFactors = scrollManager._getScrollFactorsOfEditor();
 
             expect(scrollFactors.isEditorBottom).toBe(true);
         });
@@ -82,7 +82,7 @@ describe('ScrollSync', () => {
     describe('running animation', () => {
         it('call step callback function', () => {
             const stepCallback = jasmine.createSpy('stepCallback');
-            scrollSync._animateRun(0, 10, stepCallback);
+            scrollManager._animateRun(0, 10, stepCallback);
 
             expect(stepCallback).toHaveBeenCalled();
         });
@@ -90,7 +90,7 @@ describe('ScrollSync', () => {
         it('value', done => {
             const values = [];
 
-            scrollSync._animateRun(0, 100, value => {
+            scrollManager._animateRun(0, 100, value => {
                 values.push(value);
 
                 if (value === 100) {
@@ -116,15 +116,15 @@ describe('ScrollSync', () => {
 
             sectionManager.makeSectionList();
 
-            const previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+            const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
 
             ned.on('previewRenderAfter', () => {
                 sectionManager.sectionMatch();
                 cm.scrollTo(0, cm.heightAtLine(3, 'local'));
 
-                scrollSync.syncPreviewScrollTopToMarkdown();
+                scrollManager.syncPreviewScrollTopToMarkdown();
 
-                expect(scrollSync.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+                expect(scrollManager.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
 
                 done();
             });
@@ -144,7 +144,7 @@ describe('ScrollSync', () => {
 
             sectionManager.makeSectionList();
 
-            const previewScrollTop = scrollSync.$previewContainerEl.scrollTop();
+            const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
 
             ned.on('previewRenderAfter', () => {
                 sectionManager.sectionMatch();
@@ -155,9 +155,9 @@ describe('ScrollSync', () => {
 
                 cm.scrollTo(0, cm.heightAtLine(1, 'local'));
 
-                scrollSync.syncPreviewScrollTopToMarkdown();
+                scrollManager.syncPreviewScrollTopToMarkdown();
 
-                expect(scrollSync.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
+                expect(scrollManager.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
 
                 done();
             });
@@ -179,7 +179,7 @@ describe('ScrollSync', () => {
 
             sectionManager.makeSectionList();
 
-            scrollSync.saveScrollInfo();
+            scrollManager.saveScrollInfo();
 
             cm.scrollTo(0, cm.heightAtLine(6, 'local'));
 
@@ -187,7 +187,7 @@ describe('ScrollSync', () => {
 
             const scrollInfo = cm.getScrollInfo();
 
-            expect(scrollSync._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollSync._savedScrollInfo);
+            expect(scrollManager._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollManager._savedScrollInfo);
         });
     });
 });
