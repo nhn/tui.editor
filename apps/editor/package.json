@@ -47,7 +47,7 @@
     "webpack-visualizer-plugin": "^0.1.11"
   },
   "scripts": {
-    "lint": "eslint src/js test",
+    "lint": "eslint .",
     "doc": "jsdoc -c jsdoc-conf.json",
     "test": "karma start",
     "test:ne": "cross-env SERVER=nhnent karma start",

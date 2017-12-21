@@ -20,7 +20,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  * Class ToastUIEditorViewer
  */
 class ToastUIEditorViewer {
-    /**
+  /**
      * Viewer
      * @param {object} options Option object
         * @param {string} options.initialValue Editor's initial value
@@ -33,156 +33,156 @@ class ToastUIEditorViewer {
         * @param {object} options.hooks Hook list
             * @param {function} options.hooks.previewBeforeHook Submit preview to hook URL before preview be shown
     */
-    constructor(options) {
-        this.options = options;
+  constructor(options) {
+    this.options = options;
 
-        this.eventManager = new EventManager();
-        this.commandManager = new CommandManager(this);
-        this.convertor = new Convertor(this.eventManager);
-        this.toMarkOptions = null;
+    this.eventManager = new EventManager();
+    this.commandManager = new CommandManager(this);
+    this.convertor = new Convertor(this.eventManager);
+    this.toMarkOptions = null;
 
-        if (this.options.hooks) {
-            util.forEach(this.options.hooks, (fn, key) => {
-                this.addHook(key, fn);
-            });
-        }
-
-        if (this.options.events) {
-            util.forEach(this.options.events, (fn, key) => {
-                this.on(key, fn);
-            });
-        }
-
-        this.preview = new MarkdownPreview($(this.options.el), this.eventManager, this.convertor, true);
-
-        this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
-
-        extManager.applyExtension(this, this.options.exts);
-
-        this.setValue(this.options.initialValue);
-
-        this.eventManager.emit('load', this);
+    if (this.options.hooks) {
+      util.forEach(this.options.hooks, (fn, key) => {
+        this.addHook(key, fn);
+      });
     }
 
-    /**
-     * Toggle task by detecting mousedown event.
-     * @param {MouseEvent} ev - event
-     * @private
-     */
-    _toggleTask(ev) {
-        const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
-
-        if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
-            $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
-            this.eventManager.emit('change', {
-                source: 'viewer',
-                data: ev
-            });
-        }
+    if (this.options.events) {
+      util.forEach(this.options.events, (fn, key) => {
+        this.on(key, fn);
+      });
     }
 
-    /**
-     * Set content for preview
-     * @memberof ToastUIEditorViewer
-     * @param {string} markdown Markdown text
-     */
-    setMarkdown(markdown) {
-        this.markdownValue = markdown = markdown || '';
+    this.preview = new MarkdownPreview($(this.options.el), this.eventManager, this.convertor, true);
 
-        this.preview.refresh(this.markdownValue);
-        this.eventManager.emit('setMarkdownAfter', this.markdownValue);
-    }
+    this.preview.$el.on('mousedown', $.proxy(this._toggleTask, this));
 
-    /**
-     * Set content for preview
-     * @memberof ToastUIEditorViewer
-     * @param {string} markdown Markdown text
-     * @deprecated
-     */
-    setValue(markdown) {
-        this.setMarkdown(markdown);
-    }
+    extManager.applyExtension(this, this.options.exts);
 
-    /**
-     * Bind eventHandler to event type
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     * @param {function} handler Event handler
-     */
-    on(type, handler) {
-        this.eventManager.listen(type, handler);
-    }
+    this.setValue(this.options.initialValue);
 
-    /**
-     * Unbind eventHandler from event type
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     */
-    off(type) {
-        this.eventManager.removeEventHandler(type);
-    }
+    this.eventManager.emit('load', this);
+  }
 
-    /**
-     * Remove Viewer preview from document
-     * @memberof ToastUIEditorViewer
-     */
-    remove() {
-        this.eventManager.emit('removeEditor');
-        this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
-        this.options = null;
-        this.eventManager = null;
-        this.commandManager = null;
-        this.convertor = null;
-        this.preview = null;
-    }
+  /**
+   * Toggle task by detecting mousedown event.
+   * @param {MouseEvent} ev - event
+   * @private
+   */
+  _toggleTask(ev) {
+    const isBeneathTaskBox = ev.offsetX < 18 && ev.offsetY > 18;
 
-    /**
-     * Add hook to Viewer preview's event
-     * @memberof ToastUIEditorViewer
-     * @param {string} type Event type
-     * @param {function} handler Event handler
-     */
-    addHook(type, handler) {
-        this.eventManager.removeEventHandler(type);
-        this.eventManager.listen(type, handler);
+    if (ev.target.hasAttribute(TASK_ATTR_NAME) && !isBeneathTaskBox) {
+      $(ev.target).toggleClass(TASK_CHECKED_CLASS_NAME);
+      this.eventManager.emit('change', {
+        source: 'viewer',
+        data: ev
+      });
     }
+  }
 
-    /**
-     * Return true
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-    isViewer() {
-        return true;
-    }
+  /**
+   * Set content for preview
+   * @memberof ToastUIEditorViewer
+   * @param {string} markdown Markdown text
+   */
+  setMarkdown(markdown) {
+    this.markdownValue = markdown = markdown || '';
 
-    /**
-     * Return false
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-    isMarkdownMode() {
-        return false;
-    }
+    this.preview.refresh(this.markdownValue);
+    this.eventManager.emit('setMarkdownAfter', this.markdownValue);
+  }
 
-    /**
-     * Return false
-     * @memberof ToastUIEditorViewer
-     * @returns {boolean}
-     */
-    isWysiwygMode() {
-        return false;
-    }
+  /**
+   * Set content for preview
+   * @memberof ToastUIEditorViewer
+   * @param {string} markdown Markdown text
+   * @deprecated
+   */
+  setValue(markdown) {
+    this.setMarkdown(markdown);
+  }
 
-    /**
-     * Define extension
-     * @memberof ToastUIEditorViewer
-     * @param {string} name Extension name
-     * @param {ExtManager~extension} ext extension
-     */
-    static defineExtension(name, ext) {
-        extManager.defineExtension(name, ext);
-    }
+  /**
+   * Bind eventHandler to event type
+   * @memberof ToastUIEditorViewer
+   * @param {string} type Event type
+   * @param {function} handler Event handler
+   */
+  on(type, handler) {
+    this.eventManager.listen(type, handler);
+  }
+
+  /**
+   * Unbind eventHandler from event type
+   * @memberof ToastUIEditorViewer
+   * @param {string} type Event type
+   */
+  off(type) {
+    this.eventManager.removeEventHandler(type);
+  }
+
+  /**
+   * Remove Viewer preview from document
+   * @memberof ToastUIEditorViewer
+   */
+  remove() {
+    this.eventManager.emit('removeEditor');
+    this.preview.$el.off('mousedown', $.proxy(this._toggleTask, this));
+    this.options = null;
+    this.eventManager = null;
+    this.commandManager = null;
+    this.convertor = null;
+    this.preview = null;
+  }
+
+  /**
+   * Add hook to Viewer preview's event
+   * @memberof ToastUIEditorViewer
+   * @param {string} type Event type
+   * @param {function} handler Event handler
+   */
+  addHook(type, handler) {
+    this.eventManager.removeEventHandler(type);
+    this.eventManager.listen(type, handler);
+  }
+
+  /**
+   * Return true
+   * @memberof ToastUIEditorViewer
+   * @returns {boolean}
+   */
+  isViewer() {
+    return true;
+  }
+
+  /**
+   * Return false
+   * @memberof ToastUIEditorViewer
+   * @returns {boolean}
+   */
+  isMarkdownMode() {
+    return false;
+  }
+
+  /**
+   * Return false
+   * @memberof ToastUIEditorViewer
+   * @returns {boolean}
+   */
+  isWysiwygMode() {
+    return false;
+  }
+
+  /**
+   * Define extension
+   * @memberof ToastUIEditorViewer
+   * @param {string} name Extension name
+   * @param {ExtManager~extension} ext extension
+   */
+  static defineExtension(name, ext) {
+    extManager.defineExtension(name, ext);
+  }
 }
 
 /**

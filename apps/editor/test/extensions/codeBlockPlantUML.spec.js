@@ -4,49 +4,49 @@ import umlExtension from '../../src/js/extensions/uml';
 TuiEditor.defineExtension('uml', umlExtension);
 
 describe('uml extension', () => {
-    let editor, wrapper;
+  let editor, wrapper;
 
-    beforeEach(() => {
-        wrapper = document.createElement('div');
-        document.body.appendChild(wrapper);
-        jasmine.clock().install();
+  beforeEach(() => {
+    wrapper = document.createElement('div');
+    document.body.appendChild(wrapper);
+    jasmine.clock().install();
+  });
+
+  afterEach(done => {
+    jasmine.clock().uninstall();
+    setTimeout(() => {
+      wrapper.parentNode.removeChild(wrapper);
+      done();
+    });
+  });
+
+  it('create plant uml image in markdown preview', () => {
+    editor = new TuiEditor({
+      el: wrapper,
+      previewStyle: 'vertical',
+      height: '100px',
+      initialEditType: 'markdown',
+      exts: ['uml']
     });
 
-    afterEach(done => {
-        jasmine.clock().uninstall();
-        setTimeout(() => {
-            wrapper.parentNode.removeChild(wrapper);
-            done();
-        });
+    editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
+
+    jasmine.clock().tick(800);
+
+    expect(editor.preview.$el.get(0).querySelector('pre img').getAttribute('src')).toEqual('http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000');
+  });
+
+  it('shows code in html in wysiwyg', () => {
+    editor = new TuiEditor({
+      el: wrapper,
+      previewStyle: 'vertical',
+      height: '100px',
+      initialEditType: 'wysiwyg',
+      exts: ['uml']
     });
 
-    it('create plant uml image in markdown preview', () => {
-        editor = new TuiEditor({
-            el: wrapper,
-            previewStyle: 'vertical',
-            height: '100px',
-            initialEditType: 'markdown',
-            exts: ['uml']
-        });
+    editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
 
-        editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
-
-        jasmine.clock().tick(800);
-
-        expect(editor.preview.$el.get(0).querySelector('pre img').getAttribute('src')).toEqual('http://www.plantuml.com/plantuml/png/Syp9J4vLqBLJSCfFibBmICt9oUS20000');
-    });
-
-    it('shows code in html in wysiwyg', () => {
-        editor = new TuiEditor({
-            el: wrapper,
-            previewStyle: 'vertical',
-            height: '100px',
-            initialEditType: 'wysiwyg',
-            exts: ['uml']
-        });
-
-        editor.setValue(`\`\`\`uml\nAlice -> Bob: Hello\n\`\`\``);
-
-        expect(editor.wwEditor.get$Body().get(0).querySelector('pre').innerHTML).toEqual('<div>Alice -&gt; Bob: Hello</div>');
-    });
+    expect(editor.wwEditor.get$Body().get(0).querySelector('pre').innerHTML).toEqual('<div>Alice -&gt; Bob: Hello</div>');
+  });
 });

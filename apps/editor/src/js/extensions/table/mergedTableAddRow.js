@@ -14,37 +14,37 @@ const {CommandManager} = Editor;
 
 let AddRow;
 if (CommandManager) {
-    AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
-        name: 'AddRow',
-        /**
-        * Command handler.
-        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-        */
-        exec(wwe) {
-            const sq = wwe.getEditor();
-            const range = sq.getSelection().cloneRange();
+  AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
+    name: 'AddRow',
+    /**
+     * Command handler.
+     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
 
-            wwe.focus();
+      wwe.focus();
 
-            if (!sq.hasFormat('TABLE')) {
-                return;
-            }
+      if (!sq.hasFormat('TABLE')) {
+        return;
+      }
 
-            const $startContainer = $(range.startContainer);
-            const $table = $startContainer.closest('table');
-            const tableData = dataHandler.createTableData($table);
-            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+      const $startContainer = $(range.startContainer);
+      const $table = $startContainer.closest('table');
+      const tableData = dataHandler.createTableData($table);
+      const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
-            sq.saveUndoState(range);
-            _addRow(tableData, tableRange);
+      sq.saveUndoState(range);
+      _addRow(tableData, tableRange);
 
-            const $newTable = tableRenderer.replaceTable($table, tableData);
-            const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
+      const $newTable = tableRenderer.replaceTable($table, tableData);
+      const focusTd = _findFocusTd($newTable, tableRange.end.rowIndex, tableRange.start.colIndex);
 
-            tableRenderer.focusToCell(sq, range, focusTd);
-        }
-    });
+      tableRenderer.focusToCell(sq, range, focusTd);
+    }
+  });
 }
 
 /**
@@ -57,10 +57,10 @@ if (CommandManager) {
  * @private
  */
 function _createRowMergedCell(rowMergeWith) {
-    return {
-        nodeName: 'TD',
-        rowMergeWith
-    };
+  return {
+    nodeName: 'TD',
+    rowMergeWith
+  };
 }
 
 /**
@@ -71,35 +71,35 @@ function _createRowMergedCell(rowMergeWith) {
  * @private
  */
 export function _createNewRow(tableData, rowIndex) {
-    let prevCell = null;
+  let prevCell = null;
 
-    return tableData[rowIndex].map((cellData, colIndex) => {
-        let newCell;
+  return tableData[rowIndex].map((cellData, colIndex) => {
+    let newCell;
 
-        if (util.isExisty(cellData.rowMergeWith)) {
-            const {rowMergeWith} = cellData;
-            const merger = tableData[rowMergeWith][colIndex];
-            const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
+    if (util.isExisty(cellData.rowMergeWith)) {
+      const {rowMergeWith} = cellData;
+      const merger = tableData[rowMergeWith][colIndex];
+      const lastMergedRowIndex = rowMergeWith + merger.rowspan - 1;
 
-            if (util.isExisty(merger.colMergeWith) && prevCell) {
-                newCell = util.extend({}, prevCell);
-            } else if (lastMergedRowIndex > rowIndex) {
-                merger.rowspan += 1;
-                newCell = util.extend({}, cellData);
-            }
-        } else if (cellData.rowspan > 1) {
-            cellData.rowspan += 1;
-            newCell = _createRowMergedCell(rowIndex);
-        }
+      if (util.isExisty(merger.colMergeWith) && prevCell) {
+        newCell = util.extend({}, prevCell);
+      } else if (lastMergedRowIndex > rowIndex) {
+        merger.rowspan += 1;
+        newCell = util.extend({}, cellData);
+      }
+    } else if (cellData.rowspan > 1) {
+      cellData.rowspan += 1;
+      newCell = _createRowMergedCell(rowIndex);
+    }
 
-        if (!newCell) {
-            newCell = dataHandler.createBasicCell(rowIndex + 1, colIndex);
-        }
+    if (!newCell) {
+      newCell = dataHandler.createBasicCell(rowIndex + 1, colIndex);
+    }
 
-        prevCell = newCell;
+    prevCell = newCell;
 
-        return newCell;
-    });
+    return newCell;
+  });
 }
 
 /**
@@ -114,12 +114,12 @@ export function _createNewRow(tableData, rowIndex) {
  * @private
  */
 export function _addRow(tableData, tableRange) {
-    const startRowIndex = tableRange.start.rowIndex;
-    const endRange = tableRange.end;
-    const endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
-    const newRows = util.range(startRowIndex, endRowIndex + 1).map(() => _createNewRow(tableData, endRowIndex));
+  const startRowIndex = tableRange.start.rowIndex;
+  const endRange = tableRange.end;
+  const endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+  const newRows = util.range(startRowIndex, endRowIndex + 1).map(() => _createNewRow(tableData, endRowIndex));
 
-    tableData.splice(...[endRowIndex + 1, 0].concat(newRows));
+  tableData.splice(...[endRowIndex + 1, 0].concat(newRows));
 }
 
 /**
@@ -131,11 +131,11 @@ export function _addRow(tableData, tableRange) {
  * @private
  */
 function _findFocusTd($newTable, rowIndex, colIndex) {
-    const tableData = dataHandler.createTableData($newTable);
-    const newRowIndex = dataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
-    const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, colIndex);
+  const tableData = dataHandler.createTableData($newTable);
+  const newRowIndex = dataHandler.findRowMergedLastIndex(tableData, rowIndex, colIndex) + 1;
+  const cellElementIndex = dataHandler.findElementIndex(tableData, newRowIndex, colIndex);
 
-    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
+  return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('td')[cellElementIndex.colIndex];
 }
 
 export default AddRow;

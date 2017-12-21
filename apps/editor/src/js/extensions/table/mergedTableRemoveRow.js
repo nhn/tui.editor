@@ -14,44 +14,44 @@ const {CommandManager} = Editor;
 
 let RemoveRow;
 if (CommandManager) {
-    RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
-        name: 'RemoveRow',
-        /**
-        * Command handler.
-        * @param {WysiwygEditor} wwe - WYsiwygEditor instance
-        */
-        exec(wwe) {
-            const sq = wwe.getEditor();
-            const range = sq.getSelection().cloneRange();
+  RemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
+    name: 'RemoveRow',
+    /**
+     * Command handler.
+     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+     */
+    exec(wwe) {
+      const sq = wwe.getEditor();
+      const range = sq.getSelection().cloneRange();
 
-            wwe.focus();
+      wwe.focus();
 
-            if (!sq.hasFormat('TABLE')) {
-                return;
-            }
+      if (!sq.hasFormat('TABLE')) {
+        return;
+      }
 
-            const $startContainer = $(range.startContainer);
-            const $table = $startContainer.closest('table');
-            const tableData = dataHandler.createTableData($table);
-            const beforeRowLength = tableData.length;
-            const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
-            const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
+      const $startContainer = $(range.startContainer);
+      const $table = $startContainer.closest('table');
+      const tableData = dataHandler.createTableData($table);
+      const beforeRowLength = tableData.length;
+      const $selectedCells = wwe.componentManager.getManager('tableSelection').getSelectedCells();
+      const tableRange = tableRangeHandler.getTableSelectionRange(tableData, $selectedCells, $startContainer);
 
-            sq.saveUndoState(range);
-            _removeRow(tableData, tableRange);
+      sq.saveUndoState(range);
+      _removeRow(tableData, tableRange);
 
-            if (tableData.length < 2) {
-                $table.remove();
-            } else if (beforeRowLength !== tableData.length) {
-                const $newTable = tableRenderer.replaceTable($table, tableData);
+      if (tableData.length < 2) {
+        $table.remove();
+      } else if (beforeRowLength !== tableData.length) {
+        const $newTable = tableRenderer.replaceTable($table, tableData);
 
-                const startRowIndex = tableRange.start.rowIndex;
-                const focusRowIndex = startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
-                const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
-                tableRenderer.focusToCell(sq, range, focusCell);
-            }
-        }
-    });
+        const startRowIndex = tableRange.start.rowIndex;
+        const focusRowIndex = startRowIndex < tableData.length ? startRowIndex : startRowIndex - 1;
+        const focusCell = _findFocusTd($newTable, focusRowIndex, tableRange.start.colIndex);
+        tableRenderer.focusToCell(sq, range, focusCell);
+      }
+    }
+  });
 }
 
 /**
@@ -62,25 +62,25 @@ if (CommandManager) {
  * @private
  */
 function _updateRowspan(tableData, startRowIndex, endRowIndex) {
-    util.range(startRowIndex, endRowIndex + 1).forEach(rowIndex => {
-        tableData[rowIndex].forEach((cell, cellIndex) => {
-            if (util.isExisty(cell.rowMergeWith)) {
-                const merger = tableData[cell.rowMergeWith][cellIndex];
+  util.range(startRowIndex, endRowIndex + 1).forEach(rowIndex => {
+    tableData[rowIndex].forEach((cell, cellIndex) => {
+      if (util.isExisty(cell.rowMergeWith)) {
+        const merger = tableData[cell.rowMergeWith][cellIndex];
 
-                if (merger.rowspan) {
-                    merger.rowspan -= 1;
-                }
-            } else if (cell.rowspan > 1) {
-                const lastMergedRowIndex = rowIndex + cell.rowspan - 1;
+        if (merger.rowspan) {
+          merger.rowspan -= 1;
+        }
+      } else if (cell.rowspan > 1) {
+        const lastMergedRowIndex = rowIndex + cell.rowspan - 1;
 
-                cell.rowspan -= (endRowIndex - rowIndex + 1);
+        cell.rowspan -= (endRowIndex - rowIndex + 1);
 
-                if (lastMergedRowIndex > endRowIndex) {
-                    tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
-                }
-            }
-        });
+        if (lastMergedRowIndex > endRowIndex) {
+          tableData[endRowIndex + 1][cellIndex] = util.extend({}, cell);
+        }
+      }
     });
+  });
 }
 
 /**
@@ -91,13 +91,13 @@ function _updateRowspan(tableData, startRowIndex, endRowIndex) {
  * @private
  */
 function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
-    tableData.slice(endRowIndex + 1).forEach(row => {
-        row.forEach(cell => {
-            if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
-                cell.rowMergeWith = endRowIndex + 1;
-            }
-        });
+  tableData.slice(endRowIndex + 1).forEach(row => {
+    row.forEach(cell => {
+      if (util.isExisty(cell.rowMergeWith) && cell.rowMergeWith >= startRowIndex) {
+        cell.rowMergeWith = endRowIndex + 1;
+      }
     });
+  });
 }
 
 /**
@@ -110,26 +110,26 @@ function _updateMergeStartIndex(tableData, startRowIndex, endRowIndex) {
  * @private
  */
 export function _removeRow(tableData, tableRange) {
-    let startRowIndex = tableRange.start.rowIndex;
-    const endRange = tableRange.end;
-    let endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
-    if (startRowIndex === 0 && endRowIndex === 0) {
-        return;
-    }
+  let startRowIndex = tableRange.start.rowIndex;
+  const endRange = tableRange.end;
+  let endRowIndex = dataHandler.findRowMergedLastIndex(tableData, endRange.rowIndex, endRange.colIndex);
+  if (startRowIndex === 0 && endRowIndex === 0) {
+    return;
+  }
 
-    startRowIndex = Math.max(startRowIndex, 1);
-    endRowIndex = Math.max(endRowIndex, 1);
-    const removeCount = endRowIndex - startRowIndex + 1;
+  startRowIndex = Math.max(startRowIndex, 1);
+  endRowIndex = Math.max(endRowIndex, 1);
+  const removeCount = endRowIndex - startRowIndex + 1;
 
-    // if only table body or table header left, remove table
-    if (tableData.length - removeCount < 2) {
-        tableData.splice(0, tableData.length);
-    } else {
-        _updateRowspan(tableData, startRowIndex, endRowIndex);
-        _updateMergeStartIndex(tableData, startRowIndex, endRowIndex);
+  // if only table body or table header left, remove table
+  if (tableData.length - removeCount < 2) {
+    tableData.splice(0, tableData.length);
+  } else {
+    _updateRowspan(tableData, startRowIndex, endRowIndex);
+    _updateMergeStartIndex(tableData, startRowIndex, endRowIndex);
 
-        tableData.splice(startRowIndex, removeCount);
-    }
+    tableData.splice(startRowIndex, removeCount);
+  }
 }
 
 /**
@@ -141,15 +141,15 @@ export function _removeRow(tableData, tableRange) {
  * @private
  */
 function _findFocusTd($newTable, rowIndex, colIndex) {
-    const tableData = dataHandler.createTableData($newTable);
+  const tableData = dataHandler.createTableData($newTable);
 
-    if (tableData.length - 1 < rowIndex) {
-        rowIndex -= 1;
-    }
+  if (tableData.length - 1 < rowIndex) {
+    rowIndex -= 1;
+  }
 
-    const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
+  const cellElementIndex = dataHandler.findElementIndex(tableData, rowIndex, colIndex);
 
-    return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('th,td')[cellElementIndex.colIndex];
+  return $newTable.find('tr').eq(cellElementIndex.rowIndex).find('th,td')[cellElementIndex.colIndex];
 }
 
 export default RemoveRow;

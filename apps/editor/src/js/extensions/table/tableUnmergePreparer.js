@@ -10,22 +10,22 @@ import $ from 'jquery';
  * @private
  */
 export function _prependMergeSyntaxToContent(cell) {
-    const $cell = $(cell);
-    const colspan = $cell.attr('colspan') || '';
-    const rowspan = $cell.attr('rowspan') || '';
-    let content = $cell.html();
+  const $cell = $(cell);
+  const colspan = $cell.attr('colspan') || '';
+  const rowspan = $cell.attr('rowspan') || '';
+  let content = $cell.html();
 
-    if (colspan) {
-        content = `@cols=${colspan}:${content}`;
-    }
+  if (colspan) {
+    content = `@cols=${colspan}:${content}`;
+  }
 
-    if (rowspan) {
-        content = `@rows=${rowspan}:${content}`;
-    }
+  if (rowspan) {
+    content = `@rows=${rowspan}:${content}`;
+  }
 
-    if (content) {
-        $cell.html(content);
-    }
+  if (content) {
+    $cell.html(content);
+  }
 }
 
 /**
@@ -34,7 +34,7 @@ export function _prependMergeSyntaxToContent(cell) {
  * @returns {HTMLElement}
  */
 export default function prepareTableUnmerge(tableElement) {
-    $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
+  $(tableElement).find('td, th').get().forEach(_prependMergeSyntaxToContent);
 
-    return tableElement;
+  return tableElement;
 }

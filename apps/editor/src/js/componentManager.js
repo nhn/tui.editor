@@ -7,66 +7,66 @@
  * Class ComponentManager
  */
 class ComponentManager {
+  /**
+   * Constructor
+   * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
+   */
+  constructor(editor) {
     /**
-     * Constructor
-     * @param {MarkdownEditor|WysiwygEditor} editor - Editor instance
+     * private
+     * @type {object}
+     * @private
      */
-    constructor(editor) {
-        /**
-         * private
-         * @type {object}
-         * @private
-         */
-        this._managers = {};
-        this._editor = editor;
+    this._managers = {};
+    this._editor = editor;
+  }
+
+  /**
+   * addManager
+   * Add manager
+   * @memberof ComponentManager
+   * @param {string|function} nameOrConstructor Manager name or constructor
+   * @param {function} [ManagerConstructor] Constructor
+   */
+  addManager(nameOrConstructor, ManagerConstructor) {
+    if (!ManagerConstructor) {
+      ManagerConstructor = nameOrConstructor;
+      nameOrConstructor = null;
     }
 
-    /**
-     * addManager
-     * Add manager
-     * @memberof ComponentManager
-     * @param {string|function} nameOrConstructor Manager name or constructor
-     * @param {function} [ManagerConstructor] Constructor
-     */
-    addManager(nameOrConstructor, ManagerConstructor) {
-        if (!ManagerConstructor) {
-            ManagerConstructor = nameOrConstructor;
-            nameOrConstructor = null;
-        }
+    const instance = new ManagerConstructor(this._editor);
 
-        const instance = new ManagerConstructor(this._editor);
+    this._managers[nameOrConstructor || instance.name] = instance;
+  }
 
-        this._managers[nameOrConstructor || instance.name] = instance;
+  /**
+   * getManager
+   * Get manager by manager name
+   * @memberof ComponentManager
+   * @param {string} name Manager name
+   * @returns {object} manager
+   */
+  getManager(name) {
+    return this._managers[name];
+  }
+
+  /**
+   * Remove Manager.
+   * @param {string} name - manager name
+   */
+  removeManager(name) {
+    const manager = this.getManager(name);
+
+    if (!manager) {
+      return;
     }
 
-    /**
-     * getManager
-     * Get manager by manager name
-     * @memberof ComponentManager
-     * @param {string} name Manager name
-     * @returns {object} manager
-     */
-    getManager(name) {
-        return this._managers[name];
+    if (manager.destroy) {
+      manager.destroy();
     }
 
-    /**
-     * Remove Manager.
-     * @param {string} name - manager name
-     */
-    removeManager(name) {
-        const manager = this.getManager(name);
-
-        if (!manager) {
-            return;
-        }
-
-        if (manager.destroy) {
-            manager.destroy();
-        }
-
-        delete this._managers[name];
-    }
+    delete this._managers[name];
+  }
 }
 
 export default ComponentManager;

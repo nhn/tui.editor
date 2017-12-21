@@ -6,72 +6,72 @@ import WysiwygEditor from '../../src/js/wysiwygEditor';
 import EventManager from '../../src/js/eventManager';
 
 describe('HR', () => {
-    let wwe, sq;
+  let wwe, sq;
 
-    beforeEach(() => {
-        const $container = $('<div />');
+  beforeEach(() => {
+    const $container = $('<div />');
 
-        $('body').append($container);
+    $('body').append($container);
 
-        wwe = new WysiwygEditor($container, new EventManager());
+    wwe = new WysiwygEditor($container, new EventManager());
 
-        wwe.init();
+    wwe.init();
 
-        sq = wwe.getEditor();
-        wwe.componentManager.addManager('task', WwTaskManager);
-        sq.focus();
+    sq = wwe.getEditor();
+    wwe.componentManager.addManager('task', WwTaskManager);
+    sq.focus();
+  });
+
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      $('body').empty();
+      done();
     });
+  });
 
-    // we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
-    });
+  it('add HR and if there is no next block then append default block', () => {
+    const range = sq.getSelection().cloneRange();
 
-    it('add HR and if there is no next block then append default block', () => {
-        const range = sq.getSelection().cloneRange();
+    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.collapse(true);
+    sq.setSelection(range);
 
-        range.setStart(wwe.get$Body().find('div')[0], 0);
-        range.collapse(true);
-        sq.setSelection(range);
+    HR.exec(wwe);
 
-        HR.exec(wwe);
+    expect(wwe.get$Body().find('hr').length).toEqual(1);
+    expect(wwe.get$Body().find('div').length).toEqual(2);
+  });
 
-        expect(wwe.get$Body().find('hr').length).toEqual(1);
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-    });
+  it('add HR and if there is next block then dont make default block', () => {
+    const range = sq.getSelection().cloneRange();
 
-    it('add HR and if there is next block then dont make default block', () => {
-        const range = sq.getSelection().cloneRange();
+    sq.setHTML('<div>test</div><div><br/></div>');
 
-        sq.setHTML('<div>test</div><div><br/></div>');
+    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.collapse(true);
 
-        range.setStart(wwe.get$Body().find('div')[0], 0);
-        range.collapse(true);
+    sq.setSelection(range);
 
-        sq.setSelection(range);
+    HR.exec(wwe);
 
-        HR.exec(wwe);
+    expect(wwe.get$Body().find('hr').length).toEqual(1);
+    expect(wwe.get$Body().find('div').length).toEqual(2);
+  });
 
-        expect(wwe.get$Body().find('hr').length).toEqual(1);
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-    });
+  it('append hr then cursor to next block', () => {
+    const range = sq.getSelection().cloneRange();
 
-    it('append hr then cursor to next block', () => {
-        const range = sq.getSelection().cloneRange();
+    sq.setHTML('<div>test</div><div><br/></div>');
 
-        sq.setHTML('<div>test</div><div><br/></div>');
+    range.setStart(wwe.get$Body().find('div')[0], 0);
+    range.collapse(true);
 
-        range.setStart(wwe.get$Body().find('div')[0], 0);
-        range.collapse(true);
+    sq.setSelection(range);
 
-        sq.setSelection(range);
+    HR.exec(wwe);
 
-        HR.exec(wwe);
-
-        expect(wwe.get$Body().find('div').length).toEqual(2);
-        expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('div')[1]);
-    });
+    expect(wwe.get$Body().find('div').length).toEqual(2);
+    expect(sq.getSelection().startContainer).toBe(wwe.get$Body().find('div')[1]);
+  });
 });

@@ -6,199 +6,199 @@ import WwHrManager from '../src/js/wwHrManager';
 import Hr from '../src/js/wysiwygCommands/hr';
 
 describe('WwHrManager', () => {
-    let $container, em, wwe, mgr;
+  let $container, em, wwe, mgr;
 
-    beforeEach(() => {
-        $container = $('<div />');
+  beforeEach(() => {
+    $container = $('<div />');
 
-        $('body').append($container);
+    $('body').append($container);
 
-        em = new EventManager();
+    em = new EventManager();
 
-        wwe = new WysiwygEditor($container, em);
+    wwe = new WysiwygEditor($container, em);
 
-        wwe.init();
+    wwe.init();
 
-        mgr = new WwHrManager(wwe);
-        wwe.getEditor().focus();
+    mgr = new WwHrManager(wwe);
+    wwe.getEditor().focus();
+  });
+
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      $('body').empty();
+      done();
+    });
+  });
+
+  describe('_removeHrOnEnter', () => {
+    // 현재커서가 hr을 가르키는 경우
+    it('remove hr current selection is hr', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
+
+      wwe.setValue('<div>abcd<br></div>');
+
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+      Hr.exec(wwe);
+
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+
+      mgr._removeHrOnEnter(range, {preventDefault: () => {}});
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
     });
 
-    // we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            $('body').empty();
-            done();
-        });
+    // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+    // 그런 상황에서 적용되는 케이스
+    it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
+
+      wwe.setValue('<hr><div>abcd<br></div>');
+
+      range.setStart(wwe.get$Body()[0], 1);
+      range.collapse(true);
+      mgr._removeHrOnEnter(range, {preventDefault: () => {}});
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
     });
 
-    describe('_removeHrOnEnter', () => {
-        // 현재커서가 hr을 가르키는 경우
-        it('remove hr current selection is hr', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
+    // hr이후의 엘리먼트가 없을때
+    it('remove hr then set cursor to new block when nextSibling is not exists', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<div>abcd<br></div>');
+      wwe.setValue('<div><b>abcd</b><<br></div><hr>');
 
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
+      range.setStartAfter(wwe.get$Body().children().eq(1)[0]);
+      range.collapse(true);
+      mgr._removeHrOnEnter(range, {preventDefault: () => {}});
 
-            wwe.getEditor().setSelection(range);
-            Hr.exec(wwe);
+      const newRange = wwe.getEditor().getSelection();
 
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            mgr._removeHrOnEnter(range, {preventDefault: () => {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
-        // 그런 상황에서 적용되는 케이스
-        it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div>abcd<br></div>');
-
-            range.setStart(wwe.get$Body()[0], 1);
-            range.collapse(true);
-            mgr._removeHrOnEnter(range, {preventDefault: () => {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        // hr이후의 엘리먼트가 없을때
-        it('remove hr then set cursor to new block when nextSibling is not exists', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<div><b>abcd</b><<br></div><hr>');
-
-            range.setStartAfter(wwe.get$Body().children().eq(1)[0]);
-            range.collapse(true);
-            mgr._removeHrOnEnter(range, {preventDefault: () => {}});
-
-            const newRange = wwe.getEditor().getSelection();
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-            expect(newRange.startContainer.tagName).toEqual('DIV');
-            expect(newRange.startOffset).toEqual(0);
-        });
-
-        it('remove hr then set cursor to new block if next sibling is exist', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<div><b>abcd</b><<br></div>');
-
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-            Hr.exec(wwe);
-
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
-
-            wwe.getEditor().setSelection(range);
-
-            mgr._removeHrOnEnter(range, {preventDefault: () => {}});
-
-            const newRange = wwe.getEditor().getSelection();
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-            expect(newRange.startContainer.tagName).toEqual('DIV');
-            expect(newRange.startOffset).toEqual(0);
-        });
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
+      expect(newRange.startContainer.tagName).toEqual('DIV');
+      expect(newRange.startOffset).toEqual(0);
     });
 
-    describe('_onTypedInHr', () => {
-        it('if text content is typed in hr then break new block', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
+    it('remove hr then set cursor to new block if next sibling is exist', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<div>abcd<br></div>');
+      wwe.setValue('<div><b>abcd</b><<br></div>');
 
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
 
-            wwe.getEditor().setSelection(range);
-            Hr.exec(wwe);
+      wwe.getEditor().setSelection(range);
+      Hr.exec(wwe);
 
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
 
-            wwe.getEditor().setSelection(range);
+      wwe.getEditor().setSelection(range);
 
-            mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
+      mgr._removeHrOnEnter(range, {preventDefault: () => {}});
 
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
+      const newRange = wwe.getEditor().getSelection();
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
+      expect(newRange.startContainer.tagName).toEqual('DIV');
+      expect(newRange.startOffset).toEqual(0);
+    });
+  });
+
+  describe('_onTypedInHr', () => {
+    it('if text content is typed in hr then break new block', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
+
+      wwe.setValue('<div>abcd<br></div>');
+
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+      Hr.exec(wwe);
+
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+
+      mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
+    });
+  });
+
+  describe('_removeHrOnBackspace()', () => {
+    // 현재커서가 hr을 가르키는 경우
+    it('remove hr current selection is hr', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
+
+      wwe.setValue('<div>abcd<br></div>');
+
+      range.setStart(wwe.get$Body()[0], 0);
+      range.collapse(true);
+
+      wwe.getEditor().setSelection(range);
+      Hr.exec(wwe);
+
+      range.selectNode(wwe.get$Body().find('hr')[0]);
+      range.collapse(true);
+
+      mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
     });
 
-    describe('_removeHrOnBackspace()', () => {
-        // 현재커서가 hr을 가르키는 경우
-        it('remove hr current selection is hr', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
+    // 현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
+    it('remove hr current selection\'s parentNode previousSibling is hr when offset 0', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
 
-            wwe.setValue('<div>abcd<br></div>');
+      wwe.setValue('<hr><div><b>abcd</b><<br></div>');
 
-            range.setStart(wwe.get$Body()[0], 0);
-            range.collapse(true);
+      range.setStart(wwe.get$Body().find('b')[0], 0);
+      range.collapse(true);
 
-            wwe.getEditor().setSelection(range);
-            Hr.exec(wwe);
+      mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
 
-            range.selectNode(wwe.get$Body().find('hr')[0]);
-            range.collapse(true);
-
-            mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        // 현재 같은 부모에서는 이전 엘리먼트가 더이상 없고 부모래밸의 이전 앨리먼트가 hr일경우
-        it('remove hr current selection\'s parentNode previousSibling is hr when offset 0', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div><b>abcd</b><<br></div>');
-
-            range.setStart(wwe.get$Body().find('b')[0], 0);
-            range.collapse(true);
-
-            mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
-
-        // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
-        // 그런 상황에서 적용되는 케이스
-        it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
-            const range = wwe.getEditor().getSelection().cloneRange();
-
-            wwe.setValue('<hr><div>abcd<br></div>');
-
-            range.setStart(wwe.get$Body()[0], 1);
-            range.collapse(true);
-            mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
-
-            expect(wwe.get$Body().find('hr').length).toEqual(0);
-        });
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
     });
 
-    it('unwrap div on hr whene wysiwygSetValueAfter event fire', () => {
-        wwe.getEditor().setHTML('<hr><h1>abcd</h1>');
+    // 크롬에서 커서 이동시 밑에서 위로 이동했을때 hr위에서 정상적으로 range가 잡히지 않는다
+    // 그런 상황에서 적용되는 케이스
+    it('remove hr if current is on first offset and previousSibling elemet is hr', () => {
+      const range = wwe.getEditor().getSelection().cloneRange();
 
-        em.emit('wysiwygSetValueAfter');
+      wwe.setValue('<hr><div>abcd<br></div>');
 
-        expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
+      range.setStart(wwe.get$Body()[0], 1);
+      range.collapse(true);
+      mgr._removeHrOnBackspace(range, {preventDefault: () => {}});
+
+      expect(wwe.get$Body().find('hr').length).toEqual(0);
     });
+  });
 
-    describe('_wrapDefaultBlockToOrphanTexts()', () => {
-        it('wrap selection defulat block to all orphan texts', () => {
-            wwe.get$Body().html('abcdef<div>ghijk<br></div>');
+  it('unwrap div on hr whene wysiwygSetValueAfter event fire', () => {
+    wwe.getEditor().setHTML('<hr><h1>abcd</h1>');
 
-            mgr._wrapDefaultBlockToOrphanTexts();
+    em.emit('wysiwygSetValueAfter');
 
-            expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
-        });
+    expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<hr><h1>abcd</h1>');
+  });
+
+  describe('_wrapDefaultBlockToOrphanTexts()', () => {
+    it('wrap selection defulat block to all orphan texts', () => {
+      wwe.get$Body().html('abcdef<div>ghijk<br></div>');
+
+      mgr._wrapDefaultBlockToOrphanTexts();
+
+      expect(wwe.getEditor().getHTML().replace(/<br \/>|<br>/g, '')).toEqual('<div>abcdef</div><div>ghijk</div>');
     });
+  });
 });

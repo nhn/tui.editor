@@ -4,190 +4,190 @@ import ScrollManager from '../../../src/js/extensions/scrollSync/scrollManager';
 import SectionManager from '../../../src/js/extensions/scrollSync/sectionManager';
 
 describe('ScrollManager', () => {
-    let ned, sectionManager, scrollManager, container;
+  let ned, sectionManager, scrollManager, container;
 
+  beforeEach(() => {
+    jasmine.getStyleFixtures().fixturesPath = '/base';
+    loadStyleFixtures(
+      'node_modules/codemirror/lib/codemirror.css',
+      'src/css/tui-editor.css'
+    );
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    ned = new TuiEditor({
+      el: container,
+      previewStyle: 'vertical',
+      height: '100px',
+      initialEditType: 'markdown',
+      events: {
+        'load': function(editor) {
+          sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
+          scrollManager = new ScrollManager(sectionManager, editor.getCodeMirror(), editor.preview.$el);
+        }
+      }
+    });
+  });
+
+  // we need to wait squire input event process
+  afterEach(done => {
+    setTimeout(() => {
+      document.body.removeChild(container);
+      done();
+    });
+  });
+
+  describe('get scroll data for preview from markdown', () => {
     beforeEach(() => {
-        jasmine.getStyleFixtures().fixturesPath = '/base';
-        loadStyleFixtures(
-            'node_modules/codemirror/lib/codemirror.css',
-            'src/css/tui-editor.css'
-        );
+      ned.setValue([
+        'paragraph',
+        '# header1',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        '## header2',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph',
+        'paragraph'
+      ].join('\n'));
 
-        container = document.createElement('div');
-        document.body.appendChild(container);
-
-        ned = new TuiEditor({
-            el: container,
-            previewStyle: 'vertical',
-            height: '100px',
-            initialEditType: 'markdown',
-            events: {
-                'load': function(editor) {
-                    sectionManager = new SectionManager(editor.getCodeMirror(), editor.preview);
-                    scrollManager = new ScrollManager(sectionManager, editor.getCodeMirror(), editor.preview.$el);
-                }
-            }
-        });
+      sectionManager.makeSectionList();
     });
 
-    // we need to wait squire input event process
-    afterEach(done => {
-        setTimeout(() => {
-            document.body.removeChild(container);
-            done();
-        });
+    it('get section by markdown scroll top', () => {
+      const cm = ned.getCodeMirror();
+      cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
+
+      const scrollFactors = scrollManager._getScrollFactorsOfEditor();
+
+      expect(scrollFactors.section.end).toEqual(4);
+      expect(scrollFactors.sectionRatio).not.toEqual(0);
     });
 
-    describe('get scroll data for preview from markdown', () => {
-        beforeEach(() => {
-            ned.setValue([
-                'paragraph',
-                '# header1',
-                'paragraph',
-                'paragraph',
-                'paragraph',
-                '## header2',
-                'paragraph',
-                'paragraph',
-                'paragraph',
-                'paragraph',
-                'paragraph',
-                'paragraph',
-                'paragraph'
-            ].join('\n'));
+    it('if editor scroll to bottom then return isEditorBottom === true ', () => {
+      const cm = ned.getCodeMirror();
+      cm.scrollTo(0, cm.heightAtLine(12, 'local'));
 
-            sectionManager.makeSectionList();
-        });
+      const scrollFactors = scrollManager._getScrollFactorsOfEditor();
 
-        it('get section by markdown scroll top', () => {
-            const cm = ned.getCodeMirror();
-            cm.scrollTo(0, Math.ceil(cm.heightAtLine(1, 'local')));
+      expect(scrollFactors.isEditorBottom).toBe(true);
+    });
+  });
 
-            const scrollFactors = scrollManager._getScrollFactorsOfEditor();
+  describe('running animation', () => {
+    it('call step callback function', () => {
+      const stepCallback = jasmine.createSpy('stepCallback');
+      scrollManager._animateRun(0, 10, stepCallback);
 
-            expect(scrollFactors.section.end).toEqual(4);
-            expect(scrollFactors.sectionRatio).not.toEqual(0);
-        });
-
-        it('if editor scroll to bottom then return isEditorBottom === true ', () => {
-            const cm = ned.getCodeMirror();
-            cm.scrollTo(0, cm.heightAtLine(12, 'local'));
-
-            const scrollFactors = scrollManager._getScrollFactorsOfEditor();
-
-            expect(scrollFactors.isEditorBottom).toBe(true);
-        });
+      expect(stepCallback).toHaveBeenCalled();
     });
 
-    describe('running animation', () => {
-        it('call step callback function', () => {
-            const stepCallback = jasmine.createSpy('stepCallback');
-            scrollManager._animateRun(0, 10, stepCallback);
+    it('value', done => {
+      const values = [];
 
-            expect(stepCallback).toHaveBeenCalled();
-        });
+      scrollManager._animateRun(0, 100, value => {
+        values.push(value);
 
-        it('value', done => {
-            const values = [];
+        if (value === 100) {
+          expect(values.length).toBeGreaterThan(1);
+          done();
+        }
+      });
+    });
+  });
 
-            scrollManager._animateRun(0, 100, value => {
-                values.push(value);
+  describe('sync preview scroll by markdown scroll top', () => {
+    it('get preview scrollTop that synced with markdown scroll top', done => {
+      const cm = ned.getCodeMirror();
 
-                if (value === 100) {
-                    expect(values.length).toBeGreaterThan(1);
-                    done();
-                }
-            });
-        });
+      ned.setValue([
+        'paragraph',
+        '# header1',
+        'paragraph',
+        'paragraph',
+        '## header2',
+        'paragraph'
+      ].join('\n'));
+
+      sectionManager.makeSectionList();
+
+      const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
+
+      ned.on('previewRenderAfter', () => {
+        sectionManager.sectionMatch();
+        cm.scrollTo(0, cm.heightAtLine(3, 'local'));
+
+        scrollManager.syncPreviewScrollTopToMarkdown();
+
+        expect(scrollManager.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
+
+        done();
+      });
     });
 
-    describe('sync preview scroll by markdown scroll top', () => {
-        it('get preview scrollTop that synced with markdown scroll top', done => {
-            const cm = ned.getCodeMirror();
+    it('if scroll factors have something wrong, dont scroll control', done => {
+      const cm = ned.getCodeMirror();
 
-            ned.setValue([
-                'paragraph',
-                '# header1',
-                'paragraph',
-                'paragraph',
-                '## header2',
-                'paragraph'
-            ].join('\n'));
+      ned.setValue([
+        'paragraph',
+        '# header1',
+        'paragraph',
+        'paragraph',
+        '## header2',
+        'paragraph'
+      ].join('\n'));
 
-            sectionManager.makeSectionList();
+      sectionManager.makeSectionList();
 
-            const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
+      const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
 
-            ned.on('previewRenderAfter', () => {
-                sectionManager.sectionMatch();
-                cm.scrollTo(0, cm.heightAtLine(3, 'local'));
+      ned.on('previewRenderAfter', () => {
+        sectionManager.sectionMatch();
 
-                scrollManager.syncPreviewScrollTopToMarkdown();
-
-                expect(scrollManager.$previewContainerEl.scrollTop()).not.toEqual(previewScrollTop);
-
-                done();
-            });
+        sectionManager.getSectionList().forEach(section => {
+          section.$previewSectionEl = null;
         });
 
-        it('if scroll factors have something wrong, dont scroll control', done => {
-            const cm = ned.getCodeMirror();
+        cm.scrollTo(0, cm.heightAtLine(1, 'local'));
 
-            ned.setValue([
-                'paragraph',
-                '# header1',
-                'paragraph',
-                'paragraph',
-                '## header2',
-                'paragraph'
-            ].join('\n'));
+        scrollManager.syncPreviewScrollTopToMarkdown();
 
-            sectionManager.makeSectionList();
+        expect(scrollManager.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
 
-            const previewScrollTop = scrollManager.$previewContainerEl.scrollTop();
-
-            ned.on('previewRenderAfter', () => {
-                sectionManager.sectionMatch();
-
-                sectionManager.getSectionList().forEach(section => {
-                    section.$previewSectionEl = null;
-                });
-
-                cm.scrollTo(0, cm.heightAtLine(1, 'local'));
-
-                scrollManager.syncPreviewScrollTopToMarkdown();
-
-                expect(scrollManager.$previewContainerEl.scrollTop()).toEqual(previewScrollTop);
-
-                done();
-            });
-        });
+        done();
+      });
     });
+  });
 
-    describe('Hidden codemirror', () => {
-        it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', () => {
-            const cm = ned.getCodeMirror();
+  describe('Hidden codemirror', () => {
+    it('if codemirror invisible so return scrollInfo incorrectly than use saved scrollInfo', () => {
+      const cm = ned.getCodeMirror();
 
-            ned.setValue([
-                'paragraph',
-                '# header1',
-                'paragraph',
-                'paragraph',
-                '## header2',
-                'paragraph'
-            ].join('\n'));
+      ned.setValue([
+        'paragraph',
+        '# header1',
+        'paragraph',
+        'paragraph',
+        '## header2',
+        'paragraph'
+      ].join('\n'));
 
-            sectionManager.makeSectionList();
+      sectionManager.makeSectionList();
 
-            scrollManager.saveScrollInfo();
+      scrollManager.saveScrollInfo();
 
-            cm.scrollTo(0, cm.heightAtLine(6, 'local'));
+      cm.scrollTo(0, cm.heightAtLine(6, 'local'));
 
-            cm.getWrapperElement().style.display = 'none';
+      cm.getWrapperElement().style.display = 'none';
 
-            const scrollInfo = cm.getScrollInfo();
+      const scrollInfo = cm.getScrollInfo();
 
-            expect(scrollManager._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollManager._savedScrollInfo);
-        });
+      expect(scrollManager._fallbackScrollInfoIfIncorrect(scrollInfo)).toBe(scrollManager._savedScrollInfo);
     });
+  });
 });

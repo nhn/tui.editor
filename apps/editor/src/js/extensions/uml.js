@@ -14,35 +14,35 @@ const LANG = 'uml';
  * @ignore
  */
 function umlExtension(editor, options = {}) {
-    const {
-        rendererURL = DEFAULT_RENDERER_URL
-    } = options;
+  const {
+    rendererURL = DEFAULT_RENDERER_URL
+  } = options;
 
-    /**
-     * render html from uml
-     * @param {string} umlCode - plant uml code text
-     * @returns {string} - rendered html
-     */
-    function plantUMLReplacer(umlCode) {
-        let renderedHTML;
+  /**
+   * render html from uml
+   * @param {string} umlCode - plant uml code text
+   * @returns {string} - rendered html
+   */
+  function plantUMLReplacer(umlCode) {
+    let renderedHTML;
 
-        try {
-            if (!plantumlEncoder) {
-                throw new Error('plantuml-encoder dependency required');
-            }
-            renderedHTML = `<img src="${rendererURL}${plantumlEncoder.encode(umlCode)}" />`;
-        } catch (err) {
-            renderedHTML = `Error occurred on encoding uml: ${err.message}`;
-        }
-
-        return renderedHTML;
+    try {
+      if (!plantumlEncoder) {
+        throw new Error('plantuml-encoder dependency required');
+      }
+      renderedHTML = `<img src="${rendererURL}${plantumlEncoder.encode(umlCode)}" />`;
+    } catch (err) {
+      renderedHTML = `Error occurred on encoding uml: ${err.message}`;
     }
 
-    const optionLanguages = editor.options.codeBlockLanguages;
-    if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
-        optionLanguages.push(LANG);
-    }
-    codeBlockManager.setReplacer(LANG, plantUMLReplacer);
+    return renderedHTML;
+  }
+
+  const optionLanguages = editor.options.codeBlockLanguages;
+  if (optionLanguages && optionLanguages.indexOf(LANG) < 0) {
+    optionLanguages.push(LANG);
+  }
+  codeBlockManager.setReplacer(LANG, plantUMLReplacer);
 }
 
 Editor.defineExtension('uml', umlExtension);

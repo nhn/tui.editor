@@ -14,22 +14,22 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
-    name: 'Blockquote',
-    keyMap: ['CTRL+Q', 'META+Q'],
-    /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
+  name: 'Blockquote',
+  keyMap: ['CTRL+Q', 'META+Q'],
+  /**
+   *  커맨드 핸들러
+   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   */
+  exec(wwe) {
+    const sq = wwe.getEditor();
 
-        wwe.focus();
+    wwe.focus();
 
-        if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-            wwe.unwrapBlockTag();
-            sq.increaseQuoteLevel();
-        }
+    if (!sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+      wwe.unwrapBlockTag();
+      sq.increaseQuoteLevel();
     }
+  }
 });
 
 export default Blockquote;

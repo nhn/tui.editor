@@ -3,111 +3,111 @@ import $ from 'jquery';
 import UIController from '../../src/js/ui/uicontroller';
 
 describe('UIController', () => {
-    let uic;
+  let uic;
 
-    beforeEach(() => {
-        uic = new UIController();
+  beforeEach(() => {
+    uic = new UIController();
+  });
+
+  afterEach(() => {
+    $('body').empty();
+  });
+
+  describe('on()', () => {
+    it('should bind custom event handler', () => {
+      const spy = jasmine.createSpy();
+
+      uic.on('event!', spy);
+
+      uic.trigger('event!');
+
+      expect(spy).toHaveBeenCalled();
     });
 
-    afterEach(() => {
-        $('body').empty();
+    it('should bind event handler on element', () => {
+      const spy = jasmine.createSpy();
+
+      uic.on('click', spy);
+
+      uic.$el.trigger('click');
+
+      expect(spy).toHaveBeenCalled();
     });
 
-    describe('on()', () => {
-        it('should bind custom event handler', () => {
-            const spy = jasmine.createSpy();
+    it('should bind multiple event handler via object', () => {
+      const spy = jasmine.createSpy();
 
-            uic.on('event!', spy);
+      uic.on({
+        'event!': spy
+      });
 
-            uic.trigger('event!');
+      uic.trigger('event!');
 
-            expect(spy).toHaveBeenCalled();
-        });
+      expect(spy).toHaveBeenCalled();
+    });
+  });
 
-        it('should bind event handler on element', () => {
-            const spy = jasmine.createSpy();
+  describe('off()', () => {
+    it('should unbind custom event handler', () => {
+      const spy = jasmine.createSpy();
 
-            uic.on('click', spy);
+      uic.on('event!', spy);
 
-            uic.$el.trigger('click');
+      uic.off('event!');
 
-            expect(spy).toHaveBeenCalled();
-        });
+      uic.trigger('event!');
 
-        it('should bind multiple event handler via object', () => {
-            const spy = jasmine.createSpy();
-
-            uic.on({
-                'event!': spy
-            });
-
-            uic.trigger('event!');
-
-            expect(spy).toHaveBeenCalled();
-        });
+      expect(spy).not.toHaveBeenCalled();
     });
 
-    describe('off()', () => {
-        it('should unbind custom event handler', () => {
-            const spy = jasmine.createSpy();
+    it('should unbind event handler on element', () => {
+      const spy = jasmine.createSpy();
 
-            uic.on('event!', spy);
+      uic.on('click', spy);
+      uic.off('click');
+      uic.$el.trigger('click');
 
-            uic.off('event!');
-
-            uic.trigger('event!');
-
-            expect(spy).not.toHaveBeenCalled();
-        });
-
-        it('should unbind event handler on element', () => {
-            const spy = jasmine.createSpy();
-
-            uic.on('click', spy);
-            uic.off('click');
-            uic.$el.trigger('click');
-
-            expect(spy).not.toHaveBeenCalled();
-        });
-
-        it('should unbind all event handlers if no event specified', () => {
-            const spy = jasmine.createSpy();
-            const spy2 = jasmine.createSpy();
-
-            uic.on('click', spy);
-            uic.on('event!', spy);
-
-            uic.off();
-
-            uic.$el.trigger('click');
-            uic.trigger('event!');
-
-            expect(spy).not.toHaveBeenCalled();
-            expect(spy2).not.toHaveBeenCalled();
-        });
+      expect(spy).not.toHaveBeenCalled();
     });
 
-    describe('_setRootElement()', () => {
-        it('should set root element with given jQuery element', () => {
-            const elem = $('<div />');
+    it('should unbind all event handlers if no event specified', () => {
+      const spy = jasmine.createSpy();
+      const spy2 = jasmine.createSpy();
 
-            uic._setRootElement(elem);
+      uic.on('click', spy);
+      uic.on('event!', spy);
 
-            expect(uic.$el).toBe(elem);
-        });
+      uic.off();
 
-        it('should set root element with div element if no parameter provided', () => {
-            uic._setRootElement();
-            expect(uic.$el[0].tagName).toBe('DIV');
-        });
+      uic.$el.trigger('click');
+      uic.trigger('event!');
 
-        it('should set root element according to tagName & className properties', () => {
-            uic.tagName = 'ol';
-            uic.className = 'myclass';
-            uic._setRootElement();
-
-            expect(uic.$el[0].tagName).toEqual('OL');
-            expect(uic.$el[0].className).toEqual('myclass');
-        });
+      expect(spy).not.toHaveBeenCalled();
+      expect(spy2).not.toHaveBeenCalled();
     });
+  });
+
+  describe('_setRootElement()', () => {
+    it('should set root element with given jQuery element', () => {
+      const elem = $('<div />');
+
+      uic._setRootElement(elem);
+
+      expect(uic.$el).toBe(elem);
+    });
+
+    it('should set root element with div element if no parameter provided', () => {
+      uic._setRootElement();
+      expect(uic.$el[0].tagName).toBe('DIV');
+    });
+
+    it('should set root element according to tagName & className properties', () => {
+      uic.tagName = 'ol';
+      uic.className = 'myclass';
+      uic._setRootElement();
+
+      expect(uic.$el[0].tagName).toEqual('OL');
+      expect(uic.$el[0].className).toEqual('myclass');
+    });
+  });
 });

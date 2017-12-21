@@ -14,50 +14,50 @@ import domUtils from '../domUtils';
  * @ignore
  */
 const HR = CommandManager.command('wysiwyg', /** @lends HR */{
-    name: 'HR',
-    keyMap: ['CTRL+L', 'META+L'],
-    /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection();
-        let currentNode, nextBlockNode, previousSibling;
+  name: 'HR',
+  keyMap: ['CTRL+L', 'META+L'],
+  /**
+   *  커맨드 핸들러
+   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   */
+  exec(wwe) {
+    const sq = wwe.getEditor();
+    const range = sq.getSelection();
+    let currentNode, nextBlockNode, previousSibling;
 
-        if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
-            currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
-            nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
+    if (range.collapsed && !sq.hasFormat('TABLE') && !sq.hasFormat('PRE')) {
+      currentNode = domUtils.getChildNodeByOffset(range.startContainer, range.startOffset);
+      nextBlockNode = domUtils.getTopNextNodeUnder(currentNode, wwe.get$Body()[0]);
 
-            if (!nextBlockNode) {
-                nextBlockNode = sq.createDefaultBlock();
-                wwe.get$Body().append(nextBlockNode);
-            }
+      if (!nextBlockNode) {
+        nextBlockNode = sq.createDefaultBlock();
+        wwe.get$Body().append(nextBlockNode);
+      }
 
-            const hr = sq.createElement('HR');
+      const hr = sq.createElement('HR');
 
-            sq.modifyBlocks(frag => {
-                frag.appendChild(hr);
+      sq.modifyBlocks(frag => {
+        frag.appendChild(hr);
 
-                return frag;
-            });
+        return frag;
+      });
 
-            ({previousSibling} = hr);
-            if (previousSibling
+      ({previousSibling} = hr);
+      if (previousSibling
                 && domUtils.isTextNode(previousSibling)
                 && domUtils.getTextLength(previousSibling) === 0
-            ) {
-                hr.parentNode.removeChild(previousSibling);
-            }
+      ) {
+        hr.parentNode.removeChild(previousSibling);
+      }
 
-            range.selectNodeContents(nextBlockNode);
-            range.collapse(true);
+      range.selectNodeContents(nextBlockNode);
+      range.collapse(true);
 
-            sq.setSelection(range);
-        }
-
-        wwe.focus();
+      sq.setSelection(range);
     }
+
+    wwe.focus();
+  }
 });
 
 export default HR;

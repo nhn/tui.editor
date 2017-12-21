@@ -13,38 +13,38 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const Table = CommandManager.command('wysiwyg', /** @lends Table */{
-    name: 'Table',
-    /**
-     * Command Handler
-     * @param {WysiwygEditor} wwe WYsiwygEditor instance
-     * @param {number} col column count
-     * @param {number} row row count
-     * @param {Array} data initial table data
-     */
-    exec(wwe, col, row, data) {
-        const sq = wwe.getEditor();
-        const tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
-        let tableHTMLString;
+  name: 'Table',
+  /**
+   * Command Handler
+   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {number} col column count
+   * @param {number} row row count
+   * @param {Array} data initial table data
+   */
+  exec(wwe, col, row, data) {
+    const sq = wwe.getEditor();
+    const tableIDClassName = wwe.componentManager.getManager('table').getTableIDClassName();
+    let tableHTMLString;
 
-        if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
-            wwe.focus();
+    if (!sq.getSelection().collapsed || sq.hasFormat('TABLE') || sq.hasFormat('PRE')) {
+      wwe.focus();
 
-            return;
-        }
-
-        tableHTMLString = `<table class="${tableIDClassName}">`;
-        tableHTMLString += makeHeader(col, data);
-        tableHTMLString += makeBody(col, row - 1, data);
-        tableHTMLString += '</table>';
-
-        sq.insertHTML(tableHTMLString);
-
-        wwe.focus();
-
-        if (!data) {
-            focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
-        }
+      return;
     }
+
+    tableHTMLString = `<table class="${tableIDClassName}">`;
+    tableHTMLString += makeHeader(col, data);
+    tableHTMLString += makeBody(col, row - 1, data);
+    tableHTMLString += '</table>';
+
+    sq.insertHTML(tableHTMLString);
+
+    wwe.focus();
+
+    if (!data) {
+      focusToFirstTh(sq, wwe.get$Body().find(`.${tableIDClassName}`));
+    }
+  }
 });
 
 /**
@@ -53,11 +53,11 @@ const Table = CommandManager.command('wysiwyg', /** @lends Table */{
  * @param {jQuery} $table jQuery wrapped table element
  */
 function focusToFirstTh(sq, $table) {
-    const range = sq.getSelection();
+  const range = sq.getSelection();
 
-    range.selectNodeContents($table.find('th')[0]);
-    range.collapse(true);
-    sq.setSelection(range);
+  range.selectNodeContents($table.find('th')[0]);
+  range.collapse(true);
+  sq.setSelection(range);
 }
 
 /**
@@ -68,24 +68,24 @@ function focusToFirstTh(sq, $table) {
  * @returns {string} html string
  */
 function makeHeader(col, data) {
-    let header = '<thead><tr>';
-    let index = 0;
+  let header = '<thead><tr>';
+  let index = 0;
 
-    while (col) {
-        header += '<th>';
+  while (col) {
+    header += '<th>';
 
-        if (data) {
-            header += data[index];
-            index += 1;
-        }
-
-        header += '</th>';
-        col -= 1;
+    if (data) {
+      header += data[index];
+      index += 1;
     }
 
-    header += '</tr></thead>';
+    header += '</th>';
+    col -= 1;
+  }
 
-    return header;
+  header += '</tr></thead>';
+
+  return header;
 }
 
 /**
@@ -97,29 +97,29 @@ function makeHeader(col, data) {
  * @returns {string} html string
  */
 function makeBody(col, row, data) {
-    let body = '<tbody>';
-    let index = col;
+  let body = '<tbody>';
+  let index = col;
 
-    for (let irow = 0; irow < row; irow += 1) {
-        body += '<tr>';
+  for (let irow = 0; irow < row; irow += 1) {
+    body += '<tr>';
 
-        for (let icol = 0; icol < col; icol += 1) {
-            body += '<td>';
+    for (let icol = 0; icol < col; icol += 1) {
+      body += '<td>';
 
-            if (data) {
-                body += data[index];
-                index += 1;
-            }
+      if (data) {
+        body += data[index];
+        index += 1;
+      }
 
-            body += '</td>';
-        }
-
-        body += '</tr>';
+      body += '</td>';
     }
 
-    body += '</tbody>';
+    body += '</tr>';
+  }
 
-    return body;
+  body += '</tbody>';
+
+  return body;
 }
 
 export default Table;

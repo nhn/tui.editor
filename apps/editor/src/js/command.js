@@ -8,79 +8,79 @@ import util from 'tui-code-snippet';
  * Class Command
  */
 class Command {
-    /**
-     * @param {string} name Command name
-     * @param {number} type Command type (Command.TYPE)
-     * @param {Array.<string>} [keyMap] keyMap
-     */
-    constructor(name, type, keyMap) {
-        this.name = name;
-        this.type = type;
+  /**
+   * @param {string} name Command name
+   * @param {number} type Command type (Command.TYPE)
+   * @param {Array.<string>} [keyMap] keyMap
+   */
+  constructor(name, type, keyMap) {
+    this.name = name;
+    this.type = type;
 
-        if (keyMap) {
-            this.setKeyMap(keyMap);
-        }
+    if (keyMap) {
+      this.setKeyMap(keyMap);
     }
-    /**
-     * getName
-     * returns Name of command
-     * @memberof Command
-     * @returns {string} Command Name
-     */
-    getName() {
-        return this.name;
-    }
+  }
+  /**
+   * getName
+   * returns Name of command
+   * @memberof Command
+   * @returns {string} Command Name
+   */
+  getName() {
+    return this.name;
+  }
 
-    /**
-     * getType
-     * returns Type of command
-     * @memberof Command
-     * @returns {number} Command Command type number
-     */
-    getType() {
-        return this.type;
-    }
+  /**
+   * getType
+   * returns Type of command
+   * @memberof Command
+   * @returns {number} Command Command type number
+   */
+  getType() {
+    return this.type;
+  }
 
-    /**
-     * isMDType
-     * returns whether Command Type is Markdown or not
-     * @memberof Command
-     * @returns {boolean} result
-     */
-    isMDType() {
-        return this.type === Command.TYPE.MD;
-    }
+  /**
+   * isMDType
+   * returns whether Command Type is Markdown or not
+   * @memberof Command
+   * @returns {boolean} result
+   */
+  isMDType() {
+    return this.type === Command.TYPE.MD;
+  }
 
-    /**
-     * isWWType
-     * returns whether Command Type is Wysiwyg or not
-     * @memberof Command
-     * @returns {boolean} result
-     */
-    isWWType() {
-        return this.type === Command.TYPE.WW;
-    }
+  /**
+   * isWWType
+   * returns whether Command Type is Wysiwyg or not
+   * @memberof Command
+   * @returns {boolean} result
+   */
+  isWWType() {
+    return this.type === Command.TYPE.WW;
+  }
 
-    /**
-     * isGlobalType
-     * returns whether Command Type is Global or not
-     * @memberof Command
-     * @returns {boolean} result
-     */
-    isGlobalType() {
-        return this.type === Command.TYPE.GB;
-    }
+  /**
+   * isGlobalType
+   * returns whether Command Type is Global or not
+   * @memberof Command
+   * @returns {boolean} result
+   */
+  isGlobalType() {
+    return this.type === Command.TYPE.GB;
+  }
 
-    /**
-     * setKeyMap
-     * Set keymap value for each os
-     * @memberof Command
-     * @param {string} win Windows Key(and etc)
-     * @param {string} mac Mac osx key
-     */
-    setKeyMap(win, mac) {
-        this.keyMap = [win, mac];
-    }
+  /**
+   * setKeyMap
+   * Set keymap value for each os
+   * @memberof Command
+   * @param {string} win Windows Key(and etc)
+   * @param {string} mac Mac osx key
+   */
+  setKeyMap(win, mac) {
+    this.keyMap = [win, mac];
+  }
 }
 
 /**
@@ -93,21 +93,21 @@ class Command {
  * @returns {Command}
  */
 Command.factory = function(typeStr, props) {
-    let type;
+  let type;
 
-    if (typeStr === 'markdown') {
-        type = Command.TYPE.MD;
-    } else if (typeStr === 'wysiwyg') {
-        type = Command.TYPE.WW;
-    } else if (typeStr === 'global') {
-        type = Command.TYPE.GB;
-    }
+  if (typeStr === 'markdown') {
+    type = Command.TYPE.MD;
+  } else if (typeStr === 'wysiwyg') {
+    type = Command.TYPE.WW;
+  } else if (typeStr === 'global') {
+    type = Command.TYPE.GB;
+  }
 
-    const command = new Command(props.name, type);
+  const command = new Command(props.name, type);
 
-    util.extend(command, props);
+  util.extend(command, props);
 
-    return command;
+  return command;
 };
 
 /**
@@ -119,9 +119,9 @@ Command.factory = function(typeStr, props) {
  * @type {object}
  */
 Command.TYPE = {
-    MD: 0,
-    WW: 1,
-    GB: 2
+  MD: 0,
+  WW: 1,
+  GB: 2
 };
 
 export default Command;

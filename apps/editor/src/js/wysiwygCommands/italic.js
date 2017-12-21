@@ -15,30 +15,30 @@ import domUtils from '../domUtils';
  * @ignore
  */
 const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
-    name: 'Italic',
-    keyMap: ['CTRL+I', 'META+I'],
-    /**
-     *  커맨드 핸들러
-     *  @param {WysiwygEditor} wwe WYsiwygEditor instance
-     */
-    exec(wwe) {
-        const sq = wwe.getEditor();
-        const range = sq.getSelection();
-        const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
+  name: 'Italic',
+  keyMap: ['CTRL+I', 'META+I'],
+  /**
+   *  커맨드 핸들러
+   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   */
+  exec(wwe) {
+    const sq = wwe.getEditor();
+    const range = sq.getSelection();
+    const tableSelectionManager = wwe.componentManager.getManager('tableSelection');
 
-        wwe.focus();
+    wwe.focus();
 
-        if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
-            tableSelectionManager.styleToSelectedCells(styleItalic);
-        } else {
-            styleItalic(sq);
-        }
-
-        if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
-            range.collapse(true);
-            sq.setSelection(range);
-        }
+    if (sq.hasFormat('table') && tableSelectionManager.getSelectedCells().length) {
+      tableSelectionManager.styleToSelectedCells(styleItalic);
+    } else {
+      styleItalic(sq);
     }
+
+    if (sq.hasFormat('table') && !domUtils.isTextNode(range.commonAncestorContainer)) {
+      range.collapse(true);
+      sq.setSelection(range);
+    }
+  }
 });
 
 /**
@@ -46,14 +46,14 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
  * @param {object} sq - squire editor instance
  */
 function styleItalic(sq) {
-    if (sq.hasFormat('i') || sq.hasFormat('em')) {
-        sq.changeFormat(null, {tag: 'i'});
-    } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
-        if (sq.hasFormat('code')) {
-            sq.changeFormat(null, {tag: 'code'});
-        }
-        sq.italic();
+  if (sq.hasFormat('i') || sq.hasFormat('em')) {
+    sq.changeFormat(null, {tag: 'i'});
+  } else if (!sq.hasFormat('a') && !sq.hasFormat('PRE')) {
+    if (sq.hasFormat('code')) {
+      sq.changeFormat(null, {tag: 'code'});
     }
+    sq.italic();
+  }
 }
 
 export default Italic;

@@ -13,11 +13,11 @@ import tableDataHandler from './tableDataHandler';
  * @private
  */
 function _createCellHtml(cell) {
-    let attrs = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
-    attrs += cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
-    attrs += cell.align ? ` align="${cell.align}"` : '';
+  let attrs = cell.colspan > 1 ? ` colspan="${cell.colspan}"` : '';
+  attrs += cell.rowspan > 1 ? ` rowspan="${cell.rowspan}"` : '';
+  attrs += cell.align ? ` align="${cell.align}"` : '';
 
-    return `<${cell.nodeName}${attrs}>${cell.content}</${cell.nodeName}>`;
+  return `<${cell.nodeName}${attrs}>${cell.content}</${cell.nodeName}>`;
 }
 
 /**
@@ -28,18 +28,18 @@ function _createCellHtml(cell) {
  * @private
  */
 function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
-    let html = '';
+  let html = '';
 
-    if (trs.length) {
-        html = trs.map(tr => {
-            const tdHtml = tr.map(_createCellHtml).join('');
+  if (trs.length) {
+    html = trs.map(tr => {
+      const tdHtml = tr.map(_createCellHtml).join('');
 
-            return `<tr>${tdHtml}</tr>`;
-        }).join('');
-        html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
-    }
+      return `<tr>${tdHtml}</tr>`;
+    }).join('');
+    html = `<${wrapperNodeName}>${html}</${wrapperNodeName}>`;
+  }
 
-    return html;
+  return html;
 }
 
 /**
@@ -49,13 +49,13 @@ function _createTheadOrTbodyHtml(trs, wrapperNodeName) {
  * @private
  */
 function createTableHtml(renderData) {
-    const thead = [renderData[0]];
-    const tbody = renderData.slice(1);
-    const theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
-    const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
-    const className = renderData.className ? ` class="${renderData.className}"` : '';
+  const thead = [renderData[0]];
+  const tbody = renderData.slice(1);
+  const theadHtml = _createTheadOrTbodyHtml(thead, 'THEAD');
+  const tbodyHtml = _createTheadOrTbodyHtml(tbody, 'TBODY');
+  const className = renderData.className ? ` class="${renderData.className}"` : '';
 
-    return `<table${className}>${theadHtml + tbodyHtml}</renderData>`;
+  return `<table${className}>${theadHtml + tbodyHtml}</renderData>`;
 }
 
 /**
@@ -66,13 +66,13 @@ function createTableHtml(renderData) {
  * @ignore
  */
 function replaceTable($table, tableData) {
-    const cellIndexData = tableDataHandler.createCellIndexData(tableData);
-    const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
-    const $newTable = $(createTableHtml(renderData));
+  const cellIndexData = tableDataHandler.createCellIndexData(tableData);
+  const renderData = tableDataHandler.createRenderData(tableData, cellIndexData);
+  const $newTable = $(createTableHtml(renderData));
 
-    $table.replaceWith($newTable);
+  $table.replaceWith($newTable);
 
-    return $newTable;
+  return $newTable;
 }
 
 /**
@@ -83,13 +83,13 @@ function replaceTable($table, tableData) {
  * @ignore
  */
 function focusToCell(sq, range, targetCell) {
-    range.selectNodeContents(targetCell);
-    range.collapse(true);
-    sq.setSelection(range);
+  range.selectNodeContents(targetCell);
+  range.collapse(true);
+  sq.setSelection(range);
 }
 
 export default {
-    createTableHtml,
-    replaceTable,
-    focusToCell
+  createTableHtml,
+  replaceTable,
+  focusToCell
 };

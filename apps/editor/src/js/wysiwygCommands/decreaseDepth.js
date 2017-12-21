@@ -15,25 +15,25 @@ import CommandManager from '../commandManager';
  * @ignore
  */
 const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
-    name: 'DecreaseDepth',
+  name: 'DecreaseDepth',
 
-    /**
-     * Command Handler
-     * @param {WysiwygEditor} wwe WysiwygEditor instance
-     */
-    exec(wwe) {
-        let $node = getCurrent$Li(wwe);
+  /**
+   * Command Handler
+   * @param {WysiwygEditor} wwe WysiwygEditor instance
+   */
+  exec(wwe) {
+    let $node = getCurrent$Li(wwe);
 
-        if ($node.length && isExecutable($node)) {
-            wwe.getEditor().saveUndoState();
+    if ($node.length && isExecutable($node)) {
+      wwe.getEditor().saveUndoState();
 
-            const nodeClasses = $node.attr('class');
-            wwe.getEditor().decreaseListLevel();
+      const nodeClasses = $node.attr('class');
+      wwe.getEditor().decreaseListLevel();
 
-            $node = getCurrent$Li(wwe);
-            $node.attr('class', nodeClasses);
-        }
+      $node = getCurrent$Li(wwe);
+      $node.attr('class', nodeClasses);
     }
+  }
 });
 
 /**
@@ -45,7 +45,7 @@ const DecreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
  * @ignore
  */
 function isExecutable($currentLiNode) {
-    return !($currentLiNode.next().is('OL,UL'));
+  return !($currentLiNode.next().is('OL,UL'));
 }
 
 /**
@@ -55,9 +55,9 @@ function isExecutable($currentLiNode) {
  * @ignore
  */
 function getCurrent$Li(wwe) {
-    const range = wwe.getEditor().getSelection();
+  const range = wwe.getEditor().getSelection();
 
-    return $(range.startContainer).closest('li');
+  return $(range.startContainer).closest('li');
 }
 
 export default DecreaseDepth;
