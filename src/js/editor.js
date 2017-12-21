@@ -732,6 +732,12 @@ class ToastUIEditor {
 }
 
 /**
+ * check whther is viewer
+ * @type {boolean}
+ */
+ToastUIEditor.isViewer = false;
+
+/**
  * I18n instance
  * @type {I18n}
  */
@@ -785,4 +791,4 @@ ToastUIEditor.CommandManager = CommandManager;
  */
 ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
-module.exports = ToastUIEditor;
+export default ToastUIEditor;

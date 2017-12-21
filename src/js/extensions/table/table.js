@@ -4,8 +4,7 @@
  */
 import $ from 'jquery';
 
-import Editor from '../../editor';
-import EditorViewOnly from '../../viewOnly';
+import Editor from '../editor';
 
 import './langs';
 import createMergedTable from './mergedTableCreator';
@@ -139,4 +138,4 @@ function _bindEvents(eventManager) {
     eventManager.listen('addCommandBefore', _snatchWysiwygCommand);
 }
 
-(Editor || EditorViewOnly).defineExtension('table', tableExtension);
+Editor.defineExtension('table', tableExtension);

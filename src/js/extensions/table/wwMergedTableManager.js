@@ -5,13 +5,12 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../editor';
+import Editor from '../editor';
 import tableDataHandler from './tableDataHandler';
 import tableRenderer from './tableRenderer';
 import tableRangeHandler from './tableRangeHandler';
 
-const WwTableManager = Editor ? Editor.WwTableManager : null;
-const i18n = Editor ? Editor.i18n : {};
+const {WwTableManager, i18n} = Editor;
 const PASTE_TABLE_BOOKMARK = 'tui-paste-table-bookmark';
 const PASTE_TABLE_CELL_BOOKMARK = 'tui-paste-table-cell-bookmark';
 

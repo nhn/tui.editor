@@ -5,15 +5,15 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../editor';
+import Editor from '../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
-let UnmergeCell;
+const {CommandManager} = Editor;
 
-if (Editor) {
-    const {CommandManager} = Editor;
+let UnmergeCell;
+if (CommandManager) {
     UnmergeCell = CommandManager.command('wysiwyg', /** @lends UnmergeCell */{
         name: 'UnmergeCells',
         /**

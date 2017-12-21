@@ -186,6 +186,12 @@ class ToastUIEditorViewOnly {
 }
 
 /**
+ * check whther is viewer
+ * @type {boolean}
+ */
+ToastUIEditorViewOnly.isViewer = true;
+
+/**
  * domUtil instance
  * @type {DomUtil}
  */
@@ -203,4 +209,34 @@ ToastUIEditorViewOnly.codeBlockManager = codeBlockManager;
  */
 ToastUIEditorViewOnly.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
-module.exports = ToastUIEditorViewOnly;
+/**
+ * null
+ * @type (typeof null)
+ */
+ToastUIEditorViewOnly.i18n = null;
+
+/**
+ * null
+ * @type (typeof null)
+ */
+ToastUIEditorViewOnly.Button = null;
+
+/**
+ * null
+ * @type {typeof null}
+ */
+ToastUIEditorViewOnly.WwCodeBlockManager = null;
+
+/**
+ * null
+ * @type {typeof null}
+ */
+ToastUIEditorViewOnly.WwTableManager = null;
+
+/**
+ * null
+ * @type {typeof null}
+ */
+ToastUIEditorViewOnly.WwTableSelectionManager = null;
+
+export default ToastUIEditorViewOnly;

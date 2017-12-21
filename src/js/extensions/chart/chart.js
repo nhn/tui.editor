@@ -25,13 +25,10 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 const chart = window.tui.chart;
 
+import Editor from '../editor';
 import csv from './csv';
-import Editor from '../../editor';
-import EditorViewOnly from '../../viewOnly';
 
-const EditorLoaded = Editor || EditorViewOnly;
-const WwCodeBlockManager = EditorLoaded.WwCodeBlockManager;
-const codeBlockManager = EditorLoaded.codeBlockManager;
+const {WwCodeBlockManager, codeBlockManager} = Editor;
 const LANG = 'chart';
 
 // csv configuration
@@ -493,7 +490,7 @@ function chartExtension(editor) {
     }
 }
 
-(Editor || EditorViewOnly).defineExtension('chart', chartExtension);
+Editor.defineExtension('chart', chartExtension);
 
 export {
     parseCode2DataAndOptions,

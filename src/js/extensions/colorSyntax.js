@@ -6,7 +6,6 @@ import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';
 
 import Editor from '../editor';
-import EditorViewOnly from '../viewOnly';
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;
@@ -291,6 +290,6 @@ function doubleZeroPad(numberStr) {
     return padded.substr(padded.length - 2);
 }
 
-(Editor || EditorViewOnly).defineExtension('colorSyntax', colorSyntaxExtension);
+Editor.defineExtension('colorSyntax', colorSyntaxExtension);
 
 export default colorSyntaxExtension;

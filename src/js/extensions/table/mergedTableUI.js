@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
-import Editor from '../../editor';
-const i18n = Editor ? Editor.i18n : null;
+import Editor from '../editor';
+const {i18n} = Editor;
 
 /**
  * Change contextmenu content.

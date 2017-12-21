@@ -1,7 +1,7 @@
-import Editor from '../../editor';
+import Editor from '../editor';
 
-if (Editor) {
-    const {i18n} = Editor;
+const {i18n} = Editor;
+if (i18n) {
     i18n.setLanguage(['ko', 'ko_KR'], {
         'Merge cells': '셀 병합',
         'Unmerge cells': '셀 병합해제',

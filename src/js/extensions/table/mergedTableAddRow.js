@@ -5,16 +5,15 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../../editor';
+import Editor from '../editor';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';
 
+const {CommandManager} = Editor;
+
 let AddRow;
-
-if (Editor) {
-    const {CommandManager} = Editor;
-
+if (CommandManager) {
     AddRow = CommandManager.command('wysiwyg', /** @lends AddRow */{
         name: 'AddRow',
         /**
