@@ -56,5 +56,5 @@ function styleBold(sq) {
     }
 }
 
-module.exports = Bold;
+export default Bold;
 

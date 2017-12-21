@@ -101,4 +101,4 @@ function focusToFirstTd(sq, $tr) {
     sq.setSelection(range);
 }
 
-module.exports = TableAddRow;
+export default TableAddRow;

@@ -83,5 +83,5 @@ function styleCode(editor, sq) {
     }
 }
 
-module.exports = Code;
+export default Code;
 

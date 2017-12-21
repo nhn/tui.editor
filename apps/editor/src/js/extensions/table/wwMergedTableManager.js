@@ -553,5 +553,5 @@ function any(arr, contition) {
     return result;
 }
 
-module.exports = WwMergedTableManager;
+export default WwMergedTableManager;
 

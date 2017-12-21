@@ -62,4 +62,4 @@ function getParagraphMarkdown(lineText) {
     return lineText.replace(headingRx, '');
 }
 
-module.exports = Paragraph;
+export default Paragraph;

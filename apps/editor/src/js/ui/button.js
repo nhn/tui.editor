@@ -2,8 +2,8 @@
  * @fileoverview
  * @author Sungho Kim(sungho-kim@nhnent.com) FE Development Team/NHN Ent.
  */
-const UIController = require('./uicontroller');
-const tooltip = require('./tooltip');
+import UIController from './uicontroller';
+import tooltip from './tooltip';
 
 /**
  * Class Button UI
@@ -76,4 +76,4 @@ class Button extends UIController {
     }
 }
 
-module.exports = Button;
+export default Button;

@@ -199,4 +199,4 @@ class WysiwygMarkerHelper {
         this.sqe.setSelection(range);
     }
 }
-module.exports = WysiwygMarkerHelper;
+export default WysiwygMarkerHelper;

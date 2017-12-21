@@ -168,4 +168,4 @@ class PopupAddLink extends LayerPopup {
     }
 }
 
-module.exports = PopupAddLink;
+export default PopupAddLink;

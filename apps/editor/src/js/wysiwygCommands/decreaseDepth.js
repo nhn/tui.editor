@@ -5,7 +5,7 @@
  */
 import $ from 'jquery';
 
-const CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * DecreaseDepth
@@ -60,4 +60,4 @@ function getCurrent$Li(wwe) {
     return $(range.startContainer).closest('li');
 }
 
-module.exports = DecreaseDepth;
+export default DecreaseDepth;

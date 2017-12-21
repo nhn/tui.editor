@@ -317,4 +317,4 @@ class CodeMirrorExt {
     }
 }
 
-module.exports = CodeMirrorExt;
+export default CodeMirrorExt;

@@ -1,7 +1,6 @@
-
 import util from 'tui-code-snippet';
 
-const TuiEditor = require('../../../src/js/editor');
+import TuiEditor from '../../../src/js/editor';
 import '../../../src/js/extensions/mark/mark';
 
 describe('Mark', function() {

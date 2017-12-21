@@ -121,4 +121,4 @@ class WwPManager {
     }
 }
 
-module.exports = WwPManager;
+export default WwPManager;

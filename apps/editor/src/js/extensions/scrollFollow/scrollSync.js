@@ -351,4 +351,4 @@ class ScrollSync {
     }
 }
 
-module.exports = ScrollSync;
+export default ScrollSync;

@@ -51,4 +51,4 @@ function getRows(content) {
     return content.split('\n');
 }
 
-module.exports = excelTableParser;
+export default excelTableParser;

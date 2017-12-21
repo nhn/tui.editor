@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-const Tab = require('../../src/js/ui/tab');
+import Tab from '../../src/js/ui/tab';
 
 describe('Tab', () => {
     let tab;

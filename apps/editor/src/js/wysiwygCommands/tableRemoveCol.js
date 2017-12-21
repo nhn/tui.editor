@@ -118,4 +118,4 @@ function focusToCell(sq, $cell, tableMgr) {
     }
 }
 
-module.exports = TableRemoveCol;
+export default TableRemoveCol;

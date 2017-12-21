@@ -1,10 +1,10 @@
 import $ from 'jquery';
 
-const Toolbar = require('../../src/js/ui/toolbar');
-const CommandManager = require('../../src/js/commandManager');
-const Command = require('../../src/js/command');
-const EventManager = require('../../src/js/eventManager');
-const Button = require('../../src/js/ui/button');
+import Toolbar from '../../src/js/ui/toolbar';
+import CommandManager from '../../src/js/commandManager';
+import Command from '../../src/js/command';
+import EventManager from '../../src/js/eventManager';
+import Button from '../../src/js/ui/button';
 
 describe('Toolbar', () => {
     let toolbar,

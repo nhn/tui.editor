@@ -1,7 +1,7 @@
 
 import $ from 'jquery';
 
-const Button = require('../../src/js/ui/button');
+import Button from '../../src/js/ui/button';
 
 describe('Button', () => {
     let button;

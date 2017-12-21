@@ -145,4 +145,4 @@ class WwTextObject {
     }
 }
 
-module.exports = WwTextObject;
+export default WwTextObject;

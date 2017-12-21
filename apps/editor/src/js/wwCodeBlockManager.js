@@ -306,4 +306,4 @@ function sanitizeHtmlCode(code) {
     return code.replace(/[<>&]/g, tag => tagEntities[tag] || tag);
 }
 
-module.exports = WwCodeBlockManager;
+export default WwCodeBlockManager;

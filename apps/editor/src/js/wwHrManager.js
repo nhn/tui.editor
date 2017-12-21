@@ -243,4 +243,4 @@ function findTextNodeFilter() {
     return this.nodeType === Node.TEXT_NODE;
 }
 
-module.exports = WwHrManager;
+export default WwHrManager;

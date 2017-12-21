@@ -355,4 +355,4 @@ class WwListManager {
     }
 }
 
-module.exports = WwListManager;
+export default WwListManager;

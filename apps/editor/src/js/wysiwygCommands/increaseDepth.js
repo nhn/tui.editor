@@ -54,4 +54,4 @@ const IncreaseDepth = CommandManager.command('wysiwyg', /** @lends HR */{
     }
 });
 
-module.exports = IncreaseDepth;
+export default IncreaseDepth;

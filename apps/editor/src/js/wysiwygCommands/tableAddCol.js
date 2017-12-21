@@ -121,4 +121,4 @@ function focusToNextCell(sq, $cell) {
     sq.setSelection(range);
 }
 
-module.exports = TableAddCol;
+export default TableAddCol;

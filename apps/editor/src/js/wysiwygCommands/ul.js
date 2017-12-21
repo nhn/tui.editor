@@ -81,5 +81,5 @@ const UL = CommandManager.command('wysiwyg', /** @lends UL */{
     }
 });
 
-module.exports = UL;
+export default UL;
 

@@ -359,4 +359,4 @@ class WwClipboardManager {
     }
 }
 
-module.exports = WwClipboardManager;
+export default WwClipboardManager;

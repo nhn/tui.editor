@@ -1216,5 +1216,5 @@ function tableCellGenerator(amount, tagName) {
     return tdString;
 }
 
-module.exports = WwTableManager;
+export default WwTableManager;
 

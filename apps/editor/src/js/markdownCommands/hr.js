@@ -54,4 +54,4 @@ const HR = CommandManager.command('markdown', /** @lends HR */{
     }
 });
 
-module.exports = HR;
+export default HR;

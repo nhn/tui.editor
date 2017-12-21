@@ -4,7 +4,7 @@
  * @author Junghwan Park(junghwan.park@nhnent.com) FE Development Team/NHN Ent.
  */
 
-const CommandManager = require('../commandManager');
+import CommandManager from '../commandManager';
 
 /**
  * Blockquote
@@ -32,4 +32,4 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
     }
 });
 
-module.exports = Blockquote;
+export default Blockquote;

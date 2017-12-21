@@ -101,4 +101,4 @@ class CodeBlockGadget extends BlockOverlay {
     }
 }
 
-module.exports = CodeBlockGadget;
+export default CodeBlockGadget;

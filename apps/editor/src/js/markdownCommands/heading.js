@@ -86,4 +86,4 @@ function getHeadingMarkdown(text, size) {
     return `${heading} ${text}`;
 }
 
-module.exports = Heading;
+export default Heading;

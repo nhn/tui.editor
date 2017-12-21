@@ -71,4 +71,4 @@ class LazyRunner {
         }
     }
 }
-module.exports = LazyRunner;
+export default LazyRunner;

@@ -278,4 +278,4 @@ class DefaultUI {
     }
 }
 
-module.exports = DefaultUI;
+export default DefaultUI;

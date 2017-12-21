@@ -219,4 +219,4 @@ function getRange() {
     return range;
 }
 
-module.exports = ViewOnlyMarkerHelper;
+export default ViewOnlyMarkerHelper;

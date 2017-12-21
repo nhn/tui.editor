@@ -285,4 +285,4 @@ class LayerPopup extends UIController {
     }
 }
 
-module.exports = LayerPopup;
+export default LayerPopup;

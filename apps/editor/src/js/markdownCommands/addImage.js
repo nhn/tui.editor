@@ -43,4 +43,4 @@ const AddImage = CommandManager.command('markdown', /** @lends AddImage */ {
     }
 });
 
-module.exports = AddImage;
+export default AddImage;

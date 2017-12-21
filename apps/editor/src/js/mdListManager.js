@@ -236,4 +236,4 @@ class MdListManager {
     }
 }
 
-module.exports = MdListManager;
+export default MdListManager;

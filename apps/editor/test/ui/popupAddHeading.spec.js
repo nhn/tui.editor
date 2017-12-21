@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
-const PopupAddHeading = require('../../src/js/ui/popupAddHeading');
-const EventManager = require('../../src/js/eventManager');
+import PopupAddHeading from '../../src/js/ui/popupAddHeading';
+import EventManager from '../../src/js/eventManager';
 
 describe('PopupAddHeading', () => {
     let popup,

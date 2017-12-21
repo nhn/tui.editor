@@ -213,4 +213,4 @@ class Toolbar extends UIController {
     }
 }
 
-module.exports = Toolbar;
+export default Toolbar;

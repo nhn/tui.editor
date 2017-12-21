@@ -71,4 +71,4 @@ function isUlOrTask(line) {
     return !!(line && (line.match(FIND_MD_TASK_RX) || line.match(FIND_MD_UL_RX)));
 }
 
-module.exports = OL;
+export default OL;

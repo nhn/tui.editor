@@ -273,4 +273,4 @@ class PopupCodeBlockEditor extends LayerPopup {
     }
 }
 
-module.exports = PopupCodeBlockEditor;
+export default PopupCodeBlockEditor;

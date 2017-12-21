@@ -1136,4 +1136,4 @@ class WysiwygEditor {
         return wwe;
     }
 }
-module.exports = WysiwygEditor;
+export default WysiwygEditor;

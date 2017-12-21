@@ -152,4 +152,4 @@ CommandManager.command = function(type, props) {
     return command;
 };
 
-module.exports = CommandManager;
+export default CommandManager;

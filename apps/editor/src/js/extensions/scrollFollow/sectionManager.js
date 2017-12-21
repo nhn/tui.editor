@@ -423,4 +423,4 @@ function findElementNodeFilter() {
     return this.nodeType === Node.ELEMENT_NODE;
 }
 
-module.exports = SectionManager;
+export default SectionManager;

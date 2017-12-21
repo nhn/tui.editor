@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-const ModeSwitch = require('../../src/js/ui/modeSwitch');
+import ModeSwitch from '../../src/js/ui/modeSwitch';
 
 describe('ModeSwitch', () => {
     afterEach(() => {

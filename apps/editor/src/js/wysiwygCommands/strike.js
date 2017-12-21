@@ -55,5 +55,5 @@ function styleStrike(sq) {
     }
 }
 
-module.exports = Strike;
+export default Strike;
 

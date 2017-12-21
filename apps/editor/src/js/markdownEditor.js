@@ -246,4 +246,4 @@ class MarkdownEditor extends CodeMirrorExt {
     }
 }
 
-module.exports = MarkdownEditor;
+export default MarkdownEditor;

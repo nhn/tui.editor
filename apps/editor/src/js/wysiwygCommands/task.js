@@ -87,4 +87,4 @@ const Task = CommandManager.command('wysiwyg', /** @lends Task */{
     }
 });
 
-module.exports = Task;
+export default Task;

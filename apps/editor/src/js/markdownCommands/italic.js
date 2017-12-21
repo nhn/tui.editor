@@ -189,4 +189,4 @@ const Italic = CommandManager.command('markdown', /** @lends Italic */{
     }
 });
 
-module.exports = Italic;
+export default Italic;

@@ -69,4 +69,4 @@ class ComponentManager {
     }
 }
 
-module.exports = ComponentManager;
+export default ComponentManager;

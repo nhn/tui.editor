@@ -4,7 +4,8 @@
  */
 
 import CommandManager from '../commandManager';
-import {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} from '../importManager';
+import ImportManager from '../importManager';
+const {decodeURIGraceful, encodeMarkdownCharacters, escapeMarkdownCharacters} = ImportManager;
 
 /**
  * AddLink
@@ -49,4 +50,4 @@ const AddLink = CommandManager.command('markdown', /** @lends AddLink */{
     }
 });
 
-module.exports = AddLink;
+export default AddLink;

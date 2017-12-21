@@ -103,4 +103,4 @@ class Tab extends UIController {
     }
 }
 
-module.exports = Tab;
+export default Tab;

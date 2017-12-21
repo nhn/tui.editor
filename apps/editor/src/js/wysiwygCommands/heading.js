@@ -51,4 +51,4 @@ const Heading = CommandManager.command('wysiwyg', /** @lends Heading */{
     }
 });
 
-module.exports = Heading;
+export default Heading;
