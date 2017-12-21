@@ -158,7 +158,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
         }
         state.list = null;
 // TUI.EDITOR MODIFICATION START
-// list 에서 하이라이팅이 제대로 안되는 버그
+// bug: no highlight in list
 // https://github.nhnent.com/fe/tui.editor/commit/d42c37639942633ccaf755c0c0d20f460c0b2441
 // https://github.nhnent.com/fe/tui.editor/issues/1002
       }
@@ -246,7 +246,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 // TUI.EDITOR MODIFICATION START
 // Do not show table format pasting confirm on paste event where in Bloc... (#720)
 // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        state.task = true; // task state 관리를 위해 추가
+        state.task = true; // to manage task state
 // TUI.EDITOR MODIFICATION END
       }
       state.f = state.inline;
@@ -492,9 +492,9 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
     if (ch === '!' && stream.match(/\[[^\]]*\] ?(?:\(|\[)/, false)) {
       stream.match(/\[[^\]]*\]/);
 // TUI.EDITOR MODIFICATION START
-// 이미지문법 code mirror에서 hightlight 제거
+// remove image syntax from highlight
 // https://github.nhnent.com/fe/tui.editor/commit/d2160b8c16f392372569dc2a22f12957afd7d9f2
-      // 현재 이미지의 link를 hash값으로 사용하고 있어 데이터 문자열의 길이로 인해 highlight안되는 현상 발생, iamge의 경우 하이라이팅 하지 않음
+      // hash string in image link is too long to highligh. exclude image from highlight
       // state.inline = state.f = linkHref;
 // TUI.EDITOR MODIFICATION END
       return image;
@@ -834,7 +834,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 // TUI.EDITOR MODIFICATION START
 // Do not show table format pasting confirm on paste event where in Bloc... (#720)
 // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        task: s.task, // task state 관리를 위해 추가
+        task: s.task, // to manage task state
 // TUI.EDITOR MODIFICATION END
         list: s.list,
         listDepth: s.listDepth,
@@ -894,7 +894,7 @@ CodeMirror.defineMode("markdown", function(cmCfg, modeCfg) {
 // TUI.EDITOR MODIFICATION START
 // Do not show table format pasting confirm on paste event where in Bloc... (#720)
 // https://github.nhnent.com/fe/tui.editor/commit/ed0b8b6c0cd5928a962e533f797e5bafcbfd6b33
-        state.task = false; // task state 관리를 위해 추가
+        state.task = false; // to manage task status
         // Reset state.code
         // state.code = false;
 // TUI.EDITOR MODIFICATION END

@@ -17,8 +17,8 @@ const Italic = CommandManager.command('wysiwyg', /** @lends Italic */{
   name: 'Italic',
   keyMap: ['CTRL+I', 'META+I'],
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

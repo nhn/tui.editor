@@ -177,9 +177,9 @@ class ToastUIEditor {
   }
 
   /**
-   * 프리뷰가 보여지는 방식을 변경한다
+   * change preview style
    * @memberof ToastUIEditor
-   * @param {string} style 스타일 이름 tab, vertical
+   * @param {string} style - 'tab'|'vertical'
    */
   changePreviewStyle(style) {
     this.layout.changePreviewStyle(style);

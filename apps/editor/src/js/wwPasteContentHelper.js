@@ -39,7 +39,6 @@ class WwPasteContentHelper {
     const childNodes = util.toArray($container[0].childNodes);
 
     // prepare to paste as inline of first node if possible
-    // 앞부분의 인라인으로 붙일수 있느부분은 인라인으로 붙을수 있도록 처리
     if (childNodes.length && childNodes[0].tagName === 'DIV') {
       $tempContainer.append(this._unwrapFragmentFirstChildForPasteAsInline(childNodes[0]));
       childNodes.shift();
@@ -54,7 +53,6 @@ class WwPasteContentHelper {
         $tempContainer.append(wwCodeblockManager.prepareToPasteOnCodeblock(childNodes));
       } else if (isPastingList) {
         $tempContainer.append(this._prepareToPasteList(childNodes, range, firstBlockIsTaken));
-        // 첫번째 현재위치와 병합될 가능성이있는 컨텐츠가 만들어진경우는 이후 위치에 대한 정보가 필요없다
         firstBlockIsTaken = true;
       } else {
         $tempContainer.append(childNodes.shift());
@@ -254,7 +252,7 @@ class WwPasteContentHelper {
     let node = nodes.shift();
     const newFragment = this.wwe.getEditor().getDocument().createDocumentFragment();
 
-    // IE에서는 LI-UL 구조에서 UL이 전체가 선택되었는데 LI를 포함하지 않고 UL만 넘어올때가 있다.
+    // IE somethimes returns ul without li
     if (nodeName !== 'LI' && nodes.length && nodes[0].tagName === 'LI') {
       nodeName = 'LI';
 
@@ -263,16 +261,16 @@ class WwPasteContentHelper {
       }, node);
     }
 
-    // UL과 OL이고 리스트에 paste하는경우 뎊스처리
+    // pasting list into list, we should care indentation
     if (nodeName === 'OL' || nodeName === 'UL') {
-      // 페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+      // ignore cursor if pasting data has block
       if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
         $(newFragment).append(this._wrapCurrentFormat(node));
       } else {
         $(newFragment).append(node);
       }
     } else if (nodeName === 'LI') {
-      // 리스트 그룹처리
+      // handle list group
       const listGroup = this.wwe.getEditor().getDocument().createDocumentFragment();
       listGroup.appendChild(node);
 
@@ -280,17 +278,16 @@ class WwPasteContentHelper {
         listGroup.appendChild(nodes.shift());
       }
 
-      // 리스트에 붙는경우 뎊스 연결
-      // 페이스트 데이터의 첫번째 블럭요소가 이미 만들어졌다면 커서의 위치에 대한 대응은 하지 않는다.
+      // pasting list into list, we should care indentation
+      // ignore cursor if pasting data has block
       if (!firstBlockIsTaken && this.wwe.getEditor().hasFormat('LI')) {
         $(newFragment).append(this._wrapCurrentFormat(listGroup));
-        // 카피할당시의 정보가 있다면 해당 리스트로 만듬
       } else if (rangeInfo
                 && (rangeInfo.commonAncestorName === 'UL' || rangeInfo.commonAncestorName === 'OL')) {
         $(newFragment).append(this._makeNodeAndAppend({
           tagName: rangeInfo.commonAncestorName
         }, listGroup));
-        // 외부에서온 리스트
+        // list from outside
       } else {
         $(newFragment).append(this._makeNodeAndAppend({
           tagName: 'UL'
@@ -323,10 +320,9 @@ class WwPasteContentHelper {
   _wrapCurrentFormat(nodes) {
     let currentTagName;
 
-    // 붙여질 뎊스에 맞게 확장
+    // expand to pasting area
     this._eachCurrentPath(path => {
       if (path.tagName !== 'DIV') {
-        // 프레그먼트 노드인경우와 한번이상 감싸진 노드임
         if (domUtils.isElemNode(nodes)) {
           currentTagName = nodes.tagName;
         } else {

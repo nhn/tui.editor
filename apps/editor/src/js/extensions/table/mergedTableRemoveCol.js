@@ -18,7 +18,7 @@ if (CommandManager) {
     name: 'RemoveCol',
     /**
      * Command handler.
-     * @param {WysiwygEditor} wwe - WYsiwygEditor instance
+     * @param {WysiwygEditor} wwe - wysiwygEditor instance
      */
     exec(wwe) {
       const sq = wwe.getEditor();

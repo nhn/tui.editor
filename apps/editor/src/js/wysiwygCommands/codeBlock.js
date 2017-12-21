@@ -23,7 +23,7 @@ const CodeBlock = CommandManager.command('wysiwyg', /** @lends CodeBlock */{
   keyMap: ['SHIFT+CTRL+P', 'SHIFT+META+P'],
   /**
    * Command handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    * @param {string} type of language
    */
   exec(wwe, type) {

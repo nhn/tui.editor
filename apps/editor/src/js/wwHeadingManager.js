@@ -108,7 +108,7 @@ class WwHeadingManager {
    */
   _onEnter(event, range) {
     if (range.startOffset > 0) {
-      // squire의 처리 중간이나 마지막에 개입할 방법이 없어 지연 처리
+      // I hate this but there's no way
       this.wwe.defer(wwe => {
         this._unwrapHeading();
         wwe.getEditor().removeLastUndoStack();

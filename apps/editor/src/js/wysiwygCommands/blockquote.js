@@ -16,8 +16,8 @@ const Blockquote = CommandManager.command('wysiwyg', /** @lends Blockquote */{
   name: 'Blockquote',
   keyMap: ['CTRL+Q', 'META+Q'],
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

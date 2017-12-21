@@ -33,8 +33,8 @@ describe('UL', () => {
     $('body').empty();
   });
 
-  describe('커서위치에 UL마크다운 문법을 추가한다', () => {
-    it('텍스트가 있는 라인에서 추가된다', () => {
+  describe('add ul', () => {
+    it('to a line with text on it', () => {
       doc.setCursor(0, 0);
 
       UL.exec(mde);
@@ -50,7 +50,7 @@ describe('UL', () => {
       expect(doc.getLine(4)).toEqual('* mytext3');
     });
 
-    it('빈라인에서 추가된다', () => {
+    it('to a blank line', () => {
       doc.setCursor(1, 0);
 
       UL.exec(mde);
@@ -58,7 +58,7 @@ describe('UL', () => {
       expect(doc.getLine(2)).toEqual('* ');
     });
 
-    it('영역선택후 추가된다', () => {
+    it('around selected area', () => {
       doc.setSelection({
         line: 0,
         ch: 0

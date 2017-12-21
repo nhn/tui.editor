@@ -254,8 +254,7 @@ class WysiwygEditor {
       return false;
     });
 
-    // no-iframe전환후 레인지가 업데이트 되기 전에 이벤트가 발생함
-    // 그래서 레인지 업데이트 이후 체인지 관련 이벤트 발생
+    // change event will fired after range has been updated
     squire.addEventListener('input', util.debounce(() => {
       if (!this.isEditorValid()) {
         return;
@@ -311,8 +310,7 @@ class WysiwygEditor {
         }
       });
 
-      // 파폭에서 space입력시 텍스트노드가 분리되는 현상때문에 꼭 다시 머지해줘야한다..
-      // 이렇게 하지 않으면 textObject에 문제가 생긴다.
+      // firefox produces shattered text nodes
       squire.addEventListener('keyup', () => {
         const range = this.getRange();
 
@@ -572,7 +570,6 @@ class WysiwygEditor {
     const textElem = range.startContainer;
     const cursorOffset = range.startOffset;
 
-    // 이때 range의 정보들이 body기준으로 변경된다(텍스트 노드가 사라져서)
     // after code below, range range is arranged by body
     const block = this.getEditor().createDefaultBlock([range.startContainer]);
 
@@ -581,7 +578,7 @@ class WysiwygEditor {
     if (insertTargetNode) {
       range.setStartBefore(insertTargetNode);
     } else {
-      // 컨테이너의 차일드가 이노드 한개뿐일경우
+      // only child in container
       range.selectNodeContents(range.startContainer);
     }
 

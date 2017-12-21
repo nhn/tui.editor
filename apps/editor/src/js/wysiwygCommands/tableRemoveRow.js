@@ -16,8 +16,8 @@ import CommandManager from '../commandManager';
 const TableRemoveRow = CommandManager.command('wysiwyg', /** @lends RemoveRow */{
   name: 'RemoveRow',
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

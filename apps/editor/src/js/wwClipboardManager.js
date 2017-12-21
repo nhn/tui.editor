@@ -162,7 +162,7 @@ class WwClipboardManager {
    * @private
    */
   _removeEmptyFontElement($clipboardContainer) {
-    // windows word에서 복사 붙여넣기 시 불필요 font 태그가 생성되는 경우가 있음
+    // clipboard data from ms word tend to have unneccesary font tags
     $clipboardContainer.children('font').each((index, element) => {
       const $element = $(element);
 
@@ -266,7 +266,7 @@ class WwClipboardManager {
    * @private
    */
   _extendRange(range) {
-    // 텍스트 노드이면서 모두 선택된게 아니면 레인지를 확장할 필요가 없다.
+    // non-text node && not selected whole area, then expand the range
     if (domUtils.isTextNode(range.commonAncestorContainer)
             && (range.startOffset !== 0 || range.commonAncestorContainer.textContent.length !== range.endOffset)
             && range.commonAncestorContainer.nodeName !== 'TD'
@@ -282,7 +282,7 @@ class WwClipboardManager {
       range = this._extendEndRange(range);
     }
 
-    // commonAncestor의 모든 컨텐츠가 선택된경우 commonAncestor로 셀렉션 변경
+    // commonAncestor if all of it's children has been selected
     if (this._isWholeCommonAncestorContainerSelected(range)) {
       range.selectNode(range.commonAncestorContainer);
     }
@@ -299,7 +299,7 @@ class WwClipboardManager {
   _extendStartRange(range) {
     let newBound = range.startContainer;
 
-    // 레인지 확장
+    // expand range
     while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
         && !newBound.previousSibling
@@ -307,7 +307,7 @@ class WwClipboardManager {
       newBound = newBound.parentNode;
     }
 
-    // range단위를 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    // expand range
     range.setStart(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound));
 
     return range;
@@ -324,7 +324,7 @@ class WwClipboardManager {
     let newBound = range.endContainer;
     let boundNext = newBound.nextSibling;
 
-    // 레인지 확장
+    // expand range
     while (newBound.parentNode !== range.commonAncestorContainer
         && newBound.parentNode !== this.wwe.get$Body()[0]
         && (!boundNext || (domUtils.getNodeName(boundNext) === 'BR' && newBound.parentNode.lastChild === boundNext))) {
@@ -332,7 +332,7 @@ class WwClipboardManager {
       boundNext = newBound.nextSibling;
     }
 
-    // range단위를 부모래밸로 한단계 확장 deleteContents는 start, end에 걸린 컨테이너 자체는 안지운다.
+    // expand range level
     range.setEnd(newBound.parentNode, domUtils.getNodeOffsetOfParent(newBound) + 1);
 
     return range;
@@ -341,7 +341,6 @@ class WwClipboardManager {
   /**
    * _isWholeCommonAncestorContainerSelected
    * Check whether whole commonAncestorContainter textContent selected or not
-   * 선택된 영역이 commonAncestorContainer의 모든 컨텐츠인치 체크
    * @memberof WwClipboardManager
    * @param {Range} range Range object
    * @returns {boolean} result

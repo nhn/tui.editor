@@ -34,9 +34,9 @@ const Code = CommandManager.command('markdown', /** @lends Code */{
     cm.focus();
   },
   /**
-   * Code를 적용한다
-   * @param {string} text 셀렉션텍스트
-   * @returns {string} 가 적용된 텍스트
+   * apply Code
+   * @param {string} text - selected text
+   * @returns {string} - text after code syntax applied
    */
   append(text) {
     return `\`${text}\``;

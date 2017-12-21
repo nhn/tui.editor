@@ -34,7 +34,7 @@ describe('CommandManager', function() {
   });
 
   describe('addCommand', function() {
-    it('마크다운타입으로 등록하게되면 _mdCommand에 등록된다.', function() {
+    it('register to _mdCommand', function() {
       var command = new Command('mycommand', Command.TYPE.MD);
 
       command.setKeyMap('Ctrl-B', 'Cmd-B');
@@ -50,7 +50,7 @@ describe('CommandManager', function() {
     it('should execute command', function() {
       var command = new Command('mycommand', Command.TYPE.GB);
 
-      command.exec = jasmine.createSpy('글로벌 커맨드');
+      command.exec = jasmine.createSpy('global command');
       cmgr.addCommand(command);
 
       cmgr.exec(command.getName());
@@ -105,7 +105,7 @@ describe('CommandManager', function() {
     it('should execute command via event manager', function() {
       var command = new Command('mycommand', Command.TYPE.GB);
 
-      command.exec = jasmine.createSpy('글로벌 커맨드');
+      command.exec = jasmine.createSpy('global command');
       cmgr.addCommand(command);
 
       mockupBase.eventManager.emit('command', 'mycommand', 'myarg');

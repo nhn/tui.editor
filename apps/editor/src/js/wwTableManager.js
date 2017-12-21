@@ -93,7 +93,6 @@ class WwTableManager {
     this.eventManager.listen('copyBefore.table', ({$clipboardContainer}) =>
       this.updateTableHtmlOfClipboardIfNeed($clipboardContainer));
 
-    // TODO: eventManager 사용시 preventDefault 시의 문제가 있을것으로 추정됨 (테스트 필요) - 확인하여 가능하면 eventManager를 사용하도록 작업 필요
     this.onBindedPaste = this._onPaste.bind(this);
     this.wwe.getEditor().addEventListener('paste', this.onBindedPaste);
   }

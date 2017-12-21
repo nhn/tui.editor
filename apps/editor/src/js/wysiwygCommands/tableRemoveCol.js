@@ -18,7 +18,7 @@ const TableRemoveCol = CommandManager.command('wysiwyg', /** @lends RemoveCol */
   name: 'RemoveCol',
   /**
    * command handler
-   * @param {WysiwygEditor} wwe WYsiwygEditor instance
+   * @param {WysiwygEditor} wwe wysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

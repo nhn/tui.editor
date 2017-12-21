@@ -17,8 +17,8 @@ const Strike = CommandManager.command('wysiwyg', /** @lends Strike */{
   name: 'Strike',
   keyMap: ['CTRL+S', 'META+S'],
   /**
-   *  커맨드 핸들러
-   *  @param {WysiwygEditor} wwe WysiwygEditor instance
+   * command handler
+   * @param {WysiwygEditor} wwe WysiwygEditor instance
    */
   exec(wwe) {
     const sq = wwe.getEditor();

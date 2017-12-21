@@ -10,9 +10,9 @@
  * consumes tab separated values and make data/options for tui chart
  *
  * ```chart
- * \t범례1\t범례2           => tsv, csv format chart data
- * 1월\t21\t23
- * 2월\t351\t45
+ * \tcat1\tcat2           => tsv, csv format chart data
+ * jan\t21\t23
+ * feb\t351\t45
  *                          => space required as a separator
  * type: area               => tui.chart.areaChart()
  * url: http://url.to/csv   => fetch data from the url

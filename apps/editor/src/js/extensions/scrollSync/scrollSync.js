@@ -9,6 +9,11 @@ import SectionManager from './sectionManager';
 
 const {Button} = Editor;
 
+/**
+ * scrollSync plugin
+ * @param {Editor} editor - editor
+ * @ignore
+ */
 function scrollSyncExtension(editor) {
   const className = 'tui-scrollsync';
   const i18n = editor.i18n;
