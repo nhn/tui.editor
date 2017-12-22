@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import ToastUIEditor from './editor';
+import Editor from './editor';
 
 // for jquery
 $.fn.tuiEditor = function(...args) {
@@ -23,7 +23,7 @@ $.fn.tuiEditor = function(...args) {
       }
     } else {
       options.el = el;
-      instance = ToastUIEditor.factory(options);
+      instance = Editor.factory(options);
       $.data(el, 'tuiEditor', instance);
     }
   }
@@ -31,4 +31,4 @@ $.fn.tuiEditor = function(...args) {
   return this;
 };
 
-module.exports = ToastUIEditor;
+module.exports = Editor;
