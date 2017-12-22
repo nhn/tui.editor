@@ -4,10 +4,10 @@
  */
 import $ from 'jquery';
 
-import ToastUIEditorViewer from './viewer';
+import Viewer from './viewer';
 
 // for jquery
-$.fn.tuiEditorViewer = function(...args) {
+$.fn.tuiEditor = function(...args) {
   let options, instance;
 
   const el = this.get(0);
@@ -15,7 +15,7 @@ $.fn.tuiEditorViewer = function(...args) {
   if (el) {
     options = args[0] || {};
 
-    instance = $.data(el, 'tuiEditorViewer');
+    instance = $.data(el, 'tuiEditor');
 
     if (instance) {
       if (typeof options === 'string') {
@@ -23,12 +23,12 @@ $.fn.tuiEditorViewer = function(...args) {
       }
     } else {
       options.el = el;
-      instance = new ToastUIEditorViewer(options);
-      $.data(el, 'tuiEditorViewer', instance);
+      instance = new Viewer(options);
+      $.data(el, 'tuiEditor', instance);
     }
   }
 
   return this;
 };
 
-module.exports = ToastUIEditorViewer;
+module.exports = Viewer;
