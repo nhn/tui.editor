@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import ColorPicker from 'tui-color-picker';
 
-import Editor from '../editor';
+import Editor from './editorProxy';
 
 const colorSyntaxRx = /\{color:(.+?)}(.*?)\{color}/g;
 const colorHtmlRx = /<span (?:class="colour" )?style="color:(.+?)"(?: class="colour")?>(.*?)/g;

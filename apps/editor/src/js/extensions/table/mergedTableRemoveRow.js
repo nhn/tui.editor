@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editor';
+import Editor from '../editorProxy';
 import dataHandler from './tableDataHandler';
 import tableRangeHandler from './tableRangeHandler';
 import tableRenderer from './tableRenderer';

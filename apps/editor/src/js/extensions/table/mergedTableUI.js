@@ -4,7 +4,7 @@
 */
 import $ from 'jquery';
 
-import Editor from '../editor';
+import Editor from '../editorProxy';
 const {i18n} = Editor;
 
 /**

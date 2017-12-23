@@ -807,4 +807,4 @@ ToastUIEditor.CommandManager = CommandManager;
  */
 ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
-export default ToastUIEditor;
+module.exports = ToastUIEditor;

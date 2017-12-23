@@ -4,8 +4,7 @@
 */
 import $ from 'jquery';
 
-import Editor from '../editor';
-
+import Editor from '../editorProxy';
 import './langs';
 import createMergedTable from './mergedTableCreator';
 import prepareTableUnmerge from './tableUnmergePreparer';

@@ -31,7 +31,7 @@ import $ from 'jquery';
 import util from 'tui-code-snippet';
 const chart = window.tui.chart;
 
-import Editor from '../editor';
+import Editor from '../editorProxy';
 import csv from './csv';
 
 const {WwCodeBlockManager, codeBlockManager} = Editor;

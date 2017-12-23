@@ -4,7 +4,7 @@
 */
 import plantumlEncoder from 'plantuml-encoder';
 
-import Editor from '../editor';
+import Editor from './editorProxy';
 
 const {codeBlockManager} = Editor;
 const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';

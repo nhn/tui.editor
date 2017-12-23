@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Viewer from './viewer';
+const Viewer = require('./viewer');
 
 // for jquery
 $.fn.tuiEditor = function(...args) {
