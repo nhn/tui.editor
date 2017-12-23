@@ -5,7 +5,7 @@
 import $ from 'jquery';
 import util from 'tui-code-snippet';
 
-import Editor from '../editor';
+import Editor from '../editorProxy';
 import MarkerList from './markerList';
 import MarkerManager from './markerManager';
 import WysiwygMarkerHelper from './wysiwygMarkerHelper';

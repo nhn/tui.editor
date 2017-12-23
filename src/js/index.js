@@ -4,7 +4,7 @@
  */
 import $ from 'jquery';
 
-import Editor from './editor';
+const Editor = require('./editor');
 
 // for jquery
 $.fn.tuiEditor = function(...args) {

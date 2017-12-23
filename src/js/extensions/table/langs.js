@@ -2,7 +2,7 @@
 * @fileoverview i18n for table extension
 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 */
-import Editor from '../editor';
+import Editor from '../editorProxy';
 
 const {i18n} = Editor;
 if (i18n) {

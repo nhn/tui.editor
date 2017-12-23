@@ -3,7 +3,7 @@
 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 */
 import $ from 'jquery';
-import Editor from '../editor';
+import Editor from '../editorProxy';
 
 const {domUtils} = Editor;
 const FIND_ZWB_RX = /\u200B/g;
