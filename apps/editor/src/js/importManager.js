@@ -189,7 +189,7 @@ class ImportManager {
     const blobItems = cbData && cbData.items;
     const {types} = cbData;
 
-    if (blobItems && types && util.inArray('Files', [].slice.call(types)) !== -1) {
+    if (blobItems && types && types.length === 1 && util.inArray('Files', [].slice.call(types)) !== -1) {
       this._processBlobItems(blobItems, evData);
     }
   }
