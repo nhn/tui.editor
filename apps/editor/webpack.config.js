@@ -20,8 +20,6 @@ const ENTRY_EXT_CHART = './src/js/extensions/chart/chart.js';
 const ENTRY_EXT_UML = './src/js/extensions/uml.js';
 const ENTRY_EXT_COLOR_SYNTAX = './src/js/extensions/colorSyntax.js';
 const ENTRY_EXT_SCROLL_SYNC = './src/js/extensions/scrollSync/scrollSync.js';
-const ENTRY_EXT_TASK_COUNTER = './src/js/extensions/taskCounter.js';
-const ENTRY_EXT_MARK = './src/js/extensions/mark/mark.js';
 const ENTRY_EXT_TABLE = './src/js/extensions/table/table.js';
 const ENTRY_EDITOR_CSS = './src/css/tui-editor.css';
 const ENTRY_CONTENT_CSS = './src/css/tui-editor-contents.css';
@@ -197,8 +195,6 @@ if (isDevServer) {
     'extUML': ENTRY_EXT_UML,
     'extColorSyntax': ENTRY_EXT_COLOR_SYNTAX,
     'extScrollSync': ENTRY_EXT_SCROLL_SYNC,
-    'extTaskCounter': ENTRY_EXT_TASK_COUNTER,
-    'extMark': ENTRY_EXT_MARK,
     'extTable': ENTRY_EXT_TABLE
   };
   defaultConfigs[2].output.libraryTarget = 'umd';
