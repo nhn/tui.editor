@@ -1,13 +1,13 @@
 /**
-* @fileoverview tsv, csv format tui.chart plugin
+* @fileoverview tsv, csv format chart plugin
 * consumes tab separated values and make data/options for tui chart
 * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
 */
 
 /**
  * @example
- * tsv, csv format tui.chart plugin
- * consumes tab separated values and make data/options for tui chart
+ * tsv, csv format chart plugin
+ * consumes tab separated values and make data/options for tui-chart
  *
  * ```chart
  * \tcat1\tcat2           => tsv, csv format chart data
@@ -29,7 +29,7 @@
  */
 import $ from 'jquery';
 import util from 'tui-code-snippet';
-const chart = window.tui.chart;
+import chart from 'tui-chart';
 
 import Editor from '../editorProxy';
 import csv from './csv';
