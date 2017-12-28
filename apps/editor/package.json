@@ -48,15 +48,15 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "doc": "jsdoc -c jsdoc-conf.json",
+    "doc": "npm run doc:copy & npm run doc:jsdoc",
+    "doc:copy": "copyfiles \"dist/*\" doc & copyfiles \"lib/**/*\" doc",
+    "doc:jsdoc": "jsdoc -c jsdoc.conf.js",
     "test": "karma start",
     "test:ne": "cross-env SERVER=nhnent karma start",
     "test:sl": "cross-env SERVER=saucelabs karma start",
     "test:lh": "cross-env SERVER=localhost karma start",
     "serve": "webpack-dev-server --progress --inline",
-    "build": "npm run build:prod & npm run build:dev",
-    "build:dev": "cross-env BUILD_ALL=true webpack & webpack & BUILD_EXT=true webpack",
-    "build:prod": "cross-env BUILD_ALL=true webpack -p & webpack -p & BUILD_EXT=true webpack -p",
+    "build": "cross-env webpack && webpack -p",
     "note": "tuie --tag=$(git describe --tags)"
   },
   "dependencies": {

@@ -205,37 +205,32 @@ ToastUIEditorViewer.codeBlockManager = codeBlockManager;
 
 /**
  * MarkdownIt hightlight instance
- * @type {typeof MarkdownIt}
+ * @type {MarkdownIt}
  */
 ToastUIEditorViewer.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
 /**
- * null
- * @type (typeof null)
+ * @ignore
  */
 ToastUIEditorViewer.i18n = null;
 
 /**
- * null
- * @type (typeof null)
+ * @ignore
  */
 ToastUIEditorViewer.Button = null;
 
 /**
- * null
- * @type {typeof null}
+ * @ignore
  */
 ToastUIEditorViewer.WwCodeBlockManager = null;
 
 /**
- * null
- * @type {typeof null}
+ * @ignore
  */
 ToastUIEditorViewer.WwTableManager = null;
 
 /**
- * null
- * @type {typeof null}
+ * @ignore
  */
 ToastUIEditorViewer.WwTableSelectionManager = null;
 

@@ -20,7 +20,7 @@ import Viewer from './viewer';
 import i18n from './i18n';
 import DefaultUI from './ui/defaultUI';
 import domUtils from './domUtils';
-import WwTablemanager from './wwTableManager';
+import WwTableManager from './wwTableManager';
 import WwTableSelectionManager from './wwTableSelectionManager';
 import {CodeBlockManager} from './codeBlockManager';
 import codeBlockManager from './codeBlockManager';
@@ -772,38 +772,38 @@ ToastUIEditor.domUtils = domUtils;
 ToastUIEditor.codeBlockManager = codeBlockManager;
 
 /**
- * Button Class
- * @type (typeof Button)
+ * Button class
+ * @type {Class.<Button>}
  */
 ToastUIEditor.Button = Button;
 
 /**
  * WwCodeBlockManager class
- * @type {typeof WwCodeBlockManager}
+ * @type {Class.<WwCodeBlockManager>}
  */
 ToastUIEditor.WwCodeBlockManager = WwCodeBlockManager;
 
 /**
  * WwTableManager class
- * @type {typeof WwTablemanager}
+ * @type {Class.<WwTableManager>}
  */
-ToastUIEditor.WwTableManager = WwTablemanager;
+ToastUIEditor.WwTableManager = WwTableManager;
 
 /**
  * WwTableManager class
- * @type {typeof WwTablemanager}
+ * @type {Class.<WwTableSelectionManager>}
  */
 ToastUIEditor.WwTableSelectionManager = WwTableSelectionManager;
 
 /**
  * CommandManager class
- * @type {typeof WwTablemanager}
+ * @type {Class.<CommandManager>}
  */
 ToastUIEditor.CommandManager = CommandManager;
 
 /**
  * MarkdownIt hightlight instance
- * @type {typeof MarkdownIt}
+ * @type {MarkdownIt}
  */
 ToastUIEditor.markdownitHighlight = Convertor.getMarkdownitHighlightRenderer();
 
