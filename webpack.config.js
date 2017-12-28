@@ -98,6 +98,12 @@ const defaultConfigs = Array(isDevServer ? 1 : 4).fill(0).map(() => {
         amd: 'tui-code-snippet',
         root: ['tui', 'util']
       },
+      'tui-chart': {
+        commonjs: 'tui-chart',
+        commonjs2: 'tui-chart',
+        amd: 'tui-chart',
+        root: ['tui', 'chart']
+      },
       'plantuml-encoder': {
         commonjs: 'plantuml-encoder',
         commonjs2: 'plantuml-encoder',

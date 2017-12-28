@@ -161,8 +161,8 @@ module.exports = function(config) {
     // remove chart and code snippet from here once chart is on npm
     files: [
       'node_modules/tui-code-snippet/dist/tui-code-snippet.js',
-      'node_modules/tui.chart/dist/chart.js',
-      'node_modules/tui.chart/dist/chart.css',
+      'node_modules/tui-chart/dist/tui-chart.js',
+      'node_modules/tui-chart/dist/tui-chart.css',
       'node_modules/codemirror/lib/codemirror.css',
       'src/css/tui-editor.css',
       'test/fixtures/*.*',

@@ -67,8 +67,8 @@
     "plantuml-encoder": "aleung/plantuml-encoder#156729063bfa62da6fa5f577627ebab57ae98c95",
     "squire-rte": "neilj/Squire#306230d0df9b38047cd06204476ddc0582569cfd",
     "toMark": "nhnent/toMark#0.0.19",
+    "tui-chart": "^2.13.0",
     "tui-code-snippet": "^1.2.9",
-    "tui-color-picker": "^2.0.1",
-    "tui.chart": "nhnent/tui.chart#v2.12.0"
+    "tui-color-picker": "^2.0.1"
   }
 }
