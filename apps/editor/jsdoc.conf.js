@@ -1,3 +1,5 @@
+const {version} = require('./package.json');
+
 module.exports = {
   'source': {
     'include': [
@@ -45,7 +47,7 @@ module.exports = {
   'opts': {
     'recurse': true,
     'name': 'ToastUI Editor',
-    'destination': 'doc',
+    'destination': `api/${version}`,
     'template': 'node_modules/tui-jsdoc-template',
     'tutorials': 'examples'
   }

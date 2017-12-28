@@ -49,7 +49,7 @@
   "scripts": {
     "lint": "eslint .",
     "doc": "npm run doc:copy & npm run doc:jsdoc",
-    "doc:copy": "copyfiles \"dist/*\" doc & copyfiles \"lib/**/*\" doc",
+    "doc:copy": "VER=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && copyfiles \"dist/**/*\" \"api/$VER\" && copyfiles \"lib/**/*\" \"api/$VER\"",
     "doc:jsdoc": "jsdoc -c jsdoc.conf.js",
     "test": "karma start",
     "test:ne": "cross-env SERVER=nhnent karma start",
