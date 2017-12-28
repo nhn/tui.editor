@@ -8,8 +8,10 @@ let Editor;
 try {
   Editor = require('../editor');
 } catch (e) {}
-try {
-  Editor = require('../viewer');
-} catch (e) {}
+if (!Editor) {
+  try {
+    Editor = require('../viewer');
+  } catch (e) {}
+}
 
 export default Editor;
