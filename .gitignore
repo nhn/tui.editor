@@ -49,6 +49,7 @@ build
 etc
 temp
 api
+doc
 report
 karma.conf.local.js
 .tern-project
