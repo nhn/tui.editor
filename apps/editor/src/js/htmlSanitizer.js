@@ -64,7 +64,8 @@ function removeUnnecessaryTags($html) {
  */
 function leaveOnlyWhitelistAttribute($html) {
   $html.find('*').each((index, node) => {
-    const blacklist = util.toArray(node.attributes).filter(attr => {
+    const attrs = node.attributes;
+    const blacklist = util.toArray(attrs).filter(attr => {
       const isHTMLAttr = attr.name.match(HTML_ATTR_LIST_RX);
       const isSVGAttr = attr.name.match(SVG_ATTR_LIST_RX);
 
@@ -72,7 +73,11 @@ function leaveOnlyWhitelistAttribute($html) {
     });
 
     util.forEachArray(blacklist, attr => {
-      node.attributes.removeNamedItem(attr.name);
+      // Edge svg attribute name returns uppercase bug. error guard.
+      // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/5579311/
+      if (attrs.getNamedItem(attr.name)) {
+        attrs.removeNamedItem(attr.name);
+      }
     });
   });
 }
